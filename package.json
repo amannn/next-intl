@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing translations in Next.js apps.",
   "license": "MIT",
