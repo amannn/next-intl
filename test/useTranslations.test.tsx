@@ -24,7 +24,8 @@ const messages: NextIntlMessages = {
     select: '{gender, select, male {He} female {She} other {They}} is online.',
     selectordinal:
       "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-    richText: 'This is <important>important</important>',
+    richText:
+      'This is <important>important</important> and <important>this as well</important>',
     attributeUrl: 'https://example.com',
     nested: {
       label: 'Nested'
@@ -94,9 +95,11 @@ it('handles selectordinals', () => {
 
 it('handles rich text', () => {
   const {container} = renderMessage('richText', {
-    important: (children: ReactNode) => <b key="important">{children}</b>
+    important: (children: ReactNode) => <b>{children}</b>
   });
-  expect(container.innerHTML).toBe('This is <b>important</b>');
+  expect(container.innerHTML).toBe(
+    'This is <b>important</b> and <b>this as well</b>'
+  );
 });
 
 it('can use messages in attributes', () => {

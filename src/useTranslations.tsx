@@ -1,6 +1,13 @@
 import IntlMessageFormat from 'intl-messageformat';
 import {useRouter} from 'next/router';
-import {useContext, useMemo, useRef} from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  ReactNode,
+  useContext,
+  useMemo,
+  useRef
+} from 'react';
 import NextIntlContext from './NextIntlContext';
 import NextIntlMessages from './NextIntlMessages';
 import TranslationValues from './TranslationValues';
@@ -27,6 +34,36 @@ function resolvePath(messages: NextIntlMessages, idPath: string) {
   });
 
   return message;
+}
+
+function prepareTranslationValues(values?: TranslationValues) {
+  if (!values) return values;
+
+  // Workaround for https://github.com/formatjs/formatjs/issues/1467
+  const transformedValues: TranslationValues = {};
+
+  Object.keys(values).forEach((key) => {
+    const value = values[key];
+
+    let transformed;
+    if (typeof value === 'function') {
+      transformed = (children: ReactNode) => {
+        const result = value(children);
+
+        return isValidElement(result)
+          ? cloneElement(result, {
+              key: result.key || key + String(children)
+            })
+          : result;
+      };
+    } else {
+      transformed = value;
+    }
+
+    transformedValues[key] = transformed;
+  });
+
+  return transformedValues;
 }
 
 /**
@@ -105,7 +142,9 @@ export default function useTranslations(path?: string) {
       cachedFormatsByLocale[locale][idPath] = messageFormat;
     }
 
-    const formattedMessage = messageFormat.format(values);
+    const formattedMessage = messageFormat.format(
+      prepareTranslationValues(values)
+    );
 
     if (__DEV__) {
       if (formattedMessage === undefined) {

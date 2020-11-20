@@ -104,6 +104,7 @@ App.getInitialProps = async function getInitialProps(context) {
     "selectordinal": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
 
     // See https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting
+    // and https://formatjs.io/docs/intl-messageformat/#rich-text-support
     "richText": "This is <important>important</important>",
 
     // Messages can be used in attributes
@@ -139,7 +140,7 @@ function Component() {
     <p>{t('date', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('plural', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('selectordinal', {year: 1})}</p>
-    <p>{t('richText', important: (children: ReactNode) => <b key="important">{children}</b>)}</p>
+    <p>{t('richText', important: (children: ReactNode) => <b>{children}</b>)}</p>
     // TypeScript note: You have to cast the attribute to a string, since it 
     // can potentially return a `ReactNode`: `String(t('attributeUrl'))`
     <a href={t('attributeUrl')}>Link</a>
@@ -168,9 +169,7 @@ function FancyComponent() {
 
 ## TODO
 
-- get rid of key for rich text?
-- cache format result?
-- separate repo?
+- Cache format result?
 - Pass currency to number? (if currency is sensitive to locale, use the messages)
 - Relative time
 - Check other features of react-intl
