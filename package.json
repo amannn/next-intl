@@ -13,7 +13,7 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "eslint src test && tsc",
-    "prepare": "tsdx build"
+    "prepublish": "yarn build && yarn lint"
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",
