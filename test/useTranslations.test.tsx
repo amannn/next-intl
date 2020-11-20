@@ -26,6 +26,7 @@ const messages: NextIntlMessages = {
       "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
     richText:
       'This is <important>important</important> and <important>this as well</important>',
+    nestedRichText: 'This is <bold><italic>very</italic> important</bold>',
     attributeUrl: 'https://example.com',
     nested: {
       label: 'Nested'
@@ -100,6 +101,14 @@ it('handles rich text', () => {
   expect(container.innerHTML).toBe(
     'This is <b>important</b> and <b>this as well</b>'
   );
+});
+
+it('handles nested rich text', () => {
+  const {container} = renderMessage('nestedRichText', {
+    bold: (children: ReactNode) => <b>{children}</b>,
+    italic: (children: ReactNode) => <i>{children}</i>
+  });
+  expect(container.innerHTML).toBe('This is <b><i>very</i> important</b>');
 });
 
 it('can use messages in attributes', () => {

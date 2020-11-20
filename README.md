@@ -105,7 +105,7 @@ App.getInitialProps = async function getInitialProps(context) {
 
     // See https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting
     // and https://formatjs.io/docs/intl-messageformat/#rich-text-support
-    "richText": "This is <important>important</important>",
+    "richText": "This is <important><very>very</very> important</important>",
 
     // Messages can be used in attributes
     "attributeUrl": "https://example.com",
@@ -140,7 +140,12 @@ function Component() {
     <p>{t('date', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('plural', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('selectordinal', {year: 1})}</p>
-    <p>{t('richText', important: (children: ReactNode) => <b>{children}</b>)}</p>
+    <p>
+      {t('richText', {
+        important: (children: ReactNode) => <b>{children}</b>,
+        very: (children: ReactNode) => <i>{children}</i>,
+      })}
+    </p>
     // TypeScript note: You have to cast the attribute to a string, since it 
     // can potentially return a `ReactNode`: `String(t('attributeUrl'))`
     <a href={t('attributeUrl')}>Link</a>
