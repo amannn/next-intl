@@ -38,10 +38,10 @@ function LatestFollower({user}) {
 ## Features
 
 - Based on battle-tested building blocks from [Format.JS](https://formatjs.io/) (used by `react-intl`), this library is a thin wrapper around high-quality, lower-level APIs for i18n.
-- I18n is really essential for usability, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax).
+- I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax).
 - The bundle size comes in at [32.2kb (9.2kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for the flexibility of the library.
 - A hooks-only API ensures that you can use the same API for `children` as well as for attributes which expect strings.
-- Integration with Next.js ensures only the least amount of configuration is necessary.
+- Integration with Next.js ensures only the least amount of integration code is necessary.
 
 ## Installation
 
