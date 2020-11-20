@@ -72,7 +72,7 @@ App.getInitialProps = async function getInitialProps(context) {
   return {...(await NextApp.getInitialProps(context)), messages};
 };
 ```
-3. Based on the features you need, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
+3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
 4. Use translations in your components!
 
 ## Usage
@@ -163,7 +163,7 @@ function FancyComponent() {
 
 ## Tradeoffs
 
-- All relevant translations for the components need to be supplied to the provider. There's no concept of lazy loading translations. However due to the page-based approach of Next.js, you can only provide the minimum of necessary messages. Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
+- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
 - There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
 
 ## TODO
