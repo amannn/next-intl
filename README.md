@@ -117,6 +117,11 @@ App.getInitialProps = async function getInitialProps(context) {
   },
 
   // You don't have to group messages by components. Use whatever suits your use case.
+  // For example for shared labels you can use a common key. However, from my experience
+  // I think it's often beneficial to duplicate labels across components, even if they are
+  // the same for now. This allows to easily change them later on in case you want something
+  // more specific. Duplication on the network level is typically solved by gzip. In
+  // addition to this, you can achieve reuse by using shared components.
   "generic": {
     "cancel": "Cancel"
   },
@@ -142,8 +147,8 @@ function Component() {
     <p>{t('selectordinal', {year: 1})}</p>
     <p>
       {t('richText', {
-        important: (children: ReactNode) => <b>{children}</b>,
-        very: (children: ReactNode) => <i>{children}</i>,
+        important: (children) => <b>{children}</b>,
+        very: (children) => <i>{children}</i>
       })}
     </p>
     // TypeScript note: You have to cast the attribute to a string, since it 
@@ -171,6 +176,7 @@ function FancyComponent() {
 
 - All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
 - There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
+- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters).
 
 ## TODO
 
