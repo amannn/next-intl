@@ -200,6 +200,34 @@ function FancyComponent() {
 }
 ```
 
+If you're formatting dates, times, and numbers that are not embedded within a message, you can use a separate hook:
+
+```js
+import {useIntl} from 'next-intl';
+
+function Component() {
+  const intl = useIntl();
+  const dateTime = new Date('2020-11-20T10:36:01.516Z')
+
+  return (
+    <>
+      {/*
+        * See MDN docs for options:
+        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options
+        */}
+      {intl.formatDateTime(dateTime, {year: 'numeric', month: 'numeric', day: 'numeric'})}
+      {intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'})}
+
+      {/*
+        * See MDN docs for options:
+        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options
+        */}
+      {intl.formatNumber(499.90, {style: 'currency', currency: 'USD'})}
+    <>
+  );
+}
+```
+
 ## Known tradeoffs
 
 - All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way.

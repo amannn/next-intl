@@ -14,7 +14,7 @@
     "build": "tsdx build",
     "test": "TZ=Europe/Berlin tsdx test",
     "lint": "eslint src test && tsc",
-    "prepublish": "yarn build && yarn lint"
+    "prepublish": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",
