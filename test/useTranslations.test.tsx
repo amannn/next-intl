@@ -1,11 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import React, {ReactNode} from 'react';
-import {
-  NextIntlProvider,
-  useTranslations,
-  NextIntlMessages,
-  TranslationValues
-} from '../src';
+import {NextIntlProvider, useTranslations, TranslationValues} from '../src';
 
 (global as any).__DEV__ = true;
 
@@ -13,122 +8,116 @@ jest.mock('next/router', () => ({
   useRouter: () => ({locale: 'en'})
 }));
 
-const messages: NextIntlMessages = {
-  Component: {
-    static: 'Hello',
-    interpolation: 'Hello {name}',
-    number: '{price, number, ::currency/EUR}',
-    date: '{now, date, medium}',
-    plural:
-      'You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.',
-    select: '{gender, select, male {He} female {She} other {They}} is online.',
-    selectordinal:
-      "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-    richText:
-      'This is <important>important</important> and <important>this as well</important>',
-    nestedRichText: 'This is <bold><italic>very</italic> important</bold>',
-    attributeUrl: 'https://example.com',
-    nested: {
-      label: 'Nested'
-    }
-  },
-  generic: {
-    cancel: 'Cancel'
-  },
-  fancyComponents: {
-    FancyComponent: {
-      hello: 'Hello'
-    }
-  }
-};
-
-function Provider({children}: {children: ReactNode}) {
-  return <NextIntlProvider messages={messages}>{children}</NextIntlProvider>;
-}
-
 function renderMessage(message: string, values?: TranslationValues) {
   function Component() {
-    const t = useTranslations('Component');
-    return <>{t(message, values)}</>;
+    const t = useTranslations();
+    return <>{t('message', values)}</>;
   }
 
   return render(
-    <Provider>
+    <NextIntlProvider messages={{message}}>
       <Component />
-    </Provider>
+    </NextIntlProvider>
   );
 }
 
 it('handles static messages', () => {
-  renderMessage('static');
+  renderMessage('Hello');
   screen.getByText('Hello');
 });
 
 it('handles basic interpolation', () => {
-  renderMessage('interpolation', {name: 'Jane'});
+  renderMessage('Hello {name}', {name: 'Jane'});
   screen.getByText('Hello Jane');
 });
 
 it('handles number formatting', () => {
-  renderMessage('number', {price: 123394.1243});
+  renderMessage('{price, number, ::currency/EUR}', {price: 123394.1243});
   screen.getByText('€123,394.12');
 });
 
 it('handles date formatting', () => {
-  renderMessage('date', {now: new Date('2020-11-19T15:38:43.700Z')});
+  renderMessage('{now, date, medium}', {
+    now: new Date('2020-11-19T15:38:43.700Z')
+  });
   screen.getByText('Nov 19, 2020');
 });
 
 it('handles pluralisation', () => {
-  renderMessage('plural', {numMessages: 1});
+  renderMessage(
+    'You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.',
+    {numMessages: 1}
+  );
   screen.getByText('You have one message.');
 });
 
 it('handles selects', () => {
-  renderMessage('select', {gender: 'female'});
+  renderMessage(
+    '{gender, select, male {He} female {She} other {They}} is online.',
+    {gender: 'female'}
+  );
   screen.getByText('She is online.');
 });
 
 it('handles selectordinals', () => {
-  renderMessage('selectordinal', {year: 1});
+  renderMessage(
+    "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+    {year: 1}
+  );
   screen.getByText("It's my cat's 1st birthday!");
 });
 
 it('handles rich text', () => {
-  const {container} = renderMessage('richText', {
-    important: (children: ReactNode) => <b>{children}</b>
-  });
+  const {container} = renderMessage(
+    'This is <important>important</important> and <important>this as well</important>',
+    {
+      important: (children: ReactNode) => <b>{children}</b>
+    }
+  );
   expect(container.innerHTML).toBe(
     'This is <b>important</b> and <b>this as well</b>'
   );
 });
 
 it('handles nested rich text', () => {
-  const {container} = renderMessage('nestedRichText', {
-    bold: (children: ReactNode) => <b>{children}</b>,
-    italic: (children: ReactNode) => <i>{children}</i>
-  });
+  const {container} = renderMessage(
+    'This is <bold><italic>very</italic> important</bold>',
+    {
+      bold: (children: ReactNode) => <b>{children}</b>,
+      italic: (children: ReactNode) => <i>{children}</i>
+    }
+  );
   expect(container.innerHTML).toBe('This is <b><i>very</i> important</b>');
 });
 
 it('can use messages in attributes', () => {
   function Component() {
-    const t = useTranslations('Component');
-    return <a href={String(t('attributeUrl'))}>{t('static')}</a>;
+    const t = useTranslations();
+    return <a href={String(t('message'))}>Hello</a>;
   }
 
   const {container} = render(
-    <Provider>
+    <NextIntlProvider messages={{message: 'https://example.com'}}>
       <Component />
-    </Provider>
+    </NextIntlProvider>
   );
 
   expect(container.innerHTML).toBe('<a href="https://example.com">Hello</a>');
 });
 
 it('can resolve nested paths', () => {
-  const {container} = renderMessage('nested.label');
-  expect(container.innerHTML).toBe('Nested');
+  function Component() {
+    const t = useTranslations('nested');
+    return <p>{t('moreNesting.label')}</p>;
+  }
+
+  render(
+    <NextIntlProvider messages={{nested: {moreNesting: {label: 'Nested'}}}}>
+      <Component />
+    </NextIntlProvider>
+  );
+
+  screen.getByText('Nested');
 });
 
 it('returns all messages when no namespace is specified', () => {
@@ -138,9 +127,9 @@ it('returns all messages when no namespace is specified', () => {
   }
 
   render(
-    <Provider>
+    <NextIntlProvider messages={{generic: {cancel: 'Cancel'}}}>
       <Component />
-    </Provider>
+    </NextIntlProvider>
   );
 
   screen.getByText('Cancel');
@@ -149,13 +138,15 @@ it('returns all messages when no namespace is specified', () => {
 it('can access a nested namespace in the static call', () => {
   function Component() {
     const t = useTranslations('fancyComponents.FancyComponent');
-    return <>{t('hello')}</>;
+    return <>{t('label')}</>;
   }
 
   render(
-    <Provider>
+    <NextIntlProvider
+      messages={{fancyComponents: {FancyComponent: {label: 'Hello'}}}}
+    >
       <Component />
-    </Provider>
+    </NextIntlProvider>
   );
 
   screen.getByText('Hello');
