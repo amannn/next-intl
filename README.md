@@ -206,10 +206,10 @@ function FancyComponent() {
   - Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
   - An alternative could be to gather the used namespaces at build time, splitting the messages by the namespaces into separate files and then using a Suspense-based loader to fetch translations as components are rendered.
 - There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
-- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters).
-- No descriptions are used which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. `react-intl` is generally more targeted toward larger applications and workflows with translators. This library might be more reasonable for apps where the developer sets up translations based a design for example.
+- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
+- No descriptions are used which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. `react-intl` is generally more targeted towards larger applications and workflows with translators. This library might be more reasonable for apps where the developer sets up translations based on a design for example.
 
 ## TODO
 
 - Performance: Cache format result? Use fast-memoize like react-intl?
-- Relative time. should this be a component? can update over time. can accept an optional now.
+- Relative time. Should this be a component? Can update over time.Ccan accept an optional now.
