@@ -2,7 +2,7 @@
 
 [![Stable release](https://img.shields.io/npm/v/next-intl.svg)](https://npm.im/next-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
 
-🌐 Minimal, but complete solution for managing internationalization in Next.js apps.
+Minimal, but complete solution for managing internationalization in Next.js apps. 🌐
 
 This library complements the [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) capabilities of Next.js by managing translations and providing them to components.
 
@@ -63,8 +63,8 @@ App.getInitialProps = async function getInitialProps(context) {
   // You can get the messages from anywhere you like, but the recommended
   // pattern is to put them in JSON files separated by language and read 
   // the desired one based on the `locale` received from Next.js. You
-  // can also separate your messages further (e.g. by page) and read
-  // them based on the current route.
+  // can also separate your messages by page and fetch them in `getStaticProps`
+  // in your page which will make them available on `pageProps` in the `App`.
   const messages = locale ? require(`messages/${locale}.json`) : undefined
 
   return {...(await NextApp.getInitialProps(context)), messages};
