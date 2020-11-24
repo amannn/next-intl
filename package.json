@@ -12,7 +12,7 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
+    "test": "TZ=Europe/Berlin tsdx test",
     "lint": "eslint src test && tsc",
     "prepublish": "yarn build && yarn lint"
   },
