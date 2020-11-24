@@ -10,7 +10,7 @@ Next.js has built-in support for [internationalized routing](https://nextjs.org/
 
 ## This solution
 
-This is my attempt at providing a minimal, but complete solution that fills in the missing pieces.
+This library provides a minimal, but complete solution that fills in the missing pieces.
 
 ```jsx
 function LatestFollower({user}) {
