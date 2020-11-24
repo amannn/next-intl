@@ -1,4 +1,4 @@
-import IntlMessageFormat from 'intl-messageformat';
+import IntlMessageFormat, {Formats} from 'intl-messageformat';
 import {useRouter} from 'next/router';
 import {
   cloneElement,
@@ -106,7 +106,8 @@ export default function useTranslations(path?: string) {
   function translate(
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
     idPath: string,
-    values?: TranslationValues
+    values?: TranslationValues,
+    formats?: Partial<Formats>
   ) {
     if (!locale) {
       if (__DEV__) {
@@ -134,7 +135,7 @@ export default function useTranslations(path?: string) {
         }
       }
 
-      messageFormat = new IntlMessageFormat(message, locale);
+      messageFormat = new IntlMessageFormat(message, locale, formats);
 
       if (!cachedFormatsByLocale[locale]) {
         cachedFormatsByLocale[locale] = {};

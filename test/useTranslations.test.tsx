@@ -1,4 +1,5 @@
 import {render, screen} from '@testing-library/react';
+import {Formats} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {NextIntlProvider, useTranslations, TranslationValues} from '../src';
 
@@ -8,10 +9,14 @@ jest.mock('next/router', () => ({
   useRouter: () => ({locale: 'en'})
 }));
 
-function renderMessage(message: string, values?: TranslationValues) {
+function renderMessage(
+  message: string,
+  values?: TranslationValues,
+  formats?: Partial<Formats>
+) {
   function Component() {
     const t = useTranslations();
-    return <>{t('message', values)}</>;
+    return <>{t('message', values, formats)}</>;
   }
 
   return render(
@@ -31,8 +36,31 @@ it('handles basic interpolation', () => {
   screen.getByText('Hello Jane');
 });
 
-it('handles number formatting', () => {
+it('handles number formatting with percent', () => {
+  renderMessage('{value, number, percent}', {value: 0.312});
+  screen.getByText('31%');
+});
+
+it('handles number formatting with a static currency', () => {
   renderMessage('{price, number, ::currency/EUR}', {price: 123394.1243});
+  screen.getByText('€123,394.12');
+});
+
+it('handles number formatting with a custom format', () => {
+  renderMessage(
+    '{price, number, currency}',
+    {
+      price: 123394.1243
+    },
+    {
+      number: {
+        currency: {
+          style: 'currency',
+          currency: 'EUR'
+        }
+      }
+    }
+  );
   screen.getByText('€123,394.12');
 });
 
@@ -41,6 +69,13 @@ it('handles date formatting', () => {
     now: new Date('2020-11-19T15:38:43.700Z')
   });
   screen.getByText('Nov 19, 2020');
+});
+
+it('handles time formatting', () => {
+  renderMessage('{now, time, short}', {
+    now: new Date('2020-11-19T15:38:43.700Z')
+  });
+  screen.getByText('4:38 PM');
 });
 
 it('handles pluralisation', () => {

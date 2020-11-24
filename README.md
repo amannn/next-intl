@@ -81,18 +81,31 @@ App.getInitialProps = async function getInitialProps(context) {
 // en.json
 
 {
-  // The recommended approach is to group messages by components.
+  // The recommended approach is to group messages by components and
+  // embrace them as the primary unit of code organization in your app.
   "Component": {
     "static": "Hello",
 
     // See https://formatjs.io/docs/core-concepts/icu-syntax/#simple-argument
     "interpolation": "Hello {name}",
 
-    // See https://formatjs.io/docs/core-concepts/icu-syntax/#number-type
-    "number": "{price, number, ::currency/EUR}",
+    // Static number formats
+    // See also https://formatjs.io/docs/core-concepts/icu-syntax/#number-type
+    "percent": "Percent: {value, number, percent}",
+
+    // When formatting numbers, you can pass a custom formatter name which can
+    // be provided and configured by the call site within the component.
+    // See also https://formatjs.io/docs/core-concepts/icu-syntax/#number-type
+    "price": "Price: {price, number, currency}",
     
     // See https://formatjs.io/docs/intl-messageformat#datetime-skeleton
-    "date": "{now, date, medium}",
+    // Similar to number formatting, you can provide a custom formatter
+    // from the call site within the component.
+    "date": "Date: {now, date, medium}",
+
+    // See https://formatjs.io/docs/intl-messageformat#datetime-skeleton
+    // Same mechanism as date formatting.
+    "time": "Time: {now, time, short}",
     
     // See https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format
     "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
@@ -139,13 +152,29 @@ App.getInitialProps = async function getInitialProps(context) {
 ```js
 function Component() {
   const t = useTranslations('Component');
+
   return (
     <p>{t('static')}</p>
     <p>{t('interpolation', {name: 'Jane'})}</p>
-    <p>{t('number', {price: 31918.231})}</p>
+    <p>{t('percent', {percent: 0.2})}</p>
+    <p>
+      {t(
+        'price',
+        {price: 31918.231},
+        // When custom formats are used, you can supply them via the third parameter
+        {
+          number: {
+            currency: {
+              style: 'currency',
+              currency: 'EUR'
+            }
+          }
+        )}
+    </p>
     <p>{t('date', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
+    <p>{t('time', {time: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('plural', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
-    <p>{t('selectordinal', {year: 1})}</p>
+    <p>{t('selectordinal', {year: 11})}</p>
     <p>
       {t('richText', {
         important: (children) => <b>{children}</b>,
@@ -184,7 +213,5 @@ function FancyComponent() {
 
 ## TODO
 
-- Cache format result?
-- Other features of react-intl:
-  - Relative time
-  - Pass currency to number? (if currency is sensitive to locale, use the messages)
+- Performance: Cache format result? Use fast-memoize like react-intl?
+- Relative time. should this be a component? can update over time. can accept an optional now.
