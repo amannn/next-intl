@@ -10,10 +10,7 @@ export default function useIntl() {
     return new Intl.DateTimeFormat(locale, options).format(value);
   }
 
-  function formatNumber(
-    value: number | bigint,
-    options?: Intl.NumberFormatOptions
-  ) {
+  function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
     return new Intl.NumberFormat(locale, options).format(value);
   }
 
