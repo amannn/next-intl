@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
+    "test": "echo 'No tests yet'",
     "build": "next build",
     "start": "next start"
   },
