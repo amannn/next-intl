@@ -70,7 +70,8 @@ App.getInitialProps = async function getInitialProps(context) {
 };
 ```
 3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
-4. Use translations in your components!
+4. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
+5. Use translations in your components!
 
 ## Usage
 

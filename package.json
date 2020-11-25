@@ -1,7 +1,5 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": [
-    "packages/next-intl"
-  ]
+  "workspaces": ["packages/*"]
 }
