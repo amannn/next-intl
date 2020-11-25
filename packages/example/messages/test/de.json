@@ -1,6 +1,6 @@
 {
   "Test": {
     "title": "Ein Test",
-    "description": "Diese Seite hat separate Übersetzungen aus <code>./messages/test/{locale}.json</code>, die nicht auf der Startseite geladen werden."
+    "description": "Diese Seite verwendet separate Übersetzungen aus <code>./messages/test/{locale}.json</code>. Diese Übersetzungen werden auf der Startseite nicht geladen."
   }
 }

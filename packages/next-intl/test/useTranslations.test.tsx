@@ -186,3 +186,24 @@ it('can access a nested namespace in the static call', () => {
 
   screen.getByText('Hello');
 });
+
+it('switches the message when a new locale is provided', () => {
+  function Component() {
+    const t = useTranslations();
+    return <>{t('label')}</>;
+  }
+
+  const {rerender} = render(
+    <NextIntlProvider locale="en" messages={{label: 'Hello'}}>
+      <Component />
+    </NextIntlProvider>
+  );
+  screen.getByText('Hello');
+
+  rerender(
+    <NextIntlProvider locale="de" messages={{label: 'Hallo'}}>
+      <Component />
+    </NextIntlProvider>
+  );
+  screen.getByText('Hallo');
+});

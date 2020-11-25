@@ -8,7 +8,6 @@ type Props = AppProps & {
 export default function App({Component, messages, pageProps}: Props) {
   return (
     <NextIntlProvider
-      locale="en"
       // You can merge messages that should always be present
       // (from `App.getInitialProps`) with page-level
       // messages (from `getStaticProps` of individual pages)

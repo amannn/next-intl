@@ -5,6 +5,7 @@
   },
   "Navigation": {
     "index": "Start",
-    "test": "Test"
+    "test": "Test",
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch}} wechseln"
   }
 }
