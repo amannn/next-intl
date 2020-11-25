@@ -1,6 +1,6 @@
 # next-intl
 
-[![Stable release](https://img.shields.io/npm/v/next-intl.svg)](https://npm.im/next-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
+![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
 
 Minimal, but complete solution for managing internationalization in Next.js apps. 🌐
 
