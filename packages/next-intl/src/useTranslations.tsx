@@ -68,6 +68,15 @@ function prepareTranslationValues(values?: TranslationValues) {
  */
 export default function useTranslations(path?: string) {
   const context = useIntlContext();
+
+  if (__DEV__) {
+    if (!context) {
+      throw new Error(
+        'No `next-intl` context found. Have you configured `NextIntlProvider`?'
+      );
+    }
+  }
+
   const locale = useLocale();
 
   const cachedFormatsByLocaleRef = useRef<
@@ -75,6 +84,15 @@ export default function useTranslations(path?: string) {
   >({});
 
   const allMessages = context.messages;
+
+  if (__DEV__) {
+    if (!allMessages) {
+      throw new Error(
+        'No messages found. Have you configured `NextIntlProvider` correctly with messages?'
+      );
+    }
+  }
+
   const messages = useMemo(
     () => (path ? resolvePath(allMessages, path) : allMessages),
     [allMessages, path]
