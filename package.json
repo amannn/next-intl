@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "prepare": "lerna bootstrap --ignore-prepublish",
+    "prepare": "lerna bootstrap",
     "lint": "lerna run lint",
     "test": "lerna run test",
     "build": "lerna run build"
