@@ -10,9 +10,8 @@ This library complements the [internationalized routing](https://nextjs.org/docs
 
 - Based on battle-tested building blocks from [Format.JS](https://formatjs.io/) (used by `react-intl`), this library is a thin wrapper around high-quality, lower-level APIs for i18n.
 - I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax) which covers interpolation, numbers, dates, times, plurals, ordinal pluralization, label selection based on enums and rich text.
-- The bundle size comes in at [32.2kb (9.3kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features.
 - A hooks-only API ensures that you can use the same API for `children` as well as for attributes which expect strings.
-- Integrates with both static as well as server side rendering capabilities of Next.js.
+- Integrates with both static as well as server side rendering.
 
 ## What does it look like?
 
@@ -209,27 +208,28 @@ function Component() {
   const intl = useIntl();
   const dateTime = new Date('2020-11-20T10:36:01.516Z')
 
-  return (
-    <>
-      {/*
-        * See MDN docs for options:
-        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options
-        */}
-      {intl.formatDateTime(dateTime, {year: 'numeric', month: 'numeric', day: 'numeric'})}
-      {intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'})}
+  // See MDN docs for options:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options
+  intl.formatDateTime(dateTime, {year: 'numeric', month: 'numeric', day: 'numeric'});
+  intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
 
-      {/*
-        * See MDN docs for options:
-        * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options
-        */}
-      {intl.formatNumber(499.90, {style: 'currency', currency: 'USD'})}
-    <>
-  );
+  // See MDN docs for options:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options
+  intl.formatNumber(499.90, {style: 'currency', currency: 'USD'});
+
+  // When formatting relative dates, you have to supply the current time as `now`. This is necessary
+  // for the function to return consistent results and to be pure. You can decide yourself how often
+  // you want to update the current value. If you need exceptions like '23 seconds ago' should be
+  // formatted as 'less than one minute ago' you can wrap the function and use a custom label. Note
+  // that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
+  const now = new Date('2020-11-25T10:36:01.516Z')
+  intl.formatRelativeTime(dateTime, now);
 }
 ```
 
 ## Known tradeoffs
 
+- The bundle size comes in at [32.2kb (9.3kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features.
 - All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way.
   - Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
   - An alternative could be to gather the used namespaces at build time, splitting the messages by the namespaces into separate files and then using a Suspense-based loader to fetch translations as components are rendered.
