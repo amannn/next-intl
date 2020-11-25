@@ -1,49 +1,12 @@
 {
-  "name": "next-intl",
-  "version": "0.0.7",
-  "sideEffects": false,
-  "author": "Jan Amann <jan@amann.me>",
-  "description": "Minimal, but complete solution for managing internationalization in Next.js apps.",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/amannn/next-intl"
-  },
+  "name": "root",
+  "private": true,
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "TZ=Europe/Berlin tsdx test",
-    "lint": "eslint src test && tsc",
-    "prepublish": "yarn test && yarn lint && yarn build"
-  },
-  "main": "dist/index.js",
-  "module": "dist/next-intl.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "dependencies": {
-    "intl-messageformat": "^9.3.18"
-  },
-  "peerDependencies": {
-    "next": "^10.0.0",
-    "react": "^16.8.0 || ^17.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0"
+    "lint": "lerna run lint",
+    "test": "lerna run test",
+    "build": "lerna run build"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.1.2",
-    "@types/react": "^16.9.56",
-    "eslint": "7.4.0",
-    "eslint-config-molindo": "5.0.1",
-    "next": "^10.0.2",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.1.2"
-  },
-  "engines": {
-    "node": ">=10"
+    "lerna": "^3.22.1"
   }
 }
