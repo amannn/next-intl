@@ -173,7 +173,7 @@ function Component() {
     </p>
     <p>{t('date', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
     <p>{t('time', {time: new Date('2020-11-20T10:36:01.516Z')})}</p>
-    <p>{t('plural', {date: new Date('2020-11-20T10:36:01.516Z')})}</p>
+    <p>{t('plural', {numMessages: 3})}</p>
     <p>{t('selectordinal', {year: 11})}</p>
     <p>
       {t('richText', {
