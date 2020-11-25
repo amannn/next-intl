@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
-      - run: yarn install
+      - uses: bahmutov/npm-install@v1
       - run: yarn lint
       - run: yarn test --ci --coverage --maxWorkers=2
       - run: yarn build

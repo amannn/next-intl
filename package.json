@@ -2,12 +2,11 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "prepare": "lerna bootstrap",
-    "lint": "lerna run lint",
-    "test": "lerna run test",
-    "build": "lerna run build"
+    "lint": "yarn workspaces foreach lint",
+    "test": "yarn workspaces foreach test",
+    "build": "yarn workspaces foreach build"
   },
-  "devDependencies": {
-    "lerna": "^3.22.1"
-  }
+  "workspaces": [
+    "packages/next-intl"
+  ]
 }
