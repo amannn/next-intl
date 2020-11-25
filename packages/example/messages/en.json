@@ -1,5 +1,12 @@
 {
+  "Test": {
+    "title": "A test"
+  },
   "Index": {
     "hello": "Hello {name}"
+  },
+  "Navigation": {
+    "index": "Start",
+    "test": "Test"
   }
 }

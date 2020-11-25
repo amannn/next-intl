@@ -1,13 +1,13 @@
 import {useTranslations} from 'next-intl';
 import Navigation from 'components/Navigation';
 
-export default function Index() {
-  const t = useTranslations('Index');
+export default function Test() {
+  const t = useTranslations('Test');
 
   return (
     <div>
       <Navigation />
-      <h1>{t('hello', {name: 'Jane'})}</h1>
+      <h1>{t('title')}</h1>
     </div>
   );
 }
