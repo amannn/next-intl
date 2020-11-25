@@ -8,7 +8,7 @@ import useLocale from './useLocale';
 function resolvePath(messages: NextIntlMessages, idPath: string) {
   let message = messages;
 
-  idPath.split('.').forEach((part) => {
+  idPath.split('.').forEach(part => {
     const next = (message as any)[part];
 
     if (__DEV__) {
@@ -34,7 +34,7 @@ function prepareTranslationValues(values?: TranslationValues) {
 
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: TranslationValues = {};
-  Object.keys(values).forEach((key) => {
+  Object.keys(values).forEach(key => {
     const value = values[key];
 
     let transformed;

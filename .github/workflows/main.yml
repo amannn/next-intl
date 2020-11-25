@@ -10,6 +10,6 @@ jobs:
         with:
           node-version: 14.x
       - uses: bahmutov/npm-install@v1
-      - run: yarn lint
-      - run: yarn test --ci --coverage --maxWorkers=2
-      - run: yarn build
+      - run: yarn workspaces run lint
+      - run: yarn workspaces run test --ci --coverage --maxWorkers=2
+      - run: yarn workspaces run build

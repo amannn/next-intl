@@ -1,11 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "scripts": {
-    "lint": "yarn workspaces foreach lint",
-    "test": "yarn workspaces foreach test",
-    "build": "yarn workspaces foreach build"
-  },
   "workspaces": [
     "packages/next-intl"
   ]
