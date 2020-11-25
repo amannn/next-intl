@@ -1,12 +1,10 @@
 {
-  "Test": {
-    "title": "A test"
-  },
   "Index": {
-    "hello": "Hello {name}"
+    "title": "Home",
+    "description": "This page uses globally defined messages from <code>./messages/{locale}.json</code>."
   },
   "Navigation": {
-    "index": "Start",
+    "index": "Home",
     "test": "Test"
   }
 }
