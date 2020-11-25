@@ -64,7 +64,6 @@ App.getInitialProps = async function getInitialProps(context) {
   // the desired one based on the `locale` received from Next.js. You
   // can also separate your messages by page and fetch them in `getStaticProps`
   // in your page which will make them available on `pageProps` in the `App`.
-  // See also the example in https://github.com/amannn/next-intl/blob/main/packages/example
   const messages = locale ? require(`messages/${locale}.json`) : undefined
 
   return {...(await NextApp.getInitialProps(context)), messages};
@@ -73,6 +72,8 @@ App.getInitialProps = async function getInitialProps(context) {
 3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
 4. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
 5. Use translations in your components!
+
+Have a look at [the example](./packages/example) to explore a working setup.
 
 ## Usage
 
