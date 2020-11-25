@@ -8,10 +8,10 @@ This library complements the [internationalized routing](https://nextjs.org/docs
 
 ## Features
 
-- Based on battle-tested building blocks from [Format.JS](https://formatjs.io/) (used by `react-intl`), this library is a thin wrapper around high-quality, lower-level APIs for i18n.
-- I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax) which covers interpolation, numbers, dates, times, plurals, ordinal pluralization, label selection based on enums and rich text.
-- A hooks-only API ensures that you can use the same API for `children` as well as for attributes which expect strings.
-- Integrates with both static as well as server side rendering.
+- 🌟 I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax) which covers interpolation, numbers, dates, times, plurals, ordinal pluralization, label selection based on enums and rich text.
+- ⚔️ Based on battle-tested building blocks from [Format.JS](https://formatjs.io/) (used by `react-intl`), this library is a thin wrapper around high-quality, lower-level APIs for i18n.
+- 💡 A hooks-only API ensures that you can use the same API for `children` as well as for attributes which expect strings.
+- 🚀 Integrates with both static as well as server side rendering.
 
 ## What does it look like?
 
@@ -229,15 +229,15 @@ function Component() {
 
 ## Known tradeoffs
 
-- The bundle size comes in at [32.2kb (9.3kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features.
-- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way.
-  - Ideally a build-time plugin would take care of creating message bundles based on the components used on a page (this would have to include potentially lazy loaded components as well though).
-  - An alternative could be to gather the used namespaces at build time, splitting the messages by the namespaces into separate files and then using a Suspense-based loader to fetch translations as components are rendered.
-- There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
+- The bundle size comes in at [32.3kb (9.6kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features. There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
+- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
 - If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
-- No descriptions are used which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. `react-intl` is generally more targeted towards larger applications and workflows with translators. This library might be more reasonable for apps where the developer sets up translations based on a design for example.
 
-## TODO
+## FAQ
 
-- Performance: Cache format result? Use fast-memoize like react-intl?
-- Relative time. Should this be a component? Can update over time.Ccan accept an optional now.
+How is this different from using `react-intl` directly?
+
+- This library is built around the concept of namespaces and that components consume a single namespace.
+- This library offers only a hooks-based API for message consumption. The reason for this is that the same API can be used for attributes as well as `children`.
+- This library doesn't use message descriptions, which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. This library might be more reasonable for apps where the developer sets up translations based on a design for example whereas `react-intl` is targeted at really large projects with a multitude of languages.
+- This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl@0.0.7) vs [react-intl](https://bundlephobia.com/result?p=react-intl@5.10.4) on BundlePhobia).
