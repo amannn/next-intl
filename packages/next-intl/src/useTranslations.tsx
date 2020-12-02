@@ -12,7 +12,7 @@ function resolvePath(messages: NextIntlMessages, idPath: string) {
     const next = (message as any)[part];
 
     if (__DEV__) {
-      if (!part || !next) {
+      if (part == null || next == null) {
         throw new Error(
           `Could not resolve \`${idPath}\` in \`${JSON.stringify(
             messages,

@@ -155,6 +155,11 @@ it('can resolve nested paths', () => {
   screen.getByText('Nested');
 });
 
+it('allows empty messages', () => {
+  const {container} = renderMessage('');
+  expect(container.innerHTML).toBe('');
+});
+
 it('returns all messages when no namespace is specified', () => {
   function Component() {
     const t = useTranslations();

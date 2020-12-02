@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing internationalization in Next.js apps.",
@@ -14,7 +14,7 @@
     "build": "tsdx build",
     "test": "TZ=Europe/Berlin tsdx test",
     "lint": "eslint src test && tsc",
-    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md ."
+    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && cp ../../CHANGELOG.md ."
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",
