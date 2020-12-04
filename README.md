@@ -272,9 +272,13 @@ function getMessageFallback({namespace, key, error}) {
 
 ## FAQ
 
-How is this different from using `react-intl` directly?
+### How is this different from using `react-intl` directly?
 
 - This library is built around the concept of namespaces and that components consume a single namespace.
 - This library offers only a hooks-based API for message consumption. The reason for this is that the same API can be used for attributes as well as `children`.
 - This library doesn't use message descriptions, which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. This library might be more reasonable for apps where the developer sets up translations based on a design for example whereas `react-intl` is targeted at really large projects with a multitude of languages.
 - This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
+
+### Can this be used without Next.js?
+
+Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
