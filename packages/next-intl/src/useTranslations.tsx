@@ -69,14 +69,6 @@ function prepareTranslationValues(values?: TranslationValues) {
 export default function useTranslations(path?: string) {
   const context = useIntlContext();
 
-  if (__DEV__) {
-    if (!context) {
-      throw new Error(
-        'No `next-intl` context found. Have you configured `NextIntlProvider`?'
-      );
-    }
-  }
-
   const locale = useLocale();
 
   const cachedFormatsByLocaleRef = useRef<
@@ -112,14 +104,6 @@ export default function useTranslations(path?: string) {
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
   ) {
-    if (!locale) {
-      if (__DEV__) {
-        throw new Error('No `locale` received from `useRouter()`');
-      } else {
-        throw new Error();
-      }
-    }
-
     const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
 
     let messageFormat;
