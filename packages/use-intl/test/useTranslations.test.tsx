@@ -335,3 +335,70 @@ describe('error handling', () => {
     screen.getByText('price');
   });
 });
+
+describe('global formats', () => {
+  function renderDate(
+    message: string,
+    globalFormats?: Partial<Formats>,
+    overrideFormats?: Partial<Formats>
+  ) {
+    function Component() {
+      const t = useTranslations();
+      const date = new Date('2020-11-19T15:38:43.700Z');
+      return <>{t('date', {value: date}, overrideFormats)}</>;
+    }
+
+    render(
+      <IntlProvider
+        formats={globalFormats}
+        locale="en"
+        messages={{date: message}}
+      >
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  it('allows to add global formats', () => {
+    renderDate('{value, date, onlyYear}', {
+      date: {
+        onlyYear: {
+          year: 'numeric'
+        }
+      }
+    });
+    screen.getByText('2020');
+  });
+
+  it('can modify existing global formats', () => {
+    renderDate('{value, date, full}', {
+      date: {
+        full: {
+          weekday: undefined
+        }
+      }
+    });
+    screen.getByText('November 19, 2020');
+  });
+
+  it('allows to override global formats locally', () => {
+    renderDate(
+      '{value, date, full}',
+      {
+        date: {
+          full: {
+            weekday: undefined
+          }
+        }
+      },
+      {
+        date: {
+          full: {
+            weekday: 'long'
+          }
+        }
+      }
+    );
+    screen.getByText('Thursday, November 19, 2020');
+  });
+});
