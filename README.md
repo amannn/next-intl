@@ -234,6 +234,32 @@ function Component() {
 }
 ```
 
+## Global formats
+
+To achieve consistent date, time and number formatting across the app, you can define a set of global formats and pass them to the provider.
+
+```jsx
+<NextIntlProvider
+  ...
+  formats={{
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    }
+  }}
+>
+  <App />
+</NextIntlProvider>
+```
+
 ## Error handling
 
 By default, when a message failed to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.

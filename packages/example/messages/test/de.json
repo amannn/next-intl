@@ -1,6 +1,8 @@
 {
   "Test": {
     "title": "Ein Test",
-    "description": "Diese Seite verwendet separate Übersetzungen aus <code>./messages/test/{locale}.json</code>. Diese Übersetzungen werden auf der Startseite nicht geladen."
+    "description": "Diese Seite verwendet separate Übersetzungen aus <code>./messages/test/{locale}.json</code>. Diese Übersetzungen werden auf der Startseite nicht geladen.",
+    "now": "Aktuelles Datum: {now, date, short}",
+    "preciseNumber": "Präzise Zahl: {value, number, precise}"
   }
 }
