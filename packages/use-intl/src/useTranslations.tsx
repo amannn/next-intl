@@ -111,7 +111,7 @@ export default function useTranslations(namespace?: string) {
     formats?: Partial<Formats>
   ) {
     const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
-    const fallback = [namespace, key].join('.');
+    const fallback = [namespace, key].filter((part) => part != null).join('.');
 
     // We have already warned about this during render
     if (!messages) {

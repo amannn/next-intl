@@ -239,6 +239,7 @@ describe('error handling', () => {
       'MISSING_MESSAGE: Could not resolve `Component` in messages.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('Component.label');
   });
 
   it('handles unavailable messages within an existing namespace', () => {
@@ -260,6 +261,7 @@ describe('error handling', () => {
       'MISSING_MESSAGE: Could not resolve `label` in `Component`.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('Component.label');
   });
 
   it('handles unparseable messages', () => {
@@ -285,6 +287,7 @@ describe('error handling', () => {
       'INVALID_MESSAGE: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "c" found.'
     );
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    screen.getByText('price');
   });
 
   it('handles formatting errors', () => {
@@ -306,5 +309,6 @@ describe('error handling', () => {
       'FORMATTING_ERROR: The intl string context variable "value" was not provided to the string "{value}"'
     );
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+    screen.getByText('price');
   });
 });
