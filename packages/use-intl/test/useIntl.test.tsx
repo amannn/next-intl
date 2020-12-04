@@ -10,7 +10,7 @@ function MockProvider(
   return <IntlProvider locale="en" messages={{}} {...props} />;
 }
 
-describe('formatDate', () => {
+describe('formatDateTime', () => {
   const mockDate = new Date('2020-11-20T10:36:01.516Z');
 
   function renderDateTime(
@@ -34,6 +34,11 @@ describe('formatDate', () => {
     screen.getByText('11/20/2020');
   });
 
+  it('formats a time', () => {
+    renderDateTime(mockDate, {minute: 'numeric', hour: 'numeric'});
+    screen.getByText('11:36 AM');
+  });
+
   it('accepts options', () => {
     renderDateTime(mockDate, {month: 'long'});
     screen.getByText('November');
@@ -44,22 +49,37 @@ describe('formatDate', () => {
     screen.getByText('11:36 AM');
   });
 
+  it('can use a global date format', () => {
+    function Component() {
+      const intl = useIntl();
+      return <>{intl.formatDateTime(mockDate, 'onlyYear')}</>;
+    }
+
+    render(
+      <MockProvider formats={{date: {onlyYear: {year: 'numeric'}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('2020');
+  });
+
+  it('can use a global time format', () => {
+    function Component() {
+      const intl = useIntl();
+      return <>{intl.formatDateTime(mockDate, 'onlyHours')}</>;
+    }
+
+    render(
+      <MockProvider formats={{time: {onlyHours: {hour: 'numeric'}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('11 AM');
+  });
+
   describe('error handling', () => {
-    it('can use a global format', () => {
-      function Component() {
-        const intl = useIntl();
-        return <>{intl.formatDateTime(mockDate, 'onlyYear')}</>;
-      }
-
-      render(
-        <MockProvider formats={{date: {onlyYear: {year: 'numeric'}}}}>
-          <Component />
-        </MockProvider>
-      );
-
-      screen.getByText('2020');
-    });
-
     it('handles missing formats', () => {
       const onError = jest.fn();
 
@@ -130,23 +150,23 @@ describe('formatNumber', () => {
     screen.getByText('€299.99');
   });
 
+  it('can use a global format', () => {
+    function Component() {
+      const intl = useIntl();
+      return <>{intl.formatNumber(10000, 'noGrouping')}</>;
+    }
+
+    render(
+      <MockProvider formats={{number: {noGrouping: {useGrouping: false}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('10000');
+  });
+
   describe('error handling', () => {
     const mockNumber = 10000;
-
-    it('can use a global format', () => {
-      function Component() {
-        const intl = useIntl();
-        return <>{intl.formatNumber(mockNumber, 'noGrouping')}</>;
-      }
-
-      render(
-        <MockProvider formats={{number: {noGrouping: {useGrouping: false}}}}>
-          <Component />
-        </MockProvider>
-      );
-
-      screen.getByText('10000');
-    });
 
     it('handles missing formats', () => {
       const onError = jest.fn();

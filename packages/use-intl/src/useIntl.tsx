@@ -95,8 +95,11 @@ export default function useIntl() {
     value: number | Date,
     formatOrOptions?: string | Intl.DateTimeFormatOptions
   ) {
-    return getFormattedValue(value, formatOrOptions, formats?.date, (format) =>
-      new Intl.DateTimeFormat(locale, format).format(value)
+    return getFormattedValue(
+      value,
+      formatOrOptions,
+      {...formats?.date, ...formats?.time},
+      (format) => new Intl.DateTimeFormat(locale, format).format(value)
     );
   }
 
