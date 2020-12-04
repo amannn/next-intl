@@ -6112,13 +6112,6 @@ neo-async@^2.5.0, neo-async@^2.6.1, neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-next-intl@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/next-intl/-/next-intl-0.0.8.tgz#f3e9a0527cebe7a6948e219453ffdda2ae48579c"
-  integrity sha512-5niCr7BNfy5MHtuQ9vfeO3R0RLqFKDwLObpaC1sJAoFCs0tVpXdWXvBn3UDRoW4qb99/8nAQM0v6DugPNGPW0Q==
-  dependencies:
-    intl-messageformat "^9.3.18"
-
 next-tick@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"

@@ -1,8 +1,8 @@
-import {NextIntlMessages, NextIntlProvider} from 'next-intl';
+import {IntlMessages, NextIntlProvider} from 'next-intl';
 import NextApp, {AppContext, AppProps} from 'next/app';
 
 type Props = AppProps & {
-  messages: NextIntlMessages;
+  messages: IntlMessages;
 };
 
 export default function App({Component, messages, pageProps}: Props) {

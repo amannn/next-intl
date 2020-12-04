@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing internationalization in Next.js apps.",
