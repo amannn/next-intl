@@ -220,6 +220,29 @@ it('switches the message when a new locale is provided', () => {
 });
 
 describe('error handling', () => {
+  it('allows to configure a fallback', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider
+        getMessageFallback={() => 'fallback'}
+        locale="en"
+        messages={{}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('fallback');
+  });
+
   it('handles unavailable namespaces', () => {
     const onError = jest.fn();
 

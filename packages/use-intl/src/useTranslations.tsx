@@ -66,21 +66,18 @@ function prepareTranslationValues(values?: TranslationValues) {
  * See https://formatjs.io/docs/core-concepts/icu-syntax.
  *
  * If no namespace is provided, all available messages are returned.
- *
- * The namespace can also indicate nesting by using a dot (e.g. `namespace.Component`).
+ * The namespace can also indicate nesting by using a dot
+ * (e.g. `namespace.Component`).
  */
 export default function useTranslations(namespace?: string) {
   const context = useIntlContext();
-
   const locale = useLocale();
-
   const cachedFormatsByLocaleRef = useRef<
     Record<string, Record<string, IntlMessageFormat>>
   >({});
-
   const allMessages = context.messages;
 
-  const messages = useMemo(() => {
+  const messagesOrError = useMemo(() => {
     try {
       const retrievedMessages = namespace
         ? resolvePath(allMessages, namespace)
@@ -96,9 +93,12 @@ export default function useTranslations(namespace?: string) {
 
       return retrievedMessages;
     } catch (error) {
-      context.onError(
-        new IntlError(IntlErrorCode.MISSING_MESSAGE, error.message)
+      const intlError = new IntlError(
+        IntlErrorCode.MISSING_MESSAGE,
+        error.message
       );
+      context.onError(intlError);
+      return intlError;
     }
   }, [allMessages, context, namespace]);
 
@@ -111,12 +111,22 @@ export default function useTranslations(namespace?: string) {
     formats?: Partial<Formats>
   ) {
     const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
-    const fallback = [namespace, key].filter((part) => part != null).join('.');
 
-    // We have already warned about this during render
-    if (!messages) {
-      return fallback;
+    function getFallbackFromError(code: IntlErrorCode, message?: string) {
+      const error = new IntlError(code, message);
+      context.onError(error);
+      return context.getMessageFallback({error, key, namespace});
     }
+
+    if (messagesOrError instanceof IntlError) {
+      // We have already warned about this during render
+      return context.getMessageFallback({
+        error: messagesOrError,
+        key,
+        namespace
+      });
+    }
+    const messages = messagesOrError;
 
     let messageFormat;
     if (cachedFormatsByLocale[locale]?.[key]) {
@@ -126,34 +136,28 @@ export default function useTranslations(namespace?: string) {
       try {
         message = resolvePath(messages, key, namespace);
       } catch (error) {
-        context.onError(
-          new IntlError(IntlErrorCode.MISSING_MESSAGE, error.message)
+        return getFallbackFromError(
+          IntlErrorCode.MISSING_MESSAGE,
+          error.message
         );
-
-        return fallback;
       }
 
       if (typeof message === 'object') {
-        context.onError(
-          new IntlError(
-            IntlErrorCode.INSUFFICIENT_PATH,
-            __DEV__
-              ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
-              : undefined
-          )
+        return getFallbackFromError(
+          IntlErrorCode.INSUFFICIENT_PATH,
+          __DEV__
+            ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
+            : undefined
         );
-
-        return fallback;
       }
 
       try {
         messageFormat = new IntlMessageFormat(message, locale, formats);
       } catch (error) {
-        context.onError(
-          new IntlError(IntlErrorCode.INVALID_MESSAGE, error.message)
+        return getFallbackFromError(
+          IntlErrorCode.INVALID_MESSAGE,
+          error.message
         );
-
-        return fallback;
       }
 
       if (!cachedFormatsByLocale[locale]) {
@@ -175,11 +179,10 @@ export default function useTranslations(namespace?: string) {
 
       return formattedMessage;
     } catch (error) {
-      context.onError(
-        new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message)
+      return getFallbackFromError(
+        IntlErrorCode.FORMATTING_ERROR,
+        error.message
       );
-
-      return fallback;
     }
   }
 
