@@ -11,13 +11,11 @@ export default function NextIntlProvider({locale, ...rest}: Props) {
   if (!locale && nextLocale) locale = nextLocale;
 
   if (!locale) {
-    if (__DEV__) {
-      throw new Error(
-        "Couldn't determine locale. Please make sure you use internationalized routing or alternatively pass an explicit locale to `NextIntlProvider`."
-      );
-    } else {
-      throw new Error();
-    }
+    throw new Error(
+      __DEV__
+        ? "Couldn't determine locale. Please make sure you use internationalized routing or alternatively pass an explicit locale to `NextIntlProvider`."
+        : undefined
+    );
   }
 
   return <IntlProvider locale={locale} {...rest} />;
