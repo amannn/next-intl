@@ -261,7 +261,7 @@ function getMessageFallback({namespace, key, error}) {
   if (error.code === IntlErrorCode.MISSING_MESSAGE) {
     return `${path} is not yet translated`;
   } else {
-    return 'Dear developer, please fix this: ${path}';
+    return `Dear developer, please fix this: ${path}`;
   }
 }
 
