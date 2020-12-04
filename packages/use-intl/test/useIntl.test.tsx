@@ -56,7 +56,7 @@ describe('formatDateTime', () => {
     }
 
     render(
-      <MockProvider formats={{date: {onlyYear: {year: 'numeric'}}}}>
+      <MockProvider formats={{dateTime: {onlyYear: {year: 'numeric'}}}}>
         <Component />
       </MockProvider>
     );
@@ -71,7 +71,7 @@ describe('formatDateTime', () => {
     }
 
     render(
-      <MockProvider formats={{time: {onlyHours: {hour: 'numeric'}}}}>
+      <MockProvider formats={{dateTime: {onlyHours: {hour: 'numeric'}}}}>
         <Component />
       </MockProvider>
     );

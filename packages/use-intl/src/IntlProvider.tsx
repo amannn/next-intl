@@ -1,5 +1,5 @@
-import {Formats} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
+import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlMessages from './IntlMessages';
 import {IntlError} from '.';

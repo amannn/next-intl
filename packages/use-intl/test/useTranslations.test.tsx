@@ -1,12 +1,12 @@
 import {render, screen} from '@testing-library/react';
-import {Formats} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {
-  IntlProvider,
-  useTranslations,
-  TranslationValues,
+  Formats,
   IntlError,
-  IntlErrorCode
+  IntlErrorCode,
+  IntlProvider,
+  TranslationValues,
+  useTranslations
 } from '../src';
 
 (global as any).__DEV__ = true;
@@ -361,7 +361,7 @@ describe('global formats', () => {
 
   it('allows to add global formats', () => {
     renderDate('{value, date, onlyYear}', {
-      date: {
+      dateTime: {
         onlyYear: {
           year: 'numeric'
         }
@@ -372,7 +372,7 @@ describe('global formats', () => {
 
   it('can modify existing global formats', () => {
     renderDate('{value, date, full}', {
-      date: {
+      dateTime: {
         full: {
           weekday: undefined
         }
@@ -385,14 +385,14 @@ describe('global formats', () => {
     renderDate(
       '{value, date, full}',
       {
-        date: {
+        dateTime: {
           full: {
             weekday: undefined
           }
         }
       },
       {
-        date: {
+        dateTime: {
           full: {
             weekday: 'long'
           }

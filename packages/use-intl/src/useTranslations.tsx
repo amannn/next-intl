@@ -1,8 +1,10 @@
-import IntlMessageFormat, {Formats} from 'intl-messageformat';
+import IntlMessageFormat from 'intl-messageformat';
 import {cloneElement, isValidElement, ReactNode, useMemo, useRef} from 'react';
+import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
 import TranslationValues from './TranslationValues';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
 
 function resolvePath(
@@ -156,10 +158,11 @@ export default function useTranslations(namespace?: string) {
       }
 
       try {
-        messageFormat = new IntlMessageFormat(message, locale, {
-          ...globalFormats,
-          ...formats
-        });
+        messageFormat = new IntlMessageFormat(
+          message,
+          locale,
+          convertFormatsToIntlMessageFormat({...globalFormats, ...formats})
+        );
       } catch (error) {
         return getFallbackFromError(
           IntlErrorCode.INVALID_MESSAGE,
