@@ -17,9 +17,9 @@ type Props = {
    * an error. This defaults to `${namespace}.${key}` You can use this to
    * customize what will be rendered in this case. */
   getMessageFallback?(info: {
-    error: IntlError;
-    key: string;
     namespace?: string;
+    key: string;
+    error: IntlError;
   }): string;
   /** All components that use the provided hooks should be within this tree. */
   children: ReactNode;
