@@ -24,7 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "intl-messageformat": "^9.3.18"
+    "use-intl": "^0.1.0"
   },
   "peerDependencies": {
     "next": "^10.0.0",
