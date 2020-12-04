@@ -5,11 +5,11 @@ export default function useIntlContext() {
   const context = useContext(IntlContext);
 
   if (!context) {
-    if (__DEV__) {
-      throw new Error('No context found. Have you configured the provider?');
-    } else {
-      throw new Error();
-    }
+    throw new Error(
+      __DEV__
+        ? 'No intl context found. Have you configured the provider?'
+        : undefined
+    );
   }
 
   return context;

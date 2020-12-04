@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Feature: Add error handling capabilities (see [docs](https://github.com/amannn/next-intl#error-handling))
+
 ## 0.2.0
 
 - Chore: Depend on `use-intl`

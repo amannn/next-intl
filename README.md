@@ -236,6 +236,40 @@ function Component() {
 - All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
 - If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
 
+## Error handling
+
+By default, when a message failed to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
+
+You can customize this behaviour with the `onError` and `getMessageFallback` props of `NextIntlProvider`.
+
+```jsx
+import {NextIntlProvider, IntlErrorCode} from 'next-intl';
+
+function onError(error) {
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    // Missing translations are expected and ok
+    console.error(error);
+  } else {
+    // Other errors indicate a bug in the app and should be reported
+    reportToErrorTracking(error);
+  }
+}
+
+function getMessageFallback({namespace, key, error}) {
+  const path = [namespace, key].filter((part) => part != null).join('.');
+
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    return `${path} is not yet translated`;
+  } else {
+    return 'Dear developer, please fix this: ${path}';
+  }
+}
+
+<NextIntlProvider ... onError={onError} getMessageFallback={getMessageFallback}>
+  <App />
+</NextIntlProvider>
+```
+
 ## FAQ
 
 How is this different from using `react-intl` directly?

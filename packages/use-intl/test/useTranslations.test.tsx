@@ -1,7 +1,13 @@
 import {render, screen} from '@testing-library/react';
 import {Formats} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
-import {IntlProvider, useTranslations, TranslationValues} from '../src';
+import {
+  IntlProvider,
+  useTranslations,
+  TranslationValues,
+  IntlError,
+  IntlErrorCode
+} from '../src';
 
 (global as any).__DEV__ = true;
 
@@ -211,4 +217,121 @@ it('switches the message when a new locale is provided', () => {
     </IntlProvider>
   );
   screen.getByText('Hallo');
+});
+
+describe('error handling', () => {
+  it('allows to configure a fallback', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider
+        getMessageFallback={() => 'fallback'}
+        locale="en"
+        messages={{}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('fallback');
+  });
+
+  it('handles unavailable namespaces', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" messages={{}} onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'MISSING_MESSAGE: Could not resolve `Component` in messages.'
+    );
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('Component.label');
+  });
+
+  it('handles unavailable messages within an existing namespace', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" messages={{Component: {}}} onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'MISSING_MESSAGE: Could not resolve `label` in `Component`.'
+    );
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('Component.label');
+  });
+
+  it('handles unparseable messages', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations();
+      return <>{t('price', {value: 10})}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{price: '{value, currency}'}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'INVALID_MESSAGE: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "c" found.'
+    );
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    screen.getByText('price');
+  });
+
+  it('handles formatting errors', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations();
+      return <>{t('price')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" messages={{price: '{value}'}} onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'FORMATTING_ERROR: The intl string context variable "value" was not provided to the string "{value}"'
+    );
+    expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+    screen.getByText('price');
+  });
 });
