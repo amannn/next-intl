@@ -7,7 +7,7 @@ export default function useIntlContext() {
   if (!context) {
     throw new Error(
       __DEV__
-        ? 'No context found. Have you configured the provider?'
+        ? 'No intl context found. Have you configured the provider?'
         : undefined
     );
   }
