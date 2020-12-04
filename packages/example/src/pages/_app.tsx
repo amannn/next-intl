@@ -1,4 +1,4 @@
-import {IntlMessages, NextIntlProvider} from 'next-intl';
+import {Formats, IntlMessages, NextIntlProvider} from 'next-intl';
 import NextApp, {AppContext, AppProps} from 'next/app';
 
 type Props = AppProps & {
@@ -6,13 +6,30 @@ type Props = AppProps & {
 };
 
 export default function App({Component, messages, pageProps}: Props) {
+  // You can merge messages that should always be present
+  // (from `App.getInitialProps`) with page-level
+  // messages (from `getStaticProps` of individual pages)
+  const allMessages = {...messages, ...pageProps.messages};
+
+  // To achieve consistent date, time and number formatting
+  // across the app, you can define a set of global formats.
+  const formats: Partial<Formats> = {
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    }
+  };
+
   return (
-    <NextIntlProvider
-      // You can merge messages that should always be present
-      // (from `App.getInitialProps`) with page-level
-      // messages (from `getStaticProps` of individual pages)
-      messages={{...messages, ...pageProps.messages}}
-    >
+    <NextIntlProvider formats={formats} messages={allMessages}>
       <Component {...pageProps} />
     </NextIntlProvider>
   );

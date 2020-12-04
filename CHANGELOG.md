@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Feature: Add global formats (see [docs](https://github.com/amannn/next-intl#global-formats))
+
 ## 0.3.0
 
 - Feature: Add error handling capabilities (see [docs](https://github.com/amannn/next-intl#error-handling))

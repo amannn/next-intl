@@ -77,6 +77,8 @@ Have a look at [the example](./packages/example) to explore a working setup.
 
 ## Usage
 
+### Messages
+
 ```js
 // en.json
 
@@ -202,6 +204,8 @@ function FancyComponent() {
 }
 ```
 
+### Plain dates, times and numbers
+
 If you're formatting dates, times, and numbers that are not embedded within a message, you can use a separate hook:
 
 ```js
@@ -230,11 +234,31 @@ function Component() {
 }
 ```
 
-## Known tradeoffs
+## Global formats
 
-- The bundle size comes in at [36.1kb (10.5kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features. There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
-- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
-- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
+To achieve consistent date, time and number formatting across the app, you can define a set of global formats and pass them to the provider.
+
+```jsx
+<NextIntlProvider
+  ...
+  formats={{
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    }
+  }}
+>
+  <App />
+</NextIntlProvider>
+```
 
 ## Error handling
 
@@ -269,6 +293,12 @@ function getMessageFallback({namespace, key, error}) {
   <App />
 </NextIntlProvider>
 ```
+
+## Known tradeoffs
+
+- The bundle size comes in at [36.1kb (10.5kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features. There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
+- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
+- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
 
 ## FAQ
 

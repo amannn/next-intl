@@ -1,4 +1,5 @@
-import useLocale from './useLocale';
+import IntlError, {IntlErrorCode} from './IntlError';
+import useIntlContext from './useIntlContext';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
@@ -41,17 +42,77 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export default function useIntl() {
-  const locale = useLocale();
+  const {formats, locale, onError} = useIntlContext();
+
+  function resolveFormatOrOptions<Format>(
+    typeFormats: Record<string, Format> | undefined,
+    formatOrOptions?: string | Format
+  ) {
+    let format;
+    if (typeof formatOrOptions === 'string') {
+      const formatName = formatOrOptions;
+      format = typeFormats?.[formatName];
+
+      if (!format) {
+        const error = new IntlError(
+          IntlErrorCode.MISSING_FORMAT,
+          __DEV__
+            ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
+            : undefined
+        );
+        onError(error);
+        throw error;
+      }
+    } else {
+      format = formatOrOptions;
+    }
+
+    return format;
+  }
+
+  function getFormattedValue<Value, Format>(
+    value: Value,
+    formatOrOptions: string | Format,
+    typeFormats: Record<string, Format> | undefined,
+    formatter: (format?: Format) => string
+  ) {
+    let format;
+    try {
+      format = resolveFormatOrOptions(typeFormats, formatOrOptions);
+    } catch (error) {
+      return String(value);
+    }
+
+    try {
+      return formatter(format);
+    } catch (error) {
+      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+      return String(value);
+    }
+  }
 
   function formatDateTime(
     value: number | Date,
-    options?: Intl.DateTimeFormatOptions
+    formatOrOptions?: string | Intl.DateTimeFormatOptions
   ) {
-    return new Intl.DateTimeFormat(locale, options).format(value);
+    return getFormattedValue(
+      value,
+      formatOrOptions,
+      {...formats?.dateTime},
+      (format) => new Intl.DateTimeFormat(locale, format).format(value)
+    );
   }
 
-  function formatNumber(value: number, options?: Intl.NumberFormatOptions) {
-    return new Intl.NumberFormat(locale, options).format(value);
+  function formatNumber(
+    value: number,
+    formatOrOptions?: string | Intl.NumberFormatOptions
+  ) {
+    return getFormattedValue(
+      value,
+      formatOrOptions,
+      formats?.number,
+      (format) => new Intl.NumberFormat(locale, format).format(value)
+    );
   }
 
   function formatRelativeTime(date: number | Date, now: number | Date) {
@@ -61,9 +122,14 @@ export default function useIntl() {
     const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
     const {unit, value} = getRelativeTimeFormatConfig(seconds);
 
-    return new Intl.RelativeTimeFormat(locale, {
-      numeric: 'auto'
-    }).format(value, unit);
+    try {
+      return new Intl.RelativeTimeFormat(locale, {
+        numeric: 'auto'
+      }).format(value, unit);
+    } catch (error) {
+      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+      return String(date);
+    }
   }
 
   return {formatDateTime, formatNumber, formatRelativeTime};

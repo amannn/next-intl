@@ -1,12 +1,12 @@
 import {render, screen} from '@testing-library/react';
-import {Formats} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {
-  IntlProvider,
-  useTranslations,
-  TranslationValues,
+  Formats,
   IntlError,
-  IntlErrorCode
+  IntlErrorCode,
+  IntlProvider,
+  TranslationValues,
+  useTranslations
 } from '../src';
 
 (global as any).__DEV__ = true;
@@ -333,5 +333,72 @@ describe('error handling', () => {
     );
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     screen.getByText('price');
+  });
+});
+
+describe('global formats', () => {
+  function renderDate(
+    message: string,
+    globalFormats?: Partial<Formats>,
+    overrideFormats?: Partial<Formats>
+  ) {
+    function Component() {
+      const t = useTranslations();
+      const date = new Date('2020-11-19T15:38:43.700Z');
+      return <>{t('date', {value: date}, overrideFormats)}</>;
+    }
+
+    render(
+      <IntlProvider
+        formats={globalFormats}
+        locale="en"
+        messages={{date: message}}
+      >
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  it('allows to add global formats', () => {
+    renderDate('{value, date, onlyYear}', {
+      dateTime: {
+        onlyYear: {
+          year: 'numeric'
+        }
+      }
+    });
+    screen.getByText('2020');
+  });
+
+  it('can modify existing global formats', () => {
+    renderDate('{value, date, full}', {
+      dateTime: {
+        full: {
+          weekday: undefined
+        }
+      }
+    });
+    screen.getByText('November 19, 2020');
+  });
+
+  it('allows to override global formats locally', () => {
+    renderDate(
+      '{value, date, full}',
+      {
+        dateTime: {
+          full: {
+            weekday: undefined
+          }
+        }
+      },
+      {
+        dateTime: {
+          full: {
+            weekday: 'long'
+          }
+        }
+      }
+    );
+    screen.getByText('Thursday, November 19, 2020');
   });
 });

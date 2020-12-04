@@ -1,10 +1,11 @@
-import IntlMessageFormat, {Formats} from 'intl-messageformat';
+import IntlMessageFormat from 'intl-messageformat';
 import {cloneElement, isValidElement, ReactNode, useMemo, useRef} from 'react';
+import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
 import TranslationValues from './TranslationValues';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
-import useLocale from './useLocale';
 
 function resolvePath(
   messages: IntlMessages,
@@ -70,12 +71,17 @@ function prepareTranslationValues(values?: TranslationValues) {
  * (e.g. `namespace.Component`).
  */
 export default function useTranslations(namespace?: string) {
-  const context = useIntlContext();
-  const locale = useLocale();
+  const {
+    formats: globalFormats,
+    getMessageFallback,
+    locale,
+    messages: allMessages,
+    onError
+  } = useIntlContext();
+
   const cachedFormatsByLocaleRef = useRef<
     Record<string, Record<string, IntlMessageFormat>>
   >({});
-  const allMessages = context.messages;
 
   const messagesOrError = useMemo(() => {
     try {
@@ -97,10 +103,10 @@ export default function useTranslations(namespace?: string) {
         IntlErrorCode.MISSING_MESSAGE,
         error.message
       );
-      context.onError(intlError);
+      onError(intlError);
       return intlError;
     }
-  }, [allMessages, context, namespace]);
+  }, [allMessages, namespace, onError]);
 
   function translate(
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
@@ -114,13 +120,13 @@ export default function useTranslations(namespace?: string) {
 
     function getFallbackFromError(code: IntlErrorCode, message?: string) {
       const error = new IntlError(code, message);
-      context.onError(error);
-      return context.getMessageFallback({error, key, namespace});
+      onError(error);
+      return getMessageFallback({error, key, namespace});
     }
 
     if (messagesOrError instanceof IntlError) {
       // We have already warned about this during render
-      return context.getMessageFallback({
+      return getMessageFallback({
         error: messagesOrError,
         key,
         namespace
@@ -152,7 +158,11 @@ export default function useTranslations(namespace?: string) {
       }
 
       try {
-        messageFormat = new IntlMessageFormat(message, locale, formats);
+        messageFormat = new IntlMessageFormat(
+          message,
+          locale,
+          convertFormatsToIntlMessageFormat({...globalFormats, ...formats})
+        );
       } catch (error) {
         return getFallbackFromError(
           IntlErrorCode.INVALID_MESSAGE,

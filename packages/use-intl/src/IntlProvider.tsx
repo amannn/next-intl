@@ -1,4 +1,5 @@
 import React, {ReactNode} from 'react';
+import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlMessages from './IntlMessages';
 import {IntlError} from '.';
@@ -8,6 +9,9 @@ type Props = {
   messages: IntlMessages;
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
   locale: string;
+  /** Global formats can be provided to achieve consistent
+   * formatting across components. */
+  formats?: Partial<Formats>;
   /** This callback will be invoked when an error is encountered during
    * resolving a message or formatting it. This defaults to `console.error` to
    * keep your app running. You can customize the handling by taking
