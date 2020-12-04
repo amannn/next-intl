@@ -1,11 +1,11 @@
 import IntlMessageFormat, {Formats} from 'intl-messageformat';
 import {cloneElement, isValidElement, ReactNode, useMemo, useRef} from 'react';
-import NextIntlMessages from './NextIntlMessages';
+import IntlMessages from './IntlMessages';
 import TranslationValues from './TranslationValues';
 import useIntlContext from './useIntlContext';
 import useLocale from './useLocale';
 
-function resolvePath(messages: NextIntlMessages, idPath: string) {
+function resolvePath(messages: IntlMessages, idPath: string) {
   let message = messages;
 
   idPath.split('.').forEach((part) => {
@@ -76,14 +76,6 @@ export default function useTranslations(path?: string) {
   >({});
 
   const allMessages = context.messages;
-
-  if (__DEV__) {
-    if (!allMessages) {
-      throw new Error(
-        'No messages found. Have you configured `NextIntlProvider` correctly with messages?'
-      );
-    }
-  }
 
   const messages = useMemo(
     () => (path ? resolvePath(allMessages, path) : allMessages),

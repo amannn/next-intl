@@ -1,18 +1,24 @@
-import React, {ReactNode} from 'react';
-import NextIntlContext from './NextIntlContext';
-import NextIntlMessages from './NextIntlMessages';
+import {useRouter} from 'next/router';
+import React, {ComponentProps} from 'react';
+import {IntlProvider} from 'use-intl';
 
-type Props = {
-  children: ReactNode;
-  messages: NextIntlMessages;
-  /* Override the automatically provided locale from Next.js */
+type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
 };
 
-export default function NextIntlProvider({children, locale, messages}: Props) {
-  return (
-    <NextIntlContext.Provider value={{messages, locale}}>
-      {children}
-    </NextIntlContext.Provider>
-  );
+export default function NextIntlProvider({locale, ...rest}: Props) {
+  const nextLocale = useRouter().locale;
+  if (!locale && nextLocale) locale = nextLocale;
+
+  if (!locale) {
+    if (__DEV__) {
+      throw new Error(
+        "Couldn't determine locale. Please make sure you use internationalized routing or alternatively pass an explicit locale to `NextIntlProvider`."
+      );
+    } else {
+      throw new Error();
+    }
+  }
+
+  return <IntlProvider locale={locale} {...rest} />;
 }

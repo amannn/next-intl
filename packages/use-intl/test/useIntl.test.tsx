@@ -1,12 +1,16 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
-import {NextIntlProvider, useIntl} from '../src';
+import React, {ReactNode} from 'react';
+import {IntlProvider, useIntl} from '../src';
 
 (global as any).__DEV__ = true;
 
-jest.mock('next/router', () => ({
-  useRouter: () => ({locale: 'en'})
-}));
+function MockProvider({children}: {children: ReactNode}) {
+  return (
+    <IntlProvider locale="en" messages={{}}>
+      {children}
+    </IntlProvider>
+  );
+}
 
 describe('formatDate', () => {
   const mockDate = new Date('2020-11-20T10:36:01.516Z');
@@ -21,9 +25,9 @@ describe('formatDate', () => {
     }
 
     render(
-      <NextIntlProvider messages={{}}>
+      <MockProvider>
         <Component />
-      </NextIntlProvider>
+      </MockProvider>
     );
   }
 
@@ -51,9 +55,9 @@ describe('formatNumber', () => {
     }
 
     render(
-      <NextIntlProvider messages={{}}>
+      <MockProvider>
         <Component />
-      </NextIntlProvider>
+      </MockProvider>
     );
   }
 
@@ -76,9 +80,9 @@ describe('formatRelativeTime', () => {
     }
 
     render(
-      <NextIntlProvider messages={{}}>
+      <MockProvider>
         <Component />
-      </NextIntlProvider>
+      </MockProvider>
     );
   }
 

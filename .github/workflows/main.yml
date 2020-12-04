@@ -10,6 +10,8 @@ jobs:
         with:
           node-version: 14.x
       - uses: bahmutov/npm-install@v1
+      - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
       - run: yarn workspaces run lint
       - run: yarn workspaces run test --ci --maxWorkers=2
+      - run: yarn workspace example run build
