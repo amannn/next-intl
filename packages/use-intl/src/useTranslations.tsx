@@ -1,5 +1,12 @@
 import IntlMessageFormat from 'intl-messageformat';
-import {cloneElement, isValidElement, ReactNode, useMemo, useRef} from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef
+} from 'react';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
@@ -108,93 +115,105 @@ export default function useTranslations(namespace?: string) {
     }
   }, [allMessages, namespace, onError]);
 
-  function translate(
-    /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
-    key: string,
-    /** Key value pairs for values to interpolate into the message. */
-    values?: TranslationValues,
-    /** Provide custom formats for numbers, dates and times. */
-    formats?: Partial<Formats>
-  ) {
-    const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
+  const translate = useCallback(
+    (
+      /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
+      key: string,
+      /** Key value pairs for values to interpolate into the message. */
+      values?: TranslationValues,
+      /** Provide custom formats for numbers, dates and times. */
+      formats?: Partial<Formats>
+    ) => {
+      const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
 
-    function getFallbackFromError(code: IntlErrorCode, message?: string) {
-      const error = new IntlError(code, message);
-      onError(error);
-      return getMessageFallback({error, key, namespace});
-    }
+      function getFallbackFromError(code: IntlErrorCode, message?: string) {
+        const error = new IntlError(code, message);
+        onError(error);
+        return getMessageFallback({error, key, namespace});
+      }
 
-    if (messagesOrError instanceof IntlError) {
-      // We have already warned about this during render
-      return getMessageFallback({
-        error: messagesOrError,
-        key,
-        namespace
-      });
-    }
-    const messages = messagesOrError;
+      if (messagesOrError instanceof IntlError) {
+        // We have already warned about this during render
+        return getMessageFallback({
+          error: messagesOrError,
+          key,
+          namespace
+        });
+      }
+      const messages = messagesOrError;
 
-    let messageFormat;
-    if (cachedFormatsByLocale[locale]?.[key]) {
-      messageFormat = cachedFormatsByLocale[locale][key];
-    } else {
-      let message;
+      let messageFormat;
+      if (cachedFormatsByLocale[locale]?.[key]) {
+        messageFormat = cachedFormatsByLocale[locale][key];
+      } else {
+        let message;
+        try {
+          message = resolvePath(messages, key, namespace);
+        } catch (error) {
+          return getFallbackFromError(
+            IntlErrorCode.MISSING_MESSAGE,
+            error.message
+          );
+        }
+
+        if (typeof message === 'object') {
+          return getFallbackFromError(
+            IntlErrorCode.INSUFFICIENT_PATH,
+            __DEV__
+              ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
+              : undefined
+          );
+        }
+
+        try {
+          messageFormat = new IntlMessageFormat(
+            message,
+            locale,
+            convertFormatsToIntlMessageFormat({...globalFormats, ...formats})
+          );
+        } catch (error) {
+          return getFallbackFromError(
+            IntlErrorCode.INVALID_MESSAGE,
+            error.message
+          );
+        }
+
+        if (!cachedFormatsByLocale[locale]) {
+          cachedFormatsByLocale[locale] = {};
+        }
+        cachedFormatsByLocale[locale][key] = messageFormat;
+      }
+
       try {
-        message = resolvePath(messages, key, namespace);
+        const formattedMessage = messageFormat.format(
+          prepareTranslationValues(values)
+        );
+
+        if (formattedMessage == null) {
+          throw new Error(
+            __DEV__
+              ? `Unable to format ${[namespace, key].join('.')}`
+              : undefined
+          );
+        }
+
+        return formattedMessage;
       } catch (error) {
         return getFallbackFromError(
-          IntlErrorCode.MISSING_MESSAGE,
+          IntlErrorCode.FORMATTING_ERROR,
           error.message
         );
       }
-
-      if (typeof message === 'object') {
-        return getFallbackFromError(
-          IntlErrorCode.INSUFFICIENT_PATH,
-          __DEV__
-            ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
-            : undefined
-        );
-      }
-
-      try {
-        messageFormat = new IntlMessageFormat(
-          message,
-          locale,
-          convertFormatsToIntlMessageFormat({...globalFormats, ...formats})
-        );
-      } catch (error) {
-        return getFallbackFromError(
-          IntlErrorCode.INVALID_MESSAGE,
-          error.message
-        );
-      }
-
-      if (!cachedFormatsByLocale[locale]) {
-        cachedFormatsByLocale[locale] = {};
-      }
-      cachedFormatsByLocale[locale][key] = messageFormat;
-    }
-
-    try {
-      const formattedMessage = messageFormat.format(
-        prepareTranslationValues(values)
-      );
-
-      if (formattedMessage == null) {
-        throw new Error(
-          __DEV__ ? `Unable to format ${[namespace, key].join('.')}` : undefined
-        );
-      }
-
-      return formattedMessage;
-    } catch (error) {
-      return getFallbackFromError(
-        IntlErrorCode.FORMATTING_ERROR,
-        error.message
-      );
-    }
-  }
+    },
+    [
+      getMessageFallback,
+      globalFormats,
+      locale,
+      messagesOrError,
+      namespace,
+      onError
+    ]
+  );
 
   return translate;
 }
