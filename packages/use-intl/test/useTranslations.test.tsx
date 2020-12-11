@@ -219,6 +219,38 @@ it('switches the message when a new locale is provided', () => {
   screen.getByText('Hallo');
 });
 
+it('has a stable reference', () => {
+  let existingT: any;
+
+  function Component({count}: {count: number}) {
+    const t = useTranslations();
+
+    if (existingT) {
+      expect(t).toBe(existingT);
+    } else {
+      existingT = t;
+    }
+
+    return <>{count}</>;
+  }
+
+  const messages = {};
+
+  const {rerender} = render(
+    <IntlProvider locale="en" messages={messages}>
+      <Component count={1} />
+    </IntlProvider>
+  );
+  screen.getByText('1');
+
+  rerender(
+    <IntlProvider locale="en" messages={messages}>
+      <Component count={2} />
+    </IntlProvider>
+  );
+  screen.getByText('2');
+});
+
 describe('error handling', () => {
   it('allows to configure a fallback', () => {
     const onError = jest.fn();
