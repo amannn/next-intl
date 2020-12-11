@@ -44,16 +44,16 @@ function getRelativeTimeFormatConfig(seconds: number) {
 export default function useIntl() {
   const {formats, locale, onError} = useIntlContext();
 
-  function resolveFormatOrOptions<Format>(
-    typeFormats: Record<string, Format> | undefined,
-    formatOrOptions?: string | Format
+  function resolveFormatOrOptions<Options>(
+    typeFormats: Record<string, Options> | undefined,
+    formatOrOptions?: string | Options
   ) {
-    let format;
+    let options;
     if (typeof formatOrOptions === 'string') {
       const formatName = formatOrOptions;
-      format = typeFormats?.[formatName];
+      options = typeFormats?.[formatName];
 
-      if (!format) {
+      if (!options) {
         const error = new IntlError(
           IntlErrorCode.MISSING_FORMAT,
           __DEV__
@@ -64,27 +64,27 @@ export default function useIntl() {
         throw error;
       }
     } else {
-      format = formatOrOptions;
+      options = formatOrOptions;
     }
 
-    return format;
+    return options;
   }
 
-  function getFormattedValue<Value, Format>(
+  function getFormattedValue<Value, Options>(
     value: Value,
-    formatOrOptions: string | Format,
-    typeFormats: Record<string, Format> | undefined,
-    formatter: (format?: Format) => string
+    formatOrOptions: string | Options,
+    typeFormats: Record<string, Options> | undefined,
+    formatter: (options?: Options) => string
   ) {
-    let format;
+    let options;
     try {
-      format = resolveFormatOrOptions(typeFormats, formatOrOptions);
+      options = resolveFormatOrOptions(typeFormats, formatOrOptions);
     } catch (error) {
       return String(value);
     }
 
     try {
-      return formatter(format);
+      return formatter(options);
     } catch (error) {
       onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
       return String(value);
@@ -99,7 +99,7 @@ export default function useIntl() {
       value,
       formatOrOptions,
       {...formats?.dateTime},
-      (format) => new Intl.DateTimeFormat(locale, format).format(value)
+      (options) => new Intl.DateTimeFormat(locale, options).format(value)
     );
   }
 
@@ -111,7 +111,7 @@ export default function useIntl() {
       value,
       formatOrOptions,
       formats?.number,
-      (format) => new Intl.NumberFormat(locale, format).format(value)
+      (options) => new Intl.NumberFormat(locale, options).format(value)
     );
   }
 
