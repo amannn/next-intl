@@ -1,4 +1,4 @@
-export const enum IntlErrorCode {
+export enum IntlErrorCode {
   MISSING_MESSAGE = 'MISSING_MESSAGE',
   MISSING_FORMAT = 'MISSING_FORMAT',
   INSUFFICIENT_PATH = 'INSUFFICIENT_PATH',
