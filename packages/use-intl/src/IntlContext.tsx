@@ -7,6 +7,7 @@ export type IntlContextShape = {
   messages: IntlMessages;
   locale: string;
   formats?: Partial<Formats>;
+  timeZone?: string;
   onError(error: IntlError): void;
   getMessageFallback(info: {
     error: IntlError;

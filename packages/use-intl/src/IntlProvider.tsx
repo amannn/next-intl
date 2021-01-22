@@ -12,6 +12,8 @@ type Props = {
   /** Global formats can be provided to achieve consistent
    * formatting across components. */
   formats?: Partial<Formats>;
+  /** A time zone as defined in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) which will be applied when formatting dates and times. If this is absent, the user time zone will be used. You can override this by supplying an explicit time zone to `formatDateTime`. */
+  timeZone?: string;
   /** This callback will be invoked when an error is encountered during
    * resolving a message or formatting it. This defaults to `console.error` to
    * keep your app running. You can customize the handling by taking

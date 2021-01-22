@@ -42,7 +42,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export default function useIntl() {
-  const {formats, locale, onError} = useIntlContext();
+  const {formats, locale, onError, timeZone} = useIntlContext();
 
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
@@ -72,7 +72,7 @@ export default function useIntl() {
 
   function getFormattedValue<Value, Options>(
     value: Value,
-    formatOrOptions: string | Options,
+    formatOrOptions: string | Options | undefined,
     typeFormats: Record<string, Options> | undefined,
     formatter: (options?: Options) => string
   ) {
@@ -92,14 +92,23 @@ export default function useIntl() {
   }
 
   function formatDateTime(
-    value: number | Date,
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    value: Date | number,
+    /** If a time zone is supplied, the `value` is converted to that time zone.
+     * Otherwise the user time zone will be used. */
     formatOrOptions?: string | Intl.DateTimeFormatOptions
   ) {
     return getFormattedValue(
       value,
       formatOrOptions,
-      {...formats?.dateTime},
-      (options) => new Intl.DateTimeFormat(locale, options).format(value)
+      formats?.dateTime,
+      (options) => {
+        if (timeZone && !options?.timeZone) {
+          options = {...options, timeZone};
+        }
+
+        return new Intl.DateTimeFormat(locale, options).format(value);
+      }
     );
   }
 
@@ -115,7 +124,12 @@ export default function useIntl() {
     );
   }
 
-  function formatRelativeTime(date: number | Date, now: number | Date) {
+  function formatRelativeTime(
+    /** The date time that needs to be formatted. */
+    date: number | Date,
+    /** The reference point in time to which `date` will be formatted in relation to. */
+    now: number | Date
+  ) {
     const dateDate = date instanceof Date ? date : new Date(date);
     const nowDate = now instanceof Date ? now : new Date(now);
 
