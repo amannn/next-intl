@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Feat: Added support for handling time zones.
+
 ## 1.0.0
 
 This library is now considered production ready. There are no changes from the previous version.
