@@ -94,8 +94,8 @@ export default function useIntl() {
   function formatDateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
     value: Date | number,
-    /** If a timezone is supplied, the `value` is converted to that timezone.
-     * Otherwise the user timezone will be used. */
+    /** If a time zone is supplied, the `value` is converted to that time zone.
+     * Otherwise the user time zone will be used. */
     formatOrOptions?: string | Intl.DateTimeFormatOptions
   ) {
     return getFormattedValue(

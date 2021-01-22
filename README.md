@@ -294,7 +294,7 @@ function getMessageFallback({namespace, key, error}) {
 </NextIntlProvider>
 ```
 
-## Handling timezones
+## Handling time zones
 
 If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as the client side.
 
@@ -304,7 +304,7 @@ To avoid such mismatches, you can globally define a time zone like this:
 <NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>
 ```
 
-This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Known tradeoffs
 
