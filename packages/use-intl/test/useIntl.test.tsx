@@ -79,6 +79,62 @@ describe('formatDateTime', () => {
     screen.getByText('11 AM');
   });
 
+  describe('time zones', () => {
+    it('converts a date to the target time zone', () => {
+      renderDateTime(mockDate, {
+        timeZone: 'Asia/Shanghai',
+        hour: 'numeric',
+        minute: 'numeric'
+      });
+      screen.getByText('6:36 PM');
+    });
+
+    it('can use a global time zone', () => {
+      function Component() {
+        const intl = useIntl();
+        return (
+          <>
+            {intl.formatDateTime(mockDate, {
+              hour: 'numeric',
+              minute: 'numeric'
+            })}
+          </>
+        );
+      }
+
+      render(
+        <MockProvider timeZone="Asia/Shanghai">
+          <Component />
+        </MockProvider>
+      );
+
+      screen.getByText('6:36 PM');
+    });
+
+    it('can override a global time zone', () => {
+      function Component() {
+        const intl = useIntl();
+        return (
+          <>
+            {intl.formatDateTime(mockDate, {
+              timeZone: 'Australia/Sydney',
+              hour: 'numeric',
+              minute: 'numeric'
+            })}
+          </>
+        );
+      }
+
+      render(
+        <MockProvider timeZone="Asia/Shanghai">
+          <Component />
+        </MockProvider>
+      );
+
+      screen.getByText('9:36 PM');
+    });
+  });
+
   describe('error handling', () => {
     it('handles missing formats', () => {
       const onError = jest.fn();
