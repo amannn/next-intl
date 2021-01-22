@@ -234,7 +234,7 @@ function Component() {
 }
 ```
 
-## Global formats
+### Global formats
 
 To achieve consistent date, time and number formatting across the app, you can define a set of global formats and pass them to the provider.
 
@@ -260,7 +260,7 @@ To achieve consistent date, time and number formatting across the app, you can d
 </NextIntlProvider>
 ```
 
-## Error handling
+### Error handling
 
 By default, when a message failed to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
 
@@ -294,7 +294,7 @@ function getMessageFallback({namespace, key, error}) {
 </NextIntlProvider>
 ```
 
-## Handling time zones
+### Handling time zones
 
 If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as the client side.
 
