@@ -48,30 +48,39 @@ function LatestFollower({user}) {
 import {NextIntlProvider} from 'next-intl';
 import NextApp from 'next/app';
 
-export default function App({Component, messages, pageProps}) {
+export default function App({Component, pageProps}) {
   return (
-    <NextIntlProvider messages={messages}>
+    <NextIntlProvider messages={pageProps.messages}>
       <Component {...pageProps} />
     </NextIntlProvider>
   );
 }
-
-App.getInitialProps = async function getInitialProps(context) {
-  const {locale} = context.router;
-
-  // You can get the messages from anywhere you like, but the recommended
-  // pattern is to put them in JSON files separated by language and read 
-  // the desired one based on the `locale` received from Next.js. You
-  // can also separate your messages by page and fetch them in `getStaticProps`
-  // in your page which will make them available on `pageProps` in the `App`.
-  const messages = locale ? require(`messages/${locale}.json`) : undefined
-
-  return {...(await NextApp.getInitialProps(context)), messages};
-};
 ```
-3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
-4. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
-5. Use translations in your components!
+3. Provide messages on a page-level
+```js
+// pages/index.js
+export function getStaticProps({locale}: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: {
+        // You can get the messages from anywhere you like, but the recommended
+        // pattern is to put them in JSON files separated by language and read 
+        // the desired one based on the `locale` received from Next.js. 
+        ...require(`../../messages/index/${locale}.json`),
+
+        // If you have shared messages that should be available for all pages,
+        // you can put them in a common file as shown here. Alternatively you
+        // can provide them via `App.getInitialProps` in `_app` and merge them
+        // with the messages from individual pages.
+        ...require(`../../messages/shared/${locale}.json`)
+      }
+    }
+  };
+}
+```
+4. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
+5. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
+6. Use translations in your components!
 
 Have a look at [the example](./packages/example) to explore a working setup.
 
@@ -309,8 +318,7 @@ This can either be static in your app, or alternatively read from the user profi
 ## Known tradeoffs
 
 - The bundle size comes in at [36.1kb (10.5kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalisation features. There are smaller libraries for internationalisation, but they typically cover less features than Format.JS. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
-- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
-- If you're using `getInitialProps` in a custom `App` component you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters). Alternatively you can return the messages in `getStaticProps` of a page component and use the `pageProps` in `App` to configure the provider.
+- All relevant translations for the components need to be supplied to the provider – there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way to provide bundles per feature set. It might be possible for this library to support automatic tree-shaking of messages in the future (see [#1](https://github.com/amannn/next-intl/issues/1)).
 
 ## FAQ
 
