@@ -137,10 +137,11 @@ Numbers can also be embedded within messages:
 ```js
 {
   "percent": "This product is on sale: {value, number, percent}",
+  "percent": "At most 2 fraction digits: {value, number, .##}"
 }
 ```
 
-See the [FormatJS docs about the number type](https://formatjs.io/docs/core-concepts/icu-syntax/#number-type) to learn more about this syntax.
+See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this syntax.
 
 Additionally, you can configure custom formatters which can be referenced by name:
 
@@ -208,7 +209,7 @@ Dates and times can be embedded within messages as well:
 
 ```js
 {
-  "expiryDate": "{expiryDate, date, ::yyyyMd}",
+  "expiryDate": "{expiryDate, date, ::yyyyMd}"
 }
 ```
 
@@ -241,6 +242,19 @@ t(
 ```
 
 To reuse date and time formats for multiple components, you can configure [global formats](#global-formats).
+
+
+### Time zones
+
+If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
+
+To avoid such mismatches, you can globally define a time zone like this:
+
+```jsx
+<NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>
+```
+
+This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Global formats
 
@@ -282,7 +296,7 @@ t('latitude', {latitude: 47.414329182});
 
 ## Error handling
 
-By default, when a message failed to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
+By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
 
 You can customize this behaviour with the `onError` and `getMessageFallback` props of `NextIntlProvider`.
 
@@ -291,7 +305,7 @@ import {NextIntlProvider, IntlErrorCode} from 'next-intl';
 
 function onError(error) {
   if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-    // Missing translations are expected and ok
+    // Missing translations are expected should only log an error
     console.error(error);
   } else {
     // Other errors indicate a bug in the app and should be reported
@@ -313,15 +327,3 @@ function getMessageFallback({namespace, key, error}) {
   <App />
 </NextIntlProvider>
 ```
-
-## Time zones
-
-If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
-
-To avoid such mismatches, you can globally define a time zone like this:
-
-```jsx
-<NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>
-```
-
-This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).

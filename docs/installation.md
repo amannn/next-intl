@@ -40,4 +40,4 @@ export function getStaticProps({locale}: GetStaticPropsContext) {
 5. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
 6. Use translations in your components!
 
-Have a look at [the example](./packages/example) to explore a working setup.
+Have a look at [the example](../packages/example) to explore a working setup.
