@@ -1,0 +1,42 @@
+{
+  "name": "use-now",
+  "version": "0.0.1",
+  "sideEffects": false,
+  "author": "Jan Amann <jan@amann.me>",
+  "description": "A React hook that returns the current date time.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amannn/next-intl/packages/use-now"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "eslint src test && tsc",
+    "prepublishOnly": "yarn test && yarn lint && yarn build"
+  },
+  "main": "dist/index.js",
+  "module": "dist/use-now.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^11.1.2",
+    "@types/react": "^16.9.56",
+    "eslint": "7.4.0",
+    "eslint-config-molindo": "5.0.1",
+    "react": "^17.0.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
+    "typescript": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=10"
+  }
+}
