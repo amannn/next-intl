@@ -6,7 +6,7 @@ import {IntlError} from '.';
 
 type Props = {
   /** All messages that will be available in your components. */
-  messages: IntlMessages;
+  messages?: IntlMessages;
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
   locale: string;
   /** Global formats can be provided to achieve consistent
@@ -29,6 +29,16 @@ type Props = {
   }): string;
   /** All components that use the provided hooks should be within this tree. */
   children: ReactNode;
+  /**
+   * Providing this value will have two effects:
+   * 1. It will be used as the default for the `now` argument of
+   *    `useIntl().formatRelativeTime` if no explicit value is provided.
+   * 2. It will be returned as a static value from the `useNow` hook. Note
+   *    however that when `updateInterval` is configured on the `useNow` hook,
+   *    the global `now` value will only be used for the initial render, but
+   *    afterwards the current date will be retunred continuously.
+   */
+  now?: Date;
 };
 
 function defaultGetMessageFallback({

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Feat: Add a global fallback for the `now` parameter of `formatRelativeTime`.
+- Feat: Add `useNow` hook, which can be used in conjunction with `formatRelativeTime` to continuously update the result.
+- Fix: Allow `messages` to be optional on the provider.
+
 ## 1.2.0
 
 - Feat: Added specific types for `DateTimeFormatOptions`.

@@ -4,7 +4,7 @@ import IntlError from './IntlError';
 import IntlMessages from './IntlMessages';
 
 export type IntlContextShape = {
-  messages: IntlMessages;
+  messages?: IntlMessages;
   locale: string;
   formats?: Partial<Formats>;
   timeZone?: string;
@@ -14,6 +14,7 @@ export type IntlContextShape = {
     key: string;
     namespace?: string;
   }): string;
+  now?: Date;
 };
 
 const IntlContext = createContext<IntlContextShape | undefined>(undefined);

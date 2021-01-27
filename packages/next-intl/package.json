@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
-  "description": "Minimal, but complete solution for managing internationalization in Next.js apps.",
+  "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -364,6 +364,22 @@ describe('formatRelativeTime', () => {
     screen.getByText('36 years ago');
   });
 
+  it('can use a global `now` fallback', () => {
+    function Component() {
+      const intl = useIntl();
+      const mockDate = new Date('1984-11-20T10:36:00.000Z');
+      return <>{intl.formatRelativeTime(mockDate)}</>;
+    }
+
+    render(
+      <MockProvider now={new Date('2018-11-20T10:36:00.000Z')}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('34 years ago');
+  });
+
   describe('error handling', () => {
     it('handles formatting errors', () => {
       const onError = jest.fn();
@@ -387,6 +403,28 @@ describe('formatRelativeTime', () => {
       );
       expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
       expect(container.textContent).toBe('not a number');
+    });
+
+    it('throws when no `now` value is available', () => {
+      const onError = jest.fn();
+
+      function Component() {
+        const intl = useIntl();
+        const mockDate = new Date('1984-11-20T10:36:00.000Z');
+        return <>{intl.formatRelativeTime(mockDate)}</>;
+      }
+
+      render(
+        <MockProvider onError={onError}>
+          <Component />
+        </MockProvider>
+      );
+
+      const error: IntlError = onError.mock.calls[0][0];
+      expect(error.message).toBe(
+        "FORMATTING_ERROR: The `now` parameter wasn't provided to `formatRelativeTime` and there was no global fallback configured on the provider."
+      );
+      expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     });
   });
 });
