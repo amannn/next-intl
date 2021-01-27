@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Feat: Added specific types for `DateTimeFormatOptions`.
+
 ## 1.1.0
 
 - Feat: Added support for handling time zones.

@@ -1,3 +1,4 @@
+import DateTimeFormatOptions from './DateTimeFormatOptions';
 import IntlError, {IntlErrorCode} from './IntlError';
 import useIntlContext from './useIntlContext';
 
@@ -96,7 +97,7 @@ export default function useIntl() {
     value: Date | number,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?: string | Intl.DateTimeFormatOptions
+    formatOrOptions?: string | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       value,

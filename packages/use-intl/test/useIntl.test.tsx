@@ -1,6 +1,12 @@
 import {render, screen} from '@testing-library/react';
 import React, {ComponentProps, ReactNode} from 'react';
-import {IntlError, IntlErrorCode, IntlProvider, useIntl} from '../src';
+import {
+  DateTimeFormatOptions,
+  IntlError,
+  IntlErrorCode,
+  IntlProvider,
+  useIntl
+} from '../src';
 
 (global as any).__DEV__ = true;
 
@@ -15,7 +21,7 @@ describe('formatDateTime', () => {
 
   function renderDateTime(
     value: Date | number,
-    options?: Intl.DateTimeFormatOptions
+    options?: DateTimeFormatOptions
   ) {
     function Component() {
       const intl = useIntl();
@@ -163,6 +169,8 @@ describe('formatDateTime', () => {
 
       function Component() {
         const intl = useIntl();
+
+        // @ts-expect-error
         return <>{intl.formatDateTime(mockDate, {year: 'very long'})}</>;
       }
 
