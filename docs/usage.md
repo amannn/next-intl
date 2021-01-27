@@ -199,9 +199,45 @@ const now = new Date('2020-11-25T10:36:01.516Z');
 intl.formatRelativeTime(dateTime, now);
 ```
 
-Supplying `now` is necessary for the function to return consistent results and to be pure. You can decide yourself how often you want to update the duration.
+Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
 
-Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned. If you need exceptions like "23 seconds ago" should be formatted as "less than one minute ago", you can wrap the function and use a custom label for the relevant exceptions.
+Supplying `now` is necessary for the function to return consistent results. You can provide your own value for `now`, or alternatively use the one provided from `useNow`:
+
+```js
+import {useNow} from 'next-intl';
+
+function Component() {
+  const now = useNow();
+
+  const dateTime = new Date('2020-11-20T10:36:01.516Z');
+  intl.formatRelativeTime(dateTime, now);
+}
+```
+
+You can optionally configure an interval when the `now` value should update:
+
+```js
+const now = useNow({
+  // Update every 10 seconds
+  updateInterval: 1000 * 10
+});
+```
+
+To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
+
+```js
+<NextIntlProvider
+  // This value can be generated in data fetching functions of individual pages or `App.getInitialProps`.
+  now={now}
+  ...
+>
+  <App />
+</NextIntlProvider>
+```
+
+This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
+
+For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
 ### Dates and times within messages
 

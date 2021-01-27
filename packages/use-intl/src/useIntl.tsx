@@ -43,7 +43,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 }
 
 export default function useIntl() {
-  const {formats, locale, onError, timeZone} = useIntlContext();
+  const {formats, locale, now: globalNow, onError, timeZone} = useIntlContext();
 
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
@@ -128,16 +128,28 @@ export default function useIntl() {
   function formatRelativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
-    /** The reference point in time to which `date` will be formatted in relation to. */
-    now: number | Date
+    /** The reference point in time to which `date` will be formatted in relation to.  */
+    now?: number | Date
   ) {
-    const dateDate = date instanceof Date ? date : new Date(date);
-    const nowDate = now instanceof Date ? now : new Date(now);
-
-    const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
-    const {unit, value} = getRelativeTimeFormatConfig(seconds);
-
     try {
+      if (!now) {
+        if (globalNow) {
+          now = globalNow;
+        } else {
+          throw new Error(
+            __DEV__
+              ? `The \`now\` parameter wasn't provided to \`formatRelativeTime\` and there was no global fallback configured on the provider.`
+              : undefined
+          );
+        }
+      }
+
+      const dateDate = date instanceof Date ? date : new Date(date);
+      const nowDate = now instanceof Date ? now : new Date(now);
+
+      const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
+      const {unit, value} = getRelativeTimeFormatConfig(seconds);
+
       return new Intl.RelativeTimeFormat(locale, {
         numeric: 'auto'
       }).format(value, unit);

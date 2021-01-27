@@ -1,9 +1,9 @@
 {
   "name": "next-intl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
-  "description": "Minimal, but complete solution for managing internationalization in Next.js apps.",
+  "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "use-intl": "^0.3.0"
+    "use-intl": "^1.0.0"
   },
   "peerDependencies": {
     "next": "^10.0.0",

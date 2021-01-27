@@ -15,10 +15,16 @@ import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageForm
 import useIntlContext from './useIntlContext';
 
 function resolvePath(
-  messages: IntlMessages,
+  messages: IntlMessages | undefined,
   idPath: string,
   namespace?: string
 ) {
+  if (!messages) {
+    throw new Error(
+      __DEV__ ? `No messages available at \`${namespace}\`.` : undefined
+    );
+  }
+
   let message = messages;
 
   idPath.split('.').forEach((part) => {
