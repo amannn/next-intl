@@ -8782,13 +8782,6 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-use-intl@^0.3.0:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-0.3.2.tgz#165348f687535df2ba5ec13d454259fe5a12b9bc"
-  integrity sha512-XrtviYj6On4r2lR9i/zws3kkn77dNOIBDikbtKLlL8Ex1/vwDNxIzgtPOek+LWvrgfex53jQqGfvNNkSwPd72A==
-  dependencies:
-    intl-messageformat "^9.3.18"
-
 use-subscription@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.5.1.tgz#73501107f02fad84c6dd57965beb0b75c68c42d1"
