@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Fix: Apply interval correctly in `useNow({updateInterval: …})`
+
 ## 1.3.0
 
 - Feat: Add a global fallback for the `now` parameter of `formatRelativeTime`.
