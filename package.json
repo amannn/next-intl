@@ -1,5 +1,13 @@
 {
   "name": "root",
-  "private": true,
-  "workspaces": ["packages/*"]
+  "private": false,
+  "scripts": {
+    "publish": "lerna publish --canary"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
 }
