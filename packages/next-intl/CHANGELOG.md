@@ -1,3 +1,3 @@
 # Changelog
 
-Will be overridden with the one from the project root.
+See [next-intl changelog](https://github.com/amannn/next-intl/blob/main/CHANGELOG.md).
