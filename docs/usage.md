@@ -1,6 +1,6 @@
 # Usage guide
 
-## Providing messages to components
+## Structuring messages
 
 The recommended approach is to group messages by components and embrace them as the primary unit of code organization in your app.
 
@@ -65,13 +65,72 @@ function SignUp() {
 }
 ```
 
-You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, from my experience I think it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
+You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently – however, from my experience I think it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
 
 To retrieve all available messages in a component, you can omit the namespace path:
 
 ```js
 const t = useTranslations();
 ```
+
+## Providing messages
+
+You can provide page-specific messages via `getStaticProps` of individual pages:
+
+```js
+// pages/index.js
+export function getStaticProps({locale}: GetStaticPropsContext) {
+  return {
+    props: {
+      // You can get the messages from anywhere you like, but the recommended
+      // pattern is to put them in JSON files separated by language and read 
+      // the desired one based on the `locale` received from Next.js. 
+      messages: require(`../../messages/index/${locale}.json`),
+    }
+  };
+}
+```
+
+If you have a set of common messages that should be available on every page, you can either merge them into the page-level messages:
+
+```js
+// pages/index.js
+export function getStaticProps({locale}: GetStaticPropsContext) {
+  return {
+    props: {
+      messages: {
+        ...require(`../../messages/shared/${locale}.json`),
+        ...require(`../../messages/index/${locale}.json`)
+      }
+    }
+  };
+}
+```
+
+… or alternatively set them up in `_app.js` and apply the merging there:
+
+```js
+// pages/_app.js
+import NextApp from 'next/app';
+
+export default function App({Component, messages, pageProps}) {	
+  return (
+    <NextIntlProvider messages={{...messages, ...pageProps.messages}}>
+      <Component {...pageProps} />
+    </NextIntlProvider>
+  );
+}
+
+App.getInitialProps = async function getInitialProps(context: AppContext) {	
+  const {locale} = context.router;	
+  return {	
+    ...(await NextApp.getInitialProps(context)),	
+    messages: require(`../../messages/${locale}.json`)
+  };	
+};
+```
+
+Note that in this case you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters).
 
 ## Rendering messages
 
@@ -284,7 +343,7 @@ To reuse date and time formats for multiple components, you can configure [globa
 
 If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
 
-To avoid such mismatches, you can globally define a time zone like this:
+To avoid such markup mismatches, you can globally define a time zone like this:
 
 ```jsx
 <NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>

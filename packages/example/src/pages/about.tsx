@@ -35,7 +35,7 @@ export function getStaticProps({locale}: GetStaticPropsContext) {
         ...require(`../../messages/shared/${locale}.json`),
         ...require(`../../messages/about/${locale}.json`)
       },
-      now: new Date().toISOString()
+      now: new Date().getTime()
     }
   };
 }
