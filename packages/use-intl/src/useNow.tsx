@@ -38,7 +38,7 @@ export default function useNow(options?: Options) {
 
     const intervalId = setInterval(() => {
       setNow(getNow());
-    });
+    }, updateInterval);
 
     return () => {
       clearInterval(intervalId);
