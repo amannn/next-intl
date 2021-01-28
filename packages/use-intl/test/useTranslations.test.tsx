@@ -1,4 +1,5 @@
 import {render, screen} from '@testing-library/react';
+import {parseISO} from 'date-fns';
 import React, {ReactNode} from 'react';
 import {
   Formats,
@@ -68,14 +69,14 @@ it('handles number formatting with a custom format', () => {
 
 it('handles date formatting', () => {
   renderMessage('{now, date, medium}', {
-    now: new Date('2020-11-19T15:38:43.700Z')
+    now: parseISO('2020-11-19T15:38:43.700Z')
   });
   screen.getByText('Nov 19, 2020');
 });
 
 it('handles time formatting', () => {
   renderMessage('{now, time, short}', {
-    now: new Date('2020-11-19T15:38:43.700Z')
+    now: parseISO('2020-11-19T15:38:43.700Z')
   });
   screen.getByText('4:38 PM');
 });
@@ -376,7 +377,7 @@ describe('global formats', () => {
   ) {
     function Component() {
       const t = useTranslations();
-      const date = new Date('2020-11-19T15:38:43.700Z');
+      const date = parseISO('2020-11-19T15:38:43.700Z');
       return <>{t('date', {value: date}, overrideFormats)}</>;
     }
 

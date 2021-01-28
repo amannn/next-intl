@@ -1,4 +1,5 @@
 import {render, screen} from '@testing-library/react';
+import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode} from 'react';
 import {
   DateTimeFormatOptions,
@@ -17,7 +18,7 @@ function MockProvider(
 }
 
 describe('formatDateTime', () => {
-  const mockDate = new Date('2020-11-20T10:36:01.516Z');
+  const mockDate = parseISO('2020-11-20T10:36:01.516Z');
 
   function renderDateTime(
     value: Date | number,
@@ -294,72 +295,72 @@ describe('formatRelativeTime', () => {
 
   it('can format now', () => {
     renderNumber(
-      new Date('2020-11-20T10:36:00.000Z'),
-      new Date('2020-11-20T10:36:00.100Z')
+      parseISO('2020-11-20T10:36:00.000Z'),
+      parseISO('2020-11-20T10:36:00.100Z')
     );
     screen.getByText('now');
   });
 
   it('can format seconds', () => {
     renderNumber(
-      new Date('2020-11-20T10:35:31.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-20T10:35:31.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('29 seconds ago');
   });
 
   it('can format minutes', () => {
     renderNumber(
-      new Date('2020-11-20T10:12:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-20T10:12:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('24 minutes ago');
   });
 
   it('uses the lowest unit possible', () => {
     renderNumber(
-      new Date('2020-11-20T09:37:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-20T09:37:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('59 minutes ago');
   });
 
   it('can format hours', () => {
     renderNumber(
-      new Date('2020-11-20T08:30:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-20T08:30:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('2 hours ago');
   });
 
   it('can format days', () => {
     renderNumber(
-      new Date('2020-11-17T10:36:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-17T10:36:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('3 days ago');
   });
 
   it('can format weeks', () => {
     renderNumber(
-      new Date('2020-11-02T10:36:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-11-02T10:36:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('3 weeks ago');
   });
 
   it('can format months', () => {
     renderNumber(
-      new Date('2020-03-02T10:36:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('2020-03-02T10:36:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('9 months ago');
   });
 
   it('can format years', () => {
     renderNumber(
-      new Date('1984-11-20T10:36:00.000Z'),
-      new Date('2020-11-20T10:36:00.000Z')
+      parseISO('1984-11-20T10:36:00.000Z'),
+      parseISO('2020-11-20T10:36:00.000Z')
     );
     screen.getByText('36 years ago');
   });
@@ -367,12 +368,12 @@ describe('formatRelativeTime', () => {
   it('can use a global `now` fallback', () => {
     function Component() {
       const intl = useIntl();
-      const mockDate = new Date('1984-11-20T10:36:00.000Z');
+      const mockDate = parseISO('1984-11-20T10:36:00.000Z');
       return <>{intl.formatRelativeTime(mockDate)}</>;
     }
 
     render(
-      <MockProvider now={new Date('2018-11-20T10:36:00.000Z')}>
+      <MockProvider now={parseISO('2018-11-20T10:36:00.000Z')}>
         <Component />
       </MockProvider>
     );
@@ -410,7 +411,7 @@ describe('formatRelativeTime', () => {
 
       function Component() {
         const intl = useIntl();
-        const mockDate = new Date('1984-11-20T10:36:00.000Z');
+        const mockDate = parseISO('1984-11-20T10:36:00.000Z');
         return <>{intl.formatRelativeTime(mockDate)}</>;
       }
 

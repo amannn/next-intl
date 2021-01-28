@@ -1,4 +1,5 @@
 import {render, waitFor} from '@testing-library/react';
+import {parseISO} from 'date-fns';
 import React from 'react';
 import {IntlProvider, useNow} from '../src';
 
@@ -25,7 +26,7 @@ it('can use a globally defined `now` value', () => {
   }
 
   const {container} = render(
-    <IntlProvider locale="en" now={new Date('2018-10-06T10:36:01.516Z')}>
+    <IntlProvider locale="en" now={parseISO('2018-10-06T10:36:01.516Z')}>
       <Component />
     </IntlProvider>
   );
@@ -38,7 +39,7 @@ it('can update a globally defined `now` value after the initial render', async (
   }
 
   const {container} = render(
-    <IntlProvider locale="en" now={new Date('2018-10-06T10:36:01.516Z')}>
+    <IntlProvider locale="en" now={parseISO('2018-10-06T10:36:01.516Z')}>
       <Component />
     </IntlProvider>
   );

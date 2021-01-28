@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "date-fns": "^2.16.1",
     "next": "^10.0.0",
     "next-intl": "^1.0.0",
     "react": "^17.0.0",

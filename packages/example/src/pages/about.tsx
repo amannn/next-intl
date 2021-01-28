@@ -1,3 +1,4 @@
+import {parseISO} from 'date-fns';
 import {GetStaticPropsContext} from 'next';
 import {useIntl, useTranslations} from 'next-intl';
 import {useRouter} from 'next/router';
@@ -8,7 +9,7 @@ export default function About() {
   const t = useTranslations('About');
   const {locale} = useRouter();
   const intl = useIntl();
-  const lastUpdated = new Date('2021-01-26T17:04:45.567Z');
+  const lastUpdated = parseISO('2021-01-26T17:04:45.567Z');
 
   return (
     <PageLayout title={t('title')}>

@@ -239,7 +239,7 @@ import {useIntl} from 'next-intl';
 
 function Component() {
   const intl = useIntl();
-  const dateTime = new Date('2020-11-20T10:36:01.516Z');
+  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
 
   intl.formatDateTime(dateTime, {year: 'numeric', month: 'numeric', day: 'numeric'});
   intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
@@ -253,8 +253,8 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 Relative time durations can be formatted with a separate function:
 
 ```js
-const dateTime = new Date('2020-11-20T10:36:01.516Z');
-const now = new Date('2020-11-25T10:36:01.516Z');
+const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+const now = parseISO('2020-11-25T10:36:01.516Z');
 intl.formatRelativeTime(dateTime, now);
 ```
 
@@ -268,7 +268,7 @@ import {useNow} from 'next-intl';
 function Component() {
   const now = useNow();
 
-  const dateTime = new Date('2020-11-20T10:36:01.516Z');
+  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
   intl.formatRelativeTime(dateTime, now);
 }
 ```
@@ -322,7 +322,7 @@ Additionally, you can provide custom formats based on [`DateTimeFormat` options]
 ```js
 t(
   'orderDate',
-  {date: new Date('2020-11-20T10:36:01.516Z')},
+  {date: parseISO('2020-11-20T10:36:01.516Z')},
   {
     // Custom formats can be supplied via the third parameter
     dateTime: {
@@ -385,7 +385,7 @@ To achieve consistent date, time and number formatting across your app, you can 
 ```
 
 ```js
-t('ordered', {orderDate: new Date('2020-11-20T10:36:01.516Z')});
+t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
 t('latitude', {latitude: 47.414329182});
 ```
 

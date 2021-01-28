@@ -33,6 +33,7 @@
   "devDependencies": {
     "@testing-library/react": "^11.1.2",
     "@types/react": "^16.9.56",
+    "date-fns": "^2.16.1",
     "eslint": "7.4.0",
     "eslint-config-molindo": "5.0.1",
     "react": "^17.0.0",
