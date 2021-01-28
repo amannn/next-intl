@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish --canary"
+    "publish": "lerna version && lerna publish"
   },
   "workspaces": [
     "packages/*"
