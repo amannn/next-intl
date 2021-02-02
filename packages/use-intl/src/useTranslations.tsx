@@ -2,7 +2,9 @@ import IntlMessageFormat from 'intl-messageformat';
 import {
   cloneElement,
   isValidElement,
+  ReactElement,
   ReactNode,
+  ReactNodeArray,
   useCallback,
   useMemo,
   useRef
@@ -129,7 +131,7 @@ export default function useTranslations(namespace?: string) {
       values?: TranslationValues,
       /** Provide custom formats for numbers, dates and times. */
       formats?: Partial<Formats>
-    ) => {
+    ): string | ReactElement | ReactNodeArray => {
       const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
 
       function getFallbackFromError(code: IntlErrorCode, message?: string) {
@@ -203,7 +205,13 @@ export default function useTranslations(namespace?: string) {
           );
         }
 
-        return formattedMessage;
+        // Limit the function signature to return strings or React elements
+        return isValidElement(formattedMessage) ||
+          // Arrays of React elements
+          Array.isArray(formattedMessage) ||
+          typeof formattedMessage === 'string'
+          ? formattedMessage
+          : String(formattedMessage);
       } catch (error) {
         return getFallbackFromError(
           IntlErrorCode.FORMATTING_ERROR,
