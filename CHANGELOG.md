@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Fix: Limit the function signature to return strings or React elements
+
 ## 1.3.1
 
 - Fix: Apply interval correctly in `useNow({updateInterval: …})`
