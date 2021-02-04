@@ -2,7 +2,7 @@
 
 ![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
 
-A minimal, but complete solution for managing translations, date, time and number formatting in Next.js apps.
+> A minimal, but complete solution for managing translations, date, time and number formatting in Next.js apps.
 
 This library complements the [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) capabilities of Next.js by managing translations and providing them to components.
 
