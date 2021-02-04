@@ -58,7 +58,7 @@ function SignUp() {
           // using a dot to access nested messages.
           placeholder={t('form.placeholder')}
         />
-        <button type="submit">{t('form.submit')}
+        <button type="submit">{t('form.submit')}</button>
       </form>
     </>
   );
