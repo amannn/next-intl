@@ -15,3 +15,7 @@
 ## Can this be used without Next.js?
 
 Yes, see [`use-intl`](../packages/use-intl).
+
+## How can I parse dates or manipulate them?
+
+This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
