@@ -11,11 +11,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * Update DateTimeFormatOptions ([#29](https://github.com/amannn/next-intl/issues/29)) ([91a8f52](https://github.com/amannn/next-intl/commit/91a8f5216a9ef2a0e76be6e3e8bd706f5c7496a3))
 
 
-
-
-
-# Changelog
-
 ## 1.3.2
 
 - Fix: Limit the function signature to return strings or React elements
