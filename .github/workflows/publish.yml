@@ -15,7 +15,10 @@ jobs:
       - uses: bahmutov/npm-install@v1
       # Seems like after squash & merge the author is unknown to lerna
       - run: git config --global user.email "jan@amann.me" && git config --global user.name "Jan Amann"
+      # Provide credentials
+      - run: echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - run: yarn run publish --yes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
