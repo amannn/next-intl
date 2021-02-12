@@ -6,7 +6,7 @@
 
 ## Features
 
-- 🌟 I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the **proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax)** which covers interpolation, numbers, dates, times, plurals, ordinal pluralization, label selection based on enums and rich text.
+- 🌟 I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation. Messages use the **proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax)** which covers interpolation, plurals, ordinal pluralization, label selection based on enums and rich text.
 - 📅 Built-in **date, time and number formatting** provides all the necessary parts you need for localisation. You can use global formats for a consistent look & feel of your app and integrate them with translations.
 - 💡 A **hooks-only API** ensures that you can use the same API for `children` as well as for attributes which expect strings.
 - ⚔️ Based on **battle-tested** building blocks from [Format.JS](https://formatjs.io/) (used by `react-intl`), this library is a thin wrapper around high-quality, lower-level APIs for i18n.
@@ -19,7 +19,7 @@ This library is based on the premise that messages can be grouped by namespaces 
 // en.json
 {
   "LatestFollower": {
-    "latestFollower": "<user>{username}</user> started following you {followDateRelative} ({followDate, date, short})",
+    "latestFollower": "{username} started following you",
     "followBack": "Follow back"
   }
 }
@@ -27,30 +27,16 @@ This library is based on the premise that messages can be grouped by namespaces 
 
 ```jsx
 // LatestFollower.js
-function LatestFollower({event}) {
+function LatestFollower({user}) {
   const t = useTranslations('LatestFollower');
-  const intl = useIntl();
 
   return (
     <>
-      <Text>
-        {t('latestFollower', {
-          user: children => <b>{children}</b>,
-          username: event.user.name,
-          followDateRelative: intl.formatRelativeTime(event.followDate),
-          followDate: event.followDate
-        })}
-      </Text>
+      <Text>{t('latestFollower', {username: user.name})}</Text>
       <IconButton aria-label={t('followBack')} icon={<FollowIcon />} />
     </>
   );
 }
-```
-
-```jsx
-// Output
-<p><b>Jane</b> started following you two weeks ago (Feb 4, 2021)</p>
-<button aria-label="Follow back"><svg ... /></button>
 ```
 
 ## Installation
