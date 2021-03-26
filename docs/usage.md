@@ -400,7 +400,7 @@ import {NextIntlProvider, IntlErrorCode} from 'next-intl';
 
 function onError(error) {
   if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-    // Missing translations are expected should only log an error
+    // Missing translations are expected and should only log an error
     console.error(error);
   } else {
     // Other errors indicate a bug in the app and should be reported
