@@ -6,7 +6,6 @@
 2. Add the provider in `_app.js`.
 ```jsx
 import {NextIntlProvider} from 'next-intl';
-import NextApp from 'next/app';
 
 export default function App({Component, pageProps}) {
   return (
