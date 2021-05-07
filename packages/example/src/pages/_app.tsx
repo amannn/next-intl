@@ -16,7 +16,9 @@ export default function App({Component, pageProps}: AppProps) {
         }
       }}
       // Messages can be received from individual pages or configured
-      // globally in this module (`App.getInitialProps`).
+      // globally in this module (`App.getInitialProps`). Note that in
+      // the latter case the messages are available as a top-level prop
+      // and not nested within `pageProps`.
       messages={pageProps.messages}
       // Providing an explicit value for `now` ensures consistent formatting of
       // relative values regardless of the server or client environment.
