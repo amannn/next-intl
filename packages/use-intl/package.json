@@ -27,8 +27,7 @@
     "intl-messageformat": "^9.3.18"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0",
-    "react-dom": "^16.8.0 || ^17.0.0"
+    "react": "^16.8.0 || ^17.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^11.1.2",
