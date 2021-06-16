@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "1.3.11",
+  "version": "1.4.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
