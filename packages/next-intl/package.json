@@ -24,7 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "use-intl": "^1.3.11"
+    "use-intl": "^1.3.0"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0",
