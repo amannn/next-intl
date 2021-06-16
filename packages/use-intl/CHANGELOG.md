@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/amannn/next-intl/tree/main/packages/use-intl/compare/v1.4.1...v1.4.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* Don't require `react-dom` as a peer dependency ([#39](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/39)) ([39edfcd](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/39edfcd9091e09570fc2152cda6a1e9ae5e7c210))
+
+
+
+
+
 ## 1.3.11 (2021-05-07)
 
 **Note:** Version bump only for package use-intl
