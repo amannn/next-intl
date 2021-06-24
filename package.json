@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish prerelease"
+    "publish": "npm_config__auth=$NPM_AUTH lerna publish prerelease"
   },
   "workspaces": [
     "packages/*"
