@@ -2,12 +2,12 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "npm_config__auth=$NPM_AUTH lerna publish prerelease"
+    "publish": "lerna publish prerelease"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "4.0.0"
   }
 }
