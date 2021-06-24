@@ -15,6 +15,7 @@ jobs:
       - uses: bahmutov/npm-install@v1
       # Seems like after squash & merge the author is unknown to lerna
       - run: git config --global user.email "jan@amann.me" && git config --global user.name "Jan Amann"
+      - run: npm login
       - run: npm whoami
       - run: yarn run publish --yes
         env:
