@@ -20,7 +20,8 @@ jobs:
       - run: echo //registry.npmjs.org/:_authToken=\${NPM_AUTH} > .npmrc
         env: 
           NPM_AUTH: ${{ secrets.NPM_AUTH }}
-      - run: npm_config__auth=$NPM_AUTH yarn run publish --yes --legacy-auth $NPM_AUTH
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_AUTH: ${{ secrets.NPM_AUTH }}
+      - run: lerna version prerelease --no-git-tag-version && cd packages/next-intl && npm publish --tag prerelease
+#      - run: npm_config__auth=$NPM_AUTH yarn run publish --yes --legacy-auth $NPM_AUTH
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          NPM_AUTH: ${{ secrets.NPM_AUTH }}
