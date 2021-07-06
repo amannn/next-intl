@@ -15,12 +15,13 @@ jobs:
       - uses: bahmutov/npm-install@v1
       # Seems like after squash & merge the author is unknown to lerna
       - run: git config --global user.email "jan@amann.me" && git config --global user.name "Jan Amann"
-      # - run: npm login
-      # - run: npm whoami
       - run: echo //registry.npmjs.org/:_authToken=\${NPM_AUTH} > .npmrc
         env:
           NPM_AUTH: ${{ secrets.NPM_AUTH }}
-      - run: lerna version prerelease --no-git-tag-version --yes && cd packages/next-intl && npm publish --tag prerelease
+      - run: lerna version prerelease --no-git-tag-version --yes
+#      - run: npm login
+      - run: npm whoami
+      - run: cd packages/next-intl && npm publish --tag prerelease
         env:
           NPM_AUTH: ${{ secrets.NPM_AUTH }}
 #      - run: npm_config__auth=$NPM_AUTH yarn run publish --yes --legacy-auth $NPM_AUTH
