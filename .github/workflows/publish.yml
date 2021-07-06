@@ -20,6 +20,8 @@ jobs:
           NPM_AUTH: ${{ secrets.NPM_AUTH }}
       - run: lerna version prerelease --no-git-tag-version --yes
 #      - run: npm login
+        env:
+          NPM_AUTH: ${{ secrets.NPM_AUTH }}
       - run: npm whoami
       - run: cd packages/next-intl && npm publish --tag prerelease
         env:
