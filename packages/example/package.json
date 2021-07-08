@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
   "dependencies": {
     "date-fns": "^2.16.1",
     "next": "^11.0.0",
-    "next-intl": "^1.4.3",
+    "next-intl": "^1.4.4",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },
