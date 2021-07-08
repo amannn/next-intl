@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish prerelease --no-git-tag-version --yes --no-verify-access"
+    "publish": "lerna publish --yes --no-verify-access"
   },
   "workspaces": [
     "packages/*"

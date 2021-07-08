@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "1.4.3-alpha.4",
+  "version": "1.4.2",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -14,7 +14,7 @@
     "build": "tsdx build",
     "test": "TZ=Europe/Berlin tsdx test",
     "lint": "eslint src test && tsc",
-    "_prepublishOnly": "yarn test && yarn lint && yarn build"
+    "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",

@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "1.4.3-alpha.4",
+  "version": "1.4.2",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
@@ -14,7 +14,7 @@
     "build": "tsdx build",
     "test": "TZ=Europe/Berlin tsdx test",
     "lint": "eslint src test && tsc",
-    "_prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md ."
+    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md ."
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",
@@ -24,7 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "use-intl": "^1.4.3-alpha.4"
+    "use-intl": "^1.4.2"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0",
