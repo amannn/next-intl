@@ -1,4 +1,5 @@
 name: publish
+
 on:
   push:
     branches:
@@ -9,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           node-version: 14.x
+          registry-url: 'https://registry.npmjs.org'
       - uses: bahmutov/npm-install@v1
       # Seems like after squash & merge the author is unknown to lerna
       - run: git config --global user.email "jan@amann.me" && git config --global user.name "Jan Amann"
-#      - run: yarn run publish --yes --legacy-auth $NPM_AUTH
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          NPM_AUTH: ${{ secrets.NPM_AUTH }}
+      - run: yarn run publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -2,12 +2,12 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish"
+    "publish": "lerna publish --yes --no-verify-access"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "4.0.0"
   }
 }
