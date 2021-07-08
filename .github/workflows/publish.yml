@@ -20,9 +20,9 @@ jobs:
       - run: npm whoami
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-#      - run: cd packages/next-intl && npm publish --tag prerelease
-#        env:
-#          NPM_AUTH: ${{ secrets.NPM_AUTH }}
+      - run: cd packages/next-intl && npm publish --tag prerelease
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 #      - run: npm_config__auth=$NPM_AUTH yarn run publish --yes --legacy-auth $NPM_AUTH
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
