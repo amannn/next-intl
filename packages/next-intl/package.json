@@ -23,6 +23,19 @@
     "dist",
     "src"
   ],
+  "keywords": [
+    "react",
+    "intl",
+    "i18n",
+    "internationalization",
+    "localization",
+    "translate",
+    "translation",
+    "format",
+    "formatting",
+    "next",
+    "next.js"
+  ],
   "dependencies": {
     "use-intl": "^1.4.4"
   },

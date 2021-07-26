@@ -23,6 +23,17 @@
     "dist",
     "src"
   ],
+  "keywords": [
+    "react",
+    "intl",
+    "i18n",
+    "internationalization",
+    "localization",
+    "translate",
+    "translation",
+    "format",
+    "formatting"
+  ],
   "dependencies": {
     "intl-messageformat": "^9.3.18"
   },
