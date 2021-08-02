@@ -36,7 +36,7 @@ type Props = {
    * 2. It will be returned as a static value from the `useNow` hook. Note
    *    however that when `updateInterval` is configured on the `useNow` hook,
    *    the global `now` value will only be used for the initial render, but
-   *    afterwards the current date will be retunred continuously.
+   *    afterwards the current date will be returned continuously.
    */
   now?: Date;
 };
@@ -51,9 +51,13 @@ function defaultGetMessageFallback({
   return [namespace, key].filter((part) => part != null).join('.');
 }
 
+function defaultOnError(error: IntlError) {
+  console.error(error);
+}
+
 export default function IntlProvider({
   children,
-  onError = console.error,
+  onError = defaultOnError,
   getMessageFallback = defaultGetMessageFallback,
   ...contextValues
 }: Props) {
