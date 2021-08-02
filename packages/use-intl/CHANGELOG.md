@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.4.6 (2021-08-02)
+
+
+### Bug Fixes
+
+* Use `timeZone` in translation function from `useTranslations` ([#45](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/45)) ([ebf75f2](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/ebf75f2add0ddc46f89768e9481bb16c56f94720))
+
+
+
+
+
 ## 1.4.5 (2021-07-26)
 
 **Note:** Version bump only for package use-intl
