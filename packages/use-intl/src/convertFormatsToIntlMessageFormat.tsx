@@ -1,5 +1,26 @@
 import {Formats as IntlFormats} from 'intl-messageformat';
+import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
+
+function setTimeZoneInFormats(
+  formats: Record<string, DateTimeFormatOptions> | undefined,
+  timeZone: string
+) {
+  if (!formats) return formats;
+
+  // The only way to set a time zone with `intl-messageformat` is to merge it into the formats
+  // https://github.com/formatjs/formatjs/blob/8256c5271505cf2606e48e3c97ecdd16ede4f1b5/packages/intl/src/message.ts#L15
+  return Object.keys(formats).reduce(
+    (acc: Record<string, DateTimeFormatOptions>, key) => {
+      acc[key] = {
+        timeZone,
+        ...formats[key]
+      };
+      return acc;
+    },
+    {}
+  );
+}
 
 /**
  * `intl-messageformat` uses separate keys for `date` and `time`, but there's
@@ -9,11 +30,16 @@ import Formats from './Formats';
  * to convert the format before `intl-messageformat` can be used.
  */
 export default function convertFormatsToIntlMessageFormat(
-  formats: Partial<Formats>
+  formats: Partial<Formats>,
+  timeZone?: string
 ): Partial<IntlFormats> {
+  const formatsWithTimeZone = timeZone
+    ? {...formats, dateTime: setTimeZoneInFormats(formats.dateTime, timeZone)}
+    : formats;
+
   return {
-    ...formats,
-    date: formats?.dateTime,
-    time: formats?.dateTime
+    ...formatsWithTimeZone,
+    date: formatsWithTimeZone?.dateTime,
+    time: formatsWithTimeZone?.dateTime
   };
 }

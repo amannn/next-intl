@@ -91,7 +91,8 @@ export default function useTranslations(namespace?: string) {
     getMessageFallback,
     locale,
     messages: allMessages,
-    onError
+    onError,
+    timeZone
   } = useIntlContext();
 
   const cachedFormatsByLocaleRef = useRef<
@@ -177,7 +178,10 @@ export default function useTranslations(namespace?: string) {
           messageFormat = new IntlMessageFormat(
             message,
             locale,
-            convertFormatsToIntlMessageFormat({...globalFormats, ...formats})
+            convertFormatsToIntlMessageFormat(
+              {...globalFormats, ...formats},
+              timeZone
+            )
           );
         } catch (error) {
           return getFallbackFromError(
@@ -225,7 +229,8 @@ export default function useTranslations(namespace?: string) {
       locale,
       messagesOrError,
       namespace,
-      onError
+      onError,
+      timeZone
     ]
   );
 

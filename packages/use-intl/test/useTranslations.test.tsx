@@ -23,7 +23,12 @@ function renderMessage(
   }
 
   return render(
-    <IntlProvider locale="en" messages={{message}}>
+    <IntlProvider
+      formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+      locale="en"
+      messages={{message}}
+      timeZone="Europe/London"
+    >
       <Component />
     </IntlProvider>
   );
@@ -74,11 +79,11 @@ it('handles date formatting', () => {
   screen.getByText('Nov 19, 2020');
 });
 
-it('handles time formatting', () => {
-  renderMessage('{now, time, short}', {
+it('applies a time zone for provided formats', () => {
+  renderMessage('{now, time, time}', {
     now: parseISO('2020-11-19T15:38:43.700Z')
   });
-  screen.getByText('4:38 PM');
+  screen.getByText('3:38 PM');
 });
 
 it('handles pluralisation', () => {
