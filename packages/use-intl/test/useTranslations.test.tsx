@@ -122,6 +122,32 @@ it('handles rich text', () => {
   );
 });
 
+it('can return raw HTML text', () => {
+  function Component() {
+    const t = useTranslations();
+    return (
+      <span
+        dangerouslySetInnerHTML={{
+          __html: String(t('message', {rawMessage: true}))
+        }}
+      />
+    );
+  }
+
+  const {container} = render(
+    <IntlProvider
+      locale="en"
+      messages={{message: '<a href="/test">Test</a><p>Hello</p>'}}
+    >
+      <Component />
+    </IntlProvider>
+  );
+
+  expect(container.innerHTML).toBe(
+    '<span><a href="/test">Test</a><p>Hello</p></span>'
+  );
+});
+
 it('handles nested rich text', () => {
   const {container} = renderMessage(
     'This is <bold><italic>very</italic> important</bold>',
