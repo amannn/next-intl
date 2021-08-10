@@ -129,7 +129,7 @@ export default function useTranslations(namespace?: string) {
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: string,
       /** Key value pairs for values to interpolate into the message. */
-      values?: TranslationValues,
+      values?: {rawMessage?: boolean} & TranslationValues,
       /** Provide custom formats for numbers, dates and times. */
       formats?: Partial<Formats>
     ): string | ReactElement | ReactNodeArray => {
@@ -172,6 +172,10 @@ export default function useTranslations(namespace?: string) {
               ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
               : undefined
           );
+        }
+
+        if (values?.rawMessage === true) {
+          return message;
         }
 
         try {
