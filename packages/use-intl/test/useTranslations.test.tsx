@@ -122,7 +122,7 @@ it('handles rich text', () => {
   );
 });
 
-it('can return raw HTML text', () => {
+it('can return raw messages without processing them', () => {
   function Component() {
     const t = useTranslations();
     return (
@@ -137,14 +137,14 @@ it('can return raw HTML text', () => {
   const {container} = render(
     <IntlProvider
       locale="en"
-      messages={{message: '<a href="/test">Test</a><p>Hello</p>'}}
+      messages={{message: '<a href="/test">Test</a><p>{hello}</p>'}}
     >
       <Component />
     </IntlProvider>
   );
 
   expect(container.innerHTML).toBe(
-    '<span><a href="/test">Test</a><p>Hello</p></span>'
+    '<span><a href="/test">Test</a><p>{hello}</p></span>'
   );
 });
 
