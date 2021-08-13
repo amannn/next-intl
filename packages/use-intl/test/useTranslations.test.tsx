@@ -122,32 +122,6 @@ it('handles rich text', () => {
   );
 });
 
-it('can return raw messages without processing them', () => {
-  function Component() {
-    const t = useTranslations();
-    return (
-      <span
-        dangerouslySetInnerHTML={{
-          __html: String(t('message', {rawMessage: true}))
-        }}
-      />
-    );
-  }
-
-  const {container} = render(
-    <IntlProvider
-      locale="en"
-      messages={{message: '<a href="/test">Test</a><p>{hello}</p>'}}
-    >
-      <Component />
-    </IntlProvider>
-  );
-
-  expect(container.innerHTML).toBe(
-    '<span><a href="/test">Test</a><p>{hello}</p></span>'
-  );
-});
-
 it('handles nested rich text', () => {
   const {container} = renderMessage(
     'This is <bold><italic>very</italic> important</bold>',
@@ -281,6 +255,63 @@ it('has a stable reference', () => {
     </IntlProvider>
   );
   screen.getByText('2');
+});
+
+describe('t.raw', () => {
+  function renderRawMessage(
+    message: any,
+    callback: (message: string) => ReactNode
+  ) {
+    function Component() {
+      const t = useTranslations();
+      return <>{callback(t.raw('message'))}</>;
+    }
+
+    return render(
+      <IntlProvider locale="en" messages={{message}}>
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  it('can return raw messages without processing them', () => {
+    const {
+      container
+    } = renderRawMessage(
+      '<a href="/test">Test</a><p>{hello}</p>',
+      (message) => <span dangerouslySetInnerHTML={{__html: message}} />
+    );
+
+    expect(container.innerHTML).toBe(
+      '<span><a href="/test">Test</a><p>{hello}</p></span>'
+    );
+  });
+
+  it('can return objects', () => {
+    const {container} = renderRawMessage(
+      {nested: {object: true}},
+      (message) => <span>{JSON.stringify(message)}</span>
+    );
+    expect(container.innerHTML).toBe('<span>{"nested":{"object":true}}</span>');
+  });
+
+  it('renders a fallback for unknown messages', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations();
+      return <>{t.raw('foo')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" messages={{bar: 'bar'}} onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('foo');
+  });
 });
 
 describe('error handling', () => {

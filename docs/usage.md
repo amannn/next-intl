@@ -171,6 +171,24 @@ t('richText', {
 <a href={t('attributeUrl')}>Link</a>
 ```
 
+## Raw messages
+
+Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this:
+
+```js
+{
+  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+}
+```
+
+```js
+<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
+```
+
+**Important**: Note that you should sanitize content that you pass to `dangerouslySetInnerHTML` to avoid XSS attacks.
+
+The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
+
 ## Numbers
 
 ### `formatNumber`

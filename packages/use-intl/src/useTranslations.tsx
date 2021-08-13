@@ -5,7 +5,6 @@ import {
   ReactElement,
   ReactNode,
   ReactNodeArray,
-  useCallback,
   useMemo,
   useRef
 } from 'react';
@@ -124,22 +123,26 @@ export default function useTranslations(namespace?: string) {
     }
   }, [allMessages, namespace, onError]);
 
-  const translate = useCallback(
-    (
+  const translate = useMemo(() => {
+    function getFallbackFromError(
+      key: string,
+      code: IntlErrorCode,
+      message?: string
+    ) {
+      const error = new IntlError(code, message);
+      onError(error);
+      return getMessageFallback({error, key, namespace});
+    }
+
+    function translateFn(
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: string,
       /** Key value pairs for values to interpolate into the message. */
-      values?: {rawMessage?: boolean} & TranslationValues,
+      values?: TranslationValues,
       /** Provide custom formats for numbers, dates and times. */
       formats?: Partial<Formats>
-    ): string | ReactElement | ReactNodeArray => {
+    ): string | ReactElement | ReactNodeArray {
       const cachedFormatsByLocale = cachedFormatsByLocaleRef.current;
-
-      function getFallbackFromError(code: IntlErrorCode, message?: string) {
-        const error = new IntlError(code, message);
-        onError(error);
-        return getMessageFallback({error, key, namespace});
-      }
 
       if (messagesOrError instanceof IntlError) {
         // We have already warned about this during render
@@ -160,6 +163,7 @@ export default function useTranslations(namespace?: string) {
           message = resolvePath(messages, key, namespace);
         } catch (error) {
           return getFallbackFromError(
+            key,
             IntlErrorCode.MISSING_MESSAGE,
             error.message
           );
@@ -167,15 +171,12 @@ export default function useTranslations(namespace?: string) {
 
         if (typeof message === 'object') {
           return getFallbackFromError(
+            key,
             IntlErrorCode.INSUFFICIENT_PATH,
             __DEV__
               ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
               : undefined
           );
-        }
-
-        if (values?.rawMessage === true) {
-          return message;
         }
 
         try {
@@ -189,6 +190,7 @@ export default function useTranslations(namespace?: string) {
           );
         } catch (error) {
           return getFallbackFromError(
+            key,
             IntlErrorCode.INVALID_MESSAGE,
             error.message
           );
@@ -222,21 +224,45 @@ export default function useTranslations(namespace?: string) {
           : String(formattedMessage);
       } catch (error) {
         return getFallbackFromError(
+          key,
           IntlErrorCode.FORMATTING_ERROR,
           error.message
         );
       }
-    },
-    [
-      getMessageFallback,
-      globalFormats,
-      locale,
-      messagesOrError,
-      namespace,
-      onError,
-      timeZone
-    ]
-  );
+    }
+
+    translateFn.raw = (key: string): any => {
+      if (messagesOrError instanceof IntlError) {
+        // We have already warned about this during render
+        return getMessageFallback({
+          error: messagesOrError,
+          key,
+          namespace
+        });
+      }
+      const messages = messagesOrError;
+
+      try {
+        return resolvePath(messages, key, namespace);
+      } catch (error) {
+        return getFallbackFromError(
+          key,
+          IntlErrorCode.MISSING_MESSAGE,
+          error.message
+        );
+      }
+    };
+
+    return translateFn;
+  }, [
+    getMessageFallback,
+    globalFormats,
+    locale,
+    messagesOrError,
+    namespace,
+    onError,
+    timeZone
+  ]);
 
   return translate;
 }
