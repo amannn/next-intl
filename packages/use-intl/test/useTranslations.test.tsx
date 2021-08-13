@@ -288,9 +288,11 @@ describe('t.raw', () => {
   });
 
   it('can return objects', () => {
-    renderRawMessage({nested: {object: true}}, (message) => (
-      <span>{JSON.stringify(message)}</span>
-    ));
+    const {container} = renderRawMessage(
+      {nested: {object: true}},
+      (message) => <span>{JSON.stringify(message)}</span>
+    );
+    expect(container.innerHTML).toBe('<span>{"nested":{"object":true}}</span>');
   });
 
   it('renders a fallback for unknown messages', () => {
