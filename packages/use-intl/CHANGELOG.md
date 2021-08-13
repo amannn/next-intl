@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.5.1 (2021-08-13)
+
+
+### Bug Fixes
+
+* Improve API for rendering raw messages and add docs ([#51](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/51)) ([19f4a7e](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/19f4a7e4e81e1cff78dc7e3f337dce69800be280))
+
+
+
+
+
 # 1.5.0 (2021-08-10)
 
 
