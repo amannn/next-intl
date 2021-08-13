@@ -179,7 +179,6 @@ export default function useTranslations(namespace?: string) {
           );
         }
 
-
         try {
           messageFormat = new IntlMessageFormat(
             message,
