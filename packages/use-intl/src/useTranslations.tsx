@@ -124,7 +124,7 @@ export default function useTranslations(namespace?: string) {
   }, [allMessages, namespace, onError]);
 
   const translate = useMemo(() => {
-    function getFallbackFromError(
+    function getFallbackFromErrorAndNotify(
       key: string,
       code: IntlErrorCode,
       message?: string
@@ -134,7 +134,7 @@ export default function useTranslations(namespace?: string) {
       return getMessageFallback({error, key, namespace});
     }
 
-    function translateFn(
+    function translateBaseFn(
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: string,
       /** Key value pairs for values to interpolate into the message. */
@@ -162,7 +162,7 @@ export default function useTranslations(namespace?: string) {
         try {
           message = resolvePath(messages, key, namespace);
         } catch (error) {
-          return getFallbackFromError(
+          return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.MISSING_MESSAGE,
             error.message
@@ -170,11 +170,13 @@ export default function useTranslations(namespace?: string) {
         }
 
         if (typeof message === 'object') {
-          return getFallbackFromError(
+          return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.INSUFFICIENT_PATH,
             __DEV__
-              ? `Insufficient path specified for \`${key}\` in \`${namespace}\`.`
+              ? `Insufficient path specified for \`${key}\` in \`${
+                  namespace ? `\`${namespace}\`` : 'messages'
+                }\`.`
               : undefined
           );
         }
@@ -189,7 +191,7 @@ export default function useTranslations(namespace?: string) {
             )
           );
         } catch (error) {
-          return getFallbackFromError(
+          return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.INVALID_MESSAGE,
             error.message
@@ -210,7 +212,9 @@ export default function useTranslations(namespace?: string) {
         if (formattedMessage == null) {
           throw new Error(
             __DEV__
-              ? `Unable to format ${[namespace, key].join('.')}`
+              ? `Unable to format \`${key}\` in ${
+                  namespace ? `namespace \`${namespace}\`` : 'messages'
+                }`
               : undefined
           );
         }
@@ -223,7 +227,7 @@ export default function useTranslations(namespace?: string) {
           ? formattedMessage
           : String(formattedMessage);
       } catch (error) {
-        return getFallbackFromError(
+        return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.FORMATTING_ERROR,
           error.message
@@ -231,7 +235,37 @@ export default function useTranslations(namespace?: string) {
       }
     }
 
-    translateFn.raw = (key: string): any => {
+    function translateFn(
+      /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
+      key: string,
+      /** Key value pairs for values to interpolate into the message. */
+      values?: TranslationValues,
+      /** Provide custom formats for numbers, dates and times. */
+      formats?: Partial<Formats>
+    ): string {
+      const message = translateBaseFn(key, values, formats);
+
+      if (typeof message !== 'string') {
+        return getFallbackFromErrorAndNotify(
+          key,
+          IntlErrorCode.INVALID_MESSAGE,
+          __DEV__
+            ? `The message \`${key}\` in ${
+                namespace ? `namespace \`${namespace}\`` : 'messages'
+              } didn't resolve to a string. If you want to format rich text, use \`t.rich\` instead.`
+            : undefined
+        );
+      }
+
+      return message;
+    }
+
+    translateFn.rich = translateBaseFn;
+
+    translateFn.raw = (
+      /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
+      key: string
+    ): any => {
       if (messagesOrError instanceof IntlError) {
         // We have already warned about this during render
         return getMessageFallback({
@@ -245,7 +279,7 @@ export default function useTranslations(namespace?: string) {
       try {
         return resolvePath(messages, key, namespace);
       } catch (error) {
-        return getFallbackFromError(
+        return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.MISSING_MESSAGE,
           error.message
