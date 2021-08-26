@@ -6,6 +6,7 @@ import IntlMessages from './IntlMessages';
 export type IntlContextShape = {
   messages?: IntlMessages;
   locale: string;
+  allowDefault?: boolean;
   formats?: Partial<Formats>;
   timeZone?: string;
   onError(error: IntlError): void;

@@ -16,10 +16,11 @@ import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageForm
 import useIntlContext from './useIntlContext';
 
 function resolvePath(
+  allowDefault: boolean = false,
   messages: IntlMessages | undefined,
   idPath: string,
-  namespace?: string
-) {
+  namespace?: string,
+) : IntlMessages {
   if (!messages) {
     throw new Error(
       __DEV__ ? `No messages available at \`${namespace}\`.` : undefined
@@ -27,11 +28,15 @@ function resolvePath(
   }
 
   let message = messages;
+  let splitted = idPath.split('.');
 
-  idPath.split('.').forEach((part) => {
+  for(let part of splitted) {
     const next = (message as any)[part];
 
-    if (part == null || next == null) {
+    if ((part == null || next == null)) {
+      if(allowDefault) {
+        return splitted[splitted.length - 1] as any;
+      }
       throw new Error(
         __DEV__
           ? `Could not resolve \`${idPath}\` in ${
@@ -42,7 +47,7 @@ function resolvePath(
     }
 
     message = next;
-  });
+  }
 
   return message;
 }
@@ -91,6 +96,7 @@ export default function useTranslations(namespace?: string) {
     locale,
     messages: allMessages,
     onError,
+    allowDefault,
     timeZone
   } = useIntlContext();
 
@@ -101,7 +107,7 @@ export default function useTranslations(namespace?: string) {
   const messagesOrError = useMemo(() => {
     try {
       const retrievedMessages = namespace
-        ? resolvePath(allMessages, namespace)
+        ? resolvePath(allowDefault, allMessages, namespace)
         : allMessages;
 
       if (!retrievedMessages) {
@@ -160,7 +166,7 @@ export default function useTranslations(namespace?: string) {
       } else {
         let message;
         try {
-          message = resolvePath(messages, key, namespace);
+          message = resolvePath(allowDefault, messages, key, namespace);
         } catch (error) {
           return getFallbackFromErrorAndNotify(
             key,
@@ -277,7 +283,7 @@ export default function useTranslations(namespace?: string) {
       const messages = messagesOrError;
 
       try {
-        return resolvePath(messages, key, namespace);
+        return resolvePath(allowDefault, messages, key, namespace);
       } catch (error) {
         return getFallbackFromErrorAndNotify(
           key,
