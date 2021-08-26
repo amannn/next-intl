@@ -79,7 +79,7 @@ You can provide page-specific messages via `getStaticProps` of individual pages:
 
 ```js
 // pages/index.js
-export function getStaticProps({locale}: GetStaticPropsContext) {
+export function getStaticProps({locale}) {
   return {
     props: {
       // You can get the messages from anywhere you like, but the recommended
@@ -95,7 +95,7 @@ If you have a set of common messages that should be available on every page, you
 
 ```js
 // pages/index.js
-export function getStaticProps({locale}: GetStaticPropsContext) {
+export function getStaticProps({locale}) {
   return {
     props: {
       messages: {
@@ -148,10 +148,6 @@ Note that in this case you [opt-out of automatic static optimization](https://gi
   // See https://formatjs.io/docs/core-concepts/icu-syntax/#selectordinal-format
   "selectordinal": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
 
-  // See https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting
-  // and https://formatjs.io/docs/intl-messageformat/#rich-text-support
-  "richText": "This is <important><very>very</very> important</important>",
-
   // Messages can be used in attributes as well
   "attributeUrl": "https://example.com"
 }
@@ -162,14 +158,26 @@ t('static');
 t('interpolation', {name: 'Jane'});
 t('plural', {numMessages: 3});
 t('selectordinal', {year: 11});
-t('richText', {
+<a href={t('attributeUrl')}>Link</a>
+```
+## Raw messages
+
+You can format rich text with custom tags and map them to React components.
+
+```js
+{
+  "richText": "This is <important><very>very</very> important</important>"
+}
+```
+
+```js
+t.rich('richText', {
   important: (children) => <b>{children}</b>,
   very: (children) => <i>{children}</i>
 })
-// TypeScript note: You have to cast the attribute to a string, since it 
-// can theoretically return a `ReactNode`: `String(t('attributeUrl'))`
-<a href={t('attributeUrl')}>Link</a>
 ```
+
+See the [FormatJS docs](https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting) for syntax details.
 
 ## Raw messages
 

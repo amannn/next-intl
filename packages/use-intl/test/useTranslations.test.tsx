@@ -110,33 +110,10 @@ it('handles selectordinals', () => {
   screen.getByText("It's my cat's 1st birthday!");
 });
 
-it('handles rich text', () => {
-  const {container} = renderMessage(
-    'This is <important>important</important> and <important>this as well</important>',
-    {
-      important: (children: ReactNode) => <b>{children}</b>
-    }
-  );
-  expect(container.innerHTML).toBe(
-    'This is <b>important</b> and <b>this as well</b>'
-  );
-});
-
-it('handles nested rich text', () => {
-  const {container} = renderMessage(
-    'This is <bold><italic>very</italic> important</bold>',
-    {
-      bold: (children: ReactNode) => <b>{children}</b>,
-      italic: (children: ReactNode) => <i>{children}</i>
-    }
-  );
-  expect(container.innerHTML).toBe('This is <b><i>very</i> important</b>');
-});
-
 it('can use messages in attributes', () => {
   function Component() {
     const t = useTranslations();
-    return <a href={String(t('message'))}>Hello</a>;
+    return <a href={t('message')}>Hello</a>;
   }
 
   const {container} = render(
@@ -255,6 +232,53 @@ it('has a stable reference', () => {
     </IntlProvider>
   );
   screen.getByText('2');
+});
+
+describe('t.rich', () => {
+  function renderRichTextMessage(
+    message: string,
+    values?: TranslationValues,
+    formats?: Partial<Formats>
+  ) {
+    function Component() {
+      const t = useTranslations();
+      return <>{t.rich('message', values, formats)}</>;
+    }
+
+    return render(
+      <IntlProvider
+        formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+        locale="en"
+        messages={{message}}
+        timeZone="Europe/London"
+      >
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  it('handles rich text', () => {
+    const {container} = renderRichTextMessage(
+      'This is <important>important</important> and <important>this as well</important>',
+      {
+        important: (children: ReactNode) => <b>{children}</b>
+      }
+    );
+    expect(container.innerHTML).toBe(
+      'This is <b>important</b> and <b>this as well</b>'
+    );
+  });
+
+  it('handles nested rich text', () => {
+    const {container} = renderRichTextMessage(
+      'This is <bold><italic>very</italic> important</bold>',
+      {
+        bold: (children: ReactNode) => <b>{children}</b>,
+        italic: (children: ReactNode) => <i>{children}</i>
+      }
+    );
+    expect(container.innerHTML).toBe('This is <b><i>very</i> important</b>');
+  });
 });
 
 describe('t.raw', () => {
@@ -428,6 +452,32 @@ describe('error handling', () => {
     );
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     screen.getByText('price');
+  });
+
+  it('handles rich text being returned from the regular translation function', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations();
+      return <>{t('rich', {p: (children) => <p>{children}</p>})}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{rich: '<p>Test</p>'}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      "INVALID_MESSAGE: The message `rich` in messages didn't resolve to a string. If you want to format rich text, use `t.rich` instead."
+    );
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    screen.getByText('rich');
   });
 });
 
