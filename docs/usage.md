@@ -160,7 +160,7 @@ t('plural', {numMessages: 3});
 t('selectordinal', {year: 11});
 <a href={t('attributeUrl')}>Link</a>
 ```
-## Raw messages
+## Rich text
 
 You can format rich text with custom tags and map them to React components.
 
