@@ -154,9 +154,11 @@ export default function useTranslations(namespace?: string) {
       }
       const messages = messagesOrError;
 
+      const cacheKey = `${namespace}.${key}`
+
       let messageFormat;
-      if (cachedFormatsByLocale[locale]?.[key]) {
-        messageFormat = cachedFormatsByLocale[locale][key];
+      if (cachedFormatsByLocale[locale]?.[cacheKey]) {
+        messageFormat = cachedFormatsByLocale[locale][cacheKey];
       } else {
         let message;
         try {
@@ -201,7 +203,7 @@ export default function useTranslations(namespace?: string) {
         if (!cachedFormatsByLocale[locale]) {
           cachedFormatsByLocale[locale] = {};
         }
-        cachedFormatsByLocale[locale][key] = messageFormat;
+        cachedFormatsByLocale[locale][cacheKey] = messageFormat;
       }
 
       try {
