@@ -154,7 +154,9 @@ export default function useTranslations(namespace?: string) {
       }
       const messages = messagesOrError;
 
-      const cacheKey = [namespace, key].filter(part => part != null).join('.')
+      const cacheKey = [namespace, key]
+        .filter((part) => part != null)
+        .join('.');
 
       let messageFormat;
       if (cachedFormatsByLocale[locale]?.[cacheKey]) {

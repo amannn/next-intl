@@ -235,33 +235,33 @@ it('has a stable reference', () => {
 });
 
 it('renders the correct message when the namespace changes', () => {
-  const Component = ({ namespace }: { namespace: string }): JSX.Element => {
-    const t = useTranslations(namespace)
+  function Component({namespace}: {namespace: string}): JSX.Element {
+    const t = useTranslations(namespace);
 
-    return <span>{t('title')}</span>
-  } 
+    return <span>{t('title')}</span>;
+  }
 
   const messages = {
-    namespaceA: { title: 'This is namespace A' },
-    namespaceB: { title: 'This is namespace B' }
-  }
+    namespaceA: {title: 'This is namespace A'},
+    namespaceB: {title: 'This is namespace B'}
+  };
 
   const {rerender} = render(
     <IntlProvider locale="en" messages={messages}>
       <Component namespace="namespaceA" />
     </IntlProvider>
-  )
+  );
 
-  screen.getByText('This is namespace A')
+  screen.getByText('This is namespace A');
 
   rerender(
     <IntlProvider locale="en" messages={messages}>
       <Component namespace="namespaceB" />
     </IntlProvider>
-  )
+  );
 
-  screen.getByText('This is namespace B')
-})
+  screen.getByText('This is namespace B');
+});
 
 describe('t.rich', () => {
   function renderRichTextMessage(
