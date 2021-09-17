@@ -234,7 +234,7 @@ it('has a stable reference', () => {
   screen.getByText('2');
 });
 
-it('caches by locale, namespace and key', () => {
+it('renders the correct message when the namespace changes', () => {
   const Component = ({ namespace }: { namespace: string }): JSX.Element => {
     const t = useTranslations(namespace)
 
