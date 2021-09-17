@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.0.2 (2021-09-17)
+
+
+### Bug Fixes
+
+* Render correct messages when the namespace changes in `useTranslations` ([#58](https://github.com/amannn/next-intl/issues/58)) ([b8f7dab](https://github.com/amannn/next-intl/commit/b8f7dab0e3a213a91bdcd7929547cd01ba0b5f54))
+
+
+
+
+
 ## 2.0.1 (2021-09-04)
 
 **Note:** Version bump only for package example
