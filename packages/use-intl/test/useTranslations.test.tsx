@@ -234,6 +234,35 @@ it('has a stable reference', () => {
   screen.getByText('2');
 });
 
+it('renders the correct message when the namespace changes', () => {
+  function Component({namespace}: {namespace: string}): JSX.Element {
+    const t = useTranslations(namespace);
+
+    return <span>{t('title')}</span>;
+  }
+
+  const messages = {
+    namespaceA: {title: 'This is namespace A'},
+    namespaceB: {title: 'This is namespace B'}
+  };
+
+  const {rerender} = render(
+    <IntlProvider locale="en" messages={messages}>
+      <Component namespace="namespaceA" />
+    </IntlProvider>
+  );
+
+  screen.getByText('This is namespace A');
+
+  rerender(
+    <IntlProvider locale="en" messages={messages}>
+      <Component namespace="namespaceB" />
+    </IntlProvider>
+  );
+
+  screen.getByText('This is namespace B');
+});
+
 describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
