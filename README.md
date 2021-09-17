@@ -1,6 +1,8 @@
 <h1 align="center">
 	<br>
+	<br>
 	<img width="400" src="media/logo.svg" alt="next-intl">
+	<br>
 	<br>
 	<br>
 </h1>
