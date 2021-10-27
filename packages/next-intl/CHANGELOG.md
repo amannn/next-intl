@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.1.0 (2021-10-27)
+
+
+### Features
+
+* Support Next.js 12 ([#61](https://github.com/amannn/next-intl/issues/61)) ([0391cc8](https://github.com/amannn/next-intl/commit/0391cc85d3401bca9df29080a569957f6be93c85))
+
+
+
+
+
 ## 2.0.5 (2021-09-28)
 
 **Note:** Version bump only for package next-intl
