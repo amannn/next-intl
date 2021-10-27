@@ -40,7 +40,7 @@
     "use-intl": "^2.0.5"
   },
   "peerDependencies": {
-    "next": "^10.0.0 || ^11.0.0",
+    "next": "^10.0.0 || ^11.0.0 || ^12.0.0",
     "react": "^16.8.0 || ^17.0.0"
   },
   "devDependencies": {
