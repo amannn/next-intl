@@ -26,7 +26,7 @@ export default function App({Component, pageProps}: AppProps) {
       // Also an explicit time zone is helpful to ensure dates render the
       // same way on the client as on the server, which might be located
       // in a different time zone.
-      timeZone="Austria/Vienna"
+      timeZone="UTC"
     >
       <Component {...pageProps} />
     </NextIntlProvider>
