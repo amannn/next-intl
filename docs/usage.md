@@ -300,7 +300,7 @@ To avoid mismatches between the server and client environment, it is recommended
 
 This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
 
-**Important:** Note that when you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages frequently, use `getServerSideProps` or configure an `updateInterval`.
+**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
 
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
@@ -352,7 +352,7 @@ If possible, you should configure an explicit time zone as this affects the rend
 To avoid such markup mismatches, you can globally define a time zone like this:
 
 ```jsx
-<NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>
+<NextIntlProvider timeZone="Europe/Vienna">...<NextIntlProvider>
 ```
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
