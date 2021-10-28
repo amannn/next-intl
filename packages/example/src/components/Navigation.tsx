@@ -24,3 +24,5 @@ export default function Navigation() {
     </div>
   );
 }
+
+Navigation.messages = ['Navigation'];

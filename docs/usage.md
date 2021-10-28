@@ -65,7 +65,7 @@ function SignUp() {
 }
 ```
 
-You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently – however, from my experience I think it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
+You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently – however, based on experience it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
 
 To retrieve all available messages in a component, you can omit the namespace path:
 
@@ -75,62 +75,40 @@ const t = useTranslations();
 
 ## Providing messages
 
-You can provide page-specific messages via `getStaticProps` of individual pages:
+You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
 
 ```js
 // pages/index.js
-export function getStaticProps({locale}) {
+export async function getStaticProps({locale}) {
   return {
     props: {
       // You can get the messages from anywhere you like, but the recommended
       // pattern is to put them in JSON files separated by language and read 
       // the desired one based on the `locale` received from Next.js. 
-      messages: require(`../../messages/index/${locale}.json`),
+      messages: await import(`../../messages/index/${locale}.json`)
     }
   };
 }
 ```
 
-If you have a set of common messages that should be available on every page, you can either merge them into the page-level messages:
+If you want to provide only the minimum amount of messages per page, you can filter your messages accordingly:
 
 ```js
 // pages/index.js
-export function getStaticProps({locale}) {
+import pick from 'lodash/pick';
+
+const namespaces = ['Index'];
+
+export async function getStaticProps({locale}) {
   return {
     props: {
-      messages: {
-        ...require(`../../messages/shared/${locale}.json`),
-        ...require(`../../messages/index/${locale}.json`)
-      }
+      messages: pick(await import(`../../messages/index/${locale}.json`), namespaces)
     }
   };
 }
 ```
 
-… or alternatively set them up in `_app.js` and apply the merging there:
-
-```js
-// pages/_app.js
-import NextApp from 'next/app';
-
-export default function App({Component, messages, pageProps}) {	
-  return (
-    <NextIntlProvider messages={{...messages, ...pageProps.messages}}>
-      <Component {...pageProps} />
-    </NextIntlProvider>
-  );
-}
-
-App.getInitialProps = async function getInitialProps(context: AppContext) {	
-  const {locale} = context.router;	
-  return {	
-    ...(await NextApp.getInitialProps(context)),	
-    messages: require(`../../messages/${locale}.json`)
-  };	
-};
-```
-
-Note that in this case you [opt-out of automatic static optimization](https://github.com/vercel/next.js/blob/master/errors/opt-out-auto-static-optimization.md#opt-out-of-automatic-static-optimization). However, pages that use `getStaticProps` are still statically optimized (even if `getStaticProps` is essentially a no-op – only the presence matters).
+Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](../packages/example/src/pages/index.tsx).
 
 ## Rendering messages
 
@@ -322,6 +300,8 @@ To avoid mismatches between the server and client environment, it is recommended
 
 This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
 
+**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
+
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
 ### Dates and times within messages
@@ -372,7 +352,7 @@ If possible, you should configure an explicit time zone as this affects the rend
 To avoid such markup mismatches, you can globally define a time zone like this:
 
 ```jsx
-<NextIntlProvider timeZone="Austria/Vienna">...<NextIntlProvider>
+<NextIntlProvider timeZone="Europe/Vienna">...<NextIntlProvider>
 ```
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
