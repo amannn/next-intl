@@ -11,7 +11,7 @@ import {
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
-import TranslationValues from './TranslationValues';
+import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
 
@@ -47,11 +47,11 @@ function resolvePath(
   return message;
 }
 
-function prepareTranslationValues(values?: TranslationValues) {
+function prepareTranslationValues(values?: RichTranslationValues) {
   if (!values) return values;
 
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
-  const transformedValues: TranslationValues = {};
+  const transformedValues: RichTranslationValues = {};
   Object.keys(values).forEach((key) => {
     const value = values[key];
 
@@ -113,7 +113,7 @@ export default function useTranslations(namespace?: string) {
       }
 
       return retrievedMessages;
-    } catch (error) {
+    } catch (error: any) {
       const intlError = new IntlError(
         IntlErrorCode.MISSING_MESSAGE,
         error.message
@@ -138,7 +138,7 @@ export default function useTranslations(namespace?: string) {
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: string,
       /** Key value pairs for values to interpolate into the message. */
-      values?: TranslationValues,
+      values?: RichTranslationValues,
       /** Provide custom formats for numbers, dates and times. */
       formats?: Partial<Formats>
     ): string | ReactElement | ReactNodeArray {
@@ -165,7 +165,7 @@ export default function useTranslations(namespace?: string) {
         let message;
         try {
           message = resolvePath(messages, key, namespace);
-        } catch (error) {
+        } catch (error: any) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.MISSING_MESSAGE,
@@ -194,7 +194,7 @@ export default function useTranslations(namespace?: string) {
               timeZone
             )
           );
-        } catch (error) {
+        } catch (error: any) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.INVALID_MESSAGE,
@@ -230,7 +230,7 @@ export default function useTranslations(namespace?: string) {
           typeof formattedMessage === 'string'
           ? formattedMessage
           : String(formattedMessage);
-      } catch (error) {
+      } catch (error: any) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.FORMATTING_ERROR,
@@ -282,7 +282,7 @@ export default function useTranslations(namespace?: string) {
 
       try {
         return resolvePath(messages, key, namespace);
-      } catch (error) {
+      } catch (error: any) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.MISSING_MESSAGE,

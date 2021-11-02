@@ -6,6 +6,7 @@ import {
   IntlError,
   IntlErrorCode,
   IntlProvider,
+  RichTranslationValues,
   TranslationValues,
   useTranslations
 } from '../src';
@@ -266,7 +267,7 @@ it('renders the correct message when the namespace changes', () => {
 describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
-    values?: TranslationValues,
+    values?: RichTranslationValues,
     formats?: Partial<Formats>
   ) {
     function Component() {
@@ -488,6 +489,7 @@ describe('error handling', () => {
 
     function Component() {
       const t = useTranslations();
+      // @ts-expect-error Invalid usage
       return <>{t('rich', {p: (children) => <p>{children}</p>})}</>;
     }
 
