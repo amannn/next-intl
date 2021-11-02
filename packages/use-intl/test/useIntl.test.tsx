@@ -3,6 +3,7 @@ import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode} from 'react';
 import {
   DateTimeFormatOptions,
+  NumberFormatOptions,
   IntlError,
   IntlErrorCode,
   IntlProvider,
@@ -192,7 +193,7 @@ describe('formatDateTime', () => {
 });
 
 describe('formatNumber', () => {
-  function renderNumber(value: number, options?: Intl.NumberFormatOptions) {
+  function renderNumber(value: number, options?: NumberFormatOptions) {
     function Component() {
       const intl = useIntl();
       return <>{intl.formatNumber(value, options)}</>;
