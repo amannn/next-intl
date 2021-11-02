@@ -11,7 +11,7 @@ import {
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
-import TranslationValues from './TranslationValues';
+import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
 
@@ -47,11 +47,11 @@ function resolvePath(
   return message;
 }
 
-function prepareTranslationValues(values?: TranslationValues) {
+function prepareTranslationValues(values?: RichTranslationValues) {
   if (!values) return values;
 
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
-  const transformedValues: TranslationValues = {};
+  const transformedValues: RichTranslationValues = {};
   Object.keys(values).forEach((key) => {
     const value = values[key];
 
@@ -116,7 +116,7 @@ export default function useTranslations(namespace?: string) {
     } catch (error) {
       const intlError = new IntlError(
         IntlErrorCode.MISSING_MESSAGE,
-        error.message
+        (error as Error).message
       );
       onError(intlError);
       return intlError;
@@ -138,7 +138,7 @@ export default function useTranslations(namespace?: string) {
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: string,
       /** Key value pairs for values to interpolate into the message. */
-      values?: TranslationValues,
+      values?: RichTranslationValues,
       /** Provide custom formats for numbers, dates and times. */
       formats?: Partial<Formats>
     ): string | ReactElement | ReactNodeArray {
@@ -169,7 +169,7 @@ export default function useTranslations(namespace?: string) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.MISSING_MESSAGE,
-            error.message
+            (error as Error).message
           );
         }
 
@@ -198,7 +198,7 @@ export default function useTranslations(namespace?: string) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.INVALID_MESSAGE,
-            error.message
+            (error as Error).message
           );
         }
 
@@ -234,7 +234,7 @@ export default function useTranslations(namespace?: string) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.FORMATTING_ERROR,
-          error.message
+          (error as Error).message
         );
       }
     }
@@ -286,7 +286,7 @@ export default function useTranslations(namespace?: string) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.MISSING_MESSAGE,
-          error.message
+          (error as Error).message
         );
       }
     };

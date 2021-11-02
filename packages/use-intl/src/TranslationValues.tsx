@@ -1,15 +1,13 @@
 import {ReactNode} from 'react';
 
-type TranslationValues = Record<
+// From IntlMessageFormat#format
+type TranslationValue = string | number | boolean | Date | null | undefined;
+
+type TranslationValues = Record<string, TranslationValue>;
+
+export type RichTranslationValues = Record<
   string,
-  // From IntlMessageFormat#format
-  | string
-  | number
-  | boolean
-  | Date
-  | null
-  | undefined
-  | ((children: ReactNode) => ReactNode)
+  TranslationValue | ((children: ReactNode) => ReactNode)
 >;
 
 export default TranslationValues;

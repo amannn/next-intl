@@ -87,7 +87,9 @@ export default function useIntl() {
     try {
       return formatter(options);
     } catch (error) {
-      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+      onError(
+        new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
+      );
       return String(value);
     }
   }
@@ -154,7 +156,9 @@ export default function useIntl() {
         numeric: 'auto'
       }).format(value, unit);
     } catch (error) {
-      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+      onError(
+        new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
+      );
       return String(date);
     }
   }
