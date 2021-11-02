@@ -6,7 +6,7 @@
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
