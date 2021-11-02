@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.2.0 (2021-11-02)
+
+
+### Features
+
+* TypeScript improvements: Use enum type for `style` of `NumberFormatOptions`, only allow passing React children to messages rendered with `t.rich` and update `tslib` ([#63](https://github.com/amannn/next-intl/issues/63)) ([d73e935](https://github.com/amannn/next-intl/commit/d73e9358bf13c87c0a653bd9fbed35e41548ff1d))
+
+
+
+
+
 ## 2.1.1 (2021-10-28)
 
 **Note:** Version bump only for package root
