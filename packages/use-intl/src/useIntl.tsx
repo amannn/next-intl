@@ -86,8 +86,10 @@ export default function useIntl() {
 
     try {
       return formatter(options);
-    } catch (error: any) {
-      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+    } catch (error) {
+      onError(
+        new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
+      );
       return String(value);
     }
   }
@@ -153,8 +155,10 @@ export default function useIntl() {
       return new Intl.RelativeTimeFormat(locale, {
         numeric: 'auto'
       }).format(value, unit);
-    } catch (error: any) {
-      onError(new IntlError(IntlErrorCode.FORMATTING_ERROR, error.message));
+    } catch (error) {
+      onError(
+        new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
+      );
       return String(date);
     }
   }

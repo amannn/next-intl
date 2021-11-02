@@ -113,10 +113,10 @@ export default function useTranslations(namespace?: string) {
       }
 
       return retrievedMessages;
-    } catch (error: any) {
+    } catch (error) {
       const intlError = new IntlError(
         IntlErrorCode.MISSING_MESSAGE,
-        error.message
+        (error as Error).message
       );
       onError(intlError);
       return intlError;
@@ -165,11 +165,11 @@ export default function useTranslations(namespace?: string) {
         let message;
         try {
           message = resolvePath(messages, key, namespace);
-        } catch (error: any) {
+        } catch (error) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.MISSING_MESSAGE,
-            error.message
+            (error as Error).message
           );
         }
 
@@ -194,11 +194,11 @@ export default function useTranslations(namespace?: string) {
               timeZone
             )
           );
-        } catch (error: any) {
+        } catch (error) {
           return getFallbackFromErrorAndNotify(
             key,
             IntlErrorCode.INVALID_MESSAGE,
-            error.message
+            (error as Error).message
           );
         }
 
@@ -230,11 +230,11 @@ export default function useTranslations(namespace?: string) {
           typeof formattedMessage === 'string'
           ? formattedMessage
           : String(formattedMessage);
-      } catch (error: any) {
+      } catch (error) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.FORMATTING_ERROR,
-          error.message
+          (error as Error).message
         );
       }
     }
@@ -282,11 +282,11 @@ export default function useTranslations(namespace?: string) {
 
       try {
         return resolvePath(messages, key, namespace);
-      } catch (error: any) {
+      } catch (error) {
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.MISSING_MESSAGE,
-          error.message
+          (error as Error).message
         );
       }
     };
