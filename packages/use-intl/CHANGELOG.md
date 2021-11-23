@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.2.1 (2021-11-23)
+
+
+### Bug Fixes
+
+* Clearer error message when no messages are provided ([#66](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/66)) ([742729a](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/742729aaddd63367efc2b79ef0cdf93545abdfb0))
+
+
+
+
+
 # 2.2.0 (2021-11-02)
 
 
