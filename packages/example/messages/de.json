@@ -13,6 +13,9 @@
     "about": "Über",
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch}} wechseln"
   },
+  "NotFound": {
+    "title": "Entschuldigung, diese Seite konnte nicht gefunden werden."
+  },
   "PageLayout": {
     "pageTitle": "next-intl"
   }

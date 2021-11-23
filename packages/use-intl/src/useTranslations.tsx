@@ -100,6 +100,12 @@ export default function useTranslations(namespace?: string) {
 
   const messagesOrError = useMemo(() => {
     try {
+      if (!allMessages) {
+        throw new Error(
+          __DEV__ ? `No messages were configured on the provider.` : undefined
+        );
+      }
+
       const retrievedMessages = namespace
         ? resolvePath(allMessages, namespace)
         : allMessages;

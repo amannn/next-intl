@@ -4,7 +4,7 @@ import {ReactNode} from 'react';
 import Navigation from './Navigation';
 
 type Props = {
-  children: ReactNode;
+  children?: ReactNode;
   title: string;
 };
 
