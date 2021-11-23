@@ -369,6 +369,28 @@ describe('t.raw', () => {
 });
 
 describe('error handling', () => {
+  it('warns when no messages are configured', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('label')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'MISSING_MESSAGE: No messages were configured on the provider.'
+    );
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    screen.getByText('Component.label');
+  });
+
   it('allows to configure a fallback', () => {
     const onError = jest.fn();
 
