@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.3.0 (2021-11-24)
+
+
+### Features
+
+* Add `useLocale` and `useTimeZone` ([#67](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/67)) ([7833f4a](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/7833f4adc1aadc937cbaa550a968ef6f7b4f5ee1))
+
+
+
+
+
 ## 2.2.1 (2021-11-23)
 
 
