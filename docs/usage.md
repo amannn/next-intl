@@ -428,3 +428,18 @@ function getMessageFallback({namespace, key, error}) {
   <App />
 </NextIntlProvider>
 ```
+
+## Retrieving provider config
+
+As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
+
+```js
+// Returns either an explicitly configured locale from the
+// provider or if internationalized routing is set up, it
+// returns the configured locale from Next.js.
+const locale = useLocale(); 
+
+// Note that this will be `undefined` if no explicit
+// `timeZone` was configured on the provider.
+const timeZone = useTimeZone();
+```
