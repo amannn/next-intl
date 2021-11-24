@@ -429,9 +429,9 @@ function getMessageFallback({namespace, key, error}) {
 </NextIntlProvider>
 ```
 
-## Reading config in nested components
+## Retrieving provider config
 
-As a convenience, two hooks exist that allow to read configuration that was passed to the provider in nested components:
+As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
 
 ```js
 // Returns either an explicitly configured locale from the
