@@ -1,6 +1,10 @@
 # Usage guide
 
-## Rendering messages
+This guide explains all features of `next-intl`. If you prefer a more hands-on approach to learning, you can alternatively jump directly into reading the [example source code](../packages/example).
+
+## Providing messages to components
+
+In order to render messages in components, the messages have to be provided as JSON data to the provider.
 
 ### Structuring messages
 
@@ -67,7 +71,7 @@ function SignUp() {
 }
 ```
 
-You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently – however, based on experience it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
+You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, based on experience it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
 
 To retrieve all available messages in a component, you can omit the namespace path:
 
@@ -112,7 +116,9 @@ export async function getStaticProps({locale}) {
 
 Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](../packages/example/src/pages/index.tsx).
 
-### Interpolation of values
+### Rendering of messages
+
+You can interpolate values from your components into your messages with a special placeholder syntax.
 
 ```js
 {
@@ -157,8 +163,6 @@ t.rich('richText', {
   very: (children) => <i>{children}</i>
 })
 ```
-
-See the [FormatJS docs](https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting) for syntax details.
 
 ### Raw messages
 
@@ -243,6 +247,7 @@ Similar to number formatting, you can format plain dates and times that are not 
 
 ```js
 import {useIntl} from 'next-intl';
+import {parseISO} from 'data-fns';
 
 function Component() {
   const intl = useIntl();
@@ -260,41 +265,44 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 Relative time durations can be formatted with a separate function:
 
 ```js
+import {useIntl} from 'next-intl';
+import {parseISO} from 'data-fns';
+
 function Component () {
   const intl = useIntl();
   const dateTime = parseISO('2020-11-20T08:30:00.000Z');
   const now = parseISO('2020-11-20T10:36:00.000Z');
 
-  intl.formatRelativeTime(dateTime, now); // 2 hours ago
+  // Renders "2 hours ago"
+  intl.formatRelativeTime(dateTime, now); 
 }
 ```
 
 Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
 
-Supplying `now` is necessary for the function to return consistent results. You can provide your own value for `now`, or alternatively use the one provided from `useNow`:
+Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](#global-now-value), you can omit the second argument:
 
 ```js
-import {useNow} from 'next-intl';
+intl.formatRelativeTime(dateTime); 
+```
+
+If you want the value to update over time, you can do so with the `useNow` hook:
+
+```js
+import {useNow, useIntl} from 'next-intl';
+import {parseISO} from 'data-fns';
 
 function Component() {
-  const now = useNow();
+  const now = useNow({
+    // Update every 10 seconds
+    updateInterval: 1000 * 10
+  });
   const intl = useIntl();
-
   const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+
   intl.formatRelativeTime(dateTime, now);
 }
 ```
-
-You can optionally configure an interval when the `now` value should update:
-
-```js
-const now = useNow({
-  // Update every 10 seconds
-  updateInterval: 1000 * 10
-});
-```
-
-When relative time formatting is used, you should [configure a global `now` value on the provider](#global-now-value).
 
 ### Dates and times within messages
 
@@ -448,12 +456,16 @@ function getMessageFallback({namespace, key, error}) {
 As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
 
 ```js
-// Returns either an explicitly configured locale from the
-// provider or if internationalized routing is set up, it
-// returns the configured locale from Next.js.
-const locale = useLocale(); 
+import {useLocale, useTimeZone} from 'next-intl';
 
-// Note that this will be `undefined` if no explicit
-// `timeZone` was configured on the provider.
-const timeZone = useTimeZone();
+function Component() {
+  // Returns either an explicitly configured locale from the
+  // provider or if internationalized routing is set up, it
+  // returns the configured locale from Next.js.
+  const locale = useLocale(); 
+
+  // Note that this will be `undefined` if no explicit
+  // `timeZone` was configured on the provider.
+  const timeZone = useTimeZone();
+}
 ```

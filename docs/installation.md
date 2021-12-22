@@ -1,8 +1,8 @@
-# Installation guide
+# Installation
 
 ## Typical setup
 
-1. Install `next-intl` in your project.
+1. `npm install next-intl`
 2. Add the provider in `_app.js`.
 ```jsx
 import {NextIntlProvider} from 'next-intl';
