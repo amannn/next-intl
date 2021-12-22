@@ -9,7 +9,7 @@
 
 1. This library is built around the concept of namespaces and that components consume a single namespace.
 2. This library offers only a hooks-based API for message consumption. The reason for this is that the same API can be used for attributes as well as `children`.
-3. This library doesn't use message descriptions, which could make it harder for translaters to localize messages. Related to this, AST-based extraction from `react-intl` is not possible. This library might be more reasonable for apps where the developer sets up translations based on a design for example whereas `react-intl` is targeted at really large projects with a multitude of languages.
+3. This library currently doesn't support AST-based extraction like `react-intl`.
 4. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
 
 ## Can this be used without Next.js?
@@ -19,3 +19,5 @@ Yes, see [`use-intl`](../packages/use-intl).
 ## How can I parse dates or manipulate them?
 
 This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
+
+Note that parsing dates with `new Date(dateString)` and `Date.parse(dateString)` is discouraged due to browser differences and inconsistencies (see [the MDN docs on the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).

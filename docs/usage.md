@@ -257,9 +257,13 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 Relative time durations can be formatted with a separate function:
 
 ```js
-const dateTime = parseISO('2020-11-20T10:36:01.516Z');
-const now = parseISO('2020-11-25T10:36:01.516Z');
-intl.formatRelativeTime(dateTime, now);
+function Component () {
+  const intl = useIntl();
+  const dateTime = parseISO('2020-11-20T08:30:00.000Z');
+  const now = parseISO('2020-11-20T10:36:00.000Z');
+
+  intl.formatRelativeTime(dateTime, now); // 2 hours ago
+}
 ```
 
 Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
@@ -271,6 +275,7 @@ import {useNow} from 'next-intl';
 
 function Component() {
   const now = useNow();
+  const intl = useIntl();
 
   const dateTime = parseISO('2020-11-20T10:36:01.516Z');
   intl.formatRelativeTime(dateTime, now);
@@ -286,23 +291,7 @@ const now = useNow({
 });
 ```
 
-To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
-
-```js
-<NextIntlProvider
-  // This value can be generated in data fetching functions of individual pages or `App.getInitialProps`.
-  now={now}
-  ...
->
-  <App />
-</NextIntlProvider>
-```
-
-This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
-
-**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
-
-For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
+When relative time formatting is used, you should [configure a global `now` value on the provider](#global-now-value).
 
 ### Dates and times within messages
 
@@ -356,6 +345,26 @@ To avoid such markup mismatches, you can globally define a time zone like this:
 ```
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Global `now` value
+
+To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
+
+```js
+<NextIntlProvider
+  // This value can be generated in data fetching functions of individual pages or `App.getInitialProps`.
+  now={now}
+  ...
+>
+  <App />
+</NextIntlProvider>
+```
+
+This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
+
+**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
+
+For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
 ## Global formats
 
