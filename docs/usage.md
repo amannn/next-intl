@@ -346,7 +346,7 @@ To avoid such markup mismatches, you can globally define a time zone like this:
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-### Global `now` value
+## Global `now` value
 
 To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
 
