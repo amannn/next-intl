@@ -1,6 +1,8 @@
 # Usage guide
 
-## Structuring messages
+## Rendering messages
+
+### Structuring messages
 
 The recommended approach is to group messages by components and embrace them as the primary unit of code organization in your app.
 
@@ -73,7 +75,7 @@ To retrieve all available messages in a component, you can omit the namespace pa
 const t = useTranslations();
 ```
 
-## Providing messages
+### Providing messages
 
 You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
 
@@ -110,7 +112,7 @@ export async function getStaticProps({locale}) {
 
 Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](../packages/example/src/pages/index.tsx).
 
-## Rendering messages
+### Interpolation of values
 
 ```js
 {
@@ -138,7 +140,8 @@ t('plural', {numMessages: 3});
 t('selectordinal', {year: 11});
 <a href={t('attributeUrl')}>Link</a>
 ```
-## Rich text
+
+### Rich text
 
 You can format rich text with custom tags and map them to React components.
 
@@ -157,7 +160,7 @@ t.rich('richText', {
 
 See the [FormatJS docs](https://formatjs.io/docs/core-concepts/icu-syntax/#rich-text-formatting) for syntax details.
 
-## Raw messages
+### Raw messages
 
 Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this:
 
@@ -346,7 +349,9 @@ To avoid such markup mismatches, you can globally define a time zone like this:
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-## Global `now` value
+## Configuration
+
+### Global `now` value
 
 To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
 
@@ -366,7 +371,7 @@ This value will be used as the default for the `formatRelativeTime` function as 
 
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
-## Global formats
+### Global formats
 
 To achieve consistent date, time and number formatting across your app, you can define a set of global formats and pass them to the provider.
 
@@ -404,7 +409,7 @@ t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
 t('latitude', {latitude: 47.414329182});
 ```
 
-## Error handling
+### Error handling
 
 By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
 
@@ -438,7 +443,7 @@ function getMessageFallback({namespace, key, error}) {
 </NextIntlProvider>
 ```
 
-## Retrieving provider config
+### Retrieving provider config
 
 As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
 
