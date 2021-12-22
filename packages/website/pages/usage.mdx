@@ -1,6 +1,6 @@
 # Usage guide
 
-This guide explains all features of `next-intl`. If you prefer a more hands-on approach to learning, you can alternatively jump directly into reading the [example source code](../packages/example).
+This guide explains all features of `next-intl`. If you prefer a more hands-on approach to learning, you can alternatively jump directly into reading the [example source code](https://github.com/amannn/next-intl/tree/main/packages/example).
 
 ## Providing messages to components
 
@@ -52,7 +52,7 @@ import {useTranslations} from 'next-intl';
 
 function SignUp() {
   // Provide the lowest common denominator that contains
-  // all messages this component needs to consume. 
+  // all messages this component needs to consume.
   const t = useTranslations('auth.SignUp');
 
   return (
@@ -89,8 +89,8 @@ export async function getStaticProps({locale}) {
   return {
     props: {
       // You can get the messages from anywhere you like, but the recommended
-      // pattern is to put them in JSON files separated by language and read 
-      // the desired one based on the `locale` received from Next.js. 
+      // pattern is to put them in JSON files separated by language and read
+      // the desired one based on the `locale` received from Next.js.
       messages: await import(`../../messages/index/${locale}.json`)
     }
   };
@@ -108,13 +108,16 @@ const namespaces = ['Index'];
 export async function getStaticProps({locale}) {
   return {
     props: {
-      messages: pick(await import(`../../messages/index/${locale}.json`), namespaces)
+      messages: pick(
+        await import(`../../messages/index/${locale}.json`),
+        namespaces
+      )
     }
   };
 }
 ```
 
-Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](../packages/example/src/pages/index.tsx).
+Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](https://github.com/amannn/next-intl/tree/main/packages/example/src/pages/index.tsx).
 
 ### Rendering of messages
 
@@ -127,10 +130,10 @@ You can interpolate values from your components into your messages with a specia
 
   // See https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format
   "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
-  
+
   // See https://formatjs.io/docs/core-concepts/icu-syntax/#select-format
   "select": "{gender, select, male {He} female {She} other {They}} is online.",
-  
+
   // See https://formatjs.io/docs/core-concepts/icu-syntax/#selectordinal-format
   "selectordinal": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
 
@@ -144,7 +147,7 @@ t('static');
 t('interpolation', {name: 'Jane'});
 t('plural', {numMessages: 3});
 t('selectordinal', {year: 11});
-<a href={t('attributeUrl')}>Link</a>
+<a href={t('attributeUrl')}>Link</a>;
 ```
 
 ### Rich text
@@ -159,9 +162,9 @@ You can format rich text with custom tags and map them to React components.
 
 ```js
 t.rich('richText', {
-  important: (children) => <b>{children}</b>,
-  very: (children) => <i>{children}</i>
-})
+  important: children => <b>{children}</b>,
+  very: children => <i>{children}</i>
+});
 ```
 
 ### Raw messages
@@ -191,10 +194,10 @@ When you're formatting plain numbers that are not part of a message, you can use
 ```js
 import {useIntl} from 'next-intl';
 
-function Component () {
+function Component() {
   const intl = useIntl();
 
-  intl.formatNumber(499.90, {style: 'currency', currency: 'USD'});
+  intl.formatNumber(499.9, {style: 'currency', currency: 'USD'});
 }
 ```
 
@@ -247,13 +250,17 @@ Similar to number formatting, you can format plain dates and times that are not 
 
 ```js
 import {useIntl} from 'next-intl';
-import {parseISO} from 'data-fns';
+import {parseISO} from 'date-fns';
 
 function Component() {
   const intl = useIntl();
   const dateTime = parseISO('2020-11-20T10:36:01.516Z');
 
-  intl.formatDateTime(dateTime, {year: 'numeric', month: 'numeric', day: 'numeric'});
+  intl.formatDateTime(dateTime, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric'
+  });
   intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
 }
 ```
@@ -266,15 +273,15 @@ Relative time durations can be formatted with a separate function:
 
 ```js
 import {useIntl} from 'next-intl';
-import {parseISO} from 'data-fns';
+import {parseISO} from 'date-fns';
 
-function Component () {
+function Component() {
   const intl = useIntl();
   const dateTime = parseISO('2020-11-20T08:30:00.000Z');
   const now = parseISO('2020-11-20T10:36:00.000Z');
 
   // Renders "2 hours ago"
-  intl.formatRelativeTime(dateTime, now); 
+  intl.formatRelativeTime(dateTime, now);
 }
 ```
 
@@ -283,14 +290,14 @@ Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago
 Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](#global-now-value), you can omit the second argument:
 
 ```js
-intl.formatRelativeTime(dateTime); 
+intl.formatRelativeTime(dateTime);
 ```
 
 If you want the value to update over time, you can do so with the `useNow` hook:
 
 ```js
 import {useNow, useIntl} from 'next-intl';
-import {parseISO} from 'data-fns';
+import {parseISO} from 'date-fns';
 
 function Component() {
   const now = useNow({
@@ -316,8 +323,7 @@ Dates and times can be embedded within messages as well:
 
 See the [FormatJS docs about date time](https://formatjs.io/docs/intl-messageformat#datetime-skeleton) to learn more about this syntax.
 
-Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options):
-:
+Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options): :
 
 ```js
 {
@@ -344,7 +350,6 @@ t(
 
 To reuse date and time formats for multiple components, you can configure [global formats](#global-formats).
 
-
 ### Time zones
 
 If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
@@ -363,9 +368,10 @@ This can either be static in your app, or alternatively read from the user profi
 
 To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
 
-```js
+```jsx
 <NextIntlProvider
-  // This value can be generated in data fetching functions of individual pages or `App.getInitialProps`.
+  // This value can be generated in data fetching functions
+  // of individual pages or `App.getInitialProps`.
   now={now}
   ...
 >
@@ -462,7 +468,7 @@ function Component() {
   // Returns either an explicitly configured locale from the
   // provider or if internationalized routing is set up, it
   // returns the configured locale from Next.js.
-  const locale = useLocale(); 
+  const locale = useLocale();
 
   // Note that this will be `undefined` if no explicit
   // `timeZone` was configured on the provider.
