@@ -3,4 +3,12 @@ const withNextra = require('nextra')({
   themeConfig: './theme.config.js'
 });
 
-module.exports = withNextra()
+module.exports = withNextra({
+  redirects: () => [
+    {
+      source: "/docs",
+      destination: "/docs/installation",
+      permanent: false
+    }
+  ]
+});

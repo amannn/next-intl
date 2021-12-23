@@ -1,0 +1,182 @@
+# Messages
+
+In order to render messages in components, the messages have to be provided as JSON data to the provider.
+
+## Structuring messages
+
+The recommended approach is to group messages by components and embrace them as the primary unit of code organization in your app.
+
+```js
+// en.json
+{
+  "About": {
+    "title": "About us"
+  }
+}
+```
+
+```js
+// About.js
+import {useTranslations} from 'next-intl';
+
+function About() {
+  const t = useTranslations('About');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+You can provide more structure by nesting messages:
+
+```js
+// en.json
+{
+  "auth": {
+    "SignUp": {
+      "title": "Sign up",
+      "form": {
+        "placeholder": "Please enter your name",
+        "submit": "Submit"
+      }
+    }
+  }
+}
+```
+
+```js
+// SignUp.js
+import {useTranslations} from 'next-intl';
+
+function SignUp() {
+  // Provide the lowest common denominator that contains
+  // all messages this component needs to consume.
+  const t = useTranslations('auth.SignUp');
+
+  return (
+    <>
+      <h1>{t('title')}</h1>
+      <form>
+        <input
+          // The remaining hierarchy can be resolved by
+          // using a dot to access nested messages.
+          placeholder={t('form.placeholder')}
+        />
+        <button type="submit">{t('form.submit')}</button>
+      </form>
+    </>
+  );
+}
+```
+
+You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, based on experience it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
+
+To retrieve all available messages in a component, you can omit the namespace path:
+
+```js
+const t = useTranslations();
+```
+
+## Providing messages
+
+You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
+
+```js
+// pages/index.js
+export async function getStaticProps({locale}) {
+  return {
+    props: {
+      // You can get the messages from anywhere you like, but the recommended
+      // pattern is to put them in JSON files separated by language and read
+      // the desired one based on the `locale` received from Next.js.
+      messages: await import(`../../messages/index/${locale}.json`)
+    }
+  };
+}
+```
+
+If you want to provide only the minimum amount of messages per page, you can filter your messages accordingly:
+
+```js
+// pages/index.js
+import pick from 'lodash/pick';
+
+const namespaces = ['Index'];
+
+export async function getStaticProps({locale}) {
+  return {
+    props: {
+      messages: pick(
+        await import(`../../messages/index/${locale}.json`),
+        namespaces
+      )
+    }
+  };
+}
+```
+
+Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [example](https://github.com/amannn/next-intl/tree/main/packages/example/src/pages/index.tsx).
+
+## Rendering of messages
+
+You can interpolate values from your components into your messages with a special placeholder syntax.
+
+```js
+{
+  "static": "Hello",
+  "interpolation": "Hello {name}",
+
+  // See https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format
+  "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
+
+  // See https://formatjs.io/docs/core-concepts/icu-syntax/#select-format
+  "select": "{gender, select, male {He} female {She} other {They}} is online.",
+
+  // See https://formatjs.io/docs/core-concepts/icu-syntax/#selectordinal-format
+  "selectordinal": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+
+  // Messages can be used in attributes as well
+  "attributeUrl": "https://example.com"
+}
+```
+
+```js
+t('static');
+t('interpolation', {name: 'Jane'});
+t('plural', {numMessages: 3});
+t('selectordinal', {year: 11});
+<a href={t('attributeUrl')}>Link</a>;
+```
+
+## Rich text
+
+You can format rich text with custom tags and map them to React components.
+
+```js
+{
+  "richText": "This is <important><very>very</very> important</important>"
+}
+```
+
+```js
+t.rich('richText', {
+  important: children => <b>{children}</b>,
+  very: children => <i>{children}</i>
+});
+```
+
+## Raw messages
+
+Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this:
+
+```js
+{
+  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+}
+```
+
+```js
+<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
+```
+
+**Important**: Note that you should sanitize content that you pass to `dangerouslySetInnerHTML` to avoid XSS attacks.
+
+The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.

@@ -1,0 +1,5 @@
+@tailwind utilities;
+
+code {
+  @apply text-sm;
+}

@@ -1,0 +1,33 @@
+# Error handling
+
+By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
+
+You can customize this behaviour with the `onError` and `getMessageFallback` props of `NextIntlProvider`.
+
+```jsx
+import {NextIntlProvider, IntlErrorCode} from 'next-intl';
+
+function onError(error) {
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    // Missing translations are expected and should only log an error
+    console.error(error);
+  } else {
+    // Other errors indicate a bug in the app and should be reported
+    reportToErrorTracking(error);
+  }
+}
+
+function getMessageFallback({namespace, key, error}) {
+  const path = [namespace, key].filter((part) => part != null).join('.');
+
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    return `${path} is not yet translated`;
+  } else {
+    return `Dear developer, please fix this message: ${path}`;
+  }
+}
+
+<NextIntlProvider ... onError={onError} getMessageFallback={getMessageFallback}>
+  <App />
+</NextIntlProvider>
+```

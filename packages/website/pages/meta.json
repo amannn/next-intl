@@ -1,6 +1,11 @@
 {
-  "index": "Introduction",
-  "installation": "Installation",
-  "usage": "Usage guide",
-  "faq": "FAQ"
+  "index": {
+    "title": "Introduction",
+    "type": "nav",
+    "hidden": true
+  },
+  "docs": {
+    "title": "Docs",
+    "type": "nav"
+  }
 }
