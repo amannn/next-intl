@@ -2,24 +2,15 @@ import {parseISO} from 'date-fns';
 import {pick} from 'lodash';
 import {GetServerSidePropsContext} from 'next';
 import {useIntl, useTranslations} from 'next-intl';
-import {useRouter} from 'next/router';
-import Code from '../components/Code';
 import PageLayout from '../components/PageLayout';
 
 export default function About() {
   const t = useTranslations('About');
-  const {locale} = useRouter();
   const intl = useIntl();
-  const lastUpdated = parseISO('2021-10-28T10:04:45.567Z');
+  const lastUpdated = parseISO('2021-12-23T10:04:45.567Z');
 
   return (
     <PageLayout title={t('title')}>
-      <p>
-        {t.rich('description', {
-          locale,
-          code: (children) => <Code>{children}</Code>
-        })}
-      </p>
       <p>
         {t.rich('lastUpdated', {
           lastUpdated,
@@ -41,7 +32,7 @@ export async function getServerSideProps({locale}: GetServerSidePropsContext) {
       ),
       // Note that when `now` is passed to the app, you need to make sure the
       // value is updated from time to time, so relative times are updated. See
-      // https://github.com/amannn/next-intl/blob/main/docs/usage.md#formatrelativetime
+      // https://next-intl-docs.vercel.app/docs/usage/configuration#global-now-value
       now: new Date().getTime()
     }
   };

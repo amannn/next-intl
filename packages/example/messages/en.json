@@ -1,20 +1,8 @@
 {
-  "About": {
-    "title": "About",
-    "description": "This page uses messages from <code>./messages/about/{locale}.json</code> and <code>./messages/shared/{locale}.json</code>. Messages from the start page and other locales are not loaded.",
-    "lastUpdated": "This example was updated {lastUpdatedRelative} ({lastUpdated, date, short})."
-  },
   "Index": {
     "title": "Home",
-    "description": "This page uses messages from <code>./messages/index/{locale}.json</code> and <code>./messages/shared/{locale}.json</code>. Messages from the about page and other locales are not loaded."
-  },
-  "Navigation": {
-    "index": "Home",
-    "about": "About",
+    "description": "This is the home page.",
     "switchLocale": "Switch to {locale, select, de {German} en {English}}"
-  },
-  "NotFound": {
-    "title": "Sorry, this page could not be found."
   },
   "PageLayout": {
     "pageTitle": "next-intl"

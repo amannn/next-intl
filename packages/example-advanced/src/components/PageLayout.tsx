@@ -1,6 +1,7 @@
 import {useTranslations} from 'next-intl';
 import Head from 'next/head';
 import {ReactNode} from 'react';
+import Navigation from './Navigation';
 
 type Props = {
   children?: ReactNode;
@@ -19,10 +20,13 @@ export default function PageLayout({children, title}: Props) {
         style={{
           padding: 24,
           fontFamily: 'system-ui, sans-serif',
-          lineHeight: 1.5
+          lineHeight: 1.5,
+          maxWidth: 800,
+          margin: 'auto'
         }}
       >
-        <div style={{maxWidth: 510}}>
+        <Navigation />
+        <div>
           <h1>{title}</h1>
           {children}
         </div>
@@ -30,3 +34,5 @@ export default function PageLayout({children, title}: Props) {
     </>
   );
 }
+
+PageLayout.messages = ['PageLayout', ...Navigation.messages];
