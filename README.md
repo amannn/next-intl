@@ -49,9 +49,4 @@ function LatestFollower({user}) {
 }
 ```
 
-## Docs
-
-- [Installation guide](./docs/installation.md)
-- [Usage guide](./docs/usage.md)
-- [FAQ](./docs/faq.md)
-- [Changelog](./CHANGELOG.md)
+### [→ Read the docs](https://next-intl-docs.vercel.app/)
