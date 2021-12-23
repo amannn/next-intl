@@ -1,0 +1,56 @@
+# Numbers
+
+## Formatting plain numbers
+
+When you're formatting plain numbers that are not part of a message, you can use a separate hook:
+
+```js
+import {useIntl} from 'next-intl';
+
+function Component() {
+  const intl = useIntl();
+
+  intl.formatNumber(499.9, {style: 'currency', currency: 'USD'});
+}
+```
+
+See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to `formatNumber`.
+
+## Numbers within messages
+
+Numbers can also be embedded within messages:
+
+```js
+{
+  "percent": "This product is on sale: {value, number, percent}",
+  "percent": "At most 2 fraction digits: {value, number, .##}"
+}
+```
+
+See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this syntax.
+
+Additionally, you can configure custom formatters which can be referenced by name:
+
+```js
+{
+  "price": "This product costs {price, number, currency}"
+}
+```
+
+```js
+t(
+  'price',
+  {price: 32000.99},
+  {
+    // Custom formats can be supplied via the third parameter
+    number: {
+      currency: {
+        style: 'currency',
+        currency: 'EUR'
+      }
+    }
+  }
+);
+```
+
+To reuse number formats for multiple components, you can configure [global formats](/docs/usage/configuration#global-formats).

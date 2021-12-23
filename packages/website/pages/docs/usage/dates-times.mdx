@@ -1,0 +1,109 @@
+# Dates and times
+
+If you're formatting dates and times, you should [set up a global time zone](#todo).
+
+## Formatting plain dates
+
+You can format plain dates and times that are not part of a message with the `useIntl` hook:
+
+```js
+import {useIntl} from 'next-intl';
+import {parseISO} from 'date-fns';
+
+function Component() {
+  const intl = useIntl();
+  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+
+  intl.formatDateTime(dateTime, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric'
+  });
+  intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
+}
+```
+
+See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options you can provide to `formatDateTime`.
+
+## Formatting relative time
+
+Relative time durations can be formatted with a separate function:
+
+```js
+import {useIntl} from 'next-intl';
+import {parseISO} from 'date-fns';
+
+function Component() {
+  const intl = useIntl();
+  const dateTime = parseISO('2020-11-20T08:30:00.000Z');
+  const now = parseISO('2020-11-20T10:36:00.000Z');
+
+  // Renders "2 hours ago"
+  intl.formatRelativeTime(dateTime, now);
+}
+```
+
+Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
+
+Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](/docs/usage/configuration#global-now-value), you can omit the second argument:
+
+```js
+intl.formatRelativeTime(dateTime);
+```
+
+If you want the value to update over time, you can do so with the `useNow` hook:
+
+```js
+import {useNow, useIntl} from 'next-intl';
+import {parseISO} from 'date-fns';
+
+function Component() {
+  const now = useNow({
+    // Update every 10 seconds
+    updateInterval: 1000 * 10
+  });
+  const intl = useIntl();
+  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+
+  intl.formatRelativeTime(dateTime, now);
+}
+```
+
+## Dates and times within messages
+
+Dates and times can be embedded within messages as well:
+
+```js
+{
+  "expiryDate": "{expiryDate, date, ::yyyyMd}"
+}
+```
+
+See the [FormatJS docs about date time](https://formatjs.io/docs/intl-messageformat#datetime-skeleton) to learn more about this syntax.
+
+Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options): :
+
+```js
+{
+  "ordered": "You've ordered this product on {orderDate, date, short}"
+}
+```
+
+```js
+t(
+  'orderDate',
+  {date: parseISO('2020-11-20T10:36:01.516Z')},
+  {
+    // Custom formats can be supplied via the third parameter
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    }
+  }
+);
+```
+
+To reuse date and time formats for multiple components, you can configure [global formats](/docs/usage/configuration#global-formats).

@@ -1,0 +1,91 @@
+# Configuration
+
+## Time zone
+
+If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
+
+To avoid such markup mismatches, you can globally define a time zone like this:
+
+```jsx
+<NextIntlProvider timeZone="Europe/Vienna">...<NextIntlProvider>
+```
+
+This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+## Global now value
+
+To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
+
+```jsx
+<NextIntlProvider
+  // This value can be generated in data fetching functions
+  // of individual pages or `App.getInitialProps`.
+  now={now}
+  ...
+>
+  <App />
+</NextIntlProvider>
+```
+
+This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
+
+**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
+
+For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
+
+## Global formats
+
+To achieve consistent date, time and number formatting across your app, you can define a set of global formats and pass them to the provider.
+
+```js
+<NextIntlProvider
+  ...
+  formats={{
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    }
+  }}
+>
+  <App />
+</NextIntlProvider>
+```
+
+```js
+{
+  "ordered": "You've ordered this product on {orderDate, date, short}",
+  "latitude": "Latitude: {latitude, number, precise}"
+}
+```
+
+```js
+t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
+t('latitude', {latitude: 47.414329182});
+```
+
+## Retrieving provider config
+
+As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
+
+```js
+import {useLocale, useTimeZone} from 'next-intl';
+
+function Component() {
+  // Returns either an explicitly configured locale from the
+  // provider or if internationalized routing is set up, it
+  // returns the configured locale from Next.js.
+  const locale = useLocale();
+
+  // Note that this will be `undefined` if no explicit
+  // `timeZone` was configured on the provider.
+  const timeZone = useTimeZone();
+}
+```

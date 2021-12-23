@@ -1,0 +1,11 @@
+{
+  "index": {
+    "title": "Introduction",
+    "type": "nav",
+    "hidden": true
+  },
+  "docs": {
+    "title": "Docs",
+    "type": "nav"
+  }
+}
