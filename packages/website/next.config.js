@@ -9,6 +9,11 @@ module.exports = withNextra({
       source: "/docs",
       destination: "/docs/installation",
       permanent: false
+    },
+    {
+      source: "/examples",
+      destination: "/examples/minimal",
+      permanent: false
     }
   ]
 });

@@ -6,6 +6,7 @@ module.exports = {
     node: true
   },
   rules: {
+    '@typescript-eslint/no-use-before-define': 'off',
     'react/react-in-jsx-scope': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'react/display-name': 'off'
