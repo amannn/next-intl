@@ -21,3 +21,9 @@ Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use
 This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
 
 Note that parsing dates with `new Date(dateString)` and `Date.parse(dateString)` is discouraged due to browser differences and inconsistencies (see [the MDN docs on the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
+
+## Can next-intl be used with testing libraries like Jest and Storybook?
+
+Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.
+
+Please see the [Jest example](https://github.com/amannn/next-intl/blob/main/packages/example-advanced/src/components/Navigation.spec.tsx) to explore a working setup. For Storybook, you have to [add a global decorator](https://storybook.js.org/docs/react/writing-stories/decorators#global-decorators) that configures the provider.

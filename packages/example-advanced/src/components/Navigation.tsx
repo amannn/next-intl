@@ -1,6 +1,6 @@
 import {useTranslations} from 'next-intl';
-import {useRouter} from 'next/dist/client/router';
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 
 export default function Navigation() {
   const t = useTranslations('Navigation');
