@@ -1,7 +1,9 @@
 {
   "Index": {
     "title": "Start",
-    "description": "Das ist die Startseite.",
+    "description": "Das ist die Startseite."
+  },
+  "LocaleSwitcher": {
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch}} wechseln"
   },
   "PageLayout": {
