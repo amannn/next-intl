@@ -12,15 +12,15 @@
 3. This library currently doesn't support AST-based extraction like `react-intl`.
 4. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
 
-## Can this be used without Next.js?
-
-Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
-
 ## How can I parse dates or manipulate them?
 
 This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
 
 Note that parsing dates with `new Date(dateString)` and `Date.parse(dateString)` is discouraged due to browser differences and inconsistencies (see [the MDN docs on the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
+
+## Can this be used without Next.js?
+
+Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
 
 ## Can next-intl be used with testing libraries like Jest and Storybook?
 
