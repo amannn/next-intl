@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "echo 'No tests yet'",
+    "test": "jest --config config/jest.json",
     "build": "next build",
     "start": "next start"
   },
@@ -18,9 +18,11 @@
     "react-dom": "^17.0.0"
   },
   "devDependencies": {
+    "@testing-library/react": "12.1.2",
     "@types/lodash": "4.14.176",
     "eslint": "7.4.0",
     "eslint-config-molindo": "5.0.1",
-    "eslint-config-next": "^12.0.0"
+    "eslint-config-next": "^12.0.0",
+    "jest": "27.4.5"
   }
 }

@@ -7,8 +7,13 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
 };
 
 export default function NextIntlProvider({locale, ...rest}: Props) {
-  const nextLocale = useRouter().locale;
-  if (!locale && nextLocale) locale = nextLocale;
+  // The router can be undefined if used in a context outside
+  // of Next.js (e.g. unit tests, Storybook, ...)
+  const nextLocale = useRouter()?.locale;
+
+  if (!locale && nextLocale) {
+    locale = nextLocale;
+  }
 
   if (!locale) {
     throw new Error(
