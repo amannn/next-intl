@@ -66,4 +66,4 @@ ReactDOM.render(
 
 ## Usage
 
-Please refer to the docs of [`next-intl`](https://github.com/amannn/next-intl#docs).
+Please refer to the [`next-intl` usage docs](https://next-intl-docs.vercel.app/docs/usage).
