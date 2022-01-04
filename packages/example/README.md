@@ -2,11 +2,12 @@
 
 An example that showcases a basic installation of `next-intl`.
 
-The relevant integration code is in:
+The relevant integration code is:
 
-1. [`src/pages/_app.tsx`](./src/pages/_app.tsx)
-2. [`src/pages/index.tsx`](./src/pages/index.tsx)
-3. [`messages/`](./messages/)
+1. [Set up `NextIntlProvider` in `src/pages/_app.tsx`](./src/pages/_app.tsx#L6)
+2. [Set up translations in `messages/`](./messages/)
+3. [Provide messages in `src/pages/index.tsx`](./src/pages/index.tsx#L20)
+4. [Use translations in `src/pages/index.tsx`](./src/pages/index.tsx#L7)
 
 You can run the example locally like this:
 
