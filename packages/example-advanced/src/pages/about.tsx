@@ -2,7 +2,7 @@ import {parseISO} from 'date-fns';
 import {pick} from 'lodash';
 import {GetServerSidePropsContext} from 'next';
 import {useIntl, useTranslations} from 'next-intl';
-import PageLayout from '../components/PageLayout';
+import PageLayout from 'components/PageLayout';
 
 export default function About() {
   const t = useTranslations('About');

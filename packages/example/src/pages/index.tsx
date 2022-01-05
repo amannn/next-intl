@@ -1,7 +1,7 @@
 import {GetStaticPropsContext} from 'next';
 import {useTranslations} from 'next-intl';
 import LocaleSwitcher from 'components/LocaleSwitcher';
-import PageLayout from '../components/PageLayout';
+import PageLayout from 'components/PageLayout';
 
 export default function Index() {
   const t = useTranslations('Index');

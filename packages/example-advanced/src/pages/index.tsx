@@ -2,8 +2,8 @@ import pick from 'lodash/pick';
 import {GetStaticPropsContext} from 'next';
 import {useTranslations} from 'next-intl';
 import {useRouter} from 'next/router';
-import Code from '../components/Code';
-import PageLayout from '../components/PageLayout';
+import Code from 'components/Code';
+import PageLayout from 'components/PageLayout';
 
 export default function Index() {
   const t = useTranslations('Index');

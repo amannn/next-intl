@@ -1,7 +1,7 @@
 import {useTranslations} from 'next-intl';
 import Head from 'next/head';
 import {ReactNode} from 'react';
-import Navigation from './Navigation';
+import Navigation from 'components/Navigation';
 
 type Props = {
   children?: ReactNode;
