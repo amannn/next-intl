@@ -1,5 +1,5 @@
 import {parseISO} from 'date-fns';
-import {pick} from 'lodash';
+import pick from 'lodash/pick';
 import {GetServerSidePropsContext} from 'next';
 import {useIntl, useTranslations} from 'next-intl';
 import PageLayout from 'components/PageLayout';
