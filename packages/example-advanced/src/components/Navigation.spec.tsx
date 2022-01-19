@@ -1,7 +1,7 @@
 // @ts-ignore
 
 import {render} from '@testing-library/react';
-import {pick} from 'lodash';
+import pick from 'lodash/pick';
 import {NextIntlProvider} from 'next-intl';
 import messages from '../../messages/en.json';
 import Navigation from './Navigation';
