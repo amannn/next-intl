@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.3.5 (2022-01-19)
+
+
+### Bug Fixes
+
+* Support identical wrappers with identical text content in rich text ([#80](https://github.com/amannn/next-intl/issues/80)) ([b35bb9f](https://github.com/amannn/next-intl/commit/b35bb9ffc5fa56c6260b6b424be3cd875f199aef))
+
+
+
+
+
 ## 2.3.4 (2022-01-04)
 
 
