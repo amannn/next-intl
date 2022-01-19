@@ -12,6 +12,13 @@ jobs:
         with:
           node-version: 14.x
       - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: |
+            use-intl
+            next-intl
+            example
+            example-advanced
+            website
       - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
       - run: yarn workspaces run lint
