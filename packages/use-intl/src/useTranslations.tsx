@@ -53,6 +53,7 @@ function prepareTranslationValues(values?: RichTranslationValues) {
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: RichTranslationValues = {};
   Object.keys(values).forEach((key) => {
+    let index = 0;
     const value = values[key];
 
     let transformed;
@@ -61,9 +62,7 @@ function prepareTranslationValues(values?: RichTranslationValues) {
         const result = value(children);
 
         return isValidElement(result)
-          ? cloneElement(result, {
-              key: result.key || key + String(children)
-            })
+          ? cloneElement(result, {key: key + index++})
           : result;
       };
     } else {
