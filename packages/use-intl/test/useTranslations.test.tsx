@@ -291,7 +291,7 @@ describe('t.rich', () => {
     const {container} = renderRichTextMessage(
       'This is <important>important</important> and <important>this as well</important>',
       {
-        important: (children: ReactNode) => <b>{children}</b>
+        important: (children) => <b>{children}</b>
       }
     );
     expect(container.innerHTML).toBe(
@@ -303,11 +303,26 @@ describe('t.rich', () => {
     const {container} = renderRichTextMessage(
       'This is <bold><italic>very</italic> important</bold>',
       {
-        bold: (children: ReactNode) => <b>{children}</b>,
-        italic: (children: ReactNode) => <i>{children}</i>
+        bold: (children) => <b>{children}</b>,
+        italic: (children) => <i>{children}</i>
       }
     );
     expect(container.innerHTML).toBe('This is <b><i>very</i> important</b>');
+  });
+
+  it('supports identical wrappers with identical text content', () => {
+    const consoleError = jest.spyOn(console, 'error');
+    const {container} = renderRichTextMessage(
+      '<b>foo</b> bar <b>foo</b> <i>foo</i> bar <i>foo</i> <b><i>foobar</i></b>',
+      {
+        b: (children) => <b>{children}</b>,
+        i: (children) => <i>{children}</i>
+      }
+    );
+    expect(container.innerHTML).toBe(
+      '<b>foo</b> bar <b>foo</b> <i>foo</i> bar <i>foo</i> <b><i>foobar</i></b>'
+    );
+    expect(consoleError).not.toHaveBeenCalled();
   });
 });
 
