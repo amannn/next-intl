@@ -27,7 +27,7 @@ export default function App() {
   const {locale, messages} = useLoaderData();
 
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
         <meta content="width=device-width,initial-scale=1" name="viewport" />
