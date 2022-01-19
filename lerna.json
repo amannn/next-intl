@@ -1,7 +1,11 @@
 {
   "version": "2.3.5",
   "packages": [
-    "packages/*"
+    "packages/use-intl",
+    "packages/next-intl",
+    "packages/example",
+    "packages/example-advanced",
+    "packages/website"
   ],
   "useWorkspaces": true,
   "npmClient": "yarn",

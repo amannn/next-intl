@@ -11,6 +11,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      # The Remix example unfortunately doesn't seem to support yarn workspaces
       - uses: bahmutov/npm-install@v1
       - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
