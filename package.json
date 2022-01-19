@@ -5,7 +5,11 @@
     "publish": "lerna publish --yes --no-verify-access"
   },
   "workspaces": [
-    "packages/*"
+    "packages/use-intl",
+    "packages/next-intl",
+    "packages/example",
+    "packages/example-advanced",
+    "packages/website"
   ],
   "devDependencies": {
     "lerna": "4.0.0"
