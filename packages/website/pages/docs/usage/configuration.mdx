@@ -71,6 +71,21 @@ t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
 t('latitude', {latitude: 47.414329182});
 ```
 
+## Global Rich Text Elements
+To achieve consistent usage and styling of rich text elements, you can define a set of global elements and pass them to the provider.
+If you define an element locally it will override the global default.
+
+```js
+<NextIntlProvider
+  ...
+  defaultRichTextElements={{
+    b: (value) => <strong>{value}</strong>
+  }}
+>
+  <App />
+</NextIntlProvider>
+```
+
 ## Retrieving provider config
 
 As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
