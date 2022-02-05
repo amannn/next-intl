@@ -47,8 +47,8 @@ function resolvePath(
   return message;
 }
 
-function prepareTranslationValues(values?: RichTranslationValues) {
-  if (!values) return values;
+function prepareTranslationValues(values: RichTranslationValues) {
+  if (Object.keys(values).length < 1) return undefined;
 
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: RichTranslationValues = {};
@@ -90,7 +90,8 @@ export default function useTranslations(namespace?: string) {
     locale,
     messages: allMessages,
     onError,
-    timeZone
+    timeZone,
+    defaultRichTextElements
   } = useIntlContext();
 
   const cachedFormatsByLocaleRef = useRef<
@@ -215,7 +216,7 @@ export default function useTranslations(namespace?: string) {
 
       try {
         const formattedMessage = messageFormat.format(
-          prepareTranslationValues(values)
+          prepareTranslationValues({...defaultRichTextElements, ...values})
         );
 
         if (formattedMessage == null) {
@@ -304,7 +305,8 @@ export default function useTranslations(namespace?: string) {
     messagesOrError,
     namespace,
     onError,
-    timeZone
+    timeZone,
+    defaultRichTextElements
   ]);
 
   return translate;

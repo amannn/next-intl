@@ -3,6 +3,7 @@ import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlMessages from './IntlMessages';
 import {IntlError} from '.';
+import {RichTranslationValues} from './TranslationValues';
 
 type Props = {
   /** All messages that will be available in your components. */
@@ -39,6 +40,9 @@ type Props = {
    *    afterwards the current date will be returned continuously.
    */
   now?: Date;
+  /** Global rich text elements for consistent styling or usage of rich text tags.
+   * Will be overidden by locally provided elements. */
+  defaultRichTextElements?: RichTranslationValues
 };
 
 function defaultGetMessageFallback({

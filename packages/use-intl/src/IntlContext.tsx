@@ -1,4 +1,5 @@
 import {createContext} from 'react';
+import {RichTranslationValues} from './TranslationValues';
 import Formats from './Formats';
 import IntlError from './IntlError';
 import IntlMessages from './IntlMessages';
@@ -15,6 +16,7 @@ export type IntlContextShape = {
     namespace?: string;
   }): string;
   now?: Date;
+  defaultRichTextElements?: RichTranslationValues
 };
 
 const IntlContext = createContext<IntlContextShape | undefined>(undefined);
