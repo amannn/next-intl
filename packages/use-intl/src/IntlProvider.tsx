@@ -2,8 +2,8 @@ import React, {ReactNode} from 'react';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlMessages from './IntlMessages';
-import {IntlError} from '.';
 import {RichTranslationValues} from './TranslationValues';
+import {IntlError} from '.';
 
 type Props = {
   /** All messages that will be available in your components. */
@@ -42,7 +42,7 @@ type Props = {
   now?: Date;
   /** Global rich text elements for consistent styling or usage of rich text tags.
    * Will be overidden by locally provided elements. */
-  defaultRichTextElements?: RichTranslationValues
+  defaultRichTextElements?: RichTranslationValues;
 };
 
 function defaultGetMessageFallback({
