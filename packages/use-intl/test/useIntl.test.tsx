@@ -272,7 +272,7 @@ describe('formatNumber', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'FORMATTING_ERROR: Invalid currency codes : unknown'
+        'FORMATTING_ERROR: Invalid currency code : unknown'
       );
       expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
       expect(container.textContent).toBe('10000');
