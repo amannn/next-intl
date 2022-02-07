@@ -16,7 +16,7 @@ export type IntlContextShape = {
     namespace?: string;
   }): string;
   now?: Date;
-  defaultRichTextElements?: RichTranslationValues;
+  defaultTranslationValues?: RichTranslationValues;
 };
 
 const IntlContext = createContext<IntlContextShape | undefined>(undefined);

@@ -85,7 +85,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
  */
 export default function useTranslations(namespace?: string) {
   const {
-    defaultRichTextElements,
+    defaultTranslationValues,
     formats: globalFormats,
     getMessageFallback,
     locale,
@@ -216,7 +216,7 @@ export default function useTranslations(namespace?: string) {
 
       try {
         const formattedMessage = messageFormat.format(
-          prepareTranslationValues({...defaultRichTextElements, ...values})
+          prepareTranslationValues({...defaultTranslationValues, ...values})
         );
 
         if (formattedMessage == null) {
@@ -306,7 +306,7 @@ export default function useTranslations(namespace?: string) {
     namespace,
     onError,
     timeZone,
-    defaultRichTextElements
+    defaultTranslationValues
   ]);
 
   return translate;

@@ -40,9 +40,10 @@ type Props = {
    *    afterwards the current date will be returned continuously.
    */
   now?: Date;
-  /** Global rich text elements for consistent styling or usage of rich text tags.
-   * Will be overidden by locally provided elements. */
-  defaultRichTextElements?: RichTranslationValues;
+  /** Global default values for translation values and rich text elements.
+   * Can be used for consistent usage or styling of rich text elements.
+   * Defaults will be overidden by locally provided values. */
+  defaultTranslationValues?: RichTranslationValues;
 };
 
 function defaultGetMessageFallback({
