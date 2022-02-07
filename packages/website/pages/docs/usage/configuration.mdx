@@ -80,7 +80,8 @@ The defaults will be overridden by locally provided values.
 <NextIntlProvider
   ...
   defaultTranslationValues={{
-    b: (children) => <strong>{children}</strong>
+    important: (children) => <b>{children}</b>,
+    value: 123
   }}
 >
   <App />
