@@ -615,3 +615,86 @@ describe('global formats', () => {
     screen.getByText('Thursday, November 19, 2020');
   });
 });
+
+describe('default translation values', () => {
+  function renderRichTextMessageWithDefault(
+    message: string,
+    values?: RichTranslationValues,
+    formats?: Partial<Formats>
+  ) {
+    function Component() {
+      const t = useTranslations();
+      return <>{t.rich('message', values, formats)}</>;
+    }
+
+    return render(
+      <IntlProvider
+        defaultTranslationValues={{
+          important: (children) => <b>{children}</b>
+        }}
+        formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+        locale="en"
+        messages={{message}}
+        timeZone="Europe/London"
+      >
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  function renderMessageWithDefault(
+    message: string,
+    values?: TranslationValues,
+    formats?: Partial<Formats>
+  ) {
+    function Component() {
+      const t = useTranslations();
+      return <>{t('message', values, formats)}</>;
+    }
+
+    return render(
+      <IntlProvider
+        defaultTranslationValues={{
+          value: 123
+        }}
+        formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+        locale="en"
+        messages={{message}}
+        timeZone="Europe/London"
+      >
+        <Component />
+      </IntlProvider>
+    );
+  }
+
+  it('uses default rich text element', () => {
+    const {container} = renderRichTextMessageWithDefault(
+      'This is <important>important</important> and <important>this as well</important>'
+    );
+    expect(container.innerHTML).toBe(
+      'This is <b>important</b> and <b>this as well</b>'
+    );
+  });
+
+  it('overrides default rich text element', () => {
+    const {container} = renderRichTextMessageWithDefault(
+      'This is <important>important</important> and <important>this as well</important>',
+      {
+        important: (children) => <i>{children}</i>
+      }
+    );
+    expect(container.innerHTML).toBe(
+      'This is <i>important</i> and <i>this as well</i>'
+    );
+  });
+
+  it('uses default translation values', () => {
+    renderMessageWithDefault('Hello {value}');
+    screen.getByText('Hello 123');
+  });
+
+  it('overrides default translation values', () => {
+    renderMessageWithDefault('Hello {value}', {value: 234});
+    screen.getByText('Hello 234');
+  });
+});

@@ -158,10 +158,12 @@ You can format rich text with custom tags and map them to React components.
 
 ```js
 t.rich('richText', {
-  important: children => <b>{children}</b>,
-  very: children => <i>{children}</i>
+  important: (children) => <b>{children}</b>,
+  very: (children) => <i>{children}</i>
 });
 ```
+
+If you want to use the same tag multiple times, you can configure it via the [default translation values](/docs/usage/configuration#default-translation-values).
 
 ## Raw messages
 

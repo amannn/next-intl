@@ -71,6 +71,23 @@ t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
 t('latitude', {latitude: 47.414329182});
 ```
 
+## Default translation values
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider.
+This configuration also can be used to apply consistent styling to commonly used rich text elements.
+The defaults will be overridden by locally provided values.
+
+```js
+<NextIntlProvider
+  ...
+  defaultTranslationValues={{
+    important: (children) => <b>{children}</b>,
+    value: 123
+  }}
+>
+  <App />
+</NextIntlProvider>
+```
+
 ## Retrieving provider config
 
 As a convenience, two hooks exist that allow to read configuration that was passed to the provider:

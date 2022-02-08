@@ -2,6 +2,7 @@ import React, {ReactNode} from 'react';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlMessages from './IntlMessages';
+import {RichTranslationValues} from './TranslationValues';
 import {IntlError} from '.';
 
 type Props = {
@@ -39,6 +40,10 @@ type Props = {
    *    afterwards the current date will be returned continuously.
    */
   now?: Date;
+  /** Global default values for translation values and rich text elements.
+   * Can be used for consistent usage or styling of rich text elements.
+   * Defaults will be overidden by locally provided values. */
+  defaultTranslationValues?: RichTranslationValues;
 };
 
 function defaultGetMessageFallback({
