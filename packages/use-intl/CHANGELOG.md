@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/amannn/next-intl/tree/main/packages/use-intl/compare/v2.3.5...v2.4.0) (2022-02-08)
+
+
+### Features
+
+* Default translation values ([#86](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/86)) ([0ed5e70](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/0ed5e70ffc57dcdb1b7b9270dbce9e8475b3f478))
+
+
+
+
+
 ## 2.3.5 (2022-01-19)
 
 
