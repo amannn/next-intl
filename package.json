@@ -13,5 +13,8 @@
   ],
   "devDependencies": {
     "lerna": "4.0.0"
+  },
+  "resolutions": {
+    "typescript": "4.4.4"
   }
 }
