@@ -11,6 +11,9 @@ import {
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
+// The TypeScript parser for ESLint is currently unable to parse this file
+// eslint-disable-next-line import/namespace, import/default, import/no-named-as-default-member
+import NestedKeyOf from './NestedKeyOf';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
@@ -83,7 +86,9 @@ function prepareTranslationValues(values: RichTranslationValues) {
  * The namespace can also indicate nesting by using a dot
  * (e.g. `namespace.Component`).
  */
-export default function useTranslations(namespace?: string) {
+export default function useTranslations<
+  MessagesType extends IntlMessages = any
+>(namespace?: NestedKeyOf<MessagesType>) {
   const {
     defaultTranslationValues,
     formats: globalFormats,

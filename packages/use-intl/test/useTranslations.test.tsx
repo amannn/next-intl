@@ -264,6 +264,28 @@ it('renders the correct message when the namespace changes', () => {
   screen.getByText('This is namespace B');
 });
 
+it('can restrict property access with optional types', () => {
+  const messages = {foo: 'foo', bar: {a: 'Hello'}};
+
+  function Component() {
+    const t = useTranslations<typeof messages>('bar');
+    return <>{t('a')}</>;
+  }
+
+  render(
+    <IntlProvider
+      formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+      locale="en"
+      messages={messages}
+      timeZone="Europe/London"
+    >
+      <Component />
+    </IntlProvider>
+  );
+
+  screen.getByText('Hello');
+});
+
 describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
