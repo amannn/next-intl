@@ -9,12 +9,13 @@ import {
   useRef
 } from 'react';
 import Formats from './Formats';
-import NestedPropertyOf from './NestedPropertyOf';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
-// The TypeScript parser for ESLint is currently unable to parse this file
+// The TypeScript parser for ESLint is currently unable to parse these files
 // eslint-disable-next-line import/namespace, import/default, import/no-named-as-default-member
 import NestedKeyOf from './NestedKeyOf';
+// eslint-disable-next-line import/namespace, import/default, import/no-named-as-default-member
+import NestedPropertyOf from './NestedPropertyOf';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
