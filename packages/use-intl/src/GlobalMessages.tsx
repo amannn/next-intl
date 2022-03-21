@@ -25,6 +25,8 @@ type Messages = typeof import('./en.json');
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 // interface GlobalMessages extends Test {}
-interface GlobalMessages extends Messages, Test {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface GlobalMessages extends Test {}
+// interface GlobalMessages extends Messages, Test {}
 
 export default GlobalMessages;
