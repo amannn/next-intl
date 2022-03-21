@@ -1,26 +1,23 @@
 import {useTranslations} from 'next-intl';
 
+// This page acts as a test environment for the TypeScript integration
+
 export default function Test() {
   // Correct property access
   useTranslations()('About.title');
   useTranslations('About')('title');
   useTranslations('About')('nested.hello');
-  useTranslations('About.nested')('hello');
-  useTranslations('B')('c');
-
-  useTranslations()('About.something');
-  useTranslations('About')('something');
-
-  useTranslations('About')('lastUpdated');
+  useTranslations('Test')('nested.hello');
+  useTranslations('Test.nested')('another.level');
 
   // @ts-expect-error Trying access a child key without a namespace
-  useTranslations()('e');
+  useTranslations()('title');
 
   // @ts-expect-error Only partial namespaces are allowed
   useTranslations('About.title');
 
   // @ts-expect-error Trying to access a key from another namespace
-  useTranslations('B')('title');
+  useTranslations('Test')('title');
 
   // @ts-expect-error Invalid namespace
   useTranslations('Unknown');
