@@ -265,25 +265,31 @@ it('renders the correct message when the namespace changes', () => {
 });
 
 it('can restrict property access with optional types', () => {
-  const messages = {foo: 'foo', bar: {a: 'Hello'}};
+  const messages = {foo: 'foo', bar: {a: 'Hello', b: {c: 'World'}}};
 
   function Component() {
-    const t = useTranslations<typeof messages>('bar');
-    return <>{t('a')}</>;
+    // Correct property access
+    useTranslations()('foo');
+    useTranslations('bar')('a');
+    useTranslations('bar')('b.c');
+
+    // @ts-expect-error Only partial namespaces are allowed
+    useTranslations('foo');
+
+    // @ts-expect-error Invalid namespace
+    useTranslations('baz');
+
+    // @ts-expect-error Invalid key
+    useTranslations('bar')('b.d');
+
+    return null;
   }
 
   render(
-    <IntlProvider
-      formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
-      locale="en"
-      messages={messages}
-      timeZone="Europe/London"
-    >
+    <IntlProvider locale="en" messages={messages} timeZone="Europe/London">
       <Component />
     </IntlProvider>
   );
-
-  screen.getByText('Hello');
 });
 
 describe('t.rich', () => {

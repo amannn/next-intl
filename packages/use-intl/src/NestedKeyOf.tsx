@@ -1,8 +1,9 @@
-type NestedKeyOf<ObjectType extends object> =
-  {
-    [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
-      ? `${Key}` | `${Key}.${NestedKeyOf<ObjectType[Key]>}`
-      : `${Key}`
-  }[keyof ObjectType & (string | number)];
+type NestedKeyOf<ObjectType> = ObjectType extends object
+  ? {
+      [Key in keyof ObjectType]:
+        | `${Key & string}`
+        | `${Key & string}.${NestedKeyOf<ObjectType[Key]>}`;
+    }[keyof ObjectType]
+  : never;
 
-export default NestedKeyOf
+export default NestedKeyOf;

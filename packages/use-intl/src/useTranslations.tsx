@@ -9,6 +9,7 @@ import {
   useRef
 } from 'react';
 import Formats from './Formats';
+import GetDeepProperty from './GetDeepProperty';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
 // The TypeScript parser for ESLint is currently unable to parse this file
@@ -78,6 +79,12 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
+// TODO: Move out and replace with a default interface that allows for any
+// access. A consumer can optionally override the interface to provide type
+// safety.
+const exampleMessages = {foo: 'foo', bar: {a: 'Hello', b: {c: 'World'}}};
+type Messages = typeof exampleMessages;
+
 /**
  * Translates messages from the given namespace by using the ICU syntax.
  * See https://formatjs.io/docs/core-concepts/icu-syntax.
@@ -87,8 +94,8 @@ function prepareTranslationValues(values: RichTranslationValues) {
  * (e.g. `namespace.Component`).
  */
 export default function useTranslations<
-  MessagesType extends IntlMessages = any
->(namespace?: NestedKeyOf<MessagesType>) {
+  NestedKey extends NestedKeyOf<Messages>
+>(namespace?: NestedKey) {
   const {
     defaultTranslationValues,
     formats: globalFormats,
@@ -250,9 +257,13 @@ export default function useTranslations<
       }
     }
 
-    function translateFn(
+    function translateFn<
+      TargetKey extends NestedKey extends undefined
+        ? NestedKeyOf<Messages>
+        : NestedKeyOf<GetDeepProperty<Messages, NestedKey>>
+    >(
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
-      key: string,
+      key: TargetKey,
       /** Key value pairs for values to interpolate into the message. */
       values?: TranslationValues,
       /** Provide custom formats for numbers, dates and times. */
