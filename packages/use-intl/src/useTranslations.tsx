@@ -9,7 +9,7 @@ import {
   useRef
 } from 'react';
 import Formats from './Formats';
-import GetDeepProperty from './GetDeepProperty';
+import NestedPropertyOf from './NestedPropertyOf';
 import IntlError, {IntlErrorCode} from './IntlError';
 import IntlMessages from './IntlMessages';
 // The TypeScript parser for ESLint is currently unable to parse this file
@@ -260,7 +260,7 @@ export default function useTranslations<
     function translateFn<
       TargetKey extends NestedKey extends undefined
         ? NestedKeyOf<Messages>
-        : NestedKeyOf<GetDeepProperty<Messages, NestedKey>>
+        : NestedKeyOf<NestedPropertyOf<Messages, NestedKey>>
     >(
       /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
       key: TargetKey,
