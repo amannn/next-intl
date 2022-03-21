@@ -15,19 +15,20 @@ import NestedKeyOf from './utils/NestedKeyOf';
 export default function useTranslations<
   NestedKey extends NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>>
 >(namespace?: NestedKey) {
-  const {messages} = useIntlContext();
+  // @ts-ignore
+  const messages = useIntlContext().messages as GlobalMessages;
   if (!messages) throw new Error('TODO')
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   return useTranslationsImpl<
+    // @ts-ignore
     {__private: GlobalMessages},
     NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>> extends NestedKey
       ? '__private'
       : `__private.${NestedKey}`
   >(
     {__private: messages},
-    // @ts-expect-error No known fix to avoid this
     namespace ? `__private.${namespace}` : '__private'
   );
 }

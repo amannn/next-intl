@@ -7,5 +7,5 @@ declare module 'next-intl' {
   type Messages = typeof import('./messages/en.json');
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  export interface GlobalMessages extends Messages {}
+  export interface GlobalMessages extends Messages, {} {}
 }
