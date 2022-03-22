@@ -8,6 +8,7 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
-    'react/display-name': 'off'
+    'react/display-name': 'off',
+    '@typescript-eslint/no-empty-interface': 'off'
   }
 }

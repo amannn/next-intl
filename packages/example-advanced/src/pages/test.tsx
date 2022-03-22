@@ -2,34 +2,15 @@ import {useTranslations} from 'next-intl';
 
 // This page acts as a test environment for the TypeScript integration
 
-const foo: GlobalMessages = {};
-console.log(foo.About.lastUpdated);
-
-// const jan: Jan = {
-//   Test: 'sdf'
-// };
-
-const globalJan: GlobalJan = {
-  hello: 'sdf'
-};
-
 export default function Test() {
   // Correct property access
-  useTranslations()('About.title');
   useTranslations('Test')('nested.hello');
   useTranslations('Test.nested')('another.level');
-  // TODO: As soon as About.nested is gone (or renamed), this is an error :(
   useTranslations('About')('title');
-
   useTranslations('About')('lastUpdated');
-
   useTranslations('Navigation')('about');
-
-  // useTranslations()('Navigation.about');
-  // useTranslations('Navigation')('index');
-
+  useTranslations()('About.title');
   useTranslations()('Navigation.about');
-  useTranslations('Navigation')('about');
   useTranslations('NotFound')('title');
   useTranslations('PageLayout')('pageTitle');
 
