@@ -1,4 +1,4 @@
-import GlobalMessages from './GlobalMessages';
+// import GlobalMessages from './GlobalMessages';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
 import NamespaceKeys from './utils/NamespaceKeys';
@@ -29,6 +29,7 @@ export default function useTranslations<
       : `__private.${NestedKey}`
   >(
     {__private: messages},
+    // @ts-ignore
     namespace ? `__private.${namespace}` : '__private'
   );
 }
