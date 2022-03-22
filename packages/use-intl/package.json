@@ -14,7 +14,7 @@
     "build": "dts build",
     "test": "TZ=Europe/Berlin dts test",
     "lint": "eslint src test && tsc",
-    "prepublishOnly": "yarn test && yarn lint && yarn build"
+    "prepublishOnly_": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",
