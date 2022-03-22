@@ -5,12 +5,22 @@ import {useTranslations} from 'next-intl';
 export default function Test() {
   // Correct property access
   useTranslations()('About.title');
-  useTranslations('About')('title');
-  useTranslations('About')('nested.hello');
   useTranslations('Test')('nested.hello');
   useTranslations('Test.nested')('another.level');
+  // TODO: As soon as About.nested is gone (or renamed), this is an error :(
+  useTranslations('About')('title');
 
-  // @ts-expect-error Trying access a child key without a namespace
+  // useTranslations('About')('')
+
+  // useTranslations()('Navigation.about');
+  // useTranslations('Navigation')('index')
+
+  useTranslations()('Navigation.about');
+  useTranslations('Navigation')('about');
+  useTranslations('NotFound')('title');
+  useTranslations('PageLayout')('pageTitle');
+
+  // @ts-expect-error Trying to access a child key without a namespace
   useTranslations()('title');
 
   // @ts-expect-error Only partial namespaces are allowed

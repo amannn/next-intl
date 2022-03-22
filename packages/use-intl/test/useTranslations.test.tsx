@@ -271,22 +271,20 @@ it('can restrict property access with optional types', () => {
     // Correct property access
     useTranslations()('About.title');
     useTranslations('About')('title');
-    useTranslations('About')('nested.hello');
-    useTranslations('About.nested')('hello');
-    useTranslations('B')('c');
+    useTranslations('Test')('nested.hello');
+    useTranslations('Test.nested')('another.level');
 
-    useTranslations('B')('c');
+    // @ts-expect-error Trying to access a child key without a namespace
+    useTranslations()('title');
 
-    // TODO: somehow all children are resolved to
-    // useTranslations()('c');
-    // useTranslations()('hello');
-    // useTranslations()('e');
+    // @ts-expect-error Can't cross-reference another namespace
+    useTranslations('About')('Navigation.about');
 
     // @ts-expect-error Only partial namespaces are allowed
     useTranslations('About.title');
 
     // @ts-expect-error Trying to access a key from another namespace
-    useTranslations('B')('title');
+    useTranslations('Test')('title');
 
     // @ts-expect-error Invalid namespace
     useTranslations('Unknown');
@@ -299,20 +297,6 @@ it('can restrict property access with optional types', () => {
 
     // @ts-expect-error Invalid namespace and invalid key
     useTranslations('unknown')('unknown');
-
-    // // Correct property access
-    // useTranslations()('foo');
-    // useTranslations('bar')('a');
-    // useTranslations('bar')('b.c');
-
-    // // @ts-expect-error Only partial namespaces are allowed
-    // useTranslations('foo');
-
-    // // @ts-expect-error Invalid namespace
-    // useTranslations('baz');
-
-    // // @ts-expect-error Invalid key
-    // useTranslations('bar')('b.d');
 
     return null;
   }
