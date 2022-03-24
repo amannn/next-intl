@@ -59,7 +59,7 @@ ReactDOM.render(
   <IntlProvider messages={messages} locale="en">
     <App />
   </IntlProvider>
-)
+);
 ```
 3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
 4. Use translations in your components!
