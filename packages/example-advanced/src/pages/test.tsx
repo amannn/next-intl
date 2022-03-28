@@ -4,8 +4,8 @@ import {useTranslations} from 'next-intl';
 
 export default function Test() {
   // Correct property access
-  useTranslations('StrictTypes')('nested.hello');
-  useTranslations('StrictTypes.nested')('another.level');
+  useTranslations('Test')('nested.hello');
+  useTranslations('Test.nested')('another.level');
   useTranslations('About')('title');
   useTranslations('About')('lastUpdated');
   useTranslations('Navigation')('about');

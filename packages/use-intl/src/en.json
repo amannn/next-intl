@@ -1,7 +1,10 @@
 {
   "About": {
-    "title": "Abouts",
-    "lastUpdated": "This example was updated {lastUpdatedRelative} ({lastUpdated, date, short})."
+    "title": "About",
+    "lastUpdated": "This example was updated {lastUpdatedRelative} ({lastUpdated, date, short}).",
+    "nested": {
+      "hello": "Hello"
+    }
   },
   "Index": {
     "title": "Home",
@@ -9,7 +12,7 @@
   },
   "Navigation": {
     "index": "Home",
-    "about": "Aboutsdf",
+    "about": "About",
     "switchLocale": "Switch to {locale, select, de {German} en {English}}"
   },
   "NotFound": {
