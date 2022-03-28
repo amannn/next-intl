@@ -1,8 +1,13 @@
+import {ReactElement, ReactNodeArray} from 'react';
+import Formats from './Formats';
 import IntlError, { IntlErrorCode } from './IntlError';
+import TranslationValues, { RichTranslationValues } from './TranslationValues';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
+import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
+import NestedValueOf from './utils/NestedValueOf';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -14,7 +19,38 @@ import NestedKeyOf from './utils/NestedKeyOf';
  */
 export default function useTranslations<
   NestedKey extends NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>>
->(namespace?: NestedKey) {
+>(namespace?: NestedKey):
+  // Explicitly defining the return type is necessary as TypeScript would get it wrong
+  {
+    // Default invocation
+    <TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': GlobalMessages;},
+        NamespaceKeys<
+          GlobalMessages, NestedKeyOf<GlobalMessages>
+        > extends NestedKey ? "!" : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': GlobalMessages;},
+          NamespaceKeys<
+            GlobalMessages, NestedKeyOf<GlobalMessages>
+          > extends NestedKey ? "!" : `!.${NestedKey}`>
+        >
+      >
+    >(
+      key: TargetKey,
+      values?: TranslationValues,
+      formats?: Partial<Formats>
+    ): string;
+
+    // `rich`
+    rich: (key: string, values?: RichTranslationValues, formats?: Partial<Formats>) => string | ReactElement | ReactNodeArray
+
+    // `raw`
+    raw(key: string): any;
+  }
+{
   const context = useIntlContext()
 
   // @ts-ignore
@@ -32,7 +68,6 @@ export default function useTranslations<
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!"") is arbitrary, but we have to use some.
   return useTranslationsImpl<
-    // @ts-ignore
     {'!': GlobalMessages},
     NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>> extends NestedKey
       ? '!'
