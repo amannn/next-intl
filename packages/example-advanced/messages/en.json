@@ -1,6 +1,6 @@
 {
   "About": {
-    "title": "Abouts",
+    "title": "About",
     "lastUpdated": "This example was updated {lastUpdatedRelative} ({lastUpdated, date, short})."
   },
   "Index": {
@@ -9,7 +9,7 @@
   },
   "Navigation": {
     "index": "Home",
-    "about": "Aboutsdf",
+    "about": "About",
     "switchLocale": "Switch to {locale, select, de {German} en {English}}"
   },
   "NotFound": {
@@ -18,7 +18,7 @@
   "PageLayout": {
     "pageTitle": "next-intl"
   },
-  "Test": {
+  "StrictTypes": {
     "nested": {
       "hello": "Hello",
       "another": {
