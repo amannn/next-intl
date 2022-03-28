@@ -36,6 +36,9 @@
     "next",
     "next.js"
   ],
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
   "dependencies": {
     "use-intl": "^2.4.1-alpha.3"
   },
