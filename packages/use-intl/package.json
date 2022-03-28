@@ -14,7 +14,7 @@
     "build": "dts build",
     "test": "TZ=Europe/Berlin dts test",
     "lint": "eslint src test && tsc",
-    "prepublishOnly_": "yarn test && yarn lint && yarn build"
+    "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",
@@ -49,10 +49,9 @@
     "date-fns": "^2.16.1",
     "dts-cli": "1.4.0",
     "eslint": "7.4.0",
-    "eslint-config-molindo": "5.0.1",
+    "eslint-config-molindo": "5.2.0-alpha.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },
