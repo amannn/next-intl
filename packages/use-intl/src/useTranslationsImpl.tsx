@@ -81,7 +81,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 export default function useTranslationsImpl<
   Messages extends IntlMessages,
   NestedKey extends NestedKeyOf<Messages>
->(allMessages: Messages, namespace: NestedKey) {
+>(allMessages: Messages, namespace: NestedKey, namespacePrefix: string) {
   const {
     defaultTranslationValues,
     formats: globalFormats,
@@ -90,6 +90,13 @@ export default function useTranslationsImpl<
     onError,
     timeZone
   } = useIntlContext();
+
+  // The `namespacePrefix` is part of the type system.
+  // See the comment in the hook invocation.
+  allMessages = allMessages[namespacePrefix] as Messages;
+  namespace = (namespace === namespacePrefix
+    ? undefined
+    : namespace.slice((namespacePrefix + '.').length)) as NestedKey;
 
   const cachedFormatsByLocaleRef = useRef<
     Record<string, Record<string, IntlMessageFormat>>

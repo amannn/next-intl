@@ -1,4 +1,4 @@
-// import GlobalMessages from './GlobalMessages';
+import IntlError, { IntlErrorCode } from './IntlError';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
 import NamespaceKeys from './utils/NamespaceKeys';
@@ -15,21 +15,32 @@ import NestedKeyOf from './utils/NestedKeyOf';
 export default function useTranslations<
   NestedKey extends NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>>
 >(namespace?: NestedKey) {
+  const context = useIntlContext()
+
   // @ts-ignore
-  const messages = useIntlContext().messages as GlobalMessages;
-  if (!messages) throw new Error('TODO')
+  const messages = context.messages as GlobalMessages;
+  if (!messages) {
+    const intlError = new IntlError(
+      IntlErrorCode.MISSING_MESSAGE,
+      __DEV__ ? `No messages were configured on the provider.` : undefined
+    );
+    context.onError(intlError);
+    throw intlError;
+  }
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
+  // The prefix ("!"") is arbitrary, but we have to use some.
   return useTranslationsImpl<
     // @ts-ignore
-    {__private: GlobalMessages},
+    {'!': GlobalMessages},
     NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>> extends NestedKey
-      ? '__private'
-      : `__private.${NestedKey}`
+      ? '!'
+      : `!.${NestedKey}`
   >(
-    {__private: messages},
+    {'!': messages},
     // @ts-ignore
-    namespace ? `__private.${namespace}` : '__private'
+    namespace ? `!.${namespace}` : '!',
+    '!'
   );
 }

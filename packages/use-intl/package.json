@@ -19,6 +19,9 @@
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
   "files": [
     "dist",
     "src"
