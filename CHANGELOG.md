@@ -3,36 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [2.4.1-alpha.3](https://github.com/amannn/next-intl/compare/v2.4.1-alpha.2...v2.4.1-alpha.3) (2022-03-28)
-
-**Note:** Version bump only for package root
+## 2.4.1 (2022-03-24)
 
 
+### Bug Fixes
 
-
-
-## [2.4.1-alpha.2](https://github.com/amannn/next-intl/compare/v2.4.1-alpha.1...v2.4.1-alpha.2) (2022-03-25)
-
-**Note:** Version bump only for package root
-
-
-
-
-
-## [2.4.1-alpha.1](https://github.com/amannn/next-intl/compare/v2.4.1-alpha.0...v2.4.1-alpha.1) (2022-03-22)
-
-**Note:** Version bump only for package root
-
-
-
-
-
-## [2.4.1-alpha.0](https://github.com/amannn/next-intl/compare/v2.4.0...v2.4.1-alpha.0) (2022-03-22)
-
-
-### Features
-
-* Type safe messages ([d0ae9ff](https://github.com/amannn/next-intl/commit/d0ae9ff14d22eb00001314fab432795553c611d6))
+* Overwrite prerelease ([6caf5c4](https://github.com/amannn/next-intl/commit/6caf5c48a35179f802503bc6580469187765c837))
 
 
 

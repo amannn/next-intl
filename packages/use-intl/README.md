@@ -1,4 +1,4 @@
-# use-intl 🌐
+# 🌐 use-intl
 
 ![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
 
@@ -46,9 +46,9 @@ function LatestFollower({user}) {
 ```jsx
 import {IntlProvider} from 'use-intl';
 
-// You can get the messages from anywhere you like. You can also fetch
-// them from within a component and then render the provider along with
-// your app once you have the messages.
+// You can get the messages from anywhere you like. You can also
+// fetch them from within a component and then render the provider 
+// along with your app once you have the messages.
 const messages = {
   App: {
     hello: 'Hello'
@@ -59,7 +59,7 @@ ReactDOM.render(
   <IntlProvider messages={messages} locale="en">
     <App />
   </IntlProvider>
-)
+);
 ```
 3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
 4. Use translations in your components!
