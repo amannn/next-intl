@@ -264,6 +264,50 @@ it('renders the correct message when the namespace changes', () => {
   screen.getByText('This is namespace B');
 });
 
+it('can restrict property access with optional types', () => {
+  const messages = {foo: 'foo', bar: {a: 'Hello', b: {c: 'World'}}};
+
+  function Component() {
+    // Correct property access
+    useTranslations()('About.title');
+    useTranslations('About')('title');
+    useTranslations('Test')('nested.hello');
+    useTranslations('Test.nested')('another.level');
+
+    // @ts-expect-error Trying to access a child key without a namespace
+    useTranslations()('title');
+
+    // @ts-expect-error Can't cross-reference another namespace
+    useTranslations('About')('Navigation.about');
+
+    // @ts-expect-error Only partial namespaces are allowed
+    useTranslations('About.title');
+
+    // @ts-expect-error Trying to access a key from another namespace
+    useTranslations('Test')('title');
+
+    // @ts-expect-error Invalid namespace
+    useTranslations('Unknown');
+
+    // @ts-expect-error Invalid key on global namespace
+    useTranslations()('unknown');
+
+    // @ts-expect-error Invalid key on valid namespace
+    useTranslations('About')('unknown');
+
+    // @ts-expect-error Invalid namespace and invalid key
+    useTranslations('unknown')('unknown');
+
+    return null;
+  }
+
+  render(
+    <IntlProvider locale="en" messages={messages} timeZone="Europe/London">
+      <Component />
+    </IntlProvider>
+  );
+});
+
 describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
@@ -384,28 +428,26 @@ describe('t.raw', () => {
 });
 
 describe('error handling', () => {
-  it('throws when no messages are configured', () => {
+  it('warns when no messages are configured', () => {
     const onError = jest.fn();
-    const originalConsoleError = console.error;
-    console.error = jest.fn();
 
     function Component() {
       const t = useTranslations('Component');
       return <>{t('label')}</>;
     }
 
-    expect(() =>
-      render(
-        <IntlProvider locale="en" onError={onError}>
-          <Component />
-        </IntlProvider>
-      )
-    ).toThrow('MISSING_MESSAGE: No messages were configured on the provider.');
+    render(
+      <IntlProvider locale="en" onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
 
     const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'MISSING_MESSAGE: No messages were configured on the provider.'
+    );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-
-    console.error = originalConsoleError;
+    screen.getByText('Component.label');
   });
 
   it('allows to configure a fallback', () => {
