@@ -1,7 +1,7 @@
 import {ReactElement, ReactNodeArray} from 'react';
 import Formats from './Formats';
-import IntlError, { IntlErrorCode } from './IntlError';
-import TranslationValues, { RichTranslationValues } from './TranslationValues';
+import IntlError, {IntlErrorCode} from './IntlError';
+import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
 import MessageKeys from './utils/MessageKeys';
@@ -19,41 +19,52 @@ import NestedValueOf from './utils/NestedValueOf';
  */
 export default function useTranslations<
   NestedKey extends NamespaceKeys<GlobalMessages, NestedKeyOf<GlobalMessages>>
->(namespace?: NestedKey):
-  // Explicitly defining the return type is necessary as TypeScript would get it wrong
-  {
-    // Default invocation
-    <TargetKey extends MessageKeys<
+>(
+  namespace?: NestedKey
+): // Explicitly defining the return type is necessary as TypeScript would get it wrong
+{
+  // Default invocation
+  <
+    TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': GlobalMessages;},
+        {'!': GlobalMessages},
         NamespaceKeys<
-          GlobalMessages, NestedKeyOf<GlobalMessages>
-        > extends NestedKey ? "!" : `!.${NestedKey}`
+          GlobalMessages,
+          NestedKeyOf<GlobalMessages>
+        > extends NestedKey
+          ? '!'
+          : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': GlobalMessages;},
+          {'!': GlobalMessages},
           NamespaceKeys<
-            GlobalMessages, NestedKeyOf<GlobalMessages>
-          > extends NestedKey ? "!" : `!.${NestedKey}`>
+            GlobalMessages,
+            NestedKeyOf<GlobalMessages>
+          > extends NestedKey
+            ? '!'
+            : `!.${NestedKey}`
         >
       >
-    >(
-      key: TargetKey,
-      values?: TranslationValues,
-      formats?: Partial<Formats>
-    ): string;
+    >
+  >(
+    key: TargetKey,
+    values?: TranslationValues,
+    formats?: Partial<Formats>
+  ): string;
 
-    // `rich`
-    rich: (key: string, values?: RichTranslationValues, formats?: Partial<Formats>) => string | ReactElement | ReactNodeArray
+  // `rich`
+  rich(
+    key: string,
+    values?: RichTranslationValues,
+    formats?: Partial<Formats>
+  ): string | ReactElement | ReactNodeArray;
 
-    // `raw`
-    raw(key: string): any;
-  }
-{
-  const context = useIntlContext()
+  // `raw`
+  raw(key: string): any;
+} {
+  const context = useIntlContext();
 
-  // @ts-ignore
   const messages = context.messages as GlobalMessages;
   if (!messages) {
     const intlError = new IntlError(

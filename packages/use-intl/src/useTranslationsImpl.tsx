@@ -1,4 +1,4 @@
-import IntlMessageFormat from 'intl-messageformat';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {
   cloneElement,
   isValidElement,
@@ -94,9 +94,11 @@ export default function useTranslationsImpl<
   // The `namespacePrefix` is part of the type system.
   // See the comment in the hook invocation.
   allMessages = allMessages[namespacePrefix] as Messages;
-  namespace = (namespace === namespacePrefix
-    ? undefined
-    : namespace.slice((namespacePrefix + '.').length)) as NestedKey;
+  namespace = (
+    namespace === namespacePrefix
+      ? undefined
+      : namespace.slice((namespacePrefix + '.').length)
+  ) as NestedKey;
 
   const cachedFormatsByLocaleRef = useRef<
     Record<string, Record<string, IntlMessageFormat>>

@@ -329,7 +329,7 @@ describe('t.rich', () => {
 describe('t.raw', () => {
   function renderRawMessage(
     message: any,
-    callback: (message: string) => ReactNode
+    callback: (rendered: string) => ReactNode
   ) {
     function Component() {
       const t = useTranslations();
@@ -344,9 +344,7 @@ describe('t.raw', () => {
   }
 
   it('can return raw messages without processing them', () => {
-    const {
-      container
-    } = renderRawMessage(
+    const {container} = renderRawMessage(
       '<a href="/test">Test</a><p>{hello}</p>',
       (message) => <span dangerouslySetInnerHTML={{__html: message}} />
     );
