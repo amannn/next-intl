@@ -2,4 +2,4 @@
 // by the consumer for optional type safety
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-declare interface GlobalMessages extends Record<string, any> {}
+declare interface StrictIntlMessages extends Record<string, any> {}
