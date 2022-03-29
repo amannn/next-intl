@@ -1,8 +1,8 @@
-import {useTranslations} from 'next-intl';
+import {NextIntlProvider, useTranslations} from 'next-intl';
 
 // This page acts as a test environment for the TypeScript integration
 
-export default function Test() {
+function Suite() {
   // Correct property access
   useTranslations('StrictTypes')('nested.hello');
   useTranslations('StrictTypes.nested')('another.level');
@@ -34,4 +34,18 @@ export default function Test() {
 
   // @ts-expect-error Invalid namespace and invalid key
   useTranslations('unknown')('unknown');
+
+  return <>Suite passed</>;
+}
+
+export default function Test() {
+  function onError() {
+    // No-op
+  }
+
+  return (
+    <NextIntlProvider messages={{}} onError={onError}>
+      <Suite />
+    </NextIntlProvider>
+  );
 }
