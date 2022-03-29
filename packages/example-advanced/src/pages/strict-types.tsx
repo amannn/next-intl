@@ -18,6 +18,14 @@ function Suite() {
   useTranslations('NotFound')('title');
   useTranslations('PageLayout')('pageTitle');
 
+  // Template strings
+  const t = useTranslations('StrictTypes');
+  function getTranslation(nestedKey: 'hello' | 'another.level') {
+    return t(`nested.${nestedKey}`);
+  }
+  getTranslation('hello');
+  getTranslation('another.level');
+
   // @ts-expect-error Trying to access a child key without a namespace
   useTranslations()('title');
 
