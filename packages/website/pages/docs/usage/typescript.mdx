@@ -1,19 +1,6 @@
 # TypeScript integration
 
-`next-intl` integrates with TypeScript out-of-the box without additional setup. To take full advantage of your type system, you can optionally provide the shape of your messages to `next-intl` in order to get type safety for your namespaces and message keys.
-
-To do this, add a global type definition file in your project root (e.g. `global.d.ts`):
-
-```jsx
-type Messages = typeof import('./path/to/sample/messages.json');
-declare interface StrictIntlMessages extends Messages {}
-```
-
-You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a local messages sample.
-
-Note that you have to name the interface `StrictIntlMessages` so `next-intl` is able to detect it correctly. This integration is only available from TypeScript version 4 upwards.
-
-After this is set up, TypeScript will provide auto-completion and type safety for both the namespaces you pass to `useTranslations` as well as the message key that is passed to the translation function `t`:
+`next-intl` integrates with TypeScript out-of-the box without additional setup. You can however provide the shape of your messages to get auto-completion and type safety for your namespaces and message keys.
 
 ```js
 // messages.json
@@ -29,10 +16,24 @@ After this is set up, TypeScript will provide auto-completion and type safety fo
 // About.tsx
 
 function About() {
-  // Valid namespace ✅
+  // ✅ Valid namespace
   const t = useTranslations('About');
 
-  // Valid message key ✅
+  // ✖️ Unknown message key
+  t('description');
+
+  // ✅ Valid message key
   return <p>{t('title')}</p>;
 }
 ```
+
+To do this, add a global type definition file in your project root (e.g. `global.d.ts`):
+
+```jsx
+type Messages = typeof import('./path/to/sample/messages.json');
+declare interface StrictIntlMessages extends Messages {}
+```
+
+You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a local messages sample by importing it.
+
+Note that you have to name the interface `StrictIntlMessages` so `next-intl` is able to detect it correctly. This integration is only available from TypeScript version 4 upwards.
