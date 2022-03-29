@@ -57,14 +57,62 @@ export default function useTranslations<
   ): string;
 
   // `rich`
-  rich(
-    key: string,
+  rich<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': StrictIntlMessages},
+        NamespaceKeys<
+          StrictIntlMessages,
+          NestedKeyOf<StrictIntlMessages>
+        > extends NestedKey
+          ? '!'
+          : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': StrictIntlMessages},
+          NamespaceKeys<
+            StrictIntlMessages,
+            NestedKeyOf<StrictIntlMessages>
+          > extends NestedKey
+            ? '!'
+            : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
     values?: RichTranslationValues,
     formats?: Partial<Formats>
   ): string | ReactElement | ReactNodeArray;
 
   // `raw`
-  raw(key: string): any;
+  raw<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': StrictIntlMessages},
+        NamespaceKeys<
+          StrictIntlMessages,
+          NestedKeyOf<StrictIntlMessages>
+        > extends NestedKey
+          ? '!'
+          : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': StrictIntlMessages},
+          NamespaceKeys<
+            StrictIntlMessages,
+            NestedKeyOf<StrictIntlMessages>
+          > extends NestedKey
+            ? '!'
+            : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): any;
 } {
   const context = useIntlContext();
 
