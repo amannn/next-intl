@@ -3,3 +3,9 @@
 code {
   @apply text-sm;
 }
+
+/* Hide language selection  */
+footer > *:first-child,
+.nextra-sidebar-menu {
+  display: none;
+}
