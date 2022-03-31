@@ -8,9 +8,9 @@ import {
   useMemo,
   useRef
 } from 'react';
+import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
-import IntlMessages from './IntlMessages';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import useIntlContext from './useIntlContext';
@@ -19,7 +19,7 @@ import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
 
 function resolvePath(
-  messages: IntlMessages | undefined,
+  messages: AbstractIntlMessages | undefined,
   idPath: string,
   namespace?: string
 ) {
@@ -79,7 +79,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 }
 
 export default function useTranslationsImpl<
-  Messages extends IntlMessages,
+  Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(allMessages: Messages, namespace: NestedKey, namespacePrefix: string) {
   const {

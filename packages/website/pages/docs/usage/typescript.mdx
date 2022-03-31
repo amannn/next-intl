@@ -32,14 +32,15 @@ function About() {
 To do this, add a global type definition file in your project root (e.g. `global.d.ts`):
 
 ```jsx
-type Messages = typeof import('./path/to/sample/messages.json');
-declare interface StrictIntlMessages extends Messages {}
+// Use type safe message keys with `next-intl`
+type Messages = typeof import('./messages/en.json');
+declare interface IntlMessages extends Messages {}
 ```
 
-You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a local messages sample by importing it.
+You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a messages sample by importing it.
 
 <Callout>
-  Note that you have to name the interface `StrictIntlMessages` so `next-intl`
-  is able to detect it correctly. Furthermore this integration is only available
-  from TypeScript version 4 upwards.
+  Note that you have to name the interface `IntlMessages` so `next-intl` is able
+  to detect it correctly. This integration is only available from TypeScript
+  version 4 upwards.
 </Callout>

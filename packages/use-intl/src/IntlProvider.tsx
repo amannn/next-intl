@@ -1,13 +1,13 @@
 import React, {ReactNode} from 'react';
+import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
-import IntlMessages from './IntlMessages';
 import {RichTranslationValues} from './TranslationValues';
 import {IntlError} from '.';
 
 type Props = {
   /** All messages that will be available in your components. */
-  messages?: IntlMessages;
+  messages?: AbstractIntlMessages;
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
   locale: string;
   /** Global formats can be provided to achieve consistent

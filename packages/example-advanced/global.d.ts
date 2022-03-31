@@ -1,3 +1,3 @@
 // Declaring this interface provides type safety for message keys
 type Messages = typeof import('./messages/en.json');
-declare interface StrictIntlMessages extends Messages {}
+declare interface IntlMessages extends Messages {}

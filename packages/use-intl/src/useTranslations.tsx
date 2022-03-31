@@ -18,10 +18,7 @@ import NestedValueOf from './utils/NestedValueOf';
  * (e.g. `namespace.Component`).
  */
 export default function useTranslations<
-  NestedKey extends NamespaceKeys<
-    StrictIntlMessages,
-    NestedKeyOf<StrictIntlMessages>
-  >
+  NestedKey extends NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>>
 >(
   namespace?: NestedKey
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
@@ -30,20 +27,17 @@ export default function useTranslations<
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': StrictIntlMessages},
-        NamespaceKeys<
-          StrictIntlMessages,
-          NestedKeyOf<StrictIntlMessages>
-        > extends NestedKey
+        {'!': IntlMessages},
+        NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>> extends NestedKey
           ? '!'
           : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': StrictIntlMessages},
+          {'!': IntlMessages},
           NamespaceKeys<
-            StrictIntlMessages,
-            NestedKeyOf<StrictIntlMessages>
+            IntlMessages,
+            NestedKeyOf<IntlMessages>
           > extends NestedKey
             ? '!'
             : `!.${NestedKey}`
@@ -60,20 +54,17 @@ export default function useTranslations<
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': StrictIntlMessages},
-        NamespaceKeys<
-          StrictIntlMessages,
-          NestedKeyOf<StrictIntlMessages>
-        > extends NestedKey
+        {'!': IntlMessages},
+        NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>> extends NestedKey
           ? '!'
           : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': StrictIntlMessages},
+          {'!': IntlMessages},
           NamespaceKeys<
-            StrictIntlMessages,
-            NestedKeyOf<StrictIntlMessages>
+            IntlMessages,
+            NestedKeyOf<IntlMessages>
           > extends NestedKey
             ? '!'
             : `!.${NestedKey}`
@@ -90,20 +81,17 @@ export default function useTranslations<
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': StrictIntlMessages},
-        NamespaceKeys<
-          StrictIntlMessages,
-          NestedKeyOf<StrictIntlMessages>
-        > extends NestedKey
+        {'!': IntlMessages},
+        NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>> extends NestedKey
           ? '!'
           : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': StrictIntlMessages},
+          {'!': IntlMessages},
           NamespaceKeys<
-            StrictIntlMessages,
-            NestedKeyOf<StrictIntlMessages>
+            IntlMessages,
+            NestedKeyOf<IntlMessages>
           > extends NestedKey
             ? '!'
             : `!.${NestedKey}`
@@ -116,7 +104,7 @@ export default function useTranslations<
 } {
   const context = useIntlContext();
 
-  const messages = context.messages as StrictIntlMessages;
+  const messages = context.messages as IntlMessages;
   if (!messages) {
     const intlError = new IntlError(
       IntlErrorCode.MISSING_MESSAGE,
@@ -130,11 +118,8 @@ export default function useTranslations<
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!"") is arbitrary, but we have to use some.
   return useTranslationsImpl<
-    {'!': StrictIntlMessages},
-    NamespaceKeys<
-      StrictIntlMessages,
-      NestedKeyOf<StrictIntlMessages>
-    > extends NestedKey
+    {'!': IntlMessages},
+    NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>> extends NestedKey
       ? '!'
       : `!.${NestedKey}`
   >(
