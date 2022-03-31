@@ -9,6 +9,7 @@
 - 🌟 **Proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax)**: This covers interpolation, plurals, ordinal pluralization, label selection based on enums and rich text. I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation.
 - 📅 **Built-in date, time and number formatting**: You can use global formats for a consistent look & feel of your app and integrate them with translations.
 - 💡 **Hooks-only API**: This ensures that you can use the same API for `children` as well as for attributes which expect strings.
+- ✅ **Type-safe**: If you're using TypeScript, you'll benefit from autocompletion for available message keys and compile-time errors for typos.
 - ⚔️ **Battle-tested building blocks**: This library is a minimal wrapper around built-in browser APIs and supplemental lower-level APIs from [Format.JS](https://formatjs.io/) (used by `react-intl`).
 
 ## What does it look like?
