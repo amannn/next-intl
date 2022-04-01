@@ -44,7 +44,22 @@ export default {
 
       <meta content="next-intl" name="og:title" />
       <meta
-        content="A minimal, but complete solution for managing translations, date, time and number formatting in Next.js apps."
+        content="A minimal, but complete solution for internationalization in Next.js apps."
+        name="og:description"
+      />
+      <meta content="summary_large_image" name="twitter:card" />
+      <meta content="jamannnnnn" name="twitter:site" />
+      <meta
+        content="https://next-intl-docs.vercel.app/logo.svg"
+        name="twitter:image"
+      />
+      <meta content="React Hooks for Data Fetching – SWR" name="og:title" />
+      <meta
+        content="https://next-intl-docs.vercel.app/logo.svg"
+        name="og:image"
+      />
+      <meta
+        content="A minimal, but complete solution for internationalization in Next.js apps."
         name="description"
       />
     </>

@@ -40,7 +40,15 @@ declare interface IntlMessages extends Messages {}
 You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a messages sample by importing it.
 
 <Callout>
-  Note that you have to name the interface `IntlMessages` so `next-intl` is able
-  to detect it correctly. This integration is only available from TypeScript
-  version 4 upwards.
+  If this setup isn't working immediately for you, please double check that:
+  <ol className="mt-2">
+    <li>Your interface is called `IntlMessage`.</li>
+    <li>You're using TypeScript version 4 or later.</li>
+    <li>The path of your `import` is correct.</li>
+    <li>Your type declaration file is included in `tsconfig.json`.</li>
+    <li>
+      Your editor has loaded the most recent type declarations. When in doubt,
+      please restart.
+    </li>
+  </ol>
 </Callout>

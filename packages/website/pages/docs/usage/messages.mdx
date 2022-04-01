@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # Messages
 
 In order to render messages in components, the messages have to be provided as JSON data to the provider.
@@ -113,7 +115,11 @@ export async function getStaticProps({locale}) {
 }
 ```
 
-Note that the `namespaces` can be a list that you generate dynamically based on used components. See the [advanced example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx).
+<Callout>
+  Note that the `namespaces` can be a list that you generate dynamically based
+  on used components. See the [advanced
+  example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx).
+</Callout>
 
 ## Rendering of messages
 
@@ -179,6 +185,9 @@ Messages are always parsed and therefore e.g. for rich text you need to supply t
 <div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
 ```
 
-**Important**: Note that you should sanitize content that you pass to `dangerouslySetInnerHTML` to avoid XSS attacks.
+<Callout>
+  **Important**: You should always sanitize the content that you pass to
+  `dangerouslySetInnerHTML` to avoid cross-site scripting attacks.
+</Callout>
 
 The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.

@@ -7,7 +7,7 @@
 	<br>
 </h1>
 
-> A minimal, but complete solution for managing translations, date, time and number formatting in Next.js apps.
+> A minimal, but complete solution for internationalization in Next.js apps.
 
 ![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) [<img src="https://img.shields.io/npm/dw/next-intl.svg" />](https://www.npmjs.com/package/next-intl)
 

@@ -11,6 +11,7 @@
 2. This library offers a hooks-only API for message consumption. The reason for this is that the same API can be used for attributes as well as `children`.
 3. This library currently doesn't support AST-based extraction like `react-intl`.
 4. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
+5. This library offers [type safety for message keys](/docs/usage/typescript).
 
 ## How can I parse dates or manipulate them?
 
@@ -26,7 +27,7 @@ Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use
 
 Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/packages/example-remix).
 
-## Can next-intl be used with testing libraries like Jest and Storybook?
+## Can next-intl be used in environments like Jest and Storybook?
 
 Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.
 

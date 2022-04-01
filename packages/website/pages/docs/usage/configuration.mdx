@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # Configuration
 
 ## Time zone
@@ -29,7 +31,12 @@ To avoid mismatches between the server and client environment, it is recommended
 
 This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
 
-**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
+<Callout>
+  **Important:** When you use `getStaticProps` and no `updateInterval`, this
+  value will be stale. Therefore either regenerate these pages regularly with
+  `revalidate`, use `getServerSideProps` instead or configure an
+  `updateInterval`.
+</Callout>
 
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 

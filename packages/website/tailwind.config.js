@@ -4,6 +4,6 @@ module.exports = {
     './pages/**/*.md',
     './pages/**/*.mdx',
     './theme.config.js',
-    './styles.css',
-  ],
+    './styles.css'
+  ]
 };
