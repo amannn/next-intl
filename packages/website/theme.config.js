@@ -50,12 +50,12 @@ export default {
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="jamannnnnn" name="twitter:site" />
       <meta
-        content="https://next-intl-docs.vercel.app/logo.svg"
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
         name="twitter:image"
       />
       <meta content="React Hooks for Data Fetching – SWR" name="og:title" />
       <meta
-        content="https://next-intl-docs.vercel.app/logo.svg"
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
         name="og:image"
       />
       <meta
