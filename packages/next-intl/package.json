@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
@@ -40,7 +40,7 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "use-intl": "^2.4.1"
+    "use-intl": "^2.5.0"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0",

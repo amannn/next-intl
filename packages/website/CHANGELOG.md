@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.5.0 (2022-04-01)
+
+
+### Features
+
+* Type safe messages ([#93](https://github.com/amannn/next-intl/issues/93)) ([13b49b1](https://github.com/amannn/next-intl/commit/13b49b138bc0ec3adbe661af6a70dfabfe7e86b0))
+
+
+
+
+
 
 
 
