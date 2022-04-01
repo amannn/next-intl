@@ -53,7 +53,7 @@ export default {
         content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
         name="twitter:image"
       />
-      <meta content="React Hooks for Data Fetching – SWR" name="og:title" />
+      <meta content="next-intl" name="og:title" />
       <meta
         content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
         name="og:image"
