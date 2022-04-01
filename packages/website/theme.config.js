@@ -50,12 +50,12 @@ export default {
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="jamannnnnn" name="twitter:site" />
       <meta
-        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/twitter-image.png"
         name="twitter:image"
       />
       <meta content="next-intl" name="og:title" />
       <meta
-        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/logo.png"
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/og-image.png"
         name="og:image"
       />
       <meta
