@@ -1,11 +1,11 @@
 import {createContext} from 'react';
+import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlError from './IntlError';
-import IntlMessages from './IntlMessages';
 import {RichTranslationValues} from './TranslationValues';
 
 export type IntlContextShape = {
-  messages?: IntlMessages;
+  messages?: AbstractIntlMessages;
   locale: string;
   formats?: Partial<Formats>;
   timeZone?: string;

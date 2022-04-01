@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # Configuration
 
 ## Time zone
@@ -29,7 +31,12 @@ To avoid mismatches between the server and client environment, it is recommended
 
 This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
 
-**Important:** When you use `getStaticProps` and no `updateInterval`, this value will be stale. Therefore either regenerate these pages regularly with `revalidate`, use `getServerSideProps` instead or configure an `updateInterval`.
+<Callout>
+  **Important:** When you use `getStaticProps` and no `updateInterval`, this
+  value will be stale. Therefore either regenerate these pages regularly with
+  `revalidate`, use `getServerSideProps` instead or configure an
+  `updateInterval`.
+</Callout>
 
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
@@ -72,9 +79,8 @@ t('latitude', {latitude: 47.414329182});
 ```
 
 ## Default translation values
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider.
-This configuration also can be used to apply consistent styling to commonly used rich text elements.
-The defaults will be overridden by locally provided values.
+
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider. This configuration also can be used to apply consistent styling to commonly used rich text elements. The defaults will be overridden by locally provided values.
 
 ```js
 <NextIntlProvider
@@ -88,7 +94,7 @@ The defaults will be overridden by locally provided values.
 </NextIntlProvider>
 ```
 
-## Retrieving provider config
+## Retrieve provider config
 
 As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
 

@@ -329,7 +329,7 @@ describe('t.rich', () => {
 describe('t.raw', () => {
   function renderRawMessage(
     message: any,
-    callback: (message: string) => ReactNode
+    callback: (rendered: string) => ReactNode
   ) {
     function Component() {
       const t = useTranslations();
@@ -344,9 +344,7 @@ describe('t.raw', () => {
   }
 
   it('can return raw messages without processing them', () => {
-    const {
-      container
-    } = renderRawMessage(
+    const {container} = renderRawMessage(
       '<a href="/test">Test</a><p>{hello}</p>',
       (message) => <span dangerouslySetInnerHTML={{__html: message}} />
     );
@@ -384,26 +382,28 @@ describe('t.raw', () => {
 });
 
 describe('error handling', () => {
-  it('warns when no messages are configured', () => {
+  it('throws when no messages are configured', () => {
     const onError = jest.fn();
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
 
     function Component() {
       const t = useTranslations('Component');
       return <>{t('label')}</>;
     }
 
-    render(
-      <IntlProvider locale="en" onError={onError}>
-        <Component />
-      </IntlProvider>
-    );
+    expect(() =>
+      render(
+        <IntlProvider locale="en" onError={onError}>
+          <Component />
+        </IntlProvider>
+      )
+    ).toThrow('MISSING_MESSAGE: No messages were configured on the provider.');
 
     const error: IntlError = onError.mock.calls[0][0];
-    expect(error.message).toBe(
-      'MISSING_MESSAGE: No messages were configured on the provider.'
-    );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-    screen.getByText('Component.label');
+
+    console.error = originalConsoleError;
   });
 
   it('allows to configure a fallback', () => {

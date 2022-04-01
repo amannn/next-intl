@@ -17,5 +17,13 @@
   },
   "PageLayout": {
     "pageTitle": "next-intl"
+  },
+  "StrictTypes": {
+    "nested": {
+      "hello": "Hello",
+      "another": {
+        "level": "Level"
+      }
+    }
   }
 }

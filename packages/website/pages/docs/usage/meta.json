@@ -4,5 +4,6 @@
   "numbers": "Numbers",
   "dates-times": "Dates and times",
   "configuration": "Configuration",
-  "error-handling": "Error handling"
+  "error-handling": "Error handling",
+  "typescript": "TypeScript"
 }

@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 export default {
   github: 'https://github.com/amannn/next-intl',
   projectLink: 'https://github.com/amannn/next-intl',
-  // TODO: Update!
-  docsRepositoryBase: 'https://github.com/amannn/next-intl/blob/docs/72-improve-docs/pages',
+  docsRepositoryBase:
+    'https://github.com/amannn/next-intl/tree/main/packages/website/pages',
   titleSuffix: ' – next-intl',
   nextLinks: true,
   prevLinks: true,
@@ -12,26 +13,55 @@ export default {
   footer: true,
   footerText: null,
   footerEditLink: `Edit this page on GitHub`,
-  logo: (
-    <img
-      aria-label="next-intl"
-      src="/logo.svg"
-      style={{height: 62}}
-    />
-  ),
+  logo: <img aria-label="next-intl" src="/logo.svg" style={{height: 62}} />,
   head: () => (
     <>
-      <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
-      <link rel="manifest" href="/favicon/site.webmanifest" />
-      <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5" />
-      <meta name="msapplication-TileColor" content="#da532c" />
-      <meta name="theme-color" content="#ffffff" />
+      <link
+        href="/favicon/apple-touch-icon.png"
+        rel="apple-touch-icon"
+        sizes="180x180"
+      />
+      <link
+        href="/favicon/favicon-32x32.png"
+        rel="icon"
+        sizes="32x32"
+        type="image/png"
+      />
+      <link
+        href="/favicon/favicon-16x16.png"
+        rel="icon"
+        sizes="16x16"
+        type="image/png"
+      />
+      <link href="/favicon/site.webmanifest" rel="manifest" />
+      <link
+        color="#5bbad5"
+        href="/favicon/safari-pinned-tab.svg"
+        rel="mask-icon"
+      />
+      <meta content="#da532c" name="msapplication-TileColor" />
+      <meta content="#ffffff" name="theme-color" />
 
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="og:title" content="next-intl" />
-      <meta name="description" content="A minimal, but complete solution for managing translations, date, time and number formatting in Next.js apps." />
+      <meta content="next-intl" name="og:title" />
+      <meta
+        content="A minimal, but complete solution for internationalization in Next.js apps."
+        name="og:description"
+      />
+      <meta content="summary_large_image" name="twitter:card" />
+      <meta content="jamannnnnn" name="twitter:site" />
+      <meta
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/twitter-image.png"
+        name="twitter:image"
+      />
+      <meta content="next-intl" name="og:title" />
+      <meta
+        content="https://github.com/amannn/next-intl/raw/feat/90-type-safe-messages/media/og-image.png"
+        name="og:image"
+      />
+      <meta
+        content="A minimal, but complete solution for internationalization in Next.js apps."
+        name="description"
+      />
     </>
   )
 };

@@ -2,7 +2,8 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish --yes --no-verify-access"
+    "publish": "lerna publish --yes --no-verify-access",
+    "prerelease": "lerna publish prerelease --no-verify-access --dist-tag next"
   },
   "workspaces": [
     "packages/use-intl",

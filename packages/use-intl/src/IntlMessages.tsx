@@ -1,3 +1,5 @@
-type IntlMessages = {[id: string]: IntlMessages | string};
+// This module is intended to be overridden
+// by the consumer for optional type safety
 
-export default IntlMessages;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+declare interface IntlMessages extends Record<string, any> {}

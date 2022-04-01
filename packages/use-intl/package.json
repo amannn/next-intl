@@ -10,15 +10,18 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "TZ=Europe/Berlin tsdx test",
+    "start": "dts watch",
+    "build": "dts build",
+    "test": "TZ=Europe/Berlin dts test",
     "lint": "eslint src test && tsc",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
   "files": [
     "dist",
     "src"
@@ -44,11 +47,11 @@
     "@testing-library/react": "^11.1.2",
     "@types/react": "^17.0.33",
     "date-fns": "^2.16.1",
-    "eslint": "7.4.0",
-    "eslint-config-molindo": "5.0.1",
+    "dts-cli": "1.4.0",
+    "eslint": "8.12.0",
+    "eslint-config-molindo": "6.0.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
-    "tsdx": "^0.14.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },

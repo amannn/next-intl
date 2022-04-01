@@ -1,7 +1,11 @@
 require('eslint-config-molindo/setupPlugins');
 
 module.exports = {
-  extends: ['molindo/typescript', 'molindo/react', 'plugin:@next/next/recommended'],
+  extends: [
+    'molindo/typescript',
+    'molindo/react',
+    'plugin:@next/next/recommended'
+  ],
   env: {
     node: true
   },
@@ -10,4 +14,4 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'react/display-name': 'off'
   }
-}
+};
