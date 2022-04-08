@@ -3,7 +3,7 @@
   "version": "2.5.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
-  "description": "A minimal, but complete solution for managing translations, date and number formatting in Next.js apps.",
+  "description": "A minimal, but complete solution for internationalization in Next.js apps.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -44,17 +44,17 @@
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0",
-    "react": "^16.8.0 || ^17.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^11.1.2",
-    "@types/react": "^17.0.33",
+    "@testing-library/react": "^13.0.0",
+    "@types/react": "^18.0.0",
     "dts-cli": "1.4.0",
     "eslint": "8.12.0",
     "eslint-config-molindo": "6.0.0",
-    "next": "^11.0.0",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "next": "^12.1.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },

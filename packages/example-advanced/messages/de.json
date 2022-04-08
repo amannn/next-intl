@@ -10,7 +10,7 @@
   "Navigation": {
     "index": "Start",
     "about": "Über",
-    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch}} wechseln"
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
   },
   "NotFound": {
     "title": "Entschuldigung, diese Seite konnte nicht gefunden werden."

@@ -1,5 +1,6 @@
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import IntlError, {IntlErrorCode} from './IntlError';
+import NumberFormatOptions from './NumberFormatOptions';
 import useIntlContext from './useIntlContext';
 
 const MINUTE = 60;
@@ -117,7 +118,7 @@ export default function useIntl() {
 
   function formatNumber(
     value: number,
-    formatOrOptions?: string | Intl.NumberFormatOptions
+    formatOrOptions?: string | NumberFormatOptions
   ) {
     return getFormattedValue(
       value,

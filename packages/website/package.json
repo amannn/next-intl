@@ -13,8 +13,8 @@
     "next": "^12.1.0",
     "nextra": "2.0.0-alpha.44",
     "nextra-theme-docs": "2.0.0-alpha.44",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "tailwindcss": "3.0.7"
   },
   "devDependencies": {
