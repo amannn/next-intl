@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.6.0 (2022-04-08)
+
+
+### Features
+
+* Support React 18 ([#98](https://github.com/amannn/next-intl/issues/98)) ([38614eb](https://github.com/amannn/next-intl/commit/38614eb9c6d6fb96704424d7f3ff8a67a24b789e))
+
+
+
+
+
 # 2.5.0 (2022-04-01)
 
 
