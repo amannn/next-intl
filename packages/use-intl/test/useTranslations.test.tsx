@@ -492,9 +492,7 @@ describe('error handling', () => {
     );
 
     const error: IntlError = onError.mock.calls[0][0];
-    expect(error.message).toBe(
-      'INVALID_MESSAGE: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "c" found.'
-    );
+    expect(error.message).toBe('INVALID_MESSAGE: INVALID_ARGUMENT_TYPE');
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     screen.getByText('price');
   });

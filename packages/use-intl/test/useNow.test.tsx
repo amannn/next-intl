@@ -35,7 +35,7 @@ it('can use a globally defined `now` value', () => {
 
 it('can update a globally defined `now` value after the initial render', async () => {
   function Component() {
-    return <p>{useNow({updateInterval: 1000}).toISOString()}</p>;
+    return <p>{useNow({updateInterval: 100}).toISOString()}</p>;
   }
 
   const {container} = render(
@@ -45,20 +45,23 @@ it('can update a globally defined `now` value after the initial render', async (
   );
   expect(container.textContent).toBe('2018-10-06T10:36:01.516Z');
 
-  await waitFor(() => {
-    if (!container.textContent) throw new Error();
-    const curYear = parseInt(container.textContent);
+  await waitFor(
+    () => {
+      if (!container.textContent) throw new Error();
+      const curYear = parseInt(container.textContent);
 
-    // If somebody invents time travel, this test will fail.
-    // But I guess we'll have other things to deal with then
-    // anyway apart from this library ¯\_(ツ)_/¯.
-    expect(curYear).toBeGreaterThan(2020);
-  });
+      // If somebody invents time travel, this test will fail.
+      // But I guess we'll have other things to deal with then
+      // anyway apart from this library ¯\_(ツ)_/¯.
+      expect(curYear).toBeGreaterThan(2020);
+    },
+    {interval: 150}
+  );
 });
 
 it('can update based on an interval', async () => {
   function Component() {
-    return <p>{useNow({updateInterval: 1000}).toISOString()}</p>;
+    return <p>{useNow({updateInterval: 100}).toISOString()}</p>;
   }
 
   const {container} = render(
@@ -69,9 +72,12 @@ it('can update based on an interval', async () => {
   if (!container.textContent) throw new Error();
   const initial = new Date(container.textContent).getTime();
 
-  await waitFor(() => {
-    if (!container.textContent) throw new Error();
-    const now = new Date(container.textContent).getTime();
-    expect(now - 900).toBeGreaterThanOrEqual(initial);
-  });
+  await waitFor(
+    () => {
+      if (!container.textContent) throw new Error();
+      const now = new Date(container.textContent).getTime();
+      expect(now - 900).toBeGreaterThanOrEqual(initial);
+    },
+    {interval: 150}
+  );
 });
