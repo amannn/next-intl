@@ -12,7 +12,7 @@ export default function About() {
   return (
     <PageLayout title={t('title')}>
       <p>
-        {t.rich('lastUpdated', {
+        {t('lastUpdated', {
           lastUpdated,
           lastUpdatedRelative: intl.formatRelativeTime(lastUpdated)
         })}
