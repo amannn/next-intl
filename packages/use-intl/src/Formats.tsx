@@ -1,7 +1,8 @@
 import DateTimeFormatOptions from './DateTimeFormatOptions';
+import NumberFormatOptions from './NumberFormatOptions';
 
 type Formats = {
-  number: Record<string, Intl.NumberFormatOptions>;
+  number: Record<string, NumberFormatOptions>;
   dateTime: Record<string, DateTimeFormatOptions>;
 };
 

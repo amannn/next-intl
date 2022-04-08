@@ -38,6 +38,7 @@
     "formatting"
   ],
   "dependencies": {
+    "@formatjs/ecma402-abstract": "^1.11.4",
     "intl-messageformat": "^9.3.18"
   },
   "peerDependencies": {
