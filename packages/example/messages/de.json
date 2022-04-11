@@ -4,7 +4,7 @@
     "description": "Das ist die Startseite."
   },
   "LocaleSwitcher": {
-    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch}} wechseln"
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
   },
   "PageLayout": {
     "pageTitle": "next-intl"

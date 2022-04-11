@@ -4,7 +4,7 @@
     "description": "This is the home page."
   },
   "LocaleSwitcher": {
-    "switchLocale": "Switch to {locale, select, de {German} en {English}}"
+    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
   },
   "PageLayout": {
     "pageTitle": "next-intl"
