@@ -12,7 +12,8 @@ function validateMessagesSegment(
       if (parentPath) keyLabel += ` (at ${parentPath})`;
       invalidKeyLabels.push(keyLabel);
     }
-    if (typeof messageOrMessages === 'object') {
+
+    if (messageOrMessages != null && typeof messageOrMessages === 'object') {
       validateMessagesSegment(
         messageOrMessages,
         invalidKeyLabels,
