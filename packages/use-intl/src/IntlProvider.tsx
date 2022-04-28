@@ -64,12 +64,11 @@ export default function IntlProvider({
   children,
   onError = defaultOnError,
   getMessageFallback = defaultGetMessageFallback,
-  messages,
   ...contextValues
 }: Props) {
   return (
     <IntlContext.Provider
-      value={{...contextValues, messages, onError, getMessageFallback}}
+      value={{...contextValues, onError, getMessageFallback}}
     >
       {children}
     </IntlContext.Provider>
