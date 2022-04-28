@@ -1,8 +1,8 @@
-import React, {ReactNode, useEffect} from 'react';
+import React, {ReactNode} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
-import IntlError, {IntlErrorCode} from './IntlError';
+import IntlError from './IntlError';
 import {RichTranslationValues} from './TranslationValues';
 
 type Props = {
@@ -67,55 +67,6 @@ export default function IntlProvider({
   messages,
   ...contextValues
 }: Props) {
-  // Validation of the namespace keys is currently inlined as the bundler that
-  // Bundlephobia uses is apparently not smart enough to throw the import out if
-  // this is imported from a separate module.
-  if (__DEV__) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      function validateMessagesSegment(
-        messagesPart: AbstractIntlMessages,
-        invalidKeyLabels: Array<string>,
-        parentPath?: string
-      ) {
-        Object.entries(messagesPart).forEach(([key, messageOrMessages]) => {
-          if (key.includes('.')) {
-            let keyLabel = key;
-            if (parentPath) keyLabel += ` (at ${parentPath})`;
-            invalidKeyLabels.push(keyLabel);
-          }
-          if (typeof messageOrMessages === 'object') {
-            validateMessagesSegment(
-              messageOrMessages,
-              invalidKeyLabels,
-              [parentPath, key].filter((part) => part != null).join('.')
-            );
-          }
-        });
-      }
-
-      function validateMessages() {
-        if (!messages) return;
-
-        const invalidKeyLabels: Array<string> = [];
-        validateMessagesSegment(messages, invalidKeyLabels);
-
-        if (invalidKeyLabels.length > 0) {
-          onError(
-            new IntlError(
-              IntlErrorCode.INVALID_KEY,
-              `Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid ${
-                invalidKeyLabels.length === 1 ? 'key' : 'keys'
-              }: ${invalidKeyLabels.join(', ')}`
-            )
-          );
-        }
-      }
-
-      validateMessages();
-    }, [messages, onError]);
-  }
-
   return (
     <IntlContext.Provider
       value={{...contextValues, messages, onError, getMessageFallback}}
