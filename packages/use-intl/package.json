@@ -17,6 +17,7 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
+  "browser": "dist/use-intl.esm.js",
   "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
   "jest": {
