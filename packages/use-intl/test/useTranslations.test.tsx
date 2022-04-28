@@ -546,6 +546,24 @@ describe('error handling', () => {
     screen.getByText('rich');
   });
 
+  it('allows null values', () => {
+    const onError = jest.fn();
+
+    render(
+      <IntlProvider
+        getMessageFallback={() => 'fallback'}
+        locale="en"
+        // @ts-expect-error
+        messages={{a: null}}
+        onError={onError}
+      >
+        <span />
+      </IntlProvider>
+    );
+
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it('warns for invalid namespace keys', () => {
     const onError = jest.fn();
 
