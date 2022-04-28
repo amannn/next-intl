@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.7.0 (2022-04-28)
+
+
+### Features
+
+* Warn for invalid namespace keys ([#106](https://github.com/amannn/next-intl/issues/106)) ([e86ab28](https://github.com/amannn/next-intl/commit/e86ab28b9180b866ce1a0a9173355d4b686b7d07))
+
+
+
+
+
 # 2.6.0 (2022-04-08)
 
 
