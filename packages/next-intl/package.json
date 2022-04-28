@@ -17,8 +17,6 @@
     "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md ."
   },
   "main": "dist/index.js",
-  "module": "dist/next-intl.esm.js",
-  "browser": "dist/next-intl.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
