@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.7.1 (2022-04-28)
+
+
+### Bug Fixes
+
+* Allow null message values ([#110](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/110)) ([14ae8ff](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/14ae8ffdf1b295873f14081e2c3709d0f9bd2b9e))
+
+
+
+
+
 # 2.7.0 (2022-04-28)
 
 
