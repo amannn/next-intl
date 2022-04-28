@@ -546,7 +546,7 @@ describe('error handling', () => {
     screen.getByText('rich');
   });
 
-  it('warns for invalid namespace keys', () => {
+  it.skip('warns for invalid namespace keys', () => {
     const onError = jest.fn();
 
     render(
