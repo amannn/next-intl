@@ -546,14 +546,14 @@ describe('error handling', () => {
     screen.getByText('rich');
   });
 
-  it('allows null values', () => {
+  it('allows null values for messages', () => {
     const onError = jest.fn();
 
     render(
       <IntlProvider
-        getMessageFallback={() => 'fallback'}
         locale="en"
-        // @ts-expect-error
+        // @ts-expect-error The types don't allow this,
+        // but this shouldn't lead to an error.
         messages={{a: null}}
         onError={onError}
       >
