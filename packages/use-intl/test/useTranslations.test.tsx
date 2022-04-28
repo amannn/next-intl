@@ -545,6 +545,26 @@ describe('error handling', () => {
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     screen.getByText('rich');
   });
+
+  it('warns for invalid namespace keys', () => {
+    const onError = jest.fn();
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{'a.b': {'c.d': 'ABCD', e: 'E'}, f: {g: {'h.j': 'FGHJ'}}}}
+        onError={onError}
+      >
+        <span />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.message).toBe(
+      'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
+    );
+    expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
+  });
 });
 
 describe('global formats', () => {

@@ -1,8 +1,9 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
 import {RichTranslationValues} from './TranslationValues';
+import validateMessages from './validateMessages';
 import {IntlError} from '.';
 
 type Props = {
@@ -64,11 +65,21 @@ export default function IntlProvider({
   children,
   onError = defaultOnError,
   getMessageFallback = defaultGetMessageFallback,
+  messages,
   ...contextValues
 }: Props) {
+  if (__DEV__) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      if (messages) {
+        validateMessages(messages, onError);
+      }
+    }, [messages, onError]);
+  }
+
   return (
     <IntlContext.Provider
-      value={{...contextValues, onError, getMessageFallback}}
+      value={{...contextValues, messages, onError, getMessageFallback}}
     >
       {children}
     </IntlContext.Provider>
