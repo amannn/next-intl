@@ -2,6 +2,8 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {IntlProvider, useTimeZone} from '../src';
 
+(global as any).__DEV__ = true;
+
 it('returns the time zone when it is configured', () => {
   function Component() {
     return <>{useTimeZone()}</>;
