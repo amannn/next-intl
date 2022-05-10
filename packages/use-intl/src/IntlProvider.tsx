@@ -78,7 +78,7 @@ export default function IntlProvider({
   }
   return (
     <IntlContext.Provider
-      value={{...contextValues, onError, messages, getMessageFallback}}
+      value={{...contextValues, messages, onError, getMessageFallback}}
     >
       {children}
     </IntlContext.Provider>
