@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # FAQ
 
 ## What trade-offs does this library make?
@@ -17,13 +19,18 @@
 
 This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
 
-Note that parsing dates with `new Date(dateString)` and `Date.parse(dateString)` is discouraged due to browser differences and inconsistencies (see [the MDN docs on the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
+<Callout>
+  Note that parsing dates with `new Date(dateString)` and
+  `Date.parse(dateString)` is discouraged due to browser differences and
+  inconsistencies (see [the MDN docs on the `Date`
+  constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
+</Callout>
 
-## Can this be used without Next.js?
+## Can next-intl be used without Next.js?
 
 Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
 
-## Can this be used with [Remix](https://remix.run/)?
+## Can next-intl be used with [Remix](https://remix.run/)?
 
 Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/packages/example-remix).
 
