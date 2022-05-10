@@ -14,7 +14,8 @@
     "build": "dts build",
     "test": "TZ=Europe/Berlin dts test",
     "lint": "eslint src test && tsc",
-    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md ."
+    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && git checkout .",
+    "postpublish": "rm ./README.md"
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",

@@ -4,7 +4,7 @@ import Callout from 'nextra-theme-docs/callout';
 
 ## What trade-offs does this library make?
 
-1. The bundle size comes in at [39.8kB (12kb gzipped)](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalization features. There are smaller libraries for internationalization, but they typically cover less features. If you don't need all features of `next-intl`, you can reduce the bundle size with tree shaking. However if your performance budget doesn't allow for the size of this library, you might be better off with an alternative.
+1. The bundle size comes in at [~14kB gzipped](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalization features. There are smaller libraries for internationalization, but they typically cover less features. If you don't need all features of `next-intl`, you can reduce the bundle size with tree shaking. Furthermore if [native `Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat) lands in the browsers in the future, we'll be able to reduce the bundle size significatly.
 2. Currently there's no concept of lazy loading translations. If your app has a significant number of messages, the page-based approach of Next.js allows you to only provide the minimum of necessary messages based on the route. If you split your components by features, it might make sense to split your translation files the same way to provide bundles per feature set. A built-in mechanism for lazy loading is being evaluated in [#2](https://github.com/amannn/next-intl/issues/2).
 
 ## How is this library different from using react-intl?

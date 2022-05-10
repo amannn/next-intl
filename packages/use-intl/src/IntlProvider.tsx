@@ -2,9 +2,9 @@ import React, {ReactNode, useEffect} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
+import IntlError from './IntlError';
 import {RichTranslationValues} from './TranslationValues';
 import validateMessages from './validateMessages';
-import {IntlError} from '.';
 
 type Props = {
   /** All messages that will be available in your components. */
