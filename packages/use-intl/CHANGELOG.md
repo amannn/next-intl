@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.7.2 (2022-05-10)
+
+
+### Bug Fixes
+
+* Enable tree-shaking ([#108](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/108)) ([157b0e2](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/157b0e28376055e7e34e86007c51d008c8e214aa))
+
+
+
+
+
 ## 2.7.1 (2022-04-28)
 
 
