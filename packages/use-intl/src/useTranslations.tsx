@@ -1,6 +1,5 @@
 import {ReactElement, ReactNodeArray} from 'react';
 import Formats from './Formats';
-import IntlError, {IntlErrorCode} from './IntlError';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
@@ -103,16 +102,7 @@ export default function useTranslations<
   ): any;
 } {
   const context = useIntlContext();
-
   const messages = context.messages as IntlMessages;
-  if (!messages) {
-    const intlError = new IntlError(
-      IntlErrorCode.MISSING_MESSAGE,
-      __DEV__ ? `No messages were configured on the provider.` : undefined
-    );
-    context.onError(intlError);
-    throw intlError;
-  }
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
