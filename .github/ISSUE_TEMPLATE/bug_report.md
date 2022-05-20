@@ -1,28 +1,33 @@
----
 name: Bug report
-about: Create a report to help us improve
-title: ''
+description: Create a bug report
 labels: bug
-assignees: ''
-
----
-
-<!-- NOTE: It's important that you use this template and provide a reproduction. Without it, it's unlikely that your bug will get fixed. Thank you for your understanding. -->
-
-**Describe the bug**
-
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-
-Please provide a CodeSandbox that illustrates the problem ([template](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js)).
-
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-
-A clear and concise description of what you expected to happen.
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug report! Please fill out this form as completely as possible.
+  - type: markdown
+    attributes:
+      value: Note that if you leave out sections it's unlikely that your bug will get fixed and the issue will be closed. Thank you for your understanding.
+  - type: textarea
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction
+      description: Please provide a CodeSandbox that illustrates the problem ([template](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js)).
+      value: |
+        Steps to reproduce the behaviour:
+        1. Go to …
+        2. Click on …
+        3. See error: … 
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behaviour
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
