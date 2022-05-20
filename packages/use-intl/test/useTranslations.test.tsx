@@ -382,30 +382,6 @@ describe('t.raw', () => {
 });
 
 describe('error handling', () => {
-  it('throws when no messages are configured', () => {
-    const onError = jest.fn();
-    const originalConsoleError = console.error;
-    console.error = jest.fn();
-
-    function Component() {
-      const t = useTranslations('Component');
-      return <>{t('label')}</>;
-    }
-
-    expect(() =>
-      render(
-        <IntlProvider locale="en" onError={onError}>
-          <Component />
-        </IntlProvider>
-      )
-    ).toThrow('MISSING_MESSAGE: No messages were configured on the provider.');
-
-    const error: IntlError = onError.mock.calls[0][0];
-    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-
-    console.error = originalConsoleError;
-  });
-
   it('allows to configure a fallback', () => {
     const onError = jest.fn();
 
@@ -564,6 +540,29 @@ describe('error handling', () => {
     expect(onError).not.toHaveBeenCalled();
   });
 
+  it('can render without messages', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('test')}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" onError={onError}>
+        <Component />
+      </IntlProvider>
+    );
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
+    expect(error.message).toBe(
+      'MISSING_MESSAGE: No messages were configured on the provider.'
+    );
+    screen.getByText('Component.test');
+  });
+
   it('warns for invalid namespace keys', () => {
     const onError = jest.fn();
 
@@ -578,10 +577,10 @@ describe('error handling', () => {
     );
 
     const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
     expect(error.message).toBe(
       'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
     );
-    expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
   });
 });
 
