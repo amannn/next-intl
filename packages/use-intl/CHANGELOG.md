@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.7.3 (2022-05-20)
+
+
+### Bug Fixes
+
+* Add back the ability to render the provider without messages ([#113](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/113)) ([8395822](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/8395822fa17cd0a04b88f8edce3b20e5e613fc78))
+
+
+
+
+
 ## 2.7.2 (2022-05-10)
 
 
