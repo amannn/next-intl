@@ -18,9 +18,11 @@ body:
   - type: textarea
     attributes:
       label: Reproduction
-      description: Please provide a CodeSandbox that illustrates the problem ([template](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js)).
+      description: Please provide a CodeSandbox where the problem can be reproduced ([template](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js)).
       value: |
-        Steps to reproduce the behaviour:
+        CodeSandbox reproduction: https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js
+
+        Steps to reproduce:
         1. Go to …
         2. Click on …
         3. See error: … 
