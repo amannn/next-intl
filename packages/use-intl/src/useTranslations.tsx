@@ -34,7 +34,7 @@ export default function useTranslations<
       NestedKeyOf<
         NestedValueOf<
           {'!': IntlMessages},
-          [NestedKey] extends [never],
+          [NestedKey] extends [never]
             ? '!'
             : `!.${NestedKey}`
         >
