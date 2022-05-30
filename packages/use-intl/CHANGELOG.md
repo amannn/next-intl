@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.7.4 (2022-05-30)
+
+
+### Bug Fixes
+
+* Adapt TypeScript validation to work with messages files that only have a single top-level namespace ([#115](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/115)) ([cf0b83e](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/cf0b83e3a591cfe87e17537c3ca0c7000cc70b1e))
+
+
+
+
+
 ## 2.7.3 (2022-05-20)
 
 
