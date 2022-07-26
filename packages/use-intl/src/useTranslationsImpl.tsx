@@ -5,8 +5,8 @@ import {
   ReactElement,
   ReactNode,
   ReactNodeArray,
-  useMemo,
-  useRef
+  useMemo
+  // useRef
 } from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
@@ -78,16 +78,24 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
+const cachedFormatsByLocaleRef: any = {current: {}};
+
 export default function useTranslationsImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(allMessages: Messages, namespace: NestedKey, namespacePrefix: string) {
   const {
+    // @ts-ignore
     defaultTranslationValues,
+    // @ts-ignore
     formats: globalFormats,
+    // @ts-ignore
     getMessageFallback,
+    // @ts-ignore
     locale,
+    // @ts-ignore
     onError,
+    // @ts-ignore
     timeZone
   } = useIntlContext();
 
@@ -99,10 +107,6 @@ export default function useTranslationsImpl<
       ? undefined
       : namespace.slice((namespacePrefix + '.').length)
   ) as NestedKey;
-
-  const cachedFormatsByLocaleRef = useRef<
-    Record<string, Record<string, IntlMessageFormat>>
-  >({});
 
   const messagesOrError = useMemo(() => {
     try {

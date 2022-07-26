@@ -1,4 +1,5 @@
-import {createContext} from 'react';
+// @ts-ignore
+import {createServerContext, createContext} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlError from './IntlError';
@@ -9,7 +10,7 @@ export type IntlContextShape = {
   locale: string;
   formats?: Partial<Formats>;
   timeZone?: string;
-  onError(error: IntlError): void;
+  // onError(error: IntlError): void;
   getMessageFallback(info: {
     error: IntlError;
     key: string;
@@ -19,6 +20,8 @@ export type IntlContextShape = {
   defaultTranslationValues?: RichTranslationValues;
 };
 
-const IntlContext = createContext<IntlContextShape | undefined>(undefined);
+const IntlContext: any = createServerContext
+  ? createServerContext('IntlContext', undefined)
+  : createContext(undefined);
 
 export default IntlContext;

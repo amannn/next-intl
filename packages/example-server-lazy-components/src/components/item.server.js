@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 
-import Page from './page.client'
+import Page from './Page'
 import Item from './item.client'
 import getItem from '../lib/get-item'
 import useData from '../lib/use-data'

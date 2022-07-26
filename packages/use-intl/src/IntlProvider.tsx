@@ -1,10 +1,9 @@
-import React, {ReactNode, useEffect} from 'react';
+import React, {ReactNode} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlContext from './IntlContext';
 import IntlError from './IntlError';
 import {RichTranslationValues} from './TranslationValues';
-import validateMessages from './validateMessages';
 
 type Props = {
   /** All messages that will be available in your components. */
@@ -47,39 +46,45 @@ type Props = {
   defaultTranslationValues?: RichTranslationValues;
 };
 
-function defaultGetMessageFallback({
-  key,
-  namespace
-}: {
-  key: string;
-  namespace?: string;
-}) {
-  return [namespace, key].filter((part) => part != null).join('.');
-}
+// function defaultGetMessageFallback({
+//   key,
+//   namespace
+// }: {
+//   key: string;
+//   namespace?: string;
+// }) {
+//   return [namespace, key].filter((part) => part != null).join('.');
+// }
 
-function defaultOnError(error: IntlError) {
-  console.error(error);
-}
+// function defaultOnError(error: IntlError) {
+//   console.error(error);
+// }
 
 export default function IntlProvider({
   children,
-  onError = defaultOnError,
-  getMessageFallback = defaultGetMessageFallback,
+  // onError = defaultOnError,
+  // getMessageFallback = defaultGetMessageFallback,
   messages,
   ...contextValues
 }: Props) {
-  if (__DEV__) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (messages) {
-        validateMessages(messages, onError);
-      }
-    }, [messages, onError]);
-  }
+  // if (__DEV__) {
+  //   // `useMemo` is used so this can be executed in RSC.
+  //   // eslint-disable-next-line react-hooks/rules-of-hooks
+  //   useMemo(() => {
+  //     if (messages) {
+  //       validateMessages(messages, onError);
+  //     }
+  //   }, [messages, onError]);
+  // }
 
   return (
     <IntlContext.Provider
-      value={{...contextValues, messages, onError, getMessageFallback}}
+      value={{
+        ...contextValues,
+        messages
+        // onError: defaultOnError,
+        // getMessageFallback
+      }}
     >
       {children}
     </IntlContext.Provider>
