@@ -10,6 +10,7 @@
     "packages/next-intl",
     "packages/example",
     "packages/example-advanced",
+    "packages/example-server-lazy-components",
     "packages/website"
   ],
   "devDependencies": {
