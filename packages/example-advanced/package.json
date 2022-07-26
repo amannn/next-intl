@@ -12,10 +12,10 @@
   "dependencies": {
     "date-fns": "^2.16.1",
     "lodash": "^4.17.21",
-    "next": "^12.1.4",
+    "next": "^12.2.3",
     "next-intl": "^2.7.4",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^4.6.3"
   },
   "devDependencies": {
