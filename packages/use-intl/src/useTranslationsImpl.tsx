@@ -68,6 +68,8 @@ function prepareTranslationValues(values: RichTranslationValues) {
           ? cloneElement(result, {key: key + index++})
           : result;
       };
+    } else if(isValidElement(value)) {
+      transformed = cloneElement(value, {key: key + index++});
     } else {
       transformed = value;
     }
