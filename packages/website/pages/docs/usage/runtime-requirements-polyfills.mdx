@@ -14,10 +14,36 @@ Based on the features you're using, you have to make sure your browser supports 
 
 If you target a browser that doesn't support all the required APIs, consider using polyfills. [Polyfill.io](https://polyfill.io/v3/) is a valuable solution for this that helps you to load only the polyfills you need for a given locale.
 
-**Example for `en`:**
+**Example:**
 
-```html
-<script src="https://polyfill.io/v3/polyfill.min.js?features=Intl,Intl.DateTimeFormat,Intl.DateTimeFormat.~locale.en,Intl.NumberFormat,Intl.NumberFormat.~locale.en,Intl.PluralRules,Intl.PluralRules.~locale.en,Intl.RelativeTimeFormat,Intl.RelativeTimeFormat.~locale.en"></script>
+```js
+import {useLocale} from 'next-intl';
+import Script from 'next/script';
+
+// Use this component in your Next.js custom `_app`
+export default function Polyfills() {
+  const topLevelLocale = useLocale().replace(/-.*/, '');
+
+  const polyfills = [
+    'Intl',
+    'Intl.DateTimeFormat',
+    `Intl.DateTimeFormat.~locale.${topLevelLocale}`,
+    `Intl.NumberFormat.~locale.${topLevelLocale}`,
+    'Intl.PluralRules',
+    `Intl.PluralRules.~locale.${topLevelLocale}`,
+    'Intl.RelativeTimeFormat',
+    `Intl.RelativeTimeFormat.~locale.${topLevelLocale}`
+  ];
+
+  return (
+    <Script
+      src={
+        'https://polyfill.io/v3/polyfill.min.js?features=' + polyfills.join(',')
+      }
+      strategy="beforeInteractive"
+    />
+  );
+}
 ```
 
 ## Node
