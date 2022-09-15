@@ -22,17 +22,17 @@ import Script from 'next/script';
 
 // Use this component in your Next.js custom `_app`
 export default function Polyfills() {
-  const topLevelLocale = useLocale().replace(/-.*/, '');
+  const locale = useLocale();
 
   const polyfills = [
     'Intl',
     'Intl.DateTimeFormat',
-    `Intl.DateTimeFormat.~locale.${topLevelLocale}`,
-    `Intl.NumberFormat.~locale.${topLevelLocale}`,
+    `Intl.DateTimeFormat.~locale.${locale}`,
+    `Intl.NumberFormat.~locale.${locale}`,
     'Intl.PluralRules',
-    `Intl.PluralRules.~locale.${topLevelLocale}`,
+    `Intl.PluralRules.~locale.${locale}`,
     'Intl.RelativeTimeFormat',
-    `Intl.RelativeTimeFormat.~locale.${topLevelLocale}`
+    `Intl.RelativeTimeFormat.~locale.${locale}`
   ];
 
   return (
