@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.7.6 (2022-09-22)
+
+**Note:** Version bump only for package use-intl
+
+
+
+
+
 ## 2.7.5 (2022-08-30)
 
 **Note:** Version bump only for package use-intl
