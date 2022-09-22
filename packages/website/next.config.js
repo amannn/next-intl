@@ -9,7 +9,17 @@ module.exports = withNextra({
   redirects: () => [
     {
       source: '/docs',
-      destination: '/docs/installation',
+      destination: '/docs/getting-started/installation',
+      permanent: false
+    },
+    {
+      source: '/docs/installation',
+      destination: '/docs/getting-started/installation',
+      permanent: false
+    },
+    {
+      source: '/docs/getting-started',
+      destination: '/docs/getting-started/installation',
       permanent: false
     },
     {
