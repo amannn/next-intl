@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # Dates and times
 
 If you're formatting dates and times, you should [set up a global time zone](#todo).
@@ -80,6 +82,10 @@ Dates and times can be embedded within messages as well:
 ```
 
 See the [FormatJS docs about date time](https://formatjs.io/docs/intl-messageformat#datetime-skeleton) to learn more about this syntax.
+
+<Callout>
+  Note the leading `::` that is used to indicate that a skeleton should be used.
+</Callout>
 
 Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options): :
 

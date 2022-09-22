@@ -1,3 +1,5 @@
+import Callout from 'nextra-theme-docs/callout';
+
 # Numbers
 
 ## Formatting plain numbers
@@ -22,12 +24,16 @@ Numbers can also be embedded within messages:
 
 ```js
 {
-  "percent": "This product is on sale: {value, number, percent}",
-  "percent": "At most 2 fraction digits: {value, number, .##}"
+  "percentage": "Displayed as a percentage: {value, number, percent}",
+  "decimals": "At most 2 fraction digits: {value, number, ::.##}"
 }
 ```
 
 See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this syntax.
+
+<Callout>
+  Note the leading `::` that is used to indicate that a skeleton should be used.
+</Callout>
 
 Additionally, you can configure custom formatters which can be referenced by name:
 

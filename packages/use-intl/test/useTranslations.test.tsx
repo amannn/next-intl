@@ -55,6 +55,11 @@ it('handles number formatting with a static currency', () => {
   screen.getByText('€123,394.12');
 });
 
+it('handles number formatting with defined decimals', () => {
+  renderMessage('{value, number, ::.#}', {value: 123394.1243});
+  screen.getByText('123,394.1');
+});
+
 it('handles number formatting with a custom format', () => {
   renderMessage(
     '{price, number, currency}',
