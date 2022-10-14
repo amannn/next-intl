@@ -1,8 +1,8 @@
 import {createContext} from 'react';
-import AbstractIntlMessages from './AbstractIntlMessages';
-import Formats from './Formats';
-import IntlError from './IntlError';
-import {RichTranslationValues} from './TranslationValues';
+import AbstractIntlMessages from '../core/AbstractIntlMessages';
+import Formats from '../core/Formats';
+import IntlError from '../core/IntlError';
+import {RichTranslationValues} from '../core/TranslationValues';
 
 export type IntlContextShape = {
   messages?: AbstractIntlMessages;

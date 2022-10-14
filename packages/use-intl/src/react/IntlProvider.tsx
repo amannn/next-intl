@@ -1,10 +1,10 @@
 import React, {ReactNode, useEffect} from 'react';
-import AbstractIntlMessages from './AbstractIntlMessages';
-import Formats from './Formats';
+import AbstractIntlMessages from '../core/AbstractIntlMessages';
+import Formats from '../core/Formats';
+import IntlError from '../core/IntlError';
+import {RichTranslationValues} from '../core/TranslationValues';
+import validateMessages from '../core/validateMessages';
 import IntlContext from './IntlContext';
-import IntlError from './IntlError';
-import {RichTranslationValues} from './TranslationValues';
-import validateMessages from './validateMessages';
 
 type Props = {
   /** All messages that will be available in your components. */
