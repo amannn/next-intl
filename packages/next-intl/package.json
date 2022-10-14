@@ -5,6 +5,7 @@
   "author": "Jan Amann <jan@amann.me>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
   "license": "MIT",
+  "homepage": "https://next-intl-docs.vercel.app/",
   "repository": {
     "type": "git",
     "url": "https://github.com/amannn/next-intl"
