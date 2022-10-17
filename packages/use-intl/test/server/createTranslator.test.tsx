@@ -24,7 +24,6 @@ it('can translate a message without a namespace', () => {
     locale: 'en',
     messages
   });
-  // @ts-expect-error TODO: Figure out types
   expect(t('Home.title')).toBe('Hello world!');
 });
 

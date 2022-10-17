@@ -1,59 +1,103 @@
-import React from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
-import {AbstractIntlMessages, IntlError} from '../core';
-import {
-  RichTranslationValues,
-  TranslationValue
-} from '../core/TranslationValues';
-import createBaseTranslator, {
-  CreateTranslatorProps,
-  getMessagesOrError
-} from '../core/createTranslator';
+import {Formats, TranslationValues} from '../core';
+import {CreateTranslatorProps} from '../core/createTranslator';
+import MessageKeys from '../core/utils/MessageKeys';
+import NamespaceKeys from '../core/utils/NamespaceKeys';
 import NestedKeyOf from '../core/utils/NestedKeyOf';
+import NestedValueOf from '../core/utils/NestedValueOf';
+import createTranslatorImpl, {
+  ServerRichTranslationValues
+} from './createTranslatorImpl';
 
+/**
+ * Translates messages from the given namespace by using the ICU syntax.
+ * See https://formatjs.io/docs/core-concepts/icu-syntax.
+ *
+ * If no namespace is provided, all available messages are returned.
+ * The namespace can also indicate nesting by using a dot
+ * (e.g. `namespace.Component`).
+ */
 export default function createTranslator<
-  Messages extends AbstractIntlMessages,
-  NestedKey extends NestedKeyOf<Messages>
->(
-  props: Omit<CreateTranslatorProps<Messages>, 'messagesOrError'> & {
-    messages: Messages;
-  }
-) {
-  const translator = createBaseTranslator<Messages, NestedKey>({
-    ...props,
-    messagesOrError: getMessagesOrError({
-      messages: props.messages,
-      namespace: props.namespace,
-      onError: props.onError
-    }) as Messages | IntlError
+  NestedKey extends NamespaceKeys<
+    IntlMessages,
+    NestedKeyOf<IntlMessages>
+  > = never
+>({
+  messages,
+  namespace,
+  ...rest
+}: Omit<
+  CreateTranslatorProps<IntlMessages>,
+  'messagesOrError' | 'namespace'
+> & {
+  messages: IntlMessages;
+  namespace?: NestedKey;
+}): // Explicitly defining the return type is necessary as TypeScript would get it wrong
+{
+  // Default invocation
+  <
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: TranslationValues,
+    formats?: Partial<Formats>
+  ): string;
+
+  // `rich`
+  rich<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: ServerRichTranslationValues,
+    formats?: Partial<Formats>
+  ): string;
+
+  // `raw`
+  raw<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): any;
+} {
+  return createTranslatorImpl<
+    {'!': IntlMessages},
+    [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+  >({
+    ...rest,
+    messages: {'!': messages},
+    // @ts-ignore
+    namespace: namespace ? `!.${namespace}` : '!'
   });
-
-  const originalRich = translator.rich;
-
-  function base(...args: Parameters<typeof translator>) {
-    return translator(...args);
-  }
-
-  // Augment `t.rich` to return plain strings
-  base.rich = (
-    key: Parameters<typeof originalRich>[0],
-    /** Key value pairs for values to interpolate into the message. */
-    values: Record<string, TranslationValue | ((chunks: string) => string)>,
-    formats?: Parameters<typeof originalRich>[2]
-  ): string => {
-    // `chunks` is in fact returned as a string when no React
-    // element is used, therefore it's safe to cast this type.
-    const result = originalRich(key, values as RichTranslationValues, formats);
-
-    // Resolve rich text elements to a string
-    if (typeof result !== 'string') {
-      return renderToStaticMarkup(<>{result}</>);
-    }
-
-    return result;
-  };
-
-  base.raw = translator.raw;
-
-  return base;
 }
