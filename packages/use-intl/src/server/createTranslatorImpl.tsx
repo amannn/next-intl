@@ -1,5 +1,3 @@
-import React from 'react';
-import {renderToStaticMarkup} from 'react-dom/server';
 import {AbstractIntlMessages, IntlError} from '../core';
 import {
   RichTranslationValues,
@@ -46,13 +44,15 @@ export default function createTranslatorImpl<
     values: ServerRichTranslationValues,
     formats?: Parameters<typeof originalRich>[2]
   ): string => {
-    // `chunks` is in fact returned as a string when no React
-    // element is used, therefore it's safe to cast this type.
+    // `chunks` is returned as a string when no React element
+    // is used, therefore it's safe to cast this type.
     const result = originalRich(key, values as RichTranslationValues, formats);
 
-    // Resolve rich text elements to a string
+    // When only string chunks are provided to the parser, only strings should be returned here.
     if (typeof result !== 'string') {
-      return renderToStaticMarkup(<>{result}</>);
+      throw new Error(
+        'Received non-string result from `t.rich`. This should never happen, please file an issue at https://github.com/amannn/next-intl'
+      );
     }
 
     return result;
