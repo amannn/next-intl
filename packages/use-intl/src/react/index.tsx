@@ -1,4 +1,3 @@
-// Public API of the `react` package
 export {default as IntlProvider} from './IntlProvider';
 export {default as useTranslations} from './useTranslations';
 export {default as useIntl} from './useIntl';

@@ -1,5 +1,5 @@
 import {parseISO} from 'date-fns';
-import {createIntl} from '../../src/server';
+import {createIntl} from '../../src';
 
 (global as any).__DEV__ = true;
 

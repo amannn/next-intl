@@ -1,4 +1,3 @@
-// Public API of the `core` package
 export {default as AbstractIntlMessages} from './AbstractIntlMessages';
 export {
   default as TranslationValues,
@@ -8,3 +7,5 @@ export {default as Formats} from './Formats';
 export {default as DateTimeFormatOptions} from './DateTimeFormatOptions';
 export {default as NumberFormatOptions} from './NumberFormatOptions';
 export {default as IntlError, IntlErrorCode} from './IntlError';
+export {default as createTranslator} from './createTranslator';
+export {default as createIntl} from './createIntl';

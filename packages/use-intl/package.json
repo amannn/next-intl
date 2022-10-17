@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "dts watch",
-    "build": "dts build --entry src/index.tsx --entry src/server/index.tsx",
+    "build": "dts build",
     "test": "TZ=Europe/Berlin dts test",
     "lint": "eslint src test && tsc",
     "prepublishOnly": "yarn test && yarn lint && yarn build"

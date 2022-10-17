@@ -1,7 +1,9 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {useMemo, useRef} from 'react';
 import AbstractIntlMessages from '../core/AbstractIntlMessages';
-import createTranslator, {getMessagesOrError} from '../core/createTranslator';
+import createBaseTranslator, {
+  getMessagesOrError
+} from '../core/createBaseTranslator';
 import NestedKeyOf from '../core/utils/NestedKeyOf';
 import useIntlContext from './useIntlContext';
 
@@ -38,7 +40,7 @@ export default function useTranslationsImpl<
 
   const translate = useMemo(
     () =>
-      createTranslator({
+      createBaseTranslator({
         cachedFormatsByLocale: cachedFormatsByLocaleRef.current,
         getMessageFallback,
         messagesOrError,

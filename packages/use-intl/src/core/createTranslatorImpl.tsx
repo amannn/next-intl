@@ -1,13 +1,10 @@
-import {AbstractIntlMessages, IntlError} from '../core';
-import {
-  RichTranslationValues,
-  TranslationValue
-} from '../core/TranslationValues';
+import {RichTranslationValues, TranslationValue} from './TranslationValues';
 import createBaseTranslator, {
   CreateTranslatorProps,
   getMessagesOrError
-} from '../core/createTranslator';
-import NestedKeyOf from '../core/utils/NestedKeyOf';
+} from './createBaseTranslator';
+import NestedKeyOf from './utils/NestedKeyOf';
+import {AbstractIntlMessages, IntlError} from '.';
 
 export type ServerRichTranslationValues = Record<
   string,
@@ -51,7 +48,9 @@ export default function createTranslatorImpl<
     // When only string chunks are provided to the parser, only strings should be returned here.
     if (typeof result !== 'string') {
       throw new Error(
-        'Received non-string result from `t.rich`. This should never happen, please file an issue at https://github.com/amannn/next-intl'
+        __DEV__
+          ? 'Received non-string result from `t.rich`. This should never happen, please file an issue.'
+          : undefined
       );
     }
 

@@ -1,4 +1,4 @@
-import createTranslator from '../../src/server/createTranslator';
+import {createTranslator} from '../../src';
 
 (global as any).__DEV__ = true;
 
