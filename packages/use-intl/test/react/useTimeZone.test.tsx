@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {IntlProvider, useTimeZone} from '../src';
+import {IntlProvider, useTimeZone} from '../../src';
 
 (global as any).__DEV__ = true;
 

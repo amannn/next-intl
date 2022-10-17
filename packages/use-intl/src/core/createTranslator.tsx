@@ -10,6 +10,7 @@ import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
+import {defaultGetMessageFallback, defaultOnError} from './config';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
@@ -17,7 +18,7 @@ import NestedValueOf from './utils/NestedValueOf';
 
 function resolvePath(
   messages: AbstractIntlMessages | undefined,
-  idPath: string,
+  key: string,
   namespace?: string
 ) {
   if (!messages) {
@@ -28,13 +29,13 @@ function resolvePath(
 
   let message = messages;
 
-  idPath.split('.').forEach((part) => {
+  key.split('.').forEach((part) => {
     const next = (message as any)[part];
 
     if (part == null || next == null) {
       throw new Error(
         __DEV__
-          ? `Could not resolve \`${idPath}\` in ${
+          ? `Could not resolve \`${key}\` in ${
               namespace ? `\`${namespace}\`` : 'messages'
             }.`
           : undefined
@@ -78,11 +79,11 @@ function prepareTranslationValues(values: RichTranslationValues) {
 export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   messages,
   namespace,
-  onError
+  onError = defaultOnError
 }: {
   messages: Messages;
   namespace?: string;
-  onError(error: IntlError): void;
+  onError?(error: IntlError): void;
 }) {
   try {
     if (!messages) {
@@ -114,6 +115,22 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   }
 }
 
+export type CreateTranslatorProps<Messages> = {
+  cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
+  defaultTranslationValues?: RichTranslationValues;
+  formats?: Partial<Formats>;
+  getMessageFallback?(info: {
+    error: IntlError;
+    key: string;
+    namespace?: string;
+  }): string;
+  locale: string;
+  messagesOrError: Messages | IntlError;
+  namespace?: string;
+  onError?(error: IntlError): void;
+  timeZone?: string;
+};
+
 export default function createTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -121,27 +138,13 @@ export default function createTranslator<
   cachedFormatsByLocale,
   defaultTranslationValues,
   formats: globalFormats,
-  getMessageFallback,
+  getMessageFallback = defaultGetMessageFallback,
   locale,
   messagesOrError,
   namespace,
-  onError,
+  onError = defaultOnError,
   timeZone
-}: {
-  cachedFormatsByLocale: Record<string, Record<string, IntlMessageFormat>>;
-  formats?: Partial<Formats>;
-  defaultTranslationValues?: RichTranslationValues;
-  getMessageFallback(info: {
-    error: IntlError;
-    key: string;
-    namespace?: string;
-  }): string;
-  timeZone?: string;
-  locale: string;
-  messagesOrError: Messages | IntlError;
-  namespace?: string;
-  onError(error: IntlError): void;
-}) {
+}: CreateTranslatorProps<Messages>) {
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,
@@ -173,8 +176,8 @@ export default function createTranslator<
     const cacheKey = [namespace, key].filter((part) => part != null).join('.');
 
     let messageFormat;
-    if (cachedFormatsByLocale[locale]?.[cacheKey]) {
-      messageFormat = cachedFormatsByLocale[locale][cacheKey];
+    if (cachedFormatsByLocale?.[locale]?.[cacheKey]) {
+      messageFormat = cachedFormatsByLocale?.[locale][cacheKey];
     } else {
       let message;
       try {
@@ -216,10 +219,12 @@ export default function createTranslator<
         );
       }
 
-      if (!cachedFormatsByLocale[locale]) {
-        cachedFormatsByLocale[locale] = {};
+      if (cachedFormatsByLocale) {
+        if (!cachedFormatsByLocale[locale]) {
+          cachedFormatsByLocale[locale] = {};
+        }
+        cachedFormatsByLocale[locale][cacheKey] = messageFormat;
       }
-      cachedFormatsByLocale[locale][cacheKey] = messageFormat;
     }
 
     try {
@@ -270,9 +275,9 @@ export default function createTranslator<
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
   ): string {
-    const message = translateBaseFn(key, values, formats);
+    const result = translateBaseFn(key, values, formats);
 
-    if (typeof message !== 'string') {
+    if (typeof result !== 'string') {
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.INVALID_MESSAGE,
@@ -284,7 +289,7 @@ export default function createTranslator<
       );
     }
 
-    return message;
+    return result;
   }
 
   translateFn.rich = translateBaseFn;

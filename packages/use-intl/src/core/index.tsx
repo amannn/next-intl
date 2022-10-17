@@ -1,3 +1,4 @@
+// Public API of the `core` package
 export {default as AbstractIntlMessages} from './AbstractIntlMessages';
 export {
   default as TranslationValues,

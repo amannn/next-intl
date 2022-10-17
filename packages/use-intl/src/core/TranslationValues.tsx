@@ -1,7 +1,13 @@
 import {ReactNode} from 'react';
 
 // From IntlMessageFormat#format
-type TranslationValue = string | number | boolean | Date | null | undefined;
+export type TranslationValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | null
+  | undefined;
 
 type TranslationValues = Record<string, TranslationValue>;
 

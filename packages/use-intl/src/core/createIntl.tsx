@@ -2,6 +2,7 @@ import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
+import {defaultOnError} from './config';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
@@ -46,7 +47,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 type Props = {
   locale: string;
   timeZone?: string;
-  onError(error: IntlError): void;
+  onError?(error: IntlError): void;
   formats?: Partial<Formats>;
   now?: Date;
 };
@@ -55,7 +56,7 @@ export default function createIntl({
   formats,
   locale,
   now: globalNow,
-  onError,
+  onError = defaultOnError,
   timeZone
 }: Props) {
   function resolveFormatOrOptions<Options>(

@@ -3,6 +3,7 @@ import AbstractIntlMessages from '../core/AbstractIntlMessages';
 import Formats from '../core/Formats';
 import IntlError from '../core/IntlError';
 import {RichTranslationValues} from '../core/TranslationValues';
+import {defaultGetMessageFallback, defaultOnError} from '../core/config';
 import validateMessages from '../core/validateMessages';
 import IntlContext from './IntlContext';
 
@@ -46,20 +47,6 @@ type Props = {
    * Defaults will be overidden by locally provided values. */
   defaultTranslationValues?: RichTranslationValues;
 };
-
-function defaultGetMessageFallback({
-  key,
-  namespace
-}: {
-  key: string;
-  namespace?: string;
-}) {
-  return [namespace, key].filter((part) => part != null).join('.');
-}
-
-function defaultOnError(error: IntlError) {
-  console.error(error);
-}
 
 export default function IntlProvider({
   children,
