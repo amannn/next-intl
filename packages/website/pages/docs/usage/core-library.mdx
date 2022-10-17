@@ -20,10 +20,10 @@ const t = createTranslator({locale: 'en', messages});
 // "Hello, world!"
 t('basic', {name: 'world'});
 
-// Rich text should use functions that accept and return strings.
+// Rich text should use functions that accept and return a string.
 t.rich('rich', {
   name: 'world',
-  b: (children) => `<b>${children}</b>`
+  b: (chunks) => `<b>${chunks}</b>`
 });
 ```
 

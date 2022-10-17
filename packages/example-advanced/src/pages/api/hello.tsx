@@ -18,15 +18,15 @@ export default async function handler(
   const messages = await import(`../../../messages/${locale}.json`);
 
   // This creates the same function that is returned by `useTranslations`.
-  // Since there's no provider, you can provide configuration like `locale`,
-  // `getMessageFallback` etc. as well.
+  // Since there's no provider, you can pass all the properties you'd
+  // usually pass to the provider directly here.
   const t = createTranslator({
     locale,
     messages,
     namespace: 'Index'
   });
 
-  // This creates the same function that is returned by `useIntl`.
+  // Creates the same object that is returned by `useIntl`.
   const intl = createIntl({locale});
 
   res.status(200).json({

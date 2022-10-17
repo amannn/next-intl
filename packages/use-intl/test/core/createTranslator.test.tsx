@@ -86,7 +86,7 @@ describe('t.rich', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     expect(error.message).toBe(
-      'FORMATTING_ERROR: `createTranslator` only accepts functions for rich text formatting that receive and return strings.'
+      "FORMATTING_ERROR: `createTranslator` only accepts functions for rich text formatting that receive and return strings.\n\nE.g. t.rich('rich', {b: (chunks) => `<b>${chunks}</b>`})"
     );
     expect(result).toBe('Home.rich');
   });

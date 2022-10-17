@@ -59,8 +59,8 @@ function prepareTranslationValues(values: RichTranslationValues) {
 
     let transformed;
     if (typeof value === 'function') {
-      transformed = (children: ReactNode) => {
-        const result = value(children);
+      transformed = (chunks: ReactNode) => {
+        const result = value(chunks);
 
         return isValidElement(result)
           ? cloneElement(result, {key: key + index++})

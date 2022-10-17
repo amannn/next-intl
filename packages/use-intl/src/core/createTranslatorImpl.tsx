@@ -78,7 +78,7 @@ export default function createTranslatorImpl<
       const error = new IntlError(
         IntlErrorCode.FORMATTING_ERROR,
         __DEV__
-          ? '`createTranslator` only accepts functions for rich text formatting that receive and return strings.'
+          ? "`createTranslator` only accepts functions for rich text formatting that receive and return strings.\n\nE.g. t.rich('rich', {b: (chunks) => `<b>${chunks}</b>`})"
           : undefined
       );
 

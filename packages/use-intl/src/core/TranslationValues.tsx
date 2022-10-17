@@ -13,7 +13,7 @@ type TranslationValues = Record<string, TranslationValue>;
 
 export type RichTranslationValues = Record<
   string,
-  TranslationValue | ((children: ReactNode) => ReactNode)
+  TranslationValue | ((chunks: ReactNode) => ReactNode)
 >;
 
 export default TranslationValues;
