@@ -1,30 +1,58 @@
+import AbstractIntlMessages from './AbstractIntlMessages';
+import IntlError, {IntlErrorCode} from './IntlError';
 import {RichTranslationValues, TranslationValue} from './TranslationValues';
+import {defaultGetMessageFallback, defaultOnError} from './config';
 import createBaseTranslator, {
-  CreateTranslatorProps,
+  CreateBaseTranslatorProps,
   getMessagesOrError
 } from './createBaseTranslator';
+import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
-import {AbstractIntlMessages, IntlError} from '.';
 
-export type ServerRichTranslationValues = Record<
+export type CoreRichTranslationValues = Record<
   string,
   TranslationValue | ((chunks: string) => string)
 >;
+
+export type CreateTranslatorImplProps<Messages> = Omit<
+  CreateBaseTranslatorProps<Messages>,
+  'messagesOrError' | 'onError' | 'getMessageFallback' | 'namespace'
+> & {
+  messages: Messages;
+  onError?(error: IntlError): void;
+  getMessageFallback?(info: {
+    error: IntlError;
+    key: string;
+    namespace?: string;
+  }): string;
+  namespace: string;
+};
 
 export default function createTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(
-  props: Omit<CreateTranslatorProps<Messages>, 'messagesOrError'> & {
-    messages: Messages;
-  }
+  {
+    messages,
+    namespace,
+    onError = defaultOnError,
+    getMessageFallback = defaultGetMessageFallback,
+    ...rest
+  }: CreateTranslatorImplProps<Messages>,
+  namespacePrefix: string
 ) {
+  // The `namespacePrefix` is part of the type system.
+  // See the comment in the function invocation.
+  messages = messages[namespacePrefix] as Messages;
+  namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
+
   const translator = createBaseTranslator<Messages, NestedKey>({
-    ...props,
+    ...rest,
+    onError,
     messagesOrError: getMessagesOrError({
-      messages: props.messages,
-      namespace: props.namespace,
-      onError: props.onError
+      messages,
+      namespace,
+      onError
     }) as Messages | IntlError
   });
 
@@ -38,7 +66,7 @@ export default function createTranslatorImpl<
   base.rich = (
     key: Parameters<typeof originalRich>[0],
     /** Key value pairs for values to interpolate into the message. */
-    values: ServerRichTranslationValues,
+    values: CoreRichTranslationValues,
     formats?: Parameters<typeof originalRich>[2]
   ): string => {
     // `chunks` is returned as a string when no React element
@@ -47,11 +75,15 @@ export default function createTranslatorImpl<
 
     // When only string chunks are provided to the parser, only strings should be returned here.
     if (typeof result !== 'string') {
-      throw new Error(
+      const error = new IntlError(
+        IntlErrorCode.FORMATTING_ERROR,
         __DEV__
-          ? 'Received non-string result from `t.rich`. This should never happen, please file an issue.'
+          ? '`createTranslator` only accepts functions for rich text formatting that receive and return strings.'
           : undefined
       );
+
+      onError(error);
+      return getMessageFallback({error, key, namespace});
     }
 
     return result;

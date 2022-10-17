@@ -1,4 +1,5 @@
-import {createTranslator} from '../../src';
+import React from 'react';
+import {createTranslator, IntlError, IntlErrorCode} from '../../src';
 
 (global as any).__DEV__ = true;
 
@@ -27,6 +28,26 @@ it('can translate a message without a namespace', () => {
   expect(t('Home.title')).toBe('Hello world!');
 });
 
+it('handles formatting errors', () => {
+  const onError = jest.fn();
+
+  const t = createTranslator({
+    locale: 'en',
+    messages: {price: '{value}'},
+    onError
+  });
+
+  const result = t('price');
+
+  const error: IntlError = onError.mock.calls[0][0];
+  expect(error.message).toBe(
+    'FORMATTING_ERROR: The intl string context variable "value" was not provided to the string "{value}"'
+  );
+  expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+
+  expect(result).toBe('price');
+});
+
 describe('t.rich', () => {
   it('can translate a message', () => {
     const t = createTranslator({
@@ -42,6 +63,32 @@ describe('t.rich', () => {
         i: (chunks) => `<i>${chunks}</i>`
       })
     ).toBe('<b>Hello <i>world</i>!</b>');
+  });
+
+  it('handles errors when React components are provided', () => {
+    const onError = jest.fn();
+    const t = createTranslator({
+      locale: 'en',
+      namespace: 'Home',
+      messages,
+      onError
+    });
+
+    const result = t.rich('rich', {
+      name: 'world',
+      // @ts-expect-error Intentionally broken call site
+      b: (chunks) => <b>{chunks}</b>,
+      // @ts-expect-error Intentionally broken call site
+      i: (chunks) => <i>{chunks}</i>
+    });
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+    expect(error.message).toBe(
+      'FORMATTING_ERROR: `createTranslator` only accepts functions for rich text formatting that receive and return strings.'
+    );
+    expect(result).toBe('Home.rich');
   });
 });
 

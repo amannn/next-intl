@@ -90,7 +90,7 @@ export default function useTranslations<
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
-  // The prefix ("!"") is arbitrary, but we have to use some.
+  // The prefix ("!"") is arbitrary.
   return useTranslationsImpl<
     {'!': IntlMessages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`

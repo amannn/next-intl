@@ -1,12 +1,13 @@
-import {CreateTranslatorProps} from './createBaseTranslator';
+import Formats from './Formats';
+import TranslationValues from './TranslationValues';
 import createTranslatorImpl, {
-  ServerRichTranslationValues
+  CreateTranslatorImplProps,
+  CoreRichTranslationValues
 } from './createTranslatorImpl';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
-import {Formats, TranslationValues} from '.';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -26,8 +27,8 @@ export default function createTranslator<
   namespace,
   ...rest
 }: Omit<
-  CreateTranslatorProps<IntlMessages>,
-  'messagesOrError' | 'namespace'
+  CreateTranslatorImplProps<IntlMessages>,
+  'messagesOrError' | 'namespace' | 'namespacePrefix'
 > & {
   messages: IntlMessages;
   namespace?: NestedKey;
@@ -69,7 +70,7 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    values?: ServerRichTranslationValues,
+    values?: CoreRichTranslationValues,
     formats?: Partial<Formats>
   ): string;
 
@@ -91,13 +92,19 @@ export default function createTranslator<
     key: TargetKey
   ): any;
 } {
+  // We have to wrap the actual function so the type inference for the optional
+  // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
+  // The prefix ("!"") is arbitrary.
   return createTranslatorImpl<
     {'!': IntlMessages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-  >({
-    ...rest,
-    messages: {'!': messages},
-    // @ts-ignore
-    namespace: namespace ? `!.${namespace}` : '!'
-  });
+  >(
+    {
+      ...rest,
+      messages: {'!': messages},
+      // @ts-ignore
+      namespace: namespace ? `!.${namespace}` : '!'
+    },
+    '!'
+  );
 }

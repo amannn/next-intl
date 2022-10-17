@@ -115,7 +115,7 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   }
 }
 
-export type CreateTranslatorProps<Messages> = {
+export type CreateBaseTranslatorProps<Messages> = {
   cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
   defaultTranslationValues?: RichTranslationValues;
   formats?: Partial<Formats>;
@@ -127,7 +127,7 @@ export type CreateTranslatorProps<Messages> = {
   locale: string;
   messagesOrError: Messages | IntlError;
   namespace?: string;
-  onError?(error: IntlError): void;
+  onError(error: IntlError): void;
   timeZone?: string;
 };
 
@@ -142,9 +142,9 @@ export default function createBaseTranslator<
   locale,
   messagesOrError,
   namespace,
-  onError = defaultOnError,
+  onError,
   timeZone
-}: CreateTranslatorProps<Messages>) {
+}: CreateBaseTranslatorProps<Messages>) {
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,

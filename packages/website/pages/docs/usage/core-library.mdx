@@ -1,0 +1,42 @@
+import Callout from 'nextra-theme-docs/callout';
+
+# Core library
+
+While `next-intl` is primarily intended to be used within React components, the core is agnostic and can be used independently of React.
+
+```tsx
+import {createTranslator} from 'next-intl';
+
+const messages = {
+  basic: 'Hello, {name}!',
+  rich: 'Hello, <b>{name}</b>!'
+};
+
+// This creates the same function that is returned by `useTranslations`.
+// Since there's no provider, you can pass all the properties you'd
+// usually pass to the provider directly here.
+const t = createTranslator({locale: 'en', messages});
+
+// "Hello, world!"
+t('basic', {name: 'world'});
+
+// Rich text should use functions that accept and return strings.
+t.rich('rich', {
+  name: 'world',
+  b: (children) => `<b>${children}</b>`
+});
+```
+
+For date, time and number formatting, the `intl` object can be created outside of React as well:
+
+```js
+import {createIntl} from 'next-intl';
+
+// Creates the same object that is returned by `useIntl`.
+const intl = createIntl({locale: 'en'});
+
+// E.g.: "Oct 17, 2022"
+intl.formatDateTime(new Date(), {dateStyle: 'medium'});
+```
+
+A common example for the usage of the core library is to reuse messages in [Next.js API routes](https://nextjs.org/docs/api-routes/introduction). See the [advanced example](/examples/advanced) for a working implementation.

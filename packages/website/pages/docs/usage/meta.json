@@ -6,5 +6,6 @@
   "configuration": "Configuration",
   "error-handling": "Error handling",
   "typescript": "TypeScript",
-  "runtime-requirements-polyfills": "Runtime requirements & polyfills"
+  "runtime-requirements-polyfills": "Runtime requirements & polyfills",
+  "core-library": "Core library"
 }

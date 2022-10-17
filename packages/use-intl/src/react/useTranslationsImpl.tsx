@@ -4,6 +4,7 @@ import AbstractIntlMessages from '../core/AbstractIntlMessages';
 import createBaseTranslator, {
   getMessagesOrError
 } from '../core/createBaseTranslator';
+import resolveNamespace from '../core/resolveNamespace';
 import NestedKeyOf from '../core/utils/NestedKeyOf';
 import useIntlContext from './useIntlContext';
 
@@ -23,11 +24,7 @@ export default function useTranslationsImpl<
   // The `namespacePrefix` is part of the type system.
   // See the comment in the hook invocation.
   allMessages = allMessages[namespacePrefix] as Messages;
-  namespace = (
-    namespace === namespacePrefix
-      ? undefined
-      : namespace.slice((namespacePrefix + '.').length)
-  ) as NestedKey;
+  namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
 
   const cachedFormatsByLocaleRef = useRef<
     Record<string, Record<string, IntlMessageFormat>>
