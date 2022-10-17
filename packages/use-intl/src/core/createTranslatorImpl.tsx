@@ -1,11 +1,8 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
+import {InitializedIntlConfiguration} from './IntlConfiguration';
 import IntlError, {IntlErrorCode} from './IntlError';
 import {RichTranslationValues, TranslationValue} from './TranslationValues';
-import {defaultGetMessageFallback, defaultOnError} from './config';
-import createBaseTranslator, {
-  CreateBaseTranslatorProps,
-  getMessagesOrError
-} from './createBaseTranslator';
+import createBaseTranslator, {getMessagesOrError} from './createBaseTranslator';
 import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
 
@@ -14,29 +11,21 @@ export type CoreRichTranslationValues = Record<
   TranslationValue | ((chunks: string) => string)
 >;
 
-export type CreateTranslatorImplProps<Messages> = Omit<
-  CreateBaseTranslatorProps<Messages>,
-  'messagesOrError' | 'onError' | 'getMessageFallback' | 'namespace'
-> & {
-  messages: Messages;
-  onError?(error: IntlError): void;
-  getMessageFallback?(info: {
-    error: IntlError;
-    key: string;
-    namespace?: string;
-  }): string;
-  namespace: string;
-};
+export type CreateTranslatorImplProps<Messages> =
+  InitializedIntlConfiguration & {
+    namespace: string;
+    messages: Messages;
+  };
 
 export default function createTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(
   {
+    getMessageFallback,
     messages,
     namespace,
-    onError = defaultOnError,
-    getMessageFallback = defaultGetMessageFallback,
+    onError,
     ...rest
   }: CreateTranslatorImplProps<Messages>,
   namespacePrefix: string
@@ -49,6 +38,7 @@ export default function createTranslatorImpl<
   const translator = createBaseTranslator<Messages, NestedKey>({
     ...rest,
     onError,
+    getMessageFallback,
     messagesOrError: getMessagesOrError({
       messages,
       namespace,

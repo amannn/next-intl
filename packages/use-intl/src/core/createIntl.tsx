@@ -2,7 +2,7 @@ import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
-import {defaultOnError} from './config';
+import {defaultOnError} from './defaults';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;

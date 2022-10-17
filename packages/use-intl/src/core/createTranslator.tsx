@@ -1,9 +1,10 @@
 import Formats from './Formats';
+import IntlConfiguration from './IntlConfiguration';
 import TranslationValues from './TranslationValues';
 import createTranslatorImpl, {
-  CreateTranslatorImplProps,
   CoreRichTranslationValues
 } from './createTranslatorImpl';
+import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
@@ -23,13 +24,12 @@ export default function createTranslator<
     NestedKeyOf<IntlMessages>
   > = never
 >({
+  onError = defaultOnError,
+  getMessageFallback = defaultGetMessageFallback,
   messages,
   namespace,
   ...rest
-}: Omit<
-  CreateTranslatorImplProps<IntlMessages>,
-  'messagesOrError' | 'namespace' | 'namespacePrefix'
-> & {
+}: IntlConfiguration & {
   messages: IntlMessages;
   namespace?: NestedKey;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
@@ -101,6 +101,8 @@ export default function createTranslator<
   >(
     {
       ...rest,
+      onError,
+      getMessageFallback,
       messages: {'!': messages},
       // @ts-ignore
       namespace: namespace ? `!.${namespace}` : '!'

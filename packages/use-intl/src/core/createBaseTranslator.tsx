@@ -8,10 +8,11 @@ import {
 } from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
+import {InitializedIntlConfiguration} from './IntlConfiguration';
 import IntlError, {IntlErrorCode} from './IntlError';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
-import {defaultGetMessageFallback, defaultOnError} from './config';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
+import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
@@ -115,21 +116,13 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   }
 }
 
-export type CreateBaseTranslatorProps<Messages> = {
-  cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
-  defaultTranslationValues?: RichTranslationValues;
-  formats?: Partial<Formats>;
-  getMessageFallback?(info: {
-    error: IntlError;
-    key: string;
+export type CreateBaseTranslatorProps<Messages> =
+  InitializedIntlConfiguration & {
+    cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
+    defaultTranslationValues?: RichTranslationValues;
     namespace?: string;
-  }): string;
-  locale: string;
-  messagesOrError: Messages | IntlError;
-  namespace?: string;
-  onError(error: IntlError): void;
-  timeZone?: string;
-};
+    messagesOrError: Messages | IntlError;
+  };
 
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
