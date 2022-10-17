@@ -94,7 +94,7 @@ export default function createTranslator<
 } {
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
-  // The prefix ("!"") is arbitrary.
+  // The prefix ("!") is arbitrary.
   return createTranslatorImpl<
     {'!': IntlMessages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
