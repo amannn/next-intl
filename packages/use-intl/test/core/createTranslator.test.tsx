@@ -93,7 +93,7 @@ describe('t.rich', () => {
 });
 
 describe('t.raw', () => {
-  it('can translate a message', () => {
+  it('can retrieve a message', () => {
     const t = createTranslator({
       locale: 'en',
       namespace: 'Home',

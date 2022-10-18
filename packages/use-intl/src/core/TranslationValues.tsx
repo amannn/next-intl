@@ -11,6 +11,9 @@ export type TranslationValue =
 
 type TranslationValues = Record<string, TranslationValue>;
 
+// We could consider renaming this to `ReactRichTranslationValues` and defining
+// it in the `react` namespace if the core becomes useful to other frameworks.
+// It would be a breaking change though, so let's wait for now.
 export type RichTranslationValues = Record<
   string,
   TranslationValue | ((chunks: ReactNode) => ReactNode)
