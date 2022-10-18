@@ -1,5 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
+import IntlMessageFormat from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {
   Formats,
@@ -9,9 +10,33 @@ import {
   RichTranslationValues,
   TranslationValues,
   useTranslations
-} from '../src';
+} from '../../src';
 
 (global as any).__DEV__ = true;
+
+// Wrap the library to include a counter for parse
+// invocations for the cache test below.
+jest.mock('intl-messageformat', () => {
+  const ActualIntlMessageFormat: typeof IntlMessageFormat =
+    jest.requireActual('intl-messageformat').default;
+
+  return class MockIntlMessageFormat extends ActualIntlMessageFormat {
+    public static invocationsByMessage: Record<string, number> = {};
+
+    constructor(
+      ...[message, ...rest]: ConstructorParameters<typeof IntlMessageFormat>
+    ) {
+      if (typeof message !== 'string') {
+        throw new Error('Unsupported invocation for testing.');
+      }
+
+      super(message, ...rest);
+
+      MockIntlMessageFormat.invocationsByMessage[message] ||= 0;
+      MockIntlMessageFormat.invocationsByMessage[message]++;
+    }
+  };
+});
 
 function renderMessage(
   message: string,
@@ -267,6 +292,38 @@ it('renders the correct message when the namespace changes', () => {
   );
 
   screen.getByText('This is namespace B');
+});
+
+it('utilizes a cache for parsing messages', () => {
+  function getTree(renderNum: number) {
+    return (
+      <IntlProvider
+        locale="en"
+        messages={{message: '[Cache test] Render #{renderNum}'}}
+      >
+        <Component renderNum={renderNum} />
+      </IntlProvider>
+    );
+  }
+
+  function Component({renderNum}: {renderNum: number}) {
+    const t = useTranslations();
+    return <>{t('message', {renderNum})}</>;
+  }
+
+  const result = render(getTree(1));
+  screen.getByText('[Cache test] Render #1');
+  result.rerender(getTree(2));
+  screen.getByText('[Cache test] Render #2');
+  result.rerender(getTree(3));
+  screen.getByText('[Cache test] Render #3');
+
+  // The tree was rendered 3 times, but the message was parsed only once.
+  expect(
+    (IntlMessageFormat as any).invocationsByMessage[
+      '[Cache test] Render #{renderNum}'
+    ]
+  ).toEqual(1);
 });
 
 describe('t.rich', () => {

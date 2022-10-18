@@ -8,7 +8,7 @@ import {
   IntlErrorCode,
   IntlProvider,
   useIntl
-} from '../src';
+} from '../../src';
 
 (global as any).__DEV__ = true;
 

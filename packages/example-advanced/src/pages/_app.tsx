@@ -1,7 +1,16 @@
 import {NextIntlProvider} from 'next-intl';
 import {AppProps} from 'next/app';
 
-export default function App({Component, pageProps}: AppProps) {
+type PageProps = {
+  messages: IntlMessages;
+  now: number;
+};
+
+type Props = Omit<AppProps<PageProps>, 'pageProps'> & {
+  pageProps: PageProps;
+};
+
+export default function App({Component, pageProps}: Props) {
   return (
     <NextIntlProvider
       // To achieve consistent date, time and number formatting

@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "accept-language-parser": "1.5.0",
     "date-fns": "^2.16.1",
     "lodash": "^4.17.21",
     "next": "^12.1.4",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "13.0.0",
+    "@types/accept-language-parser": "1.5.3",
     "@types/lodash": "4.14.176",
     "@types/node": "17.0.23",
     "@types/react": "18.0.0",

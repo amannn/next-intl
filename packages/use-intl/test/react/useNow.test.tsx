@@ -1,7 +1,7 @@
 import {render, waitFor} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React from 'react';
-import {IntlProvider, useNow} from '../src';
+import {IntlProvider, useNow} from '../../src';
 
 (global as any).__DEV__ = true;
 

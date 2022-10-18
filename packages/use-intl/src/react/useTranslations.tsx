@@ -1,12 +1,14 @@
 import {ReactElement, ReactNodeArray} from 'react';
-import Formats from './Formats';
-import TranslationValues, {RichTranslationValues} from './TranslationValues';
+import Formats from '../core/Formats';
+import TranslationValues, {
+  RichTranslationValues
+} from '../core/TranslationValues';
+import MessageKeys from '../core/utils/MessageKeys';
+import NamespaceKeys from '../core/utils/NamespaceKeys';
+import NestedKeyOf from '../core/utils/NestedKeyOf';
+import NestedValueOf from '../core/utils/NestedValueOf';
 import useIntlContext from './useIntlContext';
 import useTranslationsImpl from './useTranslationsImpl';
-import MessageKeys from './utils/MessageKeys';
-import NamespaceKeys from './utils/NamespaceKeys';
-import NestedKeyOf from './utils/NestedKeyOf';
-import NestedValueOf from './utils/NestedValueOf';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -88,7 +90,7 @@ export default function useTranslations<
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
-  // The prefix ("!"") is arbitrary, but we have to use some.
+  // The prefix ("!") is arbitrary.
   return useTranslationsImpl<
     {'!': IntlMessages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`

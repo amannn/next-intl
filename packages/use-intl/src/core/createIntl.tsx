@@ -1,7 +1,8 @@
 import DateTimeFormatOptions from './DateTimeFormatOptions';
+import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
-import useIntlContext from './useIntlContext';
+import {defaultOnError} from './defaults';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
@@ -43,9 +44,21 @@ function getRelativeTimeFormatConfig(seconds: number) {
   return {value, unit};
 }
 
-export default function useIntl() {
-  const {formats, locale, now: globalNow, onError, timeZone} = useIntlContext();
+type Props = {
+  locale: string;
+  timeZone?: string;
+  onError?(error: IntlError): void;
+  formats?: Partial<Formats>;
+  now?: Date;
+};
 
+export default function createIntl({
+  formats,
+  locale,
+  now: globalNow,
+  onError = defaultOnError,
+  timeZone
+}: Props) {
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options
