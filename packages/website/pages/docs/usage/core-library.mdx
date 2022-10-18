@@ -8,8 +8,8 @@ While `next-intl` is primarily intended to be used within React components, the 
 import {createTranslator} from 'next-intl';
 
 const messages = {
-  basic: 'Hello, {name}!',
-  rich: 'Hello, <b>{name}</b>!'
+  basic: 'Hello {name}!',
+  rich: 'Hello <b>{name}</b>!'
 };
 
 // This creates the same function that is returned by `useTranslations`.
@@ -17,10 +17,11 @@ const messages = {
 // usually pass to the provider directly here.
 const t = createTranslator({locale: 'en', messages});
 
-// "Hello, world!"
+// Result: "Hello world!"
 t('basic', {name: 'world'});
 
 // Rich text uses functions that accept and return a string.
+// Result: "Hello <b>world</b>!"
 t.rich('rich', {
   name: 'world',
   b: (chunks) => `<b>${chunks}</b>`
@@ -35,8 +36,8 @@ import {createIntl} from 'next-intl';
 // Creates the same object that is returned by `useIntl`.
 const intl = createIntl({locale: 'en'});
 
-// E.g.: "Oct 17, 2022"
-intl.formatDateTime(new Date(), {dateStyle: 'medium'});
+// Result: "Oct 17, 2022"
+intl.formatDateTime(new Date(2022, 9, 17), {dateStyle: 'medium'});
 ```
 
 A common example for the usage of the core library is to use messages in [Next.js API routes](https://nextjs.org/docs/api-routes/introduction). See the [advanced example](/examples/advanced) for a working implementation.
