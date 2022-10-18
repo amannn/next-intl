@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.8.0 (2022-10-18)
+
+
+### Features
+
+* Provide `createTranslator` and `createIntl` by extracting a React-agnostic core library. Thanks to David Brands from Marvia for sponsoring the work on this feature, participating in discussion and providing feedback! ([#137](https://github.com/amannn/next-intl/issues/137)) ([91f7489](https://github.com/amannn/next-intl/commit/91f748972008b8587553b48aa36c95d7348b4b0c))
+
+
+
+
+
 ## 2.7.6 (2022-09-22)
 
 **Note:** Version bump only for package website
