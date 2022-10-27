@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",

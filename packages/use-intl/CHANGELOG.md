@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.9.0 (2022-10-27)
+
+
+### Features
+
+* Next.js 13 compatibility ([#140](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/140)) ([65326a0](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/65326a0b47980f260df466a283a6e7a0aa5e1cd0)), closes [#139](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/139)
+
+
+
+
+
 # 2.8.0 (2022-10-18)
 
 
