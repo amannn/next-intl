@@ -45,18 +45,18 @@
     "use-intl": "^2.8.0"
   },
   "peerDependencies": {
-    "next": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^13.0.0",
-    "@types/react": "^18.0.0",
+    "@types/react": "^18.0.23",
     "dts-cli": "1.4.0",
     "eslint": "8.12.0",
     "eslint-config-molindo": "6.0.0",
-    "next": "^12.1.4",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "next": "^13.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },
