@@ -1,9 +1,4 @@
-type Props = {
-  src: string;
-  title: string;
-};
-
-export default function CodeSandbox({src, title}: Props) {
+export default function CodeSandbox({src, title}) {
   return (
     <iframe
       allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"

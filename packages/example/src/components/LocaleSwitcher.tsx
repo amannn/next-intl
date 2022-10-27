@@ -10,7 +10,7 @@ export default function LocaleSwitcher() {
 
   return (
     <Link href={route} locale={otherLocale}>
-      <a>{t('switchLocale', {locale: otherLocale})}</a>
+      {t('switchLocale', {locale: otherLocale})}
     </Link>
   );
 }
