@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint pages && tsc",
+    "lint": "eslint pages components",
     "test": "echo 'No tests yet'",
     "build": "next build",
     "start": "next start"
