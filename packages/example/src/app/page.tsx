@@ -2,10 +2,18 @@
 // import LocaleSwitcher from 'components/LocaleSwitcher';
 // import PageLayout from 'components/PageLayout';
 
+import {useContext} from 'react';
+import ServerOnlyContext from './ServerOnlyContext';
+
 export default function Index() {
+  const serverOnly = useContext(ServerOnlyContext);
   // const t = useTranslations('Index');
 
-  return <p>Hello</p>;
+  console.log('Index');
+
+  // return <p>{t('title')}</p>;
+
+  return <p>Hello {serverOnly.only.for.server + 10}</p>;
 
   // return (
   //   <PageLayout title={t('title')}>
