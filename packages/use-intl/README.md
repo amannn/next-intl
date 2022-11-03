@@ -18,6 +18,8 @@ This library is based on the premise that messages can be grouped by namespaces 
 
 ```jsx
 // LatestFollower.js
+import {useTranslations} from 'use-intl';
+
 function LatestFollower({user}) {
   const t = useTranslations('LatestFollower');
 
@@ -42,7 +44,7 @@ function LatestFollower({user}) {
 
 ## Installation
 
-1. Install `use-intl` in your project
+1. `npm install use-intl`
 2. Add the provider
 ```jsx
 import {IntlProvider} from 'use-intl';
@@ -51,20 +53,27 @@ import {IntlProvider} from 'use-intl';
 // fetch them from within a component and then render the provider 
 // along with your app once you have the messages.
 const messages = {
-  App: {
-    hello: 'Hello'
+  "App": {
+    "hello": 'Hello {username}!'
   }
 };
 
-ReactDOM.render(
-  <IntlProvider messages={messages} locale="en">
-    <App />
-  </IntlProvider>
-);
+function Root() {
+  return (
+    <IntlProvider messages={messages} locale="en">
+      <App user={{name: 'Jane'}} />
+    </IntlProvider>
+  );
+}
+
+function App({user}) {
+  const t = useTranslations('App');
+  return <h1>{t('hello', {username: user.name})}</h1>;
+}
 ```
-3. Based on the features you need and the browsers you support, you might have to provide [polyfills](https://formatjs.io/docs/polyfills).
-4. Use translations in your components!
+
+Have a look at [the minimal setup example](https://codesandbox.io/s/use-intl-cra-example-13w917?file=/src/Root.tsx) to explore a working app.
 
 ## Usage
 
-Please refer to the [`next-intl` usage docs](https://next-intl-docs.vercel.app/docs/usage).
+Please refer to the [`next-intl` usage docs](https://next-intl-docs.vercel.app/docs/usage) for more advanced usage, but note that you should import from `use-intl` instead of `next-intl`.
