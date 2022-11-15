@@ -1,15 +1,17 @@
 import {ReactNode} from 'react';
-// import Provider from './Provider';
+import Storage from '../utils/Storage';
 import ServerOnlyContext from './ServerOnlyContext';
 
 type Props = {
   children: ReactNode;
 };
 
-export default function RootLayout({children, ...rest}: Props) {
-  console.log(rest);
+export default function RootLayout({children}: Props) {
+  const now = new Date().toISOString();
+  Storage.set({now});
 
   // How to get this from the URL?
+  // TODO: Validate locale or redirect to default locale
   const locale = 'en';
 
   return (

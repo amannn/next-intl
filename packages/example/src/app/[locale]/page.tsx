@@ -1,3 +1,5 @@
+import Storage from '../../utils/Storage';
+
 export function generateStaticParams() {
   return ['de', 'en'].map((locale) => ({locale}));
 }
@@ -9,9 +11,13 @@ type Props = {
 };
 
 export default function Index({params: {locale}}: Props) {
-  // TODO: Validate locale or redirect to default locale
+  const value = Storage.get();
 
-  return <p>Hello {locale}</p>;
+  return (
+    <p>
+      Hello {locale} ({value.now})
+    </p>
+  );
 }
 
 // import {useTranslations} from 'next-intl';
