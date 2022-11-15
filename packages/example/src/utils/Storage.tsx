@@ -3,8 +3,10 @@ import {requestAsyncStorage} from 'next/dist/client/components/request-async-sto
 const key = '__next-intl';
 
 /**
- * Returns the request-level storage of Nex.js where typically headers
+ * Returns the request-level storage of Next.js where typically headers
  * and cookies are stored. This is recreated for every request.
+ *
+ * This uses internal APIs of Next.js and may break in the future.
  */
 function getStorage() {
   const requestStore =
