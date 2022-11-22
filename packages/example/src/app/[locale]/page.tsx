@@ -1,21 +1,15 @@
-import Storage from '../../utils/Storage';
+import Storage from '../../next-intl/IntlStorage';
 
 export function generateStaticParams() {
   return ['de', 'en'].map((locale) => ({locale}));
 }
 
-type Props = {
-  params: {
-    locale: string;
-  };
-};
-
-export default function Index({params: {locale}}: Props) {
+export default function Index() {
   const value = Storage.get();
 
   return (
     <p>
-      Hello {locale} ({value.now})
+      Hello {value.locale} ({value.now})
     </p>
   );
 }
