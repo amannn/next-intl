@@ -1,6 +1,6 @@
 import pick from 'lodash/pick';
 import {GetStaticPropsContext} from 'next';
-import {useTranslations} from 'next-intl';
+import {useTranslations, getTranslation} from 'next-intl';
 import {useRouter} from 'next/router';
 import Code from 'components/Code';
 import PageLayout from 'components/PageLayout';
@@ -25,6 +25,14 @@ export default function Index() {
           </li>
         ))}
       </ul>
+
+      <div>
+        {getTranslation("Index", "description", "rich", {
+          locale,
+          p: (children) => <p>{children}</p>,
+          code: (children) => <Code>{children}</Code>
+        })}
+      </div>
     </PageLayout>
   );
 }

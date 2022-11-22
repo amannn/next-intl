@@ -4,7 +4,7 @@ import IntlConfiguration from '../core/IntlConfiguration';
 import {RichTranslationValues} from '../core/TranslationValues';
 import {defaultGetMessageFallback, defaultOnError} from '../core/defaults';
 import validateMessages from '../core/validateMessages';
-import IntlContext from './IntlContext';
+import IntlContext, { IntlContextValue } from './IntlContext';
 
 type Props = IntlConfiguration & {
   /** All components that use the provided hooks should be within this tree. */
@@ -32,6 +32,9 @@ export default function IntlProvider({
       }
     }, [messages, onError]);
   }
+
+  // makes IntlContextValue have the same value as IntlContext
+  Object.assign(IntlContextValue, {...contextValues, messages, onError, getMessageFallback});
 
   return (
     <IntlContext.Provider

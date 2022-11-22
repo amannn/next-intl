@@ -4,3 +4,4 @@ export {default as useIntl} from './useIntl';
 export {default as useLocale} from './useLocale';
 export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
+export {default as getTranslation} from './getTranslation';

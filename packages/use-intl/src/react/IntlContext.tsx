@@ -21,4 +21,7 @@ export type IntlContextShape = {
 
 const IntlContext = createContext<IntlContextShape | undefined>(undefined);
 
+// used for getTranslation helper
+export const IntlContextValue: IntlContextShape = {} as any;
+
 export default IntlContext;
