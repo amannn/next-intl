@@ -3,12 +3,14 @@ import Callout from 'nextra-theme-docs/callout';
 # Installation
 
 1. `npm install next-intl`
-2. Add the provider in `_app.js`.
+2. If you want to support multiple languages, set up [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing).
+3. Add the provider in `_app.js`.
 
 ```jsx
 import {NextIntlProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
+  // If you don't use internationalized routing, you need to pass a `locale` to the provider.
   return (
     <NextIntlProvider messages={pageProps.messages}>
       <Component {...pageProps} />
@@ -17,23 +19,24 @@ export default function App({Component, pageProps}) {
 }
 ```
 
-3. Provide messages on a page-level.
+4. Provide messages on a page-level.
 
 ```js
 // pages/index.js
-export async function getStaticProps({locale}) {
+export async function getStaticProps(context) {
+  // I you don' use internationalized routing, define this statically.
+  const locale = context.locale;
+
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by language and read
-      // the desired one based on the `locale` received from Next.js.
+      // pattern is to put them in JSON files separated by language.
       messages: (await import(`../../messages/${locale}.json`)).default
     }
   };
 }
 ```
 
-4. Make sure you have [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) set up or alternatively provide an explicit `locale` to `NextIntlProvider`.
 5. Use translations in your components!
 
 <Callout>
