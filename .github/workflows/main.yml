@@ -19,3 +19,4 @@ jobs:
       - run: yarn workspaces run test --ci --maxWorkers=2
       - run: yarn workspace example run build
       - run: yarn workspace example-advanced run build
+      - run: yarn workspace example-next-13 run build
