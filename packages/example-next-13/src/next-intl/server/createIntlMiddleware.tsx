@@ -3,16 +3,16 @@ import NextI18nConfig from '../I18nConfig';
 import NextIntlCookie from './NextIntlCookie';
 import resolveLocale from './resolveLocale';
 
-export default function createMiddleware(i18n: NextI18nConfig) {
+export default function createIntlMiddleware(i18n: NextI18nConfig) {
   return function middleware(request: NextRequest) {
+    // Ideally we could use the `headers()` and `cookies()` API here
+    // as well, but they are currently not available in middleware.
     const locale = resolveLocale(
       i18n,
       request.headers,
       request.cookies,
       request.nextUrl.pathname
     );
-
-    // Ideally we could use the `headers()` and `cookies()` API here as well.
 
     let response;
     if (request.nextUrl.pathname === '/') {

@@ -1,4 +1,0 @@
-Next.js currently has a bug, where the `pages` folder must exist for middleware to run.
-But maybe we'll be able to remove the middleware anyway once there is a new setter API for cookies.
-
-See https://github.com/vercel/next.js/pull/43205

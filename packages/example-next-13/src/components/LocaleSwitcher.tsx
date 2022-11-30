@@ -1,6 +1,6 @@
 import {useLocale, useTranslations} from 'next-intl';
 import Link from 'next/link';
-import i18n from 'i18n';
+import i18n from '../i18n';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');

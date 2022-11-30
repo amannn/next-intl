@@ -9,6 +9,7 @@
     "packages/use-intl",
     "packages/next-intl",
     "packages/example",
+    "packages/example-next-13",
     "packages/example-advanced",
     "packages/website"
   ],

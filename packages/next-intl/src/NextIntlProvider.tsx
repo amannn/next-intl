@@ -7,12 +7,19 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
 };
 
 export default function NextIntlProvider({locale, ...rest}: Props) {
+  let router;
+  try {
+    // Reading from context is practically ok to do conditionally
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    router = useRouter();
+  } catch (error) {
+    // Calling `useRouter` is not supported in the app folder
+  }
+
   // The router can be undefined if used in a context outside
   // of Next.js (e.g. unit tests, Storybook, ...)
-  const nextLocale = useRouter()?.locale;
-
-  if (!locale && nextLocale) {
-    locale = nextLocale;
+  if (!locale && router) {
+    locale = router.locale;
   }
 
   if (!locale) {
