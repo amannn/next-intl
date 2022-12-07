@@ -4,7 +4,7 @@ import {
   RequestCookies,
   ResponseCookies
 } from 'next/dist/server/web/spec-extension/cookies';
-import NextI18nConfig from '../I18nConfig';
+import NextI18nConfig from './NextI18nConfig';
 import NextIntlCookie from './NextIntlCookie';
 
 export default function resolveLocale(

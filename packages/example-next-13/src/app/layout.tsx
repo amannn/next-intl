@@ -14,6 +14,9 @@ export default function RootLayout({children}: Props) {
 
   return (
     <html lang={lang}>
+      <head>
+        <title>next-intl example</title>
+      </head>
       <body>{children}</body>
     </html>
   );

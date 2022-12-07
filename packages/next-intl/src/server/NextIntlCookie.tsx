@@ -1,3 +1,4 @@
+// We're using internals here, but if they are not found, worst case they become `any`
 import {ReadonlyRequestCookies} from 'next/dist/server/app-render';
 import {
   RequestCookies,

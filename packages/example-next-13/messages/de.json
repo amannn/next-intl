@@ -5,8 +5,5 @@
   },
   "LocaleSwitcher": {
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
-  },
-  "PageLayout": {
-    "pageTitle": "next-intl"
   }
 }
