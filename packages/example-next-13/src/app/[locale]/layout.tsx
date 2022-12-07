@@ -1,15 +1,16 @@
-'use client';
-
 import {NextIntlProvider} from 'next-intl';
-import {use, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
 type Props = {
   children: ReactNode;
   params: {locale: string};
 };
 
-export default function LocaleLayout({children, params: {locale}}: Props) {
-  const messages = use(import(`../../../messages/${locale}.json`));
+export default async function LocaleLayout({
+  children,
+  params: {locale}
+}: Props) {
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
 
   return (
     <NextIntlProvider locale={locale} messages={messages}>

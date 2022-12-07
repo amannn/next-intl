@@ -12,15 +12,15 @@
   },
   "scripts": {
     "start": "dts watch",
-    "build": "dts build",
-    "test": "TZ=Europe/Berlin dts test",
+    "build": "rm -rf dist && tsc && rm -rf dist/test",
+    "test": "TZ=Europe/Berlin dts test test",
     "lint": "eslint src test && tsc",
     "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && git checkout .",
     "postpublish": "rm ./README.md"
   },
-  "main": "dist/index.js",
-  "module": "dist/next-intl.esm.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "module": "dist/src/next-intl.esm.js",
+  "typings": "dist/src/index.d.ts",
   "files": [
     "dist",
     "src"
@@ -57,7 +57,6 @@
     "next": "^13.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },
   "engines": {

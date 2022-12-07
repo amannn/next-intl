@@ -1,3 +1,5 @@
+'use client';
+
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 import {IntlProvider} from 'use-intl';
@@ -24,7 +26,7 @@ export default function NextIntlProvider({locale, ...rest}: Props) {
 
   if (!locale) {
     throw new Error(
-      __DEV__
+      process.env.NODE_ENV !== 'production'
         ? "Couldn't determine locale. Please make sure you use internationalized routing or alternatively pass an explicit locale to `NextIntlProvider`."
         : undefined
     );
