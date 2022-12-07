@@ -13,7 +13,7 @@
   "scripts": {
     "start": "dts watch",
     "build": "rm -rf dist && tsc && rm -rf dist/test",
-    "test": "TZ=Europe/Berlin dts test test",
+    "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
     "lint": "eslint src test && tsc",
     "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && git checkout .",
     "postpublish": "rm ./README.md"
