@@ -12,15 +12,27 @@
   },
   "scripts": {
     "start": "dts watch",
-    "build": "rm -rf dist && tsc && rm -rf dist/test",
+    "build": "yarn build:default && yarn build:rsc",
+    "build:default": "rm -rf dist && dts build",
+    "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
-    "lint": "eslint src test && tsc",
+    "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && git checkout .",
     "postpublish": "rm ./README.md"
   },
   "main": "dist/src/index.js",
   "module": "dist/src/next-intl.esm.js",
   "typings": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "react-server": "./dist/src/index.js",
+      "default": "./dist/next-intl.esm.js"
+    },
+    "./server": {
+      "react-server": "./dist/src/index.js",
+      "default": "./dist/src/server/index.js"
+    }
+  },
   "files": [
     "dist",
     "src",
