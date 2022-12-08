@@ -10,6 +10,7 @@
     "packages/next-intl",
     "packages/example",
     "packages/example-next-13",
+    "packages/example-next-13-advanced",
     "packages/example-advanced",
     "packages/website"
   ],
