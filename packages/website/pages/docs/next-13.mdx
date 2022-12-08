@@ -129,6 +129,8 @@ function InteractiveClientComponent({title}) {
 
 This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
 
+If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
+
 ## Migrating from the `pages` folder
 
 If you have existing code from the `pages` folder that you want to migrate, you can use `NextIntlClientProvider` (instead of `NextIntlServerProvider`) in `app/[locale]/layout.tsx`:
