@@ -380,7 +380,7 @@
     "@typescript-eslint/types" "5.44.0"
     eslint-visitor-keys "^3.3.0"
 
-accept-language-parser@1.5.0:
+accept-language-parser@1.5.0, accept-language-parser@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/accept-language-parser/-/accept-language-parser-1.5.0.tgz#8877c54040a8dcb59e0a07d9c1fde42298334791"
   integrity sha512-QhyTbMLYo0BBGg1aWbeMG4ekWtds/31BrEU+DONOg/7ax23vxpL03Pb7/zBmha2v7vdD3AyzZVWBVGEZxKOXWw==
@@ -1695,12 +1695,14 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-next-intl@*:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/next-intl/-/next-intl-2.9.1.tgz#da90ee45079203806c000c66c21bdf51c830db9a"
-  integrity sha512-/OPaH5T+jOHXEZJfCzfl+ZkmjcNQOvb7DNR0SHSbtzYk/9IqjLFSLlxJvj4JPbW9xivzZbPCdgT5+yGzI2Uk0w==
+next-intl@2.10.0-alpha.4:
+  version "2.10.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/next-intl/-/next-intl-2.10.0-alpha.4.tgz#f4c8df38ce30508d9f54da4051014266b8699a6c"
+  integrity sha512-TIedxhlWEakohUoSHla7UhX+megaOcuUf3Xvaa4NkdjaWBk5GClV7DtYGfw5ujqciHq4Xo3i7/u9KgxxpC+M/w==
   dependencies:
-    use-intl "^2.9.1"
+    accept-language-parser "^1.5.0"
+    server-only "0.0.1"
+    use-intl "2.10.0-alpha.3"
 
 next@^13.0.5:
   version "13.0.5"
@@ -2105,6 +2107,11 @@ semver@^7.3.5, semver@^7.3.7:
   dependencies:
     lru-cache "^6.0.0"
 
+server-only@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/server-only/-/server-only-0.0.1.tgz#0f366bb6afb618c37c9255a314535dc412cd1c9e"
+  integrity sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==
+
 shebang-command@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/shebang-command/-/shebang-command-2.0.0.tgz#ccd0af4f8835fbdc265b82461aaf0c36663f34ea"
@@ -2358,10 +2365,10 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-intl@^2.9.1:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-2.9.1.tgz#af303d61bd6f855a1fa118c4d41c8092250c8930"
-  integrity sha512-eAveKBEbFjzzS4BWx8ET3/reyvCN/fBQbFgYYd51fnIb2SlmfDA1B6c9DZPthnyvjzZLfSAXShn0+dN4cQAeIg==
+use-intl@2.10.0-alpha.3:
+  version "2.10.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-2.10.0-alpha.3.tgz#53b14be7d4af0a827c9359a34d53bf0f935823aa"
+  integrity sha512-3q3B53UMd9wbdbyXsfyIzZs++uRGnl2DELQ+y51/+/E0izj0GStlh20vnHnblotd8elvu1FIAduOT7F1B2CgdQ==
   dependencies:
     "@formatjs/ecma402-abstract" "^1.11.4"
     intl-messageformat "^9.3.18"

@@ -1,5 +1,5 @@
 {
-  "name": "example-next-13",
+  "name": "example-next-13-advanced",
   "version": "2.9.1",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "accept-language-parser": "1.5.0",
     "date-fns": "^2.16.1",
     "lodash": "^4.17.21",
-    "next-intl": "^2.9.1",
+    "next-intl": "2.10.0-alpha.4",
     "next": "^13.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
