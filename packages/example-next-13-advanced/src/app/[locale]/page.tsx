@@ -14,6 +14,7 @@ export default function Index() {
       <CurrentTime />
       <LocaleSwitcher />
       <MessagesAsPropsCounter />
+      {/* @ts-expect-error Server Component */}
       <MessagesOnClientCounter />
     </PageLayout>
   );
