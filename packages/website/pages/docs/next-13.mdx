@@ -70,7 +70,7 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-4. Use your messages on in `app/[locale]/page.tsx` (3):
+4. Use your messages in `app/[locale]/page.tsx` (3):
 
 ```tsx
 import {useTranslations} from 'next-intl';
@@ -87,9 +87,9 @@ export default function Index() {
 import {createIntlMiddleware} from 'next-intl/server';
 
 // This middleware intercepts requests to `/` and will redirect
-// to one of the configured locales instead (e.g. `/en`).
-// A cookie is set in the background, so if the user switches
-// to a new language, the decision will be remembered.
+// to one of the configured locales instead (e.g. `/en`). A cookie
+// is set in the background, so if the user switches to a new
+// language, this language will take precedence from now on.
 export default createIntlMiddleware({
   locales: ['en', 'de'],
   defaultLocale: 'en'
@@ -122,7 +122,7 @@ export default function Index() {
 import {useEffect} from 'react';
 
 function InteractiveClientComponent({title}) {
-  useEffect(() => alert('Hello!'), []);
+  useEffect(() => alert(title), []);
   return <h1>{title}</h1>;
 }
 ```
@@ -155,7 +155,7 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-By doing this, the messages automatically become available for all Client Components that are rendered in your app. Note that you have to make use of `'use client';` in all components that use features from `next-intl` if you use this approach.
+By doing this, the messages become available for all Client Components that are rendered in your app. Note that you have to make use of `'use client';` in all components that use features from `next-intl` if you use this approach.
 
 ```tsx
 // app/[locale]/page.tsx
@@ -169,7 +169,7 @@ export default function Index() {
 }
 ```
 
-If you're transitioning your components, you can use both providers to have messages available in both Server as well as Client Components.
+If you're transitioning your components to the `app` directory, you can use both providers to have messages available in Server as well as Client Components.
 
 Also note that [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) is no longer supported natively by Next.js, therefore you should use the middleware mentioned above.
 
