@@ -27,7 +27,7 @@ export default function NextIntlProvider({locale, ...rest}: Props) {
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? "Couldn't determine locale. Please make sure you use internationalized routing or alternatively pass an explicit locale to `NextIntlProvider`."
+        ? "Couldn't determine locale. Please pass an explicit `locale` prop the provider, or if you're using the `pages` folder, use internationalized routing (https://nextjs.org/docs/advanced-features/i18n-routing)."
         : undefined
     );
   }
