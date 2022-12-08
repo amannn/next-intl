@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {NextIntlProvider, useTranslations} from '../src';
+import {useTranslations} from '../../src';
+import {NextIntlClientProvider} from '../../src/client';
 
 jest.mock('next/router', () => ({
   useRouter: () => ({locale: 'en'})
@@ -13,9 +14,9 @@ it('can use messages from the provider', () => {
   }
 
   render(
-    <NextIntlProvider messages={{message: 'Hello'}}>
+    <NextIntlClientProvider messages={{message: 'Hello'}}>
       <Component />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 
   screen.getByText('Hello');
@@ -28,12 +29,12 @@ it('can override the locale from Next.js', () => {
   }
 
   render(
-    <NextIntlProvider
+    <NextIntlClientProvider
       locale="de"
       messages={{message: '{price, number, ::currency/EUR}'}}
     >
       <Component />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 
   screen.getByText('29.000,50 €');

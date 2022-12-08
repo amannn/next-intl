@@ -5,5 +5,13 @@
   },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+  },
+  "Counter": {
+    "count": "Current count:",
+    "increment": "Increment"
+  },
+  "ClientCounter": {
+    "count": "Current count: {count}",
+    "increment": "Increment"
   }
 }

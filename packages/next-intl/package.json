@@ -27,13 +27,16 @@
       "react-server": "./dist/src/react-server/index.js",
       "default": "./dist/index.js"
     },
-    "./server": "./dist/src/server/index.js"
+    "./server": "./dist/src/server/index.js",
+    "./client": "./dist/src/client/index.js"
   },
   "files": [
     "dist",
     "src",
     "server.js",
-    "server.d.ts"
+    "server.d.ts",
+    "client.js",
+    "client.d.ts"
   ],
   "keywords": [
     "react",

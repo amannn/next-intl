@@ -12232,6 +12232,14 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+use-intl@^2.9.1:
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-2.9.1.tgz#af303d61bd6f855a1fa118c4d41c8092250c8930"
+  integrity sha512-eAveKBEbFjzzS4BWx8ET3/reyvCN/fBQbFgYYd51fnIb2SlmfDA1B6c9DZPthnyvjzZLfSAXShn0+dN4cQAeIg==
+  dependencies:
+    "@formatjs/ecma402-abstract" "^1.11.4"
+    intl-messageformat "^9.3.18"
+
 use-sync-external-store@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
