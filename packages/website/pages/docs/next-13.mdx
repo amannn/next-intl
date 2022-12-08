@@ -15,7 +15,7 @@ Next.js 13 introduces the `app` directory, which includes support for [React Ser
 **Current pre-release:**
 
 ```
-npm install next-intl@2.10.0-alpha.4
+npm install next-intl@3.0.0-alpha.1
 ```
 
 This pre-release was tested with `next@13.0.6`.
@@ -131,10 +131,10 @@ This way your messages never leave the server and the client only needs to load 
 
 ## Migrating from the `pages` folder
 
-If you have existing code from the `pages` folder that you want to migrate, you can use `NextIntlProvider` (instead of `NextIntlServerProvider`) in `app/[locale]/layout.tsx`:
+If you have existing code from the `pages` folder that you want to migrate, you can use `NextIntlClientProvider` (instead of `NextIntlServerProvider`) in `app/[locale]/layout.tsx`:
 
 ```tsx
-import {NextIntlProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({children, params: {locale}}) {
@@ -146,9 +146,9 @@ export default async function LocaleLayout({children, params: {locale}}) {
   }
 
   return (
-    <NextIntlProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }
 ```
