@@ -11,6 +11,12 @@
 
 ![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) [<img src="https://img.shields.io/npm/dw/next-intl.svg" />](https://www.npmjs.com/package/next-intl)
 
+<hr />
+
+**🚀 New ✨**: `next-intl` is adding support for **Next.js 13** and the [`app` directory](https://beta.nextjs.org/docs/routing/fundamentals). A preview version with support for React Server Components is [now available](https://next-intl-git-docs-next-13-amann.vercel.app/docs/next-13) for early adopters.
+
+<hr />
+
 ## Features
 
 This library complements the [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing) capabilities of Next.js by managing translations and providing them to components.
