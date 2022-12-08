@@ -13,7 +13,7 @@
 
 <hr />
 
-**✨ New ✨**: `next-intl` is adding support for **Next.js 13** and the [`app` directory](https://beta.nextjs.org/docs/routing/fundamentals). A preview version with support for React Server Components is [now available](https://next-intl-git-docs-next-13-amann.vercel.app/docs/next-13) for early adopters.
+**🚀 New ✨**: `next-intl` is adding support for **Next.js 13** and the [`app` directory](https://beta.nextjs.org/docs/routing/fundamentals). A preview version with support for React Server Components is [now available](https://next-intl-git-docs-next-13-amann.vercel.app/docs/next-13) for early adopters.
 
 <hr />
 
