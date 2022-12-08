@@ -36,7 +36,8 @@
   "files": [
     "dist",
     "src",
-    "./server.js"
+    "./server.js",
+    "./server.d.ts"
   ],
   "keywords": [
     "react",
