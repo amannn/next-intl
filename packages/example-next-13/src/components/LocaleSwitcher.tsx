@@ -1,4 +1,4 @@
-import {useLocale, useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl/server';
 import Link from 'next/link';
 
 export default function LocaleSwitcher() {

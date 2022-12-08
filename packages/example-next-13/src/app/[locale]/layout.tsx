@@ -1,4 +1,4 @@
-import {NextIntlProvider} from 'next-intl';
+import {NextIntlServerProvider} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 
@@ -19,8 +19,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <NextIntlProvider locale={locale} messages={messages}>
+    <NextIntlServerProvider locale={locale} messages={messages}>
       {children}
-    </NextIntlProvider>
+    </NextIntlServerProvider>
   );
 }

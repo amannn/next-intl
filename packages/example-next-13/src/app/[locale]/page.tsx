@@ -1,6 +1,4 @@
-'use client';
-
-import {useTranslations} from 'next-intl';
+import {useTranslations} from 'next-intl/server';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 

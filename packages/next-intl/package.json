@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
+    "server-only": "0.0.1",
     "use-intl": "^2.9.1"
   },
   "peerDependencies": {
