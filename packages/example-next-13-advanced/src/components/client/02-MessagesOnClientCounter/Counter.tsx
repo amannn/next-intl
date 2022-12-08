@@ -1,3 +1,4 @@
+import pick from 'lodash/pick';
 import {useLocale} from 'next-intl';
 import {NextIntlClientProvider} from 'next-intl/client';
 import ClientCounter from './ClientCounter';
@@ -8,7 +9,13 @@ export default async function Counter() {
     .default;
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={
+        // Only provide the minimum of messages
+        pick(messages, 'ClientCounter')
+      }
+    >
       <ClientCounter />
     </NextIntlClientProvider>
   );
