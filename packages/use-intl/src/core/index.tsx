@@ -9,4 +9,3 @@ export {default as NumberFormatOptions} from './NumberFormatOptions';
 export {default as IntlError, IntlErrorCode} from './IntlError';
 export {default as createTranslator} from './createTranslator';
 export {default as createIntl} from './createIntl';
-export {default as IntlConfiguration} from './IntlConfiguration';

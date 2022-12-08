@@ -5,12 +5,12 @@ import IntlProviderProps from './IntlProviderProps';
 /**
  * Enhances the incoming props with defaults.
  */
-export default function getIntlProviderProps({
+export default function getIntlContextValue({
   getMessageFallback,
   messages,
   onError,
   ...rest
-}: IntlProviderProps) {
+}: Omit<IntlProviderProps, 'children'>) {
   const finalOnError = onError || defaultOnError;
   const finalGetMessageFallback =
     getMessageFallback || defaultGetMessageFallback;
