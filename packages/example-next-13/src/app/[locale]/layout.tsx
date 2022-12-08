@@ -1,4 +1,5 @@
 import {NextIntlProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 
 type Props = {
@@ -10,7 +11,12 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
+  let messages;
+  try {
+    messages = (await import(`../../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
 
   return (
     <NextIntlProvider locale={locale} messages={messages}>
