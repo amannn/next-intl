@@ -1,4 +1,4 @@
-import {useTranslations} from 'next-intl/server';
+import {useTranslations} from 'next-intl';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 

@@ -24,13 +24,10 @@
   "typings": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "react-server": "./dist/src/index.js",
+      "react-server": "./dist/src/react-server/index.js",
       "default": "./dist/index.js"
     },
-    "./server": {
-      "react-server": "./dist/src/server/index.js",
-      "default": "./dist/src/server/index.js"
-    }
+    "./server": "./dist/src/server/index.js"
   },
   "files": [
     "dist",

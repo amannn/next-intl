@@ -1,5 +1,5 @@
 import 'server-only';
-import NextIntlRequestStorage from './NextIntlRequestStorage';
+import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
 
 export default function useLocale() {
   return NextIntlRequestStorage.getLocale();

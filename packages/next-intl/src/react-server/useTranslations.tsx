@@ -1,5 +1,5 @@
 import 'server-only';
-import NextIntlRequestStorage from './NextIntlRequestStorage';
+import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
 
 export default function useTranslations(namespace: string) {
   const translator = NextIntlRequestStorage.getTranslator();
