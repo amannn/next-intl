@@ -67,7 +67,7 @@ export default function createTranslatorImpl<
     if (typeof result !== 'string') {
       const error = new IntlError(
         IntlErrorCode.FORMATTING_ERROR,
-        __DEV__
+        process.env.NODE_ENV !== 'production'
           ? "`createTranslator` only accepts functions for rich text formatting that receive and return strings.\n\nE.g. t.rich('rich', {b: (chunks) => `<b>${chunks}</b>`})"
           : undefined
       );

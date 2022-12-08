@@ -1,8 +1,6 @@
 import React from 'react';
 import {createTranslator, IntlError, IntlErrorCode} from '../../src';
 
-(global as any).__DEV__ = true;
-
 const messages = {
   Home: {
     title: 'Hello world!',

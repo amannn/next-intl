@@ -1,8 +1,6 @@
 import {parseISO} from 'date-fns';
 import {createIntl} from '../../src';
 
-(global as any).__DEV__ = true;
-
 const intl = createIntl({locale: 'en'});
 
 it('formats a date and time', () => {

@@ -15,8 +15,6 @@ export default function getIntlContextValue({
   const finalGetMessageFallback =
     getMessageFallback || defaultGetMessageFallback;
 
-  // Ideally we'd use `__DEV__`, but when building
-  // with tsc, this is not defined.
   if (process.env.NODE_ENV !== 'production') {
     if (messages) {
       validateMessages(messages, finalOnError);

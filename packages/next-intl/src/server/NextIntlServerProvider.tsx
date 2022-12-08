@@ -2,7 +2,7 @@ import 'server-only';
 import React from 'react';
 // eslint-disable-next-line import/default -- False positive
 import IntlProviderProps from 'use-intl/dist/src/react/IntlProviderProps';
-import getIntlProviderValue from 'use-intl/dist/src/react/getIntlProviderValue';
+import getIntlContextValue from 'use-intl/dist/src/react/getIntlContextValue';
 import NextIntlRequestStorage from './NextIntlRequestStorage';
 
 export default function NextIntlServerProvider(props: IntlProviderProps) {
@@ -11,7 +11,7 @@ export default function NextIntlServerProvider(props: IntlProviderProps) {
     console.error(`\`NextIntlServerProvider\` was already initialized.`);
   }
 
-  NextIntlRequestStorage.initRequest(getIntlProviderValue(props));
+  NextIntlRequestStorage.initRequest(getIntlContextValue(props));
 
   return <>{props.children}</>;
 }
