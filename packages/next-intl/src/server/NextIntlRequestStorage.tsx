@@ -1,21 +1,31 @@
-import {createTranslator} from 'use-intl/dist/src/core';
+import {createTranslator, createIntl} from 'use-intl/dist/src/core';
+// eslint-disable-next-line import/default -- False positive
+import IntlContextValue from 'use-intl/dist/src/react/IntlContextValue';
 import NextRequestStorage from './NextRequestStorage';
 
 class NextIntlRequestStorage {
   private key = '__next-intl';
 
-  private storage: NextRequestStorage<{
-    translator: any; // TODO: Use a better type
-    locale: string;
-  }>;
+  private storage: NextRequestStorage<
+    IntlContextValue & {
+      translator: ReturnType<typeof createTranslator>;
+      intl: ReturnType<typeof createIntl>;
+    }
+  >;
 
   constructor() {
     this.storage = new NextRequestStorage(this.key);
   }
 
-  public initRequest(...args: Parameters<typeof createTranslator>) {
-    const translator = createTranslator(...args);
-    this.storage.set({translator, locale: args[0].locale});
+  public initRequest(opts: IntlContextValue) {
+    const translator = createTranslator({
+      ...opts,
+      messages: opts.messages
+    });
+    const intl = createIntl(opts);
+    const now = opts.now || new Date();
+
+    this.storage.set({...opts, translator, intl, now});
   }
 
   public isInitialized() {
@@ -30,9 +40,21 @@ class NextIntlRequestStorage {
     return this.getInitializedStorage().translator;
   }
 
+  public getIntl() {
+    return this.getInitializedStorage().intl;
+  }
+
+  public getNow() {
+    return this.getInitializedStorage().now;
+  }
+
+  public getTimeZone() {
+    return this.getInitializedStorage().timeZone;
+  }
+
   private getInitializedStorage() {
     if (!this.isInitialized()) {
-      throw new Error('Locale not set');
+      throw new Error('`NextIntlServerProvider` was not initialized.');
     }
 
     return this.storage.get()!;

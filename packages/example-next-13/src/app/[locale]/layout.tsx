@@ -19,7 +19,21 @@ export default async function LocaleLayout({
   }
 
   return (
-    <NextIntlServerProvider locale={locale} messages={messages}>
+    <NextIntlServerProvider
+      formats={{
+        dateTime: {
+          medium: {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+            hour12: false
+          }
+        }
+      }}
+      locale={locale}
+      messages={messages}
+      now={new Date(1999, 11, 31, 23, 59)}
+      timeZone="America/New_York"
+    >
       {children}
     </NextIntlServerProvider>
   );
