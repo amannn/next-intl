@@ -6,7 +6,7 @@ export default function useIntlContext() {
 
   if (!context) {
     throw new Error(
-      __DEV__
+      process.env.NODE_ENV !== 'production'
         ? 'No intl context found. Have you configured the provider?'
         : undefined
     );

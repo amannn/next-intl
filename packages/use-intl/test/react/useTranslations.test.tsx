@@ -12,8 +12,6 @@ import {
   useTranslations
 } from '../../src';
 
-(global as any).__DEV__ = true;
-
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.
 jest.mock('intl-messageformat', () => {

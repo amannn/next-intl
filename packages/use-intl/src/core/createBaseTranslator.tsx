@@ -24,7 +24,9 @@ function resolvePath(
 ) {
   if (!messages) {
     throw new Error(
-      __DEV__ ? `No messages available at \`${namespace}\`.` : undefined
+      process.env.NODE_ENV !== 'production'
+        ? `No messages available at \`${namespace}\`.`
+        : undefined
     );
   }
 
@@ -35,7 +37,7 @@ function resolvePath(
 
     if (part == null || next == null) {
       throw new Error(
-        __DEV__
+        process.env.NODE_ENV !== 'production'
           ? `Could not resolve \`${key}\` in ${
               namespace ? `\`${namespace}\`` : 'messages'
             }.`
@@ -89,7 +91,9 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   try {
     if (!messages) {
       throw new Error(
-        __DEV__ ? `No messages were configured on the provider.` : undefined
+        process.env.NODE_ENV !== 'production'
+          ? `No messages were configured on the provider.`
+          : undefined
       );
     }
 
@@ -99,7 +103,7 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
 
     if (!retrievedMessages) {
       throw new Error(
-        __DEV__
+        process.env.NODE_ENV !== 'production'
           ? `No messages for namespace \`${namespace}\` found.`
           : undefined
       );
@@ -187,7 +191,7 @@ export default function createBaseTranslator<
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.INSUFFICIENT_PATH,
-          __DEV__
+          process.env.NODE_ENV !== 'production'
             ? `Insufficient path specified for \`${key}\` in \`${
                 namespace ? `\`${namespace}\`` : 'messages'
               }\`.`
@@ -231,7 +235,7 @@ export default function createBaseTranslator<
 
       if (formattedMessage == null) {
         throw new Error(
-          __DEV__
+          process.env.NODE_ENV !== 'production'
             ? `Unable to format \`${key}\` in ${
                 namespace ? `namespace \`${namespace}\`` : 'messages'
               }`
@@ -274,7 +278,7 @@ export default function createBaseTranslator<
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.INVALID_MESSAGE,
-        __DEV__
+        process.env.NODE_ENV !== 'production'
           ? `The message \`${key}\` in ${
               namespace ? `namespace \`${namespace}\`` : 'messages'
             } didn't resolve to a string. If you want to format rich text, use \`t.rich\` instead.`

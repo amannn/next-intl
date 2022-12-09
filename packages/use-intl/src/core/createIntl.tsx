@@ -71,7 +71,7 @@ export default function createIntl({
       if (!options) {
         const error = new IntlError(
           IntlErrorCode.MISSING_FORMAT,
-          __DEV__
+          process.env.NODE_ENV !== 'production'
             ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
             : undefined
         );
@@ -153,7 +153,7 @@ export default function createIntl({
           now = globalNow;
         } else {
           throw new Error(
-            __DEV__
+            process.env.NODE_ENV !== 'production'
               ? `The \`now\` parameter wasn't provided to \`formatRelativeTime\` and there was no global fallback configured on the provider.`
               : undefined
           );
