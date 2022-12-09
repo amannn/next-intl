@@ -38,7 +38,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
 
-export default async function Layout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params: {locale}}) {
   let messages;
   try {
     messages = (await import(`../../messages/${locale}.json`)).default;

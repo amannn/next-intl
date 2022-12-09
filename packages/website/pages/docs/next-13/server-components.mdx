@@ -31,7 +31,7 @@ The setup is [the same as for Client Components](/docs/next-13/client-components
 import {NextIntlServerProvider} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 
-export default async function Layout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params: {locale}}) {
   let messages;
   try {
     messages = (await import(`../../../messages/${locale}.json`)).default;
