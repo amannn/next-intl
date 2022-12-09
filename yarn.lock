@@ -12245,10 +12245,10 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-intl@^2.9.1:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-2.9.1.tgz#af303d61bd6f855a1fa118c4d41c8092250c8930"
-  integrity sha512-eAveKBEbFjzzS4BWx8ET3/reyvCN/fBQbFgYYd51fnIb2SlmfDA1B6c9DZPthnyvjzZLfSAXShn0+dN4cQAeIg==
+use-intl@^2.9.2:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/use-intl/-/use-intl-2.10.0.tgz#e27d7de1762afc91d302aa29e50e672823a1005f"
+  integrity sha512-zvpEuK7yPDTxXOFWrq7Ln1AWMY8yqqfD2POgMO+yBnXm6y1f/66Hfk/NB6ogUsgfKecBArLoZMdnUyquFWbW6Q==
   dependencies:
     "@formatjs/ecma402-abstract" "^1.11.4"
     intl-messageformat "^9.3.18"
