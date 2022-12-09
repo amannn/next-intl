@@ -12,9 +12,11 @@
   },
   "scripts": {
     "start": "dts watch",
-    "build": "dts build",
-    "test": "TZ=Europe/Berlin dts test",
-    "lint": "eslint src test && tsc",
+    "build": "yarn build:default && yarn build:rsc",
+    "build:default": "rm -rf dist && dts build",
+    "build:rsc": "tsc && rm -rf dist/test",
+    "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
+    "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },
   "main": "dist/index.js",
