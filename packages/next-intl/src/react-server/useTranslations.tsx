@@ -1,4 +1,3 @@
-import 'server-only';
 import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
 
 export default function useTranslations(namespace?: string) {

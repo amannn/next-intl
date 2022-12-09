@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "2.10.0-alpha.3",
+  "version": "2.10.0-alpha.4",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -15,7 +15,7 @@
     "build": "yarn build:default && yarn build:rsc",
     "build:default": "rm -rf dist && dts build",
     "build:rsc": "tsc && rm -rf dist/test",
-    "test": "TZ=Europe/Berlin dts test",
+    "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "yarn test && yarn lint && yarn build"
   },

@@ -1,3 +1,4 @@
+import 'server-only';
 import {createTranslator, createIntl} from 'use-intl/dist/src/core';
 // eslint-disable-next-line import/default -- False positive
 import IntlContextValue from 'use-intl/dist/src/react/IntlContextValue';

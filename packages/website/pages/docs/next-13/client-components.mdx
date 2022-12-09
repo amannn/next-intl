@@ -1,0 +1,134 @@
+import Callout from 'nextra-theme-docs/callout';
+
+# Usage in Client Components
+
+`next-intl` is available in the `app` directory from version `2.10.0` onwards.
+
+## Getting started
+
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
+
+1. Create the following file structure:
+
+```
+├── messages (1)
+│   ├── en.json
+│   └── ...
+├── app
+│   ├── [locale]
+│   │   ├── layout.tsx (2)
+│   │   └── page.tsx (3)
+│   └── ...
+└── middleware.tsx (4)
+```
+
+2. Set up messages for a language, e.g. in `messages/en.json` (1):
+
+```json
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+3. Configure `NextIntlClientProvider` in `app/[locale]/layout.tsx` (2):
+
+```tsx
+import {NextIntlClientProvider} from 'next-intl/client';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
+```
+
+4. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations (3):
+
+```tsx
+'use client';
+
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+5. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) that handles redirects:
+
+```tsx
+import {createIntlMiddleware} from 'next-intl/server';
+
+// This middleware intercepts requests to `/` and will redirect
+// to one of the configured locales instead (e.g. `/en`). A cookie
+// is set in the background, so if the user switches to a new
+// language, this language will take precedence from now on.
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en'
+});
+```
+
+That's all you need to do to start using translations in the `app` directory!
+
+If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl/tree/main/packages/example-next-13) ([demo](https://csb-k2ien9-7ytkomg4x-amann.vercel.app/en)).
+
+<Callout>
+  Note that you have to make use of `'use client';` in all components that use
+  features from `next-intl` if you use this approach. Support for `next-intl`
+  APIs in Server Components is [available in a preview
+  version](/docs/next-13/server-components).
+</Callout>
+
+## Usage in `head.js`
+
+This is the one component that Next.js doesn't allow to be marked with `'use client;'`.
+
+[Support for Server Components in `next-intl`](/docs/next-13/server-components) will allow you to use the same APIs that you already use in other components to handle i18n in `head.js`. In the meantime, as a stopgap solution, you can use the [core library](/docs/usage/core-library) from `next-intl` for this use case.
+
+```tsx
+// app/[locale]/head.tsx
+
+import {createTranslator} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+type Props = {
+  params: {
+    locale: string;
+  };
+};
+
+export default async function Head({params: {locale}}: Props) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  // Currently you can use the core (non-React) APIs when you
+  // have to use next-intl in a Server Component like `Head`.
+  // In the future you'll be able to use the React APIs here as
+  // well (see https://next-intl-docs.vercel.app/docs/next-13).
+  const t = createTranslator({locale, messages});
+
+  return (
+    <>
+      <title>{t('Head.title')}</title>
+    </>
+  );
+}
+```

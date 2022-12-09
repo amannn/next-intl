@@ -1,0 +1,99 @@
+import Callout from 'nextra-theme-docs/callout';
+
+# Usage in Server Components (preview)
+
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a preview to early adopters, who are already building apps with the `app` directory.
+
+<Callout>
+  The `app` directory is currently in beta, patterns are still emerging and APIs
+  may change. Please **use this at your own risk**, knowing that you might have
+  to face a migration effort when the `app` directory becomes stable.
+  `next-intl` tries to stay up to date with the latest developments on the
+  Next.js side, but during this period there can be unexpected issues.
+</Callout>
+
+## Current preview version
+
+```
+npm install next-intl@2.10.0-alpha.5
+```
+
+This preview version was tested with `next@13.0.6`.
+
+## Getting started
+
+The setup is [the same as for Client Components](/docs/next-13/client-components), but you're able to make two adjustments now:
+
+1. Replace the usage of `NextIntlClientProvider` with `NextIntlServerProvider` in your layout:
+
+```tsx
+// app/[locale]/layout.tsx
+import {NextIntlServerProvider} from 'next-intl/server';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <NextIntlServerProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlServerProvider>
+  );
+}
+```
+
+2. Remove the `'use client';` directive from your page component:
+
+```tsx
+// app/[locale]/page.tsx
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
+
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply both providers at the same time.
+
+## Switching to Client Components
+
+If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
+
+```tsx
+// app/[locale]/page.tsx
+import {useTranslations} from 'next-intl';
+import InteractiveClientComponent from './InteractiveClientComponent';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <InteractiveClientComponent title={t('title')} />;
+}
+```
+
+```tsx
+// app/[locale]/InteractiveClientComponent.tsx
+'use client';
+
+import {useEffect} from 'react';
+
+function InteractiveClientComponent({title}) {
+  useEffect(() => alert(title), [title]);
+  return <h1>{title}</h1>;
+}
+```
+
+This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
+
+If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
+
+## Providing feedback
+
+If you have feedback about using `next-intl` in the `app` directory, feel free to leave feedback in [the PR which implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).

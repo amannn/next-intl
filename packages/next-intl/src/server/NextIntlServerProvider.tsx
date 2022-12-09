@@ -1,4 +1,3 @@
-import 'server-only';
 import React from 'react';
 // eslint-disable-next-line import/default -- False positive
 import IntlProviderProps from 'use-intl/dist/src/react/IntlProviderProps';

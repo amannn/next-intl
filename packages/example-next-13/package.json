@@ -10,11 +10,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "accept-language-parser": "1.5.0",
-    "date-fns": "^2.16.1",
     "lodash": "^4.17.21",
-    "next-intl": "*",
     "next": "^13.0.5",
+    "next-intl": "^2.9.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.6.3"
