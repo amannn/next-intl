@@ -92,3 +92,43 @@ If you've encountered an issue, you can [explore the code for a working example]
   APIs in Server Components is [available in a preview
   version](/docs/next-13/server-components).
 </Callout>
+
+## Usage in `head.js`
+
+This is the one component that Next.js doesn't allow to be marked with `'use client;'`.
+
+[Support for Server Components in `next-intl`](/docs/next-13/server-components) will allow you to use the same APIs as in other components. For the meantime, as a stopgap solution, you can use the [core library](/docs/usage/core-library) from `next-intl`.
+
+```tsx
+// app/[locale]/head.tsx
+
+import {createTranslator} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+type Props = {
+  params: {
+    locale: string;
+  };
+};
+
+export default async function Head({params: {locale}}: Props) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  // Currently you can use the core (non-React) APIs when you
+  // have to use next-intl in a Server Component like `Head`.
+  // In the future you'll be able to use the React APIs here as
+  // well (see https://next-intl-docs.vercel.app/docs/next-13).
+  const t = createTranslator({locale, messages});
+
+  return (
+    <>
+      <title>{t('Head.title')}</title>
+    </>
+  );
+}
+```

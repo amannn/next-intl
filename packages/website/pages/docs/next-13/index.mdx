@@ -2,9 +2,11 @@ import Callout from 'nextra-theme-docs/callout';
 
 # Next.js 13
 
-With the introduction of the `app` directory, Next.js 13 provides a new level of flexibility for React apps. With this step, Next.js is removing their built-in [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing), leaving the implementation of this up to the user.
+With the introduction of the `app` directory, Next.js 13 provides a new level of flexibility for React apps.
 
-To fill in the gap, `next-intl` provides a drop-in replacement for the routing layer, handling the locale negotiation, redirects and cookies.
+Next.js is removing their built-in [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing), leaving the implementation of this up to the user. To fill in the gap, `next-intl` provides a **drop-in replacement for the i18n routing**, handling the locale negotiation, redirects and cookies.
+
+The other major change for `next-intl` is the support for **React Server Components**.
 
 There are currently two ways how you can set your app up with `next-intl` in the `app` directory:
 
