@@ -28,7 +28,6 @@ export default async function NextIntlProvider({children, locale}: Props) {
       }}
       locale={locale}
       messages={messages}
-      now={new Date()}
       timeZone="America/New_York"
     >
       {children}

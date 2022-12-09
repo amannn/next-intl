@@ -1,5 +1,5 @@
 import 'server-only';
-import {createTranslator, createIntl} from 'use-intl/dist/src/core';
+import {createIntl} from 'use-intl/dist/src/core';
 // eslint-disable-next-line import/default -- False positive
 import IntlContextValue from 'use-intl/dist/src/react/IntlContextValue';
 import NextRequestStorage from './NextRequestStorage';
@@ -9,7 +9,6 @@ class NextIntlRequestStorage {
 
   private storage: NextRequestStorage<
     IntlContextValue & {
-      translator: ReturnType<typeof createTranslator>;
       intl: ReturnType<typeof createIntl>;
     }
   >;
@@ -19,26 +18,26 @@ class NextIntlRequestStorage {
   }
 
   public initRequest(opts: IntlContextValue) {
-    const translator = createTranslator({
-      ...opts,
-      messages: opts.messages
-    });
-    const intl = createIntl(opts);
     const now = opts.now || new Date();
 
-    this.storage.set({...opts, translator, intl, now});
+    // Since `useIntl` doesn't take any params, we can cache it here.
+    const intl = createIntl(opts);
+
+    this.storage.set({...opts, intl, now});
   }
 
   public isInitialized() {
     return this.storage.get() != null;
   }
 
-  public getLocale() {
-    return this.getInitializedStorage().locale;
+  public getIntlOpts() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {intl, ...opts} = this.getInitializedStorage();
+    return opts;
   }
 
-  public getTranslator() {
-    return this.getInitializedStorage().translator;
+  public getLocale() {
+    return this.getInitializedStorage().locale;
   }
 
   public getIntl() {

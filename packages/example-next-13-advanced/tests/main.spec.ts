@@ -45,3 +45,9 @@ it('can use next-intl on the client side', async ({page}) => {
   await counter.getByRole('button', {name: 'Increment'}).click();
   await expect(counter).toHaveText(/Current count: 1/);
 });
+
+it('can use rich text', async ({page}) => {
+  await page.goto('/en');
+  const counter = page.getByTestId('RichText');
+  expect(await counter.innerHTML()).toBe('This is a <b>rich</b> text.');
+});

@@ -5,7 +5,8 @@
   },
   "Index": {
     "title": "Home",
-    "description": "This is the home page."
+    "description": "This is the home page.",
+    "rich": "This is a <important>rich</important> text."
   },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"

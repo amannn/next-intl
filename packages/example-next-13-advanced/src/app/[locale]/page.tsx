@@ -11,6 +11,9 @@ export default function Index() {
   return (
     <PageLayout title={t('title')}>
       <p>{t('description')}</p>
+      <p data-testid="RichText">
+        {t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}
+      </p>
       <CurrentTime />
       <LocaleSwitcher />
       <MessagesAsPropsCounter />
