@@ -1,4 +1,8 @@
 {
+  "Meta": {
+    "title": "next-intl example",
+    "description": "This is an example of using next-intl in the `app` directory."
+  },
   "Index": {
     "title": "Home",
     "description": "This is the home page."

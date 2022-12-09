@@ -6,11 +6,13 @@ import getIntlContextValue from 'use-intl/dist/src/react/getIntlContextValue';
 import NextIntlRequestStorage from './NextIntlRequestStorage';
 
 export default function NextIntlServerProvider(props: IntlProviderProps) {
-  // This provider must only be rendered a single time per request.
-  if (NextIntlRequestStorage.isInitialized()) {
-    console.error(`\`NextIntlServerProvider\` was already initialized.`);
-  }
-
+  // Typically this component renders only once in `layout`. It can however be
+  // the case that when next-intl features are necessary in the `<head>`, this
+  // provider will be used twice.
+  //
+  // Maybe we're doing us a disfavour by using an API that looks like it's
+  // scoped to a part of the tree. The big advantage is that the API is the
+  // same for both server and client.
   NextIntlRequestStorage.initRequest(getIntlContextValue(props));
 
   return <>{props.children}</>;
