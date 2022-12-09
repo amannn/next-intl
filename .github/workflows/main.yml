@@ -13,22 +13,14 @@ jobs:
           node-version: 16.x
       # The Remix example unfortunately doesn't seem to support yarn workspaces
       - uses: bahmutov/npm-install@v1
+      - run: yarn playwright install --with-deps
 
+      # The order matters here
       - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
-
-      - run: yarn workspaces run lint
-      - run: yarn workspaces run test --ci --maxWorkers=2
-
       - run: yarn workspace example run build
       - run: yarn workspace example-advanced run build
       - run: yarn workspace example-next-13 run build
 
-      - run: yarn playwright install --with-deps
-      - run: yarn workspace example-next-13 run test
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: example-next-13-playwright-report
-          path: packages/example-next-13/playwright-report
-          retention-days: 7
+      - run: yarn workspaces run lint
+      - run: yarn workspaces run test
