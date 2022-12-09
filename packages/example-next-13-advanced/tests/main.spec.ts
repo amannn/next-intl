@@ -27,3 +27,21 @@ it('can be used to localize the page', async ({page}) => {
   await page.goto('/de');
   page.locator('text=Das ist die Startseite.');
 });
+
+it('can pass internationalized labels to a client component', async ({
+  page
+}) => {
+  await page.goto('/en');
+  const counter = page.getByTestId('MessagesAsPropsCount');
+  await expect(counter).toHaveText(/Current count: 0/);
+  await counter.getByRole('button', {name: 'Increment'}).click();
+  await expect(counter).toHaveText(/Current count: 1/);
+});
+
+it('can use next-intl on the client side', async ({page}) => {
+  await page.goto('/en');
+  const counter = page.getByTestId('MessagesOnClientCounter');
+  await expect(counter).toHaveText(/Current count: 0/);
+  await counter.getByRole('button', {name: 'Increment'}).click();
+  await expect(counter).toHaveText(/Current count: 1/);
+});

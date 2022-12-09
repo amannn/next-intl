@@ -12,7 +12,7 @@ export default function ClientCounter() {
   }
 
   return (
-    <div>
+    <div data-testid="MessagesOnClientCounter">
       <p>{t('count', {count})}</p>
       <button onClick={onIncrement} type="button">
         {t('increment')}

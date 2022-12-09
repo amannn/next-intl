@@ -17,7 +17,7 @@ export default function ClientCounter({messages}: Props) {
   }
 
   return (
-    <div>
+    <div data-testid="MessagesAsPropsCount">
       <p>
         {messages.count} {count}
       </p>
