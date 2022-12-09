@@ -47,7 +47,7 @@ export default function resolveLocale(
       ) || i18n.defaultLocale;
   }
 
-  // Prio 5: Use default locale
+  // Prio 4: Use default locale
   if (!locale) {
     locale = i18n.defaultLocale;
   }

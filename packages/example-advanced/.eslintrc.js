@@ -10,8 +10,6 @@ module.exports = {
     node: true
   },
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    'jsx-a11y/anchor-is-valid': 'off',
-    'react/display-name': 'off'
+    'react/react-in-jsx-scope': 'off'
   }
 };

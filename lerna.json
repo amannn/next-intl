@@ -5,6 +5,7 @@
     "packages/next-intl",
     "packages/example",
     "packages/example-advanced",
+    "packages/example-next-13",
     "packages/website"
   ],
   "useWorkspaces": true,

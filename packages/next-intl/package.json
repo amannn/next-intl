@@ -20,8 +20,8 @@
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
-  "module": "dist/src/index.esm.js",
-  "typings": "dist/src/index.d.ts",
+  "module": "dist/next-intl.esm.js",
+  "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "react-server": "./dist/src/react-server/index.js",
