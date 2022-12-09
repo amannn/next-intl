@@ -51,3 +51,9 @@ it('can use rich text', async ({page}) => {
   const counter = page.getByTestId('RichText');
   expect(await counter.innerHTML()).toBe('This is a <b>rich</b> text.');
 });
+
+it('can use global defaults', async ({page}) => {
+  await page.goto('/en');
+  const counter = page.getByTestId('GlobalDefaults');
+  expect(await counter.innerHTML()).toBe('<strong>Global string</strong>');
+});

@@ -14,6 +14,7 @@ export default function Index() {
       <p data-testid="RichText">
         {t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}
       </p>
+      <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
       <CurrentTime />
       <LocaleSwitcher />
       <MessagesAsPropsCounter />

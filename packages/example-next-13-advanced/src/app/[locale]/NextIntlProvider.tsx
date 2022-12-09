@@ -17,6 +17,10 @@ export default async function NextIntlProvider({children, locale}: Props) {
 
   return (
     <NextIntlServerProvider
+      defaultTranslationValues={{
+        globalString: 'Global string',
+        highlight: (chunks) => <strong>{chunks}</strong>
+      }}
       formats={{
         dateTime: {
           medium: {
