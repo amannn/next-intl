@@ -24,7 +24,7 @@ export default function IntlProvider({
   messages,
   ...contextValues
 }: Props) {
-  if (__DEV__) {
+  if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       if (messages) {

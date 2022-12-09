@@ -3,8 +3,6 @@ import {parseISO} from 'date-fns';
 import React from 'react';
 import {IntlProvider, useNow} from '../../src';
 
-(global as any).__DEV__ = true;
-
 it('returns the current time', () => {
   function Component() {
     return <p>{useNow().toISOString()}</p>;

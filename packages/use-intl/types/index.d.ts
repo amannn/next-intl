@@ -1,5 +1,3 @@
-declare const __DEV__: boolean;
-
 // Temporarly copied here until the "es2020.intl" lib is published.
 
 declare namespace Intl {

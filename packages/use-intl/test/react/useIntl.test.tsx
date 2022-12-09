@@ -10,8 +10,6 @@ import {
   useIntl
 } from '../../src';
 
-(global as any).__DEV__ = true;
-
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
 ) {
