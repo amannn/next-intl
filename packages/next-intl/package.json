@@ -11,19 +11,32 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "start": "dts watch",
-    "build": "dts build",
-    "test": "TZ=Europe/Berlin dts test",
-    "lint": "eslint src test && tsc",
-    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md . && git checkout .",
-    "postpublish": "rm ./README.md"
+    "build": "yarn build:default && yarn build:rsc",
+    "build:default": "rm -rf dist && dts build",
+    "build:rsc": "tsc && rm -rf dist/test",
+    "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
+    "lint": "eslint src test && tsc --noEmit",
+    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md .",
+    "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
   "module": "dist/next-intl.esm.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "react-server": "./dist/src/react-server/index.js",
+      "default": "./dist/index.js"
+    },
+    "./server": "./dist/src/server/index.js",
+    "./client": "./dist/src/client/index.js"
+  },
   "files": [
     "dist",
-    "src"
+    "src",
+    "server.js",
+    "server.d.ts",
+    "client.js",
+    "client.d.ts"
   ],
   "keywords": [
     "react",
@@ -42,6 +55,7 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
+    "accept-language-parser": "^1.5.0",
     "use-intl": "^2.9.2"
   },
   "peerDependencies": {
@@ -54,10 +68,9 @@
     "dts-cli": "1.4.0",
     "eslint": "8.12.0",
     "eslint-config-molindo": "6.0.0",
-    "next": "^13.0.0",
+    "next": "^13.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tslib": "^2.3.1",
     "typescript": "^4.4.4"
   },
   "engines": {

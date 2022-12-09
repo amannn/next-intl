@@ -10,12 +10,17 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       # The Remix example unfortunately doesn't seem to support yarn workspaces
       - uses: bahmutov/npm-install@v1
+      - run: yarn playwright install --with-deps
+
+      # The order matters here
       - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
-      - run: yarn workspaces run lint
-      - run: yarn workspaces run test --ci --maxWorkers=2
       - run: yarn workspace example run build
       - run: yarn workspace example-advanced run build
+      - run: yarn workspace example-next-13 run build
+
+      - run: yarn workspaces run lint
+      - run: yarn workspaces run test
