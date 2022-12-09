@@ -2,11 +2,11 @@ import Callout from 'nextra-theme-docs/callout';
 
 # Usage in Client Components
 
-`next-intl` is available in the `app` directory from version `2.10` onwards.
+`next-intl` is available in the `app` directory from version `2.10.0` onwards.
 
 ## Getting started
 
-[Create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation) if you haven't done so already. The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
 
 1. Create the following file structure:
 
@@ -38,7 +38,7 @@ import Callout from 'nextra-theme-docs/callout';
 import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default async function Layout({children, params: {locale}}) {
   let messages;
   try {
     messages = (await import(`../../messages/${locale}.json`)).default;
@@ -82,7 +82,7 @@ export default createIntlMiddleware({
 });
 ```
 
-That's all you need to do to start using translations in the app directory!
+That's all you need to do to start using translations in the `app` directory!
 
 If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl/tree/main/packages/example-next-13) ([demo](https://csb-k2ien9-7ytkomg4x-amann.vercel.app/en)).
 
@@ -97,7 +97,7 @@ If you've encountered an issue, you can [explore the code for a working example]
 
 This is the one component that Next.js doesn't allow to be marked with `'use client;'`.
 
-[Support for Server Components in `next-intl`](/docs/next-13/server-components) will allow you to use the same APIs as in other components. For the meantime, as a stopgap solution, you can use the [core library](/docs/usage/core-library) from `next-intl`.
+[Support for Server Components in `next-intl`](/docs/next-13/server-components) will allow you to use the same APIs that you already use in other components to handle i18n in `head.js`. In the meantime, as a stopgap solution, you can use the [core library](/docs/usage/core-library) from `next-intl` for this use case.
 
 ```tsx
 // app/[locale]/head.tsx

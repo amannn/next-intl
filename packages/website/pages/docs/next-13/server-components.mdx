@@ -22,7 +22,7 @@ This preview version was tested with `next@13.0.6`.
 
 ## Getting started
 
-The setup is generally [the same as for Client Components](/docs/next-13/client-components), but you're able to make two adjustments now:
+The setup is [the same as for Client Components](/docs/next-13/client-components), but you're able to make two adjustments now:
 
 1. Replace the usage of `NextIntlClientProvider` with `NextIntlServerProvider` in your layout:
 
@@ -31,7 +31,7 @@ The setup is generally [the same as for Client Components](/docs/next-13/client-
 import {NextIntlServerProvider} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default async function Layout({children, params: {locale}}) {
   let messages;
   try {
     messages = (await import(`../../../messages/${locale}.json`)).default;
@@ -59,7 +59,9 @@ export default function Index() {
 }
 ```
 
-If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from client-only components the the Server Components preview, you can apply both providers at the same time.
+That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
+
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply both providers at the same time.
 
 ## Switching to Client Components
 
