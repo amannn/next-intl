@@ -49,9 +49,15 @@ export default {
       />
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="jamannnnnn" name="twitter:site" />
-      <meta content="/twitter-image.png" name="twitter:image" />
+      <meta
+        content="https://next-intl-docs.vercel.app/twitter-image.png"
+        name="twitter:image"
+      />
       <meta content="next-intl" name="og:title" />
-      <meta content="/og-image.png" name="og:image" />
+      <meta
+        content="https://next-intl-docs.vercel.app/og-image.png"
+        name="og:image"
+      />
       <meta
         content="A minimal, but complete solution for internationalization in Next.js apps."
         name="description"
