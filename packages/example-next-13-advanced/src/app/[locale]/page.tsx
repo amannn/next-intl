@@ -14,6 +14,10 @@ export default function Index() {
       <p data-testid="RichText">
         {t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}
       </p>
+      <p
+        dangerouslySetInnerHTML={{__html: t.raw('rich')}}
+        data-testid="RawText"
+      />
       <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
       <CurrentTime />
       <LocaleSwitcher />
