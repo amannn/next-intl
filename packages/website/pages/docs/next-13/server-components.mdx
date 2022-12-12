@@ -70,23 +70,32 @@ If you need to use translations in Client Components, the best approach is to pa
 ```tsx
 // app/[locale]/page.tsx
 import {useTranslations} from 'next-intl';
-import InteractiveClientComponent from './InteractiveClientComponent';
+import Counter from './Counter';
 
 export default function Index() {
   const t = useTranslations('Index');
-  return <InteractiveClientComponent title={t('title')} />;
+  return <Counter title={t('counterTitle')} />;
 }
 ```
 
 ```tsx
-// app/[locale]/InteractiveClientComponent.tsx
+// app/[locale]/Counter.tsx
 'use client';
 
-import {useEffect} from 'react';
+import {useState} from 'react';
 
-function InteractiveClientComponent({title}) {
-  useEffect(() => alert(title), [title]);
-  return <h1>{title}</h1>;
+function Counter({title}) {
+  const [count, setCount] = useState(0);
+
+  function onIncrement() {
+    setCount(count + 1);
+  }
+
+  return (
+    <p>
+      {title}: {count} <button onClick={onIncrement}>+</button>
+    </p>
+  );
 }
 ```
 
