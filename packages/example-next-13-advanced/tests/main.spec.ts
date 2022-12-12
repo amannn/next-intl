@@ -65,3 +65,17 @@ it('can use global defaults', async ({page}) => {
   const element = page.getByTestId('GlobalDefaults');
   expect(await element.innerHTML()).toBe('<strong>Global string</strong>');
 });
+
+it('can use `getMessageFallback`', async ({page}) => {
+  await page.goto('/en');
+  const element = page.getByTestId('MissingMessage');
+  expect(await element.innerHTML()).toBe(
+    '`getMessageFalback` called for Index.missing'
+  );
+});
+
+it('can use the core library', async ({page}) => {
+  await page.goto('/en');
+  const element = page.getByTestId('CoreLibrary');
+  await expect(element).toHaveText('Relative time: tomorrow');
+});

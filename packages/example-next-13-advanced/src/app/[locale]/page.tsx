@@ -1,4 +1,5 @@
 import {useTranslations} from 'next-intl';
+import CoreLibrary from '../../components/CoreLibrary';
 import CurrentTime from '../../components/CurrentTime';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
@@ -19,11 +20,14 @@ export default function Index() {
         data-testid="RawText"
       />
       <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
+      {/* @ts-expect-error Purposefully trigger an error */}
+      <p data-testid="MissingMessage">{t('missing')}</p>
       <CurrentTime />
       <LocaleSwitcher />
       <MessagesAsPropsCounter />
       {/* @ts-expect-error Server Component */}
       <MessagesOnClientCounter />
+      <CoreLibrary />
     </PageLayout>
   );
 }
