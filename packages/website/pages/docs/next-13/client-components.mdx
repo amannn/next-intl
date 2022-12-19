@@ -93,6 +93,50 @@ If you've encountered an issue, you can [explore the code for a working example]
   version](/docs/next-13/server-components).
 </Callout>
 
+## Linking between pages
+
+In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, you can add a component that wraps `next/link` accordingly as a drop-in replacement.
+
+```tsx
+// LocalizedLink.tsx
+import {useLocale} from 'next-intl';
+import Link from 'next/link';
+import {ComponentProps, forwardRef} from 'react';
+
+type Props = ComponentProps<typeof Link>;
+
+function LocalizedLink({href, ...rest}: Props, ref: Props['ref']) {
+  const locale = useLocale();
+
+  function getLocalizedHref(originalHref: string) {
+    return originalHref.replace(/^\//, '/' + locale + '/');
+  }
+
+  const localizedHref =
+    typeof href === 'string'
+      ? getLocalizedHref(href)
+      : href.pathname != null
+      ? {...href, pathname: getLocalizedHref(href.pathname)}
+      : href;
+
+  return <Link ref={ref} href={localizedHref} {...rest} />;
+}
+
+export default forwardRef(LocalizedLink);
+```
+
+```tsx
+// Usage while being on `/en`
+<LocalizedLink href="/">Goes to `/en`</LocalizedLink>
+<LocalizedLink href="/nested">Goes to `/en/nested`</LocalizedLink>
+<LocalizedLink href={{pathname: "/nested"}}>Goes to `/en/nested`</LocalizedLink>
+```
+
+<Callout>
+  `next-intl` is considering to provide built-in support for this component (see
+  [#149](https://github.com/amannn/next-intl/pull/149)).
+</Callout>
+
 ## Usage in `head.js`
 
 This is the one component that Next.js doesn't allow to be marked with `'use client;'`.
