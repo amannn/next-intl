@@ -9,6 +9,19 @@
     "rich": "Das ist <important>formatierter</important> Test.",
     "globalDefaults": "<highlight>{globalString}</highlight>"
   },
+  "Client": {
+    "title": "Client",
+    "description": "Dise Seite wird auf der Client-Seite initialisiert."
+  },
+  "Nested": {
+    "title": "Verschachtelt",
+    "description": "Das ist eine verschachtelte Seite."
+  },
+  "Navigation": {
+    "home": "Start",
+    "client": "Client-Seite",
+    "nested": "Verschachtelte Seite"
+  },
   "LocaleSwitcher": {
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
   },

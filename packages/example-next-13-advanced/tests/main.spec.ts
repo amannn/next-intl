@@ -1,15 +1,15 @@
 import {test as it, expect} from '@playwright/test';
 
-it('handles i18n routing', async ({page}) => {
+it('redirects to a matched locale', async ({page}) => {
   await page.goto('/');
   await expect(page).toHaveURL(/\/en/);
+});
 
-  // A cookie remembers the last locale
+// TODO: See comment in middleware.tsx
+it.skip('remembers the last locale', async ({page}) => {
   await page.goto('/de');
   await page.goto('/');
   await expect(page).toHaveURL(/\/de/);
-
-  await page.goto('/unknown');
 });
 
 it('can be used in the head', async ({page}) => {
@@ -78,4 +78,24 @@ it('can use the core library', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('CoreLibrary');
   await expect(element).toHaveText('Relative time: tomorrow');
+});
+
+it('can use `LocalizedLink` on the server', async ({page}) => {
+  await page.goto('/en');
+  await expect(page.getByRole('link', {name: 'Home'})).toHaveAttribute(
+    'href',
+    '/en'
+  );
+  await expect(page.getByRole('link', {name: 'Nested page'})).toHaveAttribute(
+    'href',
+    '/en/nested'
+  );
+});
+
+it('can use `LocalizedLink` on the client', async ({page}) => {
+  await page.goto('/en/client');
+  await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
+    'href',
+    '/en'
+  );
 });

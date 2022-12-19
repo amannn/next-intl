@@ -17,6 +17,12 @@ export default function createIntlMiddleware(i18n: NextI18nConfig) {
       request.nextUrl.pathname
     );
 
+    // It seems like setting headers and cookies here doesn't affect what can
+    // be read from RSC. If it did, we could use it to set the locale.
+    //
+    // request.headers.set('x-next-intl-locale', locale);
+    // request.cookies.set('x-next-intl-locale', locale);
+
     let response;
     if (request.nextUrl.pathname === REDIRECT_URL) {
       response = NextResponse.redirect(
