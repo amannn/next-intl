@@ -11,10 +11,15 @@ export default function useConfig() {
   const providerConfig = useServerRuntimeConfig();
 
   function getStaticConfig() {
-    const valueOrPromise = staticConfig.getOptions?.(providerConfig);
+    const {getMessages, ...rest} = staticConfig;
+    const messagesOrPromise = getMessages?.(providerConfig);
 
     // Only promises can be unwrapped
-    return isPromise(valueOrPromise) ? use(valueOrPromise) : valueOrPromise;
+    const messages = isPromise(messagesOrPromise)
+      ? use(messagesOrPromise)
+      : messagesOrPromise;
+
+    return {messages, ...rest};
   }
 
   return getIntlContextValue({...getStaticConfig(), ...providerConfig});

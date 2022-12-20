@@ -9,7 +9,7 @@ import createLocalizedLinkComponent from './shared/createLocalizedLinkComponent'
 export * from 'use-intl';
 
 export const LocalizedLink = createLocalizedLinkComponent(useLocale);
-export {default as NextI18nConfig} from './server/NextI18nConfig';
+export {default as NextIntlConfig} from './server/NextIntlConfig';
 
 // Legacy export for compatibility
 export {NextIntlClientProvider as NextIntlProvider} from './client';

@@ -1,7 +1,7 @@
 // @ts-expect-error `cSC` is not officially released yet
 import React, {createServerContext, useContext} from 'react';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
-import {NextIntlRuntimeConfig} from './NextI18nConfig';
+import {NextIntlRuntimeConfig} from './NextIntlConfig';
 
 const NextIntlServerRuntimeContext = createServerContext<NextIntlRuntimeConfig>(
   'next-intl',
