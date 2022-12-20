@@ -9,13 +9,22 @@ const NextIntlServerRuntimeContext = createServerContext<NextIntlRuntimeConfig>(
 );
 
 export function useServerRuntimeConfig() {
+  let value: NextIntlRuntimeConfig;
   try {
-    return useContext(NextIntlServerRuntimeContext) as NextIntlRuntimeConfig;
+    value = useContext(NextIntlServerRuntimeContext) as NextIntlRuntimeConfig;
   } catch (error) {
     throw new Error(
       "Currently all hooks from next-intl (like `useTranslations`) can only be used in Server Components that are not marked with `async`. We're working on removing this limitation.\n\nFor now, you can work around this by removing the `async` keyword and instead using the `use` hook from React to unwrap async values. See https://beta.nextjs.org/docs/data-fetching/fetching#use-in-client-components"
     );
   }
+
+  if (!value) {
+    throw new Error(
+      'No intl context found. Have you configured `NextIntlServerProvider`?'
+    );
+  }
+
+  return value;
 }
 
 export function NextIntlServerProvider(props: IntlProviderProps) {

@@ -99,3 +99,13 @@ it('can use `LocalizedLink` on the client', async ({page}) => {
     '/en'
   );
 });
+
+it('can navigate between sibling pages that share a parent layout', async ({
+  page
+}) => {
+  await page.goto('/en/nested');
+  await page.getByRole('link', {name: 'Client page'}).click();
+  await expect(page).toHaveURL(/\/en\/client/);
+  await page.getByRole('link', {name: 'Nested page'}).click();
+  await expect(page).toHaveURL(/\/en\/nested/);
+});
