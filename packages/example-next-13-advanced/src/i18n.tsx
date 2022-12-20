@@ -1,8 +1,6 @@
-// TODO: Add type
+import {IntlError, NextI18nConfig} from 'next-intl';
 
-import {IntlError} from 'next-intl';
-
-export default {
+const config: NextI18nConfig = {
   locales: ['en', 'de'],
   defaultLocale: 'en',
 
@@ -41,3 +39,5 @@ export default {
     };
   }
 };
+
+export default config;

@@ -1,20 +1,7 @@
 // @ts-expect-error `cSC` is not officially released yet
-import {createServerContext, useContext} from 'react';
+import React, {createServerContext, useContext} from 'react';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
-
-export type NextIntlRuntimeConfig = Pick<
-  IntlProviderProps,
-  'locale' | 'now' | 'timeZone'
->;
-
-export type NextIntlStaticConfig = Pick<
-  IntlProviderProps,
-  | 'defaultTranslationValues'
-  | 'messages'
-  | 'formats'
-  | 'onError'
-  | 'getMessageFallback'
->;
+import {NextIntlRuntimeConfig} from './NextI18nConfig';
 
 const NextIntlServerRuntimeContext = createServerContext<NextIntlRuntimeConfig>(
   'next-intl',
@@ -31,4 +18,16 @@ export function useServerRuntimeConfig() {
   return baseConfig;
 }
 
-export default NextIntlServerRuntimeContext;
+export function NextIntlServerProvider(props: IntlProviderProps) {
+  return (
+    <NextIntlServerRuntimeContext.Provider
+      value={{
+        locale: props.locale,
+        now: props.now,
+        timeZone: props.timeZone
+      }}
+    >
+      {props.children}
+    </NextIntlServerRuntimeContext.Provider>
+  );
+}

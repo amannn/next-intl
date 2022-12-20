@@ -2,10 +2,8 @@
 import staticConfig from 'next-intl/config';
 import {use} from 'react';
 import getIntlContextValue from 'use-intl/dist/src/react/getIntlContextValue';
-import {
-  NextIntlStaticConfig,
-  useServerRuntimeConfig
-} from '../server/NextIntlServerContext';
+import {NextIntlStaticOptions} from '../server/NextI18nConfig';
+import {useServerRuntimeConfig} from '../server/NextIntlServerRuntimeContext';
 
 export default function useConfig() {
   const providerConfig = useServerRuntimeConfig();
@@ -18,7 +16,7 @@ export default function useConfig() {
     // Only promises can be unwrapped
     return (
       isPromise ? use(valueOrPromise) : valueOrPromise
-    ) as NextIntlStaticConfig;
+    ) as NextIntlStaticOptions;
   }
 
   return getIntlContextValue({...getStaticConfig(), ...providerConfig});
