@@ -21,7 +21,7 @@ type NextI18nConfig = {
   defaultLocale: string;
   // TODO: `domains`
 
-  getOptions(
+  getOptions?(
     runtimeConfig: NextIntlRuntimeConfig
   ): Promise<NextIntlStaticOptions> | NextIntlStaticOptions;
 };
