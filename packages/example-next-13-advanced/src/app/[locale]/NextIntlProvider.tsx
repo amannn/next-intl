@@ -10,7 +10,7 @@ type Props = {
  * Configures `NextIntlServerProvider`, so the configuration can
  * be shared among `layout.tsx` as well as `head.tsx`.
  */
-export default async function NextIntlProvider({children, locale}: Props) {
+export default function NextIntlProvider({children, locale}: Props) {
   return (
     <NextIntlServerProvider locale={locale} timeZone="America/New_York">
       {children}

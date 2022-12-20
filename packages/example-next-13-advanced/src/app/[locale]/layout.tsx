@@ -10,6 +10,5 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // @ts-expect-error Waiting for TypeScript to support Server Components
   return <NextIntlProvider locale={locale}>{children}</NextIntlProvider>;
 }

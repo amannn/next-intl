@@ -9,7 +9,6 @@ type Props = {
 
 export default function Head({params: {locale}}: Props) {
   return (
-    // @ts-expect-error Waiting for TypeScript to support server components
     <NextIntlProvider locale={locale}>
       <Meta />
     </NextIntlProvider>
