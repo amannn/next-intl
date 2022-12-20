@@ -1,6 +1,6 @@
-import {IntlError, NextI18nConfig} from 'next-intl';
+import {IntlError, NextIntlConfig} from 'next-intl';
 
-const config: NextI18nConfig = {
+const config: NextIntlConfig = {
   locales: ['en', 'de'],
   defaultLocale: 'en',
 
