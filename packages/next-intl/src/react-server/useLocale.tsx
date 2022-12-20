@@ -1,5 +1,5 @@
-import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
+import useConfig from './useConfig';
 
 export default function useLocale() {
-  return NextIntlRequestStorage.getLocale();
+  return useConfig().locale;
 }

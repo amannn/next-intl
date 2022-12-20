@@ -3,7 +3,7 @@ import {NextIntlClientProvider} from 'next-intl/client';
 import PageLayout from '../../../components/PageLayout';
 import ClientContent from './ClientContent';
 
-export default async function Client() {
+export default function Client() {
   const t = useTranslations('Client');
   const locale = useLocale();
 

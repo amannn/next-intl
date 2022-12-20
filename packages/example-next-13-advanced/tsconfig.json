@@ -1,6 +1,9 @@
 {
   "extends": "eslint-config-molindo/tsconfig.json",
   "compilerOptions": {
+    "paths": {
+      "next-intl/config": ["./src/i18n"]
+    },
     "target": "es5",
     "lib": [
       "dom",
