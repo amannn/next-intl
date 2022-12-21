@@ -1,6 +1,9 @@
 require('eslint-config-molindo/setupPlugins');
 
 module.exports = {
+  env: {
+    node: true
+  },
   extends: [
     'molindo/typescript',
     'molindo/react',

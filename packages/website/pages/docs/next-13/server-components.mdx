@@ -15,42 +15,99 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
 ## Current preview version
 
 ```
-npm install next-intl@2.11.0-alpha.1
+npm install next-intl@2.11.0-alpha.4
 ```
 
 This preview version was tested with `next@13.0.6`.
 
 ## Getting started
 
-The setup is [the same as for Client Components](/docs/next-13/client-components), but you're able to make two adjustments now:
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
 
-1. Replace the usage of `NextIntlClientProvider` with `NextIntlServerProvider` in your layout:
+**Start by creating the following file structure:**
+
+```
+├── i18n.tsx (1)
+├── next.config.js (2)
+├── middleware.tsx (3)
+├── messages (4)
+│   ├── en.json
+│   └── ...
+└── app
+    ├── [locale]
+    │   ├── layout.tsx (5)
+    │   └── page.tsx (6)
+    └── ...
+```
+
+**Now, set up these files as follows:**
+
+1. Define your configuration in `i18n.tsx`:
 
 ```tsx
-// app/[locale]/layout.tsx
+import {NextIntlConfig} from 'next-intl';
+
+const config: NextIntlConfig = {
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+  async getMessages({locale}) {
+    return (await import(`../messages/${locale}.json`)).default;
+  }
+};
+
+export default config;
+```
+
+2. Link to your configuration in `next.config.js`:
+
+```js
+module.exports = {
+  experimental: {appDir: true},
+  webpack(config) {
+    config.resolve.alias['next-intl/config'] =
+      require.resolve('./src/i18n.tsx');
+    return config;
+  }
+};
+```
+
+3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) that handles redirects in `middleware.tsx`:
+
+```tsx
+import {createIntlMiddleware} from 'next-intl/server';
+
+// This middleware intercepts requests to `/` and will redirect
+// to one of the configured locales instead (e.g. `/en`). A cookie
+// is set in the background, so if the user switches to a new
+// language, this language will take precedence from now on.
+export default createIntlMiddleware();
+```
+
+4. Set up messages for a language, e.g. in `messages/en.json`:
+
+```json
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+5. Pass your received locale to `NextIntlServerProvider` in `app/[locale]/layout.tsx`:
+
+```tsx
 import {NextIntlServerProvider} from 'next-intl/server';
-import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({children, params: {locale}}) {
-  let messages;
-  try {
-    messages = (await import(`../../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
-
   return (
-    <NextIntlServerProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlServerProvider>
+    <NextIntlServerProvider locale={locale}>{children}</NextIntlServerProvider>
   );
 }
 ```
 
-2. Remove the `'use client';` directive from your page component:
+6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
 
 ```tsx
-// app/[locale]/page.tsx
 import {useTranslations} from 'next-intl';
 
 export default function Index() {
@@ -61,7 +118,9 @@ export default function Index() {
 
 That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
 
-If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply both providers at the same time.
+If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
+
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply `NextIntlClientProvider` additionally.
 
 ## Switching to Client Components
 
@@ -70,23 +129,32 @@ If you need to use translations in Client Components, the best approach is to pa
 ```tsx
 // app/[locale]/page.tsx
 import {useTranslations} from 'next-intl';
-import InteractiveClientComponent from './InteractiveClientComponent';
+import Counter from './Counter';
 
 export default function Index() {
   const t = useTranslations('Index');
-  return <InteractiveClientComponent title={t('title')} />;
+  return <Counter title={t('counterTitle')} />;
 }
 ```
 
 ```tsx
-// app/[locale]/InteractiveClientComponent.tsx
+// app/[locale]/Counter.tsx
 'use client';
 
-import {useEffect} from 'react';
+import {useState} from 'react';
 
-function InteractiveClientComponent({title}) {
-  useEffect(() => alert(title), [title]);
-  return <h1>{title}</h1>;
+function Counter({title}) {
+  const [count, setCount] = useState(0);
+
+  function onIncrement() {
+    setCount(count + 1);
+  }
+
+  return (
+    <p>
+      {title}: {count} <button onClick={onIncrement}>+</button>
+    </p>
+  );
 }
 ```
 

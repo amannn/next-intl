@@ -28,7 +28,8 @@
       "default": "./dist/index.js"
     },
     "./server": "./dist/src/server/index.js",
-    "./client": "./dist/src/client/index.js"
+    "./client": "./dist/src/client/index.js",
+    "./config": "./config.js"
   },
   "files": [
     "dist",
@@ -36,7 +37,8 @@
     "server.js",
     "server.d.ts",
     "client.js",
-    "client.d.ts"
+    "client.d.ts",
+    "config.js"
   ],
   "keywords": [
     "react",

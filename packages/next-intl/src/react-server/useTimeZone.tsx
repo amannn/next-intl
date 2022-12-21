@@ -1,5 +1,5 @@
-import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
+import useConfig from './useConfig';
 
 export default function useTimeZone() {
-  return NextIntlRequestStorage.getTimeZone();
+  return useConfig().timeZone;
 }

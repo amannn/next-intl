@@ -9,6 +9,19 @@
     "rich": "This is a <important>rich</important> text.",
     "globalDefaults": "<highlight>{globalString}</highlight>"
   },
+  "Client": {
+    "title": "Client",
+    "description": "This page hydrates on the client side."
+  },
+  "Nested": {
+    "title": "Nested",
+    "description": "This is a nested page."
+  },
+  "Navigation": {
+    "home": "Home",
+    "client": "Client page",
+    "nested": "Nested page"
+  },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
   },

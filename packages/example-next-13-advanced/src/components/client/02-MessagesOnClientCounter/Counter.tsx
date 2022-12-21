@@ -1,12 +1,12 @@
 import pick from 'lodash/pick';
 import {useLocale} from 'next-intl';
 import {NextIntlClientProvider} from 'next-intl/client';
+import {use} from 'react';
 import ClientCounter from './ClientCounter';
 
-export default async function Counter() {
+export default function Counter() {
   const locale = useLocale();
-  const messages = (await import(`../../../../messages/${locale}.json`))
-    .default;
+  const messages = use(import(`../../../../messages/${locale}.json`)).default;
 
   return (
     <NextIntlClientProvider

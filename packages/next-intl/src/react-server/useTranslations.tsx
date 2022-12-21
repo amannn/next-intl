@@ -1,17 +1,20 @@
 import createBaseTranslator, {
   getMessagesOrError
 } from 'use-intl/dist/src/core/createBaseTranslator';
-import NextIntlRequestStorage from '../server/NextIntlRequestStorage';
+import useConfig from './useConfig';
 
 export default function useTranslations(namespace?: string) {
-  const opts = NextIntlRequestStorage.getIntlOpts();
+  const config = useConfig();
+
   const messagesOrError = getMessagesOrError({
-    messages: opts.messages as any,
+    messages: config.messages as any,
     namespace,
-    onError: opts.onError
+    onError: config.onError
   });
+
+  // TODO: We could cache this
   return createBaseTranslator({
-    ...opts,
+    ...config,
     namespace,
     messagesOrError
   });
