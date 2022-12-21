@@ -28,7 +28,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 ```
 ├── i18n.tsx (1)
-├── tsconfig.json (2)
+├── next.config.js (2)
 ├── middleware.tsx (3)
 ├── messages (4)
 │   ├── en.json
@@ -58,17 +58,17 @@ const config: NextIntlConfig = {
 export default config;
 ```
 
-2. Link to your configuration in `tsconfig.json`:
+2. Link to your configuration in `next.config.js`:
 
 ```js
-{
-  "compilerOptions": {
-    "paths": {
-      "next-intl/config": ["./i18n"]
-    },
-    ...
+module.exports = {
+  experimental: {appDir: true},
+  webpack(config) {
+    config.resolve.alias['next-intl/config'] =
+      require.resolve('./src/i18n.tsx');
+    return config;
   }
-}
+};
 ```
 
 3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) that handles redirects in `middleware.tsx`:
@@ -118,7 +118,7 @@ export default function Index() {
 
 That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
 
-If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/packages/example-next-13) ([demo](https://csb-k2ien9-7ytkomg4x-amann.vercel.app/en)).
+If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
 
 If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply `NextIntlClientProvider` additionally.
 
