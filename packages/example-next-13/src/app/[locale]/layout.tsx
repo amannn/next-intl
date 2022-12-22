@@ -11,6 +11,12 @@ export default async function LocaleLayout({
   params: {locale}
 }: Props) {
   return (
-    <NextIntlServerProvider locale={locale}>{children}</NextIntlServerProvider>
+    <html lang={locale}>
+      <body>
+        <NextIntlServerProvider locale={locale}>
+          {children}
+        </NextIntlServerProvider>
+      </body>
+    </html>
   );
 }

@@ -12,6 +12,11 @@ it.skip('remembers the last locale', async ({page}) => {
   await expect(page).toHaveURL(/\/de/);
 });
 
+it('sets the `lang` attribute on `html`', async ({page}) => {
+  await page.goto('/en');
+  await page.waitForSelector('html[lang="en"]');
+});
+
 it('can be used in the head', async ({page}) => {
   await page.goto('/en');
   await expect(page).toHaveTitle('next-intl example');

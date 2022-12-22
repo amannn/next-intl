@@ -8,21 +8,23 @@ import Callout from 'nextra-theme-docs/callout';
 
 If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
 
-1. Create the following file structure:
+**Start by creating the following file structure:**
 
 ```
 ├── messages (1)
 │   ├── en.json
 │   └── ...
 ├── app
-│   ├── [locale]
-│   │   ├── layout.tsx (2)
-│   │   └── page.tsx (3)
-│   └── ...
-└── middleware.tsx (4)
+│   ├── layout.tsx (2)
+│   └── [locale]
+│       ├── layout.tsx (3)
+│       └── page.tsx (4)
+└── middleware.tsx (5)
 ```
 
-2. Set up messages for a language, e.g. in `messages/en.json` (1):
+**Now, set up these files as follows:**
+
+1. Set up messages for a language, e.g. in `messages/en.json`:
 
 ```json
 {
@@ -32,7 +34,15 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-3. Configure `NextIntlClientProvider` in `app/[locale]/layout.tsx` (2):
+2. Pass through children in `app/layout.tsx`:
+
+```tsx
+export default function RootLayout({children}) {
+  return children;
+}
+```
+
+3. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`:
 
 ```tsx
 import {NextIntlClientProvider} from 'next-intl/client';
@@ -47,14 +57,18 @@ export default async function LocaleLayout({children, params: {locale}}) {
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
 ```
 
-4. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations (3):
+4. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations:
 
 ```tsx
 'use client';
