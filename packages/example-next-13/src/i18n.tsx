@@ -1,6 +1,6 @@
 import {NextIntlConfig} from 'next-intl';
 
-const config: NextIntlConfig = {
+const i18n: NextIntlConfig = {
   locales: ['en', 'de'],
   defaultLocale: 'en',
   async getMessages({locale}) {
@@ -8,4 +8,4 @@ const config: NextIntlConfig = {
   }
 };
 
-export default config;
+export default i18n;

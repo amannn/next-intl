@@ -1,5 +1,10 @@
 import {NextIntlServerProvider} from 'next-intl/server';
 import {ReactNode} from 'react';
+import i18n from '../../i18n';
+
+export function generateStaticParams() {
+  return i18n.locales.map((locale) => ({locale}));
+}
 
 type Props = {
   children: ReactNode;

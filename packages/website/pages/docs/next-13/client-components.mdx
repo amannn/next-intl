@@ -48,6 +48,10 @@ export default function RootLayout({children}) {
 import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
 
+export function generateStaticParams() {
+  return [{locale: 'en'}, {locale: 'de'}];
+}
+
 export default async function LocaleLayout({children, params: {locale}}) {
   let messages;
   try {
