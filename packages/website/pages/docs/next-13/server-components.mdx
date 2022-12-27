@@ -76,10 +76,14 @@ module.exports = {
 import {createIntlMiddleware} from 'next-intl/server';
 
 // This middleware intercepts requests to `/` and will redirect
-// to one of the configured locales instead (e.g. `/en`). A cookie
-// is set in the background, so if the user switches to a new
-// language, this language will take precedence from now on.
+// to one of the configured locales instead (e.g. `/en`).
+// In the background a cookie is set that will remember the
+// locale of the last page that the user has visited.
 export default createIntlMiddleware();
+
+export const config = {
+  matcher: '/'
+};
 ```
 
 4. Set up messages for a language, e.g. in `messages/en.json`:

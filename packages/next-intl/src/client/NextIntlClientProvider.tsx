@@ -3,12 +3,13 @@
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 import {IntlProvider} from 'use-intl';
+import useCookieSync from '../shared/useCookieSync';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
 };
 
-export default function NextIntlProvider({locale, ...rest}: Props) {
+export default function NextIntlProvider({children, locale, ...rest}: Props) {
   let router;
   try {
     // Reading from context is practically ok to do conditionally
@@ -32,5 +33,11 @@ export default function NextIntlProvider({locale, ...rest}: Props) {
     );
   }
 
-  return <IntlProvider locale={locale} {...rest} />;
+  useCookieSync(locale);
+
+  return (
+    <IntlProvider locale={locale} {...rest}>
+      {children}
+    </IntlProvider>
+  );
 }

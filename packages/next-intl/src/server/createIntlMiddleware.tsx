@@ -1,5 +1,4 @@
 import {NextRequest, NextResponse} from 'next/server';
-import NextIntlCookie from './NextIntlCookie';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
@@ -22,12 +21,6 @@ export default function createIntlMiddleware() {
       request.nextUrl.pathname
     );
 
-    // It seems like setting headers and cookies here doesn't affect what can
-    // be read from RSC. If it did, we could use it to set the locale.
-    //
-    // request.headers.set('x-next-intl-locale', locale);
-    // request.cookies.set('x-next-intl-locale', locale);
-
     let response;
     if (request.nextUrl.pathname === REDIRECT_URL) {
       response = NextResponse.redirect(
@@ -36,8 +29,6 @@ export default function createIntlMiddleware() {
     } else {
       response = NextResponse.next();
     }
-
-    new NextIntlCookie(response.cookies).setLocale(locale);
 
     return response;
   };

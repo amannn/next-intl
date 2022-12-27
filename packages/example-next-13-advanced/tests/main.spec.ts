@@ -5,9 +5,20 @@ it('redirects to a matched locale', async ({page}) => {
   await expect(page).toHaveURL(/\/en/);
 });
 
-// TODO: See comment in middleware.tsx
-it.skip('remembers the last locale', async ({page}) => {
+it('remembers the last locale', async ({page}) => {
   await page.goto('/de');
+
+  // Wait for the cookie to be set on the client side
+  await expect(async () => {
+    const cookie = (await page.context().cookies()).find(
+      (cur) => cur.name === 'NEXT_LOCALE'
+    );
+    expect(cookie).toMatchObject({
+      name: 'NEXT_LOCALE',
+      value: 'de'
+    });
+  }).toPass();
+
   await page.goto('/');
   await expect(page).toHaveURL(/\/de/);
 });

@@ -2,6 +2,7 @@
 import React, {createServerContext, use} from 'react';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
 import {NextIntlRuntimeConfig} from './NextIntlConfig';
+import SyncLocaleCookie from './SyncLocaleCookie';
 
 const NextIntlServerRuntimeContext = createServerContext<NextIntlRuntimeConfig>(
   'next-intl',
@@ -37,6 +38,7 @@ export function NextIntlServerProvider(props: IntlProviderProps) {
       }}
     >
       {props.children}
+      <SyncLocaleCookie locale={props.locale} />
     </NextIntlServerRuntimeContext.Provider>
   );
 }
