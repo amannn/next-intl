@@ -9,7 +9,11 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
 };
 
-export default function NextIntlProvider({children, locale, ...rest}: Props) {
+export default function NextIntlClientProvider({
+  children,
+  locale,
+  ...rest
+}: Props) {
   let router;
   try {
     // Reading from context is practically ok to do conditionally

@@ -1,8 +1,10 @@
+import {notFound} from 'next/navigation';
 // @ts-expect-error `cSC` is not officially released yet
 import React, {createServerContext, use} from 'react';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
 import {NextIntlRuntimeConfig} from './NextIntlConfig';
 import SyncLocaleCookie from './SyncLocaleCookie';
+import staticConfig from './staticConfig';
 
 const NextIntlServerRuntimeContext = createServerContext<NextIntlRuntimeConfig>(
   'next-intl',
@@ -28,17 +30,26 @@ export function useServerRuntimeConfig() {
   return value;
 }
 
-export function NextIntlServerProvider(props: IntlProviderProps) {
+export function NextIntlServerProvider({
+  children,
+  locale,
+  now,
+  timeZone
+}: IntlProviderProps) {
+  if (!staticConfig.locales.includes(locale)) {
+    notFound();
+  }
+
   return (
     <NextIntlServerRuntimeContext.Provider
       value={{
-        locale: props.locale,
-        now: props.now,
-        timeZone: props.timeZone
+        locale,
+        now,
+        timeZone
       }}
     >
-      {props.children}
-      <SyncLocaleCookie locale={props.locale} />
+      {children}
+      <SyncLocaleCookie locale={locale} />
     </NextIntlServerRuntimeContext.Provider>
   );
 }
