@@ -144,6 +144,20 @@ If you've encountered an issue, you can [explore the code for a working example]
 
 If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply `NextIntlClientProvider` additionally.
 
+## Linking between pages
+
+In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
+
+```tsx
+import {LocalizedLink} from 'next-intl';
+
+// When the user is on `/en`, the link will point ot `/en/about`
+<LocalizedLink href="/about">About</LocalizedLink>
+
+// You can override the `locale` to switch to another language
+<LocalizedLink href="/" locale="de">Switch to German</LocalizedLink>
+```
+
 ## Switching to Client Components
 
 If you need to use translations in Client Components, the best approach is to pass the generated labels as props.

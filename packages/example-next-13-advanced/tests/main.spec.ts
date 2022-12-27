@@ -108,6 +108,15 @@ it('can use `LocalizedLink` on the server', async ({page}) => {
   );
 });
 
+it('can use `LocalizedLink` to link to the root of another language', async ({
+  page
+}) => {
+  await page.goto('/en');
+  await expect(
+    page.getByRole('link', {name: 'Switch to German'})
+  ).toHaveAttribute('href', '/de');
+});
+
 it('can use `LocalizedLink` on the client', async ({page}) => {
   await page.goto('/en/client');
   await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
