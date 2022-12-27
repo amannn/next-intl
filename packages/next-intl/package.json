@@ -2,7 +2,7 @@
   "name": "next-intl",
   "version": "2.10.2",
   "sideEffects": false,
-  "author": "Jan Amann <jan@amann.me>",
+  "author": "Jan Amann <jan@amann.work>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app/",
