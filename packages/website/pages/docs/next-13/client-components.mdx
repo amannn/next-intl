@@ -15,11 +15,10 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 │   ├── en.json
 │   └── ...
 ├── app
-│   ├── layout.tsx (2)
 │   └── [locale]
-│       ├── layout.tsx (3)
-│       └── page.tsx (4)
-└── middleware.tsx (5)
+│       ├── layout.tsx (2)
+│       └── page.tsx (3)
+└── middleware.tsx (4)
 ```
 
 **Now, set up these files as follows:**
@@ -34,15 +33,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. Pass through children in `app/layout.tsx`:
-
-```tsx
-export default function RootLayout({children}) {
-  return children;
-}
-```
-
-3. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`:
+2. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`:
 
 ```tsx
 import {NextIntlClientProvider} from 'next-intl/client';
@@ -72,7 +63,7 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-4. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations:
+3. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations:
 
 ```tsx
 'use client';
@@ -85,7 +76,7 @@ export default function Index() {
 }
 ```
 
-5. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx` that handles redirects (4):
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx` that handles redirects (4):
 
 ```tsx
 import {createIntlMiddleware} from 'next-intl/server';
