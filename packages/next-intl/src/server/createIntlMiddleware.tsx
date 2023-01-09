@@ -1,12 +1,19 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {HEADER_LOCALE_NAME} from '../shared/constants';
+import {HEADER_CONFIG_NAME} from '../shared/constants';
+import NextIntlServerRuntime from './NextIntlServerRuntime';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
 // If there's an exact match for this path, we'll add the locale to the URL
 const REDIRECT_URL = '/';
 
-export default function createIntlMiddleware() {
+export default function createIntlMiddleware(opts?: {
+  now?: Date;
+  timeZone?: string;
+}) {
+  const now = opts?.now ?? new Date();
+  const timeZone = opts?.timeZone;
+
   const i18n = {
     locales: staticConfig.locales,
     defaultLocale: staticConfig.defaultLocale
@@ -31,7 +38,11 @@ export default function createIntlMiddleware() {
       response = NextResponse.next({
         request: {
           headers: new Headers({
-            [HEADER_LOCALE_NAME]: locale
+            [HEADER_CONFIG_NAME]: NextIntlServerRuntime.serialize({
+              locale,
+              now,
+              timeZone
+            })
           })
         }
       });
