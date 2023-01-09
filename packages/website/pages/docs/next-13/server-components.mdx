@@ -15,7 +15,7 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
 ## Current preview version
 
 ```
-npm install next-intl@2.11.0-alpha.5
+npm install next-intl@2.11.0-alpha.8
 ```
 
 This preview version was tested with `next@13.1.0`.
@@ -23,8 +23,8 @@ This preview version was tested with `next@13.1.0`.
 ## Roadmap
 
 - ✅ All APIs from `next-intl` can be used in Server Components.
-- 🚧 Bugs were discovered that probably need to be resolved upstream in React/Next.js (workarounds are available).
 - 🚧 The API to provide configuration to `next-intl` is still in flux.
+- 🚧 Currently page transitions trigger a full page refresh (under investigation).
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
@@ -43,8 +43,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 │   └── ...
 └── app
     └── [locale]
-        ├── layout.tsx (5)
-        └── page.tsx (6)
+        └── page.tsx (5)
 ```
 
 **Now, set up these files as follows:**
@@ -77,19 +76,22 @@ module.exports = {
 };
 ```
 
-3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) that handles redirects in `middleware.tsx`:
+3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
 
 ```tsx
 import {createIntlMiddleware} from 'next-intl/server';
 
-// This middleware intercepts requests to `/` and will redirect
+// The middleware intercepts requests to `/` and will redirect
 // to one of the configured locales instead (e.g. `/en`).
 // In the background a cookie is set that will remember the
 // locale of the last page that the user has visited.
+// The middleware furthermore passes runtime configuration
+// to components in your app.
 export default createIntlMiddleware();
 
 export const config = {
-  matcher: '/'
+  // Skip all internal paths
+  matcher: ['/((?!_next).*)']
 };
 ```
 
@@ -103,30 +105,7 @@ export const config = {
 }
 ```
 
-5. Provide the document layout and set up `NextIntlServerProvider` in `app/[locale]/layout.tsx`:
-
-```tsx
-import {NextIntlServerProvider} from 'next-intl/server';
-import i18n from '../../i18n';
-
-export function generateStaticParams() {
-  return i18n.locales.map((locale) => ({locale}));
-}
-
-export default async function LocaleLayout({children, params: {locale}}) {
-  return (
-    <html lang={locale}>
-      <body>
-        <NextIntlServerProvider locale={locale}>
-          {children}
-        </NextIntlServerProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
+5. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
 
 ```tsx
 import {useTranslations} from 'next-intl';

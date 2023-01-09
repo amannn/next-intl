@@ -1,11 +1,19 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {HEADER_CONFIG_NAME} from '../shared/constants';
+import ServerRuntimeSerializer from './ServerRuntimeSerializer';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
 // If there's an exact match for this path, we'll add the locale to the URL
-const REDIRECT_URL = '/';
+const ROOT_URL = '/';
 
-export default function createIntlMiddleware() {
+export default function createIntlMiddleware(opts?: {
+  now?: Date;
+  timeZone?: string;
+}) {
+  const now = opts?.now ?? new Date();
+  const timeZone = opts?.timeZone;
+
   const i18n = {
     locales: staticConfig.locales,
     defaultLocale: staticConfig.defaultLocale
@@ -21,13 +29,26 @@ export default function createIntlMiddleware() {
       request.nextUrl.pathname
     );
 
+    const isUnknownLocale = !request.nextUrl.pathname.startsWith('/' + locale);
+    const isAtRoot = request.nextUrl.pathname === ROOT_URL;
+
+    const shouldRedirect = isUnknownLocale || isAtRoot;
+
     let response;
-    if (request.nextUrl.pathname === REDIRECT_URL) {
-      response = NextResponse.redirect(
-        new URL(REDIRECT_URL + locale, request.url)
-      );
+    if (shouldRedirect) {
+      response = NextResponse.redirect(new URL(ROOT_URL + locale, request.url));
     } else {
-      response = NextResponse.next();
+      response = NextResponse.next({
+        request: {
+          headers: new Headers({
+            [HEADER_CONFIG_NAME]: ServerRuntimeSerializer.serialize({
+              locale,
+              now,
+              timeZone
+            })
+          })
+        }
+      });
     }
 
     return response;

@@ -1,5 +1,5 @@
-import useConfig from './useConfig';
+import useRuntimeConfig from './useRuntimeConfig';
 
 export default function useLocale() {
-  return useConfig().locale;
+  return useRuntimeConfig().locale;
 }

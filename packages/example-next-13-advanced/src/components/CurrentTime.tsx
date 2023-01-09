@@ -6,7 +6,7 @@ export default function CurrentTime() {
   const timeZone = useTimeZone();
 
   return (
-    <p>
+    <p data-testid="StaticRuntimeConfig">
       {intl.formatDateTime(now, 'medium')} ({timeZone})
     </p>
   );

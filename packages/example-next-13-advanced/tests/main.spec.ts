@@ -1,8 +1,8 @@
 import {test as it, expect} from '@playwright/test';
 
-it('returns a 404 for unknown locales', async ({request}) => {
-  const response = await request.get('/unknown');
-  expect(response.status()).toBe(404);
+it('handles unknown locales', async ({page}) => {
+  await page.goto('/unknown');
+  await expect(page).toHaveURL(/\/en/);
 });
 
 it('redirects to a matched locale', async ({page}) => {
@@ -138,4 +138,10 @@ it('can navigate between sibling pages that share a parent layout', async ({
   await expect(page).toHaveURL(/\/en\/client/);
   await page.getByRole('link', {name: 'Nested page'}).click();
   await expect(page).toHaveURL(/\/en\/nested/);
+});
+
+it('can supply static values for runtime config', async ({page}) => {
+  await page.goto('/en');
+  const element = page.getByTestId('StaticRuntimeConfig');
+  await expect(element).toHaveText('Jan 1, 2020, 01:00 (Europe/Vienna)');
 });

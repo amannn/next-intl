@@ -1,18 +1,18 @@
 import {use} from 'react';
 import getIntlContextValue from 'use-intl/dist/src/react/getIntlContextValue';
-import {useServerRuntimeConfig} from '../server/NextIntlServerRuntimeContext';
 import staticConfig from '../server/staticConfig';
+import useRuntimeConfig from './useRuntimeConfig';
 
 function isPromise(value: any): value is Promise<unknown> {
   return value != null && typeof value.then === 'function';
 }
 
 export default function useConfig() {
-  const providerConfig = useServerRuntimeConfig();
+  const {locale, now, timeZone} = useRuntimeConfig();
 
   function getStaticConfig() {
     const {getMessages, ...rest} = staticConfig;
-    const messagesOrPromise = getMessages?.(providerConfig);
+    const messagesOrPromise = getMessages?.({locale});
 
     // Only promises can be unwrapped
     const messages = isPromise(messagesOrPromise)
@@ -22,5 +22,9 @@ export default function useConfig() {
     return {messages, ...rest};
   }
 
-  return getIntlContextValue({...getStaticConfig(), ...providerConfig});
+  const opts = {...getStaticConfig(), locale};
+  if (now != null) opts.now = now;
+  if (timeZone != null) opts.timeZone = timeZone;
+
+  return getIntlContextValue(opts);
 }

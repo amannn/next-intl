@@ -18,6 +18,11 @@ type NextIntlConfig = {
   ): AbstractIntlMessages | Promise<AbstractIntlMessages>;
 } & Pick<
   IntlProviderProps,
-  'defaultTranslationValues' | 'formats' | 'onError' | 'getMessageFallback'
+  | 'defaultTranslationValues'
+  | 'formats'
+  | 'onError'
+  | 'getMessageFallback'
+  | 'now'
+  | 'timeZone'
 >;
 export default NextIntlConfig;
