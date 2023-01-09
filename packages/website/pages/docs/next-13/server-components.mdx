@@ -30,7 +30,7 @@ For details, see the [pending pull request for Server Components support](https:
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). All routes should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages.
 
 **Start by creating the following file structure:**
 
@@ -116,7 +116,7 @@ export default function Index() {
 }
 ```
 
-That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
+That's all it takes! Now you can internationalize your apps purely on the server side.
 
 If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
 
