@@ -1,5 +1,5 @@
 import {headers} from 'next/headers';
-import NextIntlServerRuntime from '../server/NextIntlServerRuntime';
+import ServerRuntimeSerializer from '../server/ServerRuntimeSerializer';
 import {HEADER_CONFIG_NAME} from '../shared/constants';
 
 export default function useRuntimeConfig() {
@@ -9,5 +9,5 @@ export default function useRuntimeConfig() {
       'Unable to find `next-intl` runtime config, have you configured the middleware?`'
     );
   }
-  return NextIntlServerRuntime.deserialize(value);
+  return ServerRuntimeSerializer.deserialize(value);
 }

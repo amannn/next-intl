@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {HEADER_CONFIG_NAME} from '../shared/constants';
-import NextIntlServerRuntime from './NextIntlServerRuntime';
+import ServerRuntimeSerializer from './ServerRuntimeSerializer';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
@@ -41,7 +41,7 @@ export default function createIntlMiddleware(opts?: {
       response = NextResponse.next({
         request: {
           headers: new Headers({
-            [HEADER_CONFIG_NAME]: NextIntlServerRuntime.serialize({
+            [HEADER_CONFIG_NAME]: ServerRuntimeSerializer.serialize({
               locale,
               now,
               timeZone
