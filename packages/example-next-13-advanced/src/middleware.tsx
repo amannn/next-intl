@@ -7,7 +7,7 @@ export default createIntlMiddleware({
 
   // By default the current time of the server is used,
   // but you can override this (e.g. for test assertions).
-  now: new Date(2020, 0, 1, 12, 0, 0)
+  now: new Date('2020-01-01T00:00:00.000Z')
 });
 
 export const config = {
