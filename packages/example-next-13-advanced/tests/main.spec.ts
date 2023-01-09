@@ -1,8 +1,8 @@
 import {test as it, expect} from '@playwright/test';
 
-it('returns a 404 for unknown locales', async ({request}) => {
-  const response = await request.get('/unknown');
-  expect(response.status()).toBe(404);
+it('handles unknown locales', async ({page}) => {
+  await page.goto('/unknown');
+  await expect(page).toHaveURL(/\/en/);
 });
 
 it('redirects to a matched locale', async ({page}) => {

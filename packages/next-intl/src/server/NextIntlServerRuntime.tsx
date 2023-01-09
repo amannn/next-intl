@@ -10,7 +10,7 @@ export default class NextIntlServerRuntime {
   }
 
   public static deserialize(value: string) {
-    const [locale, nowTime, timeZone] = value.split(SEPARATOR);
-    return {locale, now: new Date(nowTime), timeZone};
+    const [locale, nowTimestampString, timeZone] = value.split(SEPARATOR);
+    return {locale, now: new Date(parseInt(nowTimestampString)), timeZone};
   }
 }
