@@ -43,8 +43,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 │   └── ...
 └── app
     └── [locale]
-        ├── layout.tsx (5)
-        └── page.tsx (6)
+        └── page.tsx (5)
 ```
 
 **Now, set up these files as follows:**
@@ -89,7 +88,8 @@ import {createIntlMiddleware} from 'next-intl/server';
 export default createIntlMiddleware();
 
 export const config = {
-  matcher: '/'
+  // Skip all internal paths
+  matcher: ['/((?!_next).*)']
 };
 ```
 
@@ -103,30 +103,7 @@ export const config = {
 }
 ```
 
-5. Provide the document layout and set up `NextIntlServerProvider` in `app/[locale]/layout.tsx`:
-
-```tsx
-import {NextIntlServerProvider} from 'next-intl/server';
-import i18n from '../../i18n';
-
-export function generateStaticParams() {
-  return i18n.locales.map((locale) => ({locale}));
-}
-
-export default async function LocaleLayout({children, params: {locale}}) {
-  return (
-    <html lang={locale}>
-      <body>
-        <NextIntlServerProvider locale={locale}>
-          {children}
-        </NextIntlServerProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
+5. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
 
 ```tsx
 import {useTranslations} from 'next-intl';

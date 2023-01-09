@@ -1,4 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {HEADER_LOCALE_NAME} from '../shared/constants';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
@@ -27,7 +28,13 @@ export default function createIntlMiddleware() {
         new URL(REDIRECT_URL + locale, request.url)
       );
     } else {
-      response = NextResponse.next();
+      response = NextResponse.next({
+        request: {
+          headers: new Headers({
+            [HEADER_LOCALE_NAME]: locale
+          })
+        }
+      });
     }
 
     return response;

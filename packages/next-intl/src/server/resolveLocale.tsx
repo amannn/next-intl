@@ -1,6 +1,6 @@
 import acceptLanguageParser from 'accept-language-parser';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
-import {LOCALE_COOKIE_NAME} from '../shared/constants';
+import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import NextIntlConfig from './NextIntlConfig';
 
 export default function resolveLocale(
@@ -24,8 +24,8 @@ export default function resolveLocale(
 
   // Prio 2: Use existing cookie
   if (!locale && requestCookies) {
-    if (requestCookies.has(LOCALE_COOKIE_NAME)) {
-      locale = requestCookies.get(LOCALE_COOKIE_NAME)?.value;
+    if (requestCookies.has(COOKIE_LOCALE_NAME)) {
+      locale = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
     }
   }
 
