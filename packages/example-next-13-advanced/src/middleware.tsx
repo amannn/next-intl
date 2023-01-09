@@ -3,7 +3,7 @@ import {createIntlMiddleware} from 'next-intl/server';
 export default createIntlMiddleware({
   // By default the `timeZone` of the server
   // is used, but this can be overridden.
-  timeZone: 'America/New_York',
+  timeZone: 'Europe/Vienna',
 
   // By default the current time of the server is used,
   // but you can override this (e.g. for test assertions).

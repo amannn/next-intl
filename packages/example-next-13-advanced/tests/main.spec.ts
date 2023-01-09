@@ -143,5 +143,5 @@ it('can navigate between sibling pages that share a parent layout', async ({
 it('can supply static values for runtime config', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('StaticRuntimeConfig');
-  await expect(element).toHaveText('Jan 1, 2020, 06:00 (America/New_York)');
+  await expect(element).toHaveText('Jan 1, 2020, 12:00 (Europe/Vienna)');
 });
