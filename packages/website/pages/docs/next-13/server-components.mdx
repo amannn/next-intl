@@ -23,7 +23,6 @@ This preview version was tested with `next@13.1.0`.
 ## Roadmap
 
 - ✅ All APIs from `next-intl` can be used in Server Components.
-- 🚧 Bugs were discovered that probably need to be resolved upstream in React/Next.js (workarounds are available).
 - 🚧 The API to provide configuration to `next-intl` is still in flux.
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
@@ -76,15 +75,17 @@ module.exports = {
 };
 ```
 
-3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) that handles redirects in `middleware.tsx`:
+3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
 
 ```tsx
 import {createIntlMiddleware} from 'next-intl/server';
 
-// This middleware intercepts requests to `/` and will redirect
+// The middleware intercepts requests to `/` and will redirect
 // to one of the configured locales instead (e.g. `/en`).
 // In the background a cookie is set that will remember the
 // locale of the last page that the user has visited.
+// The middleware furthermore passes runtime configuration
+// to components in your app.
 export default createIntlMiddleware();
 
 export const config = {
