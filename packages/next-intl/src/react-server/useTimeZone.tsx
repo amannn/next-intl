@@ -1,5 +1,5 @@
-import useRuntimeConfig from './useRuntimeConfig';
+import useConfig from './useConfig';
 
 export default function useTimeZone() {
-  return useRuntimeConfig().timeZone;
+  return useConfig().timeZone;
 }

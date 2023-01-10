@@ -1,19 +1,12 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {COOKIE_LOCALE_NAME, HEADER_CONFIG_NAME} from '../shared/constants';
-import ServerRuntimeSerializer from './ServerRuntimeSerializer';
+import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
 
 // If there's an exact match for this path, we'll add the locale to the URL
 const ROOT_URL = '/';
 
-export default function createIntlMiddleware(opts?: {
-  now?: Date;
-  timeZone?: string;
-}) {
-  const now = opts?.now ?? new Date();
-  const timeZone = opts?.timeZone;
-
+export default function createIntlMiddleware() {
   const i18n = {
     locales: staticConfig.locales,
     defaultLocale: staticConfig.defaultLocale
@@ -30,27 +23,35 @@ export default function createIntlMiddleware(opts?: {
     );
 
     const isUnknownLocale = !request.nextUrl.pathname.startsWith('/' + locale);
-    const isAtRoot = request.nextUrl.pathname === ROOT_URL;
-    const shouldRedirect = isUnknownLocale || isAtRoot;
+    const isRoot = request.nextUrl.pathname === ROOT_URL;
+    const shouldRedirect = isUnknownLocale || isRoot;
+    const isChangingLocale =
+      request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
 
     let response;
     if (shouldRedirect) {
       response = NextResponse.redirect(new URL(ROOT_URL + locale, request.url));
     } else {
-      response = NextResponse.next({
-        request: {
-          headers: new Headers({
-            [HEADER_CONFIG_NAME]: ServerRuntimeSerializer.serialize({
-              locale,
-              now,
-              timeZone
+      let responseInit;
+
+      // Only apply a header if absolutely necessary
+      // as this causes full page reloads
+      if (isChangingLocale) {
+        responseInit = {
+          request: {
+            headers: new Headers({
+              [HEADER_LOCALE_NAME]: locale
             })
-          })
-        }
-      });
+          }
+        };
+      }
+
+      response = NextResponse.next(responseInit);
     }
 
-    response.cookies.set(COOKIE_LOCALE_NAME, locale);
+    if (isChangingLocale) {
+      response.cookies.set(COOKIE_LOCALE_NAME, locale);
+    }
 
     return response;
   };

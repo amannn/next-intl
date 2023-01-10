@@ -1,5 +1,5 @@
-import useRuntimeConfig from './useRuntimeConfig';
+import useConfig from './useConfig';
 
 export default function useNow() {
-  return useRuntimeConfig().now;
+  return useConfig().now;
 }
