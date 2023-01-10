@@ -3,7 +3,6 @@ import {IntlError, NextIntlConfig} from 'next-intl';
 const i18n: NextIntlConfig = {
   locales: ['en', 'de'],
   defaultLocale: 'en',
-
   async getMessages({locale}) {
     return (await import(`../messages/${locale}.json`)).default;
   },
@@ -23,7 +22,9 @@ const i18n: NextIntlConfig = {
   onError(error: IntlError) {
     if (
       error.message ===
-      'MISSING_MESSAGE: Could not resolve `missing` in `Index`.'
+      (process.env.NODE_ENV === 'production'
+        ? 'MISSING_MESSAGE'
+        : 'MISSING_MESSAGE: Could not resolve `missing` in `Index`.')
     ) {
       // Do nothing, this error is triggered on purpose
     } else {
