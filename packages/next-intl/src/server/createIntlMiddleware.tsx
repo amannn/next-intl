@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {HEADER_CONFIG_NAME} from '../shared/constants';
+import {COOKIE_LOCALE_NAME, HEADER_CONFIG_NAME} from '../shared/constants';
 import ServerRuntimeSerializer from './ServerRuntimeSerializer';
 import resolveLocale from './resolveLocale';
 import staticConfig from './staticConfig';
@@ -31,7 +31,6 @@ export default function createIntlMiddleware(opts?: {
 
     const isUnknownLocale = !request.nextUrl.pathname.startsWith('/' + locale);
     const isAtRoot = request.nextUrl.pathname === ROOT_URL;
-
     const shouldRedirect = isUnknownLocale || isAtRoot;
 
     let response;
@@ -50,6 +49,8 @@ export default function createIntlMiddleware(opts?: {
         }
       });
     }
+
+    response.cookies.set(COOKIE_LOCALE_NAME, locale);
 
     return response;
   };

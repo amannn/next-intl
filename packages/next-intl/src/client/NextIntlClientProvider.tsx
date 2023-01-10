@@ -3,7 +3,6 @@
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 import {IntlProvider} from 'use-intl';
-import useCookieSync from '../shared/useCookieSync';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
@@ -36,8 +35,6 @@ export default function NextIntlClientProvider({
         : undefined
     );
   }
-
-  useCookieSync(locale);
 
   return (
     <IntlProvider locale={locale} {...rest}>
