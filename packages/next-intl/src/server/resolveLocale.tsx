@@ -24,8 +24,8 @@ export default function resolveLocale(
 
   // Prio 2: Use existing cookie
   if (!locale && requestCookies) {
-    if (requestCookies.has(COOKIE_LOCALE_NAME)) {
-      locale = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
+    if (requestCookies.has(i18n.cookieName || COOKIE_LOCALE_NAME)) {
+      locale = requestCookies.get(i18n.cookieName || COOKIE_LOCALE_NAME)?.value;
     }
   }
 

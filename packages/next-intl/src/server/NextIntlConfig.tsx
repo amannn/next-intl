@@ -11,6 +11,7 @@ export type NextIntlRuntimeConfig = Pick<
 type NextIntlConfig = {
   locales: Array<string>;
   defaultLocale: string;
+  cookieName?: string;
   // TODO: `domains`
 
   getMessages?(

@@ -9,7 +9,8 @@ const ROOT_URL = '/';
 export default function createIntlMiddleware() {
   const i18n = {
     locales: staticConfig.locales,
-    defaultLocale: staticConfig.defaultLocale
+    defaultLocale: staticConfig.defaultLocale,
+    cookieName: staticConfig.cookieName
   };
 
   return function middleware(request: NextRequest) {
@@ -26,7 +27,7 @@ export default function createIntlMiddleware() {
     const isRoot = request.nextUrl.pathname === ROOT_URL;
     const shouldRedirect = isUnknownLocale || isRoot;
     const isChangingLocale =
-      request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
+      request.cookies.get(i18n.cookieName || COOKIE_LOCALE_NAME)?.value !== locale;
 
     let response;
     if (shouldRedirect) {
@@ -50,7 +51,7 @@ export default function createIntlMiddleware() {
     }
 
     if (isChangingLocale) {
-      response.cookies.set(COOKIE_LOCALE_NAME, locale);
+      response.cookies.set(i18n.cookieName || COOKIE_LOCALE_NAME, locale);
     }
 
     return response;
