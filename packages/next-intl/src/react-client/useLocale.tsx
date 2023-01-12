@@ -1,4 +1,4 @@
-import {useLocale as useIntlLocale} from 'use-intl/dist/src/react';
+import {useLocale as useIntlLocale} from 'use-intl';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 
 function getCookieValueByName(name: string) {

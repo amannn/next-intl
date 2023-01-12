@@ -6,15 +6,23 @@ import createLocalizedLinkComponent from './shared/createLocalizedLinkComponent'
  * from 'next-intl'. Make sure this mirrors the API from 'react-server'.
  */
 
-export * from 'use-intl/dist/src/core';
-
 // Everything except for `useLocale`, as we provide an optimized implementation for that
 export {
+  AbstractIntlMessages,
+  TranslationValues,
+  RichTranslationValues,
+  Formats,
+  DateTimeFormatOptions,
+  NumberFormatOptions,
+  IntlError,
+  IntlErrorCode,
+  createTranslator,
+  createIntl,
   useTranslations,
   useIntl,
   useNow,
   useTimeZone
-} from 'use-intl/dist/src/react';
+} from 'use-intl';
 
 export {default as useLocale} from './react-client/useLocale';
 

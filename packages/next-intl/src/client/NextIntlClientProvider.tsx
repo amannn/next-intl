@@ -2,7 +2,7 @@
 
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
-import {IntlProvider} from 'use-intl/dist/src/react';
+import {IntlProvider} from 'use-intl';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
