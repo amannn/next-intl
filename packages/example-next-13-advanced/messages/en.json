@@ -22,6 +22,9 @@
     "client": "Client page",
     "nested": "Nested page"
   },
+  "NotFound": {
+    "title": "This page was not found (404)"
+  },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
   },

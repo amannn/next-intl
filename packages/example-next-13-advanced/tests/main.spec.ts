@@ -1,8 +1,10 @@
 import {test as it, expect} from '@playwright/test';
 
 it('handles unknown locales', async ({page}) => {
-  await page.goto('/unknown');
-  await expect(page).toHaveURL(/\/en/);
+  const response = await page.goto('/unknown');
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveURL(/\/unknown/);
+  page.getByRole('heading', {name: 'This page was not found (404)'});
 });
 
 it('redirects to a matched locale', async ({page}) => {

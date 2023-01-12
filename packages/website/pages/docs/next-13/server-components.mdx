@@ -42,7 +42,8 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 │   └── ...
 └── app
     └── [locale]
-        └── page.tsx (5)
+        ├── layout.tsx (5)
+        └── page.tsx (6)
 ```
 
 **Now, set up these files as follows:**
@@ -104,7 +105,35 @@ export const config = {
 }
 ```
 
-5. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
+5. Provide the matched `locale` to the document in `app/[locale]/layout.tsx`.
+
+```tsx
+import {useLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {ReactNode} from 'react';
+
+type Props = {
+  children: ReactNode;
+  params: {locale: string};
+};
+
+export default function LocaleLayout({children, params}: Props) {
+  const locale = useLocale();
+
+  // Show a 404 error for unknown locales
+  if (params.locale !== locale) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
 
 ```tsx
 import {useTranslations} from 'next-intl';

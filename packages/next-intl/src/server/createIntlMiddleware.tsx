@@ -22,14 +22,12 @@ export default function createIntlMiddleware() {
       request.nextUrl.pathname
     );
 
-    const isUnknownLocale = !request.nextUrl.pathname.startsWith('/' + locale);
     const isRoot = request.nextUrl.pathname === ROOT_URL;
-    const shouldRedirect = isUnknownLocale || isRoot;
     const isChangingLocale =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
 
     let response;
-    if (shouldRedirect) {
+    if (isRoot) {
       response = NextResponse.redirect(new URL(ROOT_URL + locale, request.url));
     } else {
       let responseInit;
