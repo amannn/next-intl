@@ -15,7 +15,7 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
 ## Current preview version
 
 ```
-npm install next-intl@2.11.0-alpha.11
+npm install next-intl@2.11.0-alpha.13
 ```
 
 This preview version was tested with `next@13.1.1`.
@@ -64,12 +64,13 @@ const config: NextIntlConfig = {
 export default config;
 ```
 
-2. Add the plugin that provides your configuration to `next-intl` in `next.config.js`:
+2. Add the plugin that passes your configuration to `next-intl` in `next.config.js`:
 
 ```js
 const withNextIntl = require('next-intl/withNextIntl');
 
 module.exports = withNextIntl({
+  i18nConfig: './i18n.tsx', // (default)
   experimental: {appDir: true}
 });
 ```
