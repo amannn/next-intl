@@ -29,7 +29,8 @@
     },
     "./server": "./dist/src/server/index.js",
     "./client": "./dist/src/client/index.js",
-    "./config": "./config.js"
+    "./config": "./config.js",
+    "./withNextIntl": "./withNextIntl.js"
   },
   "files": [
     "dist",
@@ -38,7 +39,9 @@
     "server.d.ts",
     "client.js",
     "client.d.ts",
-    "config.js"
+    "config.js",
+    "withNextIntl.js",
+    "withNextIntl.d.ts"
   ],
   "keywords": [
     "react",

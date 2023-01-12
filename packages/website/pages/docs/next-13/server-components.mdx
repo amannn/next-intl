@@ -64,16 +64,14 @@ const config: NextIntlConfig = {
 export default config;
 ```
 
-2. Link to your configuration in `next.config.js`:
+2. Add the plugin that provides your configuration to `next-intl` in `next.config.js`:
 
 ```js
-module.exports = {
-  experimental: {appDir: true},
-  webpack(config) {
-    config.resolve.alias['next-intl/config'] = require.resolve('./i18n.tsx');
-    return config;
-  }
-};
+const withNextIntl = require('next-intl/withNextIntl');
+
+module.exports = withNextIntl({
+  experimental: {appDir: true}
+});
 ```
 
 3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
@@ -85,7 +83,7 @@ import {createIntlMiddleware} from 'next-intl/server';
 // to one of the configured locales instead (e.g. `/en`).
 // In the background a cookie is set that will remember the
 // locale of the last page that the user has visited.
-// The middleware furthermore passes runtime configuration
+// The middleware furthermore passes the resolved locale
 // to components in your app.
 export default createIntlMiddleware();
 
