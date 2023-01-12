@@ -1,8 +1,6 @@
 import AbstractIntlMessages from 'use-intl/dist/core/AbstractIntlMessages';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
 
-// TODO: Move out of server?
-
 export type NextIntlRuntimeConfig = Pick<
   IntlProviderProps,
   'locale' | 'now' | 'timeZone'
@@ -11,7 +9,6 @@ export type NextIntlRuntimeConfig = Pick<
 type NextIntlConfig = {
   locales: Array<string>;
   defaultLocale: string;
-  // TODO: `domains`
 
   getMessages?(
     runtimeConfig: NextIntlRuntimeConfig
@@ -25,4 +22,5 @@ type NextIntlConfig = {
   | 'now'
   | 'timeZone'
 >;
+
 export default NextIntlConfig;

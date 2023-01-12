@@ -1,7 +1,8 @@
 import {cookies, headers} from 'next/headers';
+import {cache} from 'react';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
 
-export default function useLocale() {
+const getLocale = cache(() => {
   let locale;
 
   // A header is only set when we're changing the locale,
@@ -20,4 +21,8 @@ export default function useLocale() {
   }
 
   return locale;
+});
+
+export default function useLocale() {
+  return getLocale();
 }
