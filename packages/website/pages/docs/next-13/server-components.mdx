@@ -27,26 +27,36 @@ For details, see the [pending pull request for Server Components support](https:
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). All routes should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages.
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
 **Start by creating the following file structure:**
 
 ```
-├── i18n.tsx (1)
-├── next.config.js (2)
-├── middleware.tsx (3)
-├── messages (4)
+├── messages (1)
 │   ├── en.json
 │   └── ...
+├── i18n.tsx (2)
+├── next.config.js (3)
+├── middleware.tsx (4)
 └── app
     └── [locale]
         ├── layout.tsx (5)
         └── page.tsx (6)
 ```
 
-**Now, set up these files as follows:**
+**Now, set up the files as follows:**
 
-1. Define your configuration in `i18n.tsx`:
+1. Provide messages for a language, e.g. in `messages/en.json`:
+
+```json
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+2. Define your i18n configuration (short for "internationalization") in `i18n.tsx`:
 
 ```tsx
 import {NextIntlConfig} from 'next-intl';
@@ -62,18 +72,21 @@ const config: NextIntlConfig = {
 export default config;
 ```
 
-2. Add the plugin that passes your configuration to `next-intl` in `next.config.js`:
+3. Add the plugin that reads your configuration in `next.config.js`:
 
 ```js
 const withNextIntl = require('next-intl/withNextIntl');
 
 module.exports = withNextIntl({
-  i18nConfig: './i18n.tsx', // (default)
+  // This is the default, also the `src` folder is supported out of the box
+  i18nConfig: './i18n.tsx',
+
+  // Other Next.js configuration ...
   experimental: {appDir: true}
 });
 ```
 
-3. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
 
 ```tsx
 import {createIntlMiddleware} from 'next-intl/server';
@@ -90,16 +103,6 @@ export const config = {
   // Skip all internal paths
   matcher: ['/((?!_next).*)']
 };
-```
-
-4. Set up messages for a language, e.g. in `messages/en.json`:
-
-```json
-{
-  "Index": {
-    "title": "Hello world!"
-  }
-}
 ```
 
 5. Provide the matched `locale` to the document in `app/[locale]/layout.tsx`.
