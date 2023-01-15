@@ -1,19 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 export default {
-  github: 'https://github.com/amannn/next-intl',
-  projectLink: 'https://github.com/amannn/next-intl',
+  github: "https://github.com/amannn/next-intl",
+  projectLink: "https://github.com/amannn/next-intl",
   docsRepositoryBase:
-    'https://github.com/amannn/next-intl/tree/main/packages/website/pages',
-  titleSuffix: ' – next-intl',
+    "https://github.com/amannn/next-intl/tree/main/packages/website/pages",
+  titleSuffix: " – next-intl",
   nextLinks: true,
   prevLinks: true,
   search: true,
   customSearch: null,
   darkMode: false,
-  footer: true,
+  footer: false,
   footerText: null,
   footerEditLink: `Edit this page on GitHub`,
-  logo: <img aria-label="next-intl" src="/logo.svg" style={{height: 62}} />,
+  logo: <img aria-label="next-intl" src="/logo.svg" style={{ height: 62 }} />,
   head: () => (
     <>
       <link
@@ -63,5 +63,5 @@ export default {
         name="description"
       />
     </>
-  )
+  ),
 };
