@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint pages components",
+    "test": "echo 'No tests yet'",
     "build": "next build",
-    "start": "next start",
-    "test": "echo 'No tests yet'"
+    "start": "next start"
   },
   "dependencies": {
     "next": "^12.1.0",

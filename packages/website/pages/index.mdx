@@ -10,10 +10,10 @@ import styles from '../styles/index.module.css';
   <h1 className="text-center md:text-5xl">next-intl</h1>
   <div className="bleed relative mt-6 -mx-6 md:-mx-8 2xl:-mx-24">
     <div className="mx-auto max-w-full w-[880px] text-center px-4">
-      <span className="text-lg text-gray-600 md:!text-2xl">
+      <p className="text-lg text-gray-600 md:!text-2xl">
         A minimal, but complete solution for internationalization in Next.js
         apps.
-      </span>
+      </p>
     </div>
   </div>
 </header>
@@ -42,12 +42,12 @@ This library is based on the premise that messages can be grouped by namespaces 
 
 ```js
 // LatestFollower.js
-function LatestFollower({ user }) {
+function LatestFollower({user}) {
   const t = useTranslations('LatestFollower');
 
   return (
     <>
-      <Text>{t('latestFollower', { username: user.name })}</Text>
+      <Text>{t('latestFollower', {username: user.name})}</Text>
       <IconButton aria-label={t('followBack')} icon={<FollowIcon />} />
     </>
   );
@@ -64,7 +64,7 @@ function LatestFollower({ user }) {
 }
 ```
 
-<div className='pt-8'>
+<div className="pt-8">
   [Getting started](/docs/getting-started) · [Usage guide](/docs/usage) ·
   [Examples](/examples)
 </div>
