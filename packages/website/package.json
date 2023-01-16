@@ -6,7 +6,8 @@
     "dev": "next dev",
     "lint": "eslint pages components",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "echo 'No tests yet'"
   },
   "dependencies": {
     "next": "^12.1.0",
