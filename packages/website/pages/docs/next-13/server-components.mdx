@@ -72,15 +72,15 @@ const config: NextIntlConfig = {
 export default config;
 ```
 
-3. Add the plugin that reads your configuration in `next.config.js`:
+3. Provide the path to your configuration in `next.config.js`:
 
 ```js
-const withNextIntl = require('next-intl/withNextIntl');
+const withNextIntl = require('next-intl/plugin')(
+  // This is the default, also the `src` folder is supported out of the box
+  './i18n.tsx'
+);
 
 module.exports = withNextIntl({
-  // This is the default, also the `src` folder is supported out of the box
-  i18nConfig: './i18n.tsx',
-
   // Other Next.js configuration ...
   experimental: {appDir: true}
 });

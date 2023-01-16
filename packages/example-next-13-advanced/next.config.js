@@ -1,4 +1,4 @@
-const withNextIntl = require('next-intl/withNextIntl');
+const withNextIntl = require('next-intl/plugin')();
 
 module.exports = withNextIntl({
   experimental: {appDir: true}
