@@ -1,4 +1,5 @@
 /node_modules
+.yarn
 /.next/
 .DS_Store
 .vercel
