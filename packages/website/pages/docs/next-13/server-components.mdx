@@ -182,33 +182,33 @@ router.push('/about');
 If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
 
 ```tsx
-// app/[locale]/page.tsx
 import {useTranslations} from 'next-intl';
-import Counter from './Counter';
+import Expandable from './Expandable';
 
-export default function Index() {
-  const t = useTranslations('Index');
-  return <Counter title={t('counterTitle')} />;
+export default function FrequentlyAskedQuestions() {
+  const t = useTranslations('FrequentlyAskedQuestions');
+  return <Expandable title={t('title')} description={t('description')} />;
 }
 ```
 
 ```tsx
-// app/[locale]/Counter.tsx
+// app/[locale]/Expandable.tsx
 'use client';
 
 import {useState} from 'react';
 
-function Counter({title}) {
-  const [count, setCount] = useState(0);
+function Expandable({title, description}) {
+  const [expanded, setExpanded] = useState(false);
 
-  function onIncrement() {
-    setCount(count + 1);
+  function onToggle() {
+    setExpanded(!expanded);
   }
 
   return (
-    <p>
-      {title}: {count} <button onClick={onIncrement}>+</button>
-    </p>
+    <div>
+      <button onClick={onToggle}>{title}</button>
+      {expanded && <p>{description}</p>}
+    </div>
   );
 }
 ```
