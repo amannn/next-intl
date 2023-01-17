@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import React, {ComponentProps, forwardRef} from 'react';
+import localizeHref from './localizeHref';
 
-type Props = ComponentProps<typeof Link>;
+type Props = Omit<ComponentProps<typeof Link>, 'locale'> & {
+  locale?: string;
+};
 
 export default function createLocalizedLinkComponent(useLocale: () => string) {
   /**
@@ -11,9 +14,14 @@ export default function createLocalizedLinkComponent(useLocale: () => string) {
     const curLocale = useLocale();
     if (!locale) locale = curLocale;
 
-    let localizedHref = '/' + locale;
-    if (href !== '/') {
-      localizedHref += href;
+    let localizedHref;
+    if (typeof href === 'string') {
+      localizedHref = localizeHref(locale, href);
+    } else {
+      localizedHref = {...href};
+      if (href.pathname) {
+        localizedHref.pathname = localizeHref(locale, href.pathname);
+      }
     }
 
     return <Link ref={ref} href={localizedHref} {...rest} />;

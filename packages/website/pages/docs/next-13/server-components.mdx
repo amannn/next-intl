@@ -150,7 +150,7 @@ If you've encountered an issue, you can [explore the code for a working example]
 
 If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply `NextIntlClientProvider` additionally.
 
-## Linking between pages
+## Navigating between pages
 
 In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
 
@@ -162,6 +162,19 @@ import {LocalizedLink} from 'next-intl';
 
 // You can override the `locale` to switch to another language
 <LocalizedLink href="/" locale="de">Switch to German</LocalizedLink>
+```
+
+If you need to navigate programmatically (e.g. in response to a form submission), `next-intl` provides a convience API that wraps `useRouter` and automatically applies the locale of the user.
+
+```tsx
+'use client';
+
+import {useLocalizedRouter} from 'next-intl';
+
+const router = useLocalizedRouter();
+
+// When the user is on `/en`, the router will navigate to `/en/about`
+router.push('/about');
 ```
 
 ## Switching to Client Components

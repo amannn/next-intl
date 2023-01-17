@@ -1,5 +1,5 @@
-import {useTranslations} from 'next-intl';
-import ClientLocaleWithoutProvider from '../../components/ClientLocaleWithoutProvider';
+import {LocalizedLink, useTranslations} from 'next-intl';
+import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
 import CurrentTime from '../../components/CurrentTime';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
@@ -28,7 +28,12 @@ export default function Index() {
       <MessagesAsPropsCounter />
       <MessagesOnClientCounter />
       <CoreLibrary />
-      <ClientLocaleWithoutProvider />
+      <ClientRouterWithoutProvider />
+      <div>
+        <LocalizedLink href={{pathname: '/', query: {test: true}}}>
+          Go to home with query param
+        </LocalizedLink>
+      </div>
     </PageLayout>
   );
 }

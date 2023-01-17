@@ -115,6 +115,13 @@ it('can use `LocalizedLink` on the server', async ({page}) => {
   );
 });
 
+it('can use `LocalizedLink` with an object as `href`', async ({page}) => {
+  await page.goto('/en');
+  await expect(
+    page.getByRole('link', {name: 'Go to home with query param'})
+  ).toHaveAttribute('href', '/en?test=true');
+});
+
 it('can use `LocalizedLink` to link to the root of another language', async ({
   page
 }) => {
@@ -156,4 +163,12 @@ it('can use the locale on the client side without using the provider', async ({
       .getByTestId('ClientLocaleWithoutProvider-link')
       .getByRole('link', {name: 'Client'})
   ).toHaveAttribute('href', '/en/client');
+});
+
+it('can use the localized router on the client side without a provider', async ({
+  page
+}) => {
+  await page.goto('/en');
+  page.getByRole('button', {name: 'Go to nested page'}).click();
+  await expect(page).toHaveURL(/\/en\/nested/);
 });
