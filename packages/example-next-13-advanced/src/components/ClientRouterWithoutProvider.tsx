@@ -11,7 +11,7 @@ export default function ClientRouterWithoutProvider() {
 
   return (
     <button
-      data-testid="ClientLocaleWithoutProvider-link"
+      data-testid="ClientRouterWithoutProvider-link"
       onClick={onClick}
       type="button"
     >

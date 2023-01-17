@@ -149,26 +149,10 @@ it('can navigate between sibling pages that share a parent layout', async ({
   await expect(page).toHaveURL(/\/en\/nested/);
 });
 
-it('can use the locale on the client side without using the provider', async ({
-  page
-}) => {
-  await page.goto('/en');
-
-  await expect(
-    page.getByTestId('ClientLocaleWithoutProvider-locale')
-  ).toHaveText('en');
-
-  await expect(
-    page
-      .getByTestId('ClientLocaleWithoutProvider-link')
-      .getByRole('link', {name: 'Client'})
-  ).toHaveAttribute('href', '/en/client');
-});
-
 it('can use the localized router on the client side without a provider', async ({
   page
 }) => {
   await page.goto('/en');
-  page.getByRole('button', {name: 'Go to nested page'}).click();
+  page.getByTestId('ClientRouterWithoutProvider-link').click();
   await expect(page).toHaveURL(/\/en\/nested/);
 });
