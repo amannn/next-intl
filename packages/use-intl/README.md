@@ -1,6 +1,6 @@
 # 🌐 use-intl
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
+![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) [<img src="https://img.shields.io/npm/dw/use-intl.svg" />](https://www.npmjs.com/package/use-intl)
 
 > A minimal, but complete solution for managing translations, date, time and number formatting in React apps.
 

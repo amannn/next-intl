@@ -105,7 +105,7 @@ it('can use the core library', async ({page}) => {
 
 it('can use `LocalizedLink` on the server', async ({page}) => {
   await page.goto('/en');
-  await expect(page.getByRole('link', {name: 'Home'})).toHaveAttribute(
+  await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
     'href',
     '/en'
   );
