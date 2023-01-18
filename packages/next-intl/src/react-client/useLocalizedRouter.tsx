@@ -1,42 +1,17 @@
-import {useRouter} from 'next/navigation';
-import {useMemo} from 'react';
-import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import localizeHref from '../shared/localizeHref';
+import useLocalizedRouter from '../client/useLocalizedRouter';
 
-function getCookieValueByName(name: string) {
-  // https://stackoverflow.com/a/15724300/343045
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    const part = parts.pop()?.split(';').shift();
-    if (part) return part;
+// TODO: Only available for backwards compatibility
+// during the beta, remove for stable release
+
+let hasWarned = false;
+
+export default function useLocalizedRouterDeprecated() {
+  if (!hasWarned) {
+    console.warn(
+      `\n\nDEPRECATION WARNING: The \`useLocalizedRouter\` import from \`next-intl\` is deprecated and will be removed in the stable release of next-intl. Please import \`useLocalizedRouter\` from \`next-intl/client\` instead. See https://next-intl-docs.vercel.app/docs/next-13/server-components\n\n`
+    );
+    hasWarned = true;
   }
 
-  throw new Error(
-    `Unable to find next-intl cookie, have you configured the middleware?`
-  );
-}
-
-function getCookieLocale() {
-  return getCookieValueByName(COOKIE_LOCALE_NAME);
-}
-
-export default function useLocalizedRouter() {
-  const router = useRouter();
-
-  return useMemo(
-    () => ({
-      ...router,
-      push(href: string) {
-        return router.push(localizeHref(getCookieLocale(), href));
-      },
-      replace(href: string) {
-        return router.replace(localizeHref(getCookieLocale(), href));
-      },
-      prefetch(href: string) {
-        return router.prefetch(localizeHref(getCookieLocale(), href));
-      }
-    }),
-    [router]
-  );
+  return useLocalizedRouter();
 }
