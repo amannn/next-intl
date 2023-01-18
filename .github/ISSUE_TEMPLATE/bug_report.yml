@@ -15,15 +15,19 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+  - type: input
+    attributes:
+      label: Reproduction URL (CodeSandbox)
+      description: Here's [a template to get you started](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js).
+    validations:
+      required: true
   - type: textarea
     attributes:
-      label: Reproduction
-      description: Please provide a CodeSandbox where the problem can be reproduced ([template](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js)).
+      label: Reproduction description
+      description: Describe how the issue can be reproduced based on your provided CodeSandbox
       value: |
-        CodeSandbox reproduction: https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js
-
         Steps to reproduce:
-        1. Go to …
+        1. Open reproduction
         2. Click on …
         3. See error: … 
     validations:
