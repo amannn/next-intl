@@ -1,8 +1,8 @@
 import Callout from 'nextra-theme-docs/callout';
 
-# Usage in Server Components (preview)
+# Usage in Server Components (beta)
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a preview to early adopters, who are already building apps with the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
 <Callout>
   The `app` directory is currently in beta, patterns are still emerging and APIs
@@ -10,13 +10,13 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
   to face a migration effort when the `app` directory becomes stable.
 </Callout>
 
-## Current preview version
+## Current beta version
 
 ```
 npm install next-intl@2.11.0-beta.2
 ```
 
-This preview version was tested with `next@13.1.1`.
+This beta version was tested with `next@13.1.1`.
 
 ## Roadmap
 
@@ -148,7 +148,7 @@ That's all it takes! Now you can internationalize your apps purely on the server
 
 If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
 
-If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply `NextIntlClientProvider` additionally.
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components to the Server Components beta, you can apply `NextIntlClientProvider` additionally.
 
 ## Navigating between pages
 
