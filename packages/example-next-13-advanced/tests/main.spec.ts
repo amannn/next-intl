@@ -139,6 +139,11 @@ it('can use `LocalizedLink` on the client', async ({page}) => {
   );
 });
 
+it('can use `useUnlocalizedPathname`', async ({page}) => {
+  await page.goto('/en/client');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
+});
+
 it('can navigate between sibling pages that share a parent layout', async ({
   page
 }) => {

@@ -150,7 +150,7 @@ If you've encountered an issue, you can [explore the code for a working example]
 
 If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components to the Server Components beta, you can apply `NextIntlClientProvider` additionally.
 
-## Navigating between pages
+## Routing
 
 In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
 
@@ -175,6 +175,17 @@ const router = useLocalizedRouter();
 
 // When the user is on `/en`, the router will navigate to `/en/about`
 router.push('/about');
+```
+
+To retrieve the pathname without a locale prefix, you can call `useUnlocalizedPathname`.
+
+```tsx
+'use client';
+
+import {useUnlocalizedPathname} from 'next-intl/client';
+
+// When the user is on `/en`, this will be `/`
+const pathname = useUnlocalizedPathname();
 ```
 
 ## Switching to Client Components
