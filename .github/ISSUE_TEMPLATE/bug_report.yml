@@ -18,7 +18,7 @@ body:
   - type: input
     attributes:
       label: Reproduction URL (CodeSandbox)
-      description: Here's [a template to get you started](https://codesandbox.io/s/next-intl-template-comtb?file=/pages/index.js).
+      description: Here's [a template to get you started](https://codesandbox.io/p/sandbox/holy-lake-krm37f?file=%2Fsrc%2Fpages%2Findex.tsx).
     validations:
       required: true
   - type: textarea
