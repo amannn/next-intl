@@ -1,0 +1,44 @@
+{
+  "Meta": {
+    "title": "next-intl example",
+    "description": "This is an example of using next-intl in the `app` directory."
+  },
+  "Index": {
+    "title": "Home",
+    "description": "This is the home page.",
+    "rich": "This is a <important>rich</important> text.",
+    "globalDefaults": "<highlight>{globalString}</highlight>"
+  },
+  "Client": {
+    "title": "Client",
+    "description": "This page hydrates on the client side."
+  },
+  "Nested": {
+    "title": "Nested",
+    "description": "This is a nested page."
+  },
+  "NextPage": {
+    "title": "Next 12 page",
+    "description": "This site is accessed via the pages directory."
+  },
+  "Navigation": {
+    "home": "Home",
+    "client": "Client page",
+    "nested": "Nested page",
+    "next-page": "Next 12 Page"
+  },
+  "NotFound": {
+    "title": "This page was not found (404)"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+  },
+  "Counter": {
+    "count": "Current count:",
+    "increment": "Increment"
+  },
+  "ClientCounter": {
+    "count": "Current count: {count}",
+    "increment": "Increment"
+  }
+}
