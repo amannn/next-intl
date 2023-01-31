@@ -8,6 +8,9 @@ const receiveMessages = cache(
     getMessages?.({locale})
 );
 
+// Make sure `now` is consistent across the request in case none was configured
+const receiveNow = cache((now?: Date) => now || new Date());
+
 function isPromise(value: any): value is Promise<unknown> {
   return value != null && typeof value.then === 'function';
 }
@@ -28,7 +31,10 @@ export default function useConfig() {
       return {messages, ...rest};
     }
 
-    const opts = {...getStaticConfig(), locale};
+    const {now: receivedNow, ...rest} = getStaticConfig();
+    const now = receiveNow(receivedNow);
+    const opts = {...rest, now, locale};
+
     return getIntlContextValue(opts);
   }, [locale]);
 }

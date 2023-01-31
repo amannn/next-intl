@@ -4,13 +4,16 @@ import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 import {IntlProvider} from 'use-intl';
 
-type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
+type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale' | 'now'> & {
   locale?: string;
+  /** If a string is supplied, make sure this conforms to the ISO 8601 format (YYYY-MM-DDTHH:mm:ss.sssZ */
+  now?: Date | string;
 };
 
 export default function NextIntlClientProvider({
   children,
   locale,
+  now,
   ...rest
 }: Props) {
   let router;
@@ -28,6 +31,13 @@ export default function NextIntlClientProvider({
     locale = router.locale;
   }
 
+  // Currently RSC serialize dates to strings, therefore make sure we have
+  // a date object. We might be able to remove this once more types have
+  // first-class serialization support (https://github.com/facebook/react/issues/25687)
+  if (typeof now === 'string') {
+    now = new Date(now);
+  }
+
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
@@ -37,7 +47,7 @@ export default function NextIntlClientProvider({
   }
 
   return (
-    <IntlProvider locale={locale} {...rest}>
+    <IntlProvider locale={locale} now={now} {...rest}>
       {children}
     </IntlProvider>
   );

@@ -139,6 +139,21 @@ it('can use `LocalizedLink` on the client', async ({page}) => {
   );
 });
 
+it('supports a consistent `now` value across the server and client', async ({
+  page
+}) => {
+  await page.goto('/en/client');
+
+  const serverDate = await page.getByTestId('NowFromServer').textContent();
+  const serverDateDelayed = await page
+    .getByTestId('NowFromServerDelayed')
+    .textContent();
+  const clientDate = await page.getByTestId('NowFromClient').textContent();
+
+  expect(serverDate).toBe(serverDateDelayed);
+  expect(serverDate).toBe(clientDate);
+});
+
 it('can use `useUnlocalizedPathname`', async ({page}) => {
   await page.goto('/en/client');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
