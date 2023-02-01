@@ -26,6 +26,12 @@ This library is only concerned with formatting dates. A great library to parse a
   constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
 </Callout>
 
+## Can next-intl be used in environments like Jest and Storybook?
+
+Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.
+
+Please see the [Jest example](https://github.com/amannn/next-intl/blob/main/packages/example-advanced/src/components/Navigation.spec.tsx) to explore a working setup. For Storybook, you have to [add a global decorator](https://storybook.js.org/docs/react/writing-stories/decorators#global-decorators) that configures the provider.
+
 ## Can next-intl be used without Next.js?
 
 Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
@@ -34,8 +40,6 @@ Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use
 
 Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/packages/example-remix).
 
-## Can next-intl be used in environments like Jest and Storybook?
+## Can next-intl be used with [React Native](https://reactnative.dev/)?
 
-Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.
-
-Please see the [Jest example](https://github.com/amannn/next-intl/blob/main/packages/example-advanced/src/components/Navigation.spec.tsx) to explore a working setup. For Storybook, you have to [add a global decorator](https://storybook.js.org/docs/react/writing-stories/decorators#global-decorators) that configures the provider.
+Yes, see [the React Native example](https://github.com/amannn/next-intl/tree/main/packages/example-react-native).
