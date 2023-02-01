@@ -1,13 +1,9 @@
-import {
-  NextIntlRuntimeConfigParams,
-  NextIntlRuntimeConfig,
-  NextIntlStaticConfig
-} from 'next-intl';
+import {NextIntlRuntimeConfigParams, NextIntlRuntimeConfig} from 'next-intl';
 
 export default {
   locales: ['en', 'de'],
   defaultLocale: 'en'
-} as NextIntlStaticConfig;
+};
 
 export async function getRuntimeConfig(
   params: NextIntlRuntimeConfigParams
