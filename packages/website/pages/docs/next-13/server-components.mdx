@@ -59,17 +59,16 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 2. Define your i18n configuration (short for "internationalization") in `i18n.tsx`:
 
 ```tsx
-import {NextIntlConfig} from 'next-intl';
+import {GetNextIntlRuntimeConfig} from 'next-intl';
 
-const config: NextIntlConfig = {
+export default {
   locales: ['en', 'de'],
-  defaultLocale: 'en',
-  async getMessages({locale}) {
-    return (await import(`../messages/${locale}.json`)).default;
-  }
+  defaultLocale: 'en'
 };
 
-export default config;
+export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default
+});
 ```
 
 3. Provide the path to your configuration in `next.config.js`:
@@ -120,7 +119,7 @@ type Props = {
 export default function LocaleLayout({children, params}: Props) {
   const locale = useLocale();
 
-  // Show a 404 error for unknown locales
+  // Show a 404 error if the user requests an unknown locale
   if (params.locale !== locale) {
     notFound();
   }
@@ -186,6 +185,27 @@ import {useUnlocalizedPathname} from 'next-intl/client';
 
 // When the user is on `/en`, this will be `/`
 const pathname = useUnlocalizedPathname();
+```
+
+## Global runtime configuration
+
+If you'd like to apply [global runtime configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these via `getRuntimeConfig` in `i18n.tsx`.
+
+```tsx
+// i18n.tsx
+
+import {GetNextIntlRuntimeConfig} from 'next-intl';
+
+// ...
+
+export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => {
+  const messages = (await import(`../messages/${locale}.json`)).default;
+
+  // You can read from headers or cookies here if necessary.
+  const timezone = require('next/headers').headers().get('x-timezone');
+
+  return {timezone, messages};
+};
 ```
 
 ## Switching to Client Components

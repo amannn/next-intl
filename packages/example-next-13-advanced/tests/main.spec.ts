@@ -176,3 +176,14 @@ it('can use the localized router on the client side without a provider', async (
   page.getByTestId('ClientRouterWithoutProvider-link').click();
   await expect(page).toHaveURL(/\/en\/nested/);
 });
+
+it('can set `now` and `timeZone` at runtime', async ({page}) => {
+  page.setExtraHTTPHeaders({
+    'x-now': '2020-01-01T00:00:00.000Z',
+    'x-time-zone': 'Asia/Shanghai'
+  });
+
+  await page.goto('/en');
+  const element = page.getByTestId('CurrentTime');
+  await expect(element).toHaveText('Jan 1, 2020, 08:00 (Asia/Shanghai)');
+});

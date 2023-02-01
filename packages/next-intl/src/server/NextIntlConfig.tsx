@@ -1,18 +1,17 @@
 import AbstractIntlMessages from 'use-intl/dist/core/AbstractIntlMessages';
 import IntlProviderProps from 'use-intl/dist/react/IntlProviderProps';
 
-export type NextIntlRuntimeConfig = Pick<
-  IntlProviderProps,
-  'locale' | 'now' | 'timeZone'
->;
+export type NextIntlRuntimeConfigParams = {
+  locale: string;
+};
 
-type NextIntlConfig = {
+export type NextIntlStaticConfig = {
   locales: Array<string>;
   defaultLocale: string;
+};
 
-  getMessages?(
-    runtimeConfig: NextIntlRuntimeConfig
-  ): AbstractIntlMessages | Promise<AbstractIntlMessages>;
+export type NextIntlRuntimeConfig = {
+  messages?: AbstractIntlMessages;
 } & Pick<
   IntlProviderProps,
   | 'defaultTranslationValues'
@@ -23,4 +22,16 @@ type NextIntlConfig = {
   | 'timeZone'
 >;
 
+export type GetNextIntlRuntimeConfig = (
+  params: NextIntlRuntimeConfigParams
+) => Promise<NextIntlRuntimeConfig> | NextIntlRuntimeConfig;
+
+/** @deprecated See the updated docs for the config file */
+type NextIntlConfig = NextIntlStaticConfig &
+  NextIntlRuntimeConfig & {
+    /** @deprecated Use the `messages` property instead */
+    getMessages?(
+      params: NextIntlRuntimeConfigParams
+    ): AbstractIntlMessages | Promise<AbstractIntlMessages>;
+  };
 export default NextIntlConfig;

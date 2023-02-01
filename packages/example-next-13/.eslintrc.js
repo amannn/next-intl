@@ -11,5 +11,13 @@ module.exports = {
   ],
   rules: {
     'react/react-in-jsx-scope': 'off'
-  }
+  },
+  overrides: [
+    {
+      files: ['src/i18n.tsx'],
+      rules: {
+        'func-style': 'off'
+      }
+    }
+  ]
 };

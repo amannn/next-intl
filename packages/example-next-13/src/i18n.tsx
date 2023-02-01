@@ -1,11 +1,10 @@
-import {NextIntlConfig} from 'next-intl';
+import {GetNextIntlRuntimeConfig} from 'next-intl';
 
-const i18n: NextIntlConfig = {
+export default {
   locales: ['en', 'de'],
-  defaultLocale: 'en',
-  async getMessages({locale}) {
-    return (await import(`../messages/${locale}.json`)).default;
-  }
+  defaultLocale: 'en'
 };
 
-export default i18n;
+export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default
+});

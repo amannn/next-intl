@@ -1,15 +1,15 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
+import NextIntlServerConfig from './NextIntlServerConfig';
 import resolveLocale from './resolveLocale';
-import staticConfig from './staticConfig';
 
 // If there's an exact match for this path, we'll add the locale to the URL
 const ROOT_URL = '/';
 
 export default function createIntlMiddleware() {
   const i18n = {
-    locales: staticConfig.locales,
-    defaultLocale: staticConfig.defaultLocale
+    locales: NextIntlServerConfig.locales,
+    defaultLocale: NextIntlServerConfig.defaultLocale
   };
 
   return function middleware(request: NextRequest) {
@@ -35,11 +35,11 @@ export default function createIntlMiddleware() {
       // Only apply a header if absolutely necessary
       // as this causes full page reloads
       if (isChangingLocale) {
+        request.headers.set(HEADER_LOCALE_NAME, locale);
+
         responseInit = {
           request: {
-            headers: new Headers({
-              [HEADER_LOCALE_NAME]: locale
-            })
+            headers: request.headers
           }
         };
       }
