@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import IntlMessageFormat from 'intl-messageformat';
+import {IntlMessageFormat} from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {
   Formats,
