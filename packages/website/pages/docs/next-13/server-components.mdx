@@ -202,9 +202,9 @@ export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => {
   const messages = (await import(`../messages/${locale}.json`)).default;
 
   // You can read from headers or cookies here if necessary.
-  const timezone = require('next/headers').headers().get('x-timezone');
+  const timeZone = require('next/headers').headers().get('x-time-zone');
 
-  return {timezone, messages};
+  return {timeZone, messages};
 };
 ```
 
