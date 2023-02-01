@@ -1,10 +1,10 @@
 import acceptLanguageParser from 'accept-language-parser';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import NextIntlConfig from './NextIntlConfig';
+import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
 
 export default function resolveLocale(
-  i18n: NextIntlConfig,
+  i18n: NextIntlMiddlewareConfig,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string

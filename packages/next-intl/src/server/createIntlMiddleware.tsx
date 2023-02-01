@@ -1,15 +1,18 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
-import NextIntlServerConfig from './NextIntlServerConfig';
+import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
 import resolveLocale from './resolveLocale';
 
 // If there's an exact match for this path, we'll add the locale to the URL
 const ROOT_URL = '/';
 
-export default function createIntlMiddleware() {
+export default function createIntlMiddleware({
+  defaultLocale,
+  locales
+}: NextIntlMiddlewareConfig) {
   const i18n = {
-    locales: NextIntlServerConfig.locales,
-    defaultLocale: NextIntlServerConfig.defaultLocale
+    locales,
+    defaultLocale
   };
 
   return function middleware(request: NextRequest) {

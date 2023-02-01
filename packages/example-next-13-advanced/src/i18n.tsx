@@ -1,16 +1,10 @@
-import {NextIntlRuntimeConfigParams, NextIntlRuntimeConfig} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
+import {headers} from 'next/headers';
 
-export default {
-  locales: ['en', 'de'],
-  defaultLocale: 'en'
-};
-
-export async function getRuntimeConfig(
-  params: NextIntlRuntimeConfigParams
-): Promise<NextIntlRuntimeConfig> {
-  const now = require('next/headers').headers().get('x-now');
-  const timeZone = require('next/headers').headers().get('x-time-zone');
-  const messages = (await import(`../messages/${params.locale}.json`)).default;
+export default getRequestConfig(async ({locale}) => {
+  const now = headers().get('x-now');
+  const timeZone = headers().get('x-time-zone') ?? undefined;
+  const messages = (await import(`../messages/${locale}.json`)).default;
 
   return {
     now: now ? new Date(now) : undefined,
@@ -48,4 +42,4 @@ export async function getRuntimeConfig(
       );
     }
   };
-}
+});

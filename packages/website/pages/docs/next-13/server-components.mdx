@@ -56,19 +56,14 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. Define your i18n configuration (short for "internationalization") in `i18n.tsx`:
+2. `next-intl` creates an i18n configuration (short for "internationalization") once per request and makes it available to all Server Components. Define this in `i18n.tsx`:
 
 ```tsx
-import {GetNextIntlRuntimeConfig} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
 
-export default {
-  locales: ['en', 'de'],
-  defaultLocale: 'en'
-};
-
-export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => ({
+export default getRequestConfig(async ({locale}) => ({
   messages: (await import(`../messages/${locale}.json`)).default
-});
+}));
 ```
 
 3. Provide the path to your configuration in `next.config.js`:
@@ -96,7 +91,10 @@ import {createIntlMiddleware} from 'next-intl/server';
 // locale of the last page that the user has visited.
 // The middleware furthermore passes the resolved locale
 // to components in your app.
-export default createIntlMiddleware();
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en'
+});
 
 export const config = {
   // Skip all internal paths
@@ -187,25 +185,22 @@ import {useUnlocalizedPathname} from 'next-intl/client';
 const pathname = useUnlocalizedPathname();
 ```
 
-## Global runtime configuration
+## Global request configuration
 
-If you'd like to apply [global runtime configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these via `getRuntimeConfig` in `i18n.tsx`.
+If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.tsx`.
 
 ```tsx
 // i18n.tsx
 
-import {GetNextIntlRuntimeConfig} from 'next-intl';
+import {headers} from 'next/headers';
+import {getRequestConfig} from 'next-intl/server';
 
-// ...
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default,
 
-export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => {
-  const messages = (await import(`../messages/${locale}.json`)).default;
-
-  // You can read from headers or cookies here if necessary.
-  const timeZone = require('next/headers').headers().get('x-time-zone');
-
-  return {timeZone, messages};
-};
+  // You can read from headers or cookies here if necessary
+  timeZone: headers().get('x-time-zone') ?? undefined
+}));
 ```
 
 ## Switching to Client Components

@@ -1,10 +1,5 @@
-import {GetNextIntlRuntimeConfig} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
 
-export default {
-  locales: ['en', 'de'],
-  defaultLocale: 'en'
-};
-
-export const getRuntimeConfig: GetNextIntlRuntimeConfig = async ({locale}) => ({
+export default getRequestConfig(async ({locale}) => ({
   messages: (await import(`../messages/${locale}.json`)).default
-});
+}));
