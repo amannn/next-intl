@@ -1,4 +1,5 @@
-import {IntlMessageFormat} from 'intl-messageformat';
+// eslint-disable-next-line import/no-named-as-default -- False positive
+import IntlMessageFormat from 'intl-messageformat';
 import {useMemo, useRef} from 'react';
 import AbstractIntlMessages from '../core/AbstractIntlMessages';
 import createBaseTranslator, {
