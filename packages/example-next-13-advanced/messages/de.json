@@ -1,13 +1,13 @@
 {
-  "Meta": {
-    "title": "next-intl Beispiel",
-    "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann."
-  },
   "Index": {
     "title": "Start",
     "description": "Das ist die Startseite.",
     "rich": "Das ist <important>formatierter</important> Test.",
     "globalDefaults": "<highlight>{globalString}</highlight>"
+  },
+  "LocaleLayout": {
+    "title": "next-intl Beispiel",
+    "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann."
   },
   "Client": {
     "title": "Client",

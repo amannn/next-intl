@@ -1,5 +1,6 @@
-import useConfig from './useConfig';
+import getNow from '../server/getNow';
+import useHook from './useHook';
 
 export default function useNow() {
-  return useConfig().now;
+  return useHook('useNow', getNow());
 }

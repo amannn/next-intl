@@ -1,9 +1,6 @@
-import {useMemo} from 'react';
-import {createIntl} from 'use-intl/dist/src/core';
-import useConfig from './useConfig';
+import getIntl from '../server/getIntl';
+import useHook from './useHook';
 
 export default function useIntl() {
-  const config = useConfig();
-
-  return useMemo(() => createIntl(config), [config]);
+  return useHook('useIntl', getIntl());
 }

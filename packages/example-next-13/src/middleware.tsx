@@ -1,4 +1,4 @@
-import {createIntlMiddleware} from 'next-intl/server';
+import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
   locales: ['en', 'de'],
