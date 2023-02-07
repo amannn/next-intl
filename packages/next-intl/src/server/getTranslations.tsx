@@ -1,16 +1,16 @@
+/* eslint-disable import/default */
+
 import {cache} from 'react';
-import Formats from 'use-intl/dist/src/core/Formats';
-import TranslationValues from 'use-intl/dist/src/core/TranslationValues';
+import type Formats from 'use-intl/dist/src/core/Formats';
+import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
 import createBaseTranslator, {
   getMessagesOrError
 } from 'use-intl/dist/src/core/createBaseTranslator';
 import {CoreRichTranslationValues} from 'use-intl/dist/src/core/createTranslatorImpl';
-/* eslint-disable import/default */
 import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
 import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
 import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
 import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
-/* eslint-enable import/default */
 import getConfig from './getConfig';
 
 async function getTranslationsImpl<
