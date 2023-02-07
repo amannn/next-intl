@@ -7,9 +7,49 @@ it('handles unknown locales', async ({page}) => {
   page.getByRole('heading', {name: 'This page was not found (404)'});
 });
 
-it('redirects to a matched locale', async ({page}) => {
+it('redirects to a matched locale at the root for non-default locales', async ({
+  browser
+}) => {
+  const context = await browser.newContext({locale: 'de'});
+  const page = await context.newPage();
+
   await page.goto('/');
-  await expect(page).toHaveURL(/\/en/);
+  await expect(page).toHaveURL('/de');
+  page.getByRole('heading', {name: 'Start'});
+});
+
+it('can redirect a more specific locale to a more generic one', async ({
+  browser
+}) => {
+  const context = await browser.newContext({locale: 'de-DE'});
+  const page = await context.newPage();
+
+  await page.goto('/');
+  await expect(page).toHaveURL('/de');
+  page.getByRole('heading', {name: 'Start'});
+});
+
+it('does not redirect on the root if the default locale is matched', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(page).toHaveURL('/');
+  page.getByRole('heading', {name: 'Home'});
+});
+
+it('supports unprefixed routing for the default locale', async ({page}) => {
+  await page.goto('/nested');
+  await expect(page).toHaveURL('/nested');
+  page.getByRole('heading', {name: 'Nested'});
+});
+
+it('redirects unprefixed paths for non-default locales', async ({browser}) => {
+  const context = await browser.newContext({locale: 'de'});
+  const page = await context.newPage();
+
+  await page.goto('/nested');
+  await expect(page).toHaveURL('/de/nested');
+  page.getByRole('heading', {name: 'Verschachtelt'});
 });
 
 it('remembers the last locale', async ({page}) => {

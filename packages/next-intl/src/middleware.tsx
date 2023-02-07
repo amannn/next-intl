@@ -3,43 +3,31 @@ import NextIntlMiddlewareConfig from './server/NextIntlMiddlewareConfig';
 import resolveLocale from './server/resolveLocale';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from './shared/constants';
 
-// If there's an exact match for this path, we'll add the locale to the URL
 const ROOT_URL = '/';
 
-export default function createIntlMiddleware({
-  defaultLocale,
-  locales
-}: NextIntlMiddlewareConfig) {
-  const i18n = {
-    locales,
-    defaultLocale
-  };
-
+export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
   return function middleware(request: NextRequest) {
     // Ideally we could use the `headers()` and `cookies()` API here
     // as well, but they are currently not available in middleware.
     const locale = resolveLocale(
-      i18n,
+      config,
       request.headers,
       request.cookies,
       request.nextUrl.pathname
     );
 
     const isRoot = request.nextUrl.pathname === ROOT_URL;
-    const isChangingLocale =
+    const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
+    const hasMatchedDefaultLocale = locale === config.defaultLocale;
 
-    let response;
-    if (isRoot) {
-      response = NextResponse.redirect(new URL(ROOT_URL + locale, request.url));
-    } else {
+    function getResponseInit() {
       let responseInit;
 
-      // Only apply a header if absolutely necessary
-      // as this causes full page reloads
-      if (isChangingLocale) {
+      if (hasOutdatedCookie) {
+        // Only apply a header if absolutely necessary
+        // as this causes full page reloads
         request.headers.set(HEADER_LOCALE_NAME, locale);
-
         responseInit = {
           request: {
             headers: request.headers
@@ -47,10 +35,54 @@ export default function createIntlMiddleware({
         };
       }
 
-      response = NextResponse.next(responseInit);
+      return responseInit;
     }
 
-    if (isChangingLocale) {
+    function rewrite(url: string) {
+      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
+    }
+
+    function next() {
+      return NextResponse.next(getResponseInit());
+    }
+
+    function redirect(url: string) {
+      return NextResponse.redirect(new URL(url, request.url));
+    }
+
+    let response;
+    if (isRoot) {
+      if (hasMatchedDefaultLocale) {
+        response = rewrite(`/${locale}`);
+      } else {
+        response = redirect(`/${locale}`);
+      }
+    } else {
+      const pathLocale = config.locales.find((cur) =>
+        request.nextUrl.pathname.startsWith(`/${cur}`)
+      );
+      const hasLocalePrefix = pathLocale != null;
+
+      if (hasLocalePrefix) {
+        if (pathLocale === locale) {
+          response = next();
+        } else {
+          const basePath = request.nextUrl.pathname.replace(
+            `/${pathLocale}`,
+            ''
+          );
+          response = redirect(`/${locale}${basePath}`);
+        }
+      } else {
+        if (hasMatchedDefaultLocale) {
+          response = rewrite(`/${locale}${request.nextUrl.pathname}`);
+        } else {
+          response = redirect(`/${locale}${request.nextUrl.pathname}`);
+        }
+      }
+    }
+
+    if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale);
     }
 

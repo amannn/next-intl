@@ -65,7 +65,8 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "accept-language-parser": "^1.5.0",
+    "@formatjs/intl-localematcher": "0.2.32",
+    "negotiator": "0.6.3",
     "server-only": "0.0.1",
     "use-intl": "^2.10.2"
   },
@@ -75,6 +76,7 @@
   },
   "devDependencies": {
     "@testing-library/react": "^13.0.0",
+    "@types/negotiator": "0.6.1",
     "@types/react": "^18.0.23",
     "dts-cli": "1.4.0",
     "eslint": "8.12.0",

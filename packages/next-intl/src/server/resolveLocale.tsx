@@ -1,4 +1,5 @@
-import acceptLanguageParser from 'accept-language-parser';
+import {match} from '@formatjs/intl-localematcher';
+import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
@@ -31,11 +32,12 @@ export default function resolveLocale(
 
   // Prio 3: Use accept-language header
   if (!locale && requestHeaders) {
-    locale =
-      acceptLanguageParser.pick(
-        i18n.locales,
-        requestHeaders.get('accept-language') || i18n.defaultLocale
-      ) || i18n.defaultLocale;
+    const languages = new Negotiator({
+      headers: {
+        'accept-language': requestHeaders.get('accept-language') || undefined
+      }
+    }).languages();
+    locale = match(languages, i18n.locales, i18n.defaultLocale);
   }
 
   // Prio 4: Use default locale
