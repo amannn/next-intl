@@ -11,6 +11,7 @@
     "packages/example",
     "packages/example-next-13",
     "packages/example-next-13-advanced",
+    "packages/example-next-13-with-pages",
     "packages/example-advanced",
     "packages/website"
   ],
