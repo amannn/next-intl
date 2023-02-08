@@ -6,7 +6,7 @@
   },
   "About": {
     "title": "About",
-    "description": "This is a page about us."
+    "description": "This is the about page."
   },
   "LocaleSwitcher": {
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"

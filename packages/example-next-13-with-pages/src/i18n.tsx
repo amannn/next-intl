@@ -1,11 +1,5 @@
-import {NextIntlConfig} from 'next-intl';
+import { getRequestConfig } from "next-intl/server";
 
-const i18n: NextIntlConfig = {
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
-  async getMessages({locale}) {
-    return (await import(`../messages/${locale}.json`)).default;
-  }
-};
-
-export default i18n;
+export default getRequestConfig(async ({ locale }) => ({
+  messages: (await import(`../messages/${locale}.json`)).default,
+}));
