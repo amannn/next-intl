@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-head-element */
 import {useLocale} from 'next-intl';
 import {ReactNode} from 'react';
 
@@ -8,6 +9,7 @@ type Props = {
 
 export default async function LocaleLayout({children}: Props) {
   const locale = useLocale();
+
   return (
     <html lang={locale}>
       <head>

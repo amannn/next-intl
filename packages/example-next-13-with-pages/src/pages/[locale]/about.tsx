@@ -1,32 +1,29 @@
-import React from "react";
-import type { GetStaticPropsContext } from "next";
-import { useTranslations } from "next-intl";
-import LocaleSwitcher from "../../components/LocaleSwitcher";
-import PageLayout from "../../components/PageLayout";
+import {GetStaticPropsContext} from 'next';
+import {useTranslations} from 'next-intl';
+import PageLayout from '../../components/PageLayout';
 
-export default function AboutPage() {
-  const t = useTranslations("About");
+export default function About() {
+  const t = useTranslations('About');
 
   return (
-    <PageLayout title={t("title")}>
-      <p>{t("description")}</p>
-      <LocaleSwitcher />
+    <PageLayout title={t('title')}>
+      <p>{t('description')}</p>
     </PageLayout>
   );
 }
 
-export async function getStaticProps({ params }: GetStaticPropsContext) {
+export async function getStaticProps({params}: GetStaticPropsContext) {
   return {
     props: {
       messages: (await import(`../../../messages/${params?.locale}.json`))
-        .default,
-    },
+        .default
+    }
   };
 }
 
 export async function getStaticPaths() {
   return {
-    paths: [{ params: { locale: "de" } }, { params: { locale: "en" } }],
-    fallback: false,
+    paths: [{params: {locale: 'de'}}, {params: {locale: 'en'}}],
+    fallback: false
   };
 }

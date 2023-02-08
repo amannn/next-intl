@@ -1,16 +1,16 @@
-import { NextIntlProvider } from "next-intl";
-import { NextRouter, withRouter } from "next/router";
-import type { AppProps } from "next/app";
+import {NextIntlProvider} from 'next-intl';
+import {AppProps} from 'next/app';
+import {NextRouter, withRouter} from 'next/router';
 
-interface WithRouterProps {
+type Props = AppProps & {
   router: NextRouter;
-}
+};
 
-function App({ Component, pageProps, router }: AppProps & WithRouterProps) {
+function App({Component, pageProps, router}: Props) {
   return (
     <NextIntlProvider
+      locale={(router.query?.locale as string) ?? 'en'}
       messages={pageProps.messages}
-      locale={(router.query?.locale as string) ?? "en"}
     >
       <Component {...pageProps} />
     </NextIntlProvider>

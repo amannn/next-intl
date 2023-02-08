@@ -2,13 +2,11 @@
 
 An example that showcases a basic installation of `next-intl` in a Next.js app that uses both the pages and the new app folder.
 
-Important to note:
-
-1. Do not add the i18n config to the `next.config.js` as it will cause the `app` directory to be ignored.
-2. Add `GetStaticPaths` and `GetStaticProps` or `GetServerSideProps` (if you need SSR) to the relevant `pages`.
+**Important**: Do not add an `i18n` config to `next.config.js`, as it will cause the `app` directory to be ignored.
 
 You can run the example locally like this:
 
 ```
-yarn && yarn dev
+yarn
+yarn dev
 ```
