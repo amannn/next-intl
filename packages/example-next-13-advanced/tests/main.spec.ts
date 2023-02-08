@@ -64,6 +64,11 @@ it('supports domain-based locale detection', async ({page}) => {
   });
   await page.goto('/nested');
   page.getByRole('heading', {name: 'Verschachtelt'});
+
+  await expect(page.getByRole('link', {name: 'Client-Seite'})).toHaveAttribute(
+    'href',
+    '/client'
+  );
 });
 
 it('remembers the last locale', async ({page}) => {
