@@ -6,8 +6,8 @@
 export * from 'use-intl';
 
 export {default as useLocalizedRouter} from './react-client/useLocalizedRouter';
-export {default as LocalizedLink} from './react-client/LocalizedLink';
-export * from './server/NextIntlConfig';
+export {default as LocalizedLink} from './shared/LocalizedLink';
+export {default as NextIntlClientProvider} from './shared/NextIntlClientProvider';
 
-// Legacy export for compatibility
-export {NextIntlClientProvider as NextIntlProvider} from './client';
+// DEPRECATED: Legacy export for compatibility
+export {default as NextIntlProvider} from './shared/NextIntlClientProvider';

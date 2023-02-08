@@ -3,7 +3,7 @@ import {test as it, expect} from '@playwright/test';
 it('handles unknown locales', async ({page}) => {
   const response = await page.goto('/unknown');
   expect(response?.status()).toBe(404);
-  await expect(page).toHaveURL(/\/unknown/);
+  await expect(page).toHaveURL('/unknown');
   page.getByRole('heading', {name: 'This page was not found (404)'});
 });
 
@@ -67,7 +67,7 @@ it('remembers the last locale', async ({page}) => {
   }).toPass();
 
   await page.goto('/');
-  await expect(page).toHaveURL(/\/de/);
+  await expect(page).toHaveURL('/de');
 });
 
 it('sets the `lang` attribute on `html`', async ({page}) => {
@@ -179,6 +179,47 @@ it('can use `LocalizedLink` on the client', async ({page}) => {
   );
 });
 
+it('prefixes as necessary with `LocalizedLink`', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
+    'href',
+    '/'
+  );
+  await expect(page.getByRole('link', {name: 'Client page'})).toHaveAttribute(
+    'href',
+    '/client'
+  );
+  await expect(
+    page.getByRole('link', {name: 'Switch to German'})
+  ).toHaveAttribute('href', '/de');
+
+  await page.goto('/en');
+  await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
+    'href',
+    '/en'
+  );
+  await expect(page.getByRole('link', {name: 'Client page'})).toHaveAttribute(
+    'href',
+    '/en/client'
+  );
+  await expect(
+    page.getByRole('link', {name: 'Switch to German'})
+  ).toHaveAttribute('href', '/de');
+
+  await page.goto('/de');
+  await expect(page.getByRole('link', {name: /^Start$/})).toHaveAttribute(
+    'href',
+    '/de'
+  );
+  await expect(page.getByRole('link', {name: 'Client-Seite'})).toHaveAttribute(
+    'href',
+    '/de/client'
+  );
+  await expect(
+    page.getByRole('link', {name: 'Zu Englisch wechseln'})
+  ).toHaveAttribute('href', '/en');
+});
+
 it('supports a consistent `now` value across the server and client', async ({
   page
 }) => {
@@ -195,7 +236,13 @@ it('supports a consistent `now` value across the server and client', async ({
 });
 
 it('can use `useUnlocalizedPathname`', async ({page}) => {
+  await page.goto('/client');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
+
   await page.goto('/en/client');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
+
+  await page.goto('/de/client');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
 });
 
@@ -204,17 +251,23 @@ it('can navigate between sibling pages that share a parent layout', async ({
 }) => {
   await page.goto('/en/nested');
   await page.getByRole('link', {name: 'Client page'}).click();
-  await expect(page).toHaveURL(/\/en\/client/);
+  await expect(page).toHaveURL('/en/client');
   await page.getByRole('link', {name: 'Nested page'}).click();
-  await expect(page).toHaveURL(/\/en\/nested/);
+  await expect(page).toHaveURL('/en/nested');
 });
 
-it('can use the localized router on the client side without a provider', async ({
-  page
-}) => {
+it('prefixes routes as necessary with the router', async ({page}) => {
+  await page.goto('/');
+  page.getByTestId('ClientRouterWithoutProvider-link').click();
+  await expect(page).toHaveURL('/nested');
+
   await page.goto('/en');
   page.getByTestId('ClientRouterWithoutProvider-link').click();
-  await expect(page).toHaveURL(/\/en\/nested/);
+  await expect(page).toHaveURL('/en/nested');
+
+  await page.goto('/de');
+  page.getByTestId('ClientRouterWithoutProvider-link').click();
+  await expect(page).toHaveURL('/de/nested');
 });
 
 it('can set `now` and `timeZone` at runtime', async ({page}) => {

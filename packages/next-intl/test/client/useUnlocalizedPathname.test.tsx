@@ -4,10 +4,6 @@ it('works for the root', () => {
   expect(unlocalizePathname('/en')).toEqual('/');
 });
 
-it("works if there's no pathname", () => {
-  expect(unlocalizePathname(null)).toEqual(null);
-});
-
 it('works for nested pages', () => {
   expect(unlocalizePathname('/en/nested')).toEqual('/nested');
 });
