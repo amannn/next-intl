@@ -9,7 +9,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
   return function middleware(request: NextRequest) {
     // Ideally we could use the `headers()` and `cookies()` API here
     // as well, but they are currently not available in middleware.
-    const locale = resolveLocale(
+    const {domain, locale} = resolveLocale(
       config,
       request.headers,
       request.cookies,
@@ -19,7 +19,9 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     const isRoot = request.nextUrl.pathname === ROOT_URL;
     const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
-    const hasMatchedDefaultLocale = locale === config.defaultLocale;
+    const hasMatchedDefaultLocale = domain
+      ? domain.defaultLocale === locale
+      : locale === config.defaultLocale;
 
     function getResponseInit() {
       let responseInit;

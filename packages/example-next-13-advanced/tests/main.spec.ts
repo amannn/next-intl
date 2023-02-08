@@ -52,6 +52,20 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   page.getByRole('heading', {name: 'Verschachtelt'});
 });
 
+it('supports domain-based locale detection', async ({page}) => {
+  page.setExtraHTTPHeaders({
+    'x-forwarded-host': 'example.de'
+  });
+  await page.goto('/nested');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+
+  page.setExtraHTTPHeaders({
+    'x-forwarded-host': 'de.example.com'
+  });
+  await page.goto('/nested');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+});
+
 it('remembers the last locale', async ({page}) => {
   await page.goto('/de');
 

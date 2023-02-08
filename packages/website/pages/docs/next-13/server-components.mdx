@@ -85,15 +85,20 @@ module.exports = withNextIntl({
 ```tsx
 import createIntlMiddleware from 'next-intl/middleware';
 
-// The middleware intercepts requests to `/` and will redirect
-// to one of the configured locales instead (e.g. `/en`).
-// In the background a cookie is set that will remember the
-// locale of the last page that the user has visited.
-// The middleware furthermore passes the resolved locale
-// to components in your app.
 export default createIntlMiddleware({
+  // A list of all locales that are supported
   locales: ['en', 'de'],
-  defaultLocale: 'en'
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en',
+
+  // Optionally configure a list of domains where the `defaultLocale` is changed
+  domains: [
+    {
+      domain: 'example.de',
+      defaultLocale: 'de'
+    }
+  ]
 });
 
 export const config = {
