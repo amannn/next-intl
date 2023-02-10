@@ -1,9 +1,9 @@
-import {useRouter} from 'next/navigation';
+import {useRouter as useNextRouter} from 'next/navigation';
 import {useMemo} from 'react';
 import localizeHref from './localizeHref';
 
-export default function useLocalizedRouter() {
-  const router = useRouter();
+export default function useRouter() {
+  const router = useNextRouter();
 
   return useMemo(
     () => ({

@@ -11,7 +11,7 @@ export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
 
 // We don't offer a server-only variant of this component currently
-export {default as LocalizedLink} from '../shared/LocalizedLink';
+export {default as Link} from '../shared/Link';
 
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
