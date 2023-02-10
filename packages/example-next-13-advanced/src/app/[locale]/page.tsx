@@ -1,4 +1,4 @@
-import {LocalizedLink, useTranslations} from 'next-intl';
+import {Link, useTranslations} from 'next-intl';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
 import CurrentTime from '../../components/CurrentTime';
@@ -31,9 +31,9 @@ export default function Index() {
       <CoreLibrary />
       <ClientRouterWithoutProvider />
       <div>
-        <LocalizedLink href={{pathname: '/', query: {test: true}}}>
+        <Link href={{pathname: '/', query: {test: true}}}>
           Go to home with query param
-        </LocalizedLink>
+        </Link>
       </div>
     </PageLayout>
   );

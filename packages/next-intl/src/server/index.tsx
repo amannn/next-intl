@@ -2,6 +2,7 @@
  * Server-only APIs.
  */
 
+/** @deprecated */
 export function createIntlMiddleware() {
   throw new Error(
     "DEPRECATION ERROR: `import {createIntlMiddleware} from 'next-intl';` is deprecated and needs to be replaced with `import createIntlMiddleware from 'next-intl/middleware'`."

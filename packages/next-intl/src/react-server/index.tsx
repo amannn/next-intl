@@ -3,6 +3,8 @@
  * from 'next-intl'. Make sure this mirrors the API from the main entry.
  */
 
+import Link from '../shared/Link';
+
 // Replaced exports from the `react` package
 export {default as useLocale} from './useLocale';
 export {default as useTranslations} from './useTranslations';
@@ -17,3 +19,6 @@ export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvide
 
 // Everything from `core`
 export * from 'use-intl/dist/src/core';
+
+/** @deprecated Is called `Link` now. */
+export const LocalizedLink = Link;

@@ -1,7 +1,7 @@
 'use client';
 
-import {useNow, LocalizedLink} from 'next-intl';
-import {useUnlocalizedPathname} from 'next-intl/client';
+import {useNow, Link} from 'next-intl';
+import {usePathname} from 'next-intl/client';
 
 export default function ClientContent() {
   const now = useNow();
@@ -9,8 +9,8 @@ export default function ClientContent() {
   return (
     <>
       <p data-testid="NowFromClient">{now.toISOString()}</p>
-      <LocalizedLink href="/">Go to home</LocalizedLink>
-      <p data-testid="UnlocalizedPathname">{useUnlocalizedPathname()}</p>
+      <Link href="/">Go to home</Link>
+      <p data-testid="UnlocalizedPathname">{usePathname()}</p>
     </>
   );
 }

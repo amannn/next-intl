@@ -162,7 +162,7 @@ it('can use the core library', async ({page}) => {
   await expect(element).toHaveText('Relative time: tomorrow');
 });
 
-it('can use `LocalizedLink` on the server', async ({page}) => {
+it('can use `Link` on the server', async ({page}) => {
   await page.goto('/en');
   await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
     'href',
@@ -174,23 +174,21 @@ it('can use `LocalizedLink` on the server', async ({page}) => {
   );
 });
 
-it('can use `LocalizedLink` with an object as `href`', async ({page}) => {
+it('can use `Link` with an object as `href`', async ({page}) => {
   await page.goto('/en');
   await expect(
     page.getByRole('link', {name: 'Go to home with query param'})
   ).toHaveAttribute('href', '/en?test=true');
 });
 
-it('can use `LocalizedLink` to link to the root of another language', async ({
-  page
-}) => {
+it('can use `Link` to link to the root of another language', async ({page}) => {
   await page.goto('/en');
   await expect(
     page.getByRole('link', {name: 'Switch to German'})
   ).toHaveAttribute('href', '/de');
 });
 
-it('can use `LocalizedLink` on the client', async ({page}) => {
+it('can use `Link` on the client', async ({page}) => {
   await page.goto('/en/client');
   await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
     'href',
@@ -198,7 +196,7 @@ it('can use `LocalizedLink` on the client', async ({page}) => {
   );
 });
 
-it('prefixes as necessary with `LocalizedLink`', async ({page}) => {
+it('prefixes as necessary with `Link`', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
     'href',
@@ -254,7 +252,7 @@ it('supports a consistent `now` value across the server and client', async ({
   expect(serverDate).toBe(clientDate);
 });
 
-it('can use `useUnlocalizedPathname`', async ({page}) => {
+it('can use `usePathname`', async ({page}) => {
   await page.goto('/client');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
 
