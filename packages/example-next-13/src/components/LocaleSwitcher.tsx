@@ -1,5 +1,4 @@
-import {useLocale, useTranslations} from 'next-intl';
-import Link from 'next/link';
+import {useLocale, useTranslations, Link} from 'next-intl';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');
@@ -7,7 +6,7 @@ export default function LocaleSwitcher() {
   const otherLocale = locale === 'en' ? 'de' : 'en';
 
   return (
-    <Link href={'/' + otherLocale} prefetch={false}>
+    <Link href="/" locale={otherLocale}>
       {t('switchLocale', {locale: otherLocale})}
     </Link>
   );

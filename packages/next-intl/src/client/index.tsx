@@ -2,22 +2,18 @@
  * Client-only APIs.
  */
 
-import React, {ComponentProps} from 'react';
 import NextIntlClientProvider_ from '../shared/NextIntlClientProvider';
+import usePathname from './usePathname';
+import useRouter from './useRouter';
 
-export {default as useLocalizedRouter} from './useLocalizedRouter';
-export {default as useUnlocalizedPathname} from './useUnlocalizedPathname';
+export {default as useRouter} from './useRouter';
+export {default as usePathname} from './usePathname';
 
-let hasWarned = false;
-export function NextIntlClientProvider(
-  props: ComponentProps<typeof NextIntlClientProvider_>
-) {
-  if (!hasWarned) {
-    console.warn(
-      'DEPRECATION WARNING: `NextIntlClientProvider` should be imported from `next-intl`, not `next-intl/client` - please update your import statement.'
-    );
-    hasWarned = true;
-  }
+/** @deprecated Is called `usePathname` now. */
+export const useUnlocalizedPathname = usePathname;
 
-  return <NextIntlClientProvider_ {...props} />;
-}
+/** @deprecated Is called `useRouter` now. */
+export const useLocalizedRouter = useRouter;
+
+/** @deprecated Should be imported from `next-intl`, not `next-intl/client`. */
+export const NextIntlClientProvider = NextIntlClientProvider_;

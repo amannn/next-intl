@@ -1,4 +1,4 @@
-import useLocalizedRouter from '../client/useLocalizedRouter';
+import useRouter from '../client/useRouter';
 
 // TODO: Only available for backwards compatibility
 // during the beta, remove for stable release
@@ -13,5 +13,5 @@ export default function useLocalizedRouterDeprecated() {
     hasWarned = true;
   }
 
-  return useLocalizedRouter();
+  return useRouter();
 }

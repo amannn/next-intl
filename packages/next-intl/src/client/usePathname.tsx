@@ -1,4 +1,4 @@
-import {usePathname} from 'next/navigation';
+import {usePathname as useNextPathname} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import getCookieLocale from './getCookieLocale';
 import hasPathnamePrefixed from './hasPathnamePrefixed';
@@ -16,8 +16,8 @@ export function unlocalizePathname(pathname: string) {
  * This can be helpful e.g. to implement navigation links,
  * where the active link is highlighted.
  */
-export default function useUnlocalizedPathname() {
-  const pathname = usePathname();
+export default function usePathname() {
+  const pathname = useNextPathname();
   const [unlocalizedPathname, setUnlocalizedPathname] = useState<string | null>(
     null
   );

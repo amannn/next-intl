@@ -1,9 +1,9 @@
 'use client';
 
-import {useLocalizedRouter} from 'next-intl/client';
+import {useRouter} from 'next-intl/client';
 
 export default function ClientRouterWithoutProvider() {
-  const router = useLocalizedRouter();
+  const router = useRouter();
 
   function onClick() {
     router.push('/nested');

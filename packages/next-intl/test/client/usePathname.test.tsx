@@ -1,4 +1,4 @@
-import {unlocalizePathname} from '../../src/client/useUnlocalizedPathname';
+import {unlocalizePathname} from '../../src/client/usePathname';
 
 it('works for the root', () => {
   expect(unlocalizePathname('/en')).toEqual('/');

@@ -157,37 +157,37 @@ If you're in a transitioning phase, either from the `pages` directory to the `ap
 In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
 
 ```tsx
-import {LocalizedLink} from 'next-intl';
+import {Link} from 'next-intl';
 
 // When the user is on `/en`, the link will point to `/en/about`
-<LocalizedLink href="/about">About</LocalizedLink>
+<Link href="/about">About</Link>
 
 // You can override the `locale` to switch to another language
-<LocalizedLink href="/" locale="de">Switch to German</LocalizedLink>
+<Link href="/" locale="de">Switch to German</Link>
 ```
 
-If you need to navigate programmatically (e.g. in response to a form submission), `next-intl` provides a convience API that wraps `useRouter` and automatically applies the locale of the user.
+If you need to navigate programmatically (e.g. in response to a form submission), `next-intl` provides a convience API that wraps `useRouter` from Next.js and automatically applies the locale of the user.
 
 ```tsx
 'use client';
 
-import {useLocalizedRouter} from 'next-intl/client';
+import {useRouter} from 'next-intl/client';
 
-const router = useLocalizedRouter();
+const router = useRouter();
 
 // When the user is on `/en`, the router will navigate to `/en/about`
 router.push('/about');
 ```
 
-To retrieve the pathname without a locale prefix, you can call `useUnlocalizedPathname`.
+To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
 ```tsx
 'use client';
 
-import {useUnlocalizedPathname} from 'next-intl/client';
+import {usePathname} from 'next-intl/client';
 
 // When the user is on `/en`, this will be `/`
-const pathname = useUnlocalizedPathname();
+const pathname = usePathname();
 ```
 
 ## Global request configuration
