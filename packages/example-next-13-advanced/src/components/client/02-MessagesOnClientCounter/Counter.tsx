@@ -1,6 +1,5 @@
 import pick from 'lodash/pick';
-import {useLocale} from 'next-intl';
-import {NextIntlClientProvider} from 'next-intl/client';
+import {useLocale, NextIntlClientProvider} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
 export default async function Counter() {

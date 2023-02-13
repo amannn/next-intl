@@ -9,7 +9,11 @@ export {default as useTranslations} from './useTranslations';
 export {default as useIntl} from './useIntl';
 export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
-export {default as LocalizedLink} from './LocalizedLink';
+
+// We don't offer a server-only variant of this component currently
+export {default as LocalizedLink} from '../shared/LocalizedLink';
+
+export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
 // Everything from `core`
 export * from 'use-intl/dist/src/core';
