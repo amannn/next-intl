@@ -1,5 +1,6 @@
-import useConfig from './useConfig';
+import getTimeZone from '../server/getTimeZone';
+import useHook from './useHook';
 
 export default function useTimeZone() {
-  return useConfig().timeZone;
+  return useHook('useTimeZone', getTimeZone());
 }

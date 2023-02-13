@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
-import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
-import resolveLocale from './resolveLocale';
+import NextIntlMiddlewareConfig from './server/NextIntlMiddlewareConfig';
+import resolveLocale from './server/resolveLocale';
+import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from './shared/constants';
 
 // If there's an exact match for this path, we'll add the locale to the URL
 const ROOT_URL = '/';
