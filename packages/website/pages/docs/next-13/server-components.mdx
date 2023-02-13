@@ -66,7 +66,7 @@ export default getRequestConfig(async ({locale}) => ({
 }));
 ```
 
-3. Provide the path to your configuration in `next.config.js`:
+3. Set up the plugin and provide the path to your configuration in `next.config.js`:
 
 ```js
 const withNextIntl = require('next-intl/plugin')(
@@ -154,6 +154,8 @@ If you're in a transitioning phase, either from the `pages` directory to the `ap
 
 ## Routing
 
+### `Link`
+
 In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
 
 ```tsx
@@ -165,6 +167,8 @@ import {Link} from 'next-intl';
 // You can override the `locale` to switch to another language
 <Link href="/" locale="de">Switch to German</Link>
 ```
+
+### `useRouter`
 
 If you need to navigate programmatically (e.g. in response to a form submission), `next-intl` provides a convience API that wraps `useRouter` from Next.js and automatically applies the locale of the user.
 
@@ -179,6 +183,8 @@ const router = useRouter();
 router.push('/about');
 ```
 
+### `usePathname`
+
 To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
 ```tsx
@@ -188,6 +194,17 @@ import {usePathname} from 'next-intl/client';
 
 // When the user is on `/en`, this will be `/`
 const pathname = usePathname();
+```
+
+### `redirect`
+
+To redirect the user to another page with the current locale, you can call `redirect` from a Server Component.
+
+```tsx
+import {redirect} from 'next-intl/server';
+
+// When the user is on `/en`, this will be `/en/about`
+redirect('/about');
 ```
 
 ## Global request configuration
@@ -206,6 +223,37 @@ export default getRequestConfig(async ({locale}) => ({
   // You can read from headers or cookies here if necessary
   timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
 }));
+```
+
+## Using internationalization outside of components
+
+If you need to use translated messages in functions like `generateMetadata`, you can import awaitable versions of the functions that you usually call as hooks from `next-intl/server`.
+
+```tsx
+// [locale]/layout.tsx
+
+import {getTranslations} from 'next-intl/server';
+
+export async function generateMetadata() {
+  const t = await getTranslations('Metadata');
+
+  return {
+    title: t('title'),
+    description: t('description')
+  };
+}
+```
+
+These functions are available from `next-intl/server` for usage outside of components:
+
+```tsx
+import {
+  getTranslations, // like `useTranslations`
+  getIntl, // like `useIntl`
+  getLocale, // like `useLocale`
+  getNow, // like `useNow`
+  getTimeZone // like `useTimeZone`
+} from 'next-intl/server';
 ```
 
 ## Switching to Client Components
@@ -247,37 +295,6 @@ function Expandable({title, description}) {
 This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
 
 If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
-
-## Using internationalization outside of components
-
-If you need to use translated messages in functions like `generateMetadata`, you can import awaitable versions of the functions that you usually call as hooks from `next-intl/server`.
-
-```tsx
-// [locale]/layout.tsx
-
-import {getTranslations} from 'next-intl/server';
-
-export async function generateMetadata() {
-  const t = await getTranslations('Metadata');
-
-  return {
-    title: t('title'),
-    description: t('description')
-  };
-}
-```
-
-These functions are available from `next-intl/server` for usage outside of components:
-
-```tsx
-import {
-  getTranslations, // like `useTranslations`
-  getIntl, // like `useIntl`
-  getLocale, // like `useLocale`
-  getNow, // like `useNow`
-  getTimeZone // like `useTimeZone`
-} from 'next-intl/server';
-```
 
 ## Providing feedback
 
