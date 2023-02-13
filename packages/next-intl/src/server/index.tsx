@@ -15,3 +15,5 @@ export {default as getLocale} from './getLocale';
 export {default as getNow} from './getNow';
 export {default as getTimeZone} from './getTimeZone';
 export {default as getTranslations} from './getTranslations';
+
+export {default as redirect} from './redirect';

@@ -263,6 +263,18 @@ it('can use `usePathname`', async ({page}) => {
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
 });
 
+it('can use `redirect`', async ({page}) => {
+  await page.goto('/en/redirect');
+  await expect(page).toHaveURL('/en/client');
+
+  await page.goto('/redirect');
+  // Currently we can't detect unprefixed routing in the `redirect` function
+  await expect(page).toHaveURL('/en/client');
+
+  await page.goto('/de/redirect');
+  await expect(page).toHaveURL('/de/client');
+});
+
 it('can navigate between sibling pages that share a parent layout', async ({
   page
 }) => {

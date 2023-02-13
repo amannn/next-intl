@@ -1,16 +1,7 @@
 import {UrlObject} from 'url';
+import localizePathname from '../shared/localizePathname';
 import getCookieLocale from './getCookieLocale';
 import hasPathnamePrefixed from './hasPathnamePrefixed';
-
-function localizePathname(locale: string, pathname: string) {
-  let localizedHref = '/' + locale;
-
-  if (pathname !== '/') {
-    localizedHref += pathname;
-  }
-
-  return localizedHref;
-}
 
 export default function localizeHref(href: string, locale?: string): string;
 export default function localizeHref(
