@@ -102,8 +102,8 @@ export default createIntlMiddleware({
 });
 
 export const config = {
-  // Skip all internal paths
-  matcher: ['/((?!_next).*)']
+  // Skip all non-content paths
+  matcher: ['/((?!api|_next|favicon.ico).*)']
 };
 ```
 
@@ -274,7 +274,7 @@ import Expandable from './Expandable';
 
 export default function FAQ() {
   const t = useTranslations('FAQ');
-  return <Expandable title={t('title')} description={t('description')} />;
+  return <Expandable title={t('title')}>{t('description')}</Expandable>;
 }
 ```
 
@@ -284,7 +284,7 @@ export default function FAQ() {
 
 import {useState} from 'react';
 
-function Expandable({title, description}) {
+function Expandable({title, children}) {
   const [expanded, setExpanded] = useState(false);
 
   function onToggle() {
@@ -294,7 +294,7 @@ function Expandable({title, description}) {
   return (
     <div>
       <button onClick={onToggle}>{title}</button>
-      {expanded && <p>{description}</p>}
+      {expanded && <p>{children}</p>}
     </div>
   );
 }

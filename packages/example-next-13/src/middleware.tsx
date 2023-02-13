@@ -6,6 +6,6 @@ export default createIntlMiddleware({
 });
 
 export const config = {
-  // Skip all internal paths
-  matcher: ['/((?!_next).*)']
+  // Skip all non-content paths
+  matcher: ['/((?!api|_next|favicon.ico).*)']
 };
