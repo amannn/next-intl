@@ -54,10 +54,15 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
 
     let response;
     if (isRoot) {
+      let pathWithSearch = `/${locale}`;
+      if (request.nextUrl.search) {
+        pathWithSearch += request.nextUrl.search;
+      }
+
       if (hasMatchedDefaultLocale) {
-        response = rewrite(`/${locale}`);
+        response = rewrite(pathWithSearch);
       } else {
-        response = redirect(`/${locale}`);
+        response = redirect(pathWithSearch);
       }
     } else {
       const pathLocale = config.locales.find((cur) =>
@@ -65,21 +70,23 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       );
       const hasLocalePrefix = pathLocale != null;
 
+      let pathWithSearch = request.nextUrl.pathname;
+      if (request.nextUrl.search) {
+        pathWithSearch += request.nextUrl.search;
+      }
+
       if (hasLocalePrefix) {
         if (pathLocale === locale) {
           response = next();
         } else {
-          const basePath = request.nextUrl.pathname.replace(
-            `/${pathLocale}`,
-            ''
-          );
+          const basePath = pathWithSearch.replace(`/${pathLocale}`, '');
           response = redirect(`/${locale}${basePath}`);
         }
       } else {
         if (hasMatchedDefaultLocale) {
-          response = rewrite(`/${locale}${request.nextUrl.pathname}`);
+          response = rewrite(`/${locale}${pathWithSearch}`);
         } else {
-          response = redirect(`/${locale}${request.nextUrl.pathname}`);
+          response = redirect(`/${locale}${pathWithSearch}`);
         }
       }
     }

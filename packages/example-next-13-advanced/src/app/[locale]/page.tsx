@@ -7,7 +7,11 @@ import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
 
-export default function Index() {
+type Props = {
+  searchParams: Record<string, string>;
+};
+
+export default function Index({searchParams}: Props) {
   const t = useTranslations('Index');
 
   return (
@@ -35,6 +39,7 @@ export default function Index() {
           Go to home with query param
         </Link>
       </div>
+      <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
     </PageLayout>
   );
 }

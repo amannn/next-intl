@@ -309,3 +309,30 @@ it('can set `now` and `timeZone` at runtime', async ({page}) => {
   const element = page.getByTestId('CurrentTime');
   await expect(element).toHaveText('Jan 1, 2020, 08:00 (Asia/Shanghai)');
 });
+
+it('keeps search params for directly matched pages', async ({page}) => {
+  await page.goto('/de?param=true');
+  await expect(page).toHaveURL('/de?param=true');
+  await expect(page.getByTestId('SearchParams')).toHaveText(
+    '{ "param": "true" }'
+  );
+});
+
+it('keeps search params for rewrites', async ({page}) => {
+  await page.goto('/?param=true');
+  await expect(page).toHaveURL('/?param=true');
+  await expect(page.getByTestId('SearchParams')).toHaveText(
+    '{ "param": "true" }'
+  );
+});
+
+it('keeps search params for redirects', async ({browser}) => {
+  const context = await browser.newContext({locale: 'de-DE'});
+  const page = await context.newPage();
+
+  await page.goto('/?param=true');
+  await expect(page).toHaveURL('/de?param=true');
+  await expect(page.getByTestId('SearchParams')).toHaveText(
+    '{ "param": "true" }'
+  );
+});
