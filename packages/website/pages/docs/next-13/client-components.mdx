@@ -18,7 +18,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 │   └── [locale]
 │       ├── layout.tsx (2)
 │       └── page.tsx (3)
-└── middleware.tsx (4)
+└── middleware.ts (4)
 ```
 
 **Now, set up these files as follows:**
@@ -76,7 +76,7 @@ export default function Index() {
 }
 ```
 
-4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx` that handles redirects:
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts` that handles redirects:
 
 ```tsx
 import {createIntlMiddleware} from 'next-intl/server';

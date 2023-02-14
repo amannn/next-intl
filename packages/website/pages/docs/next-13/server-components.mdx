@@ -35,9 +35,9 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 ├── messages (1)
 │   ├── en.json
 │   └── ...
-├── i18n.tsx (2)
+├── i18n.ts (2)
 ├── next.config.js (3)
-├── middleware.tsx (4)
+├── middleware.ts (4)
 └── app
     └── [locale]
         ├── layout.tsx (5)
@@ -56,7 +56,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. `next-intl` creates a configuration once per request and makes it available to all Server Components. Define this in `i18n.tsx` (short for "internationalization"):
+2. `next-intl` creates a configuration once per request and makes it available to all Server Components. Define this in `i18n.ts` (short for "internationalization"):
 
 ```tsx
 import {getRequestConfig} from 'next-intl/server';
@@ -71,7 +71,7 @@ export default getRequestConfig(async ({locale}) => ({
 ```js
 const withNextIntl = require('next-intl/plugin')(
   // This is the default, also the `src` folder is supported out of the box
-  './i18n.tsx'
+  './i18n.ts'
 );
 
 module.exports = withNextIntl({
@@ -80,7 +80,7 @@ module.exports = withNextIntl({
 });
 ```
 
-4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx`:
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts`:
 
 ```tsx
 import createIntlMiddleware from 'next-intl/middleware';
@@ -220,7 +220,7 @@ export default async function Profile() {
 If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.tsx`.
 
 ```tsx
-// i18n.tsx
+// i18n.ts
 
 import {headers} from 'next/headers';
 import {getRequestConfig} from 'next-intl/server';
