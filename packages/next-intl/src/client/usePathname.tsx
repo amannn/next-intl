@@ -1,3 +1,5 @@
+'use client';
+
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import getCookieLocale from './getCookieLocale';
