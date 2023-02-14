@@ -70,7 +70,7 @@ export default getRequestConfig(async ({locale}) => ({
 
 ```js
 const withNextIntl = require('next-intl/plugin')(
-  // This is the default, also the `src` folder is supported out of the box
+  // This is the default (also the `src` folder is supported out of the box)
   './i18n.ts'
 );
 
@@ -217,7 +217,7 @@ export default async function Profile() {
 
 ## Global request configuration
 
-If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.tsx`.
+If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.ts`.
 
 ```tsx
 // i18n.ts
