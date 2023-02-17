@@ -76,7 +76,9 @@ export default function resolveLocale(
     }).languages();
     try {
       locale = match(languages, i18n.locales, i18n.defaultLocale);
-    } catch (e) {}
+    } catch (e) {
+      locale = i18n.defaultLocale
+    }
   }
 
   // Prio 5: Use default locale
