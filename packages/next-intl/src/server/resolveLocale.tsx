@@ -74,7 +74,11 @@ export default function resolveLocale(
         'accept-language': requestHeaders.get('accept-language') || undefined
       }
     }).languages();
-    locale = match(languages, i18n.locales, i18n.defaultLocale);
+    try {
+      locale = match(languages, i18n.locales, i18n.defaultLocale);
+    } catch (e) {
+      // Invalid language
+    }
   }
 
   // Prio 5: Use default locale
