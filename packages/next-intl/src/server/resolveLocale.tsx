@@ -77,7 +77,7 @@ export default function resolveLocale(
     try {
       locale = match(languages, i18n.locales, i18n.defaultLocale);
     } catch (e) {
-      locale = i18n.defaultLocale
+      // Invalid language
     }
   }
 
