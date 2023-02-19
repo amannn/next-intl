@@ -24,6 +24,13 @@ module.exports = withNextra({
       source: '/examples',
       destination: '/examples/minimal',
       permanent: false
+    },
+
+    // Moved pages
+    {
+      source: '/docs/getting-started/production-checklist',
+      destination: '/docs/production-checklist',
+      permanent: true
     }
   ]
 });
