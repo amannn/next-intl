@@ -85,6 +85,8 @@ module.exports = withNextIntl({
 ```tsx
 import createIntlMiddleware from 'next-intl/middleware';
 
+// The middleware matches a locale for the user request
+// and handles redirects and rewrites accordingly.
 export default createIntlMiddleware({
   // A list of all locales that are supported
   locales: ['en', 'de'],
@@ -98,14 +100,18 @@ export default createIntlMiddleware({
       domain: 'example.de',
       defaultLocale: 'de'
     }
-  ]
+  ],
+
+  // Sets the `Link` response header to notify search engines about
+  // links to the content in other languages (defaults to `true`).
+  alternateLinks: true
 });
 
 export const config = {
   // Skip all paths that aren't pages that you'd like to internationalize.
   // If you use the `public` folder, make sure your static assets are ignored
   // (e.g. by moving them to a shared folder that is referenced here).
-  matcher: ['/((?!api|_next|favicon.ico).*)']
+  matcher: ['/((?!api|_next|favicon.ico|assets).*)']
 };
 ```
 

@@ -31,6 +31,11 @@ export default function setAlternateLinksHeader(
   request: NextRequest,
   response: NextResponse
 ) {
+  // Avoid pointing to a localized subpath that is not relevant
+  if (config.locales.length <= 1) {
+    return;
+  }
+
   const unprefixedPathname = getUnprefixedPathname(config, request);
 
   const links = config.locales.flatMap((locale) => {
