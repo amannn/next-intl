@@ -74,6 +74,7 @@ export default {
       titleTemplate: '%s – next-intl'
     };
   },
+  primaryHue: 210,
   footer: {
     text: null,
     component: null
