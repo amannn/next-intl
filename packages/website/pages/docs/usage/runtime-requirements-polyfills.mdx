@@ -21,7 +21,7 @@ import {useLocale} from 'next-intl';
 import Script from 'next/script';
 
 // Use this component in your Next.js custom `_app`
-export default function IntlPolyfills() {
+function IntlPolyfills() {
   const locale = useLocale();
 
   const polyfills = [
@@ -40,7 +40,9 @@ export default function IntlPolyfills() {
   return (
     <Script
       strategy="beforeInteractive"
-      src={'https://polyfill.io/v3/polyfill.min.js?features=' + polyfills.join(',')}
+      src={
+        'https://polyfill.io/v3/polyfill.min.js?features=' + polyfills.join(',')
+      }
     />
   );
 }
