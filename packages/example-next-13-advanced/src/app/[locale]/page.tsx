@@ -1,4 +1,5 @@
 import {Link, useTranslations} from 'next-intl';
+import Image from 'next/image';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
 import CurrentTime from '../../components/CurrentTime';
@@ -40,6 +41,7 @@ export default function Index({searchParams}: Props) {
         </Link>
       </div>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
+      <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
     </PageLayout>
   );
 }
