@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/**
+ * Steps
+ */
+
+.steps {
+  @apply ml-4 pl-6 border-l border-slate-200;
+  counter-reset: step;
+}
+.steps h3 {
+  counter-increment: step;
+  @apply text-lg;
+}
+.steps h3:before {
+  content: counter(step);
+  @apply inline-block absolute mt-[-6px] ml-[-44px] pt-[4px] w-10 h-10 text-center font-bold text-base text-slate-500 rounded-full border-4 border-white bg-slate-100;
+}
+
+.dark .steps {
+  @apply border-slate-800;
+}
+.dark .steps h3:before {
+  @apply bg-slate-800 text-white/75;
+  border-color: rgba(17, 17, 17, var(--tw-bg-opacity)); /* nx-bg-dark */
+}

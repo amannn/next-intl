@@ -46,7 +46,13 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 **Now, set up the files as follows:**
 
-1. Provide messages for a language, e.g. in `messages/en.json`.
+<div className="steps">
+
+### `messages/en.json`
+
+Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+
+The simplest option is to create JSON files locally that are separated by a [locale](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
 
 ```json filename="messages/en.json"
 {
@@ -56,7 +62,9 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. `next-intl` creates a configuration once per request and makes it available to all Server Components. Define this in `i18n.ts` (short for "internationalization").
+### `i18n.ts`
+
+`next-intl` creates a configuration once per request and makes it available to all Server Components. Here you can provide messages depending the locale of the user.
 
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -66,7 +74,9 @@ export default getRequestConfig(async ({locale}) => ({
 }));
 ```
 
-3. Set up the plugin and provide the path to your configuration in `next.config.js`.
+### `next.config.js`
+
+Now, set up the plugin and provide the path to your configuration.
 
 ```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')(
@@ -80,13 +90,13 @@ module.exports = withNextIntl({
 });
 ```
 
-4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts`.
+### `middleware.ts`
+
+The middleware matches a locale for the user request and handles redirects and rewrites accordingly.
 
 ```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
 
-// The middleware matches a locale for the user request
-// and handles redirects and rewrites accordingly.
 export default createIntlMiddleware({
   // A list of all locales that are supported
   locales: ['en', 'de'],
@@ -115,7 +125,9 @@ export const config = {
 };
 ```
 
-5. Provide the matched `locale` to the document in `app/[locale]/layout.tsx`.
+### `app/[locale]/layout.tsx`
+
+The `locale` that was matched by the middleware is available via `useLocale` everywhere in your app. As a first step, use it to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {useLocale} from 'next-intl';
@@ -143,7 +155,9 @@ export default function LocaleLayout({children, params}: Props) {
 }
 ```
 
-6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
+### `app/[locale]/page.tsx`
+
+Use translations in your page components or anywhere else!
 
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
@@ -154,7 +168,9 @@ export default function Index() {
 }
 ```
 
-That's all it takes! Now you can internationalize your apps purely on the server side.
+</div>
+
+That's all it takes! Now you can internationalize your apps on the server side.
 
 If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
 
