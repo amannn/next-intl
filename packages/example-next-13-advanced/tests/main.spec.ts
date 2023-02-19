@@ -339,6 +339,32 @@ it('keeps search params for redirects', async ({browser}) => {
   );
 });
 
+it('sets alternate links', async ({request}) => {
+  for (const pathname of ['/', '/en', '/de']) {
+    expect((await request.get(pathname)).headers().link).toBe(
+      [
+        '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
+        '<http://example.de:3000/>; rel="alternate"; hreflang="de"',
+        '<http://de.example.com:3000/>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+      ].join(', ')
+    );
+  }
+
+  for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
+    expect((await request.get(pathname)).headers().link).toBe(
+      [
+        '<http://localhost:3000/en/nested>; rel="alternate"; hreflang="en"',
+        '<http://example.de:3000/nested>; rel="alternate"; hreflang="de"',
+        '<http://de.example.com:3000/nested>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
+      ].join(', ')
+    );
+  }
+});
+
 it.skip('can localize route handlers', async ({request}) => {
   // Default
   {
