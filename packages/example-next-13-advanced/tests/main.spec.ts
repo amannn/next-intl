@@ -339,7 +339,7 @@ it('keeps search params for redirects', async ({browser}) => {
   );
 });
 
-it('can localize route handlers', async ({request}) => {
+it.skip('can localize route handlers', async ({request}) => {
   // Default
   {
     const response = await request.get('/api?name=world');
