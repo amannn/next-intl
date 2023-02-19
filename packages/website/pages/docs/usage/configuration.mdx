@@ -1,4 +1,4 @@
-import Callout from 'nextra-theme-docs/callout';
+import Callout from 'components/Callout';
 
 # Configuration
 
@@ -31,7 +31,7 @@ To avoid mismatches between the server and client environment, it is recommended
 
 This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
 
-<Callout>
+<Callout type="warning">
   **Important:** When you use `getStaticProps` and no `updateInterval`, this
   value will be stale. Therefore either regenerate these pages regularly with
   `revalidate`, use `getServerSideProps` instead or configure an
@@ -74,7 +74,7 @@ To achieve consistent date, time and number formatting across your app, you can 
 ```
 
 ```js
-t('ordered', {orderDate: parseISO('2020-11-20T10:36:01.516Z')});
+t('ordered', {orderDate: new Date('2020-11-20T10:36:01.516Z')});
 t('latitude', {latitude: 47.414329182});
 ```
 

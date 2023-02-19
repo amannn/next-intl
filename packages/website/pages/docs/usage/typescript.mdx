@@ -1,12 +1,10 @@
-import Callout from 'nextra-theme-docs/callout';
+import Callout from 'components/Callout';
 
 # TypeScript integration
 
 `next-intl` integrates with TypeScript out-of-the box without additional setup. You can however provide the shape of your messages to get autocompletion and type safety for your namespaces and message keys.
 
-```js
-// messages.json
-
+```js filename="messages.json"
 {
   "About": {
     "title": "Hello"
@@ -14,9 +12,7 @@ import Callout from 'nextra-theme-docs/callout';
 }
 ```
 
-```tsx
-// About.tsx
-
+```tsx filename="About.tsx"
 function About() {
   // ✅ Valid namespace
   const t = useTranslations('About');
@@ -31,7 +27,7 @@ function About() {
 
 To do this, add a global type definition file in your project root (e.g. `global.d.ts`):
 
-```jsx
+```jsx filename="global.d.ts"
 // Use type safe message keys with `next-intl`
 type Messages = typeof import('./messages/en.json');
 declare interface IntlMessages extends Messages {}
@@ -39,16 +35,19 @@ declare interface IntlMessages extends Messages {}
 
 You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a messages sample by importing it.
 
-<Callout>
-  If you're encountering problems, please double check that:
-  <ol className="mt-2">
-    <li>Your interface is called `IntlMessages`.</li>
-    <li>You're using TypeScript version 4 or later.</li>
-    <li>The path of your `import` is correct.</li>
-    <li>Your type declaration file is included in `tsconfig.json`.</li>
-    <li>
-      Your editor has loaded the most recent type declarations. When in doubt,
-      please restart.
-    </li>
-  </ol>
+<Callout type="warning">
+
+**If you're encountering problems, please double check that:**
+
+<ol className="list-decimal ml-4">
+  <li>Your interface is called `IntlMessages`.</li>
+  <li>You're using TypeScript version 4 or later.</li>
+  <li>The path of your `import` is correct.</li>
+  <li>Your type declaration file is included in `tsconfig.json`.</li>
+  <li>
+    Your editor has loaded the most recent type declarations. When in doubt,
+    please restart.
+  </li>
+</ol>
+
 </Callout>

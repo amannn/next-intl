@@ -1,8 +1,11 @@
 const withNextra = require('nextra')({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.js',
-  unstable_flexsearch: true,
-  unstable_staticImage: true
+  staticImage: true,
+  defaultShowCopyCode: true,
+  flexsearch: {
+    codeblocks: false
+  }
 });
 
 module.exports = withNextra({
@@ -21,6 +24,13 @@ module.exports = withNextra({
       source: '/examples',
       destination: '/examples/minimal',
       permanent: false
+    },
+
+    // Moved pages
+    {
+      source: '/docs/getting-started/production-checklist',
+      destination: '/docs/production-checklist',
+      permanent: true
     }
   ]
 });

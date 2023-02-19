@@ -1,5 +1,3 @@
-import Callout from 'nextra-theme-docs/callout';
-
 # FAQ
 
 ## What trade-offs does this library make?
@@ -17,29 +15,31 @@ import Callout from 'nextra-theme-docs/callout';
 
 ## How can I parse dates or manipulate them?
 
-This library is only concerned with formatting dates. A great library to parse and manipulate dates is [date-fns](https://date-fns.org/).
+This library is only concerned with formatting dates.
 
-<Callout>
-  Note that parsing dates with `new Date(dateString)` and
-  `Date.parse(dateString)` is discouraged due to browser differences and
-  inconsistencies (see [the MDN docs on the `Date`
-  constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date)).
-</Callout>
+To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
 
-## Can next-intl be used in environments like Jest and Storybook?
+```jsx
+// Make sure your date string conforms to ISO 8601
+const date = new Date('2020-11-20T10:36:01.516Z');
+```
+
+A great library to manipulate dates is [date-fns](https://date-fns.org/).
+
+## Can `next-intl` be used with Jest and Storybook?
 
 Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.
 
 Please see the [Jest example](https://github.com/amannn/next-intl/blob/main/packages/example-advanced/src/components/Navigation.spec.tsx) to explore a working setup. For Storybook, you have to [add a global decorator](https://storybook.js.org/docs/react/writing-stories/decorators#global-decorators) that configures the provider.
 
-## Can next-intl be used without Next.js?
+## Can `next-intl` be used without Next.js?
 
 Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
 
-## Can next-intl be used with [Remix](https://remix.run/)?
+## Can `next-intl` be used with [Remix](https://remix.run/)?
 
 Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/packages/example-remix).
 
-## Can next-intl be used with [React Native](https://reactnative.dev/)?
+## Can `next-intl` be used with [React Native](https://reactnative.dev/)?
 
 Yes, see [the React Native example](https://github.com/amannn/next-intl/tree/main/packages/example-react-native).

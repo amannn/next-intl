@@ -1,4 +1,4 @@
-import Callout from 'nextra-theme-docs/callout';
+import Callout from 'components/Callout';
 
 # Messages
 
@@ -8,8 +8,7 @@ In order to render messages in components, the messages have to be provided as J
 
 The recommended approach is to group messages by components and embrace them as the primary unit of code organization in your app.
 
-```js
-// en.json
+```js filename="en.json"
 {
   "About": {
     "title": "About us"
@@ -17,8 +16,7 @@ The recommended approach is to group messages by components and embrace them as 
 }
 ```
 
-```js
-// About.js
+```js filename="About.js"
 import {useTranslations} from 'next-intl';
 
 function About() {
@@ -29,8 +27,7 @@ function About() {
 
 You can provide more structure by nesting messages:
 
-```js
-// en.json
+```js filename="en.json"
 {
   "auth": {
     "SignUp": {
@@ -44,8 +41,7 @@ You can provide more structure by nesting messages:
 }
 ```
 
-```js
-// SignUp.js
+```js filename="SignUp.js"
 import {useTranslations} from 'next-intl';
 
 function SignUp() {
@@ -81,8 +77,7 @@ const t = useTranslations();
 
 You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
 
-```js
-// pages/index.js
+```js filename="pages/index.js"
 export async function getStaticProps({locale}) {
   return {
     props: {
@@ -97,8 +92,7 @@ export async function getStaticProps({locale}) {
 
 If you want to provide only the minimum amount of messages per page, you can filter your messages accordingly:
 
-```js
-// pages/index.js
+```js filename="pages/index.js"
 import pick from 'lodash/pick';
 
 const namespaces = ['Index'];
@@ -186,7 +180,7 @@ Messages are always parsed and therefore e.g. for rich text you need to supply t
 <div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
 ```
 
-<Callout>
+<Callout type="warning">
   **Important**: You should always sanitize the content that you pass to
   `dangerouslySetInnerHTML` to avoid cross-site scripting attacks.
 </Callout>

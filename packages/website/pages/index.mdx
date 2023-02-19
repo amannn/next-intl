@@ -2,28 +2,27 @@
 title: Internationalization for Next.js
 ---
 
-import Bleed from 'nextra-theme-docs/bleed';
-import Callout from 'nextra-theme-docs/callout';
-import styles from '../styles/index.module.css';
+import Callout from 'components/Callout';
 
-<header className={styles.header}>
-  <h1 className="text-center md:text-5xl">next-intl</h1>
+<header className="py-20">
+  <h1 className="text-center text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
+    next-intl
+  </h1>
   <div className="bleed relative mt-6 -mx-6 md:-mx-8 2xl:-mx-24">
     <div className="mx-auto max-w-full w-[880px] text-center px-4">
-      <p className="text-lg text-gray-600 md:!text-2xl">
+      <span className="text-lg text-gray-600 md:text-xl">
         A minimal, but complete solution for internationalization in Next.js
         apps.
-      </p>
+      </span>
     </div>
   </div>
 </header>
 
-<aside className={styles.announcement}>
-  <b className={styles.bold}>✨ New ✨ </b> `next-intl` is adding support
-  for
-  <b>Next.js 13</b> and the `app` directory. A preview version with support for React
-  Server Components is [now available](/docs/next-13) for early adopters.
-</aside>
+<Callout emoji={null}>
+
+**✨ New ✨** `next-intl` is adding support for **Next.js 13** and the `app` directory. A preview version with support for React Server Components is [now available](/docs/next-13) for early adopters.
+
+</Callout>
 
 ## Features
 
