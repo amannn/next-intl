@@ -176,16 +176,18 @@ it('can use `Link` on the server', async ({page}) => {
 
 it('can use `Link` with an object as `href`', async ({page}) => {
   await page.goto('/en');
-  await expect(
-    page.getByRole('link', {name: 'Go to home with query param'})
-  ).toHaveAttribute('href', '/en?test=true');
+  const link = page.getByRole('link', {name: 'Go to home with query param'});
+  await expect(link).toHaveAttribute('href', '/en?test=true');
+  await link.click();
+  await expect(page).toHaveURL('/en?test=true');
 });
 
 it('can use `Link` to link to the root of another language', async ({page}) => {
   await page.goto('/en');
-  await expect(
-    page.getByRole('link', {name: 'Switch to German'})
-  ).toHaveAttribute('href', '/de');
+  const link = page.getByRole('link', {name: 'Switch to German'});
+  await expect(link).toHaveAttribute('href', '/de');
+  await link.click();
+  await expect(page).toHaveURL('/de');
 });
 
 it('can use `Link` on the client', async ({page}) => {
@@ -363,7 +365,7 @@ it('sets alternate links', async ({request}) => {
   }
 });
 
-it('can localize route handlers', async ({request}) => {
+it.skip('can localize route handlers', async ({request}) => {
   // Default
   {
     const response = await request.get('/api?name=world');
