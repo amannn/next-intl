@@ -127,19 +127,13 @@ export const config = {
 
 ### `app/[locale]/layout.tsx`
 
-The `locale` that was matched by the middleware is available via `useLocale` everywhere in your app. As a first step, use it to configure the document language.
+The `locale` that was matched by the middleware is available via `useLocale` and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
-import {ReactNode} from 'react';
 
-type Props = {
-  children: ReactNode;
-  params: {locale: string};
-};
-
-export default function LocaleLayout({children, params}: Props) {
+export default function LocaleLayout({children, params}) {
   const locale = useLocale();
 
   // Show a 404 error if the user requests an unknown locale
@@ -174,7 +168,7 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
 
-If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components to the Server Components beta, you can apply `NextIntlClientProvider` additionally.
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components to the Server Components beta, you can apply [`NextIntlClientProvider`](/docs/next-13/client-components) additionally.
 
 ## Routing
 
