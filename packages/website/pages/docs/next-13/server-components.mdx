@@ -1,10 +1,10 @@
-import Callout from 'nextra-theme-docs/callout';
+import Callout from 'components/Callout';
 
 # Usage in Server Components (beta)
 
 Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
-<Callout>
+<Callout type="warning">
   The `app` directory is currently in beta, patterns are still emerging and APIs
   may change. Please **use this at your own risk**, knowing that you might have
   to face a migration effort when the `app` directory becomes stable.
@@ -46,9 +46,9 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 **Now, set up the files as follows:**
 
-1. Provide messages for a language, e.g. in `messages/en.json`:
+1. Provide messages for a language, e.g. in `messages/en.json`.
 
-```json
+```json filename="messages/en.json"
 {
   "Index": {
     "title": "Hello world!"
@@ -56,9 +56,9 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. `next-intl` creates a configuration once per request and makes it available to all Server Components. Define this in `i18n.ts` (short for "internationalization"):
+2. `next-intl` creates a configuration once per request and makes it available to all Server Components. Define this in `i18n.ts` (short for "internationalization").
 
-```tsx
+```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => ({
@@ -66,9 +66,9 @@ export default getRequestConfig(async ({locale}) => ({
 }));
 ```
 
-3. Set up the plugin and provide the path to your configuration in `next.config.js`:
+3. Set up the plugin and provide the path to your configuration in `next.config.js`.
 
-```js
+```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')(
   // This is the default (also the `src` folder is supported out of the box)
   './i18n.ts'
@@ -80,9 +80,9 @@ module.exports = withNextIntl({
 });
 ```
 
-4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts`:
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts`.
 
-```tsx
+```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
 
 // The middleware matches a locale for the user request
@@ -117,7 +117,7 @@ export const config = {
 
 5. Provide the matched `locale` to the document in `app/[locale]/layout.tsx`.
 
-```tsx
+```tsx filename="app/[locale]/layout.tsx"
 import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
@@ -145,7 +145,7 @@ export default function LocaleLayout({children, params}: Props) {
 
 6. Use translations in your page component in `app/[locale]/page.tsx` or anywhere else!
 
-```tsx
+```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
 
 export default function Index() {
@@ -227,9 +227,7 @@ export default async function Profile() {
 
 If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.ts`.
 
-```tsx
-// i18n.ts
-
+```tsx filename="i18n.ts"
 import {headers} from 'next/headers';
 import {getRequestConfig} from 'next-intl/server';
 
@@ -245,9 +243,7 @@ export default getRequestConfig(async ({locale}) => ({
 
 If you need to use translated messages in functions like `generateMetadata`, you can import awaitable versions of the functions that you usually call as hooks from `next-intl/server`.
 
-```tsx
-// [locale]/layout.tsx
-
+```tsx filename="app/[locale]/layout.tsx"
 import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata() {
@@ -286,8 +282,7 @@ export default function FAQ() {
 }
 ```
 
-```tsx
-// app/[locale]/Expandable.tsx
+```tsx filename="app/[locale]/Expandable.tsx" {5,14-15}
 'use client';
 
 import {useState} from 'react';

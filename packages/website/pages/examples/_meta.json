@@ -1,0 +1,10 @@
+{
+  "minimal": {
+    "title": "Minimal setup",
+    "theme": {"layout": "full"}
+  },
+  "advanced": {
+    "title": "Advanced usage",
+    "theme": {"layout": "full"}
+  }
+}

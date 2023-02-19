@@ -1,4 +1,4 @@
-import Callout from 'nextra-theme-docs/callout';
+import Callout from 'components/Callout';
 
 # Dates and times
 
@@ -10,11 +10,10 @@ You can format plain dates and times that are not part of a message with the `us
 
 ```js
 import {useIntl} from 'next-intl';
-import {parseISO} from 'date-fns';
 
 function Component() {
   const intl = useIntl();
-  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+  const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
   intl.formatDateTime(dateTime, {
     year: 'numeric',
@@ -25,7 +24,7 @@ function Component() {
 }
 ```
 
-See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options you can provide to `formatDateTime`.
+See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options you can provide to `formatDateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
 
 ## Formatting relative time
 
@@ -33,12 +32,11 @@ Relative time durations can be formatted with a separate function:
 
 ```js
 import {useIntl} from 'next-intl';
-import {parseISO} from 'date-fns';
 
 function Component() {
   const intl = useIntl();
-  const dateTime = parseISO('2020-11-20T08:30:00.000Z');
-  const now = parseISO('2020-11-20T10:36:00.000Z');
+  const dateTime = new Date('2020-11-20T08:30:00.000Z');
+  const now = new Date('2020-11-20T10:36:00.000Z');
 
   // Renders "2 hours ago"
   intl.formatRelativeTime(dateTime, now);
@@ -57,7 +55,6 @@ If you want the value to update over time, you can do so with the `useNow` hook:
 
 ```js
 import {useNow, useIntl} from 'next-intl';
-import {parseISO} from 'date-fns';
 
 function Component() {
   const now = useNow({
@@ -65,7 +62,7 @@ function Component() {
     updateInterval: 1000 * 10
   });
   const intl = useIntl();
-  const dateTime = parseISO('2020-11-20T10:36:01.516Z');
+  const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
   intl.formatRelativeTime(dateTime, now);
 }
@@ -98,7 +95,7 @@ Additionally, you can provide custom formats based on [`DateTimeFormat` options]
 ```js
 t(
   'orderDate',
-  {date: parseISO('2020-11-20T10:36:01.516Z')},
+  {date: new Date('2020-11-20T10:36:01.516Z')},
   {
     // Custom formats can be supplied via the third parameter
     dateTime: {
