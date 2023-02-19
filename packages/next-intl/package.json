@@ -30,7 +30,7 @@
     "./server": "./dist/src/server/index.js",
     "./client": "./dist/src/client/index.js",
     "./config": "./config.js",
-    "./middleware": "./dist/src/middleware.js",
+    "./middleware": "./dist/src/middleware/index.js",
     "./withNextIntl": "./withNextIntl.js",
     "./plugin": "./plugin.js"
   },
@@ -42,7 +42,6 @@
     "client.js",
     "client.d.ts",
     "config.js",
-    "middleware.d.ts",
     "withNextIntl.js",
     "withNextIntl.d.ts",
     "plugin.js",

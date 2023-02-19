@@ -1,14 +1,13 @@
 import {NextRequest, NextResponse} from 'next/server';
-import NextIntlMiddlewareConfig from './server/NextIntlMiddlewareConfig';
-import resolveLocale from './server/resolveLocale';
-import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from './shared/constants';
+import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
+import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import resolveLocale from './resolveLocale';
+import setAlternateLinksHeader from './setAlternateLinksHeader';
 
 const ROOT_URL = '/';
 
 export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
   return function middleware(request: NextRequest) {
-    // Ideally we could use the `headers()` and `cookies()` API here
-    // as well, but they are currently not available in middleware.
     const {domain, locale} = resolveLocale(
       config,
       request.headers,
@@ -94,6 +93,8 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale);
     }
+
+    setAlternateLinksHeader(config, request, response);
 
     return response;
   };

@@ -1,0 +1,42 @@
+{
+  "Index": {
+    "title": "Inicio",
+    "description": "Esta es la página de inicio.",
+    "rich": "Este es un texto <important>importante</important>.",
+    "globalDefaults": "<highlight>{globalString}</highlight>"
+  },
+  "LocaleLayout": {
+    "title": "Ejemplo next-intl",
+    "description": "Este es un ejemplo de cómo usar next-intl en el directorio app."
+  },
+  "Client": {
+    "title": "Cliente",
+    "description": "Esta página se hidrata en el lado del cliente."
+  },
+  "Nested": {
+    "title": "Anidado",
+    "description": "Esta es una página anidada."
+  },
+  "Navigation": {
+    "home": "Inicio",
+    "client": "Página del cliente",
+    "nested": "Página anidada"
+  },
+  "NotFound": {
+    "title": "Esta página no se encontró (404)"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
+  },
+  "Counter": {
+    "count": "Conteo actual:",
+    "increment": "Incrementar"
+  },
+  "ClientCounter": {
+    "count": "Conteo actual: {count}",
+    "increment": "Incrementar"
+  },
+  "ApiRoute": {
+    "hello": "¡Hola {name}!"
+  }
+}

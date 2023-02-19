@@ -3,16 +3,13 @@ import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import getHost from './getHost';
 
 function findLocaleDomain(
   requestHeaders: Headers,
   i18n: NextIntlMiddlewareConfig
 ) {
-  let host =
-    requestHeaders.get('x-forwarded-host') ??
-    requestHeaders.get('host') ??
-    undefined;
-
+  let host = getHost(requestHeaders);
   // Remove port
   host = host?.replace(/:\d+$/, '');
 
