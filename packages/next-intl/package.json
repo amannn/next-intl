@@ -42,6 +42,8 @@
     "client.js",
     "client.d.ts",
     "config.js",
+    "middleware.js",
+    "middleware.d.ts",
     "withNextIntl.js",
     "withNextIntl.d.ts",
     "plugin.js",
