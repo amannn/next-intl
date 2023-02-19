@@ -337,9 +337,20 @@ it('keeps search params for redirects', async ({browser}) => {
   );
 });
 
-it.skip('keeps route handlers intact', async ({request}) => {
-  const response = await request.get('/api');
-  expect(response.status()).toBe(200);
-  const data = await response.json();
-  expect(data).toEqual({message: 'Hello world'});
+it('can localize route handlers', async ({request}) => {
+  // Default
+  {
+    const response = await request.get('/api?name=world');
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data).toEqual({message: 'Hello world!'});
+  }
+
+  // German
+  {
+    const response = await request.get('/de/api?name=Welt');
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data).toEqual({message: 'Hallo Welt!'});
+  }
 });

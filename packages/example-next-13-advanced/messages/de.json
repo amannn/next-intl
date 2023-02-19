@@ -35,5 +35,8 @@
   "ClientCounter": {
     "count": "Aktuell: {count}",
     "increment": "Erhöhen"
+  },
+  "ApiRoute": {
+    "hello": "Hallo {name}!"
   }
 }
