@@ -23,6 +23,9 @@ function getUnprefixedPathname(
   return url.toString();
 }
 
+/**
+ * See https://developers.google.com/search/docs/specialty/international/localized-versions
+ */
 export default function setAlternateLinksHeader(
   config: NextIntlMiddlewareConfig,
   request: NextRequest,
