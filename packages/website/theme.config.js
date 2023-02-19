@@ -82,19 +82,51 @@ const logo = (
 );
 
 export default {
-  github: 'https://github.com/amannn/next-intl',
-  projectLink: 'https://github.com/amannn/next-intl',
+  project: {
+    link: 'https://github.com/amannn/next-intl'
+  },
   docsRepositoryBase:
     'https://github.com/amannn/next-intl/tree/main/packages/website/pages',
-  titleSuffix: ' – next-intl',
-  nextLinks: true,
-  prevLinks: true,
-  search: true,
-  customSearch: null,
+  useNextSeoProps() {
+    return {
+      titleTemplate: '%s – next-intl'
+    };
+  },
+  // toc: {
+  //   float: true,
+  //   title: () => {
+  //     const { locale } = useRouter();
+  //     return TABLE_OF_CONTENTS_TITLE[locale] || TABLE_OF_CONTENTS_TITLE["en-US"];
+  //   },
+  // },
+  // search:{
+  //   placeholder: () => {
+  //     const { locale } = useRouter();
+  //     return SEARCH_PLACEHOLDER_WITH_TRANSLATIONS[locale] || SEARCH_PLACEHOLDER_WITH_TRANSLATIONS["en-US"];
+  //   },
+  // },
+  // editLink: {
+  //   text: () => {
+  //     const { locale } = useRouter();
+  //     return EDIT_TEXT[locale] || EDIT_TEXT["en-US"];
+  //   },
+  // },
+  // feedback: {
+  //   content: () => {
+  //     const { locale } = useRouter();
+  //     return (
+  //       FEEDBACK_LINK_WITH_TRANSLATIONS[locale] ||
+  //       FEEDBACK_LINK_WITH_TRANSLATIONS["en-US"]
+  //     );
+  //   },
+  // },
+  navigation: true,
+  // search: true,
+  // customSearch: null,
   darkMode: true,
-  footer: false,
-  footerText: null,
-  footerEditLink: `Edit this page on GitHub`,
+  // footer: false,
+  // footerText: null,
+  // footerEditLink: `Edit this page on GitHub`,
   logo,
   head: () => (
     <>
