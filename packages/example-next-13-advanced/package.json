@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "next": "13.1.7-canary.21",
+    "next": "13.1.7-canary.7",
     "next-intl": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

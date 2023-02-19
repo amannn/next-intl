@@ -7,7 +7,7 @@ export default function LocaleSwitcher() {
   const otherLocale = locale === 'en' ? 'de' : 'en';
 
   return (
-    <Link href="/" locale={otherLocale} prefetch={false}>
+    <Link href="/" locale={otherLocale}>
       {t('switchLocale', {locale: otherLocale})}
     </Link>
   );
