@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "2.10.2",
+  "version": "2.10.3",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.me>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "accept-language-parser": "^1.5.0",
-    "use-intl": "^2.10.2"
+    "use-intl": "^2.10.3"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
