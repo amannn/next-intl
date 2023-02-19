@@ -23,6 +23,10 @@ function getUnprefixedPathname(
   return url.toString();
 }
 
+function getAlternateEntry(url: string, locale: string) {
+  return `<${url}>; rel="alternate"; hreflang="${locale}"`;
+}
+
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
@@ -31,11 +35,6 @@ export default function setAlternateLinksHeader(
   request: NextRequest,
   response: NextResponse
 ) {
-  // Avoid pointing to a localized subpath that is not relevant
-  if (config.locales.length <= 1) {
-    return;
-  }
-
   const unprefixedPathname = getUnprefixedPathname(config, request);
 
   const links = config.locales.flatMap((locale) => {
@@ -58,7 +57,7 @@ export default function setAlternateLinksHeader(
       return domainConfigs.map((domainConfig) => {
         url = new URL(unprefixedPathname);
         url.host = domainConfig.domain;
-        return `<${url}>; rel="alternate"; hreflang="${locale}"`;
+        return getAlternateEntry(url.toString(), locale);
       });
     } else {
       // Prio 2: Prefixed route
@@ -66,15 +65,10 @@ export default function setAlternateLinksHeader(
       localizePathname(url);
     }
 
-    return `<${url}>; rel="alternate"; hreflang="${locale}"`;
+    return getAlternateEntry(url.toString(), locale);
   });
 
-  links.push(
-    `<${getUnprefixedPathname(
-      config,
-      request
-    )}>; rel="alternate"; hreflang="x-default"`
-  );
+  links.push(getAlternateEntry(unprefixedPathname, 'x-default'));
 
   response.headers.set('Link', links.join(', '));
 }

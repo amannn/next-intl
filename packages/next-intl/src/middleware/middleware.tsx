@@ -94,7 +94,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale);
     }
 
-    if (config.alternateLinks ?? true) {
+    if ((config.alternateLinks ?? true) && config.locales.length > 1) {
       setAlternateLinksHeader(config, request, response);
     }
 
