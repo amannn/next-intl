@@ -7,7 +7,7 @@
  */
 
 .steps {
-  @apply ml-4 pl-6 border-l border-slate-200;
+  @apply ml-4 pl-8 border-l border-slate-200;
   counter-reset: step;
 }
 .steps h3 {
@@ -16,7 +16,7 @@
 }
 .steps h3:before {
   content: counter(step);
-  @apply inline-block absolute mt-[-6px] ml-[-44px] pt-[4px] w-10 h-10 text-center font-bold text-base text-slate-500 rounded-full border-4 border-white bg-slate-100;
+  @apply inline-block absolute mt-[-6px] ml-[-52px] pt-[4px] w-10 h-10 text-center font-bold text-base text-slate-500 rounded-full border-4 border-white bg-slate-100;
 }
 
 .dark .steps {

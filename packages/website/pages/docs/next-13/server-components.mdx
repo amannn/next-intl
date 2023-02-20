@@ -52,7 +52,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
 
-The simplest option is to create JSON files locally that are separated by a [locale](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
+The simplest option is to create JSON files locally based on [locales](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
 
 ```json filename="messages/en.json"
 {
@@ -282,7 +282,7 @@ import {
 
 If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
 
-```tsx
+```tsx filename="[locale]/faq/page.tsx" {6}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
@@ -292,7 +292,7 @@ export default function FAQ() {
 }
 ```
 
-```tsx filename="app/[locale]/Expandable.tsx" {5,14-15}
+```tsx filename="Expandable.tsx" {5,14-15}
 'use client';
 
 import {useState} from 'react';
