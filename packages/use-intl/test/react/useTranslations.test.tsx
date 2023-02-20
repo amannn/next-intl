@@ -324,6 +324,27 @@ it('utilizes a cache for parsing messages', () => {
   ).toEqual(1);
 });
 
+it('updates translations when the messages on the provider change', () => {
+  function Component() {
+    const t = useTranslations();
+    return <>{t('message')}</>;
+  }
+
+  const {rerender} = render(
+    <IntlProvider locale="en" messages={{message: 'One'}}>
+      <Component />
+    </IntlProvider>
+  );
+  screen.getByText('One');
+
+  rerender(
+    <IntlProvider locale="en" messages={{message: 'Two'}}>
+      <Component />
+    </IntlProvider>
+  );
+  screen.getByText('Two');
+});
+
 describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,

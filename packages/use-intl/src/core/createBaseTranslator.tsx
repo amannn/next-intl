@@ -170,23 +170,25 @@ export default function createBaseTranslator<
     }
     const messages = messagesOrError;
 
-    const cacheKey = [namespace, key].filter((part) => part != null).join('.');
+    let message;
+    try {
+      message = resolvePath(messages, key, namespace);
+    } catch (error) {
+      return getFallbackFromErrorAndNotify(
+        key,
+        IntlErrorCode.MISSING_MESSAGE,
+        (error as Error).message
+      );
+    }
+
+    const cacheKey = [namespace, key, message]
+      .filter((part) => part != null)
+      .join('.');
 
     let messageFormat;
     if (cachedFormatsByLocale?.[locale]?.[cacheKey]) {
       messageFormat = cachedFormatsByLocale?.[locale][cacheKey];
     } else {
-      let message;
-      try {
-        message = resolvePath(messages, key, namespace);
-      } catch (error) {
-        return getFallbackFromErrorAndNotify(
-          key,
-          IntlErrorCode.MISSING_MESSAGE,
-          (error as Error).message
-        );
-      }
-
       if (typeof message === 'object') {
         return getFallbackFromErrorAndNotify(
           key,
