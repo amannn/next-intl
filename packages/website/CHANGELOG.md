@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.10.4 (2023-02-20)
+
+
+### Bug Fixes
+
+* Return up-to-date translations when messages change ([#199](https://github.com/amannn/next-intl/issues/199)) ([78f39b4](https://github.com/amannn/next-intl/commit/78f39b408933d6fcbb38d085704bfbe14065dc0a))
+
+
+
+
+
 ## 2.10.3 (2023-02-19)
 
 **Note:** Version bump only for package website
