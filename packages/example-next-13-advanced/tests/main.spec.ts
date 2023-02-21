@@ -367,6 +367,21 @@ it('sets alternate links', async ({request}) => {
   }
 });
 
+it('can use rewrites to handle localized pathnames', async ({
+  page,
+  request
+}) => {
+  await page.goto('/de/verschachtelt');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+
+  // Also available
+  await page.goto('/de/nested');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+
+  const response = await request.get('/en/verschachtelt');
+  expect(response.status()).toBe(404);
+});
+
 it.skip('can localize route handlers', async ({request}) => {
   // Default
   {
