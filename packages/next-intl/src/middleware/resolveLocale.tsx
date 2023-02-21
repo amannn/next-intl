@@ -60,7 +60,10 @@ export default function resolveLocale(
   // Prio 3: Use existing cookie
   if (!locale && requestCookies) {
     if (requestCookies.has(COOKIE_LOCALE_NAME)) {
-      locale = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
+      const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
+      if (value && i18n.locales.includes(value)) {
+        locale = value;
+      }
     }
   }
 

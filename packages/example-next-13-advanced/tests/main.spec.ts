@@ -382,6 +382,18 @@ it('can use rewrites to handle localized pathnames', async ({
   expect(response.status()).toBe(404);
 });
 
+it('replaces invalid cookie locales', async ({request}) => {
+  const response = await request.get('/', {
+    maxRedirects: 0,
+    headers: {
+      cookie: 'NEXT_LOCALE=zh'
+    }
+  });
+  expect(new URL(response.url()).pathname).toBe('/');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['set-cookie']).toBe('NEXT_LOCALE=en; Path=/');
+});
+
 it.skip('can localize route handlers', async ({request}) => {
   // Default
   {
