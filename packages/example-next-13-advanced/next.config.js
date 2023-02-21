@@ -7,6 +7,10 @@ module.exports = withNextIntl({
       {
         source: '/de/verschachtelt',
         destination: '/de/nested'
+      },
+      {
+        source: '/es/anidada',
+        destination: '/es/nested'
       }
     ];
   }

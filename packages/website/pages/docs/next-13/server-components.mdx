@@ -160,7 +160,7 @@ If you're in a transitioning phase, either from the `pages` directory to the `ap
 
 ### `Link`
 
-In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, `next-intl` provides a drop-in replacement for this use case.
+`next-intl` provides a drop-in replacement for `next/link` that will automatically prefix the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
 ```tsx
 import {Link} from 'next-intl';
@@ -218,6 +218,45 @@ export default async function Profile() {
   // ...
 }
 ```
+
+## Switching to Client Components
+
+If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
+
+```tsx filename="[locale]/faq/page.tsx" {6}
+import {useTranslations} from 'next-intl';
+import Expandable from './Expandable';
+
+export default function FAQ() {
+  const t = useTranslations('FAQ');
+  return <Expandable title={t('title')}>{t('description')}</Expandable>;
+}
+```
+
+```tsx filename="Expandable.tsx" {5,14-15}
+'use client';
+
+import {useState} from 'react';
+
+function Expandable({title, children}) {
+  const [expanded, setExpanded] = useState(false);
+
+  function onToggle() {
+    setExpanded(!expanded);
+  }
+
+  return (
+    <div>
+      <button onClick={onToggle}>{title}</button>
+      {expanded && <p>{children}</p>}
+    </div>
+  );
+}
+```
+
+This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
+
+If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
 
 ## Global request configuration
 
@@ -280,6 +319,31 @@ The locale is matched based on this priority order:
 
 If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched and the user requests the root pathname, then the user is **redirected** to to the respective sub path (e.g. `/` to `/de`).
 
+## Localizing pathnames
+
+If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  experimental: {appDir: true},
+  rewrites() {
+    return [
+      {
+        source: '/de/über',
+        destination: '/de/about'
+      }
+    ];
+  }
+});
+```
+
+Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
+
+1. Turn off the `alternateLinks` option in [the middleware](#middleware-configuration) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+2. Translate the pathnames you're passing to the [routing APIs from `next-intl`](#routing) ([example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/hooks/useNamedRoute.tsx)).
+
 ## Using internationalization outside of components
 
 If you need to use translated messages in functions like `generateMetadata`, you can import awaitable versions of the functions that you usually call as hooks from `next-intl/server`.
@@ -308,67 +372,6 @@ import {
   getTimeZone // like `useTimeZone`
 } from 'next-intl/server';
 ```
-
-## Switching to Client Components
-
-If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
-
-```tsx filename="[locale]/faq/page.tsx" {6}
-import {useTranslations} from 'next-intl';
-import Expandable from './Expandable';
-
-export default function FAQ() {
-  const t = useTranslations('FAQ');
-  return <Expandable title={t('title')}>{t('description')}</Expandable>;
-}
-```
-
-```tsx filename="Expandable.tsx" {5,14-15}
-'use client';
-
-import {useState} from 'react';
-
-function Expandable({title, children}) {
-  const [expanded, setExpanded] = useState(false);
-
-  function onToggle() {
-    setExpanded(!expanded);
-  }
-
-  return (
-    <div>
-      <button onClick={onToggle}>{title}</button>
-      {expanded && <p>{children}</p>}
-    </div>
-  );
-}
-```
-
-This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
-
-If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
-
-## Localizing pathnames
-
-If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
-
-```js filename="next.config.js"
-const withNextIntl = require('next-intl/plugin')();
-
-module.exports = withNextIntl({
-  experimental: {appDir: true},
-  rewrites() {
-    return [
-      {
-        source: '/de/über',
-        destination: '/de/about'
-      }
-    ];
-  }
-});
-```
-
-Note that you want to turn off the `alternateLinks` option in [the middleware](#middleware-configuration) in this case and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself, as the middleware isn't aware of your rewrites.
 
 ## Providing feedback
 

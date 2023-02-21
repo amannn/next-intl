@@ -367,10 +367,7 @@ it('sets alternate links', async ({request}) => {
   }
 });
 
-it('can use rewrites to handle localized pathnames', async ({
-  page,
-  request
-}) => {
+it('can use rewrites to localize pathnames', async ({page, request}) => {
   await page.goto('/de/verschachtelt');
   page.getByRole('heading', {name: 'Verschachtelt'});
 
@@ -380,6 +377,19 @@ it('can use rewrites to handle localized pathnames', async ({
 
   const response = await request.get('/en/verschachtelt');
   expect(response.status()).toBe(404);
+});
+
+it('can use named routes to localize pathnames', async ({page}) => {
+  await page.goto('/en');
+  await expect(page.getByRole('link', {name: 'Nested page'})).toHaveAttribute(
+    'href',
+    '/en/nested'
+  );
+
+  await page.goto('/de');
+  await expect(
+    page.getByRole('link', {name: 'Verschachtelte Seite'})
+  ).toHaveAttribute('href', '/de/verschachtelt');
 });
 
 it('replaces invalid cookie locales', async ({request}) => {

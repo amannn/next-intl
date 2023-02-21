@@ -38,5 +38,10 @@
   },
   "ApiRoute": {
     "hello": "Hello {name}!"
+  },
+  "useNamedRoute": {
+    "home": "/",
+    "client": "/client",
+    "nested": "/nested"
   }
 }

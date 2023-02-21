@@ -14,7 +14,7 @@
     "description": "Esta página se hidrata en el lado del cliente."
   },
   "Nested": {
-    "title": "Anidado",
+    "title": "Anidada",
     "description": "Esta es una página anidada."
   },
   "Navigation": {
@@ -38,5 +38,10 @@
   },
   "ApiRoute": {
     "hello": "¡Hola {name}!"
+  },
+  "useNamedRoute": {
+    "home": "/",
+    "client": "/client",
+    "nested": "/anidada"
   }
 }
