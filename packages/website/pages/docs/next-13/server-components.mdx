@@ -92,7 +92,7 @@ module.exports = withNextIntl({
 
 ### `middleware.ts`
 
-The middleware matches a locale for the user request and handles redirects and rewrites accordingly.
+The middleware matches a locale for the request and handles redirects and rewrites accordingly.
 
 ```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
@@ -102,25 +102,11 @@ export default createIntlMiddleware({
   locales: ['en', 'de'],
 
   // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
-  defaultLocale: 'en',
-
-  // Optionally configure a list of domains where the `defaultLocale` is changed
-  domains: [
-    {
-      domain: 'example.de',
-      defaultLocale: 'de'
-    }
-  ],
-
-  // Sets the `Link` response header to notify search engines about
-  // links to the content in other languages (defaults to `true`).
-  alternateLinks: true
+  defaultLocale: 'en'
 });
 
 export const config = {
-  // Skip all paths that aren't pages that you'd like to internationalize.
-  // If you use the `public` folder, make sure your static assets are ignored
-  // (e.g. by moving them to a shared folder that is referenced here).
+  // Skip all paths that aren't pages that you'd like to internationalize
   matcher: ['/((?!api|_next|favicon.ico|assets).*)']
 };
 ```
@@ -248,6 +234,51 @@ export default getRequestConfig(async ({locale}) => ({
   timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
 }));
 ```
+
+## Middleware configuration
+
+The middleware handles rewrites and redirects based on the detected user locale.
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en',
+
+  // Optionally configure a list of domains where the `defaultLocale` is changed
+  domains: [
+    {
+      domain: 'example.de',
+      defaultLocale: 'de'
+    }
+  ],
+
+  // Sets the `Link` response header to notify search engines about
+  // links to the content in other languages (defaults to `true`).
+  alternateLinks: true
+});
+
+export const config = {
+  // Skip all paths that aren't pages that you'd like to internationalize.
+  // If you use the `public` folder, make sure your static assets are ignored
+  // (e.g. by moving them to a shared folder that is referenced here).
+  matcher: ['/((?!api|_next|favicon.ico|assets).*)']
+};
+```
+
+The locale is matched based on this priority order:
+
+1. **Locale prefix**: The pathname is prefixed with a configured locale (e.g. `/en`).
+2. **Domain**: The host of the requested URL matches against an item in the `domains` list. The host is read from the `x-forwarded-host` or alternatively the `host` header.
+3. **Cookie**: There's an existing cookie that contains the locale that was matched from a previous request.
+4. **`accept-language` header**: The available `locales` are matched against the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language).
+5. **Default fallback**: If nothing else matches, then the `defaultLocale` is used.
+
+If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched and the user requests the root pathname, then the user is **redirected** to to the respective sub path (e.g. `/` to `/de`).
 
 ## Using internationalization outside of components
 
