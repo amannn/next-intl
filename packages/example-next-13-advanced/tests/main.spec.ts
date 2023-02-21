@@ -4,7 +4,9 @@ it('handles unknown locales', async ({page}) => {
   const response = await page.goto('/unknown');
   expect(response?.status()).toBe(404);
   await expect(page).toHaveURL('/unknown');
-  page.getByRole('heading', {name: 'This page was not found (404)'});
+  await expect(
+    page.getByRole('heading', {name: 'This page was not found (404)'})
+  ).toBeVisible();
 });
 
 it('redirects to a matched locale at the root for non-default locales', async ({
