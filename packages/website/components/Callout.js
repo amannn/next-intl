@@ -7,10 +7,10 @@ const TypeToEmoji = {
 
 const classes = {
   default: cn(
-    'border-green-700/20 bg-green-50 text-green-800 dark:border-green-400/20 dark:bg-green-600/10 dark:text-green-200'
+    'border-green-700/20 bg-green-50 text-green-800 dark:border-green-400/40 dark:bg-green-700/30 dark:text-white/90'
   ),
   warning: cn(
-    'border-yellow-300 bg-yellow-50 text-yellow-900 dark:border-yellow-200/20 dark:bg-yellow-700/20 dark:text-yellow-200'
+    'border-yellow-700/20 bg-yellow-50 text-yellow-900 dark:border-yellow-400/40 dark:bg-yellow-700/30 dark:text-white/90'
   )
 };
 
