@@ -5,10 +5,10 @@ export default function LinkButton({ variant = 'primary', ...rest }) {
   return (
     <Link
       className={clsx(
-        'rounded-full py-4 px-8 text-base font-semibold transition-colors',
+        'inline-block rounded-full py-2 px-4 text-base font-semibold transition-colors lg:py-4 lg:px-8',
         variant === 'primary'
-          ? 'bg-primary text-slate-900 hover:bg-sky-200'
-          : 'bg-slate-800 text-white hover:bg-slate-700'
+          ? 'bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-primary dark:text-slate-900 dark:hover:bg-sky-200'
+          : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-white/90 dark:hover:bg-slate-700'
       )}
       {...rest}
     />

@@ -8,7 +8,7 @@ function Tab({ active, children, onClick }) {
         'flex items-center rounded-md px-4 py-2 text-sm font-medium',
         active
           ? 'bg-slate-800 text-sky-100/70 text-white'
-          : 'bg-slate-800/40 text-slate-500'
+          : 'bg-slate-800/40 text-slate-500 hover:bg-slate-800'
       )}
       onClick={onClick}
     >
@@ -38,7 +38,7 @@ export default function HeroCode() {
             <circle className="fill-slate-800" cx={21} cy={5} r="4.5" />
             <circle className="fill-slate-800" cx={37} cy={5} r="4.5" />
           </svg>
-          <div className="mt-4 flex space-x-2">
+          <div className="mt-4 flex space-x-2 overflow-x-auto">
             {files.map((file) => (
               <Tab
                 key={file.name}
@@ -49,11 +49,8 @@ export default function HeroCode() {
               </Tab>
             ))}
           </div>
-          <div className="mt-6 flex min-h-[300px] w-[684px] items-start">
-            <pre
-              data-theme
-              className="dark ml-[-16px] flex overflow-x-auto px-0"
-            >
+          <div className="mt-6 flex items-start lg:min-h-[300px] lg:w-[684px]">
+            <pre data-theme className="ml-[-16px] flex overflow-x-auto px-0">
               {files[fileIndex].code}
             </pre>
           </div>
