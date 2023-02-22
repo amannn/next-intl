@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.dark {
+  --shiki-token-string-expression: #10b981;
+}
+
 /**
  * Steps
  */
 
 .steps {
-  @apply ml-4 pl-8 border-l border-slate-200;
+  @apply ml-4 border-l border-slate-200 pl-8;
   counter-reset: step;
 }
 .steps h3 {
@@ -16,7 +20,7 @@
 }
 .steps h3:before {
   content: counter(step);
-  @apply inline-block absolute mt-[-6px] ml-[-52px] pt-[4px] w-10 h-10 text-center font-bold text-base text-slate-500 rounded-full border-4 border-white bg-slate-100;
+  @apply absolute mt-[-6px] ml-[-52px] inline-block h-10 w-10 rounded-full border-4 border-white bg-slate-100 pt-[4px] text-center text-base font-bold text-slate-500;
 }
 
 .dark .steps {
