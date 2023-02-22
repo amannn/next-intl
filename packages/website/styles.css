@@ -6,10 +6,6 @@
   --shiki-token-string-expression: #10b981;
 }
 
-.nextra-nav-container {
-  @apply bg-white dark:bg-slate-800;
-}
-
 /**
  * Steps
  */
