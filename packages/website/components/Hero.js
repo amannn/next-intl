@@ -18,7 +18,7 @@ export default function Hero() {
                 </h1>
               </div>
               <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:text-2xl">
-                Support multiple languages, with your code becoming simpler
+                Support multiple languages, with your app code becoming simpler
                 instead of more complex.
               </p>
               <div className="mt-8 flex gap-4">
