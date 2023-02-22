@@ -1,5 +1,6 @@
+/* eslint-env node */
+/* eslint-disable import/no-extraneous-dependencies */
+
 module.exports = {
-  singleQuote: true,
-  trailingComma: 'none',
-  plugins: [require('prettier-plugin-tailwindcss')],
+  plugins: [require('prettier-plugin-tailwindcss')]
 };
