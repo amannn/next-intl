@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import clsx from 'clsx';
+import Link from 'next/link';
 
-export default function LinkButton({ variant = 'primary', ...rest }) {
+export default function LinkButton({variant = 'primary', ...rest}) {
   return (
     <Link
       className={clsx(

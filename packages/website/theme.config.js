@@ -1,6 +1,6 @@
 const logo = (
   <svg
-    style={{height: '2.5rem'}}
+    style={{ height: '2.5rem' }}
     viewBox="0 0 1663.8 399"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -74,7 +74,7 @@ export default {
       titleTemplate: '%s – next-intl'
     };
   },
-  primaryHue: {light: 210, dark: 195},
+  primaryHue: { light: 210, dark: 195 },
   footer: {
     text: null,
     component: null
@@ -112,7 +112,7 @@ export default {
 
       <meta content="next-intl" name="og:title" />
       <meta
-        content="A minimal, but complete solution for internationalization in Next.js apps."
+        content="A minimal, yet complete solution for internationalization in Next.js apps."
         name="og:description"
       />
       <meta content="summary_large_image" name="twitter:card" />
@@ -127,7 +127,7 @@ export default {
         name="og:image"
       />
       <meta
-        content="A minimal, but complete solution for internationalization in Next.js apps."
+        content="A minimal, yet complete solution for internationalization in Next.js apps."
         name="description"
       />
     </>
