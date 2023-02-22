@@ -3,26 +3,19 @@ title: Internationalization for Next.js
 ---
 
 import Callout from 'components/Callout';
+import FeaturePanel from 'components/FeaturePanel';
+import Hero from 'components/Hero';
 
-<header className="py-20">
-  <h1 className="text-center text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">
-    next-intl
-  </h1>
-  <div className="bleed relative mt-6 -mx-6 md:-mx-8 2xl:-mx-24">
-    <div className="mx-auto max-w-full w-[880px] text-center px-4">
-      <span className="text-lg text-gray-600 md:text-xl">
-        A minimal, but complete solution for internationalization in Next.js
-        apps.
-      </span>
-    </div>
-  </div>
-</header>
+<div className="bg-slate-100">
+  <Hero />
 
-<Callout emoji={null}>
+  <div className="max-w-4xl mx-auto px-4">
 
-**✨ New ✨** `next-intl` is adding support for **Next.js 13** and the `app` directory. A beta version with support for React Server Components is [now available](/docs/next-13) for early adopters.
+  <Callout className="text-center max-w-[700px] mx-auto" emoji={null}>
 
-</Callout>
+**New:** `next-intl` is adding support for **Next.js 13** and the `app` directory. A beta version with support for React Server Components is [now available](/docs/next-13) for early adopters.
+
+  </Callout>
 
 ## Features
 
@@ -35,35 +28,10 @@ This library complements the [internationalized routing](https://nextjs.org/docs
 - 🚀 **Fast**: By integrating with both static as well as server side rendering you always get the best possible performance from your app.
 - ⚔️ **Battle-tested building blocks**: This library is a minimal wrapper around built-in browser APIs and supplemental lower-level APIs from Format.JS.
 
-## What does it look like?
-
-This library is based on the premise that messages can be grouped by namespaces (typically a component name).
-
-```js
-// LatestFollower.js
-function LatestFollower({user}) {
-  const t = useTranslations('LatestFollower');
-
-  return (
-    <>
-      <Text>{t('latestFollower', {username: user.name})}</Text>
-      <IconButton aria-label={t('followBack')} icon={<FollowIcon />} />
-    </>
-  );
-}
-```
-
-```js
-// en.json
-{
-  "LatestFollower": {
-    "latestFollower": "{username} started following you",
-    "followBack": "Follow back"
-  }
-}
-```
-
 <div className="pt-8">
   [Getting started](/docs/getting-started) · [Usage guide](/docs/usage) ·
   [Examples](/examples)
+</div>
+
+  </div>
 </div>
