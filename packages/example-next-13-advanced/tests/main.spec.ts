@@ -404,7 +404,7 @@ it('replaces invalid cookie locales', async ({request}) => {
   expect(response.headers()['set-cookie']).toBe('NEXT_LOCALE=en; Path=/');
 });
 
-it.skip('can localize route handlers', async ({request}) => {
+it('can localize route handlers', async ({request}) => {
   // Default
   {
     const response = await request.get('/api?name=world');
