@@ -17,11 +17,11 @@ export default function Hero() {
                   <span className="font-light">that gets out of your way.</span>
                 </h1>
               </div>
-              <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:text-2xl">
+              <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:mt-4 lg:text-2xl lg:leading-normal">
                 Support multiple languages, with your app code becoming simpler
                 instead of more complex.
               </p>
-              <div className="mt-8 flex gap-4">
+              <div className="mt-8 flex gap-4 lg:mt-10">
                 <LinkButton href="/docs">Get started</LinkButton>
                 <LinkButton
                   href="https://github.com/amannn/next-intl"
