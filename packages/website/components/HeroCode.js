@@ -317,8 +317,42 @@ const files = [
           <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "{'{'}count, plural, =0 {'{'}No followers yet{'}'} =1 {'{'}One
-            follower{'}'} other {'{'}# followers{'}'}
+            "{'{'}count, plural,
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {'                    '}
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            =0 {'{'}No followers yet
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {'                    '}
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            =1 {'{'}One follower{'}'}
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {'                    '}
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            other {'{'}# followers{'}'}
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {'                  '}
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
             {'}'}"
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
