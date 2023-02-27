@@ -3,6 +3,7 @@ title: Internationalization for Next.js
 ---
 
 import Callout from 'components/Callout';
+import CodeSnippets from 'components/CodeSnippets';
 import Section from 'components/Section';
 import LinkButton from 'components/LinkButton';
 import Link from 'components/Link';
@@ -24,29 +25,35 @@ import Hero from 'components/Hero';
   title="Minimalistic, yet complete"
   description="next-intl complements the internationalized routing capabilities of Next.js by managing translations and providing them to components."
 >
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20">
     <FeaturePanel
-      title="ICU syntax"
+      code={<CodeSnippets.icu />}
+      title="ICU message syntax"
       description="Localize your messages with interpolation, plurals, ordinal pluralization, label selection based on enums and rich text."
     />
     <FeaturePanel
+      code={<CodeSnippets.datesTimesNumbers />}
       title="Dates, times & numbers"
       description="Use global formats for a consistent look & feel of your app and apply fine tuning as necessary."
     />
     <FeaturePanel
-      title="Hooks-only API"
-      description="Learn a single API that can be used across your code base, from components accepting children to string attributes."
-    />
-    <FeaturePanel
+      code={<CodeSnippets.typeSafe />}
       title="Type-safe"
       description="Develop faster with autocompletion for message keys and catch errors early with compile-time errors."
     />
     <FeaturePanel
+      code={<CodeSnippets.hooks />}
+      title="Hooks-only API"
+      description="Learn a single API that can be used across your code base, from components accepting children to string attributes."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.buildOutput />}
       title="Fast"
       description="Get the best performance from your app by supporting internationalization on static as well as dynamic pages."
     />
     <FeaturePanel
-      title="Solid building blocks"
+      code={<CodeSnippets.standards />}
+      title="Based on standards"
       description="Use the best parts of built-in browser APIs and supplemental lower-level APIs from Format.JS."
     />
   </div>

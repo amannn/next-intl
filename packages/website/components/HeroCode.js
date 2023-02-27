@@ -326,7 +326,7 @@ const files = [
             {'                    '}
           </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            =0 {'{'}No followers yet
+            =0 {'{'}No followers yet{'}'}
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
         </span>
@@ -426,7 +426,7 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
           <span style={{color: 'var(--shiki-color-text)'}}>
-            &gt;Last seen 2h ago&lt;/
+            &gt;Last seen 2 hours ago&lt;/
           </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
           <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>

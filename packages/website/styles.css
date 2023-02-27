@@ -4,6 +4,7 @@
 
 .dark {
   --shiki-token-string-expression: #10b981;
+  --shiki-token-punctuation: rgba(255, 255, 255, 0.5);
 }
 
 .navbar-home .nextra-nav-container-blur {
