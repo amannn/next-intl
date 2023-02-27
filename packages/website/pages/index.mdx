@@ -2,15 +2,23 @@
 title: Internationalization for Next.js
 ---
 
-import Callout from 'components/Callout';
-import Section from 'components/Section';
-import Link from 'next/link';
-import LinkButton from 'components/LinkButton';
-import FeaturePanel from 'components/FeaturePanel';
-import Hero from 'components/Hero';
+import Callout from "components/Callout";
+import Section from "components/Section";
+import LinkButton from "components/LinkButton";
+import Link from "components/Link";
+import FeaturePanel from "components/FeaturePanel";
+import Hero from "components/Hero";
 
 <div className="bg-slate-100 dark:bg-gray-900">
-<Hero />
+  
+<Hero
+  titleStrong="Internationalization for Next.js"
+  titleRegular="that gets out of your way."
+  description="Support multiple languages, with your app code becoming simpler instead of more complex." 
+  getStarted="Get started" 
+  viewOnGithub="View on GitHub" 
+  rscAnnouncement="Support for Next.js 13 and the app directory is coming →"
+/>
 
 <Section
   title="Minimalistic, yet complete"
@@ -46,8 +54,8 @@ import Hero from 'components/Hero';
   <div className="lg:pt-8 pb-40 text-center">
     <LinkButton href="/docs/getting-started">Get started with next-intl<span className="inline-block ml-2">→</span></LinkButton>
     <div className="flex gap-6 mt-8 justify-center">
-      <Link className="text-sky-600 hover:text-sky-700 transition-colors underline underline-offset-2" href="/docs/usage">Usage guide</Link>
-      <Link className="text-sky-600 hover:text-sky-700 transition-colors underline underline-offset-2" href="/examples">Examples</Link>
+      <Link href="/docs/usage">Usage guide</Link>
+      <Link href="/examples">Examples</Link>
     </div>
   </div>
 </div>

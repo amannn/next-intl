@@ -6,7 +6,7 @@ function Tab({active, children, onClick}) {
   return (
     <button
       className={clsx(
-        'flex items-center rounded-md px-4 py-2 text-sm font-medium',
+        'flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
         active
           ? 'bg-slate-800 text-sky-100/70 text-white'
           : 'bg-slate-800/40 text-slate-500 hover:bg-slate-800'
@@ -318,7 +318,7 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
             "{'{'}count, plural, =0 {'{'}No followers yet{'}'} =1 {'{'}One
-            friend{'}'} other {'{'}# followers{'}'}
+            follower{'}'} other {'{'}# followers{'}'}
             {'}'}"
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>

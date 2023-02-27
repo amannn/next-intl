@@ -1,4 +1,5 @@
 const colors = require('tailwindcss/colors');
+const defaults = require('tailwindcss/defaultConfig');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -21,6 +22,10 @@ module.exports = {
         'Courier New',
         'monospace'
       ]
+    },
+    fontSize: {
+      ...defaults.theme.fontSize,
+      '5xl': ['3rem', {lineHeight: '1.2'}]
     },
     colors: {
       ...colors,

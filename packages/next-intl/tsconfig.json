@@ -1,5 +1,5 @@
 {
-  "include": ["src", "test", "types"],
+  "include": ["src", "test", "types", "next-env.d.ts"],
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],

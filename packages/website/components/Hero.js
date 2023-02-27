@@ -2,7 +2,14 @@ import Link from 'next/link';
 import HeroCode from './HeroCode';
 import LinkButton from './LinkButton';
 
-export default function Hero() {
+export default function Hero({
+  description,
+  getStarted,
+  rscAnnouncement,
+  titleRegular,
+  titleStrong,
+  viewOnGithub
+}) {
   return (
     <div className="dark overflow-hidden bg-slate-900">
       <div className="py-16 sm:px-2 lg:relative lg:py-44 lg:px-0">
@@ -11,24 +18,21 @@ export default function Hero() {
             <div className="relative">
               <div className="max-w-2xl">
                 <h1 className="inline bg-gradient-to-r from-primary via-sky-100 to-primary bg-clip-text text-3xl leading-tight tracking-tight text-transparent lg:text-5xl">
-                  <span className="font-semibold">
-                    Internationalization for Next.js
-                  </span>{' '}
-                  <span className="font-light">that gets out of your way.</span>
+                  <strong className="font-semibold">{titleStrong}</strong>{' '}
+                  <span className="font-light">{titleRegular}</span>
                 </h1>
               </div>
-              <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:text-2xl">
-                Support multiple languages, with your app code becoming simpler
-                instead of more complex.
+              <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:mt-4 lg:text-2xl lg:leading-normal">
+                {description}
               </p>
-              <div className="mt-8 flex gap-4">
-                <LinkButton href="/docs">Get started</LinkButton>
+              <div className="mt-8 flex gap-4 lg:mt-10">
+                <LinkButton href="/docs">{getStarted}</LinkButton>
                 <LinkButton
                   href="https://github.com/amannn/next-intl"
                   target="_blank"
                   variant="secondary"
                 >
-                  View on GitHub
+                  {viewOnGithub}
                 </LinkButton>
               </div>
               {/* eslint-disable-next-line @next/next/link-passhref */}
@@ -36,8 +40,7 @@ export default function Hero() {
                 className="mt-10 inline-block border border-green-300/50 px-4 py-3 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-16"
                 href="/docs/next-13"
               >
-                <span className="mr-2 inline-block">📣</span> Support for
-                Next.js 13 and the app directory is coming →
+                <span className="mr-2 inline-block">📣</span> {rscAnnouncement}
               </Link>
             </div>
           </div>
