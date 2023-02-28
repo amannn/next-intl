@@ -81,7 +81,7 @@ CodeSnippets.datesTimesNumbers = () => (
   <code data-language="js" data-theme="default">
     <span className="line">
       <span style={{color: 'var(--shiki-token-comment)'}}>
-        // "Feb 27, 2022"
+        // "Feb 28, 2023"
       </span>
     </span>
     <span className="line">
@@ -93,35 +93,9 @@ CodeSnippets.datesTimesNumbers = () => (
       <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
       <span style={{color: 'var(--shiki-token-string-expression)'}}>
-        'short'
+        'medium'
       </span>
       <span style={{color: 'var(--shiki-color-text)'}}>);</span>
-    </span>
-    <span className="line"> </span>
-    <span className="line">
-      <span style={{color: 'var(--shiki-token-comment)'}}>// "3:36 PM"</span>
-    </span>
-    <span className="line">
-      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
-      <span style={{color: 'var(--shiki-token-function)'}}>
-        .formatDateTime
-      </span>
-      <span style={{color: 'var(--shiki-color-text)'}}>(lastSeen</span>
-      <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-      <span style={{color: 'var(--shiki-color-text)'}}> {'{'}hour</span>
-      <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-      <span style={{color: 'var(--shiki-color-text)'}}> </span>
-      <span style={{color: 'var(--shiki-token-string-expression)'}}>
-        'numeric'
-      </span>
-      <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-      <span style={{color: 'var(--shiki-color-text)'}}> minute</span>
-      <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-      <span style={{color: 'var(--shiki-color-text)'}}> </span>
-      <span style={{color: 'var(--shiki-token-string-expression)'}}>
-        'numeric'
-      </span>
-      <span style={{color: 'var(--shiki-color-text)'}}>{'}'});</span>
     </span>
     <span className="line"> </span>
     <span className="line">
@@ -135,6 +109,24 @@ CodeSnippets.datesTimesNumbers = () => (
         .formatRelativeTime
       </span>
       <span style={{color: 'var(--shiki-color-text)'}}>(lastSeen);</span>
+    </span>
+    <span className="line"> </span>
+    <span className="line">
+      <span style={{color: 'var(--shiki-token-comment)'}}>// "$1,499.90"</span>
+    </span>
+    <span className="line">
+      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>.formatNumber</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>1499.9,</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>{' {'}</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>style: </span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>
+        'currency'
+      </span>
+      <span style={{color: 'var(--shiki-color-text)'}}>, currency: </span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>'USD'</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>{'}'});</span>
     </span>
   </code>
 );
