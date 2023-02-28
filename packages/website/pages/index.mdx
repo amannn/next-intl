@@ -23,23 +23,25 @@ import Hero from 'components/Hero';
 
 <Section
   title="Minimalistic, yet complete"
-  description="Internationalization is an essential part of the user experience. next-intl provides all the pieces that you need to get language subtleties right."
+  description={
+    <>Internationalization is an essential part of the user experience. <b className="font-semibold">next-intl</b> gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.</>
+  }
 >
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20">
     <FeaturePanel
       code={<CodeSnippets.icu />}
       title="ICU message syntax"
-      description="Localize your messages with interpolation, plurals, ordinal pluralization, label selection based on enums and rich text."
+      description="Localize your messages with interpolation, plurals, ordinal pluralization, enum-based label selection, and rich text."
     />
     <FeaturePanel
       code={<CodeSnippets.datesTimesNumbers />}
       title="Dates, times & numbers"
-      description="Use global formats for a consistent look & feel of your app and apply fine tuning as necessary."
+      description="Use global formats for a consistent look & feel of your app and apply fine-tuning as necessary."
     />
     <FeaturePanel
       code={<CodeSnippets.typeSafe />}
       title="Type-safe"
-      description="Develop faster with autocompletion for message keys and catch errors early with compile-time errors."
+      description="Speed up development with autocompletion for message keys and catch typos early with compile-time checks."
     />
     <FeaturePanel
       code={<CodeSnippets.hooks />}
@@ -49,12 +51,12 @@ import Hero from 'components/Hero';
     <FeaturePanel
       code={<CodeSnippets.buildOutput />}
       title="Fast"
-      description="Get the best performance from your app by supporting internationalization on static as well as dynamic pages."
+      description="Get the best performance from your app by supporting internationalization on both static and dynamic pages."
     />
     <FeaturePanel
       code={<CodeSnippets.standards />}
-      title="Based on standards"
-      description="Use the best parts of built-in browser APIs and supplemental lower-level APIs from Format.JS."
+      title="Standards-based"
+      description="Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS."
     />
   </div>
 </Section>
