@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
+}
+
 .dark {
   --shiki-token-string-expression: #10b981;
   --shiki-token-punctuation: rgba(255, 255, 255, 0.5);

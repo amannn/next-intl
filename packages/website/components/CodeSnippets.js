@@ -142,9 +142,8 @@ CodeSnippets.datesTimesNumbers = () => (
 CodeSnippets.typeSafe = () => (
   <code data-language="sh" data-theme="default">
     <span className="line">
-      <span style={{color: 'var(--shiki-color-text)'}}>Found 1 error in </span>
-      <span style={{color: 'var(--shiki-token-string)'}}>
-        src/components/UserDetails.tsx:13
+      <span style={{color: 'var(--shiki-color-text)'}}>
+        Found 1 error in UserDetails.tsx:13
       </span>
     </span>
     <span className="line"> </span>
@@ -165,6 +164,9 @@ CodeSnippets.typeSafe = () => (
       <span style={{color: 'var(--shiki-token-keyword)'}}>
         {'         '}~~~~~~~
       </span>
+    </span>
+    <span className="line">
+      <span> </span>
     </span>
     <span className="line">
       <span style={{color: 'var(--shiki-color-text)'}}>Argument of type</span>
@@ -205,6 +207,30 @@ CodeSnippets.hooks = () => (
       <span style={{color: 'var(--shiki-color-text)'}}>);</span>
     </span>
     <span className="line">
+      <span style={{color: 'var(--shiki-token-function)'}}>t</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>
+        'title'
+      </span>
+      <span style={{color: 'var(--shiki-color-text)'}}>);</span>
+      <span style={{color: 'var(--shiki-token-punctuation)'}}> // string</span>
+    </span>
+    <span className="line">
+      <span style={{color: 'var(--shiki-token-constant)'}}>t</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>rich</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>'bio'</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>);</span>
+      <span style={{color: 'var(--shiki-token-punctuation)'}}>
+        {' '}
+        // ReactNode
+      </span>
+    </span>
+    <span className="line">
+      <span> </span>
+    </span>
+    <span className="line">
       <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
       <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
@@ -214,7 +240,6 @@ CodeSnippets.hooks = () => (
       <span style={{color: 'var(--shiki-token-function)'}}>useIntl</span>
       <span style={{color: 'var(--shiki-color-text)'}}>();</span>
     </span>
-    <span className="line"> </span>
     <span className="line">
       <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
