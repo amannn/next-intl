@@ -421,3 +421,17 @@ it('can localize route handlers', async ({request}) => {
     expect(data).toEqual({message: 'Hallo Welt!'});
   }
 });
+
+it('can use caching headers', async ({request}) => {
+  for (const pathname of [
+    '/',
+    '/en',
+    '/en/nested',
+    '/de',
+    '/de/verschachtelt'
+  ]) {
+    expect((await request.get(pathname)).headers()['cache-control']).toBe(
+      's-maxage=86400, stale-while-revalidate=31557600'
+    );
+  }
+});
