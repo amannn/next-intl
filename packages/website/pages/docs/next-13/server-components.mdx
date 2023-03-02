@@ -21,7 +21,7 @@ This beta version was tested with `next@13.2.0`.
 ## Roadmap
 
 - ✅ All APIs from `next-intl` can be used in Server Components.
-- 💡 Currently SSR-only (i.e. no `generateStaticParams`). You can use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers` in `next.config.js`](https://nextjs.org/docs/api-reference/next.config.js/headers) to to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore use [CDN caching](#cdn-caching).
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
@@ -371,6 +371,46 @@ import {
   getNow, // like `useNow`
   getTimeZone // like `useTimeZone`
 } from 'next-intl/server';
+```
+
+## CDN caching
+
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+
+```js filename="next.config.js"
+const ms = require('ms');
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  // ... Other config
+
+  headers() {
+    return [
+      {
+        // Cache all content pages
+        source: '/((?!_next|assets|favicon.ico).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: [
+              `s-maxage=` + ms('1d') / 1000,
+              `stale-while-revalidate=` + ms('1y') / 1000
+            ].join(', ')
+          }
+        ],
+
+        // If you're deploying on a host that doesn't support the `vary` header (e.g. Vercel),
+        // make sure to disable caching for prefetch requests for Server Components.
+        missing: [
+          {
+            type: 'header',
+            key: 'Next-Router-Prefetch'
+          }
+        ]
+      }
+    ];
+  }
+});
 ```
 
 ## Providing feedback
