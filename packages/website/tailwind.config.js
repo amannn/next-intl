@@ -29,6 +29,10 @@ module.exports = {
     },
     colors: {
       ...colors,
+      slate: {
+        ...colors.slate,
+        850: 'hsl(222deg 47% 16%)'
+      },
       primary: '#5fc3e7'
     }
   }

@@ -11,6 +11,31 @@
   --shiki-token-punctuation: rgba(255, 255, 255, 0.5);
 }
 
+/**
+ * Navbar on home
+ */
+.navbar-home {
+  @apply bg-slate-850 text-white dark:bg-slate-850;
+}
+
+.navbar-home a {
+  @apply !text-white/80 transition-opacity hover:opacity-70;
+}
+.navbar-home *:not(.nextra-scrollbar) a {
+  @apply !text-inherit;
+}
+
+html:not(.dark) .navbar-home .nextra-scrollbar {
+  @apply !bg-white;
+}
+
+.navbar-home input::placeholder {
+  @apply !text-white/50;
+}
+.navbar-home input {
+  @apply !bg-slate-900 !text-white;
+}
+
 .navbar-home .nextra-nav-container-blur {
   display: none;
 }
