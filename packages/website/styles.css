@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
+}
+
+.dark {
+  --shiki-token-string-expression: #10b981;
+  --shiki-token-punctuation: rgba(255, 255, 255, 0.5);
+}
+
+/**
+ * Navbar on home
+ */
+.navbar-home {
+  @apply bg-slate-850 text-white dark:bg-slate-850;
+}
+
+/* Hamburger */
+.navbar-home svg.open {
+  @apply !text-slate-900 dark:!text-white;
+}
+
+.navbar-home nav > a {
+  @apply !text-white/80 transition-opacity hover:opacity-70;
+}
+.navbar-home *:not(.nextra-scrollbar) a,
+.navbar-home *:not(.nextra-scrollbar) button {
+  @apply !text-inherit;
+}
+
+html:not(.dark) .navbar-home .nextra-scrollbar {
+  @apply !bg-white;
+}
+
+.navbar-home input::placeholder {
+  @apply !text-white/50;
+}
+.navbar-home input {
+  @apply !bg-slate-900 !text-white;
+}
+
+.navbar-home .nextra-nav-container-blur {
+  display: none;
+}
+
+/**
+ * Steps
+ */
+
+.steps {
+  @apply ml-4 border-l border-slate-200 pl-8;
+  counter-reset: step;
+}
+.steps h3 {
+  counter-increment: step;
+  @apply text-lg;
+}
+.steps h3:before {
+  content: counter(step);
+  @apply absolute mt-[-6px] ml-[-52px] inline-block h-10 w-10 rounded-full border-4 border-white bg-slate-100 pt-[4px] text-center text-base font-bold text-slate-500;
+}
+
+.dark .steps {
+  @apply border-slate-800;
+}
+.dark .steps h3:before {
+  @apply bg-slate-800 text-white/75;
+  border-color: rgba(17, 17, 17, var(--tw-bg-opacity)); /* nx-bg-dark */
+}

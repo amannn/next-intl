@@ -8,23 +8,24 @@ import Callout from 'components/Callout';
 
 If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
 
-1. Create the following file structure:
+**Start by creating the following file structure:**
 
 ```
 ├── messages (1)
 │   ├── en.json
 │   └── ...
 ├── app
-│   ├── [locale]
-│   │   ├── layout.tsx (2)
-│   │   └── page.tsx (3)
-│   └── ...
-└── middleware.tsx (4)
+│   └── [locale]
+│       ├── layout.tsx (2)
+│       └── page.tsx (3)
+└── middleware.ts (4)
 ```
 
-2. Set up messages for a language, e.g. in `messages/en.json` (1):
+**Now, set up these files as follows:**
 
-```json
+1. Set up messages for a language, e.g. in `messages/en.json`.
+
+```json filename="messages/en.json"
 {
   "Index": {
     "title": "Hello world!"
@@ -32,11 +33,15 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-3. Configure `NextIntlClientProvider` in `app/[locale]/layout.tsx` (2):
+2. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`.
 
-```tsx
+```tsx filename="app/[locale]/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
+
+export function generateStaticParams() {
+  return [{locale: 'en'}, {locale: 'de'}];
+}
 
 export default async function LocaleLayout({children, params: {locale}}) {
   let messages;
@@ -47,16 +52,20 @@ export default async function LocaleLayout({children, params: {locale}}) {
   }
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }
 ```
 
-4. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations (3):
+3. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations.
 
-```tsx
+```tsx filename="app/[locale]/page.tsx"
 'use client';
 
 import {useTranslations} from 'next-intl';
@@ -67,9 +76,9 @@ export default function Index() {
 }
 ```
 
-5. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.tsx` that handles redirects (4):
+4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts` that handles redirects.
 
-```tsx
+```tsx filename="middleware.ts"
 import {createIntlMiddleware} from 'next-intl/server';
 
 // This middleware intercepts requests to `/` and will redirect
@@ -89,7 +98,7 @@ If you've encountered an issue, you can [explore the code for a working example]
 <Callout>
   Note that you have to make use of `'use client';` in all components that use
   features from `next-intl` if you use this approach. Support for `next-intl`
-  APIs in Server Components is [available in a preview
+  APIs in Server Components is [available in a beta
   version](/docs/next-13/server-components).
 </Callout>
 
@@ -97,15 +106,14 @@ If you've encountered an issue, you can [explore the code for a working example]
 
 In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, you can add a component that wraps `next/link` accordingly as a drop-in replacement.
 
-```tsx
-// LocalizedLink.tsx
+```tsx filename="Link.tsx"
 import {useLocale} from 'next-intl';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import {ComponentProps, forwardRef} from 'react';
 
-type Props = ComponentProps<typeof Link>;
+type Props = ComponentProps<typeof NextLink>;
 
-function LocalizedLink({href, ...rest}: Props, ref: Props['ref']) {
+function Link({href, ...rest}: Props, ref: Props['ref']) {
   const locale = useLocale();
 
   function getLocalizedHref(originalHref: string) {
@@ -119,17 +127,17 @@ function LocalizedLink({href, ...rest}: Props, ref: Props['ref']) {
       ? {...href, pathname: getLocalizedHref(href.pathname)}
       : href;
 
-  return <Link ref={ref} href={localizedHref} {...rest} />;
+  return <NextLink ref={ref} href={localizedHref} {...rest} />;
 }
 
-export default forwardRef(LocalizedLink);
+export default forwardRef(Link);
 ```
 
 ```tsx
 // Usage while being on `/en`
-<LocalizedLink href="/">Goes to `/en`</LocalizedLink>
-<LocalizedLink href="/nested">Goes to `/en/nested`</LocalizedLink>
-<LocalizedLink href={{pathname: "/nested"}}>Goes to `/en/nested`</LocalizedLink>
+<Link href="/">Goes to `/en`</Link>
+<Link href="/nested">Goes to `/en/nested`</Link>
+<Link href={{pathname: "/nested"}}>Goes to `/en/nested`</Link>
 ```
 
 <Callout>
@@ -143,9 +151,7 @@ This is the one component that Next.js doesn't allow to be marked with `'use cli
 
 [Support for Server Components in `next-intl`](/docs/next-13/server-components) will allow you to use the same APIs that you already use in other components to handle i18n in `head.js`. In the meantime, as a stopgap solution, you can use the [core library](/docs/usage/core-library) from `next-intl` for this use case.
 
-```tsx
-// app/[locale]/head.tsx
-
+```tsx filename="app/[locale]/head.tsx"
 import {createTranslator} from 'next-intl';
 import {notFound} from 'next/navigation';
 

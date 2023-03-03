@@ -67,6 +67,13 @@ To achieve consistent date, time and number formatting across your app, you can 
 ```
 
 ```js
+intl.formatDateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
+intl.formatNumber(new Date('2020-11-20T10:36:01.516Z'), 'short');
+```
+
+Global formats can also be referenced in messages.
+
+```js
 {
   "ordered": "You've ordered this product on {orderDate, date, short}",
   "latitude": "Latitude: {latitude, number, precise}"
@@ -80,7 +87,7 @@ t('latitude', {latitude: 47.414329182});
 
 ## Default translation values
 
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider. This configuration also can be used to apply consistent styling to commonly used rich text elements. The defaults will be overridden by locally provided values.
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider. This configuration also can be used to apply consistent styling to commonly used rich text elements.
 
 ```js
 <NextIntlProvider
@@ -93,6 +100,8 @@ To achieve consistent usage of translation values and reduce redundancy, you can
   <App />
 </NextIntlProvider>
 ```
+
+The defaults will be overridden by locally provided values.
 
 ## Retrieve provider config
 
