@@ -1,6 +1,6 @@
 import acceptLanguageParser from 'accept-language-parser';
 import type {NextApiRequest, NextApiResponse} from 'next';
-import {createIntl, createTranslator} from 'next-intl';
+import {createFormatter, createTranslator} from 'next-intl';
 import nextConfig from '../../../next.config';
 
 // This file demonstrates how `next-intl` can
@@ -27,13 +27,13 @@ export default async function handler(
   });
 
   // Creates the same object that is returned by `useIntl`.
-  const intl = createIntl({locale});
+  const format = createFormatter({locale});
 
   res.status(200).json({
     locale,
     key: 'Index.title',
     message: t('title'),
-    date: intl.formatDateTime(new Date(), {dateStyle: 'medium'})
+    date: format.dateTime(new Date(), {dateStyle: 'medium'})
   });
 }
 
