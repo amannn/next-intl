@@ -85,10 +85,8 @@ CodeSnippets.datesTimesNumbers = () => (
       </span>
     </span>
     <span className="line">
-      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
-      <span style={{color: 'var(--shiki-token-function)'}}>
-        .formatDateTime
-      </span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>.dateTime</span>
       <span style={{color: 'var(--shiki-color-text)'}}>(lastSeen</span>
       <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
@@ -104,10 +102,8 @@ CodeSnippets.datesTimesNumbers = () => (
       </span>
     </span>
     <span className="line">
-      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
-      <span style={{color: 'var(--shiki-token-function)'}}>
-        .formatRelativeTime
-      </span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>.relativeTime</span>
       <span style={{color: 'var(--shiki-color-text)'}}>(lastSeen);</span>
     </span>
     <span className="line"> </span>
@@ -115,8 +111,8 @@ CodeSnippets.datesTimesNumbers = () => (
       <span style={{color: 'var(--shiki-token-comment)'}}>// "$1,499.90"</span>
     </span>
     <span className="line">
-      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
-      <span style={{color: 'var(--shiki-token-function)'}}>.formatNumber</span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>.number</span>
       <span style={{color: 'var(--shiki-color-text)'}}>(</span>
       <span style={{color: 'var(--shiki-token-constant)'}}>1499.9,</span>
       <span style={{color: 'var(--shiki-color-text)'}}>{' {'}</span>
@@ -225,11 +221,11 @@ CodeSnippets.hooks = () => (
     <span className="line">
       <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
-      <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
       <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
       <span style={{color: 'var(--shiki-color-text)'}}> </span>
-      <span style={{color: 'var(--shiki-token-function)'}}>useIntl</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>useFormatter</span>
       <span style={{color: 'var(--shiki-color-text)'}}>();</span>
     </span>
     <span className="line">
