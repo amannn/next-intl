@@ -36,10 +36,11 @@ export default function Hero({
             </div>
             {/* eslint-disable-next-line @next/next/link-passhref */}
             <Link
-              className="mt-10 inline-block border border-green-300/50 px-4 py-3 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-16"
+              className="mt-10 inline-block flex border border-green-300/50 px-4 py-3 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-16"
               href="/docs/next-13"
             >
-              <span className="mr-2 inline-block">📣</span> {rscAnnouncement}
+              <span className="mr-3 inline-block">📣</span>{' '}
+              <span>{rscAnnouncement}</span>
             </Link>
           </div>
           <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-16">

@@ -18,10 +18,16 @@
   @apply bg-slate-850 text-white dark:bg-slate-850;
 }
 
-.navbar-home a {
+/* Hamburger */
+.navbar-home svg.open {
+  @apply !text-slate-900 dark:!text-white;
+}
+
+.navbar-home nav > a {
   @apply !text-white/80 transition-opacity hover:opacity-70;
 }
-.navbar-home *:not(.nextra-scrollbar) a {
+.navbar-home *:not(.nextra-scrollbar) a,
+.navbar-home *:not(.nextra-scrollbar) button {
   @apply !text-inherit;
 }
 
