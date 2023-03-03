@@ -20,11 +20,17 @@ function Component() {
     month: 'numeric',
     day: 'numeric'
   });
+
   intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
 }
 ```
 
 See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options you can provide to `formatDateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
+
+<Callout>
+  To reuse date and time formats for multiple components, you can configure
+  [global formats](/docs/usage/configuration#global-formats).
+</Callout>
 
 ## Formatting relative time
 
@@ -108,5 +114,3 @@ t(
   }
 );
 ```
-
-To reuse date and time formats for multiple components, you can configure [global formats](/docs/usage/configuration#global-formats).

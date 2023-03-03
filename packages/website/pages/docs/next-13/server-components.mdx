@@ -1,56 +1,145 @@
 import Callout from 'components/Callout';
 
-# Usage in Server Components (preview)
+# Usage in Server Components (beta)
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a preview to early adopters, who are already building apps with the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
 <Callout type="warning">
   The `app` directory is currently in beta, patterns are still emerging and APIs
   may change. Please **use this at your own risk**, knowing that you might have
   to face a migration effort when the `app` directory becomes stable.
-  `next-intl` tries to stay up to date with the latest developments on the
-  Next.js side, but during this period there can be unexpected issues.
 </Callout>
 
-## Current preview version
+## Current beta version
 
 ```
-npm install next-intl@2.11.0-alpha.2
+npm install next-intl@2.11.0-beta.16
 ```
 
-This preview version was tested with `next@13.0.6`.
+This beta version was tested with `next@13.2.0`.
+
+## Roadmap
+
+- ✅ All APIs from `next-intl` can be used in Server Components.
+- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore use [CDN caching](#cdn-caching).
+
+For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
 ## Getting started
 
-The setup is [the same as for Client Components](/docs/next-13/client-components), but you're able to make two adjustments now:
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
-1. Replace the usage of `NextIntlClientProvider` with `NextIntlServerProvider` in your layout:
+**Start by creating the following file structure:**
 
-```tsx
-// app/[locale]/layout.tsx
-import {NextIntlServerProvider} from 'next-intl/server';
+```
+├── messages (1)
+│   ├── en.json
+│   └── ...
+├── i18n.ts (2)
+├── next.config.js (3)
+├── middleware.ts (4)
+└── app
+    └── [locale]
+        ├── layout.tsx (5)
+        └── page.tsx (6)
+```
+
+**Now, set up the files as follows:**
+
+<div className="steps">
+
+### `messages/en.json`
+
+Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+
+The simplest option is to create JSON files locally based on [locales](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
+
+```json filename="messages/en.json"
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+### `i18n.ts`
+
+`next-intl` creates a configuration once per request and makes it available to all Server Components. Here you can provide messages depending the locale of the user.
+
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`./messages/${locale}.json`)).default
+}));
+```
+
+### `next.config.js`
+
+Now, set up the plugin and provide the path to your configuration.
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')(
+  // This is the default (also the `src` folder is supported out of the box)
+  './i18n.ts'
+);
+
+module.exports = withNextIntl({
+  // Other Next.js configuration ...
+  experimental: {appDir: true}
+});
+```
+
+### `middleware.ts`
+
+The middleware matches a locale for the request and handles redirects and rewrites accordingly.
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en'
+});
+
+export const config = {
+  // Skip all paths that aren't pages that you'd like to internationalize
+  matcher: ['/((?!api|_next|favicon.ico|assets).*)']
+};
+```
+
+### `app/[locale]/layout.tsx`
+
+The `locale` that was matched by the middleware is available via `useLocale` and can be used to configure the document language.
+
+```tsx filename="app/[locale]/layout.tsx"
+import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
-  let messages;
-  try {
-    messages = (await import(`../../../messages/${locale}.json`)).default;
-  } catch (error) {
+export default function LocaleLayout({children, params}) {
+  const locale = useLocale();
+
+  // Show a 404 error if the user requests an unknown locale
+  if (params.locale !== locale) {
     notFound();
   }
 
   return (
-    <NextIntlServerProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlServerProvider>
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
   );
 }
 ```
 
-2. Remove the `'use client';` directive from your page component:
+### `app/[locale]/page.tsx`
 
-```tsx
-// app/[locale]/page.tsx
+Use translations in your page components or anywhere else!
+
+```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
 
 export default function Index() {
@@ -59,42 +148,108 @@ export default function Index() {
 }
 ```
 
-That's all it takes! Now you can internationalize your apps without adding i18n features to your client bundle.
+</div>
 
-If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components the the Server Components preview, you can apply both providers at the same time.
+That's all it takes! Now you can internationalize your apps on the server side.
+
+If you've encountered an issue, you can [explore the code for a working example](https://github.com/amannn/next-intl-example-next-13) ([demo](https://next-intl-example-next-13.vercel.app)).
+
+If you're in a transitioning phase, either from the `pages` directory to the `app` directory, or from Client Components to the Server Components beta, you can apply [`NextIntlClientProvider`](/docs/next-13/client-components) additionally.
+
+## Routing
+
+### `Link`
+
+`next-intl` provides a drop-in replacement for `next/link` that will automatically prefix the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
+
+```tsx
+import {Link} from 'next-intl';
+
+// When the user is on `/en`, the link will point to `/en/about`
+<Link href="/about">About</Link>
+
+// You can override the `locale` to switch to another language
+<Link href="/" locale="de">Switch to German</Link>
+```
+
+### `useRouter`
+
+If you need to navigate programmatically (e.g. in response to a form submission), `next-intl` provides a convience API that wraps `useRouter` from Next.js and automatically applies the locale of the user.
+
+```tsx
+'use client';
+
+import {useRouter} from 'next-intl/client';
+
+const router = useRouter();
+
+// When the user is on `/en`, the router will navigate to `/en/about`
+router.push('/about');
+```
+
+### `usePathname`
+
+To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
+
+```tsx
+'use client';
+
+import {usePathname} from 'next-intl/client';
+
+// When the user is on `/en`, this will be `/`
+const pathname = usePathname();
+```
+
+### `redirect`
+
+If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl`. This wraps [the `redirect` function from Next.js](https://beta.nextjs.org/docs/api-reference/redirect) and automatically applies the current locale.
+
+```tsx
+import {redirect} from 'next-intl/server';
+
+export default async function Profile() {
+  const user = await fetchUser();
+
+  if (!user) {
+    // When the user is on `/en/profile`, this will be `/en/login`
+    redirect('/login');
+  }
+
+  // ...
+}
+```
 
 ## Switching to Client Components
 
 If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
 
-```tsx
-// app/[locale]/page.tsx
+```tsx filename="[locale]/faq/page.tsx" {6}
 import {useTranslations} from 'next-intl';
-import Counter from './Counter';
+import Expandable from './Expandable';
 
-export default function Index() {
-  const t = useTranslations('Index');
-  return <Counter title={t('counterTitle')} />;
+export default function FAQ() {
+  const t = useTranslations('FAQ');
+  return <Expandable title={t('title')}>{t('description')}</Expandable>;
 }
 ```
 
-```tsx
-// app/[locale]/Counter.tsx
+```tsx filename="Expandable.tsx" {5,14-15}
 'use client';
 
 import {useState} from 'react';
 
-function Counter({title}) {
-  const [count, setCount] = useState(0);
+function Expandable({title, children}) {
+  const [expanded, setExpanded] = useState(false);
 
-  function onIncrement() {
-    setCount(count + 1);
+  function onToggle() {
+    setExpanded(!expanded);
   }
 
   return (
-    <p>
-      {title}: {count} <button onClick={onIncrement}>+</button>
-    </p>
+    <div>
+      <button onClick={onToggle}>{title}</button>
+      {expanded && <p>{children}</p>}
+    </div>
   );
 }
 ```
@@ -102,6 +257,161 @@ function Counter({title}) {
 This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
 
 If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
+
+## Global request configuration
+
+If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.ts`.
+
+```tsx filename="i18n.ts"
+import {headers} from 'next/headers';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default,
+
+  // You can read from headers or cookies here if necessary
+  timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
+}));
+```
+
+## Middleware configuration
+
+The middleware handles rewrites and redirects based on the detected user locale.
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en',
+
+  // Optionally configure a list of domains where the `defaultLocale` is changed
+  domains: [
+    {
+      domain: 'example.de',
+      defaultLocale: 'de'
+    }
+  ],
+
+  // Sets the `Link` response header to notify search engines about
+  // links to the content in other languages (defaults to `true`).
+  alternateLinks: true
+});
+
+export const config = {
+  // Skip all paths that aren't pages that you'd like to internationalize.
+  // If you use the `public` folder, make sure your static assets are ignored
+  // (e.g. by moving them to a shared folder that is referenced here).
+  matcher: ['/((?!api|_next|favicon.ico|assets).*)']
+};
+```
+
+The locale is matched based on this priority order:
+
+1. **Locale prefix**: The pathname is prefixed with a configured locale (e.g. `/en`).
+2. **Domain**: The host of the requested URL matches against an item in the `domains` list. The host is read from the `x-forwarded-host` or alternatively the `host` header.
+3. **Cookie**: There's an existing cookie that contains the locale that was matched from a previous request.
+4. **`accept-language` header**: The available `locales` are matched against the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language).
+5. **Default fallback**: If nothing else matches, then the `defaultLocale` is used.
+
+If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched and the user requests the root pathname, then the user is **redirected** to to the respective sub path (e.g. `/` to `/de`).
+
+## Localizing pathnames
+
+If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  experimental: {appDir: true},
+  rewrites() {
+    return [
+      {
+        source: '/de/über',
+        destination: '/de/about'
+      }
+    ];
+  }
+});
+```
+
+Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
+
+1. Turn off the `alternateLinks` option in [the middleware](#middleware-configuration) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+2. Translate the pathnames you're passing to the [routing APIs from `next-intl`](#routing) ([example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/Navigation.tsx)).
+
+## Using internationalization outside of components
+
+If you need to use translated messages in functions like `generateMetadata`, you can import awaitable versions of the functions that you usually call as hooks from `next-intl/server`.
+
+```tsx filename="app/[locale]/layout.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export async function generateMetadata() {
+  const t = await getTranslations('Metadata');
+
+  return {
+    title: t('title'),
+    description: t('description')
+  };
+}
+```
+
+These functions are available from `next-intl/server` for usage outside of components:
+
+```tsx
+import {
+  getTranslations, // like `useTranslations`
+  getIntl, // like `useIntl`
+  getLocale, // like `useLocale`
+  getNow, // like `useNow`
+  getTimeZone // like `useTimeZone`
+} from 'next-intl/server';
+```
+
+## CDN caching
+
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+
+```js filename="next.config.js"
+const ms = require('ms');
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  // ... Other config
+
+  headers() {
+    return [
+      {
+        // Cache all content pages
+        source: '/((?!_next|assets|favicon.ico).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: [
+              `s-maxage=` + ms('1d') / 1000,
+              `stale-while-revalidate=` + ms('1y') / 1000
+            ].join(', ')
+          }
+        ],
+
+        // If you're deploying on a host that doesn't support the `vary` header (e.g. Vercel),
+        // make sure to disable caching for prefetch requests for Server Components.
+        missing: [
+          {
+            type: 'header',
+            key: 'Next-Router-Prefetch'
+          }
+        ]
+      }
+    ];
+  }
+});
+```
 
 ## Providing feedback
 
