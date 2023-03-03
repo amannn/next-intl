@@ -93,7 +93,7 @@ export default {
       if (!isRoot) return <Navbar {...props} />;
 
       return (
-        <div className="navbar-home dark:bg-slate-900">
+        <div className="navbar-home">
           <Navbar {...props} />
         </div>
       );
