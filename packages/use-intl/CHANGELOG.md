@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.11.0 (2023-03-06)
+
+
+### Features
+
+* Add `useFormatter` (replaces `useIntl`) ([#209](https://github.com/amannn/next-intl/tree/main/packages/use-intl/issues/209)) ([021b682](https://github.com/amannn/next-intl/tree/main/packages/use-intl/commit/021b682aa00063b040ccf1c927111780c1f0a710))
+
+
+
+
+
 ## 2.10.4 (2023-02-20)
 
 
