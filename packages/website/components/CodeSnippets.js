@@ -292,7 +292,7 @@ CodeSnippets.buildOutput = () => (
     <span className="line"> </span>
     <span className="line">
       <span style={{color: 'var(--shiki-token-punctuation)'}}>
-        Route (pages){'   '}Size{'     '}First Load JS
+        Route{'           '}Size{'     '}First Load JS
       </span>
     </span>
     <span className="line">
