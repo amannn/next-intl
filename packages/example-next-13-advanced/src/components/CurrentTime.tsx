@@ -1,13 +1,13 @@
-import {useIntl, useNow, useTimeZone} from 'next-intl';
+import {useFormatter, useNow, useTimeZone} from 'next-intl';
 
 export default function CurrentTime() {
-  const intl = useIntl();
+  const format = useFormatter();
   const now = useNow();
   const timeZone = useTimeZone();
 
   return (
     <p data-testid="CurrentTime">
-      {intl.formatDateTime(now, 'medium')} ({timeZone || 'N/A'})
+      {format.dateTime(now, 'medium')} ({timeZone || 'N/A'})
     </p>
   );
 }

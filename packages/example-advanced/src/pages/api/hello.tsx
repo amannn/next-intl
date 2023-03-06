@@ -26,7 +26,7 @@ export default async function handler(
     namespace: 'Index'
   });
 
-  // Creates the same object that is returned by `useIntl`.
+  // Creates the same object that is returned by `useFormatter`.
   const format = createFormatter({locale});
 
   res.status(200).json({
