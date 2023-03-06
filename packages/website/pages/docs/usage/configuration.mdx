@@ -29,7 +29,7 @@ To avoid mismatches between the server and client environment, it is recommended
 </NextIntlProvider>
 ```
 
-This value will be used as the default for the `formatRelativeTime` function as well as for the initial render of `useNow`.
+This value will be used as the default for the `relativeTime` function as well as for the initial render of `useNow`.
 
 <Callout type="warning">
   **Important:** When you use `getStaticProps` and no `updateInterval`, this
@@ -67,8 +67,14 @@ To achieve consistent date, time and number formatting across your app, you can 
 ```
 
 ```js
-intl.formatDateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
-intl.formatNumber(new Date('2020-11-20T10:36:01.516Z'), 'short');
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+
+  format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
+  format.number(new Date('2020-11-20T10:36:01.516Z'), 'short');
+}
 ```
 
 Global formats can also be referenced in messages.
@@ -81,8 +87,14 @@ Global formats can also be referenced in messages.
 ```
 
 ```js
-t('ordered', {orderDate: new Date('2020-11-20T10:36:01.516Z')});
-t('latitude', {latitude: 47.414329182});
+import {useTranslations} from 'next-intl';
+
+function Component() {
+  const t = useTranslations();
+
+  t('ordered', {orderDate: new Date('2020-11-20T10:36:01.516Z')});
+  t('latitude', {latitude: 47.414329182});
+}
 ```
 
 ## Default translation values
