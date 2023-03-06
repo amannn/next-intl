@@ -31,7 +31,10 @@ const files = [
             {'{'}useTranslations
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> useIntl{'}'} </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {' '}
+            useFormatter{'}'}{' '}
+          </span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span
@@ -79,11 +82,13 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>useIntl</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>
+            useFormatter
+          </span>
           <span style={{color: 'var(--shiki-color-text)'}}>();</span>
         </span>
         <span className="line"> </span>
@@ -207,9 +212,9 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}> {'{'}time</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>intl</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
           <span style={{color: 'var(--shiki-token-function)'}}>
-            .formatRelativeTime
+            .relativeTime
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>(</span>
           <span style={{color: 'var(--shiki-token-constant)'}}>user</span>

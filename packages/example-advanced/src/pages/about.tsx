@@ -1,20 +1,19 @@
-import {parseISO} from 'date-fns';
 import pick from 'lodash/pick';
 import {GetServerSidePropsContext} from 'next';
-import {useIntl, useTranslations} from 'next-intl';
+import {useFormatter, useTranslations} from 'next-intl';
 import PageLayout from 'components/PageLayout';
 
 export default function About() {
   const t = useTranslations('About');
-  const intl = useIntl();
-  const lastUpdated = parseISO('2021-12-23T10:04:45.567Z');
+  const format = useFormatter();
+  const lastUpdated = new Date('2021-12-23T10:04:45.567Z');
 
   return (
     <PageLayout title={t('title')}>
       <p>
         {t('lastUpdated', {
           lastUpdated,
-          lastUpdatedRelative: intl.formatRelativeTime(lastUpdated)
+          lastUpdatedRelative: format.relativeTime(lastUpdated)
         })}
       </p>
     </PageLayout>
