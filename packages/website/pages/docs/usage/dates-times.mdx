@@ -6,26 +6,26 @@ If you're formatting dates and times, you should [set up a global time zone](#to
 
 ## Formatting plain dates
 
-You can format plain dates and times that are not part of a message with the `useIntl` hook:
+You can format plain dates and times that are not part of a message with the `useFormatter` hook:
 
 ```js
-import {useIntl} from 'next-intl';
+import {useFormatter} from 'next-intl';
 
 function Component() {
-  const intl = useIntl();
+  const format = useFormatter();
   const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
-  intl.formatDateTime(dateTime, {
+  format.dateTime(dateTime, {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric'
   });
 
-  intl.formatDateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
+  format.dateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
 }
 ```
 
-See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options you can provide to `formatDateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
+See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to `dateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
 
 <Callout>
   To reuse date and time formats for multiple components, you can configure
@@ -37,15 +37,15 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 Relative time durations can be formatted with a separate function:
 
 ```js
-import {useIntl} from 'next-intl';
+import {useFormatter} from 'next-intl';
 
 function Component() {
-  const intl = useIntl();
+  const format = useFormatter();
   const dateTime = new Date('2020-11-20T08:30:00.000Z');
   const now = new Date('2020-11-20T10:36:00.000Z');
 
   // Renders "2 hours ago"
-  intl.formatRelativeTime(dateTime, now);
+  format.relativeTime(dateTime, now);
 }
 ```
 
@@ -54,23 +54,23 @@ Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago
 Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](/docs/usage/configuration#global-now-value), you can omit the second argument:
 
 ```js
-intl.formatRelativeTime(dateTime);
+format.relativeTime(dateTime);
 ```
 
 If you want the value to update over time, you can do so with the `useNow` hook:
 
 ```js
-import {useNow, useIntl} from 'next-intl';
+import {useNow, useFormatter} from 'next-intl';
 
 function Component() {
   const now = useNow({
     // Update every 10 seconds
     updateInterval: 1000 * 10
   });
-  const intl = useIntl();
+  const format = useFormatter();
   const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
-  intl.formatRelativeTime(dateTime, now);
+  format.relativeTime(dateTime, now);
 }
 ```
 

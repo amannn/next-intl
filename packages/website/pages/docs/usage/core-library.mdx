@@ -29,13 +29,13 @@ t.rich('rich', {
 For date, time and number formatting, the `intl` object can be created outside of React as well:
 
 ```js
-import {createIntl} from 'next-intl';
+import {createFormatter} from 'next-intl';
 
-// Creates the same object that is returned by `useIntl`.
-const intl = createIntl({locale: 'en'});
+// Creates the same object that is returned by `useFormatter`.
+const format = createFormatter({locale: 'en'});
 
 // Result: "Oct 17, 2022"
-intl.formatDateTime(new Date(2022, 9, 17), {dateStyle: 'medium'});
+format.dateTime(new Date(2022, 9, 17), {dateStyle: 'medium'});
 ```
 
 A common example for the usage of the core library is to use messages in [Next.js API routes](https://nextjs.org/docs/api-routes/introduction). See the [advanced example](/examples/advanced) for a working implementation.

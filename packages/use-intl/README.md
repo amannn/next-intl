@@ -1,33 +1,38 @@
 # 🌐 use-intl
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) ![Build passing](https://img.shields.io/github/workflow/status/amannn/next-intl/main)
+![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) [<img src="https://img.shields.io/npm/dw/use-intl.svg" />](https://www.npmjs.com/package/use-intl)
 
-> A minimal, but complete solution for managing translations, date, time and number formatting in React apps.
+> Internationalization for React that gets out of your way.
 
 ## Features
 
-- 🌟 **Proven [ICU syntax](https://formatjs.io/docs/core-concepts/icu-syntax)**: This covers interpolation, plurals, ordinal pluralization, label selection based on enums and rich text. I18n is an essential part of the user experience, therefore this library doesn't compromise on flexibility and never leaves you behind when you need to fine tune a translation.
-- 📅 **Built-in date, time and number formatting**: You can use global formats for a consistent look & feel of your app and integrate them with translations.
-- 💡 **Hooks-only API**: This ensures that you can use the same API for `children` as well as for attributes which expect strings.
-- ✅ **Type-safe**: If you're using TypeScript, you'll benefit from autocompletion for available message keys and compile-time errors for typos.
-- ⚔️ **Battle-tested building blocks**: This library is a minimal wrapper around built-in browser APIs and supplemental lower-level APIs from [Format.JS](https://formatjs.io/) (used by `react-intl`).
+Internationalization is an essential part of the user experience. use-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
+
+- 🌟 **ICU message syntax**: Localize your messages with interpolation, plurals, ordinal pluralization, enum-based label selection and rich text.
+- 📅 **Dates, times & numbers**: Use global formats for a consistent look & feel of your app and apply fine-tuning as necessary.
+- ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
+- 💡 **Hooks-only API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
+- ⚔️ **Standards-based**: Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS.
 
 ## What does it look like?
 
 This library is based on the premise that messages can be grouped by namespaces (typically a component name).
 
 ```jsx
-// LatestFollower.js
-import {useTranslations} from 'use-intl';
-
-function LatestFollower({user}) {
-  const t = useTranslations('LatestFollower');
-
+// UserDetails.tsx
+import {useTranslations, useFormatter} from 'next-intl';
+ 
+function UserDetails({user}) {
+  const t = useTranslations('UserDetails');
+  const format = useFormatter();
+ 
   return (
-    <>
-      <Text>{t('latestFollower', {username: user.name})}</Text>
-      <IconButton aria-label={t('followBack')} icon={<FollowIcon />} />
-    </>
+    <section>
+      <h2>{t('title')}</h2>
+      <p>{t('followers', {count: user.followers.length})}</p>
+      <p>{t('lastSeen', {time: format.relativeTime(user.lastSeen)})</p>
+      <Image alt={t('portrait', {username: user.name})} src={user.portrait} />
+    </section>
   );
 }
 ```
@@ -35,9 +40,15 @@ function LatestFollower({user}) {
 ```js
 // en.json
 {
-  "LatestFollower": {
-    "latestFollower": "{username} started following you",
-    "followBack": "Follow back"
+  "UserDetails": {
+    "title": "User details",
+    "followers": "{count, plural, ↵
+                    =0 {No followers yet} ↵
+                    =1 {One follower} ↵
+                    other {# followers} ↵
+                  }",
+    "lastSeen": "Last seen {time}",
+    "portrait": "Portrait of {username}"
   }
 }
 ```
@@ -46,6 +57,7 @@ function LatestFollower({user}) {
 
 1. `npm install use-intl`
 2. Add the provider
+
 ```jsx
 import {IntlProvider} from 'use-intl';
 

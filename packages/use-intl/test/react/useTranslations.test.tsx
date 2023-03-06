@@ -1,5 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
+// eslint-disable-next-line import/no-named-as-default
 import IntlMessageFormat from 'intl-messageformat';
 import React, {ReactNode} from 'react';
 import {

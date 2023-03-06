@@ -7,7 +7,7 @@ import {
   IntlError,
   IntlErrorCode,
   IntlProvider,
-  useIntl
+  useFormatter
 } from '../../src';
 
 function MockProvider(
@@ -16,7 +16,7 @@ function MockProvider(
   return <IntlProvider locale="en" messages={{}} {...props} />;
 }
 
-describe('formatDateTime', () => {
+describe('dateTime', () => {
   const mockDate = parseISO('2020-11-20T10:36:01.516Z');
 
   function renderDateTime(
@@ -24,8 +24,8 @@ describe('formatDateTime', () => {
     options?: DateTimeFormatOptions
   ) {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatDateTime(value, options)}</>;
+      const format = useFormatter();
+      return <>{format.dateTime(value, options)}</>;
     }
 
     render(
@@ -57,8 +57,8 @@ describe('formatDateTime', () => {
 
   it('can use a global date format', () => {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatDateTime(mockDate, 'onlyYear')}</>;
+      const format = useFormatter();
+      return <>{format.dateTime(mockDate, 'onlyYear')}</>;
     }
 
     render(
@@ -72,8 +72,8 @@ describe('formatDateTime', () => {
 
   it('can use a global time format', () => {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatDateTime(mockDate, 'onlyHours')}</>;
+      const format = useFormatter();
+      return <>{format.dateTime(mockDate, 'onlyHours')}</>;
     }
 
     render(
@@ -97,10 +97,10 @@ describe('formatDateTime', () => {
 
     it('can use a global time zone', () => {
       function Component() {
-        const intl = useIntl();
+        const format = useFormatter();
         return (
           <>
-            {intl.formatDateTime(mockDate, {
+            {format.dateTime(mockDate, {
               hour: 'numeric',
               minute: 'numeric'
             })}
@@ -119,10 +119,10 @@ describe('formatDateTime', () => {
 
     it('can override a global time zone', () => {
       function Component() {
-        const intl = useIntl();
+        const format = useFormatter();
         return (
           <>
-            {intl.formatDateTime(mockDate, {
+            {format.dateTime(mockDate, {
               timeZone: 'Australia/Sydney',
               hour: 'numeric',
               minute: 'numeric'
@@ -146,8 +146,8 @@ describe('formatDateTime', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
-        return <>{intl.formatDateTime(mockDate, 'onlyYear')}</>;
+        const format = useFormatter();
+        return <>{format.dateTime(mockDate, 'onlyYear')}</>;
       }
 
       const {container} = render(
@@ -168,10 +168,10 @@ describe('formatDateTime', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
+        const format = useFormatter();
 
         // @ts-expect-error
-        return <>{intl.formatDateTime(mockDate, {year: 'very long'})}</>;
+        return <>{format.dateTime(mockDate, {year: 'very long'})}</>;
       }
 
       const {container} = render(
@@ -190,11 +190,11 @@ describe('formatDateTime', () => {
   });
 });
 
-describe('formatNumber', () => {
+describe('number', () => {
   function renderNumber(value: number, options?: NumberFormatOptions) {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatNumber(value, options)}</>;
+      const format = useFormatter();
+      return <>{format.number(value, options)}</>;
     }
 
     render(
@@ -216,8 +216,8 @@ describe('formatNumber', () => {
 
   it('can use a global format', () => {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatNumber(10000, 'noGrouping')}</>;
+      const format = useFormatter();
+      return <>{format.number(10000, 'noGrouping')}</>;
     }
 
     render(
@@ -236,8 +236,8 @@ describe('formatNumber', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
-        return <>{intl.formatNumber(mockNumber, 'missing')}</>;
+        const format = useFormatter();
+        return <>{format.number(mockNumber, 'missing')}</>;
       }
 
       const {container} = render(
@@ -258,8 +258,8 @@ describe('formatNumber', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
-        return <>{intl.formatNumber(mockNumber, {currency: 'unknown'})}</>;
+        const format = useFormatter();
+        return <>{format.number(mockNumber, {currency: 'unknown'})}</>;
       }
 
       const {container} = render(
@@ -278,11 +278,11 @@ describe('formatNumber', () => {
   });
 });
 
-describe('formatRelativeTime', () => {
+describe('relativeTime', () => {
   function renderNumber(date: Date | number, now: Date | number) {
     function Component() {
-      const intl = useIntl();
-      return <>{intl.formatRelativeTime(date, now)}</>;
+      const format = useFormatter();
+      return <>{format.relativeTime(date, now)}</>;
     }
 
     render(
@@ -366,9 +366,9 @@ describe('formatRelativeTime', () => {
 
   it('can use a global `now` fallback', () => {
     function Component() {
-      const intl = useIntl();
+      const format = useFormatter();
       const mockDate = parseISO('1984-11-20T10:36:00.000Z');
-      return <>{intl.formatRelativeTime(mockDate)}</>;
+      return <>{format.relativeTime(mockDate)}</>;
     }
 
     render(
@@ -385,10 +385,10 @@ describe('formatRelativeTime', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
+        const format = useFormatter();
         // @ts-ignore Provoke an error
         const date = 'not a number' as number;
-        return <>{intl.formatRelativeTime(date, -20)}</>;
+        return <>{format.relativeTime(date, -20)}</>;
       }
 
       const {container} = render(
@@ -409,9 +409,9 @@ describe('formatRelativeTime', () => {
       const onError = jest.fn();
 
       function Component() {
-        const intl = useIntl();
+        const format = useFormatter();
         const mockDate = parseISO('1984-11-20T10:36:00.000Z');
-        return <>{intl.formatRelativeTime(mockDate)}</>;
+        return <>{format.relativeTime(mockDate)}</>;
       }
 
       render(

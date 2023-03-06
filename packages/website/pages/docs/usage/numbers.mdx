@@ -7,16 +7,16 @@ import Callout from 'components/Callout';
 When you're formatting plain numbers that are not part of a message, you can use a separate hook:
 
 ```js
-import {useIntl} from 'next-intl';
+import {useFormatter} from 'next-intl';
 
 function Component() {
-  const intl = useIntl();
+  const format = useFormatter();
 
-  intl.formatNumber(499.9, {style: 'currency', currency: 'USD'});
+  format.number(499.9, {style: 'currency', currency: 'USD'});
 }
 ```
 
-See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to `formatNumber` ([interactive explorer](https://www.intl-explorer.com/NumberFormat/Currency)).
+See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to `number` ([interactive explorer](https://www.intl-explorer.com/NumberFormat/Currency)).
 
 ## Numbers within messages
 
