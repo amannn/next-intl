@@ -435,3 +435,9 @@ it('can use caching headers', async ({request}) => {
     );
   }
 });
+
+it('can use the formatter', async ({page}) => {
+  await page.goto('/en');
+  await expect(page.getByTestId('CurrentTimeRelative')).toHaveText('now');
+  await expect(page.getByTestId('Number')).toHaveText('€23,102.00');
+});

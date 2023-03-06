@@ -26,7 +26,7 @@ function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   const pathname = usePathname();
 
   useEffect(() => {
-    setLocalizedHref(localizeHref(href, locale, pathname));
+    setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
   }, [href, locale, pathname]);
 
   if (locale !== undefined) {

@@ -1,8 +1,13 @@
-import {Link, useTranslations} from 'next-intl';
+import {
+  Link,
+  useFormatter,
+  useNow,
+  useTimeZone,
+  useTranslations
+} from 'next-intl';
 import Image from 'next/image';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
-import CurrentTime from '../../components/CurrentTime';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
@@ -14,6 +19,9 @@ type Props = {
 
 export default function Index({searchParams}: Props) {
   const t = useTranslations('Index');
+  const format = useFormatter();
+  const now = useNow();
+  const timeZone = useTimeZone();
 
   return (
     <PageLayout title={t('title')}>
@@ -28,7 +36,13 @@ export default function Index({searchParams}: Props) {
       <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
       {/* @ts-expect-error Purposefully trigger an error */}
       <p data-testid="MissingMessage">{t('missing')}</p>
-      <CurrentTime />
+      <p data-testid="CurrentTime">
+        {format.dateTime(now, 'medium')} ({timeZone || 'N/A'})
+      </p>
+      <p data-testid="CurrentTimeRelative">{format.relativeTime(now)}</p>
+      <p data-testid="Number">
+        {format.number(23102, {style: 'currency', currency: 'EUR'})}
+      </p>
       <LocaleSwitcher />
       <MessagesAsPropsCounter />
       {/* @ts-expect-error RSC are not supported yet by TypeScript */}
