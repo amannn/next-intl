@@ -195,25 +195,45 @@ CodeSnippets.hooks = () => (
       <span style={{color: 'var(--shiki-color-text)'}}>);</span>
     </span>
     <span className="line">
+      <span> </span>
+    </span>
+    <span className="line">
       <span style={{color: 'var(--shiki-token-function)'}}>t</span>
       <span style={{color: 'var(--shiki-color-text)'}}>(</span>
       <span style={{color: 'var(--shiki-token-string-expression)'}}>
-        'title'
+        'followers'
       </span>
-      <span style={{color: 'var(--shiki-color-text)'}}>);</span>
-      <span style={{color: 'var(--shiki-token-punctuation)'}}> // string</span>
+      <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+      <span style={{color: 'var(--shiki-color-text)'}}> {'{'}count</span>
+      <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+      <span style={{color: 'var(--shiki-color-text)'}}> </span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>followers</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+      <span style={{color: 'var(--shiki-token-constant)'}}>length</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>{'}'}); </span>
+      <span style={{color: 'var(--shiki-token-comment)'}}>// string</span>
     </span>
     <span className="line">
       <span style={{color: 'var(--shiki-token-constant)'}}>t</span>
-      <span style={{color: 'var(--shiki-color-text)'}}>.</span>
-      <span style={{color: 'var(--shiki-token-function)'}}>rich</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>.rich</span>
       <span style={{color: 'var(--shiki-color-text)'}}>(</span>
       <span style={{color: 'var(--shiki-token-string-expression)'}}>'bio'</span>
-      <span style={{color: 'var(--shiki-color-text)'}}>);</span>
-      <span style={{color: 'var(--shiki-token-punctuation)'}}>
-        {' '}
-        // ReactNode
+      <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+      <span style={{color: 'var(--shiki-color-text)'}}> {'{'}</span>
+      <span style={{color: 'var(--shiki-token-function)'}}>b</span>
+      <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+      <span style={{color: 'var(--shiki-color-text)'}}> (chunks) </span>
+      <span style={{color: 'var(--shiki-token-keyword)'}}>=&gt;</span>
+      <span style={{color: 'var(--shiki-color-text)'}}> &lt;</span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>b</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>
+        &gt;{'{'}chunks{'}'}&lt;/
       </span>
+      <span style={{color: 'var(--shiki-token-string-expression)'}}>b</span>
+      <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'}'}); </span>
+      <span style={{color: 'var(--shiki-token-comment)'}}>// ReactNode</span>
     </span>
     <span className="line">
       <span> </span>
