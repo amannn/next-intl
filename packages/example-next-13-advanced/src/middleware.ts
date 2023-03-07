@@ -1,16 +1,12 @@
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
-  locales: ['en', 'de', 'es'],
+  locales: ['en', 'de', 'es', 'fr'],
   defaultLocale: 'en',
   domains: [
     {
-      domain: 'example.de',
-      defaultLocale: 'de'
-    },
-    {
-      domain: 'de.example.com',
-      defaultLocale: 'de'
+      domain: 'example.fr',
+      defaultLocale: 'fr'
     }
   ]
 });

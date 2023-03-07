@@ -12,12 +12,51 @@ it('handles unknown locales', async ({page}) => {
 it('redirects to a matched locale at the root for non-default locales', async ({
   browser
 }) => {
-  const context = await browser.newContext({locale: 'de'});
+  const context = await browser.newContext({locale: 'es'});
   const page = await context.newPage();
 
   await page.goto('/');
-  await expect(page).toHaveURL('/de');
-  page.getByRole('heading', {name: 'Start'});
+  await expect(page).toHaveURL('/es');
+  page.getByRole('heading', {name: 'Inicio'});
+});
+
+it('redirects to a matched domain for non-default locales at the root', async ({
+  request
+}) => {
+  const response = await request.get('/', {
+    maxRedirects: 0,
+    headers: {
+      'accept-language': 'fr'
+    }
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toEqual('http://example.fr:3000/');
+});
+
+it('redirects to a matched domain for non-default locales at a nested pathname', async ({
+  request
+}) => {
+  const response = await request.get('/nested', {
+    maxRedirects: 0,
+    headers: {
+      'accept-language': 'fr'
+    }
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toEqual('http://example.fr:3000/nested');
+});
+
+it('redirects to a matched domain for non-default locales at a nested pathname with a prefix', async ({
+  request
+}) => {
+  const response = await request.get('/fr/nested', {
+    maxRedirects: 0,
+    headers: {
+      'accept-language': 'fr'
+    }
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toEqual('http://example.fr:3000/nested');
 });
 
 it('can redirect a more specific locale to a more generic one', async ({
@@ -346,9 +385,9 @@ it('sets alternate links', async ({request}) => {
     expect((await request.get(pathname)).headers().link).toBe(
       [
         '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
-        '<http://example.de:3000/>; rel="alternate"; hreflang="de"',
-        '<http://de.example.com:3000/>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
         '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+        '<http://example.fr:3000/>; rel="alternate"; hreflang="fr"',
         '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
       ].join(', ')
     );
@@ -358,9 +397,9 @@ it('sets alternate links', async ({request}) => {
     expect((await request.get(pathname)).headers().link).toBe(
       [
         '<http://localhost:3000/en/nested>; rel="alternate"; hreflang="en"',
-        '<http://example.de:3000/nested>; rel="alternate"; hreflang="de"',
-        '<http://de.example.com:3000/nested>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/de/nested>; rel="alternate"; hreflang="de"',
         '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
+        '<http://example.fr:3000/nested>; rel="alternate"; hreflang="fr"',
         '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
       ].join(', ')
     );

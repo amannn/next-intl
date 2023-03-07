@@ -285,10 +285,11 @@ export default createIntlMiddleware({
   // A list of all locales that are supported
   locales: ['en', 'de'],
 
-  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  // If no locale matches, this will be used by default
   defaultLocale: 'en',
 
-  // Optionally configure a list of domains where the `defaultLocale` is changed
+  // Optionally configure a list of domains where the `defaultLocale` is changed.
+  // When a locale has a matching domain, this is preferred to a locale prefix.
   domains: [
     {
       domain: 'example.de',
@@ -317,7 +318,7 @@ The locale is matched based on this priority order:
 4. **`accept-language` header**: The available `locales` are matched against the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language).
 5. **Default fallback**: If nothing else matches, then the `defaultLocale` is used.
 
-If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched and the user requests the root pathname, then the user is **redirected** to to the respective sub path (e.g. `/` to `/de`).
+If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched, then the user is **redirected** either to the respective sub path (e.g. `/` to `/de`) or a `domain` (e.g. `/about` to `example.de/about`).
 
 ## Localizing pathnames
 

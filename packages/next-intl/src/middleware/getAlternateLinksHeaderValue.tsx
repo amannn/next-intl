@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest} from 'next/server';
 import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
 
 function getUnprefixedPathname(
@@ -30,10 +30,9 @@ function getAlternateEntry(url: string, locale: string) {
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
-export default function setAlternateLinksHeader(
+export default function getAlternateLinksHeaderValue(
   config: NextIntlMiddlewareConfig,
-  request: NextRequest,
-  response: NextResponse
+  request: NextRequest
 ) {
   const unprefixedPathname = getUnprefixedPathname(config, request);
 
@@ -52,7 +51,7 @@ export default function setAlternateLinksHeader(
     const domainConfigs =
       config.domains?.filter((cur) => cur.defaultLocale === locale) || [];
 
-    if (domainConfigs.length > 1) {
+    if (domainConfigs.length > 0) {
       // Prio 1: Configured domain(s)
       return domainConfigs.map((domainConfig) => {
         url = new URL(unprefixedPathname);
@@ -68,7 +67,17 @@ export default function setAlternateLinksHeader(
     return getAlternateEntry(url.toString(), locale);
   });
 
-  links.push(getAlternateEntry(unprefixedPathname, 'x-default'));
+  // Add x-default entry
+  const defaultLocaleDomainConfig = config.domains?.find(
+    (cur) => cur.defaultLocale === config.defaultLocale
+  );
+  let defaultPathname = unprefixedPathname;
+  if (defaultLocaleDomainConfig) {
+    const url = new URL(unprefixedPathname);
+    url.host = defaultLocaleDomainConfig.domain;
+    defaultPathname = url.toString();
+  }
+  links.push(getAlternateEntry(defaultPathname, 'x-default'));
 
-  response.headers.set('Link', links.join(', '));
+  return links.join(', ');
 }

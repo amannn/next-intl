@@ -1,8 +1,9 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
 import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
+import getHost from './getHost';
 import resolveLocale from './resolveLocale';
-import setAlternateLinksHeader from './setAlternateLinksHeader';
 
 const ROOT_URL = '/';
 
@@ -21,6 +22,9 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     const hasMatchedDefaultLocale = domain
       ? domain.defaultLocale === locale
       : locale === config.defaultLocale;
+    const domainConfig = config.domains?.find(
+      (cur) => cur.defaultLocale === locale
+    );
 
     function getResponseInit() {
       let responseInit;
@@ -48,7 +52,13 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     }
 
     function redirect(url: string) {
-      return NextResponse.redirect(new URL(url, request.url));
+      const urlObj = new URL(url, request.url);
+      if (domainConfig) {
+        urlObj.pathname = url.replace(`/${locale}`, '');
+        urlObj.host = domainConfig.domain;
+      }
+
+      return NextResponse.redirect(urlObj.toString());
     }
 
     let response;
@@ -76,7 +86,14 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
 
       if (hasLocalePrefix) {
         if (pathLocale === locale) {
-          response = next();
+          if (
+            domainConfig &&
+            getHost(request.headers) !== domainConfig.domain
+          ) {
+            response = redirect(pathWithSearch);
+          } else {
+            response = next();
+          }
         } else {
           const basePath = pathWithSearch.replace(`/${pathLocale}`, '');
           response = redirect(`/${locale}${basePath}`);
@@ -95,7 +112,10 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     }
 
     if ((config.alternateLinks ?? true) && config.locales.length > 1) {
-      setAlternateLinksHeader(config, request, response);
+      response.headers.set(
+        'Link',
+        getAlternateLinksHeaderValue(config, request)
+      );
     }
 
     return response;
