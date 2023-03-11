@@ -6,14 +6,14 @@ function getRequest(url = 'https://example.com/') {
   return {url} as NextRequest;
 }
 
-it('works for type prefix (as-necessary)', () => {
+it('works for type prefix (as-needed)', () => {
   const config: NextIntlMiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
     routing: {
       type: 'prefix',
-      prefix: 'as-necessary'
+      prefix: 'as-needed'
     }
   };
 

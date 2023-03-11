@@ -57,7 +57,7 @@ beforeEach(() => {
 });
 
 describe('type: prefix', () => {
-  describe('prefix: as-necessary', () => {
+  describe('prefix: as-needed', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de']

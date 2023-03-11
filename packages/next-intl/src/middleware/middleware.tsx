@@ -23,7 +23,7 @@ function receiveConfig(
   }
 
   if (result.routing.type === 'prefix') {
-    result.routing.prefix = result.routing.prefix ?? 'as-necessary';
+    result.routing.prefix = result.routing.prefix ?? 'as-needed';
   }
 
   return result as NextIntlMiddlewareConfigWithDefaults;
@@ -132,7 +132,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       if (
         hasMatchedDefaultLocale &&
         ((configWithDefaults.routing.type === 'prefix' &&
-          configWithDefaults.routing.prefix === 'as-necessary') ||
+          configWithDefaults.routing.prefix === 'as-needed') ||
           configWithDefaults.routing.type === 'domain')
       ) {
         response = rewrite(pathWithSearch);
@@ -163,7 +163,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
           if (pathLocale === locale) {
             if (
               hasMatchedDefaultLocale &&
-              configWithDefaults.routing.prefix === 'as-necessary'
+              configWithDefaults.routing.prefix === 'as-needed'
             ) {
               response = redirect(basePath);
             } else {
@@ -177,7 +177,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
         if (
           hasMatchedDefaultLocale &&
           ((configWithDefaults.routing.type === 'prefix' &&
-            configWithDefaults.routing.prefix === 'as-necessary') ||
+            configWithDefaults.routing.prefix === 'as-needed') ||
             configWithDefaults.routing.type === 'domain')
         ) {
           response = rewrite(`/${locale}${pathWithSearch}`);

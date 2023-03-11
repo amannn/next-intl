@@ -3,7 +3,7 @@ export type RoutingConfigPrefix = {
 
   /** The default locale can be used without a prefix (e.g. `/about`). If you prefer to have a prefix for the default locale as well (e.g. `/en/about`), you can switch this option to `always`.
    */
-  prefix?: 'as-necessary' | 'always';
+  prefix?: 'as-needed' | 'always';
 };
 
 export type DomainConfig = {
