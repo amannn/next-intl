@@ -1,7 +1,9 @@
 import {NextRequest} from 'next/server';
-import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import NextIntlMiddlewareConfig, {
+  NextIntlMiddlewareConfigWithDefaults
+} from './NextIntlMiddlewareConfig';
 
-function getUnprefixedPathname(
+function getUnprefixedUrl(
   config: NextIntlMiddlewareConfig,
   request: NextRequest
 ) {
@@ -31,10 +33,10 @@ function getAlternateEntry(url: string, locale: string) {
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
 export default function getAlternateLinksHeaderValue(
-  config: NextIntlMiddlewareConfig,
+  config: NextIntlMiddlewareConfigWithDefaults,
   request: NextRequest
 ) {
-  const unprefixedPathname = getUnprefixedPathname(config, request);
+  const unprefixedUrl = getUnprefixedUrl(config, request);
 
   const links = config.locales.flatMap((locale) => {
     function localizePathname(url: URL) {
@@ -48,36 +50,36 @@ export default function getAlternateLinksHeaderValue(
 
     let url;
 
-    const domainConfigs =
-      config.domains?.filter((cur) => cur.defaultLocale === locale) || [];
+    if (config.routing.type === 'domain') {
+      const domainConfigs =
+        config.routing.domains.filter((cur) => cur.locale === locale) || [];
 
-    if (domainConfigs.length > 0) {
-      // Prio 1: Configured domain(s)
       return domainConfigs.map((domainConfig) => {
-        url = new URL(unprefixedPathname);
+        url = new URL(unprefixedUrl);
+        url.port = '';
         url.host = domainConfig.domain;
         return getAlternateEntry(url.toString(), locale);
       });
     } else {
-      // Prio 2: Prefixed route
-      url = new URL(unprefixedPathname);
-      localizePathname(url);
+      url = new URL(unprefixedUrl);
+      if (
+        locale !== config.defaultLocale ||
+        config.routing.prefix === 'always'
+      ) {
+        localizePathname(url);
+      }
     }
 
     return getAlternateEntry(url.toString(), locale);
   });
 
   // Add x-default entry
-  const defaultLocaleDomainConfig = config.domains?.find(
-    (cur) => cur.defaultLocale === config.defaultLocale
-  );
-  let defaultPathname = unprefixedPathname;
-  if (defaultLocaleDomainConfig) {
-    const url = new URL(unprefixedPathname);
-    url.host = defaultLocaleDomainConfig.domain;
-    defaultPathname = url.toString();
+  if (config.routing.type === 'prefix') {
+    const url = new URL(unprefixedUrl);
+    links.push(getAlternateEntry(url.toString(), 'x-default'));
+  } else {
+    // For `type: domain` there is no reasonable x-default
   }
-  links.push(getAlternateEntry(defaultPathname, 'x-default'));
 
   return links.join(', ');
 }

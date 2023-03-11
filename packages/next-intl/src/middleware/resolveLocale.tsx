@@ -2,19 +2,23 @@ import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import {
+  DomainConfig,
+  NextIntlMiddlewareConfigWithDefaults,
+  RoutingConfigDomain
+} from './NextIntlMiddlewareConfig';
 import getHost from './getHost';
 
 function findLocaleDomain(
   requestHeaders: Headers,
-  i18n: NextIntlMiddlewareConfig
+  routingConfig: RoutingConfigDomain
 ) {
   let host = getHost(requestHeaders);
-  // Remove port
+  // Remove port (easier for local development)
   host = host?.replace(/:\d+$/, '');
 
   // Consider optional www subdomain
-  const domains = i18n.domains?.flatMap((cur) => {
+  const domains = routingConfig.domains.flatMap((cur) => {
     if (cur.domain.startsWith('www.')) {
       return cur;
     }
@@ -22,52 +26,43 @@ function findLocaleDomain(
   });
 
   if (host && domains) {
-    const domain = domains.find((cur) => cur.domain === host);
-    return domain;
+    return domains.find((cur) => cur.domain === host);
   }
 
   return undefined;
 }
 
-export default function resolveLocale(
-  i18n: NextIntlMiddlewareConfig,
+function resolveLocaleFromPrefix(
+  locales: Array<string>,
+  defaultLocale: string,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ) {
-  let locale, domain;
+  let locale;
 
   // Prio 1: Use route prefix
   if (pathname) {
     const segments = pathname.split('/');
     if (segments.length > 1) {
       const segment = segments[1];
-      if (i18n.locales.includes(segment)) {
+      if (locales.includes(segment)) {
         locale = segment;
       }
     }
   }
 
-  // Prio 2: Use a domain
-  if (!locale && i18n.domains) {
-    domain = findLocaleDomain(requestHeaders, i18n);
-
-    if (domain) {
-      locale = domain.defaultLocale;
-    }
-  }
-
-  // Prio 3: Use existing cookie
+  // Prio 2: Use existing cookie
   if (!locale && requestCookies) {
     if (requestCookies.has(COOKIE_LOCALE_NAME)) {
       const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
-      if (value && i18n.locales.includes(value)) {
+      if (value && locales.includes(value)) {
         locale = value;
       }
     }
   }
 
-  // Prio 4: Use the `accept-language` header
+  // Prio 3: Use the `accept-language` header
   if (!locale && requestHeaders) {
     const languages = new Negotiator({
       headers: {
@@ -75,16 +70,67 @@ export default function resolveLocale(
       }
     }).languages();
     try {
-      locale = match(languages, i18n.locales, i18n.defaultLocale);
+      locale = match(languages, locales, defaultLocale);
     } catch (e) {
       // Invalid language
     }
   }
 
-  // Prio 5: Use default locale
+  // Prio 4: Use default locale
   if (!locale) {
-    locale = i18n.defaultLocale;
+    locale = defaultLocale;
+  }
+
+  return locale;
+}
+
+function resolveLocaleFromDomain(
+  routingConfig: RoutingConfigDomain,
+  requestHeaders: Headers,
+  defaultLocale: string
+) {
+  let locale, domain;
+
+  // Prio 1: Use a domain
+  if (routingConfig.domains) {
+    domain = findLocaleDomain(requestHeaders, routingConfig);
+
+    if (domain) {
+      locale = domain.locale;
+    } else {
+      // Might be localhost
+    }
+  }
+
+  // Prio 2: Use default locale
+  if (!locale) {
+    locale = defaultLocale;
   }
 
   return {locale, domain};
+}
+
+export default function resolveLocale(
+  config: NextIntlMiddlewareConfigWithDefaults,
+  requestHeaders: Headers,
+  requestCookies: RequestCookies,
+  pathname: string
+): {locale: string; domain?: DomainConfig} {
+  if (config.routing.type === 'domain') {
+    return resolveLocaleFromDomain(
+      config.routing,
+      requestHeaders,
+      config.defaultLocale
+    );
+  } else {
+    return {
+      locale: resolveLocaleFromPrefix(
+        config.locales,
+        config.defaultLocale,
+        requestHeaders,
+        requestCookies,
+        pathname
+      )
+    };
+  }
 }
