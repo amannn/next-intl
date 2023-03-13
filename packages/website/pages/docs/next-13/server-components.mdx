@@ -280,9 +280,28 @@ The middleware handles redirects and rewrites based on the detected user locale.
 
 ### Routing with a locale prefix (default)
 
-By default, `next-intl` will map the incoming requests to your defined routes (e.g. `/de/about` matches `[locale]/about/page.tsx`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix (e.g. `/about` matches `[locale]/about/page.tsx` too).
+By default, `next-intl` will map the incoming requests to your defined routes. To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
-When the user visits a route without an explicit locale, `next-intl` matches the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) of the request against the available locales and optionally redirects the user to a prefixed route. Note that a previously matched locale is saved in a cookie for subsequent requests.
+**Examples:**
+
+- `/` → `/en`
+- `/about` → `/en/about`
+- `/de/about` → `/de/about`
+
+When the user visits a route without an explicit locale, `next-intl` matches the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) of the request against the available locales and optionally redirects the user to a prefixed route. Note that a matched locale is saved in a cookie for subsequent requests.
+
+#### Changing locales
+
+To change the locale, the user can visit a prefixed route. This will always take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
+
+**Example:**
+
+1. The user requests `/` and based on the `accept-language` header, the `de` locale is matched.
+2. The `de` locale is saved in the cookie and the user is redirected to `/de`.
+3. The app renders `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
+4. When the user clicks on the link, the middleware will update the cookie to `en` and will redirect the user to `/`. The user will now be served content in `en`.
+
+#### Alwyays use a locale prefix
 
 If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
 
@@ -299,6 +318,8 @@ export default createIntlMiddleware({
   }
 });
 ```
+
+In this case requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
 
 ### Routing with domains
 
@@ -327,13 +348,24 @@ export default createIntlMiddleware({
 });
 ```
 
-In this case, your content will be available without a locale prefix based on the domain since `next-intl` rewrites the request internally (e.g. `de.example.com/about` matches `[locales]/about/page.tsx`).
+In this case, your content will be available without a locale prefix based on the domain since `next-intl` rewrites the request internally (e.g. `de.example.com/about` → `/de/about`).
 
 The domain that is needed to match the locale is read from the `x-forwarded-host` header, with a fallback to the `host` header. If no domain matches (e.g. on localhost), the `defaultLocale` is used.
 
+#### Changing locales
+
+Since the middleware is aware of all your domains, `next-intl` will automatically switch the domain when the user requests to change the locale.
+
+**Example:**
+
+1. The user is on `en.example.com`.
+2. The app renders `<Link locale="de" href="/">Switch to German</Link>` to allow the user to change the locale to `de`.
+3. When the link is clicked, a request to `en.example.com/de` is initiated.
+4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `de.example.com`.
+
 ### Alternate links
 
-`next-intl` automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages.
+`next-intl` automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy, wether it's `prefix` or `domain`.
 
 If you prefer to include these links yourself, you can opt-out of this behaviour.
 
@@ -404,7 +436,7 @@ import {
 
 ## CDN caching
 
-Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages as you'd get from SSG ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
 
 ```js filename="next.config.js"
 const ms = require('ms');

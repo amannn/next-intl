@@ -201,7 +201,7 @@ describe('type: domain', () => {
     );
   });
 
-  it.only('serves requests for matching locales at unknown hosts', () => {
+  it('serves requests for matching locales at unknown hosts', () => {
     middleware(createMockRequest('/', 'en', 'http://localhost:3000'));
     expect(MockedNextResponse.next).not.toHaveBeenCalled();
     expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
@@ -220,7 +220,7 @@ describe('type: domain', () => {
       );
     });
 
-    it('redirects for for sub paths when the locale matches', () => {
+    it('redirects for sub paths when the locale matches', () => {
       middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -238,7 +238,7 @@ describe('type: domain', () => {
       );
     });
 
-    it("redirects for for sub paths when the locale doesn't match", () => {
+    it("redirects for sub paths when the locale doesn't match", () => {
       middleware(createMockRequest('/de/about', 'de', 'http://en.example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
