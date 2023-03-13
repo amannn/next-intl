@@ -1,0 +1,11 @@
+{
+  "LocaleLayout": {
+    "title": "Guitars"
+  },
+  "Index": {
+    "title": "Guitars"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+  }
+}

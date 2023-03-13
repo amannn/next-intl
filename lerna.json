@@ -7,6 +7,7 @@
     "packages/example-advanced",
     "packages/example-next-13",
     "packages/example-next-13-advanced",
+    "packages/example-next-13-named-routes",
     "packages/example-next-13-with-pages",
     "packages/website"
   ],
