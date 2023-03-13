@@ -20,7 +20,17 @@ it('redirects to a matched locale at the root for non-default locales', async ({
   page.getByRole('heading', {name: 'Start'});
 });
 
-it('can redirect a more specific locale to a more generic one', async ({
+it('redirects a prefixed pathname for the default locale to the unprefixed version', async ({
+  request
+}) => {
+  const response = await request.get('/en', {
+    maxRedirects: 0
+  });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toEqual('/');
+});
+
+it('redirects a more specific locale to a more generic one', async ({
   browser
 }) => {
   const context = await browser.newContext({locale: 'de-DE'});
@@ -40,6 +50,12 @@ it('does not redirect on the root if the default locale is matched', async ({
 });
 
 it('supports unprefixed routing for the default locale', async ({page}) => {
+  await page.goto('/de/verschachtelt');
+  await expect(page).toHaveURL('/de/verschachtelt');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+});
+
+it('supports prefixed routing for non-default locales', async ({page}) => {
   await page.goto('/nested');
   await expect(page).toHaveURL('/nested');
   page.getByRole('heading', {name: 'Nested'});
@@ -52,25 +68,6 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   await page.goto('/nested');
   await expect(page).toHaveURL('/de/nested');
   page.getByRole('heading', {name: 'Verschachtelt'});
-});
-
-it('supports domain-based locale detection', async ({page}) => {
-  page.setExtraHTTPHeaders({
-    'x-forwarded-host': 'example.de'
-  });
-  await page.goto('/nested');
-  page.getByRole('heading', {name: 'Verschachtelt'});
-
-  page.setExtraHTTPHeaders({
-    'x-forwarded-host': 'de.example.com'
-  });
-  await page.goto('/nested');
-  page.getByRole('heading', {name: 'Verschachtelt'});
-
-  await expect(page.getByRole('link', {name: 'Client-Seite'})).toHaveAttribute(
-    'href',
-    '/client'
-  );
 });
 
 it('remembers the last locale', async ({page}) => {
@@ -165,27 +162,27 @@ it('can use the core library', async ({page}) => {
 });
 
 it('can use `Link` on the server', async ({page}) => {
-  await page.goto('/en');
+  await page.goto('/');
   await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
     'href',
-    '/en'
+    '/'
   );
   await expect(page.getByRole('link', {name: 'Nested page'})).toHaveAttribute(
     'href',
-    '/en/nested'
+    '/nested'
   );
 });
 
 it('can use `Link` with an object as `href`', async ({page}) => {
-  await page.goto('/en');
+  await page.goto('/');
   const link = page.getByRole('link', {name: 'Go to home with query param'});
-  await expect(link).toHaveAttribute('href', '/en?test=true');
+  await expect(link).toHaveAttribute('href', '/?test=true');
   await link.click();
-  await expect(page).toHaveURL('/en?test=true');
+  await expect(page).toHaveURL('/?test=true');
 });
 
 it('can use `Link` to link to the root of another language', async ({page}) => {
-  await page.goto('/en');
+  await page.goto('/');
   const link = page.getByRole('link', {name: 'Switch to German'});
   await expect(link).toHaveAttribute('href', '/de');
   await link.click();
@@ -193,10 +190,10 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
 });
 
 it('can use `Link` on the client', async ({page}) => {
-  await page.goto('/en/client');
+  await page.goto('/client');
   await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
     'href',
-    '/en'
+    '/'
   );
 });
 
@@ -217,11 +214,11 @@ it('prefixes as necessary with `Link`', async ({page}) => {
   await page.goto('/en');
   await expect(page.getByRole('link', {name: /^Home$/})).toHaveAttribute(
     'href',
-    '/en'
+    '/'
   );
   await expect(page.getByRole('link', {name: 'Client page'})).toHaveAttribute(
     'href',
-    '/en/client'
+    '/client'
   );
   await expect(
     page.getByRole('link', {name: 'Switch to German'})
@@ -268,12 +265,11 @@ it('can use `usePathname`', async ({page}) => {
 });
 
 it('can use `redirect`', async ({page}) => {
-  await page.goto('/en/redirect');
-  await expect(page).toHaveURL('/en/client');
+  await page.goto('/redirect');
+  await expect(page).toHaveURL('/client');
 
   await page.goto('/redirect');
-  // Currently we can't detect unprefixed routing in the `redirect` function
-  await expect(page).toHaveURL('/en/client');
+  await expect(page).toHaveURL('/client');
 
   await page.goto('/de/redirect');
   await expect(page).toHaveURL('/de/client');
@@ -282,11 +278,11 @@ it('can use `redirect`', async ({page}) => {
 it('can navigate between sibling pages that share a parent layout', async ({
   page
 }) => {
-  await page.goto('/en/nested');
+  await page.goto('/nested');
   await page.getByRole('link', {name: 'Client page'}).click();
-  await expect(page).toHaveURL('/en/client');
+  await expect(page).toHaveURL('/client');
   await page.getByRole('link', {name: 'Nested page'}).click();
-  await expect(page).toHaveURL('/en/nested');
+  await expect(page).toHaveURL('/nested');
 });
 
 it('prefixes routes as necessary with the router', async ({page}) => {
@@ -296,7 +292,7 @@ it('prefixes routes as necessary with the router', async ({page}) => {
 
   await page.goto('/en');
   page.getByTestId('ClientRouterWithoutProvider-link').click();
-  await expect(page).toHaveURL('/en/nested');
+  await expect(page).toHaveURL('/nested');
 
   await page.goto('/de');
   page.getByTestId('ClientRouterWithoutProvider-link').click();
@@ -343,27 +339,21 @@ it('keeps search params for redirects', async ({browser}) => {
 
 it('sets alternate links', async ({request}) => {
   for (const pathname of ['/', '/en', '/de']) {
-    expect((await request.get(pathname)).headers().link).toBe(
-      [
-        '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
-        '<http://example.de:3000/>; rel="alternate"; hreflang="de"',
-        '<http://de.example.com:3000/>; rel="alternate"; hreflang="de"',
-        '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
-        '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
-      ].join(', ')
-    );
+    expect((await request.get(pathname)).headers().link.split(', ')).toEqual([
+      '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+      '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+      '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+    ]);
   }
 
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
-    expect((await request.get(pathname)).headers().link).toBe(
-      [
-        '<http://localhost:3000/en/nested>; rel="alternate"; hreflang="en"',
-        '<http://example.de:3000/nested>; rel="alternate"; hreflang="de"',
-        '<http://de.example.com:3000/nested>; rel="alternate"; hreflang="de"',
-        '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
-        '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
-      ].join(', ')
-    );
+    expect((await request.get(pathname)).headers().link.split(', ')).toEqual([
+      '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
+      '<http://localhost:3000/de/nested>; rel="alternate"; hreflang="de"',
+      '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
+    ]);
   }
 });
 
@@ -380,10 +370,10 @@ it('can use rewrites to localize pathnames', async ({page, request}) => {
 });
 
 it('can use named routes to localize pathnames', async ({page}) => {
-  await page.goto('/en');
+  await page.goto('/');
   await expect(page.getByRole('link', {name: 'Nested page'})).toHaveAttribute(
     'href',
-    '/en/nested'
+    '/nested'
   );
 
   await page.goto('/de');
@@ -423,13 +413,7 @@ it('can localize route handlers', async ({request}) => {
 });
 
 it('can use caching headers', async ({request}) => {
-  for (const pathname of [
-    '/',
-    '/en',
-    '/en/nested',
-    '/de',
-    '/de/verschachtelt'
-  ]) {
+  for (const pathname of ['/', '/nested', '/de', '/de/verschachtelt']) {
     expect((await request.get(pathname)).headers()['cache-control']).toBe(
       's-maxage=86400, stale-while-revalidate=31557600'
     );

@@ -52,7 +52,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
 
-The simplest option is to create JSON files locally based on [locales](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
+The simplest option is to create JSON files locally based on locales, e.g. `en.json`.
 
 ```json filename="messages/en.json"
 {
@@ -276,48 +276,110 @@ export default getRequestConfig(async ({locale}) => ({
 
 ## Middleware configuration
 
-The middleware handles rewrites and redirects based on the detected user locale.
+The middleware handles redirects and rewrites based on the detected user locale.
+
+### Routing with a locale prefix (default)
+
+By default, `next-intl` will map the incoming requests to your defined routes. To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
+
+**Examples for rewrites:**
+
+- `/` → `/en`
+- `/about` → `/en/about`
+- `/de/about` → `/de/about`
+
+When the user visits a route without an explicit locale, `next-intl` matches the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) of the request against the available locales and optionally redirects the user to a prefixed route. The matched locale is saved in a cookie.
+
+#### Changing locales
+
+To change the locale, the user can visit a prefixed route. This will always take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
+
+**Example workflow:**
+
+1. The user requests `/` and based on the `accept-language` header, the `de` locale is matched.
+2. The `de` locale is saved in a cookie and the user is redirected to `/de`.
+3. In your app code, you render `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
+4. When the user clicks on the link, a request to `/en` is initiated.
+5. The middleware will update the cookie value to `en` and will redirect the user to `/`.
+
+#### Always use a locale prefix
+
+If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
+
+```tsx {7-10}
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+
+  routing: {
+    type: 'prefix',
+    prefix: 'always' // Defaults to 'as-needed'
+  }
+});
+```
+
+In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
+
+### Routing with domains
+
+If you want to serve your localized content based on separate domains, you can provide a list of mappings between domains and locales to the middleware.
+
+```tsx {7-19}
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+
+  routing: {
+    type: 'domain',
+    domains: [
+      {
+        domain: 'en.example.com',
+        locale: 'en'
+      },
+      {
+        domain: 'de.example.com',
+        locale: 'de'
+      }
+    ]
+  }
+});
+```
+
+In this case, your content will be available without a locale prefix based on the domain since `next-intl` rewrites the request internally (e.g. `de.example.com/about` → `/de/about`).
+
+The domain that is needed to match the locale is read from the `x-forwarded-host` header, with a fallback to the `host` header. If no domain matches (e.g. on localhost), the `defaultLocale` is used.
+
+#### Changing locales
+
+Since the middleware is aware of all your domains, `next-intl` will automatically switch the domain when the user requests to change the locale.
+
+**Example workflow:**
+
+1. The user is on `en.example.com`.
+2. The app renders `<Link locale="de" href="/">Switch to German</Link>` to allow the user to change the locale to `de`.
+3. When the link is clicked, a request to `en.example.com/de` is initiated.
+4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `de.example.com`.
+
+### Alternate links
+
+`next-intl` automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration (`prefix` or `domain`).
+
+If you prefer to include these links yourself, you can opt-out of this behaviour.
 
 ```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
-  // A list of all locales that are supported
-  locales: ['en', 'de'],
+  // ... other config
 
-  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
-  defaultLocale: 'en',
-
-  // Optionally configure a list of domains where the `defaultLocale` is changed
-  domains: [
-    {
-      domain: 'example.de',
-      defaultLocale: 'de'
-    }
-  ],
-
-  // Sets the `Link` response header to notify search engines about
-  // links to the content in other languages (defaults to `true`).
-  alternateLinks: true
+  // Default: `true`
+  alternateLinks: false
 });
-
-export const config = {
-  // Skip all paths that aren't pages that you'd like to internationalize.
-  // If you use the `public` folder, make sure your static assets are ignored
-  // (e.g. by moving them to a shared folder that is referenced here).
-  matcher: ['/((?!api|_next|favicon.ico|assets).*)']
-};
 ```
-
-The locale is matched based on this priority order:
-
-1. **Locale prefix**: The pathname is prefixed with a configured locale (e.g. `/en`).
-2. **Domain**: The host of the requested URL matches against an item in the `domains` list. The host is read from the `x-forwarded-host` or alternatively the `host` header.
-3. **Cookie**: There's an existing cookie that contains the locale that was matched from a previous request.
-4. **`accept-language` header**: The available `locales` are matched against the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language).
-5. **Default fallback**: If nothing else matches, then the `defaultLocale` is used.
-
-If the default locale matches, the request will be **rewritten** to the corresponding sub path (e.g. `/about` to `/en/about`). If a non-default locale is matched and the user requests the root pathname, then the user is **redirected** to to the respective sub path (e.g. `/` to `/de`).
 
 ## Localizing pathnames
 
@@ -341,7 +403,7 @@ module.exports = withNextIntl({
 
 Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
 
-1. Turn off the `alternateLinks` option in [the middleware](#middleware-configuration) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+1. Turn off [the `alternateLinks` option](#alternate-links) in the middleware and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
 2. Translate the pathnames you're passing to the [routing APIs from `next-intl`](#routing) ([example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/Navigation.tsx)).
 
 ## Using internationalization outside of components
@@ -375,7 +437,7 @@ import {
 
 ## CDN caching
 
-Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages as you'd get from SSG ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
 
 ```js filename="next.config.js"
 const ms = require('ms');

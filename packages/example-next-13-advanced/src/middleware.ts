@@ -2,17 +2,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
   locales: ['en', 'de', 'es'],
-  defaultLocale: 'en',
-  domains: [
-    {
-      domain: 'example.de',
-      defaultLocale: 'de'
-    },
-    {
-      domain: 'de.example.com',
-      defaultLocale: 'de'
-    }
-  ]
+  defaultLocale: 'en'
 });
 
 export const config = {

@@ -1,7 +1,9 @@
-import {NextRequest, NextResponse} from 'next/server';
-import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import {NextRequest} from 'next/server';
+import NextIntlMiddlewareConfig, {
+  NextIntlMiddlewareConfigWithDefaults
+} from './NextIntlMiddlewareConfig';
 
-function getUnprefixedPathname(
+function getUnprefixedUrl(
   config: NextIntlMiddlewareConfig,
   request: NextRequest
 ) {
@@ -30,12 +32,11 @@ function getAlternateEntry(url: string, locale: string) {
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
-export default function setAlternateLinksHeader(
-  config: NextIntlMiddlewareConfig,
-  request: NextRequest,
-  response: NextResponse
+export default function getAlternateLinksHeaderValue(
+  config: NextIntlMiddlewareConfigWithDefaults,
+  request: NextRequest
 ) {
-  const unprefixedPathname = getUnprefixedPathname(config, request);
+  const unprefixedUrl = getUnprefixedUrl(config, request);
 
   const links = config.locales.flatMap((locale) => {
     function localizePathname(url: URL) {
@@ -49,26 +50,36 @@ export default function setAlternateLinksHeader(
 
     let url;
 
-    const domainConfigs =
-      config.domains?.filter((cur) => cur.defaultLocale === locale) || [];
+    if (config.routing.type === 'domain') {
+      const domainConfigs =
+        config.routing.domains.filter((cur) => cur.locale === locale) || [];
 
-    if (domainConfigs.length > 1) {
-      // Prio 1: Configured domain(s)
       return domainConfigs.map((domainConfig) => {
-        url = new URL(unprefixedPathname);
+        url = new URL(unprefixedUrl);
+        url.port = '';
         url.host = domainConfig.domain;
         return getAlternateEntry(url.toString(), locale);
       });
     } else {
-      // Prio 2: Prefixed route
-      url = new URL(unprefixedPathname);
-      localizePathname(url);
+      url = new URL(unprefixedUrl);
+      if (
+        locale !== config.defaultLocale ||
+        config.routing.prefix === 'always'
+      ) {
+        localizePathname(url);
+      }
     }
 
     return getAlternateEntry(url.toString(), locale);
   });
 
-  links.push(getAlternateEntry(unprefixedPathname, 'x-default'));
+  // Add x-default entry
+  if (config.routing.type === 'prefix') {
+    const url = new URL(unprefixedUrl);
+    links.push(getAlternateEntry(url.toString(), 'x-default'));
+  } else {
+    // For `type: domain` there is no reasonable x-default
+  }
 
-  response.headers.set('Link', links.join(', '));
+  return links.join(', ');
 }

@@ -1,15 +1,68 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
-import NextIntlMiddlewareConfig from './NextIntlMiddlewareConfig';
+import NextIntlMiddlewareConfig, {
+  NextIntlMiddlewareConfigWithDefaults
+} from './NextIntlMiddlewareConfig';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
-import setAlternateLinksHeader from './setAlternateLinksHeader';
 
 const ROOT_URL = '/';
 
+function receiveConfig(
+  config: NextIntlMiddlewareConfig
+): NextIntlMiddlewareConfigWithDefaults {
+  const result = {
+    ...config,
+    alternateLinks: config.alternateLinks ?? true
+  };
+
+  if (!result.routing) {
+    result.routing = {
+      type: 'prefix'
+    };
+  }
+
+  if (result.routing.type === 'prefix') {
+    result.routing.prefix = result.routing.prefix ?? 'as-needed';
+  }
+
+  return result as NextIntlMiddlewareConfigWithDefaults;
+}
+
 export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
+  // TODO: Remove before stable release
+  if (config.domains != null) {
+    console.error(
+      'The `domains` option is deprecated. Please use `routing` instead.'
+    );
+    config = {
+      ...config,
+      routing: {
+        type: 'domain',
+        domains: config.domains.map((cur) => ({
+          domain: cur.domain,
+          locale: cur.defaultLocale
+        }))
+      }
+    };
+    delete config.domains;
+  }
+
+  const configWithDefaults = receiveConfig(config);
+
+  if (configWithDefaults.routing.type === 'domain') {
+    const {domains} = configWithDefaults.routing;
+    const hasMatchingDomainForEveryLocale = configWithDefaults.locales.every(
+      (locale) => domains.find((cur) => cur.locale === locale) != null
+    );
+    if (!hasMatchingDomainForEveryLocale) {
+      throw new Error('Every locale must have a matching domain');
+    }
+  }
+
   return function middleware(request: NextRequest) {
     const {domain, locale} = resolveLocale(
-      config,
+      configWithDefaults,
       request.headers,
       request.cookies,
       request.nextUrl.pathname
@@ -19,8 +72,14 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
     const hasMatchedDefaultLocale = domain
-      ? domain.defaultLocale === locale
-      : locale === config.defaultLocale;
+      ? domain.locale === locale
+      : locale === configWithDefaults.defaultLocale;
+    const domainConfigs =
+      configWithDefaults.routing.type === 'domain'
+        ? configWithDefaults.routing.domains.filter(
+            (cur) => cur.locale === locale
+          ) ?? []
+        : [];
 
     function getResponseInit() {
       let responseInit;
@@ -47,8 +106,20 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       return NextResponse.next(getResponseInit());
     }
 
-    function redirect(url: string) {
-      return NextResponse.redirect(new URL(url, request.url));
+    function redirect(url: string, host?: string) {
+      const urlObj = new URL(url, request.url);
+
+      if (domainConfigs.length > 0) {
+        urlObj.pathname = url.replace(`/${locale}`, '');
+        if (domainConfigs[0].domain && !host) {
+          host = domainConfigs[0].domain;
+        }
+      }
+      if (host) {
+        urlObj.host = host;
+      }
+
+      return NextResponse.redirect(urlObj.toString());
     }
 
     let response;
@@ -58,13 +129,18 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
         pathWithSearch += request.nextUrl.search;
       }
 
-      if (hasMatchedDefaultLocale) {
+      if (
+        hasMatchedDefaultLocale &&
+        ((configWithDefaults.routing.type === 'prefix' &&
+          configWithDefaults.routing.prefix === 'as-needed') ||
+          configWithDefaults.routing.type === 'domain')
+      ) {
         response = rewrite(pathWithSearch);
       } else {
         response = redirect(pathWithSearch);
       }
     } else {
-      const pathLocale = config.locales.find((cur) =>
+      const pathLocale = configWithDefaults.locales.find((cur) =>
         request.nextUrl.pathname.startsWith(`/${cur}`)
       );
       const hasLocalePrefix = pathLocale != null;
@@ -75,14 +151,35 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       }
 
       if (hasLocalePrefix) {
-        if (pathLocale === locale) {
-          response = next();
+        const basePath = pathWithSearch.replace(`/${pathLocale}`, '') || '/';
+
+        if (configWithDefaults.routing.type === 'domain') {
+          const pathDomain = configWithDefaults.routing.domains.find(
+            (cur) => pathLocale === cur.locale
+          );
+
+          response = redirect(basePath, pathDomain?.domain);
         } else {
-          const basePath = pathWithSearch.replace(`/${pathLocale}`, '');
-          response = redirect(`/${locale}${basePath}`);
+          if (pathLocale === locale) {
+            if (
+              hasMatchedDefaultLocale &&
+              configWithDefaults.routing.prefix === 'as-needed'
+            ) {
+              response = redirect(basePath);
+            } else {
+              response = next();
+            }
+          } else {
+            response = redirect(`/${locale}${basePath}`);
+          }
         }
       } else {
-        if (hasMatchedDefaultLocale) {
+        if (
+          hasMatchedDefaultLocale &&
+          ((configWithDefaults.routing.type === 'prefix' &&
+            configWithDefaults.routing.prefix === 'as-needed') ||
+            configWithDefaults.routing.type === 'domain')
+        ) {
           response = rewrite(`/${locale}${pathWithSearch}`);
         } else {
           response = redirect(`/${locale}${pathWithSearch}`);
@@ -94,8 +191,14 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale);
     }
 
-    if ((config.alternateLinks ?? true) && config.locales.length > 1) {
-      setAlternateLinksHeader(config, request, response);
+    if (
+      configWithDefaults.alternateLinks &&
+      configWithDefaults.locales.length > 1
+    ) {
+      response.headers.set(
+        'Link',
+        getAlternateLinksHeaderValue(configWithDefaults, request)
+      );
     }
 
     return response;
