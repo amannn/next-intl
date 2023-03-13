@@ -282,26 +282,27 @@ The middleware handles redirects and rewrites based on the detected user locale.
 
 By default, `next-intl` will map the incoming requests to your defined routes. To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
-**Examples:**
+**Examples for rewrites:**
 
 - `/` → `/en`
 - `/about` → `/en/about`
 - `/de/about` → `/de/about`
 
-When the user visits a route without an explicit locale, `next-intl` matches the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) of the request against the available locales and optionally redirects the user to a prefixed route. Note that a matched locale is saved in a cookie for subsequent requests.
+When the user visits a route without an explicit locale, `next-intl` matches the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) of the request against the available locales and optionally redirects the user to a prefixed route. The matched locale is saved in a cookie.
 
 #### Changing locales
 
 To change the locale, the user can visit a prefixed route. This will always take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
 
-**Example:**
+**Example workflow:**
 
 1. The user requests `/` and based on the `accept-language` header, the `de` locale is matched.
-2. The `de` locale is saved in the cookie and the user is redirected to `/de`.
-3. The app renders `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
-4. When the user clicks on the link, the middleware will update the cookie to `en` and will redirect the user to `/`. The user will now be served content in `en`.
+2. The `de` locale is saved in a cookie and the user is redirected to `/de`.
+3. In your app code, you render `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
+4. When the user clicks on the link, a request to `/en` is initiated.
+5. The middleware will update the cookie value to `en` and will redirect the user to `/`.
 
-#### Alwyays use a locale prefix
+#### Always use a locale prefix
 
 If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
 
@@ -319,7 +320,7 @@ export default createIntlMiddleware({
 });
 ```
 
-In this case requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
+In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
 
 ### Routing with domains
 
@@ -356,7 +357,7 @@ The domain that is needed to match the locale is read from the `x-forwarded-host
 
 Since the middleware is aware of all your domains, `next-intl` will automatically switch the domain when the user requests to change the locale.
 
-**Example:**
+**Example workflow:**
 
 1. The user is on `en.example.com`.
 2. The app renders `<Link locale="de" href="/">Switch to German</Link>` to allow the user to change the locale to `de`.
@@ -365,7 +366,7 @@ Since the middleware is aware of all your domains, `next-intl` will automaticall
 
 ### Alternate links
 
-`next-intl` automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy, wether it's `prefix` or `domain`.
+`next-intl` automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration (`prefix` or `domain`).
 
 If you prefer to include these links yourself, you can opt-out of this behaviour.
 
