@@ -351,7 +351,13 @@ export default createIntlMiddleware({
 
 In this case, your content will be available without a locale prefix based on the domain since `next-intl` rewrites the request internally (e.g. `de.example.com/about` → `/de/about`).
 
-The domain that is needed to match the locale is read from the `x-forwarded-host` header, with a fallback to the `host` header. If no domain matches (e.g. on localhost), the `defaultLocale` is used.
+The domain that is needed to match the locale is read from the `x-forwarded-host` header, with a fallback to `host`. If no domain matches (e.g. on localhost), the `defaultLocale` is used.
+
+<Callout>
+  
+Note that you might want to turn on domain-based routing only in production, since the middleware will try to redirect to one of the configured domains based on the matched locale.
+
+</Callout>
 
 #### Changing locales
 
