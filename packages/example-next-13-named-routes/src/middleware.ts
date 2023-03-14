@@ -5,8 +5,8 @@ export default createIntlMiddleware({
   defaultLocale: 'en',
 
   // TODO: Here a mapping needs to be created where the incoming request is
-  // resolved to a named route and based on that, all localized routes need
-  // to be created.
+  // resolved to a named route and based on that, all localized routes are
+  // linked to from the `Link` response header.
   alternateLinks: false
 });
 

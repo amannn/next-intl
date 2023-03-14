@@ -1,6 +1,6 @@
 import {Link, useLocale} from 'next-intl';
 import {ComponentProps} from 'react';
-import routes from '../../routesByLocale.json';
+import routesByLocale from '../../routesByLocale.json';
 
 type Routes =
   | {
@@ -17,7 +17,7 @@ type Props = Omit<ComponentProps<typeof Link>, 'href'> & Routes;
 export default function NamedLink({name, params, ...rest}: Props) {
   const locale = useLocale();
 
-  const localeRoutes = (routes as any)[locale];
+  const localeRoutes = (routesByLocale as any)[locale];
   if (!localeRoutes) {
     throw new Error(`No routes found for locale "${locale}"`);
   }
