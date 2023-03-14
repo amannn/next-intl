@@ -40,7 +40,7 @@ function createMockRequest(
       pathname: pathnameWithSearch.replace(/\?.*$/, ''),
       href: url,
       search: pathnameWithSearch.includes('?')
-        ? pathnameWithSearch.split('?')[1]
+        ? '?' + pathnameWithSearch.split('?')[1]
         : ''
     }
   } as NextRequest;

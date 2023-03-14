@@ -127,7 +127,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     if (isRoot) {
       let pathWithSearch = `/${locale}`;
       if (request.nextUrl.search) {
-        pathWithSearch += '?' + request.nextUrl.search;
+        pathWithSearch += request.nextUrl.search;
       }
 
       if (
@@ -153,7 +153,7 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
 
       let pathWithSearch = request.nextUrl.pathname;
       if (request.nextUrl.search) {
-        pathWithSearch += '?' + request.nextUrl.search;
+        pathWithSearch += request.nextUrl.search;
       }
 
       if (hasLocalePrefix) {
