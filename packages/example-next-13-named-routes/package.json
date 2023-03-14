@@ -1,5 +1,5 @@
 {
-  "name": "example-next-13-advanced",
+  "name": "example-next-13-named-routes",
   "version": "2.9.1",
   "private": true,
   "scripts": {
@@ -11,8 +11,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "ms": "2.1.3",
     "next": "13.2.4",
     "next-intl": "*",
     "react": "^18.2.0",

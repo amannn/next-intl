@@ -1,0 +1,10 @@
+{
+  "en": {
+    "home": "/",
+    "detail": "/guitars/:slug"
+  },
+  "de": {
+    "home": "/",
+    "detail": "/gitarren/:slug"
+  }
+}
