@@ -8,6 +8,7 @@ import {
   RoutingConfigDomain
 } from './NextIntlMiddlewareConfig';
 import getHost from './getHost';
+import getLocaleFromPathname from './getLocaleFromPathname';
 
 function findLocaleDomain(
   requestHeaders: Headers,
@@ -43,12 +44,9 @@ function resolveLocaleFromPrefix(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const segments = pathname.split('/');
-    if (segments.length > 1) {
-      const segment = segments[1];
-      if (locales.includes(segment)) {
-        locale = segment;
-      }
+    const pathLocale = getLocaleFromPathname(pathname);
+    if (locales.includes(pathLocale)) {
+      locale = pathLocale;
     }
   }
 

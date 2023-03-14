@@ -2,8 +2,6 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import createIntlMiddleware from '../../src/middleware';
 
-(global as any).Request = class Request {};
-
 type MockResponse = NextResponse & {
   args: Array<any>;
 };
@@ -15,15 +13,15 @@ jest.mock('next/server', () => {
   };
   return {
     NextResponse: {
-      next: jest.fn((...args) => ({...response, args})),
-      rewrite: jest.fn((...args) => ({...response, args})),
-      redirect: jest.fn((...args) => ({...response, args}))
+      next: jest.fn(() => response),
+      rewrite: jest.fn(() => response),
+      redirect: jest.fn(() => response)
     }
   };
 });
 
 function createMockRequest(
-  pathname = '/',
+  pathnameWithSearch = '/',
   locale: 'en' | 'de' = 'en',
   host = 'http://localhost:3000'
 ) {
@@ -32,14 +30,18 @@ function createMockRequest(
       locale === 'en' ? 'en-US,en;q=0.9,de;q=0.8' : 'de-DE,de;q=0.9,en;q=0.8',
     host: new URL(host).host
   });
+  const url = host + pathnameWithSearch;
 
   return {
     headers,
     cookies: new RequestCookies(headers),
-    url: host + pathname,
+    url,
     nextUrl: {
-      pathname,
-      search: ''
+      pathname: pathnameWithSearch.replace(/\?.*$/, ''),
+      href: url,
+      search: pathnameWithSearch.includes('?')
+        ? pathnameWithSearch.split('?')[1]
+        : ''
     }
   } as NextRequest;
 }
@@ -72,6 +74,33 @@ describe('type: prefix', () => {
       );
     });
 
+    it('rewrites requests for the default locale with query params at the root', () => {
+      middleware(createMockRequest('/?sort=asc'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en?sort=asc'
+      );
+    });
+
+    it('rewrites requests for the default locale with query params at a nested path', () => {
+      middleware(createMockRequest('/list?sort=asc'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en/list?sort=asc'
+      );
+    });
+
+    it('handles hashes for the default locale', () => {
+      middleware(createMockRequest('/#asdf'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en/#asdf'
+      );
+    });
+
     it('redirects requests for the default locale when prefixed at the root', () => {
       middleware(createMockRequest('/en'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -97,6 +126,34 @@ describe('type: prefix', () => {
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/de'
       );
+    });
+
+    it('serves requests for other locales when prefixed', () => {
+      middleware(createMockRequest('/de'));
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it('serves requests for other locales when prefixed with a trailing slash', () => {
+      middleware(createMockRequest('/de/'));
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it('serves requests for other locales with query params at the root', () => {
+      middleware(createMockRequest('/de?sort=asc'));
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+    });
+
+    it('serves requests for other locales with query params at a nested path', () => {
+      middleware(createMockRequest('/de/list?sort=asc'));
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
     });
 
     it('sets a cookie', () => {
@@ -133,6 +190,25 @@ describe('type: prefix', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/de'
+      );
+    });
+
+    it('redirects when a pathname starts with the locale characters', () => {
+      middleware(createMockRequest('/engage'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en/engage'
+      );
+
+      middleware(createMockRequest('/engage?test'));
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'http://localhost:3000/en/engage?test'
+      );
+
+      middleware(createMockRequest('/engage/test'));
+      expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
+        'http://localhost:3000/en/engage/test'
       );
     });
 
