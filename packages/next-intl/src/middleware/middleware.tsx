@@ -4,6 +4,7 @@ import NextIntlMiddlewareConfig, {
   NextIntlMiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
+import getLocaleFromPathname from './getLocaleFromPathname';
 import resolveLocale from './resolveLocale';
 
 const ROOT_URL = '/';
@@ -140,9 +141,14 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
         response = redirect(pathWithSearch);
       }
     } else {
-      const pathLocale = configWithDefaults.locales.find((cur) =>
-        request.nextUrl.pathname.startsWith(`/${cur}`)
+      const pathLocaleCandidate = getLocaleFromPathname(
+        request.nextUrl.pathname
       );
+      const pathLocale = configWithDefaults.locales.includes(
+        pathLocaleCandidate
+      )
+        ? pathLocaleCandidate
+        : undefined;
       const hasLocalePrefix = pathLocale != null;
 
       let pathWithSearch = request.nextUrl.pathname;
