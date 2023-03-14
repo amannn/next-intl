@@ -7,7 +7,7 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
 <Callout type="warning">
   The `app` directory is currently in beta, patterns are still emerging and APIs
   may change. Please **use this at your own risk**, knowing that you might have
-  to face a migration effort when the `app` directory becomes stable.
+  to face a migration effort as the `app` directory becomes stable.
 </Callout>
 
 ## Current beta version
@@ -280,9 +280,9 @@ The middleware handles redirects and rewrites based on the detected user locale.
 
 ### Routing with a locale prefix (default)
 
-By default, `next-intl` will map the incoming requests to your defined routes. To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
+Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
-**Examples for rewrites:**
+**Request examples:**
 
 - `/` → `/en`
 - `/about` → `/en/about`
@@ -292,15 +292,15 @@ When the user visits a route without an explicit locale, `next-intl` matches the
 
 #### Changing locales
 
-To change the locale, the user can visit a prefixed route. This will always take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
+To change the locale, users can visit a prefixed route. This will always take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
 
 **Example workflow:**
 
-1. The user requests `/` and based on the `accept-language` header, the `de` locale is matched.
+1. A user requests `/` and based on the `accept-language` header, the `de` locale is matched.
 2. The `de` locale is saved in a cookie and the user is redirected to `/de`.
 3. In your app code, you render `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
 4. When the user clicks on the link, a request to `/en` is initiated.
-5. The middleware will update the cookie value to `en` and will redirect the user to `/`.
+5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
 
 #### Always use a locale prefix
 
