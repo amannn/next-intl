@@ -1,5 +1,6 @@
+import {Metadata} from 'next';
 import {useLocale} from 'next-intl';
-import {getTranslations} from 'next-intl/server';
+import {getTranslations, getFormatter} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 
@@ -8,12 +9,16 @@ type Props = {
   params: {locale: string};
 };
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('LocaleLayout');
+  const formatter = await getFormatter();
 
   return {
     title: t('title'),
-    description: t('description')
+    description: t('description'),
+    other: {
+      currentYear: formatter.dateTime(new Date(), {year: 'numeric'})
+    }
   };
 }
 

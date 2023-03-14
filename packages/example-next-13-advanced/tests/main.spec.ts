@@ -412,3 +412,16 @@ it('can use the formatter', async ({page}) => {
   await expect(page.getByTestId('CurrentTimeRelative')).toHaveText('now');
   await expect(page.getByTestId('Number')).toHaveText('€23,102.00');
 });
+
+it('populates metadata', async ({page}) => {
+  await page.goto('/en');
+  await expect(page).toHaveTitle('next-intl example');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    'This is an example of using next-intl in the `app` directory.'
+  );
+  await expect(page.locator('meta[name="currentYear"]')).toHaveAttribute(
+    'content',
+    '2023'
+  );
+});
