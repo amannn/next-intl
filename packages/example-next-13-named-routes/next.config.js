@@ -1,5 +1,5 @@
 const withNextIntl = require('next-intl/plugin')();
-const routes = require('./routes.json');
+const routes = require('./routesByLocale.json');
 
 function createLocaleRewrites(locale) {
   return Object.keys(routes[locale]).map((namedRoute) => ({

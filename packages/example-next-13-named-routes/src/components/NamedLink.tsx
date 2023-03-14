@@ -1,6 +1,6 @@
 import {Link, useLocale} from 'next-intl';
 import {ComponentProps} from 'react';
-import routes from '../../routes.json';
+import routes from '../../routesByLocale.json';
 
 type Routes =
   | {
