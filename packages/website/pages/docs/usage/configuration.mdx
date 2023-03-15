@@ -73,13 +73,13 @@ function Component() {
   const format = useFormatter();
 
   format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
-  format.number(new Date('2020-11-20T10:36:01.516Z'), 'short');
+  format.number(47.414329182, 'precise');
 }
 ```
 
-Global formats can also be referenced in messages.
+Global formats can be referenced in messages too.
 
-```js
+```js filename="en.json"
 {
   "ordered": "You've ordered this product on {orderDate, date, short}",
   "latitude": "Latitude: {latitude, number, precise}"
@@ -117,7 +117,7 @@ The defaults will be overridden by locally provided values.
 
 ## Retrieve provider config
 
-As a convenience, two hooks exist that allow to read configuration that was passed to the provider:
+As a convenience, two hooks exist that allow to read configuration that was passed to the provider.
 
 ```js
 import {useLocale, useTimeZone} from 'next-intl';

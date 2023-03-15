@@ -65,7 +65,7 @@ function SignUp() {
 }
 ```
 
-You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, based on experience it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
+You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, based on experience, it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
 
 To retrieve all available messages in a component, you can omit the namespace path:
 
@@ -119,7 +119,7 @@ export async function getStaticProps({locale}) {
 
 You can interpolate values from your components into your messages with a special placeholder syntax.
 
-```js
+```js filename="en.json"
 {
   "static": "Hello",
   "interpolation": "Hello {name}",
@@ -151,7 +151,7 @@ t('selectordinal', {year: 11});
 
 You can format rich text with custom tags and map them to React components.
 
-```js
+```js filename="en.json"
 {
   "richText": "This is <important><very>very</very> important</important>"
 }
@@ -170,7 +170,7 @@ If you want to use the same tag multiple times, you can configure it via the [de
 
 Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this:
 
-```js
+```js filename="en.json"
 {
   "content": "<h1>Headline<h1><p>This is raw HTML</p>"
 }
@@ -186,3 +186,57 @@ Messages are always parsed and therefore e.g. for rich text you need to supply t
 </Callout>
 
 The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
+
+## Arrays of messages
+
+If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
+
+```js filename="en.json"
+{
+  "Features": {
+    "trust": "Built by experts",
+    "customizable": "Easy to customize",
+    "fast": "Blazingly fast"
+  }
+}
+```
+
+```js filename="Features.js"
+import {useTranslations} from 'next-intl';
+
+function Features() {
+  const t = useTranslations('Features');
+  return (
+    <ul>
+      {['trust', 'customizable', 'fast'].map((key) => (
+        <li key={key}>{t(key)}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+If the number of items varies between locales, you can solve this by using [rich text](#rich-text).
+
+```js filename="en.json"
+{
+  "Features": {
+    "items": "<item>Built by experts</item><item>Easy to customize</item><item>Blazingly fast</item>"
+  }
+}
+```
+
+```js filename="Features.js"
+import {useTranslations} from 'next-intl';
+
+function Features() {
+  const t = useTranslations('Features');
+  return (
+    <ul>
+      {t.rich('items', {
+        item: (chunks) => <li>{chunks}</li>
+      })}
+    </ul>
+  );
+}
+```
