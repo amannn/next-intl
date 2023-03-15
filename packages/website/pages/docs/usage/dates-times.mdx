@@ -78,7 +78,7 @@ function Component() {
 
 Dates and times can be embedded within messages as well:
 
-```js
+```js filename="en.json"
 {
   "expiryDate": "{expiryDate, date, ::yyyyMd}"
 }
@@ -92,7 +92,7 @@ See the [FormatJS docs about date time](https://formatjs.io/docs/intl-messagefor
 
 Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options): :
 
-```js
+```js filename="en.json"
 {
   "ordered": "You've ordered this product on {orderDate, date, short}"
 }

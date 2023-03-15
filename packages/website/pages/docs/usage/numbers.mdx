@@ -22,7 +22,7 @@ See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs
 
 Numbers can also be embedded within messages:
 
-```js
+```js filename="en.json"
 {
   "percentage": "Displayed as a percentage: {value, number, percent}",
   "decimals": "At most 2 fraction digits: {value, number, ::.##}"
@@ -37,7 +37,7 @@ See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/user
 
 Additionally, you can configure custom formatters which can be referenced by name:
 
-```js
+```js filename="en.json"
 {
   "price": "This product costs {price, number, currency}"
 }
