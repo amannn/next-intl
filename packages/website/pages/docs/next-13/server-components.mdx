@@ -219,17 +219,21 @@ export default async function Profile() {
 }
 ```
 
-## Switching to Client Components
+## Using translations in Client Components
 
-If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
+If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx" {6}
+```tsx filename="[locale]/faq/page.tsx" {7-9}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
-export default function FAQ() {
-  const t = useTranslations('FAQ');
-  return <Expandable title={t('title')}>{t('description')}</Expandable>;
+export default function FAQEntry() {
+  const t = useTranslations('FAQEntry');
+  return (
+    <Expandable title={t('title')}>
+      <FAQContent content={t('description')} />
+    </Expandable>
+  );
 }
 ```
 
@@ -248,13 +252,23 @@ function Expandable({title, children}) {
   return (
     <div>
       <button onClick={onToggle}>{title}</button>
-      {expanded && <p>{children}</p>}
+      {expanded && <div>{children}</div>}
     </div>
   );
 }
 ```
 
 This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
+
+If you need to integrate your translations with interactively-controlled state, you can still manage your translations on the server side by using one of the following techniques.
+
+**Examples for state that can be read on the server side:**
+
+- [Page- or search params](https://beta.nextjs.org/docs/api-reference/file-conventions/page)
+- [Cookies](https://beta.nextjs.org/docs/api-reference/cookies)
+- [Database state](https://beta.nextjs.org/docs/data-fetching/fundamentals)
+
+There's [an article about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
 
 If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
 
