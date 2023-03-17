@@ -1,4 +1,4 @@
-import {LocalizedLink, useLocale, useTranslations} from 'next-intl';
+import {Link, useLocale, useTranslations} from 'next-intl';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 
@@ -11,9 +11,9 @@ export default function Index() {
       <p>{t('description')}</p>
       <LocaleSwitcher />
       <p>
-        <LocalizedLink href="/about" locale={locale}>
+        <Link href="/about" locale={locale}>
           {t('navigateToAbout')}
-        </LocalizedLink>
+        </Link>
       </p>
     </PageLayout>
   );
