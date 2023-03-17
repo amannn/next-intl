@@ -21,7 +21,7 @@ This beta version was tested with `next@13.2.4`.
 ## Roadmap
 
 - ✅ All APIs from `next-intl` can be used in Server Components.
-- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore use [CDN caching](#cdn-caching).
+- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore consider [CDN caching](#cdn-caching).
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
@@ -457,7 +457,7 @@ import {
 
 ## CDN caching
 
-Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages as you'd get from SSG ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from dynamic rendering as you'd get from static rendering ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)). Also note that [the Next.js Cache](https://nextjs.org/blog/next-13-2#nextjs-cache) improves the performance for dynamically rendered pages.
 
 ```js filename="next.config.js"
 const ms = require('ms');
