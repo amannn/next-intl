@@ -1,4 +1,6 @@
 import {Inter} from '@next/font/google';
+// eslint-disable-next-line import/no-unresolved
+import {Analytics} from '@vercel/analytics/react';
 import 'nextra-theme-docs/style.css';
 import '../styles.css';
 
@@ -9,6 +11,7 @@ export default function App({Component, pageProps}) {
   return (
     <div className={inter.className}>
       {getLayout(<Component {...pageProps} />)}
+      <Analytics />
     </div>
   );
 }
