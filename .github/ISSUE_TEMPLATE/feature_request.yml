@@ -2,10 +2,14 @@ name: Feature request
 description: Suggest an idea for this project
 labels:
  - enhancement
+ - unconfirmed
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to file a feature request! Please fill out this form as completely as possible.
+      value: Thanks for taking the time to file a feature request! Please fill out this form completely.
+  - type: markdown
+    attributes:
+      value: Please keep in mind that if something doesn't work as expected, you might want to [create a bug report](https://github.com/amannn/next-intl/issues/new/choose) instead. Bug reports disguised as feature requests will be closed.
   - type: textarea
     attributes:
       label: Is your feature request related to a problem? Please describe.
