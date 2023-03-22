@@ -2,10 +2,11 @@ name: Bug report
 description: Create a bug report
 labels:
  - bug
+ - unconfirmed
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to file a bug report! Please fill out this form as completely as possible.
+      value: Thanks for taking the time to file a bug report! Please fill out this form completely.
   - type: markdown
     attributes:
       value: Note that if you leave out sections it's unlikely that your bug will get fixed and the issue will be closed. Thank you for your understanding.
@@ -17,14 +18,14 @@ body:
       required: true
   - type: input
     attributes:
-      label: Reproduction URL (CodeSandbox)
+      label: Mandatory reproduction URL (CodeSandbox or GitHub repository)
       description: Here's [a template to get you started](https://codesandbox.io/p/sandbox/holy-lake-krm37f?file=%2Fsrc%2Fpages%2Findex.tsx).
     validations:
       required: true
   - type: textarea
     attributes:
       label: Reproduction description
-      description: Describe how the issue can be reproduced based on your provided CodeSandbox
+      description: Describe how the issue can be reproduced based on your provided CodeSandbox or GitHub repository.
       value: |
         Steps to reproduce:
         1. Open reproduction
