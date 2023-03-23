@@ -1,4 +1,3 @@
-import Partner from 'components/Partner';
 import PartnerSidebar from 'components/PartnerSidebar';
 import {useRouter} from 'next/router';
 import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
