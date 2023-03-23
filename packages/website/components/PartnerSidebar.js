@@ -6,7 +6,10 @@ export default function PartnerSidebar({intro = 'Presented by'}) {
       <p className="mb-2 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-300">
         {intro}
       </p>
-      <Partner.Logo height={20} />
+      {/* eslint-disable-next-line react/jsx-no-target-blank */}
+      <a href={Partner.link} target="_blank">
+        <Partner.Logo height={20} />
+      </a>
     </div>
   );
 }
