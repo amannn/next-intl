@@ -191,7 +191,7 @@ describe('dateTime', () => {
 });
 
 describe('number', () => {
-  function renderNumber(value: number, options?: NumberFormatOptions) {
+  function renderNumber(value: number | bigint, options?: NumberFormatOptions) {
     function Component() {
       const format = useFormatter();
       return <>{format.number(value, options)}</>;
@@ -207,6 +207,11 @@ describe('number', () => {
   it('formats a number', () => {
     renderNumber(2948192329.12312);
     screen.getByText('2,948,192,329.123');
+  });
+
+  it('formats a bigint', () => {
+    renderNumber(123456789123456789n);
+    screen.getByText('123,456,789,123,456,789');
   });
 
   it('accepts options', () => {

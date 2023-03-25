@@ -12,9 +12,23 @@ it('formats a date and time', () => {
 });
 
 it('formats a number', () => {
+  expect(intl.number(123456)).toBe('123,456');
+});
+
+it('formats a bigint', () => {
+  expect(intl.number(123456789123456789n)).toBe('123,456,789,123,456,789');
+});
+
+it('formats a number as currency', () => {
   expect(intl.number(123456.789, {style: 'currency', currency: 'USD'})).toBe(
     '$123,456.79'
   );
+});
+
+it('formats a bigint as currency', () => {
+  expect(
+    intl.number(123456789123456789n, {style: 'currency', currency: 'USD'})
+  ).toBe('$123,456,789,123,456,789.00');
 });
 
 it('formats a relative time', () => {
