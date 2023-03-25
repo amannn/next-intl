@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.12.0 (2023-03-25)
+
+
+### Features
+
+* Add `BigInt` support for `useFormatter.format()` by [@tacomanator](https://github.com/tacomanator) ([#222](https://github.com/amannn/next-intl/issues/222))  ([a5ded6c](https://github.com/amannn/next-intl/commit/a5ded6c4cd706d5361556865050c5948a4d78887))
+
+
+
+
+
 # 2.11.0 (2023-03-06)
 
 
