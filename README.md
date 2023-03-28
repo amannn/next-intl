@@ -72,7 +72,7 @@ function UserDetails({user}) {
 ### [→ Read the docs](https://next-intl-docs.vercel.app/)
 
 <div align="center">
-  <a href="https://crowdin.com/">
+  <a href="https://crowdin.com/" target="_blank">
     <img width="400" src="media/partner.svg" alt="Crowdin logo">
   </a>
   <br>
