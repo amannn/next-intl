@@ -68,3 +68,12 @@ function UserDetails({user}) {
 ```
 
 ### [→ Read the docs](https://next-intl-docs.vercel.app/)
+
+<h1 align="center">
+	<br>
+	<br>
+	<img width="400" src="media/partner.svg" alt="Crowdin logo">
+	<br>
+	<br>
+	<br>
+</h1>
