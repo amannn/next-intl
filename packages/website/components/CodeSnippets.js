@@ -291,8 +291,8 @@ CodeSnippets.buildOutput = () => (
     </span>
     <span className="line"> </span>
     <span className="line">
-      <span style={{color: 'var(--shiki-token-punctuation)'}}>
-        Route{'           '}Size{'     '}First Load JS
+      <span style={{color: 'var(--shiki-token-comment)'}}>
+        Route{'           '}Size{'     '}First load JS
       </span>
     </span>
     <span className="line">
@@ -327,7 +327,7 @@ CodeSnippets.buildOutput = () => (
     </span>
     <span className="line"> </span>
     <span className="line">
-      <span style={{color: 'var(--shiki-token-punctuation)'}}>
+      <span style={{color: 'var(--shiki-token-comment)'}}>
         ● (SSG) automatically generated as static HTML + JSON
       </span>
     </span>

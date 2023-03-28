@@ -2,8 +2,8 @@ import Partner from './Partner';
 
 export default function PartnerSidebar({intro = 'Presented by'}) {
   return (
-    <div className="pb-1">
-      <p className="mb-2 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-300">
+    <div className="pb-[0.35rem]">
+      <p className="mb-2 text-[11px] uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {intro}
       </p>
       {/* eslint-disable-next-line react/jsx-no-target-blank */}

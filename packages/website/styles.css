@@ -4,6 +4,7 @@
 
 :root {
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
+  --shiki-token-comment: rgba(100, 116, 139, 0.8);
 }
 
 .dark {
