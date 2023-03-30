@@ -10,6 +10,7 @@ const withNextra = require('nextra')({
 
 module.exports = withNextra({
   redirects: () => [
+    // Index pages
     {
       source: '/docs',
       destination: '/docs/getting-started',
@@ -29,7 +30,12 @@ module.exports = withNextra({
     // Moved pages
     {
       source: '/docs/getting-started/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/usage/production-checklist',
+      permanent: true
+    },
+    {
+      source: '/docs/production-checklist',
+      destination: '/docs/usage/production-checklist',
       permanent: true
     }
   ]

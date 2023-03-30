@@ -7,5 +7,6 @@
   "error-handling": "Error handling",
   "typescript": "TypeScript",
   "runtime-requirements-polyfills": "Runtime requirements & polyfills",
-  "core-library": "Core library"
+  "core-library": "Core library",
+  "production-checklist": "Checklist for production"
 }

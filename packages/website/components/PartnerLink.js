@@ -1,11 +1,3 @@
-import {useMDXComponents} from 'nextra/mdx';
-
-export default function PartnerLink({children, href}) {
-  const components = useMDXComponents();
-
-  return (
-    <components.a href={href} rel="noreferrer" target="_blank">
-      {children}
-    </components.a>
-  );
+export default function PartnerLink({as: Component = 'a', href, ...rest}) {
+  return <Component href={href} target="_blank" {...rest} />;
 }

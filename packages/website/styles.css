@@ -48,6 +48,27 @@ html:not(.dark) .navbar-home .nextra-scrollbar {
 }
 
 /**
+ * Typography
+ */
+
+figure {
+  @apply my-8 flex flex-col items-center;
+}
+
+figure img {
+  /* @apply mx-auto; */
+  /* @apply rounded-lg; */
+}
+
+figcaption {
+  @apply mt-4 text-center text-sm text-slate-500;
+}
+
+.screenshot {
+  @apply rounded-md shadow-lg;
+}
+
+/**
  * Steps
  */
 

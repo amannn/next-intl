@@ -1,4 +1,5 @@
 import Partner from './Partner';
+import PartnerLink from './PartnerLink';
 import Wrapper from './Wrapper';
 
 export default function PartnerBanner({intro}) {
@@ -8,15 +9,13 @@ export default function PartnerBanner({intro}) {
         <p className="text-center text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
           {intro}
         </p>
-        <a
+        <PartnerLink
           className="mx-auto mt-6 inline-flex flex-col items-center gap-4"
           href={Partner.link}
-          rel="noreferrer"
-          target="_blank"
         >
           <Partner.Logo />
           <p className="text-slate-700 dark:text-slate-400">{Partner.slogan}</p>
-        </a>
+        </PartnerLink>
       </Wrapper>
     </div>
   );
