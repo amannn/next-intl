@@ -73,7 +73,7 @@ function UserDetails({user}) {
 
 <div align="center">
   <a href="https://crowdin.com/" target="_blank">
-    <img width="400" src="media/partner.svg" alt="Crowdin logo">
+    <img width="350" src="media/partner.svg" alt="Crowdin logo">
   </a>
   <br>
 </div>
