@@ -20,8 +20,18 @@ This beta version was tested with `next@13.2.4`.
 
 ## Roadmap
 
-- ✅ All APIs from `next-intl` can be used in Server Components.
-- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore consider [CDN caching](#cdn-caching).
+| Feature                                            | Status |
+| :------------------------------------------------- | :----: |
+| Usage of all `next-intl` APIs in Server Components |   ✅   |
+| Middleware for i18n routing                        |   ✅   |
+| Dynamic rendering                                  |   ✅   |
+| Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
+
+<Callout>
+
+While the support for static rendering is pending, consider [CDN caching](#cdn-caching) to get the same performance characteristics from dynamic rendering or [use Client Components](/docs/next-13/client-components) for the time being.
+
+</Callout>
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
