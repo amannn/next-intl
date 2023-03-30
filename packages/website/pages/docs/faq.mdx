@@ -9,7 +9,7 @@
 
 1. This library is built around the concept of namespaces and that components consume a single namespace (however this is not required).
 2. This library offers a hooks-only API for message consumption. The reason for this is that the same API can be used for attributes as well as `children`.
-3. This library currently doesn't support AST-based extraction like `react-intl`.
+3. This library currently doesn't support AST-based extraction like `react-intl`. You can easily [work with multiple locales](#can-next-intl-update-locale-files-based-on-default-locale-file) though.
 4. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
 5. This library offers [type safety for message keys](/docs/usage/typescript).
 
@@ -43,3 +43,12 @@ Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/packa
 ## Can `next-intl` be used with [React Native](https://reactnative.dev/)?
 
 Yes, see [the React Native example](https://github.com/amannn/next-intl/tree/main/packages/example-react-native).
+
+## Can `next-intl` update locale files based on default locale file?
+No, but on Unix-based systems you can use this command:
+
+```bash
+sed 's/: "/: "TODO: /' en.json | cat - by.json | jq add -s
+```
+
+In this case it will merge `by.json` and default `en.json`. Existing translations in `by.json` won't be replaced, but new messages from default `en.json` will be added with `TODO:` prefix, so you can easily search for them later in the process of translation. You can modify the prefix to be whatever works for you!
