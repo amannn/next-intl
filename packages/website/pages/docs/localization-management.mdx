@@ -39,10 +39,10 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
 1. Git integration e.g. via the <PartnerContentLink href="https://support.crowdin.com/github-integration/">GitHub app</PartnerContentLink> or the <PartnerContentLink href="https://developer.crowdin.com/cli-tool/">Crowdin CLI</PartnerContentLink> (recommended)
 2. Automatic workflows triggered from <PartnerContentLink href="https://developer.crowdin.com/api/v2/#tag/Webhooks">webhooks</PartnerContentLink>
 3. Over-the-air delivery via the <PartnerContentLink href="https://developer.crowdin.com/sdk-ota-web/">JS SDK</PartnerContentLink>
-4. Manual up- and download of messages
+4. Manual up- and download of messages (useful to get started)
 
 <figure>
-  <div className="max-w-3xl">
+  <div className="max-w-2xl">
     <PartnerContentLink href="https://crowdin.com/teams/engineering">
       <Image
         src="/crowdin-workflow.png"
@@ -74,11 +74,11 @@ You can further simplify the process for translators by setting up <PartnerConte
 
 ## Example workflow with the GitHub integration
 
-For this example, we're going to use an example that is publicly available on GitHub: [Street Photography Viewer](https://github.com/amannn/street-photography-viewer)—an app that display street photography pictures from Unsplash.
+For this example, we're going to use an example that is publicly available on GitHub: [Street Photography Viewer](https://github.com/amannn/street-photography-viewer). It's a Next.js 13 app that displays street photography pictures from Unsplash and uses `next-intl` for all internationalization needs.
 
 Once you have a GitHub repository with your app, you can follow these steps:
 
-1. Install <PartnerContentLink href="https://store.crowdin.com/github">the GitHub app on the Crowdin store</PartnerContentLink>
+1. Install <PartnerContentLink href="https://store.crowdin.com/github">the GitHub app from the Crowdin store</PartnerContentLink>
 2. Follow <PartnerContentLink href="https://support.crowdin.com/github-integration/">the setup guide for the GitHub integration</PartnerContentLink>
 
 After this procedure, Crowdin will commit a configuration file to your repository based on your settings.
@@ -89,7 +89,7 @@ files:
     translation: /messages/%locale%.json
 ```
 
-This file exposes the local translations in your repository to Crowdin.
+This file provides the local translations in your repository to Crowdin.
 
 <figure>
   <div className="max-w-2xl">
@@ -120,8 +120,8 @@ Now, as soon as a translation gets updated in Crowdin, the next sync will create
     />
   </div>
   <figcaption>
-    Automatic translation sync from Crowdin
-    ([example](https://github.com/amannn/street-photography-viewer/pull/3))
+    Automatic translation sync from Crowdin ([example pull
+    request](https://github.com/amannn/street-photography-viewer/pull/3))
   </figcaption>
 </figure>
 
