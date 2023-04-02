@@ -10,13 +10,17 @@ export async function GET(request: Request) {
     return new NextResponse(null, {status: StatusCodes.BAD_REQUEST});
   }
 
-  ServerTracker.trackEvent({
+  await ServerTracker.trackEvent({
     name: 'partner-referral',
     data: {href, name: 'redirect'},
     request
-  }).catch((error) => {
-    console.error('Failed to track redirect', error);
-  });
+  }).catch(
+    (error) =>
+      new NextResponse('failed to track' + error, {
+        status: StatusCodes.INTERNAL_SERVER_ERROR
+      })
+    // console.error('Failed to track redirect', error);
+  );
 
   return NextResponse.redirect(href);
 }
