@@ -38,5 +38,12 @@ module.exports = withNextra({
       destination: '/docs/usage/production-checklist',
       permanent: true
     }
+  ],
+
+  rewrites: () => [
+    {
+      source: '/stats/:match*',
+      destination: process.env.UMAMI_URL + '/:match*'
+    }
   ]
 });

@@ -6,6 +6,10 @@ module.exports = {
     'molindo/react',
     'plugin:@next/next/recommended'
   ],
+  env: {
+    node: true,
+    browser: true
+  },
   rules: {
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',

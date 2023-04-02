@@ -12,6 +12,7 @@ export default function PartnerBanner({intro}) {
         <PartnerLink
           className="mx-auto mt-6 inline-flex flex-col items-center gap-4"
           href={Partner.link}
+          name="partner-banner"
         >
           <Partner.Logo />
           <p className="text-slate-700 dark:text-slate-400">{Partner.slogan}</p>

@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 Once you've set up your app with `next-intl`, you'll have multiple translation bundles that contain your messages (e.g. `en.json`). To streamline the workflow of managing these and to allow other team members to contribute translations, it's a good idea to use a localization management platform.
 
-`next-intl` recommends <PartnerContentLink href="https://crowdin.com/teams/engineering">Crowdin</PartnerContentLink> for managing your translations.
+`next-intl` recommends <PartnerContentLink name="localization-management-intro" href="https://crowdin.com/teams/engineering">Crowdin</PartnerContentLink> for managing your translations.
 
 ## Collaborate with translators
 
@@ -14,7 +14,10 @@ The Crowdin Editor provides an easy-to-use environment for translating messages.
 
 <figure>
   <div className="max-w-lg">
-    <PartnerContentLink href="https://crowdin.com/page/freelance-translators">
+    <PartnerContentLink
+      name="localization-management-translators-image"
+      href="https://crowdin.com/page/freelance-translators"
+    >
       <Image
         className="screenshot"
         src="/crowdin-editor-schematic.png"
@@ -36,14 +39,17 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
 
 **Integration options:**
 
-1. Git integration e.g. via the <PartnerContentLink href="https://support.crowdin.com/github-integration/">GitHub app</PartnerContentLink> or the <PartnerContentLink href="https://developer.crowdin.com/cli-tool/">Crowdin CLI</PartnerContentLink> (recommended)
-2. Automatic workflows triggered from <PartnerContentLink href="https://developer.crowdin.com/api/v2/#tag/Webhooks">webhooks</PartnerContentLink>
-3. Over-the-air delivery via the <PartnerContentLink href="https://developer.crowdin.com/sdk-ota-web/">JS SDK</PartnerContentLink>
+1. Git integration e.g. via the <PartnerContentLink name="localization-management-developers-integrations" href="https://support.crowdin.com/github-integration/">GitHub app</PartnerContentLink> or the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/cli-tool/">Crowdin CLI</PartnerContentLink> (recommended)
+2. Automatic workflows triggered from <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/api/v2/#tag/Webhooks">webhooks</PartnerContentLink>
+3. Over-the-air delivery via the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/sdk-ota-web/">JS SDK</PartnerContentLink>
 4. Manual up- and download of messages (useful to get started)
 
 <figure>
   <div className="max-w-2xl">
-    <PartnerContentLink href="https://crowdin.com/teams/engineering">
+    <PartnerContentLink
+      name="localization-management-developers-image"
+      href="https://crowdin.com/teams/engineering"
+    >
       <Image
         src="/crowdin-workflow.png"
         width={858}
@@ -56,7 +62,10 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
   <figcaption>
     <p>
       {'The '}
-      <PartnerContentLink href="https://support.crowdin.com/github-integration/">
+      <PartnerContentLink
+        name="localization-management-developers-image-caption"
+        href="https://support.crowdin.com/github-integration/"
+      >
         {'Crowdin GitHub integration'}
       </PartnerContentLink>
       {' automatically creates pull requests when translations are updated.'}
@@ -70,7 +79,7 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
   bundles.
 </Callout>
 
-You can further simplify the process for translators by setting up <PartnerContentLink href="https://developer.crowdin.com/in-context-localization/">Crowdin In-Context</PartnerContentLink>, allowing for the translation of messages directly from your app.
+You can further simplify the process for translators by setting up <PartnerContentLink name="localization-management-developers" href="https://developer.crowdin.com/in-context-localization/">Crowdin In-Context</PartnerContentLink>, allowing for the translation of messages directly from your app.
 
 ## Example workflow with the GitHub integration
 
@@ -78,8 +87,8 @@ For this example, we're going to use an example that is publicly available on Gi
 
 Once you have a GitHub repository with your app, you can follow these steps:
 
-1. Install <PartnerContentLink href="https://store.crowdin.com/github">the GitHub app from the Crowdin store</PartnerContentLink>
-2. Follow <PartnerContentLink href="https://support.crowdin.com/github-integration/">the setup guide for the GitHub integration</PartnerContentLink>
+1. Install <PartnerContentLink name="localization-management-example" href="https://store.crowdin.com/github">the GitHub app from the Crowdin store</PartnerContentLink>
+2. Follow <PartnerContentLink name="localization-management-example" href="https://support.crowdin.com/github-integration/">the setup guide for the GitHub integration</PartnerContentLink>
 
 After this procedure, Crowdin will commit a configuration file to your repository based on your settings.
 
@@ -125,4 +134,4 @@ Now, as soon as a translation gets updated in Crowdin, the next sync will create
   </figcaption>
 </figure>
 
-→ Head over to <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink> to learn more.
+→ Head over to <PartnerContentLink name="localization-management-example" href="https://crowdin.com/">Crowdin</PartnerContentLink> to learn more.

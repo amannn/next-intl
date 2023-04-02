@@ -1,5 +1,6 @@
 import {Inter} from '@next/font/google';
 import {Analytics} from '@vercel/analytics/react';
+import Script from 'next/script';
 import 'nextra-theme-docs/style.css';
 import '../styles.css';
 
@@ -10,7 +11,16 @@ export default function App({Component, pageProps}) {
   return (
     <div className={inter.className}>
       {getLayout(<Component {...pageProps} />)}
+
       <Analytics />
+      {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+        <Script
+          async
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          defer
+          src="/stats/umami.js"
+        />
+      )}
     </div>
   );
 }
