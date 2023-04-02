@@ -12,7 +12,7 @@ export default class ServerTracker {
     request: Request;
   }) {
     const referer = request.headers.get('referer');
-    const refererUrl = referer ? new URL(referer) : undefined;
+    const requestUrl = new URL(request.url);
 
     const language = request.headers
       .get('accept-language')
@@ -37,8 +37,8 @@ export default class ServerTracker {
         payload: {
           language,
           website: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
-          hostname: refererUrl?.hostname,
-          url: refererUrl?.pathname,
+          hostname: requestUrl.hostname,
+          url: requestUrl.pathname,
           ...body.payload
         }
       })
