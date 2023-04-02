@@ -1,20 +1,37 @@
 export default class ServerTracker {
-  static postToCollect({body, headers, req}) {
-    const {referer} = req.headers;
+  private static postToCollect({
+    auth,
+    body,
+    request
+  }: {
+    body: {
+      type: 'pageview' | 'event';
+      payload?: any;
+    };
+    auth?: string;
+    request: Request;
+  }) {
+    const referer = request.headers.get('referer');
     const refererUrl = referer ? new URL(referer) : undefined;
 
-    const language = req.headers['accept-language']
+    const language = request.headers
+      .get('accept-language')
       ?.split(',')
       .at(0)
       ?.replace(/;.*/, '');
 
+    const headers = new Headers();
+    headers.set('content-type', 'application/json');
+    if (referer) {
+      headers.set('referer', referer);
+    }
+    if (auth) {
+      headers.set('x-umami-auth', auth);
+    }
+
     return fetch(process.env.UMAMI_URL + '/api/collect', {
       method: 'POST',
-      headers: {
-        ...headers,
-        'content-type': 'application/json',
-        Referer: referer
-      },
+      headers,
       body: JSON.stringify({
         ...body,
         payload: {
@@ -37,22 +54,28 @@ export default class ServerTracker {
     );
   }
 
-  static createAuth(req) {
+  private static createAuth(request: Request) {
     return ServerTracker.postToCollect({
-      req,
+      request,
       body: {
         type: 'pageview',
-        payload: {url: req.url}
+        payload: {url: request.url}
       }
     });
   }
 
-  static async trackEvent({data, name, req}) {
+  public static async trackEvent({
+    data,
+    name,
+    request
+  }: {
+    data: unknown;
+    name: string;
+    request: Request;
+  }) {
     return ServerTracker.postToCollect({
-      req,
-      headers: {
-        'x-umami-cache': await ServerTracker.createAuth(req)
-      },
+      request,
+      auth: await ServerTracker.createAuth(request),
       body: {
         type: 'event',
         payload: {

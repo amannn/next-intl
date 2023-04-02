@@ -9,6 +9,9 @@ const withNextra = require('nextra')({
 });
 
 module.exports = withNextra({
+  experimental: {
+    appDir: true
+  },
   redirects: () => [
     // Index pages
     {
