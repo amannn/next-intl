@@ -10,17 +10,15 @@ export async function GET(request: Request) {
     return new NextResponse(null, {status: StatusCodes.BAD_REQUEST});
   }
 
+  // Ideally we'd do this in parallel, but the serverless function would
+  // exit too early and the tracking therefore doesn't succeed.
   await ServerTracker.trackEvent({
     name: 'partner-referral',
     data: {href, name: 'redirect'},
     request
-  }).catch(
-    (error) =>
-      new NextResponse('failed to track' + error, {
-        status: StatusCodes.INTERNAL_SERVER_ERROR
-      })
-    // console.error('Failed to track redirect', error);
-  );
+  }).catch((error) => {
+    console.error('Failed to track redirect', error);
+  });
 
   return NextResponse.redirect(href);
 }
