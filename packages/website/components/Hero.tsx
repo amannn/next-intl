@@ -3,6 +3,15 @@ import HeroCode from './HeroCode';
 import LinkButton from './LinkButton';
 import Wrapper from './Wrapper';
 
+type Props = {
+  description: string;
+  getStarted: string;
+  rscAnnouncement: string;
+  titleRegular: string;
+  titleStrong: string;
+  viewOnGithub: string;
+};
+
 export default function Hero({
   description,
   getStarted,
@@ -10,7 +19,7 @@ export default function Hero({
   titleRegular,
   titleStrong,
   viewOnGithub
-}) {
+}: Props) {
   return (
     <div className="dark overflow-hidden">
       <div className="relative max-w-full overflow-hidden bg-slate-850 py-16 sm:px-2 lg:py-40 lg:px-0">

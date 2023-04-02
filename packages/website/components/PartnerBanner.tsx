@@ -2,7 +2,11 @@ import Partner from './Partner';
 import PartnerLink from './PartnerLink';
 import Wrapper from './Wrapper';
 
-export default function PartnerBanner({intro}) {
+type Props = {
+  intro: string;
+};
+
+export default function PartnerBanner({intro}: Props) {
   return (
     <div className="border-b bg-white py-6 dark:border-b-0 dark:bg-slate-900">
       <Wrapper className="flex flex-col justify-center">

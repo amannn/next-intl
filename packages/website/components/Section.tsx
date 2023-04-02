@@ -1,6 +1,13 @@
+import {ReactNode} from 'react';
 import Wrapper from './Wrapper';
 
-export default function Section({children, description, title}) {
+type Props = {
+  children: ReactNode;
+  description: string;
+  title: string;
+};
+
+export default function Section({children, description, title}: Props) {
   return (
     <>
       <div className="mx-auto h-px w-full bg-gradient-to-r from-sky-300/0 via-sky-300/60 to-sky-300/0 dark:via-sky-300/30" />

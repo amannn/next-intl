@@ -1,7 +1,11 @@
 import Partner from './Partner';
 import PartnerLink from './PartnerLink';
 
-export default function PartnerSidebar({intro = 'Presented by'}) {
+type Props = {
+  intro?: string;
+};
+
+export default function PartnerSidebar({intro = 'Presented by'}: Props) {
   return (
     <div className="pb-[0.35rem]">
       <p className="mb-2 text-[11px] uppercase tracking-widest text-slate-500 dark:text-slate-400">

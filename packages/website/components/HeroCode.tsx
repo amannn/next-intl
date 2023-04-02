@@ -1,8 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 import clsx from 'clsx';
-import {useState} from 'react';
+import {ReactNode, useState} from 'react';
 
-function Tab({active, children, onClick}) {
+function Tab({
+  active,
+  children,
+  onClick
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick(): void;
+}) {
   return (
     <button
       className={clsx(

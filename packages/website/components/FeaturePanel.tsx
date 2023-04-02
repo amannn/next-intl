@@ -1,4 +1,10 @@
-export default function FeaturePanel({code, description, title}) {
+type Props = {
+  code?: string;
+  description: string;
+  title: string;
+};
+
+export default function FeaturePanel({code, description, title}: Props) {
   return (
     <div className="flex flex-col overflow-hidden rounded-md border border-slate-200 dark:border-slate-700">
       {code && (
