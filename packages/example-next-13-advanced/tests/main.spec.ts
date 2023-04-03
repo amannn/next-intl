@@ -151,7 +151,7 @@ it('can use `getMessageFallback`', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('MissingMessage');
   expect(await element.innerHTML()).toBe(
-    '`getMessageFalback` called for Index.missing'
+    '`getMessageFallback` called for Index.missing'
   );
 });
 
