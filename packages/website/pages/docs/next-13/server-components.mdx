@@ -274,7 +274,16 @@ If you absolutely need to use functionality from `next-intl` on the client side,
 
 ## Global request configuration
 
-If you'd like to apply [global configuration](/docs/usage/configuration) like `formats`, `defaultTranslationValues`, `timeZone`, `now`, or [error handling functions](/docs/usage/error-handling) like `onError` and `getMessageFallback`, you can provide these in `i18n.ts`.
+`next-intl` supports the following [global configuration](/docs/usage/configuration):
+
+- `formats`
+- `defaultTranslationValues`
+- `timeZone`
+- `now`
+- `onError`
+- `getMessageFallback`
+
+For the usage in Server Components, these can be configured in `i18n.ts`.
 
 ```tsx filename="i18n.ts"
 import {headers} from 'next/headers';
@@ -287,6 +296,8 @@ export default getRequestConfig(async ({locale}) => ({
   timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
 }));
 ```
+
+Note that the configuration object will be created once for each request and will then be made available to all of Server Components in your app.
 
 ## Middleware configuration
 
@@ -357,11 +368,14 @@ export default createIntlMiddleware({
       domain: 'us.example.com',
       defaultLocale: 'en',
       // Optionally restrict the locales managed by this domain
-      locales: ['en']
+      locales: ['en'],
+      // Optionally change the `localePrefix` for this domain
+      localePrefix: 'awlays'
     },
     {
       domain: 'ca.example.com',
-      defaultLocale: 'en'
+      defaultLocale: 'en',
+      locales: ['en', 'fr']
     }
   ]
 });
@@ -372,8 +386,8 @@ The middleware rewrites the requests internally, so that requests for the `defau
 The domain that is needed to match the locale is read from the `x-forwarded-host` header, with a fallback to `host`.
 
 <Callout>
-  
-Note that you might want to turn on domain-based routing only in production, since the middleware will try to redirect to one of the configured domains based on the matched locale.
+
+Note that domain-based routing allows the `defaultLocale` to be used for `localhost` if it matches, but other locales will be redirected to the configured domains. Therefore, you may want to enable domain-based routing in production only.
 
 </Callout>
 
@@ -384,9 +398,9 @@ Since the middleware is aware of all your domains, `next-intl` will automaticall
 **Example workflow:**
 
 1. The user is on `en.example.com`.
-2. The app renders `<Link locale="de" href="/">Switch to German</Link>` to allow the user to change the locale to `de`.
-3. When the link is clicked, a request to `en.example.com/de` is initiated.
-4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `de.example.com`.
+2. The app renders `<Link locale="fr" href="/">Switch to French</Link>` to allow the user to change the locale to `fr`.
+3. When the link is clicked, a request to `en.example.com/fr` is initiated.
+4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
 
 ### Alternate links
 
