@@ -1,20 +1,17 @@
 import {NextRequest} from 'next/server';
-import {NextIntlMiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
+import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 
 function getRequest(url = 'https://example.com/') {
   return {url} as NextRequest;
 }
 
-it('works for type prefix (as-needed)', () => {
-  const config: NextIntlMiddlewareConfigWithDefaults = {
+it('works for prefixed routing (as-needed)', () => {
+  const config: MiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
-    routing: {
-      type: 'prefix',
-      prefix: 'as-needed'
-    }
+    localePrefix: 'as-needed'
   };
 
   expect(
@@ -37,15 +34,12 @@ it('works for type prefix (as-needed)', () => {
   ]);
 });
 
-it('works for type prefix (always)', () => {
-  const config: NextIntlMiddlewareConfigWithDefaults = {
+it('works for prefixed routing (always)', () => {
+  const config: MiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
-    routing: {
-      type: 'prefix',
-      prefix: 'always'
-    }
+    localePrefix: 'always'
   };
 
   expect(
@@ -69,30 +63,39 @@ it('works for type prefix (always)', () => {
 });
 
 it('works for type domain', () => {
-  const config: NextIntlMiddlewareConfigWithDefaults = {
+  const config: MiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
-    locales: ['en', 'es'],
+    locales: ['en', 'es', 'fr'],
     alternateLinks: true,
-    routing: {
-      type: 'domain',
-      domains: [
-        {
-          domain: 'example.com',
-          locale: 'en'
-        },
-        {
-          domain: 'example.es',
-          locale: 'es'
-        }
-      ]
-    }
+    localePrefix: 'as-needed',
+    domains: [
+      {
+        domain: 'example.com',
+        defaultLocale: 'en'
+        // (supports all locales)
+      },
+      {
+        domain: 'example.es',
+        defaultLocale: 'es',
+        locales: ['es']
+      },
+      {
+        domain: 'example.ca',
+        defaultLocale: 'en',
+        locales: ['en', 'fr']
+      }
+    ]
   };
 
   expect(
     getAlternateLinksHeaderValue(config, getRequest()).split(', ')
   ).toEqual([
     '<https://example.com/>; rel="alternate"; hreflang="en"',
-    '<https://example.es/>; rel="alternate"; hreflang="es"'
+    '<https://example.ca/>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es>; rel="alternate"; hreflang="es"',
+    '<https://example.es/>; rel="alternate"; hreflang="es"',
+    '<https://example.com/fr>; rel="alternate"; hreflang="fr"',
+    '<https://example.ca/fr>; rel="alternate"; hreflang="fr"'
   ]);
 
   expect(
@@ -102,7 +105,11 @@ it('works for type domain', () => {
     ).split(', ')
   ).toEqual([
     '<https://example.com/>; rel="alternate"; hreflang="en"',
-    '<https://example.es/>; rel="alternate"; hreflang="es"'
+    '<https://example.ca/>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es>; rel="alternate"; hreflang="es"',
+    '<https://example.es/>; rel="alternate"; hreflang="es"',
+    '<https://example.com/fr>; rel="alternate"; hreflang="fr"',
+    '<https://example.ca/fr>; rel="alternate"; hreflang="fr"'
   ]);
 
   expect(
@@ -112,6 +119,10 @@ it('works for type domain', () => {
     ).split(', ')
   ).toEqual([
     '<https://example.com/about>; rel="alternate"; hreflang="en"',
-    '<https://example.es/about>; rel="alternate"; hreflang="es"'
+    '<https://example.ca/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
+    '<https://example.es/about>; rel="alternate"; hreflang="es"',
+    '<https://example.com/fr/about>; rel="alternate"; hreflang="fr"',
+    '<https://example.ca/fr/about>; rel="alternate"; hreflang="fr"'
   ]);
 });

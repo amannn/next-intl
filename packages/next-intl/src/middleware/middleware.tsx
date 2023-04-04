@@ -1,65 +1,75 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
-import NextIntlMiddlewareConfig, {
-  NextIntlMiddlewareConfigWithDefaults
+import MiddlewareConfig, {
+  MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
-import getLocaleFromPathname from './getLocaleFromPathname';
 import resolveLocale from './resolveLocale';
+import {
+  getBestMatchingDomain,
+  getLocaleFromPathname,
+  isLocaleSupportedOnDomain
+} from './utils';
 
 const ROOT_URL = '/';
 
-function receiveConfig(
-  config: NextIntlMiddlewareConfig
-): NextIntlMiddlewareConfigWithDefaults {
-  const result = {
-    ...config,
-    alternateLinks: config.alternateLinks ?? true
-  };
+function handleConfigDeprecations(config: MiddlewareConfig) {
+  if (config.routing) {
+    const {routing} = config;
+    config = {...config};
+    delete config.routing;
 
-  if (!result.routing) {
-    result.routing = {
-      type: 'prefix'
-    };
+    if (routing.type === 'prefix') {
+      config.localePrefix = routing.prefix;
+    } else if (routing.type === 'domain') {
+      config.domains = routing.domains.map((cur) => ({
+        domain: cur.domain,
+        defaultLocale: cur.locale
+        // `locales` didn't exist before
+      }));
+    }
+
+    console.error(
+      "\n\nThe `routing` option is deprecated, please use `localePrefix` and `domains` instead. Here's your updated configuration:\n\n" +
+        JSON.stringify(config, null, 2) +
+        '\n\nThank you so much for following along with the Server Components beta and sorry for the inconvenience!\n\n'
+    );
   }
 
-  if (result.routing.type === 'prefix') {
-    result.routing.prefix = result.routing.prefix ?? 'as-needed';
+  if (config.domains) {
+    const {domains} = config;
+    config = {...config};
+    config.domains = domains.map((cur) => {
+      if (cur.locale) {
+        console.error(
+          '\n\nThe `domain.locale` option is deprecated, please use `domain.defaultLocale` instead.'
+        );
+      }
+      return {
+        ...cur,
+        defaultLocale: cur.locale || cur.defaultLocale
+      };
+    });
   }
 
-  return result as NextIntlMiddlewareConfigWithDefaults;
+  return config;
 }
 
-export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
+function receiveConfig(config: MiddlewareConfig) {
   // TODO: Remove before stable release
-  if (config.domains != null) {
-    console.error(
-      'The `domains` option is deprecated. Please use `routing` instead.'
-    );
-    config = {
-      ...config,
-      routing: {
-        type: 'domain',
-        domains: config.domains.map((cur) => ({
-          domain: cur.domain,
-          locale: cur.defaultLocale
-        }))
-      }
-    };
-    delete config.domains;
-  }
+  config = handleConfigDeprecations(config);
 
+  const result: MiddlewareConfigWithDefaults = {
+    ...config,
+    alternateLinks: config.alternateLinks ?? true,
+    localePrefix: config.localePrefix ?? 'as-needed'
+  };
+
+  return result;
+}
+
+export default function createIntlMiddleware(config: MiddlewareConfig) {
   const configWithDefaults = receiveConfig(config);
-
-  if (configWithDefaults.routing.type === 'domain') {
-    const {domains} = configWithDefaults.routing;
-    const hasMatchingDomainForEveryLocale = configWithDefaults.locales.every(
-      (locale) => domains.find((cur) => cur.locale === locale) != null
-    );
-    if (!hasMatchingDomainForEveryLocale) {
-      throw new Error('Every locale must have a matching domain');
-    }
-  }
 
   return function middleware(request: NextRequest) {
     const {domain, locale} = resolveLocale(
@@ -73,14 +83,12 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
     const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
     const hasMatchedDefaultLocale = domain
-      ? domain.locale === locale
+      ? [domain.defaultLocale, ...(domain.locales ?? [])].includes(locale)
       : locale === configWithDefaults.defaultLocale;
     const domainConfigs =
-      configWithDefaults.routing.type === 'domain'
-        ? configWithDefaults.routing.domains.filter(
-            (cur) => cur.locale === locale
-          ) ?? []
-        : [];
+      configWithDefaults.domains?.filter((curDomain) =>
+        isLocaleSupportedOnDomain(locale, curDomain)
+      ) || [];
 
     function getResponseInit() {
       let responseInit;
@@ -112,10 +120,20 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
 
       if (domainConfigs.length > 0) {
         urlObj.pathname = url.replace(`/${locale}`, '');
-        if (domainConfigs[0].domain && !host) {
-          host = domainConfigs[0].domain;
+
+        if (!host) {
+          const bestMatchingDomain = getBestMatchingDomain(
+            domain,
+            locale,
+            domainConfigs
+          );
+
+          if (bestMatchingDomain) {
+            host = bestMatchingDomain.domain;
+          }
         }
       }
+
       if (host) {
         urlObj.host = host;
       }
@@ -132,9 +150,8 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
 
       if (
         hasMatchedDefaultLocale &&
-        ((configWithDefaults.routing.type === 'prefix' &&
-          configWithDefaults.routing.prefix === 'as-needed') ||
-          configWithDefaults.routing.type === 'domain')
+        (configWithDefaults.localePrefix === 'as-needed' ||
+          domainConfigs.length > 0)
       ) {
         response = rewrite(pathWithSearch);
       } else {
@@ -159,17 +176,18 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       if (hasLocalePrefix) {
         const basePath = pathWithSearch.replace(`/${pathLocale}`, '') || '/';
 
-        if (configWithDefaults.routing.type === 'domain') {
-          const pathDomain = configWithDefaults.routing.domains.find(
-            (cur) => pathLocale === cur.locale
+        if (configWithDefaults.domains) {
+          const pathDomain = getBestMatchingDomain(
+            domain,
+            pathLocale,
+            domainConfigs
           );
-
           response = redirect(basePath, pathDomain?.domain);
         } else {
           if (pathLocale === locale) {
             if (
               hasMatchedDefaultLocale &&
-              configWithDefaults.routing.prefix === 'as-needed'
+              configWithDefaults.localePrefix === 'as-needed'
             ) {
               response = redirect(basePath);
             } else {
@@ -182,9 +200,8 @@ export default function createIntlMiddleware(config: NextIntlMiddlewareConfig) {
       } else {
         if (
           hasMatchedDefaultLocale &&
-          ((configWithDefaults.routing.type === 'prefix' &&
-            configWithDefaults.routing.prefix === 'as-needed') ||
-            configWithDefaults.routing.type === 'domain')
+          (configWithDefaults.localePrefix === 'as-needed' ||
+            configWithDefaults.domains)
         ) {
           response = rewrite(`/${locale}${pathWithSearch}`);
         } else {
