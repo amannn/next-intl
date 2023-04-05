@@ -276,59 +276,112 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales at the root', () => {
-      middleware(createMockRequest('/', 'fr', 'http://ca.example.com'));
-      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+    it('serves requests for non-default locales at the locale root', () => {
+      middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://ca.example.com/fr'
-      );
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+    });
+
+    it('serves requests for non-default locales at the locale root when the accept-language header points to the default locale', () => {
+      middleware(createMockRequest('/fr', 'en', 'http://ca.example.com'));
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).toHaveBeenCalled();
     });
 
     it('serves requests for non-default locales at sub paths', () => {
-      middleware(createMockRequest('/about', 'fr', 'http://ca.example.com'));
-      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      middleware(createMockRequest('/fr/about', 'fr', 'http://ca.example.com'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://ca.example.com/fr/about'
-      );
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).toHaveBeenCalled();
+    });
+
+    describe('unknown hosts', () => {
+      it('serves requests for unknown hosts at the root', () => {
+        middleware(createMockRequest('/', 'en', 'http://localhost'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost/en'
+        );
+      });
+
+      it('serves requests for unknown hosts at sub paths', () => {
+        middleware(createMockRequest('/about', 'en', 'http://localhost'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost/en/about'
+        );
+      });
+
+      it('serves requests for unknown hosts and non-default locales at the locale root', () => {
+        middleware(createMockRequest('/fr', 'fr', 'http://localhost'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
+
+      it('serves requests for unknown hosts and non-default locales at sub paths', () => {
+        middleware(createMockRequest('/fr/about', 'fr', 'http://localhost'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
+      });
     });
 
     describe('locales-restricted domain', () => {
-      it('redirects not matching locales at the root', () => {
-        middleware(createMockRequest('/', 'en', 'http://fr.example.com'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://en.example.com/'
-        );
-      });
-
-      it('redirects not matching locales at sub paths', () => {
-        middleware(createMockRequest('/about', 'en', 'http://fr.example.com'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://en.example.com/about'
-        );
-      });
-
-      it('serves requests for non-default locales at the root', () => {
-        middleware(createMockRequest('/', 'fr', 'http://ca.example.com'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      it('serves requests for the default locale at the root when the accept-language header matches', () => {
+        middleware(createMockRequest('/', 'en', 'http://ca.example.com'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://ca.example.com/fr'
+          'http://ca.example.com/en'
         );
+      });
+
+      it("serves requests for the default locale at the root when the accept-language header doesn't match", () => {
+        middleware(createMockRequest('/', 'en', 'http://fr.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://fr.example.com/fr'
+        );
+      });
+
+      it('serves requests for the default locale at sub paths when the accept-langauge header matches', () => {
+        middleware(createMockRequest('/about', 'en', 'http://ca.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://ca.example.com/en/about'
+        );
+      });
+
+      it("serves requests for the default locale at sub paths when the accept-langauge header doesn't match", () => {
+        middleware(createMockRequest('/about', 'en', 'http://fr.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://fr.example.com/fr/about'
+        );
+      });
+
+      it('serves requests for non-default locales at the locale root', () => {
+        middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
       });
 
       it('serves requests for non-default locales at sub paths', () => {
-        middleware(createMockRequest('/about', 'fr', 'http://ca.example.com'));
-        expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://ca.example.com/fr/about'
+        middleware(
+          createMockRequest('/fr/about', 'fr', 'http://ca.example.com')
         );
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).toHaveBeenCalled();
       });
     });
 
@@ -479,28 +532,27 @@ describe('deprecated domain config', () => {
       }
     });
 
-    // middleware(createMockRequest('/', 'en', 'http://en.example.com'));
-    // middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
+    middleware(createMockRequest('/', 'en', 'http://en.example.com'));
+    middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
 
-    // expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    // expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+    expect(MockedNextResponse.next).not.toHaveBeenCalled();
+    expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
 
-    // expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-    //   'http://en.example.com/en'
-    // );
-    // expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-    //   'http://en.example.com/en/about'
-    // );
+    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+      'http://en.example.com/en'
+    );
+    expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+      'http://en.example.com/en/about'
+    );
 
-    // middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
-    // expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-    //   'http://en.example.com/about'
-    // );
+    middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
+    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+      'http://en.example.com/about'
+    );
 
     middleware(createMockRequest('/de/help', 'de', 'http://en.example.com'));
 
-    // expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
       'http://de.example.com/help'
     );
   });

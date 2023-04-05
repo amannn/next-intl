@@ -89,42 +89,43 @@ function resolveLocaleFromPrefix(
 }
 
 function resolveLocaleFromDomain(
-  {defaultLocale, domains, locales}: MiddlewareConfigWithDefaults,
-  requestHeaders: Headers
+  config: MiddlewareConfigWithDefaults,
+  requestHeaders: Headers,
+  requestCookies: RequestCookies,
+  pathname: string
 ) {
-  let locale, domain;
+  const {domains} = config;
 
-  const requestLocale = getAcceptLanguageLocale(
+  const localeFromPrefix = resolveLocaleFromPrefix(
+    config,
     requestHeaders,
-    locales,
-    defaultLocale
+    requestCookies,
+    pathname
   );
 
   // Prio 1: Use a domain
   if (domains) {
-    domain = findDomainFromHost(requestHeaders, domains);
+    const domain = findDomainFromHost(requestHeaders, domains);
+    const hasLocalePrefix =
+      pathname && pathname.startsWith(`/${localeFromPrefix}`);
 
     if (domain) {
-      if (requestLocale && isLocaleSupportedOnDomain(requestLocale, domain)) {
-        locale = requestLocale;
+      if (localeFromPrefix) {
+        return {
+          locale:
+            isLocaleSupportedOnDomain(localeFromPrefix, domain) ||
+            hasLocalePrefix
+              ? localeFromPrefix
+              : domain.defaultLocale,
+          localeFromPrefix,
+          domain
+        };
       }
-    } else {
-      // Might be localhost
     }
   }
 
-  // Prio 2: Use the request locale if it is
-  // supported, but not on the current domain
-  if (!locale && requestLocale && locales.includes(requestLocale)) {
-    locale = requestLocale;
-  }
-
-  // Prio 3: Use default locale
-  if (!locale) {
-    locale = defaultLocale;
-  }
-
-  return {locale, domain};
+  // Prio 2: Use prefix strategy
+  return {locale: localeFromPrefix};
 }
 
 export default function resolveLocale(
@@ -134,7 +135,12 @@ export default function resolveLocale(
   pathname: string
 ): {locale: string; domain?: DomainConfig} {
   if (config.domains) {
-    return resolveLocaleFromDomain(config, requestHeaders);
+    return resolveLocaleFromDomain(
+      config,
+      requestHeaders,
+      requestCookies,
+      pathname
+    );
   } else {
     return {
       locale: resolveLocaleFromPrefix(

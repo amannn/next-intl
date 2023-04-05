@@ -367,7 +367,9 @@ export default createIntlMiddleware({
     {
       domain: 'us.example.com',
       defaultLocale: 'en',
-      // Optionally restrict the locales managed by this domain
+      // Optionally restrict the locales managed by this domain. If this
+      // domain receives requests for other locales (e.g. us.example.com/fr),
+      // then the middleware will redirect to a domain that supports them.
       locales: ['en']
     },
     {
@@ -381,13 +383,13 @@ export default createIntlMiddleware({
 });
 ```
 
-The middleware rewrites the requests internally, so that requests for the `defaultLocale` on a given domain work without a locale prefix (e.g. `us.example.com/about` → `/en/about`). If you want to include a prefix for the default locale as well, you can add `localePrefix: 'always'` either at the root or to an individual domain.
+The middleware rewrites the requests internally, so that requests for the `defaultLocale` on a given domain work without a locale prefix (e.g. `us.example.com/about` → `/en/about`). If you want to include a prefix for the default locale as well, you can add `localePrefix: 'always'`.
 
 The domain that is used to match the locale is read from the `x-forwarded-host` header, with a fallback to `host`.
 
 <Callout>
 
-Note that domain-based routing allows the `defaultLocale` to be used for `localhost` if it matches the `accept-language` header. However, other locales will be redirected to the configured domains. To avoid redirects pointing away from your development server, you may want to enable domain-based routing in production only.
+Note that if no domain matches an incoming request, prefix-based routing will be used. This can be useful, e.g. for local development where the host is `localhost`.
 
 </Callout>
 

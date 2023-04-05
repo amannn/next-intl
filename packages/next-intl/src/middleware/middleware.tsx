@@ -84,13 +84,14 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
     const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
     const hasMatchedDefaultLocale = domain
-      ? [domain.defaultLocale, ...(domain.locales ?? [])].includes(locale)
+      ? domain.defaultLocale === locale
       : locale === configWithDefaults.defaultLocale;
 
     const domainConfigs =
       configWithDefaults.domains?.filter((curDomain) =>
         isLocaleSupportedOnDomain(locale, curDomain)
       ) || [];
+    const hasUnknownHost = configWithDefaults.domains != null && !domain;
 
     function getResponseInit() {
       let responseInit;
@@ -195,7 +196,8 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
                 pathLocale,
                 domainConfigs
               );
-              if (domain?.domain !== pathDomain?.domain) {
+
+              if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
                 response = redirect(basePath, pathDomain?.domain);
               } else {
                 response = next();
