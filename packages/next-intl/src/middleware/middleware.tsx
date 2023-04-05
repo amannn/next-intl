@@ -63,7 +63,8 @@ function receiveConfig(config: MiddlewareConfig) {
   const result: MiddlewareConfigWithDefaults = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
-    localePrefix: config.localePrefix ?? 'as-needed'
+    localePrefix: config.localePrefix ?? 'as-needed',
+    localeDetection: config.localeDetection ?? true
   };
 
   return result;

@@ -339,22 +339,6 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 4. When the user clicks on the link, a request to `/en` is initiated.
 5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
 
-#### Always use a locale prefix
-
-If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
-
-```tsx {6}
-import createIntlMiddleware from 'next-intl/middleware';
-
-export default createIntlMiddleware({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
-  localePrefix: 'always' // Defaults to 'as-needed'
-});
-```
-
-In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
-
 ### Domain-based routing
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
@@ -421,7 +405,43 @@ Since the middleware is aware of all your domains, the domain will automatically
 3. When the link is clicked, a request to `us.example.com/fr` is initiated.
 4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
 
-### Alternate links
+### Further configuration
+
+#### Always use a locale prefix
+
+If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
+
+```tsx {6}
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+  localePrefix: 'always' // Defaults to 'as-needed'
+});
+```
+
+In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
+
+Note that this will affect both prefix-based as well as domain-based routing.
+
+#### Disable automatic locale detection
+
+If you want to disable locale detection based on the `accept-language` header, you can opt-out of this mechanism.
+
+```tsx {6}
+import createIntlMiddleware from 'next-intl/middleware';
+
+export default createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
+  localeDetection: false // Defaults to `true`
+});
+```
+
+Note that in this case other detection mechanisms will remain in place regardless (e.g. based on a locale prefix in the pathname or a matched domain).
+
+#### Disable alternate links
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 

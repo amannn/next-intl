@@ -50,7 +50,7 @@ function getAcceptLanguageLocale(
 }
 
 function resolveLocaleFromPrefix(
-  {defaultLocale, locales}: MiddlewareConfigWithDefaults,
+  {defaultLocale, localeDetection, locales}: MiddlewareConfigWithDefaults,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -76,7 +76,7 @@ function resolveLocaleFromPrefix(
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && requestHeaders) {
+  if (!locale && localeDetection && requestHeaders) {
     locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
   }
 

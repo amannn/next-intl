@@ -41,11 +41,14 @@ export type DomainConfig = Omit<
 };
 
 type MiddlewareConfig = RoutingBaseConfig & {
-  /** Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http */
-  alternateLinks?: boolean;
-
   /** Can be used to change the locale handling per domain. */
   domains?: Array<DomainConfig>;
+
+  /** By setting this to `false`, the `accept-language` header will no longer be used for locale detection. */
+  localeDetection?: boolean;
+
+  /** Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http */
+  alternateLinks?: boolean;
 
   /** @deprecated Deprecated in favor of `localePrefix` and `domains`. */
   routing?: RoutingConfigPrefix | RoutingConfigDomain;
@@ -54,6 +57,7 @@ type MiddlewareConfig = RoutingBaseConfig & {
 export type MiddlewareConfigWithDefaults = MiddlewareConfig & {
   alternateLinks: boolean;
   localePrefix: LocalePrefix;
+  localeDetection: boolean;
 };
 
 export default MiddlewareConfig;

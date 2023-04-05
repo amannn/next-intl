@@ -173,6 +173,24 @@ describe('prefix-based routing', () => {
     });
   });
 
+  describe('localePrefix: as-needed, localeDetection: false', () => {
+    const middleware = createMockMiddleware({
+      defaultLocale: 'en',
+      locales: ['en', 'de'],
+      localePrefix: 'as-needed',
+      localeDetection: false
+    });
+
+    it('serves non-prefixed requests with the default locale and ignores the accept-language header', () => {
+      middleware(createMockRequest('/', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+  });
+
   describe('localePrefix: always', () => {
     const middleware = createMockMiddleware({
       defaultLocale: 'en',
