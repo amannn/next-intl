@@ -130,7 +130,7 @@ export default function createFormatter({
   }
 
   function number(
-    value: number,
+    value: number | bigint,
     formatOrOptions?: string | NumberFormatOptions
   ) {
     return getFormattedValue(
