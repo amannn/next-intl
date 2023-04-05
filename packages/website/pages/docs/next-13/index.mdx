@@ -1,10 +1,10 @@
 # Next.js 13
 
-With the introduction of [the `app` directory](https://beta.nextjs.org/docs/routing/fundamentals), Next.js 13 provides a new level of flexibility for React apps.
+With the introduction of [the App Router](https://beta.nextjs.org/docs/routing/fundamentals), Next.js 13 provides a new level of flexibility for React apps.
 
 There are two major changes that affect `next-intl`:
 
-1. Next.js is removing their built-in [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing), leaving the implementation of this up to the user. To fill in the gap, `next-intl` provides a **drop-in replacement for i18n routing**, handling the locale negotiation, redirects and cookies.
+1. Next.js is removing their built-in [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing), leaving the implementation of this up to the user. To fill in the gap, `next-intl` provides a **drop-in middleware replacement for i18n routing**, handling the locale negotiation, redirects and cookies.
 2. Next.js now supports **React Server Components**.
 
 There are currently two ways how you can set your app up with `next-intl` in the `app` directory:

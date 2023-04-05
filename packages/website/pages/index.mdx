@@ -5,25 +5,27 @@ title: Internationalization for Next.js
 import Callout from 'components/Callout';
 import CodeSnippets from 'components/CodeSnippets';
 import Section from 'components/Section';
+import PartnerBanner from 'components/PartnerBanner';
 import LinkButton from 'components/LinkButton';
 import Link from 'components/Link';
 import FeaturePanel from 'components/FeaturePanel';
 import Hero from 'components/Hero';
 
 <div className="bg-slate-50 dark:bg-gray-900">
-  
+
 <Hero
   titleStrong="Internationalization for Next.js"
   titleRegular="that gets out of your way."
-  description="Support multiple languages, with your app code becoming simpler instead of more complex." 
-  getStarted="Get started" 
-  viewOnGithub="View on GitHub" 
-  rscAnnouncement="Support for Next.js 13 and the app directory is coming →"
+  description="Support multiple languages, with your app code becoming simpler instead of more complex."
+  getStarted="Get started"
+  viewOnGithub="View on GitHub"
+  rscAnnouncement="Support for Next.js 13 and the App Router is coming →"
 />
+<PartnerBanner intro="Presented by" />
 
 <Section
   title="Minimalistic, yet complete"
-  description="Internationalization is an essential part of the user experience. next-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation."
+  description="Internationalization (i18n) is an essential part of the user experience, therefore next‑intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation."
 >
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-20">
     <FeaturePanel
@@ -48,13 +50,13 @@ import Hero from 'components/Hero';
     />
     <FeaturePanel
       code={<CodeSnippets.buildOutput />}
-      title="Fast"
+      title="Static & dynamic rendering"
       description="Get the best performance from your app by supporting internationalization on both static and dynamic pages."
     />
     <FeaturePanel
       code={<CodeSnippets.standards />}
       title="Standards-based"
-      description="Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS."
+      description="Use the best parts of built-in JavaScript APIs and the battle-tested ICU parser from Format.JS."
     />
   </div>
 </Section>

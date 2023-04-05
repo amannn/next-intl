@@ -9,7 +9,11 @@ const withNextra = require('nextra')({
 });
 
 module.exports = withNextra({
+  experimental: {
+    appDir: true
+  },
   redirects: () => [
+    // Index pages
     {
       source: '/docs',
       destination: '/docs/getting-started',
@@ -29,8 +33,20 @@ module.exports = withNextra({
     // Moved pages
     {
       source: '/docs/getting-started/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/usage/production-checklist',
       permanent: true
+    },
+    {
+      source: '/docs/production-checklist',
+      destination: '/docs/usage/production-checklist',
+      permanent: true
+    }
+  ],
+
+  rewrites: () => [
+    {
+      source: '/stats/:match*',
+      destination: process.env.UMAMI_URL + '/:match*'
     }
   ]
 });

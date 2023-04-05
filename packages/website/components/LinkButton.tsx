@@ -1,7 +1,12 @@
 import clsx from 'clsx';
 import Link from 'next/link';
+import {ComponentProps} from 'react';
 
-export default function LinkButton({variant = 'primary', ...rest}) {
+type Props = {
+  variant?: 'primary' | 'secondary';
+} & Omit<ComponentProps<typeof Link>, 'className'>;
+
+export default function LinkButton({variant = 'primary', ...rest}: Props) {
   return (
     <Link
       className={clsx(

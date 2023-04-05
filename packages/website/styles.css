@@ -4,6 +4,7 @@
 
 :root {
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
+  --shiki-token-comment: rgba(100, 116, 139, 0.8);
 }
 
 .dark {
@@ -44,6 +45,27 @@ html:not(.dark) .navbar-home .nextra-scrollbar {
 
 .navbar-home .nextra-nav-container-blur {
   display: none;
+}
+
+/**
+ * Typography
+ */
+
+figure {
+  @apply my-8 flex flex-col items-center;
+}
+
+figure img {
+  /* @apply mx-auto; */
+  /* @apply rounded-lg; */
+}
+
+figcaption {
+  @apply mt-4 text-center text-sm text-slate-500;
+}
+
+.screenshot {
+  @apply rounded-md shadow-lg;
 }
 
 /**

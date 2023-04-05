@@ -1,6 +1,15 @@
 import Callout from 'components/Callout';
+import PartnerContentLink from 'components/PartnerContentLink';
 
 # Numbers
+
+The formatting of numbers can vary depending on the user's locale and may include different rules such as:
+
+1. Decimal separators (e.g. "12.3" in `en-US` vs. "12,3" in `de-DE`)
+2. Digit grouping (e.g. "120,000" in `en-US` vs. "1,20,000" in `hi-IN`)
+3. Currency sign position (e.g. "12 €" in `de-DE` vs. "€ 12" in `de-AT`)
+
+By using the formatting capabilities provided by `next-intl`, you can adjust to these variations and ensure that numbers are displayed accurately for users across different locales.
 
 ## Formatting plain numbers
 
@@ -20,22 +29,27 @@ See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs
 
 ## Numbers within messages
 
-Numbers can also be embedded within messages:
+Numbers can be embedded within messages by using the ICU syntax.
 
 ```js filename="en.json"
 {
+  "basic": "Basic formatting: {value, number}",
   "percentage": "Displayed as a percentage: {value, number, percent}",
-  "decimals": "At most 2 fraction digits: {value, number, ::.##}"
+  "custom": "At most 2 fraction digits: {value, number, ::.##}"
 }
 ```
 
-See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this syntax.
+Note the leading `::` that is used to indicate that a skeleton should be used. See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this.
 
 <Callout>
-  Note the leading `::` that is used to indicate that a skeleton should be used.
+
+If you work with translators, it can be helpful for them to use an editor that supports the ICU syntax for numbers (e.g. the <PartnerContentLink name="numbers-messages" href="https://support.crowdin.com/icu-message-syntax/#number">Crowdin Editor</PartnerContentLink>).
+
 </Callout>
 
-Additionally, you can configure custom formatters which can be referenced by name:
+### Custom number formats
+
+To use custom formats in messages, you can provide formatters that can be referenced by name.
 
 ```js filename="en.json"
 {
@@ -48,7 +62,6 @@ t(
   'price',
   {price: 32000.99},
   {
-    // Custom formats can be supplied via the third parameter
     number: {
       currency: {
         style: 'currency',
@@ -59,4 +72,8 @@ t(
 );
 ```
 
+<Callout>
+
 To reuse number formats for multiple components, you can configure [global formats](/docs/usage/configuration#global-formats).
+
+</Callout>

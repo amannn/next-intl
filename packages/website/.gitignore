@@ -5,3 +5,4 @@
 .vercel
 public/.nextra
 tsconfig.tsbuildinfo
+.env

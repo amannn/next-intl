@@ -1,4 +1,5 @@
 import Callout from 'components/Callout';
+import PartnerContentLink from 'components/PartnerContentLink';
 
 # Messages
 
@@ -65,13 +66,31 @@ function SignUp() {
 }
 ```
 
-You don't have to group messages by components – use whatever suits your use case. You can theoretically use a common key for shared labels that are used frequently. However, based on experience, it's often beneficial to duplicate labels across components, even if they are the same in one language. Depending on the context, a different label can be more appropriate (e.g. "not now" instead of "cancel"). Duplicating the labels allows to easily change them later on in case you want something more specific. Duplication on the network level is typically solved by gzip. In addition to this, you can achieve reuse by using shared components.
-
 To retrieve all available messages in a component, you can omit the namespace path:
 
 ```js
 const t = useTranslations();
+
+t('auth.SignUp.title');
 ```
+
+<details>
+  <summary>
+    
+    **How can I reuse messages?**
+    
+    </summary>
+
+As your app grows, you'll want to reuse messages among your components. If you use component names as namespaces to structure your messages, you'll automatically benefit from reusable messages by reusing your components.
+
+**Examples:**
+
+- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
+- You're displaying products in your app and often need to resolve a category identifier to a human readable label (e.g. `new` → "Just in"). To ensure consistency, you can add a `ProductCategory` component that turns the `category` into a string.
+
+There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
+
+</details>
 
 ## Providing messages
 
@@ -84,7 +103,7 @@ export async function getStaticProps({locale}) {
       // You can get the messages from anywhere you like. The recommended
       // pattern is to put them in JSON files separated by language and read
       // the desired one based on the `locale` received from Next.js.
-      messages: (await import(`../../messages/index/${locale}.json`)).default
+      messages: (await import(`../../messages/${locale}.json`)).default
     }
   };
 }
@@ -101,7 +120,7 @@ export async function getStaticProps({locale}) {
   return {
     props: {
       messages: pick(
-        (await import(`../../messages/index/${locale}.json`)).default,
+        (await import(`../../messages/${locale}.json`)).default,
         namespaces
       )
     }
@@ -115,26 +134,19 @@ export async function getStaticProps({locale}) {
   example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx).
 </Callout>
 
-## Rendering of messages
+## Rendering messages
+
+`next-intl` uses ICU message syntax that allows you to express language subtleties and separates state handling within messages from your app code.
 
 You can interpolate values from your components into your messages with a special placeholder syntax.
 
 ```js filename="en.json"
 {
-  "static": "Hello",
-  "interpolation": "Hello {name}",
-
-  // See https://formatjs.io/docs/core-concepts/icu-syntax/#plural-format
+  "static": "Hello world!",
+  "interpolation": "Hello {name}!",
   "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
-
-  // See https://formatjs.io/docs/core-concepts/icu-syntax/#select-format
   "select": "{gender, select, female {She} male {He} other {They}} is online.",
-
-  // See https://formatjs.io/docs/core-concepts/icu-syntax/#selectordinal-format
-  "selectordinal": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-
-  // Messages can be used in attributes as well
-  "attributeUrl": "https://example.com"
+  "selectordinal": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 }
 ```
 
@@ -144,8 +156,13 @@ t('interpolation', {name: 'Jane'});
 t('plural', {numMessages: 3});
 t('select', {gender: 'female'});
 t('selectordinal', {year: 11});
-<a href={t('attributeUrl')}>Link</a>;
 ```
+
+<Callout>
+
+To work with ICU messages, it can be helpful to use an editor that supports this syntax. E.g. the <PartnerContentLink name="messages-rendering" href="https://support.crowdin.com/icu-message-syntax/">Crowdin Editor</PartnerContentLink> can be used by translators to work on translations without having to change app code.
+
+</Callout>
 
 ## Rich text
 

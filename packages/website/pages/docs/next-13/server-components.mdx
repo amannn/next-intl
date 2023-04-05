@@ -2,32 +2,42 @@ import Callout from 'components/Callout';
 
 # Usage in Server Components (beta)
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) in the `app` directory. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps within the `app` directory.
 
 <Callout type="warning">
-  The `app` directory is currently in beta, patterns are still emerging and APIs
-  may change. Please **use this at your own risk**, knowing that you might have
-  to face a migration effort when the `app` directory becomes stable.
+  The App Router is currently in beta, patterns are still emerging and APIs may
+  change. Please **use this at your own risk**, knowing that you might have to
+  face a migration effort as the App Router becomes stable.
 </Callout>
 
 ## Current beta version
 
 ```
-npm install next-intl@2.11.0-beta.16
+npm install next-intl@2.12.0-beta.5
 ```
 
-This beta version was tested with `next@13.2.0`.
+This beta version was tested with `next@13.2.4`.
 
 ## Roadmap
 
-- ✅ All APIs from `next-intl` can be used in Server Components.
-- 💡 Currently SSR-only (i.e. no `generateStaticParams`), therefore use [CDN caching](#cdn-caching).
+| Feature                                            | Status |
+| :------------------------------------------------- | :----: |
+| Usage of all `next-intl` APIs in Server Components |   ✅   |
+| Middleware for i18n routing                        |   ✅   |
+| Dynamic rendering                                  |   ✅   |
+| Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
+
+<Callout>
+
+While the support for static rendering is pending, consider [CDN caching](#cdn-caching) to get the same performance characteristics from dynamic rendering or [use Client Components](/docs/next-13/client-components) for the time being.
+
+</Callout>
 
 For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+If you haven't done so already, [create a Next.js 13 app that uses the App Router](https://beta.nextjs.org/docs/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
 **Start by creating the following file structure:**
 
@@ -52,7 +62,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
 
-The simplest option is to create JSON files locally based on [locales](<https://en.wikipedia.org/wiki/Locale_(computer_software)>).
+The simplest option is to create JSON files locally based on locales, e.g. `en.json`.
 
 ```json filename="messages/en.json"
 {
@@ -219,17 +229,21 @@ export default async function Profile() {
 }
 ```
 
-## Switching to Client Components
+## Using translations in Client Components
 
-If you need to use translations in Client Components, the best approach is to pass the generated labels as props.
+If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx" {6}
+```tsx filename="[locale]/faq/page.tsx" {7-9}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
-export default function FAQ() {
-  const t = useTranslations('FAQ');
-  return <Expandable title={t('title')}>{t('description')}</Expandable>;
+export default function FAQEntry() {
+  const t = useTranslations('FAQEntry');
+  return (
+    <Expandable title={t('title')}>
+      <FAQContent content={t('description')} />
+    </Expandable>
+  );
 }
 ```
 
@@ -248,7 +262,7 @@ function Expandable({title, children}) {
   return (
     <div>
       <button onClick={onToggle}>{title}</button>
-      {expanded && <p>{children}</p>}
+      {expanded && <div>{children}</div>}
     </div>
   );
 }
@@ -256,7 +270,17 @@ function Expandable({title, children}) {
 
 This way your messages never leave the server and the client only needs to load the code that is necessary for initializing your interactive components.
 
-If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this will increase your client bundle size.
+If you need to integrate your translations with interactively-controlled state, you can still manage your translations on the server side by using one of the following techniques.
+
+**Examples for state that can be read on the server side:**
+
+- [Page- or search params](https://beta.nextjs.org/docs/api-reference/file-conventions/page)
+- [Cookies](https://beta.nextjs.org/docs/api-reference/cookies)
+- [Database state](https://beta.nextjs.org/docs/data-fetching/fundamentals)
+
+There's [an article about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
+
+If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider` ([example code](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx)). Note however that this is a performance tradeoff since the relevant messages need to be serialized into the document and the used APIs from `next-intl` need to be included in the client-side bundle. Also note that `NextIntlClientProvider` doesn't automatically inherit configuration from `i18n.ts`, therefore make sure to provide all relevant props on the component.
 
 ## Global request configuration
 
@@ -375,7 +399,7 @@ import {
 
 ## CDN caching
 
-Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from SSR'd pages ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)).
+Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from dynamic rendering as you'd get from static rendering ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)). Also note that [the Next.js Cache](https://nextjs.org/blog/next-13-2#nextjs-cache) improves the performance for dynamically rendered pages.
 
 ```js filename="next.config.js"
 const ms = require('ms');
