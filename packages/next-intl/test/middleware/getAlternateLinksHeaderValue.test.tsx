@@ -11,7 +11,8 @@ it('works for prefixed routing (as-needed)', () => {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
-    localePrefix: 'as-needed'
+    localePrefix: 'as-needed',
+    localeDetection: true
   };
 
   expect(
@@ -39,7 +40,8 @@ it('works for prefixed routing (always)', () => {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
-    localePrefix: 'always'
+    localePrefix: 'always',
+    localeDetection: true
   };
 
   expect(
@@ -68,6 +70,7 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
     locales: ['en', 'es', 'fr'],
     alternateLinks: true,
     localePrefix: 'as-needed',
+    localeDetection: true,
     domains: [
       {
         domain: 'example.com',
@@ -125,6 +128,7 @@ it("works for type domain with `localePrefix: 'always'`", () => {
     locales: ['en', 'es', 'fr'],
     alternateLinks: true,
     localePrefix: 'always',
+    localeDetection: true,
     domains: [
       {
         domain: 'example.com',
