@@ -360,7 +360,7 @@ If you want to serve your localized content based on different domains, you can 
 - `ca.example.com` (default: `en`)
 - `ca.example.com/fr` (`fr`)
 
-```tsx
+```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
@@ -422,12 +422,12 @@ Since the middleware is aware of all your domains, the domain will automatically
 
 If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
 
-```tsx {6}
+```tsx filename="middleware.ts" {6}
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
+  // ... other config
+
   localePrefix: 'always' // Defaults to 'as-needed'
 });
 ```
@@ -440,12 +440,12 @@ Note that this will affect both prefix-based as well as domain-based routing.
 
 If you want to disable locale detection based on the `accept-language` header, you can opt-out of this mechanism.
 
-```tsx {6}
+```tsx filename="middleware.ts" {6}
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
+  // ... other config
+
   localeDetection: false // Defaults to `true`
 });
 ```
@@ -458,14 +458,13 @@ The middleware automatically sets [the `link` header](https://developers.google.
 
 If you prefer to include these links yourself, you can opt-out of this behaviour.
 
-```tsx filename="middleware.ts"
+```tsx filename="middleware.ts" {6}
 import createIntlMiddleware from 'next-intl/middleware';
 
 export default createIntlMiddleware({
   // ... other config
 
-  // Default: `true`
-  alternateLinks: false
+  alternateLinks: false // Defaults to `true`
 });
 ```
 
