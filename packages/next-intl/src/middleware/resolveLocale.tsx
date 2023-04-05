@@ -4,27 +4,22 @@ import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {
   DomainConfig,
-  NextIntlMiddlewareConfigWithDefaults,
-  RoutingConfigDomain
+  MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
-import getHost from './getHost';
-import getLocaleFromPathname from './getLocaleFromPathname';
+import {
+  getLocaleFromPathname,
+  getHost,
+  isLocaleSupportedOnDomain
+} from './utils';
 
-function findLocaleDomain(
+function findDomainFromHost(
   requestHeaders: Headers,
-  routingConfig: RoutingConfigDomain
+  domains: Array<DomainConfig>
 ) {
   let host = getHost(requestHeaders);
+
   // Remove port (easier for local development)
   host = host?.replace(/:\d+$/, '');
-
-  // Consider optional www subdomain
-  const domains = routingConfig.domains.flatMap((cur) => {
-    if (cur.domain.startsWith('www.')) {
-      return cur;
-    }
-    return [cur, {...cur, domain: `www.${cur.domain}`}];
-  });
 
   if (host && domains) {
     return domains.find((cur) => cur.domain === host);
@@ -33,9 +28,29 @@ function findLocaleDomain(
   return undefined;
 }
 
-function resolveLocaleFromPrefix(
+function getAcceptLanguageLocale(
+  requestHeaders: Headers,
   locales: Array<string>,
-  defaultLocale: string,
+  defaultLocale: string
+) {
+  let locale;
+
+  const languages = new Negotiator({
+    headers: {
+      'accept-language': requestHeaders.get('accept-language') || undefined
+    }
+  }).languages();
+  try {
+    locale = match(languages, locales, defaultLocale);
+  } catch (e) {
+    // Invalid language
+  }
+
+  return locale;
+}
+
+function resolveLocaleFromPrefix(
+  {defaultLocale, localeDetection, locales}: MiddlewareConfigWithDefaults,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -61,17 +76,8 @@ function resolveLocaleFromPrefix(
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && requestHeaders) {
-    const languages = new Negotiator({
-      headers: {
-        'accept-language': requestHeaders.get('accept-language') || undefined
-      }
-    }).languages();
-    try {
-      locale = match(languages, locales, defaultLocale);
-    } catch (e) {
-      // Invalid language
-    }
+  if (!locale && localeDetection && requestHeaders) {
+    locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
   }
 
   // Prio 4: Use default locale
@@ -83,48 +89,62 @@ function resolveLocaleFromPrefix(
 }
 
 function resolveLocaleFromDomain(
-  routingConfig: RoutingConfigDomain,
+  config: MiddlewareConfigWithDefaults,
   requestHeaders: Headers,
-  defaultLocale: string
+  requestCookies: RequestCookies,
+  pathname: string
 ) {
-  let locale, domain;
+  const {domains} = config;
+
+  const localeFromPrefixStrategy = resolveLocaleFromPrefix(
+    config,
+    requestHeaders,
+    requestCookies,
+    pathname
+  );
 
   // Prio 1: Use a domain
-  if (routingConfig.domains) {
-    domain = findLocaleDomain(requestHeaders, routingConfig);
+  if (domains) {
+    const domain = findDomainFromHost(requestHeaders, domains);
+    const hasLocalePrefix =
+      pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`);
 
     if (domain) {
-      locale = domain.locale;
-    } else {
-      // Might be localhost
+      if (localeFromPrefixStrategy) {
+        return {
+          locale:
+            isLocaleSupportedOnDomain(localeFromPrefixStrategy, domain) ||
+            hasLocalePrefix
+              ? localeFromPrefixStrategy
+              : domain.defaultLocale,
+          localeFromPrefix: localeFromPrefixStrategy,
+          domain
+        };
+      }
     }
   }
 
-  // Prio 2: Use default locale
-  if (!locale) {
-    locale = defaultLocale;
-  }
-
-  return {locale, domain};
+  // Prio 2: Use prefix strategy
+  return {locale: localeFromPrefixStrategy};
 }
 
 export default function resolveLocale(
-  config: NextIntlMiddlewareConfigWithDefaults,
+  config: MiddlewareConfigWithDefaults,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ): {locale: string; domain?: DomainConfig} {
-  if (config.routing.type === 'domain') {
+  if (config.domains) {
     return resolveLocaleFromDomain(
-      config.routing,
+      config,
       requestHeaders,
-      config.defaultLocale
+      requestCookies,
+      pathname
     );
   } else {
     return {
       locale: resolveLocaleFromPrefix(
-        config.locales,
-        config.defaultLocale,
+        config,
         requestHeaders,
         requestCookies,
         pathname

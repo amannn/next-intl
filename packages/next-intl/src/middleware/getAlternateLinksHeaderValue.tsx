@@ -1,12 +1,10 @@
 import {NextRequest} from 'next/server';
-import NextIntlMiddlewareConfig, {
-  NextIntlMiddlewareConfigWithDefaults
+import MiddlewareConfig, {
+  MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
+import {isLocaleSupportedOnDomain} from './utils';
 
-function getUnprefixedUrl(
-  config: NextIntlMiddlewareConfig,
-  request: NextRequest
-) {
+function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
   const url = new URL(request.url);
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
@@ -33,7 +31,7 @@ function getAlternateEntry(url: string, locale: string) {
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
 export default function getAlternateLinksHeaderValue(
-  config: NextIntlMiddlewareConfigWithDefaults,
+  config: MiddlewareConfigWithDefaults,
   request: NextRequest
 ) {
   const unprefixedUrl = getUnprefixedUrl(config, request);
@@ -50,22 +48,29 @@ export default function getAlternateLinksHeaderValue(
 
     let url;
 
-    if (config.routing.type === 'domain') {
+    if (config.domains) {
       const domainConfigs =
-        config.routing.domains.filter((cur) => cur.locale === locale) || [];
+        config.domains.filter((cur) =>
+          isLocaleSupportedOnDomain(locale, cur)
+        ) || [];
 
       return domainConfigs.map((domainConfig) => {
         url = new URL(unprefixedUrl);
         url.port = '';
         url.host = domainConfig.domain;
+
+        if (
+          locale !== domainConfig.defaultLocale ||
+          config.localePrefix === 'always'
+        ) {
+          localizePathname(url);
+        }
+
         return getAlternateEntry(url.toString(), locale);
       });
     } else {
       url = new URL(unprefixedUrl);
-      if (
-        locale !== config.defaultLocale ||
-        config.routing.prefix === 'always'
-      ) {
+      if (locale !== config.defaultLocale || config.localePrefix === 'always') {
         localizePathname(url);
       }
     }
@@ -74,7 +79,7 @@ export default function getAlternateLinksHeaderValue(
   });
 
   // Add x-default entry
-  if (config.routing.type === 'prefix') {
+  if (!config.domains) {
     const url = new URL(unprefixedUrl);
     links.push(getAlternateEntry(url.toString(), 'x-default'));
   } else {

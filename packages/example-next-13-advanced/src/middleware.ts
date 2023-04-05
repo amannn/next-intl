@@ -7,5 +7,5 @@ export default createIntlMiddleware({
 
 export const config = {
   // Skip all paths that should not be internationalized
-  matcher: ['/((?!_next|assets|favicon.ico).*)']
+  matcher: ['/((?!_next|.*\\..*).*)']
 };
