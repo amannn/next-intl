@@ -96,7 +96,7 @@ function resolveLocaleFromDomain(
 ) {
   const {domains} = config;
 
-  const localeFromPrefix = resolveLocaleFromPrefix(
+  const localeFromPrefixStrategy = resolveLocaleFromPrefix(
     config,
     requestHeaders,
     requestCookies,
@@ -107,17 +107,17 @@ function resolveLocaleFromDomain(
   if (domains) {
     const domain = findDomainFromHost(requestHeaders, domains);
     const hasLocalePrefix =
-      pathname && pathname.startsWith(`/${localeFromPrefix}`);
+      pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`);
 
     if (domain) {
-      if (localeFromPrefix) {
+      if (localeFromPrefixStrategy) {
         return {
           locale:
-            isLocaleSupportedOnDomain(localeFromPrefix, domain) ||
+            isLocaleSupportedOnDomain(localeFromPrefixStrategy, domain) ||
             hasLocalePrefix
-              ? localeFromPrefix
+              ? localeFromPrefixStrategy
               : domain.defaultLocale,
-          localeFromPrefix,
+          localeFromPrefix: localeFromPrefixStrategy,
           domain
         };
       }
@@ -125,7 +125,7 @@ function resolveLocaleFromDomain(
   }
 
   // Prio 2: Use prefix strategy
-  return {locale: localeFromPrefix};
+  return {locale: localeFromPrefixStrategy};
 }
 
 export default function resolveLocale(
