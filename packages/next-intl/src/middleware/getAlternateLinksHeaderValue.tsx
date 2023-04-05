@@ -59,7 +59,10 @@ export default function getAlternateLinksHeaderValue(
         url.port = '';
         url.host = domainConfig.domain;
 
-        if (locale !== domainConfig.defaultLocale) {
+        if (
+          locale !== domainConfig.defaultLocale ||
+          config.localePrefix === 'always'
+        ) {
           localizePathname(url);
         }
 

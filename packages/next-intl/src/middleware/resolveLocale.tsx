@@ -94,17 +94,17 @@ function resolveLocaleFromDomain(
 ) {
   let locale, domain;
 
+  const requestLocale = getAcceptLanguageLocale(
+    requestHeaders,
+    locales,
+    defaultLocale
+  );
+
   // Prio 1: Use a domain
   if (domains) {
     domain = findDomainFromHost(requestHeaders, domains);
 
     if (domain) {
-      const requestLocale = getAcceptLanguageLocale(
-        requestHeaders,
-        locales,
-        defaultLocale
-      );
-
       if (requestLocale && isLocaleSupportedOnDomain(requestLocale, domain)) {
         locale = requestLocale;
       }
@@ -113,7 +113,13 @@ function resolveLocaleFromDomain(
     }
   }
 
-  // Prio 2: Use default locale
+  // Prio 2: Use the request locale if it is
+  // supported, but not on the current domain
+  if (!locale && requestLocale && locales.includes(requestLocale)) {
+    locale = requestLocale;
+  }
+
+  // Prio 3: Use default locale
   if (!locale) {
     locale = defaultLocale;
   }

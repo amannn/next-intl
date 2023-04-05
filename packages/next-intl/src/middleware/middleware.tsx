@@ -24,8 +24,8 @@ function handleConfigDeprecations(config: MiddlewareConfig) {
     } else if (routing.type === 'domain') {
       config.domains = routing.domains.map((cur) => ({
         domain: cur.domain,
-        defaultLocale: cur.locale
-        // `locales` didn't exist before
+        defaultLocale: cur.locale,
+        locales: [cur.locale]
       }));
     }
 
@@ -47,7 +47,8 @@ function handleConfigDeprecations(config: MiddlewareConfig) {
       }
       return {
         ...cur,
-        defaultLocale: cur.locale || cur.defaultLocale
+        defaultLocale: cur.locale || cur.defaultLocale,
+        ...(cur.locale && {locales: [cur.locale]})
       };
     });
   }
@@ -85,6 +86,7 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
     const hasMatchedDefaultLocale = domain
       ? [domain.defaultLocale, ...(domain.locales ?? [])].includes(locale)
       : locale === configWithDefaults.defaultLocale;
+
     const domainConfigs =
       configWithDefaults.domains?.filter((curDomain) =>
         isLocaleSupportedOnDomain(locale, curDomain)
@@ -119,8 +121,6 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
       const urlObj = new URL(url, request.url);
 
       if (domainConfigs.length > 0) {
-        urlObj.pathname = url.replace(`/${locale}`, '');
-
         if (!host) {
           const bestMatchingDomain = getBestMatchingDomain(
             domain,
@@ -130,6 +130,13 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
 
           if (bestMatchingDomain) {
             host = bestMatchingDomain.domain;
+
+            if (
+              bestMatchingDomain.defaultLocale === locale &&
+              configWithDefaults.localePrefix === 'as-needed'
+            ) {
+              urlObj.pathname = urlObj.pathname.replace(`/${locale}`, '');
+            }
           }
         }
       }
@@ -150,8 +157,7 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
 
       if (
         hasMatchedDefaultLocale &&
-        (configWithDefaults.localePrefix === 'as-needed' ||
-          domainConfigs.length > 0)
+        configWithDefaults.localePrefix === 'as-needed'
       ) {
         response = rewrite(pathWithSearch);
       } else {
@@ -176,26 +182,30 @@ export default function createIntlMiddleware(config: MiddlewareConfig) {
       if (hasLocalePrefix) {
         const basePath = pathWithSearch.replace(`/${pathLocale}`, '') || '/';
 
-        if (configWithDefaults.domains) {
-          const pathDomain = getBestMatchingDomain(
-            domain,
-            pathLocale,
-            domainConfigs
-          );
-          response = redirect(basePath, pathDomain?.domain);
-        } else {
-          if (pathLocale === locale) {
-            if (
-              hasMatchedDefaultLocale &&
-              configWithDefaults.localePrefix === 'as-needed'
-            ) {
-              response = redirect(basePath);
+        if (pathLocale === locale) {
+          if (
+            hasMatchedDefaultLocale &&
+            configWithDefaults.localePrefix === 'as-needed'
+          ) {
+            response = redirect(basePath);
+          } else {
+            if (configWithDefaults.domains) {
+              const pathDomain = getBestMatchingDomain(
+                domain,
+                pathLocale,
+                domainConfigs
+              );
+              if (domain?.domain !== pathDomain?.domain) {
+                response = redirect(basePath, pathDomain?.domain);
+              } else {
+                response = next();
+              }
             } else {
               response = next();
             }
-          } else {
-            response = redirect(`/${locale}${basePath}`);
           }
+        } else {
+          response = redirect(`/${locale}${basePath}`);
         }
       } else {
         if (

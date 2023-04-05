@@ -31,7 +31,7 @@ export function getBestMatchingDomain(
   let domainConfig;
 
   // Prio 1: Stay on current domain
-  if (curHostDomain?.defaultLocale === locale) {
+  if (curHostDomain && isLocaleSupportedOnDomain(locale, curHostDomain)) {
     domainConfig = curHostDomain;
   }
 
