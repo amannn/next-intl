@@ -5,12 +5,11 @@ import IntlProviderProps from './IntlProviderProps';
 /**
  * Enhances the incoming props with defaults.
  */
-export default function getIntlContextValue({
-  getMessageFallback,
-  messages,
-  onError,
-  ...rest
-}: Omit<IntlProviderProps, 'children'>) {
+export default function getIntlContextValue<
+  // This is a generic to allow for stricter typing. E.g.
+  // the RSC integration always provides a `now` value.
+  Props extends Omit<IntlProviderProps, 'children'>
+>({getMessageFallback, messages, onError, ...rest}: Props) {
   const finalOnError = onError || defaultOnError;
   const finalGetMessageFallback =
     getMessageFallback || defaultGetMessageFallback;
