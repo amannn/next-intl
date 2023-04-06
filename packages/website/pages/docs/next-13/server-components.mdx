@@ -2,7 +2,7 @@ import Callout from 'components/Callout';
 
 # Usage in Server Components (beta)
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps within the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
 <Callout type="warning">
   The App Router is currently in beta, patterns are still emerging and APIs may
@@ -303,12 +303,12 @@ import {getRequestConfig} from 'next-intl/server';
 export default getRequestConfig(async ({locale}) => ({
   messages: (await import(`../messages/${locale}.json`)).default,
 
-  // You can read from headers or cookies here if necessary
+  // You can read from headers or cookies here
   timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
 }));
 ```
 
-Note that the configuration object will be created once for each request and will then be made available to all of Server Components in your app.
+Note that the configuration object will be created once for each request and will then be made available to all Server Components in your app.
 
 ## Middleware configuration
 
