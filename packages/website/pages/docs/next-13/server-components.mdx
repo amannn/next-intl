@@ -438,7 +438,7 @@ Note that this will affect both prefix-based as well as domain-based routing.
 
 #### Disable automatic locale detection
 
-If you want to disable locale detection based on the `accept-language` header, you can opt-out of this mechanism.
+If you want to rely entirely on the URL to resolve the locale, you can disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
 ```tsx filename="middleware.ts" {6}
 import createIntlMiddleware from 'next-intl/middleware';

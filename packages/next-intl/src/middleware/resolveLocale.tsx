@@ -66,7 +66,7 @@ function resolveLocaleFromPrefix(
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && requestCookies) {
+  if (!locale && localeDetection && requestCookies) {
     if (requestCookies.has(COOKIE_LOCALE_NAME)) {
       const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
       if (value && locales.includes(value)) {
@@ -110,17 +110,14 @@ function resolveLocaleFromDomain(
       pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`);
 
     if (domain) {
-      if (localeFromPrefixStrategy) {
-        return {
-          locale:
-            isLocaleSupportedOnDomain(localeFromPrefixStrategy, domain) ||
-            hasLocalePrefix
-              ? localeFromPrefixStrategy
-              : domain.defaultLocale,
-          localeFromPrefix: localeFromPrefixStrategy,
-          domain
-        };
-      }
+      return {
+        locale:
+          isLocaleSupportedOnDomain(localeFromPrefixStrategy, domain) ||
+          hasLocalePrefix
+            ? localeFromPrefixStrategy
+            : domain.defaultLocale,
+        domain
+      };
     }
   }
 

@@ -2,6 +2,7 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import createIntlMiddleware from '../../src/middleware';
 import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
+import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 type MockResponse = NextResponse & {
   args: Array<any>;
@@ -24,11 +25,15 @@ jest.mock('next/server', () => {
 function createMockRequest(
   pathnameWithSearch = '/',
   locale = 'en',
-  host = 'http://localhost:3000'
+  host = 'http://localhost:3000',
+  localeCookieValue?: string
 ) {
   const headers = new Headers({
     'accept-language': `${locale};q=0.9,en;q=0.8`,
-    host: new URL(host).host
+    host: new URL(host).host,
+    ...(localeCookieValue && {
+      cookie: `${COOKIE_LOCALE_NAME}=${localeCookieValue}`
+    })
   });
   const url = host + pathnameWithSearch;
 
@@ -136,6 +141,15 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('redirects requests for the root if a cookie exists with a non-default locale', () => {
+      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/de'
+      );
+    });
+
     it('serves requests for other locales when prefixed', () => {
       middleware(createMockRequest('/de'));
       expect(MockedNextResponse.next).toHaveBeenCalled();
@@ -183,6 +197,16 @@ describe('prefix-based routing', () => {
 
     it('serves non-prefixed requests with the default locale and ignores the accept-language header', () => {
       middleware(createMockRequest('/', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+
+    it('serves non-prefixed requests with the default locale and ignores an existing cookie value', () => {
+      middleware(createMockRequest('/', 'de', 'http://localhost:3000', 'de'));
+
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
