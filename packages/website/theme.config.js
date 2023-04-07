@@ -1,5 +1,6 @@
+import PartnerSidebar from 'components/PartnerSidebar';
 import {useRouter} from 'next/router';
-import {Navbar} from 'nextra-theme-docs';
+import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
 
 const logo = (
   <svg
@@ -86,6 +87,16 @@ export default {
   navigation: true,
   darkMode: true,
   logo,
+  themeSwitch: {
+    component(props) {
+      return (
+        <div className="flex items-end justify-between">
+          <PartnerSidebar />
+          <ThemeSwitch {...props} />
+        </div>
+      );
+    }
+  },
   navbar: {
     component: function CustomNavbar(props) {
       const router = useRouter();

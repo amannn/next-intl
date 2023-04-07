@@ -1,4 +1,12 @@
 import cn from 'clsx';
+import {ReactNode} from 'react';
+
+type Props = {
+  children: ReactNode;
+  type?: 'default' | 'warning';
+  className?: string;
+  emoji?: string;
+};
 
 const TypeToEmoji = {
   default: '💡',
@@ -19,7 +27,7 @@ export default function Callout({
   type = 'default',
   className,
   emoji = TypeToEmoji[type]
-}) {
+}: Props) {
   return (
     <div
       className={cn(

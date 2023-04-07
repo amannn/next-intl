@@ -1,7 +1,9 @@
 <h1 align="center">
 	<br>
 	<br>
-	<img width="400" src="media/logo.svg" alt="next-intl">
+    <a href="https://next-intl-docs.vercel.app/">
+      <img width="400" src="media/logo.svg" alt="next-intl">
+    </a>
 	<br>
 	<br>
 	<br>
@@ -68,3 +70,10 @@ function UserDetails({user}) {
 ```
 
 ### [→ Read the docs](https://next-intl-docs.vercel.app/)
+
+<div align="center">
+  <a href="https://next-intl-docs.vercel.app/redirect?href=https://crowdin.com" target="_blank">
+    <img width="350" src="media/partner.svg" alt="Crowdin logo">
+  </a>
+  <br>
+</div>

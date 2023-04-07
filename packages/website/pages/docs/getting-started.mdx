@@ -28,7 +28,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by language.
+      // pattern is to put them in JSON files separated by locale.
       messages: (await import(`../../messages/${context.locale}.json`)).default
     }
   };
@@ -66,7 +66,7 @@ export async function getStaticProps() {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by language.
+      // pattern is to put them in JSON files separated by locale.
       messages: (await import(`../../messages/${locale}.json`)).default
     }
   };
@@ -82,11 +82,11 @@ export async function getStaticProps() {
 
 **Next steps:**
 
-<ul className="list-disc ml-4">
+<ul className="ml-4 list-disc">
   <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
   <li>
     Decided you're sticking with `next-intl`? Consider the steps of the
-    [checklist for production](/docs/production-checklist).
+    [checklist for production](/docs/usage/production-checklist).
   </li>
   <li>
     Ran into an issue? Have a look at [the minimal setup
