@@ -1,12 +1,19 @@
 import Callout from 'components/Callout';
+import PartnerContentLink from 'components/PartnerContentLink';
 
 # Dates and times
 
-If you're formatting dates and times, you should [set up a global time zone](#todo).
+The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle all differences automatically.
 
-## Formatting plain dates
+<Callout>
 
-You can format plain dates and times that are not part of a message with the `useFormatter` hook:
+If you're formatting dates and times, you should [set up a global time zone](#/docs/usage/configuration#time-zone).
+
+</Callout>
+
+## Formatting dates and times
+
+You can format plain dates that are not part of a message with the `useFormatter` hook:
 
 ```js
 import {useFormatter} from 'next-intl';
@@ -26,11 +33,6 @@ function Component() {
 ```
 
 See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to `dateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
-
-<Callout>
-  To reuse date and time formats for multiple components, you can configure
-  [global formats](/docs/usage/configuration#global-formats).
-</Callout>
 
 ## Formatting relative time
 
@@ -76,25 +78,60 @@ function Component() {
 
 ## Dates and times within messages
 
-Dates and times can be embedded within messages as well:
+Dates and times can be embedded within messages by using the ICU syntax.
 
 ```js filename="en.json"
 {
-  "expiryDate": "{expiryDate, date, ::yyyyMd}"
+  "ordered": "Ordered on {orderDate, date, medium}"
 }
 ```
 
-See the [FormatJS docs about date time](https://formatjs.io/docs/intl-messageformat#datetime-skeleton) to learn more about this syntax.
+These formats are supported out of the box: `full`, `long`, `medium` and `short`.
 
 <Callout>
-  Note the leading `::` that is used to indicate that a skeleton should be used.
+
+If you work with translators, it can be helpful for them to use an editor that supports the ICU syntax for dates and times (e.g. the <PartnerContentLink name="dates-times-messages" href="https://support.crowdin.com/icu-message-syntax/#date-time">Crowdin Editor</PartnerContentLink>).
+
 </Callout>
 
-Additionally, you can provide custom formats based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options): :
+You can customize the formatting by using date skeletons:
 
 ```js filename="en.json"
 {
-  "ordered": "You've ordered this product on {orderDate, date, short}"
+  "ordered": "Ordered on {orderDate, date, ::yyyyMd}"
+}
+```
+
+Note the leading `::` that is used to indicate that a skeleton should be used.
+
+**These formats from ICU are supported:**
+
+| Symbol | Meaning                       |
+| :----: | :---------------------------- |
+|   G    | Era designator                |
+|   y    | Year                          |
+|   M    | Month in year                 |
+|   L    | Stand-alone month in year     |
+|   d    | Day in month                  |
+|   E    | Day of week                   |
+|   e    | Local day of week             |
+|   c    | Stand-alone local day of week |
+|   a    | AM/PM marker                  |
+|   h    | Hour [1-12]                   |
+|   H    | Hour [0-23]                   |
+|   K    | Hour [0-11]                   |
+|   k    | Hour [1-24]                   |
+|   m    | Minute                        |
+|   s    | Second                        |
+|   z    | Time zone                     |
+
+### Custom date and time formats
+
+To use custom formats in messages, you can provide formatters based on [`DateTimeFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) that can be referenced by name.
+
+```js filename="en.json"
+{
+  "ordered": "Ordered on {orderDate, date, short}"
 }
 ```
 
@@ -103,7 +140,6 @@ t(
   'orderDate',
   {date: new Date('2020-11-20T10:36:01.516Z')},
   {
-    // Custom formats can be supplied via the third parameter
     dateTime: {
       short: {
         day: 'numeric',
@@ -114,3 +150,8 @@ t(
   }
 );
 ```
+
+<Callout>
+  To reuse date and time formats for multiple components, you can configure
+  [global formats](/docs/usage/configuration#global-formats).
+</Callout>
