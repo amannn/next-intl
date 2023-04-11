@@ -2,12 +2,12 @@ import {test as it, expect} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
-  await expect(page).toHaveURL(/\/en/);
+  await expect(page).toHaveURL('/');
 
   // A cookie remembers the last locale
   await page.goto('/de');
   await page.goto('/');
-  await expect(page).toHaveURL(/\/de/);
+  await expect(page).toHaveURL('/de');
 
   await page.goto('/unknown');
 });

@@ -1,6 +1,6 @@
 import {createContext} from 'react';
-import IntlContextValue from './IntlContextValue';
+import {InitializedIntlConfig} from '../core/IntlConfig';
 
-const IntlContext = createContext<IntlContextValue | undefined>(undefined);
+const IntlContext = createContext<InitializedIntlConfig | undefined>(undefined);
 
 export default IntlContext;

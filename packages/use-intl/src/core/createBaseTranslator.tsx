@@ -9,7 +9,7 @@ import {
 } from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
-import {InitializedIntlConfiguration} from './IntlConfiguration';
+import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
@@ -122,7 +122,7 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
 }
 
 export type CreateBaseTranslatorProps<Messages> =
-  InitializedIntlConfiguration & {
+  InitializedIntlConfig & {
     cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
     defaultTranslationValues?: RichTranslationValues;
     namespace?: string;

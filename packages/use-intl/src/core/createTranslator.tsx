@@ -1,5 +1,5 @@
 import Formats from './Formats';
-import IntlConfiguration from './IntlConfiguration';
+import IntlConfig from './IntlConfig';
 import TranslationValues from './TranslationValues';
 import createTranslatorImpl, {
   CoreRichTranslationValues
@@ -29,8 +29,8 @@ export default function createTranslator<
   messages,
   namespace,
   ...rest
-}: IntlConfiguration & {
-  messages: IntlMessages;
+}: Omit<IntlConfig<IntlMessages>, 'defaultTranslationValues' | 'messages'> & {
+  messages: NonNullable<IntlConfig<IntlMessages>['messages']>;
   namespace?: NestedKey;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 {
