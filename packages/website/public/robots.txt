@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://next-intl-docs.vercel.app
+
+# Sitemaps
+Sitemap: https://next-intl-docs.vercel.app/sitemap.xml
