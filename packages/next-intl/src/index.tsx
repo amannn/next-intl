@@ -1,4 +1,6 @@
 export * from 'use-intl';
 
+export {default as NextIntlClientProvider} from './shared/NextIntlClientProvider';
+
 // Legacy export for compatibility
-export {NextIntlClientProvider as NextIntlProvider} from './client';
+export {default as NextIntlProvider} from './shared/NextIntlClientProvider';

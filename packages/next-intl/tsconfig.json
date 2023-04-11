@@ -1,9 +1,9 @@
 {
-  "include": ["src", "test", "types"],
+  "include": ["src", "test", "types", "next-env.d.ts"],
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "target": "ES2020",
+    "target": "ES2019",
     "importHelpers": false,
     "declaration": true,
     "sourceMap": true,

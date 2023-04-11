@@ -1,7 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {useTranslations} from '../../src';
-import {NextIntlClientProvider} from '../../src/client';
+import {useTranslations, NextIntlClientProvider} from '../../src';
 
 jest.mock('next/router', () => ({
   useRouter: () => ({locale: 'en'})
