@@ -9,8 +9,8 @@ export default function NextIntlClientProvider(
   if (!hasWarned) {
     hasWarned = true;
     console.warn(
-      'DEPRECATION WARNING: Importing `NextIntlClientProvider` from `next-intl/client` is deprecated. ' +
-        'Please import it from `next-intl` instead.'
+      'Importing `NextIntlClientProvider` from `next-intl/client` is deprecated. ' +
+        "Please import it as `import {NextIntlClientProvider} from 'next-intl'`."
     );
   }
   return <NextIntlClientProvider_ {...props} />;

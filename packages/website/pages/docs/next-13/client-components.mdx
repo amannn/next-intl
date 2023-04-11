@@ -79,13 +79,13 @@ export default function Index() {
 4. Create a [middleware](https://nextjs.org/docs/advanced-features/middleware) in `middleware.ts` that handles redirects.
 
 ```tsx filename="middleware.ts"
-import {createIntlMiddleware} from 'next-intl/server';
+import createMiddleware from 'next-intl/middleware';
 
 // This middleware intercepts requests to `/` and will redirect
 // to the best matching locale instead (e.g. `/en`). A cookie
 // is set in the background, so if the user switches to a new
 // language, this will take precedence from now on.
-export default createIntlMiddleware({
+export default createMiddleware({
   locales: ['en', 'de'],
   defaultLocale: 'en'
 });

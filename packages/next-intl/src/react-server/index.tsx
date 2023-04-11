@@ -1,5 +1,6 @@
 // Everything from core, React APIs stubbed-out for now (since they don't work without context)
 export * from 'use-intl/dist/src/core';
+export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
 function notSupported() {
   throw new Error(

@@ -4,7 +4,7 @@ import useIntlContext from './useIntlContext';
 
 let hasWarned = false;
 
-/** @deprecated  Switch to `useFormatter` */
+/** @deprecated Switch to `useFormatter` instead. */
 export default function useIntl() {
   const {formats, locale, now: globalNow, onError, timeZone} = useIntlContext();
 
