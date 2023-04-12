@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import getIntlContextValue from 'use-intl/dist/src/react/getIntlContextValue';
+import getInitializedConfig from 'use-intl/dist/src/react/getInitializedConfig';
 import createRequestConfig from '../server/createRequestConfig';
 import getLocale from './getLocale';
 
@@ -21,7 +21,7 @@ const getConfig = cache(async () => {
   const locale = getLocale();
   const runtimeConfig = await receiveRuntimeConfig(locale, createRequestConfig);
   const opts = {...runtimeConfig, locale};
-  return getIntlContextValue(opts);
+  return getInitializedConfig(opts);
 });
 
 export default getConfig;

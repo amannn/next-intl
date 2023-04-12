@@ -1,14 +1,14 @@
+import IntlConfig from '../core/IntlConfig';
 import {defaultGetMessageFallback, defaultOnError} from '../core/defaults';
 import validateMessages from '../core/validateMessages';
-import IntlProviderProps from './IntlProviderProps';
 
 /**
  * Enhances the incoming props with defaults.
  */
-export default function getIntlContextValue<
+export default function getInitializedConfig<
   // This is a generic to allow for stricter typing. E.g.
   // the RSC integration always provides a `now` value.
-  Props extends Omit<IntlProviderProps, 'children'>
+  Props extends Omit<IntlConfig, 'children'>
 >({getMessageFallback, messages, onError, ...rest}: Props) {
   const finalOnError = onError || defaultOnError;
   const finalGetMessageFallback =

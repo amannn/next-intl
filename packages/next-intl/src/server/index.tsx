@@ -5,11 +5,22 @@
 /** @deprecated */
 export function createIntlMiddleware() {
   throw new Error(
-    "DEPRECATION ERROR: `import {createIntlMiddleware} from 'next-intl';` is deprecated and needs to be replaced with `import createIntlMiddleware from 'next-intl/middleware'`."
+    `
+    Importing \`createMiddleware\` from \`next-intl/server\` is deprecated and no longer supported. Please update the import and add a \`matcher\`:
+    
+      // middleware.ts
+      import createMiddleware from 'next-intl/middleware';
+    
+      // ...
+    
+      export const config = {
+        // Skip all paths that should not be internationalized
+        matcher: ['/((?!api|_next|.*\\\\..*).*)']
+      };
+    `
   );
 }
 
-export {default as getRequestConfig} from './getRequestConfig';
 export {default as getIntl} from './getIntl';
 export {default as getFormatter} from './getFormatter';
 export {default as getLocale} from './getLocale';
