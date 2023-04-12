@@ -10,6 +10,9 @@ const config: PlaywrightTestConfig = {
       use: devices['Desktop Chrome']
     }
   ],
+  use: {
+    baseURL: 'http://localhost:3000'
+  },
   webServer: {
     reuseExistingServer: true,
     command: 'yarn start',
