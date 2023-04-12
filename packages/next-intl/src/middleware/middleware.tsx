@@ -27,7 +27,16 @@ function receiveConfig(config: MiddlewareConfig) {
 export default function createMiddleware(config: MiddlewareConfig) {
   const configWithDefaults = receiveConfig(config);
 
+  // Currently only in use to enable a seamless upgrade path from the
+  // `{createIntlMiddleware} from 'next-intl/server'` API.
+  const matcher: Array<string> | undefined = (config as any)._matcher;
+
   return function middleware(request: NextRequest) {
+    const matches =
+      !matcher ||
+      matcher.some((pattern) => request.nextUrl.pathname.match(pattern));
+    if (!matches) return NextResponse.next();
+
     const {domain, locale} = resolveLocale(
       configWithDefaults,
       request.headers,

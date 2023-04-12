@@ -8,10 +8,11 @@ export default function NextIntlClientProvider(
 ) {
   if (!hasWarned) {
     hasWarned = true;
-    console.warn(
-      'Importing `NextIntlClientProvider` from `next-intl/client` is deprecated. ' +
-        "Please import it as `import {NextIntlClientProvider} from 'next-intl'`."
-    );
+    console.warn(`
+Importing \`NextIntlClientProvider\` from \`next-intl/client\` is deprecated. Please update the import:
+
+  import {NextIntlClientProvider} from 'next-intl';
+`);
   }
   return <NextIntlClientProvider_ {...props} />;
 }
