@@ -8,11 +8,15 @@ it('handles i18n routing', async ({page}) => {
   await page.goto('/de');
   await page.goto('/');
   await expect(page).toHaveURL('/de');
+  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
+  await expect(page).toHaveURL('/');
+  page.getByRole('heading', {name: 'This is the home page.'});
 
   await page.goto('/unknown');
+  page.getByRole('heading', {name: 'This page could not be found.'});
 });
 
-it('can be used in the head', async ({page}) => {
+it('can be used to configure metadata', async ({page}) => {
   await page.goto('/en');
   await expect(page).toHaveTitle('next-intl example');
 
@@ -22,8 +26,8 @@ it('can be used in the head', async ({page}) => {
 
 it('can be used to localize the page', async ({page}) => {
   await page.goto('/en');
-  page.locator('text=This is the home page.');
+  page.getByRole('heading', {name: 'This is the home page.'});
 
   await page.goto('/de');
-  page.locator('text=Das ist die Startseite.');
+  page.getByRole('heading', {name: 'Das ist die Startseite.'});
 });
