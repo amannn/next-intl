@@ -1,5 +1,7 @@
 import IntlConfig from 'use-intl/dist/core/IntlConfig';
 
+type RequestConfig = Omit<IntlConfig, 'locale'>;
+
 export type GetRequestConfigParams = {
   locale: string;
 };
@@ -10,7 +12,7 @@ export type GetRequestConfigParams = {
 export default function getRequestConfig(
   createRequestConfig: ({
     locale
-  }: GetRequestConfigParams) => IntlConfig | Promise<IntlConfig>
+  }: GetRequestConfigParams) => RequestConfig | Promise<RequestConfig>
 ) {
   return createRequestConfig;
 }
