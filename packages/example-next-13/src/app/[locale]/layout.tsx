@@ -10,10 +10,9 @@ type Props = {
 export async function generateMetadata({params: {locale}}: Props) {
   const messages = (await import(`../../../messages/${locale}.json`)).default;
 
-  // Currently you can use the core (non-React) APIs when you
-  // have to use next-intl in a Server Component like `Head`.
-  // In the future you'll be able to use the React APIs here as
-  // well (see https://next-intl-docs.vercel.app/docs/next-13).
+  // You can use the core (non-React) APIs when you have to use next-intl
+  // outside of components. Potentially this will be simplified in the future
+  // (see https://next-intl-docs.vercel.app/docs/next-13/server-components).
   const t = createTranslator({locale, messages});
 
   return {
