@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
+import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
@@ -49,20 +49,8 @@ export default function createMiddleware(config: MiddlewareConfig) {
     const hasUnknownHost = configWithDefaults.domains != null && !domain;
 
     function getResponseInit() {
-      let responseInit;
-
-      if (hasOutdatedCookie) {
-        // Only apply a header if absolutely necessary
-        // as this causes full page reloads
-        request.headers.set(HEADER_LOCALE_NAME, locale);
-        responseInit = {
-          request: {
-            headers: request.headers
-          }
-        };
-      }
-
-      return responseInit;
+      // Nothing yet
+      return undefined;
     }
 
     function rewrite(url: string) {
