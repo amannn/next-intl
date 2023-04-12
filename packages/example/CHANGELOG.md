@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.13.0 (2023-04-12)
+
+
+### Features
+
+* Sync improvements from RSC branch to main ([#238](https://github.com/amannn/next-intl/issues/238)) ([1d12ba2](https://github.com/amannn/next-intl/commit/1d12ba219afdbca77663c9d20f18db746de033fd)), closes [#149](https://github.com/amannn/next-intl/issues/149) [#237](https://github.com/amannn/next-intl/issues/237)
+
+
+
+
+
 # 2.12.0 (2023-03-25)
 
 
