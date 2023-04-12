@@ -6,17 +6,17 @@
 export function createIntlMiddleware() {
   throw new Error(
     `
-    Importing \`createMiddleware\` from \`next-intl/server\` is deprecated and no longer supported. Please update the import and add a \`matcher\`:
-    
-      // middleware.ts
-      import createMiddleware from 'next-intl/middleware';
-    
-      // ...
-    
-      export const config = {
-        // Skip all paths that should not be internationalized
-        matcher: ['/((?!api|_next|.*\\\\..*).*)']
-      };
+Importing \`createMiddleware\` from \`next-intl/server\` is deprecated and no longer supported. Please update the import and add a \`matcher\`:
+
+  // middleware.ts
+  import createMiddleware from 'next-intl/middleware';
+
+  // ...
+
+  export const config = {
+    // Skip all paths that should not be internationalized
+    matcher: ['/((?!api|_next|.*\\\\..*).*)']
+  };
     `
   );
 }
