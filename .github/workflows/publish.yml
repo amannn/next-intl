@@ -16,7 +16,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - uses: bahmutov/npm-install@v1
       # Seems like after squash & merge the author is unknown to lerna
-      - run: git config --global user.email "jan@amann.me" && git config --global user.name "Jan Amann"
+      - run: git config --global user.email "jan@amann.work" && git config --global user.name "Jan Amann"
       - run: yarn run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

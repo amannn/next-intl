@@ -2,10 +2,10 @@
   "name": "next-intl",
   "version": "2.12.0",
   "sideEffects": false,
-  "author": "Jan Amann <jan@amann.me>",
+  "author": "Jan Amann <jan@amann.work>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
   "license": "MIT",
-  "homepage": "https://next-intl-docs.vercel.app/",
+  "homepage": "https://next-intl-docs.vercel.app",
   "repository": {
     "type": "git",
     "url": "https://github.com/amannn/next-intl"
@@ -28,15 +28,15 @@
       "default": "./dist/index.js"
     },
     "./server": "./dist/src/server/index.js",
-    "./client": "./dist/src/client/index.js"
+    "./client": "./dist/src/client/index.js",
+    "./middleware": "./dist/src/middleware/index.js"
   },
   "files": [
     "dist",
     "src",
-    "server.js",
     "server.d.ts",
-    "client.js",
-    "client.d.ts"
+    "client.d.ts",
+    "middleware.d.ts"
   ],
   "keywords": [
     "react",
@@ -55,7 +55,8 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "accept-language-parser": "^1.5.0",
+    "@formatjs/intl-localematcher": "0.2.32",
+    "negotiator": "0.6.3",
     "use-intl": "^2.12.0"
   },
   "peerDependencies": {
@@ -64,11 +65,13 @@
   },
   "devDependencies": {
     "@testing-library/react": "^13.0.0",
+    "@types/negotiator": "0.6.1",
     "@types/react": "^18.0.23",
     "dts-cli": "1.4.0",
     "eslint": "8.12.0",
     "eslint-config-molindo": "6.0.0",
-    "next": "^13.0.5",
+    "eslint-plugin-deprecation": "1.4.0",
+    "next": "13.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.4.4"

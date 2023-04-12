@@ -1,10 +1,10 @@
 {
-  "Head": {
-    "title": "next-intl Beispiel"
-  },
   "Index": {
     "title": "Start",
     "description": "Das ist die Startseite."
+  },
+  "LocaleLayout": {
+    "title": "next-intl Beispiel"
   },
   "LocaleSwitcher": {
     "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"

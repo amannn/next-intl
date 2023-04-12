@@ -7,6 +7,7 @@
     "lint": "eslint pages components",
     "test": "echo 'No tests yet'",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start"
   },
   "dependencies": {
@@ -15,7 +16,7 @@
     "@vercel/analytics": "0.1.11",
     "clsx": "1.2.1",
     "http-status-codes": "2.2.0",
-    "next": "^13.2.4",
+    "next": "^13.3.0",
     "nextra": "^2.2.19",
     "nextra-theme-docs": "^2.2.19",
     "react": "^18.0.0",
@@ -27,6 +28,7 @@
     "eslint": "8.12.0",
     "eslint-config-molindo": "6.0.0",
     "eslint-config-next": "^12.0.0",
+    "next-sitemap": "4.0.7",
     "prettier-plugin-tailwindcss": "0.2.3"
   }
 }

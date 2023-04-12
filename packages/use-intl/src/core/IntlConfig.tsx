@@ -1,11 +1,12 @@
 import Formats from './Formats';
 import IntlError from './IntlError';
+import {AbstractIntlMessages, RichTranslationValues} from '.';
 
 /**
  * Should be used for entry points that configure the library.
  */
 
-type IntlConfiguration = {
+type IntlConfig<Messages = AbstractIntlMessages> = {
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
   locale: string;
   /** Global formats can be provided to achieve consistent
@@ -36,15 +37,22 @@ type IntlConfiguration = {
    *    afterwards the current date will be returned continuously.
    */
   now?: Date;
+  /** All messages that will be available. */
+  messages?: Messages;
+  /** Global default values for translation values and rich text elements.
+   * Can be used for consistent usage or styling of rich text elements.
+   * Defaults will be overidden by locally provided values. */
+  defaultTranslationValues?: RichTranslationValues;
 };
 
 /**
  * A stricter set of the configuration that should be used internally
  * once defaults are assigned to `IntlConfiguration`.
  */
-export type InitializedIntlConfiguration = IntlConfiguration & {
-  onError: NonNullable<IntlConfiguration['onError']>;
-  getMessageFallback: NonNullable<IntlConfiguration['getMessageFallback']>;
-};
+export type InitializedIntlConfig<Messages = AbstractIntlMessages> =
+  IntlConfig<Messages> & {
+    onError: NonNullable<IntlConfig<Messages>['onError']>;
+    getMessageFallback: NonNullable<IntlConfig<Messages>['getMessageFallback']>;
+  };
 
-export default IntlConfiguration;
+export default IntlConfig;

@@ -1,36 +1,18 @@
-'use client';
-
-import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
-import {IntlProvider} from 'use-intl';
+import NextIntlClientProvider_ from '../shared/NextIntlClientProvider';
 
-type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
-  locale?: string;
-};
+let hasWarned = false;
+/** @deprecated Should be imported from `next-intl`, not `next-intl/client`. */
+export default function NextIntlClientProvider(
+  props: ComponentProps<typeof NextIntlClientProvider_>
+) {
+  if (!hasWarned) {
+    hasWarned = true;
+    console.warn(`
+Importing \`NextIntlClientProvider\` from \`next-intl/client\` is deprecated. Please update the import:
 
-export default function NextIntlProvider({locale, ...rest}: Props) {
-  let router;
-  try {
-    // Reading from context is practically ok to do conditionally
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    router = useRouter();
-  } catch (error) {
-    // Calling `useRouter` is not supported in the app folder
+  import {NextIntlClientProvider} from 'next-intl';
+`);
   }
-
-  // The router can be undefined if used in a context outside
-  // of Next.js (e.g. unit tests, Storybook, ...)
-  if (!locale && router) {
-    locale = router.locale;
-  }
-
-  if (!locale) {
-    throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? "Couldn't determine locale. Please pass an explicit `locale` prop the provider, or if you're using the `pages` folder, use internationalized routing (https://nextjs.org/docs/advanced-features/i18n-routing)."
-        : undefined
-    );
-  }
-
-  return <IntlProvider locale={locale} {...rest} />;
+  return <NextIntlClientProvider_ {...props} />;
 }

@@ -2,7 +2,7 @@
   "name": "use-intl",
   "version": "2.12.0",
   "sideEffects": false,
-  "author": "Jan Amann <jan@amann.me>",
+  "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app/",

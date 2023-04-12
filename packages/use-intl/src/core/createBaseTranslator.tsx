@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-named-as-default
+// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
 import {
   cloneElement,
@@ -9,7 +9,7 @@ import {
 } from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
-import {InitializedIntlConfiguration} from './IntlConfiguration';
+import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
@@ -121,13 +121,12 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
   }
 }
 
-export type CreateBaseTranslatorProps<Messages> =
-  InitializedIntlConfiguration & {
-    cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
-    defaultTranslationValues?: RichTranslationValues;
-    namespace?: string;
-    messagesOrError: Messages | IntlError;
-  };
+export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
+  cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
+  defaultTranslationValues?: RichTranslationValues;
+  namespace?: string;
+  messagesOrError: Messages | IntlError;
+};
 
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
