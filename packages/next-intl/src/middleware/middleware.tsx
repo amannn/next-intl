@@ -13,53 +13,7 @@ import {
 
 const ROOT_URL = '/';
 
-function handleConfigDeprecations(config: MiddlewareConfig) {
-  if (config.routing) {
-    const {routing} = config;
-    config = {...config};
-    delete config.routing;
-
-    if (routing.type === 'prefix') {
-      config.localePrefix = routing.prefix;
-    } else if (routing.type === 'domain') {
-      config.domains = routing.domains.map((cur) => ({
-        domain: cur.domain,
-        defaultLocale: cur.locale,
-        locales: [cur.locale]
-      }));
-    }
-
-    console.error(
-      "\n\nThe `routing` option is deprecated, please use `localePrefix` and `domains` instead. Here's your updated configuration:\n\n" +
-        JSON.stringify(config, null, 2) +
-        '\n\nThank you so much for following along with the Server Components beta and sorry for the inconvenience!\n\n'
-    );
-  }
-
-  if (config.domains) {
-    const {domains} = config;
-    config = {...config};
-    config.domains = domains.map((cur) => {
-      if (cur.locale) {
-        console.error(
-          '\n\nThe `domain.locale` option is deprecated, please use `domain.defaultLocale` instead.'
-        );
-      }
-      return {
-        ...cur,
-        defaultLocale: cur.locale || cur.defaultLocale,
-        ...(cur.locale && {locales: [cur.locale]})
-      };
-    });
-  }
-
-  return config;
-}
-
 function receiveConfig(config: MiddlewareConfig) {
-  // TODO: Remove before stable release
-  config = handleConfigDeprecations(config);
-
   const result: MiddlewareConfigWithDefaults = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,

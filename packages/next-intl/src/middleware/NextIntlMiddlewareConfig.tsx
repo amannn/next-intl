@@ -1,18 +1,3 @@
-type RoutingConfigPrefix = {
-  type: 'prefix';
-
-  /** The default locale can be used without a prefix (e.g. `/about`). If you prefer to have a prefix for the default locale as well (e.g. `/en/about`), you can switch this option to `always`.
-   */
-  prefix?: 'as-needed' | 'always';
-};
-
-type RoutingConfigDomain = {
-  type: 'domain';
-
-  /** Provide a list of mappings between domains and locales. Note that the `x-forwarded-host` or alternatively the `host` header will be used to determine the requested domain. */
-  domains: Array<{domain: string; locale: string}>;
-};
-
 type LocalePrefix = 'as-needed' | 'always';
 
 type RoutingBaseConfig = {
@@ -35,9 +20,6 @@ export type DomainConfig = Omit<
   domain: string;
   // Optional here
   locales?: RoutingBaseConfig['locales'];
-
-  /** @deprecated Use `defaultLocale` instead. */
-  locale?: string;
 };
 
 type MiddlewareConfig = RoutingBaseConfig & {
@@ -49,9 +31,6 @@ type MiddlewareConfig = RoutingBaseConfig & {
 
   /** Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http */
   alternateLinks?: boolean;
-
-  /** @deprecated Deprecated in favor of `localePrefix` and `domains`. */
-  routing?: RoutingConfigPrefix | RoutingConfigDomain;
 };
 
 export type MiddlewareConfigWithDefaults = MiddlewareConfig & {

@@ -1,7 +1,6 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import createIntlMiddleware from '../../src/middleware';
-import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 type MockResponse = NextResponse & {
@@ -531,119 +530,5 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).toHaveBeenCalledTimes(2);
     });
-  });
-});
-
-describe('deprecated domain config', () => {
-  it("accepts deprecated config with `routing.type: 'prefix'`", () => {
-    const middleware = createMockMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      routing: {
-        type: 'prefix',
-        prefix: 'always'
-      }
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://example.com'));
-
-    expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://example.com/en'
-    );
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://example.com/en/about'
-    );
-
-    middleware(createMockRequest('/de/about', 'de', 'http://example.com'));
-    expect(MockedNextResponse.next).toHaveBeenCalled();
-  });
-
-  it("accepts deprecated config with `routing.type: 'domain'`", () => {
-    const middleware = createMockMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      routing: {
-        type: 'domain',
-        domains: [
-          {
-            locale: 'en',
-            domain: 'en.example.com'
-          },
-          {
-            locale: 'de',
-            domain: 'de.example.com'
-          }
-        ]
-      }
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://en.example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
-
-    expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-
-    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/en'
-    );
-    expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-      'http://en.example.com/en/about'
-    );
-
-    middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/about'
-    );
-
-    middleware(createMockRequest('/de/help', 'de', 'http://en.example.com'));
-
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://de.example.com/help'
-    );
-  });
-
-  it('accepts deprecated config with `domain.locale`', () => {
-    const domains = [
-      {
-        locale: 'en',
-        domain: 'en.example.com'
-      },
-      {
-        locale: 'de',
-        domain: 'de.example.com'
-      }
-    ] as Array<DomainConfig>;
-
-    const middleware = createMockMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      domains
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://en.example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
-
-    expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-
-    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/en'
-    );
-    expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-      'http://en.example.com/en/about'
-    );
-
-    middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/about'
-    );
-
-    middleware(createMockRequest('/de/help', 'de', 'http://en.example.com'));
-
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://de.example.com/help'
-    );
   });
 });
