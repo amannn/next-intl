@@ -10,8 +10,6 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale' | 'now'> & {
   now?: Date | string;
 };
 
-// Move this from /client to default
-
 export default function NextIntlClientProvider({
   children,
   locale,

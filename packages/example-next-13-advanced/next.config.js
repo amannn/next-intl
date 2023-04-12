@@ -18,7 +18,7 @@ module.exports = withNextIntl({
   headers() {
     return [
       {
-        source: '/((?!_next|assets|favicon.ico).*)',
+        source: '/((?!_next|.*\\..*).*)',
         missing: [
           {
             type: 'header',

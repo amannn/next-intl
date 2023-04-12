@@ -1,6 +1,6 @@
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 
-export default createIntlMiddleware({
+export default createMiddleware({
   locales: ['en', 'de', 'es'],
   defaultLocale: 'en'
 });

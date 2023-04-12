@@ -6,3 +6,6 @@
 public/.nextra
 tsconfig.tsbuildinfo
 .env
+public/robots.txt
+public/sitemap.xml
+public/sitemap-0.xml

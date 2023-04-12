@@ -1,5 +1,5 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
-import {InitializedIntlConfiguration} from './IntlConfiguration';
+import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
 import {RichTranslationValues, TranslationValue} from './TranslationValues';
 import createBaseTranslator, {getMessagesOrError} from './createBaseTranslator';
@@ -11,11 +11,13 @@ export type CoreRichTranslationValues = Record<
   TranslationValue | ((chunks: string) => string)
 >;
 
-export type CreateTranslatorImplProps<Messages> =
-  InitializedIntlConfiguration & {
-    namespace: string;
-    messages: Messages;
-  };
+export type CreateTranslatorImplProps<Messages> = Omit<
+  InitializedIntlConfig,
+  'messages'
+> & {
+  namespace: string;
+  messages: Messages;
+};
 
 export default function createTranslatorImpl<
   Messages extends AbstractIntlMessages,

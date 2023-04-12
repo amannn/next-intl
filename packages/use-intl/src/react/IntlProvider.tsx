@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
+import IntlConfig from '../core/IntlConfig';
 import IntlContext from './IntlContext';
-import IntlProviderProps from './IntlProviderProps';
-import getIntlContextValue from './getIntlContextValue';
+import getInitializedConfig from './getInitializedConfig';
 
-export default function IntlProvider({children, ...props}: IntlProviderProps) {
+type Props = IntlConfig & {
+  children: ReactNode;
+};
+
+export default function IntlProvider({children, ...props}: Props) {
   return (
-    <IntlContext.Provider value={getIntlContextValue(props)}>
+    <IntlContext.Provider value={getInitializedConfig(props)}>
       {children}
     </IntlContext.Provider>
   );
