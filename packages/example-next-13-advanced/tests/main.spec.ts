@@ -338,8 +338,18 @@ it('keeps search params for redirects', async ({browser}) => {
 });
 
 it('sets alternate links', async ({request}) => {
+  async function getLinks(pathname: string) {
+    return (
+      (await request.get(pathname))
+        .headers()
+        .link.split(', ')
+        // On CI, Playwright uses a different host somehow
+        .map((cur) => cur.replace(/0\.0\.0\.0/g, 'localhost'))
+    );
+  }
+
   for (const pathname of ['/', '/en', '/de']) {
-    expect((await request.get(pathname)).headers().link.split(', ')).toEqual([
+    expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
       '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
@@ -348,7 +358,7 @@ it('sets alternate links', async ({request}) => {
   }
 
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
-    expect((await request.get(pathname)).headers().link.split(', ')).toEqual([
+    expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de/nested>; rel="alternate"; hreflang="de"',
       '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
