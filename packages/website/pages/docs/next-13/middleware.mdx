@@ -1,0 +1,159 @@
+import Callout from 'components/Callout';
+
+# Middleware for i18n routing
+
+The middleware handles redirects and rewrites based on the detected user locale.
+
+There are two strategies for detecting the locale:
+
+1.  [Prefix-based routing (default)](#prefix-based-routing-default)
+2.  [Domain-based routing](#domain-based-routing)
+
+Once a locale is detected, it will be saved in a cookie.
+
+## Prefix-based routing (default)
+
+Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
+
+**Request examples:**
+
+- `/` → `/en`
+- `/about` → `/en/about`
+- `/de/about` → `/de/about`
+
+### Locale detection
+
+The locale is detected based on these priorities:
+
+1. A locale prefix is present in the pathname (e.g. `/de/about`)
+2. A cookie is present that contains a previously detected locale
+3. The [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language) is matched against the available `locales`
+4. The `defaultLocale` is used
+
+To change the locale, users can visit a prefixed route. This will take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header.
+
+**Example workflow:**
+
+1. A user requests `/` and based on the `accept-language` header, the `de` locale is matched.
+2. The `de` locale is saved in a cookie and the user is redirected to `/de`.
+3. The app renders `<Link locale="en" href="/">Switch to English</Link>` to allow the user to change the locale to `en`.
+4. When the user clicks on the link, a request to `/en` is initiated.
+5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
+
+## Domain-based routing
+
+If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
+
+**Example:**
+
+- `us.example.com` (default: `en`)
+- `ca.example.com` (default: `en`)
+- `ca.example.com/fr` (`fr`)
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // All locales across all domains
+  locales: ['en', 'fr'],
+
+  // Used when no domain matches (e.g. on localhost)
+  defaultLocale: 'en',
+
+  domains: [
+    {
+      domain: 'us.example.com',
+      defaultLocale: 'en',
+      // Optionally restrict the locales managed by this domain. If this
+      // domain receives requests for another locale (e.g. us.example.com/fr),
+      // then the middleware will redirect to a domain that supports it.
+      locales: ['en']
+    },
+    {
+      domain: 'ca.example.com',
+      defaultLocale: 'en'
+      // If there are no `locales` specified on a domain,
+      // all global locales will be supported here.
+    }
+  ]
+});
+```
+
+The middleware rewrites the requests internally, so that requests for the `defaultLocale` on a given domain work without a locale prefix (e.g. `us.example.com/about` → `/en/about`). If you want to include a prefix for the default locale as well, you can add [`localePrefix: 'always'`](#always-use-a-locale-prefix).
+
+### Locale detection
+
+To match the request against the available domains, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
+
+The locale is detected based on these priorities:
+
+1. A locale prefix is present in the pathname and the domain supports it (e.g. `ca.example.com/fr`)
+2. If the host of the request is configured in `domains`, the `defaultLocale` of the domain is used
+3. As a fallback, the [locale detection of prefix-based routing](#locale-detection) applies
+
+<Callout>
+
+Since unknown domains will be handled with [prefix-based routing](#prefix-based-routing-default), this strategy can be used for local development where the host is `localhost`.
+
+</Callout>
+
+Since the middleware is aware of all your domains, the domain will automatically be switched when the user requests to change the locale.
+
+**Example workflow:**
+
+1. The user requests `us.example.com` and based on the `defaultLocale` of this domain, the `en` locale is matched.
+2. The app renders `<Link locale="fr" href="/">Switch to French</Link>` to allow the user to change the locale to `fr`.
+3. When the link is clicked, a request to `us.example.com/fr` is initiated.
+4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
+
+## Further configuration
+
+### Always use a locale prefix
+
+If you want to include a prefix for the default locale as well, you can configure the middleware accordingly.
+
+```tsx filename="middleware.ts" {6}
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // ... other config
+
+  localePrefix: 'always' // Defaults to 'as-needed'
+});
+```
+
+In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
+
+Note that this will affect both prefix-based as well as domain-based routing.
+
+### Disable automatic locale detection
+
+If you want to rely entirely on the URL to resolve the locale, you can disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
+
+```tsx filename="middleware.ts" {6}
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // ... other config
+
+  localeDetection: false // Defaults to `true`
+});
+```
+
+Note that in this case other detection mechanisms will remain in place regardless (e.g. based on a locale prefix in the pathname or a matched domain).
+
+### Disable alternate links
+
+The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
+
+If you prefer to include these links yourself, you can opt-out of this behaviour.
+
+```tsx filename="middleware.ts" {6}
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // ... other config
+
+  alternateLinks: false // Defaults to `true`
+});
+```
