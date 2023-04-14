@@ -1,6 +1,8 @@
 import Callout from 'components/Callout';
 
-# Configuration
+# Global configuration
+
+Configuration properties that you commonly use across your Next.js app for internationalization can be set globally on the provider.
 
 ## Time zone
 
@@ -105,7 +107,7 @@ To achieve consistent usage of translation values and reduce redundancy, you can
 <NextIntlProvider
   ...
   defaultTranslationValues={{
-    important: (children) => <b>{children}</b>,
+    important: (chunks) => <b>{chunks}</b>,
     value: 123
   }}
 >

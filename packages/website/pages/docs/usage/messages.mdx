@@ -1,13 +1,23 @@
 import Callout from 'components/Callout';
 import PartnerContentLink from 'components/PartnerContentLink';
 
-# Messages
+# Rendering i18n messages
 
-In order to render messages in components, the messages have to be provided as JSON data to the provider.
+The main part of handling internationalization (i18n) in your Next.js app is to provide messages based on the language of the user.
+
+We use the term _locale_ as an identifier that describes the language and formatting preferences of users. Apart from the language, this includes regional information.
+
+**Examples:**
+
+- `en-US`: English, specific to the United States
+- `de-AT`: German, specific to Austria
+- `de`: German, without regional specifics
+
+The recommended way to structure your messages is to separate them by locale, e.g. `en.json`.
 
 ## Structuring messages
 
-The recommended approach is to group messages by components and embrace them as the primary unit of code organization in your app.
+To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app.
 
 ```js filename="en.json"
 {
@@ -56,7 +66,7 @@ function SignUp() {
       <form>
         <input
           // The remaining hierarchy can be resolved by
-          // using a dot to access nested messages.
+          // using `.` to access nested messages.
           placeholder={t('form.placeholder')}
         />
         <button type="submit">{t('form.submit')}</button>
@@ -97,13 +107,13 @@ There might be cases where you want to use the same message in different compone
 You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
 
 ```js filename="pages/index.js"
-export async function getStaticProps({locale}) {
+export async function getStaticProps(context) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by language and read
+      // pattern is to put them in JSON files separated by locale and read
       // the desired one based on the `locale` received from Next.js.
-      messages: (await import(`../../messages/${locale}.json`)).default
+      messages: (await import(`../../messages/${context.locale}.json`)).default
     }
   };
 }
@@ -116,11 +126,11 @@ import pick from 'lodash/pick';
 
 const namespaces = ['Index'];
 
-export async function getStaticProps({locale}) {
+export async function getStaticProps(context) {
   return {
     props: {
       messages: pick(
-        (await import(`../../messages/${locale}.json`)).default,
+        (await import(`../../messages/${context.locale}.json`)).default,
         namespaces
       )
     }
@@ -128,11 +138,50 @@ export async function getStaticProps({locale}) {
 }
 ```
 
-<Callout>
-  Note that the `namespaces` can be a list that you generate dynamically based
-  on used components. See the [advanced
-  example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx).
-</Callout>
+<details>
+  <summary>
+    **How can I know all the namespaces needed for a page?**
+  </summary>
+
+You can assemble the `namespaces` dynamically based on the used components on a page. The [advanced
+example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx) outlines this technique.
+
+This is the gist:
+
+```tsx filename="pages/index.js"
+import pick from 'lodash/pick';
+import {useTranslations} from 'next-intl';
+import PageLayout from 'components/PageLayout';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <PageLayout title={t('title')}>{t('description')}</PageLayout>;
+}
+
+// The namespaces can be generated based on used components. `PageLayout` in
+// turn requires messages for `Navigation` and therefore a recursive list of
+// namespaces is created dynamically, where the owner of a component doesn't
+// have to know which nested components are rendered. Note that this approach
+// is limited to components which are not lazy loaded.
+Index.messages = ['Index', ...PageLayout.messages];
+
+export async function getStaticProps({locale}) {
+  return {
+    props: {
+      messages: pick(
+        await import(`../../messages/${locale}.json`),
+        Index.messages
+      )
+    }
+  };
+}
+```
+
+An automatic way to tree-shake messages is being evaluated in [issue #1](https://github.com/amannn/next-intl/issues/1). Leave a 👍 there if you're interested in this feature!
+
+Credits for this approach go to the [Relay fragment composition](https://relay.dev/docs/guided-tour/rendering/fragments/).
+
+</details>
 
 ## Rendering messages
 
@@ -182,27 +231,6 @@ t.rich('richText', {
 ```
 
 If you want to use the same tag multiple times, you can configure it via the [default translation values](/docs/usage/configuration#default-translation-values).
-
-## Raw messages
-
-Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this:
-
-```js filename="en.json"
-{
-  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
-}
-```
-
-```js
-<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
-```
-
-<Callout type="warning">
-  **Important**: You should always sanitize the content that you pass to
-  `dangerouslySetInnerHTML` to avoid cross-site scripting attacks.
-</Callout>
-
-The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
 
 ## Arrays of messages
 
@@ -258,8 +286,35 @@ function Benefits() {
 }
 ```
 
-<Callout type="question" title='"Why can‘t I just use arrays in my messages?"'>
-  The advantage of this approach over supporting arrays in messages is that this
-  way you can use the formatting capabilities, e.g. to interpolate values into
-  messages.
+<details>
+  <summary>
+    **Why can't I just use arrays in my messages?**
+  </summary>
+
+The advantage of this approach over supporting arrays in messages is that this
+way you can use the formatting capabilities, e.g. to interpolate values into
+messages.
+
+</details>
+
+## Raw messages
+
+Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case.
+
+```js filename="en.json"
+{
+  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+}
+```
+
+```js
+<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
+```
+
+<Callout type="warning">
+  **Important**: You should always sanitize the content that you pass to
+  [`dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
+  to avoid cross-site scripting attacks.
 </Callout>
+
+The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
