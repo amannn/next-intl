@@ -3,14 +3,16 @@ import {ReactNode} from 'react';
 
 type Props = {
   children: ReactNode;
-  type?: 'default' | 'warning';
   className?: string;
   emoji?: string;
+  title?: string;
+  type?: 'default' | 'warning';
 };
 
 const TypeToEmoji = {
   default: '💡',
-  warning: '⚠️'
+  warning: '⚠️',
+  question: '🤔'
 };
 
 const classes = {
@@ -19,12 +21,16 @@ const classes = {
   ),
   warning: cn(
     'border-yellow-700/20 bg-yellow-50 text-yellow-900 dark:border-yellow-400/40 dark:bg-yellow-700/30 dark:text-white/90'
+  ),
+  question: cn(
+    'border-sky-700/20 bg-sky-50 text-sky-800 dark:border-sky-400/40 dark:bg-sky-700/30 dark:text-white/90'
   )
 };
 
 export default function Callout({
   children,
   type = 'default',
+  title,
   className,
   emoji = TypeToEmoji[type]
 }: Props) {
@@ -45,7 +51,14 @@ export default function Callout({
       >
         {emoji}
       </div>
-      <div className="nx-w-full nx-min-w-0 nx-leading-7">{children}</div>
+      <div className="nx-w-full nx-min-w-0 nx-leading-7">
+        {title && (
+          <p className="mb-1">
+            <strong>{title}</strong>
+          </p>
+        )}
+        <div>{children}</div>
+      </div>
     </div>
   );
 }
