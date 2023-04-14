@@ -10,9 +10,9 @@ export type GetRequestConfigParams = {
  * Should be called in `i18n.ts` to create the configuration for the current request.
  */
 export default function getRequestConfig(
-  createRequestConfig: ({
-    locale
-  }: GetRequestConfigParams) => RequestConfig | Promise<RequestConfig>
+  createRequestConfig: (
+    params: GetRequestConfigParams
+  ) => RequestConfig | Promise<RequestConfig>
 ) {
   return createRequestConfig;
 }
