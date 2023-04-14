@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.13.1 (2023-04-14)
+
+
+### Bug Fixes
+
+* Improve error message when trying to render an array as a message ([#244](https://github.com/amannn/next-intl/issues/244)) ([c6a4f7a](https://github.com/amannn/next-intl/commit/c6a4f7a338d0b2cf7be545cb5203949679c187fc))
+
+
+
+
+
 # 2.13.0 (2023-04-12)
 
 
