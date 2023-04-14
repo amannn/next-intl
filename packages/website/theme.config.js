@@ -140,7 +140,7 @@ export default {
 
       <meta content="next-intl" name="og:title" />
       <meta
-        content="Internationalization for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js that gets out of your way."
         name="og:description"
       />
       <meta content="summary_large_image" name="twitter:card" />
@@ -155,7 +155,7 @@ export default {
         name="og:image"
       />
       <meta
-        content="Internationalization for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js that gets out of your way."
         name="description"
       />
     </>

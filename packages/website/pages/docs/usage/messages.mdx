@@ -210,22 +210,22 @@ If you need to render a list of messages, the recommended approach is to map an 
 
 ```js filename="en.json"
 {
-  "Features": {
-    "trust": "Built by experts",
+  "Benefits": {
+    "zero-config": "Works with zero config",
     "customizable": "Easy to customize",
     "fast": "Blazingly fast"
   }
 }
 ```
 
-```js filename="Features.js"
+```js filename="Benefits.js"
 import {useTranslations} from 'next-intl';
 
-function Features() {
-  const t = useTranslations('Features');
+function Benefits() {
+  const t = useTranslations('Benefits');
   return (
     <ul>
-      {['trust', 'customizable', 'fast'].map((key) => (
+      {['zero-config', 'customizable', 'fast'].map((key) => (
         <li key={key}>{t(key)}</li>
       ))}
     </ul>
@@ -237,17 +237,17 @@ If the number of items varies between locales, you can solve this by using [rich
 
 ```js filename="en.json"
 {
-  "Features": {
-    "items": "<item>Built by experts</item><item>Easy to customize</item><item>Blazingly fast</item>"
+  "Benefits": {
+    "items": "<item>Works with zero config</item><item>Easy to customize</item><item>Blazingly fast</item>"
   }
 }
 ```
 
-```js filename="Features.js"
+```js filename="Benefits.js"
 import {useTranslations} from 'next-intl';
 
-function Features() {
-  const t = useTranslations('Features');
+function Benefits() {
+  const t = useTranslations('Benefits');
   return (
     <ul>
       {t.rich('items', {
@@ -257,3 +257,9 @@ function Features() {
   );
 }
 ```
+
+<Callout type="question" title='"Why can‘t I just use arrays in my messages?"'>
+  The advantage of this approach over supporting arrays in messages is that this
+  way you can use the formatting capabilities, e.g. to interpolate values into
+  messages.
+</Callout>
