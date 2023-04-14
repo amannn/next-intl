@@ -31,26 +31,27 @@ const files = [
   {
     name: 'UserDetails.tsx',
     code: (
-      <code data-language="js" data-theme="default">
+      <code data-language="tsx" data-theme="default">
         <span className="line">
           <span style={{color: 'var(--shiki-token-keyword)'}}>import</span>
           <span style={{color: 'var(--shiki-color-text)'}}>
             {' '}
-            {'{'}useTranslations
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {' '}
-            useFormatter{'}'}{' '}
+            {'{'}useTranslations{'}'}{' '}
           </span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
             'next-intl'
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-token-keyword)'}}>import</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> OnlineStatus </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            './OnlineStatus'
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>;</span>
         </span>
@@ -77,12 +78,155 @@ const files = [
             useTranslations
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
             'UserDetails'
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>);</span>
+        </span>
+        <span className="line"> </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>return</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> (</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            section
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            h2
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            'title'
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>){'}'}&lt;/</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            h2
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            'followers'
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}count</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>followers</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>length</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {'}'}){'}'}&lt;/
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>
+            OnlineStatus
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-function)'}}>lastSeen</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            .lastSeen{'}'} /&gt;
+          </span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;/</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            section
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '});</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
+        </span>
+      </code>
+    )
+  },
+  {
+    name: 'OnlineStatus.tsx',
+    code: (
+      <code data-language="tsx" data-theme="default">
+        <span className="line">
+          <span style={{color: 'var(--shiki-token-keyword)'}}>import</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            {' '}
+            {'{'}useTranslations
+          </span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> useFormatter</span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> useNow{'}'} </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            'next-intl'
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-token-keyword)'}}>import</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> OnlineIcon </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            './OnlineIcon'
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>;</span>
+        </span>
+        <span className="line"> </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-token-keyword)'}}>export</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>default</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>function</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-function)'}}>
+            OnlineStatus
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            ({'{'}lastSeen{'}'}) {'{'}
+          </span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>t</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-function)'}}>
+            useTranslations
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            'OnlineStatus'
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>);</span>
         </span>
@@ -99,6 +243,17 @@ const files = [
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>();</span>
         </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>now</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-function)'}}>useNow</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>();</span>
+        </span>
         <span className="line"> </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
@@ -106,186 +261,54 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}> (</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'    '}
-            &lt;
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>OnlineIcon</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'      '}
-            &lt;
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            h2
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>aria-label</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
           <span style={{color: 'var(--shiki-token-function)'}}>t</span>
           <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            'title'
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>){'}'}&lt;/</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            h2
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
-        </span>
-        <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'      '}
-            &lt;
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            p
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            'followers'
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            'label'
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}count</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>.</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>followers</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>.</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>length</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'}'}){'}'}&lt;/
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            p
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
-        </span>
-        <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'      '}
-            &lt;
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            p
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            'lastSeen'
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}time</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}lastSeen</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-constant)'}}>format</span>
           <span style={{color: 'var(--shiki-token-function)'}}>
             .relativeTime
           </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
           <span style={{color: 'var(--shiki-color-text)'}}>
-            .lastSeen){'}'})
+            (lastSeen){'}'}){'}'}
           </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&lt;/</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {'      '}
-            &lt;
-          </span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            Image
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>alt</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>isOnline</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
           <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            'portrait'
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}username</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>now </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>-</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> lastSeen </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>&lt;</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            .name{'}'}){'} '}
-          </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>src</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            .portrait{'}'}{' '}
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>/&gt;</span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>5</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>*</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>60</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>*</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-constant)'}}>1000</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&lt;/</span>
-          <span
-            style={{
-              color: 'var(--shiki-token-string-expression)'
-            }}
-          >
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}/&gt;</span>
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '});</span>
@@ -305,16 +328,14 @@ const files = [
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>
             "UserDetails"
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}>: {'{'}</span>
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "title"
-          </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>"title"</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
@@ -324,9 +345,7 @@ const files = [
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "followers"
-          </span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>"followers"</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
@@ -371,26 +390,24 @@ const files = [
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "lastSeen"
-          </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "Last seen {'{'}time{'}'}"
-          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  }'}</span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "portrait"
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>
+            "OnlineStatus"
           </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>"label"</span>
+          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "Portrait of {'{'}username{'}'}"
+            "Last seen {'{'}lastSeen{'}'}"
           </span>
         </span>
         <span className="line">
@@ -437,31 +454,20 @@ const files = [
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            &gt;Last seen 2 hours ago&lt;/
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            svg
           </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
+          <span style={{color: 'var(--shiki-color-text)'}}> </span>
+          <span style={{color: 'var(--shiki-token-function)'}}>aria-label</span>
+          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            "Last seen 2 hours ago"
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;...&lt;/</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            svg
+          </span>
           <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
-        </span>
-        <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            img
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>alt</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "Portrait of Jane"
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>src</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "/media/jane.png"
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}> /&gt;</span>
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>&lt;/</span>

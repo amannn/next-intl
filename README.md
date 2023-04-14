@@ -15,7 +15,7 @@
 
 <hr />
 
-📣 [Support for Server Components in Next.js 13 is coming →](https://next-intl-docs.vercel.app/docs/next-13)
+📣 [Support for Next.js 13 and the App Router has arrived →](https://next-intl-docs.vercel.app/docs/next-13)
 
 <hr />
 
@@ -24,7 +24,7 @@
 Internationalization is an essential part of the user experience. next-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, plurals, ordinal pluralization, enum-based label selection, and rich text.
-- 📅 **Dates, times & numbers**: Use global formats for a consistent look & feel of your app and apply fine-tuning as necessary.
+- 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
 - 💡 **Hooks-only API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
 - 🚀 **Fast**: Get the best performance from your app by supporting internationalization on both static and dynamic pages.

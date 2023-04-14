@@ -140,17 +140,12 @@ function typeSafe() {
   return (
     <code data-language="tsx" data-theme="default">
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}> </span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-keyword)'}}>export</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> </span>
-        <span style={{color: 'var(--shiki-token-keyword)'}}>default</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-token-keyword)'}}>function</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
-        <span style={{color: 'var(--shiki-token-function)'}}>About</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>() {'{'}</span>
+        <span style={{color: 'var(--shiki-token-function)'}}>UserDetails</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>
+          ({'{'}user{'}'}) {'{'}
+        </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
@@ -165,7 +160,7 @@ function typeSafe() {
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>(</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          'About'
+          'UserDetails'
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>);</span>
       </span>
@@ -173,8 +168,18 @@ function typeSafe() {
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
         <span style={{color: 'var(--shiki-token-keyword)'}}>return</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> &lt;</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>h1</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> (</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          section
+        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
         <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
         <span style={{color: 'var(--shiki-token-function)'}}>t</span>
         <span style={{color: 'var(--shiki-color-text)'}}>(</span>
@@ -183,21 +188,28 @@ function typeSafe() {
           style={{color: 'var(--shiki-token-string-expression)'}}
         >
           {"''"}
-          <div className="absolute top-0 left-2 h-full border-l-2 border-slate-400" />
+          <div className="absolute top-0 left-2 h-full border-l-[1.5px] border-slate-400" />
           <div className="absolute top-[calc(100%+2px)] left-2 min-w-[8rem] rounded-sm border border-slate-300 bg-slate-100 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
             <div className="bg-sky-100 p-1 dark:bg-slate-600">title</div>
-            <div className="p-1">description</div>
+            <div className="p-1">followers</div>
           </div>
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>){'}'}&lt;/</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>h1</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>&gt;;</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;/</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          section
+        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'  '});</span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}> </span>
       </span>
     </code>
   );
