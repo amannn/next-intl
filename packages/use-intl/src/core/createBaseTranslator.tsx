@@ -181,24 +181,37 @@ export default function createBaseTranslator<
       );
     }
 
-    const cacheKey = [namespace, key, message]
-      .filter((part) => part != null)
-      .join('.');
+    function joinPath(parts: Array<string | undefined>) {
+      return parts.filter((part) => part != null).join('.');
+    }
+
+    const cacheKey = joinPath([namespace, key, String(message)]);
 
     let messageFormat;
     if (cachedFormatsByLocale?.[locale]?.[cacheKey]) {
       messageFormat = cachedFormatsByLocale?.[locale][cacheKey];
     } else {
       if (typeof message === 'object') {
-        return getFallbackFromErrorAndNotify(
-          key,
-          IntlErrorCode.INSUFFICIENT_PATH,
-          process.env.NODE_ENV !== 'production'
-            ? `Insufficient path specified for \`${key}\` in \`${
-                namespace ? `\`${namespace}\`` : 'messages'
-              }\`.`
-            : undefined
-        );
+        let code, errorMessage;
+        if (Array.isArray(message)) {
+          code = IntlErrorCode.INVALID_MESSAGE;
+          if (process.env.NODE_ENV !== 'production') {
+            errorMessage = `Message at \`${joinPath([
+              namespace,
+              key
+            ])}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
+          }
+        } else {
+          code = IntlErrorCode.INSUFFICIENT_PATH;
+          if (process.env.NODE_ENV !== 'production') {
+            errorMessage = `Message at \`${joinPath([
+              namespace,
+              key
+            ])}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
+          }
+        }
+
+        return getFallbackFromErrorAndNotify(key, code, errorMessage);
       }
 
       try {
