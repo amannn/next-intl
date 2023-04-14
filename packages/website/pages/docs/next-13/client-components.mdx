@@ -81,12 +81,11 @@ export default function Index() {
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 
-// The middleware intercepts requests to `/` and will redirect
-// to the best matching locale instead (e.g. `/en`). A cookie
-// is set in the background, so if the user switches to a new
-// language, this will take precedence from now on.
 export default createMiddleware({
+  // A list of all locales that are supported
   locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
   defaultLocale: 'en'
 });
 
