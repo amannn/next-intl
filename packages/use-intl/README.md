@@ -9,7 +9,7 @@
 Internationalization is an essential part of the user experience. use-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, plurals, ordinal pluralization, enum-based label selection and rich text.
-- 📅 **Dates, times & numbers**: Use global formats for a consistent look & feel of your app and apply fine-tuning as necessary.
+- 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
 - 💡 **Hooks-only API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
 - ⚔️ **Standards-based**: Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS.
