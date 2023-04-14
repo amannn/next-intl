@@ -444,6 +444,16 @@ describe('t.raw', () => {
     expect(container.innerHTML).toBe('<span>{"nested":{"object":true}}</span>');
   });
 
+  it('can return arrays', () => {
+    const {container} = renderRawMessage(
+      {array: [1, '2', {three: true}]},
+      (message) => <span>{JSON.stringify(message)}</span>
+    );
+    expect(container.innerHTML).toBe(
+      '<span>{"array":[1,"2",{"three":true}]}</span>'
+    );
+  });
+
   it('renders a fallback for unknown messages', () => {
     const onError = jest.fn();
 
@@ -662,6 +672,108 @@ describe('error handling', () => {
     expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
     expect(error.message).toBe(
       'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
+    );
+  });
+
+  it('shows an error when trying to render an object with `t`', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('object')}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{Component: {object: {a: 'a'}}}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
+    expect(error.message).toBe(
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages'
+    );
+  });
+
+  it('shows an error when trying to render an object with `t.rich`', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t.rich('object')}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{Component: {object: {a: 'a'}}}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
+    expect(error.message).toBe(
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages'
+    );
+  });
+
+  it('shows an error when trying to render an array with `t`', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t('array')}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        // @ts-expect-error Arrays are not allowed
+        messages={{Component: {array: ['a', 'b']}}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    expect(error.message).toBe(
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages'
+    );
+  });
+
+  it('shows an error when trying to render an array with `t.rich`', () => {
+    const onError = jest.fn();
+
+    function Component() {
+      const t = useTranslations('Component');
+      return <>{t.rich('array')}</>;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        // @ts-expect-error Arrays are not allowed
+        messages={{Component: {array: ['a', 'b']}}}
+        onError={onError}
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
+    expect(error.message).toBe(
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages'
     );
   });
 });

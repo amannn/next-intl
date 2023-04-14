@@ -9,13 +9,13 @@
 	<br>
 </h1>
 
-> Internationalization for Next.js that gets out of your way.
+> Internationalization (i18n) for Next.js that gets out of your way.
 
 ![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) [<img src="https://img.shields.io/npm/dw/next-intl.svg" />](https://www.npmjs.com/package/next-intl)
 
 <hr />
 
-📣 [Support for Next.js 13 and the app directory is coming →](https://next-intl-docs.vercel.app/docs/next-13)
+📣 [Support for Server Components in Next.js 13 is coming →](https://next-intl-docs.vercel.app/docs/next-13)
 
 <hr />
 
