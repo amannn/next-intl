@@ -8,7 +8,7 @@
 }
 
 .dark {
-  --shiki-token-string-expression: #10b981;
+  --shiki-token-string-expression: hsl(160, 75%, 45%);
   --shiki-token-punctuation: rgba(255, 255, 255, 0.5);
 }
 

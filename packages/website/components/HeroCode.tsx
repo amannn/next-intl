@@ -128,9 +128,9 @@ const files = [
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
           <span style={{color: 'var(--shiki-color-text)'}}>.</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>followers</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>followers</span>
           <span style={{color: 'var(--shiki-color-text)'}}>.</span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>length</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>length</span>
           <span style={{color: 'var(--shiki-color-text)'}}>
             {'}'}){'}'}&lt;/
           </span>
