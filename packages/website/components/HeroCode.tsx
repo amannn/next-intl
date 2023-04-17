@@ -266,7 +266,7 @@ const files = [
         </span>
         <span className="line">
           <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>aria-label</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>title</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
           <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
           <span style={{color: 'var(--shiki-token-function)'}}>t</span>
@@ -458,12 +458,31 @@ const files = [
             svg
           </span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>aria-label</span>
+          <span style={{color: 'var(--shiki-token-function)'}}>role</span>
           <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "Last seen 2 hours ago"
+            "img"
           </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;...&lt;/</span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            title
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>
+            &gt;Last seen 2 hours ago&lt;/
+          </span>
+          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+            title
+          </span>
+          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}...</span>
+        </span>
+        <span className="line">
+          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;/</span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
             svg
           </span>
