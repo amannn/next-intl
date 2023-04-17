@@ -212,9 +212,9 @@ const pathname = usePathname();
 
 ### `redirect`
 
-If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl`. This wraps [the `redirect` function from Next.js](https://beta.nextjs.org/docs/api-reference/redirect) and automatically applies the current locale.
+If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://beta.nextjs.org/docs/api-reference/redirect) and automatically applies the current locale.
 
-```tsx
+```tsx {1, 8}
 import {redirect} from 'next-intl/server';
 
 export default async function Profile() {
@@ -324,7 +324,7 @@ Note that the configuration object will be created once for each request and wil
 
 If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
 
-```js filename="next.config.js"
+```js filename="next.config.js" {8-9}
 const withNextIntl = require('next-intl/plugin')();
 
 module.exports = withNextIntl({

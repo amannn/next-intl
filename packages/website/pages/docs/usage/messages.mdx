@@ -3,7 +3,7 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 # Rendering i18n messages
 
-The main part of handling internationalization (i18n) in your Next.js app is to provide messages based on the language of the user.
+The main part of handling internationalization (typically referred to as i18n) in your Next.js app is to provide messages based on the language of the user.
 
 We use the term _locale_ as an identifier that describes the language and formatting preferences of users. Apart from the language, this includes regional information.
 
@@ -26,6 +26,8 @@ To group your messages within a locale, it's recommended to use component names 
   }
 }
 ```
+
+Now, you can render messages from within a React component via the `useTranslations` hook.
 
 ```js filename="About.js"
 import {useTranslations} from 'next-intl';
@@ -121,7 +123,7 @@ export async function getStaticProps(context) {
 
 If you want to provide only the minimum amount of messages per page, you can filter your messages accordingly:
 
-```js filename="pages/index.js"
+```js filename="pages/index.js" {3, 8-11}
 import pick from 'lodash/pick';
 
 const namespaces = ['Index'];
