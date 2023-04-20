@@ -19,7 +19,7 @@
   @apply bg-slate-850 text-white dark:bg-slate-850;
 }
 
-/* Hamburger */
+/* Hamburger menu */
 .navbar-home svg.open {
   @apply !text-slate-900 dark:!text-white;
 }
@@ -55,13 +55,19 @@ figure {
   @apply my-8 flex flex-col items-center;
 }
 
-figure img {
-  /* @apply mx-auto; */
-  /* @apply rounded-lg; */
-}
-
 figcaption {
   @apply mt-4 text-center text-sm text-slate-500;
+}
+
+summary {
+  @apply font-bold;
+}
+
+details > div > div {
+  @apply pt-4 pl-7 pr-3;
+}
+details > div > div:last-child {
+  @apply mb-4;
 }
 
 .screenshot {

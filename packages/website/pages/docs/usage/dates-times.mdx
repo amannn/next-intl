@@ -34,6 +34,25 @@ function Component() {
 
 See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to `dateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
 
+<details>
+<summary>How can I parse dates or manipulate them?</summary>
+
+To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
+
+Since `next-intl` is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
+
+```tsx
+import {subDays} from 'date-fns';
+
+// Make sure your date string conforms to ISO 8601
+const date = new Date('2020-11-20T10:36:01.516Z');
+
+// 2020-11-18T10:36:01.516Z
+const twoDaysAgo = subDays(date, 2);
+```
+
+</details>
+
 ## Formatting relative time
 
 Relative time durations can be formatted with a separate function:
