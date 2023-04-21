@@ -38,7 +38,18 @@ function About() {
 }
 ```
 
-You can provide more structure by nesting messages:
+To retrieve all available messages in a component, you can omit the namespace path:
+
+```js
+const t = useTranslations();
+
+t('About.title');
+```
+
+<details>
+<summary>How can I provide more structure for messages?</summary>
+
+Optionally, you can structure your messages into nested objects.
 
 ```js filename="en.json"
 {
@@ -78,29 +89,30 @@ function SignUp() {
 }
 ```
 
-To retrieve all available messages in a component, you can omit the namespace path:
-
-```js
-const t = useTranslations();
-
-t('auth.SignUp.title');
-```
+</details>
 
 <details>
-  <summary>
-    
-    **How can I reuse messages?**
-    
-    </summary>
+<summary>How can I reuse messages?</summary>
 
 As your app grows, you'll want to reuse messages among your components. If you use component names as namespaces to structure your messages, you'll automatically benefit from reusable messages by reusing your components.
 
 **Examples:**
 
-- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
 - You're displaying products in your app and often need to resolve a category identifier to a human readable label (e.g. `new` → "Just in"). To ensure consistency, you can add a `ProductCategory` component that turns the `category` into a string.
+- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
 
 There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
+
+</details>
+
+<details>
+<summary>How can I use translations outside of components?</summary>
+
+`next-intl` only offers an API to use translations from within React components.
+
+This may seem like an unnecessary limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
+
+If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [Using translations outside of React components](/blog/translations-outside-of-react-components).
 
 </details>
 
@@ -141,9 +153,7 @@ export async function getStaticProps(context) {
 ```
 
 <details>
-  <summary>
-    **How can I know all the namespaces needed for a page?**
-  </summary>
+<summary>How can I know all the namespaces needed for a page?</summary>
 
 You can assemble the `namespaces` dynamically based on the used components on a page. The [advanced
 example](https://github.com/amannn/next-intl/tree/main/packages/example-advanced/src/pages/index.tsx) outlines this technique.
@@ -202,6 +212,8 @@ You can interpolate values from your components into your messages with a specia
 ```
 
 ```js
+const t = useTranslations();
+
 t('static');
 t('interpolation', {name: 'Jane'});
 t('plural', {numMessages: 3});
@@ -289,13 +301,39 @@ function Benefits() {
 ```
 
 <details>
-  <summary>
-    **Why can't I just use arrays in my messages?**
-  </summary>
+<summary>Why can't I just use arrays in my messages?</summary>
 
-The advantage of this approach over supporting arrays in messages is that this
-way you can use the formatting capabilities, e.g. to interpolate values into
-messages.
+The advantage of this approach over supporting arrays in messages is that this way you can use the formatting capabilities, e.g. to interpolate values into individual messages.
+
+```js filename="en.json"
+{
+  "Benefits": {
+    "zero-config": "Works with <b>zero config</b>",
+    "customizable": "Easy to <b>customize</b>",
+    "fast": "Blazingly <b>fast</b>"
+  }
+}
+```
+
+```js filename="Benefits.js"
+import {useTranslations} from 'next-intl';
+
+function Benefits() {
+  const t = useTranslations('Benefits');
+  return (
+    <ul>
+      {['zero-config', 'customizable', 'fast'].map((key, index, arr) => {
+        const color = `hsl(${(index / (arr.length - 1)) * 360}deg 70% 50%)`;
+        return (
+          <li key={key}>
+            {t(key, {b: (chunks) => <b style={{color}}>{chunks}</b>})}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+```
 
 </details>
 

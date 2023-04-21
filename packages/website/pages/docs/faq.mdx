@@ -13,19 +13,6 @@
 4. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
 5. This library offers [type safety for message keys](/docs/usage/typescript).
 
-## How can I parse dates or manipulate them?
-
-This library is only concerned with formatting dates.
-
-To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
-
-```jsx
-// Make sure your date string conforms to ISO 8601
-const date = new Date('2020-11-20T10:36:01.516Z');
-```
-
-A great library to manipulate dates is [date-fns](https://date-fns.org/).
-
 ## Can `next-intl` be used with Jest and Storybook?
 
 Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlProvider`.

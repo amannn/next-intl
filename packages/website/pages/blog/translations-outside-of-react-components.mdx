@@ -1,0 +1,136 @@
+---
+title: Using translations outside of React components
+---
+
+# Using translations outside of React components
+
+Have you ever wondered why `next-intl` doesn’t provide an API to consume translations outside of React components?
+
+The traditional way is to use the `useTranslations` hook.
+
+```tsx
+import {useTranslations} from 'next-intl';
+
+function About() {
+  const t = useTranslations('About');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+Why is it not possible to format messages e.g. in utility functions? Is there something missing here?
+
+This may seem like an unnecessary limitation, but the absence of this feature is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
+
+## Example: Formatting error messages
+
+Let's assume you have a `FeedbackForm` component that posts user feedback to a backend endpoint. Unfortunately, the server occasionally returns a 504 status code due to the high volume of feedback. To improve the user experience, you would like to implement automatic retries and provide appropriate feedback to the user.
+
+Here’s a naive approach. Can you spot an issue with this implementation?
+
+```tsx
+import {useTranslations, useNow} from 'next-intl';
+import {addMinutes} from 'date-fns';
+
+function sendFeedback() {
+  // ❌ Bad implementation: Returns formatted messages
+  API.sendFeedback().catch((error) => {
+    if (error.status === 504) {
+      // Notify the user that we'll try again in 5 minutes
+      return t('timeout', {nextAttempt: addMinutes(new Date(), 5)});
+    }
+  });
+}
+
+function FeedbackForm({user}) {
+  const t = useTranslations('Form');
+  const [errorMessage, setErrorMessage] = useState();
+
+  function onSubmit() {
+    sendFeedback().catch((errorMessage) => {
+      setErrorMessage(errorMessage);
+    });
+  }
+
+  return (
+    <form onSubmit={onSubmit}>
+      {errorMessage != null && <p>{errorMessage}</p>}
+      ...
+    </form>
+  );
+}
+```
+
+Have you found an issue?
+
+Let's have a look together:
+
+1. The `nextAttempt` value is interpolated into the message in a utility function that is called by an event handler. There's no way how we can keep the remaining time updated as we're nearing the retry timeout.
+2. If the user changes the language, the error message will remain in the previously selected language, leading to a jarring user experience.
+
+## A better way: Formatting during render
+
+To avoid these issues, we can format messages during the rendering phase of React, turning data structures into human readable strings.
+
+```tsx
+import {useTranslations, useNow} from 'next-intl';
+import {addMinutes} from 'date-fns';
+
+function FeedbackForm({user}) {
+  const t = useTranslations('Form');
+  const [retry, setRetry] = useState();
+  const now = useNow({
+    // Update every minute
+    updateInterval: 1000 * 60
+  });
+
+  function onSubmit() {
+    // ✅ Good implementation: Store data structures in state
+    API.sendFeedback().catch((error) => {
+      if (error.status === 504) {
+        setRetry(addMinutes(now, 5));
+      }
+    });
+  }
+
+  return (
+    <form onSubmit={onSubmit}>
+      {retry != null && <p>{t('timeout', {nextAttempt: nextAttempt - now})}</p>}
+      ...
+    </form>
+  );
+}
+```
+
+Now, we can offer a better user experience by interactively counting down the time to the next attempt.
+
+Additionally, this approach is more robust to possibly unexpected states, like the user changing the language while the timeout message is being displayed.
+
+## The exception that proves the rule
+
+If you’re working with Next.js, you might like to translate i18n messages in [API routes](https://nextjs.org/docs/api-routes/introduction), [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers) or the [Metadata API](https://beta.nextjs.org/docs/api-reference/metadata).
+
+`next-intl` provides a [core library](/docs/usage/core-library) that is agnostic from React and can be used for these cases.
+
+```tsx
+import {createTranslator} from 'next-intl';
+
+const messages = {
+  hello: 'Hello {name}!'
+};
+
+// This creates the same function that is returned by `useTranslations`.
+// Since there's no provider, you can pass all the properties you'd
+// usually pass to the provider directly here.
+const t = createTranslator({locale: 'en', messages});
+
+// Result: "Hello world!"
+t('hello', {name: 'world'});
+```
+
+There's currently a proposal to further simplify this use case, by offering a set of [new APIs that integrate with Server Components](/docs/next-13/server-components#using-internationalization-outside-of-components) (currently in beta).
+
+## This seems familiar
+
+If you’ve been working with React for a longer time, you might have experienced the change [from `component{DidMount,DidUpdate,WillUnmount}` to `useEffect`](https://legacy.reactjs.org/docs/hooks-effect.html#explanation-why-effects-run-on-each-update). The reason why `useEffect` is superior is because it nudges the developer into a direction where the app is always in sync and by doing this, a whole array of potential issues just magically disappear.
+
+By limiting ourselves to only format messages during render, we're in a similar situation: The rendered output of translated messages is always in sync with app state.
