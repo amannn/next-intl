@@ -45,7 +45,6 @@ export default function Hero({
                   {viewOnGithub}
                 </LinkButton>
               </div>
-              {/* eslint-disable-next-line @next/next/link-passhref */}
               <Link
                 className="mt-10 inline-flex border border-green-300/50 px-4 py-2 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-20"
                 href="/docs/next-13"

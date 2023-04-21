@@ -98,10 +98,21 @@ As your app grows, you'll want to reuse messages among your components. If you u
 
 **Examples:**
 
-- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
 - You're displaying products in your app and often need to resolve a category identifier to a human readable label (e.g. `new` → "Just in"). To ensure consistency, you can add a `ProductCategory` component that turns the `category` into a string.
+- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
 
 There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
+
+</details>
+
+<details>
+<summary>How can I use translations outside of components?</summary>
+
+`next-intl` only offers an API to use translations from within React components.
+
+This may seem like an unnecessary limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
+
+If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [Using translations outside of React components](/blog/translations-outside-of-react-components).
 
 </details>
 

@@ -4,7 +4,7 @@ title: Using translations outside of React components
 
 # Using translations outside of React components
 
-Have you ever wondered why `next-intl` doesn’t provide an API to consume i18n translations outside of React components?
+Have you ever wondered why `next-intl` doesn’t provide an API to consume translations outside of React components?
 
 The traditional way is to use the `useTranslations` hook.
 
@@ -19,7 +19,7 @@ function About() {
 
 Why is it not possible to format messages e.g. in utility functions? Is there something missing here?
 
-This may seem like an unnecessary limitation, but the absence of this feature is in fact intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
+This may seem like an unnecessary limitation, but the absence of this feature is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
 
 ## Example: Formatting error messages
 
@@ -60,9 +60,9 @@ function FeedbackForm({user}) {
 }
 ```
 
-Have you found some issues?
+Have you found an issue?
 
-Let's have a look:
+Let's have a look together:
 
 1. The `nextAttempt` value is interpolated into the message in a utility function that is called by an event handler. There's no way how we can keep the remaining time updated as we're nearing the retry timeout.
 2. If the user changes the language, the error message will remain in the previously selected language, leading to a jarring user experience.
@@ -101,19 +101,15 @@ function FeedbackForm({user}) {
 }
 ```
 
-Now, we can offer a better user experience by interactively counting down the time to the next attempt. Additionally, this approach is more robust to possibly unexpected states, like the user changing the language while the timeout message is being displayed.
+Now, we can offer a better user experience by interactively counting down the time to the next attempt.
 
-## This seems familiar
-
-If you’ve been working with React for a longer time, you might have experienced the change [from `component{DidMount,DidUpdate,WillUnmount}` to `useEffect`](https://legacy.reactjs.org/docs/hooks-effect.html#explanation-why-effects-run-on-each-update) . The reason why `useEffect` is superior is because it nudges the developer into a direction where the app is always in sync and by doing this, a whole array of potential issues just magically disappear.
-
-By limiting ourselves to only format messages during render, we experience a similar situation: The rendered output of translated messages is always in sync with app state.
+Additionally, this approach is more robust to possibly unexpected states, like the user changing the language while the timeout message is being displayed.
 
 ## The exception that proves the rule
 
-If you’re working with Next.js, you might need to translate i18n messages in [API routes](https://nextjs.org/docs/api-routes/introduction), or in case you're using the App Router, in [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers) or for the [Metadata API](https://beta.nextjs.org/docs/api-reference/metadata).
+If you’re working with Next.js, you might like to translate i18n messages in [API routes](https://nextjs.org/docs/api-routes/introduction), [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers) or the [Metadata API](https://beta.nextjs.org/docs/api-reference/metadata).
 
-`next-intl` provides a [core library](/docs/usage/core-library) that is agnostic from React and can be used for these use cases.
+`next-intl` provides a [core library](/docs/usage/core-library) that is agnostic from React and can be used for these cases.
 
 ```tsx
 import {createTranslator} from 'next-intl';
@@ -131,4 +127,10 @@ const t = createTranslator({locale: 'en', messages});
 t('hello', {name: 'world'});
 ```
 
-Furthermore, the `next-intl` Server Components beta [proposes APIs to further simplify this use case](/docs/next-13/server-components#using-internationalization-outside-of-components).
+There's currently a proposal to further simplify this use case, by offering a set of [new APIs that integrate with Server Components](/docs/next-13/server-components#using-internationalization-outside-of-components) (currently in beta).
+
+## This seems familiar
+
+If you’ve been working with React for a longer time, you might have experienced the change [from `component{DidMount,DidUpdate,WillUnmount}` to `useEffect`](https://legacy.reactjs.org/docs/hooks-effect.html#explanation-why-effects-run-on-each-update). The reason why `useEffect` is superior is because it nudges the developer into a direction where the app is always in sync and by doing this, a whole array of potential issues just magically disappear.
+
+By limiting ourselves to only format messages during render, we're in a similar situation: The rendered output of translated messages is always in sync with app state.
