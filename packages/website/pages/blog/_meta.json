@@ -2,8 +2,8 @@
   "index": {
     "title": "next-intl blog"
   },
-  "i18n-translations-outside-of-react-components": {
-    "title": "Using translations outside of React components",
+  "translations-outside-of-react-components": {
+    "title": "How (not) to use translations outside of React components",
     "display": "hidden"
   }
 }
