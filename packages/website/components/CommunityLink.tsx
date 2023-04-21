@@ -19,9 +19,9 @@ export default function CommunityLink({meta, title, type, ...rest}: Props) {
               'inline-block rounded-sm px-2 py-1 text-sm font-semibold',
               {
                 article:
-                  'bg-green-100 text-green-800 dark:bg-green-700/30 dark:text-white/90',
+                  'bg-green-100 text-green-800 dark:bg-green-800/50 dark:text-green-100',
                 video:
-                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-700/30 dark:text-white/90'
+                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/50 dark:text-yellow-100'
               }[type]
             )}
           >
