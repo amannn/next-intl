@@ -16,7 +16,7 @@ export default function CommunityLink({meta, title, type, ...rest}: Props) {
         {type && (
           <p
             className={clsx(
-              'inline-block rounded-sm px-2 py-1 text-sm font-semibold',
+              'mr-2 inline-block rounded-sm px-2 py-1 text-sm font-semibold',
               {
                 article:
                   'bg-green-100 text-green-800 dark:bg-green-800/50 dark:text-green-100',
@@ -28,7 +28,7 @@ export default function CommunityLink({meta, title, type, ...rest}: Props) {
             {{article: 'Article', video: 'Video'}[type]}
           </p>
         )}
-        <p className="ml-2 inline-block text-base text-slate-500">{meta}</p>
+        <p className="inline-block text-base text-slate-500">{meta}</p>
       </div>
     </Link>
   );
