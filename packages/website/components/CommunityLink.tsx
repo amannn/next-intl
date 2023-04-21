@@ -3,14 +3,21 @@ import Link from 'next/link';
 import {ComponentProps} from 'react';
 
 type Props = Omit<ComponentProps<typeof Link>, 'children'> & {
-  meta: string;
+  date: string;
+  author: string;
   title: string;
   type?: 'article' | 'video';
 };
 
-export default function CommunityLink({meta, title, type, ...rest}: Props) {
+export default function CommunityLink({
+  author,
+  date,
+  title,
+  type,
+  ...rest
+}: Props) {
   return (
-    <Link className="inline-block py-2" {...rest}>
+    <Link className="block py-2" {...rest}>
       <p className="text-xl font-semibold">{title}</p>
       <div className="mt-2">
         {type && (
@@ -28,7 +35,9 @@ export default function CommunityLink({meta, title, type, ...rest}: Props) {
             {{article: 'Article', video: 'Video'}[type]}
           </p>
         )}
-        <p className="inline-block text-base text-slate-500">{meta}</p>
+        <p className="inline-block text-base text-slate-500">{date}</p>
+        <p className="inline-block text-base text-slate-500">{' ・ '}</p>
+        <p className="inline-block text-base text-slate-500">{author}</p>
       </div>
     </Link>
   );
