@@ -1,6 +1,6 @@
 import Callout from 'components/Callout';
 
-# Usage in Server Components (beta)
+# Next.js 13: Internationalization (i18n) in Server Components
 
 Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
@@ -319,31 +319,6 @@ export default getRequestConfig(async ({locale}) => ({
 ```
 
 Note that the configuration object will be created once for each request and will then be made available to all Server Components in your app.
-
-## Localizing pathnames
-
-If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
-
-```js filename="next.config.js" {8-9}
-const withNextIntl = require('next-intl/plugin')();
-
-module.exports = withNextIntl({
-  experimental: {appDir: true},
-  rewrites() {
-    return [
-      {
-        source: '/de/über',
-        destination: '/de/about'
-      }
-    ];
-  }
-});
-```
-
-Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
-
-1. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) in the middleware and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
-2. Translate the pathnames you're passing to the [routing APIs from `next-intl`](#routing) ([example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-named-routes/)).
 
 ## Using internationalization outside of components
 

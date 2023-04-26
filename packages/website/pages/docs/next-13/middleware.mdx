@@ -1,6 +1,6 @@
 import Callout from 'components/Callout';
 
-# Middleware for i18n routing
+# Next.js 13 middleware for i18n routing
 
 The middleware handles redirects and rewrites based on the detected user locale.
 
@@ -21,6 +21,8 @@ export const config = {
 };
 ```
 
+## Strategies
+
 There are two strategies for detecting the locale:
 
 1.  [Prefix-based routing (default)](#prefix-based-routing-default)
@@ -28,7 +30,7 @@ There are two strategies for detecting the locale:
 
 Once a locale is detected, it will be saved in a cookie.
 
-## Prefix-based routing (default)
+### Prefix-based routing (default)
 
 Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
@@ -38,7 +40,7 @@ Since your pages are nested within a `[locale]` folder, all routes are prefixed 
 - `/about` → `/en/about`
 - `/de/about` → `/de/about`
 
-### Locale detection
+#### Locale detection
 
 The locale is detected based on these priorities:
 
@@ -57,7 +59,7 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 4. When the user clicks on the link, a request to `/en` is initiated.
 5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
 
-## Domain-based routing
+### Domain-based routing
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
 
@@ -98,7 +100,7 @@ export default createMiddleware({
 
 The middleware rewrites the requests internally, so that requests for the `defaultLocale` on a given domain work without a locale prefix (e.g. `us.example.com/about` → `/en/about`). If you want to include a prefix for the default locale as well, you can add [`localePrefix: 'always'`](#always-use-a-locale-prefix).
 
-### Locale detection
+#### Locale detection
 
 To match the request against the available domains, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
 
@@ -174,3 +176,28 @@ export default createMiddleware({
   alternateLinks: false // Defaults to `true`
 });
 ```
+
+## Localizing pathnames
+
+If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
+
+```js filename="next.config.js" {8-9}
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  experimental: {appDir: true},
+  rewrites() {
+    return [
+      {
+        source: '/de/über',
+        destination: '/de/about'
+      }
+    ];
+  }
+});
+```
+
+Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
+
+1. Translate the pathnames you're passing to routing APIs like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-named-routes/) that uses the proposed [routing APIs from the Server Components beta](http://localhost:3000/docs/next-13/server-components#routing).
+2. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
