@@ -1,6 +1,6 @@
 import Callout from 'components/Callout';
 
-# Usage in Client Components
+# Next.js 13: Internationalization (i18n) in Client Components
 
 `next-intl` is available in the `app` directory from version `2.10.0` onwards.
 
@@ -35,7 +35,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 
 2. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`.
 
-```tsx filename="app/[locale]/layout.tsx"
+```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl/client';
 import {notFound} from 'next/navigation';
 
@@ -81,12 +81,11 @@ export default function Index() {
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 
-// The middleware intercepts requests to `/` and will redirect
-// to the best matching locale instead (e.g. `/en`). A cookie
-// is set in the background, so if the user switches to a new
-// language, this will take precedence from now on.
 export default createMiddleware({
+  // A list of all locales that are supported
   locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
   defaultLocale: 'en'
 });
 

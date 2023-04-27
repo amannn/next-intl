@@ -1,0 +1,9 @@
+{
+  "index": {
+    "title": "next-intl blog"
+  },
+  "translations-outside-of-react-components": {
+    "title": "How (not) to use translations outside of React components",
+    "display": "hidden"
+  }
+}

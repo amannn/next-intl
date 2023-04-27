@@ -138,53 +138,78 @@ function datesTimesNumbers() {
 
 function typeSafe() {
   return (
-    <code data-language="sh" data-theme="default">
+    <code data-language="tsx" data-theme="default">
       <span className="line">
+        <span style={{color: 'var(--shiki-token-keyword)'}}>function</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> </span>
+        <span style={{color: 'var(--shiki-token-function)'}}>UserDetails</span>
         <span style={{color: 'var(--shiki-color-text)'}}>
-          Found 1 error in UserDetails.tsx:13
+          ({'{'}user{'}'}) {'{'}
         </span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> </span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>t</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> </span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> </span>
+        <span style={{color: 'var(--shiki-token-function)'}}>
+          useTranslations
+        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          'UserDetails'
+        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>);</span>
       </span>
       <span className="line"> </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>&lt;</span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>return</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> (</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          h1&gt;
+          section
         </span>
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {'{'}t('titel'){'}'}
-        </span>
-        <span style={{color: 'var(--shiki-color-text)'}}>&lt;/</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>h1</span>
         <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-token-keyword)'}}>
-          {'         '}~~~~~~~
+        <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
+        <span style={{color: 'var(--shiki-token-function)'}}>t</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>(</span>
+        <span
+          className="relative"
+          style={{color: 'var(--shiki-token-string-expression)'}}
+        >
+          {"''"}
+          <div className="absolute top-0 left-2 h-full border-l-[1.5px] border-slate-400" />
+          <div className="absolute top-[calc(100%+2px)] left-2 min-w-[8rem] rounded-sm border border-slate-300 bg-slate-100 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+            <div className="bg-sky-100 p-1 dark:bg-slate-600">title</div>
+            <div className="p-1">followers</div>
+          </div>
         </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>){'}'}&lt;/</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
       </span>
       <span className="line">
-        <span> </span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>Argument of type</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;/</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "titel"
+          section
         </span>
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {' '}
-          is not assignable
-        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          to parameter of type{' '}
-        </span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "title" | "description"
-        </span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'  '});</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
       </span>
     </code>
   );

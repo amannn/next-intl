@@ -76,7 +76,7 @@ export default {
     'https://github.com/amannn/next-intl/blob/main/packages/website',
   useNextSeoProps() {
     return {
-      titleTemplate: '%s – next-intl'
+      titleTemplate: '%s – Internationalization (i18n) for Next.js'
     };
   },
   primaryHue: {light: 210, dark: 195},

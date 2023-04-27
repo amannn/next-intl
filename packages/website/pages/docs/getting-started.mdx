@@ -9,7 +9,7 @@ import Callout from 'components/Callout';
 2. Set up [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing).
 3. Add the provider in `_app.js`.
 
-```jsx filename="_app.js"
+```jsx filename="_app.js" /NextIntlProvider/
 import {NextIntlProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
@@ -27,8 +27,8 @@ export default function App({Component, pageProps}) {
 export async function getStaticProps(context) {
   return {
     props: {
-      // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by locale.
+      // You can get the messages from anywhere you like. The recommended pattern
+      // is to put them in JSON files separated by locale (e.g. `en.json`).
       messages: (await import(`../../messages/${context.locale}.json`)).default
     }
   };
@@ -45,7 +45,7 @@ Even if you only support a single language, `next-intl` can still be helpful to 
 
 2. Add the provider in `_app.js`.
 
-```jsx filename="_app.js"
+```jsx filename="_app.js" /NextIntlProvider/
 import {NextIntlProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
@@ -65,8 +65,8 @@ export async function getStaticProps() {
 
   return {
     props: {
-      // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by locale.
+      // You can get the messages from anywhere you like. The recommended pattern
+      // is to put them in JSON files separated by locale (e.g. `en.json`).
       messages: (await import(`../../messages/${locale}.json`)).default
     }
   };
