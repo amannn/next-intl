@@ -1,9 +1,11 @@
 'use client';
 
+import url from 'url';
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import localizeHref from '../client/localizeHref';
+import isLocalURL from './isLocalUrl';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
@@ -26,7 +28,9 @@ function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   const pathname = usePathname();
 
   useEffect(() => {
-    setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
+    if (isLocalURL(href)) {
+      setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
+    }
   }, [href, locale, pathname]);
 
   if (locale !== undefined) {
@@ -41,10 +45,12 @@ function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
     }
 
     let localizedHrefString;
-    if (typeof localizedHref === 'string') {
-      localizedHrefString = localizedHref;
-    } else if (localizedHref) {
-      localizedHrefString = localizedHref.toString();
+    if (localizedHref) {
+      if (typeof localizedHref === 'string') {
+        localizedHrefString = localizedHref;
+      } else {
+        localizedHrefString = url.format(localizedHref);
+      }
     }
 
     return (
