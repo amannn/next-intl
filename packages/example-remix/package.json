@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "remix dev",
     "lint": "eslint app && tsc",
+    "test": "echo \"No tests yet\"",
     "build": "remix build",
     "postinstall": "remix setup node",
     "start": "remix-serve build"

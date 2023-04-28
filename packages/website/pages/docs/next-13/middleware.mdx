@@ -213,7 +213,7 @@ middleware(request: NextRequest): NextResponse
 If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, or modify the response that is returned.
 
 ```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
+import createIntlMiddleware from 'next-intl/middleware';
 import {NextFetchEvent, NextMiddleware, NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
@@ -221,7 +221,7 @@ export default async function middleware(request: NextRequest) {
   request.headers.set('x-test', 'test');
 
   // Step 2: Create and call the next-intl middleware
-  const handleI18nRouting = createMiddleware({
+  const handleI18nRouting = createIntlMiddleware({
     locales: ['en', 'de'],
     defaultLocale: 'en'
   });
