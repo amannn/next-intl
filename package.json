@@ -6,12 +6,7 @@
     "prerelease": "lerna publish prerelease --yes --no-verify-access --dist-tag next --no-changelog --no-git-tag-version"
   },
   "workspaces": [
-    "packages/use-intl",
-    "packages/next-intl",
-    "packages/example",
-    "packages/example-next-13",
-    "packages/example-advanced",
-    "packages/website"
+    "packages/*"
   ],
   "devDependencies": {
     "lerna": "4.0.0"
