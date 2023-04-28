@@ -165,7 +165,7 @@ Note that in this case other detection mechanisms will remain in place regardles
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, you can opt-out of this behaviour.
+If you prefer to include these links yourself, you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -201,3 +201,40 @@ Since `next-intl` isn't aware of the rewrites you've configured, you likely want
 
 1. Translate the pathnames you're passing to routing APIs like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-named-routes/) that uses the proposed [routing APIs from the Server Components beta](http://localhost:3000/docs/next-13/server-components#routing).
 2. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+
+## Composing other middlewares
+
+By calling `createMiddleware`, you'll receive a function of the following type:
+
+```tsx
+middleware(request: NextRequest): NextResponse
+```
+
+If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, or modify the response that is returned.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {NextFetchEvent, NextMiddleware, NextRequest} from 'next/server';
+
+export default async function middleware(request: NextRequest) {
+  // Step 1: Potentially change the incoming request
+  request.headers.set('x-test', 'test');
+
+  // Step 2: Create and call the next-intl middleware
+  const handleI18nRouting = createMiddleware({
+    locales: ['en', 'de'],
+    defaultLocale: 'en'
+  });
+  const response = handleI18nRouting(request);
+
+  // Step 3: Potentially change the response
+  response.headers.set('x-test', 'test');
+
+  return response;
+}
+
+export const config = {
+  // Skip all paths that should not be internationalized
+  matcher: ['/((?!_next|.*\\..*).*)']
+};
+```
