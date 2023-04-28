@@ -1,0 +1,27 @@
+{
+  "Index": {
+    "title": "Startseite",
+    "loggedIn": "Angemeldet als {username}",
+    "loggedOut": "Du bist abgemeldet.",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "secret": "Geheime Seite für angemeldete Benutzer"
+  },
+  "LocaleLayout": {
+    "title": "next-intl mit Auth.js Beispiel"
+  },
+  "Login": {
+    "title": "Anmelden",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "error": "{error, select, CredentialsSignin {Ungültiger Benutzername oder Passwort} other {Unbekannter Fehler}}"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
+  },
+  "Secret": {
+    "title": "Geheime Seite",
+    "description": "Diese Seite ist nur für angemeldete Benutzer sichtbar."
+  }
+}
