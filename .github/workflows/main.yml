@@ -20,6 +20,7 @@ jobs:
       - run: yarn workspace example run build
       - run: yarn workspace example-advanced run build
       - run: yarn workspace example-next-13 run build
+      - run: yarn workspace example-next-13-next-auth run build
 
       - run: yarn workspaces run lint
       - run: yarn workspaces run test
