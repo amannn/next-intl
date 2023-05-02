@@ -36,7 +36,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 2. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`.
 
 ```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
-import {NextIntlClientProvider} from 'next-intl/client';
+import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 export function generateStaticParams() {
