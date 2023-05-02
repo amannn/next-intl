@@ -1,0 +1,21 @@
+.root {
+  @apply ml-4 border-l border-slate-200 pl-8;
+  counter-reset: step;
+}
+
+.root h3 {
+  counter-increment: step;
+  @apply text-lg;
+}
+.root h3:before {
+  content: counter(step);
+  @apply absolute mt-[-6px] ml-[-52px] inline-block h-10 w-10 rounded-full border-4 border-white bg-slate-100 pt-[4px] text-center text-base font-bold text-slate-500;
+}
+
+:global(.dark) .root {
+  @apply border-slate-800;
+}
+:global(.dark) .root h3:before {
+  @apply bg-slate-800 text-white/75;
+  border-color: rgba(17, 17, 17, var(--tw-bg-opacity)); /* nx-bg-dark */
+}
