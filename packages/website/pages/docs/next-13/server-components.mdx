@@ -1,4 +1,5 @@
 import Callout from 'components/Callout';
+import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Server Components
 
@@ -13,7 +14,7 @@ Next.js 13 introduces support for [React Server Components](https://beta.nextjs.
 ## Current beta version
 
 ```
-npm install next-intl@2.14.0-beta.2
+npm install next-intl@2.14.0-beta.3
 ```
 
 This beta version was tested with `next@13.3.0`.
@@ -56,7 +57,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the App Route
 
 **Now, set up the files as follows:**
 
-<div className="steps">
+<Steps>
 
 ### `messages/en.json`
 
@@ -158,7 +159,7 @@ export default function Index() {
 }
 ```
 
-</div>
+</Steps>
 
 That's all it takes! Now you can internationalize your apps on the server side.
 

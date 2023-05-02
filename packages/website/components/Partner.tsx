@@ -2,7 +2,7 @@ const name = 'Crowdin';
 const slogan = 'Agile localization for tech companies';
 const link = 'https://crowdin.com/';
 
-function Logo({height = 33}) {
+function Logo({height = 33}: {height?: number}) {
   return (
     <svg
       className="text-[#263238] dark:text-white"

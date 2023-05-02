@@ -11,10 +11,7 @@ module.exports = {
     browser: true
   },
   rules: {
-    'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
-    'react/display-name': 'off',
     'import/no-unresolved': 'off'
   }
 };

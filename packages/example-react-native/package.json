@@ -5,6 +5,9 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
+    "lint": "echo \"No linting configured\"",
+    "test": "echo \"No tests configured\"",
+    "build": "echo \"No build configured\"",
     "ios": "expo start --ios",
     "web": "expo start --web"
   },

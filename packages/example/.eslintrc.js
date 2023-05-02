@@ -5,8 +5,5 @@ module.exports = {
     'molindo/typescript',
     'molindo/react',
     'plugin:@next/next/recommended'
-  ],
-  rules: {
-    'react/react-in-jsx-scope': 'off'
-  }
+  ]
 };

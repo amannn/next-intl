@@ -8,8 +8,5 @@ module.exports = {
   ],
   env: {
     node: true
-  },
-  rules: {
-    'react/react-in-jsx-scope': 'off'
   }
 };
