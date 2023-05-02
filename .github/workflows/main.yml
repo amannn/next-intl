@@ -17,10 +17,10 @@ jobs:
       # The order matters here
       - run: yarn workspace use-intl run build
       - run: yarn workspace next-intl run build
-      - run: yarn workspace example run build
-      - run: yarn workspace example-advanced run build
-      - run: yarn workspace example-next-13 run build
-      - run: yarn workspace example-next-13-next-auth run build
+      - run: yarn workspace example run build --no-lint
+      - run: yarn workspace example-advanced run build --no-lint
+      - run: yarn workspace example-next-13 run build --no-lint
+      - run: yarn workspace example-next-13-next-auth run build --no-lint
 
       - run: yarn workspaces run lint
       - run: yarn workspaces run test
