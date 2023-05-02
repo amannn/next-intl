@@ -15992,10 +15992,10 @@ next-mdx-remote@^4.2.1:
     vfile "^5.3.0"
     vfile-matter "^3.0.1"
 
-next-seo@^5.5.0:
-  version "5.15.0"
-  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-5.15.0.tgz#b1a90508599774982909ea44803323c6fb7b50f4"
-  integrity sha512-LGbcY91yDKGMb7YI+28n3g+RuChUkt6pXNpa8FkfKkEmNiJkeRDEXTnnjVtwT9FmMhG6NH8qwHTelGrlYm9rgg==
+next-seo@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/next-seo/-/next-seo-6.0.0.tgz#4568dc61a44dbdf5fe5ff44156cd0ff8804889a2"
+  integrity sha512-jKKt1p1z4otMA28AyeoAONixVjdYmgFCWwpEFtu+DwRHQDllVX3RjtyXbuCQiUZEfQ9rFPBpAI90vDeLZlMBdg==
 
 next-sitemap@4.0.7:
   version "4.0.7"
@@ -16032,10 +16032,10 @@ next@13.3.0, next@^13.3.0:
     "@next/swc-win32-ia32-msvc" "13.3.0"
     "@next/swc-win32-x64-msvc" "13.3.0"
 
-nextra-theme-docs@^2.2.19:
-  version "2.2.19"
-  resolved "https://registry.yarnpkg.com/nextra-theme-docs/-/nextra-theme-docs-2.2.19.tgz#b9d9176e32bd15f756898e8b51492f11396f7be9"
-  integrity sha512-+5PcNgHwxwSAmQZlbV2cbjbvxj7CPYnN44OtWNxHQ8L3dzlw6fUyIJtyCUcGbDHpFC3sHmwYgB3OCWH8m4P35Q==
+nextra-theme-docs@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/nextra-theme-docs/-/nextra-theme-docs-2.4.2.tgz#40519660073481c783d3a172eb3d9ed44b7f123d"
+  integrity sha512-5H6NJ38TlbgetNx9HjMmQcNpsp6GFH26TfjLVC0RWxhEPuoutSFpJ8RjWKXv6WEaWaL500CoErW0/DeXzuQGUg==
   dependencies:
     "@headlessui/react" "^1.7.10"
     "@popperjs/core" "^2.11.6"
@@ -16045,15 +16045,15 @@ nextra-theme-docs@^2.2.19:
     git-url-parse "^13.1.0"
     intersection-observer "^0.12.2"
     match-sorter "^6.3.1"
-    next-seo "^5.5.0"
+    next-seo "^6.0.0"
     next-themes "^0.2.1"
     scroll-into-view-if-needed "^3.0.0"
     zod "^3.20.2"
 
-nextra@^2.2.19:
-  version "2.2.19"
-  resolved "https://registry.yarnpkg.com/nextra/-/nextra-2.2.19.tgz#79bf4d8dfa48e14867de2db153ac08e2b230474f"
-  integrity sha512-QmgbJvT1lfmFCM8n5gfGTA5p8efw20N/oZP9ojBhWhmatq/PwAp7VoSeTan6TT9Yspv6PmnrgpqKhYGzPSkFVw==
+nextra@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/nextra/-/nextra-2.4.2.tgz#f9f130f1b47727ef661fa2ad63033e9d7c9960be"
+  integrity sha512-FH2BTCF8q3aBtc1w1pj1N6LMFyiMP5KL+w6Ph4s2M5FwTtv150dSNWWw5Hy2GgxLTi391B/CRkO31OCjp9trkA==
   dependencies:
     "@mdx-js/mdx" "^2.3.0"
     "@mdx-js/react" "^2.3.0"
@@ -16066,7 +16066,7 @@ nextra@^2.2.19:
     next-mdx-remote "^4.2.1"
     p-limit "^3.1.0"
     rehype-katex "^6.0.2"
-    rehype-pretty-code "0.9.3"
+    rehype-pretty-code "0.9.4"
     remark-gfm "^3.0.1"
     remark-math "^5.1.1"
     remark-reading-time "^2.0.1"
@@ -16075,6 +16075,7 @@ nextra@^2.2.19:
     title "^3.5.3"
     unist-util-remove "^3.1.1"
     unist-util-visit "^4.1.1"
+    zod "^3.20.2"
 
 nice-try@^1.0.4:
   version "1.0.5"
@@ -18960,10 +18961,10 @@ rehype-parse@^8.0.0:
     parse5 "^6.0.0"
     unified "^10.0.0"
 
-rehype-pretty-code@0.9.3:
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/rehype-pretty-code/-/rehype-pretty-code-0.9.3.tgz#484f3fefea89abde8914afea2f3ce42995755938"
-  integrity sha512-57i+ifrttqpeQxub0NZ2pRw0aiUPYeBpr234NLWfZ4BfbEaP+29+iCXB1rUMkzoPi6IBC4w4I93mUPgw36IajQ==
+rehype-pretty-code@0.9.4:
+  version "0.9.4"
+  resolved "https://registry.yarnpkg.com/rehype-pretty-code/-/rehype-pretty-code-0.9.4.tgz#ab214026b530890c7a2e14c4f0881483e39e9cbc"
+  integrity sha512-3m4aQT15n8C+UizcZL0enaahoZwCDm5K1qKQ3DGgHE7U8l/DEEEJ/hm+uDe9yyK4sxVOSfZcRIMHrpJwLQi+Rg==
   dependencies:
     hash-obj "^4.0.0"
     parse-numeric-range "^1.3.0"
