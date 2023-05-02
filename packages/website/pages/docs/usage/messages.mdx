@@ -207,7 +207,8 @@ You can interpolate values from your components into your messages with a specia
   "interpolation": "Hello {name}!",
   "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
   "select": "{gender, select, female {She} male {He} other {They}} is online.",
-  "selectordinal": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+  "selectordinal": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+  "escaped": "Escape curly braces with single quotes (e.g. '{name'})"
 }
 ```
 
@@ -219,6 +220,7 @@ t('interpolation', {name: 'Jane'});
 t('plural', {numMessages: 3});
 t('select', {gender: 'female'});
 t('selectordinal', {year: 11});
+t('escaped');
 ```
 
 <Callout>

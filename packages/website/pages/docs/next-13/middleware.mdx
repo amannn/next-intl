@@ -165,7 +165,7 @@ Note that in this case other detection mechanisms will remain in place regardles
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, you can opt-out of this behaviour.
+If you prefer to include these links yourself, e.g. because you're using [locale-specific rewrites](#localizing-pathnames), you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -201,3 +201,104 @@ Since `next-intl` isn't aware of the rewrites you've configured, you likely want
 
 1. Translate the pathnames you're passing to routing APIs like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-named-routes/) that uses the proposed [routing APIs from the Server Components beta](http://localhost:3000/docs/next-13/server-components#routing).
 2. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+
+## Composing other middlewares
+
+By calling `createMiddleware`, you'll receive a function of the following type:
+
+```tsx
+middleware(request: NextRequest): NextResponse
+```
+
+If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, or modify the response that is returned.
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+import {NextFetchEvent, NextMiddleware, NextRequest} from 'next/server';
+
+export default async function middleware(request: NextRequest) {
+  // Step 1: Use the incoming request
+  const defaultLocale = request.headers.get('x-default-locale') || 'en';
+
+  // Step 2: Create and call the next-intl middleware
+  const handleI18nRouting = createIntlMiddleware({
+    locales: ['en', 'de'],
+    defaultLocale
+  });
+  const response = handleI18nRouting(request);
+
+  // Step 3: Alter the response
+  response.headers.set('x-default-locale', defaultLocale);
+
+  return response;
+}
+
+export const config = {
+  // Skip all paths that should not be internationalized
+  matcher: ['/((?!_next|.*\\..*).*)']
+};
+```
+
+### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
+
+The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration into their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
+
+For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and run only the `next-intl` middleware in this case.
+
+```tsx filename="middleware.ts"
+import {withAuth} from 'next-auth/middleware';
+import createIntlMiddleware from 'next-intl/middleware';
+import {NextRequest} from 'next/server';
+
+const locales = ['en', 'de'];
+const publicPages = ['/', '/login'];
+
+const intlMiddleware = createIntlMiddleware({
+  locales,
+  defaultLocale: 'en'
+});
+
+const authMiddleware = withAuth(
+  // Note that this callback is only invoked if
+  // the `authorized` callback has returned `true`
+  // and not for pages listed in `pages`.
+  function onSuccess(req) {
+    return intlMiddleware(req);
+  },
+  {
+    callbacks: {
+      authorized: ({token}) => token != null
+    },
+    pages: {
+      signIn: '/login'
+    }
+  }
+);
+
+export default function middleware(req: NextRequest) {
+  const publicPathnameRegex = RegExp(
+    `^(/(${locales.join('|')}))?(${publicPages.join('|')})?/?$`,
+    'i'
+  );
+  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+
+  if (isPublicPage) {
+    return intlMiddleware(req);
+  } else {
+    return (authMiddleware as any)(req);
+  }
+}
+
+export const config = {
+  // Skip all paths that should not be internationalized
+  matcher: ['/((?!api|_next|.*\\..*).*)']
+};
+```
+
+<Callout>
+
+There's a working [example that combines `next-intl` with Auth.js](https://github.com/amannn/next-intl/tree/main/packages/example-next-13-next-auth) on GitHub.
+
+</Callout>
+
+Many thanks to [narakhan](https://github.com/narakhan) for [sharing his middleware implementation](https://github.com/amannn/next-intl/pull/149#issuecomment-1509990635)!
