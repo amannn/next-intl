@@ -69,6 +69,11 @@ it('handles basic interpolation', () => {
   screen.getByText('Hello Jane');
 });
 
+it('can escape curly brackets', () => {
+  renderMessage("Hello '{name'}");
+  screen.getByText('Hello {name}');
+});
+
 it('handles number formatting with percent', () => {
   renderMessage('{value, number, percent}', {value: 0.312});
   screen.getByText('31%');
