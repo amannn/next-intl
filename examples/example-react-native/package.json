@@ -15,8 +15,8 @@
     "@expo/webpack-config": "^0.17.2",
     "expo": "~47.0.12",
     "expo-status-bar": "~1.4.2",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
+    "react": "~18.1.0",
+    "react-dom": "~18.1.0",
     "react-native": "^0.70.5",
     "react-native-web": "~0.18.9",
     "use-intl": "workspace:*"

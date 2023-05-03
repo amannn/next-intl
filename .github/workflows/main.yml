@@ -6,6 +6,9 @@ jobs:
   build:
     name: Build, lint, and test
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
@@ -31,6 +34,6 @@ jobs:
           pnpm --filter example-next-13 exec playwright install --with-deps
           pnpm --filter example-next-13-next-auth exec playwright install --with-deps
 
-      - run: pnpm --recursive build
-      - run: pnpm --recursive lint
-      - run: pnpm --recursive test
+      - run: pnpm run build
+      - run: pnpm run lint
+      - run: pnpm run test
