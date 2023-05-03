@@ -16,8 +16,21 @@ jobs:
           node-version: 18.x
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm --filter example-next-13 exec playwright install --with-deps
-      - run: pnpm --filter example-next-13-next-auth exec playwright install --with-deps
+
+      # Playwright
+      - run: |
+          PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep /@playwright/test@ | sed 's/.*@\([^:]*\):.*/\1/')
+          echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        id: cache-playwright-browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
+      - if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
+        run: |
+          pnpm --filter example-next-13 exec playwright install --with-deps
+          pnpm --filter example-next-13-next-auth exec playwright install --with-deps
+
       - run: pnpm --recursive build
       - run: pnpm --recursive lint
       - run: pnpm --recursive test
