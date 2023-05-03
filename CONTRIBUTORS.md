@@ -7,9 +7,8 @@ Thank you so much for contributing to `next-intl`!
 ```sh
 git clone git@github.com:amannn/next-intl.git
 cd next-intl
-yarn install
-yarn workspace use-intl run build
-yarn workspace next-intl run build
+pnpm install
+pnpm prepare
 ```
 
 Now, you're all set and you can work on individual packages.
