@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "bootstrap": "pnpm --filter './packages/**' build",
+    "prepare": "turbo run build --filter './packages/**'",
     "publish": "lerna publish --yes --no-verify-access",
     "prerelease": "lerna publish prerelease --yes --no-verify-access --dist-tag next --no-changelog --no-git-tag-version"
   },

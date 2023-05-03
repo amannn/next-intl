@@ -4,11 +4,12 @@ Thank you so much for contributing to `next-intl`!
 
 ## Local setup
 
+Make sure you have [pnpm](https://pnpm.io/) installed.
+
 ```sh
 git clone git@github.com:amannn/next-intl.git
 cd next-intl
 pnpm install
-pnpm bootstrap
 ```
 
 Now, you're all set and you can work on individual packages.

@@ -3,7 +3,6 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["UMAMI_URL"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "test": {
