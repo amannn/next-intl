@@ -16,7 +16,8 @@ jobs:
           node-version: 18.x
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm playwright install --with-deps
+      - run: pnpm --filter example-next-13 exec playwright install --with-deps
+      - run: pnpm --filter example-next-13-next-auth exec playwright install --with-deps
       - run: pnpm --recursive build
       - run: pnpm --recursive lint
       - run: pnpm --recursive test
