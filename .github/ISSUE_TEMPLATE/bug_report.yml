@@ -13,7 +13,6 @@ body:
         Please note:
         1. Bug reports without a reproduction may be closed immediately.
         2. General usage questions are not bug reports. Please [submit usage questions on Stack Overflow](https://stackoverflow.com/questions/ask) instead.
-        
         Creating a good bug report takes time, please make sure your [reproduction is minimal](https://stackoverflow.com/help/minimal-reproducible-example).
   - type: textarea
     attributes:
