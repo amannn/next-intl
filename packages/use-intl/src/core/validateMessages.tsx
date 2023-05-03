@@ -34,9 +34,43 @@ export default function validateMessages(
     onError(
       new IntlError(
         IntlErrorCode.INVALID_KEY,
-        `Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid ${
-          invalidKeyLabels.length === 1 ? 'key' : 'keys'
-        }: ${invalidKeyLabels.join(', ')}`
+        process.env.NODE_ENV !== 'production'
+          ? `Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.
+
+Invalid ${
+              invalidKeyLabels.length === 1 ? 'key' : 'keys'
+            }: ${invalidKeyLabels.join(', ')}
+
+If you're migrating from a flat structure, you can convert your messages as follows:
+
+import {set} from "lodash";
+
+const input = {
+  "one.one": "1.1",
+  "one.two": "1.2",
+  "two.one.one": "2.1.1"
+};
+
+const output = Object.entries(input).reduce(
+  (acc, [key, value]) => set(acc, key, value),
+  {}
+);
+
+// Output:
+//
+// {
+//   "one": {
+//     "one": "1.1",
+//     "two": "1.2"
+//   },
+//   "two": {
+//     "one": {
+//       "one": "2.1.1"
+//     }
+//   }
+// }
+`
+          : undefined
       )
     );
   }

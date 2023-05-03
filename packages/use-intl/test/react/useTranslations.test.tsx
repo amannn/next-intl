@@ -663,20 +663,37 @@ describe('error handling', () => {
   it('warns for invalid namespace keys', () => {
     const onError = jest.fn();
 
-    render(
+    function Component() {
+      return (
+        <>
+          <p>{useTranslations('a.b')('c.d')}</p>
+          <p>{useTranslations('a.b')('e')}</p>
+          <p>{useTranslations('f')('g.h.j')}</p>
+          <p>{useTranslations('f.g')('h.j')}</p>
+          <p>{useTranslations('f.g.h')('j')}</p>
+          <p>{useTranslations()('f.g.h.j')}</p>
+        </>
+      );
+    }
+
+    const {container} = render(
       <IntlProvider
         locale="en"
         messages={{'a.b': {'c.d': 'ABCD', e: 'E'}, f: {g: {'h.j': 'FGHJ'}}}}
         onError={onError}
       >
-        <span />
+        <Component />
       </IntlProvider>
     );
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_KEY);
-    expect(error.message).toBe(
+    expect(error.message.split('\n').slice(0, 3).join('\n')).toBe(
       'INVALID_KEY: Namespace keys can not contain the character "." as this is used to express nesting. Please remove it or replace it with another character.\n\nInvalid keys: a.b, c.d (at a.b), h.j (at f.g)'
+    );
+
+    expect(container.innerHTML).toBe(
+      '<p>a.b.c.d</p><p>a.b.e</p><p>f.g.h.j</p><p>f.g.h.j</p><p>f.g.h.j</p><p>f.g.h.j</p>'
     );
   });
 

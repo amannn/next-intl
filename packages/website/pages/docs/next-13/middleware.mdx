@@ -241,7 +241,7 @@ export const config = {
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
-The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration into their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
+The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
 
 For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and run only the `next-intl` middleware in this case.
 

@@ -1,15 +1,47 @@
 import Callout from 'components/Callout';
+import {
+  BeakerIcon,
+  LinkIcon,
+  RectangleGroupIcon,
+  BoltIcon,
+  SparklesIcon
+} from '@heroicons/react/24/outline';
+import {Card, Cards} from 'nextra-theme-docs';
 
 # Next.js 13 internationalization (i18n)
 
 With the introduction of [the App Router](https://beta.nextjs.org/docs/routing/fundamentals) (i.e. the `app` directory), Next.js 13 provides a new level of flexibility for React apps and new possibilities when it comes to internationalization (i18n).
 
-There are two major changes that affect `next-intl`:
+There are two major changes that affect the usage of `next-intl`:
 
-1. Next.js is removing their built-in internationalized routing, leaving the implementation of this up to the user. To fill in the gap, `next-intl` provides a [drop-in middleware replacement for i18n routing](/docs/next-13/middleware), handling the locale negotiation, redirects, rewrites and cookies.
-2. Next.js now supports **React Server Components**.
+1. Next.js has removed their built-in internationalized routing
+2. Next.js now supports React Server Components
 
-There are currently two ways how you can set your app up with `next-intl` in the `app` directory:
+To fill in the gaps and to leverage the new capabilities, `next-intl` now supports:
 
-1. [Deferring the usage of `next-intl` to Client Components](/docs/next-13/client-components) (stable, recommended when you migrate)
-2. [Using `next-intl` in Server Components](/docs/next-13/server-components) (beta)
+<Cards num={2}>
+  <Card
+    arrow
+    icon={<RectangleGroupIcon />}
+    title="Client Components"
+    href="/docs/next-13/client-components"
+  />
+  <Card
+    arrow
+    icon={<SparklesIcon />}
+    title="Server Components (beta)"
+    href="/docs/next-13/server-components"
+  />
+  <Card
+    arrow
+    icon={<BoltIcon />}
+    title="Middleware for i18n routing"
+    href="/docs/next-13/middleware"
+  />
+  <Card
+    arrow
+    icon={<LinkIcon />}
+    title="Localized routing APIs (beta)"
+    href="/docs/next-13/server-components#routing"
+  />
+</Cards>

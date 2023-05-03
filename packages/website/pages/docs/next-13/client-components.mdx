@@ -1,8 +1,9 @@
 import Callout from 'components/Callout';
+import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Client Components
 
-`next-intl` is available in the `app` directory from version `2.10.0` onwards.
+Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. While support for Server Components in `next-intl` is [on the horizon](/docs/next-13/server-components), you can continue to use `next-intl` in the `app` directory by deferring the usage of internationalization to Client Components.
 
 ## Getting started
 
@@ -14,16 +15,22 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 ├── messages (1)
 │   ├── en.json
 │   └── ...
-├── app
-│   └── [locale]
-│       ├── layout.tsx (2)
-│       └── page.tsx (3)
-└── middleware.ts (4)
+├── middleware.ts (2)
+└── app
+    └── [locale]
+        ├── layout.tsx (3)
+        └── page.tsx (4)
 ```
 
 **Now, set up these files as follows:**
 
-1. Set up messages for a language, e.g. in `messages/en.json`.
+<Steps>
+
+### `messages/en.json`
+
+Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+
+The simplest option is to create JSON files locally based on locales, e.g. `en.json`.
 
 ```json filename="messages/en.json"
 {
@@ -33,7 +40,30 @@ If you haven't done so already, [create a Next.js 13 app that uses the `app` dir
 }
 ```
 
-2. Provide the document layout and set up `NextIntlClientProvider` in `app/[locale]/layout.tsx`.
+### `middleware.ts`
+
+[The middleware](/docs/next-13/middleware) matches a locale for the request and handles redirects and rewrites accordingly.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en'
+});
+
+export const config = {
+  // Skip all paths that should not be internationalized
+  matcher: ['/((?!api|_next|.*\\..*).*)']
+};
+```
+
+### `app/[locale]/layout.tsx`
+
+Provide the document layout and set up `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
@@ -63,7 +93,9 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-3. Turn your component in `app/[locale]/page.tsx` into a Client Component to be able to use translations.
+### `app/[locale]/page.tsx`
+
+Turn your page component into a Client Component to be able to use translations.
 
 ```tsx filename="app/[locale]/page.tsx"
 'use client';
@@ -76,24 +108,7 @@ export default function Index() {
 }
 ```
 
-4. Set up [the i18n routing middleware](/docs/next-13/middleware) in `middleware.ts`. The middleware matches the locale of the request and handles redirects and rewrites accordingly.
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales: ['en', 'de'],
-
-  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
-  defaultLocale: 'en'
-});
-
-export const config = {
-  // Skip all paths that should not be internationalized
-  matcher: ['/((?!api|_next|.*\\..*).*)']
-};
-```
+</Steps>
 
 That's all you need to do to start using translations in the `app` directory!
 
@@ -164,9 +179,8 @@ import {createTranslator} from 'next-intl';
 export async function generateMetadata({params: {locale}}) {
   const messages = (await import(`../../../messages/${locale}.json`)).default;
 
-  // You can use the core (non-React) APIs when you have to use next-intl
-  // outside of components. Potentially this will be simplified in the future
-  // (see https://next-intl-docs.vercel.app/docs/next-13/server-components).
+  // You can use the core (non-React) APIs when you
+  // have to use next-intl outside of components.
   const t = createTranslator({locale, messages});
 
   return {
