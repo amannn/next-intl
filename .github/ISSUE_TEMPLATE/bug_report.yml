@@ -6,10 +6,15 @@ labels:
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to file a bug report! Please fill out this form completely.
+      value: Thanks for taking the time to file a bug report!
   - type: markdown
     attributes:
-      value: Note that if you leave out sections it's unlikely that your bug will get fixed and the issue will be closed. Thank you for your understanding.
+      value: |
+        Please note:
+        1. Bug reports without a reproduction may be closed immediately.
+        2. General usage questions are not bug reports. Please [submit usage questions on Stack Overflow](https://stackoverflow.com/questions/ask) instead.
+        
+        Creating a good bug report takes time, please make sure your [reproduction is minimal](https://stackoverflow.com/help/minimal-reproducible-example).
   - type: textarea
     attributes:
       label: Description
@@ -19,7 +24,7 @@ body:
   - type: input
     attributes:
       label: Mandatory reproduction URL (CodeSandbox or GitHub repository)
-      description: Here's [a template to get you started](https://codesandbox.io/p/sandbox/holy-lake-krm37f?file=%2Fsrc%2Fpages%2Findex.tsx).
+      description: Templates: [CodeSandbox (pages)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f), [CodeSandbox (app)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
     validations:
       required: true
   - type: textarea
