@@ -301,9 +301,6 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      remix:
-        specifier: ^1.15.0
-        version: 1.15.0
       use-intl:
         specifier: workspace:*
         version: link:../../packages/use-intl
@@ -18235,11 +18232,6 @@ packages:
       mdast-util-to-hast: 11.3.0
       unified: 10.1.2
     dev: true
-
-  /remix@1.15.0:
-    resolution: {integrity: sha512-Kn7PEa+nGkyHwiD8M6BFHLq4w//LTJnAfa1cjRLEXmDT6V5wFQoeVPrDFKqIomcFcKTKX7j5/hEnrn1dmf1BtA==}
-    engines: {node: '>=14'}
-    dev: false
 
   /remove-accents@0.4.2:
     resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}

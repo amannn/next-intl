@@ -25,6 +25,7 @@ jobs:
           PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep /@playwright/test@ | sed 's/.*@\([^:]*\):.*/\1/')
           echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
       - uses: actions/cache@v3
+        name: Restore playwright
         id: cache-playwright-browsers
         with:
           path: ~/.cache/ms-playwright

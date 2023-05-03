@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData
-} from 'remix';
+} from '@remix-run/react';
 import {IntlProvider} from 'use-intl';
 import {getMessages, resolveLocale} from './utils';
 
