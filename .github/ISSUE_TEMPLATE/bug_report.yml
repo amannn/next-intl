@@ -25,7 +25,7 @@ body:
     attributes:
       label: Mandatory reproduction URL (CodeSandbox or GitHub repository)
       description: |
-        Templates: [CodeSandbox (pages)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f), [CodeSandbox (app)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
+        Templates: [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f), [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
     validations:
       required: true
   - type: textarea
