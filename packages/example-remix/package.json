@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "example-remix",
-  "version": "0.0.1",
+  "version": "2.13.2",
   "scripts": {
     "dev": "remix dev",
     "lint": "eslint app && tsc",
@@ -17,7 +17,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "remix": "1.15.0",
-    "use-intl": "^2.13.1"
+    "use-intl": "^2.13.2"
   },
   "devDependencies": {
     "@remix-run/dev": "1.15.0",
