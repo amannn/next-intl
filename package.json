@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "node ./scripts/publish.js",
+    "publish": "lerna publish --yes --no-verify-access",
     "prerelease": "lerna publish prerelease --yes --no-verify-access --dist-tag next --no-changelog --no-git-tag-version"
   },
   "workspaces": [
