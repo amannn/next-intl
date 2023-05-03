@@ -1,4 +1,4 @@
-# website
+# docs
 
 Website for `next-intl`
 

@@ -11,7 +11,7 @@ importers:
         specifier: ^1.9.3
         version: 1.9.3
 
-  docs/website:
+  docs:
     dependencies:
       '@heroicons/react':
         specifier: ^2.0.17
@@ -41,10 +41,10 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2(next@13.3.4)(nextra@2.4.2)(react-dom@18.2.0)(react@18.2.0)
       react:
-        specifier: ^18.0.0
+        specifier: ^18.2.0
         version: 18.2.0
       react-dom:
-        specifier: ^18.0.0
+        specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       tailwindcss:
         specifier: ^3.2.4
