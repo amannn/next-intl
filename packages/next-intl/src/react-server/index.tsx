@@ -4,9 +4,12 @@ export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvide
 
 function notSupported() {
   throw new Error(
-    'The React APIs of next-intl are currently not available in Server Components.' +
-      '\n\n' +
-      'You can either try out the Server Components beta (see https://next-intl-docs.vercel.app/docs/next-13/server-components) or use the core library as a stopgap solution (see https://next-intl-docs.vercel.app/docs/usage/core-library).'
+    `The React APIs of next-intl are currently not available in Server Components.
+
+You can try one of these options:
+1. Try out the Server Components beta, see https://next-intl-docs.vercel.app/docs/next-13/server-components
+2. Use the core library as a stopgap solution, see https://next-intl-docs.vercel.app/docs/usage/core-library
+`
   );
 }
 
