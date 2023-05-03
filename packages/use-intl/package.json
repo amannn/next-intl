@@ -17,7 +17,7 @@
     "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "pnpm test && pnpm lint && pnpm build"
+    "prepublishOnly": "turbo test && turbo lint && turbo build"
   },
   "main": "dist/index.js",
   "module": "dist/use-intl.esm.js",
