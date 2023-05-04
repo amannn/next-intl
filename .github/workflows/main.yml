@@ -32,7 +32,7 @@ jobs:
           key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
       - if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
         # Setting up playwright in one example is sufficient
-        run: pnpm --filter example-next-13 exec playwright install --with-deps
+        run: pnpm --filter example-next-13-advanced exec playwright install --with-deps
 
       - run: pnpm run build
       - run: pnpm run lint
