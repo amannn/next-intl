@@ -17,7 +17,7 @@
     "@vercel/analytics": "^1.0.0",
     "clsx": "^1.2.1",
     "http-status-codes": "^2.2.0",
-    "next": "^13.3.4",
+    "next": "^13.4.0",
     "nextra": "^2.4.2",
     "nextra-theme-docs": "^2.4.2",
     "react": "^18.2.0",
@@ -25,11 +25,11 @@
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.2",
+    "@types/react": "^18.2.5",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
-    "eslint-config-next": "^13.3.1",
+    "eslint-config-next": "^13.4.0",
     "next-sitemap": "^4.0.7",
     "prettier-plugin-tailwindcss": "^0.2.3"
   }
