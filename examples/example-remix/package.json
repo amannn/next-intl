@@ -16,7 +16,7 @@
     "accept-language-parser": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "use-intl": "workspace:*"
+    "use-intl": "^2.13.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.15.0",
