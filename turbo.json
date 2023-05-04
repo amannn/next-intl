@@ -11,8 +11,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "test": {
-      "dependsOn": ["build"],
-      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts", "test/**/*.tsx"]
+      "dependsOn": ["build"]
     },
     "lint": {}
   }
