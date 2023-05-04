@@ -1,7 +1,9 @@
 *.log
 .DS_Store
-node_modules
-dist
+node_modules/
 .vscode
-.next
 .vercel
+.turbo/
+dist/
+.next/
+tsconfig.tsbuildinfo

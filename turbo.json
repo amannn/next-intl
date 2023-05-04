@@ -1,0 +1,21 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["UMAMI_URL", "NEXTAUTH_SECRET"],
+      "outputs": [
+        "dist/**/*.ts",
+        "dist/**/*.tsx",
+        "dist/**/*.mjs",
+        "dist/**/*.js",
+        ".next/**",
+        "!.next/cache/**"
+      ]
+    },
+    "test": {
+      "dependsOn": ["build"]
+    },
+    "lint": {}
+  }
+}
