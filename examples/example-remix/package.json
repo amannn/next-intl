@@ -16,12 +16,12 @@
     "accept-language-parser": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "use-intl": "workspace:*"
+    "use-intl": "^2.13.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.15.0",
     "@types/accept-language-parser": "^1.5.3",
-    "@types/react": "^18.2.0",
+    "@types/react": "^18.2.5",
     "@types/react-dom": "^18.2.1",
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
