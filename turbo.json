@@ -3,6 +3,7 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["UMAMI_URL", "NEXTAUTH_SECRET"],
       "outputs": [
         "dist/**/*.ts",
         "dist/**/*.tsx",
@@ -11,11 +12,6 @@
         ".next/**",
         "!.next/cache/**"
       ]
-    },
-    "docs#build": {
-      "dependsOn": ["^build"],
-      "env": ["UMAMI_URL"],
-      "outputs": [".next/**", "!.next/cache/**"]
     },
     "test": {
       "dependsOn": ["build"]
