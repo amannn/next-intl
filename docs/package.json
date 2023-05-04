@@ -1,0 +1,36 @@
+{
+  "name": "docs",
+  "version": "2.13.2",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "lint": "eslint pages components",
+    "test": "echo 'No tests yet'",
+    "build": "next build",
+    "postbuild": "next-sitemap",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.0.17",
+    "@next/font": "^13.1.6",
+    "@tailwindcss/typography": "^0.5.9",
+    "@vercel/analytics": "^1.0.0",
+    "clsx": "^1.2.1",
+    "http-status-codes": "^2.2.0",
+    "next": "^13.3.4",
+    "nextra": "^2.4.2",
+    "nextra-theme-docs": "^2.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.2",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.39.0",
+    "eslint-config-molindo": "^6.0.0",
+    "eslint-config-next": "^13.3.1",
+    "next-sitemap": "^4.0.7",
+    "prettier-plugin-tailwindcss": "^0.2.3"
+  }
+}

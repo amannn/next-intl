@@ -24,10 +24,10 @@ export default function createTranslator<
     NestedKeyOf<IntlMessages>
   > = never
 >({
-  onError = defaultOnError,
   getMessageFallback = defaultGetMessageFallback,
   messages,
   namespace,
+  onError = defaultOnError,
   ...rest
 }: Omit<IntlConfig<IntlMessages>, 'defaultTranslationValues' | 'messages'> & {
   messages: NonNullable<IntlConfig<IntlMessages>['messages']>;

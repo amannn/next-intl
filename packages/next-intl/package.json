@@ -11,12 +11,12 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "yarn build:default && yarn build:rsc",
+    "build": "pnpm build:default && pnpm build:rsc",
     "build:default": "rm -rf dist && dts build",
     "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "yarn test && yarn lint && yarn build && cp ../../README.md .",
+    "prepublishOnly": "turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
@@ -55,8 +55,8 @@
     "testEnvironment": "jsdom"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.2.32",
-    "negotiator": "0.6.3",
+    "@formatjs/intl-localematcher": "^0.2.32",
+    "negotiator": "^0.6.3",
     "use-intl": "^2.13.2"
   },
   "peerDependencies": {
@@ -65,17 +65,19 @@
   },
   "devDependencies": {
     "@testing-library/react": "^13.0.0",
-    "@types/negotiator": "0.6.1",
+    "@types/jest": "^29.5.1",
+    "@types/negotiator": "^0.6.1",
+    "@types/node": "^17.0.23",
     "@types/react": "^18.0.23",
-    "dts-cli": "1.4.0",
-    "eslint": "8.39.0",
-    "eslint-config-molindo": "6.0.0",
-    "eslint-plugin-deprecation": "1.4.1",
-    "next": "13.3.4",
+    "dts-cli": "^1.4.0",
+    "eslint": "^8.39.0",
+    "eslint-config-molindo": "^6.0.0",
+    "eslint-plugin-deprecation": "^1.4.1",
+    "next": "^13.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ts-jest": "29.1.0",
-    "typescript": "^4.4.4"
+    "ts-jest": "^29.1.0",
+    "typescript": "^4.6.3"
   },
   "engines": {
     "node": ">=10"

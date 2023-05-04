@@ -6,21 +6,34 @@ jobs:
   build:
     name: Build, lint, and test
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.4.0
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - uses: bahmutov/npm-install@v1
-      - run: yarn playwright install --with-deps
+          cache: 'pnpm'
+      - run: pnpm install
 
-      # The order matters here
-      - run: yarn workspace use-intl run build
-      - run: yarn workspace next-intl run build
-      - run: yarn workspace example run build --no-lint
-      - run: yarn workspace example-advanced run build --no-lint
-      - run: yarn workspace example-next-13 run build --no-lint
-      - run: yarn workspace example-next-13-next-auth run build --no-lint
+      # Playwright
+      - run: |
+          PLAYWRIGHT_VERSION=$(cat pnpm-lock.yaml | grep /@playwright/test@ | sed 's/.*@\([^:]*\):.*/\1/')
+          echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Restore playwright
+        id: cache-playwright-browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
+      - if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
+        # Setting up playwright in one example is sufficient
+        run: pnpm --filter example-next-13 exec playwright install --with-deps
 
-      - run: yarn workspaces run lint
-      - run: yarn workspaces run test
+      - run: pnpm run build
+      - run: pnpm run lint
+      - run: pnpm run test

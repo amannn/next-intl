@@ -2,13 +2,14 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "publish": "lerna publish --yes --no-verify-access",
-    "prerelease": "lerna publish prerelease --yes --no-verify-access --dist-tag next --no-changelog --no-git-tag-version"
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "prepare": "./scripts/prepare.sh",
+    "publish": "lerna publish --yes --no-verify-access"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
-    "lerna": "4.0.0"
+    "lerna": "^4.0.0",
+    "turbo": "^1.9.3"
   }
 }
