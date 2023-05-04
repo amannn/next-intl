@@ -6,7 +6,7 @@ Thank you so much for contributing to `next-intl`!
 
 1. Make sure you have [pnpm](https://pnpm.io/) installed
 2. Clone the repo
-3. `pnpm install` (includes an initial build of the packages)
+3. `pnpm install:dev` (includes an initial build of the packages)
 
 Now, you're all set and you can work on individual packages.
 

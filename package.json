@@ -5,8 +5,9 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "prepare": "turbo run build --filter './packages/**'",
-    "prepare:ci": "pnpm run prepare --force",
+    "build:packages": "turbo run build --filter './packages/**'",
+    "install:ci": "pnpm install && pnpm run build:packages --force",
+    "install:dev": "pnpm install && pnpm run build:packages",
     "publish": "lerna publish --yes --no-verify-access"
   },
   "devDependencies": {
