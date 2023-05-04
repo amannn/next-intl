@@ -2,7 +2,7 @@
 
 Thank you so much for contributing to `next-intl`!
 
-## Local setup
+## Development setup
 
 1. Make sure you have [pnpm](https://pnpm.io/) installed
 2. Clone the repo
