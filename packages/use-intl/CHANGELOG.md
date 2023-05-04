@@ -573,3 +573,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## Previous releases
 
 See [next-intl changelog](https://github.com/amannn/next-intl/blob/main/CHANGELOG.md).
+
