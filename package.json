@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "prepare": "./scripts/prepare.sh",
+    "prepare": "turbo run build --filter './packages/**'",
     "publish": "lerna publish --yes --no-verify-access"
   },
   "devDependencies": {

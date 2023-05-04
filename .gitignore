@@ -1,8 +1,8 @@
 *.log
 .DS_Store
-node_modules
+node_modules/
 .vscode
 .vercel
-.turbo
-dist
-.next
+.turbo/
+dist/
+.next/
