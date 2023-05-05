@@ -652,3 +652,4 @@ This library is now considered production ready. There are no changes from the p
 ## 0.1.1
 
 - Fix: Don't throw for empty messages (`""`).
+
