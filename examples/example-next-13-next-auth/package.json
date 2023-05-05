@@ -1,6 +1,6 @@
 {
   "name": "example-next-13-next-auth",
-  "version": "2.13.3",
+  "version": "2.13.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,7 @@
   "dependencies": {
     "next": "^13.4.0",
     "next-auth": "^4.22.1",
-    "next-intl": "^2.13.3",
+    "next-intl": "^2.13.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

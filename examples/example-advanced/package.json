@@ -1,6 +1,6 @@
 {
   "name": "example-advanced",
-  "version": "2.13.3",
+  "version": "2.13.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,7 @@
     "accept-language-parser": "^1.5.0",
     "lodash": "^4.17.21",
     "next": "^13.4.0",
-    "next-intl": "^2.13.3",
+    "next-intl": "^2.13.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
