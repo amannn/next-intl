@@ -9,7 +9,7 @@
     "publish": "lerna publish --yes --no-verify-access"
   },
   "devDependencies": {
-    "lerna": "^4.0.0",
+    "lerna": "^6.6.2",
     "turbo": "^1.9.3"
   }
 }
