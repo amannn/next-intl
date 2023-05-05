@@ -18,17 +18,19 @@ export default function localizeHref(
   locale?: string,
   pathname?: string
 ) {
-  const cookieLocale = getCookieLocale();
+  const cookieLocale =
+    typeof window === 'undefined' ? undefined : getCookieLocale();
   if (!locale) locale = cookieLocale;
 
   if (!pathname) {
     pathname = window.location.pathname;
   }
 
-  const isSwitchingLocale = locale !== cookieLocale;
-  const isPathnamePrefixed = hasPathnamePrefixed(locale, pathname);
+  const isSwitchingLocale = !cookieLocale || locale !== cookieLocale;
+  const isPathnamePrefixed =
+    locale == null || hasPathnamePrefixed(locale, pathname);
 
-  if (isPathnamePrefixed || isSwitchingLocale) {
+  if ((isPathnamePrefixed || isSwitchingLocale) && locale != null) {
     let prefixedHref;
     if (typeof href === 'string') {
       prefixedHref = localizePathname(locale, href);

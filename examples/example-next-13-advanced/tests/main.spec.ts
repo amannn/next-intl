@@ -187,6 +187,8 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
   await expect(link).toHaveAttribute('href', '/de');
   await link.click();
   await expect(page).toHaveURL('/de');
+  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
+  await expect(page).toHaveURL('/');
 });
 
 it('can use `Link` on the client', async ({page}) => {

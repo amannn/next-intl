@@ -24,10 +24,17 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
  *    otherwise.
  */
 function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
-  const [localizedHref, setLocalizedHref] = useState<typeof href>(href);
   const pathname = usePathname();
+  const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
+    isLocalURL(href) ? localizeHref(href, locale, pathname) : href
+  );
 
   useEffect(() => {
+    // We need to read from the cookie on the client side to know which locale
+    // the user currently is on to set the localized href correctly. The state
+    // is initialized with a locale prefix, which is always a valid URL, even
+    // if it might cause a redirect - this is better than pointing to a
+    // non-localized href during the server render.
     if (isLocalURL(href)) {
       setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
     }
