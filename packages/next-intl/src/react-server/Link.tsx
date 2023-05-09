@@ -6,7 +6,7 @@ type Props = Omit<ComponentProps<typeof BaseLink>, 'locale'> & {
   locale?: string;
 };
 
-export default function Link(props: Props) {
+export default function Link({locale, ...rest}: Props) {
   const defaultLocale = useLocale();
-  return <BaseLink locale={defaultLocale} {...props} />;
+  return <BaseLink locale={locale || defaultLocale} {...rest} />;
 }

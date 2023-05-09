@@ -1,4 +1,29 @@
-import {test as it, expect} from '@playwright/test';
+import {test as it, expect, Page, BrowserContext} from '@playwright/test';
+
+async function expectLocaleCookieToBe(page: Page, value: string) {
+  await expect(async () => {
+    const cookie = (await page.context().cookies()).find(
+      (cur) => cur.name === 'NEXT_LOCALE'
+    );
+    expect(cookie).toMatchObject({
+      name: 'NEXT_LOCALE',
+      value
+    });
+  }).toPass();
+}
+
+function getPageLoadTracker(context: BrowserContext) {
+  const state = {numMainAppLoads: 0};
+
+  context.on('request', (request) => {
+    // Is the same in dev and prod
+    if (request.url().includes('/chunks/main-app')) {
+      state.numMainAppLoads++;
+    }
+  });
+
+  return state;
+}
 
 it('handles unknown locales', async ({page}) => {
   const response = await page.goto('/unknown');
@@ -74,15 +99,7 @@ it('remembers the last locale', async ({page}) => {
   await page.goto('/de');
 
   // Wait for the cookie to be set on the client side
-  await expect(async () => {
-    const cookie = (await page.context().cookies()).find(
-      (cur) => cur.name === 'NEXT_LOCALE'
-    );
-    expect(cookie).toMatchObject({
-      name: 'NEXT_LOCALE',
-      value: 'de'
-    });
-  }).toPass();
+  await expectLocaleCookieToBe(page, 'de');
 
   await page.goto('/');
   await expect(page).toHaveURL('/de');
@@ -192,32 +209,46 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
 });
 
 it('uses client-side transitions when using link', async ({context, page}) => {
-  let numMainAppLoads = 0;
-  context.on('request', (request) => {
-    // Is the same in dev and prod
-    if (request.url().includes('/chunks/main-app')) {
-      numMainAppLoads++;
-    }
-  });
+  const tracker = getPageLoadTracker(context);
 
   await page.goto('/');
-  expect(numMainAppLoads).toBe(1);
+  expect(tracker.numMainAppLoads).toBe(1);
 
   await page.getByRole('link', {name: 'Nested page'}).click();
   await expect(page).toHaveURL('/nested');
-  expect(numMainAppLoads).toBe(1);
+  expect(tracker.numMainAppLoads).toBe(1);
 
   await page.getByRole('link', {name: 'Client page'}).click();
   await expect(page).toHaveURL('/client');
-  expect(numMainAppLoads).toBe(1);
+  expect(tracker.numMainAppLoads).toBe(1);
 
   await page.goBack();
   await expect(page).toHaveURL('/nested');
-  expect(numMainAppLoads).toBe(1);
+  expect(tracker.numMainAppLoads).toBe(1);
 
   await page.goForward();
   await expect(page).toHaveURL('/client');
-  expect(numMainAppLoads).toBe(1);
+  expect(tracker.numMainAppLoads).toBe(1);
+});
+
+it('keeps the locale cookie updated when changing the locale and uses soft navigation when changing the locale', async ({
+  context,
+  page
+}) => {
+  const tracker = getPageLoadTracker(context);
+
+  await page.goto('/');
+  await expectLocaleCookieToBe(page, 'en');
+  expect(tracker.numMainAppLoads).toBe(1);
+
+  const link = page.getByRole('link', {name: 'Switch to German'});
+  await link.hover();
+  await expectLocaleCookieToBe(page, 'en');
+  await link.click();
+
+  await expect(page).toHaveURL('/de');
+  await expectLocaleCookieToBe(page, 'de');
+  expect(tracker.numMainAppLoads).toBe(1);
 });
 
 it('can use `Link` in client components without using a provider', async ({
