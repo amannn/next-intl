@@ -248,7 +248,10 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
 
   await expect(page).toHaveURL('/de');
   await expectLocaleCookieToBe(page, 'de');
-  expect(tracker.numMainAppLoads).toBe(1);
+
+  // Somehow Next.js performs a hard refresh when
+  // a non-preloaded route is being navigated to.
+  expect(tracker.numMainAppLoads).toBe(2);
 });
 
 it('can use `Link` in client components without using a provider', async ({

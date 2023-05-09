@@ -40,14 +40,12 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   }, [defaultLocale, href, locale, pathname]);
 
   if (isChangingLocale) {
-    if (prefetch) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error(
-          'The `prefetch` prop is currently not supported when using the `locale` prop on `Link` to switch the locale.`'
-        );
-      }
-      prefetch = false;
+    if (prefetch && process.env.NODE_ENV !== 'production') {
+      console.error(
+        'The `prefetch` prop is currently not supported when using the `locale` prop on `Link` to switch the locale.`'
+      );
     }
+    prefetch = false;
   }
 
   return (
