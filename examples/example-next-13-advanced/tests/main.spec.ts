@@ -1,6 +1,6 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
 
-async function expectLocaleCookieToBe(page: Page, value: string) {
+async function assertLocaleCookieValue(page: Page, value: string) {
   await expect(async () => {
     const cookie = (await page.context().cookies()).find(
       (cur) => cur.name === 'NEXT_LOCALE'
@@ -13,12 +13,12 @@ async function expectLocaleCookieToBe(page: Page, value: string) {
 }
 
 function getPageLoadTracker(context: BrowserContext) {
-  const state = {numMainAppLoads: 0};
+  const state = {numPageLoads: 0};
 
   context.on('request', (request) => {
     // Is the same in dev and prod
     if (request.url().includes('/chunks/main-app')) {
-      state.numMainAppLoads++;
+      state.numPageLoads++;
     }
   });
 
@@ -99,7 +99,7 @@ it('remembers the last locale', async ({page}) => {
   await page.goto('/de');
 
   // Wait for the cookie to be set on the client side
-  await expectLocaleCookieToBe(page, 'de');
+  await assertLocaleCookieValue(page, 'de');
 
   await page.goto('/');
   await expect(page).toHaveURL('/de');
@@ -212,23 +212,23 @@ it('uses client-side transitions when using link', async ({context, page}) => {
   const tracker = getPageLoadTracker(context);
 
   await page.goto('/');
-  expect(tracker.numMainAppLoads).toBe(1);
+  expect(tracker.numPageLoads).toBe(1);
 
   await page.getByRole('link', {name: 'Nested page'}).click();
   await expect(page).toHaveURL('/nested');
-  expect(tracker.numMainAppLoads).toBe(1);
+  expect(tracker.numPageLoads).toBe(1);
 
   await page.getByRole('link', {name: 'Client page'}).click();
   await expect(page).toHaveURL('/client');
-  expect(tracker.numMainAppLoads).toBe(1);
+  expect(tracker.numPageLoads).toBe(1);
 
   await page.goBack();
   await expect(page).toHaveURL('/nested');
-  expect(tracker.numMainAppLoads).toBe(1);
+  expect(tracker.numPageLoads).toBe(1);
 
   await page.goForward();
   await expect(page).toHaveURL('/client');
-  expect(tracker.numMainAppLoads).toBe(1);
+  expect(tracker.numPageLoads).toBe(1);
 });
 
 it('keeps the locale cookie updated when changing the locale and uses soft navigation when changing the locale', async ({
@@ -238,20 +238,20 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
   const tracker = getPageLoadTracker(context);
 
   await page.goto('/');
-  await expectLocaleCookieToBe(page, 'en');
-  expect(tracker.numMainAppLoads).toBe(1);
+  await assertLocaleCookieValue(page, 'en');
+  expect(tracker.numPageLoads).toBe(1);
 
   const link = page.getByRole('link', {name: 'Switch to German'});
   await link.hover();
-  await expectLocaleCookieToBe(page, 'en');
+  await assertLocaleCookieValue(page, 'en');
   await link.click();
 
   await expect(page).toHaveURL('/de');
-  await expectLocaleCookieToBe(page, 'de');
+  await assertLocaleCookieValue(page, 'de');
 
   // Somehow Next.js performs a hard refresh when
   // a non-preloaded route is being navigated to.
-  expect(tracker.numMainAppLoads).toBe(2);
+  expect(tracker.numPageLoads).toBe(2);
 });
 
 it('can use `Link` in client components without using a provider', async ({
