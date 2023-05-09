@@ -1,4 +1,29 @@
-import {test as it, expect} from '@playwright/test';
+import {test as it, expect, Page, BrowserContext} from '@playwright/test';
+
+async function assertLocaleCookieValue(page: Page, value: string) {
+  await expect(async () => {
+    const cookie = (await page.context().cookies()).find(
+      (cur) => cur.name === 'NEXT_LOCALE'
+    );
+    expect(cookie).toMatchObject({
+      name: 'NEXT_LOCALE',
+      value
+    });
+  }).toPass();
+}
+
+function getPageLoadTracker(context: BrowserContext) {
+  const state = {numPageLoads: 0};
+
+  context.on('request', (request) => {
+    // Is the same in dev and prod
+    if (request.url().includes('/chunks/main-app')) {
+      state.numPageLoads++;
+    }
+  });
+
+  return state;
+}
 
 it('handles unknown locales', async ({page}) => {
   const response = await page.goto('/unknown');
@@ -74,15 +99,7 @@ it('remembers the last locale', async ({page}) => {
   await page.goto('/de');
 
   // Wait for the cookie to be set on the client side
-  await expect(async () => {
-    const cookie = (await page.context().cookies()).find(
-      (cur) => cur.name === 'NEXT_LOCALE'
-    );
-    expect(cookie).toMatchObject({
-      name: 'NEXT_LOCALE',
-      value: 'de'
-    });
-  }).toPass();
+  await assertLocaleCookieValue(page, 'de');
 
   await page.goto('/');
   await expect(page).toHaveURL('/de');
@@ -187,6 +204,68 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
   await expect(link).toHaveAttribute('href', '/de');
   await link.click();
   await expect(page).toHaveURL('/de');
+  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
+  await expect(page).toHaveURL('/');
+});
+
+it('uses client-side transitions when using link', async ({context, page}) => {
+  const tracker = getPageLoadTracker(context);
+
+  await page.goto('/');
+  expect(tracker.numPageLoads).toBe(1);
+
+  await page.getByRole('link', {name: 'Nested page'}).click();
+  await expect(page).toHaveURL('/nested');
+  expect(tracker.numPageLoads).toBe(1);
+
+  await page.getByRole('link', {name: 'Client page'}).click();
+  await expect(page).toHaveURL('/client');
+  expect(tracker.numPageLoads).toBe(1);
+
+  await page.goBack();
+  await expect(page).toHaveURL('/nested');
+  expect(tracker.numPageLoads).toBe(1);
+
+  await page.goForward();
+  await expect(page).toHaveURL('/client');
+  expect(tracker.numPageLoads).toBe(1);
+});
+
+it('keeps the locale cookie updated when changing the locale and uses soft navigation when changing the locale', async ({
+  context,
+  page
+}) => {
+  const tracker = getPageLoadTracker(context);
+
+  await page.goto('/');
+  await assertLocaleCookieValue(page, 'en');
+  expect(tracker.numPageLoads).toBe(1);
+
+  const link = page.getByRole('link', {name: 'Switch to German'});
+  await link.hover();
+  await assertLocaleCookieValue(page, 'en');
+  await link.click();
+
+  await expect(page).toHaveURL('/de');
+  await assertLocaleCookieValue(page, 'de');
+
+  // Somehow Next.js performs a hard refresh when
+  // a non-preloaded route is being navigated to.
+  expect(tracker.numPageLoads).toBe(2);
+});
+
+it('can use `Link` in client components without using a provider', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(
+    page.getByRole('link', {name: 'Link on client without provider'})
+  ).toHaveAttribute('href', '/');
+
+  await page.goto('/de');
+  await expect(
+    page.getByRole('link', {name: 'Link on client without provider'})
+  ).toHaveAttribute('href', '/de');
 });
 
 it('can use `Link` on the client', async ({page}) => {
@@ -194,6 +273,12 @@ it('can use `Link` on the client', async ({page}) => {
   await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
     'href',
     '/'
+  );
+
+  await page.goto('/de/client');
+  await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
+    'href',
+    '/de'
   );
 });
 
@@ -262,6 +347,17 @@ it('can use `usePathname`', async ({page}) => {
 
   await page.goto('/de/client');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
+});
+
+it('returns the correct value from `usePathname` in the initial render', async ({
+  request
+}) => {
+  expect(await (await request.get('/client')).text()).toContain(
+    '<p data-testid="UnlocalizedPathname">/client</p>'
+  );
+  expect(await (await request.get('/de/client')).text()).toContain(
+    '<p data-testid="UnlocalizedPathname">/client</p>'
+  );
 });
 
 it('can use `redirect`', async ({page}) => {

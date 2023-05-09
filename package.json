@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "turbo run test --concurrency 1",
     "lint": "turbo run lint",
     "prepare": "turbo run build --filter './packages/**'",
     "publish": "lerna publish --yes --no-verify-access"

@@ -2,9 +2,10 @@ import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {Link} from '../../src';
 
-beforeEach(() => {
-  document.cookie = 'NEXT_LOCALE=en';
-});
+jest.mock('next/navigation', () => ({
+  useParams: jest.fn(() => ({locale: 'en'})),
+  usePathname: jest.fn(() => '/')
+}));
 
 it('renders an href without a locale if the locale matches', () => {
   render(<Link href="/test">Test</Link>);
@@ -64,8 +65,4 @@ it('works for external urls with an object href', () => {
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     'https://example.com/test'
   );
-});
-
-afterEach(() => {
-  document.cookie = '';
 });

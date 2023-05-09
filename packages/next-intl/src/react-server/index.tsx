@@ -3,7 +3,7 @@
  * from 'next-intl'. Make sure this mirrors the API from the main entry.
  */
 
-import Link from '../shared/Link';
+import Link from './Link';
 
 // Replaced exports from the `react` package
 export {default as useLocale} from './useLocale';
@@ -12,9 +12,7 @@ export {default as useIntl} from './useIntl';
 export {default as useFormatter} from './useFormatter';
 export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
-
-// We don't offer a server-only variant of this component currently
-export {default as Link} from '../shared/Link';
+export {default as Link} from './Link';
 
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
