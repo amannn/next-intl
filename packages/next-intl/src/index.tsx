@@ -3,12 +3,12 @@
  * from 'next-intl'. Make sure this mirrors the API from 'react-server'.
  */
 
-import Link from './shared/Link';
+import Link from './react-client/Link';
 
 export * from 'use-intl';
 
 export {default as useLocalizedRouter} from './react-client/useLocalizedRouter';
-export {default as Link} from './shared/Link';
+export {default as Link} from './react-client/Link';
 
 /** @deprecated Is called `Link` now. */
 export const LocalizedLink = Link;

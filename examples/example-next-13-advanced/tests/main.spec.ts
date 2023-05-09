@@ -197,6 +197,12 @@ it('can use `Link` on the client', async ({page}) => {
     'href',
     '/'
   );
+
+  await page.goto('/de/client');
+  await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(
+    'href',
+    '/de'
+  );
 });
 
 it('prefixes as necessary with `Link`', async ({page}) => {

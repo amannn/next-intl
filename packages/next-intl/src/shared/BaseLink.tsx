@@ -6,13 +6,14 @@ import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import localizeHref from '../client/localizeHref';
 import isLocalURL from './isLocalUrl';
+import prefixHref from './prefixHref';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
 };
 
 /**
- * Wraps `next/link` and prefixes the `href` with the current locale.
+ * Wraps `next/link` and prefixes the `href` with the current locale if necessary.
  *
  * Note that when a `locale` prop is passed, two de-optimizations are made:
  *
@@ -23,18 +24,24 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
  *    bug with Server Components where the markup wouldn't be updated correctly
  *    otherwise.
  */
-function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
+function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   const pathname = usePathname();
+
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
-    isLocalURL(href) ? localizeHref(href, locale, pathname) : href
+    isLocalURL(href) && locale
+      ? // Potentially the href shouldn't be prefixed, but to determine this we
+        // need a) the default locale and b) the information if we use prefixed
+        // routing. During the server side render (both in RSC as well as SSR),
+        // we don't have this information. Therefore we always prefix the href
+        // since this will always result in a valid URL, even if it might cause
+        // a redirect. This is better than pointing to a non-localized href
+        // during the server render, which would potentially be wrong. The final
+        // href is determined in the effect below.
+        prefixHref(href, locale)
+      : href
   );
 
   useEffect(() => {
-    // We need to read from the cookie on the client side to know which locale
-    // the user currently is on to set the localized href correctly. The state
-    // is initialized with a locale prefix, which is always a valid URL, even
-    // if it might cause a redirect - this is better than pointing to a
-    // non-localized href during the server render.
     if (isLocalURL(href)) {
       setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
     }
@@ -71,4 +78,4 @@ function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   );
 }
 
-export default forwardRef(Link);
+export default forwardRef(BaseLink);
