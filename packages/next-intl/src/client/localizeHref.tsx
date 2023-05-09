@@ -1,32 +1,30 @@
 import {UrlObject} from 'url';
 import prefixHref from '../shared/prefixHref';
-import getCookieLocale from './getCookieLocale';
 import hasPathnamePrefixed from './hasPathnamePrefixed';
 
 export default function localizeHref(
   href: string,
-  locale?: string,
+  locale: string,
+  defaultLocale?: string,
   pathname?: string
 ): string;
 export default function localizeHref(
   href: UrlObject | string,
-  locale?: string,
+  locale: string,
+  defaultLocale?: string,
   pathname?: string
 ): UrlObject | string;
 export default function localizeHref(
   href: UrlObject | string,
-  locale?: string,
+  locale: string,
+  defaultLocale: string = locale,
   pathname?: string
 ) {
-  const cookieLocale =
-    typeof window === 'undefined' ? undefined : getCookieLocale();
-  if (!locale) locale = cookieLocale;
-
   if (!pathname) {
     pathname = window.location.pathname;
   }
 
-  const isSwitchingLocale = !cookieLocale || locale !== cookieLocale;
+  const isSwitchingLocale = locale !== defaultLocale;
   const isPathnamePrefixed =
     locale == null || hasPathnamePrefixed(locale, pathname);
   const shouldPrefix = isPathnamePrefixed || isSwitchingLocale;

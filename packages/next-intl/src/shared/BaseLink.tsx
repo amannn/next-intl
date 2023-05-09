@@ -5,11 +5,12 @@ import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import localizeHref from '../client/localizeHref';
+import useClientLocale from '../client/useClientLocale';
 import isLocalURL from './isLocalUrl';
 import prefixHref from './prefixHref';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
-  locale?: string;
+  locale: string;
 };
 
 /**
@@ -26,6 +27,8 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
  */
 function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   const pathname = usePathname();
+  const defaultLocale = useClientLocale();
+  const isChangingLocale = locale !== defaultLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
     isLocalURL(href) && locale
@@ -43,11 +46,13 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
 
   useEffect(() => {
     if (isLocalURL(href)) {
-      setLocalizedHref(localizeHref(href, locale, pathname ?? undefined));
+      setLocalizedHref(
+        localizeHref(href, locale, defaultLocale, pathname ?? undefined)
+      );
     }
-  }, [href, locale, pathname]);
+  }, [defaultLocale, href, locale, pathname]);
 
-  if (locale !== undefined) {
+  if (isChangingLocale) {
     // If Next.js fixes the bug where the markup isn't updated correctly when
     // the locale changes, we can remove this check. Note however that we still
     // need to disable prefetching (see comment above).

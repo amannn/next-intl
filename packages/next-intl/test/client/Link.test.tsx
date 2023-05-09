@@ -1,20 +1,21 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import BaseLink from '../../src/shared/BaseLink';
+import {Link} from '../../src';
 
-beforeEach(() => {
-  document.cookie = 'NEXT_LOCALE=en';
-});
+jest.mock('next/navigation', () => ({
+  useParams: jest.fn(() => ({locale: 'en'})),
+  usePathname: jest.fn(() => '/')
+}));
 
 it('renders an href without a locale if the locale matches', () => {
-  render(<BaseLink href="/test">Test</BaseLink>);
+  render(<Link href="/test">Test</Link>);
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     '/test'
   );
 });
 
 it('renders an href without a locale if the locale matches for an object href', () => {
-  render(<BaseLink href={{pathname: '/test'}}>Test</BaseLink>);
+  render(<Link href={{pathname: '/test'}}>Test</Link>);
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     '/test'
   );
@@ -22,9 +23,9 @@ it('renders an href without a locale if the locale matches for an object href', 
 
 it('renders an href with a locale if the locale changes', () => {
   render(
-    <BaseLink href="/test" locale="de">
+    <Link href="/test" locale="de">
       Test
-    </BaseLink>
+    </Link>
   );
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     '/de/test'
@@ -33,9 +34,9 @@ it('renders an href with a locale if the locale changes', () => {
 
 it('renders an href with a locale if the locale changes for an object href', () => {
   render(
-    <BaseLink href={{pathname: '/test'}} locale="de">
+    <Link href={{pathname: '/test'}} locale="de">
       Test
-    </BaseLink>
+    </Link>
   );
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     '/de/test'
@@ -43,7 +44,7 @@ it('renders an href with a locale if the locale changes for an object href', () 
 });
 
 it('works for external urls', () => {
-  render(<BaseLink href="https://example.com">Test</BaseLink>);
+  render(<Link href="https://example.com">Test</Link>);
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     'https://example.com'
   );
@@ -51,7 +52,7 @@ it('works for external urls', () => {
 
 it('works for external urls with an object href', () => {
   render(
-    <BaseLink
+    <Link
       href={{
         pathname: '/test',
         protocol: 'https:',
@@ -59,13 +60,9 @@ it('works for external urls with an object href', () => {
       }}
     >
       Test
-    </BaseLink>
+    </Link>
   );
   expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
     'https://example.com/test'
   );
-});
-
-afterEach(() => {
-  document.cookie = '';
 });

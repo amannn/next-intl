@@ -191,6 +191,35 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
   await expect(page).toHaveURL('/');
 });
 
+it('uses client-side transitions when using link', async ({context, page}) => {
+  let numMainAppLoads = 0;
+  context.on('request', (request) => {
+    // Is the same in dev and prod
+    if (request.url().includes('/chunks/main-app')) {
+      numMainAppLoads++;
+    }
+  });
+
+  await page.goto('/');
+  expect(numMainAppLoads).toBe(1);
+
+  await page.getByRole('link', {name: 'Nested page'}).click();
+  await expect(page).toHaveURL('/nested');
+  expect(numMainAppLoads).toBe(1);
+
+  await page.getByRole('link', {name: 'Client page'}).click();
+  await expect(page).toHaveURL('/client');
+  expect(numMainAppLoads).toBe(1);
+
+  await page.goBack();
+  await expect(page).toHaveURL('/nested');
+  expect(numMainAppLoads).toBe(1);
+
+  await page.goForward();
+  await expect(page).toHaveURL('/client');
+  expect(numMainAppLoads).toBe(1);
+});
+
 it('can use `Link` in client components without using a provider', async ({
   page
 }) => {
