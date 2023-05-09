@@ -272,6 +272,17 @@ it('can use `usePathname`', async ({page}) => {
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/client');
 });
 
+it('returns the correct value from `usePathname` in the initial render', async ({
+  request
+}) => {
+  expect(await (await request.get('/client')).text()).toContain(
+    '<p data-testid="UnlocalizedPathname">/client</p>'
+  );
+  expect(await (await request.get('/de/client')).text()).toContain(
+    '<p data-testid="UnlocalizedPathname">/client</p>'
+  );
+});
+
 it('can use `redirect`', async ({page}) => {
   await page.goto('/redirect');
   await expect(page).toHaveURL('/client');
