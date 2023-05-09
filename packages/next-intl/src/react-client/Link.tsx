@@ -1,10 +1,10 @@
 import React, {ComponentProps} from 'react';
-import {useLocale} from 'use-intl';
+import useClientLocale from '../client/useClientLocale';
 import BaseLink from '../shared/BaseLink';
 
 type Props = ComponentProps<typeof BaseLink>;
 
 export default function Link(props: Props) {
-  const defaultLocale = useLocale();
+  const defaultLocale = useClientLocale();
   return <BaseLink locale={defaultLocale} {...props} />;
 }

@@ -191,6 +191,20 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
   await expect(page).toHaveURL('/');
 });
 
+it('can use `Link` in client components without using a provider', async ({
+  page
+}) => {
+  await page.goto('/');
+  await expect(
+    page.getByRole('link', {name: 'Link on client without provider'})
+  ).toHaveAttribute('href', '/');
+
+  await page.goto('/de');
+  await expect(
+    page.getByRole('link', {name: 'Link on client without provider'})
+  ).toHaveAttribute('href', '/de');
+});
+
 it('can use `Link` on the client', async ({page}) => {
   await page.goto('/client');
   await expect(page.getByRole('link', {name: 'Go to home'})).toHaveAttribute(

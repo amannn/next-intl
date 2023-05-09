@@ -6,6 +6,7 @@ import {
   useTimeZone,
   useTranslations
 } from 'next-intl';
+import ClientLink from '../../components/ClientLink';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
@@ -54,6 +55,7 @@ export default function Index({searchParams}: Props) {
           Go to home with query param
         </Link>
       </div>
+      <ClientLink href="/">Link on client without provider</ClientLink>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
     </PageLayout>
