@@ -26,7 +26,7 @@ module.exports = withNextra({
     },
     {
       source: '/examples',
-      destination: '/examples/minimal',
+      destination: '/examples/next-13',
       permanent: false
     },
 

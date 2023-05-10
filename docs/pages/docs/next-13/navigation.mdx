@@ -1,0 +1,71 @@
+import Callout from 'components/Callout';
+
+# Next.js 13 internationalized navigation
+
+`next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
+
+### `Link`
+
+This component wraps `next/link` and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
+
+```tsx
+import {Link} from 'next-intl';
+
+// When the user is on `/en`, the link will point to `/en/about`
+<Link href="/about">About</Link>
+
+// You can override the `locale` to switch to another language
+<Link href="/" locale="de">Switch to German</Link>
+```
+
+### `useRouter`
+
+If you need to navigate programmatically, e.g. in response to a form submission, `next-intl` provides a convience API that wraps `useRouter` from Next.js and automatically applies the locale of the user.
+
+```tsx
+'use client';
+
+import {useRouter} from 'next-intl/client';
+
+const router = useRouter();
+
+// When the user is on `/en`, the router will navigate to `/en/about`
+router.push('/about');
+```
+
+### `usePathname`
+
+To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
+
+```tsx
+'use client';
+
+import {usePathname} from 'next-intl/client';
+
+// When the user is on `/en`, this will be `/`
+const pathname = usePathname();
+```
+
+### `redirect`
+
+<Callout type="warning">
+  This API is only available in [the Server Components
+  beta](/docs/next-13/server-components).
+</Callout>
+
+If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://beta.nextjs.org/docs/api-reference/redirect) and automatically applies the current locale.
+
+```tsx {1, 8}
+import {redirect} from 'next-intl/server';
+
+export default async function Profile() {
+  const user = await fetchUser();
+
+  if (!user) {
+    // When the user is on `/en/profile`, this will be `/en/login`
+    redirect('/login');
+  }
+
+  // ...
+}
+```

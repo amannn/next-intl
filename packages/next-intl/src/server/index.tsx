@@ -1,12 +1,18 @@
 /**
- * Server-only APIs.
+ * Server-only APIs available via `next-intl/server`.
  */
 
-/** @deprecated */
-export function createIntlMiddleware() {
-  throw new Error(
-    `
-Importing \`createMiddleware\` from \`next-intl/server\` is deprecated and no longer supported. Please update the import and add a \`matcher\`:
+import createMiddleware_ from '../middleware';
+import MiddlewareConfig from '../middleware/NextIntlMiddlewareConfig';
+
+let hasWarnedForMiddlewareImport = false;
+/** @deprecated Should be imported as `import createMiddleware from 'next-intl/middleware', not from `next-intl/server`. */
+export function createIntlMiddleware(config: MiddlewareConfig) {
+  if (!hasWarnedForMiddlewareImport) {
+    hasWarnedForMiddlewareImport = true;
+    console.warn(
+      `
+Importing \`createMiddleware\` from \`next-intl/server\` is deprecated. Please update the import and add a \`matcher\`:
 
   // middleware.ts
   import createMiddleware from 'next-intl/middleware';
@@ -17,8 +23,14 @@ Importing \`createMiddleware\` from \`next-intl/server\` is deprecated and no lo
     // Skip all paths that should not be internationalized
     matcher: ['/((?!api|_next|.*\\\\..*).*)']
   };
-    `
-  );
+`
+    );
+  }
+  return createMiddleware_({
+    ...config,
+    // @ts-expect-error
+    _matcher: ['/((?!api|_next|.*\\..*).*)']
+  });
 }
 
 export {default as getRequestConfig} from './getRequestConfig';

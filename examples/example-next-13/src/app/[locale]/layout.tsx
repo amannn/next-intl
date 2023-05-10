@@ -1,6 +1,11 @@
+import {Inter} from '@next/font/google';
+import clsx from 'clsx';
 import {useLocale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
+import Navigation from 'components/Navigation';
+
+const inter = Inter({subsets: ['latin']});
 
 type Props = {
   children: ReactNode;
@@ -18,8 +23,11 @@ export async function generateMetadata() {
 export default async function LocaleLayout({children}: Props) {
   const locale = useLocale();
   return (
-    <html lang={locale}>
-      <body>{children}</body>
+    <html className="h-full" lang={locale}>
+      <body className={clsx(inter.className, 'flex h-full flex-col')}>
+        <Navigation />
+        {children}
+      </body>
     </html>
   );
 }

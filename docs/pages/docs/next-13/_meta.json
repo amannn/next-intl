@@ -2,5 +2,6 @@
   "index": "Getting started",
   "client-components": "Client Components",
   "server-components": "Server Components (beta)",
-  "middleware": "Middleware"
+  "middleware": "Middleware",
+  "navigation": "Navigation"
 }

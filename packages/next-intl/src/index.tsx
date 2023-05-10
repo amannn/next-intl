@@ -1,19 +1,9 @@
 /**
- * This is the main entry file when non-'react-server' environments import
- * from 'next-intl'. Make sure this mirrors the API from 'react-server'.
+ * This is the default entry file when consumers import from
+ * 'next-intl'. We use the client APIs in this case.
+ *
+ * Note that the `react-server` environment (i.e. RSC) imports
+ * from `./react-server` instead.
  */
 
-import Link from './react-client/Link';
-
-export * from 'use-intl';
-
-export {default as useLocalizedRouter} from './react-client/useLocalizedRouter';
-export {default as Link} from './react-client/Link';
-
-/** @deprecated Is called `Link` now. */
-export const LocalizedLink = Link;
-
-export {default as NextIntlClientProvider} from './shared/NextIntlClientProvider';
-
-// Legacy export for compatibility
-export {default as NextIntlProvider} from './shared/NextIntlClientProvider';
+export * from './react-client';
