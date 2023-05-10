@@ -4,7 +4,8 @@ import {localizeHref} from '../shared/utils';
 import useClientLocale from './useClientLocale';
 
 /**
- * Returns a wrapped instance of `useRouter` from `next/navigation` that will automatically localize the `href` parameters it receives.
+ * Returns a wrapped instance of `useRouter` from `next/navigation` that
+ * will automatically localize the `href` parameters it receives.
  *
  * @example
  * ```tsx
