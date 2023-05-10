@@ -32,9 +32,9 @@ function callRouter(cb: (router: AppRouterInstance) => void) {
 }
 
 function mockLocation(pathname: string) {
-  delete (global as any).window.location;
-  (global as any).window = Object.create(window);
-  (global as any).window.location = {pathname};
+  delete (global.window as any).location;
+  global.window ??= Object.create(window);
+  (global.window as any).location = {pathname};
 }
 
 describe('unprefixed routing', () => {
