@@ -1,5 +1,5 @@
 import {redirect as nextRedirect} from 'next/navigation';
-import localizePathname from '../shared/localizePathname';
+import {localizePathname} from '../shared/utils';
 import getLocale from './getLocale';
 
 export default function redirect(pathname: string) {

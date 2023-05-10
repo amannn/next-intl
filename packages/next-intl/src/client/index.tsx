@@ -1,8 +1,7 @@
 /**
- * Client-only APIs.
+ * Client-only APIs available via `next-intl/client`.
  */
 
-import NextIntlClientProvider_ from '../shared/NextIntlClientProvider';
 import usePathname from './usePathname';
 import useRouter from './useRouter';
 
@@ -15,5 +14,5 @@ export const useUnlocalizedPathname = usePathname;
 /** @deprecated Is called `useRouter` now. */
 export const useLocalizedRouter = useRouter;
 
-/** @deprecated Should be imported from `next-intl`, not `next-intl/client`. */
-export const NextIntlClientProvider = NextIntlClientProvider_;
+// Legacy export (deprecation is handled by component)
+export {default as NextIntlClientProvider} from './NextIntlClientProvider';

@@ -1,24 +1,33 @@
 'use client';
 
 import {usePathname as useNextPathname} from 'next/navigation';
-import unlocalizePathname from '../shared/unlocalizePathname';
-import hasPathnamePrefixed from './hasPathnamePrefixed';
+import {useMemo} from 'react';
+import {hasPathnamePrefixed, unlocalizePathname} from '../shared/utils';
 import useClientLocale from './useClientLocale';
 
 /**
  * Returns the pathname without a potential locale prefix.
  *
- * This can be helpful e.g. to implement navigation links,
- * where the active link is highlighted.
+ * @example
+ * ```tsx
+ * 'use client';
+ *
+ * import {usePathname} from 'next-intl/client';
+ *
+ * // When the user is on `/en`, this will be `/`
+ * const pathname = usePathname();
+ * ```
  */
 export default function usePathname(): string {
   const pathname = useNextPathname();
   const locale = useClientLocale();
 
-  const isPathnamePrefixed = hasPathnamePrefixed(locale, pathname);
-  const unlocalizedPathname = isPathnamePrefixed
-    ? unlocalizePathname(pathname, locale)
-    : pathname;
+  return useMemo(() => {
+    const isPathnamePrefixed = hasPathnamePrefixed(locale, pathname);
+    const unlocalizedPathname = isPathnamePrefixed
+      ? unlocalizePathname(pathname, locale)
+      : pathname;
 
-  return unlocalizedPathname;
+    return unlocalizedPathname;
+  }, [locale, pathname]);
 }
