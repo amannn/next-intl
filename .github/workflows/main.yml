@@ -36,5 +36,4 @@ jobs:
 
       - run: pnpm run build
       - run: pnpm run lint
-      # Playwright tests might randomly crash otherwise
-      - run: pnpm run test -- --concurrency 1
+      - run: pnpm run test
