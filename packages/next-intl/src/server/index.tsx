@@ -1,3 +1,7 @@
+/**
+ * Server-only APIs available via `next-intl/server`.
+ */
+
 import createMiddleware_ from '../middleware';
 import MiddlewareConfig from '../middleware/NextIntlMiddlewareConfig';
 

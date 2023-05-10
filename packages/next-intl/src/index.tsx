@@ -1,6 +1,9 @@
-export * from 'use-intl';
+/**
+ * This is the default entry file when consumers import from
+ * 'next-intl'. We use the client APIs in this case.
+ *
+ * Note that the `react-server` environment (i.e. RSC) imports
+ * from `./react-server` instead.
+ */
 
-export {default as NextIntlClientProvider} from './shared/NextIntlClientProvider';
-
-// Legacy export for compatibility
-export {default as NextIntlProvider} from './shared/NextIntlClientProvider';
+export * from './react-client';
