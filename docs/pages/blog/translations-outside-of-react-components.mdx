@@ -6,7 +6,7 @@ title: How (not) to use translations outside of React components
 
 Have you ever wondered why `next-intl` doesn’t provide an API to consume translations outside of React components?
 
-The traditional way is to use the `useTranslations` hook.
+The traditional way to internationalize your app with `next-intl` is to use the `useTranslations` hook:
 
 ```tsx
 import {useTranslations} from 'next-intl';
@@ -34,8 +34,10 @@ import {addMinutes} from 'date-fns';
 function sendFeedback() {
   // ❌ Bad implementation: Returns formatted messages
   API.sendFeedback().catch((error) => {
+    // In case of a gateway timeout, notify the
+    // user that we'll try again in 5 minutes
     if (error.status === 504) {
-      // Notify the user that we'll try again in 5 minutes
+      // (let's assume `t` is defined here for the sake of the example)
       return t('timeout', {nextAttempt: addMinutes(new Date(), 5)});
     }
   });
@@ -107,7 +109,7 @@ Additionally, this approach is more robust to possibly unexpected states, like t
 
 ## The exception that proves the rule
 
-If you’re working with Next.js, you might like to translate i18n messages in [API routes](https://nextjs.org/docs/api-routes/introduction), [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers) or the [Metadata API](https://beta.nextjs.org/docs/api-reference/metadata).
+If you’re working with Next.js, you might want to translate i18n messages in [API routes](https://nextjs.org/docs/api-routes/introduction), [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers) or the [Metadata API](https://beta.nextjs.org/docs/api-reference/metadata).
 
 `next-intl` provides a [core library](/docs/usage/core-library) that is agnostic from React and can be used for these cases.
 
@@ -133,6 +135,6 @@ There's currently a proposal to further simplify this use case, by offering a se
 
 If you’ve been working with React for a longer time, you might have experienced the change [from `component{DidMount,DidUpdate,WillUnmount}` to `useEffect`](https://legacy.reactjs.org/docs/hooks-effect.html#explanation-why-effects-run-on-each-update). The reason why `useEffect` is superior is because it nudges the developer into a direction where the app is always in sync and by doing this, a whole array of potential issues just magically disappear.
 
-By limiting ourselves to only format messages during render, we're in a similar situation: The rendered output of translated messages is always in sync with app state.
+By limiting ourselves to only format messages during render, we're in a similar situation: The rendered output of translated messages is always in sync with app state and we can rely on the app being consistent.
 
 Related: ["How can I reuse messages?" in the structuring messages docs](/docs/usage/messages#structuring-messages)

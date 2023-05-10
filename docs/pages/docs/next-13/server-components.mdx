@@ -395,6 +395,8 @@ import {
 } from 'next-intl/server';
 ```
 
+Note however that the `useTranslations` hook is the primary API to translate messages in your app. Related: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components)
+
 ## CDN caching
 
 Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from dynamic rendering as you'd get from static rendering ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)). Also note that [the Next.js Cache](https://nextjs.org/blog/next-13-2#nextjs-cache) improves the performance for dynamically rendered pages.
