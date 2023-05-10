@@ -3,12 +3,11 @@ import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Server Components
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
 <Callout type="warning">
-  The App Router is currently in beta, patterns are still emerging and APIs may
-  change. Please **use this at your own risk**, knowing that you might have to
-  face a migration as the App Router becomes stable.
+  Support for React Server Components is currently in beta. Please use it at
+  your own risk, knowing that you may have to migrate upon a stable release.
 </Callout>
 
 ## Current beta version
@@ -38,7 +37,7 @@ For details, see the [pending pull request for Server Components support](https:
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js 13 app that uses the App Router](https://beta.nextjs.org/docs/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+If you haven't done so already, [create a Next.js 13 app that uses the App Router](https://nextjs.org/docs/getting-started/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
 **Start by creating the following file structure:**
 
@@ -232,9 +231,9 @@ function Pagination({curPage, totalPages}) {
 }
 ```
 
-You can still manage your translations on the server side by using [page- or search params](https://beta.nextjs.org/docs/api-reference/file-conventions/page). There's [an article on Smashing Magazine about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
+You can still manage your translations on the server side by using [page- or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page). There's [an article on Smashing Magazine about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
 
-Apart from page- or search params, you can also use [cookies](https://beta.nextjs.org/docs/api-reference/cookies) or [database state](https://beta.nextjs.org/docs/data-fetching/fundamentals) for storing state that can be read on the server side.
+Apart from page- or search params, you can also use [cookies](https://nextjs.org/docs/app/api-reference/functions/cookies) or [database state](https://nextjs.org/docs/app/building-your-application/data-fetching) for storing state that can be read on the server side.
 
 If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider`.
 

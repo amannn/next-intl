@@ -3,11 +3,11 @@ import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Client Components
 
-Next.js 13 introduces support for [React Server Components](https://beta.nextjs.org/docs/rendering/server-and-client-components) with the App Router. While support for Server Components in `next-intl` is [on the horizon](/docs/next-13/server-components), you can continue to use `next-intl` in the `app` directory by deferring the usage of internationalization to Client Components.
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router. While support for Server Components in `next-intl` is [on the horizon](/docs/next-13/server-components), you can continue to use `next-intl` in the `app` directory by deferring the usage of internationalization to Client Components.
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://beta.nextjs.org/docs/installation). The goal is to prefix all routes with the `locale`, so that we can retrieve it as a [dynamic segment](https://beta.nextjs.org/docs/routing/defining-routes#dynamic-segments) and use it to configure `next-intl`.
+If you haven't done so already, [create a Next.js 13 app that uses the `app` directory](https://nextjs.org/docs/getting-started/installation). The goal is to prefix all routes with the `locale`, so that we can retrieve it as a [dynamic segment](https://nextjs.org/docs/app/building-your-application/routing/defining-routes#creating-routes) and use it to configure `next-intl`.
 
 **Start by creating the following file structure:**
 
