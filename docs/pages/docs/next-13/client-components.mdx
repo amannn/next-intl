@@ -121,57 +121,6 @@ If you've encountered an issue, you can [explore the code for a working example]
   version](/docs/next-13/server-components).
 </Callout>
 
-## Linking between pages
-
-In the `pages` folder, Next.js automatically considers the current locale for `next/link`. Since this is no longer the case for the `app` directory, you can add a component that wraps `next/link` accordingly as a drop-in replacement.
-
-```tsx filename="Link.tsx"
-import {useLocale} from 'next-intl';
-import NextLink from 'next/link';
-import {ComponentProps, forwardRef} from 'react';
-
-type Props = ComponentProps<typeof NextLink>;
-
-function Link({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
-  const defaultLocale = useLocale();
-  if (!locale) locale = defaultLocale;
-
-  // Turn prefetching off, to avoid updating the locale cookie for prefetch requests
-  if (locale !== defaultLocale) {
-    prefetch = false;
-  }
-
-  function getLocalizedHref(originalHref: string) {
-    return originalHref.replace(/^\//, '/' + locale + '/');
-  }
-
-  const localizedHref =
-    typeof href === 'string'
-      ? getLocalizedHref(href)
-      : href.pathname != null
-      ? {...href, pathname: getLocalizedHref(href.pathname)}
-      : href;
-
-  return (
-    <NextLink ref={ref} href={localizedHref} prefetch={prefetch} {...rest} />
-  );
-}
-
-export default forwardRef(Link);
-```
-
-```tsx
-// Usage while being on `/en`
-<Link href="/">Goes to `/en`</Link>
-<Link href="/nested">Goes to `/en/nested`</Link>
-<Link href={{pathname: "/nested"}}>Goes to `/en/nested`</Link>
-```
-
-<Callout>
-  Built-in support for i18n routing APIs is being considered (see [the Server
-  Components beta docs](/docs/next-13/server-components#routing)).
-</Callout>
-
 ## Usage with the Metadata API
 
 To provide metadata for a route, you can use the [core library](/docs/usage/core-library) from `next-intl`.
