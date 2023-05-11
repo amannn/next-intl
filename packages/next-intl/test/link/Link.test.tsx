@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname} from 'next/navigation';
 import React from 'react';
-import {Link} from '../../src';
+import Link from '../../src/link';
 
 jest.mock('next/navigation', () => ({
   useParams: jest.fn(() => ({locale: 'en'})),

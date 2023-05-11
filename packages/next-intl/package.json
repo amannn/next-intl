@@ -29,6 +29,7 @@
     },
     "./server": "./dist/src/server/index.js",
     "./client": "./dist/src/client/index.js",
+    "./link": "./dist/src/link/index.js",
     "./middleware": "./dist/src/middleware/index.js"
   },
   "files": [
@@ -36,6 +37,7 @@
     "src",
     "server.d.ts",
     "client.d.ts",
+    "link.d.ts",
     "middleware.d.ts"
   ],
   "keywords": [
