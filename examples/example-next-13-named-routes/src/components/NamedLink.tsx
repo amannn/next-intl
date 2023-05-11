@@ -1,4 +1,5 @@
-import {Link, useLocale} from 'next-intl';
+import {useLocale} from 'next-intl';
+import Link from 'next-intl/link';
 import {ComponentProps} from 'react';
 import routesByLocale from '../../routesByLocale.json';
 

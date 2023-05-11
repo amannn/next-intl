@@ -9,7 +9,7 @@ import Callout from 'components/Callout';
 This component wraps `next/link` and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
 ```tsx
-import {Link} from 'next-intl';
+import Link from 'next-intl/link';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>
@@ -53,7 +53,7 @@ const pathname = usePathname();
   beta](/docs/next-13/server-components).
 </Callout>
 
-If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://beta.nextjs.org/docs/api-reference/redirect) and automatically applies the current locale.
+If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
 ```tsx {1, 8}
 import {redirect} from 'next-intl/server';

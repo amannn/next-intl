@@ -1,7 +1,7 @@
 'use client';
 
-import {Link} from 'next-intl';
 import {usePathname} from 'next-intl/client';
+import Link from 'next-intl/link';
 import {ReactNode} from 'react';
 
 type Props = {

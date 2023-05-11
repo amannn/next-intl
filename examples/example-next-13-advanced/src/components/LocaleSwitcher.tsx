@@ -1,4 +1,5 @@
-import {Link, useLocale, useTranslations} from 'next-intl';
+import {useLocale, useTranslations} from 'next-intl';
+import Link from 'next-intl/link';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');

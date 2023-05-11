@@ -1,6 +1,6 @@
 'use client';
 
-import {Link} from 'next-intl';
+import Link from 'next-intl/link';
 import {ComponentProps} from 'react';
 
 type Props = ComponentProps<typeof Link>;

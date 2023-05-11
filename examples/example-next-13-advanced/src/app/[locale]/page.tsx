@@ -1,11 +1,6 @@
 import Image from 'next/image';
-import {
-  Link,
-  useFormatter,
-  useNow,
-  useTimeZone,
-  useTranslations
-} from 'next-intl';
+import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import Link from 'next-intl/link';
 import ClientLink from '../../components/ClientLink';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';

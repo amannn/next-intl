@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "2.14.0",
+  "version": "2.14.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
@@ -29,6 +29,10 @@
     },
     "./server": "./dist/src/server/index.js",
     "./client": "./dist/src/client/index.js",
+    "./link": {
+      "react-server": "./dist/src/link/react-server/index.js",
+      "default": "./dist/src/link/index.js"
+    },
     "./config": "./config.js",
     "./middleware": "./dist/src/middleware/index.js",
     "./withNextIntl": "./withNextIntl.js",
@@ -39,6 +43,7 @@
     "src",
     "server.d.ts",
     "client.d.ts",
+    "link.d.ts",    
     "config.js",
     "middleware.d.ts",
     "withNextIntl.js",
@@ -66,7 +71,7 @@
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
     "server-only": "0.0.1",
-    "use-intl": "^2.14.0"
+    "use-intl": "^2.14.1"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
