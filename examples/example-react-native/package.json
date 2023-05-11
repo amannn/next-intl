@@ -1,6 +1,6 @@
 {
   "name": "example-react-native",
-  "version": "2.14.0",
+  "version": "2.14.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -19,7 +19,7 @@
     "react-dom": "~18.1.0",
     "react-native": "^0.70.5",
     "react-native-web": "~0.18.9",
-    "use-intl": "^2.14.0"
+    "use-intl": "^2.14.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -81,7 +81,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -124,7 +124,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -179,7 +179,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -234,7 +234,7 @@ importers:
         specifier: ^4.22.1
         version: 4.22.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -292,7 +292,7 @@ importers:
         specifier: ~0.18.9
         version: 0.18.9(react-dom@18.1.0)(react@18.1.0)
       use-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/use-intl
     devDependencies:
       '@babel/core':
@@ -320,7 +320,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       use-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../../packages/use-intl
     devDependencies:
       '@remix-run/dev':
@@ -354,7 +354,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.14.0
+        specifier: ^2.14.1
         version: link:../use-intl
     devDependencies:
       '@testing-library/react':
@@ -9957,6 +9957,7 @@ packages:
 
   /file-uri-to-path@1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
     optional: true
 
   /file-uri-to-path@2.0.0:
