@@ -77,3 +77,6 @@ function UserDetails({user}) {
   </a>
   <br>
 </div>
+
+
+Hosted on <a href="https://vercel.com?utm_source=next-intl&utm_campaign=oss">Vercel</a>

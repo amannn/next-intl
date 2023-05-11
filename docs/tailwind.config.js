@@ -1,6 +1,3 @@
-const colors = require('tailwindcss/colors');
-const defaults = require('tailwindcss/defaultConfig');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
@@ -10,6 +7,18 @@ module.exports = {
     './theme.config.{js,tsx}'
   ],
   theme: {
+    extend: {
+      fontSize: {
+        '2xs': ['0.69rem', {lineHeight: '1'}],
+        '5xl': ['3rem', {lineHeight: '1.2'}]
+      },
+      colors: {
+        slate: {
+          850: 'hsl(222deg 47% 16%)'
+        },
+        primary: '#5fc3e7'
+      }
+    },
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
       mono: [
@@ -22,43 +31,6 @@ module.exports = {
         'Courier New',
         'monospace'
       ]
-    },
-    fontSize: {
-      ...defaults.theme.fontSize,
-      '5xl': ['3rem', {lineHeight: '1.2'}]
-    },
-    colors: {
-      inherit: colors.inherit,
-      current: colors.current,
-      transparent: colors.transparent,
-      black: colors.black,
-      white: colors.white,
-      gray: colors.gray,
-      zinc: colors.zinc,
-      neutral: colors.neutral,
-      stone: colors.stone,
-      red: colors.red,
-      orange: colors.orange,
-      amber: colors.amber,
-      yellow: colors.yellow,
-      lime: colors.lime,
-      green: colors.green,
-      emerald: colors.emerald,
-      teal: colors.teal,
-      cyan: colors.cyan,
-      sky: colors.sky,
-      blue: colors.blue,
-      indigo: colors.indigo,
-      violet: colors.violet,
-      purple: colors.purple,
-      fuchsia: colors.fuchsia,
-      pink: colors.pink,
-      rose: colors.rose,
-      slate: {
-        ...colors.slate,
-        850: 'hsl(222deg 47% 16%)'
-      },
-      primary: '#5fc3e7'
     }
   }
 };

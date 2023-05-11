@@ -1,3 +1,4 @@
+import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
 import {useRouter} from 'next/router';
 import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
@@ -81,8 +82,7 @@ export default {
   },
   primaryHue: {light: 210, dark: 195},
   footer: {
-    text: null,
-    component: null
+    component: Footer
   },
   navigation: true,
   darkMode: true,
