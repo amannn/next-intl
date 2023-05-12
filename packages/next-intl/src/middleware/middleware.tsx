@@ -63,7 +63,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
           headers: request.headers
         }
       };
-    
+
       return responseInit;
     }
 

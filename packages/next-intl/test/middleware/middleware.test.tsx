@@ -26,7 +26,7 @@ function createMockRequest(
   locale = 'en',
   host = 'http://localhost:3000',
   localeCookieValue?: string,
-  customHeaders?: HeadersInit,
+  customHeaders?: HeadersInit
 ) {
   const headers = new Headers({
     'accept-language': `${locale};q=0.9,en;q=0.8`,
@@ -199,7 +199,7 @@ describe('prefix-based routing', () => {
         )
       ).toBe('test');
     });
-    
+
     it('retains request headers for secondary locales', () => {
       middleware(
         createMockRequest('/de', 'de', 'http://localhost:3000', undefined, {
