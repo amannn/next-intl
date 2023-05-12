@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.14.2 (2023-05-12)
+
+
+### Bug Fixes
+
+* Fix forwarding of request headers in middleware ([#269](https://github.com/amannn/next-intl/issues/269) by @ARochniak) ([4ecbab5](https://github.com/amannn/next-intl/commit/4ecbab55c53d88a287a11237eea80bd66233f8c1)), closes [#266](https://github.com/amannn/next-intl/issues/266)
+
+
+
+
+
 ## 2.14.1 (2023-05-11)
 
 

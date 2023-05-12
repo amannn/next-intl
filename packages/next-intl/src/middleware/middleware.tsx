@@ -104,17 +104,17 @@ export default function createMiddleware(config: MiddlewareConfig) {
     const hasUnknownHost = configWithDefaults.domains != null && !domain;
 
     function getResponseInit() {
-      let responseInit;
+      const responseInit = {
+        request: {
+          headers: request.headers
+        }
+      };
 
       if (hasOutdatedCookie) {
-        // Only apply a header if absolutely necessary
-        // as this causes full page reloads
-        request.headers.set(HEADER_LOCALE_NAME, locale);
-        responseInit = {
-          request: {
-            headers: request.headers
-          }
-        };
+        responseInit.request.headers = new Headers(
+          responseInit.request.headers
+        );
+        responseInit.request.headers.set(HEADER_LOCALE_NAME, locale);
       }
 
       return responseInit;
