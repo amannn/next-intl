@@ -8,12 +8,20 @@ it('handles i18n routing', async ({page}) => {
   await page.goto('/de');
   await page.goto('/');
   await expect(page).toHaveURL('/de');
-  await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
-  await expect(page).toHaveURL('/');
-  page.getByRole('heading', {name: 'This is the home page.'});
+  await page
+    .getByRole('combobox', {name: 'Sprache ändern'})
+    .selectOption({label: 'Englisch'});
 
+  await expect(page).toHaveURL('/');
+  page.getByRole('heading', {name: 'next-intl example'});
+});
+
+it('handles not found pages', async ({page}) => {
   await page.goto('/unknown');
-  page.getByRole('heading', {name: 'This page could not be found.'});
+  page.getByRole('heading', {name: 'Page not found'});
+
+  await page.goto('/de/unknown');
+  page.getByRole('heading', {name: 'Seite nicht gefunden'});
 });
 
 it('can be used to configure metadata', async ({page}) => {
@@ -26,8 +34,8 @@ it('can be used to configure metadata', async ({page}) => {
 
 it('can be used to localize the page', async ({page}) => {
   await page.goto('/en');
-  page.getByRole('heading', {name: 'This is the home page.'});
+  page.getByRole('heading', {name: 'next-intl example'});
 
   await page.goto('/de');
-  page.getByRole('heading', {name: 'Das ist die Startseite.'});
+  page.getByRole('heading', {name: 'next-intl Beispiel'});
 });

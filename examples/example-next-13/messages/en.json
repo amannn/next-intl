@@ -1,12 +1,39 @@
 {
-  "Index": {
-    "title": "Home",
-    "description": "This is the home page."
+  "IndexPage": {
+    "title": "next-intl example",
+    "description": "This is a basic example that demonstrates the usage of <code>next-intl</code> with the Next.js App Router. Try changing the locale in the top right corner and see how the content changes."
+  },
+  "AboutPage": {
+    "title": "About",
+    "description": "<p>The routing is internationalized too.</p><p>If you're using the default language English, you'll see <code>/about</code> in the browser address bar on this page.</p><p>If you change the locale to German, the URL is prefixed with the locale (<code>/de/about</code>).</p>"
+  },
+  "NotFoundPage": {
+    "title": "Page not found",
+    "description": "Please double-check the URL or use the navigation to go to a known page."
   },
   "LocaleLayout": {
     "title": "next-intl example"
   },
   "LocaleSwitcher": {
-    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+    "label": "Change language",
+    "locale": "{locale, select, de {German} en {English} other {Unknown}}"
+  },
+  "Navigation": {
+    "home": "Home",
+    "about": "About"
+  },
+  "PageLayout": {
+    "links": {
+      "docs": {
+        "title": "Docs",
+        "description": "Learn more about next-intl in the official docs.",
+        "href": "https://next-intl-docs.vercel.app/"
+      },
+      "source": {
+        "title": "Source code",
+        "description": "Browse the source code of this example on GitHub.",
+        "href": "https://github.com/amannn/next-intl/tree/main/examples/example-next-13"
+      }
+    }
   }
 }

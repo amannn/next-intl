@@ -1,4 +1,11 @@
-// Everything from core, React APIs stubbed-out for now (since they don't work without context)
+/**
+ * This is the main entry file when 'react-server' environments
+ * (i.e. RSC) import from 'next-intl'. Currently we export everything
+ * from `use-intl` core, but React-APIs are stubbed out.
+ *
+ * Make sure this mirrors the API from '../react-client'.
+ */
+
 export * from 'use-intl/dist/src/core';
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
@@ -19,3 +26,4 @@ export const useIntl = notSupported;
 export const useLocale = notSupported;
 export const useNow = notSupported;
 export const useTimeZone = notSupported;
+export const Link = notSupported;

@@ -1,10 +1,14 @@
 {
+  "next-13": {
+    "title": "App Router",
+    "theme": {"layout": "full"}
+  },
   "minimal": {
-    "title": "Minimal setup",
+    "title": "Pages Router",
     "theme": {"layout": "full"}
   },
   "advanced": {
-    "title": "Advanced usage",
+    "title": "Pages Router (advanced)",
     "theme": {"layout": "full"}
   }
 }
