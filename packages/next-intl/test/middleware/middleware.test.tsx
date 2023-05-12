@@ -25,14 +25,16 @@ function createMockRequest(
   pathnameWithSearch = '/',
   locale = 'en',
   host = 'http://localhost:3000',
-  localeCookieValue?: string
+  localeCookieValue?: string,
+  customHeaders?: HeadersInit
 ) {
   const headers = new Headers({
     'accept-language': `${locale};q=0.9,en;q=0.8`,
     host: new URL(host).host,
     ...(localeCookieValue && {
       cookie: `${COOKIE_LOCALE_NAME}=${localeCookieValue}`
-    })
+    }),
+    ...customHeaders
   });
   const url = host + pathnameWithSearch;
 
@@ -183,6 +185,30 @@ describe('prefix-based routing', () => {
         name: 'NEXT_LOCALE',
         value: 'en'
       });
+    });
+
+    it('retains request headers for the default locale', () => {
+      middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1].request.headers.get(
+          'x-test'
+        )
+      ).toBe('test');
+    });
+
+    it('retains request headers for secondary locales', () => {
+      middleware(
+        createMockRequest('/de', 'de', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.next.mock.calls[0][0].request.headers.get('x-test')
+      ).toBe('test');
     });
   });
 
