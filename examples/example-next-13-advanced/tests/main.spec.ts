@@ -231,7 +231,7 @@ it('uses client-side transitions when using link', async ({context, page}) => {
   expect(tracker.numPageLoads).toBe(1);
 });
 
-it('keeps the locale cookie updated when changing the locale and uses soft navigation when changing the locale', async ({
+it('keeps the locale cookie updated when changing the locale and uses soft navigation (no reloads)', async ({
   context,
   page
 }) => {
@@ -249,9 +249,9 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
   await expect(page).toHaveURL('/de');
   await assertLocaleCookieValue(page, 'de');
 
-  // Somehow Next.js performs a hard refresh when
-  // a non-preloaded route is being navigated to.
-  expect(tracker.numPageLoads).toBe(2);
+  // Currently, a root layout outside of the `[locale]`
+  // folder is required for this to work.
+  expect(tracker.numPageLoads).toBe(1);
 });
 
 it('can use `Link` in client components without using a provider', async ({
