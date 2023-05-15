@@ -12,15 +12,19 @@ export default function useHook<Value>(
       error.message.includes("Cannot read properties of null (reading 'use')")
     ) {
       throw new Error(
-        `\`${hookName}\` is not callable within an async component.
+        `\`${hookName}\` is not callable within an async component. To resolve this, you can split your component into two, leaving the async code in the first one and moving the usage of \`${hookName}\` to the second one.
 
-You can either:
+Example:
 
-1. Split your component into two, leaving the async code in the first
-   one and moving the usage of \`${hookName}\` to the second one.
+async function Profile() {
+  const user = await getUser();
+  return <ProfileContent user={user} />;
+}
 
-2. Use an awaitable version of the hook, see
-   https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components`,
+function ProfileContent({user}) {
+  // Call \`${hookName}\` here and use the \`user\` prop
+  return ...;
+}`,
         {cause: error}
       );
     } else {
