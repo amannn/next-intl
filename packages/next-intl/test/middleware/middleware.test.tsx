@@ -3,10 +3,6 @@ import {NextRequest, NextResponse} from 'next/server';
 import createIntlMiddleware from '../../src/middleware';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
-type MockResponse = NextResponse & {
-  args: Array<any>;
-};
-
 jest.mock('next/server', () => {
   const response = {
     headers: new Headers(),
@@ -52,14 +48,6 @@ function createMockRequest(
   } as NextRequest;
 }
 
-function createMockMiddleware(
-  ...args: Parameters<typeof createIntlMiddleware>
-) {
-  return createIntlMiddleware(...args) as (
-    request: NextRequest
-  ) => MockResponse;
-}
-
 const MockedNextResponse = NextResponse as unknown as {
   next: jest.Mock<typeof NextResponse>;
   rewrite: jest.Mock<typeof NextResponse>;
@@ -74,7 +62,7 @@ beforeEach(() => {
 
 describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de']
     });
@@ -213,7 +201,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: as-needed, localeDetection: false', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'as-needed',
@@ -241,7 +229,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: always', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'always'
@@ -302,7 +290,7 @@ describe('prefix-based routing', () => {
 
 describe('domain-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       domains: [
@@ -505,7 +493,7 @@ describe('domain-based routing', () => {
   });
 
   describe("localePrefix: 'always'", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       localePrefix: 'always',
