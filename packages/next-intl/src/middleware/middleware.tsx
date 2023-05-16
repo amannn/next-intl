@@ -31,7 +31,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
   // `{createIntlMiddleware} from 'next-intl/server'` API.
   const matcher: Array<string> | undefined = (config as any)._matcher;
 
-  return function middleware(request: NextRequest) {
+  function middleware(request: NextRequest) {
     const matches =
       !matcher ||
       matcher.some((pattern) => request.nextUrl.pathname.match(pattern));
@@ -194,5 +194,12 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     return response;
-  };
+  }
+
+  // Next.js is ambiguous if a middleware should be defined as a named
+  // or default export. We support both patterns for compatibility.
+  // https://github.com/amannn/next-intl/issues/290
+  middleware.middleware = middleware;
+
+  return middleware;
 }
