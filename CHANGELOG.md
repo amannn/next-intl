@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.14.4](https://github.com/amannn/next-intl/compare/v2.14.3...v2.14.4) (2023-05-22)
+
+
+### Bug Fixes
+
+* Move JSDoc for `next/link` ([b85b6f5](https://github.com/amannn/next-intl/commit/b85b6f53fc541f4832a750665060b40839574533))
+
+
+
+
+
+## 2.14.3 (2023-05-22)
+
+
+### Bug Fixes
+
+* Accept `ref` for `next-intl/link` ([#300](https://github.com/amannn/next-intl/issues/300)) ([4d7cc17](https://github.com/amannn/next-intl/commit/4d7cc17de723c23fff81e2d77623f734a7cc9363)), closes [#299](https://github.com/amannn/next-intl/issues/299)
+
+
+
+
+
 ## 2.14.2 (2023-05-12)
 
 
