@@ -81,7 +81,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -124,7 +124,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -179,7 +179,7 @@ importers:
         specifier: ^13.4.0
         version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -234,7 +234,7 @@ importers:
         specifier: ^4.22.1
         version: 4.22.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -292,7 +292,7 @@ importers:
         specifier: ~0.18.9
         version: 0.18.9(react-dom@18.1.0)(react@18.1.0)
       use-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/use-intl
     devDependencies:
       '@babel/core':
@@ -320,7 +320,7 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       use-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../../packages/use-intl
     devDependencies:
       '@remix-run/dev':
@@ -354,7 +354,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.14.2
+        specifier: ^2.14.3
         version: link:../use-intl
     devDependencies:
       '@testing-library/react':
