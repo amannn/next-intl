@@ -6,6 +6,11 @@ type Props = Omit<ComponentProps<typeof BaseLink>, 'locale'> & {
   locale?: string;
 };
 
+function Link({locale, ...rest}: Props, ref: Props['ref']) {
+  const defaultLocale = useClientLocale();
+  return <BaseLink ref={ref} locale={locale || defaultLocale} {...rest} />;
+}
+
 /**
  * Wraps `next/link` and prefixes the `href` with the current locale if
  * necessary.
@@ -26,9 +31,4 @@ type Props = Omit<ComponentProps<typeof BaseLink>, 'locale'> & {
  * the `set-cookie` response header would cause the locale cookie on the current
  * page to be overwritten before the user even decides to change the locale.
  */
-function Link({locale, ...rest}: Props, ref: Props['ref']) {
-  const defaultLocale = useClientLocale();
-  return <BaseLink ref={ref} locale={locale || defaultLocale} {...rest} />;
-}
-
 export default forwardRef(Link);
