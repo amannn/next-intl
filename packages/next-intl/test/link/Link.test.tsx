@@ -72,6 +72,23 @@ describe('unprefixed routing', () => {
       'https://example.com/test'
     );
   });
+
+  it('can receive a ref', () => {
+    let ref;
+
+    render(
+      <Link
+        ref={(node) => {
+          ref = node;
+        }}
+        href="/test"
+      >
+        Test
+      </Link>
+    );
+
+    expect(ref).toBeDefined();
+  });
 });
 
 describe('prefixed routing', () => {
