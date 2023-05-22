@@ -39,3 +39,10 @@ it('can be used to localize the page', async ({page}) => {
   await page.goto('/de');
   page.getByRole('heading', {name: 'next-intl Beispiel'});
 });
+
+it('sets a cookie', async ({page}) => {
+  const response = await page.goto('/');
+  expect(await response?.headerValue('set-cookie')).toBe(
+    'NEXT_LOCALE=en; Path=/; SameSite=strict'
+  );
+});
