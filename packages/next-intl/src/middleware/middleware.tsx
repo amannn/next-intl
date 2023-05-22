@@ -180,7 +180,9 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     if (hasOutdatedCookie) {
-      response.cookies.set(COOKIE_LOCALE_NAME, locale);
+      response.cookies.set(COOKIE_LOCALE_NAME, locale, {
+        sameSite: 'strict'
+      });
     }
 
     if (
