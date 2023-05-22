@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.14.5 (2023-05-22)
+
+
+### Bug Fixes
+
+* Set `SameSite` attribute for locale cookie to `strict` ([#302](https://github.com/amannn/next-intl/issues/302)) ([0a6bce5](https://github.com/amannn/next-intl/commit/0a6bce5d57733487b99a7da5037c6195b9d2779b)), closes [#301](https://github.com/amannn/next-intl/issues/301)
+
+
+
+
+
 ## [2.14.4](https://github.com/amannn/next-intl/compare/v2.14.3...v2.14.4) (2023-05-22)
 
 
