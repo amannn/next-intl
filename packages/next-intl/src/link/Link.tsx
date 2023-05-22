@@ -1,4 +1,4 @@
-import React, {ComponentProps} from 'react';
+import React, {ComponentProps, forwardRef} from 'react';
 import useClientLocale from '../client/useClientLocale';
 import BaseLink from '../shared/BaseLink';
 
@@ -26,7 +26,9 @@ type Props = Omit<ComponentProps<typeof BaseLink>, 'locale'> & {
  * the `set-cookie` response header would cause the locale cookie on the current
  * page to be overwritten before the user even decides to change the locale.
  */
-export default function Link({locale, ...rest}: Props) {
+function Link({locale, ...rest}: Props, ref: Props['ref']) {
   const defaultLocale = useClientLocale();
-  return <BaseLink locale={locale || defaultLocale} {...rest} />;
+  return <BaseLink ref={ref} locale={locale || defaultLocale} {...rest} />;
 }
+
+export default forwardRef(Link);
