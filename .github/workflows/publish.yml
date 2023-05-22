@@ -23,6 +23,9 @@ jobs:
       - run: pnpm install
       # Seems like after squash & merge the author is unknown to lerna
       - run: git config --global user.email "jan@amann.work" && git config --global user.name "Jan Amann"
+      - uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-actor: true
       - run: pnpm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
