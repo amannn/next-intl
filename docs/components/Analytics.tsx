@@ -17,7 +17,7 @@ export default function Analytics() {
           async
           data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
           defer
-          src="/stats/script.js"
+          src="/stats/main.js"
         />
       )}
     </>
