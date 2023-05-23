@@ -46,7 +46,7 @@ module.exports = withNextra({
   ...(process.env.UMAMI_URL && {
     rewrites: () => [
       {
-        source: '/api/stats/:match*',
+        source: '/stats/:match*',
         destination: process.env.UMAMI_URL + '/:match*'
       }
     ]
