@@ -491,7 +491,9 @@ it('replaces invalid cookie locales', async ({request}) => {
   });
   expect(new URL(response.url()).pathname).toBe('/');
   expect(response.status()).toBe(200);
-  expect(response.headers()['set-cookie']).toBe('NEXT_LOCALE=en; Path=/');
+  expect(response.headers()['set-cookie']).toBe(
+    'NEXT_LOCALE=en; Path=/; SameSite=strict'
+  );
 });
 
 it('can localize route handlers', async ({request}) => {
