@@ -9,7 +9,7 @@
   },
   "NotFoundPage": {
     "title": "Page not found",
-    "description": "Please double-check the URL or use the navigation to go to a known page."
+    "description": "Please double-check the browser address bar or use the navigation to go to a known page."
   },
   "LocaleLayout": {
     "title": "next-intl example"

@@ -12,8 +12,16 @@ type Props = {
   params: {locale: string};
 };
 
+async function getMessages(locale: string) {
+  try {
+    return (await import(`../../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+}
+
 export async function generateMetadata({params: {locale}}: Props) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
+  const messages = await getMessages(locale);
 
   // You can use the core (non-React) APIs when you have to use next-intl
   // outside of components. Potentially this will be simplified in the future
@@ -29,12 +37,7 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  let messages;
-  try {
-    messages = (await import(`../../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
+  const messages = await getMessages(locale);
 
   return (
     <html className="h-full" lang={locale}>

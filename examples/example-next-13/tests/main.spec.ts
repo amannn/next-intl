@@ -24,6 +24,15 @@ it('handles not found pages', async ({page}) => {
   page.getByRole('heading', {name: 'Seite nicht gefunden'});
 });
 
+it("handles not found pages for routes that don't match the middleware", async ({
+  page
+}) => {
+  await page.goto('/test.png');
+  page.getByRole('heading', {name: 'This page could not be found.'});
+  await page.goto('/api/hello');
+  page.getByRole('heading', {name: 'This page could not be found.'});
+});
+
 it('can be used to configure metadata', async ({page}) => {
   await page.goto('/en');
   await expect(page).toHaveTitle('next-intl example');
