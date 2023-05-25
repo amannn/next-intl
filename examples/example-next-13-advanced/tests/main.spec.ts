@@ -360,14 +360,19 @@ it('returns the correct value from `usePathname` in the initial render', async (
   );
 });
 
-it('can use `redirect`', async ({page}) => {
-  await page.goto('/redirect');
-  await expect(page).toHaveURL('/client');
-
+it('can use `redirect` in Server Components', async ({page}) => {
   await page.goto('/redirect');
   await expect(page).toHaveURL('/client');
 
   await page.goto('/de/redirect');
+  await expect(page).toHaveURL('/de/client');
+});
+
+it('can use `redirect` in Client Components', async ({page}) => {
+  await page.goto('/client/redirect');
+  await expect(page).toHaveURL('/client');
+
+  await page.goto('/de/client/redirect');
   await expect(page).toHaveURL('/de/client');
 });
 

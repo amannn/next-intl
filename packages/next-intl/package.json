@@ -27,7 +27,10 @@
       "react-server": "./dist/src/react-server/index.js",
       "default": "./dist/index.js"
     },
-    "./server": "./dist/src/server/index.js",
+    "./server": {
+      "react-server": "./dist/src/server/index.js",
+      "default": "./dist/src/server/react-client/index.js"
+    },
     "./client": "./dist/src/client/index.js",
     "./link": {
       "react-server": "./dist/src/link/react-server/index.js",
