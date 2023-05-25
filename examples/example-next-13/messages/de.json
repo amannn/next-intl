@@ -9,7 +9,7 @@
   },
   "NotFoundPage": {
     "title": "Seite nicht gefunden",
-    "description": "Bitte überprüfe die URL oder verwende die Navigation um zu einer bekannten Seite zu wechseln."
+    "description": "Bitte überprüfe die Addressleiste deines Browsers oder verwende die Navigation um zu einer bekannten Seite zu wechseln."
   },
   "LocaleLayout": {
     "title": "next-intl Beispiel"

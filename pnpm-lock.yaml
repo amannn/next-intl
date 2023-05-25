@@ -486,7 +486,7 @@ importers:
         specifier: 0.0.1
         version: 0.0.1
       use-intl:
-        specifier: ^2.14.3
+        specifier: ^2.14.6
         version: link:../use-intl
     devDependencies:
       '@testing-library/react':

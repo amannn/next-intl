@@ -13,7 +13,7 @@ export default class BrowserTracker {
     if (typeof window !== 'undefined') {
       const umami = (window as any).umami;
       if (umami) {
-        promises.push(umami.trackEvent(name, data));
+        promises.push(umami.track(name, data));
       } else {
         console.warn('umami not loaded');
       }
