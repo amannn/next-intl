@@ -9,7 +9,7 @@ type Props = {
   rscAnnouncement: string;
   titleRegular: string;
   titleStrong: string;
-  viewOnGithub: string;
+  viewExample: string;
 };
 
 export default function Hero({
@@ -18,7 +18,7 @@ export default function Hero({
   rscAnnouncement,
   titleRegular,
   titleStrong,
-  viewOnGithub
+  viewExample
 }: Props) {
   return (
     <div className="dark overflow-hidden">
@@ -38,11 +38,11 @@ export default function Hero({
               <div className="mt-8 flex gap-4 lg:mt-10">
                 <LinkButton href="/docs">{getStarted}</LinkButton>
                 <LinkButton
-                  href="https://github.com/amannn/next-intl"
+                  href="https://next-intl-example-next-13.vercel.app"
                   target="_blank"
                   variant="secondary"
                 >
-                  {viewOnGithub}
+                  {viewExample}
                 </LinkButton>
               </div>
               <Link

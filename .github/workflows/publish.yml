@@ -18,6 +18,7 @@ jobs:
           version: 8.4.0
       - uses: actions/setup-node@v3
         with:
+          registry-url: 'https://registry.npmjs.org'
           node-version: 18.x
           cache: 'pnpm'
       - run: pnpm install

@@ -360,14 +360,19 @@ it('returns the correct value from `usePathname` in the initial render', async (
   );
 });
 
-it('can use `redirect`', async ({page}) => {
-  await page.goto('/redirect');
-  await expect(page).toHaveURL('/client');
-
+it('can use `redirect` in Server Components', async ({page}) => {
   await page.goto('/redirect');
   await expect(page).toHaveURL('/client');
 
   await page.goto('/de/redirect');
+  await expect(page).toHaveURL('/de/client');
+});
+
+it('can use `redirect` in Client Components', async ({page}) => {
+  await page.goto('/client/redirect');
+  await expect(page).toHaveURL('/client');
+
+  await page.goto('/de/client/redirect');
   await expect(page).toHaveURL('/de/client');
 });
 
@@ -486,7 +491,9 @@ it('replaces invalid cookie locales', async ({request}) => {
   });
   expect(new URL(response.url()).pathname).toBe('/');
   expect(response.status()).toBe(200);
-  expect(response.headers()['set-cookie']).toBe('NEXT_LOCALE=en; Path=/');
+  expect(response.headers()['set-cookie']).toBe(
+    'NEXT_LOCALE=en; Path=/; SameSite=strict'
+  );
 });
 
 it('can localize route handlers', async ({request}) => {
