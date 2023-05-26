@@ -1,5 +1,10 @@
 lockfileVersion: '6.0'
 
+patchedDependencies:
+  next@13.4.0:
+    hash: vl37pcs5nt3zsfkmgmmwb6r5bu
+    path: patches/next@13.4.0.patch
+
 importers:
 
   .:
@@ -33,7 +38,7 @@ importers:
         version: 2.2.0
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       nextra:
         specifier: ^2.4.2
         version: 2.4.2(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
@@ -79,7 +84,7 @@ importers:
         version: 2.16.1
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.14.3
         version: link:../../packages/next-intl
@@ -122,7 +127,7 @@ importers:
         version: 4.17.21
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.14.3
         version: link:../../packages/next-intl
@@ -177,7 +182,7 @@ importers:
         version: 1.2.1
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.14.3
         version: link:../../packages/next-intl
@@ -211,7 +216,7 @@ importers:
         version: 8.39.0
       eslint-config-molindo:
         specifier: ^6.0.0
-        version: 6.0.0(eslint@8.39.0)(jest@29.5.0)
+        version: 6.0.0(eslint@8.39.0)
       eslint-config-next:
         specifier: ^13.4.0
         version: 13.4.0(eslint@8.39.0)(typescript@4.9.5)
@@ -235,7 +240,7 @@ importers:
         version: 2.1.3
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.13.2
         version: link:../../packages/next-intl
@@ -278,7 +283,7 @@ importers:
     dependencies:
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.13.2
         version: link:../../packages/next-intl
@@ -321,7 +326,7 @@ importers:
     dependencies:
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: ^4.22.1
         version: 4.22.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
@@ -364,7 +369,7 @@ importers:
     dependencies:
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.13.2
         version: link:../../packages/next-intl
@@ -518,7 +523,7 @@ importers:
         version: 1.4.1(eslint@8.39.0)(typescript@4.9.5)
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -2319,7 +2324,7 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       espree: 9.5.1
       globals: 13.20.0
       ignore: 5.2.4
@@ -2772,7 +2777,7 @@ packages:
     engines: {node: '>=10.10.0'}
     dependencies:
       '@humanwhocodes/object-schema': 1.2.1
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -5117,7 +5122,7 @@ packages:
       '@typescript-eslint/scope-manager': 5.59.2
       '@typescript-eslint/type-utils': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
       '@typescript-eslint/utils': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       eslint: 8.39.0
       grapheme-splitter: 1.0.4
       ignore: 5.2.4
@@ -5142,7 +5147,7 @@ packages:
       '@typescript-eslint/scope-manager': 5.59.2
       '@typescript-eslint/types': 5.59.2
       '@typescript-eslint/typescript-estree': 5.59.2(typescript@4.9.5)
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       eslint: 8.39.0
       typescript: 4.9.5
     transitivePeerDependencies:
@@ -5169,7 +5174,7 @@ packages:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.59.2(typescript@4.9.5)
       '@typescript-eslint/utils': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       eslint: 8.39.0
       tsutils: 3.21.0(typescript@4.9.5)
       typescript: 4.9.5
@@ -5193,7 +5198,7 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.59.2
       '@typescript-eslint/visitor-keys': 5.59.2
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.5.0
@@ -8028,6 +8033,17 @@ packages:
       ms: 2.0.0
       supports-color: 6.1.0
 
+  /debug@3.2.7:
+    resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.3
+    dev: true
+
   /debug@3.2.7(supports-color@6.1.0):
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
     peerDependencies:
@@ -8038,6 +8054,19 @@ packages:
     dependencies:
       ms: 2.1.3
       supports-color: 6.1.0
+    dev: false
+
+  /debug@4.3.4:
+    resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
+    engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+    dependencies:
+      ms: 2.1.2
+    dev: true
 
   /debug@4.3.4(supports-color@6.1.0):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -8969,6 +8998,36 @@ packages:
       source-map: 0.6.1
     dev: true
 
+  /eslint-config-molindo@6.0.0(eslint@8.39.0):
+    resolution: {integrity: sha512-kZ/SZBJIejZY45HVn9q0WSkF1mhvem+7FmxDF7mNfCepGEGrjID2mNlOuWAShBTidzpukMQ7qKhkjV5JVmO91w==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^8.0.0
+    dependencies:
+      '@rushstack/eslint-patch': 1.2.0
+      '@typescript-eslint/eslint-plugin': 5.59.2(@typescript-eslint/parser@5.59.2)(eslint@8.39.0)(typescript@4.9.5)
+      '@typescript-eslint/parser': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
+      confusing-browser-globals: 1.0.11
+      eslint: 8.39.0
+      eslint-plugin-css-modules: 2.11.0(eslint@8.39.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.59.2)(eslint-import-resolver-typescript@3.5.5)(eslint@8.39.0)
+      eslint-plugin-jest: 26.9.0(@typescript-eslint/eslint-plugin@5.59.2)(eslint@8.39.0)(typescript@4.9.5)
+      eslint-plugin-jsx-a11y: 6.7.1(eslint@8.39.0)
+      eslint-plugin-prettier: 4.2.1(eslint@8.39.0)(prettier@2.8.8)
+      eslint-plugin-react: 7.32.2(eslint@8.39.0)
+      eslint-plugin-react-hooks: 4.6.0(eslint@8.39.0)
+      eslint-plugin-sort-destructure-keys: 1.5.0(eslint@8.39.0)
+      eslint-plugin-unicorn: 41.0.1(eslint@8.39.0)
+      prettier: 2.8.8
+      typescript: 4.9.5
+    transitivePeerDependencies:
+      - eslint-config-prettier
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - jest
+      - supports-color
+    dev: true
+
   /eslint-config-molindo@6.0.0(eslint@8.39.0)(jest@27.5.1):
     resolution: {integrity: sha512-kZ/SZBJIejZY45HVn9q0WSkF1mhvem+7FmxDF7mNfCepGEGrjID2mNlOuWAShBTidzpukMQ7qKhkjV5JVmO91w==}
     engines: {node: '>=10'}
@@ -9066,7 +9125,7 @@ packages:
   /eslint-import-resolver-node@0.3.7:
     resolution: {integrity: sha512-gozW2blMLJCeFpBwugLTGyvVjNoeo1knonXAcatC6bjPBZitotxdWf7Gimr25N4c0AAOo4eOUfaG82IJPDpqCA==}
     dependencies:
-      debug: 3.2.7(supports-color@6.1.0)
+      debug: 3.2.7
       is-core-module: 2.12.0
       resolve: 1.22.2
     transitivePeerDependencies:
@@ -9080,7 +9139,7 @@ packages:
       eslint: '*'
       eslint-plugin-import: '*'
     dependencies:
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       enhanced-resolve: 5.13.0
       eslint: 8.39.0
       eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.59.2)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.39.0)
@@ -9119,7 +9178,7 @@ packages:
         optional: true
     dependencies:
       '@typescript-eslint/parser': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
-      debug: 3.2.7(supports-color@6.1.0)
+      debug: 3.2.7
       eslint: 8.39.0
       eslint-import-resolver-node: 0.3.7
       eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.59.2)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.39.0)
@@ -9182,7 +9241,7 @@ packages:
       array-includes: 3.1.6
       array.prototype.flat: 1.3.1
       array.prototype.flatmap: 1.3.1
-      debug: 3.2.7(supports-color@6.1.0)
+      debug: 3.2.7
       doctrine: 2.1.0
       eslint: 8.39.0
       eslint-import-resolver-node: 0.3.7
@@ -9245,6 +9304,27 @@ packages:
       - typescript
     dev: true
 
+  /eslint-plugin-jest@26.9.0(@typescript-eslint/eslint-plugin@5.59.2)(eslint@8.39.0)(typescript@4.9.5):
+    resolution: {integrity: sha512-TWJxWGp1J628gxh2KhaH1H1paEdgE2J61BBF1I59c6xWeL5+D1BzMxGDN/nXAfX+aSkR5u80K+XhskK6Gwq9ng==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': ^5.0.0
+      eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+      jest: '*'
+    peerDependenciesMeta:
+      '@typescript-eslint/eslint-plugin':
+        optional: true
+      jest:
+        optional: true
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 5.59.2(@typescript-eslint/parser@5.59.2)(eslint@8.39.0)(typescript@4.9.5)
+      '@typescript-eslint/utils': 5.59.2(eslint@8.39.0)(typescript@4.9.5)
+      eslint: 8.39.0
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
   /eslint-plugin-jsx-a11y@6.7.1(eslint@8.39.0):
     resolution: {integrity: sha512-63Bog4iIethyo8smBklORknVjB0T2dwB8Mr/hIC+fBS0uyHdYYpzM/Ed+YC8VxTjlXHEWFOdmgwcDn1U2L9VCA==}
     engines: {node: '>=4.0'}
@@ -9283,6 +9363,22 @@ packages:
     dependencies:
       eslint: 8.39.0
       eslint-config-prettier: 8.8.0(eslint@8.39.0)
+      prettier: 2.8.8
+      prettier-linter-helpers: 1.0.0
+    dev: true
+
+  /eslint-plugin-prettier@4.2.1(eslint@8.39.0)(prettier@2.8.8):
+    resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      eslint: '>=7.28.0'
+      eslint-config-prettier: '*'
+      prettier: '>=2.0.0'
+    peerDependenciesMeta:
+      eslint-config-prettier:
+        optional: true
+    dependencies:
+      eslint: 8.39.0
       prettier: 2.8.8
       prettier-linter-helpers: 1.0.0
     dev: true
@@ -9425,7 +9521,7 @@ packages:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.3
-      debug: 4.3.4(supports-color@6.1.0)
+      debug: 4.3.4
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.0
@@ -15531,7 +15627,7 @@ packages:
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
       jose: 4.14.4
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       oauth: 0.9.15
       openid-client: 5.4.2
       preact: 10.13.2
@@ -15565,7 +15661,7 @@ packages:
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
     dependencies:
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -15581,7 +15677,7 @@ packages:
       '@corex/deepmerge': 4.0.43
       '@next/env': 13.4.0
       minimist: 1.2.8
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
     dev: true
 
   /next-themes@0.2.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0):
@@ -15591,12 +15687,12 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next@13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0):
+  /next@13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-y3E+2ZjiVrphkz7zcJvd2rEG6miOekI8krPfWV4AZZ9TaF0LDuFdP/f+RQ5M9wRvsz6GWw8k8+7jsO860GxSqg==}
     engines: {node: '>=16.8.0'}
     hasBin: true
@@ -15639,6 +15735,53 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    patched: true
+
+  /next@13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-y3E+2ZjiVrphkz7zcJvd2rEG6miOekI8krPfWV4AZZ9TaF0LDuFdP/f+RQ5M9wRvsz6GWw8k8+7jsO860GxSqg==}
+    engines: {node: '>=16.8.0'}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': ^1.1.0
+      fibers: '>= 3.1.0'
+      node-sass: ^6.0.0 || ^7.0.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      sass: ^1.3.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      fibers:
+        optional: true
+      node-sass:
+        optional: true
+      sass:
+        optional: true
+    dependencies:
+      '@next/env': 13.4.0
+      '@swc/helpers': 0.5.1
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001482
+      postcss: 8.4.14
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.1(react@18.2.0)
+      zod: 3.21.4
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 13.4.0
+      '@next/swc-darwin-x64': 13.4.0
+      '@next/swc-linux-arm64-gnu': 13.4.0
+      '@next/swc-linux-arm64-musl': 13.4.0
+      '@next/swc-linux-x64-gnu': 13.4.0
+      '@next/swc-linux-x64-musl': 13.4.0
+      '@next/swc-win32-arm64-msvc': 13.4.0
+      '@next/swc-win32-ia32-msvc': 13.4.0
+      '@next/swc-win32-x64-msvc': 13.4.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+    dev: false
+    patched: true
 
   /nextra-theme-docs@2.4.2(next@13.4.0)(nextra@2.4.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-5H6NJ38TlbgetNx9HjMmQcNpsp6GFH26TfjLVC0RWxhEPuoutSFpJ8RjWKXv6WEaWaL500CoErW0/DeXzuQGUg==}
@@ -15656,7 +15799,7 @@ packages:
       git-url-parse: 13.1.0
       intersection-observer: 0.12.2
       match-sorter: 6.3.1
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-seo: 6.0.0(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       next-themes: 0.2.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       nextra: 2.4.2(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
@@ -15682,7 +15825,7 @@ packages:
       gray-matter: 4.0.3
       katex: 0.16.7
       lodash.get: 4.4.2
-      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(patch_hash=vl37pcs5nt3zsfkmgmmwb6r5bu)(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-mdx-remote: 4.4.1(react-dom@18.2.0)(react@18.2.0)
       p-limit: 3.1.0
       react: 18.2.0
@@ -19894,6 +20037,23 @@ packages:
       '@babel/core': 7.21.8
       client-only: 0.0.1
       react: 18.2.0
+
+  /styled-jsx@5.1.1(react@18.2.0):
+    resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      client-only: 0.0.1
+      react: 18.2.0
+    dev: false
 
   /stylehacks@4.0.3:
     resolution: {integrity: sha512-7GlLk9JwlElY4Y6a/rmbH2MhVlTyVmiJd1PfTCqFaIBEGMYNsrO/v3SeGTdhBThLg4Z+NbOk/qFMwCa+J+3p/g==}
