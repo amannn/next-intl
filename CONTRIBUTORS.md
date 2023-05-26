@@ -2,6 +2,19 @@
 
 Thank you so much for contributing to `next-intl`!
 
+This project is a team effort and we rely on individuals working together to build a sustainable and reliable project.
+
+There are several ways you can contribute:
+
+1. **Helping others by answering questions**: Developers often seek guidance by posting questions in [issues](https://github.com/amannn/next-intl/issues), [discussions](https://github.com/amannn/next-intl/discussions), and [on Stack Overflow](https://stackoverflow.com/search?q=%22next-intl%22). Your responses, based on your experience, are greatly appreciated and help foster a supportive community.
+2. **Docs**: We focus on documentation as much as we do on the code itself. We strive to create helpful learning resources that efficiently communicate concepts and address common user issues. If you encounter areas that need clarification or have ideas to improve our documentation, we welcome and appreciate your contributions!
+3. **Bug fixes**: Fixing a bug always starts with creating a regression test that reliably reproduces the broken behavior. This alone is a valuable contribution and can be submitted as a pull request. If you're up for the challenge, feel free to provide the bug fix yourself!
+4. **New features**: We encourage proposing feature ideas as issues prior to starting development. This practice helps avoid duplicated efforts and allows us to align on the direction before investing significant development time.
+
+Open source work should be enjoyable for everyone involved. Let's make sure it stays that way! Our communication style aims to be clear and friendly. We value respect, empathy, and understanding different perspectives.
+
+Thank you again for being a part of this project! 🙌
+
 ## Local development
 
 ### Setup
