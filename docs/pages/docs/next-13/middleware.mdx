@@ -199,7 +199,7 @@ module.exports = withNextIntl({
 
 Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
 
-1. Translate the pathnames you're passing to [navigation APIs](/docs/next-13/navigation) like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/packages/example-next-13-named-routes/) that uses the proposed APIs from [the Server Components beta](http://localhost:3000/docs/next-13/server-components).
+1. Translate the pathnames you're passing to [navigation APIs](/docs/next-13/navigation) like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-named-routes/) that uses the proposed APIs from [the Server Components beta](https://next-intl-docs.vercel.app/docs/next-13/server-components).
 2. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
 
 ## Composing other middlewares

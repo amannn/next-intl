@@ -1,6 +1,3 @@
-import * as vercel from '@vercel/analytics';
-
-// Note: Vercel Analytics only supports 2 properties per event
 type Event = {
   name: 'partner-referral';
   data: {href: string; name: string};
@@ -18,8 +15,6 @@ export default class BrowserTracker {
         console.warn('umami not loaded');
       }
     }
-
-    promises.push(vercel.track(name, data));
 
     return Promise.all(promises);
   }
