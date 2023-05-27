@@ -14,7 +14,6 @@
     "@heroicons/react": "^2.0.17",
     "@next/font": "^13.1.6",
     "@tailwindcss/typography": "^0.5.9",
-    "@vercel/analytics": "^1.0.0",
     "clsx": "^1.2.1",
     "http-status-codes": "^2.2.0",
     "next": "^13.4.0",
