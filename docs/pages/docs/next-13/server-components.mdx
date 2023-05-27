@@ -333,48 +333,34 @@ Note however that the `useTranslations` hook is the primary API to translate mes
 
 ## CDN caching
 
-Since `next-intl` is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) via [`headers`](https://nextjs.org/docs/api-reference/next.config.js/headers) in `next.config.js` to get the same level of performance from dynamic rendering as you'd get from static rendering ([learn more](https://youtu.be/bfLFHp7Sbkg?t=490)). Also note that [the Next.js Cache](https://nextjs.org/blog/next-13-2#nextjs-cache) improves the performance for dynamically rendered pages.
+Since the support for using `next-intl` in React Server Components is currently SSR-only, it's a good idea to use [CDN caching](https://vercel.com/docs/concepts/edge-network/caching#stale-while-revalidate) to get the same performance characteristics as SSG.
 
-```js filename="next.config.js"
-const ms = require('ms');
-const withNextIntl = require('next-intl/plugin')();
-
-module.exports = withNextIntl({
-  // ... Other config
-
-  headers() {
-    return [
-      {
-        // Cache all content pages
-        source: '/((?!_next|.*\\..*).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: [
-              `s-maxage=` + ms('1d') / 1000,
-              `stale-while-revalidate=` + ms('1y') / 1000
-            ].join(', ')
-          }
-        ],
-
-        // If you're deploying on a host that doesn't support the `vary` header (e.g. Vercel),
-        // make sure to disable caching for prefetch requests for Server Components.
-        missing: [
-          {
-            type: 'header',
-            key: 'Next-Router-Prefetch'
-          }
-        ]
-      }
-    ];
-  }
-});
-```
+Unfortunately, Next.js currently ignores response headers for content routes that are defined via `next.config.js` or `middleware.ts`, therefore the only way to achieve this currently seems to be to [patch Next.js accordingly](https://github.com/vercel/next.js/issues/22319#issuecomment-1565268095).
 
 <Callout type="warning">
-  Unfortunately, this doesn't work anymore in Next.js 13.4. An alternative is
-  being investigated.
+  **Important:** This is a big hack, make sure you know what you're doing if you
+  apply this and test the result properly. This is considered a stopgap solution
+  and will eventually be replaced with a reliable alternative.
 </Callout>
+
+```diff filename="dist/server/send-payload/revalidate-headers.js"
+  function setRevalidateHeaders(res, options) {
+       if (options.private || options.stateful) {
+-        if (options.private || !res.getHeader("Cache-Control")) {
+-            res.setHeader("Cache-Control", `private, no-cache, no-store, max-age=0, must-revalidate`);
+-        }
++        if (options.private) {
++            res.setHeader("Cache-Control", `private, no-cache, no-store, max-age=0, must-revalidate`);
++        } else {
++            // IMPORTANT: This matches all dynamic content routes and applies the same
++            // caching headers (10min CDN caching with infinite stale-while-revalidate).
++            // You can also use `res.req.url` to match specific routes.
++            res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=31557600");
++         }
+     } else if (typeof options.revalidate === "number") {
+               if (options.revalidate < 1) {
+                       throw new Error(`invariant: invalid Cache-Control duration provided: ${options.revalidate} < 1`);
+```
 
 ## Providing feedback
 
