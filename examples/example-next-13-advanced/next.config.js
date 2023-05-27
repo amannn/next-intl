@@ -1,4 +1,3 @@
-const ms = require('ms');
 const withNextIntl = require('next-intl/plugin')();
 
 module.exports = withNextIntl({
@@ -12,28 +11,6 @@ module.exports = withNextIntl({
       {
         source: '/es/anidada',
         destination: '/es/nested'
-      }
-    ];
-  },
-  headers() {
-    return [
-      {
-        source: '/((?!_next|.*\\..*).*)',
-        missing: [
-          {
-            type: 'header',
-            key: 'Next-Router-Prefetch'
-          }
-        ],
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: [
-              `s-maxage=` + ms('1d') / 1000,
-              `stale-while-revalidate=` + ms('1y') / 1000
-            ].join(', ')
-          }
-        ]
       }
     ];
   }

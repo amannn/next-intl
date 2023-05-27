@@ -1,0 +1,22 @@
+diff --git a/dist/server/send-payload/revalidate-headers.js b/dist/server/send-payload/revalidate-headers.js
+index eae390d4927601057e38e95d6cda615342e9674e..b83df25eebfee4db68049f8bdf267dd0cd22dd2c 100644
+--- a/dist/server/send-payload/revalidate-headers.js
++++ b/dist/server/send-payload/revalidate-headers.js
+@@ -10,9 +10,14 @@ Object.defineProperty(exports, "setRevalidateHeaders", {
+ });
+ function setRevalidateHeaders(res, options) {
+     if (options.private || options.stateful) {
+-        if (options.private || !res.getHeader("Cache-Control")) {
+-            res.setHeader("Cache-Control", `private, no-cache, no-store, max-age=0, must-revalidate`);
+-        }
++        if (options.private) {
++            res.setHeader("Cache-Control", `private, no-cache, no-store, max-age=0, must-revalidate`);
++        } else {
++            // IMPORTANT: This matches all content routes and applies the same caching
++            // headers (10min CDN caching with infinite stale-while-revalidate).
++            // You can also use res.req.url to match specific routes.
++            res.setHeader('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=31557600');
++         }
+     } else if (typeof options.revalidate === "number") {
+         if (options.revalidate < 1) {
+             throw new Error(`invariant: invalid Cache-Control duration provided: ${options.revalidate} < 1`);

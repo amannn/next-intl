@@ -11,5 +11,10 @@
   "devDependencies": {
     "lerna": "^6.6.2",
     "turbo": "^1.9.3"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "next@13.4.0": "patches/next@13.4.0.patch"
+    }
   }
 }
