@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 importers:
 
@@ -30,7 +34,7 @@ importers:
         version: 2.2.0
       next:
         specifier: ^13.4.0
-        version: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       nextra:
         specifier: ^2.4.2
         version: 2.4.2(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
@@ -58,7 +62,7 @@ importers:
         version: 8.39.0
       eslint-config-molindo:
         specifier: ^6.0.0
-        version: 6.0.0(eslint@8.39.0)
+        version: 6.0.0(eslint@8.39.0)(jest@29.5.0)
       eslint-config-next:
         specifier: ^13.4.0
         version: 13.4.0(eslint@8.39.0)(typescript@4.9.5)
@@ -166,15 +170,12 @@ importers:
 
   examples/example-next-13:
     dependencies:
-      '@next/font':
-        specifier: ^13.1.6
-        version: 13.1.6
       clsx:
         specifier: ^1.2.1
         version: 1.2.1
       next:
         specifier: ^13.4.0
-        version: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
+        version: 13.4.0(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: ^2.14.3
         version: link:../../packages/next-intl
@@ -208,7 +209,7 @@ importers:
         version: 8.39.0
       eslint-config-molindo:
         specifier: ^6.0.0
-        version: 6.0.0(eslint@8.39.0)(jest@29.5.0)
+        version: 6.0.0(eslint@8.39.0)
       eslint-config-next:
         specifier: ^13.4.0
         version: 13.4.0(eslint@8.39.0)(typescript@4.9.5)
@@ -7907,6 +7908,7 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
+    dev: true
 
   /debug@4.3.4(supports-color@6.1.0):
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -14983,7 +14985,7 @@ packages:
     resolution: {integrity: sha512-6Mj0yHLdUZjHnOPgr5xfWIMqMWS12zDN6iws9SLuSz76W8jTtAv24MN4/CL7gJrl5vtxGInkkqDv/JIoRsQOvA==}
     dependencies:
       '@types/debug': 4.1.7
-      debug: 4.3.4
+      debug: 4.3.4(supports-color@6.1.0)
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.0.6
       micromark-factory-space: 1.0.0
@@ -15505,7 +15507,7 @@ packages:
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
     dependencies:
-      next: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -15521,7 +15523,7 @@ packages:
       '@corex/deepmerge': 4.0.43
       '@next/env': 13.4.0
       minimist: 1.2.8
-      next: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
     dev: true
 
   /next-themes@0.2.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0):
@@ -15531,7 +15533,7 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      next: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
@@ -15623,6 +15625,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
 
   /nextra-theme-docs@2.4.2(next@13.4.0)(nextra@2.4.2)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-5H6NJ38TlbgetNx9HjMmQcNpsp6GFH26TfjLVC0RWxhEPuoutSFpJ8RjWKXv6WEaWaL500CoErW0/DeXzuQGUg==}
@@ -15640,7 +15643,7 @@ packages:
       git-url-parse: 13.1.0
       intersection-observer: 0.12.2
       match-sorter: 6.3.1
-      next: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-seo: 6.0.0(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       next-themes: 0.2.1(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
       nextra: 2.4.2(next@13.4.0)(react-dom@18.2.0)(react@18.2.0)
@@ -15666,7 +15669,7 @@ packages:
       gray-matter: 4.0.3
       katex: 0.16.7
       lodash.get: 4.4.2
-      next: 13.4.0(react-dom@18.2.0)(react@18.2.0)
+      next: 13.4.0(@babel/core@7.21.8)(react-dom@18.2.0)(react@18.2.0)
       next-mdx-remote: 4.4.1(react-dom@18.2.0)(react@18.2.0)
       p-limit: 3.1.0
       react: 18.2.0
@@ -19894,6 +19897,7 @@ packages:
     dependencies:
       client-only: 0.0.1
       react: 18.2.0
+    dev: false
 
   /stylehacks@4.0.3:
     resolution: {integrity: sha512-7GlLk9JwlElY4Y6a/rmbH2MhVlTyVmiJd1PfTCqFaIBEGMYNsrO/v3SeGTdhBThLg4Z+NbOk/qFMwCa+J+3p/g==}
