@@ -39,3 +39,9 @@ it('formats a relative time', () => {
     )
   ).toBe('2 hours ago');
 });
+
+it('formats a list', () => {
+	expect(
+		intl.list(['apple', 'banana', 'orange'], {type: 'disjunction'})
+	).toBe('apple, banana, or orange');
+})

@@ -177,5 +177,17 @@ export default function createFormatter({
     }
   }
 
-  return {dateTime, number, relativeTime};
+	function list(
+    value: Iterable<string>,
+    formatOrOptions?: string | Intl.ListFormatOptions
+  ) {
+    return getFormattedValue(
+      value,
+      formatOrOptions,
+      formats?.list,
+      (options) => new Intl.ListFormat(locale, options).format(value)
+    );
+  }
+
+  return {dateTime, number, relativeTime, list};
 }
