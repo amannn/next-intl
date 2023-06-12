@@ -1,4 +1,4 @@
-import {Inter} from '@next/font/google';
+import {Inter} from 'next/font/google';
 import Analytics from 'components/Analytics';
 import {AppProps} from 'next/app';
 import {ReactNode} from 'react';
