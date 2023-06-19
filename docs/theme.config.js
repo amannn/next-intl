@@ -72,8 +72,7 @@ export default {
   project: {
     link: 'https://github.com/amannn/next-intl'
   },
-  docsRepositoryBase:
-    'https://github.com/amannn/next-intl/blob/main/packages/website',
+  docsRepositoryBase: 'https://github.com/amannn/next-intl/blob/main/docs',
   useNextSeoProps() {
     return {
       titleTemplate: '%s – Internationalization (i18n) for Next.js'
