@@ -47,7 +47,7 @@ it('formats a list', () => {
 });
 
 it('formats a set', () => {
-  expect(intl.list(new Set(['apple', 'banana', 'orange']), {type: 'disjunction'})).toBe(
-    'apple, banana, or orange'
-  );
+  expect(
+    intl.list(new Set(['apple', 'banana', 'orange']), {type: 'disjunction'})
+  ).toBe('apple, banana, or orange');
 });

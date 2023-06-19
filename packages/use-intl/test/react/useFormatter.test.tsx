@@ -435,7 +435,10 @@ describe('relativeTime', () => {
 });
 
 describe('list', () => {
-  function renderList(value: Iterable<string>, options?: Intl.ListFormatOptions) {
+  function renderList(
+    value: Iterable<string>,
+    options?: Intl.ListFormatOptions
+  ) {
     function Component() {
       const format = useFormatter();
       return <>{format.list(value, options)}</>;
@@ -449,19 +452,19 @@ describe('list', () => {
   }
 
   it('formats a list', () => {
-    renderList(['apple', 'banana', 'orange'])
+    renderList(['apple', 'banana', 'orange']);
     screen.getByText('apple, banana, and orange');
-  })
+  });
 
   it('accepts a set', () => {
-    renderList(new Set(['apple', 'banana', 'orange']))
+    renderList(new Set(['apple', 'banana', 'orange']));
     screen.getByText('apple, banana, and orange');
-  })
+  });
 
   it('accepts options', () => {
-    renderList(['apple', 'banana', 'orange'], {type: 'disjunction'})
+    renderList(['apple', 'banana', 'orange'], {type: 'disjunction'});
     screen.getByText('apple, banana, or orange');
-  })
+  });
 
   it('can use a global format', () => {
     function Component() {
@@ -476,5 +479,5 @@ describe('list', () => {
     );
 
     screen.getByText('apple, banana, & orange');
-  })
-})
+  });
+});
