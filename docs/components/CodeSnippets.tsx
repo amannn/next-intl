@@ -406,6 +406,10 @@ function standards() {
           .RelativeTimeFormat
         </span>
       </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>.ListFormat</span>
+      </span>
       <span className="line"> </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>

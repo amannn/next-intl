@@ -177,15 +177,12 @@ export default function createFormatter({
     }
   }
 
-	function list(
+  function list(
     value: Iterable<string>,
     formatOrOptions?: string | Intl.ListFormatOptions
   ) {
-    return getFormattedValue(
-      value,
-      formatOrOptions,
-      formats?.list,
-      (options) => new Intl.ListFormat(locale, options).format(value)
+    return getFormattedValue(value, formatOrOptions, formats?.list, (options) =>
+      new Intl.ListFormat(locale, options).format(value)
     );
   }
 

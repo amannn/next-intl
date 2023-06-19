@@ -44,7 +44,7 @@ For consistent results in end-to-end tests, it can be helpful to mock this value
 
 ## Global formats
 
-To achieve consistent date, time and number formatting across your app, you can define a set of global formats and pass them to the provider.
+To achieve consistent date, time, number and list formatting across your app, you can define a set of global formats and pass them to the provider.
 
 ```js
 <NextIntlProvider
@@ -61,6 +61,12 @@ To achieve consistent date, time and number formatting across your app, you can 
       precise: {
         maximumFractionDigits: 5
       }
+    },
+    list: {
+      enumeration: {
+        style: 'long',
+        type: 'conjunction'
+      }
     }
   }}
 >
@@ -76,10 +82,11 @@ function Component() {
 
   format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
   format.number(47.414329182, 'precise');
+  format.enumeration(['HTML', 'CSS', 'JavaScript'], 'enumeration');
 }
 ```
 
-Global formats can be referenced in messages too.
+Global formats for numbers, dates and times can be referenced in messages too.
 
 ```js filename="en.json"
 {

@@ -41,7 +41,7 @@ it('formats a relative time', () => {
 });
 
 it('formats a list', () => {
-	expect(
-		intl.list(['apple', 'banana', 'orange'], {type: 'disjunction'})
-	).toBe('apple, banana, or orange');
-})
+  expect(intl.list(['apple', 'banana', 'orange'], {type: 'disjunction'})).toBe(
+    'apple, banana, or orange'
+  );
+});
