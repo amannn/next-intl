@@ -20,6 +20,10 @@ async function getMessages(locale: string) {
   }
 }
 
+export async function generateStaticParams() {
+  return ['en', 'de'].map((locale) => ({locale}));
+}
+
 export async function generateMetadata({params: {locale}}: Props) {
   const messages = await getMessages(locale);
 
