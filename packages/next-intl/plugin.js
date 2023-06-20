@@ -34,7 +34,7 @@ const withNextIntl = require('next-intl/plugin')(
 );
 
 module.exports = withNextIntl({
-  experimental: {appDir: true}
+  // Other Next.js configuration ...
 });\n`);
     }
   }
@@ -49,7 +49,7 @@ module.exports = withNextIntl({
     webpack(config, options) {
       config.resolve.alias['next-intl/config'] = require.resolve(i18nPath);
 
-      if (typeof nextConfig.webpack === 'function') {
+      if (typeof nextConfig?.webpack === 'function') {
         return nextConfig.webpack(config, options);
       }
 
