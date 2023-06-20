@@ -12,16 +12,16 @@ import {useFormatter} from 'next-intl';
 
 function Component() {
   const format = useFormatter();
-
   const items = ['HTML', 'CSS', 'JavaScript'];
+
+  // Renders "HTML, CSS, and JavaScript"
   format.list(items, {type: 'conjunction'});
 }
 ```
 
 See [the MDN docs about `ListFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat) to learn more about the options that you can provide to `list` ([interactive explorer](https://www.intl-explorer.com/ListFormat)).
 
-Note that lists can can currently only be formatted via `useFormatter`,
-there's now equivalent inline syntax for messages at this point.
+Note that lists can can currently only be formatted via `useFormatter`, there's no equivalent inline syntax for messages at this point.
 
 <Callout>
   To reuse list formats for multiple components, you can configure [global
