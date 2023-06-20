@@ -1,6 +1,6 @@
-import {Inter} from '@next/font/google';
 import Analytics from 'components/Analytics';
 import {AppProps} from 'next/app';
+import {Inter} from 'next/font/google';
 import {ReactNode} from 'react';
 import 'nextra-theme-docs/style.css';
 import '../styles.css';
