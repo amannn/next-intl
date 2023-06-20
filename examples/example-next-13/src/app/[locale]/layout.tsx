@@ -1,5 +1,5 @@
-import {Inter} from '@next/font/google';
 import clsx from 'clsx';
+import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
 import {useLocale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';

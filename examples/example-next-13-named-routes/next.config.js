@@ -2,8 +2,6 @@ const withNextIntl = require('next-intl/plugin')();
 const routesByLocale = require('./routesByLocale.json');
 
 module.exports = withNextIntl({
-  experimental: {appDir: true},
-
   rewrites() {
     // Routes are set up for the default locale ("en") in the app. This
     // rewrites all non-English routes to their internal equivalent.

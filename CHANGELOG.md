@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.15.0 (2023-06-20)
+
+
+### Features
+
+* Add `format.list(…)` for formatting conjunctions and disjunctions ([#327](https://github.com/amannn/next-intl/issues/327) by [@stefanprobst](https://github.com/stefanprobst)) ([32cda32](https://github.com/amannn/next-intl/commit/32cda32f47112915bb2032f3f9cc02bf3a4e833b))
+
+
+
+
+
 ## 2.14.6 (2023-05-22)
 
 **Note:** Version bump only for package root

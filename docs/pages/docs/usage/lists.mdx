@@ -1,0 +1,43 @@
+import Callout from 'components/Callout';
+
+# List formatting
+
+When working with lists of items, you might want to format them as conjunctions or disjunctions.
+
+Formatting aspects, like the used separators, differ per locale:
+
+- "HTML, CSS, and JavaScript" in `en-US`
+- "HTML, CSS und JavaScript" in `de-DE`
+
+List formatting can be applied with the `useFormatter` hook:
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+  const items = ['HTML', 'CSS', 'JavaScript'];
+
+  // Renders "HTML, CSS, and JavaScript"
+  format.list(items, {type: 'conjunction'});
+
+  // Renders "HTML, CSS, or JavaScript"
+  format.list(items, {type: 'disjunction'});
+}
+```
+
+See [the MDN docs about `ListFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat) to learn more about the options that you can provide to `list` ([interactive explorer](https://www.intl-explorer.com/ListFormat)).
+
+Note that lists can can currently only be formatted via `useFormatter`, there's no equivalent inline syntax for messages at this point.
+
+<Callout>
+  To reuse list formats for multiple components, you can configure [global
+  formats](/docs/usage/configuration#global-formats).
+</Callout>
+
+<details>
+<summary>How can I render an array of messages?</summary>
+
+See the [arrays of messages guide](/docs/usage/messages#arrays-of-messages).
+
+</details>

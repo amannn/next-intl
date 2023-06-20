@@ -21,6 +21,7 @@ import {useFormatter} from 'next-intl';
 function Component() {
   const format = useFormatter();
 
+  // Renders "$499.90"
   format.number(499.9, {style: 'currency', currency: 'USD'});
 }
 ```

@@ -25,12 +25,12 @@ export const config = {
 
 There are two strategies for detecting the locale:
 
-1.  [Prefix-based routing (default)](#prefix-based-routing-default)
+1.  [Prefix-based routing (default)](#prefix-based-routing)
 2.  [Domain-based routing](#domain-based-routing)
 
 Once a locale is detected, it will be saved in a cookie.
 
-### Prefix-based routing (default)
+### Prefix-based routing (default) [#prefix-based-routing]
 
 Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
@@ -112,7 +112,7 @@ The locale is detected based on these priorities:
 
 <Callout>
 
-Since unknown domains will be handled with [prefix-based routing](#prefix-based-routing-default), this strategy can be used for local development where the host is `localhost`.
+Since unknown domains will be handled with [prefix-based routing](#prefix-based-routing), this strategy can be used for local development where the host is `localhost`.
 
 </Callout>
 
@@ -302,3 +302,36 @@ There's a working [example that combines `next-intl` with Auth.js](https://githu
 </Callout>
 
 Many thanks to [narakhan](https://github.com/narakhan) for [sharing his middleware implementation](https://github.com/amannn/next-intl/pull/149#issuecomment-1509990635)!
+
+## Usage without middleware (static export)
+
+If you're using the [static export feature from Next.js](https://nextjs.org/docs/app/building-your-application/deploying/static-exports) (`output: 'export'`), the middleware will not run. You can use [prefix-based routing](#prefix-based-routing) nontheless to internationalize your app, but a few tradeoffs apply.
+
+**Static export limitations:**
+
+1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#always-use-a-locale-prefix))
+2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-automatic-locale-detection))
+3. You need to add a redirect for the root of the app
+
+```tsx filename="app/page.tsx"
+import {redirect} from 'next/navigation';
+
+// Redirect the user to the default locale when the app root is requested
+export default function RootPage() {
+  redirect('/en');
+}
+```
+
+<Callout type="warning">
+  Note that this is currently limited to the usage of `next-intl` in [Client
+  Components](/docs/next-13/client-components) (not [Server
+  Components](/docs/next-13/server-components)).
+</Callout>
+
+You can explore a working demo by building [the Next.js 13 example](/examples/next-13) after enabling the static export:
+
+```tsx filename="next.config.js"
+module.exports = {
+  output: 'export'
+};
+```
