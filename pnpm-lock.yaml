@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 importers:
 
@@ -345,7 +349,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.14.6
+        specifier: ^2.15.0
         version: link:../use-intl
     devDependencies:
       '@testing-library/react':
