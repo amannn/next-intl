@@ -1,9 +1,13 @@
 import Callout from 'components/Callout';
-import PartnerContentLink from 'components/PartnerContentLink';
 
 # List formatting
 
-Depending on the users locale, lists of items should be formatted differently (e.g. "HTML, CSS, and JavaScript" in `en-US` vs. "HTML, CSS und JavaScript" in `de-DE`).
+When working with lists of items, you might want to format them as conjunctions or disjunctions.
+
+Formatting aspects, like the used separators, differ per locale:
+
+- "HTML, CSS, and JavaScript" in `en-US`
+- "HTML, CSS und JavaScript" in `de-DE`
 
 List formatting can be applied with the `useFormatter` hook:
 
@@ -16,6 +20,9 @@ function Component() {
 
   // Renders "HTML, CSS, and JavaScript"
   format.list(items, {type: 'conjunction'});
+
+  // Renders "HTML, CSS, or JavaScript"
+  format.list(items, {type: 'disjunction'});
 }
 ```
 
@@ -27,3 +34,10 @@ Note that lists can can currently only be formatted via `useFormatter`, there's 
   To reuse list formats for multiple components, you can configure [global
   formats](/docs/usage/configuration#global-formats).
 </Callout>
+
+<details>
+<summary>How can I render an array of messages?</summary>
+
+See the [arrays of messages guide](/docs/usage/messages#arrays-of-messages).
+
+</details>
