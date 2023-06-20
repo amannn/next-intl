@@ -10,7 +10,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@next/font": "^13.1.6",
     "clsx": "^1.2.1",
     "next": "^13.4.6",
     "next-intl": "^2.14.3",
