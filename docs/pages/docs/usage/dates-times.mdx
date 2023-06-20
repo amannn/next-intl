@@ -22,12 +22,14 @@ function Component() {
   const format = useFormatter();
   const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
+  // Renders "Nov 20, 2020"
   format.dateTime(dateTime, {
     year: 'numeric',
-    month: 'numeric',
+    month: 'short',
     day: 'numeric'
   });
 
+  // Renders "11:36 AM"
   format.dateTime(dateTime, {hour: 'numeric', minute: 'numeric'});
 }
 ```
@@ -91,6 +93,7 @@ function Component() {
   const format = useFormatter();
   const dateTime = new Date('2020-11-20T10:36:01.516Z');
 
+  // Renders e.g. "2 hours ago" and updates continuously
   format.relativeTime(dateTime, now);
 }
 ```

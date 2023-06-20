@@ -13,6 +13,7 @@ Based on the features you're using, you have to make sure your browser supports 
 - Number formatting: `Intl.NumberFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#browser_compatibility))
 - Pluralization: `Intl.PluralRules` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules/PluralRules#browser_compatibility))
 - Relative time formatting: `Intl.RelativeTimeFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/RelativeTimeFormat#browser_compatibility))
+- List formatting: `Intl.ListFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat#browser_compatibility))
 
 If you target a browser that doesn't support all the required APIs, consider using polyfills. [Polyfill.io](https://polyfill.io/v3/) is a valuable solution for this that helps you to load only the polyfills you need for a given locale.
 
@@ -36,7 +37,9 @@ function IntlPolyfills() {
     'Intl.PluralRules',
     `Intl.PluralRules.~locale.${locale}`,
     'Intl.RelativeTimeFormat',
-    `Intl.RelativeTimeFormat.~locale.${locale}`
+    `Intl.RelativeTimeFormat.~locale.${locale}`,
+    'Intl.ListFormat',
+    `Intl.ListFormat.~locale.${locale}`
   ];
 
   return (
