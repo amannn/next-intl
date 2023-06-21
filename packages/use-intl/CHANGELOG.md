@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.15.1 (2023-06-21)
+
+
+### Bug Fixes
+
+* Allow usage of `next-intl/link` and `usePathname` outside of Next.js ([#338](https://github.com/amannn/next-intl/issues/338)) ([6e1a56c](https://github.com/amannn/next-intl/commit/6e1a56c8c7b708b578033b41c31436a4dde32afc)), closes [#337](https://github.com/amannn/next-intl/issues/337)
+
+
+
+
+
 # 2.15.0 (2023-06-20)
 
 
