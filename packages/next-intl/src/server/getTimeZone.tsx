@@ -10,8 +10,8 @@ const getTimeZone = cache(async (opts?: {locale: string}) => {
 Calling \`getTimeZone\` without a locale is deprecated. Please update the call:
 
 // app/[locale]/layout.tsx
-export async function generateMetadata({locale}) {
-  const t = await getTimeZone({locale});
+export async function generateMetadata({params}) {
+  const t = await getTimeZone({locale: params.locale});
 
   // ...
 }

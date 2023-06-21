@@ -2,8 +2,6 @@ import {cache} from 'react';
 import {createFormatter} from 'use-intl/dist/src/core';
 import getConfig from './getConfig';
 
-type Opts = Parameters<typeof createFormatter>[0];
-
 let hasWarned = false;
 
 /**
@@ -12,15 +10,15 @@ let hasWarned = false;
  * The formatter automatically receives the request config, but
  * you can override it by passing in additional options.
  */
-const getFormatter = cache(async (opts?: Opts) => {
+const getFormatter = cache(async (opts?: {locale: string}) => {
   if (!opts?.locale && !hasWarned) {
     hasWarned = true;
     console.warn(`
 Calling \`getFormatter\` without a locale is deprecated, please update the call:
 
 // app/[locale]/layout.tsx
-export async function generateMetadata({locale}) {
-  const t = await getFormatter({locale});
+export async function generateMetadata({params}) {
+  const t = await getFormatter({locale: params.locale});
 
   // ...
 }

@@ -18,12 +18,10 @@ async function getTranslatorImpl<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
->(
-  opts: {namespace?: NestedKey} & Omit<
-    Parameters<typeof createBaseTranslator>[0],
-    'cachedFormatsByLocale' | ' messagesOrError' | 'namespace'
-  >
-): // Explicitly defining the return type is necessary as TypeScript would get it wrong
+>(opts: {
+  namespace?: NestedKey;
+  locale: string;
+}): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
   // Default invocation
   <

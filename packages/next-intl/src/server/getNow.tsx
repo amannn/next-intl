@@ -10,8 +10,8 @@ const getNow = cache(async (opts?: {locale: string}) => {
 Calling \`getNow\` without a locale is deprecated. Please update the call:
 
 // app/[locale]/layout.tsx
-export async function generateMetadata({locale}) {
-  const t = await getNow({locale});
+export async function generateMetadata({params}) {
+  const t = await getNow({locale: params.locale});
 
   // ...
 }
