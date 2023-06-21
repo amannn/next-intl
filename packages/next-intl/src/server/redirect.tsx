@@ -1,7 +1,7 @@
 import baseRedirect from '../shared/redirect';
-import getLocale from './getLocale';
+import getLocaleFromHeader from './getLocaleFromHeader';
 
 export default function redirect(pathname: string) {
-  const locale = getLocale();
+  const locale = getLocaleFromHeader();
   return baseRedirect(pathname, locale);
 }

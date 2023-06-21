@@ -1,7 +1,10 @@
 import {cache} from 'react';
 import getInitializedConfig from 'use-intl/dist/src/react/getInitializedConfig';
 import createRequestConfig from '../server/createRequestConfig';
-import getLocale from './getLocale';
+import getLocaleFromHeader from './getLocaleFromHeader';
+
+// Make sure `now` is consistent across the request in case none was configured
+const getDefaultNow = cache(() => new Date());
 
 const receiveRuntimeConfig = cache(
   async (locale: string, getConfig?: typeof createRequestConfig) => {
@@ -11,14 +14,14 @@ const receiveRuntimeConfig = cache(
     }
     return {
       ...result,
-      // Make sure `now` is consistent across the request in case none was configured
-      now: result?.now || new Date()
+      now: result?.now || getDefaultNow()
     };
   }
 );
 
-const getConfig = cache(async () => {
-  const locale = getLocale();
+const getConfig = cache(async (locale?: string) => {
+  if (!locale) locale = getLocaleFromHeader();
+
   const runtimeConfig = await receiveRuntimeConfig(locale, createRequestConfig);
   const opts = {...runtimeConfig, locale};
   return getInitializedConfig(opts);

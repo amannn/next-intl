@@ -9,7 +9,11 @@ const getIntl = cache(async () => {
   if (!hasWarned) {
     hasWarned = true;
     console.warn(
-      '`getIntl()` is deprecated and will be removed in the next major version. Please switch to `getFormatter()`.'
+      `
+\`getIntl()\` is deprecated and will be removed in the next major version. Please switch to \`getFormatter()\`.
+
+Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+`
     );
   }
 
