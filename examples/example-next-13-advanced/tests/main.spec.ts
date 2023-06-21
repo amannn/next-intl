@@ -538,6 +538,10 @@ it('populates metadata', async ({page}) => {
   );
   await expect(page.locator('meta[name="currentYear"]')).toHaveAttribute(
     'content',
-    '2023'
+    new Date().getFullYear().toString()
+  );
+  await expect(page.locator('meta[name="timeZone"]')).toHaveAttribute(
+    'content',
+    'Europe/Vienna'
   );
 });

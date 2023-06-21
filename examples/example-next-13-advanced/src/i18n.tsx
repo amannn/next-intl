@@ -3,7 +3,7 @@ import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
   const now = headers().get('x-now');
-  const timeZone = headers().get('x-time-zone') ?? undefined;
+  const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
   const messages = (await import(`../messages/${locale}.json`)).default;
 
   return {
