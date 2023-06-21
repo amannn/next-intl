@@ -19,10 +19,17 @@ import useClientLocale from './useClientLocale';
  * ```
  */
 export default function usePathname(): string {
-  const pathname = useNextPathname();
+  // The types aren't entirely correct here. Outside of Next.js
+  // `useParams` can be called, but the return type is `null`.
+  const pathname = useNextPathname() as ReturnType<
+    typeof useNextPathname
+  > | null;
+
   const locale = useClientLocale();
 
   return useMemo(() => {
+    if (!pathname) return pathname as ReturnType<typeof useNextPathname>;
+
     const isPathnamePrefixed = hasPathnamePrefixed(locale, pathname);
     const unlocalizedPathname = isPathnamePrefixed
       ? unlocalizePathname(pathname, locale)
