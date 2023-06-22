@@ -12,6 +12,7 @@ import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
 import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
 import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
 import getConfig from './getConfig';
+import getLocaleFromHeader from './getLocaleFromHeader';
 
 let hasWarned = false;
 
@@ -91,7 +92,8 @@ Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#usi
     hasWarned = true;
   }
 
-  const config = await getConfig();
+  const locale = getLocaleFromHeader();
+  const config = await getConfig(locale);
 
   const messagesOrError = getMessagesOrError({
     messages: config.messages as any,

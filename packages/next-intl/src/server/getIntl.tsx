@@ -1,6 +1,7 @@
 import {cache} from 'react';
 import {createIntl} from 'use-intl/dist/src/core';
 import getConfig from './getConfig';
+import getLocaleFromHeader from './getLocaleFromHeader';
 
 let hasWarned = false;
 
@@ -17,7 +18,8 @@ Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#usi
     );
   }
 
-  const config = await getConfig();
+  const locale = getLocaleFromHeader();
+  const config = await getConfig(locale);
   return createIntl(config);
 });
 

@@ -81,7 +81,7 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  const config = await getConfig();
+  const config = await getConfig(opts.locale);
 
   const messagesOrError = getMessagesOrError({
     messages: config.messages as any,

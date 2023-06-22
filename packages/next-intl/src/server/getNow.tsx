@@ -1,5 +1,6 @@
 import {cache} from 'react';
 import getConfig from './getConfig';
+import getLocaleFromHeader from './getLocaleFromHeader';
 
 let hasWarned = false;
 
@@ -20,7 +21,8 @@ Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#usi
 `);
   }
 
-  const config = await getConfig(opts?.locale);
+  const locale = opts?.locale || getLocaleFromHeader();
+  const config = await getConfig(locale);
   return config.now;
 });
 

@@ -14,7 +14,9 @@ type Props = {
   params: {locale: string};
 };
 
-export async function generateMetadata({params}: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params
+}: Omit<Props, 'children'>): Promise<Metadata> {
   const t = await getTranslator({
     namespace: 'LocaleLayout',
     locale: params.locale
