@@ -76,7 +76,5 @@ function UserDetails({user}) {
     <img width="350" src="media/partner.svg" alt="Crowdin logo">
   </a>
   <br>
+  <p>Hosted on <a href="https://vercel.com?utm_source=next-intl&utm_campaign=oss">Vercel</a></p>
 </div>
-
-
-Hosted on <a href="https://vercel.com?utm_source=next-intl&utm_campaign=oss">Vercel</a>
