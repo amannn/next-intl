@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
 import {useLocale} from 'next-intl';
-import {getTranslations} from 'next-intl/server';
+import {getTranslator} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
 
@@ -13,11 +13,14 @@ type Props = {
   params: {locale: string};
 };
 
-export async function generateMetadata() {
-  const t = await getTranslations();
+export async function generateMetadata({params}: Omit<Props, 'children'>) {
+  const t = await getTranslator({
+    locale: params.locale,
+    namespace: 'LocaleLayout'
+  });
 
   return {
-    title: t('LocaleLayout.title')
+    title: t('title')
   };
 }
 

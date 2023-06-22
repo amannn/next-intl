@@ -1,6 +1,7 @@
 import type {useNow as useNowType} from 'use-intl';
 import getNow from '../server/getNow';
 import useHook from './useHook';
+import useLocale from './useLocale';
 
 export default function useNow(
   ...[options]: Parameters<typeof useNowType>
@@ -11,5 +12,6 @@ export default function useNow(
     );
   }
 
-  return useHook('useNow', getNow());
+  const locale = useLocale();
+  return useHook('useNow', getNow({locale}));
 }
