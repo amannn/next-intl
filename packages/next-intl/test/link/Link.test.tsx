@@ -1,16 +1,15 @@
 import {render, screen} from '@testing-library/react';
-import {usePathname} from 'next/navigation';
+import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
+import {NextIntlClientProvider} from '../../src';
 import Link from '../../src/link';
 
-jest.mock('next/navigation', () => ({
-  useParams: jest.fn(() => ({locale: 'en'})),
-  usePathname: jest.fn(() => '/')
-}));
+jest.mock('next/navigation');
 
 describe('unprefixed routing', () => {
   beforeEach(() => {
     jest.mocked(usePathname).mockImplementation(() => '/');
+    jest.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href without a locale if the locale matches', () => {
@@ -94,6 +93,7 @@ describe('unprefixed routing', () => {
 describe('prefixed routing', () => {
   beforeEach(() => {
     jest.mocked(usePathname).mockImplementation(() => '/en');
+    jest.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href with a locale if the locale matches', () => {
@@ -153,6 +153,29 @@ describe('prefixed routing', () => {
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com/test'
+    );
+  });
+});
+
+describe('usage outside of Next.js', () => {
+  beforeEach(() => {
+    jest.mocked(useParams).mockImplementation((() => null) as any);
+  });
+
+  it('works with a provider', () => {
+    render(
+      <NextIntlClientProvider locale="en">
+        <Link href="/test">Test</Link>
+      </NextIntlClientProvider>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/en/test'
+    );
+  });
+
+  it('throws without a provider', () => {
+    expect(() => render(<Link href="/test">Test</Link>)).toThrow(
+      'No intl context found. Have you configured the provider?'
     );
   });
 });
