@@ -58,8 +58,13 @@ export default function createMiddleware(config: MiddlewareConfig) {
     const hasUnknownHost = configWithDefaults.domains != null && !domain;
 
     function getResponseInit() {
-      // Nothing yet
-      return undefined;
+      const responseInit = {
+        request: {
+          headers: request.headers
+        }
+      };
+
+      return responseInit;
     }
 
     function rewrite(url: string) {
@@ -175,7 +180,9 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     if (hasOutdatedCookie) {
-      response.cookies.set(COOKIE_LOCALE_NAME, locale);
+      response.cookies.set(COOKIE_LOCALE_NAME, locale, {
+        sameSite: 'strict'
+      });
     }
 
     if (

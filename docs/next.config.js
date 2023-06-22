@@ -9,9 +9,6 @@ const withNextra = require('nextra')({
 });
 
 module.exports = withNextra({
-  experimental: {
-    appDir: true
-  },
   redirects: () => [
     // Index pages
     {
@@ -46,7 +43,7 @@ module.exports = withNextra({
   ...(process.env.UMAMI_URL && {
     rewrites: () => [
       {
-        source: '/stats/:match*',
+        source: '/u/:match*',
         destination: process.env.UMAMI_URL + '/:match*'
       }
     ]

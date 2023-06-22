@@ -9,7 +9,7 @@ import Callout from 'components/Callout';
 This component wraps `next/link` and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
 ```tsx
-import {Link} from 'next-intl';
+import Link from 'next-intl/link';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>

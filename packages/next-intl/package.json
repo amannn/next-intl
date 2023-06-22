@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "2.14.0",
+  "version": "2.15.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
@@ -29,6 +29,7 @@
     },
     "./server": "./dist/src/server/index.js",
     "./client": "./dist/src/client/index.js",
+    "./link": "./dist/src/link/index.js",
     "./middleware": "./dist/src/middleware/index.js"
   },
   "files": [
@@ -36,6 +37,7 @@
     "src",
     "server.d.ts",
     "client.d.ts",
+    "link.d.ts",
     "middleware.d.ts"
   ],
   "keywords": [
@@ -57,7 +59,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^2.14.0"
+    "use-intl": "^2.15.1"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
@@ -73,11 +75,11 @@
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "^13.4.0",
+    "next": "^13.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-jest": "^29.1.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.9.5"
   },
   "engines": {
     "node": ">=10"

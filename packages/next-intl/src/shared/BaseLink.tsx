@@ -11,7 +11,10 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
 };
 
 function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
-  const pathname = usePathname();
+  // The types aren't entirely correct here. Outside of Next.js
+  // `useParams` can be called, but the return type is `null`.
+  const pathname = usePathname() as ReturnType<typeof usePathname> | null;
+
   const defaultLocale = useClientLocale();
   const isChangingLocale = locale !== defaultLocale;
 
@@ -30,6 +33,8 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   );
 
   useEffect(() => {
+    if (!pathname) return;
+
     setLocalizedHref(
       localizeHref(href, locale, defaultLocale, pathname ?? undefined)
     );

@@ -1,8 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import {Link} from 'next-intl';
 import {usePathname} from 'next-intl/client';
+import Link from 'next-intl/link';
 import {ComponentProps} from 'react';
 
 type Props = Omit<ComponentProps<typeof Link>, 'href'> & {

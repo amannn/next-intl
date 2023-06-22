@@ -6,7 +6,7 @@
     "test": "turbo run test --concurrency 1",
     "lint": "turbo run lint",
     "prepare": "turbo run build --filter './packages/**'",
-    "publish": "lerna publish --yes --no-verify-access"
+    "publish": "lerna publish --yes --no-private"
   },
   "devDependencies": {
     "lerna": "^6.6.2",
