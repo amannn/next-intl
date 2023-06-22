@@ -15,7 +15,7 @@ export default function PartnerBanner({intro}: Props) {
           href={Partner.link}
           name="partner-banner"
         >
-          <p className="mb-6 text-center text-xs uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          <p className="mb-6 text-center text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {intro}
           </p>
           <Partner.Logo />
