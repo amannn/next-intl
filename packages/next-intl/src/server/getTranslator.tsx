@@ -89,8 +89,9 @@ Promise<{
   ): any;
 }> {
   if (typeof locale === 'object') {
-    namespace = locale.namespace;
-    locale = locale.locale;
+    const opts = locale;
+    namespace = opts.namespace;
+    locale = opts.locale;
     if (!hasWarned) {
       console.warn(
         `
@@ -123,6 +124,7 @@ See also https://next-intl-docs.vercel.app/docs/next-13/server-components#using-
   // @ts-ignore
   return createBaseTranslator({
     ...config,
+    namespace,
     messagesOrError
   });
 }
