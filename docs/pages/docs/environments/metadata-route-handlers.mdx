@@ -1,0 +1,83 @@
+import Callout from 'components/Callout';
+import VersionTabs from 'components/VersionTabs';
+import {Tab} from 'nextra-theme-docs';
+
+# Internationalization of Metadata & Route Handlers in Next.js
+
+There are two APIs in Next.js where you might need to apply internationalization outside of React components:
+
+1. [The Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
+2. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers)
+
+For these cases, you can use the [core library](/docs/environments/core-library) from `next-intl`.
+
+<Callout>
+  If you're using the [`next-intl` Server Components beta
+  version](/docs/getting-started/app-router-server-components), you can use a
+  set of new APIs that automatically pick up your request configuration.
+</Callout>
+
+<VersionTabs items={['Stable', 'Server Components beta version']}>
+<Tab>
+
+```tsx filename="app/[locale]/layout.tsx"
+import {createTranslator} from 'next-intl';
+
+export async function generateMetadata({params: {locale}}) {
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
+
+  // You can use the core (non-React) APIs when you
+  // have to use next-intl outside of components.
+  const t = createTranslator({locale, messages});
+
+  return {
+    title: t('LocaleLayout.title')
+  };
+}
+```
+
+</Tab>
+<Tab>
+`next-intl/server` provides a set of awaitable versions of the functions that you usually call as hooks from within components. Unlike the hooks, these functions require a `locale` that you receive from Next.js via [`params`](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes).
+
+```tsx filename="app/[locale]/layout.tsx"
+import {getTranslator} from 'next-intl/server';
+
+export async function generateMetadata({params: {locale}}) {
+  // Passing the `locale` is required. The namespace is optional and
+  // identical to the parameter that `useTranslations` accepts.
+  const t = await getTranslator(locale, 'Metadata');
+
+  return {
+    title: t('title')
+  };
+}
+```
+
+These functions are available:
+
+```tsx
+import {
+  getTranslator,
+  getFormatter,
+  getNow,
+  getTimeZone
+} from 'next-intl/server';
+
+export async function generateMetadata({params: {locale}}) {
+  const t = await getTranslator(locale, 'LocaleLayout');
+  const format = await getFormatter(locale);
+  const now = await getNow(locale);
+  const timeZone = await getTimeZone(locale);
+}
+```
+
+<Callout>
+  The [global request configuration]((#global-request-configuration)) that
+  you've set up in `i18n.ts` is automatically inherited by these functions. The
+  `locale` is the only exception that needs to be provided in comparison to the
+  hooks.
+</Callout>
+
+</Tab>
+</VersionTabs>

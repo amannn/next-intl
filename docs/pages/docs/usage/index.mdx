@@ -1,10 +1,26 @@
+import Callout from 'components/Callout';
+import {Card, Cards} from 'nextra-theme-docs';
+import {ChatBubbleBottomCenterTextIcon} from '@heroicons/react/24/outline';
+
 # Usage guide
 
-This guide explains all features of `next-intl`.
+This guide explains how `next-intl` can be used in React components.
 
-**Start by learning how to [render messages in components](/docs/usage/messages).**
+Note that while it might be helpful to get an overview of the capabilities of `next-intl`, you don't have to read the whole usage guide upfront—rather, you can come back to it as necessary.
 
-If you prefer a more hands-on approach to learning, you can alternatively jump directly into reading the source code of the examples:
+Let's get started:
 
-- [Minimal setup](/examples/minimal)
-- [Advanced](/examples/advanced)
+<Cards num={2}>
+  <Card
+    arrow
+    icon={<ChatBubbleBottomCenterTextIcon />}
+    title="Render messages in components"
+    href="/docs/usage/messages"
+  />
+</Cards>
+
+If you prefer a more hands-on approach to learning, you can alternatively explore these example apps:
+
+- [App Router example](/examples/next-13)
+- [Pages Router example](/examples/minimal)
+- [Pages Router (advanced) example](/examples/advanced)

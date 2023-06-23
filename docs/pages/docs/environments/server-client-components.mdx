@@ -1,0 +1,126 @@
+import Callout from 'components/Callout';
+
+# Internationalization of Server & Client Components in Next.js
+
+<Callout type="warning">
+
+This page contains background information about the advantages of moving internationalization to Server Components. Note that this is currently only available in [the Server Components beta version of `next-intl`](/docs/getting-started/app-router-server-components). If you're on a stable release, you currently have to [use Client Components for internationalization](/docs/getting-started/app-router-client-components#usage).
+
+</Callout>
+
+With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
+
+If internationalization is implemented entirely on the server side, we can achieve new levels of performance for our apps, leaving the client side for interactive features.
+
+<Callout emoji="✅" title="Benefits of server-side internationalization">
+
+<ol className="ml-4 list-decimal">
+  <li>
+    Your messages never leave the server and don't need to be serialized for the
+    client side
+  </li>
+  <li>
+    Library code for internationalization doesn't need to be loaded on the
+    client side
+  </li>
+  <li>No need to split your messages based on routes or components</li>
+  <li>No runtime cost on the client side</li>
+  <li>
+    No need to handle environment differences like different time zones on the
+    server and client
+  </li>
+</ol>
+
+</Callout>
+
+## Passing translations to Client Components
+
+If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
+
+```tsx filename="[locale]/faq/page.tsx" {7-9}
+import {useTranslations} from 'next-intl';
+import Expandable from './Expandable';
+
+export default function FAQEntry() {
+  const t = useTranslations('FAQEntry');
+  return (
+    <Expandable title={t('title')}>
+      <FAQContent content={t('description')} />
+    </Expandable>
+  );
+}
+```
+
+```tsx filename="Expandable.tsx" {5,14-15}
+'use client';
+
+import {useState} from 'react';
+
+function Expandable({title, children}) {
+  const [expanded, setExpanded] = useState(false);
+
+  function onToggle() {
+    setExpanded(!expanded);
+  }
+
+  return (
+    <div>
+      <button onClick={onToggle}>{title}</button>
+      {expanded && <div>{children}</div>}
+    </div>
+  );
+}
+```
+
+As you can see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
+
+## Using interactive state in translations
+
+You might run into cases where you have dynamic state, such as pagination, that should be reflected in translated messages.
+
+```tsx filename="Pagination.tsx"
+function Pagination({curPage, totalPages}) {
+  const t = useTranslations('Pagination');
+  return <p>{t('info', {curPage, totalPages})}</p>;
+}
+```
+
+You can still manage your translations on the server side by using [page- or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page). There's [an article on Smashing Magazine about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
+
+Apart from page- or search params, you can also use [cookies](https://nextjs.org/docs/app/api-reference/functions/cookies) or [database state](https://nextjs.org/docs/app/building-your-application/data-fetching) for storing state that can be read on the server side.
+
+If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider`.
+
+```tsx filename="Counter.tsx"
+import pick from 'lodash/pick';
+import {useLocale, NextIntlClientProvider} from 'next-intl';
+import ClientCounter from './ClientCounter';
+
+async function Counter() {
+  const locale = useLocale();
+  const messages = (await import(`../../../../messages/${locale}.json`))
+    .default;
+
+  return (
+    <NextIntlClientProvider
+      locale={locale}
+      messages={
+        // Only provide the minimum of messages
+        pick(messages, 'ClientCounter')
+      }
+    >
+      <ClientCounter />
+    </NextIntlClientProvider>
+  );
+}
+```
+
+([working example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx))
+
+<Callout>
+  `NextIntlClientProvider` doesn't automatically inherit configuration from
+  `i18n.ts`, therefore make sure to provide all relevant props on the component.
+  If you're configuring non-serializable values like functions, you have to mark
+  the component that renders `NextIntlClientProvider` with `'use client';`
+  ([example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx)).
+</Callout>

@@ -4,6 +4,13 @@ import Callout from 'components/Callout';
 
 Configuration properties that you commonly use across your Next.js app for internationalization can be set globally on the provider.
 
+<Callout>
+  Note that if you're using [the Server Components
+  beta](http://localhost:3000/docs/getting-started/app-router-server-components),
+  you can set these properties in [the global request configuration
+  (`i18n.ts`)](http://localhost:3000/docs/getting-started/app-router-server-components#global-request-configuration).
+</Callout>
+
 ## Time zone
 
 If possible, you should configure an explicit time zone as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user will likely be different, this can be problematic when your app is both rendered on the server as well as on the client side.
@@ -11,7 +18,7 @@ If possible, you should configure an explicit time zone as this affects the rend
 To avoid such markup mismatches, you can globally define a time zone like this:
 
 ```jsx
-<NextIntlProvider timeZone="Europe/Vienna">...<NextIntlProvider>
+<NextIntlClientProvider timeZone="Europe/Vienna">...<NextIntlClientProvider>
 ```
 
 This can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
@@ -21,23 +28,24 @@ This can either be static in your app, or alternatively read from the user profi
 To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
 
 ```jsx
-<NextIntlProvider
+<NextIntlClientProvider
   // This value can be generated in data fetching functions
   // of individual pages or `App.getInitialProps`.
   now={now}
   ...
 >
   <App />
-</NextIntlProvider>
+</NextIntlClientProvider>
 ```
 
 This value will be used as the default for the `relativeTime` function as well as for the initial render of `useNow`.
 
 <Callout type="warning">
-  **Important:** When you use `getStaticProps` and no `updateInterval`, this
-  value will be stale. Therefore either regenerate these pages regularly with
-  `revalidate`, use `getServerSideProps` instead or configure an
-  `updateInterval`.
+  **Important:** When you cache the rendered markup (e.g. when using [static
+  rendering](https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering#static-rendering-default))
+  and no `updateInterval` is configured, this value will be stale. Therefore
+  either regenerate these pages regularly with `revalidate`, use
+  `getServerSideProps` instead or configure an `updateInterval`.
 </Callout>
 
 For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
@@ -47,7 +55,7 @@ For consistent results in end-to-end tests, it can be helpful to mock this value
 To achieve consistent date, time, number and list formatting across your app, you can define a set of global formats and pass them to the provider.
 
 ```js
-<NextIntlProvider
+<NextIntlClientProvider
   ...
   formats={{
     dateTime: {
@@ -71,7 +79,7 @@ To achieve consistent date, time, number and list formatting across your app, yo
   }}
 >
   <App />
-</NextIntlProvider>
+</NextIntlClientProvider>
 ```
 
 ```js
@@ -111,7 +119,7 @@ function Component() {
 To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values and pass them to the provider. This configuration also can be used to apply consistent styling to commonly used rich text elements.
 
 ```js
-<NextIntlProvider
+<NextIntlClientProvider
   ...
   defaultTranslationValues={{
     important: (chunks) => <b>{chunks}</b>,
@@ -119,7 +127,7 @@ To achieve consistent usage of translation values and reduce redundancy, you can
   }}
 >
   <App />
-</NextIntlProvider>
+</NextIntlClientProvider>
 ```
 
 The defaults will be overridden by locally provided values.
@@ -132,13 +140,59 @@ As a convenience, two hooks exist that allow to read configuration that was pass
 import {useLocale, useTimeZone} from 'next-intl';
 
 function Component() {
-  // Returns either an explicitly configured locale from the
-  // provider or if internationalized routing is set up, it
-  // returns the configured locale from Next.js.
+  // Returns either an explicitly configured locale from the provider
+  // or if internationalized routing is used in the pages directory,
+  // it returns the configured locale from Next.js.
   const locale = useLocale();
 
   // Note that this will be `undefined` if no explicit
   // `timeZone` was configured on the provider.
   const timeZone = useTimeZone();
 }
+```
+
+## Error handling
+
+By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
+
+You can customize this behavior with the `onError` and `getMessageFallback` props of `NextIntlClientProvider`.
+
+```jsx
+import {NextIntlClientProvider, IntlErrorCode} from 'next-intl';
+
+function onError(error) {
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    // Missing translations are expected and should only log an error
+    console.error(error);
+  } else {
+    // Other errors indicate a bug in the app and should be reported
+    reportToErrorTracking(error);
+  }
+}
+
+function getMessageFallback({namespace, key, error}) {
+  const path = [namespace, key].filter((part) => part != null).join('.');
+
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    return `${path} is not yet translated`;
+  } else {
+    return `Dear developer, please fix this message: ${path}`;
+  }
+}
+
+<NextIntlClientProvider ... onError={onError} getMessageFallback={getMessageFallback}>
+  <App />
+</NextIntlClientProvider>
+```
+
+### Fallbacks from other locales
+
+If you have incomplete messages for a given locale and would like to use messages from another locale as a fallback, you can merge the two before passing them to `NextIntlClientProvider`.
+
+```jsx filename="pages/index.js"
+import deepmerge from 'deepmerge';
+
+const userMessages = (await import(`../../messages/${locale}.json`)).default;
+const defaultMessages = (await import(`../../messages/en.json`)).default;
+const messages = deepmerge(defaultMessages, userMessages);
 ```

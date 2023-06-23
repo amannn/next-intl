@@ -1,22 +1,22 @@
 import {Tab, Tabs} from 'nextra-theme-docs';
 import Callout from 'components/Callout';
 
-# Installation
+# Next.js 13 internationalization (i18n) with the Pages Router
 
 <Tabs items={['Multiple languages', 'Single language']}>
 <Tab>
 1. `npm install next-intl`
 2. Set up [internationalized routing](https://nextjs.org/docs/advanced-features/i18n-routing).
-3. Add the provider in `_app.js`.
+3. Add the provider in `_app.tsx`.
 
-```jsx filename="_app.js" /NextIntlProvider/
-import {NextIntlProvider} from 'next-intl';
+```jsx filename="_app.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
   return (
-    <NextIntlProvider messages={pageProps.messages}>
+    <NextIntlClientProvider messages={pageProps.messages}>
       <Component {...pageProps} />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }
 ```
@@ -27,8 +27,9 @@ export default function App({Component, pageProps}) {
 export async function getStaticProps(context) {
   return {
     props: {
-      // You can get the messages from anywhere you like. The recommended pattern
-      // is to put them in JSON files separated by locale (e.g. `en.json`).
+      // You can get the messages from anywhere you like. The recommended
+      // pattern is to put them in JSON files separated by locale and read
+      // the desired one based on the `locale` received from Next.js.
       messages: (await import(`../../messages/${context.locale}.json`)).default
     }
   };
@@ -43,16 +44,16 @@ Even if you only support a single language, `next-intl` can still be helpful to 
 
 1. `npm install next-intl`
 
-2. Add the provider in `_app.js`.
+2. Add the provider in `_app.tsx`.
 
-```jsx filename="_app.js" /NextIntlProvider/
-import {NextIntlProvider} from 'next-intl';
+```jsx filename="_app.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
   return (
-    <NextIntlProvider locale="en" messages={pageProps.messages}>
+    <NextIntlClientProvider locale="en" messages={pageProps.messages}>
       <Component {...pageProps} />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }
 ```
@@ -86,7 +87,7 @@ export async function getStaticProps() {
   <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
   <li>
     Decided you're sticking with `next-intl`? Consider the steps of the
-    [checklist for production](/docs/usage/production-checklist).
+    [checklist for production](/docs/production-checklist).
   </li>
   <li>
     Ran into an issue? Have a look at [the minimal setup

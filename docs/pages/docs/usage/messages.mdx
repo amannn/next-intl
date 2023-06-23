@@ -29,7 +29,7 @@ To group your messages within a locale, it's recommended to use component names 
 
 Now, you can render messages from within a React component via the `useTranslations` hook.
 
-```js filename="About.js"
+```js filename="About.tsx"
 import {useTranslations} from 'next-intl';
 
 function About() {
@@ -65,7 +65,7 @@ Optionally, you can structure your messages into nested objects.
 }
 ```
 
-```js filename="SignUp.js"
+```js filename="SignUp.tsx"
 import {useTranslations} from 'next-intl';
 
 function SignUp() {
@@ -114,84 +114,7 @@ This may seem like an unnecessary limitation, but this is intentional and aims t
 
 If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
 
-</details>
-
-## Providing messages
-
-You can provide page-specific messages via [data fetching methods of Next.js](https://nextjs.org/docs/basic-features/data-fetching) for individual pages:
-
-```js filename="pages/index.js"
-export async function getStaticProps(context) {
-  return {
-    props: {
-      // You can get the messages from anywhere you like. The recommended
-      // pattern is to put them in JSON files separated by locale and read
-      // the desired one based on the `locale` received from Next.js.
-      messages: (await import(`../../messages/${context.locale}.json`)).default
-    }
-  };
-}
-```
-
-If you want to provide only the minimum amount of messages per page, you can filter your messages accordingly:
-
-```js filename="pages/index.js" {3, 8-11}
-import pick from 'lodash/pick';
-
-const namespaces = ['Index'];
-
-export async function getStaticProps(context) {
-  return {
-    props: {
-      messages: pick(
-        (await import(`../../messages/${context.locale}.json`)).default,
-        namespaces
-      )
-    }
-  };
-}
-```
-
-<details>
-<summary>How can I know all the namespaces needed for a page?</summary>
-
-You can assemble the `namespaces` dynamically based on the used components on a page. The [advanced
-example](https://github.com/amannn/next-intl/tree/main/examples/example-advanced/src/pages/index.tsx) outlines this technique.
-
-This is the gist:
-
-```tsx filename="pages/index.js"
-import pick from 'lodash/pick';
-import {useTranslations} from 'next-intl';
-import PageLayout from 'components/PageLayout';
-
-export default function Index() {
-  const t = useTranslations('Index');
-  return <PageLayout title={t('title')}>{t('description')}</PageLayout>;
-}
-
-// The namespaces can be generated based on used components. `PageLayout` in
-// turn requires messages for `Navigation` and therefore a recursive list of
-// namespaces is created dynamically, where the owner of a component doesn't
-// have to know which nested components are rendered. Note that this approach
-// is limited to components which are not lazy loaded.
-Index.messages = ['Index', ...PageLayout.messages];
-
-export async function getStaticProps({locale}) {
-  return {
-    props: {
-      messages: pick(
-        await import(`../../messages/${locale}.json`),
-        Index.messages
-      )
-    }
-  };
-}
-```
-
-An automatic way to tree-shake messages is being evaluated in [issue #1](https://github.com/amannn/next-intl/issues/1). Leave a 👍 there if you're interested in this feature!
-
-Credits for this approach go to the [Relay fragment composition](https://relay.dev/docs/guided-tour/rendering/fragments/).
+There's one exception however: [Using `next-intl` with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
 
 </details>
 
@@ -262,7 +185,7 @@ If you need to render a list of messages, the recommended approach is to map an 
 }
 ```
 
-```js filename="Benefits.js"
+```js filename="Benefits.tsx"
 import {useTranslations} from 'next-intl';
 
 function Benefits() {
@@ -287,7 +210,7 @@ If the number of items varies between locales, you can solve this by using [rich
 }
 ```
 
-```js filename="Benefits.js"
+```js filename="Benefits.tsx"
 import {useTranslations} from 'next-intl';
 
 function Benefits() {
@@ -317,7 +240,7 @@ The advantage of this approach over supporting arrays in messages is that this w
 }
 ```
 
-```js filename="Benefits.js"
+```js filename="Benefits.tsx"
 import {useTranslations} from 'next-intl';
 
 function Benefits() {

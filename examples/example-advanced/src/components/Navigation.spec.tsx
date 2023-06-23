@@ -2,7 +2,7 @@
 
 import {render} from '@testing-library/react';
 import pick from 'lodash/pick';
-import {NextIntlProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import messages from '../../messages/en.json';
 import Navigation from './Navigation';
 
@@ -20,11 +20,11 @@ jest.mock('next/router', () => ({
 
 it('renders', () => {
   render(
-    <NextIntlProvider
+    <NextIntlClientProvider
       locale="en"
       messages={pick(messages, Navigation.messages)}
     >
       <Navigation />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 });
