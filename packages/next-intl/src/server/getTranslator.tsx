@@ -13,15 +13,22 @@ import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
 import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
 import getConfig from './getConfig';
 
+let hasWarned = false;
+
 async function getTranslatorImpl<
   NestedKey extends NamespaceKeys<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
->(opts: {
-  namespace?: NestedKey;
-  locale: string;
-}): // Explicitly defining the return type is necessary as TypeScript would get it wrong
+>(
+  locale:
+    | string
+    | {
+        namespace?: NestedKey;
+        locale: string;
+      },
+  namespace?: NestedKey
+): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
   // Default invocation
   <
@@ -81,11 +88,33 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  const config = await getConfig(opts.locale);
+  if (typeof locale === 'object') {
+    const opts = locale;
+    namespace = opts.namespace;
+    locale = opts.locale;
+    if (!hasWarned) {
+      console.warn(
+        `
+DEPRECATION WARNING: Calling \`getTranslator\` with an object argument is deprecated, please update your call site accordingly.
+
+// Previously
+getTranslator({locale: 'en', namespace: 'About'});
+
+// Now
+getTranslator('en', 'About');
+
+See also https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+`
+      );
+      hasWarned = true;
+    }
+  }
+
+  const config = await getConfig(locale);
 
   const messagesOrError = getMessagesOrError({
     messages: config.messages as any,
-    namespace: opts.namespace,
+    namespace,
     onError: config.onError
   });
 
@@ -95,7 +124,7 @@ Promise<{
   // @ts-ignore
   return createBaseTranslator({
     ...config,
-    ...opts,
+    namespace,
     messagesOrError
   });
 }

@@ -13,11 +13,10 @@ type Props = {
   params: {locale: string};
 };
 
-export async function generateMetadata({params}: Omit<Props, 'children'>) {
-  const t = await getTranslator({
-    locale: params.locale,
-    namespace: 'LocaleLayout'
-  });
+export async function generateMetadata({
+  params: {locale}
+}: Omit<Props, 'children'>) {
+  const t = await getTranslator(locale, 'LocaleLayout');
 
   return {
     title: t('title')

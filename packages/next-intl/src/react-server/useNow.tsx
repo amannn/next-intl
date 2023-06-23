@@ -13,5 +13,5 @@ export default function useNow(
   }
 
   const locale = useLocale();
-  return useHook('useNow', getNow({locale}));
+  return useHook('useNow', getNow(locale));
 }
