@@ -15,15 +15,12 @@ type Props = {
 };
 
 export async function generateMetadata({
-  params
+  params: {locale}
 }: Omit<Props, 'children'>): Promise<Metadata> {
-  const t = await getTranslator({
-    namespace: 'LocaleLayout',
-    locale: params.locale
-  });
-  const formatter = await getFormatter({locale: params.locale});
-  const now = await getNow({locale: params.locale});
-  const timeZone = await getTimeZone({locale: params.locale});
+  const t = await getTranslator(locale, 'LocaleLayout');
+  const formatter = await getFormatter(locale);
+  const now = await getNow(locale);
+  const timeZone = await getTimeZone(locale);
 
   return {
     title: t('title'),
