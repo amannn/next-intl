@@ -1,3 +1,5 @@
+import * as vercel from '@vercel/analytics/react';
+
 type Event = {
   name: 'partner-referral';
   data: {href: string; name: string};
@@ -15,6 +17,8 @@ export default class BrowserTracker {
         console.warn('umami not loaded');
       }
     }
+
+    promises.push(vercel.track(name, data));
 
     return Promise.all(promises);
   }
