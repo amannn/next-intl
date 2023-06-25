@@ -7,7 +7,7 @@
     "lint": "eslint pages components",
     "test": "echo 'No tests yet'",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "sitemap": "next-sitemap",
     "start": "next start"
   },
   "dependencies": {
