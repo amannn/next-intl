@@ -4,13 +4,16 @@ import {
   DocumentDuplicateIcon
 } from '@heroicons/react/24/outline';
 import Callout from 'components/Callout';
+import Chip from 'components/Chip';
 import {Card} from 'nextra-theme-docs';
 
 # Next.js internationalization (i18n)
 
-Welcome to the `next-intl` documentation! In this guide you will learn how to set up internationalization (i18n) in your Next.js app.
+Welcome to the `next-intl` docs!
 
-With **Next.js 13**, the [App Router](https://nextjs.org/docs/app) was introduced and announced stable with version 13.4. Following the lead of Next.js, `next-intl` also recommends this paradigm going forward.
+In this guide you will learn how to set up internationalization (i18n) in your Next.js app.
+
+With **Next.js 13**, the [App Router](https://nextjs.org/docs/app) was introduced and announced stable with version 13.4. Following the lead of Next.js, `next-intl` now also recommends this paradigm going forward.
 
 <Callout>
   Support for using all `next-intl` APIs in Server Components is currently in
@@ -21,21 +24,28 @@ With **Next.js 13**, the [App Router](https://nextjs.org/docs/app) was introduce
 
 <div className="mt-8 flex flex-col gap-4 md:w-2/3">
   <Card
-    arrow
     icon={<RectangleGroupIcon />}
-    title="Usage with the App Router and Client Components (stable)"
+    title={
+      <span className="inline-flex items-center gap-2">
+        <span>Usage with the App Router and Client Components</span>
+        <Chip>Stable</Chip>
+      </span>
+    }
     href="/docs/getting-started/app-router-client-components"
   />
   <Card
-    arrow
     icon={<SparklesIcon />}
-    title="Usage with the App Router and Server Components (beta)"
+    title={
+      <span className="inline-flex items-center gap-2">
+        <span>Usage with the App Router and Server Components</span>
+        <Chip color="orange">Beta</Chip>
+      </span>
+    }
     href="/docs/getting-started/app-router-server-components"
   />
   <Card
-    arrow
     icon={<DocumentDuplicateIcon />}
-    title="Usage with the Pages Router (existing apps)"
+    title="Usage with the Pages Router for existing apps"
     href="/docs/getting-started/pages-router"
   />
 </div>

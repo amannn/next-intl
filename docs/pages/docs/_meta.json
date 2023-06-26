@@ -1,8 +1,8 @@
 {
   "getting-started": "Getting started",
   "usage": "Usage guide",
-  "configuration": "Configuration",
   "environments": "Environments",
+  "configuration": "Global configuration",
   "routing": "Routing",
   "typescript": "TypeScript integration",
   "production-checklist": "Checklist for production",

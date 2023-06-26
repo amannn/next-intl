@@ -17,7 +17,7 @@ For these cases, you can use the [core library](/docs/environments/core-library)
   set of new APIs that automatically pick up your request configuration.
 </Callout>
 
-<VersionTabs items={['Stable', 'Server Components beta version']}>
+<VersionTabs defaultLabel="Core library">
 <Tab>
 
 ```tsx filename="app/[locale]/layout.tsx"
@@ -44,7 +44,7 @@ export async function generateMetadata({params: {locale}}) {
 import {getTranslator} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
-  // Passing the `locale` is required. The namespace is optional and
+  // While the `locale` is required, the namespace is optional and
   // identical to the parameter that `useTranslations` accepts.
   const t = await getTranslator(locale, 'Metadata');
 

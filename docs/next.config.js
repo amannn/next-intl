@@ -75,7 +75,7 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/runtime-requirements-polyfills',
-      destination: '/docs/production-checklist/runtime-requirements-polyfills',
+      destination: '/docs/production-checklist#runtime-requirements',
       permanent: true
     },
     {

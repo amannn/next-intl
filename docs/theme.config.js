@@ -86,6 +86,9 @@ export default {
   navigation: true,
   darkMode: true,
   logo,
+  sidebar: {
+    defaultMenuCollapseLevel: 1
+  },
   themeSwitch: {
     component(props) {
       return (

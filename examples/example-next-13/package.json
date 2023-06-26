@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "playwright test",
+    "test": "pnpm run test:playwright && pnpm run test:jest",
+    "test:playwright": "playwright test",
+    "test:jest": "jest",
     "build": "next build",
     "start": "next start"
   },
@@ -18,7 +20,10 @@
     "tailwindcss": "^3.2.4"
   },
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "@playwright/test": "^1.28.1",
+    "@testing-library/react": "^13.0.0",
+    "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
@@ -26,6 +31,8 @@
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
     "eslint-config-next": "^13.4.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "postcss": "^8.4.23",
     "prettier-plugin-tailwindcss": "^0.2.3",
     "typescript": "^4.9.5"
