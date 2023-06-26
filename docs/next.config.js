@@ -87,6 +87,21 @@ module.exports = withNextra({
       source: '/docs/usage/error-handling',
       destination: '/docs/configuration#error-handling',
       permanent: true
+    },
+    {
+      source: '/examples/next-13',
+      destination: '/examples/app-router',
+      permanent: true
+    },
+    {
+      source: '/examples/minimal',
+      destination: '/examples/pages-router',
+      permanent: true
+    },
+    {
+      source: '/examples/advanced',
+      destination: '/examples/pages-router-advanced',
+      permanent: true
     }
   ],
 
