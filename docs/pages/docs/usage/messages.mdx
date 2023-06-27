@@ -103,19 +103,19 @@ There might be cases where you want to use the same message in different compone
 <details>
 <summary>How can I use translations outside of components?</summary>
 
-`next-intl` only offers an API to use translations from within React components.
+next-intl only offers an API to use translations from within React components.
 
 This may seem like an unnecessary limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
 
 If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
 
-There's one exception however: [Using `next-intl` with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
+There's one exception however: [Using next-intl with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
 
 </details>
 
 ## Rendering messages
 
-`next-intl` uses ICU message syntax that allows you to express language nuances and separates state handling within messages from your app code.
+next-intl uses ICU message syntax that allows you to express language nuances and separates state handling within messages from your app code.
 
 You can interpolate values from your components into your messages with a special placeholder syntax.
 

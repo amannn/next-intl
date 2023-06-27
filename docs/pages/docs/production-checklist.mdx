@@ -2,7 +2,7 @@ import Callout from 'components/Callout';
 
 # Checklist for production
 
-While the [installation instructions](/docs/getting-started) are sufficient to use `next-intl` in your Next.js app, this checklist helps you ensure you're all set for production:
+While the [installation instructions](/docs/getting-started) are sufficient to use next-intl in your Next.js app, this checklist helps you ensure you're all set for production:
 
 1. If you're using TypeScript, you can take advantage of autocompletion and type safety for message keys by [setting up a type for your messages](/docs/typescript).
 2. If you're formatting dates and times, a [time zone should be configured](/docs/configuration#time-zone). By default, dates are formatted according to the time zone of the environment, which can lead to markup mismatches if the server and the user are located in different time zones. By supplying the `timeZone` explicitly, you can ensure that dates and times are rendered the same way on the server as well as the client.

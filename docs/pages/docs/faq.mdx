@@ -2,11 +2,11 @@
 
 ## What trade-offs does this library make?
 
-If you bundle `next-intl` for the client side ([which you don't have to](/docs/environments/server-client-components)), the bundle size comes in at [~14kB gzipped](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalization features. There are smaller libraries for internationalization, but they typically cover less features.
+If you bundle next-intl for the client side ([which you don't have to](/docs/environments/server-client-components)), the bundle size comes in at [~14kB gzipped](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalization features. There are smaller libraries for internationalization, but they typically cover less features.
 
-If you don't need all features of `next-intl`, you can reduce the bundle size with tree shaking. Furthermore if [native `Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat) lands in JavaScript in the future, we might be able to reduce the bundle size significantly.
+If you don't need all features of next-intl, you can reduce the bundle size with tree shaking. Furthermore if [native `Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat) lands in JavaScript in the future, we might be able to reduce the bundle size significantly.
 
-Generally, it's recommended to [handle internationalization in Server Components](/docs/environments/server-client-components) to avoid bundling `next-intl` for the client side in the first place.
+Generally, it's recommended to [handle internationalization in Server Components](/docs/environments/server-client-components) to avoid bundling next-intl for the client side in the first place.
 
 ## How is this library different from using react-intl?
 
@@ -17,20 +17,20 @@ Generally, it's recommended to [handle internationalization in Server Components
 5. This library is a bit smaller in size ([next-intl](https://bundlephobia.com/result?p=next-intl) vs [react-intl](https://bundlephobia.com/result?p=react-intl) on BundlePhobia).
 6. This library offers [type safety for message keys](/docs/typescript).
 
-## Can `next-intl` be used with Jest and Storybook?
+## Can next-intl be used with Jest and Storybook?
 
 Yes. These environments pose the challenge that components render in isolation and therefore relevant providers might be missing. To fix this, you should wrap the component with `NextIntlClientProvider`.
 
 Please see the [Jest example](https://github.com/amannn/next-intl/blob/main/examples/example-next-13/src/components/Navigation.spec.tsx) to explore a working setup. For Storybook, you have to [add a global decorator](https://storybook.js.org/docs/react/writing-stories/decorators#global-decorators) that configures the provider.
 
-## Can `next-intl` be used without Next.js?
+## Can next-intl be used without Next.js?
 
 Yes, see [`use-intl`](https://github.com/amannn/next-intl/tree/main/packages/use-intl).
 
-## Can `next-intl` be used with [Remix](https://remix.run/)?
+## Can next-intl be used with [Remix](https://remix.run/)?
 
 Yes, see [the Remix example](https://github.com/amannn/next-intl/tree/main/examples/example-remix).
 
-## Can `next-intl` be used with [React Native](https://reactnative.dev/)?
+## Can next-intl be used with [React Native](https://reactnative.dev/)?
 
 Yes, see [the React Native example](https://github.com/amannn/next-intl/tree/main/examples/example-react-native).

@@ -37,7 +37,7 @@ Moving internationalization to the server side unlocks new levels of performance
 
 ## Passing translations to Client Components
 
-If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
+If you need to use translations or other functionality from next-intl in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
 
 ```tsx filename="[locale]/faq/page.tsx" {7-9}
 import {useTranslations} from 'next-intl';
@@ -87,11 +87,11 @@ function Pagination({curPage, totalPages}) {
 }
 ```
 
-You can still manage your translations on the server side by using [page- or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page). There's [an article on Smashing Magazine about using `next-intl` in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
+You can still manage your translations on the server side by using [page- or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page). There's [an article on Smashing Magazine about using next-intl in Server Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components) which explores this topic in more detail, specifically [the section about adding interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos).
 
 Apart from page- or search params, you can also use [cookies](https://nextjs.org/docs/app/api-reference/functions/cookies) or [database state](https://nextjs.org/docs/app/building-your-application/data-fetching) for storing state that can be read on the server side.
 
-If you absolutely need to use functionality from `next-intl` on the client side, you can wrap the respective components with `NextIntlClientProvider`.
+If you absolutely need to use functionality from next-intl on the client side, you can wrap the respective components with `NextIntlClientProvider`.
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';

@@ -3,7 +3,7 @@ import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Server Components
 
-Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. next-intl is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with the `app` directory.
 
 <Callout type="warning">
   Support for React Server Components is currently in beta. Please use it at
@@ -20,11 +20,11 @@ This beta version was tested with `next@13.4.0`.
 
 ## Roadmap
 
-| Feature                                            | Status |
-| :------------------------------------------------- | :----: |
-| Usage of all `next-intl` APIs in Server Components |   ✅   |
-| Dynamic rendering                                  |   ✅   |
-| Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
+| Feature                                          | Status |
+| :----------------------------------------------- | :----: |
+| Usage of all next-intl APIs in Server Components |   ✅   |
+| Dynamic rendering                                |   ✅   |
+| Static rendering (i.e. `generateStaticParams`)   |   🏗️   |
 
 <Callout emoji="🏗️">
   Full support for static rendering is currently pending, but [stopgap solutions
@@ -72,7 +72,7 @@ The simplest option is to create JSON files locally based on locales, e.g. `en.j
 
 ### `i18n.ts`
 
-`next-intl` creates a configuration once per request and makes it available to all Server Components. Here you can provide messages and other options depending the locale of the user.
+next-intl creates a configuration once per request and makes it available to all Server Components. Here you can provide messages and other options depending the locale of the user.
 
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -170,13 +170,13 @@ That's all it takes! Now you can internationalize your apps on the server side.
     example](https://next-intl-example-next-13-git-feat-next-13-rsc-amannn.vercel.app/)
     ([source](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)).
   </li>
-  <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
+  <li>Exploring next-intl? Check out the [usage guide](/docs/usage).</li>
   <li>
-    Decided you're sticking with `next-intl`? Consider the steps of the
-    [checklist for production](/docs/production-checklist).
+    Decided you're sticking with next-intl? Consider the steps of the [checklist
+    for production](/docs/production-checklist).
   </li>
   <li>
-    Interested to learn more about the advantages of using `next-intl` in Server
+    Interested to learn more about the advantages of using next-intl in Server
     Components? Check out the [Server & Client Components
     guide](/docs/environments/server-client-components).
   </li>
@@ -191,7 +191,7 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 ## Global request configuration
 
-`next-intl` supports the following [global configuration](/docs/configuration):
+next-intl supports the following [global configuration](/docs/configuration):
 
 - `formats`
 - `defaultTranslationValues`
@@ -218,7 +218,7 @@ Note that the configuration object will be created once for each request and wil
 
 ## Static rendering
 
-The support for using `next-intl` in React Server Components is currently limited to dynamic rendering and support for static rendering is pending until [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is integrated with Next.js. If you have a strong need for static rendering, you can choose from a set of stopgap solutions depending on your needs.
+The support for using next-intl in React Server Components is currently limited to dynamic rendering and support for static rendering is pending until [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is integrated with Next.js. If you have a strong need for static rendering, you can choose from a set of stopgap solutions depending on your needs.
 
 **Temporary workarounds for static rendering:**
 
@@ -251,10 +251,10 @@ export default async function Index({params: {locale}}) {
 <Callout>
   Note that these are temporary workarounds that will no longer be necessary
   once `createServerContext` is integrated with Next.js. As soon as this is the
-  case, there will be a stable release of `next-intl` with Server Components
+  case, there will be a stable release of next-intl with Server Components
   support.
 </Callout>
 
 ## Providing feedback
 
-If you have feedback about using `next-intl` in the `app` directory, feel free to leave feedback in [the PR which implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).
+If you have feedback about using next-intl in the `app` directory, feel free to leave feedback in [the PR which implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).
