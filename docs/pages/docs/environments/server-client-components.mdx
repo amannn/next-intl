@@ -10,6 +10,8 @@ This page contains background information about the advantages of moving interna
 
 With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
 
+## Benefits of handling i18n in Server Components [#server-components-benefits]
+
 Moving internationalization to the server side unlocks new levels of performance, leaving the client side for interactive features.
 
 <Callout emoji="✅" title="Benefits of server-side internationalization">
@@ -23,7 +25,7 @@ Moving internationalization to the server side unlocks new levels of performance
     Library code for internationalization doesn't need to be loaded on the
     client side
   </li>
-  <li>No need to split your messages based on routes or components</li>
+  <li>No need to split your messages, e.g. based on routes or components</li>
   <li>No runtime cost on the client side</li>
   <li>
     No need to handle environment differences like different time zones on the
@@ -123,4 +125,39 @@ async function Counter() {
   If you're configuring non-serializable values like functions, you have to mark
   the component that renders `NextIntlClientProvider` with `'use client';`
   ([example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx)).
+</Callout>
+
+## Highly dynamic apps
+
+If you're building a highly dynamic app with many components that use React's interactive features, you may prefer to make all messages available to Client Components.
+
+```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+The advantage of this technique is that you don't have to carefully design component boundaries to ensure that internationalization is handled exclusively on the server side.
+
+<Callout type="warning">
+  Note that this has an impact on the performance of your app (see [the bullet
+  points above](#server-components-benefits)).
 </Callout>

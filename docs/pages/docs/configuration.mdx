@@ -1,10 +1,11 @@
+import PartnerContentLink from 'components/PartnerContentLink';
 import Callout from 'components/Callout';
 import VersionTabs from 'components/VersionTabs';
 import {Tab} from 'nextra-theme-docs';
 
 # Global configuration
 
-Configuration properties that you commonly use across your Next.js app can be set globally.
+Configuration properties that you use across your Next.js app can be set globally.
 
 <Callout>
   Note that if you're using [the Server Components
@@ -14,17 +15,43 @@ Configuration properties that you commonly use across your Next.js app can be se
   to use them in Server Components.
 </Callout>
 
-## Time zone
+## Messages
 
-If possible, you should configure an explicit time zone, as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser this is the local time zone of the user. As the time zone of the server and the one from the user can be different, this might be problematic when your app is both rendered on the server as well as on the client side.
+The most crucial aspect of internationalization is providing labels based on the user's language. The recommended workflow is to store your messages in your repository along with the code.
 
-To ensure consistency, you can globally define a time zone:
+```
+├── messages
+│   ├── en.json
+│   ├── de-AT.json
+│   └── ...
+...
+```
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
 
-```tsx
-<NextIntlClientProvider timeZone="Europe/Vienna">...<NextIntlClientProvider>
+```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
 ```
 
 </Tab>
@@ -38,6 +65,65 @@ To ensure consistency, you can globally define a time zone:
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`./messages/${locale}.json`)).default
+}));
+```
+
+</Tab>
+</VersionTabs>
+
+Colocating your messages with app code is beneficial because it allows developers to make changes to messages quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/typescript). Translators can collaborate on the messages too, for example by using <PartnerContentLink name="localization-management-intro" href="https://crowdin.com/teams/engineering">Crowdin's GitHub integration</PartnerContentLink>, allowing to synchronize changes directly into your code repository.
+
+If you prefer to split your messages into multiple files, then merge them before passing them to `next-intl`:
+
+```tsx
+const messages = {
+  ...(await import(`../../messages/${locale}/login.json`)).default,
+  ...(await import(`../../messages/${locale}/dashboard.json`)).default
+};
+```
+
+While colocating messages is recommended, you can also load the messages from remote sources, e.g. by using <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
+
+```tsx
+import OtaClient from '@crowdin/ota-client';
+
+const client = new OtaClient('<distribution-hash>');
+const messages = await client.getStringsByLocale(locale);
+```
+
+## Time zone
+
+If possible, you should configure an explicit time zone, as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser, this is the local time zone of the user. As the time zone of the server and the one from the user can be different, this might be problematic when your app is both rendered on the server as well as on the client side.
+
+To ensure consistency, you can globally define a time zone:
+
+<VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
+<Tab>
+
+```tsx
+// The time zone can either be statically defined, read from the
+// user profile if you store such a setting, or based on dynamic
+// request information like the locale or headers.
+const timeZone = 'EuropeVienna';
+
+<NextIntlClientProvider timeZone={timeZone}>...<NextIntlClientProvider>
+```
+
+</Tab>
+<Tab>
+  
+<div className="-mt-6">
+  <Callout>This only applies if you're using [the Server Components beta](/docs/getting-started/app-router-server-components).</Callout>
+</div>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  // The time zone can either be statically defined, read from the
+  // user profile if you store such a setting, or based on dynamic 
+  // request information like the locale or headers.
   timeZone: 'Europe/Vienna',
   // ...
 }));
@@ -46,7 +132,7 @@ export default getRequestConfig(async ({locale}) => ({
 </Tab>
 </VersionTabs>
 
-The time zone can either be static in your app, or alternatively read from the user profile if you store such a setting. The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ## Global now value
 
