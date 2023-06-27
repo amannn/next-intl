@@ -74,7 +74,7 @@ export default getRequestConfig(async ({locale}) => ({
 
 Colocating your messages with app code is beneficial because it allows developers to make changes to messages quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/typescript). Translators can collaborate on the messages too, for example by using <PartnerContentLink name="localization-management-intro" href="https://crowdin.com/teams/engineering">Crowdin's GitHub integration</PartnerContentLink>, allowing to synchronize changes directly into your code repository.
 
-If you prefer to split your messages into multiple files, then merge them before passing them to next-intl:
+If you prefer to split your messages into multiple files, you can merge them to combine the messages:
 
 ```tsx
 const messages = {
