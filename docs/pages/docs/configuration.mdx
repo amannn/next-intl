@@ -72,24 +72,30 @@ export default getRequestConfig(async ({locale}) => ({
 </Tab>
 </VersionTabs>
 
-Colocating your messages with app code is beneficial because it allows developers to make changes to messages quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/typescript). Translators can collaborate on the messages too, for example by using <PartnerContentLink name="localization-management-intro" href="https://crowdin.com/teams/engineering">Crowdin's GitHub integration</PartnerContentLink>, allowing to synchronize changes directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes to messages quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/typescript).
 
-If you prefer to split your messages into multiple files, you can merge them to combine the messages:
+Translators can also collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+
+While it's recommended to colocate at least the messages for the default locale, you can also load messages from remote sources, e.g. with <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
+
+```tsx
+import OtaClient from '@crowdin/ota-client';
+
+const defaultLocale = 'en';
+const client = new OtaClient('<distribution-hash>');
+const messages =
+  locale === defaultLocale
+    ? (await import(`../../messages/en.json`)).default
+    : await client.getStringsByLocale(locale);
+```
+
+Since the messages can be freely defined and loaded, you can also split your messages into multiple files and merge them later at runtime if you prefer:
 
 ```tsx
 const messages = {
   ...(await import(`../../messages/${locale}/login.json`)).default,
   ...(await import(`../../messages/${locale}/dashboard.json`)).default
 };
-```
-
-While colocating messages is recommended, you can also load the messages from remote sources, e.g. by using <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
-
-```tsx
-import OtaClient from '@crowdin/ota-client';
-
-const client = new OtaClient('<distribution-hash>');
-const messages = await client.getStringsByLocale(locale);
 ```
 
 ## Time zone
