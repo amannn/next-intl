@@ -1,6 +1,7 @@
 import {Formats as IntlFormats} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
+import { TimeZone } from './utils/TimeZones';
 
 function setTimeZoneInFormats(
   formats: Record<string, DateTimeFormatOptions> | undefined,
@@ -31,7 +32,7 @@ function setTimeZoneInFormats(
  */
 export default function convertFormatsToIntlMessageFormat(
   formats: Partial<Formats>,
-  timeZone?: string
+  timeZone?: TimeZone
 ): Partial<IntlFormats> {
   const formatsWithTimeZone = timeZone
     ? {...formats, dateTime: setTimeZoneInFormats(formats.dateTime, timeZone)}
