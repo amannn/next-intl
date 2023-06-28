@@ -3,7 +3,7 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 # Date and time formatting
 
-The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of next-intl, you can handle all i18n differences in your Next.js app automatically.
+The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle all i18n differences in your Next.js app automatically.
 
 <Callout>
 
@@ -41,7 +41,7 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 
 To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
 
-Since next-intl is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
+Since `next-intl` is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
 
 ```tsx
 import {subDays} from 'date-fns';

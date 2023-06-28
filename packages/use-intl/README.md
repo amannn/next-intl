@@ -88,4 +88,4 @@ Have a look at [the minimal setup example](https://codesandbox.io/s/use-intl-cra
 
 ## Usage
 
-Please refer to the [next-intl usage docs](https://next-intl-docs.vercel.app/docs/usage) for more advanced usage, but note that you should import from `use-intl` instead of next-intl.
+Please refer to the [`next-intl` usage docs](https://next-intl-docs.vercel.app/docs/usage) for more advanced usage, but note that you should import from `use-intl` instead of `next-intl`.

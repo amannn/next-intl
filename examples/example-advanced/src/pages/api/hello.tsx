@@ -3,7 +3,7 @@ import type {NextApiRequest, NextApiResponse} from 'next';
 import {createFormatter, createTranslator} from 'next-intl';
 import nextConfig from '../../../next.config';
 
-// This file demonstrates how next-intl can
+// This file demonstrates how `next-intl` can
 // be used in API routes to translate messages.
 
 export default async function handler(

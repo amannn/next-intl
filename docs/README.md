@@ -1,6 +1,6 @@
 # docs
 
-This is the documentation website for next-intl.
+Website for `next-intl`
 
 You can run it locally like this:
 

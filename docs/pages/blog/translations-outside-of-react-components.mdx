@@ -4,9 +4,9 @@ title: How (not) to use translations outside of React components
 
 # How (not) to use translations outside of React components
 
-Have you ever wondered why next-intl doesn’t provide an API to consume translations outside of React components?
+Have you ever wondered why `next-intl` doesn’t provide an API to consume translations outside of React components?
 
-The traditional way to internationalize your app with next-intl is to use the `useTranslations` hook:
+The traditional way to internationalize your app with `next-intl` is to use the `useTranslations` hook:
 
 ```tsx
 import {useTranslations} from 'next-intl';
@@ -111,7 +111,7 @@ Additionally, this approach is more robust to possibly unexpected states, like t
 
 If you’re working with Next.js, you might want to translate i18n messages in [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes), [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) or the [Metadata API](https://nextjs.org/docs/app/api-reference/file-conventions/metadata).
 
-next-intl provides a [core library](/docs/environments/core-library) that is agnostic from React and can be used for these cases.
+`next-intl` provides a [core library](/docs/environments/core-library) that is agnostic from React and can be used for these cases.
 
 ```tsx
 import {createTranslator} from 'next-intl';

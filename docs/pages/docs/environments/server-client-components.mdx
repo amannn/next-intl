@@ -26,7 +26,7 @@ However, depending on your situation, you may need to handle internationalizatio
 
 ## Option 1: Passing translations to Client Components
 
-If you need to use translations or other functionality from next-intl in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
+If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
 
 ```tsx filename="[locale]/faq/page.tsx" {7-9}
 import {useTranslations} from 'next-intl';
@@ -83,7 +83,7 @@ You can still manage your translations on the server side by using:
 3. [Database state](https://nextjs.org/docs/app/building-your-application/data-fetching)
 
 <Callout>
-  There's [an article on Smashing Magazine about using next-intl in Server
+  There's [an article on Smashing Magazine about using `next-intl` in Server
   Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components)
   which explores the usage of search params (specifically [the section about
   adding

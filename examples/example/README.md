@@ -1,6 +1,6 @@
 # example
 
-An example that showcases a basic installation of next-intl.
+An example that showcases a basic installation of `next-intl`.
 
 The relevant integration code is:
 
