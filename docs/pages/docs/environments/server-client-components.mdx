@@ -101,8 +101,9 @@ import ClientCounter from './ClientCounter';
 
 async function Counter() {
   const locale = useLocale();
-  const messages = (await import(`../../../../messages/${locale}.json`))
-    .default;
+
+  // Receive messages provided in `i18n.ts`
+  const messages = useMessages();
 
   return (
     <NextIntlClientProvider
@@ -137,12 +138,8 @@ import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({children, params: {locale}}) {
-  let messages;
-  try {
-    messages = (await import(`../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
+  // Receive messages provided in `i18n.ts`
+  const messages = useMessages();
 
   return (
     <html lang={locale}>
