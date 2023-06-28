@@ -39,6 +39,11 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/next-13',
+      destination: '/docs/getting-started',
+      permanent: true
+    },
+    {
       source: '/docs/next-13/client-components',
       destination: '/docs/getting-started/app-router-client-components',
       permanent: true
@@ -56,11 +61,6 @@ module.exports = withNextra({
     {
       source: '/docs/next-13/navigation',
       destination: '/docs/routing/navigation',
-      permanent: true
-    },
-    {
-      source: '/docs/next-13',
-      destination: '/docs/getting-started',
       permanent: true
     },
     {
