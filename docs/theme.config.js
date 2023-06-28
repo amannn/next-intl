@@ -87,6 +87,7 @@ export default {
   darkMode: true,
   logo,
   sidebar: {
+    autoCollapse: true,
     defaultMenuCollapseLevel: 1
   },
   themeSwitch: {
