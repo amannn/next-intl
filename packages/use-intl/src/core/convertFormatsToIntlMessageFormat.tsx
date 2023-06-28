@@ -1,11 +1,11 @@
 import {Formats as IntlFormats} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
-import { TimeZone } from './utils/TimeZones';
+import TimeZone from './TimeZone';
 
 function setTimeZoneInFormats(
   formats: Record<string, DateTimeFormatOptions> | undefined,
-  timeZone: string
+  timeZone: TimeZone
 ) {
   if (!formats) return formats;
 
