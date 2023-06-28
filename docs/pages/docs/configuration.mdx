@@ -9,7 +9,7 @@ Configuration properties that you use across your Next.js app can be set globall
 
 ## Client- and Server Components [#client-server-components]
 
-Depending on if you handle internationalization in [Client- or Server Components](http://localhost:3000/docs/environments/server-client-components#server-components-benefits), the configuration from `NextIntlClientProvider` or `i18n.ts` will be applied respectively.
+Depending on if you handle internationalization in [Client- or Server Components](/docs/environments/server-client-components#server-components-benefits), the configuration from `NextIntlClientProvider` or `i18n.ts` will be applied respectively.
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
@@ -168,7 +168,7 @@ To ensure consistency, you can globally define a time zone:
 // The time zone can either be statically defined, read from the
 // user profile if you store such a setting, or based on dynamic
 // request information like the locale or headers.
-const timeZone = 'EuropeVienna';
+const timeZone = 'Europe/Vienna';
 
 <NextIntlClientProvider timeZone={timeZone}>...<NextIntlClientProvider>
 ```
@@ -214,8 +214,6 @@ To avoid mismatches between the server and client environment, it is recommended
 </NextIntlClientProvider>
 ```
 
-This value will be used as the default for [the `relativeTime` function](/docs/usage/dates-times#formatting-relative-time) as well as returned during the initial render of [`useNow`](/docs/usage/dates-times#usenow).
-
 </Tab>
 <Tab>
   
@@ -236,6 +234,8 @@ export default getRequestConfig(async ({locale}) => ({
 
 </Tab>
 </VersionTabs>
+
+This value will be used as the default for [the `relativeTime` function](/docs/usage/dates-times#formatting-relative-time) as well as returned during the initial render of [`useNow`](/docs/usage/dates-times#usenow).
 
 <Callout type="warning">
   **Important:** When you cache the rendered markup (e.g. when using [static

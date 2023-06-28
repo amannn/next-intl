@@ -89,6 +89,11 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/usage/core-library',
+      destination: '/docs/environments/core-library',
+      permanent: true
+    },
+    {
       source: '/examples/next-13',
       destination: '/examples/app-router',
       permanent: true
