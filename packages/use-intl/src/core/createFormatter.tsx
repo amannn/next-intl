@@ -2,8 +2,8 @@ import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
+import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
-import { TimeZone } from './utils/TimeZones';
 
 const MINUTE = 60;
 const HOUR = MINUTE * 60;
