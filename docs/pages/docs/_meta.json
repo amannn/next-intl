@@ -4,8 +4,8 @@
   "environments": "Environments",
   "configuration": "Global configuration",
   "routing": "Routing",
-  "typescript": "TypeScript integration",
-  "production-checklist": "Checklist for production",
+  "typescript": "TypeScript",
+  "production-checklist": "Production checklist",
   "faq": "FAQ",
   "localization-management": "Localization management with Crowdin"
 }

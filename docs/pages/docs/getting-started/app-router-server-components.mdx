@@ -189,33 +189,6 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 </Callout>
 
-## Global request configuration
-
-next-intl supports the following [global configuration](/docs/configuration):
-
-- `formats`
-- `defaultTranslationValues`
-- `timeZone`
-- `now`
-- `onError`
-- `getMessageFallback`
-
-For the usage in Server Components, these can be configured in `i18n.ts`.
-
-```tsx filename="i18n.ts"
-import {headers} from 'next/headers';
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`../messages/${locale}.json`)).default,
-
-  // You can read from headers or cookies here
-  timeZone: headers().get('x-time-zone') ?? 'Europe/Berlin'
-}));
-```
-
-Note that the configuration object will be created once for each request and will then be made available to all Server Components in your app.
-
 ## Static rendering
 
 The support for using next-intl in React Server Components is currently limited to dynamic rendering and support for static rendering is pending until [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is integrated with Next.js. If you have a strong need for static rendering, you can choose from a set of stopgap solutions depending on your needs.
@@ -257,4 +230,4 @@ export default async function Index({params: {locale}}) {
 
 ## Providing feedback
 
-If you have feedback about using next-intl in the `app` directory, feel free to leave feedback in [the PR which implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).
+If you have feedback about using next-intl in the `app` directory, feel free to leave feedback in [the PR that implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).

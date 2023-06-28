@@ -7,13 +7,60 @@ import {Tab} from 'nextra-theme-docs';
 
 Configuration properties that you use across your Next.js app can be set globally.
 
-<Callout>
-  Note that if you're using [the Server Components
-  beta](http://localhost:3000/docs/getting-started/app-router-server-components),
-  you can set these properties in [the global request configuration
-  (`i18n.ts`)](http://localhost:3000/docs/getting-started/app-router-server-components#global-request-configuration)
-  to use them in Server Components.
-</Callout>
+## Client- and Server Components [#client-server-components]
+
+Depending on if you handle internationalization in [Client- or Server Components](http://localhost:3000/docs/environments/server-client-components#server-components-benefits), the configuration from `NextIntlClientProvider` or `i18n.ts` will be applied respectively.
+
+<VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
+<Tab>
+
+`NextIntlClientProvider` can be used to provide configuration for **Client Components**.
+
+```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+</Tab>
+<Tab>
+  
+<div className="-mt-6">
+  <Callout>This only applies if you're using [the Server Components beta](/docs/getting-started/app-router-server-components).</Callout>
+</div>
+
+`i18n.ts` can be used to provide configuration for **Server Components**.
+
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`./messages/${locale}.json`)).default
+}));
+```
+
+The configuration object is created once for each request by internally using React's [`cache`](https://nextjs.org/docs/app/building-your-application/data-fetching/caching#react-cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
+
+</Tab>
+</VersionTabs>
 
 ## Messages
 
@@ -335,25 +382,6 @@ export default getRequestConfig(async ({locale}) => ({
 
 The defaults will be overridden by locally provided values.
 
-## Retrieve provider config
-
-As a convenience, two hooks exist that allow to read configuration that was globally configured.
-
-```js
-import {useLocale, useTimeZone} from 'next-intl';
-
-function Component() {
-  // Returns either an explicitly configured locale from the provider
-  // or if internationalized routing is used in the pages directory,
-  // it returns the configured locale from Next.js.
-  const locale = useLocale();
-
-  // Note that this will be `undefined` if no explicit
-  // `timeZone` was configured on the provider.
-  const timeZone = useTimeZone();
-}
-```
-
 ## Error handling
 
 By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
@@ -429,6 +457,25 @@ export default getRequestConfig(async ({locale}) => ({
 ````
 </Tab>
 </VersionTabs>
+
+## Retrieve provider config
+
+As a convenience, two hooks exist that allow to read configuration that was globally configured.
+
+```js
+import {useLocale, useTimeZone} from 'next-intl';
+
+function Component() {
+  // Returns either an explicitly configured locale from the provider
+  // or if internationalized routing is used in the pages directory,
+  // it returns the configured locale from Next.js.
+  const locale = useLocale();
+
+  // Note that this will be `undefined` if no explicit
+  // `timeZone` was configured on the provider.
+  const timeZone = useTimeZone();
+}
+```
 
 ### Fallbacks from other locales
 
