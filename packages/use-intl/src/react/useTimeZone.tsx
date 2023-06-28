@@ -1,6 +1,5 @@
-import { TimeZone } from '../core/utils/TimeZones';
 import useIntlContext from './useIntlContext';
 
-export default function useTimeZone(): TimeZone {
+export default function useTimeZone() {
   return useIntlContext().timeZone;
 }
