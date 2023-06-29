@@ -62,7 +62,8 @@ import {
   getTranslator,
   getFormatter,
   getNow,
-  getTimeZone
+  getTimeZone,
+  getMessages
 } from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
@@ -70,6 +71,7 @@ export async function generateMetadata({params: {locale}}) {
   const format = await getFormatter(locale);
   const now = await getNow(locale);
   const timeZone = await getTimeZone(locale);
+  const messages = await getMessages(locale);
 }
 ```
 

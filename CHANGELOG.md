@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.16.0 (2023-06-29)
+
+
+### Features
+
+* Add `useMessages` for convenience and restructure docs to be App Router-first ([#345](https://github.com/amannn/next-intl/issues/345)) ([0dedbfd](https://github.com/amannn/next-intl/commit/0dedbfd10411796c7a290f172ad03f406c7cccec))
+
+
+
+
+
 ## 2.15.1 (2023-06-21)
 
 
