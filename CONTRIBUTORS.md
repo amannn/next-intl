@@ -15,7 +15,7 @@ Open source work should be fun for everyone involved. Let's make sure it stays t
 
 Thank you for being a part of this project! 🙌
 
-## Local development
+## Development
 
 ### Setup
 
@@ -33,6 +33,28 @@ There are currently two test setups:
 
 In either case, you can focus individual tests during development via [`it.only`](https://jestjs.io/docs/api#testonlyname-fn-timeout).
 
-## Pull requests
+### Code formatting (ESLint & Prettier)
+
+This project uses ESLint both for detecting issues in code, as well as for formatting.
+
+Prettier is integrated via an autofixable ESLint rule, therefore it's recommended to autofix all ESLint issues on save in your editor:
+
+```js
+// settings.json (VSCode)
+{
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true
+  }
+}
+```
+
+Alternatively, you can run ESLint via the command line:
+
+```sh
+pnpm eslint src --fix
+```
+
+### Pull requests
 
 This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to automate the releases.
