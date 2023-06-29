@@ -35,7 +35,7 @@ Calling \`getTimeZone\` without a locale is deprecated, please update the call:
 
 // app/[locale]/layout.tsx
 export async function generateMetadata({params}) {
-  const t = await getTimeZone({locale: params.locale});
+  const t = await getTimeZone(params.locale);
 
   // ...
 }

@@ -41,5 +41,6 @@ export {default as getNow} from './getNow';
 export {default as getTimeZone} from './getTimeZone';
 export {default as getTranslations} from './getTranslations';
 export {default as getTranslator} from './getTranslator';
+export {default as getMessages} from './getMessages';
 
 export {default as redirect} from './redirect';

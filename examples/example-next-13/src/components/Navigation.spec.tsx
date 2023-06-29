@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import {render} from '@testing-library/react';
 import pick from 'lodash/pick';
 import {NextIntlClientProvider} from 'next-intl';
@@ -7,22 +5,26 @@ import messages from '../../messages/en.json';
 import Navigation from './Navigation';
 
 // If the tested component uses features from Next.js, you have to mock them.
-// Note that next-intl only has an optional dependency on Next.js.
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      locale: 'en',
-      locales: ['en', 'de']
-    };
-  }
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/',
+  useRouter: () => ({
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    push: jest.fn(),
+    prefetch: jest.fn(),
+    replace: jest.fn()
+  }),
+  useParams: () => ({
+    locale: 'en'
+  })
 }));
 
 it('renders', () => {
   render(
     <NextIntlClientProvider
       locale="en"
-      messages={pick(messages, Navigation.messages)}
+      messages={pick(messages, ['Navigation', 'LocaleSwitcher'])}
     >
       <Navigation />
     </NextIntlClientProvider>

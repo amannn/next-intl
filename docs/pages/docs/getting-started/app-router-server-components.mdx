@@ -1,0 +1,233 @@
+import Callout from 'components/Callout';
+import Steps from 'components/Steps';
+
+# Next.js 13: Internationalization (i18n) in Server Components
+
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps using the `app` directory.
+
+<Callout type="warning">
+  Support for React Server Components is currently in beta. Please use it at
+  your own risk, knowing that you may have to migrate upon a stable release.
+</Callout>
+
+## Current beta version
+
+```
+npm install next-intl@3.0.0-beta.5
+```
+
+This beta version was tested with `next@13.4.0`.
+
+## Roadmap
+
+| Feature                                            | Status |
+| :------------------------------------------------- | :----: |
+| Usage of all `next-intl` APIs in Server Components |   ✅   |
+| Dynamic rendering                                  |   ✅   |
+| Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
+
+<Callout emoji="🏗️">
+  Full support for static rendering is currently pending, but [stopgap solutions
+  are available](#static-rendering).
+</Callout>
+
+For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
+
+## Getting started
+
+If you haven't done so already, [create a Next.js 13 app that uses the App Router](https://nextjs.org/docs/getting-started/installation). All pages should be moved within a `[locale]` folder so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+
+**Start by running `npm install next-intl` and create the following file structure:**
+
+```
+├── messages (1)
+│   ├── en.json
+│   └── ...
+├── i18n.ts (2)
+├── next.config.js (3)
+├── middleware.ts (4)
+└── app
+    └── [locale]
+        ├── layout.tsx (5)
+        └── page.tsx (6)
+```
+
+**Now, set up the files as follows:**
+
+<Steps>
+
+### `messages/en.json`
+
+Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+
+The simplest option is to create JSON files locally based on locales, e.g. `en.json`.
+
+```json filename="messages/en.json"
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+### `i18n.ts`
+
+`next-intl` creates a configuration once per request and makes it available to all Server Components. Here you can provide messages and other options depending the locale of the user.
+
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`./messages/${locale}.json`)).default
+}));
+```
+
+### `next.config.js`
+
+Now, set up the plugin and provide the path to your configuration.
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')(
+  // This is the default (also the `src` folder is supported out of the box)
+  './i18n.ts'
+);
+
+module.exports = withNextIntl({
+  // Other Next.js configuration ...
+});
+```
+
+### `middleware.ts`
+
+[The middleware](/docs/routing/middleware) matches a locale for the request and handles redirects and rewrites accordingly.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: 'en'
+});
+
+export const config = {
+  // Skip all paths that should not be internationalized. This example skips the
+  // folders "api", "_next" and all files with an extension (e.g. favicon.ico)
+  matcher: ['/((?!api|_next|.*\\..*).*)']
+};
+```
+
+### `app/[locale]/layout.tsx`
+
+The `locale` that was matched by the middleware is available via `useLocale` and can be used to configure the document language.
+
+```tsx filename="app/[locale]/layout.tsx"
+import {useLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+export default function LocaleLayout({children, params}) {
+  const locale = useLocale();
+
+  // Show a 404 error if the user requests an unknown locale
+  if (params.locale !== locale) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+### `app/[locale]/page.tsx`
+
+Use translations in your page components or anywhere else!
+
+```tsx filename="app/[locale]/page.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+</Steps>
+
+That's all it takes! Now you can internationalize your apps on the server side.
+
+<Callout>
+
+**Next steps:**
+
+<ul className="ml-4 list-disc">
+  <li>
+    Ran into an issue? Have a look at [the Server Components
+    example](https://next-intl-example-next-13-git-feat-next-13-rsc-amannn.vercel.app/)
+    ([source](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)).
+  </li>
+  <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
+  <li>
+    Decided you're sticking with `next-intl`? Consider the steps of the
+    [checklist for production](/docs/production-checklist).
+  </li>
+  <li>
+    Interested to learn more about the advantages of using `next-intl` in Server
+    Components? Check out the [Server & Client Components
+    guide](/docs/environments/server-client-components).
+  </li>
+  <li>
+    Are you transitioning from the `pages` directory to `app`? Check out the
+    [migration
+    example](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13-with-pages).
+  </li>
+</ul>
+
+</Callout>
+
+## Static rendering
+
+The support for using `next-intl` in React Server Components is currently limited to dynamic rendering and support for static rendering is pending until [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is integrated with Next.js. If you have a strong need for static rendering, you can choose from a set of stopgap solutions depending on your needs.
+
+**Temporary workarounds for static rendering:**
+
+1. [Handle internationalization in Client Components](/docs/getting-started/app-router-client-components) for now, as static rendering is fully supported in this paradigm without limitations.
+
+```tsx filename="app/[locale]/page.tsx"
+'use client';
+
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+2. The [APIs for using internationalization outside of components](#using-internationalization-outside-of-components) are integrated with static rendering. As a temporary solution, you can use these APIs in components too, but note that you have to "drill-down" the `locale` that is received via `params` to all components.
+
+```tsx filename="app/[locale]/page.tsx"
+import {getTranslator} from 'next-intl/server';
+
+export default async function Index({params: {locale}}) {
+  const t = await getTranslator(locale, 'Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+3. Use [CDN caching](https://www.youtube.com/watch?v=bfLFHp7Sbkg) to get the same performance characteristics from your dynamic pages as static ones. Note however that this is [not supported in Next.js itself](https://github.com/vercel/next.js/issues/22319) (except for if you [apply a patch](https://github.com/vercel/next.js/issues/22319#issuecomment-1565268095)), therefore this needs to be configured on your hosting solution (e.g. [Netlify](https://docs.netlify.com/routing/headers/#syntax-for-the-netlify-configuration-file), [Cloudflare](https://blog.cloudflare.com/transform-http-response-headers/)).
+
+<Callout>
+  Note that these are temporary workarounds that will no longer be necessary
+  once `createServerContext` is integrated with Next.js. As soon as this is the
+  case, there will be a stable release of `next-intl` with Server Components
+  support.
+</Callout>
+
+## Providing feedback
+
+If you have feedback about using `next-intl` in the `app` directory, feel free to leave feedback in [the PR that implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).

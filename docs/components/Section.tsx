@@ -17,7 +17,7 @@ export default function Section({children, description, title}: Props) {
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white lg:text-4xl">
               {title}
             </h2>
-            <div className="mt-6 max-w-2xl text-base text-slate-600 dark:text-slate-400 lg:mx-auto lg:text-lg">
+            <div className="mt-6 max-w-[38rem] text-base text-slate-600 dark:text-slate-400 lg:mx-auto lg:text-lg">
               {description}
             </div>
           </div>

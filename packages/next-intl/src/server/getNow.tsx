@@ -35,7 +35,7 @@ Calling \`getNow\` without a locale is deprecated, please update the call:
 
 // app/[locale]/layout.tsx
 export async function generateMetadata({params}) {
-  const t = await getNow({locale: params.locale});
+  const t = await getNow(params.locale);
 
   // ...
 }

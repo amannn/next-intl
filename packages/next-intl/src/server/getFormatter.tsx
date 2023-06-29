@@ -42,7 +42,7 @@ Calling \`getFormatter\` without a locale is deprecated, please update the call:
 
 // app/[locale]/layout.tsx
 export async function generateMetadata({params}) {
-  const t = await getFormatter({locale: params.locale});
+  const t = await getFormatter(params.locale);
 
   // ...
 }

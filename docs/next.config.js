@@ -17,25 +17,95 @@ module.exports = withNextra({
       permanent: false
     },
     {
-      source: '/docs/installation',
-      destination: '/docs/getting-started',
-      permanent: false
-    },
-    {
       source: '/examples',
-      destination: '/examples/next-13',
+      destination: '/examples/app-router',
       permanent: false
     },
 
     // Moved pages
     {
-      source: '/docs/getting-started/production-checklist',
-      destination: '/docs/usage/production-checklist',
+      source: '/docs/installation',
+      destination: '/docs/getting-started',
       permanent: true
     },
     {
-      source: '/docs/production-checklist',
-      destination: '/docs/usage/production-checklist',
+      source: '/docs/getting-started/production-checklist',
+      destination: '/docs/production-checklist',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/production-checklist',
+      destination: '/docs/production-checklist',
+      permanent: true
+    },
+    {
+      source: '/docs/next-13',
+      destination: '/docs/getting-started',
+      permanent: true
+    },
+    {
+      source: '/docs/next-13/client-components',
+      destination: '/docs/getting-started/app-router-client-components',
+      permanent: true
+    },
+    {
+      source: '/docs/next-13/server-components',
+      destination: '/docs/getting-started/app-router-server-components',
+      permanent: true
+    },
+    {
+      source: '/docs/next-13/middleware',
+      destination: '/docs/routing/middleware',
+      permanent: true
+    },
+    {
+      source: '/docs/next-13/navigation',
+      destination: '/docs/routing/navigation',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/typescript',
+      destination: '/docs/typescript',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/production-checklist',
+      destination: '/docs/production-checklist',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/runtime-requirements-polyfills',
+      destination: '/docs/production-checklist#runtime-requirements',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/configuration',
+      destination: '/docs/configuration',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/error-handling',
+      destination: '/docs/configuration#error-handling',
+      permanent: true
+    },
+    {
+      source: '/docs/usage/core-library',
+      destination: '/docs/environments/core-library',
+      permanent: true
+    },
+    {
+      source: '/examples/next-13',
+      destination: '/examples/app-router',
+      permanent: true
+    },
+    {
+      source: '/examples/minimal',
+      destination: '/examples/pages-router',
+      permanent: true
+    },
+    {
+      source: '/examples/advanced',
+      destination: '/examples/pages-router-advanced',
       permanent: true
     }
   ],

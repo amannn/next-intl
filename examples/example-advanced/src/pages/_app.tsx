@@ -1,5 +1,5 @@
 import {AppProps} from 'next/app';
-import {NextIntlProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 
 type PageProps = {
   messages: IntlMessages;
@@ -12,7 +12,7 @@ type Props = Omit<AppProps<PageProps>, 'pageProps'> & {
 
 export default function App({Component, pageProps}: Props) {
   return (
-    <NextIntlProvider
+    <NextIntlClientProvider
       // To achieve consistent date, time and number formatting
       // across the app, you can define a set of global formats.
       formats={{
@@ -38,6 +38,6 @@ export default function App({Component, pageProps}: Props) {
       timeZone="Europe/Vienna"
     >
       <Component {...pageProps} />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }
