@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.17.0 (2023-06-29)
+
+
+### Features
+
+* Add autocomplete support for `timeZone` ([#359](https://github.com/amannn/next-intl/issues/359) by @A7med3bdulBaset) ([630dfc2](https://github.com/amannn/next-intl/commit/630dfc282c1eb2c1fca7a4bce4eb172ff7c03087))
+
+
+
+
+
 # 2.16.0 (2023-06-29)
 
 
