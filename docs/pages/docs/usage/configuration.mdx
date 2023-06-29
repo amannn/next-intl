@@ -142,3 +142,45 @@ function Component() {
   const timeZone = useTimeZone();
 }
 ```
+
+{/* useLanguageDirection */}
+## Language direction
+
+Sometimes it is necessary to know the direction of the current language, e.g. to apply the correct direction to the `html` element. This can be done with the `useLanguageDirection` hook:
+
+```tsx {2,6,9} filename="app/layout.tsx"
+import {useLocale} from 'next-intl';
+import {useLanguageDirection} from 'next-intl';
+
+export default function Layout({children, params}) {
+  const locale = useLocale();
+  const direction = useLanguageDirection(locale); // 'ltr' or 'rtl'
+  // ...
+  return (
+    <html lang={locale} dir={direction}>
+      <body>
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+Or maybe you want to render a different icon depending on the language direction:
+
+```tsx {1,5,10} filename="components/BreadCrumb.tsx"
+import {useLanguageDirection} from 'next-intl';
+// ...
+
+export default function BreadCrumb({children, params}) {
+  const direction = useLanguageDirection();
+
+  return (
+    <div className={direction === 'ltr' ? 'text-left' : 'text-right'}>
+      <span>Docs</span>
+      <span>{direction === 'ltr' ? <ArrowRight /> : <ArrowLeft />}</span>
+      <span>Global Configuration</span>
+    </div>
+  );
+}
+```
