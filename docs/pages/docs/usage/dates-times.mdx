@@ -7,7 +7,7 @@ The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 
 
 <Callout>
 
-If you're formatting dates and times, you should [set up a global time zone](/docs/usage/configuration#time-zone).
+If you're formatting dates and times, you should [set up a global time zone](/docs/configuration#time-zone).
 
 </Callout>
 
@@ -34,7 +34,7 @@ function Component() {
 }
 ```
 
-See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to `dateTime` ([interactive explorer](https://www.intl-explorer.com/DateTimeFormat)).
+See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to the `dateTime` function or [try the interactive explorer for `Intl.DateTimeFormat`](https://www.intl-explorer.com/DateTimeFormat).
 
 <details>
 <summary>How can I parse dates or manipulate them?</summary>
@@ -74,13 +74,15 @@ function Component() {
 
 Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
 
-Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](/docs/usage/configuration#global-now-value), you can omit the second argument:
+Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](/docs/configuration#global-now-value), you can omit the second argument:
 
 ```js
 format.relativeTime(dateTime);
 ```
 
-If you want the value to update over time, you can do so with the `useNow` hook:
+### `useNow`
+
+If you want the relative time value to update over time, you can do so with the `useNow` hook:
 
 ```js
 import {useNow, useFormatter} from 'next-intl';
@@ -175,5 +177,5 @@ t(
 
 <Callout>
   To reuse date and time formats for multiple components, you can configure
-  [global formats](/docs/usage/configuration#global-formats).
+  [global formats](/docs/configuration#global-formats).
 </Callout>

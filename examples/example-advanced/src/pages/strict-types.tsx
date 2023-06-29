@@ -1,4 +1,4 @@
-import {NextIntlProvider, useTranslations} from 'next-intl';
+import {NextIntlClientProvider, useTranslations} from 'next-intl';
 
 // This page acts as a test environment for the TypeScript integration
 
@@ -128,8 +128,8 @@ export default function Test() {
   }
 
   return (
-    <NextIntlProvider messages={{}} onError={onError}>
+    <NextIntlClientProvider messages={{}} onError={onError}>
       <Suite />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }

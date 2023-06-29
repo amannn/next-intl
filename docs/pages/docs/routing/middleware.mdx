@@ -16,7 +16,8 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Skip all paths that should not be internationalized
+  // Skip all paths that should not be internationalized. This example skips the
+  // folders "api", "_next" and all files with an extension (e.g. favicon.ico)
   matcher: ['/((?!api|_next|.*\\..*).*)']
 };
 ```
@@ -198,8 +199,8 @@ module.exports = withNextIntl({
 
 Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
 
-1. Translate the pathnames you're passing to [navigation APIs](/docs/next-13/navigation) like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-named-routes/) that uses the proposed APIs from [the Server Components beta](https://next-intl-docs.vercel.app/docs/next-13/server-components).
-2. Turn off [the `alternateLinks` option](/docs/next-13/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+1. Translate the pathnames you're passing to [navigation APIs](/docs/routing/navigation) like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-named-routes/) that uses the proposed APIs from [the Server Components beta](https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components).
+2. Turn off [the `alternateLinks` option](/docs/routing/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
 
 ## Composing other middlewares
 
@@ -242,7 +243,7 @@ export const config = {
 
 The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
 
-For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and run only the `next-intl` middleware in this case.
+For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
 
 ```tsx filename="middleware.ts"
 import {withAuth} from 'next-auth/middleware';
@@ -289,7 +290,6 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // Skip all paths that should not be internationalized
   matcher: ['/((?!api|_next|.*\\..*).*)']
 };
 ```
@@ -323,11 +323,11 @@ export default function RootPage() {
 
 <Callout type="warning">
   Note that this is currently limited to the usage of `next-intl` in [Client
-  Components](/docs/next-13/client-components) (not [Server
-  Components](/docs/next-13/server-components)).
+  Components](/docs/getting-started/app-router-client-components) (no [Server
+  Components](/docs/getting-started/app-router-server-components)).
 </Callout>
 
-You can explore a working demo by building [the Next.js 13 example](/examples/next-13) after enabling the static export:
+You can explore a working demo by building [the Next.js 13 example](/examples/app-router) after enabling the static export:
 
 ```tsx filename="next.config.js"
 module.exports = {

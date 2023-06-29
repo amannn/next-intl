@@ -111,7 +111,7 @@ Additionally, this approach is more robust to possibly unexpected states, like t
 
 If you’re working with Next.js, you might want to translate i18n messages in [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes), [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) or the [Metadata API](https://nextjs.org/docs/app/api-reference/file-conventions/metadata).
 
-`next-intl` provides a [core library](/docs/usage/core-library) that is agnostic from React and can be used for these cases.
+`next-intl` provides a [core library](/docs/environments/core-library) that is agnostic from React and can be used for these cases.
 
 ```tsx
 import {createTranslator} from 'next-intl';
@@ -129,7 +129,7 @@ const t = createTranslator({locale: 'en', messages});
 t('hello', {name: 'world'});
 ```
 
-There's currently a proposal to further simplify this use case, by offering a set of [new APIs that integrate with Server Components](/docs/next-13/server-components#using-internationalization-outside-of-components) (currently in beta).
+There's currently a proposal to further simplify this use case, by offering a set of [new APIs that integrate with Server Components](/docs/getting-started/app-router-server-components#using-internationalization-outside-of-components) (currently in beta).
 
 ## This seems familiar
 
