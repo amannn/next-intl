@@ -149,8 +149,7 @@ function Component() {
 Sometimes it is necessary to know the direction of the current language, e.g. to apply the correct direction to the `html` element. This can be done with the `useLanguageDirection` hook:
 
 ```tsx {2,6,9} filename="app/layout.tsx"
-import {useLocale} from 'next-intl';
-import {useLanguageDirection} from 'next-intl';
+import {useLocale, useLanguageDirection} from 'next-intl';
 
 export default function Layout({children, params}) {
   const locale = useLocale();
