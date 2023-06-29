@@ -24,6 +24,7 @@ export const IntlProvider = notSupported;
 export const useTranslations = notSupported;
 export const useIntl = notSupported;
 export const useLocale = notSupported;
+export const useLanguageDirection = notSupported;
 export const useNow = notSupported;
 export const useTimeZone = notSupported;
 export const Link = notSupported;
