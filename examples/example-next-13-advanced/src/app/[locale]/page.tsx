@@ -41,7 +41,6 @@ export default function Index({searchParams}: Props) {
       </p>
       <LocaleSwitcher />
       <MessagesAsPropsCounter />
-      {/* @ts-expect-error RSC are not supported yet by TypeScript */}
       <MessagesOnClientCounter />
       <CoreLibrary />
       <ClientRouterWithoutProvider />
