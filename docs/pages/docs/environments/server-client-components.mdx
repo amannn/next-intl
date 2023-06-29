@@ -112,7 +112,7 @@ import pick from 'lodash/pick';
 import {useLocale, NextIntlClientProvider} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
-async function Counter() {
+export default function Counter() {
   const locale = useLocale();
 
   // Receive messages provided in `i18n.ts`
