@@ -18,7 +18,7 @@ module.exports = withNextra({
     },
     {
       source: '/examples',
-      destination: '/examples/next-13',
+      destination: '/examples/app-router',
       permanent: false
     },
 

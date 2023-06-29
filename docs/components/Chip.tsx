@@ -4,18 +4,20 @@ import {ReactNode} from 'react';
 type Props = {
   children: ReactNode;
   className?: string;
-  color?: 'teal' | 'orange';
+  color?: 'green' | 'yellow';
 };
 
-export default function Chip({children, className, color = 'teal'}: Props) {
+export default function Chip({children, className, color = 'green'}: Props) {
   return (
     <span
       className={clsx(
         className,
-        'inline-block rounded-md px-2 py-[2px] text-xs font-semibold uppercase tracking-wide',
+        'inline-block rounded-md px-[6px] py-[2px] text-xs font-semibold uppercase tracking-wider',
         {
-          teal: 'bg-teal-100 text-teal-800',
-          orange: 'bg-orange-100 text-orange-800'
+          green:
+            'bg-green-100 text-green-800 dark:bg-green-800/50 dark:text-green-100',
+          yellow:
+            'bg-yellow-100 text-orange-800 dark:bg-yellow-800/50 dark:text-yellow-100'
         }[color]
       )}
     >

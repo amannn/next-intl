@@ -14,13 +14,24 @@ With the introduction of the App Router in Next.js 13, [React Server Components]
 
 Moving internationalization to the server side unlocks new levels of performance, leaving the client side for interactive features.
 
-**Benefits of server-side internationalization:**
-
-1. Your messages never leave the server and don't need to be serialized for the client side
-2. Library code for internationalization doesn't need to be loaded on the client side
-3. No need to split your messages, e.g. based on routes or components
-4. No runtime cost on the client side
-5. No need to handle environment differences like time zones on the server and client
+<Callout emoji="✅" title="Benefits of server-side internationalization">
+  <ol className="ml-4 list-decimal">
+    <li>
+      Your messages never leave the server and don't need to be serialized for
+      the client side
+    </li>
+    <li>
+      Library code for internationalization doesn't need to be loaded on the
+      client side
+    </li>
+    <li>No need to split your messages, e.g. based on routes or components</li>
+    <li>No runtime cost on the client side</li>
+    <li>
+      No need to handle environment differences like different time zones on the
+      server and client
+    </li>
+  </ol>
+</Callout>
 
 However, depending on your situation, you may need to handle internationalization in Client Components as well. This page discusses several strategies for handling this situation, in order of recommendation.
 
@@ -78,9 +89,11 @@ function Pagination({curPage, totalPages}) {
 
 You can still manage your translations on the server side by using:
 
-1. [Page- or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page)
+1. [Page or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page)
 2. [Cookies](https://nextjs.org/docs/app/api-reference/functions/cookies)
 3. [Database state](https://nextjs.org/docs/app/building-your-application/data-fetching)
+
+In particular, page and search params are often a great option because they offer additional benefits such as preserving the state of the app when the URL is shared, as well as integration with the browser history.
 
 <Callout>
   There's [an article on Smashing Magazine about using `next-intl` in Server

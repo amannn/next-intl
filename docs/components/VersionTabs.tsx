@@ -19,7 +19,7 @@ export default function VersionTabs({
         defaultLabel,
         <span key="2" className="inline-flex items-center">
           <span>{rscLabel}</span>
-          <Chip className="ml-2" color="orange">
+          <Chip className="ml-2" color="yellow">
             Beta
           </Chip>
         </span>

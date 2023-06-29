@@ -225,8 +225,8 @@ To avoid mismatches between the server and client environment, it is recommended
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => ({
-  // This is the default, a single date instance will be used by all Server 
-  // Components to ensure consistency even across async components
+  // This is the default, a single date instance will be used 
+  // by all Server Components to ensure consistency
   now: new Date(), 
   // ...
 }));
