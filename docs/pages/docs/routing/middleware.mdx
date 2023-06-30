@@ -214,7 +214,7 @@ If you need to incorporate additional behavior, you can either modify the reques
 
 ```tsx filename="middleware.ts"
 import createIntlMiddleware from 'next-intl/middleware';
-import {NextFetchEvent, NextMiddleware, NextRequest} from 'next/server';
+import {NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
   // Step 1: Use the incoming request
@@ -234,7 +234,6 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Skip all paths that should not be internationalized
   matcher: ['/((?!_next|.*\\..*).*)']
 };
 ```

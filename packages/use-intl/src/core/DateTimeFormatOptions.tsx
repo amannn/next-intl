@@ -1,5 +1,7 @@
 // https://github.com/microsoft/TypeScript/issues/35865
 
+import TimeZone from './TimeZone';
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
  */
@@ -71,7 +73,7 @@ type DateTimeFormatOptions = Intl.DateTimeFormatOptions & {
   /**
    * One of the [database names from the TZ database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
    */
-  timeZone?: string;
+  timeZone?: TimeZone;
 
   localeMatcher?: 'best fit' | 'lookup';
 

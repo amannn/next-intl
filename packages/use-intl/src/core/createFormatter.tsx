@@ -2,6 +2,7 @@ import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
+import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
 
 const MINUTE = 60;
@@ -46,7 +47,7 @@ function getRelativeTimeFormatConfig(seconds: number) {
 
 type Props = {
   locale: string;
-  timeZone?: string;
+  timeZone?: TimeZone;
   onError?(error: IntlError): void;
   formats?: Partial<Formats>;
   now?: Date;
