@@ -6,6 +6,7 @@ import {devices} from '@playwright/test';
 const PORT = process.env.CI ? 3003 : 3000;
 
 const config: PlaywrightTestConfig = {
+  retries: process.env.CI ? 1 : 0,
   testDir: './tests',
   projects: [
     {
