@@ -33,6 +33,7 @@ Importing \`createMiddleware\` from \`next-intl/server\` is deprecated. Please u
   });
 }
 
+// Must match `./react-client/index.tsx`
 export {default as getRequestConfig} from './getRequestConfig';
 export {default as getIntl} from './getIntl';
 export {default as getFormatter} from './getFormatter';
