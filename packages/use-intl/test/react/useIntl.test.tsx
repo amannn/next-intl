@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode} from 'react';
+import {it, expect, describe, vi} from 'vitest';
 import {
   DateTimeFormatOptions,
   NumberFormatOptions,
@@ -143,7 +144,7 @@ describe('formatDateTime', () => {
 
   describe('error handling', () => {
     it('handles missing formats', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();
@@ -165,7 +166,7 @@ describe('formatDateTime', () => {
     });
 
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();
@@ -233,7 +234,7 @@ describe('formatNumber', () => {
     const mockNumber = 10000;
 
     it('handles missing formats', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();
@@ -255,7 +256,7 @@ describe('formatNumber', () => {
     });
 
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();
@@ -382,7 +383,7 @@ describe('formatRelativeTime', () => {
 
   describe('error handling', () => {
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();
@@ -406,7 +407,7 @@ describe('formatRelativeTime', () => {
     });
 
     it('throws when no `now` value is available', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const intl = useIntl();

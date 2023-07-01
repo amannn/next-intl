@@ -1,5 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {it} from 'vitest';
 import {IntlProvider, useLocale} from '../../src';
 
 it('returns the current locale', () => {

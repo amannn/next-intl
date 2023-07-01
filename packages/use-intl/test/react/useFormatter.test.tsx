@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode} from 'react';
+import {it, expect, describe, vi} from 'vitest';
 import {
   DateTimeFormatOptions,
   NumberFormatOptions,
@@ -143,7 +144,7 @@ describe('dateTime', () => {
 
   describe('error handling', () => {
     it('handles missing formats', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
@@ -165,7 +166,7 @@ describe('dateTime', () => {
     });
 
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
@@ -238,7 +239,7 @@ describe('number', () => {
     const mockNumber = 10000;
 
     it('handles missing formats', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
@@ -260,7 +261,7 @@ describe('number', () => {
     });
 
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
@@ -387,7 +388,7 @@ describe('relativeTime', () => {
 
   describe('error handling', () => {
     it('handles formatting errors', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
@@ -411,7 +412,7 @@ describe('relativeTime', () => {
     });
 
     it('throws when no `now` value is available', () => {
-      const onError = jest.fn();
+      const onError = vi.fn();
 
       function Component() {
         const format = useFormatter();
