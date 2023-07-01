@@ -1,4 +1,5 @@
 import {NextRequest} from 'next/server';
+import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 

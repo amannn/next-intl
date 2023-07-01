@@ -1,3 +1,4 @@
+import {it, describe, expect} from 'vitest';
 import {hasPathnamePrefixed, unlocalizePathname} from '../../src/shared/utils';
 
 describe('hasPathnamePrefixed', () => {

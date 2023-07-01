@@ -2,16 +2,17 @@ import {render} from '@testing-library/react';
 import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context';
 import {useRouter as useNextRouter} from 'next/navigation';
 import React, {useEffect} from 'react';
+import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {useRouter} from '../../src/client';
 
-jest.mock('next/navigation', () => {
+vi.mock('next/navigation', () => {
   const router: AppRouterInstance = {
-    push: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
-    back: jest.fn(),
-    forward: jest.fn(),
-    refresh: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn()
   };
   return {
     useRouter: () => router,
