@@ -1,4 +1,5 @@
 import React from 'react';
+import {it, expect, describe, vi} from 'vitest';
 import {createTranslator, IntlError, IntlErrorCode} from '../../src';
 
 const messages = {
@@ -27,7 +28,7 @@ it('can translate a message without a namespace', () => {
 });
 
 it('handles formatting errors', () => {
-  const onError = jest.fn();
+  const onError = vi.fn();
 
   const t = createTranslator({
     locale: 'en',
@@ -64,7 +65,7 @@ describe('t.rich', () => {
   });
 
   it('handles errors when React components are provided', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
     const t = createTranslator({
       locale: 'en',
       namespace: 'Home',
