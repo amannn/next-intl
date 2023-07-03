@@ -2,7 +2,6 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
-import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 type MockResponse = NextResponse & {
