@@ -1,6 +1,7 @@
 import {render, waitFor} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React from 'react';
+import {it, expect} from 'vitest';
 import {IntlProvider, useNow} from '../../src';
 
 it('returns the current time', () => {

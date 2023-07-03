@@ -1,22 +1,24 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
+import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
+import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 type MockResponse = NextResponse & {
   args: Array<any>;
 };
 
-jest.mock('next/server', () => {
+vi.mock('next/server', () => {
   const response = {
     headers: new Headers(),
     cookies: new RequestCookies(new Headers())
   };
   return {
     NextResponse: {
-      next: jest.fn(() => response),
-      rewrite: jest.fn(() => response),
-      redirect: jest.fn(() => response)
+      next: vi.fn(() => response),
+      rewrite: vi.fn(() => response),
+      redirect: vi.fn(() => response)
     }
   };
 });
@@ -61,9 +63,9 @@ function createMockMiddleware(
 }
 
 const MockedNextResponse = NextResponse as unknown as {
-  next: jest.Mock<typeof NextResponse>;
-  rewrite: jest.Mock<typeof NextResponse>;
-  redirect: jest.Mock<typeof NextResponse>;
+  next: Mock<Parameters<(typeof NextResponse)['next']>>;
+  rewrite: Mock<Parameters<(typeof NextResponse)['rewrite']>>;
+  redirect: Mock<Parameters<(typeof NextResponse)['redirect']>>;
 };
 
 beforeEach(() => {
@@ -194,7 +196,7 @@ describe('prefix-based routing', () => {
         })
       );
       expect(
-        MockedNextResponse.rewrite.mock.calls[0][1].request.headers.get(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
           'x-test'
         )
       ).toBe('test');
@@ -207,7 +209,9 @@ describe('prefix-based routing', () => {
         })
       );
       expect(
-        MockedNextResponse.next.mock.calls[0][0].request.headers.get('x-test')
+        MockedNextResponse.next.mock.calls[0][0]?.request?.headers?.get(
+          'x-test'
+        )
       ).toBe('test');
     });
   });

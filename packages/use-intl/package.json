@@ -11,20 +11,14 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "start": "dts watch",
-    "build": "pnpm build:default && pnpm build:rsc",
-    "build:default": "rm -rf dist && dts build",
-    "build:rsc": "tsc && rm -rf dist/test",
-    "test": "TZ=Europe/Berlin dts test --testPathIgnorePatterns=dist",
+    "build": "tsup",
+    "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "turbo test && turbo lint && turbo build"
   },
   "main": "dist/index.js",
-  "module": "dist/use-intl.esm.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
-  "jest": {
-    "testEnvironment": "jsdom"
-  },
   "files": [
     "dist",
     "src"
@@ -49,18 +43,16 @@
   },
   "devDependencies": {
     "@testing-library/react": "^13.0.0",
-    "@types/jest": "^29.5.1",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
     "date-fns": "^2.16.1",
-    "dts-cli": "^1.4.0",
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
-    "jest-environment-jsdom": "^27.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.9.5"
+    "tsup": "^7.1.0",
+    "typescript": "^4.9.5",
+    "vitest": "^0.32.2"
   },
   "engines": {
     "node": ">=10"

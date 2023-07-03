@@ -1,7 +1,6 @@
 declare interface IntlMessages extends Record<string, any> {}
 
 // Temporarly copied here until the "es2020.intl" lib is published.
-
 declare namespace Intl {
   /**
    * [BCP 47 language tag](http://tools.ietf.org/html/rfc5646) definition.
