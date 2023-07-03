@@ -1,14 +1,15 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname as useNextPathname, useParams} from 'next/navigation';
 import React from 'react';
+import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../src';
 import {usePathname} from '../../src/client';
 
-jest.mock('next/navigation');
+vi.mock('next/navigation');
 
 function mockPathname(pathname: string) {
-  jest.mocked(useNextPathname).mockImplementation(() => pathname);
-  jest.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+  vi.mocked(useNextPathname).mockImplementation(() => pathname);
+  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 }
 
 function Component() {
@@ -45,8 +46,8 @@ describe('prefixed routing', () => {
 
 describe('usage outside of Next.js', () => {
   beforeEach(() => {
-    jest.mocked(useNextPathname).mockImplementation((() => null) as any);
-    jest.mocked(useParams).mockImplementation((() => null) as any);
+    vi.mocked(useNextPathname).mockImplementation((() => null) as any);
+    vi.mocked(useParams).mockImplementation((() => null) as any);
   });
 
   it('returns `null` when used within a provider', () => {

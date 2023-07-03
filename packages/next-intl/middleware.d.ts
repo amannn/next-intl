@@ -1,1 +1,1 @@
-export {default} from './dist/src/middleware';
+export {default} from './dist/middleware';

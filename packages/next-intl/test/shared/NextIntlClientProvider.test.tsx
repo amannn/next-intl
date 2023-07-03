@@ -1,8 +1,9 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
+import {it, vi} from 'vitest';
 import {useTranslations, NextIntlClientProvider} from '../../src';
 
-jest.mock('next/router', () => ({
+vi.mock('next/router', () => ({
   useRouter: () => ({locale: 'en'})
 }));
 

@@ -1,15 +1,16 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
+import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../src';
 import Link from '../../src/link';
 
-jest.mock('next/navigation');
+vi.mock('next/navigation');
 
 describe('unprefixed routing', () => {
   beforeEach(() => {
-    jest.mocked(usePathname).mockImplementation(() => '/');
-    jest.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+    vi.mocked(usePathname).mockImplementation(() => '/');
+    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href without a locale if the locale matches', () => {
@@ -92,8 +93,8 @@ describe('unprefixed routing', () => {
 
 describe('prefixed routing', () => {
   beforeEach(() => {
-    jest.mocked(usePathname).mockImplementation(() => '/en');
-    jest.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+    vi.mocked(usePathname).mockImplementation(() => '/en');
+    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href with a locale if the locale matches', () => {
@@ -159,7 +160,7 @@ describe('prefixed routing', () => {
 
 describe('usage outside of Next.js', () => {
   beforeEach(() => {
-    jest.mocked(useParams).mockImplementation((() => null) as any);
+    vi.mocked(useParams).mockImplementation((() => null) as any);
   });
 
   it('works with a provider', () => {

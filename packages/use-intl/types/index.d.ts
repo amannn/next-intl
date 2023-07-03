@@ -1,3 +1,7 @@
+// This type is intended to be overridden
+// by the consumer for optional type safety
+declare interface IntlMessages extends Record<string, any> {}
+
 // Temporarly copied here until the "es2020.intl" lib is published.
 
 declare namespace Intl {

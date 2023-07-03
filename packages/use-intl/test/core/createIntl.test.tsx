@@ -1,4 +1,5 @@
 import {parseISO} from 'date-fns';
+import {it, expect} from 'vitest';
 import {createIntl} from '../../src';
 
 const intl = createIntl({locale: 'en'});

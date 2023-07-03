@@ -3,6 +3,7 @@ import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
 import React, {ReactNode} from 'react';
+import {it, expect, vi, describe} from 'vitest';
 import {
   Formats,
   IntlError,
@@ -15,24 +16,27 @@ import {
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.
-jest.mock('intl-messageformat', () => {
-  const ActualIntlMessageFormat: typeof IntlMessageFormat =
-    jest.requireActual('intl-messageformat').default;
+vi.mock('intl-messageformat', async (importOriginal) => {
+  const ActualIntlMessageFormat: typeof IntlMessageFormat = (
+    (await importOriginal()) as any
+  ).default;
 
-  return class MockIntlMessageFormat extends ActualIntlMessageFormat {
-    public static invocationsByMessage: Record<string, number> = {};
+  return {
+    default: class MockIntlMessageFormat extends ActualIntlMessageFormat {
+      public static invocationsByMessage: Record<string, number> = {};
 
-    constructor(
-      ...[message, ...rest]: ConstructorParameters<typeof IntlMessageFormat>
-    ) {
-      if (typeof message !== 'string') {
-        throw new Error('Unsupported invocation for testing.');
+      constructor(
+        ...[message, ...rest]: ConstructorParameters<typeof IntlMessageFormat>
+      ) {
+        if (typeof message !== 'string') {
+          throw new Error('Unsupported invocation for testing.');
+        }
+
+        super(message, ...rest);
+
+        MockIntlMessageFormat.invocationsByMessage[message] ||= 0;
+        MockIntlMessageFormat.invocationsByMessage[message]++;
       }
-
-      super(message, ...rest);
-
-      MockIntlMessageFormat.invocationsByMessage[message] ||= 0;
-      MockIntlMessageFormat.invocationsByMessage[message]++;
     }
   };
 });
@@ -398,7 +402,7 @@ describe('t.rich', () => {
   });
 
   it('supports identical wrappers with identical text content', () => {
-    const consoleError = jest.spyOn(console, 'error');
+    const consoleError = vi.spyOn(console, 'error');
     const {container} = renderRichTextMessage(
       '<b>foo</b> bar <b>foo</b> <i>foo</i> bar <i>foo</i> <b><i>foobar</i></b>',
       {
@@ -460,7 +464,7 @@ describe('t.raw', () => {
   });
 
   it('renders a fallback for unknown messages', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations();
@@ -480,7 +484,7 @@ describe('t.raw', () => {
 
 describe('error handling', () => {
   it('allows to configure a fallback', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -503,7 +507,7 @@ describe('error handling', () => {
   });
 
   it('handles unavailable namespaces', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -525,7 +529,7 @@ describe('error handling', () => {
   });
 
   it('handles unavailable messages within an existing namespace', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -547,7 +551,7 @@ describe('error handling', () => {
   });
 
   it('handles unparseable messages', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations();
@@ -573,7 +577,7 @@ describe('error handling', () => {
   });
 
   it('handles formatting errors', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations();
@@ -595,7 +599,7 @@ describe('error handling', () => {
   });
 
   it('handles rich text being returned from the regular translation function', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations();
@@ -622,7 +626,7 @@ describe('error handling', () => {
   });
 
   it('allows null values for messages', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     render(
       <IntlProvider
@@ -640,7 +644,7 @@ describe('error handling', () => {
   });
 
   it('can render without messages', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -663,7 +667,7 @@ describe('error handling', () => {
   });
 
   it('warns for invalid namespace keys', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       return (
@@ -700,7 +704,7 @@ describe('error handling', () => {
   });
 
   it('shows an error when trying to render an object with `t`', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -725,7 +729,7 @@ describe('error handling', () => {
   });
 
   it('shows an error when trying to render an object with `t.rich`', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -750,7 +754,7 @@ describe('error handling', () => {
   });
 
   it('shows an error when trying to render an array with `t`', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');
@@ -776,7 +780,7 @@ describe('error handling', () => {
   });
 
   it('shows an error when trying to render an array with `t.rich`', () => {
-    const onError = jest.fn();
+    const onError = vi.fn();
 
     function Component() {
       const t = useTranslations('Component');

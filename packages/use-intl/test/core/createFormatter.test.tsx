@@ -1,4 +1,5 @@
 import {parseISO} from 'date-fns';
+import {it, expect} from 'vitest';
 import {createFormatter} from '../../src';
 
 const formatter = createFormatter({locale: 'en'});
