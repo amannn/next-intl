@@ -1,4 +1,4 @@
-// sd@vitest-environment edge-runtime
+// @vitest-environment edge-runtime
 
 import {it, vi, expect, describe} from 'vitest';
 import {
