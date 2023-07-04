@@ -10,17 +10,18 @@ import {
 } from '../../src/server';
 
 vi.mock('next-intl/config', () => ({
-  default: () => ({
-    locale: 'en',
-    now: new Date('2020-01-01T00:00:00.000Z'),
-    timeZone: 'Europe/London',
-    messages: {
-      About: {
-        interpolation: 'Hello {name}',
-        rich: '<link>{name}</link>'
+  default: async () =>
+    (await vi.importActual('../../src/server')).getRequestConfig({
+      locale: 'en',
+      now: new Date('2020-01-01T00:00:00.000Z'),
+      timeZone: 'Europe/London',
+      messages: {
+        About: {
+          interpolation: 'Hello {name}',
+          rich: '<link>{name}</link>'
+        }
       }
-    }
-  })
+    })
 }));
 
 vi.mock('react', async (importOriginal) => {
