@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.17.1 (2023-07-04)
+
+
+### Bug Fixes
+
+* Switch to `tsup` for more efficient bundling and also switch to `vitest` internally ([#375](https://github.com/amannn/next-intl/issues/375)) ([bf31626](https://github.com/amannn/next-intl/commit/bf31626046bbf5829c34b8b8fc31f5d47a2ab26e))
+
+
+
+
+
 # 2.17.0 (2023-06-29)
 
 
