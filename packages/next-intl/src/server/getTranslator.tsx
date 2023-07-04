@@ -103,7 +103,7 @@ getTranslator({locale: 'en', namespace: 'About'});
 // Now
 getTranslator('en', 'About');
 
-See also https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers
 `
       );
       hasWarned = true;

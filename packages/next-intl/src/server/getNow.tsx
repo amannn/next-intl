@@ -20,7 +20,7 @@ getNow({locale: 'en'});
 // Now
 getNow('en');
 
-See also https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers
 `
       );
     }
@@ -40,7 +40,7 @@ export async function generateMetadata({params}) {
   // ...
 }
 
-Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers
 `);
     }
   }

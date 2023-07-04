@@ -15,7 +15,7 @@ export default function LinkDeprecated(props: ComponentProps<typeof Link>) {
 Previously: import {Link} from 'next-intl';
 Now:        import Link from 'next-intl/link';
 
-Please upgrade your import accordingly. See also https://next-intl-docs.vercel.app/docs/next-13/navigation#link\n\n`
+Please upgrade your import accordingly. See also https://next-intl-docs.vercel.app/docs/routing/navigation#link\n\n`
     );
     hasWarned = true;
   }

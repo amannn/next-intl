@@ -12,7 +12,7 @@ export async function generateMetadata({params}) {
   // Use \`params.locale\` here
 }
 
-Learn more: https://next-intl-docs.vercel.app/docs/next-13/server-components#using-internationalization-outside-of-components
+Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers
 `);
     hasWarned = true;
   }
