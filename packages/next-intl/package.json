@@ -93,6 +93,7 @@
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^3.0.3",
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^17.0.23",
