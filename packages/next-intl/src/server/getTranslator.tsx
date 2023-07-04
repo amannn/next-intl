@@ -1,8 +1,7 @@
 /* eslint-disable import/default */
 
 import {cache} from 'react';
-import type Formats from 'use-intl/dist/src/core/Formats';
-import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
+import type {Formats, TranslationValues} from 'use-intl/core';
 import createBaseTranslator, {
   getMessagesOrError
 } from 'use-intl/dist/src/core/createBaseTranslator';

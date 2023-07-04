@@ -20,7 +20,7 @@ export {default as useMessages} from './useMessages';
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
 // Everything from `core`
-export * from 'use-intl/dist/src/core';
+export * from 'use-intl/core';
 
 /** @deprecated Is called `Link` now. */
 export const LocalizedLink = Link;

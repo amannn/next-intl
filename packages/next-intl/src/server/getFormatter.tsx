@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {createFormatter} from 'use-intl/dist/src/core';
+import {createFormatter} from 'use-intl/core';
 import getConfig from './getConfig';
 import getLocaleFromHeader from './getLocaleFromHeader';
 
