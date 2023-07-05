@@ -14,44 +14,37 @@
     "build": "tsup",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "turbo test && turbo lint && turbo build && cp ../../README.md .",
+    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "react-server": {
-        "import": "./dist/react-server/index.mjs",
         "default": "./dist/react-server/index.js"
       },
-      "import": "./dist/index.mjs",
       "default": "./dist/index.js"
     },
     "./server": {
       "react-server": {
-        "import": "./dist/server/index.mjs",
         "default": "./dist/server/index.js"
       },
-      "import": "./dist/server/react-client/index.mjs",
       "default": "./dist/server/react-client/index.js"
     },
     "./client": {
-      "import": "./dist/client/index.mjs",
       "default": "./dist/client/index.js"
     },
     "./link": {
+      "types": "./link.d.ts",
       "react-server": {
-        "import": "./dist/link/react-server/index.mjs",
         "default": "./dist/link/react-server/index.js"
       },
-      "import": "./dist/link/index.mjs",
       "default": "./dist/link/index.js"
     },
     "./config": "./config.js",
     "./middleware": {
-      "import": "./dist/middleware/index.mjs",
+      "types": "./middleware.d.ts",
       "default": "./dist/middleware/index.js"
     },
     "./withNextIntl": "./withNextIntl.js",
