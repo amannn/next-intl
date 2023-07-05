@@ -1,1 +1,3 @@
-export {default} from './dist/middleware';
+import Middleware from './dist/middleware';
+
+export = Middleware;

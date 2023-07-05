@@ -18,7 +18,6 @@
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
@@ -34,9 +33,11 @@
       "default": "./dist/client/index.js"
     },
     "./link": {
+      "types": "./link.d.ts",
       "default": "./dist/link/index.js"
     },
     "./middleware": {
+      "types": "./middleware.d.ts",
       "default": "./dist/middleware/index.js"
     }
   },
