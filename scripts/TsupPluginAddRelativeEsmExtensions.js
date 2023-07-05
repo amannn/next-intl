@@ -87,7 +87,7 @@ function addExtensions(distDir) {
 
 function TsupPluginAddRelativeEsmExtensions(distFolder = 'dist') {
   return {
-    name: 'esbuild-plugin-add-relative-extensions',
+    name: 'TsupPluginAddRelativeEsmExtensions',
     buildEnd(context) {
       const isEsmBuild = context.writtenFiles.some((file) =>
         file.name.endsWith('.mjs')
