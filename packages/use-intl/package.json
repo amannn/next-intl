@@ -17,6 +17,7 @@
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build"
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",

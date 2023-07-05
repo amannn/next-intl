@@ -18,26 +18,37 @@
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
       "react-server": {
+        "import": "./dist/react-server/index.mjs",
+        "node": "./dist/react-server/index.js",
         "default": "./dist/react-server/index.js"
       },
+      "import": "./dist/index.mjs",
+      "node": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./server": {
+      "import": "./dist/server/index.mjs",
+      "node": "./dist/server/index.js",
       "default": "./dist/server/index.js"
     },
     "./client": {
+      "import": "./dist/client/index.mjs",
+      "node": "./dist/client/index.js",
       "default": "./dist/client/index.js"
     },
     "./link": {
-      "types": "./link.d.ts",
+      "import": "./dist/link/index.mjs",
+      "node": "./dist/link/index.js",
       "default": "./dist/link/index.js"
     },
     "./middleware": {
-      "types": "./middleware.d.ts",
+      "import": "./dist/middleware/index.mjs",
+      "node": "./dist/middleware/index.js",
       "default": "./dist/middleware/index.js"
     }
   },
