@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {defineConfig} from 'tsup';
+import TsupPluginAddRelativeEsmExtensions from '../../scripts/TsupPluginAddRelativeEsmExtensions';
 
 export default defineConfig({
   entry: ['src'],
@@ -9,5 +10,6 @@ export default defineConfig({
   clean: true,
   bundle: false,
   dts: true,
-  minify: true
+  minify: true,
+  plugins: [new TsupPluginAddRelativeEsmExtensions()]
 });
