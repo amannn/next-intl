@@ -14,7 +14,7 @@
     "build": "tsup",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "turbo test && turbo lint && turbo build && cp ../../README.md .",
+    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md"
   },
   "main": "dist/index.js",

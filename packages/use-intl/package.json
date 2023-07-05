@@ -14,7 +14,7 @@
     "build": "tsup",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "turbo test && turbo lint && turbo build"
+    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
