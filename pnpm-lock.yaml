@@ -376,7 +376,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.17.1
+        specifier: ^2.17.2
         version: link:../use-intl
     devDependencies:
       '@testing-library/react':
