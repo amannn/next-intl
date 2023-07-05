@@ -508,7 +508,7 @@ importers:
         specifier: 0.0.1
         version: 0.0.1
       use-intl:
-        specifier: ^2.17.1
+        specifier: ^2.17.3
         version: link:../use-intl
     devDependencies:
       '@edge-runtime/vm':

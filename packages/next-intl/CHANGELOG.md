@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.17.3 (2023-07-05)
+
+
+### Bug Fixes
+
+* Forward optional remaining args from Next.js router to wrapped `useRouter` ([3ff878c](https://github.com/amannn/next-intl/commit/3ff878c380d998171fbc777df1951d1c817ab9ad))
+
+
+
+
+
+## 2.17.2 (2023-07-05)
+
+
+### Bug Fixes
+
+* Remove ESM build ([#379](https://github.com/amannn/next-intl/issues/379)) ([22d9f27](https://github.com/amannn/next-intl/commit/22d9f272a06b99b1d1f9f3079b44067b8349102b))
+
+
+
+
+
 ## 2.17.1 (2023-07-04)
 
 
