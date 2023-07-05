@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.17.4 (2023-07-05)
+
+
+### Bug Fixes
+
+* Bring back ESM build (and fix bundle size) ([#381](https://github.com/amannn/next-intl/issues/381)) ([4d0fefc](https://github.com/amannn/next-intl/commit/4d0fefcb558bcee6037dce7bd8cebe727257c8ca))
+
+
+
+
+
 ## 2.17.3 (2023-07-05)
 
 
