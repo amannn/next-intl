@@ -30,14 +30,14 @@ export default function useRouter() {
 
     return {
       ...router,
-      push(href: string) {
-        return router.push(localize(href));
+      push(...[href, ...args]: Parameters<typeof router.push>) {
+        return router.push(localize(href), ...args);
       },
-      replace(href: string) {
-        return router.replace(localize(href));
+      replace(...[href, ...args]: Parameters<typeof router.replace>) {
+        return router.replace(localize(href), ...args);
       },
-      prefetch(href: string) {
-        return router.prefetch(localize(href));
+      prefetch(...[href, ...args]: Parameters<typeof router.prefetch>) {
+        return router.prefetch(localize(href), ...args);
       }
     };
   }, [locale, router]);
