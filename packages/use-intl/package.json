@@ -12,14 +12,15 @@
   },
   "scripts": {
     "build": "pnpm build:default && pnpm build:rsc",
-    "build:default": "rm -rf dist && dts build --format cjs",
-    "build:rsc": "tsc --module commonjs && rm -rf dist/test",
+    "build:default": "rm -rf dist && dts build",
+    "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
   "main": "dist/index.js",
+  "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
