@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "2.17.3",
+  "version": "2.17.4",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -17,6 +17,7 @@
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build"
   },
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",

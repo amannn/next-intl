@@ -3,7 +3,7 @@ import {defineConfig} from 'tsup';
 
 const config = {
   entry: ['src'],
-  format: ['cjs'],
+  format: ['cjs', 'esm'],
   splitting: false,
   sourcemap: true,
   clean: true,
