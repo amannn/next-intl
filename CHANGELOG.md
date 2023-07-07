@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.17.5 (2023-07-07)
+
+
+### Bug Fixes
+
+* Use ESM build only for browser bundlers (not Node.js) ([#386](https://github.com/amannn/next-intl/issues/386)) ([34a69f2](https://github.com/amannn/next-intl/commit/34a69f29cf07032c8a02aaf2b94e7e60d3f35088))
+
+
+
+
+
 ## 2.17.4 (2023-07-05)
 
 
