@@ -30,7 +30,7 @@
     },
     "./server": {
       "react-server": "./dist/src/server/index.js",
-      "default": "./dist/src/server/index.js"
+      "default": "./dist/src/server/react-client/index.js"
     },
     "./client": {
       "default": "./dist/src/client/index.js"
