@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "pnpm build:default && pnpm build:rsc",
-    "build:default": "rm -rf dist && dts build",
+    "build:default": "rm -rf dist && dts build --entry src/index.tsx --entry src/core.tsx --entry src/react.tsx",
     "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
@@ -23,18 +23,9 @@
   "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.js"
-    },
-    "./core": {
-      "import": "./dist/core/index.mjs",
-      "default": "./dist/core/index.js"
-    },
-    "./react": {
-      "import": "./dist/react/index.mjs",
-      "default": "./dist/react/index.js"
-    }
+    ".": "./dist/index.js",
+    "./core": "./dist/core.js",
+    "./react": "./dist/react.js"
   },
   "files": [
     "dist",
