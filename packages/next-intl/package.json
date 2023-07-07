@@ -29,20 +29,20 @@
     },
     "./server": {
       "react-server": "./dist/src/server/index.js",
-      "default": "./dist/server/index.js"
+      "default": "./dist/src/server/index.js"
     },
     "./client": {
-      "default": "./dist/client/index.js"
+      "default": "./dist/src/client/index.js"
     },
     "./link": {
       "types": "./link.d.ts",
       "react-server": "./dist/src/link/react-server/index.js",
-      "default": "./dist/link/index.js"
+      "default": "./dist/src/link/index.js"
     },
     "./config": "./config.js",
     "./middleware": {
       "types": "./middleware.d.ts",
-      "default": "./dist/middleware/index.js"
+      "default": "./dist/src/middleware/index.js"
     },
     "./withNextIntl": "./withNextIntl.js",
     "./plugin": "./plugin.js"
