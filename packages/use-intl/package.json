@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "2.17.3",
+  "version": "2.17.5",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -11,12 +11,16 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm build:default && pnpm build:rsc",
+    "build:default": "rm -rf dist && dts build",
+    "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
-    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build"
+    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
+    "size": "size-limit"
   },
   "main": "dist/index.js",
+  "module": "dist/use-intl.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -41,18 +45,30 @@
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@size-limit/preset-big-lib": "^8.2.6",
     "@testing-library/react": "^13.0.0",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
     "date-fns": "^2.16.1",
+    "dts-cli": "^1.4.0",
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tsup": "^7.1.0",
+    "size-limit": "^8.2.6",
     "typescript": "^4.9.5",
     "vitest": "^0.32.2"
   },
+  "size-limit": [
+    {
+      "path": "dist/use-intl.cjs.production.min.js",
+      "limit": "10.3 kB"
+    },
+    {
+      "path": "dist/use-intl.cjs.development.js",
+      "limit": "10.3 kB"
+    }
+  ],
   "engines": {
     "node": ">=10"
   }

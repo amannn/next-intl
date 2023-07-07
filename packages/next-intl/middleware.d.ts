@@ -1,3 +1,3 @@
-import Middleware from './dist/middleware';
+import createMiddleware from './dist/middleware';
 
-export = Middleware;
+export = createMiddleware;
