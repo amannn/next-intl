@@ -6,6 +6,7 @@
     "test": "turbo run test --concurrency 1",
     "lint": "turbo run lint",
     "prepare": "turbo run build --filter './packages/**'",
+    "size": "turbo run size",
     "publish": "lerna publish --yes --no-private"
   },
   "devDependencies": {
