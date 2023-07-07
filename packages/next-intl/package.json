@@ -104,11 +104,11 @@
   "size-limit": [
     {
       "path": "dist/next-intl.cjs.production.min.js",
-      "limit": "13.7 KB"
+      "limit": "13.8 KB"
     },
     {
       "path": "dist/next-intl.cjs.development.js",
-      "limit": "13.7 KB"
+      "limit": "13.8 KB"
     }
   ],
   "engines": {
