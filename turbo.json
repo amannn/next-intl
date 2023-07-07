@@ -16,6 +16,9 @@
     "test": {
       "dependsOn": ["build"]
     },
+    "size": {
+      "dependsOn": ["build"]
+    },
     "lint": {}
   }
 }

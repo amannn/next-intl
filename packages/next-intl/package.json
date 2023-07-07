@@ -11,53 +11,37 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm build:default && pnpm build:rsc",
+    "build:default": "rm -rf dist && dts build --format cjs",
+    "build:rsc": "tsc --module commonjs && rm -rf dist/test",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
-    "postpublish": "git checkout . && rm ./README.md"
+    "postpublish": "git checkout . && rm ./README.md",
+    "size": "size-limit"
   },
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
-      "react-server": {
-        "node": "./dist/react-server/index.js",
-        "import": "./dist/react-server/index.mjs",
-        "default": "./dist/react-server/index.js"
-      },
-      "node": "./dist/index.js",
-      "import": "./dist/index.mjs",
+      "react-server": "./dist/src/react-server/index.js",
       "default": "./dist/index.js"
     },
     "./server": {
-      "react-server": {
-        "default": "./dist/server/index.js"
-      },
-      "node": "./dist/server/index.js",
-      "import": "./dist/server/index.mjs",
+      "react-server": "./dist/src/server/index.js",
       "default": "./dist/server/index.js"
     },
     "./client": {
-      "node": "./dist/client/index.js",
-      "import": "./dist/client/index.mjs",
       "default": "./dist/client/index.js"
     },
     "./link": {
       "types": "./link.d.ts",
-      "react-server": {
-        "default": "./dist/link/react-server/index.js"
-      },
-      "node": "./dist/link/index.js",
-      "import": "./dist/link/index.mjs",
+      "react-server": "./dist/src/link/react-server/index.js",
       "default": "./dist/link/index.js"
     },
     "./config": "./config.js",
     "./middleware": {
       "types": "./middleware.d.ts",
-      "node": "./dist/middleware/index.js",
-      "import": "./dist/middleware/index.mjs",
       "default": "./dist/middleware/index.js"
     },
     "./withNextIntl": "./withNextIntl.js",
@@ -100,20 +84,32 @@
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@size-limit/preset-big-lib": "^8.2.6",
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
+    "dts-cli": "^1.4.0",
     "eslint": "^8.39.0",
     "eslint-config-molindo": "^6.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
     "next": "^13.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tsup": "^7.1.0",
+    "size-limit": "^8.2.6",
     "typescript": "^4.9.5",
     "vitest": "^0.32.2"
   },
+  "size-limit": [
+    {
+      "path": "dist/next-intl.cjs.production.min.js",
+      "limit": "13.7 KB"
+    },
+    {
+      "path": "dist/next-intl.cjs.development.js",
+      "limit": "13.7 KB"
+    }
+  ],
   "engines": {
     "node": ">=10"
   }
