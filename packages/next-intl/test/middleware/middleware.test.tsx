@@ -363,6 +363,15 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('redirects requests with default locale in a nested path', () => {
+      middleware(createMockRequest('/en/list'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
     it('rewrites requests for the root if a cookie exists with a non-default locale', () => {
       middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -386,6 +395,42 @@ describe('prefix-based routing', () => {
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'en'
+      });
+    });
+
+    it('sets a cookie based on accept-language header', () => {
+      const response = middleware(createMockRequest('/', 'de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('keeps a cookie if already set', () => {
+      const response = middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', 'de')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('sets a cookie with locale in the path', () => {
+      const response = middleware(createMockRequest('/de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('updates a cookie with locale in the path', () => {
+      const response = middleware(
+        createMockRequest('/de', 'en', 'http://localhost:3000', 'en')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
       });
     });
 
