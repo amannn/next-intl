@@ -362,6 +362,58 @@ describe('prefix-based routing', () => {
         'http://localhost:3000/'
       );
     });
+
+    it('rewrites requests for the root if a cookie exists with a non-default locale', () => {
+      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/de'
+      );
+    });
+
+    it('rewrites requests for the root if a cookie exists with the default locale', () => {
+      middleware(createMockRequest('/', 'de', 'http://localhost:3000', 'en'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+
+    it('sets a cookie', () => {
+      const response = middleware(createMockRequest('/'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'en'
+      });
+    });
+
+    it('retains request headers for the default locale', () => {
+      middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
+          'x-test'
+        )
+      ).toBe('test');
+    });
+
+    it('retains request headers for secondary locales', () => {
+      middleware(
+        createMockRequest('/', 'de', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
+          'x-test'
+        )
+      ).toBe('test');
+    });
   });
 });
 
