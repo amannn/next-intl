@@ -60,10 +60,11 @@ export default function createMiddleware(config: MiddlewareConfig) {
     function getResponseInit() {
       const responseInit = {
         request: {
-          headers: request.headers
+          headers: new Headers(request.headers)
         }
       };
 
+      responseInit.request.headers.set("accept-encoding", "gzip, deflate, br");
       return responseInit;
     }
 
