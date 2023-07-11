@@ -80,12 +80,12 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
-export function getMessagesOrError<Messages extends AbstractIntlMessages>({
+function getMessagesOrError<Messages extends AbstractIntlMessages>({
   messages,
   namespace,
   onError = defaultOnError
 }: {
-  messages: Messages;
+  messages?: Messages;
   namespace?: string;
   onError?(error: IntlError): void;
 }) {
@@ -133,7 +133,7 @@ export default function createBaseTranslator<
   NestedKey extends NestedKeyOf<Messages>
 >(config: Omit<CreateBaseTranslatorProps<Messages>, 'messagesOrError'>) {
   const messagesOrError = getMessagesOrError({
-    messages: config.messages as any,
+    messages: config.messages,
     namespace: config.namespace,
     onError: config.onError
   }) as Messages | IntlError;
