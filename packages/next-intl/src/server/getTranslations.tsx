@@ -1,11 +1,9 @@
 /* eslint-disable import/default */
 
 import {cache} from 'react';
+import {createTranslator} from 'use-intl/dist/src/core';
 import type Formats from 'use-intl/dist/src/core/Formats';
 import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
-import createBaseTranslator, {
-  getMessagesOrError
-} from 'use-intl/dist/src/core/createBaseTranslator';
 import {CoreRichTranslationValues} from 'use-intl/dist/src/core/createTranslatorImpl';
 import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
 import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
@@ -95,20 +93,10 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
   const locale = getLocaleFromHeader();
   const config = await getConfig(locale);
 
-  const messagesOrError = getMessagesOrError({
-    messages: config.messages as any,
-    namespace,
-    onError: config.onError
-  });
-
-  // We allow to resolve rich text formatting here, but the types forbid it when
-  // `getTranslations` is used directly. Supporting rich text is important when
-  // the react-server implementation calls into this function.
-  // @ts-ignore
-  return createBaseTranslator({
+  return createTranslator({
     ...config,
     namespace,
-    messagesOrError
+    messages: config.messages || {}
   });
 }
 
