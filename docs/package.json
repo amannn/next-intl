@@ -32,6 +32,6 @@
     "eslint-config-next": "^13.4.0",
     "next-sitemap": "^4.0.7",
     "prettier-plugin-tailwindcss": "^0.2.3",
-    "typescript": "5.0.4"
+    "typescript": "^5.0.0"
   }
 }
