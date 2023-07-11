@@ -13,7 +13,7 @@ Next.js 13 introduces support for [React Server Components](https://nextjs.org/d
 ## Current beta version
 
 ```
-npm install next-intl@3.0.0-beta.7
+npm install next-intl@3.0.0-beta.8
 ```
 
 This beta version was tested with `next@13.4.0`.
@@ -208,7 +208,7 @@ export default function Index() {
 }
 ```
 
-2. The [APIs for using internationalization outside of components](#using-internationalization-outside-of-components) are integrated with static rendering. As a temporary solution, you can use these APIs in components too, but note that you have to "drill-down" the `locale` that is received via `params` to all components.
+2. The [APIs for using internationalization outside of components](/docs/environments/metadata-route-handlers) are integrated with static rendering. As a temporary solution, you can use these APIs in components too, but note that you have to "drill-down" the `locale` that is received via `params` to all components. Furthermore, the returned `t` function is based on [the `createTranslator` API](/docs/environments/core-library), meaning that `t.rich` uses functions that accept and return strings.
 
 ```tsx filename="app/[locale]/page.tsx"
 import {getTranslator} from 'next-intl/server';
