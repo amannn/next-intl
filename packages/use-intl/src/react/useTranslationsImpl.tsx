@@ -2,9 +2,7 @@
 import IntlMessageFormat from 'intl-messageformat';
 import {useMemo, useRef} from 'react';
 import AbstractIntlMessages from '../core/AbstractIntlMessages';
-import createBaseTranslator, {
-  getMessagesOrError
-} from '../core/createBaseTranslator';
+import createBaseTranslator from '../core/createBaseTranslator';
 import resolveNamespace from '../core/resolveNamespace';
 import NestedKeyOf from '../core/utils/NestedKeyOf';
 import useIntlContext from './useIntlContext';
@@ -31,17 +29,12 @@ export default function useTranslationsImpl<
     Record<string, Record<string, IntlMessageFormat>>
   >({});
 
-  const messagesOrError = useMemo(
-    () => getMessagesOrError({messages: allMessages, namespace, onError}),
-    [allMessages, namespace, onError]
-  );
-
   const translate = useMemo(
     () =>
       createBaseTranslator({
         cachedFormatsByLocale: cachedFormatsByLocaleRef.current,
         getMessageFallback,
-        messagesOrError,
+        messages: allMessages,
         defaultTranslationValues,
         namespace,
         onError,
@@ -51,10 +44,10 @@ export default function useTranslationsImpl<
       }),
     [
       getMessageFallback,
-      messagesOrError,
-      defaultTranslationValues,
+      allMessages,
       namespace,
       onError,
+      defaultTranslationValues,
       globalFormats,
       locale,
       timeZone

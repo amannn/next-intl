@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "pnpm build:default && pnpm build:rsc",
-    "build:default": "rm -rf dist && dts build",
+    "build:default": "rm -rf dist && dts build --entry src/index.tsx --entry src/client.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/server.tsx",
     "build:rsc": "tsc && rm -rf dist/test",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",

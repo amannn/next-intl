@@ -131,6 +131,22 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
+>(config: Omit<CreateBaseTranslatorProps<Messages>, 'messagesOrError'>) {
+  const messagesOrError = getMessagesOrError({
+    messages: config.messages as any,
+    namespace: config.namespace,
+    onError: config.onError
+  }) as Messages | IntlError;
+
+  return createBaseTranslatorImpl<Messages, NestedKey>({
+    ...config,
+    messagesOrError
+  });
+}
+
+function createBaseTranslatorImpl<
+  Messages extends AbstractIntlMessages,
+  NestedKey extends NestedKeyOf<Messages>
 >({
   cachedFormatsByLocale,
   defaultTranslationValues,

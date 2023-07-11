@@ -11,7 +11,7 @@ import {
 
 vi.mock('next-intl/config', () => ({
   default: async () =>
-    (await vi.importActual('../../src/server')).getRequestConfig({
+    ((await vi.importActual('../../src/server')) as any).getRequestConfig({
       locale: 'en',
       now: new Date('2020-01-01T00:00:00.000Z'),
       timeZone: 'Europe/London',

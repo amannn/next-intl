@@ -1,15 +1,14 @@
-/* eslint-disable import/default */
-
 import {cache} from 'react';
-import type {Formats, TranslationValues} from 'use-intl/core';
-import createBaseTranslator, {
-  getMessagesOrError
-} from 'use-intl/dist/src/core/createBaseTranslator';
-import {CoreRichTranslationValues} from 'use-intl/dist/src/core/createTranslatorImpl';
-import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
-import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
-import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
-import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
+import {
+  createTranslator,
+  Formats,
+  TranslationValues,
+  RichTranslationValuesPlain,
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from 'use-intl/core';
 import getConfig from './getConfig';
 import getLocaleFromHeader from './getLocaleFromHeader';
 
@@ -60,7 +59,7 @@ Promise<{
     >
   >(
     key: TargetKey,
-    values?: CoreRichTranslationValues,
+    values?: RichTranslationValuesPlain,
     formats?: Partial<Formats>
   ): string;
 
@@ -94,20 +93,10 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
   const locale = getLocaleFromHeader();
   const config = await getConfig(locale);
 
-  const messagesOrError = getMessagesOrError({
-    messages: config.messages as any,
-    namespace,
-    onError: config.onError
-  });
-
-  // We allow to resolve rich text formatting here, but the types forbid it when
-  // `getTranslations` is used directly. Supporting rich text is important when
-  // the react-server implementation calls into this function.
-  // @ts-ignore
-  return createBaseTranslator({
+  return createTranslator({
     ...config,
-    namespace,
-    messagesOrError
+    messages: config.messages || {},
+    namespace
   });
 }
 

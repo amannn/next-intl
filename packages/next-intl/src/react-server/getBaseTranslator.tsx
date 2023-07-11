@@ -1,15 +1,15 @@
-import {cache} from 'react';
+import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
-  createTranslator,
   Formats,
   TranslationValues,
-  RichTranslationValuesPlain,
+  RichTranslationValues,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
-  NestedValueOf
+  NestedValueOf,
+  createBaseTranslator
 } from 'use-intl/core';
-import getConfig from './getConfig';
+import getConfig from '../server/getConfig';
 
 let hasWarned = false;
 
@@ -64,9 +64,9 @@ Promise<{
     >
   >(
     key: TargetKey,
-    values?: RichTranslationValuesPlain,
+    values?: RichTranslationValues,
     formats?: Partial<Formats>
-  ): string;
+  ): string | ReactElement | ReactNodeArray;
 
   // `raw`
   raw<
@@ -109,11 +109,10 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
   }
 
   const config = await getConfig(locale);
-
-  return createTranslator({
+  return createBaseTranslator({
     ...config,
-    messages: config.messages || {},
-    namespace
+    namespace,
+    messages: config.messages
   });
 }
 
