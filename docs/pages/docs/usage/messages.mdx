@@ -278,3 +278,72 @@ Messages are always parsed and therefore e.g. for rich text you need to supply t
 </Callout>
 
 The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
+
+## Right-to-left languages
+
+Languages such as Arabic, Hebrew and Persian use [right-to-left script](https://en.wikipedia.org/wiki/Right-to-left_script) (often abbreviated as RTL). For these languages, writing begins on the right side of the page and continues to the left.
+
+**Example:**
+
+<div dir="rtl" className="text-right mt-6">
+
+```
+النص في اللغة العربية _مثلا_ يُقرأ من اليمين لليسار
+```
+
+</div>
+
+In addition to providing translated messages, proper RTL localization requires:
+
+1. Providing [the `dir` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) on the document
+2. Layout mirroring, e.g. by using [CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
+3. Element mirroring, e.g. by customizing icons
+
+To handle these cases in your components, you can set up a reusable hook:
+
+```tsx filename="useTextDirection.tsx"
+import {isRtlLang} from 'rtl-detect';
+import {useLocale} from 'next-intl';
+
+export default function useTextDirection(locale) {
+  const defaultLocale = useLocale();
+  if (!locale) locale = defaultLocale;
+  return isRtlLang(locale) ? 'rtl' : 'ltr';
+}
+```
+
+… and use it accordingly:
+
+```tsx filename="app/[locale]/layout.tsx"
+import useTextDirection from './useTextDirection';
+
+export default function Layout({children, params: {locale}}) {
+  const direction = useTextDirection(locale);
+
+  return (
+    <html lang={locale} dir={direction}>
+      {/* ... */}
+    </html>
+  );
+}
+```
+
+```tsx filename="components/Breadcrumbs.tsx"
+import {useTranslations} from 'next-intl';
+import useTextDirection from './useTextDirection';
+
+export default function Breadcrumbs({children, params}) {
+  const t = useTranslations('Breadcrumbs');
+  const direction = useTextDirection();
+
+  return (
+    <div style={{display: 'flex'}}>
+      <p>{t('home')}</p>
+      <div style={{marginInlineStart: 10}}>
+        {direction === 'ltr' ? <ArrowRight /> : <ArrowLeft />}
+      </div>
+      <p style={{marginInlineStart: 10}}>{t('about')}</p>
+    </div>
+  );
+}
+```
