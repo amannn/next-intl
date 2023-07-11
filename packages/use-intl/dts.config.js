@@ -1,7 +1,7 @@
 /* global module */
 
 /**
- * @type {import('dts-cli').DtsConfig}
+ * @type {import('dts-cli').DtsOptions}
  */
 module.exports = {
   rollup(config) {

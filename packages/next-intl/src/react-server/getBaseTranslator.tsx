@@ -1,15 +1,17 @@
-/* eslint-disable import/default */
+/* eslint-disable import/default -- False positives */
 
-import {cache} from 'react';
-import {createTranslator} from 'use-intl/dist/src/core';
+import {ReactElement, ReactNodeArray, cache} from 'react';
 import type Formats from 'use-intl/dist/src/core/Formats';
 import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
-import {CoreRichTranslationValues} from 'use-intl/dist/src/core/createTranslatorImpl';
+import type {RichTranslationValues} from 'use-intl/dist/src/core/TranslationValues';
+import createBaseTranslator, {
+  getMessagesOrError
+} from 'use-intl/dist/src/core/createBaseTranslator';
 import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
 import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
 import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
 import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
-import getConfig from './getConfig';
+import getConfig from '../server/getConfig';
 
 let hasWarned = false;
 
@@ -64,9 +66,9 @@ Promise<{
     >
   >(
     key: TargetKey,
-    values?: CoreRichTranslationValues,
+    values?: RichTranslationValues,
     formats?: Partial<Formats>
-  ): string;
+  ): string | ReactElement | ReactNodeArray;
 
   // `raw`
   raw<
@@ -110,10 +112,16 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
 
   const config = await getConfig(locale);
 
-  return createTranslator({
+  const messagesOrError = getMessagesOrError({
+    messages: config.messages as any,
+    namespace,
+    onError: config.onError
+  });
+
+  return createBaseTranslator({
     ...config,
     namespace,
-    messages: config.messages || {}
+    messagesOrError
   });
 }
 
