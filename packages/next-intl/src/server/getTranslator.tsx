@@ -112,8 +112,8 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
 
   return createTranslator({
     ...config,
-    messages: config.messages || {},
-    namespace
+    namespace,
+    messages: config.messages || {}
   });
 }
 

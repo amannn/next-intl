@@ -95,8 +95,8 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
 
   return createTranslator({
     ...config,
-    messages: config.messages || {},
-    namespace
+    namespace,
+    messages: config.messages || {}
   });
 }
 
