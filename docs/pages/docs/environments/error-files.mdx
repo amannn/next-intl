@@ -8,8 +8,6 @@ The Next.js file convention provides two files that can be used for error handli
 1. [`not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found)
 2. [`error.js`](https://nextjs.org/docs/app/api-reference/file-conventions/error)
 
-While `not-found.js` can either be a Server or Client Component, the latter two files require to be Client Components. Therefore depending on the file, you have to make sure that you're [providing configuration like messages](/docs/configuration#client-server-components) accordingly.
-
 This page provides practical guides for these cases.
 
 <Callout>
@@ -19,7 +17,7 @@ This page provides practical guides for these cases.
 
 ## `not-found.js`
 
-Next.js renders the nearest `not-found` page when a route segment throws a [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). Since we rely on the `[locale]` segment to localize our app, the `not-found` page needs to be located within this segment.
+Next.js renders the closest `not-found` page when a route segment calls the [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). Since you rely on the `[locale]` segment to localize your app, the `not-found` page needs to be located within this route segment too.
 
 ```tsx filename="app/[locale]/not-found.tsx"
 import {useTranslations} from 'next-intl';
@@ -31,11 +29,11 @@ export default function NotFoundPage() {
 }
 ```
 
-Note however that Next.js will only render this page, when the `notFound` function is thrown from within a route, not for all unknown routes in general.
+Note however that Next.js will only render this page, when the `notFound` function is called from within a route, not for all unknown routes in general.
 
 ### Catching unknown routes
 
-To catch unknown routes too, we can define a catch-all route that explicitly throws the `notFound` function.
+To catch unknown routes too, you can define a catch-all route that explicitly calls the `notFound` function.
 
 ```tsx filename="app/[locale]/[...rest]/page.tsx"
 import {notFound} from 'next/navigation';
@@ -45,11 +43,11 @@ export default function CatchAllPage() {
 }
 ```
 
-After this change, all routes that are matched within the `[locale]` segment will render the defined `not-found` page when an unknown route is encountered.
+After this change, all routes that are matched within the `[locale]` segment will render the `not-found` page when an unknown route is encountered.
 
 ### Catching non-localized requests
 
-When the user requests a route that is not matched by [the `next-intl` middleware](/docs/routing/middleware) (depending on your `matcher` config), there's no locale associated with the request. You can add a root `not-found` page to handle these cases too (e.g. `/unknown.txt`).
+When the user requests a route that is not matched by [the `next-intl` middleware](/docs/routing/middleware) (depending on your `matcher` config), there's no locale associated with the request (e.g. `/unknown.txt`). You can add a root `not-found` page to handle these cases too.
 
 ```tsx filename="app/not-found.tsx"
 'use client';
@@ -73,11 +71,19 @@ export default function NotFound() {
 
 ## `error.js`
 
-When an unexpected runtime error is encountered within your components, Next.js will gracefully handle the error by [using the closest `error` file](https://nextjs.org/docs/app/building-your-application/routing/error-handling). When an `error` file is defined, Next.js will create [an error boundary within your layout that wraps pages accordingly](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works).
+When an `error` file is defined, Next.js will create [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors.
+
+```tsx
+<LocaleLayout>
+  <ErrorBoundary fallback={<Error />}>
+    <Page />
+  </ErrorBoundary>
+</LocaleLayout>
+```
 
 Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/configuration#client-server-components) to provide messages in case the `error` file renders.
 
-If you've [set up `next-intl` to be used in Client Components](http://localhost:3001/docs/getting-started/app-router-client-components), this is already the case and there's no additional setup needed. If you're using [the Server Components beta](/docs/getting-started/app-router-server-components), you have to provide the relevant messages in the wrapping layout.
+If you've [set up `next-intl` to be used in Client Components](http://localhost:3001/docs/getting-started/app-router-client-components), this is already the case and there's no additional setup needed. If you're using [the Server Components beta](/docs/getting-started/app-router-server-components) though, you have to provide the relevant messages in the wrapping layout.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import pick from 'lodash/pick';
