@@ -29,7 +29,7 @@ export default function NotFoundPage() {
 }
 ```
 
-Note however that Next.js will only render this page, when the `notFound` function is called from within a route, not for all unknown routes in general.
+Note however, that Next.js will only render this page when the `notFound` function is called from within a route, not for all unknown routes in general.
 
 ### Catching unknown routes
 
@@ -71,7 +71,7 @@ export default function NotFound() {
 
 ## `error.js`
 
-When an `error` file is defined, Next.js will create [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors.
+When an `error` file is defined, Next.js will create [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors:
 
 ```tsx
 <LocaleLayout>
