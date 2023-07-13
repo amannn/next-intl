@@ -7,6 +7,10 @@
     "title": "Über",
     "description": "<p>Auch das Routing ist internationalisiert.</p><p>Wenn du die Standardsprache Englisch verwendest, siehst du <code>/about</code> in der Adressleiste des Browsers auf dieser Seite.</p><p>Wenn du die Sprache auf Deutsch änderst, wird die URL mit der Locale ergänzt (<code>/de/about</code>).</p>"
   },
+  "Error": {
+    "title": "Etwas ist schief gelaufen!",
+    "description": "<p>Es ist leider ein Problem aufgetreten.</p><p>Du kannst versuchen <retry>diese Seite neu zu laden</retry>.</p>"
+  },
   "NotFoundPage": {
     "title": "Seite nicht gefunden",
     "description": "Bitte überprüfe die Addressleiste deines Browsers oder verwende die Navigation um zu einer bekannten Seite zu wechseln."
