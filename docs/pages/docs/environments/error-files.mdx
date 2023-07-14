@@ -21,7 +21,6 @@ Next.js renders the closest `not-found` page when a route segment calls the [`no
 
 ```tsx filename="app/[locale]/not-found.tsx"
 import {useTranslations} from 'next-intl';
-import PageLayout from 'components/PageLayout';
 
 export default function NotFoundPage() {
   const t = useTranslations('NotFoundPage');
