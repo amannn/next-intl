@@ -10,11 +10,20 @@ This page contains background information about the advantages of moving interna
 
 With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
 
+```tsx filename="app/[locale]/page.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
 ## Benefits of handling i18n in Server Components [#server-components-benefits]
 
 Moving internationalization to the server side unlocks new levels of performance, leaving the client side for interactive features.
 
-<Callout emoji="✅" title="Benefits of server-side internationalization">
+<Callout emoji="✅" title="Benefits of server-side internationalization:">
   <ol className="ml-4 list-decimal">
     <li>
       Your messages never leave the server and don't need to be serialized for
@@ -33,11 +42,13 @@ Moving internationalization to the server side unlocks new levels of performance
   </ol>
 </Callout>
 
-However, depending on your situation, you may need to handle internationalization in Client Components as well. This page discusses several strategies for handling this situation, in order of recommendation.
+## Using internationalization in Client Components
 
-## Option 1: Passing translations to Client Components
+Depending on your situation, you may need to handle internationalization in Client Components as well. There are several options for using translations or other functionality from `next-intl` in Client Components, listed here in order of recommendation.
 
-If you need to use translations or other functionality from `next-intl` in Client Components, the best approach is to pass the processed labels as props or `children` from a Server Component.
+### Option 1: Passing translations to Client Components
+
+The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
 ```tsx filename="[locale]/faq/page.tsx" {7-9}
 import {useTranslations} from 'next-intl';
@@ -74,9 +85,9 @@ function Expandable({title, children}) {
 }
 ```
 
-As you can see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
+As you see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
 
-## Option 2: Moving state to the server side
+### Option 2: Moving state to the server side
 
 You might run into cases where you have dynamic state, such as pagination, that should be reflected in translated messages.
 
@@ -98,12 +109,12 @@ In particular, page and search params are often a great option because they offe
 <Callout>
   There's [an article on Smashing Magazine about using `next-intl` in Server
   Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components)
-  which explores the usage of search params (specifically [the section about
-  adding
+  which explores the usage of search params through a real-world example
+  (specifically [the section about adding
   interactivity](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/#adding-interactivity-dynamic-ordering-of-photos)).
 </Callout>
 
-## Option 3: Providing individual messages
+### Option 3: Providing individual messages
 
 If you need to internalize dynamic state that can not be moved to the server side, you can wrap the respective components with `NextIntlClientProvider`.
 
@@ -138,11 +149,11 @@ export default function Counter() {
   `NextIntlClientProvider` doesn't automatically inherit configuration from
   `i18n.ts`, therefore make sure to provide all relevant props on the component.
   If you're configuring non-serializable values like functions, you have to mark
-  the component that renders `NextIntlClientProvider` with `'use client';`
+  the component that renders `NextIntlClientProvider` with `'use client'`
   ([example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx)).
 </Callout>
 
-## Option 4: Providing all messages
+### Option 4: Providing all messages
 
 If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
 

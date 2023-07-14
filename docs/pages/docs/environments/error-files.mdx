@@ -3,7 +3,7 @@ import Callout from 'components/Callout';
 
 # Internationalization in Next.js error files
 
-The Next.js file convention provides two files that can be used for error handling:
+The Next.js App Router's file convention provides two files that can be used for error handling:
 
 1. [`not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found)
 2. [`error.js`](https://nextjs.org/docs/app/api-reference/file-conventions/error)
@@ -17,7 +17,7 @@ This page provides practical guides for these cases.
 
 ## `not-found.js`
 
-Next.js renders the closest `not-found` page when a route segment calls the [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). Since you rely on the `[locale]` segment to localize your app, the `not-found` page needs to be located within this route segment too.
+Next.js renders the closest `not-found` page when a route segment calls the [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). Since the `[locale]` segment is used to localize your app, the `not-found` page needs to be located within this route segment too.
 
 ```tsx filename="app/[locale]/not-found.tsx"
 import {useTranslations} from 'next-intl';
@@ -43,7 +43,7 @@ export default function CatchAllPage() {
 }
 ```
 
-After this change, all routes that are matched within the `[locale]` segment will render the `not-found` page when an unknown route is encountered.
+After this change, all requests that are matched within the `[locale]` segment will render the `not-found` page when an unknown route is encountered.
 
 ### Catching non-localized requests
 
@@ -69,10 +69,14 @@ export default function NotFound() {
 }
 ```
 
+Note that a root layout file is required in this case, even if [it's just passing `children` through](https://github.com/amannn/next-intl/blob/main/examples/example-next-13/src/app/layout.tsx).
+
 ## `error.js`
 
-When an `error` file is defined, Next.js will create [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors:
+When an `error` file is defined, Next.js creates [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors:
 
+<figure>
+<div className="w-full lg:w-[500px]">
 ```tsx
 <LocaleLayout>
   <ErrorBoundary fallback={<Error />}>
@@ -80,15 +84,22 @@ When an `error` file is defined, Next.js will create [an error boundary within y
   </ErrorBoundary>
 </LocaleLayout>
 ```
+</div>
+
+<figcaption>
+  Schematic component hierarchy that Next.js creates internally.
+</figcaption>
+
+</figure>
 
 Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/configuration#client-server-components) to provide messages in case the `error` file renders.
 
 If you've [set up `next-intl` to be used in Client Components](http://localhost:3001/docs/getting-started/app-router-client-components), this is already the case and there's no additional setup needed. If you're using [the Server Components beta](/docs/getting-started/app-router-server-components) though, you have to provide the relevant messages in the wrapping layout.
 
+<figure>
+
 ```tsx filename="app/[locale]/layout.tsx"
 import pick from 'lodash/pick';
-
-// (only necessary when using the Server Components beta)
 
 export default async function LocaleLayout({children}) {
   // ...
@@ -109,7 +120,14 @@ export default async function LocaleLayout({children}) {
 }
 ```
 
-Once `NextIntlClientProvider` is in place, you can use `next-intl` APIs in the `error` file:
+<figcaption>
+  Providing messages for the `error` file is only necessary when using [the
+  Server Components beta](/docs/getting-started/app-router-server-components).
+</figcaption>
+
+</figure>
+
+Once `NextIntlClientProvider` is in place, you can use functionality from `next-intl` in the `error` file:
 
 ```tsx filename="app/[locale]/error.tsx"
 'use client';
