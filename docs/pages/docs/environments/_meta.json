@@ -2,5 +2,6 @@
   "index": "Overview",
   "server-client-components": "Server & Client Components",
   "metadata-route-handlers": "Metadata & Route Handlers",
+  "error-files": "Error files (e.g. not-found)",
   "core-library": "Core library"
 }
