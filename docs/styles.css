@@ -55,6 +55,13 @@ figure {
   @apply my-8 flex flex-col items-center;
 }
 
+figure .nextra-code-block {
+  @apply w-full;
+}
+figure .nextra-code-block > pre {
+  @apply mb-0;
+}
+
 figcaption {
   @apply mt-4 text-center text-sm text-slate-500;
 }
