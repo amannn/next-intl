@@ -21,7 +21,7 @@ vi.mock('next/navigation', () => {
   };
 });
 
-function callRouter(cb: (router: AppRouterInstance) => void) {
+function callRouter(cb: (router: ReturnType<typeof useRouter>) => void) {
   function Component() {
     const router = useRouter();
     useEffect(() => {
