@@ -31,7 +31,7 @@ export default function NextIntlClientProvider({
     locale = router.locale;
   }
 
-  // Currently RSC serialize dates to strings, therefore make sure we have
+  // TODO: Currently RSC serialize dates to strings, therefore make sure we have
   // a date object. We might be able to remove this once more types have
   // first-class serialization support (https://github.com/facebook/react/issues/25687)
   if (typeof now === 'string') {

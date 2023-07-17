@@ -11,7 +11,7 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && dts build --entry src/client.tsx --entry src/index.react-server.tsx --entry src/index.tsx --entry src/link.react-server.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/plugin.tsx --entry src/server.react-server.tsx --entry src/server.tsx",
+    "build": "rm -rf dist && dts build --entry src/client.tsx --entry src/index.react-server.tsx --entry src/index.tsx --entry src/link.react-server.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/plugin.tsx --entry src/server.react-server.tsx --entry src/server.tsx --entry src/config.tsx",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
@@ -38,7 +38,10 @@
       "react-server": "./dist/link.react-server.js",
       "default": "./dist/link.js"
     },
-    "./config": "./config.js",
+    "./config": {
+      "types": "./config.d.ts",
+      "default": "./dist/config.js"
+    },
     "./middleware": {
       "types": "./middleware.d.ts",
       "default": "./dist/middleware.js"
@@ -51,12 +54,11 @@
     "server.d.ts",
     "client.d.ts",
     "link.d.ts",
-    "config.js",
     "middleware.d.ts",
     "withNextIntl.js",
     "withNextIntl.d.ts",
-    "plugin.js",
-    "plugin.d.ts"
+    "plugin.d.ts",
+    "config.d.ts"
   ],
   "keywords": [
     "react",
