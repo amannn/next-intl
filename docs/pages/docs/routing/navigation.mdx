@@ -4,9 +4,9 @@ import Callout from 'components/Callout';
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
-### `Link`
+## `Link`
 
-This component wraps `next/link` and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
+This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
 ```tsx
 import Link from 'next-intl/link';
@@ -18,9 +18,9 @@ import Link from 'next-intl/link';
 <Link href="/" locale="de">Switch to German</Link>
 ```
 
-### `useRouter`
+## `useRouter`
 
-If you need to navigate programmatically, e.g. in response to a form submission, `next-intl` provides a convience API that wraps `useRouter` from Next.js and automatically applies the locale of the user.
+If you need to navigate programmatically, e.g. in an event handler, `next-intl` provides a convience API that wraps [`useRouter` from Next.js](https://nextjs.org/docs/app/api-reference/functions/use-router) and automatically applies the locale of the user.
 
 ```tsx
 'use client';
@@ -31,9 +31,30 @@ const router = useRouter();
 
 // When the user is on `/en`, the router will navigate to `/en/about`
 router.push('/about');
+
+// You can override the `locale` to switch to another language
+router.push('/about', {locale: 'de'});
 ```
 
-### `usePathname`
+<details>
+<summary>How can I change the locale for the current page?</summary>
+
+By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you can change the locale for the current page programmatically.
+
+```tsx
+'use client';
+
+import {usePathname, useRouter} from 'next-intl/client';
+
+const pathname = usePathname();
+const router = useRouter();
+
+router.replace(pathname, {locale: 'de'});
+```
+
+</details>
+
+## `usePathname`
 
 To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
@@ -46,14 +67,14 @@ import {usePathname} from 'next-intl/client';
 const pathname = usePathname();
 ```
 
-### `redirect`
+## `redirect`
 
 <Callout type="warning">
   This API is only available in [the Server Components
   beta](/docs/getting-started/app-router-server-components).
 </Callout>
 
-If you want to interrupt the render of a Server Component and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
+If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
 ```tsx {1, 8}
 import {redirect} from 'next-intl/server';

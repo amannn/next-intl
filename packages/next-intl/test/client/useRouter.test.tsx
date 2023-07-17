@@ -1,4 +1,5 @@
 import {render} from '@testing-library/react';
+import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context';
 import {useRouter as useNextRouter} from 'next/navigation';
 import React, {useEffect} from 'react';
@@ -66,6 +67,25 @@ describe('unprefixed routing', () => {
   it('passes through relative urls', () => {
     callRouter((router) => router.push('about'));
     expect(useNextRouter().push).toHaveBeenCalledWith('about');
+  });
+
+  it('can change the locale with `push`', () => {
+    callRouter((router) => router.push('/about', {locale: 'de'}));
+    expect(useNextRouter().push).toHaveBeenCalledWith('/de/about');
+  });
+
+  it('can change the locale with `replace`', () => {
+    callRouter((router) => router.replace('/about', {locale: 'es'}));
+    expect(useNextRouter().replace).toHaveBeenCalledWith('/es/about');
+  });
+
+  it('can prefetch a new locale', () => {
+    callRouter((router) =>
+      router.prefetch('/about', {locale: 'es', kind: PrefetchKind.AUTO})
+    );
+    expect(useNextRouter().prefetch).toHaveBeenCalledWith('/es/about', {
+      kind: PrefetchKind.AUTO
+    });
   });
 });
 
