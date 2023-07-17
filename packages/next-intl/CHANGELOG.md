@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.18.0 (2023-07-17)
+
+
+### Features
+
+* Accept `locale` with `useRouter` APIs ([#409](https://github.com/amannn/next-intl/issues/409)) ([0fbb3c7](https://github.com/amannn/next-intl/commit/0fbb3c7cc9945eff40fe84ef433da172b909a8e6)), closes [#408](https://github.com/amannn/next-intl/issues/408) [#407](https://github.com/amannn/next-intl/issues/407) [#320](https://github.com/amannn/next-intl/issues/320)
+
+
+
+
+
 ## 2.17.5 (2023-07-07)
 
 
