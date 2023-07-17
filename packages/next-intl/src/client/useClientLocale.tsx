@@ -1,5 +1,5 @@
 import {useParams} from 'next/navigation';
-import {useLocale} from 'use-intl';
+import {useLocale} from 'use-intl/react';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants';
 
 export default function useClientLocale(): string {

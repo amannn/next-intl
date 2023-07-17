@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -550,6 +550,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      rollup-plugin-preserve-directives:
+        specifier: 0.2.0
+        version: 0.2.0(rollup@3.21.4)
       size-limit:
         specifier: ^8.2.6
         version: 8.2.6
@@ -21848,6 +21851,15 @@ packages:
     resolution: {integrity: sha512-4kCrKPTJ6sK4/gLL/U5QzVT8cxJcofO0OU74tnB19F40cmuAKSzH5/siithxlofFEjwvw1YAhPmbvGNA6jEroA==}
     dependencies:
       rollup-plugin-inject: 3.0.2
+    dev: true
+
+  /rollup-plugin-preserve-directives@0.2.0(rollup@3.21.4):
+    resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
+    peerDependencies:
+      rollup: 2.x || 3.x
+    dependencies:
+      magic-string: 0.30.0
+      rollup: 3.21.4
     dev: true
 
   /rollup-plugin-sourcemaps@0.6.3(@types/node@17.0.23)(rollup@2.79.1):

@@ -11,9 +11,7 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "pnpm build:default && pnpm build:rsc",
-    "build:default": "rm -rf dist && dts build --entry src/index.tsx --entry src/core.tsx --entry src/react.tsx",
-    "build:rsc": "tsc && rm -rf dist/test",
+    "build": "rm -rf dist && dts build --entry src/index.tsx --entry src/core.tsx --entry src/react.tsx",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",

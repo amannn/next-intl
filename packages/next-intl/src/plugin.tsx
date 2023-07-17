@@ -1,9 +1,10 @@
 /* eslint-env node */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import type {NextConfig} from 'next';
 
-function initPlugin(i18nPath, nextConfig) {
+function initPlugin(i18nPath?: string, nextConfig?: NextConfig) {
   if (i18nPath) {
     i18nPath = path.resolve(i18nPath);
 
@@ -45,9 +46,12 @@ module.exports = withNextIntl({
     );
   }
 
+  const finalI18nPath = i18nPath;
   return Object.assign({}, nextConfig, {
-    webpack(config, options) {
-      config.resolve.alias['next-intl/config'] = require.resolve(i18nPath);
+    webpack(
+      ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
+    ) {
+      config.resolve.alias['next-intl/config'] = require.resolve(finalI18nPath);
 
       if (typeof nextConfig?.webpack === 'function') {
         return nextConfig.webpack(config, options);
@@ -58,8 +62,9 @@ module.exports = withNextIntl({
   });
 }
 
-module.exports = function withNextIntl(i18nPath) {
-  return (nextConfig) => initPlugin(i18nPath, nextConfig);
+module.exports = function withNextIntl(i18nPath?: string) {
+  return (nextConfig?: NextConfig) => initPlugin(i18nPath, nextConfig);
 };
 
 module.exports.initPlugin = initPlugin;
+module.exports.default = module.exports;
