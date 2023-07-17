@@ -100,4 +100,5 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
   });
 }
 
+/** @deprecated Is called `getTranslator` now. */
 export default cache(getTranslationsImpl);

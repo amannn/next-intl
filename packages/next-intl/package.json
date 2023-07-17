@@ -23,11 +23,11 @@
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
-      "react-server": "./dist/index.react-server.js",
+      "react-server": "./dist/index.react-server.esm.js",
       "default": "./dist/index.js"
     },
     "./server": {
-      "react-server": "./dist/server.react-server.js",
+      "react-server": "./dist/server.react-server.esm.js",
       "default": "./dist/server.js"
     },
     "./client": {
@@ -35,7 +35,7 @@
     },
     "./link": {
       "types": "./link.d.ts",
-      "react-server": "./dist/link.react-server.js",
+      "react-server": "./dist/link.react-server.esm.js",
       "default": "./dist/link.js"
     },
     "./config": {
