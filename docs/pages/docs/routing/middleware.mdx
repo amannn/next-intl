@@ -144,7 +144,9 @@ export default createMiddleware({
 
 In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
 
-Note that this will affect both prefix-based as well as domain-based routing.
+<Callout>
+  Note that this will affect both prefix-based as well as domain-based routing.
+</Callout>
 
 ### Never use a locale prefix
 
@@ -160,7 +162,16 @@ export default createMiddleware({
 });
 ```
 
-In this case all requests for all locales will be rewritten internally.
+<Callout>
+  In this case all requests for all locales will be rewritten to have the locale
+  prefixed internally. You still need to place all your pages inside a
+  `[locale]` folder.
+</Callout>
+
+<Callout>
+  Alternate links will be disabled, regardless of the [`alternateLinks`
+  configuration setting](#disable-alternate-links).
+</Callout>
 
 ### Disable automatic locale detection
 

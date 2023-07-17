@@ -190,6 +190,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     if (
+      configWithDefaults.localePrefix !== 'never' &&
       configWithDefaults.alternateLinks &&
       configWithDefaults.locales.length > 1
     ) {
