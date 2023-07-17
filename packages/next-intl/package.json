@@ -11,7 +11,7 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && dts build --entry src/client.tsx --entry src/index.react-server.tsx --entry src/index.tsx --entry src/link.react-server.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/plugin.tsx --entry src/server.react-server.tsx --entry src/server.tsx --entry src/config.tsx",
+    "build": "dts build --entry src/index.tsx && dts build --entry src/client.tsx --entry src/index.react-server.tsx --entry src/link.react-server.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/plugin.tsx --entry src/server.react-server.tsx --entry src/server.tsx --entry src/config.tsx --noClean",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
@@ -104,12 +104,12 @@
   },
   "size-limit": [
     {
-      "path": "dist/index.cjs.production.min.js",
-      "limit": "13.8 KB"
+      "path": "dist/next-intl.cjs.production.min.js",
+      "limit": "14.00 KB"
     },
     {
-      "path": "dist/index.cjs.development.js",
-      "limit": "13.8 KB"
+      "path": "dist/next-intl.cjs.development.js",
+      "limit": "14.20 KB"
     }
   ],
   "engines": {
