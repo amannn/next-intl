@@ -138,15 +138,13 @@ import createMiddleware from 'next-intl/middleware';
 export default createMiddleware({
   // ... other config
 
-  localePrefix: 'always' // Defaults to 'as-needed'
+  localePrefix: 'always'
 });
 ```
 
 In this case, requests without a prefix will be redirected accordingly (e.g. `/about` to `/en/about`).
 
-<Callout>
-  Note that this will affect both prefix-based as well as domain-based routing.
-</Callout>
+Note that this will affect both prefix-based as well as domain-based routing.
 
 ### Never use a locale prefix
 
@@ -158,19 +156,17 @@ import createMiddleware from 'next-intl/middleware';
 export default createMiddleware({
   // ... other config
 
-  localePrefix: 'never' // Defaults to 'as-needed'
+  localePrefix: 'never'
 });
 ```
 
-<Callout>
-  In this case all requests for all locales will be rewritten to have the locale
-  prefixed internally. You still need to place all your pages inside a
-  `[locale]` folder.
-</Callout>
+In this case all requests for all locales will be rewritten to have the locale
+prefixed internally. You still need to place all your pages inside a
+`[locale]` folder for the routes to be able to receive the `locale` param.
 
 <Callout>
-  Alternate links will be disabled, regardless of the [`alternateLinks`
-  configuration setting](#disable-alternate-links).
+  Note that [alternate links](#disable-alternate-links) are disabled in this
+  mode since there are no distinct URLs per language.
 </Callout>
 
 ### Disable automatic locale detection
@@ -183,11 +179,11 @@ import createMiddleware from 'next-intl/middleware';
 export default createMiddleware({
   // ... other config
 
-  localeDetection: false // Defaults to `true`
+  localeDetection: false
 });
 ```
 
-Note that in this case other detection mechanisms will remain in place regardless (e.g. based on a locale prefix in the pathname or a matched domain).
+In this case, only the locale prefix and a potentially [matching domain](#domain-based-routing) are used to determine the locale.
 
 ### Disable alternate links
 
@@ -209,7 +205,7 @@ export default createMiddleware({
 
 If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
 
-```js filename="next.config.js" {8-9}
+```js filename="next.config.js" {7-8}
 const withNextIntl = require('next-intl/plugin')();
 
 module.exports = withNextIntl({
@@ -349,8 +345,9 @@ export default function RootPage() {
 
 <Callout type="warning">
   Note that this is currently limited to the usage of `next-intl` in [Client
-  Components](/docs/getting-started/app-router-client-components) (no [Server
-  Components](/docs/getting-started/app-router-server-components)).
+  Components](/docs/getting-started/app-router-client-components) ([Server
+  Components](/docs/getting-started/app-router-server-components) are not
+  supported).
 </Callout>
 
 You can explore a working demo by building [the Next.js 13 example](/examples/app-router) after enabling the static export:
