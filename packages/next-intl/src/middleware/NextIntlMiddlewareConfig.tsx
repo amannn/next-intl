@@ -1,4 +1,4 @@
-type LocalePrefix = 'as-needed' | 'always';
+type LocalePrefix = 'as-needed' | 'always' | 'never';
 
 type RoutingBaseConfig = {
   /** A list of all locales that are supported. */

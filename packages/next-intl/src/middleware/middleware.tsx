@@ -114,8 +114,9 @@ export default function createMiddleware(config: MiddlewareConfig) {
       }
 
       if (
-        hasMatchedDefaultLocale &&
-        configWithDefaults.localePrefix === 'as-needed'
+        configWithDefaults.localePrefix === 'never' ||
+        (hasMatchedDefaultLocale &&
+          configWithDefaults.localePrefix === 'as-needed')
       ) {
         response = rewrite(pathWithSearch);
       } else {
@@ -140,7 +141,9 @@ export default function createMiddleware(config: MiddlewareConfig) {
       if (hasLocalePrefix) {
         const basePath = pathWithSearch.replace(`/${pathLocale}`, '') || '/';
 
-        if (pathLocale === locale) {
+        if (configWithDefaults.localePrefix === 'never') {
+          response = redirect(basePath);
+        } else if (pathLocale === locale) {
           if (
             hasMatchedDefaultLocale &&
             configWithDefaults.localePrefix === 'as-needed'
@@ -168,9 +171,10 @@ export default function createMiddleware(config: MiddlewareConfig) {
         }
       } else {
         if (
-          hasMatchedDefaultLocale &&
-          (configWithDefaults.localePrefix === 'as-needed' ||
-            configWithDefaults.domains)
+          configWithDefaults.localePrefix === 'never' ||
+          (hasMatchedDefaultLocale &&
+            (configWithDefaults.localePrefix === 'as-needed' ||
+              configWithDefaults.domains))
         ) {
           response = rewrite(`/${locale}${pathWithSearch}`);
         } else {
@@ -186,6 +190,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     if (
+      configWithDefaults.localePrefix !== 'never' &&
       configWithDefaults.alternateLinks &&
       configWithDefaults.locales.length > 1
     ) {
