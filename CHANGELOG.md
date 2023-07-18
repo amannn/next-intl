@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.19.0 (2023-07-18)
+
+
+### Features
+
+* Add `localePrefix: 'never'` option for middleware ([#388](https://github.com/amannn/next-intl/issues/388) by [@boris-arkenaar](https://github.com/boris-arkenaar)) ([92ec33a](https://github.com/amannn/next-intl/commit/92ec33a8c47929f0ef0902d60bd1f55b64b2cf91)), closes [#366](https://github.com/amannn/next-intl/issues/366)
+
+
+
+
+
 # 2.18.0 (2023-07-17)
 
 
