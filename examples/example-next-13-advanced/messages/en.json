@@ -38,5 +38,8 @@
   },
   "ApiRoute": {
     "hello": "Hello {name}!"
+  },
+  "OpenGraph": {
+    "title": "next-intl example"
   }
 }
