@@ -755,7 +755,7 @@ describe('domain-based routing', () => {
 
 describe('deprecated domain config', () => {
   it("accepts deprecated config with `routing.type: 'prefix'`", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       routing: {
@@ -780,7 +780,7 @@ describe('deprecated domain config', () => {
   });
 
   it("accepts deprecated config with `routing.type: 'domain'`", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       routing: {
@@ -835,7 +835,7 @@ describe('deprecated domain config', () => {
       }
     ] as Array<DomainConfig>;
 
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       domains
