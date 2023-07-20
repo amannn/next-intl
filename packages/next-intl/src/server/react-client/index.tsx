@@ -26,7 +26,7 @@ export const getIntl = notSupported('getIntl') as unknown as typeof getIntl_type
 // prettier-ignore
 export const getFormatter = notSupported('getFormatter') as unknown as typeof getFormatter_type;
 // prettier-ignore
-/** @deprecated Please use the \`locale\` parameter from Next.js instead. */
+/** @deprecated Please use the `locale` parameter from Next.js instead. */
 export const getLocale = notSupported('getLocale') as unknown as typeof getLocale_type;
 // prettier-ignore
 export const getNow = notSupported('getNow') as unknown as typeof getNow_type;

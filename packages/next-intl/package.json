@@ -19,7 +19,7 @@
     "size": "size-limit"
   },
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/next-intl.esm.js",
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {

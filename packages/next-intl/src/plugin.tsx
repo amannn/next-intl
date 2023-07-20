@@ -67,4 +67,3 @@ module.exports = function withNextIntl(i18nPath?: string) {
 };
 
 module.exports.initPlugin = initPlugin;
-module.exports.default = module.exports;
