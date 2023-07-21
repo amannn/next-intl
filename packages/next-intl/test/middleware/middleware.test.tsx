@@ -228,7 +228,7 @@ describe('prefix-based routing', () => {
           home: '/',
           about: {
             en: '/about',
-            de: '/über'
+            de: '/ueber'
           },
           users: {
             en: '/users',
@@ -287,7 +287,7 @@ describe('prefix-based routing', () => {
       });
 
       it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/de/über', 'de'));
+        middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer/1', 'de'));
         middlewareWithPathnames(
@@ -311,7 +311,7 @@ describe('prefix-based routing', () => {
       });
 
       it('redirects a request for a localized route that is not associated with the requested locale', () => {
-        middlewareWithPathnames(createMockRequest('/über', 'en'));
+        middlewareWithPathnames(createMockRequest('/ueber', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
@@ -328,7 +328,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de/%C3%BCber'
+          'http://localhost:3000/de/ueber'
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/benutzer/2'
@@ -342,7 +342,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de/%C3%BCber'
+          'http://localhost:3000/de/ueber'
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/benutzer/2'
@@ -448,7 +448,7 @@ describe('prefix-based routing', () => {
           home: '/',
           about: {
             en: '/about',
-            de: '/über'
+            de: '/ueber'
           },
           users: {
             en: '/users',
@@ -493,7 +493,7 @@ describe('prefix-based routing', () => {
       });
 
       it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/de/über', 'de'));
+        middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer/1', 'de'));
         middlewareWithPathnames(
@@ -518,7 +518,7 @@ describe('prefix-based routing', () => {
 
       it('redirects a request for a localized route that is not associated with the requested locale', () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(createMockRequest('/en/über', 'en'));
+        middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
         middlewareWithPathnames(createMockRequest('/en/benutzer/12', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
