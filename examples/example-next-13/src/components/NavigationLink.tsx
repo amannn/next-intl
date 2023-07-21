@@ -11,6 +11,8 @@ type Props = Omit<ComponentProps<typeof Link>, 'href'> & {
 
 export default function NavigationLink({href, ...rest}: Props) {
   const pathname = usePathname();
+
+  // TODO: We need to consult the pathnames map here
   const isActive = pathname === href;
 
   return (

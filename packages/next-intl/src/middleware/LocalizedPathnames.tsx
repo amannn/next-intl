@@ -24,52 +24,32 @@ export function getLocalizedRedirectPathname<Locales extends AllLocales>(
     configWithDefaults.locales
   );
 
-  if (pathLocale) {
-    if (pathLocale === configWithDefaults.defaultLocale) {
-      return;
+  for (const [, routePath] of Object.entries(configWithDefaults.pathnames)) {
+    if (typeof routePath === 'string') {
+      // No redirect is necessary if all locales use the same pathname
+      continue;
     }
 
-    for (const [, routePath] of Object.entries(configWithDefaults.pathnames)) {
-      if (typeof routePath === 'string') {
-        // No redirect is necessary if all locales use the same pathname
+    for (const [locale, localePathname] of Object.entries(routePath)) {
+      if (resolvedLocale === locale) {
         continue;
       }
 
-      const defaultLocaleTemplate = routePath[configWithDefaults.defaultLocale];
-      const pathLocalePathname = `/${pathLocale}${defaultLocaleTemplate}`;
-      const matches = matchesPathname(pathLocalePathname, pathname);
+      let template = '';
+      if (pathLocale) template = `/${pathLocale}`;
+      template += localePathname;
 
+      const matches = matchesPathname(template, pathname);
       if (matches) {
-        const params = getRouteParams(pathLocalePathname, pathname);
-        return getPathWithSearch(
-          `/${pathLocale}` + formatPathname(routePath[pathLocale], params),
-          request.nextUrl.search
-        );
-      }
-    }
-  } else if (resolvedLocale !== configWithDefaults.defaultLocale) {
-    if (resolvedLocale === configWithDefaults.defaultLocale) {
-      return;
-    }
+        const params = getRouteParams(template, pathname);
 
-    // Check if the path matches a route from the default locale.
-    // If this is the case, then redirect to a localized version.
-    for (const [, routePath] of Object.entries(configWithDefaults.pathnames)) {
-      if (typeof routePath === 'string') {
-        // No redirect is necessary if all locales use the same pathname
-        continue;
-      }
+        let targetPathname = '';
+        if (resolvedLocale !== configWithDefaults.defaultLocale || pathLocale) {
+          targetPathname = `/${resolvedLocale}`;
+        }
+        targetPathname += formatPathname(routePath[resolvedLocale], params);
 
-      const defaultLocalePathname = routePath[configWithDefaults.defaultLocale];
-      const matches = matchesPathname(defaultLocalePathname, pathname);
-
-      if (matches) {
-        const params = getRouteParams(defaultLocalePathname, pathname);
-        return getPathWithSearch(
-          `/${resolvedLocale}` +
-            formatPathname(routePath[resolvedLocale], params),
-          request.nextUrl.search
-        );
+        return getPathWithSearch(targetPathname, request.nextUrl.search);
       }
     }
   }

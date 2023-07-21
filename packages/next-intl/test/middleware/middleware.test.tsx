@@ -310,13 +310,13 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('forwards a request for a localized route that is not associated with the requested locale so that a 404 response can be returned', () => {
+      it('redirects a request for a localized route that is not associated with the requested locale', () => {
         middlewareWithPathnames(createMockRequest('/über', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(1);
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/%C3%BCber'
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/about'
         );
       });
 
@@ -516,13 +516,19 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('forwards a request for a localized route that is not associated with the requested locale so that a 404 response can be returned', () => {
+      it('redirects a request for a localized route that is not associated with the requested locale', () => {
         // Relevant to avoid duplicate content issues
         middlewareWithPathnames(createMockRequest('/en/über', 'en'));
         middlewareWithPathnames(createMockRequest('/en/benutzer/12', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.next).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/users/12'
+        );
       });
     });
   });
