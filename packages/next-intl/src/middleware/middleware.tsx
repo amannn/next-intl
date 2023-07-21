@@ -1,34 +1,42 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import MiddlewareConfig, {
+  AllLocales,
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
+import {getLocalizedRewritePathname,getLocalizedRedirectPathname} from './LocalizedPathnames';
 import resolveLocale from './resolveLocale';
 import {
+  getBasePath,
   getBestMatchingDomain,
-  getLocaleFromPathname,
+  getKnownLocaleFromPathname,
+  getPathWithSearch,
   isLocaleSupportedOnDomain
 } from './utils';
 
 const ROOT_URL = '/';
 
-function receiveConfig(config: MiddlewareConfig) {
-  const result: MiddlewareConfigWithDefaults = {
+function receiveConfig<Locales extends AllLocales>(
+  config: MiddlewareConfig<Locales>
+): MiddlewareConfigWithDefaults<Locales> {
+  return {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
     localePrefix: config.localePrefix ?? 'as-needed',
     localeDetection: config.localeDetection ?? true
   };
-
-  return result;
 }
 
-export default function createMiddleware(config: MiddlewareConfig) {
+// TODO: eslint-config-molindo needs an upgrade of @typescript-eslint/parser
+export default function createMiddleware<const Locales extends AllLocales>(
+  config: MiddlewareConfig<Locales>
+) {
   const configWithDefaults = receiveConfig(config);
 
   // Currently only in use to enable a seamless upgrade path from the
   // `{createIntlMiddleware} from 'next-intl/server'` API.
+  // TODO: Remove in next major release.
   const matcher: Array<string> | undefined = (config as any)._matcher;
 
   return function middleware(request: NextRequest) {
@@ -107,11 +115,12 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     let response;
+
     if (isRoot) {
-      let pathWithSearch = `/${locale}`;
-      if (request.nextUrl.search) {
-        pathWithSearch += request.nextUrl.search;
-      }
+      const pathWithSearch = getPathWithSearch(
+        `/${locale}`,
+        request.nextUrl.search
+      );
 
       if (
         configWithDefaults.localePrefix === 'never' ||
@@ -123,62 +132,78 @@ export default function createMiddleware(config: MiddlewareConfig) {
         response = redirect(pathWithSearch);
       }
     } else {
-      const pathLocaleCandidate = getLocaleFromPathname(
-        request.nextUrl.pathname
-      );
-      const pathLocale = configWithDefaults.locales.includes(
-        pathLocaleCandidate
-      )
-        ? pathLocaleCandidate
-        : undefined;
-      const hasLocalePrefix = pathLocale != null;
-
-      let pathWithSearch = request.nextUrl.pathname;
-      if (request.nextUrl.search) {
-        pathWithSearch += request.nextUrl.search;
+      if (configWithDefaults.pathnames) {
+        const localizedRedirect = getLocalizedRedirectPathname(
+          request,
+          locale,
+          configWithDefaults
+        )
+        if (localizedRedirect) {
+          response = redirect(localizedRedirect);
+        } else {
+          const localizedRewrite = getLocalizedRewritePathname(
+            request,
+            configWithDefaults
+          );
+          if (localizedRewrite) {
+            response = rewrite(localizedRewrite);
+          }
+        }
       }
 
-      if (hasLocalePrefix) {
-        const basePath = pathWithSearch.replace(`/${pathLocale}`, '') || '/';
+      if (!response) {
+        const pathLocale = getKnownLocaleFromPathname(
+          request.nextUrl.pathname,
+          configWithDefaults.locales
+        );
+        const hasLocalePrefix = pathLocale != null;
+        const pathWithSearch = getPathWithSearch(
+          request.nextUrl.pathname,
+          request.nextUrl.search
+        );
 
-        if (configWithDefaults.localePrefix === 'never') {
-          response = redirect(basePath);
-        } else if (pathLocale === locale) {
-          if (
-            hasMatchedDefaultLocale &&
-            configWithDefaults.localePrefix === 'as-needed'
-          ) {
+        if (hasLocalePrefix) {
+          const basePath = getBasePath(pathWithSearch, pathLocale);
+
+          if (configWithDefaults.localePrefix === 'never') {
             response = redirect(basePath);
-          } else {
-            if (configWithDefaults.domains) {
-              const pathDomain = getBestMatchingDomain(
-                domain,
-                pathLocale,
-                domainConfigs
-              );
+          } else if (pathLocale === locale) {
+            if (
+              hasMatchedDefaultLocale &&
+              configWithDefaults.localePrefix === 'as-needed'
+            ) {
+              response = redirect(basePath);
+            } else {
+              if (configWithDefaults.domains) {
+                const pathDomain = getBestMatchingDomain(
+                  domain,
+                  pathLocale,
+                  domainConfigs
+                );
 
-              if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
-                response = redirect(basePath, pathDomain?.domain);
+                if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
+                  response = redirect(basePath, pathDomain?.domain);
+                } else {
+                  response = next();
+                }
               } else {
                 response = next();
               }
-            } else {
-              response = next();
             }
+          } else {
+            response = redirect(`/${locale}${basePath}`);
           }
         } else {
-          response = redirect(`/${locale}${basePath}`);
-        }
-      } else {
-        if (
-          configWithDefaults.localePrefix === 'never' ||
-          (hasMatchedDefaultLocale &&
-            (configWithDefaults.localePrefix === 'as-needed' ||
-              configWithDefaults.domains))
-        ) {
-          response = rewrite(`/${locale}${pathWithSearch}`);
-        } else {
-          response = redirect(`/${locale}${pathWithSearch}`);
+          if (
+            configWithDefaults.localePrefix === 'never' ||
+            (hasMatchedDefaultLocale &&
+              (configWithDefaults.localePrefix === 'as-needed' ||
+                configWithDefaults.domains))
+          ) {
+            response = rewrite(`/${locale}${pathWithSearch}`);
+          } else {
+            response = redirect(`/${locale}${pathWithSearch}`);
+          }
         }
       }
     }

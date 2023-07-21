@@ -1,7 +1,55 @@
-import {DomainConfig} from './NextIntlMiddlewareConfig';
+import {pathToRegexp, match, compile} from 'path-to-regexp';
+import {AllLocales, DomainConfig} from './NextIntlMiddlewareConfig';
 
 export function getLocaleFromPathname(pathname: string) {
   return pathname.split('/')[1];
+}
+
+export function getKnownLocaleFromPathname<Locales extends AllLocales>(
+  pathname: string,
+  locales: Locales
+): Locales[number] | undefined {
+  const pathLocaleCandidate = getLocaleFromPathname(pathname);
+  const pathLocale = locales.includes(pathLocaleCandidate)
+    ? pathLocaleCandidate
+    : undefined;
+  return pathLocale;
+}
+
+export function getBasePath(pathname: string, pathLocale: string) {
+  return pathname.replace(`/${pathLocale}`, '') || '/';
+}
+
+export function matchesPathname(template: string, pathname: string) {
+  const regex = pathToRegexp(template);
+  const matches = regex.exec(pathname);
+  return matches != null;
+}
+
+export function getRouteParams(template: string, pathname: string) {
+  const fn = match(
+    template
+    // { decode: decodeURIComponent }
+  );
+
+  const result = fn(pathname);
+  return result ? result.params : undefined;
+}
+
+export function formatPathname(template: string, params?: object) {
+  const toPath = compile(template);
+  return toPath(params);
+}
+
+export function getPathWithSearch(
+  pathname: string,
+  search: string | undefined
+) {
+  let pathWithSearch = pathname;
+  if (search) {
+    pathWithSearch += search;
+  }
+  return pathWithSearch;
 }
 
 export function getHost(requestHeaders: Headers) {
@@ -12,9 +60,9 @@ export function getHost(requestHeaders: Headers) {
   );
 }
 
-export function isLocaleSupportedOnDomain(
+export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
   locale: string,
-  domain: DomainConfig
+  domain: DomainConfig<Locales>
 ) {
   return (
     domain.defaultLocale === locale ||
@@ -23,10 +71,10 @@ export function isLocaleSupportedOnDomain(
   );
 }
 
-export function getBestMatchingDomain(
-  curHostDomain: DomainConfig | undefined,
+export function getBestMatchingDomain<Locales extends AllLocales>(
+  curHostDomain: DomainConfig<Locales> | undefined,
   locale: string,
-  domainConfigs: Array<DomainConfig>
+  domainConfigs: Array<DomainConfig<Locales>>
 ) {
   let domainConfig;
 

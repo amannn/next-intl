@@ -8,7 +8,7 @@ function getRequest(url = 'https://example.com/') {
 }
 
 it('works for prefixed routing (as-needed)', () => {
-  const config: MiddlewareConfigWithDefaults = {
+  const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
@@ -37,7 +37,7 @@ it('works for prefixed routing (as-needed)', () => {
 });
 
 it('works for prefixed routing (always)', () => {
-  const config: MiddlewareConfigWithDefaults = {
+  const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
@@ -66,7 +66,7 @@ it('works for prefixed routing (always)', () => {
 });
 
 it("works for type domain with `localePrefix: 'as-needed'`", () => {
-  const config: MiddlewareConfigWithDefaults = {
+  const config: MiddlewareConfigWithDefaults<['en', 'es', 'fr']> = {
     defaultLocale: 'en',
     locales: ['en', 'es', 'fr'],
     alternateLinks: true,
@@ -124,7 +124,7 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
 });
 
 it("works for type domain with `localePrefix: 'always'`", () => {
-  const config: MiddlewareConfigWithDefaults = {
+  const config: MiddlewareConfigWithDefaults<['en', 'es', 'fr']> = {
     defaultLocale: 'en',
     locales: ['en', 'es', 'fr'],
     alternateLinks: true,

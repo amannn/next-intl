@@ -1,10 +1,14 @@
 import {NextRequest} from 'next/server';
 import MiddlewareConfig, {
+  AllLocales,
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import {isLocaleSupportedOnDomain} from './utils';
 
-function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
+function getUnprefixedUrl<Locales extends AllLocales>(
+  config: MiddlewareConfig<Locales>,
+  request: NextRequest
+) {
   const url = new URL(request.url);
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
@@ -30,10 +34,9 @@ function getAlternateEntry(url: string, locale: string) {
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
-export default function getAlternateLinksHeaderValue(
-  config: MiddlewareConfigWithDefaults,
-  request: NextRequest
-) {
+export default function getAlternateLinksHeaderValue<
+  Locales extends AllLocales
+>(config: MiddlewareConfigWithDefaults<Locales>, request: NextRequest) {
   const unprefixedUrl = getUnprefixedUrl(config, request);
 
   const links = config.locales.flatMap((locale) => {
