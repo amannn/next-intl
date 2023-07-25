@@ -1,0 +1,33 @@
+name: Add comment
+on:
+  issues:
+    types:
+      - labeled
+jobs:
+  add-comment:
+    if: github.event.label.name == 'reproduction-missing'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Thank you for your report.
+            
+            Unfortunately, the reproduction is missing, and as such we cannot investigate this issue. Please add a reproduction to the issue, otherwise it will be closed automatically.
+
+            **Templates:**
+             - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
+             - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
+            
+            **Creating a good bug report takes time.** To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
+
+            Apart from the reproduction, make sure to include the precise steps on how to reproduce the issue, e.g.:
+
+            1. Open reproduction
+            2. Click on …
+            3. See error: … 
+
+            Thank you for your understanding!
