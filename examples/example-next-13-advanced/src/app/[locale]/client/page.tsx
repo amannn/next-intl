@@ -18,7 +18,7 @@ export default function Client() {
       <p>{t('description')}</p>
       <p data-testid="NowFromServer">{now.toISOString()}</p>
       <DelayedServerContent />
-      <NextIntlClientProvider locale={locale} now={now.toISOString()}>
+      <NextIntlClientProvider locale={locale} now={now}>
         <ClientContent />
       </NextIntlClientProvider>
     </PageLayout>
