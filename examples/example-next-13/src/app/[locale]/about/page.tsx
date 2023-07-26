@@ -6,7 +6,7 @@ export default function AboutPage() {
 
   return (
     <PageLayout title={t('title')}>
-      <div className="max-w-[460px]">
+      <div className="max-w-[520px]">
         {t.rich('description', {
           p: (chunks) => <p className="mt-4">{chunks}</p>,
           code: (chunks) => (

@@ -3,11 +3,15 @@
  */
 
 import createMiddleware_ from '../middleware';
-import MiddlewareConfig from '../middleware/NextIntlMiddlewareConfig';
+import MiddlewareConfig, {
+  AllLocales
+} from '../middleware/NextIntlMiddlewareConfig';
 
 let hasWarnedForMiddlewareImport = false;
 /** @deprecated Should be imported as `import createMiddleware from 'next-intl/middleware', not from `next-intl/server`. */
-export function createIntlMiddleware(config: MiddlewareConfig) {
+export function createIntlMiddleware<const Locales extends AllLocales>(
+  config: MiddlewareConfig<Locales>
+) {
   if (!hasWarnedForMiddlewareImport) {
     hasWarnedForMiddlewareImport = true;
     console.warn(
