@@ -1,3 +1,5 @@
+// @vitest-environment edge-runtime
+
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
