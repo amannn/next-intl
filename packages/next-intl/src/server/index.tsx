@@ -9,7 +9,7 @@ import MiddlewareConfig, {
 
 let hasWarnedForMiddlewareImport = false;
 /** @deprecated Should be imported as `import createMiddleware from 'next-intl/middleware', not from `next-intl/server`. */
-export function createIntlMiddleware<const Locales extends AllLocales>(
+export function createIntlMiddleware<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ) {
   if (!hasWarnedForMiddlewareImport) {

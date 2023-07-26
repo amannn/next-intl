@@ -82,7 +82,7 @@ function receiveConfig<Locales extends AllLocales>(
 }
 
 // TODO: eslint-config-molindo needs an upgrade of @typescript-eslint/parser
-export default function createMiddleware<const Locales extends AllLocales>(
+export default function createMiddleware<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ) {
   const configWithDefaults = receiveConfig(config);

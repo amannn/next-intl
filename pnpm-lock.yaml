@@ -49,7 +49,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       tailwindcss:
         specifier: ^3.2.4
-        version: 3.2.4(postcss@8.4.26)
+        version: 3.2.4(postcss@8.4.27)
     devDependencies:
       '@types/node':
         specifier: ^20.1.2
@@ -59,7 +59,7 @@ importers:
         version: 18.2.5
       autoprefixer:
         specifier: ^10.4.0
-        version: 10.4.0(postcss@8.4.26)
+        version: 10.4.0(postcss@8.4.27)
       eslint:
         specifier: ^8.39.0
         version: 8.39.0
@@ -71,7 +71,7 @@ importers:
         version: 13.4.0(eslint@8.39.0)(typescript@5.0.4)
       next-sitemap:
         specifier: ^4.0.7
-        version: 4.0.7(@next/env@13.4.11)(next@13.4.7)
+        version: 4.0.7(@next/env@13.4.12)(next@13.4.7)
       prettier-plugin-tailwindcss:
         specifier: ^0.2.3
         version: 0.2.3(prettier@3.0.0)
@@ -555,7 +555,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       rollup-plugin-preserve-directives:
         specifier: 0.2.0
-        version: 0.2.0(rollup@3.21.4)
+        version: 0.2.0(rollup@3.26.3)
       size-limit:
         specifier: ^8.2.6
         version: 8.2.6
@@ -955,10 +955,10 @@ packages:
       - supports-color
     dev: true
 
-  /@babel/helper-define-polyfill-provider@0.4.1(@babel/core@7.21.8):
-    resolution: {integrity: sha512-kX4oXixDxG197yhX+J3Wp+NpL2wuCFjWQAr6yX2jtCnflK9ulMI51ULFGIrWiX1jGfvAxdHp+XQCcP2bZGPs9A==}
+  /@babel/helper-define-polyfill-provider@0.4.2(@babel/core@7.21.8):
+    resolution: {integrity: sha512-k0qnnOqHn5dK9pZpfD5XXZ9SojAITdCKRn2Lp6rnDGzIbaP0rHyMPk/4wsSxVBVz4RfN0q6VpXWP2pDGIoQ7hw==}
     peerDependencies:
-      '@babel/core': ^7.4.0-0
+      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
     dependencies:
       '@babel/core': 7.21.8
       '@babel/helper-compilation-targets': 7.22.9(@babel/core@7.21.8)
@@ -3609,11 +3609,11 @@ packages:
       '@babel/plugin-transform-unicode-property-regex': 7.22.5(@babel/core@7.21.8)
       '@babel/plugin-transform-unicode-regex': 7.22.5(@babel/core@7.21.8)
       '@babel/plugin-transform-unicode-sets-regex': 7.22.5(@babel/core@7.21.8)
-      '@babel/preset-modules': 0.1.5(@babel/core@7.21.8)
+      '@babel/preset-modules': 0.1.6(@babel/core@7.21.8)
       '@babel/types': 7.22.5
-      babel-plugin-polyfill-corejs2: 0.4.4(@babel/core@7.21.8)
-      babel-plugin-polyfill-corejs3: 0.8.2(@babel/core@7.21.8)
-      babel-plugin-polyfill-regenerator: 0.5.1(@babel/core@7.21.8)
+      babel-plugin-polyfill-corejs2: 0.4.5(@babel/core@7.21.8)
+      babel-plugin-polyfill-corejs3: 0.8.3(@babel/core@7.21.8)
+      babel-plugin-polyfill-regenerator: 0.5.2(@babel/core@7.21.8)
       core-js-compat: 3.31.1
       semver: 6.3.1
     transitivePeerDependencies:
@@ -3656,6 +3656,19 @@ packages:
       '@babel/types': 7.22.5
       esutils: 2.0.3
     dev: true
+
+  /@babel/preset-modules@0.1.6(@babel/core@7.21.8):
+    resolution: {integrity: sha512-ID2yj6K/4lKfhuU3+EX4UvNbIt7eACFbHmNUjzA+ep+B5971CknnA/9DEWKbRokfbbtblxxxXFJJrH47UEAMVg==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0 || ^8.0.0-0 <8.0.0
+    dependencies:
+      '@babel/core': 7.21.8
+      '@babel/helper-plugin-utils': 7.22.5
+      '@babel/plugin-proposal-unicode-property-regex': 7.18.6(@babel/core@7.21.8)
+      '@babel/plugin-transform-dotall-regex': 7.22.5(@babel/core@7.21.8)
+      '@babel/types': 7.22.5
+      esutils: 2.0.3
+    dev: false
 
   /@babel/preset-typescript@7.21.5(@babel/core@7.21.8):
     resolution: {integrity: sha512-iqe3sETat5EOrORXiQ6rWfoOg2y68Cs75B9wNxdPW4kixJxh7aXQE1KPdWLDniC24T/6dSnguF33W9j/ZZQcmA==}
@@ -5476,8 +5489,8 @@ packages:
       '@napi-rs/simple-git-win32-x64-msvc': 0.1.8
     dev: false
 
-  /@next/env@13.4.11:
-    resolution: {integrity: sha512-BbPLOkfFFca+OpwSmGhNrl56B3ZzOFS4eJ85SpGTDpjlXoz7XFfS3MMOfjUCTuW1laTrQjm98I9Q30tsYpr8ew==}
+  /@next/env@13.4.12:
+    resolution: {integrity: sha512-RmHanbV21saP/6OEPBJ7yJMuys68cIf8OBBWd7+uj40LdpmswVAwe1uzeuFyUsd6SfeITWT3XnQfn6wULeKwDQ==}
     dev: true
 
   /@next/env@13.4.7:
@@ -5560,11 +5573,6 @@ packages:
     os: [win32]
     requiresBuild: true
     optional: true
-
-  /@nicolo-ribaudo/semver-v6@6.3.3:
-    resolution: {integrity: sha512-3Yc1fUTs69MG/uZbJlLSI3JISMn2UV2rg+1D/vROUqZyh3l6iYHCs7GMp+M40ZD7yOdDbYjJcU1oTJhrc+dGKg==}
-    hasBin: true
-    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -6737,7 +6745,7 @@ packages:
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.2.4(postcss@8.4.26)
+      tailwindcss: 3.2.4(postcss@8.4.27)
     dev: false
 
   /@testing-library/dom@8.20.0:
@@ -8387,7 +8395,7 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
-  /autoprefixer@10.4.0(postcss@8.4.26):
+  /autoprefixer@10.4.0(postcss@8.4.27):
     resolution: {integrity: sha512-7FdJ1ONtwzV1G43GDD0kpVMn/qbiNqyOPMFTX5nRffI+7vgWoFEc6DcXOxHJxrWNDXrZh18eDsZjvZGUljSRGA==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
@@ -8399,7 +8407,7 @@ packages:
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
-      postcss: 8.4.26
+      postcss: 8.4.27
       postcss-value-parser: 4.2.0
     dev: true
 
@@ -8596,15 +8604,15 @@ packages:
       - supports-color
     dev: true
 
-  /babel-plugin-polyfill-corejs2@0.4.4(@babel/core@7.21.8):
-    resolution: {integrity: sha512-9WeK9snM1BfxB38goUEv2FLnA6ja07UMfazFHzCXUb3NyDZAwfXvQiURQ6guTTMeHcOsdknULm1PDhs4uWtKyA==}
+  /babel-plugin-polyfill-corejs2@0.4.5(@babel/core@7.21.8):
+    resolution: {integrity: sha512-19hwUH5FKl49JEsvyTcoHakh6BE0wgXLLptIyKZ3PijHc/Ci521wygORCUCCred+E/twuqRyAkE02BAWPmsHOg==}
     peerDependencies:
-      '@babel/core': ^7.0.0-0
+      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
     dependencies:
       '@babel/compat-data': 7.22.9
       '@babel/core': 7.21.8
-      '@babel/helper-define-polyfill-provider': 0.4.1(@babel/core@7.21.8)
-      '@nicolo-ribaudo/semver-v6': 6.3.3
+      '@babel/helper-define-polyfill-provider': 0.4.2(@babel/core@7.21.8)
+      semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -8644,13 +8652,13 @@ packages:
       - supports-color
     dev: true
 
-  /babel-plugin-polyfill-corejs3@0.8.2(@babel/core@7.21.8):
-    resolution: {integrity: sha512-Cid+Jv1BrY9ReW9lIfNlNpsI53N+FN7gE+f73zLAUbr9C52W4gKLWSByx47pfDJsEysojKArqOtOKZSVIIUTuQ==}
+  /babel-plugin-polyfill-corejs3@0.8.3(@babel/core@7.21.8):
+    resolution: {integrity: sha512-z41XaniZL26WLrvjy7soabMXrfPWARN25PZoriDEiLMxAp50AUW3t35BGQUMg5xK3UrpVTtagIDklxYa+MhiNA==}
     peerDependencies:
-      '@babel/core': ^7.0.0-0
+      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
     dependencies:
       '@babel/core': 7.21.8
-      '@babel/helper-define-polyfill-provider': 0.4.1(@babel/core@7.21.8)
+      '@babel/helper-define-polyfill-provider': 0.4.2(@babel/core@7.21.8)
       core-js-compat: 3.31.1
     transitivePeerDependencies:
       - supports-color
@@ -8699,13 +8707,13 @@ packages:
       - supports-color
     dev: true
 
-  /babel-plugin-polyfill-regenerator@0.5.1(@babel/core@7.21.8):
-    resolution: {integrity: sha512-L8OyySuI6OSQ5hFy9O+7zFjyr4WhAfRjLIOkhQGYl+emwJkd/S4XXT1JpfrgR1jrQ1NcGiOh+yAdGlF8pnC3Jw==}
+  /babel-plugin-polyfill-regenerator@0.5.2(@babel/core@7.21.8):
+    resolution: {integrity: sha512-tAlOptU0Xj34V1Y2PNTL4Y0FOJMDB6bZmoW39FeCQIhigGLkqu3Fj6uiXpxIf6Ij274ENdYx64y6Au+ZKlb1IA==}
     peerDependencies:
-      '@babel/core': ^7.0.0-0
+      '@babel/core': ^7.4.0 || ^8.0.0-0 <8.0.0
     dependencies:
       '@babel/core': 7.21.8
-      '@babel/helper-define-polyfill-provider': 0.4.1(@babel/core@7.21.8)
+      '@babel/helper-define-polyfill-provider': 0.4.2(@babel/core@7.21.8)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -18832,7 +18840,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@4.0.7(@next/env@13.4.11)(next@13.4.7):
+  /next-sitemap@4.0.7(@next/env@13.4.12)(next@13.4.7):
     resolution: {integrity: sha512-S2g5IwJeO0+ecmFq981fb+Mw9YWmntOuN/qTCxclSkUibOJ8qKIOye0vn6NEJ1S4tKhbY+MTYKgJpNdFZYxLoA==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -18841,7 +18849,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 13.4.11
+      '@next/env': 13.4.12
       minimist: 1.2.8
       next: 13.4.7(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
     dev: true
@@ -20400,13 +20408,13 @@ packages:
       resolve: 1.22.2
     dev: false
 
-  /postcss-import@14.1.0(postcss@8.4.26):
+  /postcss-import@14.1.0(postcss@8.4.27):
     resolution: {integrity: sha512-flwI+Vgm4SElObFVPpTIT7SU7R3qk2L7PyduMcokiaVKuWv9d/U+Gm/QAd8NDLuykTWTkcrjOeD2Pp1rMeBTGw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       postcss: ^8.0.0
     dependencies:
-      postcss: 8.4.26
+      postcss: 8.4.27
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.2
@@ -20422,14 +20430,14 @@ packages:
       postcss: 8.4.23
     dev: false
 
-  /postcss-js@4.0.1(postcss@8.4.26):
+  /postcss-js@4.0.1(postcss@8.4.27):
     resolution: {integrity: sha512-dDLF8pEO191hJMtlHFPRa8xsizHaM82MLfNkUHdUtVEV3tgTp5oj+8qbEqYM57SLfc74KSbw//4SeJma2LRVIw==}
     engines: {node: ^12 || ^14 || >= 16}
     peerDependencies:
       postcss: ^8.4.21
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.4.26
+      postcss: 8.4.27
     dev: false
 
   /postcss-load-config@3.1.4(postcss@8.4.23):
@@ -20449,7 +20457,7 @@ packages:
       yaml: 1.10.2
     dev: false
 
-  /postcss-load-config@3.1.4(postcss@8.4.26):
+  /postcss-load-config@3.1.4(postcss@8.4.27):
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
     peerDependencies:
@@ -20462,7 +20470,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 2.1.0
-      postcss: 8.4.26
+      postcss: 8.4.27
       yaml: 1.10.2
     dev: false
 
@@ -20644,13 +20652,13 @@ packages:
       postcss-selector-parser: 6.0.12
     dev: false
 
-  /postcss-nested@6.0.0(postcss@8.4.26):
+  /postcss-nested@6.0.0(postcss@8.4.27):
     resolution: {integrity: sha512-0DkamqrPcmkBDsLn+vQDIrtkSbNkv5AD/M322ySo9kqFkCIYklym2xEmWkwo+Y3/qZo34tzEPNUw4y7yMCdv5w==}
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.2.14
     dependencies:
-      postcss: 8.4.26
+      postcss: 8.4.27
       postcss-selector-parser: 6.0.12
     dev: false
 
@@ -20855,6 +20863,15 @@ packages:
 
   /postcss@8.4.26:
     resolution: {integrity: sha512-jrXHFF8iTloAenySjM/ob3gSj7pCu0Ji49hnjqzsgSRa50hkWCKD0HQ+gMNJkW38jBI68MpAAg7ZWwHwX8NMMw==}
+    engines: {node: ^10 || ^12 || >=14}
+    dependencies:
+      nanoid: 3.3.6
+      picocolors: 1.0.0
+      source-map-js: 1.0.2
+    dev: true
+
+  /postcss@8.4.27:
+    resolution: {integrity: sha512-gY/ACJtJPSmUFPDCHtX78+01fHa64FaU4zaaWfuh1MhGJISufJAH4cun6k/8fwsHYeK4UQmENQK+tRLCFJE8JQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.6
@@ -22207,13 +22224,13 @@ packages:
       rollup-plugin-inject: 3.0.2
     dev: true
 
-  /rollup-plugin-preserve-directives@0.2.0(rollup@3.21.4):
+  /rollup-plugin-preserve-directives@0.2.0(rollup@3.26.3):
     resolution: {integrity: sha512-KUwbBaFvD1zFIDNnOkR+u64sSod3m0l6q46/SzTOa4GTQ6hp6w0FRr2u7x99YkY9qhlna5panmTmuLWeJ/2KWw==}
     peerDependencies:
       rollup: 2.x || 3.x
     dependencies:
       magic-string: 0.30.0
-      rollup: 3.21.4
+      rollup: 3.26.3
     dev: true
 
   /rollup-plugin-sourcemaps@0.6.3(@types/node@17.0.23)(rollup@2.79.1):
@@ -22277,6 +22294,14 @@ packages:
 
   /rollup@3.21.4:
     resolution: {integrity: sha512-N5LxpvDolOm9ueiCp4NfB80omMDqb45ShtsQw2+OT3f11uJ197dv703NZvznYHP6RWR85wfxanXurXKG3ux2GQ==}
+    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /rollup@3.26.3:
+    resolution: {integrity: sha512-7Tin0C8l86TkpcMtXvQu6saWH93nhG3dGQ1/+l5V2TDMceTxO7kDiK6GzbfLWNNxqJXm591PcEZUozZm51ogwQ==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -23526,7 +23551,7 @@ packages:
       - ts-node
     dev: false
 
-  /tailwindcss@3.2.4(postcss@8.4.26):
+  /tailwindcss@3.2.4(postcss@8.4.27):
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -23547,11 +23572,11 @@ packages:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.0
-      postcss: 8.4.26
-      postcss-import: 14.1.0(postcss@8.4.26)
-      postcss-js: 4.0.1(postcss@8.4.26)
-      postcss-load-config: 3.1.4(postcss@8.4.26)
-      postcss-nested: 6.0.0(postcss@8.4.26)
+      postcss: 8.4.27
+      postcss-import: 14.1.0(postcss@8.4.27)
+      postcss-js: 4.0.1(postcss@8.4.27)
+      postcss-load-config: 3.1.4(postcss@8.4.27)
+      postcss-nested: 6.0.0(postcss@8.4.27)
       postcss-selector-parser: 6.0.12
       postcss-value-parser: 4.2.0
       quick-lru: 5.1.1
