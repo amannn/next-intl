@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import getInitializedConfig from 'use-intl/dist/src/react/getInitializedConfig';
+import {initializeConfig} from 'use-intl/core';
 import createRequestConfig from '../server/createRequestConfig';
 
 // Make sure `now` is consistent across the request in case none was configured
@@ -21,7 +21,7 @@ const receiveRuntimeConfig = cache(
 const getConfig = cache(async (locale: string) => {
   const runtimeConfig = await receiveRuntimeConfig(locale, createRequestConfig);
   const opts = {...runtimeConfig, locale};
-  return getInitializedConfig(opts);
+  return initializeConfig(opts);
 });
 
 export default getConfig;

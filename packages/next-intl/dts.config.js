@@ -1,14 +1,26 @@
-/* global module */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-env node */
+
+const preserveDirectives = require('rollup-plugin-preserve-directives').default;
 
 /**
  * @type {import('dts-cli').DtsOptions}
  */
 module.exports = {
   rollup(config) {
-    // Enable tree shaking detection in rollup / Bundlephobia
-    if (config.output.format === 'esm') {
-      config.output.preserveModules = true;
-    }
+    // 'use client' support
+    config.output.preserveModules = true;
+    config.plugins.push(preserveDirectives());
+    config.onwarn = function onwarn(warning, warn) {
+      if (warning.code !== 'MODULE_LEVEL_DIRECTIVE') {
+        warn(warning);
+      }
+    };
+
+    // Otherwise rollup will insert code like `require('next/link')`,
+    // which will break the RSC render due to usage of `createContext`
+    config.treeshake.moduleSideEffects = false;
+
     return config;
   }
 };

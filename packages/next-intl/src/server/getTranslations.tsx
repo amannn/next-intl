@@ -1,14 +1,14 @@
-/* eslint-disable import/default */
-
 import {cache} from 'react';
-import {createTranslator} from 'use-intl/dist/src/core';
-import type Formats from 'use-intl/dist/src/core/Formats';
-import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
-import {CoreRichTranslationValues} from 'use-intl/dist/src/core/createTranslatorImpl';
-import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
-import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
-import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
-import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
+import {
+  createTranslator,
+  Formats,
+  TranslationValues,
+  RichTranslationValuesPlain,
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from 'use-intl/core';
 import getConfig from './getConfig';
 import getLocaleFromHeader from './getLocaleFromHeader';
 
@@ -59,7 +59,7 @@ Promise<{
     >
   >(
     key: TargetKey,
-    values?: CoreRichTranslationValues,
+    values?: RichTranslationValuesPlain,
     formats?: Partial<Formats>
   ): string;
 
@@ -100,4 +100,5 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
   });
 }
 
+/** @deprecated Is called `getTranslator` now. */
 export default cache(getTranslationsImpl);

@@ -1,4 +1,4 @@
-import IntlConfig from 'use-intl/dist/core/IntlConfig';
+import type {IntlConfig} from 'use-intl/core';
 
 type RequestConfig = Omit<IntlConfig, 'locale'>;
 

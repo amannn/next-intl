@@ -1,16 +1,14 @@
-/* eslint-disable import/default -- False positives */
-
 import {ReactElement, ReactNodeArray, cache} from 'react';
-import type Formats from 'use-intl/dist/src/core/Formats';
-import type TranslationValues from 'use-intl/dist/src/core/TranslationValues';
-import type {RichTranslationValues} from 'use-intl/dist/src/core/TranslationValues';
-import createBaseTranslator, {
-  getMessagesOrError
-} from 'use-intl/dist/src/core/createBaseTranslator';
-import MessageKeys from 'use-intl/dist/src/core/utils/MessageKeys';
-import NamespaceKeys from 'use-intl/dist/src/core/utils/NamespaceKeys';
-import NestedKeyOf from 'use-intl/dist/src/core/utils/NestedKeyOf';
-import NestedValueOf from 'use-intl/dist/src/core/utils/NestedValueOf';
+import {
+  Formats,
+  TranslationValues,
+  RichTranslationValues,
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf,
+  createBaseTranslator
+} from 'use-intl/core';
 import getConfig from '../server/getConfig';
 
 let hasWarned = false;
@@ -111,17 +109,10 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
   }
 
   const config = await getConfig(locale);
-
-  const messagesOrError = getMessagesOrError({
-    messages: config.messages as any,
-    namespace,
-    onError: config.onError
-  });
-
   return createBaseTranslator({
     ...config,
     namespace,
-    messagesOrError
+    messages: config.messages
   });
 }
 

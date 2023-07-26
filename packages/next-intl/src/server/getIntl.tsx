@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {createIntl} from 'use-intl/dist/src/core';
+import {createIntl} from 'use-intl/core';
 import getConfig from './getConfig';
 import getLocaleFromHeader from './getLocaleFromHeader';
 

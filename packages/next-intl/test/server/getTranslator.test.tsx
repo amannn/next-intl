@@ -7,11 +7,13 @@ import {
   getFormatter,
   getNow,
   getTimeZone
-} from '../../src/server';
+} from '../../src/server.react-server';
 
 vi.mock('next-intl/config', () => ({
   default: async () =>
-    ((await vi.importActual('../../src/server')) as any).getRequestConfig({
+    (
+      (await vi.importActual('../../src/server.react-server')) as any
+    ).getRequestConfig({
       locale: 'en',
       now: new Date('2020-01-01T00:00:00.000Z'),
       timeZone: 'Europe/London',

@@ -11,7 +11,9 @@ import type {
 } from '..';
 
 function notSupported(name: string) {
-  throw new Error(`\`${name}\` is not supported in Client Components.`);
+  return () => {
+    throw new Error(`\`${name}\` is not supported in Client Components.`);
+  };
 }
 
 // Must match `../index.tsx`
@@ -19,16 +21,19 @@ function notSupported(name: string) {
 // prettier-ignore
 export const getRequestConfig = notSupported('getRequestConfig') as unknown as typeof getRequestConfig_type;
 // prettier-ignore
+/** @deprecated Is called `getFormatter` now. */
 export const getIntl = notSupported('getIntl') as unknown as typeof getIntl_type;
 // prettier-ignore
 export const getFormatter = notSupported('getFormatter') as unknown as typeof getFormatter_type;
 // prettier-ignore
+/** @deprecated Please use the `locale` parameter from Next.js instead. */
 export const getLocale = notSupported('getLocale') as unknown as typeof getLocale_type;
 // prettier-ignore
 export const getNow = notSupported('getNow') as unknown as typeof getNow_type;
 // prettier-ignore
 export const getTimeZone = notSupported('getTimeZone') as unknown as typeof getTimeZone_type;
 // prettier-ignore
+/** @deprecated Is called `getTranslator` now. */
 export const getTranslations = notSupported('getTranslations') as unknown as typeof getTranslations_type;
 // prettier-ignore
 export const getTranslator = notSupported('getTranslator') as unknown as typeof getTranslator_type;

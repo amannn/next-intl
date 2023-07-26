@@ -1,9 +1,9 @@
 import Formats from './Formats';
 import IntlConfig from './IntlConfig';
-import TranslationValues from './TranslationValues';
-import createTranslatorImpl, {
-  CoreRichTranslationValues
-} from './createTranslatorImpl';
+import TranslationValues, {
+  RichTranslationValuesPlain
+} from './TranslationValues';
+import createTranslatorImpl from './createTranslatorImpl';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
@@ -70,7 +70,7 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    values?: CoreRichTranslationValues,
+    values?: RichTranslationValuesPlain,
     formats?: Partial<Formats>
   ): string;
 

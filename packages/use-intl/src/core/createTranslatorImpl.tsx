@@ -1,15 +1,13 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
-import {RichTranslationValues, TranslationValue} from './TranslationValues';
-import createBaseTranslator, {getMessagesOrError} from './createBaseTranslator';
+import {
+  RichTranslationValues,
+  RichTranslationValuesPlain
+} from './TranslationValues';
+import createBaseTranslator from './createBaseTranslator';
 import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
-
-export type CoreRichTranslationValues = Record<
-  string,
-  TranslationValue | ((chunks: string) => string)
->;
 
 export type CreateTranslatorImplProps<Messages> = Omit<
   InitializedIntlConfig,
@@ -41,11 +39,8 @@ export default function createTranslatorImpl<
     ...rest,
     onError,
     getMessageFallback,
-    messagesOrError: getMessagesOrError({
-      messages,
-      namespace,
-      onError
-    }) as Messages | IntlError
+    messages,
+    namespace
   });
 
   const originalRich = translator.rich;
@@ -58,7 +53,7 @@ export default function createTranslatorImpl<
   base.rich = (
     key: Parameters<typeof originalRich>[0],
     /** Key value pairs for values to interpolate into the message. */
-    values: CoreRichTranslationValues,
+    values: RichTranslationValuesPlain,
     formats?: Parameters<typeof originalRich>[2]
   ): string => {
     // `chunks` is returned as a string when no React element

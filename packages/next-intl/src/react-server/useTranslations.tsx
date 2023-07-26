@@ -7,6 +7,7 @@ export default function useTranslations(
   ...[namespace]: Parameters<typeof useTranslationsType>
 ): ReturnType<typeof useTranslationsType> {
   const locale = useLocale();
+
   const result = useHook(
     'useTranslations',
     getBaseTranslator(locale, namespace)
