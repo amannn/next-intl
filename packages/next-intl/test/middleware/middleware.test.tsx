@@ -5,20 +5,25 @@ import createIntlMiddleware from '../../src/middleware';
 import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
-type MockResponse = NextResponse & {
-  args: Array<any>;
-};
-
 vi.mock('next/server', () => {
-  const response = {
-    headers: new Headers(),
-    cookies: new RequestCookies(new Headers())
-  };
+  type MiddlewareResponseInit = Parameters<(typeof NextResponse)['next']>[0];
+
+  function createResponse(init: MiddlewareResponseInit) {
+    const response = new Response(null, init);
+    (response as any).cookies = new RequestCookies(
+      init?.request?.headers || new Headers()
+    );
+    return response as NextResponse;
+  }
   return {
     NextResponse: {
-      next: vi.fn(() => response),
-      rewrite: vi.fn(() => response),
-      redirect: vi.fn(() => response)
+      next: vi.fn((init: ResponseInit) => createResponse(init)),
+      rewrite: vi.fn((_destination: string, init: ResponseInit) =>
+        createResponse(init)
+      ),
+      redirect: vi.fn((_url: string, init: ResponseInit) =>
+        createResponse(init)
+      )
     }
   };
 });
@@ -54,14 +59,6 @@ function createMockRequest(
   } as NextRequest;
 }
 
-function createMockMiddleware(
-  ...args: Parameters<typeof createIntlMiddleware>
-) {
-  return createIntlMiddleware(...args) as (
-    request: NextRequest
-  ) => MockResponse;
-}
-
 const MockedNextResponse = NextResponse as unknown as {
   next: Mock<Parameters<(typeof NextResponse)['next']>>;
   rewrite: Mock<Parameters<(typeof NextResponse)['rewrite']>>;
@@ -69,14 +66,12 @@ const MockedNextResponse = NextResponse as unknown as {
 };
 
 beforeEach(() => {
-  MockedNextResponse.next.mockClear();
-  MockedNextResponse.rewrite.mockClear();
-  MockedNextResponse.redirect.mockClear();
+  vi.clearAllMocks();
 });
 
 describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de']
     });
@@ -214,10 +209,21 @@ describe('prefix-based routing', () => {
         )
       ).toBe('test');
     });
+
+    it('returns alternate links', () => {
+      const response = middleware(createMockRequest('/'));
+      expect(response.headers.get('link')).toBe(
+        [
+          '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+        ].join(', ')
+      );
+    });
   });
 
   describe('localePrefix: as-needed, localeDetection: false', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'as-needed',
@@ -245,7 +251,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: always', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'always'
@@ -302,16 +308,184 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).toHaveBeenCalled();
     });
   });
+
+  describe('localePrefix: never', () => {
+    const middleware = createIntlMiddleware({
+      defaultLocale: 'en',
+      locales: ['en', 'de'],
+      localePrefix: 'never'
+    });
+
+    it('rewrites requests for the default locale', () => {
+      middleware(createMockRequest('/'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+
+    it('rewrites requests for other locales', () => {
+      middleware(createMockRequest('/', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/de'
+      );
+    });
+
+    it('rewrites requests for the default locale at a nested path', () => {
+      middleware(createMockRequest('/list'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en/list'
+      );
+    });
+
+    it('rewrites requests for other locales at a nested path', () => {
+      middleware(createMockRequest('/list', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/de/list'
+      );
+    });
+
+    it('redirects requests with default locale in the path', () => {
+      middleware(createMockRequest('/en'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/'
+      );
+    });
+
+    it('redirects requests with other locales in the path', () => {
+      middleware(createMockRequest('/de', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/'
+      );
+    });
+
+    it('redirects requests with default locale in a nested path', () => {
+      middleware(createMockRequest('/en/list'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('rewrites requests for the root if a cookie exists with a non-default locale', () => {
+      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/de'
+      );
+    });
+
+    it('rewrites requests for the root if a cookie exists with the default locale', () => {
+      middleware(createMockRequest('/', 'de', 'http://localhost:3000', 'en'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+
+    it('sets a cookie', () => {
+      const response = middleware(createMockRequest('/'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'en'
+      });
+    });
+
+    it('sets a cookie based on accept-language header', () => {
+      const response = middleware(createMockRequest('/', 'de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('keeps a cookie if already set', () => {
+      const response = middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', 'de')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('sets a cookie with locale in the path', () => {
+      const response = middleware(createMockRequest('/de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('updates a cookie with locale in the path', () => {
+      const response = middleware(
+        createMockRequest('/de', 'en', 'http://localhost:3000', 'en')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'de'
+      });
+    });
+
+    it('retains request headers for the default locale', () => {
+      middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
+          'x-test'
+        )
+      ).toBe('test');
+    });
+
+    it('retains request headers for secondary locales', () => {
+      middleware(
+        createMockRequest('/', 'de', 'http://localhost:3000', undefined, {
+          'x-test': 'test'
+        })
+      );
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
+          'x-test'
+        )
+      ).toBe('test');
+    });
+
+    it('disables the alternate links', () => {
+      const response = middleware(createMockRequest('/'));
+      expect(response.headers.get('link')).toBe(null);
+    });
+  });
 });
 
 describe('domain-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       domains: [
         {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
-        {defaultLocale: 'en', domain: 'ca.example.com', locales: ['en', 'fr']},
+        {
+          defaultLocale: 'en',
+          domain: 'ca.example.com',
+          locales: ['en', 'fr']
+        },
         {defaultLocale: 'fr', domain: 'fr.example.com', locales: ['fr']}
       ]
     });
@@ -362,6 +536,18 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).toHaveBeenCalled();
+    });
+
+    it('returns alternate links', () => {
+      const response = middleware(createMockRequest('/'));
+      expect(response.headers.get('link')).toBe(
+        [
+          '<http://en.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
+        ].join(', ')
+      );
     });
 
     describe('unknown hosts', () => {
@@ -509,13 +695,17 @@ describe('domain-based routing', () => {
   });
 
   describe("localePrefix: 'always'", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       localePrefix: 'always',
       domains: [
         {defaultLocale: 'en', domain: 'example.com', locales: ['en']},
-        {defaultLocale: 'en', domain: 'ca.example.com', locales: ['en', 'fr']}
+        {
+          defaultLocale: 'en',
+          domain: 'ca.example.com',
+          locales: ['en', 'fr']
+        }
       ]
     });
 
@@ -565,7 +755,7 @@ describe('domain-based routing', () => {
 
 describe('deprecated domain config', () => {
   it("accepts deprecated config with `routing.type: 'prefix'`", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       routing: {
@@ -590,7 +780,7 @@ describe('deprecated domain config', () => {
   });
 
   it("accepts deprecated config with `routing.type: 'domain'`", () => {
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       routing: {
@@ -645,7 +835,7 @@ describe('deprecated domain config', () => {
       }
     ] as Array<DomainConfig>;
 
-    const middleware = createMockMiddleware({
+    const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       domains

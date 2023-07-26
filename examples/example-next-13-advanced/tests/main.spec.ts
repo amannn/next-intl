@@ -545,3 +545,15 @@ it('populates metadata', async ({page}) => {
     'Europe/Vienna'
   );
 });
+
+it('supports opengraph images', async ({page, request}) => {
+  await page.goto('/');
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute('content');
+  expect(ogImage).toBeTruthy();
+  const ogImageUrl = new URL(ogImage!);
+  expect(ogImageUrl.pathname).toBe('/en/opengraph-image');
+  const result = await request.get(ogImageUrl.pathname);
+  expect(result.ok()).toBe(true);
+});
