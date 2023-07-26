@@ -17,7 +17,8 @@ export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvide
 export {default as NextIntlProvider} from '../shared/NextIntlClientProvider';
 
 /** @deprecated Is available as `import Link from 'next-intl/link'` now. */
-export const LocalizedLink = Link;
-export {default as Link} from './Link';
+export const LocalizedLink = Link; // TODO: Remove, this is only for compatibility in the RSC beta and would break Next.js 12
+/** @deprecated Is available as `import Link from 'next-intl/link'` now. */
+export {default as Link} from './Link'; // TODO: Remove, this is only for compatibility in the RSC beta and would break Next.js 12
 
 export {default as useLocalizedRouter} from './useLocalizedRouter';
