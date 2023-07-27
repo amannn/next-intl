@@ -166,6 +166,8 @@ t.rich('richText', {
 
 If you want to use the same tag multiple times, you can configure it via the [default translation values](/docs/configuration#default-translation-values).
 
+Note that the ICU parser doesn't support self-closing tags at this point, therefore you have to use syntax like `<br></br>` if your rich text function doesn't intend to receive any `chunks` (e.g. `br: () => <br />`).
+
 ## Arrays of messages
 
 If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
