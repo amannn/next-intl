@@ -1,4 +1,4 @@
-import {redirect} from 'next-intl/server';
+import {redirect} from '../../../navigation';
 
 export default function Redirect() {
   redirect('/client');

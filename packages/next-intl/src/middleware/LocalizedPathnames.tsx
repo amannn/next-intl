@@ -22,13 +22,19 @@ export function getLocalizedRedirectPathname<Locales extends AllLocales>(
     configWithDefaults.locales
   );
 
-  for (const [, routePath] of Object.entries(configWithDefaults.pathnames)) {
-    if (typeof routePath === 'string') {
+  // TODO
+  // what if there's no path locale? assume default locale?
+  // we can't use the defaultLocale btw., but should consult the domain config
+
+  for (const [, localizedPathnames] of Object.entries(
+    configWithDefaults.pathnames
+  )) {
+    if (typeof localizedPathnames === 'string') {
       // No redirect is necessary if all locales use the same pathname
       continue;
     }
 
-    for (const [locale, localePathname] of Object.entries(routePath)) {
+    for (const [locale, localePathname] of Object.entries(localizedPathnames)) {
       if (resolvedLocale === locale) {
         continue;
       }
@@ -45,7 +51,10 @@ export function getLocalizedRedirectPathname<Locales extends AllLocales>(
         if (resolvedLocale !== configWithDefaults.defaultLocale || pathLocale) {
           targetPathname = `/${resolvedLocale}`;
         }
-        targetPathname += formatPathname(routePath[resolvedLocale], params);
+        targetPathname += formatPathname(
+          localizedPathnames[resolvedLocale],
+          params
+        );
 
         return getPathWithSearch(targetPathname, request.nextUrl.search);
       }
@@ -71,30 +80,39 @@ export function getLocalizedRewritePathname<Locales extends AllLocales>(
     configWithDefaults.locales
   );
 
+  // TODO
+  // this assumption is wrong
+  // maybe we should consult the domain config here to figure out the default locale and then use it to map a localized pathname to an internal one
+  // generally test the case when the internal path is different than the default locale
+  // const locale = pathLocale ?? configWithDefaults.defaultLocale;
   if (
     // When using unprefixed routing, we assume that the
     // pathname uses routes from the default locale
-    !pathLocale ||
-    // Internal routes are set up based on the default locale
-    pathLocale === configWithDefaults.defaultLocale
+    !pathLocale
   ) {
     return;
   }
 
-  for (const [, routePath] of Object.entries(configWithDefaults.pathnames)) {
-    if (typeof routePath === 'string') {
+  for (const [internalPathname, localizedPathnames] of Object.entries(
+    configWithDefaults.pathnames
+  )) {
+    if (typeof localizedPathnames === 'string') {
       // No rewrite is necessary if all locales use the same pathname
       continue;
     }
 
-    const defaultLocalePathname = routePath[configWithDefaults.defaultLocale];
-    const pathLocalePathname = `/${pathLocale}${routePath[pathLocale]}`;
+    if (internalPathname === localizedPathnames[pathLocale]) {
+      // No rewrite is necessary if the localized pathname matches the internal one
+      continue;
+    }
+
+    const pathLocalePathname = `/${pathLocale}${localizedPathnames[pathLocale]}`;
     const matches = matchesPathname(pathLocalePathname, pathname);
 
     if (matches) {
       const params = getRouteParams(pathLocalePathname, pathname);
       return getPathWithSearch(
-        `/${pathLocale}` + formatPathname(defaultLocalePathname, params),
+        `/${pathLocale}` + formatPathname(internalPathname, params),
         request.nextUrl.search
       );
     }

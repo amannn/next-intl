@@ -1,17 +1,13 @@
 import React, {ComponentProps} from 'react';
 import BaseLink from '../../link/react-server';
-import {redirect as baseRedirect} from '../../server';
 import getLocaleFromHeader from '../../server/getLocaleFromHeader';
+import {redirect as baseRedirect} from '../../server.react-server';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
-import {Params, compileNamedRoute} from '../utils';
+import {Params, compileLocalizedPathname} from '../utils';
 
-export default function createNamedNavigation<Locales extends AllLocales>({
-  locales,
-  pathnames
-}: {
-  locales: Locales;
-  pathnames: Pathnames<Locales>;
-}) {
+export default function createLocalizedPathnamesNavigation<
+  Locales extends AllLocales
+>({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
   function Link({
     href,
     locale,
@@ -27,12 +23,13 @@ export default function createNamedNavigation<Locales extends AllLocales>({
 
     return (
       <BaseLink
-        href={compileNamedRoute({
+        href={compileLocalizedPathname({
           locale: finalLocale,
           href,
           params,
           pathnames
         })}
+        locale={locale}
         {...rest}
       />
     );
@@ -53,7 +50,7 @@ export default function createNamedNavigation<Locales extends AllLocales>({
         : nameOrNameWithParams;
 
     const locale = getLocaleFromHeader();
-    const href = compileNamedRoute({
+    const href = compileLocalizedPathname({
       locale,
       href: name,
       params,
@@ -64,9 +61,11 @@ export default function createNamedNavigation<Locales extends AllLocales>({
   }
 
   function notSupported(message: string) {
-    throw new Error(
-      `\`${message}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
-    );
+    return () => {
+      throw new Error(
+        `\`${message}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
+      );
+    };
   }
 
   return {

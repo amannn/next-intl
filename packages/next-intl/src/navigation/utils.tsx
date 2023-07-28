@@ -1,40 +1,73 @@
-import {AllLocales, Pathnames} from '../shared/types';
+import type {UrlObject} from 'url';
+import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
 
 // TODO: Can we type this?
-export type Params = Record<string, string>;
+export type Params = Record<string, string | number | boolean>;
 
-export function compileNamedRoute<Locales extends AllLocales>({
-  href: name,
+export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
+  locale: Locales[number];
+  // eslint-disable-next-line no-use-before-define -- False positive
+  href: keyof typeof opts.pathnames;
+  params?: Params;
+  pathnames: Pathnames<Locales>;
+}): string;
+export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
+  locale: Locales[number];
+  // eslint-disable-next-line no-use-before-define -- False positive
+  href: StrictUrlObject<keyof typeof opts.pathnames>;
+  params?: Params;
+  pathnames: Pathnames<Locales>;
+}): UrlObject;
+export function compileLocalizedPathname<Locales extends AllLocales>({
+  href,
   locale,
   params,
   pathnames
 }: {
   locale: Locales[number];
-  href: keyof Pathnames<Locales>;
+  href: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
   params?: Params;
   pathnames: Pathnames<Locales>;
 }) {
-  const namedPath = pathnames[name];
-
-  if (!namedPath) {
-    throw new Error(
-      `No named route found for "${name}". Available routes: ${Object.keys(
-        pathnames
-      ).join(', ')}`
-    );
+  function getNamedPath(value: keyof typeof pathnames) {
+    const namedPath = pathnames[value];
+    if (!namedPath) {
+      throw new Error(
+        `No named route found for "${value}". Available routes: ${Object.keys(
+          pathnames
+        ).join(', ')}`
+      );
+    }
+    return namedPath;
   }
 
-  const href = typeof namedPath === 'string' ? namedPath : namedPath[locale];
-  if (params) {
-    // Object.keys(params).forEach((param) => {
-    //   href = href.replace(
-    //     new RegExp(':' + param, 'g'),
-    //     (params as any)[param]
-    //   );
-    // });
+  function compilePath(
+    namedPath: Pathnames<Locales>[keyof Pathnames<Locales>]
+  ) {
+    let compiled =
+      typeof namedPath === 'string' ? namedPath : namedPath[locale];
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        compiled = compiled.replace(`[${key}]`, String(value));
+      });
+    }
+    // Error handling if there are unresolved params
+
+    return compiled;
   }
 
-  return href;
+  if (typeof href === 'string') {
+    const namedPath = getNamedPath(href);
+    const compiled = compilePath(namedPath);
+    return compiled;
+  } else {
+    const {pathname, ...rest} = href;
+    const namedPath = getNamedPath(pathname);
+    const compiled = compilePath(namedPath);
+    const result: UrlObject = {...rest, pathname: compiled};
+    return result;
+  }
 }
 
 export function getNamedRoute<Locales extends AllLocales>({

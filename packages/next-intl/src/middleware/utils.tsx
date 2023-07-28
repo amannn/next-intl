@@ -1,4 +1,3 @@
-import {pathToRegexp, match, compile} from 'path-to-regexp';
 import {AllLocales} from '../shared/types';
 import {DomainConfig} from './NextIntlMiddlewareConfig';
 
@@ -21,25 +20,41 @@ export function getBasePath(pathname: string, pathLocale: string) {
   return pathname.replace(`/${pathLocale}`, '') || '/';
 }
 
-export function matchesPathname(template: string, pathname: string) {
-  const regex = pathToRegexp(template);
-  const matches = regex.exec(pathname);
-  return matches != null;
+function templateToRegex(template: string): RegExp {
+  const regexPattern = template.replace(/\[([^\]]+)\]/g, '([^/]+)');
+  return new RegExp(`^${regexPattern}$`);
+}
+
+export function matchesPathname(
+  /** E.g. `/users/[userId]-[userName]` */
+  template: string,
+  /** E.g. `/users/23-jane` */
+  pathname: string
+) {
+  const regex = templateToRegex(template);
+  return regex.test(pathname);
 }
 
 export function getRouteParams(template: string, pathname: string) {
-  const fn = match(
-    template
-    // { decode: decodeURIComponent }
-  );
-
-  const result = fn(pathname);
-  return result ? result.params : undefined;
+  const regex = templateToRegex(template);
+  const match = regex.exec(pathname);
+  if (!match) return undefined;
+  const params: Record<string, string> = {};
+  for (let i = 1; i < match.length; i++) {
+    const key = template.match(/\[([^\]]+)\]/g)?.[i - 1].replace(/[[\]]/g, '');
+    if (key) params[key] = match[i];
+  }
+  return params;
 }
 
 export function formatPathname(template: string, params?: object) {
-  const toPath = compile(template);
-  return toPath(params);
+  if (!params) return template;
+
+  let result = template;
+  Object.entries(params).forEach(([key, value]) => {
+    result = result.replace(`[${key}]`, value);
+  });
+  return result;
 }
 
 export function getPathWithSearch(

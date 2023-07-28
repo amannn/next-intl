@@ -1,3 +1,5 @@
+import type {UrlObject} from 'url';
+
 export type Locale = string;
 export type AllLocales = ReadonlyArray<Locale>;
 
@@ -5,6 +7,17 @@ export type Pathnames<Locales extends AllLocales> = Record<
   string,
   {[Key in Locales[number]]: string} | string
 >;
+
+export type StrictUrlObject<Pathname extends string> = Omit<
+  UrlObject,
+  'pathname'
+> & {
+  pathname: Pathname;
+};
+
+export type HrefOrUrlObject<Pathname extends string> =
+  | Pathname
+  | StrictUrlObject<Pathname>;
 
 export type ParametersExceptFirst<Fn> = Fn extends (
   arg0: any,

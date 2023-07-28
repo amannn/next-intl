@@ -20,7 +20,11 @@
   "Navigation": {
     "home": "Home",
     "client": "Client page",
-    "nested": "Nested page"
+    "nested": "Nested page",
+    "newsArticle": "News article #{articleId}"
+  },
+  "NewsArticle": {
+    "title": "News article #{articleId}"
   },
   "NotFound": {
     "title": "This page was not found (404)"

@@ -6,16 +6,17 @@ import {
 import useClientLocale from '../client/useClientLocale';
 import BaseLink from '../link';
 import baseRedirect from '../server/react-client/redirect';
-import {AllLocales, ParametersExceptFirst, Pathnames} from '../shared/types';
-import {Params, compileNamedRoute, getNamedRoute} from './utils';
+import {
+  AllLocales,
+  HrefOrUrlObject,
+  ParametersExceptFirst,
+  Pathnames
+} from '../shared/types';
+import {Params, compileLocalizedPathname, getNamedRoute} from './utils';
 
-export default function createNamedNavigation<Locales extends AllLocales>({
-  locales,
-  pathnames
-}: {
-  locales: Locales;
-  pathnames: Pathnames<Locales>;
-}) {
+export default function createLocalizedPathnamesNavigation<
+  Locales extends AllLocales
+>({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
   function useLocale() {
     return useClientLocale() as (typeof locales)[number];
   }
@@ -28,7 +29,7 @@ export default function createNamedNavigation<Locales extends AllLocales>({
         params,
         ...rest
       }: Omit<ComponentProps<typeof BaseLink>, 'href' | 'name'> & {
-        href: keyof Pathnames<Locales>;
+        href: HrefOrUrlObject<keyof typeof pathnames>;
         params?: Params;
         locale?: Locales[number];
       },
@@ -40,12 +41,14 @@ export default function createNamedNavigation<Locales extends AllLocales>({
       return (
         <BaseLink
           ref={ref}
-          href={compileNamedRoute({
+          href={compileLocalizedPathname<Locales>({
             locale: finalLocale,
+            // @ts-expect-error -- No idea
             href,
             params,
             pathnames
           })}
+          locale={locale}
           {...rest}
         />
       );
@@ -53,7 +56,7 @@ export default function createNamedNavigation<Locales extends AllLocales>({
   );
   Link.displayName = 'Link';
 
-  type NameOrNameWithParams =
+  type HrefOrHrefWithParams =
     | keyof Pathnames<Locales>
     | {
         href: keyof Pathnames<Locales>;
@@ -61,7 +64,7 @@ export default function createNamedNavigation<Locales extends AllLocales>({
       };
 
   function normalizeNameOrNameWithParams(
-    nameOrNameWithParams: NameOrNameWithParams
+    nameOrNameWithParams: HrefOrHrefWithParams
   ) {
     return typeof nameOrNameWithParams === 'string'
       ? {href: nameOrNameWithParams, params: undefined}
@@ -69,12 +72,12 @@ export default function createNamedNavigation<Locales extends AllLocales>({
   }
 
   function redirect(
-    nameOrNameWithParams: NameOrNameWithParams,
+    nameOrNameWithParams: HrefOrHrefWithParams,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
     const locale = useLocale();
-    const href = compileNamedRoute({
+    const href = compileLocalizedPathname({
       ...normalizeNameOrNameWithParams(nameOrNameWithParams),
       locale,
       pathnames
@@ -89,10 +92,10 @@ export default function createNamedNavigation<Locales extends AllLocales>({
     return {
       ...baseRouter,
       push(
-        nameOrNameWithParams: NameOrNameWithParams,
+        nameOrNameWithParams: HrefOrHrefWithParams,
         ...args: ParametersExceptFirst<typeof baseRouter.push>
       ) {
-        const href = compileNamedRoute({
+        const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
           locale,
           pathnames
@@ -101,10 +104,10 @@ export default function createNamedNavigation<Locales extends AllLocales>({
       },
 
       replace(
-        nameOrNameWithParams: NameOrNameWithParams,
+        nameOrNameWithParams: HrefOrHrefWithParams,
         ...args: ParametersExceptFirst<typeof baseRouter.replace>
       ) {
-        const href = compileNamedRoute({
+        const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
           locale,
           pathnames
@@ -113,10 +116,10 @@ export default function createNamedNavigation<Locales extends AllLocales>({
       },
 
       prefetch(
-        nameOrNameWithParams: NameOrNameWithParams,
+        nameOrNameWithParams: HrefOrHrefWithParams,
         ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
       ) {
-        const href = compileNamedRoute({
+        const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
           locale,
           pathnames

@@ -20,7 +20,11 @@
   "Navigation": {
     "home": "Inicio",
     "client": "Página del cliente",
-    "nested": "Página anidada"
+    "nested": "Página anidada",
+    "newsArticle": "Noticias #{articleId}"
+  },
+  "NewsArticle": {
+    "title": "Noticias #{articleId}"
   },
   "NotFound": {
     "title": "Esta página no se encontró (404)"

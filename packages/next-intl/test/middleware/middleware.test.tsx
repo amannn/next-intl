@@ -227,22 +227,22 @@ describe('prefix-based routing', () => {
         defaultLocale: 'en',
         locales: ['en', 'de'],
         pathnames: {
-          home: '/',
-          about: {
+          '/': '/',
+          '/about': {
             en: '/about',
             de: '/ueber'
           },
-          users: {
+          '/users': {
             en: '/users',
             de: '/benutzer'
           },
-          'users-detail': {
-            en: '/users/:userId',
-            de: '/benutzer/:userId'
+          '/users/[userId]': {
+            en: '/users/[userId]',
+            de: '/benutzer/[userId]'
           },
-          'news-detail': {
-            en: '/news/:articleSlug-:articleId',
-            de: '/neuigkeiten/:articleSlug-:articleId'
+          '/news/[articleSlug]-[articleId]': {
+            en: '/news/[articleSlug]-[articleId]',
+            de: '/neuigkeiten/[articleSlug]-[articleId]'
           }
         }
       });
@@ -447,22 +447,22 @@ describe('prefix-based routing', () => {
         locales: ['en', 'de'],
         localePrefix: 'always',
         pathnames: {
-          home: '/',
-          about: {
+          '/': '/',
+          '/about': {
             en: '/about',
             de: '/ueber'
           },
-          users: {
+          '/users': {
             en: '/users',
             de: '/benutzer'
           },
-          'users-detail': {
-            en: '/users/:userId',
-            de: '/benutzer/:userId'
+          '/users/[userId]': {
+            en: '/users/[userId]',
+            de: '/benutzer/[userId]'
           },
-          'news-detail': {
-            en: '/news/:articleSlug-:articleId',
-            de: '/neuigkeiten/:articleSlug-:articleId'
+          '/news/[articleSlug]-[articleId]': {
+            en: '/news/[articleSlug]-[articleId]',
+            de: '/neuigkeiten/[articleSlug]-[articleId]'
           }
         }
       });

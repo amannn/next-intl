@@ -14,7 +14,7 @@ export default function NavigationLink({href, ...rest}: Props) {
 
   return (
     <Link
-      aria-current={isActive}
+      aria-current={isActive ? 'page' : undefined}
       className={clsx(
         'inline-block py-3 px-2 transition-colors',
         isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'

@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next-intl/link';
 import {ComponentProps} from 'react';
+import {Link} from '../navigation';
 
 type Props = ComponentProps<typeof Link>;
 

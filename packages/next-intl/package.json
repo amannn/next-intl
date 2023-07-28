@@ -81,7 +81,6 @@
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
     "server-only": "0.0.1",
-    "path-to-regexp": "^6.2.1",
     "use-intl": "^2.19.0"
   },
   "peerDependencies": {

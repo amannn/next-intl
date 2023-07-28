@@ -20,7 +20,11 @@
   "Navigation": {
     "home": "Start",
     "client": "Client-Seite",
-    "nested": "Verschachtelte Seite"
+    "nested": "Verschachtelte Seite",
+    "newsArticle": "News-Artikel #{articleId}"
+  },
+  "NewsArticle": {
+    "title": "News-Artikel #{articleId}"
   },
   "NotFound": {
     "title": "Diese Seite wurde nicht gefunden (404)"

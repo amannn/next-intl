@@ -21,9 +21,9 @@ describe('unprefixed routing', () => {
   });
 
   it('renders an href without a locale if the locale matches for an object href', () => {
-    render(<Link href={{pathname: '/test'}}>Test</Link>);
+    render(<Link href={{pathname: '/test', query: {foo: 'bar'}}}>Test</Link>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
-      '/test'
+      '/test?foo=bar'
     );
   });
 

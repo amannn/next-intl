@@ -1,6 +1,6 @@
 'use client';
 
-import {useRouter} from 'next-intl/client';
+import {useRouter} from '../navigation';
 
 export default function ClientRouterWithoutProvider() {
   const router = useRouter();

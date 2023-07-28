@@ -2,7 +2,7 @@
 
 import {useNow} from 'next-intl';
 import {usePathname} from 'next-intl/client';
-import Link from 'next-intl/link';
+import {Link} from '../../../navigation';
 
 export default function ClientContent() {
   const now = useNow();
