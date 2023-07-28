@@ -87,7 +87,7 @@ export default function createLocalizedPathnamesNavigation<
 
   function useRouter() {
     const baseRouter = useBaseRouter();
-    const locale = useLocale();
+    const defaultLocale = useLocale();
 
     return {
       ...baseRouter,
@@ -97,7 +97,7 @@ export default function createLocalizedPathnamesNavigation<
       ) {
         const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
-          locale,
+          locale: args[0]?.locale || defaultLocale,
           pathnames
         });
         return baseRouter.push(href, ...args);
@@ -109,7 +109,7 @@ export default function createLocalizedPathnamesNavigation<
       ) {
         const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
-          locale,
+          locale: args[0]?.locale || defaultLocale,
           pathnames
         });
         return baseRouter.replace(href, ...args);
@@ -121,7 +121,7 @@ export default function createLocalizedPathnamesNavigation<
       ) {
         const href = compileLocalizedPathname({
           ...normalizeNameOrNameWithParams(nameOrNameWithParams),
-          locale,
+          locale: args[0]?.locale || defaultLocale,
           pathnames
         });
         return baseRouter.prefetch(href, ...args);
