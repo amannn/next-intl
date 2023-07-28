@@ -1,3 +1,5 @@
+import {AllLocales, Pathnames} from '../shared/types';
+
 type RoutingConfigPrefix = {
   type: 'prefix';
 
@@ -14,9 +16,6 @@ type RoutingConfigDomain = {
 };
 
 type LocalePrefix = 'as-needed' | 'always' | 'never';
-
-type Locale = string;
-export type AllLocales = ReadonlyArray<Locale>;
 
 type RoutingBaseConfig<Locales extends AllLocales> = {
   /** A list of all locales that are supported. */
@@ -44,11 +43,6 @@ export type DomainConfig<Locales extends AllLocales> = Omit<
   locale?: string;
 };
 
-export type Pathnames<Locales extends AllLocales> = Record<
-  string,
-  {[Key in Locales[number]]: string} | string
->;
-
 // TODO: Default or not?
 type MiddlewareConfig<Locales extends AllLocales> =
   RoutingBaseConfig<Locales> & {
@@ -66,6 +60,10 @@ type MiddlewareConfig<Locales extends AllLocales> =
 
     /** TODO */
     pathnames?: Pathnames<Locales>;
+    // Internal note: We want to accept this explicitly instead
+    // of inferring it from `next-intl/config` so that:
+    // a) The user gets TypeScript errors when there's a mismatch
+    // b) The middleware can be used in a standalone fashion
   };
 
 export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =

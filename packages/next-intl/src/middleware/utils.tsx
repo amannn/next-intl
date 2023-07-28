@@ -1,5 +1,6 @@
 import {pathToRegexp, match, compile} from 'path-to-regexp';
-import {AllLocales, DomainConfig} from './NextIntlMiddlewareConfig';
+import {AllLocales} from '../shared/types';
+import {DomainConfig} from './NextIntlMiddlewareConfig';
 
 export function getLocaleFromPathname(pathname: string) {
   return pathname.split('/')[1];

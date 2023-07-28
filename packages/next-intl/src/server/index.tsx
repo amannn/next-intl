@@ -3,9 +3,8 @@
  */
 
 import createMiddleware_ from '../middleware';
-import MiddlewareConfig, {
-  AllLocales
-} from '../middleware/NextIntlMiddlewareConfig';
+import MiddlewareConfig from '../middleware/NextIntlMiddlewareConfig';
+import {AllLocales} from '../shared/types';
 
 let hasWarnedForMiddlewareImport = false;
 /** @deprecated Should be imported as `import createMiddleware from 'next-intl/middleware', not from `next-intl/server`. */

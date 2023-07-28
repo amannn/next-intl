@@ -2,6 +2,7 @@ import {useParams} from 'next/navigation';
 import {useLocale} from 'use-intl';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants';
 
+// TODO: Potentially we could export this instead of useLocale from use-intl?
 export default function useClientLocale(): string {
   let locale;
 

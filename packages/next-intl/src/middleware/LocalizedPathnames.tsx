@@ -1,8 +1,6 @@
 import {NextRequest} from 'next/server';
-import {
-  AllLocales,
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
+import {AllLocales} from '../shared/types';
+import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
   formatPathname,
   getKnownLocaleFromPathname,

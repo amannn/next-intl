@@ -1,8 +1,12 @@
 import useClientLocale from '../../client/useClientLocale';
-import baseRedirect from '../../shared/redirect';
+import {ParametersExceptFirstTwo} from '../../shared/types';
+import baseRedirect from '../baseRedirect';
 
-export default function redirect(pathname: string) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export default function redirect(
+  pathname: string,
+  ...args: ParametersExceptFirstTwo<typeof baseRedirect>
+) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
   const locale = useClientLocale();
-  return baseRedirect(pathname, locale);
+  return baseRedirect(pathname, locale, ...args);
 }

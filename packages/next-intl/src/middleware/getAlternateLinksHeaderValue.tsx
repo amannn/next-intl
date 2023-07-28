@@ -1,6 +1,6 @@
 import {NextRequest} from 'next/server';
+import {AllLocales} from '../shared/types';
 import MiddlewareConfig, {
-  AllLocales,
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import {isLocaleSupportedOnDomain} from './utils';

@@ -1,18 +1,15 @@
 'use client';
 
 import clsx from 'clsx';
-import {usePathname} from 'next-intl/client';
-import Link from 'next-intl/link';
+import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
+import {Link} from '../navigation';
 
-type Props = Omit<ComponentProps<typeof Link>, 'href'> & {
-  href: string;
-};
+type Props = ComponentProps<typeof Link>;
 
 export default function NavigationLink({href, ...rest}: Props) {
-  const pathname = usePathname();
-
-  // TODO: We need to consult the pathnames map here
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+  const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;
 
   return (

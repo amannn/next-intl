@@ -4,7 +4,6 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
-import {DomainConfig} from '../../src/middleware/NextIntlMiddlewareConfig';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 vi.mock('next/server', () => {
@@ -1051,21 +1050,21 @@ describe('deprecated domain config', () => {
   });
 
   it('accepts deprecated config with `domain.locale`', () => {
-    const domains = [
-      {
-        locale: 'en',
-        domain: 'en.example.com'
-      },
-      {
-        locale: 'de',
-        domain: 'de.example.com'
-      }
-    ] as Array<DomainConfig>;
-
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
-      domains
+      domains: [
+        // @ts-expect-error Deprecated config
+        {
+          locale: 'en',
+          domain: 'en.example.com'
+        },
+        // @ts-expect-error Deprecated config
+        {
+          locale: 'de',
+          domain: 'de.example.com'
+        }
+      ]
     });
 
     middleware(createMockRequest('/', 'en', 'http://en.example.com'));
