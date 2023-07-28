@@ -17,12 +17,12 @@ export default function LocaleSwitcherSelect({
 }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const namedPath = usePathname();
+  const pathname = usePathname();
 
   function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value;
     startTransition(() => {
-      router.replace(namedPath, {locale: nextLocale});
+      router.replace(pathname, {locale: nextLocale});
     });
   }
 

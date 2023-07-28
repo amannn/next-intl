@@ -1,31 +1,140 @@
 import Callout from 'components/Callout';
+import {Tab, Tabs} from 'nextra-theme-docs';
 
 # Next.js 13 internationalized navigation
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
-## `Link`
+## Strategies
+
+There are two strategies that you can use based on your needs:
+
+1.  [Shared pathnames](#shared-pathnames)
+2.  [Localized pathnames](#localized-pathnames)
+
+Each strategy will provide you with corresponding [navigation APIs](#apis) that you can use in your components. Typically, you'll provide these APIs in a central module that you can easily reference (e.g. `./navigation.ts`).
+
+### Strategy 1: Shared pathnames [#shared-pathnames]
+
+The simplest case is when your app uses the same pathnames, regardless of the locale, e.g.:
+
+- `/en/about`
+- `/en-GB/about`
+
+In this example, the path segment `about` remains the same, regardless of the user's locale. This is the simplest case, because the routes you define in Next.js will map directly to the URLs that a user can request.
+
+To create [navigation APIs](#apis) for this use case, use the `createSharedPathnamesNavigation` function:
+
+```tsx filename="./navigation.tsx"
+import {createSharedPathnamesNavigation} from 'next-intl/navigation';
+
+export const {Link, redirect, usePathname, useRouter} =
+  createSharedPathnamesNavigation({
+    locales: ['en', 'en-GB'],
+    pathnames: {
+      '/': '/',
+      '/about': {
+        en: '/about',
+        de: '/ueber-uns'
+      }
+    }
+  });
+```
+
+The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to share it along with the `locales` from a shared file like `i18n.ts`:
+
+```tsx filename="i18n.ts"
+import {Pathnames} from 'next-intl/navigation';
+
+export const locales = ['en', 'de'] as const;
+
+export const pathnames: Pathnames<typeof locales> = {
+  '/': '/',
+  '/about': {
+    en: '/about',
+    de: '/ueber-uns'
+  }
+} as const;
+```
+
+Have a look at the [App Router example](/examples/app-router) to explore a working implementation of localized pathnames.
+
+### Strategy 2: Localized pathnames [#localized-pathnames]
+
+If you've configured the middleware to [use localized pathnames](/docs/routing/middleware#localizing-pathnames), you can use the `createLocalizedPathnamesNavigation` function to create corresponding navigation APIs:
+
+'re using the middleware configuration localized pathnames in the
+
+Many apps choose to localize pathnames, especially when search engine optimization is relevant:
+
+```tsx filename="./navigation.tsx"
+import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
+
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
+    locales: ['en', 'en-GB']
+  });
+```
+
+---
+
+## APIs
+
+### `Link`
 
 This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
+<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
+
 ```tsx
-import Link from 'next-intl/link';
+import {Link} from '../navigation';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>
 
 // You can override the `locale` to switch to another language
 <Link href="/" locale="de">Switch to German</Link>
+
+// Dynamic params need to be interpolated into the pathname
+<Link href="/users/12">Susan</Link>
 ```
 
-## `useRouter`
+</Tab>
+<Tab>
+When using [localized pathnames](#shared-pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+
+```tsx
+import {Link} from '../navigation';
+
+// When the user is on `/de`, the link will point to `/de/ueber-uns`
+<Link href="/about">About</Link>
+
+// You can override the `locale` to switch to another language
+<Link href="/" locale="en">Switch to English</Link>
+
+// Dynamic params need to be passed to a separate prop
+<Link href="/users/[userId]" params={{userId: '5'}}>Susan</Link>
+```
+
+</Tab>
+</Tabs>
+
+<Callout>
+  Note that `prefetch` will be turned off when linking to another locale to
+  avoid prematurely overwriting the locale cookie.
+</Callout>
+
+### `useRouter`
 
 If you need to navigate programmatically, e.g. in an event handler, `next-intl` provides a convience API that wraps [`useRouter` from Next.js](https://nextjs.org/docs/app/api-reference/functions/use-router) and automatically applies the locale of the user.
 
+<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
 ```tsx
 'use client';
 
-import {useRouter} from 'next-intl/client';
+import {useRouter} from '../navigation';
 
 const router = useRouter();
 
@@ -33,8 +142,12 @@ const router = useRouter();
 router.push('/about');
 
 // You can override the `locale` to switch to another language
-router.push('/about', {locale: 'de'});
-```
+router.replace('/about', {locale: 'de'});
+
+// Dynamic params need to be interpolated into the pathname
+router.push('/users/12', {locale: 'de'});
+
+````
 
 <details>
 <summary>How can I change the locale for the current page?</summary>
@@ -44,7 +157,7 @@ By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you c
 ```tsx
 'use client';
 
-import {usePathname, useRouter} from 'next-intl/client';
+import {usePathname, useRouter} from '../navigation';
 
 const pathname = usePathname();
 const router = useRouter();
@@ -53,40 +166,129 @@ router.replace(pathname, {locale: 'de'});
 ```
 
 </details>
+</Tab>
+<Tab>
 
-## `usePathname`
-
-To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
+When using [localized pathnames](#shared-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 'use client';
 
-import {usePathname} from 'next-intl/client';
+import {useRouter} from '../navigation';
+
+const router = useRouter();
+
+// When the user is on `/de`, the router will navigate to `/de/ueber-uns`
+router.push('/about');
+
+// You can override the `locale` to switch to another language
+router.replace('/about', {locale: 'en'});
+
+// Dynamic params need to be passed in object format
+router.push({
+  pathname: '/users/[userId]',
+  params: {userId: '12'}
+});
+````
+
+<details>
+<summary>How can I change the locale for the current page?</summary>
+
+By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you can change the locale for the current page programmatically.
+
+Note that if you have dynamic params on some routes, you should pass those as well to potentially resolve an internal pathname.
+
+```tsx
+'use client';
+
+import {useParams} from 'next/navigation';
+import {usePathname, useRouter} from '../navigation';
+
+const pathname = usePathname();
+const router = useRouter();
+const params = useParams();
+
+router.replace({pathname, params}, {locale: 'de'});
+```
+
+</details>
+</Tab>
+</Tabs>
+
+### `usePathname`
+
+To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
+
+<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
+
+```tsx
+'use client';
+
+import {usePathname} from '../navigation';
 
 // When the user is on `/en`, this will be `/`
 const pathname = usePathname();
 ```
 
-## `redirect`
+</Tab>
+<Tab>
+
+When using [localized pathnames](#shared-pathnames), the returned pathname will correspond to an internal pathname.
+
+```tsx
+'use client';
+
+import {usePathname} from '../navigation';
+
+// When the user is on `/de/ueber-uns`, this will be `/about`
+const pathname = usePathname();
+```
+
+Note that internal pathnames are returned without params being resolved (e.g. `/users/[userId]`).
+
+</Tab>
+</Tabs>
+
+### `redirect`
 
 <Callout type="warning">
   This API is only available in [the Server Components
   beta](/docs/getting-started/app-router-server-components).
 </Callout>
 
-If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function from `next-intl/server`. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
+If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
-```tsx {1, 8}
-import {redirect} from 'next-intl/server';
+<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
 
-export default async function Profile() {
-  const user = await fetchUser();
+```tsx
+import {redirect} from '../navigation';
 
-  if (!user) {
-    // When the user is on `/en/profile`, this will be `/en/login`
-    redirect('/login');
-  }
+// When the user is on `/en/profile`, this will be `/en/login`
+redirect('/login');
 
-  // ...
-}
+// Dynamic params need to be interpolated into the pathname
+router.push('/users/12');
 ```
+
+</Tab>
+<Tab>
+
+When using [localized pathnames](#shared-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+
+```tsx
+import {redirect} from '../navigation';
+
+// When the user is on `/en/profile`, this will be `/en/login`
+redirect('/login');
+
+// Dynamic params need to be passed in object format
+redirect({
+  pathname: '/help/[articleSlug]',
+  params: {articleSlug: 'how-to-login'}
+});
+```
+
+</Tab>
+</Tabs>

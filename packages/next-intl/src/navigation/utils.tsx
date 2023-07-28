@@ -7,25 +7,25 @@ export type Params = Record<string, string | number | boolean>;
 export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
   locale: Locales[number];
   // eslint-disable-next-line no-use-before-define -- False positive
-  href: keyof typeof opts.pathnames;
+  pathname: keyof typeof opts.pathnames;
   params?: Params;
   pathnames: Pathnames<Locales>;
 }): string;
 export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
   locale: Locales[number];
   // eslint-disable-next-line no-use-before-define -- False positive
-  href: StrictUrlObject<keyof typeof opts.pathnames>;
+  pathname: StrictUrlObject<keyof typeof opts.pathnames>;
   params?: Params;
   pathnames: Pathnames<Locales>;
 }): UrlObject;
 export function compileLocalizedPathname<Locales extends AllLocales>({
-  href,
+  pathname,
   locale,
   params,
   pathnames
 }: {
   locale: Locales[number];
-  href: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
+  pathname: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
   params?: Params;
   pathnames: Pathnames<Locales>;
 }) {
@@ -57,13 +57,13 @@ export function compileLocalizedPathname<Locales extends AllLocales>({
     return compiled;
   }
 
-  if (typeof href === 'string') {
-    const namedPath = getNamedPath(href);
+  if (typeof pathname === 'string') {
+    const namedPath = getNamedPath(pathname);
     const compiled = compilePath(namedPath);
     return compiled;
   } else {
-    const {pathname, ...rest} = href;
-    const namedPath = getNamedPath(pathname);
+    const {pathname: href, ...rest} = pathname;
+    const namedPath = getNamedPath(href);
     const compiled = compilePath(namedPath);
     const result: UrlObject = {...rest, pathname: compiled};
     return result;

@@ -44,7 +44,7 @@ export default function createLocalizedPathnamesNavigation<
           href={compileLocalizedPathname<Locales>({
             locale: finalLocale,
             // @ts-expect-error -- No idea
-            href,
+            pathname: href,
             params,
             pathnames
           })}
@@ -59,7 +59,7 @@ export default function createLocalizedPathnamesNavigation<
   type HrefOrHrefWithParams =
     | keyof Pathnames<Locales>
     | {
-        href: keyof Pathnames<Locales>;
+        pathname: keyof Pathnames<Locales>;
         params?: Params;
       };
 
@@ -67,7 +67,7 @@ export default function createLocalizedPathnamesNavigation<
     nameOrNameWithParams: HrefOrHrefWithParams
   ) {
     return typeof nameOrNameWithParams === 'string'
-      ? {href: nameOrNameWithParams, params: undefined}
+      ? {pathname: nameOrNameWithParams, params: undefined}
       : nameOrNameWithParams;
   }
 

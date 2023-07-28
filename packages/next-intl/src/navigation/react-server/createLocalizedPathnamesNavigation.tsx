@@ -25,7 +25,7 @@ export default function createLocalizedPathnamesNavigation<
       <BaseLink
         href={compileLocalizedPathname({
           locale: finalLocale,
-          href,
+          pathname: href,
           params,
           pathnames
         })}
@@ -52,7 +52,7 @@ export default function createLocalizedPathnamesNavigation<
     const locale = getLocaleFromHeader();
     const href = compileLocalizedPathname({
       locale,
-      href: name,
+      pathname: name,
       params,
       pathnames
     });
