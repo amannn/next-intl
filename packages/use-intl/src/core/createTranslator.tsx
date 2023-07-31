@@ -104,7 +104,6 @@ export default function createTranslator<
       onError,
       getMessageFallback,
       messages: {'!': messages},
-      // @ts-ignore
       namespace: namespace ? `!.${namespace}` : '!'
     },
     '!'

@@ -357,7 +357,8 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#always-use-a-locale-prefix))
 2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-automatic-locale-detection))
-3. You need to add a redirect for the root of the app
+3. You can't use [pathname localization](#localizing-pathnames).
+4. You need to add a redirect for the root of the app
 
 ```tsx filename="app/page.tsx"
 import {redirect} from 'next/navigation';
