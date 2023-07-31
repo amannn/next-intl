@@ -20,6 +20,12 @@ describe('matchesPathname', () => {
     expect(
       matchesPathname('/users/[userId]/posts/[postId]', '/users/23/posts/42')
     ).toBe(true);
+    expect(
+      matchesPathname('/products/[...slug]', '/products/clothing/t-shirts')
+    ).toBe(true);
+    expect(matchesPathname('/[[...slug]]', '/products/clothing/t-shirts')).toBe(
+      true
+    );
   });
 
   it('returns false for non-matching paths', () => {
@@ -69,7 +75,7 @@ describe('getRouteParams', () => {
     ).toBeUndefined();
   });
 
-  it.only('returns an object with parameters for matching paths', () => {
+  it('returns an object with parameters for matching paths', () => {
     expect(
       getRouteParams('/users/[userId]-[userName]', '/users/23-jane')
     ).toEqual({userId: '23', userName: 'jane'});

@@ -21,7 +21,15 @@ export function getBasePath(pathname: string, pathLocale: string) {
 }
 
 function templateToRegex(template: string): RegExp {
-  const regexPattern = template.replace(/\[([^\]]+)\]/g, '([^/]+)');
+  const regexPattern = template
+    .replace(/\[([^\]]+)\]/g, (match) => {
+      if (match.startsWith('[...')) return '(.*)';
+      if (match.startsWith('[[...')) return '(.*)';
+      return '([^/]+)';
+    })
+    // Clean up regex match remainders from optional catchall ('[[...slug]]')
+    .replaceAll('(.*)]', '(.*)');
+
   return new RegExp(`^${regexPattern}$`);
 }
 
@@ -50,10 +58,15 @@ export function getRouteParams(template: string, pathname: string) {
 export function formatPathname(template: string, params?: object) {
   if (!params) return template;
 
+  // Simplify syntax for optional catchall ('[[...slug]]') so
+  // we can replace the value with simple interpolation
+  template = template.replaceAll('[[', '[').replaceAll(']]', ']');
+
   let result = template;
   Object.entries(params).forEach(([key, value]) => {
-    result = result.replace(`[${key}]`, value);
+    result = result.replace(`[${key}]`, encodeURIComponent(value));
   });
+
   return result;
 }
 

@@ -243,6 +243,14 @@ describe('prefix-based routing', () => {
           '/news/[articleSlug]-[articleId]': {
             en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]'
+          },
+          '/products/[...slug]': {
+            en: '/products/[...slug]',
+            de: '/produkte/[...slug]'
+          },
+          '/categories/[[...slug]]': {
+            en: '/categories/[[...slug]]',
+            de: '/kategorien/[[...slug]]'
           }
         }
       });
@@ -263,10 +271,16 @@ describe('prefix-based routing', () => {
         middlewareWithPathnames(
           createMockRequest('/news/happy-newyear-g5b116754', 'en')
         );
+        middlewareWithPathnames(
+          createMockRequest('/products/apparel/t-shirts', 'en')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/categories/women/t-shirts', 'en')
+        );
 
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(4);
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/en/about'
         );
@@ -278,6 +292,12 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
           'http://localhost:3000/en/news/happy-newyear-g5b116754'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://localhost:3000/en/products/apparel/t-shirts'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://localhost:3000/en/categories/women/t-shirts'
         );
       });
 
@@ -295,9 +315,16 @@ describe('prefix-based routing', () => {
         middlewareWithPathnames(
           createMockRequest('/de/neuigkeiten/happy-newyear-g5b116754', 'de')
         );
+        middlewareWithPathnames(
+          createMockRequest('/de/produkte/kleidung/t-shirts', 'de')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/de/kategorien/frauen/t-shirts', 'de')
+        );
 
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de/about'
         );
@@ -309,6 +336,12 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
           'http://localhost:3000/de/news/happy-newyear-g5b116754'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://localhost:3000/de/products/kleidung%2Ft-shirts'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://localhost:3000/de/categories/frauen%2Ft-shirts'
         );
       });
 
