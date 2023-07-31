@@ -22,6 +22,8 @@ export const config = {
 };
 ```
 
+In addition to handling i18n routing, the middleware sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages.
+
 ## Strategies
 
 There are two strategies for detecting the locale:
@@ -189,7 +191,7 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, e.g. because you're using [locale-specific rewrites](#localizing-pathnames), you can opt-out of this behavior.
+If you prefer to include these links yourself, you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -208,9 +210,9 @@ Many apps choose to localize pathnames, especially when search engine optimizati
 - `/en/about`
 - `/de/ueber-uns`
 
-Since you want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared paths internally.
+Since you want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
 
-```js filename="middleware.ts"
+```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
@@ -221,7 +223,7 @@ export default createMiddleware({
   // external paths. Based on the locale, the external
   // paths are rewritten to the shared, internal ones.
   pathnames: {
-    // If all locales use the same paths, a single
+    // If all locales use the same pathname, a single
     // external path can be used for all locales.
     '/': '/',
     '/blog': '/blog',
@@ -242,13 +244,10 @@ export default createMiddleware({
 });
 ```
 
-Note that the middleware will adapt the returned [alternate links](http://localhost:3000/docs/routing/middleware#disable-alternate-links) depending on this configuration.
-
 <Callout>
-  If you have pathname localization set up in your middleware, you likely want
-  to use the [localized navigation
-  APIs](/docs/routing/navigation#strategy-2-localized-pathnames) in your
-  components.
+  If you have pathname localization set up in the middleware, you likely want to
+  use the [localized navigation
+  APIs](/docs/routing/navigation#localized-pathnames) in your components.
 </Callout>
 
 ## Composing other middlewares

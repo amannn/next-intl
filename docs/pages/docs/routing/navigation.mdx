@@ -7,76 +7,105 @@ import {Tab, Tabs} from 'nextra-theme-docs';
 
 ## Strategies
 
-There are two strategies that you can use based on your needs:
+There are two strategies that you can use based on your needs.
 
-1.  [Shared pathnames](#shared-pathnames)
-2.  [Localized pathnames](#localized-pathnames)
+The simplest case is when your app uses [shared pathnames](#shared-pathnames), regardless of the locale, e.g.:
 
-Each strategy will provide you with corresponding [navigation APIs](#apis) that you can use in your components. Typically, you'll provide these APIs in a central module that you can easily reference (e.g. `./navigation.ts`).
+- `/en/about`
+- `/de/about`
+
+Many apps choose to [localize pathnames](#localized-pathnames) however, especially when search engine optimization is relevant. In this case, you'll provide distinct pathnames based on the user locale, e.g.:
+
+- `/en/about`
+- `/de/ueber-uns`
+
+Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `./navigation.ts`).
 
 ### Strategy 1: Shared pathnames [#shared-pathnames]
 
-The simplest case is when your app uses the same pathnames, regardless of the locale, e.g.:
+With this strategy, the pathnames are identical for all locales. This is the simplest case, because the routes you define in Next.js will map directly to the pathnames that a user can request.
 
-- `/en/about`
-- `/en-GB/about`
+To create [navigation APIs](#apis) for this strategy, use the `createSharedPathnamesNavigation` function:
 
-In this example, the path segment `about` remains the same, regardless of the user's locale. This is the simplest case, because the routes you define in Next.js will map directly to the URLs that a user can request.
-
-To create [navigation APIs](#apis) for this use case, use the `createSharedPathnamesNavigation` function:
-
-```tsx filename="./navigation.tsx"
+```tsx filename="./navigation.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
-
-export const {Link, redirect, usePathname, useRouter} =
-  createSharedPathnamesNavigation({
-    locales: ['en', 'en-GB'],
-    pathnames: {
-      '/': '/',
-      '/about': {
-        en: '/about',
-        de: '/ueber-uns'
-      }
-    }
-  });
-```
-
-The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to share it along with the `locales` from a shared file like `i18n.ts`:
-
-```tsx filename="i18n.ts"
-import {Pathnames} from 'next-intl/navigation';
 
 export const locales = ['en', 'de'] as const;
 
-export const pathnames: Pathnames<typeof locales> = {
-  '/': '/',
-  '/about': {
-    en: '/about',
-    de: '/ueber-uns'
-  }
-} as const;
+export const {Link, redirect, usePathname, useRouter} =
+  createSharedPathnamesNavigation({locales});
 ```
 
-Have a look at the [App Router example](/examples/app-router) to explore a working implementation of localized pathnames.
+The `locales` argument is identical to the configuration that you pass to the middleware. To reuse it there, you can import the `locales` into the middleware.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {locales} from './navigation';
+
+export default createMiddleware({
+  defaultLocale: 'en',
+  locales
+});
+```
 
 ### Strategy 2: Localized pathnames [#localized-pathnames]
 
-If you've configured the middleware to [use localized pathnames](/docs/routing/middleware#localizing-pathnames), you can use the `createLocalizedPathnamesNavigation` function to create corresponding navigation APIs:
+When using this strategy, you have to provide distinct pathnames for every locale that your app supports. However, the localized variants should be handled by a single route internally, therefore a mapping needs to be provided that is [consumed by the middleware too](/docs/routing/middleware#localizing-pathnames).
 
-'re using the middleware configuration localized pathnames in the
+You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis):
 
-Many apps choose to localize pathnames, especially when search engine optimization is relevant:
+```tsx filename="./navigation.ts"
+import {
+  createLocalizedPathnamesNavigation,
+  Pathnames
+} from 'next-intl/navigation';
 
-```tsx filename="./navigation.tsx"
-import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
+export const locales = ['en', 'de'] as const;
+
+// The `pathnames` object holds pairs of internal
+// and external paths. Based on the locale, the
+// corresponding external path will be picked.
+export const pathnames: Pathnames<typeof locales> = {
+  // If all locales use the same pathname, a single
+  // external path can be used for all locales.
+  '/': '/',
+  '/blog': '/blog',
+
+  // If locales use different paths, you can
+  // specify each external path per locale.
+  '/about': {
+    en: '/about',
+    de: '/ueber-uns'
+  },
+
+  // Dynamic params are supported via square brackets
+  '/news/[articleSlug]-[articleId]': {
+    en: '/news/[articleSlug]-[articleId]',
+    de: '/neuigkeiten/[articleSlug]-[articleId]'
+  }
+} as const;
 
 export const {Link, redirect, usePathname, useRouter} =
-  createLocalizedPathnamesNavigation({
-    locales: ['en', 'en-GB']
-  });
+  createLocalizedPathnamesNavigation({locales, pathnames});
 ```
 
----
+The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to import the `locales` and `pathnames` into the middleware.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {locales, pathnames} from './navigation';
+
+export default createMiddleware({
+  defaultLocale: 'en',
+  locales,
+  pathnames
+});
+```
+
+<Callout>
+  Have a look at the [App Router example](/examples/app-router) to explore a
+  working implementation of localized pathnames.
+</Callout>
 
 ## APIs
 
@@ -102,7 +131,7 @@ import {Link} from '../navigation';
 
 </Tab>
 <Tab>
-When using [localized pathnames](#shared-pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](#localized-pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 import {Link} from '../navigation';
@@ -113,17 +142,43 @@ import {Link} from '../navigation';
 // You can override the `locale` to switch to another language
 <Link href="/" locale="en">Switch to English</Link>
 
-// Dynamic params need to be passed to a separate prop
+// Dynamic params need to be passed separately
 <Link href="/users/[userId]" params={{userId: '5'}}>Susan</Link>
 ```
 
 </Tab>
 </Tabs>
 
-<Callout>
-  Note that `prefetch` will be turned off when linking to another locale to
-  avoid prematurely overwriting the locale cookie.
-</Callout>
+<details>
+<summary>How can I render a navigation link?</summary>
+
+The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment) from Next.js allows you to detect if a given child segment is active from within the parent layout. Since this returns an internal pathname, it can be matched against an `href` that you can pass to `Link`.
+
+```tsx
+function BlogNavigationLink() {
+  const href = '/blog';
+
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+  const activeHref = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
+  const isActive = activeHref === href;
+
+  return (
+    <Link href={href} style={{fontWeight: isActive ? 'bold' : 'normal'}}>
+      Blog
+    </Link>
+  );
+}
+```
+
+See also the Next.js docs on [creating an active link component](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment#creating-an-active-link-component).
+
+</details>
+
+<details>
+<summary>How does prefetching of localized links work?</summary>
+Just like `next/link`, by default all links are prefetched. The one exception to this is that links to other locales aren't prefetched, because this would result in prematurely overwriting the locale cookie.
+
+</details>
 
 ### `useRouter`
 
@@ -169,7 +224,7 @@ router.replace(pathname, {locale: 'de'});
 </Tab>
 <Tab>
 
-When using [localized pathnames](#shared-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](#localized-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 'use client';
@@ -184,7 +239,7 @@ router.push('/about');
 // You can override the `locale` to switch to another language
 router.replace('/about', {locale: 'en'});
 
-// Dynamic params need to be passed in object format
+// Dynamic params need to be provided as objects
 router.push({
   pathname: '/users/[userId]',
   params: {userId: '12'}
@@ -234,7 +289,7 @@ const pathname = usePathname();
 </Tab>
 <Tab>
 
-When using [localized pathnames](#shared-pathnames), the returned pathname will correspond to an internal pathname.
+When using [localized pathnames](#localized-pathnames), the returned pathname will correspond to an internal pathname.
 
 ```tsx
 'use client';
@@ -265,7 +320,7 @@ If you want to interrupt the render and redirect to another page, you can invoke
 ```tsx
 import {redirect} from '../navigation';
 
-// When the user is on `/en/profile`, this will be `/en/login`
+// When the user is on `/en`, this will be `/en/login`
 redirect('/login');
 
 // Dynamic params need to be interpolated into the pathname
@@ -275,15 +330,15 @@ router.push('/users/12');
 </Tab>
 <Tab>
 
-When using [localized pathnames](#shared-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](#localized-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 import {redirect} from '../navigation';
 
-// When the user is on `/en/profile`, this will be `/en/login`
+// When the user is on `/en`, this will be `/en/login`
 redirect('/login');
 
-// Dynamic params need to be passed in object format
+// Dynamic params need to be provided as objects
 redirect({
   pathname: '/help/[articleSlug]',
   params: {articleSlug: 'how-to-login'}
