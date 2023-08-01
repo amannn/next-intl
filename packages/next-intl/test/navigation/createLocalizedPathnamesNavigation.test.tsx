@@ -70,7 +70,10 @@ describe('Link', () => {
       <Link
         href="/news/[articleSlug]-[articleId]"
         locale="de"
-        params={{articleSlug: 'launch-party', articleId: 3}}
+        params={{
+          articleId: 3,
+          articleSlug: 'launch-party'
+        }}
       >
         About
       </Link>

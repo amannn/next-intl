@@ -1,7 +1,7 @@
 import type {UrlObject} from 'url';
 import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
 
-// TODO: Can we type this?
+// TODO: Remove this in favor of StrictParams
 export type Params = Record<string, string | number | boolean>;
 
 export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
