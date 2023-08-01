@@ -69,10 +69,16 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        compiled = compiled.replace(`[${key}]`, String(value));
+        if (Array.isArray(value)) {
+          compiled = compiled.replace(
+            new RegExp(`(\\[)?\\[...${key}\\](\\])?`, 'g'),
+            value.map((v) => String(v)).join('/')
+          );
+        } else {
+          compiled = compiled.replace(`[${key}]`, String(value));
+        }
       });
     }
-    // Error handling if there are unresolved params
 
     return compiled;
   }

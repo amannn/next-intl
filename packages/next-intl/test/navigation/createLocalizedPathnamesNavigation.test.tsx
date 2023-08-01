@@ -21,7 +21,12 @@ const {Link, useRouter} = createLocalizedPathnamesNavigation({
     '/news/[articleSlug]-[articleId]': {
       en: '/news/[articleSlug]-[articleId]',
       de: '/neuigkeiten/[articleSlug]-[articleId]'
-    }
+    },
+    '/categories/[...parts]': {
+      en: '/categories/[...parts]',
+      de: '/kategorien/[...parts]'
+    },
+    '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
   }
 });
 
@@ -80,6 +85,31 @@ describe('Link', () => {
     );
     expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
       '/de/neuigkeiten/launch-party-3'
+    );
+  });
+
+  it('handles catch-all segments', () => {
+    render(
+      <Link
+        href="/categories/[...parts]"
+        params={{parts: ['clothing', 't-shirts']}}
+      >
+        Test
+      </Link>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/categories/clothing/t-shirts'
+    );
+  });
+
+  it('handles optional catch-all segments', () => {
+    render(
+      <Link href="/catch-all/[[...parts]]" params={{parts: ['one', 'two']}}>
+        Test
+      </Link>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/catch-all/one/two'
     );
   });
 });
