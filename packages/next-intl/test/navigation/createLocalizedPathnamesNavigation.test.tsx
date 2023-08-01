@@ -147,11 +147,32 @@ function TypeTests() {
   // @ts-expect-error -- Requires params
   <Link href="/news/[articleSlug]-[articleId]">About</Link>;
 
+  // @ts-expect-error -- Params for different route
+  <Link href="/about" params={{articleId: 2}}>
+    About
+  </Link>;
+
   // @ts-expect-error -- Doesn't accept params
   <Link href="/about" params={{foo: 'bar'}}>
     About
   </Link>;
 
+  // @ts-expect-error -- Missing params
+  <Link href={{pathname: '/news/[articleSlug]-[articleId]'}}>Über uns</Link>;
+
   // Valid
   <Link href="/about">Über uns</Link>;
+  <Link href={{pathname: '/about'}}>Über uns</Link>;
+  <Link
+    href={{
+      pathname: '/news/[articleSlug]-[articleId]',
+      query: {foo: 'bar'}
+    }}
+    params={{
+      articleId: 3,
+      articleSlug: 'launch-party'
+    }}
+  >
+    Über uns
+  </Link>;
 }

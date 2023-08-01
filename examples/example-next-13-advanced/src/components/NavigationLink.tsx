@@ -6,7 +6,7 @@ import {Link} from '../navigation';
 
 type Props = ComponentProps<typeof Link>;
 
-export default function NavigationLink({href, ...rest}: Props) {
+function NavigationLink({href, ...rest}: Props) {
   const selectedLayoutSegment = useSelectedLayoutSegment();
   const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;
@@ -20,3 +20,6 @@ export default function NavigationLink({href, ...rest}: Props) {
     />
   );
 }
+
+// Make sure the generic type of `Link` is preserved.
+export default NavigationLink as typeof Link;

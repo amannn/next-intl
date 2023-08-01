@@ -65,7 +65,7 @@ export const locales = ['en', 'de'] as const;
 // The `pathnames` object holds pairs of internal
 // and external paths. Based on the locale, the
 // corresponding external path will be picked.
-export const pathnames: Pathnames<typeof locales> = {
+export const pathnames = {
   // If all locales use the same pathname, a single
   // external path can be used for all locales.
   '/': '/',
@@ -83,7 +83,7 @@ export const pathnames: Pathnames<typeof locales> = {
     en: '/news/[articleSlug]-[articleId]',
     de: '/neuigkeiten/[articleSlug]-[articleId]'
   }
-} as const;
+} satisfies Pathnames<typeof locales>;
 
 export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({locales, pathnames});

@@ -5,13 +5,13 @@ import {
 
 export const locales = ['en', 'de'] as const;
 
-export const pathnames: Pathnames<typeof locales> = {
+export const pathnames = {
   '/': '/',
   '/about': {
     en: '/about',
     de: '/ueber'
   }
-} as const;
+} satisfies Pathnames<typeof locales>;
 
 export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({
