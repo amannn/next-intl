@@ -88,7 +88,7 @@ importers:
         specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -131,7 +131,7 @@ importers:
         specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -186,7 +186,7 @@ importers:
         specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -256,7 +256,7 @@ importers:
         specifier: ^4.22.1
         version: 4.22.1(next@13.4.7)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0

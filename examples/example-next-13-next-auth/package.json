@@ -12,7 +12,7 @@
   "dependencies": {
     "next": "13.4.7",
     "next-auth": "^4.22.1",
-    "next-intl": "^2.14.3",
+    "next-intl": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
