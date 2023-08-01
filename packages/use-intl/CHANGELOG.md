@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.19.1 (2023-08-01)
+
+
+### Bug Fixes
+
+* Handle case where the `locale` param is an array and set cookie expiration to one year ([#435](https://github.com/amannn/next-intl/issues/435)) ([82e842c](https://github.com/amannn/next-intl/commit/82e842ce742106bf350246316855bd053f4cdac7))
+
+
+
+
+
 # 2.19.0 (2023-07-18)
 
 
