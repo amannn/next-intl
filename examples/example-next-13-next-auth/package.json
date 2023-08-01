@@ -10,7 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^13.4.7",
+    "next": "^13.4.12",
     "next-auth": "^4.22.1",
     "next-intl": "^2.14.3",
     "react": "^18.2.0",
