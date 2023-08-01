@@ -1,24 +1,44 @@
 import type {UrlObject} from 'url';
 import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
+import StrictParams from './StrictParams';
 
-// TODO: Remove this in favor of StrictParams
-export type Params = Record<string, string | number | boolean>;
+export type HrefOrHrefWithParams<Pathname> =
+  Pathname extends `${string}[${string}`
+    ? {
+        pathname: Pathname;
+        params: StrictParams<Pathname>;
+      }
+    : Pathname;
 
-export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
+export function normalizeNameOrNameWithParams<Pathname>(
+  href: HrefOrHrefWithParams<Pathname>
+): {
+  pathname: Pathname;
+  params?: StrictParams<Pathname>;
+} {
+  // @ts-expect-error -- `extends string` in the generic unfortunately weakens the type
+  return typeof href === 'string' ? {pathname: href as Pathname} : href;
+}
+
+export function compileLocalizedPathname<
+  Locales extends AllLocales,
+  Pathname
+>(opts: {
   locale: Locales[number];
-  // eslint-disable-next-line no-use-before-define -- False positive
-  pathname: keyof typeof opts.pathnames;
-  params?: Params;
+  pathname: Pathname;
+  params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
 }): string;
-export function compileLocalizedPathname<Locales extends AllLocales>(opts: {
+export function compileLocalizedPathname<
+  Locales extends AllLocales,
+  Pathname
+>(opts: {
   locale: Locales[number];
-  // eslint-disable-next-line no-use-before-define -- False positive
-  pathname: StrictUrlObject<keyof typeof opts.pathnames>;
-  params?: Params;
+  pathname: StrictUrlObject<Pathname>;
+  params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
 }): UrlObject;
-export function compileLocalizedPathname<Locales extends AllLocales>({
+export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   pathname,
   locale,
   params,
@@ -26,7 +46,7 @@ export function compileLocalizedPathname<Locales extends AllLocales>({
 }: {
   locale: Locales[number];
   pathname: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
-  params?: Params;
+  params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
 }) {
   function getNamedPath(value: keyof typeof pathnames) {
@@ -70,7 +90,7 @@ export function compileLocalizedPathname<Locales extends AllLocales>({
   }
 }
 
-export function getNamedRoute<Locales extends AllLocales>({
+export function getRoute<Locales extends AllLocales>({
   locale,
   pathname,
   pathnames

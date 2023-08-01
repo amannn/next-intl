@@ -2,29 +2,44 @@ import React, {ComponentProps} from 'react';
 import BaseLink from '../../link/react-server';
 import getLocaleFromHeader from '../../server/getLocaleFromHeader';
 import {redirect as baseRedirect} from '../../server.react-server';
-import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
-import {Params, compileLocalizedPathname} from '../utils';
+import {
+  AllLocales,
+  HrefOrUrlObject,
+  ParametersExceptFirst,
+  Pathnames
+} from '../../shared/types';
+import StrictParams from '../StrictParams';
+import {
+  HrefOrHrefWithParams,
+  compileLocalizedPathname,
+  normalizeNameOrNameWithParams
+} from '../utils';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales
 >({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
-  function Link({
+  type LinkProps<Pathname extends keyof typeof pathnames> = Omit<
+    ComponentProps<typeof BaseLink>,
+    'href' | 'name'
+  > & {
+    href: HrefOrUrlObject<Pathname>;
+    params?: StrictParams<Pathname>;
+    locale?: Locales[number];
+  };
+  function Link<Pathname extends keyof typeof pathnames>({
     href,
     locale,
     params,
     ...rest
-  }: Omit<ComponentProps<typeof BaseLink>, 'href' | 'name'> & {
-    href: keyof Pathnames<Locales>;
-    params?: Params;
-    locale?: Locales[number];
-  }) {
+  }: LinkProps<Pathname>) {
     const defaultLocale = getLocaleFromHeader() as (typeof locales)[number];
     const finalLocale = locale || defaultLocale;
 
     return (
       <BaseLink
-        href={compileLocalizedPathname({
+        href={compileLocalizedPathname<Locales, Pathname>({
           locale: finalLocale,
+          // @ts-expect-error -- No idea
           pathname: href,
           params,
           pathnames
@@ -35,29 +50,17 @@ export default function createLocalizedPathnamesNavigation<
     );
   }
 
-  function redirect(
-    nameOrNameWithParams:
-      | keyof Pathnames<Locales>
-      | {
-          name: keyof Pathnames<Locales>;
-          params?: Params;
-        },
+  function redirect<Pathname extends keyof typeof pathnames>(
+    href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
-    const {name, params} =
-      typeof nameOrNameWithParams === 'string'
-        ? {name: nameOrNameWithParams, params: undefined}
-        : nameOrNameWithParams;
-
     const locale = getLocaleFromHeader();
-    const href = compileLocalizedPathname({
+    const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
+      ...normalizeNameOrNameWithParams(href),
       locale,
-      pathname: name,
-      params,
       pathnames
     });
-
-    return baseRedirect(href, ...args);
+    return baseRedirect(resolvedHref, ...args);
   }
 
   function notSupported(message: string) {

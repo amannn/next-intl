@@ -13,25 +13,32 @@ import {
   Pathnames
 } from '../shared/types';
 import StrictParams from './StrictParams';
-import {compileLocalizedPathname, getNamedRoute} from './utils';
+import {
+  compileLocalizedPathname,
+  getRoute,
+  normalizeNameOrNameWithParams,
+  HrefOrHrefWithParams
+} from './utils';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales
->({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
+  Locales extends AllLocales,
+  PathnamesConfig extends Pathnames<Locales>
+>({locales, pathnames}: {locales: Locales; pathnames: PathnamesConfig}) {
   function useLocale() {
     return useClientLocale() as (typeof locales)[number];
   }
 
-  type LinkProps<Pathname extends keyof typeof pathnames> = Omit<
+  type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
     ComponentProps<typeof BaseLink>,
     'href' | 'name'
   > & {
     href: HrefOrUrlObject<Pathname>;
-    params?: StrictParams<Pathname>;
     locale?: Locales[number];
-  };
-  function Link<Pathname extends keyof typeof pathnames>(
-    {href, locale, params, ...rest}: LinkProps<Pathname>,
+  } & (Pathname extends `${string}[${string}`
+      ? {params: StrictParams<Pathname>}
+      : object);
+  function Link<Pathname extends keyof PathnamesConfig>(
+    {href, locale, ...rest}: LinkProps<Pathname>,
     ref?: ComponentProps<typeof BaseLink>['ref']
   ) {
     const defaultLocale = useLocale();
@@ -40,11 +47,12 @@ export default function createLocalizedPathnamesNavigation<
     return (
       <BaseLink
         ref={ref}
-        href={compileLocalizedPathname<Locales>({
+        href={compileLocalizedPathname<Locales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- No idea
           pathname: href,
-          params,
+          // @ts-expect-error -- This is ok
+          params: rest.params,
           pathnames
         })}
         locale={locale}
@@ -52,40 +60,25 @@ export default function createLocalizedPathnamesNavigation<
       />
     );
   }
-  const LinkWithRef = forwardRef(Link) as <
-    Pathname extends keyof typeof pathnames
+  const LinkWithRef = forwardRef(Link) as unknown as <
+    Pathname extends keyof PathnamesConfig
   >(
     props: LinkProps<Pathname> & {ref?: ComponentProps<typeof BaseLink>['ref']}
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 
-  type HrefOrHrefWithParams<Pathname extends keyof typeof pathnames> =
-    | keyof Pathnames<Locales>
-    | {
-        pathname: keyof Pathnames<Locales>;
-        params?: StrictParams<Pathname>;
-      };
-
-  function normalizeNameOrNameWithParams<
-    Pathname extends keyof typeof pathnames
-  >(nameOrNameWithParams: HrefOrHrefWithParams<Pathname>) {
-    return typeof nameOrNameWithParams === 'string'
-      ? {pathname: nameOrNameWithParams, params: undefined}
-      : nameOrNameWithParams;
-  }
-
-  function redirect<Pathname extends keyof typeof pathnames>(
-    nameOrNameWithParams: HrefOrHrefWithParams<Pathname>,
+  function redirect<Pathname extends keyof PathnamesConfig>(
+    href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
     const locale = useLocale();
-    const href = compileLocalizedPathname({
-      ...normalizeNameOrNameWithParams(nameOrNameWithParams),
+    const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
+      ...normalizeNameOrNameWithParams(href),
       locale,
       pathnames
     });
-    return baseRedirect(href, ...args);
+    return baseRedirect(resolvedHref, ...args);
   }
 
   function useRouter() {
@@ -94,48 +87,48 @@ export default function createLocalizedPathnamesNavigation<
 
     return {
       ...baseRouter,
-      push<Pathname extends keyof typeof pathnames>(
-        nameOrNameWithParams: HrefOrHrefWithParams<Pathname>,
+      push<Pathname extends keyof PathnamesConfig>(
+        href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.push>
       ) {
-        const href = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(nameOrNameWithParams),
+        const resolvedHref = compileLocalizedPathname({
+          ...normalizeNameOrNameWithParams(href),
           locale: args[0]?.locale || defaultLocale,
           pathnames
         });
-        return baseRouter.push(href, ...args);
+        return baseRouter.push(resolvedHref, ...args);
       },
 
-      replace<Pathname extends keyof typeof pathnames>(
-        nameOrNameWithParams: HrefOrHrefWithParams<Pathname>,
+      replace<Pathname extends keyof PathnamesConfig>(
+        href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.replace>
       ) {
-        const href = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(nameOrNameWithParams),
+        const resolvedHref = compileLocalizedPathname({
+          ...normalizeNameOrNameWithParams(href),
           locale: args[0]?.locale || defaultLocale,
           pathnames
         });
-        return baseRouter.replace(href, ...args);
+        return baseRouter.replace(resolvedHref, ...args);
       },
 
-      prefetch<Pathname extends keyof typeof pathnames>(
-        nameOrNameWithParams: HrefOrHrefWithParams<Pathname>,
+      prefetch<Pathname extends keyof PathnamesConfig>(
+        href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
       ) {
-        const href = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(nameOrNameWithParams),
+        const resolvedHref = compileLocalizedPathname({
+          ...normalizeNameOrNameWithParams(href),
           locale: args[0]?.locale || defaultLocale,
           pathnames
         });
-        return baseRouter.prefetch(href, ...args);
+        return baseRouter.prefetch(resolvedHref, ...args);
       }
     };
   }
 
-  function usePathname(): keyof typeof pathnames {
+  function usePathname(): keyof PathnamesConfig {
     const pathname = useBasePathname();
     const locale = useLocale();
-    return getNamedRoute({pathname, locale, pathnames});
+    return getRoute({pathname, locale, pathnames});
   }
 
   return {Link: LinkWithRef, redirect, usePathname, useRouter};

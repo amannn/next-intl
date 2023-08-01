@@ -8,16 +8,11 @@ export type Pathnames<Locales extends AllLocales> = Record<
   {[Key in Locales[number]]: string} | string
 >;
 
-export type StrictUrlObject<Pathname extends string> = Omit<
-  UrlObject,
-  'pathname'
-> & {
+export type StrictUrlObject<Pathname> = Omit<UrlObject, 'pathname'> & {
   pathname: Pathname;
 };
 
-export type HrefOrUrlObject<Pathname extends string> =
-  | Pathname
-  | StrictUrlObject<Pathname>;
+export type HrefOrUrlObject<Pathname> = Pathname | StrictUrlObject<Pathname>;
 
 export type ParametersExceptFirst<Fn> = Fn extends (
   arg0: any,

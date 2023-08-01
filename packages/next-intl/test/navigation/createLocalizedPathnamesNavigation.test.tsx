@@ -99,3 +99,59 @@ describe('useRouter', () => {
     });
   });
 });
+
+/**
+ * Type tests
+ */
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TypeTests() {
+  const router = useRouter();
+
+  // @ts-expect-error -- Unknown route
+  router.push('/unknown');
+
+  // Valid
+  router.push('/about');
+  router.push('/about', {locale: 'de'});
+
+  // @ts-expect-error -- Needs to be passed as string
+  router.push({pathname: '/about'});
+
+  // @ts-expect-error -- Requires params
+  router.push({pathname: '/news/[articleSlug]-[articleId]'});
+
+  router.push({
+    pathname: '/news/[articleSlug]-[articleId]',
+    // @ts-expect-error -- Missing param
+    params: {
+      articleId: 3
+    }
+  });
+
+  // Valid
+  router.push({
+    pathname: '/news/[articleSlug]-[articleId]',
+    params: {
+      articleId: 3,
+      articleSlug: 'launch-party'
+    }
+  });
+
+  // @ts-expect-error -- Doesn't accept params
+  router.push({pathname: '/about', params: {foo: 'bar'}});
+
+  // @ts-expect-error -- Unknown route
+  <Link href="/unknown">About</Link>;
+
+  // @ts-expect-error -- Requires params
+  <Link href="/news/[articleSlug]-[articleId]">About</Link>;
+
+  // @ts-expect-error -- Doesn't accept params
+  <Link href="/about" params={{foo: 'bar'}}>
+    About
+  </Link>;
+
+  // Valid
+  <Link href="/about">Über uns</Link>;
+}
