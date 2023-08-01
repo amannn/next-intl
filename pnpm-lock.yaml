@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -33,7 +33,7 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       nextra:
         specifier: ^2.8.0
@@ -71,7 +71,7 @@ importers:
         version: 13.4.0(eslint@8.39.0)(typescript@5.0.4)
       next-sitemap:
         specifier: ^4.0.7
-        version: 4.0.7(@next/env@13.4.7)(next@13.4.7)
+        version: 4.0.7(@next/env@13.4.12)(next@13.4.7)
       prettier-plugin-tailwindcss:
         specifier: ^0.2.3
         version: 0.2.3(prettier@2.8.8)
@@ -85,10 +85,10 @@ importers:
         specifier: ^2.16.1
         version: 2.16.1
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -128,10 +128,10 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -183,10 +183,10 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -250,13 +250,13 @@ importers:
   examples/example-next-13-next-auth:
     dependencies:
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: ^4.22.1
         version: 4.22.1(next@13.4.7)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
-        specifier: ^2.14.3
+        specifier: latest
         version: link:../../packages/next-intl
       react:
         specifier: ^18.2.0
@@ -407,7 +407,7 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(eslint@8.39.0)(typescript@5.0.4)
       next:
-        specifier: ^13.4.7
+        specifier: 13.4.7
         version: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
@@ -5110,6 +5110,10 @@ packages:
       '@napi-rs/simple-git-win32-arm64-msvc': 0.1.8
       '@napi-rs/simple-git-win32-x64-msvc': 0.1.8
     dev: false
+
+  /@next/env@13.4.12:
+    resolution: {integrity: sha512-RmHanbV21saP/6OEPBJ7yJMuys68cIf8OBBWd7+uj40LdpmswVAwe1uzeuFyUsd6SfeITWT3XnQfn6wULeKwDQ==}
+    dev: true
 
   /@next/env@13.4.7:
     resolution: {integrity: sha512-ZlbiFulnwiFsW9UV1ku1OvX/oyIPLtMk9p/nnvDSwI0s7vSoZdRtxXNsaO+ZXrLv/pMbXVGq4lL8TbY9iuGmVw==}
@@ -18300,7 +18304,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /next-sitemap@4.0.7(@next/env@13.4.7)(next@13.4.7):
+  /next-sitemap@4.0.7(@next/env@13.4.12)(next@13.4.7):
     resolution: {integrity: sha512-S2g5IwJeO0+ecmFq981fb+Mw9YWmntOuN/qTCxclSkUibOJ8qKIOye0vn6NEJ1S4tKhbY+MTYKgJpNdFZYxLoA==}
     engines: {node: '>=14.18'}
     hasBin: true
@@ -18309,7 +18313,7 @@ packages:
       next: '*'
     dependencies:
       '@corex/deepmerge': 4.0.43
-      '@next/env': 13.4.7
+      '@next/env': 13.4.12
       minimist: 1.2.8
       next: 13.4.7(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
     dev: true
