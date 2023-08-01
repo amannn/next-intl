@@ -51,7 +51,10 @@ it('can be used to localize the page', async ({page}) => {
 
 it('sets a cookie', async ({page}) => {
   const response = await page.goto('/');
-  expect(await response?.headerValue('set-cookie')).toBe(
-    'NEXT_LOCALE=en; Path=/; SameSite=strict'
-  );
+  const value = await response?.headerValue('set-cookie');
+  expect(value).toContain('NEXT_LOCALE=en;');
+  expect(value).toContain('Path=/;');
+  expect(value).toContain('SameSite=strict');
+  expect(value).toContain('Max-Age=31536000;');
+  expect(value).toContain('Expires=');
 });
