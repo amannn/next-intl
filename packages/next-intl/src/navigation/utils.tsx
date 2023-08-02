@@ -2,6 +2,15 @@ import type {UrlObject} from 'url';
 import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
 import StrictParams from './StrictParams';
 
+export type LinkParams<Pathname> = Pathname extends `${string}[[...${string}`
+  ? // Optional catch-all
+    {params?: StrictParams<Pathname>}
+  : Pathname extends `${string}[${string}`
+  ? // Required catch-all & regular params
+    {params: StrictParams<Pathname>}
+  : // No params
+    object;
+
 export type HrefOrHrefWithParams<Pathname> =
   Pathname extends `${string}[${string}`
     ? {

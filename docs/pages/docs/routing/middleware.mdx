@@ -239,6 +239,12 @@ export default createMiddleware({
     '/news/[articleSlug]-[articleId]': {
       en: '/news/[articleSlug]-[articleId]',
       de: '/neuigkeiten/[articleSlug]-[articleId]'
+    },
+
+    // Also (optional) catch-all segments are supported
+    '/categories/[...slug]': {
+      en: '/categories/[...slug]',
+      de: '/kategorien/[...slug]'
     }
   }
 });

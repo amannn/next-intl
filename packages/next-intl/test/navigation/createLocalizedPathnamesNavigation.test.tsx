@@ -205,4 +205,5 @@ function TypeTests() {
   >
     Über uns
   </Link>;
+  <Link href="/catch-all/[[...parts]]">Catch-all</Link>;
 }

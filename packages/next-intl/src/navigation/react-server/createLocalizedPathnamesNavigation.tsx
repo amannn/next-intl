@@ -8,28 +8,27 @@ import {
   ParametersExceptFirst,
   Pathnames
 } from '../../shared/types';
-import StrictParams from '../StrictParams';
 import {
   HrefOrHrefWithParams,
+  LinkParams,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
 } from '../utils';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales
+  Locales extends AllLocales,
+  PathnamesConfig extends Pathnames<Locales>
 >({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
-  type LinkProps<Pathname extends keyof typeof pathnames> = Omit<
+  type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
     ComponentProps<typeof BaseLink>,
     'href' | 'name'
   > & {
     href: HrefOrUrlObject<Pathname>;
-    params?: StrictParams<Pathname>;
     locale?: Locales[number];
-  };
-  function Link<Pathname extends keyof typeof pathnames>({
+  } & LinkParams<Pathname>;
+  function Link<Pathname extends keyof PathnamesConfig>({
     href,
     locale,
-    params,
     ...rest
   }: LinkProps<Pathname>) {
     const defaultLocale = getLocaleFromHeader() as (typeof locales)[number];
@@ -41,7 +40,8 @@ export default function createLocalizedPathnamesNavigation<
           locale: finalLocale,
           // @ts-expect-error -- No idea
           pathname: href,
-          params,
+          // @ts-expect-error -- This is ok
+          params: rest.params,
           pathnames
         })}
         locale={locale}
@@ -50,7 +50,7 @@ export default function createLocalizedPathnamesNavigation<
     );
   }
 
-  function redirect<Pathname extends keyof typeof pathnames>(
+  function redirect<Pathname extends keyof PathnamesConfig>(
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {

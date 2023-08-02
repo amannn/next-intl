@@ -12,12 +12,12 @@ import {
   ParametersExceptFirst,
   Pathnames
 } from '../shared/types';
-import StrictParams from './StrictParams';
 import {
   compileLocalizedPathname,
   getRoute,
   normalizeNameOrNameWithParams,
-  HrefOrHrefWithParams
+  HrefOrHrefWithParams,
+  LinkParams
 } from './utils';
 
 export default function createLocalizedPathnamesNavigation<
@@ -34,9 +34,7 @@ export default function createLocalizedPathnamesNavigation<
   > & {
     href: HrefOrUrlObject<Pathname>;
     locale?: Locales[number];
-  } & (Pathname extends `${string}[${string}`
-      ? {params: StrictParams<Pathname>}
-      : object);
+  } & LinkParams<Pathname>;
   function Link<Pathname extends keyof PathnamesConfig>(
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref?: ComponentProps<typeof BaseLink>['ref']
