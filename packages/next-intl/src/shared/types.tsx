@@ -1,7 +1,6 @@
 import type {UrlObject} from 'url';
 
-export type Locale = string;
-export type AllLocales = ReadonlyArray<Locale>;
+export type AllLocales = ReadonlyArray<string>;
 
 export type Pathnames<Locales extends AllLocales> = Record<
   string,

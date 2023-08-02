@@ -11,7 +11,7 @@ import {createLocalizedPathnamesNavigation} from '../../src/navigation';
 vi.mock('next/navigation');
 
 const {Link, useRouter} = createLocalizedPathnamesNavigation({
-  locales: ['en', 'de'],
+  locales: ['en', 'de'] as const,
   pathnames: {
     '/': '/',
     '/about': {
@@ -170,6 +170,11 @@ function TypeTests() {
 
   // @ts-expect-error -- Doesn't accept params
   router.push({pathname: '/about', params: {foo: 'bar'}});
+
+  // @ts-expect-error -- Unknown locale
+  <Link href="/about" locale="unknown">
+    Über uns
+  </Link>;
 
   // @ts-expect-error -- Unknown route
   <Link href="/unknown">About</Link>;
