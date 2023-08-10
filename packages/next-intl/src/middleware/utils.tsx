@@ -1,8 +1,63 @@
 import {AllLocales} from '../shared/types';
-import {DomainConfig} from './NextIntlMiddlewareConfig';
+import {
+  DomainConfig,
+  MiddlewareConfigWithDefaults
+} from './NextIntlMiddlewareConfig';
 
 export function getLocaleFromPathname(pathname: string) {
   return pathname.split('/')[1];
+}
+
+export function getInternalTemplate<Locales extends AllLocales>(
+  pathnames: NonNullable<MiddlewareConfigWithDefaults<Locales>['pathnames']>,
+  pathname: string
+): [Locales[number] | undefined, string | undefined] {
+  for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
+    pathnames
+  )) {
+    if (typeof localizedPathnamesOrPathname === 'string') {
+      const localizedPathname = localizedPathnamesOrPathname;
+      if (matchesPathname(localizedPathname, pathname)) {
+        return [undefined, internalPathname];
+      }
+    } else {
+      for (const [locale, localizedPathname] of Object.entries(
+        localizedPathnamesOrPathname
+      )) {
+        if (matchesPathname(localizedPathname as string, pathname)) {
+          return [locale, internalPathname];
+        }
+      }
+    }
+  }
+
+  return [undefined, undefined];
+}
+
+export function formatInternalPathname(
+  pathname: string,
+  localeTemplate: string,
+  internalTemplate: string,
+  localePrefix?: string
+) {
+  const params = getRouteParams(localeTemplate, pathname);
+  let targetPathname = '';
+  if (localePrefix) {
+    targetPathname = `/${localePrefix}`;
+  }
+  targetPathname += formatPathname(internalTemplate, params);
+  return targetPathname;
+}
+
+/**
+ * Removes potential locales from the pathname.
+ */
+export function getNormalizedPathname<Locales extends AllLocales>(
+  pathname: string,
+  locales: Locales
+) {
+  const match = pathname.match(`^/(${locales.join('|')})(.*)`);
+  return match?.[2] || pathname;
 }
 
 export function getKnownLocaleFromPathname<Locales extends AllLocales>(
@@ -64,7 +119,7 @@ export function formatPathname(template: string, params?: object) {
 
   let result = template;
   Object.entries(params).forEach(([key, value]) => {
-    result = result.replace(`[${key}]`, encodeURIComponent(value));
+    result = result.replace(`[${key}]`, value);
   });
 
   return result;

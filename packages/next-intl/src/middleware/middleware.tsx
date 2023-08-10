@@ -1,21 +1,21 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
 import {AllLocales} from '../shared/types';
-import {
-  getLocalizedRewritePathname,
-  getLocalizedRedirectPathname
-} from './LocalizedPathnames';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import {
+  getInternalTemplate,
+  formatInternalPathname,
   getBasePath,
   getBestMatchingDomain,
   getKnownLocaleFromPathname,
+  getNormalizedPathname,
   getPathWithSearch,
-  isLocaleSupportedOnDomain
+  isLocaleSupportedOnDomain,
+  matchesPathname
 } from './utils';
 
 const ROOT_URL = '/';
@@ -105,7 +105,6 @@ export default function createMiddleware<Locales extends AllLocales>(
       request.nextUrl.pathname
     );
 
-    const isRoot = request.nextUrl.pathname === ROOT_URL;
     const hasOutdatedCookie =
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
     const hasMatchedDefaultLocale = domain
@@ -139,10 +138,6 @@ export default function createMiddleware<Locales extends AllLocales>(
       return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
     }
 
-    function next() {
-      return NextResponse.next(getResponseInit());
-    }
-
     function redirect(url: string, host?: string) {
       const urlObj = new URL(url, request.url);
 
@@ -174,9 +169,59 @@ export default function createMiddleware<Locales extends AllLocales>(
       return NextResponse.redirect(urlObj.toString());
     }
 
+    const normalizedPathname = getNormalizedPathname(
+      request.nextUrl.pathname,
+      configWithDefaults.locales
+    );
+
+    const pathLocale = getKnownLocaleFromPathname(
+      request.nextUrl.pathname,
+      configWithDefaults.locales
+    );
+    const hasLocalePrefix = pathLocale != null;
+
     let response;
 
-    if (isRoot) {
+    let pathname = request.nextUrl.pathname;
+    if (configWithDefaults.pathnames) {
+      const [resolvedTemplateLocale = locale, internalTemplate] =
+        getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
+      if (internalTemplate) {
+        const pathnameConfig = configWithDefaults.pathnames[internalTemplate];
+        const localeTemplate: string =
+          typeof pathnameConfig === 'string'
+            ? pathnameConfig
+            : // TODO: Add correct type for locale
+              pathnameConfig[locale];
+
+        if (matchesPathname(localeTemplate, normalizedPathname)) {
+          pathname = formatInternalPathname(
+            normalizedPathname,
+            localeTemplate,
+            internalTemplate,
+            pathLocale
+          );
+        } else {
+          const isDefaultLocale =
+            configWithDefaults.defaultLocale === locale ||
+            domainConfigs.some((cur) => cur.defaultLocale === locale);
+
+          response = redirect(
+            formatInternalPathname(
+              normalizedPathname,
+              // TODO: Add correct type for locale
+              pathnameConfig[resolvedTemplateLocale],
+              localeTemplate,
+              pathLocale || !isDefaultLocale ? locale : undefined
+            )
+          );
+        }
+      }
+    }
+
+    if (pathname === ROOT_URL) {
+      // we might have to rewrite calls even at the root when the internal pathname != the pathname in the default locale
+
       const pathWithSearch = getPathWithSearch(
         `/${locale}`,
         request.nextUrl.search
@@ -192,33 +237,9 @@ export default function createMiddleware<Locales extends AllLocales>(
         response = redirect(pathWithSearch);
       }
     } else {
-      if (configWithDefaults.pathnames) {
-        const localizedRedirect = getLocalizedRedirectPathname(
-          request,
-          locale,
-          configWithDefaults
-        );
-        if (localizedRedirect) {
-          response = redirect(localizedRedirect);
-        } else {
-          const localizedRewrite = getLocalizedRewritePathname(
-            request,
-            configWithDefaults
-          );
-          if (localizedRewrite) {
-            response = rewrite(localizedRewrite);
-          }
-        }
-      }
-
       if (!response) {
-        const pathLocale = getKnownLocaleFromPathname(
-          request.nextUrl.pathname,
-          configWithDefaults.locales
-        );
-        const hasLocalePrefix = pathLocale != null;
         const pathWithSearch = getPathWithSearch(
-          request.nextUrl.pathname,
+          pathname,
           request.nextUrl.search
         );
 
@@ -244,10 +265,10 @@ export default function createMiddleware<Locales extends AllLocales>(
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
                   response = redirect(basePath, pathDomain?.domain);
                 } else {
-                  response = next();
+                  response = rewrite(pathWithSearch);
                 }
               } else {
-                response = next();
+                response = rewrite(pathWithSearch);
               }
             }
           } else {

@@ -1,9 +1,20 @@
 import {describe, expect, it} from 'vitest';
 import {
   formatPathname,
+  getNormalizedPathname,
   getRouteParams,
   matchesPathname
 } from '../../src/middleware/utils';
+
+describe('getNormalizedPathname', () => {
+  it('should return the normalized pathname', () => {
+    expect(getNormalizedPathname('/en/about', ['en', 'de'])).toBe('/about');
+    expect(getNormalizedPathname('/de/about', ['en', 'de'])).toBe('/about');
+    expect(getNormalizedPathname('/about', ['en', 'de'])).toBe('/about');
+    expect(getNormalizedPathname('/', ['en', 'de'])).toBe('/');
+    expect(getNormalizedPathname('/es', ['en', 'de'])).toBe('/es');
+  });
+});
 
 describe('matchesPathname', () => {
   it('returns true for matching paths', () => {
