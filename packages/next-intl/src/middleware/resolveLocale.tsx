@@ -141,7 +141,7 @@ export default function resolveLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
-): {locale: string; domain?: DomainConfig<Locales>} {
+): {locale: Locales[number]; domain?: DomainConfig<Locales>} {
   if (config.domains) {
     return resolveLocaleFromDomain(
       config,

@@ -191,8 +191,7 @@ export default function createMiddleware<Locales extends AllLocales>(
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
-            : // TODO: Add correct type for locale
-              pathnameConfig[locale];
+            : pathnameConfig[locale];
 
         if (matchesPathname(localeTemplate, normalizedPathname)) {
           pathname = formatInternalPathname(
@@ -209,8 +208,9 @@ export default function createMiddleware<Locales extends AllLocales>(
           response = redirect(
             formatInternalPathname(
               normalizedPathname,
-              // TODO: Add correct type for locale
-              pathnameConfig[resolvedTemplateLocale],
+              typeof pathnameConfig === 'string'
+                ? pathnameConfig
+                : pathnameConfig[resolvedTemplateLocale],
               localeTemplate,
               pathLocale || !isDefaultLocale ? locale : undefined
             )
