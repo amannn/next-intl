@@ -1,31 +1,10 @@
-import {NextRequest} from 'next/server';
-import {AllLocales} from '../shared/types';
-import MiddlewareConfig, {
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
-import {isLocaleSupportedOnDomain} from './utils';
-
-function getUnprefixedUrl<Locales extends AllLocales>(
-  config: MiddlewareConfig<Locales>,
-  request: NextRequest
-) {
-  const url = new URL(request.url);
-  if (!url.pathname.endsWith('/')) {
-    url.pathname += '/';
-  }
-
-  url.pathname = url.pathname.replace(
-    new RegExp(`^/(${config.locales.join('|')})/`),
-    '/'
-  );
-
-  // Remove trailing slash
-  if (url.pathname !== '/') {
-    url.pathname = url.pathname.slice(0, -1);
-  }
-
-  return url.toString();
-}
+import {AllLocales, Pathnames} from '../shared/types';
+import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
+import {
+  formatTemplatePathname,
+  getNormalizedPathname,
+  isLocaleSupportedOnDomain
+} from './utils';
 
 function getAlternateEntry(url: string, locale: string) {
   return `<${url}>; rel="alternate"; hreflang="${locale}"`;
@@ -36,20 +15,45 @@ function getAlternateEntry(url: string, locale: string) {
  */
 export default function getAlternateLinksHeaderValue<
   Locales extends AllLocales
->(config: MiddlewareConfigWithDefaults<Locales>, request: NextRequest) {
-  const unprefixedUrl = getUnprefixedUrl(config, request);
+>({
+  config,
+  localizedPathnames,
+  requestUrl,
+  resolvedLocale
+}: {
+  config: MiddlewareConfigWithDefaults<Locales>;
+  requestUrl: string;
+  resolvedLocale: Locales[number];
+  localizedPathnames?: Pathnames<Locales>[string];
+}) {
+  const normalizedUrl = new URL(requestUrl);
+  normalizedUrl.pathname = getNormalizedPathname(
+    normalizedUrl.pathname,
+    config.locales
+  );
+
+  function getLocalizedPathname(pathname: string, locale: Locales[number]) {
+    if (localizedPathnames && typeof localizedPathnames === 'object') {
+      return formatTemplatePathname(
+        pathname,
+        localizedPathnames[resolvedLocale],
+        localizedPathnames[locale]
+      );
+    } else {
+      return pathname;
+    }
+  }
 
   const links = config.locales.flatMap((locale) => {
-    function localizePathname(url: URL) {
-      if (url.pathname === '/') {
-        url.pathname = `/${locale}`;
+    function prefixPathname(pathname: string) {
+      if (pathname === '/') {
+        return `/${locale}`;
       } else {
-        url.pathname = `/${locale}${url.pathname}`;
+        return `/${locale}${pathname}`;
       }
-      return url;
     }
 
-    let url;
+    let url: URL;
 
     if (config.domains) {
       const domainConfigs =
@@ -58,7 +62,7 @@ export default function getAlternateLinksHeaderValue<
         ) || [];
 
       return domainConfigs.map((domainConfig) => {
-        url = new URL(unprefixedUrl);
+        url = new URL(normalizedUrl);
         url.port = '';
         url.host = domainConfig.domain;
 
@@ -66,16 +70,25 @@ export default function getAlternateLinksHeaderValue<
           locale !== domainConfig.defaultLocale ||
           config.localePrefix === 'always'
         ) {
-          localizePathname(url);
+          url.pathname = prefixPathname(url.pathname);
         }
+
+        // TODO: Alternate links for domains
 
         return getAlternateEntry(url.toString(), locale);
       });
     } else {
-      url = new URL(unprefixedUrl);
-      if (locale !== config.defaultLocale || config.localePrefix === 'always') {
-        localizePathname(url);
+      let pathname: string;
+      if (localizedPathnames && typeof localizedPathnames === 'object') {
+        pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+      } else {
+        pathname = normalizedUrl.pathname;
       }
+
+      if (locale !== config.defaultLocale || config.localePrefix === 'always') {
+        pathname = prefixPathname(pathname);
+      }
+      url = new URL(pathname, normalizedUrl);
     }
 
     return getAlternateEntry(url.toString(), locale);
@@ -83,10 +96,13 @@ export default function getAlternateLinksHeaderValue<
 
   // Add x-default entry
   if (!config.domains) {
-    const url = new URL(unprefixedUrl);
+    const url = new URL(
+      getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),
+      normalizedUrl
+    );
     links.push(getAlternateEntry(url.toString(), 'x-default'));
   } else {
-    // For `type: domain` there is no reasonable x-default
+    // For domain-based routing there is no reasonable x-default
   }
 
   return links.join(', ');

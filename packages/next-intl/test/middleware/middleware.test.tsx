@@ -401,6 +401,69 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/de/benutzer/2'
         );
       });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPathnames(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        expect(getLinks(createMockRequest('/', 'en'))).toEqual([
+          '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
+          '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/about', 'en'))).toEqual([
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/users/1', 'en'))).toEqual([
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/products/apparel/t-shirts', 'en'))
+        ).toEqual([
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
+        ).toEqual([
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/unknown', 'en'))).toEqual([
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de/unknown', 'de'))).toEqual([
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+        ]);
+      });
     });
   });
 
@@ -518,6 +581,10 @@ describe('prefix-based routing', () => {
           '/news/[articleSlug]-[articleId]': {
             en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]'
+          },
+          '/products/[...slug]': {
+            en: '/products/[...slug]',
+            de: '/produkte/[...slug]'
           }
         }
       });
@@ -602,6 +669,64 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/en/users/12'
         );
+      });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPathnames(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        expect(getLinks(createMockRequest('/en', 'en'))).toEqual([
+          '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
+          '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/en/about', 'en'))).toEqual([
+          '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
+          '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/en/users/1', 'en'))).toEqual([
+          '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
+          '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/en/products/apparel/t-shirts', 'en'))
+        ).toEqual([
+          '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
+        ).toEqual([
+          '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(getLinks(createMockRequest('/en/unknown', 'en'))).toEqual([
+          '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+        ]);
       });
     });
   });

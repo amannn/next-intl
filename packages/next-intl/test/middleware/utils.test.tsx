@@ -106,6 +106,25 @@ describe('getRouteParams', () => {
       userId: '23%2F42'
     });
   });
+
+  it('handles arrays', () => {
+    expect(
+      getRouteParams(
+        '/categories/[...categories]',
+        '/categories/clothing/t-shirts'
+      )
+    ).toEqual({
+      '...categories': 'clothing/t-shirts'
+    });
+    expect(
+      getRouteParams(
+        '/categories/[[...categories]]',
+        '/categories/clothing/t-shirts'
+      )
+    ).toEqual({
+      '...categories': 'clothing/t-shirts'
+    });
+  });
 });
 
 describe('formatPathname', () => {

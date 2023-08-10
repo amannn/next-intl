@@ -8,10 +8,15 @@ export function getLocaleFromPathname(pathname: string) {
   return pathname.split('/')[1];
 }
 
-export function getInternalTemplate<Locales extends AllLocales>(
-  pathnames: NonNullable<MiddlewareConfigWithDefaults<Locales>['pathnames']>,
+export function getInternalTemplate<
+  Locales extends AllLocales,
+  Pathnames extends NonNullable<
+    MiddlewareConfigWithDefaults<Locales>['pathnames']
+  >
+>(
+  pathnames: Pathnames,
   pathname: string
-): [Locales[number] | undefined, string | undefined] {
+): [Locales[number] | undefined, keyof Pathnames | undefined] {
   for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
     pathnames
   )) {
@@ -34,18 +39,23 @@ export function getInternalTemplate<Locales extends AllLocales>(
   return [undefined, undefined];
 }
 
-export function formatInternalPathname(
-  pathname: string,
-  localeTemplate: string,
-  internalTemplate: string,
+export function formatTemplatePathname(
+  sourcePathname: string,
+  sourceTemplate: string,
+  targetTemplate: string,
   localePrefix?: string
 ) {
-  const params = getRouteParams(localeTemplate, pathname);
+  const params = getRouteParams(sourceTemplate, sourcePathname);
   let targetPathname = '';
   if (localePrefix) {
     targetPathname = `/${localePrefix}`;
   }
-  targetPathname += formatPathname(internalTemplate, params);
+  targetPathname += formatPathname(targetTemplate, params);
+
+  if (targetPathname.endsWith('/')) {
+    targetPathname = targetPathname.slice(0, -1);
+  }
+
   return targetPathname;
 }
 
@@ -56,8 +66,21 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   pathname: string,
   locales: Locales
 ) {
+  // Add trailing slash for consistent handling
+  // both for the root as well as nested paths
+  if (!pathname.endsWith('/')) {
+    pathname += '/';
+  }
+
   const match = pathname.match(`^/(${locales.join('|')})(.*)`);
-  return match?.[2] || pathname;
+  let result = match ? match[2] : pathname;
+
+  // Remove trailing slash
+  if (result.endsWith('/') && result !== '/') {
+    result = result.slice(0, -1);
+  }
+
+  return result;
 }
 
 export function getKnownLocaleFromPathname<Locales extends AllLocales>(

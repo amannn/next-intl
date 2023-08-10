@@ -1,11 +1,6 @@
-import {NextRequest} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
-
-function getRequest(url = 'https://example.com/') {
-  return {url} as NextRequest;
-}
 
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
@@ -17,7 +12,11 @@ it('works for prefixed routing (as-needed)', () => {
   };
 
   expect(
-    getAlternateLinksHeaderValue(config, getRequest()).split(', ')
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/>; rel="alternate"; hreflang="en"',
     '<https://example.com/es>; rel="alternate"; hreflang="es"',
@@ -25,14 +24,91 @@ it('works for prefixed routing (as-needed)', () => {
   ]);
 
   expect(
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.com/about')
-    ).split(', ')
+      requestUrl: 'https://example.com/about',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/about>; rel="alternate"; hreflang="en"',
     '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
     '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+  ]);
+});
+
+it('works for prefixed routing (as-needed) with `pathnames`', () => {
+  const config: MiddlewareConfigWithDefaults<['en', 'de']> = {
+    defaultLocale: 'en',
+    locales: ['en', 'de'],
+    alternateLinks: true,
+    localePrefix: 'as-needed',
+    localeDetection: true
+  };
+  const pathnames = {
+    '/': '/',
+    '/about': {
+      en: '/about',
+      de: '/ueber'
+    },
+    '/users': {
+      en: '/users',
+      de: '/benutzer'
+    },
+    '/users/[userId]': {
+      en: '/users/[userId]',
+      de: '/benutzer/[userId]'
+    }
+  };
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/',
+      resolvedLocale: 'en'
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/>; rel="alternate"; hreflang="en"',
+    '<https://example.com/de>; rel="alternate"; hreflang="de"',
+    '<https://example.com/>; rel="alternate"; hreflang="x-default"'
+  ]);
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/about',
+      resolvedLocale: 'en',
+      localizedPathnames: pathnames['/about']
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/de/ueber>; rel="alternate"; hreflang="de"',
+    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+  ]);
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/de/ueber',
+      resolvedLocale: 'de',
+      localizedPathnames: pathnames['/about']
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/de/ueber>; rel="alternate"; hreflang="de"',
+    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+  ]);
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/users/2',
+      resolvedLocale: 'en',
+      localizedPathnames: pathnames['/users/[userId]']
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/users/2>; rel="alternate"; hreflang="en"',
+    '<https://example.com/de/benutzer/2>; rel="alternate"; hreflang="de"',
+    '<https://example.com/users/2>; rel="alternate"; hreflang="x-default"'
   ]);
 });
 
@@ -46,7 +122,11 @@ it('works for prefixed routing (always)', () => {
   };
 
   expect(
-    getAlternateLinksHeaderValue(config, getRequest()).split(', ')
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.com/',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/en>; rel="alternate"; hreflang="en"',
     '<https://example.com/es>; rel="alternate"; hreflang="es"',
@@ -54,10 +134,11 @@ it('works for prefixed routing (always)', () => {
   ]);
 
   expect(
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.com/about')
-    ).split(', ')
+      requestUrl: 'https://example.com/about',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
     '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
@@ -92,11 +173,16 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   };
 
   [
-    getAlternateLinksHeaderValue(config, getRequest()).split(', '),
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.es/')
-    ).split(', ')
+      requestUrl: 'https://example.com/',
+      resolvedLocale: 'en'
+    }).split(', '),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.es',
+      resolvedLocale: 'es'
+    }).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
       '<https://example.com/>; rel="alternate"; hreflang="en"',
@@ -109,10 +195,11 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   });
 
   expect(
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.com/about')
-    ).split(', ')
+      requestUrl: 'https://example.com/about',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/about>; rel="alternate"; hreflang="en"',
     '<https://example.ca/about>; rel="alternate"; hreflang="en"',
@@ -150,11 +237,16 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   };
 
   [
-    getAlternateLinksHeaderValue(config, getRequest()).split(', '),
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.es/')
-    ).split(', ')
+      requestUrl: 'https://example.com/',
+      resolvedLocale: 'en'
+    }).split(', '),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://example.es',
+      resolvedLocale: 'es'
+    }).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
       '<https://example.com/en>; rel="alternate"; hreflang="en"',
@@ -167,10 +259,11 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   });
 
   expect(
-    getAlternateLinksHeaderValue(
+    getAlternateLinksHeaderValue({
       config,
-      getRequest('https://example.com/about')
-    ).split(', ')
+      requestUrl: 'https://example.com/about',
+      resolvedLocale: 'en'
+    }).split(', ')
   ).toEqual([
     '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
     '<https://example.ca/en/about>; rel="alternate"; hreflang="en"',

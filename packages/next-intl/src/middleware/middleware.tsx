@@ -8,7 +8,7 @@ import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import {
   getInternalTemplate,
-  formatInternalPathname,
+  formatTemplatePathname,
   getBasePath,
   getBestMatchingDomain,
   getKnownLocaleFromPathname,
@@ -181,23 +181,27 @@ export default function createMiddleware<Locales extends AllLocales>(
     const hasLocalePrefix = pathLocale != null;
 
     let response;
+    let internalTemplateName: string | undefined;
 
     let pathname = request.nextUrl.pathname;
     if (configWithDefaults.pathnames) {
-      const [resolvedTemplateLocale = locale, internalTemplate] =
+      let resolvedTemplateLocale;
+      [resolvedTemplateLocale = locale, internalTemplateName] =
         getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
-      if (internalTemplate) {
-        const pathnameConfig = configWithDefaults.pathnames[internalTemplate];
+
+      if (internalTemplateName) {
+        const pathnameConfig =
+          configWithDefaults.pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
             : pathnameConfig[locale];
 
         if (matchesPathname(localeTemplate, normalizedPathname)) {
-          pathname = formatInternalPathname(
+          pathname = formatTemplatePathname(
             normalizedPathname,
             localeTemplate,
-            internalTemplate,
+            internalTemplateName,
             pathLocale
           );
         } else {
@@ -206,7 +210,7 @@ export default function createMiddleware<Locales extends AllLocales>(
             domainConfigs.some((cur) => cur.defaultLocale === locale);
 
           response = redirect(
-            formatInternalPathname(
+            formatTemplatePathname(
               normalizedPathname,
               typeof pathnameConfig === 'string'
                 ? pathnameConfig
@@ -219,25 +223,25 @@ export default function createMiddleware<Locales extends AllLocales>(
       }
     }
 
-    if (pathname === ROOT_URL) {
-      // we might have to rewrite calls even at the root when the internal pathname != the pathname in the default locale
+    if (!response) {
+      if (pathname === ROOT_URL) {
+        // we might have to rewrite calls even at the root when the internal pathname != the pathname in the default locale
 
-      const pathWithSearch = getPathWithSearch(
-        `/${locale}`,
-        request.nextUrl.search
-      );
+        const pathWithSearch = getPathWithSearch(
+          `/${locale}`,
+          request.nextUrl.search
+        );
 
-      if (
-        configWithDefaults.localePrefix === 'never' ||
-        (hasMatchedDefaultLocale &&
-          configWithDefaults.localePrefix === 'as-needed')
-      ) {
-        response = rewrite(pathWithSearch);
+        if (
+          configWithDefaults.localePrefix === 'never' ||
+          (hasMatchedDefaultLocale &&
+            configWithDefaults.localePrefix === 'as-needed')
+        ) {
+          response = rewrite(pathWithSearch);
+        } else {
+          response = redirect(pathWithSearch);
+        }
       } else {
-        response = redirect(pathWithSearch);
-      }
-    } else {
-      if (!response) {
         const pathWithSearch = getPathWithSearch(
           pathname,
           request.nextUrl.search
@@ -302,7 +306,15 @@ export default function createMiddleware<Locales extends AllLocales>(
     ) {
       response.headers.set(
         'Link',
-        getAlternateLinksHeaderValue(configWithDefaults, request)
+        getAlternateLinksHeaderValue({
+          config: configWithDefaults,
+          localizedPathnames:
+            internalTemplateName != null
+              ? configWithDefaults.pathnames?.[internalTemplateName]
+              : undefined,
+          requestUrl: request.url,
+          resolvedLocale: locale
+        })
       );
     }
 
