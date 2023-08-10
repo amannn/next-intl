@@ -155,12 +155,12 @@ describe('formatPathname', () => {
     ).toBe('/users/23/posts/42');
   });
 
-  it('handles special characters in parameter values', () => {
-    expect(formatPathname('/users/[userId]', {userId: '23 jane'})).toBe(
+  it('does not encode special characters in parameter values', () => {
+    expect(formatPathname('/users/[userId]', {userId: '23%20jane'})).toBe(
       '/users/23%20jane'
     );
     expect(formatPathname('/users/[userId]', {userId: '23/42'})).toBe(
-      '/users/23%2F42'
+      '/users/23/42'
     );
   });
 });
