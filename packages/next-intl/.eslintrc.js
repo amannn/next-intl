@@ -1,5 +1,3 @@
-require('eslint-config-molindo/setupPlugins');
-
 module.exports = {
   extends: ['molindo/typescript', 'molindo/react', 'molindo/jest'],
   plugins: ['deprecation'],
@@ -7,8 +5,7 @@ module.exports = {
     {
       files: ['test/**/*.tsx'],
       rules: {
-        'deprecation/deprecation': 'error',
-        'import/no-extraneous-dependencies': 'off'
+        'deprecation/deprecation': 'error'
       }
     }
   ]

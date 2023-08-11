@@ -392,7 +392,7 @@ describe('relativeTime', () => {
 
       function Component() {
         const format = useFormatter();
-        // @ts-ignore Provoke an error
+        // @ts-expect-error Provoke an error
         const date = 'not a number' as number;
         return <>{format.relativeTime(date, -20)}</>;
       }

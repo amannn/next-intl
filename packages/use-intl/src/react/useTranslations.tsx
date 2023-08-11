@@ -96,7 +96,7 @@ export default function useTranslations<
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
   >(
     {'!': messages},
-    // @ts-ignore
+    // @ts-expect-error
     namespace ? `!.${namespace}` : '!',
     '!'
   );
