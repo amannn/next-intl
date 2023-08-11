@@ -22,8 +22,8 @@ export default function Hero({
 }: Props) {
   return (
     <div className="dark overflow-hidden">
-      <div className="relative max-w-full overflow-hidden bg-slate-850 py-16 sm:px-2 lg:py-40 lg:px-0">
-        <div className="absolute top-0 left-0 h-[20500px] w-[20500px] -translate-x-[47.5%] rounded-full bg-gradient-to-b from-slate-900 via-cyan-500 md:top-1" />
+      <div className="relative max-w-full overflow-hidden bg-slate-850 py-16 sm:px-2 lg:px-0 lg:py-40">
+        <div className="absolute left-0 top-0 h-[20500px] w-[20500px] translate-x-[-47.5%] rounded-full bg-gradient-to-b from-slate-900 via-cyan-500 md:top-1" />
         <Wrapper>
           <div className="flex flex-col gap-16 xl:flex-row xl:items-center xl:justify-between">
             <div className="max-w-2xl">

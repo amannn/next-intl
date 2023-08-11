@@ -22,6 +22,8 @@ export const config = {
 };
 ```
 
+In addition to handling i18n routing, the middleware sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages.
+
 ## Strategies
 
 There are two strategies for detecting the locale:
@@ -31,7 +33,7 @@ There are two strategies for detecting the locale:
 
 Once a locale is detected, it will be saved in a cookie.
 
-### Prefix-based routing (default) [#prefix-based-routing]
+### Strategy 1: Prefix-based routing (default) [#prefix-based-routing]
 
 Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
@@ -60,7 +62,7 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 4. When the user clicks on the link, a request to `/en` is initiated.
 5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
 
-### Domain-based routing
+### Strategy 2: Domain-based routing [#domain-based-routing]
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
 

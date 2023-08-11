@@ -23,7 +23,7 @@ export default function CommunityLink({
         <div className="mt-2">
           {type && (
             <Chip
-              className="mr-2 -translate-y-[1px]"
+              className="mr-2 translate-y-[-1px]"
               color={({article: 'green', video: 'yellow'} as const)[type]}
             >
               {{article: 'Article', video: 'Video'}[type]}
