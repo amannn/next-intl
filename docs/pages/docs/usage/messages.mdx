@@ -187,9 +187,11 @@ import {useTranslations} from 'next-intl';
 
 function Benefits() {
   const t = useTranslations('Benefits');
+  const keys = ['zero-config', 'customizable', 'fast'] as const;
+
   return (
     <ul>
-      {['zero-config', 'customizable', 'fast'].map((key) => (
+      {keys.map((key) => (
         <li key={key}>{t(key)}</li>
       ))}
     </ul>
