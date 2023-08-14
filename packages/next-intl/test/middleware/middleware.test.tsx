@@ -893,6 +893,119 @@ describe('prefix-based routing', () => {
       const response = middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(null);
     });
+
+    describe('localized pathnames', () => {
+      const middlewareWithPathnames = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'de'],
+        localePrefix: 'never',
+        pathnames: {
+          '/': '/',
+          '/about': {
+            en: '/about',
+            de: '/ueber'
+          },
+          '/users': {
+            en: '/users',
+            de: '/benutzer'
+          },
+          '/users/[userId]': {
+            en: '/users/[userId]',
+            de: '/benutzer/[userId]'
+          },
+          '/news/[articleSlug]-[articleId]': {
+            en: '/news/[articleSlug]-[articleId]',
+            de: '/neuigkeiten/[articleSlug]-[articleId]'
+          },
+          '/products/[...slug]': {
+            en: '/products/[...slug]',
+            de: '/produkte/[...slug]'
+          }
+        }
+      });
+
+      it('serves requests for the default locale at the root', () => {
+        middlewareWithPathnames(createMockRequest('/', 'en'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+      });
+
+      it('serves requests for the default locale at nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/about', 'en'));
+        middlewareWithPathnames(createMockRequest('/users', 'en'));
+        middlewareWithPathnames(createMockRequest('/users/1', 'en'));
+        middlewareWithPathnames(
+          createMockRequest('/news/happy-newyear-g5b116754', 'en')
+        );
+
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(4);
+        expect(
+          MockedNextResponse.rewrite.mock.calls.map((call) =>
+            call[0].toString()
+          )
+        ).toEqual([
+          'http://localhost:3000/en/about',
+          'http://localhost:3000/en/users',
+          'http://localhost:3000/en/users/1',
+          'http://localhost:3000/en/news/happy-newyear-g5b116754'
+        ]);
+      });
+
+      it('serves requests for a non-default locale at the root', () => {
+        middlewareWithPathnames(createMockRequest('/', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de'
+        );
+      });
+
+      it('serves requests for a non-default locale at nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/ueber', 'de'));
+        middlewareWithPathnames(createMockRequest('/benutzer', 'de'));
+        middlewareWithPathnames(createMockRequest('/benutzer/1', 'de'));
+        middlewareWithPathnames(
+          createMockRequest('/neuigkeiten/gutes-neues-jahr-g5b116754', 'de')
+        );
+
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/users'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/de/users/1'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://localhost:3000/de/news/gutes-neues-jahr-g5b116754'
+        );
+      });
+
+      it('redirects a request for a localized route that is not associated with the requested locale', () => {
+        // Relevant to avoid duplicate content issues
+        middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
+        middlewareWithPathnames(createMockRequest('/en/benutzer/12', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/users/12'
+        );
+      });
+    });
   });
 });
 
