@@ -2,7 +2,6 @@ import {useParams} from 'next/navigation';
 import {useLocale as useBaseLocale} from 'use-intl';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants';
 
-// TODO: Potentially we could export this instead of useLocale from use-intl?
 export default function useLocale(): string {
   let locale;
 
@@ -13,7 +12,7 @@ export default function useLocale(): string {
   if (params?.[LOCALE_SEGMENT_NAME]) {
     locale = params[LOCALE_SEGMENT_NAME];
   } else {
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine as long as we're in the render phase
     locale = useBaseLocale();
   }
 

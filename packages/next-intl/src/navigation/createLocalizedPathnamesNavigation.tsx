@@ -69,7 +69,7 @@ export default function createLocalizedPathnamesNavigation<
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
     const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
       ...normalizeNameOrNameWithParams(href),
