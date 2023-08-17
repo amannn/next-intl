@@ -464,6 +464,42 @@ describe('prefix-based routing', () => {
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
       });
+
+      it('rewrites requests when the pathname is mapped for the default locale as well', () => {
+        const callMiddleware = createIntlMiddleware({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          pathnames: {
+            '/a': {
+              en: '/one',
+              de: '/eins'
+            },
+            '/b/[param]': {
+              en: '/two/[param]',
+              de: '/zwei/[param]'
+            }
+          }
+        });
+        callMiddleware(createMockRequest('/one', 'en'));
+        callMiddleware(createMockRequest('/de/eins', 'de'));
+        callMiddleware(createMockRequest('/two/2', 'en'));
+        callMiddleware(createMockRequest('/de/zwei/2', 'de'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(4);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/a'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/a'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/en/b/2'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://localhost:3000/de/b/2'
+        );
+      });
     });
   });
 
