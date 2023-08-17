@@ -1,4 +1,5 @@
 import {AllLocales} from '../shared/types';
+import {matchesPathname, templateToRegex} from '../shared/utils';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -96,29 +97,6 @@ export function getKnownLocaleFromPathname<Locales extends AllLocales>(
 
 export function getBasePath(pathname: string, pathLocale: string) {
   return pathname.replace(`/${pathLocale}`, '') || '/';
-}
-
-function templateToRegex(template: string): RegExp {
-  const regexPattern = template
-    .replace(/\[([^\]]+)\]/g, (match) => {
-      if (match.startsWith('[...')) return '(.*)';
-      if (match.startsWith('[[...')) return '(.*)';
-      return '([^/]+)';
-    })
-    // Clean up regex match remainders from optional catchall ('[[...slug]]')
-    .replaceAll('(.*)]', '(.*)');
-
-  return new RegExp(`^${regexPattern}$`);
-}
-
-export function matchesPathname(
-  /** E.g. `/users/[userId]-[userName]` */
-  template: string,
-  /** E.g. `/users/23-jane` */
-  pathname: string
-) {
-  const regex = templateToRegex(template);
-  return regex.test(pathname);
 }
 
 export function getRouteParams(template: string, pathname: string) {

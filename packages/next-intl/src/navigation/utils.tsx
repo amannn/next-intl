@@ -1,5 +1,6 @@
 import type {UrlObject} from 'url';
 import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
+import {matchesPathname, unlocalizePathname} from '../shared/utils';
 import StrictParams from './StrictParams';
 
 export type LinkParams<Pathname> = Pathname extends `${string}[[...${string}`
@@ -62,9 +63,11 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
     const namedPath = pathnames[value];
     if (!namedPath) {
       throw new Error(
-        `No named route found for "${value}". Available routes: ${Object.keys(
-          pathnames
-        ).join(', ')}`
+        process.env.NODE_ENV !== 'production'
+          ? `No route found for "${value}". Available routes: ${Object.keys(
+              pathnames
+            ).join(', ')}`
+          : undefined
       );
     }
     return namedPath;
@@ -114,21 +117,23 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  // TODO: Consider params
-  const routeName = Object.entries(pathnames).find(
-    ([, routePath]) =>
-      (typeof routePath !== 'string' ? routePath[locale] : routePath) ===
-      pathname
-  )?.[0];
+  pathname = unlocalizePathname(pathname, locale);
 
-  if (!routeName) {
+  const template = Object.entries(pathnames).find(([, routePath]) => {
+    const routePathname =
+      typeof routePath !== 'string' ? routePath[locale] : routePath;
+    return matchesPathname(routePathname, pathname);
+  })?.[0];
+
+  if (!template) {
     throw new Error(
-      `No named route found for "${pathname}". Available routes: ${Object.keys(
-        pathnames
-      ).join(', ')}`
+      process.env.NODE_ENV !== 'production'
+        ? `No route found for "${pathname}". Available routes: ${Object.keys(
+            pathnames
+          ).join(', ')}`
+        : undefined
     );
   }
 
-  // TODO: Fix typing with const assertion
-  return routeName as keyof Pathnames<Locales>;
+  return template as keyof Pathnames<Locales>;
 }

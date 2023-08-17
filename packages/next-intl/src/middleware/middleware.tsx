@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
 import {AllLocales} from '../shared/types';
+import {matchesPathname} from '../shared/utils';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
@@ -14,8 +15,7 @@ import {
   getKnownLocaleFromPathname,
   getNormalizedPathname,
   getPathWithSearch,
-  isLocaleSupportedOnDomain,
-  matchesPathname
+  isLocaleSupportedOnDomain
 } from './utils';
 
 const ROOT_URL = '/';

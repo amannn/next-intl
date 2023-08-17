@@ -1,34 +1,42 @@
 import {render, screen} from '@testing-library/react';
 import {
-  usePathname,
+  usePathname as useNextPathname,
   useParams,
-  useRouter as useNextRouter
+  useRouter as useNextRouter,
+  redirect as nextRedirect
 } from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
-import {createLocalizedPathnamesNavigation} from '../../src/navigation';
+import {
+  Pathnames,
+  createLocalizedPathnamesNavigation
+} from '../../src/navigation';
 
 vi.mock('next/navigation');
 
-const {Link, useRouter} = createLocalizedPathnamesNavigation({
-  locales: ['en', 'de'] as const,
-  pathnames: {
-    '/': '/',
-    '/about': {
-      en: '/about',
-      de: '/ueber-uns'
-    },
-    '/news/[articleSlug]-[articleId]': {
-      en: '/news/[articleSlug]-[articleId]',
-      de: '/neuigkeiten/[articleSlug]-[articleId]'
-    },
-    '/categories/[...parts]': {
-      en: '/categories/[...parts]',
-      de: '/kategorien/[...parts]'
-    },
-    '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
-  }
-});
+const locales = ['en', 'de'] as const;
+const pathnames = {
+  '/': '/',
+  '/about': {
+    en: '/about',
+    de: '/ueber-uns'
+  },
+  '/news/[articleSlug]-[articleId]': {
+    en: '/news/[articleSlug]-[articleId]',
+    de: '/neuigkeiten/[articleSlug]-[articleId]'
+  },
+  '/categories/[...parts]': {
+    en: '/categories/[...parts]',
+    de: '/kategorien/[...parts]'
+  },
+  '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
+} satisfies Pathnames<typeof locales>;
+
+const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
+    locales,
+    pathnames
+  });
 
 beforeEach(() => {
   const router = {
@@ -40,8 +48,120 @@ beforeEach(() => {
     refresh: vi.fn()
   };
   vi.mocked(useNextRouter).mockImplementation(() => router);
-  vi.mocked(usePathname).mockImplementation(() => '/');
+
+  // usePathname from Next.js returns the pathname the user sees
+  // (i.e. the external one that might be localized)
+  vi.mocked(useNextPathname).mockImplementation(() => '/');
+
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+});
+
+describe('redirect', () => {
+  it('can redirect for the default locale', () => {
+    function Component<Pathname extends keyof typeof pathnames>({
+      href
+    }: {
+      href: Parameters<typeof redirect<Pathname>>[0];
+    }) {
+      redirect(href);
+      return null;
+    }
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/');
+    const {rerender} = render(<Component href="/" />);
+    expect(nextRedirect).toHaveBeenLastCalledWith('/en');
+
+    rerender(<Component href="/about" />);
+    expect(nextRedirect).toHaveBeenLastCalledWith('/en/about');
+
+    rerender(
+      <Component
+        href={{
+          pathname: '/news/[articleSlug]-[articleId]',
+          params: {
+            articleId: 3,
+            articleSlug: 'launch-party'
+          }
+        }}
+      />
+    );
+    expect(nextRedirect).toHaveBeenLastCalledWith('/en/news/launch-party-3');
+  });
+
+  it('can redirect for a non-default locale', () => {
+    vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+    function Component<Pathname extends keyof typeof pathnames>({
+      href
+    }: {
+      href: Parameters<typeof redirect<Pathname>>[0];
+    }) {
+      redirect(href);
+      return null;
+    }
+    vi.mocked(useNextPathname).mockImplementation(() => '/');
+    const {rerender} = render(<Component href="/" />);
+    expect(nextRedirect).toHaveBeenLastCalledWith('/de');
+
+    rerender(<Component href="/about" />);
+    expect(nextRedirect).toHaveBeenLastCalledWith('/de/ueber-uns');
+
+    rerender(
+      <Component
+        href={{
+          pathname: '/news/[articleSlug]-[articleId]',
+          params: {
+            articleId: 3,
+            articleSlug: 'launch-party'
+          }
+        }}
+      />
+    );
+    expect(nextRedirect).toHaveBeenLastCalledWith(
+      '/de/neuigkeiten/launch-party-3'
+    );
+  });
+});
+
+describe('usePathname', () => {
+  it('returns the internal pathname for the default locale', () => {
+    function Component() {
+      const pathname = usePathname();
+      return <>{pathname}</>;
+    }
+    vi.mocked(useNextPathname).mockImplementation(() => '/');
+    const {rerender} = render(<Component />);
+    screen.getByText('/');
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/about');
+    rerender(<Component />);
+    screen.getByText('/about');
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/news/launch-party-3');
+    rerender(<Component />);
+    screen.getByText('/news/[articleSlug]-[articleId]');
+  });
+
+  it('returns the internal pathname a non-default locale', () => {
+    vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+
+    function Component() {
+      const pathname = usePathname();
+      return <>{pathname}</>;
+    }
+    vi.mocked(useNextPathname).mockImplementation(() => '/de');
+    const {rerender} = render(<Component />);
+    screen.getByText('/');
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/de/ueber-uns');
+    rerender(<Component />);
+    screen.getByText('/about');
+
+    vi.mocked(useNextPathname).mockImplementation(
+      () => '/de/neuigkeiten/launch-party-3'
+    );
+    rerender(<Component />);
+    screen.getByText('/news/[articleSlug]-[articleId]');
+  });
 });
 
 describe('Link', () => {
@@ -211,4 +331,20 @@ function TypeTests() {
     Über uns
   </Link>;
   <Link href="/catch-all/[[...parts]]">Catch-all</Link>;
+
+  // @ts-expect-error -- Unknown route
+  redirect('/unknown');
+  // @ts-expect-error -- Doesn't accept params
+  redirect({pathname: '/about'});
+  // @ts-expect-error -- Localized alternative
+  redirect('/ueber-uns');
+  // @ts-expect-error -- Requires params
+  redirect('/news/[articleSlug]-[articleId]');
+  redirect({
+    pathname: '/news/[articleSlug]-[articleId]',
+    // @ts-expect-error -- Missing param
+    params: {
+      articleId: 3
+    }
+  });
 }
