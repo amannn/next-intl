@@ -3,8 +3,8 @@ import {
   useRouter as useBaseRouter,
   usePathname as useBasePathname
 } from '../client';
-import useClientLocale from '../client/useClientLocale';
 import BaseLink from '../link';
+import useLocale from '../react-client/useLocale';
 import baseRedirect from '../server/react-client/redirect';
 import {
   AllLocales,
@@ -24,8 +24,8 @@ export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
 >({locales, pathnames}: {locales: Locales; pathnames: PathnamesConfig}) {
-  function useLocale() {
-    return useClientLocale() as (typeof locales)[number];
+  function useTypedLocale() {
+    return useLocale() as (typeof locales)[number];
   }
 
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
@@ -39,7 +39,7 @@ export default function createLocalizedPathnamesNavigation<
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref?: ComponentProps<typeof BaseLink>['ref']
   ) {
-    const defaultLocale = useLocale();
+    const defaultLocale = useTypedLocale();
     const finalLocale = locale || defaultLocale;
 
     return (
@@ -70,7 +70,7 @@ export default function createLocalizedPathnamesNavigation<
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
-    const locale = useLocale();
+    const locale = useTypedLocale();
     const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
       ...normalizeNameOrNameWithParams(href),
       locale,
@@ -81,7 +81,7 @@ export default function createLocalizedPathnamesNavigation<
 
   function useRouter() {
     const baseRouter = useBaseRouter();
-    const defaultLocale = useLocale();
+    const defaultLocale = useTypedLocale();
 
     return {
       ...baseRouter,
@@ -125,7 +125,7 @@ export default function createLocalizedPathnamesNavigation<
 
   function usePathname(): keyof PathnamesConfig {
     const pathname = useBasePathname();
-    const locale = useLocale();
+    const locale = useTypedLocale();
     return getRoute({pathname, locale, pathnames});
   }
 

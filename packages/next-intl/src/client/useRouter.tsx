@@ -1,8 +1,8 @@
 import {useRouter as useNextRouter} from 'next/navigation';
 import {useMemo} from 'react';
+import useLocale from '../react-client/useLocale';
 import {AllLocales} from '../shared/types';
 import {localizeHref} from '../shared/utils';
-import useClientLocale from './useClientLocale';
 
 type IntlNavigateOptions<Locales extends AllLocales> = {
   locale?: Locales[number];
@@ -29,7 +29,7 @@ type IntlNavigateOptions<Locales extends AllLocales> = {
  */
 export default function useRouter<Locales extends AllLocales>() {
   const router = useNextRouter();
-  const locale = useClientLocale();
+  const locale = useLocale();
 
   return useMemo(() => {
     function localize(href: string, nextLocale?: string) {

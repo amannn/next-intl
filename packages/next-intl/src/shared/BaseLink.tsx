@@ -3,7 +3,7 @@
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
-import useClientLocale from '../client/useClientLocale';
+import useLocale from '../react-client/useLocale';
 import {isLocalHref, localizeHref, prefixHref} from './utils';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
@@ -15,7 +15,7 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
-  const defaultLocale = useClientLocale();
+  const defaultLocale = useLocale();
   const isChangingLocale = locale !== defaultLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>

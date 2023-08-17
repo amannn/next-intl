@@ -1,5 +1,5 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import useClientLocale from '../client/useClientLocale';
+import useLocale from '../react-client/useLocale';
 import BaseLink from '../shared/BaseLink';
 import {AllLocales} from '../shared/types';
 
@@ -14,7 +14,7 @@ function Link<Locales extends AllLocales>(
   {locale, ...rest}: Props<Locales>,
   ref: Props<Locales>['ref']
 ) {
-  const defaultLocale = useClientLocale();
+  const defaultLocale = useLocale();
   return <BaseLink ref={ref} locale={locale || defaultLocale} {...rest} />;
 }
 
