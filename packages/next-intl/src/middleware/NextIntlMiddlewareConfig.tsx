@@ -43,7 +43,6 @@ export type DomainConfig<Locales extends AllLocales> = Omit<
   locale?: string;
 };
 
-// TODO: Default or not?
 type MiddlewareConfig<Locales extends AllLocales> =
   RoutingBaseConfig<Locales> & {
     /** Can be used to change the locale handling per domain. */
@@ -58,7 +57,7 @@ type MiddlewareConfig<Locales extends AllLocales> =
     /** By setting this to `false`, the `accept-language` header will no longer be used for locale detection. */
     localeDetection?: boolean;
 
-    /** TODO */
+    /** Maps internal pathnames to external ones which can be localized per locale. */
     pathnames?: Pathnames<Locales>;
     // Internal note: We want to accept this explicitly instead
     // of inferring it from `next-intl/config` so that:

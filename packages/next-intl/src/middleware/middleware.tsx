@@ -81,7 +81,6 @@ function receiveConfig<Locales extends AllLocales>(
   return result;
 }
 
-// TODO: eslint-config-molindo needs an upgrade of @typescript-eslint/parser
 export default function createMiddleware<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ) {
@@ -225,8 +224,6 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (!response) {
       if (pathname === ROOT_URL) {
-        // we might have to rewrite calls even at the root when the internal pathname != the pathname in the default locale
-
         const pathWithSearch = getPathWithSearch(
           `/${locale}`,
           request.nextUrl.search

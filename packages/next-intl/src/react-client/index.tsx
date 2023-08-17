@@ -10,18 +10,9 @@
 
 import Link from './Link';
 
-export * from 'use-intl/core';
+export * from 'use-intl';
 
-// Everything except for `useLocale`, which is replaced by an alternative
-export {
-  IntlProvider,
-  useTranslations,
-  useNow,
-  useTimeZone,
-  useMessages,
-  useFormatter,
-  useIntl
-} from 'use-intl/react';
+// Replace `useLocale` export from `use-intl`
 export {default as useLocale} from './useLocale';
 
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
