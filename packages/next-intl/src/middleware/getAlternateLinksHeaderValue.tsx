@@ -5,7 +5,7 @@ import MiddlewareConfig, {
 import {isLocaleSupportedOnDomain} from './utils';
 
 function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
-  const url = new URL(request.url);
+  const url = request.nextUrl.clone();
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
   }
