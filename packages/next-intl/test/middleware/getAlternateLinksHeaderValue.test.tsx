@@ -1,10 +1,10 @@
 import {NextRequest} from 'next/server';
-import {it, expect} from 'vitest';
+import {expect, it} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 
 function getRequest(url = 'https://example.com/') {
-  return {url} as NextRequest;
+  return new NextRequest(url);
 }
 
 it('works for prefixed routing (as-needed)', () => {
