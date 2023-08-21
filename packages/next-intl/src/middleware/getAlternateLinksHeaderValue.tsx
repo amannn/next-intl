@@ -2,10 +2,11 @@ import {NextRequest} from 'next/server';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
-import {isLocaleSupportedOnDomain} from './utils';
+import {getHost, isLocaleSupportedOnDomain} from './utils';
 
 function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
-  const url = request.nextUrl.clone();
+  const url = new URL(request.url);
+  url.host = getHost(request.headers) ?? url.host;
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
   }
