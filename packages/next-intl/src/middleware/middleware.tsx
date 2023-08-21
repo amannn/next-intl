@@ -7,7 +7,6 @@ import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import {
   getBestMatchingDomain,
-  getHost,
   getLocaleFromPathname,
   isLocaleSupportedOnDomain
 } from './utils';
@@ -33,9 +32,6 @@ export default function createMiddleware(config: MiddlewareConfig) {
   const matcher: Array<string> | undefined = (config as any)._matcher;
 
   return function middleware(request: NextRequest) {
-    // if Next.js behind a reverse proxy, it cannot get the correct host. ex) localhost, 172.x.x.x
-    // We need to set the host here, because Next.js doesn't do it for us
-    request.nextUrl.host = getHost(request.headers) ?? request.nextUrl.host;
     const matches =
       !matcher ||
       matcher.some((pattern) => request.nextUrl.pathname.match(pattern));
