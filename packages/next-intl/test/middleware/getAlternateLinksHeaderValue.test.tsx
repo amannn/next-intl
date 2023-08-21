@@ -3,8 +3,10 @@ import {expect, it} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 
-function getRequest(url = 'https://example.com/') {
-  return new NextRequest(url);
+function getRequest(url = 'https://internal-url.com/') {
+  return new NextRequest(url, {
+    headers: {host: 'example.com', 'x-forwarded-host': 'example.com'}
+  });
 }
 
 it('works for prefixed routing (as-needed)', () => {
