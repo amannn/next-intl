@@ -68,10 +68,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     function rewrite(url: string) {
-      return NextResponse.rewrite(
-        new URL(url, request.nextUrl.href),
-        getResponseInit()
-      );
+      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
     }
 
     function next() {
@@ -79,7 +76,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     function redirect(url: string, host?: string) {
-      const urlObj = new URL(url, request.nextUrl.href);
+      const urlObj = new URL(url, request.url);
 
       if (domainConfigs.length > 0) {
         if (!host) {
