@@ -36,6 +36,7 @@
     },
     "./link": {
       "types": "./link.d.ts",
+      "react-server": "./dist/src/link/react-server/index.js",
       "default": "./dist/src/link/index.js"
     },
     "./middleware": {
