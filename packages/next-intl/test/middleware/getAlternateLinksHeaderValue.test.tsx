@@ -189,7 +189,7 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   ]);
 });
 
-it('use the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
+it('uses the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
   const config: MiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
