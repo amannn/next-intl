@@ -17,7 +17,7 @@ export default function UserTestimonial({
 }: Props) {
   return (
     <a
-      className="block rounded-md bg-white p-6 dark:bg-slate-800"
+      className="block rounded-sm bg-white p-6 dark:bg-slate-800"
       href={href}
       rel="noreferrer"
       target="_blank"
