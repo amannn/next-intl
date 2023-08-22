@@ -206,7 +206,7 @@ export default function createMiddleware<Locales extends AllLocales>(
         } else {
           const isDefaultLocale =
             configWithDefaults.defaultLocale === locale ||
-            domainConfigs.some((cur) => cur.defaultLocale === locale);
+            domain?.defaultLocale === locale;
 
           response = redirect(
             formatTemplatePathname(

@@ -65,6 +65,7 @@ export default function getAlternateLinksHeaderValue<
         url = new URL(normalizedUrl);
         url.port = '';
         url.host = domainConfig.domain;
+        url.pathname = getLocalizedPathname(url.pathname, locale);
 
         if (
           locale !== domainConfig.defaultLocale ||
@@ -72,8 +73,6 @@ export default function getAlternateLinksHeaderValue<
         ) {
           url.pathname = prefixPathname(url.pathname);
         }
-
-        // TODO: Alternate links for domains
 
         return getAlternateEntry(url.toString(), locale);
       });

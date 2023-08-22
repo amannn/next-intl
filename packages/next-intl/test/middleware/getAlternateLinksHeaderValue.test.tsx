@@ -1,6 +1,7 @@
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
+import {Pathnames} from '../../src/navigation';
 
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
@@ -64,7 +65,8 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
     getAlternateLinksHeaderValue({
       config,
       requestUrl: 'https://example.com/',
-      resolvedLocale: 'en'
+      resolvedLocale: 'en',
+      localizedPathnames: pathnames['/']
     }).split(', ')
   ).toEqual([
     '<https://example.com/>; rel="alternate"; hreflang="en"',
@@ -272,4 +274,154 @@ it("works for type domain with `localePrefix: 'always'`", () => {
     '<https://example.com/fr/about>; rel="alternate"; hreflang="fr"',
     '<https://example.ca/fr/about>; rel="alternate"; hreflang="fr"'
   ]);
+});
+
+it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", () => {
+  const config: MiddlewareConfigWithDefaults<['en', 'fr']> = {
+    alternateLinks: true,
+    localePrefix: 'as-needed',
+    localeDetection: true,
+    defaultLocale: 'en',
+    locales: ['en', 'fr'],
+    domains: [
+      {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
+      {
+        defaultLocale: 'en',
+        domain: 'ca.example.com',
+        locales: ['en', 'fr']
+      },
+      {defaultLocale: 'fr', domain: 'fr.example.com', locales: ['fr']}
+    ],
+    pathnames: {
+      '/': '/',
+      '/about': {
+        en: '/about',
+        fr: '/a-propos'
+      },
+      '/users': {
+        en: '/users',
+        fr: '/utilisateurs'
+      },
+      '/users/[userId]': {
+        en: '/users/[userId]',
+        fr: '/utilisateurs/[userId]'
+      },
+      '/news/[articleSlug]-[articleId]': {
+        en: '/news/[articleSlug]-[articleId]',
+        fr: '/nouvelles/[articleSlug]-[articleId]'
+      },
+      '/products/[...slug]': {
+        en: '/products/[...slug]',
+        fr: '/produits/[...slug]'
+      },
+      '/categories/[[...slug]]': {
+        en: '/categories/[[...slug]]',
+        fr: '/categories/[[...slug]]'
+      }
+    } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
+  };
+
+  [
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://en.example.com/',
+      resolvedLocale: 'en'
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com',
+      resolvedLocale: 'en'
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com/fr',
+      resolvedLocale: 'fr'
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://fr.example.com',
+      resolvedLocale: 'fr'
+    })
+  ]
+    .map((links) => links.split(', '))
+    .forEach((links) => {
+      expect(links).toEqual([
+        '<https://en.example.com/>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
+        '<https://fr.example.com/>; rel="alternate"; hreflang="fr"'
+      ]);
+    });
+
+  [
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://en.example.com/about',
+      resolvedLocale: 'en',
+      localizedPathnames: config.pathnames!['/about']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com/about',
+      resolvedLocale: 'en',
+      localizedPathnames: config.pathnames!['/about']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com/fr/a-propos',
+      resolvedLocale: 'fr',
+      localizedPathnames: config.pathnames!['/about']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://fr.example.com/a-propos',
+      resolvedLocale: 'fr',
+      localizedPathnames: config.pathnames!['/about']
+    })
+  ]
+    .map((links) => links.split(', '))
+    .forEach((links) => {
+      expect(links).toEqual([
+        '<https://en.example.com/about>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/about>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/fr/a-propos>; rel="alternate"; hreflang="fr"',
+        '<https://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
+      ]);
+    });
+
+  [
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://en.example.com/users/42',
+      resolvedLocale: 'en',
+      localizedPathnames: config.pathnames!['/users/[userId]']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com/users/42',
+      resolvedLocale: 'en',
+      localizedPathnames: config.pathnames!['/users/[userId]']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://ca.example.com/fr/utilisateurs/42',
+      resolvedLocale: 'fr',
+      localizedPathnames: config.pathnames!['/users/[userId]']
+    }),
+    getAlternateLinksHeaderValue({
+      config,
+      requestUrl: 'https://fr.example.com/utilisateurs/42',
+      resolvedLocale: 'fr',
+      localizedPathnames: config.pathnames!['/users/[userId]']
+    })
+  ]
+    .map((links) => links.split(', '))
+    .forEach((links) => {
+      expect(links).toEqual([
+        '<https://en.example.com/users/42>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/users/42>; rel="alternate"; hreflang="en"',
+        '<https://ca.example.com/fr/utilisateurs/42>; rel="alternate"; hreflang="fr"',
+        '<https://fr.example.com/utilisateurs/42>; rel="alternate"; hreflang="fr"'
+      ]);
+    });
 });

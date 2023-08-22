@@ -4,6 +4,7 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
+import {Pathnames} from '../../src/navigation';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 vi.mock('next/server', () => {
@@ -267,7 +268,7 @@ describe('prefix-based routing', () => {
             en: '/categories/[[...slug]]',
             de: '/kategorien/[[...slug]]'
           }
-        }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -622,7 +623,7 @@ describe('prefix-based routing', () => {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]'
           }
-        }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -957,7 +958,7 @@ describe('prefix-based routing', () => {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]'
           }
-        }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -1282,6 +1283,364 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://fr.example.com/about'
         );
+      });
+    });
+
+    describe('localized pathnames', () => {
+      const middlewareWithPathnames = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'fr'],
+        domains: [
+          {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
+          {
+            defaultLocale: 'en',
+            domain: 'ca.example.com',
+            locales: ['en', 'fr']
+          },
+          {defaultLocale: 'fr', domain: 'fr.example.com', locales: ['fr']}
+        ],
+        pathnames: {
+          '/': '/',
+          '/about': {
+            en: '/about',
+            fr: '/a-propos'
+          },
+          '/users': {
+            en: '/users',
+            fr: '/utilisateurs'
+          },
+          '/users/[userId]': {
+            en: '/users/[userId]',
+            fr: '/utilisateurs/[userId]'
+          },
+          '/news/[articleSlug]-[articleId]': {
+            en: '/news/[articleSlug]-[articleId]',
+            fr: '/nouvelles/[articleSlug]-[articleId]'
+          },
+          '/products/[...slug]': {
+            en: '/products/[...slug]',
+            fr: '/produits/[...slug]'
+          },
+          '/categories/[[...slug]]': {
+            en: '/categories/[[...slug]]',
+            fr: '/categories/[[...slug]]'
+          }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
+      });
+
+      it('serves requests for the default locale at the root', () => {
+        middlewareWithPathnames(
+          createMockRequest('/', 'en', 'http://en.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/', 'en', 'http://ca.example.com')
+        );
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/en'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://ca.example.com/en'
+        );
+      });
+
+      it('serves requests for the default locale at nested paths', () => {
+        middlewareWithPathnames(
+          createMockRequest('/about', 'en', 'http://en.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/users', 'en', 'http://en.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/users/1', 'en', 'http://en.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/news/happy-newyear-g5b116754',
+            'en',
+            'http://en.example.com'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/products/apparel/t-shirts',
+            'en',
+            'http://en.example.com'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/categories/women/t-shirts',
+            'en',
+            'http://en.example.com'
+          )
+        );
+
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/en/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://en.example.com/en/users'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://en.example.com/en/users/1'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://en.example.com/en/news/happy-newyear-g5b116754'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://en.example.com/en/products/apparel/t-shirts'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://en.example.com/en/categories/women/t-shirts'
+        );
+      });
+
+      it('serves requests for a non-default locale at the root', () => {
+        middlewareWithPathnames(
+          createMockRequest('/fr', 'fr', 'http://ca.example.com')
+        );
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled(); // We rewrite just in case
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://ca.example.com/fr'
+        );
+      });
+
+      it('serves requests for a non-default locale at nested paths', () => {
+        middlewareWithPathnames(
+          createMockRequest('/fr/a-propos', 'fr', 'http://ca.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/fr/utilisateurs', 'fr', 'http://ca.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/fr/utilisateurs/1', 'fr', 'http://ca.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/fr/nouvelles/happy-newyear-g5b116754',
+            'fr',
+            'http://ca.example.com'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/fr/produits/vetements/t-shirts',
+            'fr',
+            'http://ca.example.com'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/fr/categories/femmes/t-shirts',
+            'fr',
+            'http://ca.example.com'
+          )
+        );
+
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://ca.example.com/fr/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://ca.example.com/fr/users'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://ca.example.com/fr/users/1'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://ca.example.com/fr/news/happy-newyear-g5b116754'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://ca.example.com/fr/products/vetements/t-shirts'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://ca.example.com/fr/categories/femmes/t-shirts'
+        );
+      });
+
+      it('redirects a request for a localized route that is not associated with the requested locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/a-propos', 'en', 'http://en.example.com')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/about'
+        );
+      });
+
+      it('redirects when a pathname from the default locale ends up with a different locale that is the default locale on the domain', () => {
+        // Relevant to avoid duplicate content issues
+        middlewareWithPathnames(
+          createMockRequest('/about', 'fr', 'http://fr.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/users/2', 'fr', 'http://fr.example.com')
+        );
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://fr.example.com/a-propos'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://fr.example.com/utilisateurs/2'
+        );
+      });
+
+      it('redirects when a pathname from the default locale ends up with a different locale that is a secondary locale on the domain', () => {
+        // Relevant to avoid duplicate content issues
+        middlewareWithPathnames(
+          createMockRequest('/about', 'fr', 'http://ca.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/users/2', 'fr', 'http://ca.example.com')
+        );
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://ca.example.com/fr/a-propos'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://ca.example.com/fr/utilisateurs/2'
+        );
+      });
+
+      it('redirects a non-prefixed nested path to a localized alternative if another locale was detected', () => {
+        middlewareWithPathnames(
+          createMockRequest('/about', 'fr', 'http://ca.example.com')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/users/2', 'fr', 'http://ca.example.com')
+        );
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://ca.example.com/fr/a-propos'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://ca.example.com/fr/utilisateurs/2'
+        );
+      });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPathnames(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        expect(
+          getLinks(createMockRequest('/', 'en', 'http://en.example.com'))
+        ).toEqual([
+          '<http://en.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/fr', 'fr', 'http://ca.example.com'))
+        ).toEqual([
+          '<http://en.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/about', 'en', 'http://en.example.com'))
+        ).toEqual([
+          '<http://en.example.com/about>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/about>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/a-propos>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(
+            createMockRequest('/a-propos', 'fr', 'http://ca.example.com')
+          )
+        ).toEqual([
+          '<http://en.example.com/about>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/about>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/a-propos>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/users/1', 'en', 'http://en.example.com'))
+        ).toEqual([
+          '<http://en.example.com/users/1>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/users/1>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/utilisateurs/1>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/utilisateurs/1>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(
+            createMockRequest('/utilisateurs/1', 'fr', 'http://fr.example.com')
+          )
+        ).toEqual([
+          '<http://en.example.com/users/1>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/users/1>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/utilisateurs/1>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/utilisateurs/1>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(
+            createMockRequest(
+              '/products/apparel/t-shirts',
+              'en',
+              'http://en.example.com'
+            )
+          )
+        ).toEqual([
+          '<http://en.example.com/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(
+            createMockRequest(
+              '/fr/produits/apparel/t-shirts',
+              'fr',
+              'http://fr.example.com'
+            )
+          )
+        ).toEqual([
+          '<http://en.example.com/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(createMockRequest('/unknown', 'en', 'http://en.example.com'))
+        ).toEqual([
+          '<http://en.example.com/unknown>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/unknown>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/unknown>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/unknown>; rel="alternate"; hreflang="fr"'
+        ]);
+        expect(
+          getLinks(
+            createMockRequest('/fr/unknown', 'fr', 'http://ca.example.com')
+          )
+        ).toEqual([
+          '<http://en.example.com/unknown>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/unknown>; rel="alternate"; hreflang="en"',
+          '<http://ca.example.com/fr/unknown>; rel="alternate"; hreflang="fr"',
+          '<http://fr.example.com/unknown>; rel="alternate"; hreflang="fr"'
+        ]);
       });
     });
   });
