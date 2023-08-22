@@ -2,10 +2,13 @@ import {NextRequest} from 'next/server';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
-import {isLocaleSupportedOnDomain} from './utils';
+import {getHost, isLocaleSupportedOnDomain} from './utils';
 
 function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
   const url = new URL(request.url);
+  url.host = getHost(request.headers) ?? url.host;
+  url.protocol = request.headers.get('x-forwarded-proto') ?? url.protocol;
+
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
   }
