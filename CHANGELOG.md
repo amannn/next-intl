@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.19.2 (2023-08-22)
+
+
+### Bug Fixes
+
+* Use correct host and protocol for alternate links when running behind a proxy (`x-forwarded-host`, `x-forwarded-proto`) ([#462](https://github.com/amannn/next-intl/issues/462) by @HHongSeungWoo) ([747cf8e](https://github.com/amannn/next-intl/commit/747cf8ef71a2e27a39c2178353eb31cfda8170f2))
+
+
+
+
+
 ## 2.19.1 (2023-08-01)
 
 
