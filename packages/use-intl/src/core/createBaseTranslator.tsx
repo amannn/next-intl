@@ -11,6 +11,7 @@ import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
+import MessageFormatCache from './MessageFormatCache';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
@@ -122,7 +123,7 @@ export function getMessagesOrError<Messages extends AbstractIntlMessages>({
 }
 
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
-  cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
+  messageFormatCache?: MessageFormatCache;
   defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
   messagesOrError: Messages | IntlError;
@@ -149,11 +150,11 @@ export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >({
-  cachedFormatsByLocale,
   defaultTranslationValues,
   formats: globalFormats,
   getMessageFallback = defaultGetMessageFallback,
   locale,
+  messageFormatCache,
   messagesOrError,
   namespace,
   onError,
@@ -202,11 +203,11 @@ export default function createBaseTranslator<
       return parts.filter((part) => part != null).join('.');
     }
 
-    const cacheKey = joinPath([namespace, key, String(message)]);
+    const cacheKey = joinPath([locale, namespace, key, String(message)]);
 
-    let messageFormat;
-    if (cachedFormatsByLocale?.[locale]?.[cacheKey]) {
-      messageFormat = cachedFormatsByLocale?.[locale][cacheKey];
+    let messageFormat: IntlMessageFormat;
+    if (messageFormatCache?.has(cacheKey)) {
+      messageFormat = messageFormatCache.get(cacheKey)!;
     } else {
       if (typeof message === 'object') {
         let code, errorMessage;
@@ -252,12 +253,7 @@ export default function createBaseTranslator<
         );
       }
 
-      if (cachedFormatsByLocale) {
-        if (!cachedFormatsByLocale[locale]) {
-          cachedFormatsByLocale[locale] = {};
-        }
-        cachedFormatsByLocale[locale][cacheKey] = messageFormat;
-      }
+      messageFormatCache?.set(cacheKey, messageFormat);
     }
 
     try {

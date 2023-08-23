@@ -1078,4 +1078,22 @@ describe('performance', () => {
     expect(renderCount).toBe(1);
     screen.getByText('Hello');
   });
+
+  it('reuses message formats across component instances', () => {
+    function Component({value}: {value: number}) {
+      const t = useTranslations();
+      return <>{t('message', {value})}</>;
+    }
+
+    render(
+      <IntlProvider locale="en" messages={{message: 'Value {value}'}}>
+        <Component value={1} />
+        <Component value={2} />
+        <Component value={3} />
+      </IntlProvider>
+    );
+
+    screen.getByText(['Value 1', 'Value 2', 'Value 3'].join(''));
+    expect(MockIntlMessageFormat.invocationsByMessage['Value {value}']).toBe(1);
+  });
 });
