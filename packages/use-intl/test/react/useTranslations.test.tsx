@@ -124,7 +124,7 @@ it('applies a time zone for provided formats', () => {
   });
 });
 
-it.only('applies a time zone when using a built-in format', () => {
+it('applies a time zone when using a built-in format', () => {
   function expectFormatted(
     style: 'time' | 'date',
     format: 'full' | 'long' | 'medium' | 'short',
