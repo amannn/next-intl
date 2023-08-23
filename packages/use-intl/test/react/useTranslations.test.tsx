@@ -166,9 +166,9 @@ it('handles selects', () => {
 it('handles selectordinals', () => {
   renderMessage(
     "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-    {year: 1}
+    {year: 21}
   );
-  screen.getByText("It's my cat's 1st birthday!");
+  screen.getByText("It's my cat's 21st birthday!");
 });
 
 it('can use messages in attributes', () => {
