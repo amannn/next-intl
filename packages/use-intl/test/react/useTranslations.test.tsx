@@ -137,7 +137,7 @@ it.only('applies a time zone when using a built-in format', () => {
   }
 
   expectFormatted('time', 'full', 'May 8, 2023 at 10:50:16 PM UTC');
-  expectFormatted('time', 'long', '10:50:16 PM GMT+0');
+  expectFormatted('time', 'long', '10:50:16 PM UTC');
   expectFormatted('time', 'medium', '10:50:16 PM');
   expectFormatted('time', 'short', '10:50 PM');
 
