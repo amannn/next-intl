@@ -376,7 +376,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.19.2
+        specifier: ^2.19.3
         version: link:../use-intl
     devDependencies:
       '@size-limit/preset-big-lib':

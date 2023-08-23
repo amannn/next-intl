@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.19.3 (2023-08-23)
+
+
+### Bug Fixes
+
+* Apply time zone for built-in default formats (`full`, `long`, `medium`, `short`) ([#473](https://github.com/amannn/next-intl/issues/473)) ([244b9b2](https://github.com/amannn/next-intl/commit/244b9b2adf003d80d47a2d84b72a2ef77d32950f)), closes [#467](https://github.com/amannn/next-intl/issues/467)
+
+
+
+
+
 ## 2.19.2 (2023-08-22)
 
 
