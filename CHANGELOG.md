@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.20.0 (2023-08-23)
+
+
+### Features
+
+* Improve runtime performance of `useTranslations` by avoiding the creation of message format instances if possible and introducing a cross-component message format cache ([#475](https://github.com/amannn/next-intl/issues/475)) ([4d177f8](https://github.com/amannn/next-intl/commit/4d177f8a27eada4f056b79b77797b384a08111e5)), closes [#294](https://github.com/amannn/next-intl/issues/294)
+
+
+
+
+
 ## 2.19.4 (2023-08-23)
 
 
