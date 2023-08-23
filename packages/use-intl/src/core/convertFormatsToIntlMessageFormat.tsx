@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
