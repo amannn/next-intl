@@ -128,6 +128,23 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   messagesOrError: Messages | IntlError;
 };
 
+function getPlainMessage(candidate: string, values?: unknown) {
+  if (values) return undefined;
+
+  const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+
+  // Placeholders can be in the message if there are default values,
+  // or if the user has forgotten to provide values. In the latter
+  // case we need to compile the message to receive an error.
+  const hasPlaceholders = /<|{/.test(unescapedMessage);
+
+  if (!hasPlaceholders) {
+    return unescapedMessage;
+  }
+
+  return undefined;
+}
+
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -213,6 +230,10 @@ export default function createBaseTranslator<
 
         return getFallbackFromErrorAndNotify(key, code, errorMessage);
       }
+
+      // Hot path that avoids creating an `IntlMessageFormat` instance
+      const plainMessage = getPlainMessage(message as string, values);
+      if (plainMessage) return plainMessage;
 
       try {
         messageFormat = new IntlMessageFormat(

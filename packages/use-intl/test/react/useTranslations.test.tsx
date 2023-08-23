@@ -3,7 +3,7 @@ import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
 import React, {ReactNode} from 'react';
-import {it, expect, vi, describe} from 'vitest';
+import {it, expect, vi, describe, beforeEach} from 'vitest';
 import {
   Formats,
   IntlError,
@@ -975,5 +975,107 @@ describe('default translation values', () => {
   it('overrides default translation values', () => {
     renderMessageWithDefault('Hello {value}', {value: 234});
     screen.getByText('Hello 234');
+  });
+});
+
+describe('performance', () => {
+  const MockIntlMessageFormat: typeof IntlMessageFormat & {
+    invocationsByMessage: Record<string, number>;
+  } = IntlMessageFormat as any;
+
+  beforeEach(() => {
+    vi.mock('intl-messageformat', async (original) => {
+      const ActualIntlMessageFormat: typeof IntlMessageFormat = (
+        (await original()) as any
+      ).default;
+
+      return {
+        default: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
+          public static invocationsByMessage: Record<string, number> = {};
+
+          constructor(
+            ...[message, ...rest]: ConstructorParameters<
+              typeof IntlMessageFormat
+            >
+          ) {
+            if (typeof message !== 'string') {
+              throw new Error('Unsupported invocation for testing.');
+            }
+
+            super(message, ...rest);
+
+            MockIntlMessageFormatImpl.invocationsByMessage[message] ||= 0;
+            MockIntlMessageFormatImpl.invocationsByMessage[message]++;
+          }
+        }
+      };
+    });
+  });
+
+  it('caches message formats for component instances', () => {
+    let renderCount = 0;
+
+    function Component() {
+      const t = useTranslations();
+      renderCount++;
+      return <>{t.rich('message', {count: renderCount})}</>;
+    }
+
+    function Provider({children}: {children: ReactNode}) {
+      return (
+        <IntlProvider locale="en" messages={{message: 'Hello #{count}'}}>
+          {children}
+        </IntlProvider>
+      );
+    }
+
+    const {rerender} = render(
+      <Provider>
+        <Component />
+      </Provider>
+    );
+    expect(MockIntlMessageFormat.invocationsByMessage['Hello #{count}']).toBe(
+      1
+    );
+    expect(renderCount).toBe(1);
+    screen.getByText('Hello #1');
+
+    rerender(
+      <Provider>
+        <Component />
+      </Provider>
+    );
+    expect(MockIntlMessageFormat.invocationsByMessage['Hello #{count}']).toBe(
+      1
+    );
+    expect(renderCount).toBe(2);
+    screen.getByText('Hello #2');
+  });
+
+  it("doesn't create a message format for plain strings", () => {
+    let renderCount = 0;
+
+    function Component() {
+      const t = useTranslations();
+      renderCount++;
+      return <>{t('message')}</>;
+    }
+
+    function Provider({children}: {children: ReactNode}) {
+      return (
+        <IntlProvider locale="en" messages={{message: 'Hello'}}>
+          {children}
+        </IntlProvider>
+      );
+    }
+
+    render(
+      <Provider>
+        <Component />
+      </Provider>
+    );
+    expect(MockIntlMessageFormat.invocationsByMessage.Hello).toBe(undefined);
+    expect(renderCount).toBe(1);
+    screen.getByText('Hello');
   });
 });
