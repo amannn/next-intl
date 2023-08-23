@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.19.4 (2023-08-23)
+
+
+### Bug Fixes
+
+* Allow to import `next-intl/link` into Server Components without having to add a wrapping Client Component ([#465](https://github.com/amannn/next-intl/issues/465)) ([21a0691](https://github.com/amannn/next-intl/commit/21a06913055028848d36474fe636a4e3e332f647))
+
+
+
+
+
 ## 2.19.3 (2023-08-23)
 
 
