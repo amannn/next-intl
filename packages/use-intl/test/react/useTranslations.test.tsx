@@ -56,7 +56,7 @@ function renderMessage(
       formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
       locale="en"
       messages={{message}}
-      timeZone="Europe/London"
+      timeZone="Etc/UTC"
     >
       <Component />
     </IntlProvider>
@@ -122,7 +122,29 @@ it('applies a time zone for provided formats', () => {
   renderMessage('{now, time, time}', {
     now: parseISO('2020-11-19T15:38:43.700Z')
   });
-  screen.getByText('3:38 PM');
+});
+
+it('applies a time zone when using a built-in format', () => {
+  function expectFormatted(
+    style: 'time' | 'date',
+    format: 'full' | 'long' | 'medium' | 'short',
+    result: string
+  ) {
+    const now = parseISO('2023-05-08T22:50:16.879Z');
+    const {unmount} = renderMessage(`{now, ${style}, ${format}}`, {now});
+    screen.getByText(result);
+    unmount();
+  }
+
+  expectFormatted('time', 'full', '10:50:16 PM UTC');
+  expectFormatted('time', 'long', '10:50:16 PM UTC');
+  expectFormatted('time', 'medium', '10:50:16 PM');
+  expectFormatted('time', 'short', '10:50 PM');
+
+  expectFormatted('date', 'full', 'Monday, May 8, 2023');
+  expectFormatted('date', 'long', 'May 8, 2023');
+  expectFormatted('date', 'medium', 'May 8, 2023');
+  expectFormatted('date', 'short', '5/8/23');
 });
 
 it('handles pluralisation', () => {
