@@ -11,6 +11,7 @@ import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
+import MessageFormatCache from './MessageFormatCache';
 import TranslationValues, {RichTranslationValues} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
@@ -122,11 +123,28 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>({
 }
 
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
-  cachedFormatsByLocale?: Record<string, Record<string, IntlMessageFormat>>;
+  messageFormatCache?: MessageFormatCache;
   defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
   messagesOrError: Messages | IntlError;
 };
+
+function getPlainMessage(candidate: string, values?: unknown) {
+  if (values) return undefined;
+
+  const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+
+  // Placeholders can be in the message if there are default values,
+  // or if the user has forgotten to provide values. In the latter
+  // case we need to compile the message to receive an error.
+  const hasPlaceholders = /<|{/.test(unescapedMessage);
+
+  if (!hasPlaceholders) {
+    return unescapedMessage;
+  }
+
+  return undefined;
+}
 
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
@@ -148,11 +166,11 @@ function createBaseTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >({
-  cachedFormatsByLocale,
   defaultTranslationValues,
   formats: globalFormats,
   getMessageFallback = defaultGetMessageFallback,
   locale,
+  messageFormatCache,
   messagesOrError,
   namespace,
   onError,
@@ -201,11 +219,11 @@ function createBaseTranslatorImpl<
       return parts.filter((part) => part != null).join('.');
     }
 
-    const cacheKey = joinPath([namespace, key, String(message)]);
+    const cacheKey = joinPath([locale, namespace, key, String(message)]);
 
-    let messageFormat;
-    if (cachedFormatsByLocale?.[locale]?.[cacheKey]) {
-      messageFormat = cachedFormatsByLocale?.[locale][cacheKey];
+    let messageFormat: IntlMessageFormat;
+    if (messageFormatCache?.has(cacheKey)) {
+      messageFormat = messageFormatCache.get(cacheKey)!;
     } else {
       if (typeof message === 'object') {
         let code, errorMessage;
@@ -230,6 +248,10 @@ function createBaseTranslatorImpl<
         return getFallbackFromErrorAndNotify(key, code, errorMessage);
       }
 
+      // Hot path that avoids creating an `IntlMessageFormat` instance
+      const plainMessage = getPlainMessage(message as string, values);
+      if (plainMessage) return plainMessage;
+
       try {
         messageFormat = new IntlMessageFormat(
           message,
@@ -247,12 +269,7 @@ function createBaseTranslatorImpl<
         );
       }
 
-      if (cachedFormatsByLocale) {
-        if (!cachedFormatsByLocale[locale]) {
-          cachedFormatsByLocale[locale] = {};
-        }
-        cachedFormatsByLocale[locale][cacheKey] = messageFormat;
-      }
+      messageFormatCache?.set(cacheKey, messageFormat);
     }
 
     try {

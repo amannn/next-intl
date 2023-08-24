@@ -9,7 +9,7 @@ export default function useLocale(): string {
   // `useParams` can be called, but the return type is `null`.
   const params = useParams() as ReturnType<typeof useParams> | null;
 
-  if (params?.[LOCALE_SEGMENT_NAME]) {
+  if (typeof params?.[LOCALE_SEGMENT_NAME] === 'string') {
     locale = params[LOCALE_SEGMENT_NAME];
   } else {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine as long as we're in the render phase

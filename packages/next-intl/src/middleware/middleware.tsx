@@ -292,7 +292,8 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
-        sameSite: 'strict'
+        sameSite: 'strict',
+        maxAge: 31536000 // 1 year
       });
     }
 
@@ -309,7 +310,7 @@ export default function createMiddleware<Locales extends AllLocales>(
             internalTemplateName != null
               ? configWithDefaults.pathnames?.[internalTemplateName]
               : undefined,
-          requestUrl: request.url,
+          request,
           resolvedLocale: locale
         })
       );

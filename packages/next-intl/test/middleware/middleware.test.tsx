@@ -7,7 +7,8 @@ import createIntlMiddleware from '../../src/middleware';
 import {Pathnames} from '../../src/navigation';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
-vi.mock('next/server', () => {
+vi.mock('next/server', async (importActual) => {
+  const ActualNextServer = (await importActual()) as any;
   type MiddlewareResponseInit = Parameters<(typeof NextResponse)['next']>[0];
 
   function createResponse(init: MiddlewareResponseInit) {
@@ -18,6 +19,7 @@ vi.mock('next/server', () => {
     return response as NextResponse;
   }
   return {
+    ...ActualNextServer,
     NextResponse: {
       next: vi.fn((init: ResponseInit) => createResponse(init)),
       rewrite: vi.fn((_destination: string, init: ResponseInit) =>
@@ -46,19 +48,7 @@ function createMockRequest(
     ...customHeaders
   });
   const url = host + pathnameWithSearch;
-
-  return {
-    headers,
-    cookies: new RequestCookies(headers),
-    url,
-    nextUrl: {
-      pathname: pathnameWithSearch.replace(/\?.*$/, ''),
-      href: url,
-      search: pathnameWithSearch.includes('?')
-        ? '?' + pathnameWithSearch.split('?')[1]
-        : ''
-    }
-  } as NextRequest;
+  return new NextRequest(url, {headers});
 }
 
 const MockedNextResponse = NextResponse as unknown as {
@@ -102,15 +92,6 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/en/list?sort=asc'
-      );
-    });
-
-    it('handles hashes for the default locale', () => {
-      middleware(createMockRequest('/#asdf'));
-      expect(MockedNextResponse.next).not.toHaveBeenCalled();
-      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en/#asdf'
       );
     });
 

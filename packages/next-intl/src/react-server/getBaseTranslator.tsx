@@ -11,6 +11,8 @@ import {
 } from 'use-intl/core';
 import getConfig from '../server/getConfig';
 
+const getMessageFormatCache = cache(() => new Map());
+
 let hasWarned = false;
 
 async function getTranslatorImpl<
@@ -111,6 +113,7 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
   const config = await getConfig(locale);
   return createBaseTranslator({
     ...config,
+    messageFormatCache: getMessageFormatCache(),
     namespace,
     messages: config.messages
   });

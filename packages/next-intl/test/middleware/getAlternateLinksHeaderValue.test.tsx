@@ -1,3 +1,6 @@
+// @vitest-environment edge-runtime
+
+import {NextRequest} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
@@ -15,7 +18,7 @@ it('works for prefixed routing (as-needed)', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/',
+      request: new NextRequest('https://example.com/'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -27,7 +30,7 @@ it('works for prefixed routing (as-needed)', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/about',
+      request: new NextRequest('https://example.com/about'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -64,7 +67,7 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/',
+      request: new NextRequest('https://example.com/'),
       resolvedLocale: 'en',
       localizedPathnames: pathnames['/']
     }).split(', ')
@@ -77,7 +80,7 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/about',
+      request: new NextRequest('https://example.com/about'),
       resolvedLocale: 'en',
       localizedPathnames: pathnames['/about']
     }).split(', ')
@@ -90,7 +93,7 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/de/ueber',
+      request: new NextRequest('https://example.com/de/ueber'),
       resolvedLocale: 'de',
       localizedPathnames: pathnames['/about']
     }).split(', ')
@@ -103,7 +106,7 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/users/2',
+      request: new NextRequest('https://example.com/users/2'),
       resolvedLocale: 'en',
       localizedPathnames: pathnames['/users/[userId]']
     }).split(', ')
@@ -126,7 +129,7 @@ it('works for prefixed routing (always)', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/',
+      request: new NextRequest('https://example.com/'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -138,7 +141,7 @@ it('works for prefixed routing (always)', () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/about',
+      request: new NextRequest('https://example.com/about'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -177,12 +180,12 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   [
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/',
+      request: new NextRequest('https://example.com/'),
       resolvedLocale: 'en'
     }).split(', '),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.es',
+      request: new NextRequest('https://example.es'),
       resolvedLocale: 'es'
     }).split(', ')
   ].forEach((links) => {
@@ -199,7 +202,7 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/about',
+      request: new NextRequest('https://example.com/about'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -241,12 +244,12 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   [
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/',
+      request: new NextRequest('https://example.com/'),
       resolvedLocale: 'en'
     }).split(', '),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.es',
+      request: new NextRequest('https://example.es'),
       resolvedLocale: 'es'
     }).split(', ')
   ].forEach((links) => {
@@ -263,7 +266,7 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   expect(
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://example.com/about',
+      request: new NextRequest('https://example.com/about'),
       resolvedLocale: 'en'
     }).split(', ')
   ).toEqual([
@@ -324,22 +327,22 @@ it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", ()
   [
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://en.example.com/',
+      request: new NextRequest('https://en.example.com/'),
       resolvedLocale: 'en'
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com',
+      request: new NextRequest('https://ca.example.com'),
       resolvedLocale: 'en'
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com/fr',
+      request: new NextRequest('https://ca.example.com/fr'),
       resolvedLocale: 'fr'
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://fr.example.com',
+      request: new NextRequest('https://fr.example.com'),
       resolvedLocale: 'fr'
     })
   ]
@@ -356,25 +359,25 @@ it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", ()
   [
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://en.example.com/about',
+      request: new NextRequest('https://en.example.com/about'),
       resolvedLocale: 'en',
       localizedPathnames: config.pathnames!['/about']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com/about',
+      request: new NextRequest('https://ca.example.com/about'),
       resolvedLocale: 'en',
       localizedPathnames: config.pathnames!['/about']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com/fr/a-propos',
+      request: new NextRequest('https://ca.example.com/fr/a-propos'),
       resolvedLocale: 'fr',
       localizedPathnames: config.pathnames!['/about']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://fr.example.com/a-propos',
+      request: new NextRequest('https://fr.example.com/a-propos'),
       resolvedLocale: 'fr',
       localizedPathnames: config.pathnames!['/about']
     })
@@ -392,25 +395,25 @@ it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", ()
   [
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://en.example.com/users/42',
+      request: new NextRequest('https://en.example.com/users/42'),
       resolvedLocale: 'en',
       localizedPathnames: config.pathnames!['/users/[userId]']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com/users/42',
+      request: new NextRequest('https://ca.example.com/users/42'),
       resolvedLocale: 'en',
       localizedPathnames: config.pathnames!['/users/[userId]']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://ca.example.com/fr/utilisateurs/42',
+      request: new NextRequest('https://ca.example.com/fr/utilisateurs/42'),
       resolvedLocale: 'fr',
       localizedPathnames: config.pathnames!['/users/[userId]']
     }),
     getAlternateLinksHeaderValue({
       config,
-      requestUrl: 'https://fr.example.com/utilisateurs/42',
+      request: new NextRequest('https://fr.example.com/utilisateurs/42'),
       resolvedLocale: 'fr',
       localizedPathnames: config.pathnames!['/users/[userId]']
     })
@@ -424,4 +427,32 @@ it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", ()
         '<https://fr.example.com/utilisateurs/42>; rel="alternate"; hreflang="fr"'
       ]);
     });
+});
+
+it('uses the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
+  const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    alternateLinks: true,
+    localePrefix: 'as-needed',
+    localeDetection: true
+  };
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      request: new NextRequest('http://127.0.0.1/about', {
+        headers: {
+          host: 'example.com',
+          'x-forwarded-host': 'example.com',
+          'x-forwarded-proto': 'https'
+        }
+      }),
+      resolvedLocale: 'en'
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
+    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+  ]);
 });

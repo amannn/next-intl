@@ -165,6 +165,33 @@ describe('dateTime', () => {
       expect(container.textContent).toMatch(/Nov 20 2020/);
     });
 
+    it('handles missing formats, which are available as defaults for `useTranslations`', () => {
+      // This is because we can't safely apply defaults for `dateTime`.
+      // `IntlMessageFormat` has defaults for `date` and `time`, but we
+      // consider a single `dateTime` namespace to be more useful. Because
+      // of this, we can't pick or merge default formats.
+
+      const onError = vi.fn();
+
+      function Component() {
+        const format = useFormatter();
+        return <>{format.dateTime(mockDate, 'medium')}</>;
+      }
+
+      const {container} = render(
+        <MockProvider onError={onError}>
+          <Component />
+        </MockProvider>
+      );
+
+      const error: IntlError = onError.mock.calls[0][0];
+      expect(error.message).toBe(
+        'MISSING_FORMAT: Format `medium` is not available. You can configure it on the provider or provide custom options.'
+      );
+      expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
+      expect(container.textContent).toMatch(/Nov 20 2020/);
+    });
+
     it('handles formatting errors', () => {
       const onError = vi.fn();
 

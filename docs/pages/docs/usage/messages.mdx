@@ -113,39 +113,75 @@ There's one exception however: [Using `next-intl` with the Next.js Metadata API 
 
 </details>
 
-## Rendering messages
+## Rendering ICU messages
 
 `next-intl` uses ICU message syntax that allows you to express language nuances and separates state handling within messages from your app code.
-
-You can interpolate values from your components into your messages with a special placeholder syntax.
-
-```js filename="en.json"
-{
-  "static": "Hello world!",
-  "interpolation": "Hello {name}!",
-  "plural": "You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.",
-  "select": "{gender, select, female {She} male {He} other {They}} is online.",
-  "selectordinal": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-  "escaped": "Escape curly braces with single quotes (e.g. '{name'})"
-}
-```
-
-```js
-const t = useTranslations();
-
-t('static');
-t('interpolation', {name: 'Jane'});
-t('plural', {numMessages: 3});
-t('select', {gender: 'female'});
-t('selectordinal', {year: 11});
-t('escaped');
-```
 
 <Callout>
 
 To work with ICU messages, it can be helpful to use an editor that supports this syntax. E.g. the <PartnerContentLink name="messages-rendering" href="https://support.crowdin.com/icu-message-syntax/">Crowdin Editor</PartnerContentLink> can be used by translators to work on translations without having to change app code.
 
 </Callout>
+
+### Static messages
+
+```js filename="en.json"
+"message": "Hello world!"
+```
+
+```js
+t('message'); // "Hello world!"
+```
+
+### Interpolation of dynamic values
+
+```js filename="en.json"
+"message": "Hello {name}!"
+```
+
+```js
+t('message', {name: 'Jane'}); // "Hello Jane!"
+```
+
+### Pluralization
+
+```js filename="en.json"
+"message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
+```
+
+```js
+t('message', {count: 3580}); // "You have 3,580 followers."
+```
+
+### Ordinal pluralization
+
+```js filename="en.json"
+"message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+```
+
+```js
+t('message', {year: 21}); // "It's your 21st birthday!"
+```
+
+### Selecting enum-based values
+
+```js filename="en.json"
+"message": "{gender, select, female {She} male {He} other {They}} is online."
+```
+
+```js
+t('message', {gender: 'female'}); // "She is online."
+```
+
+### Escaping
+
+```js filename="en.json"
+"message": "Escape curly braces with single quotes (e.g. '{name'})"
+```
+
+```js
+t('message'); // "Escape curly braces with single quotes (e.g. {name})"
+```
 
 ## Rich text
 
@@ -164,7 +200,9 @@ t.rich('richText', {
 });
 ```
 
-If you want to use the same tag multiple times, you can configure it via the [default translation values](/docs/configuration#default-translation-values).
+If you want to use the same tag across your app, you can configure it via the [default translation values](/docs/configuration#default-translation-values).
+
+Note that the ICU parser doesn't support self-closing tags at this point, therefore you have to use syntax like `<br></br>` if your rich text function doesn't intend to receive any `chunks` (e.g. `br: () => <br />`).
 
 ## Arrays of messages
 
@@ -185,9 +223,11 @@ import {useTranslations} from 'next-intl';
 
 function Benefits() {
   const t = useTranslations('Benefits');
+  const keys = ['zero-config', 'customizable', 'fast'] as const;
+
   return (
     <ul>
-      {['zero-config', 'customizable', 'fast'].map((key) => (
+      {keys.map((key) => (
         <li key={key}>{t(key)}</li>
       ))}
     </ul>

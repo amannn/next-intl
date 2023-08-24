@@ -1,7 +1,9 @@
+import {NextRequest} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
 import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
   formatTemplatePathname,
+  getHost,
   getNormalizedPathname,
   isLocaleSupportedOnDomain
 } from './utils';
@@ -18,15 +20,18 @@ export default function getAlternateLinksHeaderValue<
 >({
   config,
   localizedPathnames,
-  requestUrl,
+  request,
   resolvedLocale
 }: {
   config: MiddlewareConfigWithDefaults<Locales>;
-  requestUrl: string;
+  request: NextRequest;
   resolvedLocale: Locales[number];
   localizedPathnames?: Pathnames<Locales>[string];
 }) {
-  const normalizedUrl = new URL(requestUrl);
+  const normalizedUrl = request.nextUrl.clone();
+  normalizedUrl.host = getHost(request.headers) ?? normalizedUrl.host;
+  normalizedUrl.protocol =
+    request.headers.get('x-forwarded-proto') ?? normalizedUrl.protocol;
   normalizedUrl.pathname = getNormalizedPathname(
     normalizedUrl.pathname,
     config.locales
