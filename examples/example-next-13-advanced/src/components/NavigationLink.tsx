@@ -2,11 +2,11 @@
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {Link} from '../navigation';
+import {Link, pathnames} from '../navigation';
 
-type Props = ComponentProps<typeof Link>;
-
-function NavigationLink({href, ...rest}: Props) {
+export default function NavigationLink<
+  Pathname extends keyof typeof pathnames
+>({href, ...rest}: ComponentProps<typeof Link<Pathname>>) {
   const selectedLayoutSegment = useSelectedLayoutSegment();
   const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;
@@ -20,6 +20,3 @@ function NavigationLink({href, ...rest}: Props) {
     />
   );
 }
-
-// Make sure the generic type of `Link` is preserved.
-export default NavigationLink as typeof Link;

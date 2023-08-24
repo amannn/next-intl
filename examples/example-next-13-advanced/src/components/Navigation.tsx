@@ -9,7 +9,9 @@ export default function Navigation() {
       <NavigationLink href="/">{t('home')}</NavigationLink>
       <NavigationLink href="/client">{t('client')}</NavigationLink>
       <NavigationLink href="/nested">{t('nested')}</NavigationLink>
-      <NavigationLink href="/news/[articleId]" params={{articleId: 3}}>
+      <NavigationLink
+        href={{pathname: '/news/[articleId]', params: {articleId: 3}}}
+      >
         {t('newsArticle', {articleId: 3})}
       </NavigationLink>
     </nav>

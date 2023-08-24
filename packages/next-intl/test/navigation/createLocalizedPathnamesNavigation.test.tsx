@@ -5,7 +5,7 @@ import {
   useRouter as useNextRouter,
   redirect as nextRedirect
 } from 'next/navigation';
-import React from 'react';
+import React, {ComponentProps} from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import {
   Pathnames,
@@ -359,16 +359,14 @@ function TypeTests() {
 
   // @ts-expect-error -- Requires params
   <Link href="/news/[articleSlug]-[articleId]">About</Link>;
+  // @ts-expect-error -- Requires params
+  <Link href={{pathname: '/news/[articleSlug]-[articleId]'}}>About</Link>;
 
   // @ts-expect-error -- Params for different route
-  <Link href="/about" params={{articleId: 2}}>
-    About
-  </Link>;
+  <Link href={{pathname: '/about', params: {articleId: 2}}}>About</Link>;
 
   // @ts-expect-error -- Doesn't accept params
-  <Link href="/about" params={{foo: 'bar'}}>
-    About
-  </Link>;
+  <Link href={{pathname: '/about', params: {foo: 'bar'}}}>About</Link>;
 
   // @ts-expect-error -- Missing params
   <Link href={{pathname: '/news/[articleSlug]-[articleId]'}}>Über uns</Link>;
@@ -389,6 +387,25 @@ function TypeTests() {
     Über uns
   </Link>;
   <Link href="/catch-all/[[...parts]]">Optional catch-all</Link>;
+
+  // Link composition
+  function WrappedLink<LinkPathname extends keyof typeof pathnames>(
+    props: ComponentProps<typeof Link<LinkPathname>>
+  ) {
+    return <Link {...props} />;
+  }
+  <WrappedLink href="/about">About</WrappedLink>;
+  <WrappedLink
+    href={{
+      pathname: '/news/[articleSlug]-[articleId]',
+      params: {articleSlug: 'launch-party', articleId: 3}
+    }}
+  >
+    News
+  </WrappedLink>;
+
+  // @ts-expect-error -- Requires params
+  <WrappedLink href="/news/[articleSlug]-[articleId]">News</WrappedLink>;
 
   // Valid
   redirect({pathname: '/about'});
