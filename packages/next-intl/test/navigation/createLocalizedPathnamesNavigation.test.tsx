@@ -197,13 +197,6 @@ describe('Link', () => {
     );
   });
 
-  it('renders an object href', () => {
-    render(<Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>);
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/about?foo=bar'
-    );
-  });
-
   it('adds a prefix when linking to a non-default locale', () => {
     render(
       <Link href="/about" locale="de">
@@ -218,12 +211,14 @@ describe('Link', () => {
   it('handles params', () => {
     render(
       <Link
-        href="/news/[articleSlug]-[articleId]"
-        locale="de"
-        params={{
-          articleId: 3,
-          articleSlug: 'launch-party'
+        href={{
+          pathname: '/news/[articleSlug]-[articleId]',
+          params: {
+            articleId: 3,
+            articleSlug: 'launch-party'
+          }
         }}
+        locale="de"
       >
         About
       </Link>
@@ -236,8 +231,10 @@ describe('Link', () => {
   it('handles catch-all segments', () => {
     render(
       <Link
-        href="/categories/[...parts]"
-        params={{parts: ['clothing', 't-shirts']}}
+        href={{
+          pathname: '/categories/[...parts]',
+          params: {parts: ['clothing', 't-shirts']}
+        }}
       >
         Test
       </Link>
@@ -249,7 +246,12 @@ describe('Link', () => {
 
   it('handles optional catch-all segments', () => {
     render(
-      <Link href="/catch-all/[[...parts]]" params={{parts: ['one', 'two']}}>
+      <Link
+        href={{
+          pathname: '/catch-all/[[...parts]]',
+          params: {parts: ['one', 'two']}
+        }}
+      >
         Test
       </Link>
     );
@@ -322,6 +324,7 @@ function TypeTests() {
   router.push('/about');
   router.push('/about', {locale: 'de'});
   router.push({pathname: '/about'});
+  router.push('/catch-all/[[...parts]]');
 
   // @ts-expect-error -- Requires params
   router.push({pathname: '/news/[articleSlug]-[articleId]'});
@@ -376,19 +379,24 @@ function TypeTests() {
   <Link
     href={{
       pathname: '/news/[articleSlug]-[articleId]',
+      params: {
+        articleId: 3,
+        articleSlug: 'launch-party'
+      },
       query: {foo: 'bar'}
-    }}
-    params={{
-      articleId: 3,
-      articleSlug: 'launch-party'
     }}
   >
     Über uns
   </Link>;
-  <Link href="/catch-all/[[...parts]]">Catch-all</Link>;
+  <Link href="/catch-all/[[...parts]]">Optional catch-all</Link>;
 
-  // Also allows objects
+  // Valid
   redirect({pathname: '/about'});
+  redirect('/catch-all/[[...parts]]');
+  redirect({
+    pathname: '/catch-all/[[...parts]]',
+    params: {parts: ['one', 'two']}
+  });
 
   // @ts-expect-error -- Unknown route
   redirect('/unknown');

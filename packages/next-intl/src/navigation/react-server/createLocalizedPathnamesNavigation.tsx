@@ -2,15 +2,10 @@ import React, {ComponentProps} from 'react';
 import BaseLink from '../../link/react-server';
 import getLocaleFromHeader from '../../server/getLocaleFromHeader';
 import {redirect as baseRedirect} from '../../server.react-server';
-import {
-  AllLocales,
-  HrefOrUrlObject,
-  ParametersExceptFirst,
-  Pathnames
-} from '../../shared/types';
+import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
 import {
   HrefOrHrefWithParams,
-  LinkParams,
+  HrefOrUrlObjectWithParams,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
 } from '../utils';
@@ -23,9 +18,9 @@ export default function createLocalizedPathnamesNavigation<
     ComponentProps<typeof BaseLink>,
     'href' | 'name'
   > & {
-    href: HrefOrUrlObject<Pathname>;
+    href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: Locales[number];
-  } & LinkParams<Pathname>;
+  };
   function Link<Pathname extends keyof PathnamesConfig>({
     href,
     locale,
@@ -38,10 +33,10 @@ export default function createLocalizedPathnamesNavigation<
       <BaseLink
         href={compileLocalizedPathname<Locales, Pathname>({
           locale: finalLocale,
-          // @ts-expect-error -- No idea
+          // @ts-expect-error -- This is ok
           pathname: href,
           // @ts-expect-error -- This is ok
-          params: rest.params,
+          params: typeof href === 'object' ? href.params : undefined,
           pathnames
         })}
         locale={locale}

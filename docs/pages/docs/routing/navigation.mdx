@@ -154,11 +154,21 @@ import {Link} from '../navigation';
 // You can override the `locale` to switch to another language
 <Link href="/" locale="en">Switch to English</Link>
 
-// Dynamic params need to be passed separately
-<Link href="/users/[userId]" params={{userId: '5'}}>Susan</Link>
+// Dynamic params can be passed via the object form
+<Link href={{
+  pathname: '/users/[userId]',
+  params: {userId: '5'}
+}}>
+  Susan
+</Link>
 
 // Catch-all params can be passed as arrays
-<Link href="/categories/[...slug]" params={{slug: ['clothing', 't-shirts']}}>T-Shirts</Link>
+<Link href={{
+  pathname: '/categories/[...slug]',
+  params: {slug: ['clothing', 't-shirts']}
+}}>
+  T-Shirts
+</Link>
 
 // Search params can be added via `query`
 <Link href={{pathname: "/users", query: {sortBy: 'name'}}}>Users</Link>

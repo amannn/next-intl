@@ -1,33 +1,32 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
+import {AllLocales, Pathnames} from '../shared/types';
 import {matchesPathname, unlocalizePathname} from '../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 
-export type LinkParams<Pathname> = Pathname extends `${string}[[...${string}`
-  ? // Optional catch-all
-    {params?: StrictParams<Pathname>}
-  : Pathname extends `${string}[${string}`
-  ? // Required catch-all & regular params
-    {params: StrictParams<Pathname>}
-  : // No params
-    object;
+// Minor false positive: A route that has both optional and
+// required params will allow optional params.
+type HrefOrHrefWithParamsImpl<Pathname, Other> =
+  Pathname extends `${string}[[...${string}`
+    ? // Optional catch-all
+      Pathname | ({pathname: Pathname; params?: StrictParams<Pathname>} & Other)
+    : Pathname extends `${string}[${string}`
+    ? // Required catch-all & regular params
+      {pathname: Pathname; params: StrictParams<Pathname>} & Other
+    : // No params
+      Pathname | ({pathname: Pathname} & Other);
 
-export type HrefOrHrefWithParams<Pathname> =
-  Pathname extends `${string}[${string}`
-    ? {
-        pathname: Pathname;
-        params: StrictParams<Pathname>;
-        query?: Record<string, SearchParamValue>;
-      }
-    :
-        | Pathname
-        | {
-            pathname: Pathname;
-            query?: Record<string, SearchParamValue>;
-          };
+export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
+  Pathname,
+  Omit<UrlObject, 'pathname'>
+>;
+
+export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
+  Pathname,
+  {query?: Record<string, SearchParamValue>}
+>;
 
 export function normalizeNameOrNameWithParams<Pathname>(
   href: HrefOrHrefWithParams<Pathname>
@@ -58,6 +57,10 @@ export function serializeSearchParams(
   }
   return '?' + urlSearchParams.toString();
 }
+
+type StrictUrlObject<Pathname> = Omit<UrlObject, 'pathname'> & {
+  pathname: Pathname;
+};
 
 export function compileLocalizedPathname<
   Locales extends AllLocales,
