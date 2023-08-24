@@ -1,11 +1,9 @@
+// @vitest-environment edge-runtime
+
 import {NextRequest} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
-
-function getRequest(url = 'https://example.com/') {
-  return {url} as NextRequest;
-}
 
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults = {
@@ -17,7 +15,10 @@ it('works for prefixed routing (as-needed)', () => {
   };
 
   expect(
-    getAlternateLinksHeaderValue(config, getRequest()).split(', ')
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('https://example.com/')
+    ).split(', ')
   ).toEqual([
     '<https://example.com/>; rel="alternate"; hreflang="en"',
     '<https://example.com/es>; rel="alternate"; hreflang="es"',
@@ -27,7 +28,7 @@ it('works for prefixed routing (as-needed)', () => {
   expect(
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.com/about')
+      new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
     '<https://example.com/about>; rel="alternate"; hreflang="en"',
@@ -46,7 +47,10 @@ it('works for prefixed routing (always)', () => {
   };
 
   expect(
-    getAlternateLinksHeaderValue(config, getRequest()).split(', ')
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('https://example.com/')
+    ).split(', ')
   ).toEqual([
     '<https://example.com/en>; rel="alternate"; hreflang="en"',
     '<https://example.com/es>; rel="alternate"; hreflang="es"',
@@ -56,7 +60,7 @@ it('works for prefixed routing (always)', () => {
   expect(
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.com/about')
+      new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
     '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
@@ -92,10 +96,13 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   };
 
   [
-    getAlternateLinksHeaderValue(config, getRequest()).split(', '),
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.es/')
+      new NextRequest('https://example.com/')
+    ).split(', '),
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('https://example.es/')
     ).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
@@ -111,7 +118,7 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
   expect(
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.com/about')
+      new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
     '<https://example.com/about>; rel="alternate"; hreflang="en"',
@@ -150,10 +157,13 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   };
 
   [
-    getAlternateLinksHeaderValue(config, getRequest()).split(', '),
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.es/')
+      new NextRequest('https://example.com/')
+    ).split(', '),
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('https://example.es/')
     ).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
@@ -169,7 +179,7 @@ it("works for type domain with `localePrefix: 'always'`", () => {
   expect(
     getAlternateLinksHeaderValue(
       config,
-      getRequest('https://example.com/about')
+      new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
     '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
@@ -178,5 +188,32 @@ it("works for type domain with `localePrefix: 'always'`", () => {
     '<https://example.es/es/about>; rel="alternate"; hreflang="es"',
     '<https://example.com/fr/about>; rel="alternate"; hreflang="fr"',
     '<https://example.ca/fr/about>; rel="alternate"; hreflang="fr"'
+  ]);
+});
+
+it('uses the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
+  const config: MiddlewareConfigWithDefaults = {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    alternateLinks: true,
+    localePrefix: 'as-needed',
+    localeDetection: true
+  };
+
+  expect(
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('http://127.0.0.1/about', {
+        headers: {
+          host: 'example.com',
+          'x-forwarded-host': 'example.com',
+          'x-forwarded-proto': 'https'
+        }
+      })
+    ).split(', ')
+  ).toEqual([
+    '<https://example.com/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
+    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
   ]);
 });

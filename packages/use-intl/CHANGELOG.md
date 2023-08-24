@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.20.0 (2023-08-23)
+
+
+### Features
+
+* Improve runtime performance of `useTranslations` by avoiding the creation of message format instances if possible and introducing a cross-component message format cache ([#475](https://github.com/amannn/next-intl/issues/475)) ([4d177f8](https://github.com/amannn/next-intl/commit/4d177f8a27eada4f056b79b77797b384a08111e5)), closes [#294](https://github.com/amannn/next-intl/issues/294)
+
+
+
+
+
+## 2.19.4 (2023-08-23)
+
+
+### Bug Fixes
+
+* Allow to import `next-intl/link` into Server Components without having to add a wrapping Client Component ([#465](https://github.com/amannn/next-intl/issues/465)) ([21a0691](https://github.com/amannn/next-intl/commit/21a06913055028848d36474fe636a4e3e332f647))
+
+
+
+
+
+## 2.19.3 (2023-08-23)
+
+
+### Bug Fixes
+
+* Apply time zone for built-in default formats (`full`, `long`, `medium`, `short`) ([#473](https://github.com/amannn/next-intl/issues/473)) ([244b9b2](https://github.com/amannn/next-intl/commit/244b9b2adf003d80d47a2d84b72a2ef77d32950f)), closes [#467](https://github.com/amannn/next-intl/issues/467)
+
+
+
+
+
+## 2.19.2 (2023-08-22)
+
+
+### Bug Fixes
+
+* Use correct host and protocol for alternate links when running behind a proxy (`x-forwarded-host`, `x-forwarded-proto`) ([#462](https://github.com/amannn/next-intl/issues/462) by @HHongSeungWoo) ([747cf8e](https://github.com/amannn/next-intl/commit/747cf8ef71a2e27a39c2178353eb31cfda8170f2))
+
+
+
+
+
+## 2.19.1 (2023-08-01)
+
+
+### Bug Fixes
+
+* Handle case where the `locale` param is an array and set cookie expiration to one year ([#435](https://github.com/amannn/next-intl/issues/435)) ([82e842c](https://github.com/amannn/next-intl/commit/82e842ce742106bf350246316855bd053f4cdac7))
+
+
+
+
+
 # 2.19.0 (2023-07-18)
 
 

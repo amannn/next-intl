@@ -58,3 +58,7 @@ pnpm eslint src --fix
 ### Pull requests
 
 This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to automate the releases.
+
+## Repository workflows
+
+- Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.

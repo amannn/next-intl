@@ -1,4 +1,5 @@
-import {Formats as IntlFormats} from 'intl-messageformat';
+// eslint-disable-next-line import/no-named-as-default -- False positive
+import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import TimeZone from './TimeZone';
@@ -38,9 +39,25 @@ export default function convertFormatsToIntlMessageFormat(
     ? {...formats, dateTime: setTimeZoneInFormats(formats.dateTime, timeZone)}
     : formats;
 
+  const mfDateDefaults = IntlMessageFormat.formats.date as Formats['dateTime'];
+  const defaultDateFormats = timeZone
+    ? setTimeZoneInFormats(mfDateDefaults, timeZone)
+    : mfDateDefaults;
+
+  const mfTimeDefaults = IntlMessageFormat.formats.time as Formats['dateTime'];
+  const defaultTimeFormats = timeZone
+    ? setTimeZoneInFormats(mfTimeDefaults, timeZone)
+    : mfTimeDefaults;
+
   return {
     ...formatsWithTimeZone,
-    date: formatsWithTimeZone?.dateTime,
-    time: formatsWithTimeZone?.dateTime
+    date: {
+      ...defaultDateFormats,
+      ...formatsWithTimeZone?.dateTime
+    },
+    time: {
+      ...defaultTimeFormats,
+      ...formatsWithTimeZone?.dateTime
+    }
   };
 }

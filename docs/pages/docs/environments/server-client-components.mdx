@@ -10,8 +10,13 @@ This page contains background information about the advantages of moving interna
 
 With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
 
+This applies to handling internationalization too.
+
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
+
+// Since this component doesn't use any interactive features
+// from React, it can be implemented as a Server Component.
 
 export default function Index() {
   const t = useTranslations('Index');
@@ -87,6 +92,8 @@ function Expandable({title, children}) {
 
 As you see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
 
+Learn more in the Next.js docs: [Nesting Server Components inside Client Components](https://nextjs.org/docs/getting-started/react-essentials#nesting-server-components-inside-client-components)
+
 ### Option 2: Moving state to the server side
 
 You might run into cases where you have dynamic state, such as pagination, that should be reflected in translated messages.
@@ -116,7 +123,7 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-If you need to internalize dynamic state that can not be moved to the server side, you can wrap the respective components with `NextIntlClientProvider`.
+If you need to incorporate dynamic state that can not be moved to the server side, you can wrap the respective components with `NextIntlClientProvider`.
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';

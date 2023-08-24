@@ -238,7 +238,8 @@ export default function createMiddleware(config: MiddlewareConfig) {
 
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
-        sameSite: 'strict'
+        sameSite: 'strict',
+        maxAge: 31536000 // 1 year
       });
     }
 

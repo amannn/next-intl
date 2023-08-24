@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
-import IntlMessageFormat from 'intl-messageformat';
-import {useMemo, useRef} from 'react';
+import {useMemo} from 'react';
 import AbstractIntlMessages from '../core/AbstractIntlMessages';
 import createBaseTranslator from '../core/createBaseTranslator';
 import resolveNamespace from '../core/resolveNamespace';
@@ -16,6 +14,7 @@ export default function useTranslationsImpl<
     formats: globalFormats,
     getMessageFallback,
     locale,
+    messageFormatCache,
     onError,
     timeZone
   } = useIntlContext();
@@ -25,14 +24,10 @@ export default function useTranslationsImpl<
   allMessages = allMessages[namespacePrefix] as Messages;
   namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
 
-  const cachedFormatsByLocaleRef = useRef<
-    Record<string, Record<string, IntlMessageFormat>>
-  >({});
-
   const translate = useMemo(
     () =>
       createBaseTranslator({
-        cachedFormatsByLocale: cachedFormatsByLocaleRef.current,
+        messageFormatCache,
         getMessageFallback,
         messages: allMessages,
         defaultTranslationValues,
@@ -43,6 +38,7 @@ export default function useTranslationsImpl<
         timeZone
       }),
     [
+      messageFormatCache,
       getMessageFallback,
       allMessages,
       namespace,

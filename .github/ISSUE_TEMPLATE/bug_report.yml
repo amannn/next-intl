@@ -10,11 +10,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please note:
+        **Creating a good bug report takes time.**
+        
+        To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
+
+        **Please note:**
         1. Bug reports without a reproduction may be closed immediately.
         2. General usage questions are not bug reports. Please [submit usage questions on Stack Overflow](https://stackoverflow.com/questions/ask) instead.
-
-        Creating a good bug report takes time, please make sure your [reproduction is minimal](https://stackoverflow.com/help/minimal-reproducible-example).
   - type: textarea
     attributes:
       label: Description
@@ -25,7 +27,9 @@ body:
     attributes:
       label: Mandatory reproduction URL (CodeSandbox or GitHub repository)
       description: |
-        Templates: [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f), [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
+        **Templates:**
+        - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
+        - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
     validations:
       required: true
   - type: textarea
