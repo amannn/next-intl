@@ -1,7 +1,10 @@
+import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {AllLocales, Pathnames, StrictUrlObject} from '../shared/types';
 import {matchesPathname, unlocalizePathname} from '../shared/utils';
 import StrictParams from './StrictParams';
+
+type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 
 export type LinkParams<Pathname> = Pathname extends `${string}[[...${string}`
   ? // Optional catch-all
@@ -17,8 +20,14 @@ export type HrefOrHrefWithParams<Pathname> =
     ? {
         pathname: Pathname;
         params: StrictParams<Pathname>;
+        query?: Record<string, SearchParamValue>;
       }
-    : Pathname;
+    :
+        | Pathname
+        | {
+            pathname: Pathname;
+            query?: Record<string, SearchParamValue>;
+          };
 
 export function normalizeNameOrNameWithParams<Pathname>(
   href: HrefOrHrefWithParams<Pathname>
@@ -30,6 +39,26 @@ export function normalizeNameOrNameWithParams<Pathname>(
   return typeof href === 'string' ? {pathname: href as Pathname} : href;
 }
 
+export function serializeSearchParams(
+  searchParams: Record<string, SearchParamValue>
+) {
+  function serializeValue(value: SearchParamValue) {
+    return String(value);
+  }
+
+  const urlSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (Array.isArray(value)) {
+      value.forEach((cur) => {
+        urlSearchParams.append(key, serializeValue(cur));
+      });
+    } else {
+      urlSearchParams.set(key, serializeValue(value));
+    }
+  }
+  return '?' + urlSearchParams.toString();
+}
+
 export function compileLocalizedPathname<
   Locales extends AllLocales,
   Pathname
@@ -38,6 +67,7 @@ export function compileLocalizedPathname<
   pathname: Pathname;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
+  query?: Record<string, SearchParamValue>;
 }): string;
 export function compileLocalizedPathname<
   Locales extends AllLocales,
@@ -47,17 +77,20 @@ export function compileLocalizedPathname<
   pathname: StrictUrlObject<Pathname>;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
+  query?: Record<string, SearchParamValue>;
 }): UrlObject;
 export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   pathname,
   locale,
   params,
-  pathnames
+  pathnames,
+  query
 }: {
   locale: Locales[number];
   pathname: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
   params?: StrictParams<Pathname>;
   pathnames: Pathnames<Locales>;
+  query?: Record<string, SearchParamValue>;
 }) {
   function getNamedPath(value: keyof typeof pathnames) {
     const namedPath = pathnames[value];
@@ -90,6 +123,10 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
           compiled = compiled.replace(`[${key}]`, String(value));
         }
       });
+    }
+
+    if (query) {
+      compiled += serializeSearchParams(query);
     }
 
     return compiled;

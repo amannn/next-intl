@@ -120,6 +120,31 @@ describe('redirect', () => {
       '/de/neuigkeiten/launch-party-3'
     );
   });
+
+  it('supports optional search params', () => {
+    function Component<Pathname extends keyof typeof pathnames>({
+      href
+    }: {
+      href: Parameters<typeof redirect<Pathname>>[0];
+    }) {
+      redirect(href);
+      return null;
+    }
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/');
+    render(
+      <Component
+        href={{
+          pathname: '/',
+          query: {
+            foo: 'bar',
+            bar: [1, 2]
+          }
+        }}
+      />
+    );
+    expect(nextRedirect).toHaveBeenLastCalledWith('/en?foo=bar&bar=1&bar=2');
+  });
 });
 
 describe('usePathname', () => {
@@ -232,6 +257,17 @@ describe('Link', () => {
       '/catch-all/one/two'
     );
   });
+
+  it('supports optional search params', () => {
+    render(
+      <Link href={{pathname: '/about', query: {foo: 'bar', bar: [1, 2]}}}>
+        Test
+      </Link>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/about?foo=bar&bar=1&bar=2'
+    );
+  });
 });
 
 describe('useRouter', () => {
@@ -246,6 +282,27 @@ describe('useRouter', () => {
       const push = useNextRouter().push as Mock;
       expect(push).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/de/ueber-uns');
+    });
+
+    it('supports optional search params', () => {
+      function Component() {
+        const router = useRouter();
+        router.push(
+          {
+            pathname: '/about',
+            query: {
+              foo: 'bar',
+              bar: [1, 2]
+            }
+          },
+          {locale: 'de'}
+        );
+        return null;
+      }
+      render(<Component />);
+      const push = useNextRouter().push as Mock;
+      expect(push).toHaveBeenCalledTimes(1);
+      expect(push).toHaveBeenCalledWith('/de/ueber-uns?foo=bar&bar=1&bar=2');
     });
   });
 });
@@ -264,8 +321,6 @@ function TypeTests() {
   // Valid
   router.push('/about');
   router.push('/about', {locale: 'de'});
-
-  // @ts-expect-error -- Needs to be passed as string
   router.push({pathname: '/about'});
 
   // @ts-expect-error -- Requires params
@@ -332,10 +387,11 @@ function TypeTests() {
   </Link>;
   <Link href="/catch-all/[[...parts]]">Catch-all</Link>;
 
+  // Also allows objects
+  redirect({pathname: '/about'});
+
   // @ts-expect-error -- Unknown route
   redirect('/unknown');
-  // @ts-expect-error -- Doesn't accept params
-  redirect({pathname: '/about'});
   // @ts-expect-error -- Localized alternative
   redirect('/ueber-uns');
   // @ts-expect-error -- Requires params

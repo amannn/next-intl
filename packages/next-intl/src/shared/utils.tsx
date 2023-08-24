@@ -78,9 +78,12 @@ export function unlocalizePathname(pathname: string, locale: string) {
 export function localizePathname(locale: string, pathname: string) {
   let localizedHref = '/' + locale;
 
-  if (pathname !== '/') {
-    localizedHref += pathname;
+  // Avoid trailing slashes
+  if (/^\/(\?.*)?$/.test(pathname)) {
+    pathname = pathname.slice(1);
   }
+
+  localizedHref += pathname;
 
   return localizedHref;
 }

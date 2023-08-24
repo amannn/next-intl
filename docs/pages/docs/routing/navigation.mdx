@@ -159,6 +159,9 @@ import {Link} from '../navigation';
 
 // Catch-all params can be passed as arrays
 <Link href="/categories/[...slug]" params={{slug: ['clothing', 't-shirts']}}>T-Shirts</Link>
+
+// Search params can be added via `query`
+<Link href={{pathname: "/users", query: {sortBy: 'name'}}}>Users</Link>
 ```
 
 </Tab>
@@ -259,6 +262,12 @@ router.push({
   pathname: '/users/[userId]',
   params: {userId: '12'}
 });
+
+// Search params can be added via `query`
+router.push({
+  pathname: '/users',
+  query: {sortBy: 'name'}
+});
 ````
 
 <details>
@@ -357,6 +366,12 @@ redirect('/login');
 redirect({
   pathname: '/help/[articleSlug]',
   params: {articleSlug: 'how-to-login'}
+});
+
+// Search params can be added via `query`
+redirect({
+  pathname: '/users',
+  query: {sortBy: 'name'}
 });
 ```
 

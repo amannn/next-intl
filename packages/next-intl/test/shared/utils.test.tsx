@@ -2,8 +2,23 @@ import {it, describe, expect} from 'vitest';
 import {
   hasPathnamePrefixed,
   unlocalizePathname,
-  matchesPathname
+  matchesPathname,
+  localizePathname
 } from '../../src/shared/utils';
+
+describe('localizePathname', () => {
+  it("doesn't add trailing slashes for the root", () => {
+    expect(localizePathname('en', '/')).toEqual('/en');
+  });
+
+  it("doesn't add trailing slashes for search params", () => {
+    expect(localizePathname('en', '/?foo=bar')).toEqual('/en?foo=bar');
+  });
+
+  it('localizes nested paths', () => {
+    expect(localizePathname('en', '/nested')).toEqual('/en/nested');
+  });
+});
 
 describe('hasPathnamePrefixed', () => {
   it('detects prefixed pathnames', () => {
