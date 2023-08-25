@@ -6,7 +6,7 @@ import {
 } from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
-import {createSharedPathnamesNavigation} from '../../src/navigation';
+import createSharedPathnamesNavigation from '../../src/navigation/createSharedPathnamesNavigation';
 
 vi.mock('next/navigation');
 
