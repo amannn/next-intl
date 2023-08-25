@@ -1,4 +1,5 @@
 {
+  "extends": "eslint-config-molindo/tsconfig.json",
   "include": ["src", "test", "types", "next-env.d.ts"],
   "compilerOptions": {
     "module": "esnext",
@@ -8,16 +9,10 @@
     "declaration": true,
     "sourceMap": true,
     "rootDir": ".",
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "moduleResolution": "node",
     "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "outDir": "dist"
   }

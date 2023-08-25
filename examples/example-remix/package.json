@@ -23,8 +23,8 @@
     "@types/accept-language-parser": "^1.5.3",
     "@types/react": "^18.2.5",
     "@types/react-dom": "^18.2.1",
-    "eslint": "^8.39.0",
-    "eslint-config-molindo": "^6.0.0",
+    "eslint": "^8.46.0",
+    "eslint-config-molindo": "7.0.0-alpha.7",
     "typescript": "^5.0.0"
   },
   "engines": {

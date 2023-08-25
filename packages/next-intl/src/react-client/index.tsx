@@ -11,6 +11,10 @@
 import Link from './Link';
 
 export * from 'use-intl';
+
+// Replace `useLocale` export from `use-intl`
+export {default as useLocale} from './useLocale';
+
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
 // Legacy export (TBD if we'll deprecate this in favour of `NextIntlClientProvider`)

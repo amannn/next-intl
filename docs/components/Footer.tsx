@@ -11,7 +11,7 @@ export default function Footer() {
 
   return (
     <div className="border-t border-slate-200 bg-slate-100 dark:border-t-slate-800 dark:bg-transparent">
-      <div className="mx-auto max-w-[90rem] py-2 px-4 md:flex md:justify-between ">
+      <div className="mx-auto max-w-[90rem] px-4 py-2 md:flex md:justify-between ">
         <div>
           <FooterLink href="/docs">Docs</FooterLink>
           <FooterSeparator />

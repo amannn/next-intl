@@ -1,9 +1,8 @@
-require('eslint-config-molindo/setupPlugins');
-
 module.exports = {
   extends: [
     'molindo/typescript',
     'molindo/react',
+    'molindo/tailwind',
     'plugin:@next/next/recommended'
   ],
   env: {

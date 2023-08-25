@@ -19,7 +19,7 @@ function notSupported(name: string) {
 // Must match `../index.tsx`
 
 // prettier-ignore
-export const getRequestConfig = notSupported('getRequestConfig') as unknown as typeof getRequestConfig_type;
+export const getRequestConfig = (() => notSupported('getRequestConfig')) as unknown as typeof getRequestConfig_type;
 // prettier-ignore
 /** @deprecated Is called `getFormatter` now. */
 export const getIntl = notSupported('getIntl') as unknown as typeof getIntl_type;

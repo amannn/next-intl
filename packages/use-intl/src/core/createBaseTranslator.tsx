@@ -274,7 +274,7 @@ function createBaseTranslatorImpl<
 
     try {
       const formattedMessage = messageFormat.format(
-        // @ts-ignore `intl-messageformat` expects a different format
+        // @ts-expect-error `intl-messageformat` expects a different format
         // for rich text elements since a recent minor update. This
         // needs to be evaluated in detail, possibly also in regards
         // to be able to format to parts.

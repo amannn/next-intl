@@ -1,8 +1,8 @@
 import {useParams} from 'next/navigation';
-import {useLocale} from 'use-intl';
+import {useLocale as useBaseLocale} from 'use-intl';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants';
 
-export default function useClientLocale(): string {
+export default function useLocale(): string {
   let locale;
 
   // The types aren't entirely correct here. Outside of Next.js
@@ -12,8 +12,8 @@ export default function useClientLocale(): string {
   if (typeof params?.[LOCALE_SEGMENT_NAME] === 'string') {
     locale = params[LOCALE_SEGMENT_NAME];
   } else {
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine
-    locale = useLocale();
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context conditionally is fine as long as we're in the render phase
+    locale = useBaseLocale();
   }
 
   return locale;

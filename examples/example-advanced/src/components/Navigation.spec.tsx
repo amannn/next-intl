@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import {render} from '@testing-library/react';
 import pick from 'lodash/pick';
 import {NextIntlClientProvider} from 'next-intl';

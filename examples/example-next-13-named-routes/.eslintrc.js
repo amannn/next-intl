@@ -1,5 +1,3 @@
-require('eslint-config-molindo/setupPlugins');
-
 module.exports = {
   env: {
     node: true

@@ -1,10 +1,11 @@
 import {useRouter as useNextRouter} from 'next/navigation';
 import {useMemo} from 'react';
+import useLocale from '../react-client/useLocale';
+import {AllLocales} from '../shared/types';
 import {localizeHref} from '../shared/utils';
-import useClientLocale from './useClientLocale';
 
-type IntlNavigateOptions = {
-  locale?: string;
+type IntlNavigateOptions<Locales extends AllLocales> = {
+  locale?: Locales[number];
 };
 
 /**
@@ -26,9 +27,9 @@ type IntlNavigateOptions = {
  * router.push('/about', {locale: 'de'});
  * ```
  */
-export default function useRouter() {
+export default function useRouter<Locales extends AllLocales>() {
   const router = useNextRouter();
-  const locale = useClientLocale();
+  const locale = useLocale();
 
   return useMemo(() => {
     function localize(href: string, nextLocale?: string) {
@@ -44,7 +45,8 @@ export default function useRouter() {
       ...router,
       push(
         href: string,
-        options?: Parameters<typeof router.push>[1] & IntlNavigateOptions
+        options?: Parameters<typeof router.push>[1] &
+          IntlNavigateOptions<Locales>
       ) {
         const {locale: nextLocale, ...rest} = options || {};
         const args: [
@@ -59,7 +61,8 @@ export default function useRouter() {
 
       replace(
         href: string,
-        options?: Parameters<typeof router.replace>[1] & IntlNavigateOptions
+        options?: Parameters<typeof router.replace>[1] &
+          IntlNavigateOptions<Locales>
       ) {
         const {locale: nextLocale, ...rest} = options || {};
         const args: [
@@ -74,7 +77,8 @@ export default function useRouter() {
 
       prefetch(
         href: string,
-        options?: Parameters<typeof router.prefetch>[1] & IntlNavigateOptions
+        options?: Parameters<typeof router.prefetch>[1] &
+          IntlNavigateOptions<Locales>
       ) {
         const {locale: nextLocale, ...rest} = options || {};
         const args: [

@@ -2,8 +2,8 @@
 
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
+import useLocale from '../react-client/useLocale';
 import {hasPathnamePrefixed, unlocalizePathname} from '../shared/utils';
-import useClientLocale from './useClientLocale';
 
 /**
  * Returns the pathname without a potential locale prefix.
@@ -25,7 +25,7 @@ export default function usePathname(): string {
     typeof useNextPathname
   > | null;
 
-  const locale = useClientLocale();
+  const locale = useLocale();
 
   return useMemo(() => {
     if (!pathname) return pathname as ReturnType<typeof useNextPathname>;

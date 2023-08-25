@@ -15,9 +15,8 @@ jest.mock('next/navigation', () => ({
     prefetch: jest.fn(),
     replace: jest.fn()
   }),
-  useParams: () => ({
-    locale: 'en'
-  })
+  useParams: () => ({locale: 'en'}),
+  useSelectedLayoutSegment: () => ({locale: 'en'})
 }));
 
 it('renders', () => {

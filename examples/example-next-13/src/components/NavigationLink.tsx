@@ -1,23 +1,22 @@
 'use client';
 
 import clsx from 'clsx';
-import {usePathname} from 'next-intl/client';
-import Link from 'next-intl/link';
+import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
+import {Link, pathnames} from '../navigation';
 
-type Props = Omit<ComponentProps<typeof Link>, 'href'> & {
-  href: string;
-};
-
-export default function NavigationLink({href, ...rest}: Props) {
-  const pathname = usePathname();
+export default function NavigationLink<
+  Pathname extends keyof typeof pathnames
+>({href, ...rest}: ComponentProps<typeof Link<Pathname>>) {
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+  const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;
 
   return (
     <Link
-      aria-current={isActive}
+      aria-current={isActive ? 'page' : undefined}
       className={clsx(
-        'inline-block py-3 px-2 transition-colors',
+        'inline-block px-2 py-3 transition-colors',
         isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'
       )}
       href={href}

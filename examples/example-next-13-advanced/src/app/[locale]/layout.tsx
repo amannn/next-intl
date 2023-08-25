@@ -8,6 +8,7 @@ import {
   getTranslator
 } from 'next-intl/server';
 import {ReactNode} from 'react';
+import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
@@ -42,7 +43,18 @@ export default function LocaleLayout({children, params}: Props) {
 
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <div
+          style={{
+            padding: 24,
+            fontFamily: 'system-ui, sans-serif',
+            lineHeight: 1.5
+          }}
+        >
+          <Navigation />
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

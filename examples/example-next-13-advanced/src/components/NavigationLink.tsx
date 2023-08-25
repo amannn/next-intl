@@ -1,16 +1,14 @@
 'use client';
 
-import {usePathname} from 'next-intl/client';
-import Link from 'next-intl/link';
-import {ReactNode} from 'react';
+import {useSelectedLayoutSegment} from 'next/navigation';
+import {ComponentProps} from 'react';
+import {Link, pathnames} from '../navigation';
 
-type Props = {
-  children: ReactNode;
-  href: string;
-};
-
-export default function NavigationLink({children, href}: Props) {
-  const pathname = usePathname();
+export default function NavigationLink<
+  Pathname extends keyof typeof pathnames
+>({href, ...rest}: ComponentProps<typeof Link<Pathname>>) {
+  const selectedLayoutSegment = useSelectedLayoutSegment();
+  const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;
 
   return (
@@ -18,8 +16,7 @@ export default function NavigationLink({children, href}: Props) {
       aria-current={isActive ? 'page' : undefined}
       href={href}
       style={{textDecoration: isActive ? 'underline' : 'none'}}
-    >
-      {children}
-    </Link>
+      {...rest}
+    />
   );
 }

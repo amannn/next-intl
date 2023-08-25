@@ -387,7 +387,7 @@ describe('formatRelativeTime', () => {
 
       function Component() {
         const intl = useIntl();
-        // @ts-ignore Provoke an error
+        // @ts-expect-error -- Provoke an error
         const date = 'not a number' as number;
         return <>{intl.formatRelativeTime(date, -20)}</>;
       }
