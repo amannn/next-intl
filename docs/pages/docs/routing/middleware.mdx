@@ -22,6 +22,8 @@ export const config = {
 };
 ```
 
+In addition to handling i18n routing, the middleware sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages.
+
 ## Strategies
 
 There are two strategies for detecting the locale:
@@ -31,7 +33,7 @@ There are two strategies for detecting the locale:
 
 Once a locale is detected, it will be saved in a cookie.
 
-### Prefix-based routing (default) [#prefix-based-routing]
+### Strategy 1: Prefix-based routing (default) [#prefix-based-routing]
 
 Since your pages are nested within a `[locale]` folder, all routes are prefixed with one of your supported locales (e.g. `/de/about`). To keep the URL short, requests for the default locale are rewritten internally to work without a locale prefix.
 
@@ -60,7 +62,7 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 4. When the user clicks on the link, a request to `/en` is initiated.
 5. The middleware will update the cookie value to `en` and subsequently redirects the user to `/`.
 
-### Domain-based routing
+### Strategy 2: Domain-based routing [#domain-based-routing]
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
 
@@ -189,7 +191,7 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, e.g. because you're using [locale-specific rewrites](#localizing-pathnames), you can opt-out of this behavior.
+If you prefer to include these links yourself, you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -201,29 +203,63 @@ export default createMiddleware({
 });
 ```
 
-## Localizing pathnames
+### Localizing pathnames
 
-If you want to localize the pathnames of your app, you can accomplish this by using appropriate [rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites).
+<Callout type="warning">
+  This API is only available in [the Server Components
+  beta](/docs/getting-started/app-router-server-components).
+</Callout>
 
-```js filename="next.config.js" {7-8}
-const withNextIntl = require('next-intl/plugin')();
+Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
 
-module.exports = withNextIntl({
-  rewrites() {
-    return [
-      {
-        source: '/de/über',
-        destination: '/de/about'
-      }
-    ];
+- `/en/about`
+- `/de/ueber-uns`
+
+Since you want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  defaultLocale: 'en',
+  locales: ['en', 'de'],
+
+  // The `pathnames` object holds pairs of internal and
+  // external paths. Based on the locale, the external
+  // paths are rewritten to the shared, internal ones.
+  pathnames: {
+    // If all locales use the same pathname, a single
+    // external path can be used for all locales.
+    '/': '/',
+    '/blog': '/blog',
+
+    // If locales use different paths, you can
+    // specify each external path per locale.
+    '/about': {
+      en: '/about',
+      de: '/ueber-uns'
+    },
+
+    // Dynamic params are supported via square brackets
+    '/news/[articleSlug]-[articleId]': {
+      en: '/news/[articleSlug]-[articleId]',
+      de: '/neuigkeiten/[articleSlug]-[articleId]'
+    },
+
+    // Also (optional) catch-all segments are supported
+    '/categories/[...slug]': {
+      en: '/categories/[...slug]',
+      de: '/kategorien/[...slug]'
+    }
   }
 });
 ```
 
-Since `next-intl` isn't aware of the rewrites you've configured, you likely want to make some adjustments:
-
-1. Translate the pathnames you're passing to [navigation APIs](/docs/routing/navigation) like `Link` based on the `locale`. See the [named routes example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-named-routes/) that uses the proposed APIs from [the Server Components beta](https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components).
-2. Turn off [the `alternateLinks` option](/docs/routing/middleware#disable-alternate-links) and provide [search engine hints about localized versions of your content](https://developers.google.com/search/docs/specialty/international/localized-versions) by yourself.
+<Callout>
+  If you have pathname localization set up in the middleware, you likely want to
+  use the [localized navigation
+  APIs](/docs/routing/navigation#localized-pathnames) in your components.
+</Callout>
 
 ## Composing other middlewares
 
@@ -332,7 +368,8 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#always-use-a-locale-prefix))
 2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-automatic-locale-detection))
-3. You need to add a redirect for the root of the app
+3. You can't use [pathname localization](#localizing-pathnames)
+4. You need to add a redirect for the root of the app
 
 ```tsx filename="app/page.tsx"
 import {redirect} from 'next/navigation';
