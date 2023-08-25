@@ -56,7 +56,7 @@ export default createMiddleware({
 
 ### Strategy 2: Localized pathnames [#localized-pathnames]
 
-When using this strategy, you have to provide distinct pathnames for every locale that your app supports. However, the localized variants should be handled by a single route internally, therefore a mapping needs to be provided that is also [consumed by the middleware](/docs/routing/middleware#localizing-pathnames).
+When using this strategy, you have to provide distinct pathnames for every locale that your app supports. However, the localized variants will be handled by a single route internally, therefore a mapping needs to be provided that is also [consumed by the middleware](/docs/routing/middleware#localizing-pathnames).
 
 You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis):
 
@@ -69,11 +69,10 @@ import {
 export const locales = ['en', 'de'] as const;
 
 // The `pathnames` object holds pairs of internal
-// and external paths. Based on the locale, the
-// corresponding external path will be picked.
+// and external paths, separated by locale.
 export const pathnames = {
-  // If all locales use the same pathname, a single
-  // external path can be used for all locales.
+  // If all locales use the same pathname, a
+  // single external path can be provided.
   '/': '/',
   '/blog': '/blog',
 
