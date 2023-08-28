@@ -57,6 +57,7 @@
     "dist",
     "server.d.ts",
     "client.d.ts",
+    "navigation.d.ts",
     "link.d.ts",
     "middleware.d.ts",
     "withNextIntl.js",
