@@ -1,0 +1,31 @@
+import {
+  CheckCircleIcon,
+  GlobeAltIcon,
+  CodeBracketIcon
+} from '@heroicons/react/24/outline';
+import {Card} from 'nextra-theme-docs';
+
+# Workflows & integrations
+
+To get the most out of `next-intl`, you can choose from these integrations to improve your workflow when developing and collaborating with translators.
+
+<div className="mt-8 flex flex-col gap-4 md:w-1/2">
+  <Card
+    arrow
+    icon={<CheckCircleIcon />}
+    title="TypeScript integration"
+    href="/docs/workflows/typescript"
+  />
+  <Card
+    icon={<GlobeAltIcon />}
+    arrow
+    title="Localization management with Crowdin"
+    href="/docs/workflows/localization-management"
+  />
+  <Card
+    icon={<CodeBracketIcon />}
+    arrow
+    title="VSCode integration"
+    href="/docs/workflows/vscode-integration"
+  />
+</div>
