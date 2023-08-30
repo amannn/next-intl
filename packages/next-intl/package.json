@@ -110,11 +110,27 @@
   "size-limit": [
     {
       "path": "dist/next-intl.cjs.production.min.js",
-      "limit": "14.05 KB"
+      "limit": "14.5 KB"
     },
     {
-      "path": "dist/next-intl.cjs.development.js",
-      "limit": "14.25 KB"
+      "path": "dist/navigation.cjs.production.min.js",
+      "limit": "5 KB"
+    },
+    {
+      "path": "dist/server.cjs.production.min.js",
+      "limit": "4 KB"
+    },
+    {
+      "path": "dist/client.cjs.production.min.js",
+      "limit": "5.5 KB"
+    },
+    {
+      "path": "dist/link.cjs.production.min.js",
+      "limit": "4 KB"
+    },
+    {
+      "path": "dist/middleware.cjs.production.min.js",
+      "limit": "9 KB"
     }
   ],
   "engines": {
