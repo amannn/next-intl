@@ -18,6 +18,7 @@
     "size": "size-limit"
   },
   "main": "./dist/index.js",
+  "module": "dist/esm/index.js",
   "typings": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
