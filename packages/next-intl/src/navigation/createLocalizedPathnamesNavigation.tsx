@@ -15,6 +15,14 @@ import {
   HrefOrUrlObjectWithParams
 } from './utils';
 
+export type LocalizedPathnamesLinkProps<Pathname extends keyof Pathnames<Locales>> = Omit<
+  ComponentProps<typeof BaseLink>,
+  'href' | 'name'
+> & {
+  href: HrefOrUrlObjectWithParams<Pathname>;
+  locale?: Locales[number];
+}
+
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
@@ -23,13 +31,7 @@ export default function createLocalizedPathnamesNavigation<
     return useLocale() as (typeof locales)[number];
   }
 
-  type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
-    ComponentProps<typeof BaseLink>,
-    'href' | 'name'
-  > & {
-    href: HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locales[number];
-  };
+  type LinkProps<Pathname extends keyof PathnamesConfig> = LocalizedPathnamesLinkProps<Pathname>;
   function Link<Pathname extends keyof PathnamesConfig>(
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref?: ComponentProps<typeof BaseLink>['ref']

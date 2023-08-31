@@ -1,4 +1,4 @@
-export {default as createLocalizedPathnamesNavigation} from './createLocalizedPathnamesNavigation';
+export {default as createLocalizedPathnamesNavigation, LocalizedPathnamesLinkProps} from './createLocalizedPathnamesNavigation';
 export {Pathnames} from '../shared/types';
 
 // TODO: Possibly release after RFC
