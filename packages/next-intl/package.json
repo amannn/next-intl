@@ -23,12 +23,12 @@
   "exports": {
     ".": {
       "types": "./dist/types/src/index.d.ts",
-      "react-server": "./dist/index.react-server.js",
+      "react-server": "./dist/esm/index.react-server.js",
       "default": "./dist/index.js"
     },
     "./server": {
       "types": "./server.d.ts",
-      "react-server": "./dist/server.react-server.js",
+      "react-server": "./dist/esm/server.react-server.js",
       "default": "./dist/server.js"
     },
     "./client": {
@@ -37,7 +37,7 @@
     },
     "./link": {
       "types": "./link.d.ts",
-      "react-server": "./dist/link.react-server.js",
+      "react-server": "./dist/esm/link.react-server.js",
       "default": "./dist/link.js"
     },
     "./config": {
@@ -50,7 +50,7 @@
     },
     "./navigation": {
       "types": "./navigation.d.ts",
-      "react-server": "./dist/navigation.react-server.js",
+      "react-server": "./dist/esm/navigation.react-server.js",
       "default": "./dist/navigation.js"
     },
     "./withNextIntl": "./withNextIntl.js",

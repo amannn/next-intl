@@ -49,12 +49,13 @@ module.exports = function getConfig({
     input,
     external: [/node_modules/, ...external],
     output: {
-      ...output,
       dir: outDir + env,
       format: 'cjs',
       interop: 'auto',
+      freeze: false,
       esModule: true,
-      exports: 'named'
+      exports: 'named',
+      ...output,
     },
     treeshake: {
       moduleSideEffects: false,
@@ -87,7 +88,7 @@ module.exports = function getConfig({
       env !== 'development' && terser(),
       {
         buildEnd() {
-          if (env !== 'development') {
+          if (env === 'production') {
             writeEnvIndex(input);
             buildTypes();
           }

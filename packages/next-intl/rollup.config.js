@@ -39,6 +39,14 @@ module.exports = [
   }),
   getBuildConfig({
     ...config,
+    output: {
+      ...config.output,
+      format: 'es'
+    },
+    env: 'esm'
+  }),
+  getBuildConfig({
+    ...config,
     env: 'production'
   })
 ];
