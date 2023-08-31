@@ -19,7 +19,7 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   const isChangingLocale = locale !== defaultLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
-    isLocalHref(href) && locale
+    isLocalHref(href) && locale && locale !== 'en'
       ? // Potentially the href shouldn't be prefixed, but to determine this we
         // need a) the default locale and b) the information if we use prefixed
         // routing. During the server side render (both in RSC as well as SSR),
