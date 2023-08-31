@@ -12,7 +12,11 @@ import type {
 
 function notSupported(name: string) {
   return () => {
-    throw new Error(`\`${name}\` is not supported in Client Components.`);
+    throw new Error(
+      process.env.NODE_ENV !== 'production'
+        ? `\`${name}\` is not supported in Client Components.`
+        : undefined
+    );
   };
 }
 

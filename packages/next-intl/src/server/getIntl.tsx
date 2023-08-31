@@ -7,7 +7,7 @@ let hasWarned = false;
 
 /** @deprecated Please switch to `getFormatter`. */
 const getIntl = cache(async () => {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     hasWarned = true;
     console.warn(
       `

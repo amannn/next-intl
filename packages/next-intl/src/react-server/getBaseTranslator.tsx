@@ -92,7 +92,7 @@ Promise<{
     const opts = locale;
     namespace = opts.namespace;
     locale = opts.locale;
-    if (!hasWarned) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarned) {
       console.warn(
         `
 DEPRECATION WARNING: Calling \`getTranslator\` with an object argument is deprecated, please update your call site accordingly.
