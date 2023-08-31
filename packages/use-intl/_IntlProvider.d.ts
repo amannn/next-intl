@@ -1,1 +1,3 @@
-export {default} from '../dist/_IntlProvider';
+import _IntlProvider from './dist/production/_IntlProvider';
+
+export = _IntlProvider;

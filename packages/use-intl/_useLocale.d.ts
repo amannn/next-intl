@@ -1,1 +1,3 @@
-export {default} from '../dist/_useLocale';
+import _useLocale from './dist/production/_useLocale';
+
+export = _useLocale;
