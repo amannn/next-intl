@@ -1,3 +1,3 @@
-import config from './dist/config';
+import config from './dist/types/src/config';
 
 export = config;

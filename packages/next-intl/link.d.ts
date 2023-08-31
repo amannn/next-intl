@@ -1,3 +1,3 @@
-import Link from './dist/link';
+import Link from './dist/types/src/link';
 
 export = Link;

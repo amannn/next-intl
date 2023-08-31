@@ -11,7 +11,7 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
@@ -19,16 +19,16 @@
     "size": "size-limit"
   },
   "main": "./dist/index.js",
-  "typings": "./dist/production/index.d.ts",
+  "typings": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/production/index.d.ts",
-      "react-server": "./dist/react-server/index.react-server.js",
+      "types": "./dist/types/src/index.d.ts",
+      "react-server": "./dist/index.react-server.js",
       "default": "./dist/index.js"
     },
     "./server": {
       "types": "./server.d.ts",
-      "react-server": "./dist/react-server/server.react-server.js",
+      "react-server": "./dist/server.react-server.js",
       "default": "./dist/server.js"
     },
     "./client": {
@@ -37,7 +37,7 @@
     },
     "./link": {
       "types": "./link.d.ts",
-      "react-server": "./dist/react-server/link.react-server.js",
+      "react-server": "./dist/link.react-server.js",
       "default": "./dist/link.js"
     },
     "./config": {
@@ -50,7 +50,7 @@
     },
     "./navigation": {
       "types": "./navigation.d.ts",
-      "react-server": "./dist/react-server/navigation.react-server.js",
+      "react-server": "./dist/navigation.react-server.js",
       "default": "./dist/navigation.js"
     },
     "./withNextIntl": "./withNextIntl.js",
@@ -108,36 +108,36 @@
     "next": "13.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup": "^3.28.1",
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
-    "tsup": "^7.2.0",
     "typescript": "^5.0.0",
     "vitest": "^0.32.2"
   },
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "13.4 KB"
+      "limit": "13.6 KB"
     },
     {
       "path": "dist/production/navigation.js",
-      "limit": "2 KB"
+      "limit": "2.5 KB"
     },
     {
       "path": "dist/production/server.js",
-      "limit": "1 KB"
+      "limit": "1.3 KB"
     },
     {
       "path": "dist/production/client.js",
-      "limit": "1.5 KB"
+      "limit": "1.8 KB"
     },
     {
       "path": "dist/production/link.js",
-      "limit": "1.1 KB"
+      "limit": "1.4 KB"
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "5.5 KB"
+      "limit": "5.9 KB"
     }
   ]
 }

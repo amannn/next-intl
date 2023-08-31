@@ -1,0 +1,44 @@
+/* eslint-env node */
+const preserveDirectives = require('rollup-plugin-preserve-directives').default;
+const getBuildConfig = require('../../scripts/getBuildConfig');
+
+const config = {
+  input: {
+    index: 'src/index.tsx',
+    'index.react-server': 'src/index.react-server.tsx',
+
+    link: 'src/link.tsx',
+    'link.react-server': 'src/link.react-server.tsx',
+
+    navigation: 'src/navigation.tsx',
+    'navigation.react-server': 'src/navigation.react-server.tsx',
+
+    server: 'src/server.tsx',
+    'server.react-server': 'src/server.react-server.tsx',
+
+    client: 'src/client.tsx',
+    middleware: 'src/middleware.tsx',
+    plugin: 'src/plugin.tsx',
+    config: 'src/config.tsx'
+  },
+  external: ['next-intl/config', /use-intl/],
+  output: {
+    preserveModules: true
+  },
+  onwarn(warning, warn) {
+    if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+    warn(warning);
+  },
+  plugins: [preserveDirectives()]
+};
+
+module.exports = [
+  getBuildConfig({
+    ...config,
+    env: 'development'
+  }),
+  getBuildConfig({
+    ...config,
+    env: 'production'
+  })
+];

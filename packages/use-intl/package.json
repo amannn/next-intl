@@ -11,17 +11,17 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
   "main": "./dist/index.js",
-  "typings": "./dist/production/index.d.ts",
+  "typings": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/production/index.d.ts",
+      "types": "./dist/types/src/index.d.ts",
       "default": "./dist/index.js"
     },
     "./core": {
@@ -76,15 +76,15 @@
     "eslint-config-molindo": "7.0.0-alpha.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup": "^3.28.1",
     "size-limit": "^8.2.6",
-    "tsup": "^7.2.0",
     "typescript": "^5.0.0",
     "vitest": "^0.32.2"
   },
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "11.85 kB"
+      "limit": "12.25 kB"
     }
   ]
 }
