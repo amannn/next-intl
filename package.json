@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "lerna": "^6.6.2",
+    "tsup": "^7.2.0",
     "turbo": "^1.9.3"
   }
 }

@@ -1,1 +1,1 @@
-export * from './dist/core';
+export * from './dist/production/core';
