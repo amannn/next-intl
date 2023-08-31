@@ -96,15 +96,16 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   query?: Record<string, SearchParamValue>;
 }) {
   function getNamedPath(value: keyof typeof pathnames) {
-    const namedPath = pathnames[value];
+    let namedPath = pathnames[value];
     if (!namedPath) {
-      throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? `No route found for "${value}". Available routes: ${Object.keys(
-              pathnames
-            ).join(', ')}`
-          : undefined
-      );
+      namedPath = value;
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          `No route found for "${value}". Available routes: ${Object.keys(
+            pathnames
+          ).join(', ')}`
+        )
+      }
     }
     return namedPath;
   }
@@ -159,20 +160,21 @@ export function getRoute<Locales extends AllLocales>({
 }) {
   pathname = unlocalizePathname(pathname, locale);
 
-  const template = Object.entries(pathnames).find(([, routePath]) => {
+  let template = Object.entries(pathnames).find(([, routePath]) => {
     const routePathname =
       typeof routePath !== 'string' ? routePath[locale] : routePath;
     return matchesPathname(routePathname, pathname);
   })?.[0];
 
   if (!template) {
-    throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `No route found for "${pathname}". Available routes: ${Object.keys(
-            pathnames
-          ).join(', ')}`
-        : undefined
-    );
+    template = pathname;
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        `No route found for "${pathname}". Available routes: ${Object.keys(
+          pathnames
+        ).join(', ')}`
+      )
+    }
   }
 
   return template as keyof Pathnames<Locales>;
