@@ -14,6 +14,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": false,
-    "outDir": "dist/tsc"
+    "outDir": "dist"
   }
 }

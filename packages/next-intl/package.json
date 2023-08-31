@@ -61,7 +61,6 @@
   },
   "files": [
     "dist",
-    "index.d.ts",
     "server.d.ts",
     "client.d.ts",
     "navigation.d.ts",
