@@ -1,3 +1,1 @@
-import _IntlProvider from './dist/types/src/_IntlProvider';
-
-export = _IntlProvider;
+export * from './dist/types/src/_IntlProvider';

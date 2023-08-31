@@ -1,1 +1,1 @@
-export {default} from './react/useLocale';
+export {default as useLocale} from './react/useLocale';

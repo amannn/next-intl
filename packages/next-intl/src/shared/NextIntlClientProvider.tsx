@@ -3,7 +3,7 @@
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 // Workaround for some bundle splitting until we have ESM
-import IntlProvider from 'use-intl/_IntlProvider';
+import {IntlProvider} from 'use-intl/_IntlProvider';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;

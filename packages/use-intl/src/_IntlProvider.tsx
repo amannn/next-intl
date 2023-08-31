@@ -1,1 +1,1 @@
-export {default} from './react/IntlProvider';
+export {default as IntlProvider} from './react/IntlProvider';

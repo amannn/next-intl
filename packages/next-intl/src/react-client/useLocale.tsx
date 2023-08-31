@@ -1,6 +1,6 @@
 import {useParams} from 'next/navigation';
 // Workaround for some bundle splitting until we have ESM
-import useBaseLocale from 'use-intl/_useLocale';
+import {useLocale as useBaseLocale} from 'use-intl/_useLocale';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants';
 
 export default function useLocale(): string {
