@@ -177,5 +177,5 @@ export function getRoute<Locales extends AllLocales>({
     }
   }
 
-  return template as keyof Pathnames<Locales>;
+  return template as keyof Pathnames<Locales> | (string & {});
 }
