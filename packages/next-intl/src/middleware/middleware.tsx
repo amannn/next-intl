@@ -38,18 +38,20 @@ function handleConfigDeprecations<Locales extends AllLocales>(
       }));
     }
 
-    console.error(
-      "\n\nThe `routing` option is deprecated, please use `localePrefix` and `domains` instead. Here's your updated configuration:\n\n" +
-        JSON.stringify(config, null, 2) +
-        '\n\nThank you so much for following along with the Server Components beta and sorry for the inconvenience!\n\n'
-    );
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(
+        "\n\nThe `routing` option is deprecated, please use `localePrefix` and `domains` instead. Here's your updated configuration:\n\n" +
+          JSON.stringify(config, null, 2) +
+          '\n\nThank you so much for following along with the Server Components beta and sorry for the inconvenience!\n\n'
+      );
+    }
   }
 
   if (config.domains) {
     const {domains} = config;
     config = {...config};
     config.domains = domains.map((cur) => {
-      if (cur.locale) {
+      if (process.env.NODE_ENV !== 'production' && cur.locale) {
         console.error(
           '\n\nThe `domain.locale` option is deprecated, please use `domain.defaultLocale` instead.'
         );

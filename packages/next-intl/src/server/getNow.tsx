@@ -8,7 +8,7 @@ let hasWarnedForObjectArgument = false;
 const getNow = cache(async (locale?: string | {locale: string}) => {
   if (typeof locale === 'object') {
     locale = locale.locale;
-    if (!hasWarnedForObjectArgument) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarnedForObjectArgument) {
       hasWarnedForObjectArgument = true;
       console.warn(
         `
@@ -28,7 +28,7 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
 
   if (!locale) {
     locale = getLocaleFromHeader();
-    if (!hasWarnedForMissingLocale) {
+    if (process.env.NODE_ENV !== 'production' && !hasWarnedForMissingLocale) {
       hasWarnedForMissingLocale = true;
       console.warn(`
 Calling \`getNow\` without a locale is deprecated, please update the call:

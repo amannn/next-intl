@@ -3,7 +3,7 @@ import getLocaleFromHeader from './getLocaleFromHeader';
 let hasWarned = false;
 
 export default function getLocale() {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     console.warn(`
 \`getLocale\` is deprecated. Please use the \`locale\` parameter from Next.js instead:
 

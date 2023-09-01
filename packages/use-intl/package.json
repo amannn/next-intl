@@ -11,24 +11,43 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "dts build --entry src/index.tsx && dts build --entry src/core.tsx --entry src/react.tsx --noClean",
+    "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
-  "main": "dist/index.js",
-  "module": "dist/use-intl.esm.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "./dist/types/src/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./core": "./dist/core.js",
-    "./react": "./dist/react.js"
+    ".": {
+      "types": "./dist/types/src/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./core.d.ts",
+      "default": "./dist/core.js"
+    },
+    "./react": {
+      "types": "./react.d.ts",
+      "default": "./dist/react.js"
+    },
+    "./_useLocale": {
+      "types": "./_useLocale.d.ts",
+      "default": "./dist/_useLocale.js"
+    },
+    "./_IntlProvider": {
+      "types": "./_IntlProvider.d.ts",
+      "default": "./dist/_IntlProvider.js"
+    }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts"
+    "react.d.ts",
+    "_useLocale.d.ts",
+    "_IntlProvider.d.ts"
   ],
   "keywords": [
     "react",
@@ -54,26 +73,19 @@
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
     "date-fns": "^2.16.1",
-    "dts-cli": "^1.4.0",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "7.0.0-alpha.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup": "^3.28.1",
     "size-limit": "^8.2.6",
     "typescript": "^5.0.0",
     "vitest": "^0.32.2"
   },
   "size-limit": [
     {
-      "path": "dist/use-intl.cjs.production.min.js",
-      "limit": "10.30 kB"
-    },
-    {
-      "path": "dist/use-intl.cjs.development.js",
-      "limit": "10.30 kB"
+      "path": "dist/production/index.js",
+      "limit": "12.25 kB"
     }
-  ],
-  "engines": {
-    "node": ">=10"
-  }
+  ]
 }
