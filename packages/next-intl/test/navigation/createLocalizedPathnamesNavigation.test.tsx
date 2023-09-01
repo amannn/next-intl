@@ -317,7 +317,7 @@ describe('useRouter', () => {
 function TypeTests() {
   const router = useRouter();
 
-  // @ts-expect-error -- Unknown route
+  // Valid -- Unknown route
   router.push('/unknown');
 
   // Valid
@@ -354,7 +354,7 @@ function TypeTests() {
     Über uns
   </Link>;
 
-  // @ts-expect-error -- Unknown route
+  // Valid -- Unknown route
   <Link href="/unknown">About</Link>;
 
   // @ts-expect-error -- Requires params
@@ -415,9 +415,9 @@ function TypeTests() {
     params: {parts: ['one', 'two']}
   });
 
-  // @ts-expect-error -- Unknown route
+  // Valid -- Unknown route
   redirect('/unknown');
-  // @ts-expect-error -- Localized alternative
+  // Valid -- Localized alternative
   redirect('/ueber-uns');
   // @ts-expect-error -- Requires params
   redirect('/news/[articleSlug]-[articleId]');
