@@ -158,12 +158,12 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  pathname = unlocalizePathname(pathname, locale);
+  const unlocalizedPathname = unlocalizePathname(pathname, locale);
 
   let template = Object.entries(pathnames).find(([, routePath]) => {
     const routePathname =
       typeof routePath !== 'string' ? routePath[locale] : routePath;
-    return matchesPathname(routePathname, pathname);
+    return matchesPathname(routePathname, unlocalizedPathname);
   })?.[0];
 
   if (!template) {
