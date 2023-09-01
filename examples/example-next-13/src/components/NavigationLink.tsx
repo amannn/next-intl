@@ -20,7 +20,7 @@ export default function NavigationLink({href, ...rest}: Props) {
         'inline-block py-3 px-2 transition-colors',
         isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'
       )}
-      href={href}
+      href={'/[slug]/wrong'}
       {...rest}
     />
   );

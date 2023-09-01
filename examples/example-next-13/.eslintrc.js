@@ -6,6 +6,9 @@ module.exports = {
     'molindo/react',
     'plugin:@next/next/recommended'
   ],
+  rules: {
+    'react/jsx-curly-brace-presence': 'off'
+  },
   overrides: [
     {
       files: ['*.spec.tsx'],
