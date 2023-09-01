@@ -16,7 +16,7 @@ type HrefOrHrefWithParamsImpl<Pathname, Other> =
     ? // Required catch-all & regular params
       {pathname: Pathname; params: StrictParams<Pathname>} & Other
     : // No params
-      Pathname | ({pathname: Pathname} & Other);
+      Pathname | ({pathname: Pathname} & Other) | (string & {});
 
 export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
