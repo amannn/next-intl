@@ -100,6 +100,16 @@ export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({locales, pathnames});
 ```
 
+By default, the [navigation APIs](#apis) will be strictly typed to only allow the routes provided in your `pathnames` config. If you wish to allow unknown routes please use the following type signature (alternatively, you may need to use `@ts-expect-error` for individual cases):
+
+```tsx filename="./navigation.ts"
+// ...
+export const {Link, redirect, usePathname, useRouter} = createLocalizedPathnamesNavigation({
+    locales,
+    pathnames: as typeof pathnames & Record<string & {}, string>
+});
+```
+
 The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to import the `locales` and `pathnames` into the middleware.
 
 ```tsx filename="middleware.ts"
