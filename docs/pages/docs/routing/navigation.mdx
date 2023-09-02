@@ -104,10 +104,11 @@ By default, the [navigation APIs](#apis) will be strictly typed to only allow th
 
 ```tsx filename="./navigation.ts"
 // ...
-export const {Link, redirect, usePathname, useRouter} = createLocalizedPathnamesNavigation({
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
     locales,
-    pathnames: as typeof pathnames & Record<string & {}, string>
-});
+    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
+  });
 ```
 
 The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to import the `locales` and `pathnames` into the middleware.
