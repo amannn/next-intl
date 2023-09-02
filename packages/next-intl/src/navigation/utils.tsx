@@ -99,13 +99,6 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
     let namedPath = pathnames[value];
     if (!namedPath) {
       namedPath = value;
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `No route found for "${value}". Available routes: ${Object.keys(
-            pathnames
-          ).join(', ')}`
-        )
-      }
     }
     return namedPath;
   }
@@ -168,13 +161,6 @@ export function getRoute<Locales extends AllLocales>({
 
   if (!template) {
     template = pathname;
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        `No route found for "${pathname}". Available routes: ${Object.keys(
-          pathnames
-        ).join(', ')}`
-      )
-    }
   }
 
   return template as keyof Pathnames<Locales>;

@@ -118,7 +118,7 @@ export default function createLocalizedPathnamesNavigation<
     };
   }
 
-  function usePathname(): keyof PathnamesConfig | (string & {}) {
+  function usePathname(): keyof PathnamesConfig {
     const pathname = useBasePathname();
     const locale = useTypedLocale();
     return getRoute({pathname, locale, pathnames});
