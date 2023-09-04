@@ -145,6 +145,22 @@ describe('redirect', () => {
     );
     expect(nextRedirect).toHaveBeenLastCalledWith('/en?foo=bar&bar=1&bar=2');
   });
+
+  it('handles unknown route', () => {
+    function Component<Pathname extends keyof typeof pathnames>({
+      href
+    }: {
+      href: Parameters<typeof redirect<Pathname>>[0];
+    }) {
+      redirect(href);
+      return null;
+    }
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/');
+    // @ts-expect-error -- Unknown route
+    render(<Component href="/unknown" />);
+    expect(nextRedirect).toHaveBeenLastCalledWith('/en/unknown');
+  });
 });
 
 describe('usePathname', () => {
@@ -186,6 +202,20 @@ describe('usePathname', () => {
     );
     rerender(<Component />);
     screen.getByText('/news/[articleSlug]-[articleId]');
+  });
+
+  it('handles unknown route', () => {
+    function Component() {
+      const pathname = usePathname();
+      return <>{pathname}</>;
+    }
+    vi.mocked(useNextPathname).mockImplementation(() => '/en/unknown');
+    const { rerender } = render(<Component />);
+    screen.getByText('/unknown');
+
+    vi.mocked(useNextPathname).mockImplementation(() => '/de/unknown');
+    rerender(<Component />);
+    screen.getByText('/de/unknown');
   });
 });
 
@@ -270,6 +300,20 @@ describe('Link', () => {
       '/about?foo=bar&bar=1&bar=2'
     );
   });
+
+  it('handles unknown routes', () => {
+    // @ts-expect-error -- Unknown route
+    const { rerender } = render(<Link href="/unknown">Unknown</Link>);
+    expect(screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')).toBe(
+      '/unknown'
+    );
+
+    // @ts-expect-error -- Unknown route
+    rerender(<Link href="/unknown" locale="de">Unknown</Link>);
+    expect(screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')).toBe(
+      '/de/unknown'
+    );
+  });
 });
 
 describe('useRouter', () => {
@@ -306,6 +350,19 @@ describe('useRouter', () => {
       expect(push).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/de/ueber-uns?foo=bar&bar=1&bar=2');
     });
+  });
+
+  it('handles unknown routes', () => {
+    function Component() {
+      const router = useRouter();
+      // @ts-expect-error -- Unknown route
+      router.push('/unknown');
+      return null;
+    }
+    render(<Component />);
+    const push = useNextRouter().push as Mock;
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith('/unknown');
   });
 });
 
@@ -428,4 +485,20 @@ function TypeTests() {
       articleId: 3
     }
   });
+
+
+  // Allow unknown routes
+  const {
+    Link: LinkWithUnknown, 
+    redirect: redirectWithUnknown, 
+    usePathname: usePathnameWithUnkown, 
+    useRouter: useRouterWithUnknown
+  } = createLocalizedPathnamesNavigation({
+    locales,
+    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
+  });
+  <LinkWithUnknown href="/unknown">Unknown</LinkWithUnknown>
+  redirectWithUnknown('/unknown');
+  let pathnameWithUnknown: ReturnType<typeof usePathnameWithUnkown> = '/unknown'
+  useRouterWithUnknown().push('/unknown');
 }
