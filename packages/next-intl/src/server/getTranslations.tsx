@@ -81,7 +81,7 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     console.warn(`
 \`getTranslations\` is deprecated, please switch to \`getTranslator\`.
 

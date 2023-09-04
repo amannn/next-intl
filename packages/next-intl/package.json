@@ -11,31 +11,34 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "dts build --entry src/index.tsx && dts build --entry src/client.tsx --entry src/index.react-server.tsx --entry src/link.react-server.tsx --entry src/link.tsx --entry src/middleware.tsx --entry src/navigation.tsx --entry src/navigation.react-server.tsx --entry src/plugin.tsx --entry src/server.react-server.tsx --entry src/server.tsx --entry src/config.tsx --noClean",
+    "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "eslint src test && tsc --noEmit",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "dist/index.js",
-  "module": "dist/next-intl.esm.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/esm/index.js",
+  "typings": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "react-server": "./dist/index.react-server.esm.js",
+      "types": "./dist/types/src/index.d.ts",
+      "react-server": "./dist/esm/index.react-server.js",
       "default": "./dist/index.js"
     },
     "./server": {
-      "react-server": "./dist/server.react-server.esm.js",
+      "types": "./server.d.ts",
+      "react-server": "./dist/esm/server.react-server.js",
       "default": "./dist/server.js"
     },
     "./client": {
+      "types": "./client.d.ts",
       "default": "./dist/client.js"
     },
     "./link": {
       "types": "./link.d.ts",
-      "react-server": "./dist/link.react-server.esm.js",
+      "react-server": "./dist/esm/link.react-server.js",
       "default": "./dist/link.js"
     },
     "./config": {
@@ -47,11 +50,15 @@
       "default": "./dist/middleware.js"
     },
     "./navigation": {
-      "react-server": "./dist/navigation.react-server.esm.js",
+      "types": "./navigation.d.ts",
+      "react-server": "./dist/esm/navigation.react-server.js",
       "default": "./dist/navigation.js"
     },
     "./withNextIntl": "./withNextIntl.js",
-    "./plugin": "./dist/plugin.js"
+    "./plugin": {
+      "types": "./plugin.d.ts",
+      "default": "./dist/plugin.js"
+    }
   },
   "files": [
     "dist",
@@ -95,13 +102,13 @@
     "@types/negotiator": "^0.6.1",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
-    "dts-cli": "^1.4.0",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "7.0.0-alpha.7",
     "eslint-plugin-deprecation": "^1.4.1",
     "next": "13.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup": "^3.28.1",
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.0.0",
@@ -109,15 +116,28 @@
   },
   "size-limit": [
     {
-      "path": "dist/next-intl.cjs.production.min.js",
-      "limit": "14.05 KB"
+      "path": "dist/production/index.js",
+      "limit": "13.6 KB"
     },
     {
-      "path": "dist/next-intl.cjs.development.js",
-      "limit": "14.25 KB"
+      "path": "dist/production/navigation.js",
+      "limit": "2.5 KB"
+    },
+    {
+      "path": "dist/production/server.js",
+      "limit": "1.3 KB"
+    },
+    {
+      "path": "dist/production/client.js",
+      "limit": "1.8 KB"
+    },
+    {
+      "path": "dist/production/link.js",
+      "limit": "1.4 KB"
+    },
+    {
+      "path": "dist/production/middleware.js",
+      "limit": "5.9 KB"
     }
-  ],
-  "engines": {
-    "node": ">=10"
-  }
+  ]
 }

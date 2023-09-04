@@ -1,1 +1,1 @@
-export * from './dist/navigation';
+export * from './dist/types/src/navigation';

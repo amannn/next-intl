@@ -8,7 +8,7 @@ let hasWarned = false;
 
 /** @deprecated Is available as `import Link from 'next-intl/link'` now. */
 export default function LinkDeprecated(props: ComponentProps<typeof Link>) {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     console.warn(
       `\n\nDEPRECATION WARNING: The import for \`Link\` from next-intl has changed.
 

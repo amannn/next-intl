@@ -11,7 +11,7 @@ let hasWarnedForMiddlewareImport = false;
 export function createIntlMiddleware<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ) {
-  if (!hasWarnedForMiddlewareImport) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarnedForMiddlewareImport) {
     hasWarnedForMiddlewareImport = true;
     console.warn(
       `

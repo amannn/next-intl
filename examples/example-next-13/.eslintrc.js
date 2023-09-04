@@ -1,4 +1,7 @@
 module.exports = {
+  env: {
+    node: true
+  },
   extends: [
     'molindo/typescript',
     'molindo/react',
