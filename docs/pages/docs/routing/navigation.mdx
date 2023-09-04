@@ -100,17 +100,6 @@ export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({locales, pathnames});
 ```
 
-By default, the [navigation APIs](#apis) will be strictly typed and only allow routes provided in the `pathnames` config. If you wish to allow unknown routes please use the following type signature (alternatively, you may need to use `@ts-expect-error` for individual cases):
-
-```tsx filename="./navigation.ts"
-// ...
-export const {Link, redirect, usePathname, useRouter} =
-  createLocalizedPathnamesNavigation({
-    locales,
-    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
-  });
-```
-
 The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to import the `locales` and `pathnames` into the middleware.
 
 ```tsx filename="middleware.ts"
@@ -128,6 +117,32 @@ export default createMiddleware({
   Have a look at the [App Router example](/examples/app-router) to explore a
   working implementation of localized pathnames.
 </Callout>
+
+<details>
+<summary>How can I link to unknown routes?</summary>
+
+The [navigation APIs](#apis) are strictly typed and only allow routes specified in the `pathnames` config.
+
+If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
+
+```tsx
+// @ts-expect-error
+<Link href="/unknown">...</Link>
+```
+
+… or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
+
+```tsx filename="./navigation.ts"
+// ...
+
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
+    locales,
+    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
+  });
+```
+
+</details>
 
 ## APIs
 
