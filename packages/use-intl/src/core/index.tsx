@@ -13,10 +13,10 @@ export {default as createTranslator} from './createTranslator';
 export {default as createBaseTranslator} from './createBaseTranslator';
 export {default as createFormatter} from './createFormatter';
 export {default as initializeConfig} from './initializeConfig';
-export {default as MessageKeys} from './utils/MessageKeys';
-export {default as NamespaceKeys} from './utils/NamespaceKeys';
-export {default as NestedKeyOf} from './utils/NestedKeyOf';
-export {default as NestedValueOf} from './utils/NestedValueOf';
+export type {default as MessageKeys} from './utils/MessageKeys';
+export type {default as NamespaceKeys} from './utils/NamespaceKeys';
+export type {default as NestedKeyOf} from './utils/NestedKeyOf';
+export type {default as NestedValueOf} from './utils/NestedValueOf';
 
 // TODO: Remove in next major version
 export {default as createIntl} from './createIntl';

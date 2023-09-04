@@ -6,7 +6,7 @@ import useRouter from '../client/useRouter';
 let hasWarned = false;
 
 export default function useLocalizedRouterDeprecated() {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     console.warn(
       `\n\nDEPRECATION WARNING: The \`useLocalizedRouter\` import from \`next-intl\` is deprecated and will be removed in the stable release of next-intl. Please import \`useLocalizedRouter\` from \`next-intl/client\` instead. See https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components\n\n`
     );

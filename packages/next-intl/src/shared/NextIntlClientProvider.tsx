@@ -2,7 +2,8 @@
 
 import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
-import {IntlProvider} from 'use-intl';
+// Workaround for some bundle splitting until we have ESM
+import {IntlProvider} from 'use-intl/_IntlProvider';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
@@ -30,7 +31,7 @@ export default function NextIntlClientProvider({
   }
 
   // TODO: This is no longer necessary, remove for stable release
-  if (typeof now === 'string') {
+  if (process.env.NODE_ENV !== 'production' && typeof now === 'string') {
     console.error(
       'Passing an ISO date string to `NextIntlClientProvider` is deprecated since React Server Components have built-in support for serializing dates now. To upgrade, pass a `Date` instance instead.'
     );

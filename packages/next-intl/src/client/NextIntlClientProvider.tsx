@@ -6,7 +6,7 @@ let hasWarned = false;
 export default function NextIntlClientProvider(
   props: ComponentProps<typeof NextIntlClientProvider_>
 ) {
-  if (!hasWarned) {
+  if (process.env.NODE_ENV !== 'production' && !hasWarned) {
     hasWarned = true;
     console.warn(`
 Importing \`NextIntlClientProvider\` from \`next-intl/client\` is deprecated. Please update the import:

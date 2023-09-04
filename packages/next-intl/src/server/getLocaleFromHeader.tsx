@@ -16,6 +16,7 @@ const getLocaleFromHeader = cache(() => {
     }
   } catch (error) {
     if (
+      process.env.NODE_ENV !== 'production' &&
       error instanceof Error &&
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
@@ -30,7 +31,9 @@ const getLocaleFromHeader = cache(() => {
 
   if (!locale) {
     throw new Error(
-      'Unable to find `next-intl` locale, have you configured the middleware?`'
+      process.env.NODE_ENV !== 'production'
+        ? 'Unable to find `next-intl` locale, have you configured the middleware?`'
+        : undefined
     );
   }
 
