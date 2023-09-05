@@ -118,6 +118,32 @@ export default createMiddleware({
   working implementation of localized pathnames.
 </Callout>
 
+<details>
+<summary>How can I link to unknown routes?</summary>
+
+The [navigation APIs](#apis) are strictly typed and only allow routes specified in the `pathnames` config.
+
+If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
+
+```tsx
+// @ts-expect-error
+<Link href="/unknown">...</Link>
+```
+
+… or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
+
+```tsx filename="./navigation.ts"
+// ...
+
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
+    locales,
+    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
+  });
+```
+
+</details>
+
 ## APIs
 
 ### `Link`

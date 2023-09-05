@@ -96,15 +96,9 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   query?: Record<string, SearchParamValue>;
 }) {
   function getNamedPath(value: keyof typeof pathnames) {
-    const namedPath = pathnames[value];
+    let namedPath = pathnames[value];
     if (!namedPath) {
-      throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? `No route found for "${value}". Available routes: ${Object.keys(
-              pathnames
-            ).join(', ')}`
-          : undefined
-      );
+      namedPath = value;
     }
     return namedPath;
   }
@@ -157,22 +151,16 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  pathname = unlocalizePathname(pathname, locale);
+  const unlocalizedPathname = unlocalizePathname(pathname, locale);
 
-  const template = Object.entries(pathnames).find(([, routePath]) => {
+  let template = Object.entries(pathnames).find(([, routePath]) => {
     const routePathname =
       typeof routePath !== 'string' ? routePath[locale] : routePath;
-    return matchesPathname(routePathname, pathname);
+    return matchesPathname(routePathname, unlocalizedPathname);
   })?.[0];
 
   if (!template) {
-    throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `No route found for "${pathname}". Available routes: ${Object.keys(
-            pathnames
-          ).join(', ')}`
-        : undefined
-    );
+    template = pathname;
   }
 
   return template as keyof Pathnames<Locales>;
