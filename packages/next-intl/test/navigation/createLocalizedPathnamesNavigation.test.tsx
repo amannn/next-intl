@@ -210,7 +210,7 @@ describe('usePathname', () => {
       return <>{pathname}</>;
     }
     vi.mocked(useNextPathname).mockImplementation(() => '/en/unknown');
-    const { rerender } = render(<Component />);
+    const {rerender} = render(<Component />);
     screen.getByText('/unknown');
 
     vi.mocked(useNextPathname).mockImplementation(() => '/de/unknown');
@@ -303,16 +303,20 @@ describe('Link', () => {
 
   it('handles unknown routes', () => {
     // @ts-expect-error -- Unknown route
-    const { rerender } = render(<Link href="/unknown">Unknown</Link>);
-    expect(screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')).toBe(
-      '/unknown'
-    );
+    const {rerender} = render(<Link href="/unknown">Unknown</Link>);
+    expect(
+      screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')
+    ).toBe('/unknown');
 
-    // @ts-expect-error -- Unknown route
-    rerender(<Link href="/unknown" locale="de">Unknown</Link>);
-    expect(screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')).toBe(
-      '/de/unknown'
+    rerender(
+      // @ts-expect-error -- Unknown route
+      <Link href="/unknown" locale="de">
+        Unknown
+      </Link>
     );
+    expect(
+      screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')
+    ).toBe('/de/unknown');
   });
 });
 
@@ -486,19 +490,21 @@ function TypeTests() {
     }
   });
 
-
   // Allow unknown routes
   const {
-    Link: LinkWithUnknown, 
-    redirect: redirectWithUnknown, 
-    usePathname: usePathnameWithUnkown, 
+    Link: LinkWithUnknown,
+    redirect: redirectWithUnknown,
+    usePathname: usePathnameWithUnkown,
     useRouter: useRouterWithUnknown
   } = createLocalizedPathnamesNavigation({
     locales,
+    // eslint-disable-next-line @typescript-eslint/ban-types
     pathnames: pathnames as typeof pathnames & Record<string & {}, string>
   });
-  <LinkWithUnknown href="/unknown">Unknown</LinkWithUnknown>
+  <LinkWithUnknown href="/unknown">Unknown</LinkWithUnknown>;
   redirectWithUnknown('/unknown');
-  let pathnameWithUnknown: ReturnType<typeof usePathnameWithUnkown> = '/unknown'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const pathnameWithUnknown: ReturnType<typeof usePathnameWithUnkown> =
+    '/unknown';
   useRouterWithUnknown().push('/unknown');
 }
