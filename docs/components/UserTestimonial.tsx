@@ -1,17 +1,17 @@
 import Image from 'next/image';
 
 type Props = {
-  position: string;
   href: string;
   portraitUrl: string;
+  position: string;
   quote: string;
   userName: string;
 };
 
 export default function UserTestimonial({
-  position,
   href,
   portraitUrl,
+  position,
   quote,
   userName
 }: Props) {
