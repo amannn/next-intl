@@ -16,7 +16,7 @@ function Tab({
       className={clsx(
         'flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors',
         active
-          ? 'bg-slate-800 text-sky-100/70 text-white'
+          ? 'bg-slate-800 text-white'
           : 'bg-slate-800/40 text-slate-500 hover:bg-slate-800'
       )}
       onClick={onClick}

@@ -4,12 +4,14 @@ title: next-intl
 
 import Callout from 'components/Callout';
 import CodeSnippets from 'components/CodeSnippets';
-import Section from 'components/Section';
-import PartnerBanner from 'components/PartnerBanner';
-import LinkButton from 'components/LinkButton';
-import Link from 'components/Link';
 import FeaturePanel from 'components/FeaturePanel';
 import Hero from 'components/Hero';
+import Link from 'components/Link';
+import LinkButton from 'components/LinkButton';
+import PartnerBanner from 'components/PartnerBanner';
+import Section from 'components/Section';
+import ShowcaseSite from 'components/ShowcaseSite';
+import UserTestimonial from 'components/UserTestimonial';
 
 <div className="bg-slate-50 dark:bg-gray-900">
 
@@ -60,11 +62,108 @@ import Hero from 'components/Hero';
     />
   </div>
 </Section>
-  <div className="pb-40 text-center">
-    <LinkButton href="/docs/getting-started">Get started with next-intl<span className="inline-block ml-2">→</span></LinkButton>
-    <div className="flex gap-6 mt-8 justify-center">
-      <Link href="/docs/usage">Usage guide</Link>
-      <Link href="/examples">Examples</Link>
+<Section title="Trusted by the Next.js community">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col gap-6">
+      <UserTestimonial
+        userName="Kieran McHugh"
+        companyName="Founder & CEO at Daybridge"
+        quote="We were initially worried that adding support for multiple languages to our app would add overwhelming complexity, but next-intl genuinely made the process so much smoother than we expected."
+        portraitUrl="/user-kieran-mchugh.jpg"
+        href="https://twitter.com/kieranmch"
+      />
+      <UserTestimonial
+        userName="Colin Sidoti"
+        companyName="Co-founder & CEO at Clerk"
+        quote="Interop with next-intl was a design requirement"
+        portraitUrl="/user-colin-sidoti.jpg"
+        href="https://twitter.com/tweetsbycolin/status/1654418495646629888"
+      />
+    </div>
+    <div className="flex flex-col gap-6">
+      <UserTestimonial
+        userName="Cali Castle"
+        companyName="Founder & CEO at Zolplay"
+        quote="I think next-intl should become a Next.js first-class citizen at some point, it’s just brilliant and simple to use."
+        portraitUrl="/user-cali-castle.png"
+        href="https://twitter.com/thecalicastle/status/1638566769433669633"
+      />
+      <UserTestimonial
+        userName="Alvar Lagerlöf"
+        companyName="Senior Frontend Developer at Matsmart"
+        quote="It's a great tool. We're using it now for our App Router rollout."
+        portraitUrl="/user-alvar-lagerlof.jpeg"
+        href="https://twitter.com/alvarlagerlof"
+      />
+    </div>
+    <div className="flex flex-col gap-6">
+      <UserTestimonial
+        userName="Lachlan Campbell"
+        companyName="Web designer-developer at Watershed"
+        quote="We're using next-intl on watershed.com! It's running entirely on App Router, using the Client Components version."
+        portraitUrl="/user-lachlan-campbell.jpeg"
+        href="https://twitter.com/lachlanjc"
+      />
+      <UserTestimonial
+        userName="Jökull Solberg"
+        companyName="Founder & CEO at Takumi"
+        quote="Amazing work on this library, launching our site today."
+        portraitUrl="/user-jokull-solberg.jpeg"
+        href="https://twitter.com/jokull"
+      />
     </div>
   </div>
+  <div className="flex flex-col-reverse gap-6 mt-10 lg:mt-24 justify-center items-center relative">
+    <div className="hidden hover:z-10 lg:absolute lg:left-1/2 lg:translate-x-[-800px] lg:scale-75 lg:block">
+      <ShowcaseSite
+        className="shadow-md"
+        title="Zolplay"
+        screenUrl="/showcase-zolplay.png"
+        href="https://zolplay.com/"
+      />
+    </div>
+    <div className="hover:z-10 lg:absolute lg:left-1/2 lg:translate-x-[-600px] lg:scale-90">
+      <ShowcaseSite
+        className="shadow-md"
+        title="Trip to Japan"
+        screenUrl="/showcase-triptojapan.png"
+        href="https://www.triptojapan.com/"
+      />
+    </div>
+    <div className="hidden hover:z-10 lg:absolute lg:left-1/2 lg:translate-x-[200px] lg:scale-75 lg:block">
+      <ShowcaseSite
+        className="shadow-md"
+        title="Motatos"
+        screenUrl="/showcase-motatos.png"
+        href="https://www.motatos.co.uk/"
+      />
+    </div>
+    <div className="hover:z-10 lg:absolute lg:left-1/2 lg:scale-90">
+      <ShowcaseSite
+        className="shadow-md"
+        title="Daybridge"
+        screenUrl="/showcase-daybridge.png"
+        href="https://www.daybridge.com"
+      />
+    </div>
+    <div className="hover:z-10 ">
+      <ShowcaseSite
+        className="shadow-lg"
+        title="Watershed"
+        screenUrl="/showcase-watershed.png"
+        href="https://www.watershed.com"
+      />
+    </div>
+  </div>
+  <div className="mt-8 text-sm text-center text-slate-600 dark:text-slate-400">
+    Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
+  </div>
+</Section>
+<div className="pb-40 text-center">
+  <LinkButton href="/docs/getting-started">Get started with next-intl<span className="inline-block ml-2">→</span></LinkButton>
+  <div className="flex gap-6 mt-8 justify-center">
+    <Link href="/docs/usage">Usage guide</Link>
+    <Link href="/examples">Examples</Link>
+  </div>
+</div>
 </div>

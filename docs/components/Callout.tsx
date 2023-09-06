@@ -44,7 +44,7 @@ export default function Callout({
       )}
     >
       <div
-        className="select-none text-xl ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2"
+        className="select-none text-xl ltr:pl-3 ltr:pr-2 rtl:pl-2 rtl:pr-3"
         style={{
           fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
         }}

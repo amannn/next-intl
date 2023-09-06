@@ -111,9 +111,10 @@ export default createMiddleware({
 ```
 
 <Callout>
-  Have a look at the [App Router
-  example with RSC support](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)
-  to explore a working implementation of localized pathnames ([demo](https://next-intl-example-next-13-git-feat-next-13-rsc-next-intl.vercel.app/)).
+  Have a look at the [App Router example with RSC
+  support](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)
+  to explore a working implementation of localized pathnames
+  ([demo](https://next-intl-example-next-13-git-feat-next-13-rsc-next-intl.vercel.app/)).
 </Callout>
 
 ## APIs
@@ -213,6 +214,26 @@ import {Link} from '../navigation';
 // Search params can be added via `query`
 <Link href={{pathname: "/users", query: {sortBy: 'name'}}}>Users</Link>
 ```
+
+<details>
+<summary>How can I compose the link with its href prop?</summary>
+
+If you need to create a component that receives an `href` prop that is forwarded to `Link` internally, you can retain the type safety of `href` by making your component generic and accepting a `Pathname`. The type argument can then be forwarded to the internal props of `Link`.
+
+```tsx filename="StyledLink.tsx"
+import {ComponentProps} from 'react';
+import {Link, pathnames} from '../navigation';
+
+export default function StyledLink<Pathname extends keyof typeof pathnames>({
+  color,
+  href,
+  ...rest
+}: {color: 'blue' | 'red'} & ComponentProps<typeof Link<Pathname>>) {
+  return <Link href={href} style={{color}} {...rest} />;
+}
+```
+
+</details>
 
 <details>
 <summary>How can I render a navigation link?</summary>
