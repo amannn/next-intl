@@ -13,7 +13,7 @@ Next.js 13 introduces support for [React Server Components](https://nextjs.org/d
 ## Current beta version
 
 ```
-npm install next-intl@3.0.0-beta.12
+npm install next-intl@3.0.0-beta.16
 ```
 
 This beta version was tested with `next@13.4.0`.
@@ -130,7 +130,7 @@ import {notFound} from 'next/navigation';
 export default function LocaleLayout({children, params}) {
   const locale = useLocale();
 
-  // Show a 404 error if the user requests an unknown locale
+  // Validate that the incoming `locale` parameter is a valid locale
   if (params.locale !== locale) {
     notFound();
   }

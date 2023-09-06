@@ -1,0 +1,22 @@
+# VSCode integration
+
+To improve the workflow for managing messages right from your code editor, you can use the [i18n Ally VSCode extension](https://marketplace.visualstudio.com/items?itemName=lokalise.i18n-ally) which includes support for `next-intl`.
+
+<video
+  className="my-8"
+  autoPlay
+  loop
+  controls
+  muted
+  src="/i18n-ally-demo.mp4"
+/>
+
+## Installation instructions
+
+1. Install [i18n Ally](https://marketplace.visualstudio.com/items?itemName=lokalise.i18n-ally)
+2. Configure the extension in your workspace via [`settings.json`](https://code.visualstudio.com/docs/getstarted/settings#_workspace-settings)
+
+```json filename=".vscode/settings.json"
+"i18n-ally.localesPaths": ["path/to/your/messages"], // E.g. "messages"
+"i18n-ally.keystyle": "nested"
+```
