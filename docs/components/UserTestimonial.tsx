@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 type Props = {
-  companyName: string;
+  position: string;
   href: string;
   portraitUrl: string;
   quote: string;
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function UserTestimonial({
-  companyName,
+  position,
   href,
   portraitUrl,
   quote,
@@ -34,7 +34,7 @@ export default function UserTestimonial({
           <h3 className="font-semibold text-slate-900 dark:text-white">
             {userName}
           </h3>
-          <p className="text-slate-600 dark:text-slate-400">{companyName}</p>
+          <p className="text-slate-600 dark:text-slate-400">{position}</p>
         </div>
       </div>
       <p className="mt-4 indent-[-0.4rem] text-slate-900 dark:text-white">
