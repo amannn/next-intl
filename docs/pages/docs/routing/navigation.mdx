@@ -278,6 +278,29 @@ export default function NavigationLink<
 See also the Next.js docs on [creating an active link component](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment#creating-an-active-link-component).
 
 </details>
+<details>
+<summary>How can I link to unknown routes?</summary>
+
+The [navigation APIs](#apis) are strictly typed and only allow routes specified in the `pathnames` config. If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
+
+```tsx
+// @ts-expect-error
+<Link href="/unknown">...</Link>
+```
+
+… or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
+
+```tsx filename="./navigation.ts"
+// ...
+
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({
+    locales,
+    pathnames: pathnames as typeof pathnames & Record<string & {}, string>
+  });
+```
+
+</details>
 
 </Tab>
 </VersionTabs>
