@@ -243,6 +243,26 @@ import {Link} from '../navigation';
 ```
 
 <details>
+<summary>How can I compose the link with its href prop?</summary>
+
+If you need to create a component that receives an `href` prop that is forwarded to `Link` internally, you can retain the type safety of `href` by making your component generic and accepting a `Pathname`. The type argument can then be forwarded to the internal props of `Link`.
+
+```tsx filename="StyledLink.tsx"
+import {ComponentProps} from 'react';
+import {Link, pathnames} from '../navigation';
+
+export default function StyledLink<Pathname extends keyof typeof pathnames>({
+  color,
+  href,
+  ...rest
+}: {color: 'blue' | 'red'} & ComponentProps<typeof Link<Pathname>>) {
+  return <Link href={href} style={{color}} {...rest} />;
+}
+```
+
+</details>
+
+<details>
 <summary>How can I render a navigation link?</summary>
 
 The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment) from Next.js allows you to detect if a given child segment is active from within the parent layout. Since this returns an internal pathname, it can be matched against an `href` that you can pass to `Link`.

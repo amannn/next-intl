@@ -65,7 +65,12 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/typescript',
-      destination: '/docs/typescript',
+      destination: '/docs/workflows/typescript',
+      permanent: true
+    },
+    {
+      source: '/docs/typescript',
+      destination: '/docs/workflows/typescript',
       permanent: true
     },
     {
@@ -91,6 +96,11 @@ module.exports = withNextra({
     {
       source: '/docs/usage/core-library',
       destination: '/docs/environments/core-library',
+      permanent: true
+    },
+    {
+      source: '/docs/localization-management',
+      destination: '/docs/workflows/localization-management',
       permanent: true
     },
     {

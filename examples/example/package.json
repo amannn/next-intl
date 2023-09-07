@@ -21,7 +21,7 @@
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.5",
     "eslint": "^8.46.0",
-    "eslint-config-molindo": "7.0.0-alpha.7",
+    "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^13.4.0",
     "typescript": "^5.0.0"
   }

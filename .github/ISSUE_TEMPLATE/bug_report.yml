@@ -15,8 +15,9 @@ body:
         To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
 
         **Please note:**
-        1. Bug reports without a reproduction may be closed immediately.
+        1. `next-intl` is based on Next.js, therefore bugs in Next.js might cause errors in apps that use `next-intl`. Please make sure that the bug you're experiencing is _caused by_ by `next-intl`. If you're unsure, please search on [the Next.js issue tracker](https://github.com/vercel/next.js/issues) for similar issues.
         2. General usage questions are not bug reports. Please [submit usage questions on Stack Overflow](https://stackoverflow.com/questions/ask) instead.
+        3. Bug reports without a reproduction may be closed immediately.
   - type: textarea
     attributes:
       label: Description
@@ -29,6 +30,7 @@ body:
       description: |
         **Templates:**
         - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
+        - [CodeSandbox (`app` directory, RSC beta)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
         - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
     validations:
       required: true

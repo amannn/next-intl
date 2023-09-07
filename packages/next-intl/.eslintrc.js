@@ -10,8 +10,7 @@ module.exports = {
     {
       files: ['test/**/*.tsx'],
       rules: {
-        'deprecation/deprecation': 'error',
-        'import/no-extraneous-dependencies': 'off'
+        'deprecation/deprecation': 'error'
       }
     }
   ]

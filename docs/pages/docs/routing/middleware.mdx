@@ -203,7 +203,12 @@ export default createMiddleware({
 });
 ```
 
-## Localizing pathnames
+### Localizing pathnames
+
+<Callout type="warning">
+  This API is only available in [the Server Components
+  beta](/docs/getting-started/app-router-server-components).
+</Callout>
 
 Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
 
@@ -292,6 +297,33 @@ export const config = {
 };
 ```
 
+### Example: Integrating with Clerk
+
+[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be integrated with `next-intl` by using [the `beforeAuth` hook](https://clerk.com/docs/references/nextjs/auth-middleware#using-before-auth-to-execute-middleware-before-authentication). By doing this, the middleware from `next-intl` will run first, potentially redirect or rewrite incoming requests, followed by the middleware from `@clerk/next` acting on the response.
+
+```tsx filename="middleware.ts"
+import {authMiddleware} from '@clerk/nextjs';
+import createMiddleware from 'next-intl/middleware';
+
+const intlMiddleware = createMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en'
+});
+
+export default authMiddleware({
+  beforeAuth(request) {
+    return intlMiddleware(request);
+  },
+
+  // Ensure that locale-specific sign in pages are public
+  publicRoutes: ['/', '/:locale/sign-in']
+});
+
+export const config = {
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
+};
+```
+
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
 The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
@@ -363,8 +395,12 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#always-use-a-locale-prefix))
 2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-automatic-locale-detection))
-3. You can't use [pathname localization](#localizing-pathnames).
+3. You can't use [pathname localization](#localizing-pathnames)
 4. You need to add a redirect for the root of the app
+5. Currently this is limited to the usage of `next-intl` in [Client
+   Components](/docs/getting-started/app-router-client-components) ([Server
+   Components](/docs/getting-started/app-router-server-components) are not
+   supported yet).
 
 ```tsx filename="app/page.tsx"
 import {redirect} from 'next/navigation';
@@ -374,13 +410,6 @@ export default function RootPage() {
   redirect('/en');
 }
 ```
-
-<Callout type="warning">
-  Note that this is currently limited to the usage of `next-intl` in [Client
-  Components](/docs/getting-started/app-router-client-components) ([Server
-  Components](/docs/getting-started/app-router-server-components) are not
-  supported).
-</Callout>
 
 You can explore a working demo by building [the Next.js 13 example](/examples/app-router) after enabling the static export:
 
