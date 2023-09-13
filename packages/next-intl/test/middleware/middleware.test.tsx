@@ -68,6 +68,33 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+it.only('has docs that suggest a reasonable default matcher', () => {
+  const regexStringFromDocs = '/((?!api|_next|.*\\..).*)';
+
+  const test = [
+    ['/', true],
+    ['/test', true],
+    ['/de/test', true],
+    ['/something/else', true],
+    ['/something/dot.', true],
+    ['/something/dot.dot.', true],
+    ['/something/Mars%20B.V.', true],
+    ['/test.html', false],
+    ['/test.html?searchParam=2', false],
+    ['/hello/text.txt', false],
+    ['/.gitignore', false]
+  ] as const;
+
+  expect(
+    test.map(
+      ([pathname]) =>
+        pathname +
+        ': ' +
+        (pathname.match(new RegExp(regexStringFromDocs)) != null)
+    )
+  ).toEqual(test.map(([pathname, expected]) => pathname + ': ' + expected));
+});
+
 describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
     const middleware = createIntlMiddleware({
