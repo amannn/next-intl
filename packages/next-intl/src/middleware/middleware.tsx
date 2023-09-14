@@ -119,20 +119,9 @@ export default function createMiddleware<Locales extends AllLocales>(
     const hasUnknownHost = configWithDefaults.domains != null && !domain;
 
     function getResponseInit() {
-      const responseInit = {
-        request: {
-          headers: request.headers
-        }
-      };
-
-      if (hasOutdatedCookie) {
-        responseInit.request.headers = new Headers(
-          responseInit.request.headers
-        );
-        responseInit.request.headers.set(HEADER_LOCALE_NAME, locale);
-      }
-
-      return responseInit;
+      const headers = new Headers(request.headers);
+      headers.set(HEADER_LOCALE_NAME, locale);
+      return {request: {headers}};
     }
 
     function rewrite(url: string) {

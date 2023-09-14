@@ -219,6 +219,16 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('always provides the locale via a request header, even if a cookie exists with the correct value (see https://github.com/amannn/next-intl/discussions/446)', () => {
+      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'en'));
+      expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+      expect(
+        MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
+          'x-next-intl-locale'
+        )
+      ).toBe('en');
+    });
+
     describe('localized pathnames', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
