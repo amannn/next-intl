@@ -1,5 +1,6 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
+import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
@@ -69,7 +70,26 @@ beforeEach(() => {
 });
 
 it.only('has docs that suggest a reasonable default matcher', () => {
-  const regexStringFromDocs = '/((?!api|_next|.*\\..).*)';
+  // Approach 1: Allow-list certain pathnames to contain dots
+  const matcherFromDocs = [
+    // Skip certain segments and all files with an extension (e.g. favicon.ico)
+    '/((?!_next|api|_vercel|.+\\..+).*)',
+    // Allow all characters, including dots (e.g. /users/jane.doe)
+    '/(.+)?/users/(.+)'
+  ];
+
+  // Approach 2: Be restrictive with static assets
+  // Note: Seems too difficult, also due to restrictions from path-to-regexp)
+  // const matcherFromDocs = [
+  //   '/((?!api|_next|_vercel|favicon.ico|.*\\.txt|.*\\.png|.*\\.ico|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.json|.*\\.webmanifest|.*\\.gif|.*\\.xml|.*\\.webp|.*\\.html).*)'
+  // ];
+
+  // Approach 3: Ask user to put all static assets in something like `/public/assets`
+  // Note: Doesn't work well with built-in metadata files support from Next.js
+
+  // Approach 4: Handle the matching within the middleware, skip processing of known extensions,
+  // but allow the user to disable this (e.g. `createMiddleware({matcher: false})`)
+  // See https://github.com/shuding/nextra/blob/feed42a2dbdcd0d15d6c64bd3beab400044a6977/packages/nextra/src/locales.ts#L41
 
   const test = [
     ['/', true],
@@ -77,21 +97,42 @@ it.only('has docs that suggest a reasonable default matcher', () => {
     ['/de/test', true],
     ['/something/else', true],
     ['/something/dot.', true],
-    ['/something/dot.dot.', true],
-    ['/something/Mars%20B.V.', true],
+    ['/.leading-dot', true],
+    ['/encoded%20BV', true],
+    ['/users/jane.doe', true],
+    ['/de/users/jane.doe', true],
+    ['/users/jane.doe/profile', true],
+
+    ['/favicon.ico', false],
+    ['/icon.ico', false],
+    ['/icon.png', false],
+    ['/icon.jpg', false],
+    ['/icon.jpeg', false],
+    ['/icon.svg', false],
+    ['/apple-icon.png', false],
+    ['/manifest.json', false],
+    ['/manifest.webmanifest', false],
+    ['/opengraph-image.gif', false],
+    ['/twitter-image.png', false],
+    ['/robots.txt', false],
+    ['/sitemap.xml', false],
+    ['/portraits/jane.webp', false],
+    ['/api/auth', false],
+    ['/_vercel/insights/script.js', false],
+    ['/_vercel/insights/view', false],
     ['/test.html', false],
+    ['/_next/static/chunks/main-app-123.js?23', false],
     ['/test.html?searchParam=2', false],
-    ['/hello/text.txt', false],
-    ['/.gitignore', false]
+    ['/hello/text.txt', false]
   ] as const;
 
   expect(
-    test.map(
-      ([pathname]) =>
-        pathname +
-        ': ' +
-        (pathname.match(new RegExp(regexStringFromDocs)) != null)
-    )
+    test.map(([pathname]) => {
+      const matches = matcherFromDocs.some((pattern) =>
+        pathname.match(pathToRegexp(pattern))
+      );
+      return pathname + ': ' + matches;
+    })
   ).toEqual(test.map(([pathname, expected]) => pathname + ': ' + expected));
 });
 
