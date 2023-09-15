@@ -1,11 +1,11 @@
 import {ParametersExceptFirstTwo} from '../shared/types';
+import {getRequestLocale} from './RequestLocale';
 import baseRedirect from './baseRedirect';
-import getLocaleFromHeader from './getLocaleFromHeader';
 
 export default function redirect(
   pathname: string,
   ...args: ParametersExceptFirstTwo<typeof baseRedirect>
 ) {
-  const locale = getLocaleFromHeader();
+  const locale = getRequestLocale();
   return baseRedirect(pathname, locale, ...args);
 }

@@ -48,3 +48,4 @@ export {default as getTranslator} from './getTranslator';
 export {default as getMessages} from './getMessages';
 
 export {default as redirect} from './redirect';
+export {default as unstable_NextIntlServerProvider} from './NextIntlServerProvider';
