@@ -39,7 +39,7 @@ const getCache = cache(() => {
   return value;
 });
 
-export function setRequestCacheLocale(locale: string) {
+export function setRequestLocale(locale: string) {
   getCache().locale = locale;
 }
 

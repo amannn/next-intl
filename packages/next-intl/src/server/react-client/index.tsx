@@ -8,7 +8,7 @@ import type {
   getTranslations as getTranslations_type,
   getTranslator as getTranslator_type,
   getMessages as getMessages_type,
-  unstable_NextIntlServerProvider as NextIntlServerProvider_type
+  unstable_setRequestLocale as unstable_setRequestLocale_type
 } from '..';
 
 function notSupported(name: string) {
@@ -45,7 +45,7 @@ export const getTranslator = notSupported('getTranslator') as unknown as typeof 
 // prettier-ignore
 export const getMessages = notSupported('getMessages') as unknown as typeof getMessages_type;
 // prettier-ignore
-export const unstable_NextIntlServerProvider = notSupported('NextIntlServerProvider') as unknown as typeof NextIntlServerProvider_type;
+export const unstable_setRequestLocale = notSupported('unstable_setRequestLocale') as unknown as typeof unstable_setRequestLocale_type;
 
 // TODO: Since this is available in Client Comonents too, we should really
 // consider exporting this from `next-intl/navigation` instead. For now, for
