@@ -381,40 +381,39 @@ function buildOutput() {
   );
 }
 
-function standards() {
+function routing() {
   return (
     <code data-language="js" data-theme="default">
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.Locale</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>en</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.DateTimeFormat</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>es</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.NumberFormat</span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.PluralRules</span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          .RelativeTimeFormat
-        </span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.ListFormat</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>de</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line"> </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          IntlMessageformat
-        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>en</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/about-us</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>es</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/sobre-nosotros</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>de</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/ueber-uns</span>
       </span>
     </code>
   );
@@ -426,5 +425,5 @@ export default {
   typeSafe,
   hooks,
   buildOutput,
-  standards
+  routing
 };
