@@ -30,6 +30,9 @@ export default function NextIntlClientProvider({
     locale = router.locale;
   }
 
+  // TODO: We could call `useParams` here to receive a default value
+  // for `locale`, but this would require dropping Next.js <13.
+
   // TODO: This is no longer necessary, remove for stable release
   if (process.env.NODE_ENV !== 'production' && typeof now === 'string') {
     console.error(
