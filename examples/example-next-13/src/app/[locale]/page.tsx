@@ -1,7 +1,13 @@
 import {useTranslations} from 'next-intl';
+import {unstable_setRequestLocale} from 'next-intl/server';
 import PageLayout from 'components/PageLayout';
 
-export default function IndexPage() {
+type Props = {
+  params: {locale: string};
+};
+
+export default function IndexPage({params}: Props) {
+  unstable_setRequestLocale(params.locale);
   const t = useTranslations('IndexPage');
 
   return (
