@@ -69,35 +69,19 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-it.only('has docs that suggest a reasonable default matcher', () => {
-  // Approach 1: Allow-list certain pathnames to contain dots
+it('has docs that suggest a reasonable matcher', () => {
   const matcherFromDocs = [
-    // Skip certain segments and all files with an extension (e.g. favicon.ico)
-    '/((?!_next|api|_vercel|.+\\..+).*)',
-    // Allow all characters, including dots (e.g. /users/jane.doe)
+    // Match all pathnames without `.`
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+    // Match all pathnames within `/users`, optionally with a locale prefix
     '/(.+)?/users/(.+)'
   ];
-
-  // Approach 2: Be restrictive with static assets
-  // Note: Seems too difficult, also due to restrictions from path-to-regexp)
-  // const matcherFromDocs = [
-  //   '/((?!api|_next|_vercel|favicon.ico|.*\\.txt|.*\\.png|.*\\.ico|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.json|.*\\.webmanifest|.*\\.gif|.*\\.xml|.*\\.webp|.*\\.html).*)'
-  // ];
-
-  // Approach 3: Ask user to put all static assets in something like `/public/assets`
-  // Note: Doesn't work well with built-in metadata files support from Next.js
-
-  // Approach 4: Handle the matching within the middleware, skip processing of known extensions,
-  // but allow the user to disable this (e.g. `createMiddleware({matcher: false})`)
-  // See https://github.com/shuding/nextra/blob/feed42a2dbdcd0d15d6c64bd3beab400044a6977/packages/nextra/src/locales.ts#L41
 
   const test = [
     ['/', true],
     ['/test', true],
     ['/de/test', true],
     ['/something/else', true],
-    ['/something/dot.', true],
-    ['/.leading-dot', true],
     ['/encoded%20BV', true],
     ['/users/jane.doe', true],
     ['/de/users/jane.doe', true],
@@ -117,6 +101,8 @@ it.only('has docs that suggest a reasonable default matcher', () => {
     ['/robots.txt', false],
     ['/sitemap.xml', false],
     ['/portraits/jane.webp', false],
+    ['/something/dot.', false],
+    ['/.leading-dot', false],
     ['/api/auth', false],
     ['/_vercel/insights/script.js', false],
     ['/_vercel/insights/view', false],
