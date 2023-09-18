@@ -93,7 +93,7 @@ export const pathnames = {
   }
 } satisfies Pathnames<typeof locales>;
 
-export const {Link, redirect, usePathname, useRouter} =
+export const {Link, redirect, usePathname, useRouter, getPathname} =
   createLocalizedPathnamesNavigation({locales, pathnames});
 ```
 
@@ -486,6 +486,42 @@ redirect({
   pathname: '/users',
   query: {sortBy: 'name'}
 });
+```
+
+</Tab>
+</VersionTabs>
+
+### `getPathname`
+
+If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
+
+<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tab>
+
+<Callout>
+  This API is only available for localized pathnames, since it is not necessary
+  for shared pathnames.
+</Callout>
+
+</Tab>
+<Tab>
+
+```tsx filename="page.tsx"
+import {getPathname} from '../navigation';
+
+export async function generateMetadata({params}) {
+  return {
+    alternates: {
+      canonical: getPathname({
+        locale: props.params.locale,
+        href: {
+          pathname: '/users/[userId]',
+          params: {userId: '5'}
+        }
+      })
+    }
+  };
+}
 ```
 
 </Tab>
