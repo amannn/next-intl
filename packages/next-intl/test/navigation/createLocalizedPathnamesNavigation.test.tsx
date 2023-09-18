@@ -32,7 +32,7 @@ const pathnames = {
   '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
 } satisfies Pathnames<typeof locales>;
 
-const {Link, redirect, usePathname, useRouter} =
+const {Link, getPathname, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({
     locales,
     pathnames
@@ -317,6 +317,21 @@ describe('Link', () => {
     expect(
       screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')
     ).toBe('/de/unknown');
+  });
+});
+
+describe('getPathname', () => {
+  it('resolves to the correct path', () => {
+    expect(
+      getPathname({
+        locale: 'en',
+        href: {
+          pathname: '/categories/[...parts]',
+          params: {parts: ['clothing', 't-shirts']},
+          query: {sort: 'price'}
+        }
+      })
+    ).toBe('/categories/clothing/t-shirts?sort=price');
   });
 });
 
