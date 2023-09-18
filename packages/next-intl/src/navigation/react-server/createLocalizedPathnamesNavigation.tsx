@@ -50,11 +50,7 @@ export default function createLocalizedPathnamesNavigation<
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
     const locale = getLocaleFromHeader();
-    const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
-      ...normalizeNameOrNameWithParams(href),
-      locale,
-      pathnames
-    });
+    const resolvedHref = getPathname({href, locale});
     return baseRedirect(resolvedHref, ...args);
   }
 

@@ -66,11 +66,7 @@ export default function createLocalizedPathnamesNavigation<
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
-    const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
-      ...normalizeNameOrNameWithParams(href),
-      locale,
-      pathnames
-    });
+    const resolvedHref = getPathname({href, locale});
     return baseRedirect(resolvedHref, ...args);
   }
 
@@ -84,10 +80,9 @@ export default function createLocalizedPathnamesNavigation<
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.push>
       ) {
-        const resolvedHref = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(href),
-          locale: args[0]?.locale || defaultLocale,
-          pathnames
+        const resolvedHref = getPathname({
+          href,
+          locale: args[0]?.locale || defaultLocale
         });
         return baseRouter.push(resolvedHref, ...args);
       },
@@ -96,10 +91,9 @@ export default function createLocalizedPathnamesNavigation<
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.replace>
       ) {
-        const resolvedHref = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(href),
-          locale: args[0]?.locale || defaultLocale,
-          pathnames
+        const resolvedHref = getPathname({
+          href,
+          locale: args[0]?.locale || defaultLocale
         });
         return baseRouter.replace(resolvedHref, ...args);
       },
@@ -108,10 +102,9 @@ export default function createLocalizedPathnamesNavigation<
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
       ) {
-        const resolvedHref = compileLocalizedPathname({
-          ...normalizeNameOrNameWithParams(href),
-          locale: args[0]?.locale || defaultLocale,
-          pathnames
+        const resolvedHref = getPathname({
+          href,
+          locale: args[0]?.locale || defaultLocale
         });
         return baseRouter.prefetch(resolvedHref, ...args);
       }
