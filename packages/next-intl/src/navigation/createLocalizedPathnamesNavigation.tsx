@@ -124,5 +124,25 @@ export default function createLocalizedPathnamesNavigation<
     return getRoute({pathname, locale, pathnames});
   }
 
-  return {Link: LinkWithRef, redirect, usePathname, useRouter};
+  function getPathname({
+    href,
+    locale
+  }: {
+    locale: Locales[number];
+    href: HrefOrHrefWithParams<keyof PathnamesConfig>;
+  }) {
+    return compileLocalizedPathname({
+      ...normalizeNameOrNameWithParams(href),
+      locale,
+      pathnames
+    });
+  }
+
+  return {
+    Link: LinkWithRef,
+    redirect,
+    usePathname,
+    useRouter,
+    getPathname
+  };
 }

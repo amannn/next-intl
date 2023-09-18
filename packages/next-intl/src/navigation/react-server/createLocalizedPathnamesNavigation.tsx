@@ -58,6 +58,20 @@ export default function createLocalizedPathnamesNavigation<
     return baseRedirect(resolvedHref, ...args);
   }
 
+  function getPathname({
+    href,
+    locale
+  }: {
+    locale: Locales[number];
+    href: HrefOrHrefWithParams<keyof PathnamesConfig>;
+  }) {
+    return compileLocalizedPathname({
+      ...normalizeNameOrNameWithParams(href),
+      locale,
+      pathnames
+    });
+  }
+
   function notSupported(message: string) {
     return () => {
       throw new Error(
@@ -69,6 +83,7 @@ export default function createLocalizedPathnamesNavigation<
   return {
     Link,
     redirect,
+    getPathname,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };
