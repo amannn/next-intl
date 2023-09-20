@@ -215,3 +215,30 @@ it('uses the external host name from headers instead of the url of the incoming 
     '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
   ]);
 });
+
+it('uses the external host name and the port from headers instead of the url with port of the incoming request (relevant when running the app behind a proxy)', () => {
+  const config: MiddlewareConfigWithDefaults = {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+    alternateLinks: true,
+    localePrefix: 'as-needed',
+    localeDetection: true
+  };
+
+  expect(
+    getAlternateLinksHeaderValue(
+      config,
+      new NextRequest('http://127.0.0.1:3000/about', {
+        headers: {
+          host: 'example.com',
+          'x-forwarded-host': 'example.com',
+          'x-forwarded-proto': 'https'
+        }
+      })
+    ).split(', ')
+  ).toEqual([
+    '<https://example.com/about>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
+    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+  ]);
+});

@@ -8,6 +8,7 @@ function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
   const url = new URL(request.url);
   url.host = getHost(request.headers) ?? url.host;
   url.protocol = request.headers.get('x-forwarded-proto') ?? url.protocol;
+  url.port = request.headers.get('x-forwarded-host') ? '' : url.port;
 
   if (!url.pathname.endsWith('/')) {
     url.pathname += '/';
