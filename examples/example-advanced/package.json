@@ -12,7 +12,7 @@
   "dependencies": {
     "accept-language-parser": "^1.5.0",
     "lodash": "^4.17.21",
-    "next": "13.4.7",
+    "next": "13.5.1",
     "next-intl": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

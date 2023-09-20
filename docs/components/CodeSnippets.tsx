@@ -336,39 +336,39 @@ function buildOutput() {
       <span className="line"> </span>
       <span className="line">
         <span style={{color: 'var(--shiki-token-comment)'}}>
-          Route{'           '}Size{'     '}First load JS
+          Route{'           '}Size{'       '}First load JS
         </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>┌ ● /</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-color-text)'}}>
-          {'          '}637
+          {'          '}1.4
         </span>
-        <span style={{color: 'var(--shiki-color-text)'}}> B</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          90.1 kB
+          104 kB
         </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>├ ● /about</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>512</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>205</span>
         <span style={{color: 'var(--shiki-color-text)'}}> B</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          92.5 kB
+          97.5 kB
         </span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>└ ● /contact</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>└ λ /contact</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>931</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> B</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>3.24</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          91.2 kB
+          106 kB
         </span>
       </span>
       <span className="line"> </span>
@@ -381,40 +381,39 @@ function buildOutput() {
   );
 }
 
-function standards() {
+function routing() {
   return (
     <code data-language="js" data-theme="default">
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.Locale</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>en</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.DateTimeFormat</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>es</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.NumberFormat</span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.PluralRules</span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          .RelativeTimeFormat
-        </span>
-      </span>
-      <span className="line">
-        <span style={{color: 'var(--shiki-token-constant)'}}>Intl</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>.ListFormat</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>de</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/blog</span>
       </span>
       <span className="line"> </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          IntlMessageformat
-        </span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>en</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/about-us</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>es</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/sobre-nosotros</span>
+      </span>
+      <span className="line">
+        <span style={{color: 'var(--shiki-color-text)'}}>/</span>
+        <span style={{color: 'var(--shiki-token-constant)'}}>de</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>/ueber-uns</span>
       </span>
     </code>
   );
@@ -426,5 +425,5 @@ export default {
   typeSafe,
   hooks,
   buildOutput,
-  standards
+  routing
 };
