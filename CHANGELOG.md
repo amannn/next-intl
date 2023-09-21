@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.20.1 (2023-09-21)
+
+
+### Bug Fixes
+
+* Use correct port for alternate links when running behind a proxy ([#514](https://github.com/amannn/next-intl/issues/514) by [@iza-w](https://github.com/iza-w)) ([747ad5b](https://github.com/amannn/next-intl/commit/747ad5b38301499e8857be6eae6540257623752c))
+
+
+
+
+
 # 2.20.0 (2023-08-23)
 
 
