@@ -50,12 +50,22 @@ export default function createLocalizedPathnamesNavigation<
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
     const locale = getRequestLocale();
-    const resolvedHref = compileLocalizedPathname<Locales, Pathname>({
+    const resolvedHref = getPathname({href, locale});
+    return baseRedirect(resolvedHref, ...args);
+  }
+
+  function getPathname({
+    href,
+    locale
+  }: {
+    locale: Locales[number];
+    href: HrefOrHrefWithParams<keyof PathnamesConfig>;
+  }) {
+    return compileLocalizedPathname({
       ...normalizeNameOrNameWithParams(href),
       locale,
       pathnames
     });
-    return baseRedirect(resolvedHref, ...args);
   }
 
   function notSupported(message: string) {
@@ -69,6 +79,7 @@ export default function createLocalizedPathnamesNavigation<
   return {
     Link,
     redirect,
+    getPathname,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };

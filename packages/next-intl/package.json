@@ -105,7 +105,7 @@
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "13.4.7",
+    "next": "13.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rollup": "^3.28.1",
@@ -117,7 +117,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "13.6 KB"
+      "limit": "13.62 KB"
     },
     {
       "path": "dist/production/navigation.js",
