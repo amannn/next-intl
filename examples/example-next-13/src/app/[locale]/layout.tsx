@@ -31,7 +31,7 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // Show a 404 error if the user requests an unknown locale
+  // Validate that the incoming `locale` parameter is valid
   const isValidLocale = locales.some((cur) => cur === locale);
   if (!isValidLocale) notFound();
   unstable_setRequestLocale(locale);
