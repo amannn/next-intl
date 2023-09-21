@@ -29,7 +29,11 @@ export default function getAlternateLinksHeaderValue<
   localizedPathnames?: Pathnames<Locales>[string];
 }) {
   const normalizedUrl = request.nextUrl.clone();
-  normalizedUrl.host = getHost(request.headers) ?? normalizedUrl.host;
+  const host = getHost(request.headers);
+  if (host) {
+    normalizedUrl.port = '';
+    normalizedUrl.host = host;
+  }
   normalizedUrl.protocol =
     request.headers.get('x-forwarded-proto') ?? normalizedUrl.protocol;
   normalizedUrl.pathname = getNormalizedPathname(
