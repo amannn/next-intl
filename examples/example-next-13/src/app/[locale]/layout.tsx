@@ -31,11 +31,10 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  unstable_setRequestLocale(locale);
-
   // Show a 404 error if the user requests an unknown locale
   const isValidLocale = locales.some((cur) => cur === locale);
   if (!isValidLocale) notFound();
+  unstable_setRequestLocale(locale);
 
   return (
     <html className="h-full" lang={locale}>

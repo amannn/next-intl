@@ -446,8 +446,7 @@ it('keeps search params for redirects', async ({browser}) => {
   );
 });
 
-// TODO
-it.skip('sets alternate links', async ({request}) => {
+it('sets alternate links', async ({request}) => {
   async function getLinks(pathname: string) {
     return (
       (await request.get(pathname))
@@ -472,8 +471,8 @@ it.skip('sets alternate links', async ({request}) => {
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
     expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de/nested>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/es/nested>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
+      '<http://localhost:3000/es/anidada>; rel="alternate"; hreflang="es"',
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
     ]);
   }
@@ -526,15 +525,6 @@ it('can localize route handlers', async ({request}) => {
     expect(response.status()).toBe(200);
     const data = await response.json();
     expect(data).toEqual({message: 'Hallo Welt!'});
-  }
-});
-
-// Unfortunately broken in newer Next.js versions (probably somewhere around ~13.3)
-it.skip('can use caching headers', async ({request}) => {
-  for (const pathname of ['/', '/nested', '/de', '/de/verschachtelt']) {
-    expect((await request.get(pathname)).headers()['cache-control']).toBe(
-      's-maxage=86400, stale-while-revalidate=31557600'
-    );
   }
 });
 

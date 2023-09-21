@@ -24,15 +24,21 @@ it('handles not found pages', async ({page}) => {
   page.getByRole('heading', {name: 'Seite nicht gefunden'});
 });
 
-// TODO: Once we no longer retrieve the locale from a
-// header, there's probably a better way to do this
-it.skip("handles not found pages for routes that don't match the middleware", async ({
+it("handles not found pages for routes that don't match the middleware", async ({
   page
 }) => {
   await page.goto('/test.png');
   page.getByRole('heading', {name: 'This page could not be found.'});
   await page.goto('/api/hello');
   page.getByRole('heading', {name: 'This page could not be found.'});
+});
+
+it('sets caching headers', async ({request}) => {
+  for (const pathname of ['/', '/about', '/de', '/de/ueber']) {
+    expect((await request.get(pathname)).headers()['cache-control']).toBe(
+      's-maxage=31536000, stale-while-revalidate'
+    );
+  }
 });
 
 it('can be used to configure metadata', async ({page}) => {

@@ -1,13 +1,19 @@
+import {notFound} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {unstable_setRequestLocale} from 'next-intl/server';
 import PageLayout from 'components/PageLayout';
+import {locales} from 'navigation';
 
 type Props = {
   params: {locale: string};
 };
 
-export default function IndexPage({params}: Props) {
-  unstable_setRequestLocale(params.locale);
+export default function IndexPage({params: {locale}}: Props) {
+  // Show a 404 error if the user requests an unknown locale
+  const isValidLocale = locales.some((cur) => cur === locale);
+  if (!isValidLocale) notFound();
+  unstable_setRequestLocale(locale);
+
   const t = useTranslations('IndexPage');
 
   return (
