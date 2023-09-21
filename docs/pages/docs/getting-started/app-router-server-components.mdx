@@ -13,7 +13,7 @@ Next.js 13 introduces support for [React Server Components](https://nextjs.org/d
 ## Current beta version
 
 ```
-npm install next-intl@3.0.0-beta.16
+npm install next-intl@3.0.0-beta.18
 ```
 
 This beta version was tested with `next@13.5.1`.
@@ -111,11 +111,13 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Skip all paths that should not be internationalized. This example skips the
-  // folders "api", "_next" and all files with an extension (e.g. favicon.ico)
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  // Skip all paths that should not be internationalized. This example skips
+  // certain folders and all pathnames with a dot (e.g. favicon.ico)
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };
 ```
+
+**Note:** If you have pages that contain the character `.` in the pathname (e.g. `/users/jane.doe`), you might want to consider them in your [matcher config](/docs/routing/middleware#matcher-config).
 
 ### `app/[locale]/layout.tsx`
 

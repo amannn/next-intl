@@ -16,9 +16,9 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Skip all paths that should not be internationalized. This example skips the
-  // folders "api", "_next" and all files with an extension (e.g. favicon.ico)
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  // Skip all paths that should not be internationalized. This example skips
+  // certain folders and all pathnames with a dot (e.g. favicon.ico)
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };
 ```
 
@@ -260,6 +260,39 @@ export default createMiddleware({
   use the [localized navigation
   APIs](/docs/routing/navigation#localized-pathnames) in your components.
 </Callout>
+
+### Matcher config
+
+The middleware is intended to only run on pages, not on arbitrary files that you serve independently of the user locale (e.g. `/favicon.ico`).
+
+Because of this, the following config is generally recommended:
+
+```tsx filename="middleware.ts"
+export const config = {
+  // Skip all paths that should not be internationalized. This example skips
+  // certain folders and all pathnames with a dot (e.g. favicon.ico)
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+};
+```
+
+However, this can lead to false negatives if you have pages that contain the character `.` (e.g. `/users/jane.doe`). To make sure these are processed by the middleware, you can add corresponding entries to the matcher config:
+
+```tsx filename="middleware.ts"
+export const config = {
+  // Matcher entries are linked with a logical "or", therefore
+  // if one of them matches, the middleware will be invoked.
+  matcher: [
+    // Match all pathnames without `.`
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+    // Match all pathnames within `/users`, optionally with a locale prefix
+    '/(.+)?/users/(.+)'
+  ]
+};
+```
+
+{/* Keep this in sync with `packages/next-intl/test/middleware/middleware.test.tsx` */}
+
+Additionally, some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
 
 ## Composing other middlewares
 

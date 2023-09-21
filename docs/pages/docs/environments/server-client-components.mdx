@@ -188,3 +188,14 @@ export default async function LocaleLayout({children, params: {locale}}) {
   Note that this is a tradeoff in regard to performance (see [the bullet points
   above](#server-components-benefits)).
 </Callout>
+
+## Troubleshooting
+
+### "Failed to call `useTranslations`, because the context from `NextIntlClientProvider` was not found." [#missing-context]
+
+You might encounter this error or a similar one referencing `useFormatter` while working on your app.
+
+This can happen because:
+
+1. The component that calls the hook accidentally ended up in a client-side module graph, but you expected it to render as a Server Component. If this is the case, try to [pass this component via `children`](#option-1-passing-translations-to-client-components) to the Client Component instead.
+2. You're intentionally calling the hook from a Client Component, but `NextIntlClientProvider` is not present as an ancestor in the component tree. If this is the case, you can [wrap your component in `NextIntlClientProvider`](#option-3-providing-individual-messages) to resolve this error.

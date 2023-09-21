@@ -2,6 +2,7 @@
 
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
+import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
 import {Pathnames} from '../../src/navigation';
@@ -59,6 +60,59 @@ const MockedNextResponse = NextResponse as unknown as {
 
 beforeEach(() => {
   vi.clearAllMocks();
+});
+
+it('has docs that suggest a reasonable matcher', () => {
+  const matcherFromDocs = [
+    // Match all pathnames without `.`
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+    // Match all pathnames within `/users`, optionally with a locale prefix
+    '/(.+)?/users/(.+)'
+  ];
+
+  const test = [
+    ['/', true],
+    ['/test', true],
+    ['/de/test', true],
+    ['/something/else', true],
+    ['/encoded%20BV', true],
+    ['/users/jane.doe', true],
+    ['/de/users/jane.doe', true],
+    ['/users/jane.doe/profile', true],
+
+    ['/favicon.ico', false],
+    ['/icon.ico', false],
+    ['/icon.png', false],
+    ['/icon.jpg', false],
+    ['/icon.jpeg', false],
+    ['/icon.svg', false],
+    ['/apple-icon.png', false],
+    ['/manifest.json', false],
+    ['/manifest.webmanifest', false],
+    ['/opengraph-image.gif', false],
+    ['/twitter-image.png', false],
+    ['/robots.txt', false],
+    ['/sitemap.xml', false],
+    ['/portraits/jane.webp', false],
+    ['/something/dot.', false],
+    ['/.leading-dot', false],
+    ['/api/auth', false],
+    ['/_vercel/insights/script.js', false],
+    ['/_vercel/insights/view', false],
+    ['/test.html', false],
+    ['/_next/static/chunks/main-app-123.js?23', false],
+    ['/test.html?searchParam=2', false],
+    ['/hello/text.txt', false]
+  ] as const;
+
+  expect(
+    test.map(([pathname]) => {
+      const matches = matcherFromDocs.some((pattern) =>
+        pathname.match(pathToRegexp(pattern))
+      );
+      return pathname + ': ' + matches;
+    })
+  ).toEqual(test.map(([pathname, expected]) => pathname + ': ' + expected));
 });
 
 describe('prefix-based routing', () => {
