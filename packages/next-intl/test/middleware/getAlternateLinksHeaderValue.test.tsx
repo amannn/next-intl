@@ -1,3 +1,5 @@
+// @vitest-environment edge-runtime
+
 import {NextRequest} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
