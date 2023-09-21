@@ -1,6 +1,6 @@
 import React, {ComponentProps} from 'react';
 import BaseLink from '../../link/react-server';
-import getLocaleFromHeader from '../../server/getLocaleFromHeader';
+import {getRequestLocale} from '../../server/RequestLocale';
 import {redirect as baseRedirect} from '../../server.react-server';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
 import {
@@ -26,7 +26,7 @@ export default function createLocalizedPathnamesNavigation<
     locale,
     ...rest
   }: LinkProps<Pathname>) {
-    const defaultLocale = getLocaleFromHeader() as (typeof locales)[number];
+    const defaultLocale = getRequestLocale() as (typeof locales)[number];
     const finalLocale = locale || defaultLocale;
 
     return (
@@ -49,7 +49,7 @@ export default function createLocalizedPathnamesNavigation<
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof baseRedirect>
   ) {
-    const locale = getLocaleFromHeader();
+    const locale = getRequestLocale();
     const resolvedHref = getPathname({href, locale});
     return baseRedirect(resolvedHref, ...args);
   }

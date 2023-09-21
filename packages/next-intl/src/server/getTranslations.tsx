@@ -9,8 +9,8 @@ import {
   NestedKeyOf,
   NestedValueOf
 } from 'use-intl/core';
+import {getRequestLocale} from './RequestLocale';
 import getConfig from './getConfig';
-import getLocaleFromHeader from './getLocaleFromHeader';
 
 let hasWarned = false;
 
@@ -90,7 +90,7 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
     hasWarned = true;
   }
 
-  const locale = getLocaleFromHeader();
+  const locale = getRequestLocale();
   const config = await getConfig(locale);
 
   return createTranslator({

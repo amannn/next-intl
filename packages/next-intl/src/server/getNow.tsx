@@ -1,6 +1,6 @@
 import {cache} from 'react';
+import {getRequestLocale} from './RequestLocale';
 import getConfig from './getConfig';
-import getLocaleFromHeader from './getLocaleFromHeader';
 
 let hasWarnedForMissingLocale = false;
 let hasWarnedForObjectArgument = false;
@@ -27,7 +27,7 @@ See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-hand
   }
 
   if (!locale) {
-    locale = getLocaleFromHeader();
+    locale = getRequestLocale();
     if (process.env.NODE_ENV !== 'production' && !hasWarnedForMissingLocale) {
       hasWarnedForMissingLocale = true;
       console.warn(`

@@ -48,3 +48,4 @@ export {default as getTranslator} from './getTranslator';
 export {default as getMessages} from './getMessages';
 
 export {default as redirect} from './redirect';
+export {setRequestLocale as unstable_setRequestLocale} from './RequestLocale';

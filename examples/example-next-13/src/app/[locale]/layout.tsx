@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
-import {useLocale} from 'next-intl';
-import {getTranslator} from 'next-intl/server';
+import {getTranslator, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
+import {locales} from 'navigation';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -12,6 +12,10 @@ type Props = {
   children: ReactNode;
   params: {locale: string};
 };
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
 
 export async function generateMetadata({
   params: {locale}
@@ -23,13 +27,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function LocaleLayout({children, params}: Props) {
-  const locale = useLocale();
-
-  // Show a 404 error if the user requests an unknown locale
-  if (params.locale !== locale) {
-    notFound();
-  }
+export default async function LocaleLayout({
+  children,
+  params: {locale}
+}: Props) {
+  // Validate that the incoming `locale` parameter is valid
+  const isValidLocale = locales.some((cur) => cur === locale);
+  if (!isValidLocale) notFound();
+  unstable_setRequestLocale(locale);
 
   return (
     <html className="h-full" lang={locale}>

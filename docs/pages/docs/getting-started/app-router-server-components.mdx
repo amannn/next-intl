@@ -3,7 +3,7 @@ import Steps from 'components/Steps';
 
 # Next.js 13: Internationalization (i18n) in Server Components
 
-Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps using the `app` directory.
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with Server Components.
 
 <Callout type="warning">
   Support for React Server Components is currently in beta. Please use it at
@@ -16,7 +16,7 @@ Next.js 13 introduces support for [React Server Components](https://nextjs.org/d
 npm install next-intl@3.0.0-beta.16
 ```
 
-This beta version was tested with `next@13.4.0`.
+This beta version was tested with `next@13.5.1`.
 
 ## Roadmap
 
@@ -27,11 +27,9 @@ This beta version was tested with `next@13.4.0`.
 | Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
 
 <Callout emoji="🏗️">
-  Full support for static rendering is currently pending, but [stopgap solutions
-  are available](#static-rendering).
+  Support for static rendering is currently available via a stopgap solution
+  (see [static rendering](#static-rendering).
 </Callout>
-
-For details, see the [pending pull request for Server Components support](https://github.com/amannn/next-intl/pull/149).
 
 ## Getting started
 
@@ -84,7 +82,7 @@ export default getRequestConfig(async ({locale}) => ({
 
 ### `next.config.js`
 
-Now, set up the plugin and provide the path to your configuration.
+Now, set up the plugin and provide the path to your `i18n.ts` file.
 
 ```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')(
@@ -121,19 +119,18 @@ export const config = {
 
 ### `app/[locale]/layout.tsx`
 
-The `locale` that was matched by the middleware is available via `useLocale` and can be used to configure the document language.
+The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 
-export default function LocaleLayout({children, params}) {
-  const locale = useLocale();
+const locales = ['en', 'de'];
 
-  // Validate that the incoming `locale` parameter is a valid locale
-  if (params.locale !== locale) {
-    notFound();
-  }
+export default function LocaleLayout({children, params: {locale}}) {
+  // Validate that the incoming `locale` parameter is valid
+  const isValidLocale = locales.some((cur) => cur === locale);
+  if (!isValidLocale) notFound();
 
   return (
     <html lang={locale}>
@@ -191,42 +188,75 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 ## Static rendering
 
-The support for using `next-intl` in React Server Components is currently limited to dynamic rendering and support for static rendering is pending until [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is integrated with Next.js. If you have a strong need for static rendering, you can choose from a set of stopgap solutions depending on your needs.
+The support for using `next-intl` in React Server Components currently opts your pages into dynamic rendering. This is a limitation that will eventually be lifted once [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is available and integrated in Next.js.
 
-**Temporary workarounds for static rendering:**
+If you have a strong need for static rendering, you can enable static rendering as follows:
 
-1. [Handle internationalization in Client Components](/docs/getting-started/app-router-client-components) for now, as static rendering is fully supported in this paradigm without limitations.
+<Steps>
 
-```tsx filename="app/[locale]/page.tsx"
-'use client';
+### Add `generateStaticParams` to `app/[locale]/layout.tsx`
 
-import {useTranslations} from 'next-intl';
+Since we use a dynamic route segment for the `[locale]` param, we need to provide all possible values via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to Next.js, so the routes can be rendered at build time.
 
-export default function Index() {
-  const t = useTranslations('Index');
-  return <h1>{t('title')}</h1>;
+```tsx filename="app/[locale]/layout.tsx"
+const locales = ['en', 'de'];
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
 }
 ```
 
-2. The [APIs for using internationalization outside of components](/docs/environments/metadata-route-handlers) are integrated with static rendering. As a temporary solution, you can use these APIs in components too, but note that you have to "drill-down" the `locale` that is received via `params` to all components. Furthermore, the returned `t` function is based on [the `createTranslator` API](/docs/environments/core-library), meaning that `t.rich` uses functions that accept and return strings.
+### Add `unstable_setRequestLocale` to all layouts and pages
 
-```tsx filename="app/[locale]/page.tsx"
-import {getTranslator} from 'next-intl/server';
+As a stopgap solution, `next-intl` provides a temporary API that can be used to distribute the locale that is received via `params` in a layout or page for usage in all Server Components that are rendered as part of the request.
 
-export default async function Index({params: {locale}}) {
-  const t = await getTranslator(locale, 'Index');
-  return <h1>{t('title')}</h1>;
+```tsx filename="app/[locale]/layout.tsx"
+import {unstable_setRequestLocale} from 'next-intl/server';
+
+const locales = ['en', 'de'];
+
+export default async function LocaleLayout({
+  children,
+  params: {locale}
+}) {
+  // Validate that the incoming `locale` parameter is valid
+  const isValidLocale = locales.some((cur) => cur === locale);
+  if (!isValidLocale) notFound();
+
+  unstable_setRequestLocale(locale);
+
+  return (
+    // ...
+  );
 }
 ```
 
-3. Use [CDN caching](https://www.youtube.com/watch?v=bfLFHp7Sbkg) to get the same performance characteristics from your dynamic pages as static ones. Note however that this is [not supported in Next.js itself](https://github.com/vercel/next.js/issues/22319) (except for if you [apply a patch](https://github.com/vercel/next.js/issues/22319#issuecomment-1565268095)), therefore this needs to be configured on your hosting solution (e.g. [Netlify](https://docs.netlify.com/routing/headers/#syntax-for-the-netlify-configuration-file), [Cloudflare](https://blog.cloudflare.com/transform-http-response-headers/)).
+```tsx filename="app/[locale]/page.tsx"
+import {unstable_setRequestLocale} from 'next-intl/server';
+import {locales} from '..';
 
-<Callout>
-  Note that these are temporary workarounds that will no longer be necessary
-  once `createServerContext` is integrated with Next.js. As soon as this is the
-  case, there will be a stable release of `next-intl` with Server Components
-  support.
-</Callout>
+export default async function IndexPage({
+  params: {locale}
+}) {
+  unstable_setRequestLocale(locale);
+
+  return (
+    // ...
+  );
+}
+```
+
+**What does "unstable" mean?**
+
+`unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on `createServerContext`. When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
+
+Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `settings/page.tsx`.
+
+Apart from that, the API can only be used for pages that receive `params` (i.e. not `not-found.tsx`).
+
+That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
+
+</Steps>
 
 ## Providing feedback
 

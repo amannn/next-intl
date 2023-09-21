@@ -1,4 +1,4 @@
-import getLocaleFromHeader from './getLocaleFromHeader';
+import {getRequestLocale} from './RequestLocale';
 
 let hasWarned = false;
 
@@ -17,5 +17,5 @@ Learn more: https://next-intl-docs.vercel.app/docs/environments/metadata-route-h
     hasWarned = true;
   }
 
-  return getLocaleFromHeader();
+  return getRequestLocale();
 }

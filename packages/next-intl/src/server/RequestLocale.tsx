@@ -33,4 +33,16 @@ const getLocaleFromHeader = cache(() => {
   return locale;
 });
 
-export default getLocaleFromHeader;
+// Workaround until `createServerContext` is available
+const getCache = cache(() => {
+  const value: {locale?: string} = {locale: undefined};
+  return value;
+});
+
+export function setRequestLocale(locale: string) {
+  getCache().locale = locale;
+}
+
+export function getRequestLocale(): string {
+  return getCache().locale || getLocaleFromHeader();
+}
