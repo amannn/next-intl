@@ -13,10 +13,13 @@ While it's recommended to [use `next-intl` with the App Router](/docs/getting-st
 
 ```jsx filename="_app.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
+import {useRouter} from 'next/router';
 
 export default function App({Component, pageProps}) {
+  const router = useRouter();
+
   return (
-    <NextIntlClientProvider messages={pageProps.messages}>
+    <NextIntlClientProvider locale={router.locale} messages={pageProps.messages}>
       <Component {...pageProps} />
     </NextIntlClientProvider>
   );

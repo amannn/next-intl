@@ -1,11 +1,11 @@
 'use client';
 
-import {useRouter} from 'next/router';
 import React, {ComponentProps} from 'react';
 // Workaround for some bundle splitting until we have ESM
 import {IntlProvider} from 'use-intl/_IntlProvider';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
+  /** This is automatically received when being rendered from a Server Component. In all other cases, e.g. when rendered from a Client Component, a unit test or with the Pages Router, you can pass this prop explicitly. */
   locale?: string;
 };
 
@@ -15,21 +15,6 @@ export default function NextIntlClientProvider({
   now,
   ...rest
 }: Props) {
-  let router;
-  try {
-    // Reading from context is practically ok to do conditionally
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    router = useRouter();
-  } catch (error) {
-    // Calling `useRouter` is not supported in the app folder
-  }
-
-  // The router can be undefined if used in a context outside
-  // of Next.js (e.g. unit tests, Storybook, ...)
-  if (!locale && router) {
-    locale = router.locale;
-  }
-
   // TODO: We could call `useParams` here to receive a default value
   // for `locale`, but this would require dropping Next.js <13.
 
@@ -44,7 +29,7 @@ export default function NextIntlClientProvider({
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? "Couldn't determine locale. Please pass an explicit `locale` prop the provider, or if you're using the `pages` folder, use internationalized routing (https://nextjs.org/docs/advanced-features/i18n-routing)."
+        ? 'Failed to determine locale in `NextIntlClientProvider`, please provide the `locale` prop explicitly.\n\nSee https://next-intl-docs.vercel.app/docs/configuration#locale'
         : undefined
     );
   }

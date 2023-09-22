@@ -220,6 +220,7 @@ To avoid mismatches between the server and client environment, it is recommended
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
+
 ```tsx
 <NextIntlClientProvider
   // This value can be generated in data fetching
@@ -270,7 +271,8 @@ To achieve consistent date, time, number and list formatting, you can define a s
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
-```js
+
+```tsx
 <NextIntlClientProvider
   ...
   formats={{
@@ -297,6 +299,7 @@ To achieve consistent date, time, number and list formatting, you can define a s
   <App />
 </NextIntlClientProvider>
 ```
+
 </Tab>
 <Tab>
   
@@ -331,10 +334,11 @@ export default getRequestConfig(async ({locale}) => ({
   // ...
 }));
 ```
+
 </Tab>
 </VersionTabs>
 
-```js
+```tsx
 import {useFormatter} from 'next-intl';
 
 function Component() {
@@ -348,14 +352,14 @@ function Component() {
 
 Global formats for numbers, dates and times can be referenced in messages too.
 
-```js filename="en.json"
+```tsx filename="en.json"
 {
   "ordered": "You've ordered this product on {orderDate, date, short}",
   "latitude": "Latitude: {latitude, number, precise}"
 }
 ```
 
-```js
+```tsx
 import {useTranslations} from 'next-intl';
 
 function Component() {
@@ -372,7 +376,8 @@ To achieve consistent usage of translation values and reduce redundancy, you can
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
-```js
+
+```tsx
 <NextIntlClientProvider
   ...
   defaultTranslationValues={{
@@ -383,6 +388,7 @@ To achieve consistent usage of translation values and reduce redundancy, you can
   <App />
 </NextIntlClientProvider>
 ```
+
 </Tab>
 <Tab>
   
@@ -401,6 +407,7 @@ export default getRequestConfig(async ({locale}) => ({
   // ...
 }));
 ```
+
 </Tab>
 </VersionTabs>
 
@@ -432,9 +439,9 @@ function getMessageFallback({namespace, key, error}) {
   const path = [namespace, key].filter((part) => part != null).join('.');
 
   if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-    return `${path} is not yet translated`;
+    return path + ' is not yet translated';
   } else {
-    return `Dear developer, please fix this message: ${path}`;
+    return 'Dear developer, please fix this message: ' + path;
   }
 }
 
@@ -469,24 +476,53 @@ export default getRequestConfig(async ({locale}) => ({
     const path = [namespace, key].filter((part) => part != null).join('.');
 
     if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-      return `${path} is not yet translated`;
+      return path + ' is not yet translated';
     } else {
-      return `Dear developer, please fix this message: ${path}`;
+      return 'Dear developer, please fix this message: ' + path;
     }
-
-},
-// ...
+  },
+  // ...
 }));
 
 ````
+
 </Tab>
 </VersionTabs>
+
+## Locale
+
+`NextIntlClientProvider` requires a `locale` that it provides to all hooks from `next-intl`.
+
+If you render `NextIntlClientProvider` from a Server Component, the `locale` will automatically be received.
+
+In all other cases, e.g. when being rendered from a Client Component, a unit test or within the Pages Router, you need to pass this prop explicitly. Be sure to also set a [`timeZone`](#time-zone) and a value for [`now`](#now) in this case to avoid potential markup mismatches.
+
+<details>
+<summary>I'm using the Pages Router, how can I provide the locale?</summary>
+
+If you use [internationalized routing with the Pages Router](https://nextjs.org/docs/pages/building-your-application/routing/internationalization), you can receive the locale from the router in order to pass it to `NextIntlClientProvider`:
+
+```tsx filename="_app.tsx"
+import {useRouter} from 'next/router';
+
+// ...
+
+const router = useRouter();
+
+return (
+  <NextIntlClientProvider locale={router.locale}>
+    ...
+  </NextIntlClientProvider>;
+);
+```
+
+</details>
 
 ## Retrieve global configuration
 
 As a convenience, there are a couple of hooks that allow you to read global configuration.
 
-```js
+```tsx
 import {useLocale, useTimeZone, useMessages} from 'next-intl';
 
 function Component() {

@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import {NextIntlClientProvider, useTranslations} from 'next-intl';
 
 // This page acts as a test environment for the TypeScript integration
@@ -123,12 +124,18 @@ function Suite() {
 }
 
 export default function Test() {
+  const router = useRouter();
+
   function onError() {
     // No-op
   }
 
   return (
-    <NextIntlClientProvider messages={{}} onError={onError}>
+    <NextIntlClientProvider
+      locale={router.locale}
+      messages={{}}
+      onError={onError}
+    >
       <Suite />
     </NextIntlClientProvider>
   );
