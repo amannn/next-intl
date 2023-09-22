@@ -40,6 +40,8 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
+Note that `NextIntlClientProvider` automatically inherits the props `locale`, `now` and `timeZone` when the component is rendered from a Server Component. Other configuration like `messages` and `formats` can be provided as necessary.
+
 </Tab>
 <Tab>
   
