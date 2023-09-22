@@ -197,7 +197,7 @@ export default getRequestConfig(async ({locale}) => ({
 
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-## Global now value
+## Now value [#now]
 
 To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
 
@@ -250,7 +250,7 @@ This value will be used as the default for [the `relativeTime` function](/docs/u
   value to a constant value, e.g. based on an environment parameter.
 </Callout>
 
-## Global formats
+## Formats
 
 To achieve consistent date, time, number and list formatting, you can define a set of global formats.
 
