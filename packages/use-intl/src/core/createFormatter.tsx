@@ -58,7 +58,7 @@ export default function createFormatter({
   locale,
   now: globalNow,
   onError = defaultOnError,
-  timeZone
+  timeZone: globalTimeZone
 }: Props) {
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
@@ -121,8 +121,19 @@ export default function createFormatter({
       formatOrOptions,
       formats?.dateTime,
       (options) => {
-        if (timeZone && !options?.timeZone) {
-          options = {...options, timeZone};
+        if (!options?.timeZone) {
+          if (globalTimeZone) {
+            options = {...options, timeZone: globalTimeZone};
+          } else {
+            onError(
+              new IntlError(
+                IntlErrorCode.ENVIRONMENT_FALLBACK,
+                process.env.NODE_ENV !== 'production'
+                  ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+                  : undefined
+              )
+            );
+          }
         }
 
         return new Intl.DateTimeFormat(locale, options).format(value);
@@ -153,16 +164,23 @@ export default function createFormatter({
         if (globalNow) {
           now = globalNow;
         } else {
-          throw new Error(
-            process.env.NODE_ENV !== 'production'
-              ? `The \`now\` parameter wasn't provided and there was no global fallback configured on the provider.`
-              : undefined
+          onError(
+            new IntlError(
+              IntlErrorCode.ENVIRONMENT_FALLBACK,
+              process.env.NODE_ENV !== 'production'
+                ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+                : undefined
+            )
           );
         }
       }
 
       const dateDate = date instanceof Date ? date : new Date(date);
-      const nowDate = now instanceof Date ? now : new Date(now);
+      const nowDate =
+        now instanceof Date
+          ? now
+          : // @ts-expect-error -- `undefined` is fine for the `Date` constructor
+            new Date(now);
 
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
       const {unit, value} = getRelativeTimeFormatConfig(seconds);

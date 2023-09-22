@@ -14,7 +14,14 @@ import {
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
 ) {
-  return <IntlProvider locale="en" messages={{}} {...props} />;
+  return (
+    <IntlProvider
+      locale="en"
+      messages={{}}
+      timeZone="Europe/Berlin"
+      {...props}
+    />
+  );
 }
 
 describe('formatDateTime', () => {
@@ -422,10 +429,10 @@ describe('formatRelativeTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toBe(
-        "FORMATTING_ERROR: The `now` parameter wasn't provided and there was no global fallback configured on the provider."
+      expect(error.message).toMatch(
+        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
       );
-      expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });
 });
