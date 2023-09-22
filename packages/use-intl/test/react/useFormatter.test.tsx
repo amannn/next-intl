@@ -14,7 +14,14 @@ import {
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
 ) {
-  return <IntlProvider locale="en" messages={{}} {...props} />;
+  return (
+    <IntlProvider
+      locale="en"
+      messages={{}}
+      timeZone="Europe/Berlin"
+      {...props}
+    />
+  );
 }
 
 describe('dateTime', () => {
@@ -203,7 +210,7 @@ describe('dateTime', () => {
       }
 
       const {container} = render(
-        <MockProvider onError={onError}>
+        <MockProvider onError={onError} timeZone="Asia/Shanghai">
           <Component />
         </MockProvider>
       );
@@ -214,6 +221,28 @@ describe('dateTime', () => {
       );
       expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
       expect(container.textContent).toMatch(/Nov 20 2020/);
+    });
+
+    it('reports an error when formatting a date time and no time zone is available', () => {
+      const onError = vi.fn();
+
+      function Component() {
+        const format = useFormatter();
+        return <>{format.dateTime(mockDate)}</>;
+      }
+
+      const {container} = render(
+        <MockProvider onError={onError} timeZone={undefined}>
+          <Component />
+        </MockProvider>
+      );
+
+      const error: IntlError = onError.mock.calls[0][0];
+      expect(error.message).toMatch(
+        "ENVIRONMENT_FALLBACK: The `timeZone` parameter wasn't provided and there is no global default configured."
+      );
+      expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
+      expect(container.textContent).toBe('11/20/2020');
     });
   });
 });
@@ -438,7 +467,7 @@ describe('relativeTime', () => {
       expect(container.textContent).toBe('not a number');
     });
 
-    it('throws when no `now` value is available', () => {
+    it('reports an error when no `now` value is available', () => {
       const onError = vi.fn();
 
       function Component() {
@@ -454,10 +483,10 @@ describe('relativeTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toBe(
-        "FORMATTING_ERROR: The `now` parameter wasn't provided and there was no global fallback configured on the provider."
+      expect(error.message).toMatch(
+        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
       );
-      expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });
 });
