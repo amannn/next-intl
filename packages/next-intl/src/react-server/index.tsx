@@ -16,8 +16,7 @@ export {default as useFormatter} from './useFormatter';
 export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
 export {default as useMessages} from './useMessages';
-
-export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
+export {default as NextIntlClientProvider} from './NextIntlClientProvider';
 
 // Everything from `core`
 export * from 'use-intl/core';
