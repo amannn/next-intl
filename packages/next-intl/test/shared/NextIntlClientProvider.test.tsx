@@ -1,11 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {it, vi} from 'vitest';
+import {it} from 'vitest';
 import {useTranslations, NextIntlClientProvider} from '../../src';
-
-vi.mock('next/router', () => ({
-  useRouter: () => ({locale: 'en'})
-}));
 
 it('can use messages from the provider', () => {
   function Component() {
@@ -14,7 +10,7 @@ it('can use messages from the provider', () => {
   }
 
   render(
-    <NextIntlClientProvider messages={{message: 'Hello'}}>
+    <NextIntlClientProvider locale="en" messages={{message: 'Hello'}}>
       <Component />
     </NextIntlClientProvider>
   );
