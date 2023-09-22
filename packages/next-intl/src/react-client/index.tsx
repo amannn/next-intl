@@ -45,7 +45,7 @@ export {default as useLocale} from './useLocale';
 
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
 
-// Legacy export (TBD if we'll deprecate this in favour of `NextIntlClientProvider`)
+// TODO: Legacy export (TBD if we'll deprecate this in favour of `NextIntlClientProvider`)
 export {default as NextIntlProvider} from '../shared/NextIntlClientProvider';
 
 /** @deprecated Is available as `import Link from 'next-intl/link'` now. */
