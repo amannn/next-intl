@@ -33,6 +33,7 @@ The latter two have already been added in minor versions, but 3.0 cleans up the 
 6. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 7. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
 8. `useIntl` has been replaced with [`useFormatter`](/docs/usage/dates-times).
+9. `createIntl` has been replaced with [`createFormatter`](/docs/environments/core-library)
 
 If you've been part of the Server Components beta and have already tried out previous releases, first of all, thank you so much! Second: Some APIs saw iterations over the beta period, please upgrade to `next-intl@3.0.0-beta.19` and check if you see any deprecations in the console output of your app. If not, you should be able to upgrade to the release candidate without any changes.
 
