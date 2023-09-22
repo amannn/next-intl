@@ -121,7 +121,10 @@ export default getRequestConfig(async ({locale}) => ({
 
 Colocating your messages with app code is beneficial because it allows developers to make changes to messages quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/workflows/typescript).
 
-Translators can also collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+
+<details>
+<summary>How can I load messages from remote sources?</summary>
 
 While it's recommended to colocate at least the messages for the default locale, you can also load messages from remote sources, e.g. with <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
 
@@ -136,7 +139,12 @@ const messages =
     : await client.getStringsByLocale(locale);
 ```
 
-Since the messages can be freely defined and loaded, you can also split your messages into multiple files and merge them later at runtime if you prefer:
+</details>
+
+<details>
+<summary>How can I split my messages into multiple files?</summary>
+
+Since the messages can be freely defined and loaded, you can split your messages into multiple files and merge them later at runtime if you prefer:
 
 ```tsx
 const messages = {
@@ -144,6 +152,11 @@ const messages = {
   ...(await import(`../../messages/${locale}/dashboard.json`)).default
 };
 ```
+
+</details>
+
+<details>
+<summary>How can I use messages from another locale as fallbacks?</summary>
 
 If you have incomplete messages for a given locale and would like to use messages from another locale as a fallback, you can merge the two accordingly.
 
@@ -155,9 +168,11 @@ const defaultMessages = (await import(`../../messages/en.json`)).default;
 const messages = deepmerge(defaultMessages, userMessages);
 ```
 
+</details>
+
 ## Time zone
 
-If possible, you should configure an explicit time zone, as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser, this is the local time zone of the user. As the time zone of the server and the one from the user can be different, this might be problematic when your app is both rendered on the server as well as on the client side.
+If possible, you should configure an explicit time zone, as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser, this is the local time zone of the user. As the time zone of the server and the one from the user can differ, this can lead to markup mismatches when your app is both rendered on the server as well as on the client side.
 
 To ensure consistency, you can globally define a time zone:
 
@@ -199,7 +214,7 @@ The available time zone names can be looked up in [the tz database](https://en.w
 
 ## Now value [#now]
 
-To avoid mismatches between the server and client environment, it is recommended to configure a static global `now` value on the provider:
+To avoid mismatches between the server and client environment, it is recommended to configure a global value for `now`:
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>
@@ -237,17 +252,14 @@ export default getRequestConfig(async ({locale}) => ({
 
 This value will be used as the default for [the `relativeTime` function](/docs/usage/dates-times#formatting-relative-time) as well as returned during the initial render of [`useNow`](/docs/usage/dates-times#usenow).
 
+**Tip:** For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
+
 <Callout type="warning">
   **Important:** When you cache the rendered markup (e.g. when using [static
   rendering](https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering#static-rendering-default)),
   the formatted value will become stale. Therefore either regenerate these pages
   regularly or use the `updateInterval` option of
   [`useNow`](/docs/usage/dates-times#usenow) on the client side.
-</Callout>
-
-<Callout>
-  For consistent results in end-to-end tests, it can be helpful to mock this
-  value to a constant value, e.g. based on an environment parameter.
 </Callout>
 
 ## Formats
@@ -354,7 +366,7 @@ function Component() {
 
 ## Default translation values
 
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration also can be used to apply consistent styling of commonly used rich text elements.
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
 
 <VersionTabs defaultLabel="Provider" rscLabel="i18n.ts">
 <Tab>

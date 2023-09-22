@@ -430,9 +430,9 @@ describe('formatRelativeTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toMatch(
-        "FORMATTING_ERROR: The `now` parameter wasn't provided and there is no global default configured."
+        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
       );
-      expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });
 });
