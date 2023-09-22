@@ -6,8 +6,6 @@
  * Make sure this mirrors the API from '../react-client'.
  */
 
-import Link from './Link';
-
 // Replaced exports from the `react` package
 export {default as useLocale} from './useLocale';
 export {default as useTranslations} from './useTranslations';
@@ -20,9 +18,3 @@ export {default as NextIntlClientProvider} from './NextIntlClientProvider';
 
 // Everything from `core`
 export * from 'use-intl/core';
-
-/** @deprecated Is called `Link` now. */
-export const LocalizedLink = Link;
-
-// Deprecation handled within component
-export {default as Link} from './Link';

@@ -20,59 +20,9 @@ import {
 
 const ROOT_URL = '/';
 
-function handleConfigDeprecations<Locales extends AllLocales>(
-  config: MiddlewareConfig<Locales>
-) {
-  if (config.routing) {
-    const {routing} = config;
-    config = {...config};
-    delete config.routing;
-
-    if (routing.type === 'prefix') {
-      config.localePrefix = routing.prefix;
-    } else if (routing.type === 'domain') {
-      config.domains = routing.domains.map((cur) => ({
-        domain: cur.domain,
-        defaultLocale: cur.locale,
-        locales: [cur.locale]
-      }));
-    }
-
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(
-        "\n\nThe `routing` option is deprecated, please use `localePrefix` and `domains` instead. Here's your updated configuration:\n\n" +
-          JSON.stringify(config, null, 2) +
-          '\n\nThank you so much for following along with the Server Components beta and sorry for the inconvenience!\n\n'
-      );
-    }
-  }
-
-  if (config.domains) {
-    const {domains} = config;
-    config = {...config};
-    config.domains = domains.map((cur) => {
-      if (process.env.NODE_ENV !== 'production' && cur.locale) {
-        console.error(
-          '\n\nThe `domain.locale` option is deprecated, please use `domain.defaultLocale` instead.'
-        );
-      }
-      return {
-        ...cur,
-        defaultLocale: cur.locale || cur.defaultLocale,
-        ...(cur.locale && {locales: [cur.locale]})
-      };
-    });
-  }
-
-  return config;
-}
-
 function receiveConfig<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ): MiddlewareConfigWithDefaults<Locales> {
-  // TODO: Remove before stable release
-  config = handleConfigDeprecations(config);
-
   const result: MiddlewareConfigWithDefaults<Locales> = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
@@ -88,17 +38,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 ) {
   const configWithDefaults = receiveConfig(config);
 
-  // Currently only in use to enable a seamless upgrade path from the
-  // `{createIntlMiddleware} from 'next-intl/server'` API.
-  // TODO: Remove in next major release.
-  const matcher: Array<string> | undefined = (config as any)._matcher;
-
   return function middleware(request: NextRequest) {
-    const matches =
-      !matcher ||
-      matcher.some((pattern) => request.nextUrl.pathname.match(pattern));
-    if (!matches) return NextResponse.next();
-
     const {domain, locale} = resolveLocale(
       configWithDefaults,
       request.headers,

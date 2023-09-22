@@ -54,7 +54,6 @@
       "react-server": "./dist/esm/navigation.react-server.js",
       "default": "./dist/navigation.js"
     },
-    "./withNextIntl": "./withNextIntl.js",
     "./plugin": {
       "types": "./plugin.d.ts",
       "default": "./dist/plugin.js"
@@ -67,8 +66,6 @@
     "navigation.d.ts",
     "link.d.ts",
     "middleware.d.ts",
-    "withNextIntl.js",
-    "withNextIntl.d.ts",
     "plugin.d.ts",
     "config.d.ts"
   ],
