@@ -2,7 +2,7 @@ import {parseISO} from 'date-fns';
 import {it, expect} from 'vitest';
 import {createFormatter} from '../../src';
 
-const formatter = createFormatter({locale: 'en'});
+const formatter = createFormatter({locale: 'en', timeZone: 'Europe/Berlin'});
 
 it('formats a date and time', () => {
   expect(
