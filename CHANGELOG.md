@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.20.2 (2023-09-22)
+
+
+### Bug Fixes
+
+* Add error reporting when no `timeZone` is specified and downgrade error handling for missing `now` value from throwing to reporting an error ([#519](https://github.com/amannn/next-intl/issues/519)) ([dc55ab2](https://github.com/amannn/next-intl/commit/dc55ab24bcf4c8e84316fa044736f93d56d1a41d))
+
+
+
+
+
 ## 2.20.1 (2023-09-21)
 
 
