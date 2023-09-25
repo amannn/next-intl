@@ -25,7 +25,7 @@ const getLocaleFromHeader = cache(() => {
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? 'Unable to find `next-intl` locale, have you configured the middleware?`'
+        ? `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale`
         : undefined
     );
   }
