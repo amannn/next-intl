@@ -14,7 +14,7 @@ The main part of handling internationalization (typically referred to as _i18n_)
 
 To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "About": {
     "title": "About us"
@@ -46,7 +46,7 @@ t('About.title');
 
 Optionally, you can structure your messages as nested objects.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "auth": {
     "SignUp": {
@@ -129,7 +129,7 @@ There's one exception however: [Using `next-intl` with the Next.js Metadata API 
 
 ## Rendering ICU messages
 
-`next-intl` uses ICU message syntax that allows you to express language nuances and separates state handling within messages from your app code.
+`next-intl` uses [ICU message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) that allows you to express language nuances and separates state handling within messages from your app code.
 
 <Callout>
 
@@ -139,7 +139,7 @@ To work with ICU messages, it can be helpful to use an editor that supports this
 
 ### Static messages
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Hello world!"
 ```
 
@@ -149,7 +149,7 @@ t('message'); // "Hello world!"
 
 ### Interpolation of dynamic values
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Hello {name}!"
 ```
 
@@ -235,7 +235,7 @@ Now, this should laser focus your desired locale which can ensure the same forma
 
 ### Escaping
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
 ```
 
@@ -247,7 +247,7 @@ t('message'); // "Escape curly braces with single quotes (e.g. {name})"
 
 You can format rich text with custom tags and map them to React components.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "richText": "This is <important><very>very</very> important</important>"
 }
@@ -268,7 +268,7 @@ Note that the ICU parser doesn't support self-closing tags at this point, theref
 
 If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "zero-config": "Works with zero config",
@@ -297,7 +297,7 @@ function Benefits() {
 
 If the number of items varies between locales, you can solve this by using [rich text](#rich-text).
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "items": "<item>Works with zero config</item><item>Easy to customize</item><item>Blazingly fast</item>"
@@ -325,7 +325,7 @@ function Benefits() {
 
 The advantage of this approach over supporting arrays in messages is that this way you can use the formatting capabilities, e.g. to interpolate values into individual messages.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "zero-config": "Works with <b>zero config</b>",
@@ -361,7 +361,7 @@ function Benefits() {
 
 Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "content": "<h1>Headline<h1><p>This is raw HTML</p>"
 }
