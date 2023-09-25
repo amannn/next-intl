@@ -157,35 +157,81 @@ t('message'); // "Hello world!"
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
-### Pluralization
+### Formatting Interpolated daynamic values
 
-```js filename="en.json"
-"message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
-```
+Values can also be formatted based on their type. You use a `{key, type, format}` argument to do that.
 
-```js
-t('message', {count: 3580}); // "You have 3,580 followers."
-```
+The elements of the argument are:
 
-### Ordinal pluralization
+- `key` is where in the input data to find the data
+- `type` is where in the input data to find the data
+- `format` is optional, and is a further refinement on how to display that type of data
 
-```js filename="en.json"
-"message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
-```
+The available format `type`s available are:
 
-```js
-t('message', {year: 21}); // "It's your 21st birthday!"
-```
+- [`{number}`](/docs/usage/numbers#numbers-within-messages) This type is used to format numbers in a way that is sensitive to the locale.
+- [`{date}`](/docs/usage/dates-times#dates-and-times-within-messages) This type is used to format dates in a way that is sensitive to the locale.
+- [`{time}`](/docs/usage/dates-times#dates-and-times-within-messages) This type is used to format times in a way that is sensitive to the locale.
+- [`{select}`](/docs/usage/plurals-enums#selecting-enum-based-values) This type is used to choose output by matching a value to one of many choices.
+- [`{plural}`](/docs/usage/plurals-enums#cardinal-pluralization) This type is used to choose output based on the cardinal pluralization rules of the current locale.
+- [`{selectordinal}`](/docs/usage/plurals-enums#ordinal-pluralization) This type is used to choose output based on the ordinal pluralization rules of the current locale.
 
-### Selecting enum-based values
-
-```js filename="en.json"
-"message": "{gender, select, female {She} male {He} other {They}} is online."
-```
+<Callout type="warning">
+  **Important**: If your setup only includes the language in the locale string like this:
 
 ```js
-t('message', {gender: 'female'}); // "She is online."
+{
+  locales: ['en', 'ar'],
+  defaultLocale: 'en'
+}
 ```
+
+Formatting might cause hydration errors because the locale strings that you have in your setup only contain the language with no extra data in it to help the [Intl API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) match the proper locale rules, so the Intl API resorts to a `localeMatcher` algorithm, and this algorirthm can result in different formatting rules in different hosting environments.
+For example, on the server `ar` as a locale string will result in Arabic digits, but on chrome Latin digits.
+
+To solve this hydration error you can override the global formatting options as desired following the Intl API to ensure consistent formatting.
+
+```ts
+import {type IntlConfig} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`./translations/${locale}.json`)).default,
+  formats: getGlobalFormatOptions(locale)
+}));
+
+export function getGlobalFormatOptions(locale: Locale): IntlConfig['formats'] {
+  return {
+    dateTime: {
+      date: {
+        // ...
+        numberingSystem: locale === 'ar' ? 'arab' : 'latn'
+      }
+    },
+    number: {
+      currency: {
+        // ...
+        numberingSystem: locale === 'ar' ? 'arab' : 'latn'
+      }
+    }
+  };
+}
+```
+
+Another solution if you're already handling different locales for the same language, you'll need to add the different locales any way, so you can make your locale strings more specific to make sure that the formatting rules will match on every environment as follows:
+
+```js
+{
+  locales: ['en-US', 'ar-AE'],
+  defaultLocale: 'en-US'
+}
+```
+
+And adjust the rest of the files accordingly.
+
+Now, this should laser focus your desired locale which can ensure the same formatting rules in different hosting environments.
+
+</Callout>
 
 ### Escaping
 
