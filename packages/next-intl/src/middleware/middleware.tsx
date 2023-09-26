@@ -26,7 +26,7 @@ function receiveConfig<Locales extends AllLocales>(
   const result: MiddlewareConfigWithDefaults<Locales> = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
-    localePrefix: config.localePrefix ?? 'as-needed',
+    localePrefix: config.localePrefix ?? 'always',
     localeDetection: config.localeDetection ?? true
   };
 

@@ -2,7 +2,7 @@ import {test as it, expect} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
-  await expect(page).toHaveURL('/');
+  await expect(page).toHaveURL('/en');
 
   // A cookie remembers the last locale
   await page.goto('/de');
@@ -12,7 +12,7 @@ it('handles i18n routing', async ({page}) => {
     .getByRole('combobox', {name: 'Sprache ändern'})
     .selectOption({label: 'Englisch'});
 
-  await expect(page).toHaveURL('/');
+  await expect(page).toHaveURL('/en');
   page.getByRole('heading', {name: 'next-intl example'});
 });
 
@@ -34,7 +34,7 @@ it("handles not found pages for routes that don't match the middleware", async (
 });
 
 it('sets caching headers', async ({request}) => {
-  for (const pathname of ['/', '/about', '/de', '/de/ueber']) {
+  for (const pathname of ['/en', '/en/about', '/de', '/de/ueber']) {
     expect((await request.get(pathname)).headers()['cache-control']).toBe(
       's-maxage=31536000, stale-while-revalidate'
     );
@@ -58,7 +58,7 @@ it('can be used to localize the page', async ({page}) => {
 });
 
 it('sets a cookie', async ({page}) => {
-  const response = await page.goto('/');
+  const response = await page.goto('/en');
   const value = await response?.headerValue('set-cookie');
   expect(value).toContain('NEXT_LOCALE=en;');
   expect(value).toContain('Path=/;');
