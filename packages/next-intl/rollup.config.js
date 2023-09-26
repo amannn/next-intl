@@ -13,7 +13,6 @@ const config = {
     server: 'src/server.tsx',
     'server.react-server': 'src/server.react-server.tsx',
 
-    client: 'src/client.tsx',
     middleware: 'src/middleware.tsx',
     plugin: 'src/plugin.tsx',
     config: 'src/config.tsx'

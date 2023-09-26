@@ -4,7 +4,7 @@ import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context.shared-
 import {useRouter as useNextRouter} from 'next/navigation';
 import React, {useEffect} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
-import {useRouter} from '../../src/client';
+import useBaseRouter from '../../src/navigation/useBaseRouter';
 
 vi.mock('next/navigation', () => {
   const router: AppRouterInstance = {
@@ -21,9 +21,9 @@ vi.mock('next/navigation', () => {
   };
 });
 
-function callRouter(cb: (router: ReturnType<typeof useRouter>) => void) {
+function callRouter(cb: (router: ReturnType<typeof useBaseRouter>) => void) {
   function Component() {
-    const router = useRouter();
+    const router = useBaseRouter();
     useEffect(() => {
       cb(router);
     }, [router]);

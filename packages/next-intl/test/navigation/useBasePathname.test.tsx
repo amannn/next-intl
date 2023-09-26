@@ -3,7 +3,7 @@ import {usePathname as useNextPathname, useParams} from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../src';
-import {usePathname} from '../../src/client';
+import useBasePathname from '../../src/navigation/useBasePathname';
 
 vi.mock('next/navigation');
 
@@ -13,7 +13,7 @@ function mockPathname(pathname: string) {
 }
 
 function Component() {
-  return <>{usePathname()}</>;
+  return <>{useBasePathname()}</>;
 }
 
 describe('unprefixed routing', () => {

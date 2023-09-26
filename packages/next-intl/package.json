@@ -32,10 +32,6 @@
       "react-server": "./dist/esm/server.react-server.js",
       "default": "./dist/server.js"
     },
-    "./client": {
-      "types": "./client.d.ts",
-      "default": "./dist/client.js"
-    },
     "./config": {
       "types": "./config.d.ts",
       "default": "./dist/config.js"
@@ -113,15 +109,11 @@
     },
     {
       "path": "dist/production/navigation.js",
-      "limit": "2.5 KB"
+      "limit": "2.6 KB"
     },
     {
       "path": "dist/production/server.js",
       "limit": "1.3 KB"
-    },
-    {
-      "path": "dist/production/client.js",
-      "limit": "1.8 KB"
     },
     {
       "path": "dist/production/middleware.js",
