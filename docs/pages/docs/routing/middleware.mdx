@@ -16,9 +16,8 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Skip all paths that should not be internationalized. This example skips
-  // certain folders and all pathnames with a dot (e.g. favicon.ico)
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
 };
 ```
 
@@ -293,13 +292,21 @@ Because of this, the following config is generally recommended:
 
 ```tsx filename="middleware.ts"
 export const config = {
-  // Skip all paths that should not be internationalized. This example skips
-  // certain folders and all pathnames with a dot (e.g. favicon.ico)
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
 };
 ```
 
-However, this can lead to false negatives if you have pages that contain the character `.` (e.g. `/users/jane.doe`). To make sure these are processed by the middleware, you can add corresponding entries to the matcher config:
+This enables:
+
+1. A redirect at `/` to a suitable locale
+2. Internationalization of all pathnames starting with a locale (e.g. `/en/about`)
+
+#### Pathnames without a locale prefix [#matcher-no-prefix]
+
+If you pick a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always), you need a more flexible solution since you have to match pathnames without a locale prefix as well (e.g. `/about`).
+
+A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically are static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
 ```tsx filename="middleware.ts"
 export const config = {
@@ -316,7 +323,7 @@ export const config = {
 
 {/* Keep this in sync with `packages/next-intl/test/middleware/middleware.test.tsx` */}
 
-Additionally, some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
+Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
 
 ## Composing other middlewares
 
@@ -350,7 +357,8 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
 };
 ```
 
@@ -373,11 +381,12 @@ export default authMiddleware({
   },
 
   // Ensure that locale-specific sign in pages are public
-  publicRoutes: ['/', '/:locale/sign-in']
+  publicRoutes: ['/:locale', '/:locale/sign-in']
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)']
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
 };
 ```
 
@@ -397,6 +406,7 @@ const publicPages = ['/', '/login'];
 
 const intlMiddleware = createIntlMiddleware({
   locales,
+  localePrefix: 'as-necssary',
   defaultLocale: 'en'
 });
 
