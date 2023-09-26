@@ -5,6 +5,12 @@ import createRequestConfig from '../server/createRequestConfig';
 // Make sure `now` is consistent across the request in case none was configured
 const getDefaultNow = cache(() => new Date());
 
+// This is automatically inherited by `NextIntlClientProvider` if
+// the component is rendered from a Server Component
+const getDefaultTimeZone = cache(
+  () => Intl.DateTimeFormat().resolvedOptions().timeZone
+);
+
 const receiveRuntimeConfig = cache(
   async (locale: string, getConfig?: typeof createRequestConfig) => {
     let result = getConfig?.({locale});
@@ -13,7 +19,8 @@ const receiveRuntimeConfig = cache(
     }
     return {
       ...result,
-      now: result?.now || getDefaultNow()
+      now: result?.now || getDefaultNow(),
+      timeZone: result?.timeZone || getDefaultTimeZone()
     };
   }
 );

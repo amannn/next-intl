@@ -174,7 +174,7 @@ const messages = deepmerge(defaultMessages, userMessages);
 
 ## Time zone
 
-If possible, you should configure an explicit time zone, as this affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone that is configured for the server and in the browser, this is the local time zone of the user. As the time zone of the server and the one from the user can differ, this can lead to markup mismatches when your app is both rendered on the server as well as on the client side.
+Specifying a time zone affects the rendering of dates and times. By default, the available time zone of the runtime will be used: In Node.js this is the time zone of the server and in the browser, this is the local time zone of the user. As these can differ, this can lead to markup mismatches when your components render both on the server as well as on the client side.
 
 To ensure consistency, you can globally define a time zone:
 
