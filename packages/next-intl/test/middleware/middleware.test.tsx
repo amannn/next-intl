@@ -119,7 +119,8 @@ describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
-      locales: ['en', 'de']
+      locales: ['en', 'de'],
+      localePrefix: 'as-needed'
     });
 
     it('rewrites requests for the default locale', () => {
@@ -287,6 +288,7 @@ describe('prefix-based routing', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
+        localePrefix: 'as-needed',
         pathnames: {
           '/': '/',
           '/about': {
@@ -515,6 +517,7 @@ describe('prefix-based routing', () => {
         const callMiddleware = createIntlMiddleware({
           defaultLocale: 'en',
           locales: ['en', 'de'],
+          localePrefix: 'as-needed',
           pathnames: {
             '/a': {
               en: '/one',
@@ -1096,6 +1099,7 @@ describe('domain-based routing', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
+      localePrefix: 'as-needed',
       domains: [
         {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
         {
@@ -1335,6 +1339,7 @@ describe('domain-based routing', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'fr'],
+        localePrefix: 'as-needed',
         domains: [
           {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
           {
