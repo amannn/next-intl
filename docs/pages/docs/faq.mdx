@@ -2,7 +2,7 @@
 
 ## What trade-offs does this library make?
 
-If you bundle `next-intl` for the client side ([which you don't have to](/docs/environments/server-client-components)), the bundle size comes in at [~14kB gzipped](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the mentioned internationalization features. There are smaller libraries for internationalization, but they typically cover less features.
+If you bundle `next-intl` for the client side ([which you don't have to](/docs/environments/server-client-components)), the bundle size comes in at [~14kB gzipped](https://bundlephobia.com/result?p=next-intl) which is the tradeoff that's necessary for supporting all the included i18n features. There are smaller libraries for internationalization, but they typically cover less features.
 
 If you don't need all features of `next-intl`, you can reduce the bundle size with tree shaking. Furthermore if [native `Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat) lands in JavaScript in the future, we might be able to reduce the bundle size significantly.
 
