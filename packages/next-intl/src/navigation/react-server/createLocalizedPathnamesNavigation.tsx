@@ -7,8 +7,8 @@ import {
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
 } from '../utils';
-import BaseLink from './Link';
-import baseRedirect from './redirect';
+import BaseLink from './BaseLink';
+import baseRedirect from './baseRedirect';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,

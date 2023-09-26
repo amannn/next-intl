@@ -5,8 +5,8 @@ import {
 } from '../client';
 import useLocale from '../react-client/useLocale';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../shared/types';
-import BaseLink from './Link';
-import baseRedirect from './redirect';
+import BaseLink from './BaseLink';
+import baseRedirect from './baseRedirect';
 import {
   compileLocalizedPathname,
   getRoute,
