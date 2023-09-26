@@ -12,7 +12,6 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
 export default function NextIntlClientProvider({
   children,
   locale,
-  now,
   ...rest
 }: Props) {
   // TODO: We could call `useParams` here to receive a default value
@@ -26,9 +25,5 @@ export default function NextIntlClientProvider({
     );
   }
 
-  return (
-    <IntlProvider locale={locale} now={now} {...rest}>
-      {children}
-    </IntlProvider>
-  );
+  return <IntlProvider locale={locale} {...rest} />;
 }

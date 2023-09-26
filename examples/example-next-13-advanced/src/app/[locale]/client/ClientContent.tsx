@@ -1,8 +1,7 @@
 'use client';
 
 import {useNow} from 'next-intl';
-import {usePathname} from 'next-intl/client';
-import {Link} from '../../../navigation';
+import {Link, usePathname} from '../../../navigation';
 
 export default function ClientContent() {
   const now = useNow();
