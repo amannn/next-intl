@@ -1,7 +1,7 @@
 import {useLocale, useTranslations} from 'next-intl';
-import Link from 'next-intl/link';
 import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
+import {Link} from '../../navigation';
 
 export default function Index() {
   const t = useTranslations('Index');
@@ -12,7 +12,7 @@ export default function Index() {
       <p>{t('description')}</p>
       <LocaleSwitcher />
       <p>
-        <Link href="/about" locale={locale}>
+        <Link href="/about" locale={locale as any}>
           {t('navigateToAbout')}
         </Link>
       </p>
