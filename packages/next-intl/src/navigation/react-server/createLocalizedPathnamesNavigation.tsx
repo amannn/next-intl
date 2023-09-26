@@ -1,7 +1,5 @@
 import React, {ComponentProps} from 'react';
-import BaseLink from '../../link/react-server';
 import {getRequestLocale} from '../../server/RequestLocale';
-import {redirect as baseRedirect} from '../../server.react-server';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
 import {
   HrefOrHrefWithParams,
@@ -9,6 +7,8 @@ import {
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
 } from '../utils';
+import BaseLink from './Link';
+import baseRedirect from './redirect';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,

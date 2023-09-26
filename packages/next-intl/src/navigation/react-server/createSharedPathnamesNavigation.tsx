@@ -1,6 +1,6 @@
-import Link from '../../link/react-server';
-import redirect from '../../server/redirect';
 import {AllLocales} from '../../shared/types';
+import Link from './Link';
+import redirect from './redirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales

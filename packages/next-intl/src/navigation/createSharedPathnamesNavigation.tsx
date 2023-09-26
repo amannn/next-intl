@@ -1,8 +1,8 @@
 import usePathname from '../client/usePathname';
 import useRouter from '../client/useRouter';
-import Link from '../link';
-import redirect from '../server/react-client/redirect';
 import {AllLocales} from '../shared/types';
+import Link from './Link';
+import redirect from './redirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales

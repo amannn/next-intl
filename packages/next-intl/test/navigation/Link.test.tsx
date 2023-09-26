@@ -3,7 +3,7 @@ import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../src';
-import Link from '../../src/link';
+import Link from '../../src/navigation/Link';
 
 vi.mock('next/navigation');
 

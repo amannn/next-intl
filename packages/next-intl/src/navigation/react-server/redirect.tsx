@@ -1,6 +1,6 @@
-import {ParametersExceptFirstTwo} from '../shared/types';
-import {getRequestLocale} from './RequestLocale';
-import baseRedirect from './baseRedirect';
+import {getRequestLocale} from '../../server/RequestLocale';
+import {ParametersExceptFirstTwo} from '../../shared/types';
+import baseRedirect from '../baseRedirect';
 
 export default function redirect(
   pathname: string,

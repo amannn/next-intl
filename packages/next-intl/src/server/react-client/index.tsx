@@ -34,8 +34,3 @@ export const getTranslator = notSupported('getTranslator') as unknown as typeof 
 export const getMessages = notSupported('getMessages') as unknown as typeof getMessages_type;
 // prettier-ignore
 export const unstable_setRequestLocale = notSupported('unstable_setRequestLocale') as unknown as typeof unstable_setRequestLocale_type;
-
-// TODO: Since this is available in Client Comonents too, we should really
-// consider exporting this from `next-intl/navigation` instead. For now, for
-// compatibility, we'll add a client entry point for `next-intl/server`.
-export {default as redirect} from './redirect';

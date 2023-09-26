@@ -3,10 +3,10 @@ import {
   useRouter as useBaseRouter,
   usePathname as useBasePathname
 } from '../client';
-import BaseLink from '../link';
 import useLocale from '../react-client/useLocale';
-import baseRedirect from '../server/react-client/redirect';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../shared/types';
+import BaseLink from './Link';
+import baseRedirect from './redirect';
 import {
   compileLocalizedPathname,
   getRoute,

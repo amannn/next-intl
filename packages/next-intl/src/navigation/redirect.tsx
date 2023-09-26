@@ -1,6 +1,6 @@
-import useLocale from '../../react-client/useLocale';
-import {ParametersExceptFirstTwo} from '../../shared/types';
-import baseRedirect from '../baseRedirect';
+import useLocale from '../react-client/useLocale';
+import {ParametersExceptFirstTwo} from '../shared/types';
+import baseRedirect from './baseRedirect';
 
 export default function redirect(
   pathname: string,

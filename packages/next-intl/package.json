@@ -36,11 +36,6 @@
       "types": "./client.d.ts",
       "default": "./dist/client.js"
     },
-    "./link": {
-      "types": "./link.d.ts",
-      "react-server": "./dist/esm/link.react-server.js",
-      "default": "./dist/link.js"
-    },
     "./config": {
       "types": "./config.d.ts",
       "default": "./dist/config.js"
@@ -64,7 +59,6 @@
     "server.d.ts",
     "client.d.ts",
     "navigation.d.ts",
-    "link.d.ts",
     "middleware.d.ts",
     "plugin.d.ts",
     "config.d.ts"
@@ -128,10 +122,6 @@
     {
       "path": "dist/production/client.js",
       "limit": "1.8 KB"
-    },
-    {
-      "path": "dist/production/link.js",
-      "limit": "1.4 KB"
     },
     {
       "path": "dist/production/middleware.js",
