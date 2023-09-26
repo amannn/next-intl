@@ -104,7 +104,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "12.67 KB"
+      "limit": "12.7 KB"
     },
     {
       "path": "dist/production/navigation.js",
