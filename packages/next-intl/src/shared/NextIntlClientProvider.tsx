@@ -9,11 +9,7 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
 };
 
-export default function NextIntlClientProvider({
-  children,
-  locale,
-  ...rest
-}: Props) {
+export default function NextIntlClientProvider({locale, ...rest}: Props) {
   // TODO: We could call `useParams` here to receive a default value
   // for `locale`, but this would require dropping Next.js <13.
 
