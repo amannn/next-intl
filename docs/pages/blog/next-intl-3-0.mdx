@@ -4,11 +4,11 @@ title: next-intl 3.0 release candidate
 
 # next-intl 3.0 release candidate
 
-<small>Sep 22, 2023 · by Jan Amann</small>
+<small>Sep 27, 2023 · by Jan Amann</small>
 
 Almost one year ago, on Oct 25, 2022, [Next.js 13 was announced](https://nextjs.org/blog/next-13) with beta support for the App Router and Server Components. Ever since then, `next-intl` began an exploration on what it means to provide an optimal experience for implementing i18n with these new capabilities.
 
-Today, [after more than 300 commits and the involvement of over 50 community members](https://github.com/amannn/next-intl/pull/149), I'm absolutely thrilled to share the first release candidate of `next-intl` 3.0, which is now App Router-first.
+Today, [after more than 300 commits and the involvement of over 50 community members](https://github.com/amannn/next-intl/pull/149), I'm absolutely thrilled to share the **first release candidate of `next-intl` 3.0**, which is now App Router-first.
 
 If you're still happy with the Pages Router, rest assured that `next-intl` is dedicated to support this paradigm for as long as Next.js does. For those who already migrated to the App Router, this means that `next-intl` now takes full advantage of the new capabilities.
 
@@ -17,9 +17,9 @@ If you're still happy with the Pages Router, rest assured that `next-intl` is de
 1. **Support for React Server Components**: The APIs `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` can now be used in Server Components ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/environments/server-client-components)).
 2. **New async APIs to handle i18n outside of components**: To handle i18n in the Metadata API and Route Handlers, the APIs `getTranslator`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/environments/metadata-route-handlers)).
 3. **Middleware for internationalized routing**: While Next.js has built-in support for this with the Pages Router, the App Router doesn't include a built-in solution anymore. `next-intl` now provides a drop-in solution that has you covered ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware)).
-4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect` ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation)).
+4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect`. These APIs allow you to handle locale prefixes behind the scenes and also provide support for localizing pathnames (e.g. `/en/about` vs. `/de/ueber-uns`, see the [proposed docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation)).
 
-The latter two have already been added in minor versions, but 3.0 cleans up the API and includes many improvements and fixes.
+The latter two have already been added in minor versions, but 3.0 cleans up the API and includes many improvements and bug fixes.
 
 ## Breaking changes
 
@@ -51,7 +51,7 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 
 Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the proposed navigation docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#shared-pathnames)).
 
-These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames. By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the navigation factory function and potentially fix pathnames where necessary as reported by TypeScript since localized pathnames are fully typed.
+These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames. By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the factory function.
 
 ### Switching the middleware default of `localePrefix` to `always`
 
