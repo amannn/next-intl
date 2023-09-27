@@ -51,24 +51,37 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 
 Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the proposed navigation docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#shared-pathnames)).
 
-These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames. By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the navigation factory function and potentially fix pathnames where necessary as reported by TypeScript (localized pathnames are fully typed).
+These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames. By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the navigation factory function and potentially fix pathnames where necessary as reported by TypeScript since localized pathnames are fully typed.
 
-### Static rendering
+### Switching the middleware default of `localePrefix` to `always`
+
+Previously, the [`localePrefix` of the middleware](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware#locale-prefix) defaulted to `as-necessary`, meaning that a locale prefix was only added for non-default locales.
+
+This default has now been changed to `always` since this has two advantages:
+
+1. We can recommend [a safer default `matcher`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
+2. It avoids an [edge case of `Link`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-necessary) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a link pointing to a redirect in this case).
+
+If you want to stay on the `as-necessary` strategy, you can explicitly [configure this in the middleware](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-necessary).
+
+### Static rendering of Server Components
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs like `useTranslations` in a Server Component, by default, the hook will opt the page into dynamic rendering. This is a temporary limitation that we aim to remove once `createServerContext` is supported in Next.js, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
+If you call APIs like `useTranslations` in a Server Component, by default, the hook will opt the page into dynamic rendering. This is a temporary limitation that we aim to remove once [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is supported in Next.js, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
+
+Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 
 ### Other notable changes
 
 1. `next-intl` now uses [`exports` in `package.json`](https://nodejs.org/api/packages.html#subpath-exports) to clearly define which modules are exported. This should not affect you, unless you've previously imported undocumented internals.
 2. `NextIntlProvider` has been removed in favor of [`NextIntlClientProvider`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/configuration#client-server-components)
 3. `NextIntlClientProvider` now needs to be imported from `next-intl` instead of `next-intl/client`.
-4. [The middleware](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server`.
+4. [The middleware](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server` (deprecated since v2.14).
 5. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 6. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
-7. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since [v2.11](https://github.com/amannn/next-intl/blob/main/CHANGELOG.md#2110-2023-03-06)).
-8. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/environments/core-library) (deprecated since [v2.11](https://github.com/amannn/next-intl/blob/main/CHANGELOG.md#2110-2023-03-06)).
+7. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
+8. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
 
 ## Upgrade now
 
