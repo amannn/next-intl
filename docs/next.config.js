@@ -99,13 +99,8 @@ module.exports = withNextra({
       permanent: true
     },
     {
-      source: '/docs/usage/configuration',
-      destination: '/docs/configuration',
-      permanent: true
-    },
-    {
       source: '/docs/usage/error-handling',
-      destination: '/docs/configuration#error-handling',
+      destination: '/docs/usage/configuration#error-handling',
       permanent: true
     },
     {

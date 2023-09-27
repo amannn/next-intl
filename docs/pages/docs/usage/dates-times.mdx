@@ -68,7 +68,7 @@ function Component() {
 
 Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
 
-Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now`](/docs/configuration#global-now-value), you can omit the second argument:
+Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now`](/docs/usage/configuration#now), you can omit the second argument:
 
 ```js
 format.relativeTime(dateTime);
@@ -171,5 +171,5 @@ t(
 
 <Callout>
   To reuse date and time formats for multiple components, you can configure
-  [global formats](/docs/configuration#global-formats).
+  [global formats](/docs/usage/configuration#formats).
 </Callout>

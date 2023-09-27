@@ -3,5 +3,6 @@
   "messages": "Messages",
   "numbers": "Numbers",
   "dates-times": "Dates and times",
-  "lists": "Lists"
+  "lists": "Lists",
+  "configuration": "Global configuration"
 }
