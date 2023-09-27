@@ -111,25 +111,20 @@ Additionally, this approach is more robust to possibly unexpected states, like t
 
 If you’re working with Next.js, you might want to translate i18n messages in [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes), [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) or the [Metadata API](https://nextjs.org/docs/app/api-reference/file-conventions/metadata).
 
-`next-intl` provides a [core library](/docs/environments/core-library) that is agnostic from React and can be used for these cases.
+`next-intl/server` provides a set of awaitable versions of the functions that you usually call as hooks from within components. These are agnostic from React and can be used for these cases.
 
 ```tsx
-import {createTranslator} from 'next-intl';
+import {getTranslator} from 'next-intl/server';
 
-const messages = {
-  hello: 'Hello {name}!'
-};
+// The `locale` is received from Next.js via `params`
+const locale = params.locale;
 
 // This creates the same function that is returned by `useTranslations`.
-// Since there's no provider, you can pass all the properties you'd
-// usually pass to the provider directly here.
-const t = createTranslator({locale: 'en', messages});
+const t = await getTranslator(locale);
 
 // Result: "Hello world!"
 t('hello', {name: 'world'});
 ```
-
-There's currently a proposal to further simplify this use case, by offering a set of [new APIs that integrate with Server Components](/docs/environments/metadata-route-handlers) (currently in beta).
 
 ## This seems familiar
 

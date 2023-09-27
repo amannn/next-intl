@@ -50,12 +50,22 @@ module.exports = withNextra({
     },
     {
       source: '/docs/next-13/client-components',
-      destination: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {
       source: '/docs/next-13/server-components',
-      destination: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {

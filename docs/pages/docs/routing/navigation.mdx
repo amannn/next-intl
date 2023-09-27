@@ -25,7 +25,7 @@ For example:
 
 ---
 
-Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `./navigation.ts`).
+Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `src/navigation.ts`).
 
 ### Strategy 1: Shared pathnames [#shared-pathnames]
 
@@ -33,7 +33,7 @@ With this strategy, the pathnames of your app are identical for all locales. Thi
 
 To create [navigation APIs](#apis) for this strategy, use the `createSharedPathnamesNavigation` function:
 
-```tsx filename="./navigation.ts"
+```tsx filename="navigation.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
 
 export const locales = ['en', 'de'] as const;
@@ -60,7 +60,7 @@ When using this strategy, you have to provide distinct pathnames for every local
 
 You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis):
 
-```tsx filename="./navigation.ts"
+```tsx filename="navigation.ts"
 import {
   createLocalizedPathnamesNavigation,
   Pathnames
@@ -291,7 +291,7 @@ The [navigation APIs](#apis) are strictly typed and only allow routes specified 
 
 … or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
 
-```tsx filename="./navigation.ts"
+```tsx filename="navigation.ts"
 // ...
 
 export const {Link, redirect, usePathname, useRouter} =
@@ -444,11 +444,6 @@ Note that internal pathnames are returned without params being resolved (e.g. `/
 </Tabs>
 
 ### `redirect`
-
-<Callout type="warning">
-  This API is only available in [the Server Components
-  beta](/docs/getting-started/app-router-server-components).
-</Callout>
 
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 

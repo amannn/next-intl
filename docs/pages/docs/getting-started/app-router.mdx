@@ -1,35 +1,9 @@
 import Callout from 'components/Callout';
 import Steps from 'components/Steps';
 
-# Next.js 13: Internationalization (i18n) in Server Components
+# Next.js 13: Internationalization (i18n)
 
-Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side. `next-intl` is adopting the new capabilities and is currently offering a beta version to early adopters, who are already building apps with Server Components.
-
-<Callout type="warning">
-  Support for React Server Components is currently in beta. Please use it at
-  your own risk, knowing that you may have to migrate upon a stable release.
-</Callout>
-
-## Current beta version
-
-```
-npm install next-intl@3.0.0-beta.19
-```
-
-This beta version was tested with `next@13.5.1`.
-
-## Roadmap
-
-| Feature                                            | Status |
-| :------------------------------------------------- | :----: |
-| Usage of all `next-intl` APIs in Server Components |   ✅   |
-| Dynamic rendering                                  |   ✅   |
-| Static rendering (i.e. `generateStaticParams`)     |   🏗️   |
-
-<Callout emoji="🏗️">
-  Support for static rendering is currently available via a stopgap solution
-  (see [static rendering](#static-rendering).
-</Callout>
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side.
 
 ## Getting started
 
@@ -41,13 +15,14 @@ If you haven't done so already, [create a Next.js 13 app that uses the App Route
 ├── messages (1)
 │   ├── en.json
 │   └── ...
-├── i18n.ts (2)
-├── next.config.js (3)
-├── middleware.ts (4)
-└── app
-    └── [locale]
-        ├── layout.tsx (5)
-        └── page.tsx (6)
+├── next.config.js (2)
+└── src
+    ├── i18n.ts (3)
+    ├── middleware.ts (4)
+    └── app
+        └── [locale]
+            ├── layout.tsx (5)
+            └── page.tsx (6)
 ```
 
 **Now, set up the files as follows:**
@@ -68,32 +43,49 @@ The simplest option is to create JSON files locally based on locales, e.g. `en.j
 }
 ```
 
-### `i18n.ts`
+### `next.config.js`
 
-`next-intl` creates a configuration once per request and makes it available to all Server Components. Here you can provide messages and other options depending the locale of the user.
+Now, set up the plugin which provides i18n configuration to Server Components.
 
-```tsx filename="i18n.ts"
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  // Other Next.js configuration ...
+});
+```
+
+### `src/i18n.ts`
+
+`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
+
+```tsx filename="src/i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`./messages/${locale}.json`)).default
+  messages: (await import(`../messages/${locale}.json`)).default
 }));
 ```
 
-### `next.config.js`
+<details>
+  <summary>Can I move this file somewhere else?</summary>
 
-Now, set up the plugin and provide the path to your `i18n.ts` file.
+This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can provide an optional path to the plugin:
 
 ```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')(
-  // This is the default (also the `src` folder is supported out of the box)
-  './i18n.ts'
+  // Specify a custom path here
+  './somewhere/else/i18n.ts'
 );
 
 module.exports = withNextIntl({
   // Other Next.js configuration ...
 });
 ```
+
+</details>
 
 ### `middleware.ts`
 
@@ -128,8 +120,7 @@ const locales = ['en', 'de'];
 
 export default function LocaleLayout({children, params: {locale}}) {
   // Validate that the incoming `locale` parameter is valid
-  const isValidLocale = locales.some((cur) => cur === locale);
-  if (!isValidLocale) notFound();
+  if (!locales.includes(locale as any)) notFound();
 
   return (
     <html lang={locale}>
@@ -154,23 +145,18 @@ export default function Index() {
 
 </Steps>
 
-That's all it takes! Now you can internationalize your apps on the server side.
+That's all it takes!
 
 <Callout>
 
 **Next steps:**
 
 <ul className="ml-4 list-disc">
-  <li>
-    Ran into an issue? Have a look at [the Server Components
-    example](https://next-intl-example-next-13-git-feat-next-13-rsc-amannn.vercel.app/)
-    ([source](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)).
-  </li>
   <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
   <li>
-    Interested to learn more about the advantages of using `next-intl` in Server
-    Components? Check out the [Server & Client Components
-    guide](/docs/environments/server-client-components).
+    Ran into an issue? Have a look at [the App Router
+    example](https://next-intl-example-next-13.vercel.app/)
+    ([source](https://github.com/amannn/next-intl/tree/main/examples/example-next-13)).
   </li>
 </ul>
 
@@ -180,7 +166,7 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 The support for using `next-intl` in React Server Components currently opts your pages into dynamic rendering. This is a limitation that will eventually be lifted once [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is available and integrated in Next.js.
 
-If you have a strong need for static rendering, you can enable static rendering as follows:
+If you have a need for static rendering in Server Components, you can enable it as follows:
 
 <Steps>
 
@@ -210,8 +196,7 @@ export default async function LocaleLayout({
   params: {locale}
 }) {
   // Validate that the incoming `locale` parameter is valid
-  const isValidLocale = locales.some((cur) => cur === locale);
-  if (!isValidLocale) notFound();
+  if (!locales.includes(locale as any)) notFound();
 
   unstable_setRequestLocale(locale);
 
@@ -238,16 +223,10 @@ export default async function IndexPage({
 
 **What does "unstable" mean?**
 
-`unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on `createServerContext`. When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
+`unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early). When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
 Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `settings/page.tsx`.
-
-Apart from that, the API can only be used for pages that receive `params` (i.e. not `not-found.tsx`).
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
 
 </Steps>
-
-## Providing feedback
-
-If you have feedback about using `next-intl` in the `app` directory, feel free to leave feedback in [the PR that implements the React Server Components support](https://github.com/amannn/next-intl/pull/149).

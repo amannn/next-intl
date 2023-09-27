@@ -32,8 +32,7 @@ export default async function LocaleLayout({
   params: {locale}
 }: Props) {
   // Validate that the incoming `locale` parameter is valid
-  const isValidLocale = locales.some((cur) => cur === locale);
-  if (!isValidLocale) notFound();
+  if (!locales.includes(locale as any)) notFound();
   unstable_setRequestLocale(locale);
 
   return (

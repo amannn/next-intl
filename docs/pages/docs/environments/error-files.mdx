@@ -1,4 +1,3 @@
-import VersionTabs from 'components/VersionTabs';
 import Callout from 'components/Callout';
 
 # Internationalization in Next.js error files
@@ -70,7 +69,7 @@ export default function NotFound() {
 }
 ```
 
-Note that the presence of `app/not-found.tsx` requires that a root layout is available as well, even if it's just passing `children` through.
+Note that the presence of `app/not-found.tsx` requires that a root layout is available, even if it's just passing `children` through.
 
 ```tsx filename="app/layout.tsx"
 // Since we have a root `not-found.tsx` page, a layout file
@@ -89,12 +88,8 @@ import {notFound} from 'next/navigation';
 const locales = ['en', 'de'];
 
 export default function LocaleLayout({children, params}) {
-  const locale = useLocale();
-
-  // Validate that the incoming `locale` parameter is a valid locale
-  if (params.locale !== locale) {
-    notFound();
-  }
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
 
   return (
     <html lang={locale}>
@@ -127,10 +122,6 @@ When an `error` file is defined, Next.js creates [an error boundary within your 
 
 Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/configuration#client-server-components) to provide messages in case the `error` file renders.
 
-If you've [set up `next-intl` to be used in Client Components](/docs/getting-started/app-router-client-components), this is already the case and there's no additional setup needed. If you're using [the Server Components beta](/docs/getting-started/app-router-server-components) though, you have to provide the relevant messages in the wrapping layout.
-
-<figure>
-
 ```tsx filename="app/[locale]/layout.tsx"
 import pick from 'lodash/pick';
 
@@ -153,13 +144,6 @@ export default async function LocaleLayout({children}) {
 }
 ```
 
-<figcaption>
-  Providing messages for the `error` file is only necessary when using [the
-  Server Components beta](/docs/getting-started/app-router-server-components).
-</figcaption>
-
-</figure>
-
 Once `NextIntlClientProvider` is in place, you can use functionality from `next-intl` in the `error` file:
 
 ```tsx filename="app/[locale]/error.tsx"
@@ -178,3 +162,5 @@ export default function Error({error, reset}) {
   );
 }
 ```
+
+Note that `NextIntlClientProvider` only provides the messages to your error page, but doesn't load any runtime code for processing translations on the client side. Only the error page will include this code, so the performance of other pages isn't affected.
