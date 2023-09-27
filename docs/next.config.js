@@ -30,12 +30,17 @@ module.exports = withNextra({
     },
     {
       source: '/docs/getting-started/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
+      permanent: true
+    },
+    {
+      source: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
@@ -75,12 +80,12 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/runtime-requirements-polyfills',
-      destination: '/docs/production-checklist#runtime-requirements',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
