@@ -170,6 +170,8 @@ export default createMiddleware({
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
 
+**Important:** If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
+
 <Callout>
   If you use [the `Link` component](/docs/routing/navigation#link), the initial
   render will point to the prefixed version but will be patched immediately on
@@ -193,6 +195,8 @@ export default createMiddleware({
 ```
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
+
+**Important:** If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
 
 <Callout>
   Note that [alternate links](#disable-alternate-links) are disabled in this
@@ -304,7 +308,7 @@ This enables:
 
 #### Pathnames without a locale prefix [#matcher-no-prefix]
 
-If you pick a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always), you need a more flexible solution since you have to match pathnames without a locale prefix as well (e.g. `/about`).
+If you pick a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always), you need a more flexible matcher since you have to match pathnames without a locale prefix as well (e.g. `/about`).
 
 A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically are static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
@@ -313,7 +317,9 @@ export const config = {
   // Matcher entries are linked with a logical "or", therefore
   // if one of them matches, the middleware will be invoked.
   matcher: [
-    // Match all pathnames without `.`
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
     '/((?!api|_next|_vercel|.*\\..*).*)',
     // Match all pathnames within `/users`, optionally with a locale prefix
     '/(.+)?/users/(.+)'

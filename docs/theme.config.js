@@ -79,6 +79,20 @@ export default {
       titleTemplate: '%s – Internationalization (i18n) for Next.js'
     };
   },
+  banner: {
+    text: (
+      <>
+        3.0 preview (see{' '}
+        <a
+          className="underline"
+          href="https://next-intl-docs.vercel.app/blog/3-0-release-candidate"
+        >
+          announcement
+        </a>
+        )
+      </>
+    )
+  },
   primaryHue: {light: 210, dark: 195},
   footer: {
     component: Footer
