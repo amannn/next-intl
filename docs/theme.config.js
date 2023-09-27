@@ -85,7 +85,7 @@ export default {
         3.0 preview (see{' '}
         <a
           className="underline"
-          href="https://next-intl-docs.vercel.app/blog/3-0-release-candidate"
+          href="https://next-intl-docs.vercel.app/blog/next-intl-3-0"
         >
           announcement
         </a>
