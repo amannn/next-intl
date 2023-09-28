@@ -52,20 +52,15 @@ You can add a root `not-found` page to handle these cases too.
 ```tsx filename="app/not-found.tsx"
 'use client';
 
-import Error from 'next/error';
+import {redirect, usePathname} from 'next/navigation';
 
-// Render the default Next.js 404 page when a route
-// is requested that doesn't match the middleware and
-// therefore doesn't have a locale associated with it.
+const defaultLocale = 'en';
 
 export default function NotFound() {
-  return (
-    <html lang="en">
-      <body>
-        <Error statusCode={404} />
-      </body>
-    </html>
-  );
+  const pathname = usePathname();
+
+  // Add a locale prefix to show a localized not found page
+  redirect(`/${defaultLocale}${pathname}`);
 }
 ```
 
