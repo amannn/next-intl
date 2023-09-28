@@ -1,5 +1,6 @@
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
+import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
 
@@ -72,6 +73,17 @@ const logo = (
 export default {
   project: {
     link: 'https://github.com/amannn/next-intl'
+  },
+  banner: {
+    text: (
+      <>
+        Try out the{' '}
+        <Link className="underline" href="/blog/next-intl-3-0">
+          3.0 release candidate
+        </Link>
+        !
+      </>
+    )
   },
   docsRepositoryBase: 'https://github.com/amannn/next-intl/blob/main/docs',
   useNextSeoProps() {
