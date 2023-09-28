@@ -1,6 +1,6 @@
 import {AppProps} from 'next/app';
 import {NextRouter, withRouter} from 'next/router';
-import {NextIntlProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 
 type Props = AppProps & {
   router: NextRouter;
@@ -8,12 +8,12 @@ type Props = AppProps & {
 
 function App({Component, pageProps, router}: Props) {
   return (
-    <NextIntlProvider
+    <NextIntlClientProvider
       locale={(router.query?.locale as string) ?? 'en'}
       messages={pageProps.messages}
     >
       <Component {...pageProps} />
-    </NextIntlProvider>
+    </NextIntlClientProvider>
   );
 }
 

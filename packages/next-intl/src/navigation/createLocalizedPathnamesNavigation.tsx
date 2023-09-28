@@ -1,12 +1,10 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import {
-  useRouter as useBaseRouter,
-  usePathname as useBasePathname
-} from '../client';
-import BaseLink from '../link';
 import useLocale from '../react-client/useLocale';
-import baseRedirect from '../server/react-client/redirect';
 import {AllLocales, ParametersExceptFirst, Pathnames} from '../shared/types';
+import BaseLink from './BaseLink';
+import baseRedirect from './baseRedirect';
+import useBasePathname from './useBasePathname';
+import useBaseRouter from './useBaseRouter';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -19,8 +17,17 @@ export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
 >({locales, pathnames}: {locales: Locales; pathnames: PathnamesConfig}) {
-  function useTypedLocale() {
-    return useLocale() as (typeof locales)[number];
+  function useTypedLocale(): (typeof locales)[number] {
+    const locale = useLocale();
+    const isValid = locales.includes(locale as any);
+    if (!isValid) {
+      throw new Error(
+        process.env.NODE_ENV !== 'production'
+          ? `Unknown locale encountered: "${locale}". Make sure to validate the locale in \`app/[locale]/layout.tsx\`.`
+          : undefined
+      );
+    }
+    return locale;
   }
 
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<

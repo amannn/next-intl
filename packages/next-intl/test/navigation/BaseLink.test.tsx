@@ -3,7 +3,7 @@ import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../src';
-import Link from '../../src/link';
+import BaseLink from '../../src/navigation/BaseLink';
 
 vi.mock('next/navigation');
 
@@ -14,14 +14,16 @@ describe('unprefixed routing', () => {
   });
 
   it('renders an href without a locale if the locale matches', () => {
-    render(<Link href="/test">Test</Link>);
+    render(<BaseLink href="/test">Test</BaseLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/test'
     );
   });
 
   it('renders an href without a locale if the locale matches for an object href', () => {
-    render(<Link href={{pathname: '/test', query: {foo: 'bar'}}}>Test</Link>);
+    render(
+      <BaseLink href={{pathname: '/test', query: {foo: 'bar'}}}>Test</BaseLink>
+    );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/test?foo=bar'
     );
@@ -29,9 +31,9 @@ describe('unprefixed routing', () => {
 
   it('renders an href with a locale if the locale changes', () => {
     render(
-      <Link href="/test" locale="de">
+      <BaseLink href="/test" locale="de">
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -40,9 +42,9 @@ describe('unprefixed routing', () => {
 
   it('renders an href with a locale if the locale changes for an object href', () => {
     render(
-      <Link href={{pathname: '/test'}} locale="de">
+      <BaseLink href={{pathname: '/test'}} locale="de">
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -50,7 +52,7 @@ describe('unprefixed routing', () => {
   });
 
   it('works for external urls', () => {
-    render(<Link href="https://example.com">Test</Link>);
+    render(<BaseLink href="https://example.com">Test</BaseLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com'
     );
@@ -58,7 +60,7 @@ describe('unprefixed routing', () => {
 
   it('works for external urls with an object href', () => {
     render(
-      <Link
+      <BaseLink
         href={{
           pathname: '/test',
           protocol: 'https:',
@@ -66,7 +68,7 @@ describe('unprefixed routing', () => {
         }}
       >
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com/test'
@@ -77,14 +79,14 @@ describe('unprefixed routing', () => {
     let ref;
 
     render(
-      <Link
+      <BaseLink
         ref={(node) => {
           ref = node;
         }}
         href="/test"
       >
         Test
-      </Link>
+      </BaseLink>
     );
 
     expect(ref).toBeDefined();
@@ -98,14 +100,14 @@ describe('prefixed routing', () => {
   });
 
   it('renders an href with a locale if the locale matches', () => {
-    render(<Link href="/test">Test</Link>);
+    render(<BaseLink href="/test">Test</BaseLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/en/test'
     );
   });
 
   it('renders an href without a locale if the locale matches for an object href', () => {
-    render(<Link href={{pathname: '/test'}}>Test</Link>);
+    render(<BaseLink href={{pathname: '/test'}}>Test</BaseLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/en/test'
     );
@@ -113,9 +115,9 @@ describe('prefixed routing', () => {
 
   it('renders an href with a locale if the locale changes', () => {
     render(
-      <Link href="/test" locale="de">
+      <BaseLink href="/test" locale="de">
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -124,9 +126,9 @@ describe('prefixed routing', () => {
 
   it('renders an href with a locale if the locale changes for an object href', () => {
     render(
-      <Link href={{pathname: '/test'}} locale="de">
+      <BaseLink href={{pathname: '/test'}} locale="de">
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -134,7 +136,7 @@ describe('prefixed routing', () => {
   });
 
   it('works for external urls', () => {
-    render(<Link href="https://example.com">Test</Link>);
+    render(<BaseLink href="https://example.com">Test</BaseLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com'
     );
@@ -142,7 +144,7 @@ describe('prefixed routing', () => {
 
   it('works for external urls with an object href', () => {
     render(
-      <Link
+      <BaseLink
         href={{
           pathname: '/test',
           protocol: 'https:',
@@ -150,7 +152,7 @@ describe('prefixed routing', () => {
         }}
       >
         Test
-      </Link>
+      </BaseLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com/test'
@@ -166,7 +168,7 @@ describe('usage outside of Next.js', () => {
   it('works with a provider', () => {
     render(
       <NextIntlClientProvider locale="en">
-        <Link href="/test">Test</Link>
+        <BaseLink href="/test">Test</BaseLink>
       </NextIntlClientProvider>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
@@ -175,7 +177,7 @@ describe('usage outside of Next.js', () => {
   });
 
   it('throws without a provider', () => {
-    expect(() => render(<Link href="/test">Test</Link>)).toThrow(
+    expect(() => render(<BaseLink href="/test">Test</BaseLink>)).toThrow(
       'No intl context found. Have you configured the provider?'
     );
   });

@@ -9,22 +9,9 @@ type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   locale?: string;
 };
 
-export default function NextIntlClientProvider({
-  children,
-  locale,
-  now,
-  ...rest
-}: Props) {
+export default function NextIntlClientProvider({locale, ...rest}: Props) {
   // TODO: We could call `useParams` here to receive a default value
   // for `locale`, but this would require dropping Next.js <13.
-
-  // TODO: This is no longer necessary, remove for stable release
-  if (process.env.NODE_ENV !== 'production' && typeof now === 'string') {
-    console.error(
-      'Passing an ISO date string to `NextIntlClientProvider` is deprecated since React Server Components have built-in support for serializing dates now. To upgrade, pass a `Date` instance instead.'
-    );
-    now = new Date(now);
-  }
 
   if (!locale) {
     throw new Error(
@@ -34,9 +21,5 @@ export default function NextIntlClientProvider({
     );
   }
 
-  return (
-    <IntlProvider locale={locale} now={now} {...rest}>
-      {children}
-    </IntlProvider>
-  );
+  return <IntlProvider locale={locale} {...rest} />;
 }

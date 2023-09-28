@@ -2,12 +2,6 @@ import Callout from 'components/Callout';
 
 # Internationalization of Server & Client Components in Next.js 13
 
-<Callout type="warning">
-
-This page contains background information about the advantages of moving internationalization to Server Components. Note that this is currently only available in [the Server Components beta version](/docs/getting-started/app-router-server-components).
-
-</Callout>
-
 With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
 
 This applies to handling internationalization too.
@@ -92,7 +86,7 @@ function Expandable({title, children}) {
 
 As you see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
 
-Learn more in the Next.js docs: [Nesting Server Components inside Client Components](https://nextjs.org/docs/getting-started/react-essentials#nesting-server-components-inside-client-components)
+Learn more in the Next.js docs: [Passing Server Components to Client Components as Props](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props)
 
 ### Option 2: Moving state to the server side
 
@@ -164,6 +158,8 @@ import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({children, params: {locale}}) {
+  // ...
+
   // Receive messages provided in `i18n.ts`
   const messages = useMessages();
 
@@ -201,9 +197,9 @@ You might encounter this error when you try to pass a non-serializable prop to `
 
 The component accepts the following props that are not serializable:
 
-1. [`onError`](/docs/configuration#error-handling)
-2. [`getMessageFallback`](/docs/configuration#error-handling)
-3. Rich text elements for [`defaultTranslationValues`](/docs/configuration#default-translation-values)
+1. [`onError`](/docs/usage/configuration#error-handling)
+2. [`getMessageFallback`](/docs/usage/configuration#error-handling)
+3. Rich text elements for [`defaultTranslationValues`](/docs/usage/configuration#default-translation-values)
 
 To configure these, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props:
 

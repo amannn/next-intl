@@ -27,7 +27,7 @@ type IntlNavigateOptions<Locales extends AllLocales> = {
  * router.push('/about', {locale: 'de'});
  * ```
  */
-export default function useRouter<Locales extends AllLocales>() {
+export default function useBaseRouter<Locales extends AllLocales>() {
   const router = useNextRouter();
   const locale = useLocale();
 

@@ -18,7 +18,7 @@ import {hasPathnamePrefixed, unlocalizePathname} from '../shared/utils';
  * const pathname = usePathname();
  * ```
  */
-export default function usePathname(): string {
+export default function useBasePathname(): string {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = useNextPathname() as ReturnType<

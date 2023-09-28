@@ -10,7 +10,10 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
 };
 
-function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
+function BaseLinkWithLocale(
+  {href, locale, prefetch, ...rest}: Props,
+  ref: Props['ref']
+) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
@@ -54,4 +57,4 @@ function BaseLink({href, locale, prefetch, ...rest}: Props, ref: Props['ref']) {
   );
 }
 
-export default forwardRef(BaseLink);
+export default forwardRef(BaseLinkWithLocale);

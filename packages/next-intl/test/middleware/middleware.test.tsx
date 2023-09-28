@@ -119,7 +119,8 @@ describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
-      locales: ['en', 'de']
+      locales: ['en', 'de'],
+      localePrefix: 'as-needed'
     });
 
     it('rewrites requests for the default locale', () => {
@@ -287,6 +288,7 @@ describe('prefix-based routing', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
+        localePrefix: 'as-needed',
         pathnames: {
           '/': '/',
           '/about': {
@@ -515,6 +517,7 @@ describe('prefix-based routing', () => {
         const callMiddleware = createIntlMiddleware({
           defaultLocale: 'en',
           locales: ['en', 'de'],
+          localePrefix: 'as-needed',
           pathnames: {
             '/a': {
               en: '/one',
@@ -1096,6 +1099,7 @@ describe('domain-based routing', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
+      localePrefix: 'as-needed',
       domains: [
         {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
         {
@@ -1335,6 +1339,7 @@ describe('domain-based routing', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'fr'],
+        localePrefix: 'as-needed',
         domains: [
           {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
           {
@@ -1752,122 +1757,5 @@ describe('domain-based routing', () => {
         'http://ca.example.com/fr/about'
       );
     });
-  });
-});
-
-describe('deprecated domain config', () => {
-  it("accepts deprecated config with `routing.type: 'prefix'`", () => {
-    const middleware = createIntlMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      routing: {
-        type: 'prefix',
-        prefix: 'always'
-      }
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://example.com'));
-    middleware(createMockRequest('/de/about', 'de', 'http://example.com'));
-
-    expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://example.com/en'
-    );
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://example.com/en/about'
-    );
-    expect(MockedNextResponse.rewrite).toHaveBeenCalled();
-    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-      'http://example.com/de/about'
-    );
-  });
-
-  it("accepts deprecated config with `routing.type: 'domain'`", () => {
-    const middleware = createIntlMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      routing: {
-        type: 'domain',
-        domains: [
-          {
-            locale: 'en',
-            domain: 'en.example.com'
-          },
-          {
-            locale: 'de',
-            domain: 'de.example.com'
-          }
-        ]
-      }
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://en.example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
-
-    expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-
-    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/en'
-    );
-    expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-      'http://en.example.com/en/about'
-    );
-
-    middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/about'
-    );
-
-    middleware(createMockRequest('/de/help', 'de', 'http://en.example.com'));
-
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://de.example.com/help'
-    );
-  });
-
-  it('accepts deprecated config with `domain.locale`', () => {
-    const middleware = createIntlMiddleware({
-      defaultLocale: 'en',
-      locales: ['en', 'de'],
-      domains: [
-        // @ts-expect-error Deprecated config
-        {
-          locale: 'en',
-          domain: 'en.example.com'
-        },
-        // @ts-expect-error Deprecated config
-        {
-          locale: 'de',
-          domain: 'de.example.com'
-        }
-      ]
-    });
-
-    middleware(createMockRequest('/', 'en', 'http://en.example.com'));
-    middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
-
-    expect(MockedNextResponse.next).not.toHaveBeenCalled();
-    expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-
-    expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/en'
-    );
-    expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-      'http://en.example.com/en/about'
-    );
-
-    middleware(createMockRequest('/en/about', 'en', 'http://en.example.com'));
-    expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-      'http://en.example.com/about'
-    );
-
-    middleware(createMockRequest('/de/help', 'de', 'http://en.example.com'));
-
-    expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-      'http://de.example.com/help'
-    );
   });
 });

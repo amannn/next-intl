@@ -1,6 +1,6 @@
-import Link from '../../link/react-server';
-import redirect from '../../server/redirect';
 import {AllLocales} from '../../shared/types';
+import BaseLink from './BaseLink';
+import baseRedirect from './baseRedirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
@@ -15,8 +15,8 @@ export default function createSharedPathnamesNavigation<
   }
 
   return {
-    Link: Link<Locales>,
-    redirect,
+    Link: BaseLink<Locales>,
+    redirect: baseRedirect,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };

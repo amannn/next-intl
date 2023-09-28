@@ -12,7 +12,6 @@ import {
   useTranslations as base_useTranslations,
   useFormatter as base_useFormatter
 } from 'use-intl';
-import Link from './Link';
 
 export * from 'use-intl';
 
@@ -44,13 +43,3 @@ export const useFormatter = callHook(
 export {default as useLocale} from './useLocale';
 
 export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
-
-// Legacy export (TBD if we'll deprecate this in favour of `NextIntlClientProvider`)
-export {default as NextIntlProvider} from '../shared/NextIntlClientProvider';
-
-/** @deprecated Is available as `import Link from 'next-intl/link'` now. */
-export const LocalizedLink = Link; // TODO: Remove, this is only for compatibility in the RSC beta and would break Next.js 12
-/** @deprecated Is available as `import Link from 'next-intl/link'` now. */
-export {default as Link} from './Link'; // TODO: Remove, this is only for compatibility in the RSC beta and would break Next.js 12
-
-export {default as useLocalizedRouter} from './useLocalizedRouter';

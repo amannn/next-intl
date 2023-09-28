@@ -7,14 +7,14 @@ The main part of handling internationalization (typically referred to as _i18n_)
 
 ## Terminology
 
-- **Locale**: We use this term to describe an identifier that contains the language and formatting preferences of users. Apart from the language, this includes optional regional information (e.g. `en-US`, `de`).
-- **Messages**: These are collections of namespace-label pairs that provide grouping by locale (e.g. `en-US.json`, `de.json`).
+- **Locale**: We use this term to describe an identifier that contains the language and formatting preferences of users. Apart from the language, this includes optional regional information (e.g. `en-US`).
+- **Messages**: These are collections of namespace-label pairs that provide grouping by locale (e.g. `en-US.json`).
 
 ## Structuring messages
 
 To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "About": {
     "title": "About us"
@@ -46,7 +46,7 @@ t('About.title');
 
 Optionally, you can structure your messages as nested objects.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "auth": {
     "SignUp": {
@@ -117,7 +117,7 @@ export default function useLocaleLabel() {
 <details>
 <summary>How can I use translations outside of components?</summary>
 
-`next-intl` only offers an API to use translations from within React components.
+`next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components.
 
 This may seem like an unnecessary limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
 
@@ -139,7 +139,7 @@ To work with ICU messages, it can be helpful to use an editor that supports this
 
 ### Static messages
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Hello world!"
 ```
 
@@ -149,7 +149,7 @@ t('message'); // "Hello world!"
 
 ### Interpolation of dynamic values
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Hello {name}!"
 ```
 
@@ -159,7 +159,7 @@ t('message', {name: 'Jane'}); // "Hello Jane!"
 
 ### Pluralization
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
 ```
 
@@ -169,7 +169,7 @@ t('message', {count: 3580}); // "You have 3,580 followers."
 
 ### Ordinal pluralization
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
@@ -179,7 +179,7 @@ t('message', {year: 21}); // "It's your 21st birthday!"
 
 ### Selecting enum-based values
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "{gender, select, female {She} male {He} other {They}} is online."
 ```
 
@@ -189,7 +189,7 @@ t('message', {gender: 'female'}); // "She is online."
 
 ### Escaping
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
 ```
 
@@ -201,7 +201,7 @@ t('message'); // "Escape curly braces with single quotes (e.g. {name})"
 
 You can format rich text with custom tags and map them to React components.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "richText": "This is <important><very>very</very> important</important>"
 }
@@ -214,7 +214,7 @@ t.rich('richText', {
 });
 ```
 
-If you want to use the same tag across your app, you can configure it via the [default translation values](/docs/configuration#default-translation-values).
+If you want to use the same tag across your app, you can configure it via the [default translation values](/docs/usage/configuration#default-translation-values).
 
 Note that the ICU parser doesn't support self-closing tags at this point, therefore you have to use syntax like `<br></br>` if your rich text function doesn't intend to receive any `chunks` (e.g. `br: () => <br />`).
 
@@ -222,7 +222,7 @@ Note that the ICU parser doesn't support self-closing tags at this point, theref
 
 If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "zero-config": "Works with zero config",
@@ -251,7 +251,7 @@ function Benefits() {
 
 If the number of items varies between locales, you can solve this by using [rich text](#rich-text).
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "items": "<item>Works with zero config</item><item>Easy to customize</item><item>Blazingly fast</item>"
@@ -279,7 +279,7 @@ function Benefits() {
 
 The advantage of this approach over supporting arrays in messages is that this way you can use the formatting capabilities, e.g. to interpolate values into individual messages.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "Benefits": {
     "zero-config": "Works with <b>zero config</b>",
@@ -315,7 +315,7 @@ function Benefits() {
 
 Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "content": "<h1>Headline<h1><p>This is raw HTML</p>"
 }

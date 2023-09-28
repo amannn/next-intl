@@ -348,7 +348,7 @@ function buildOutput() {
         <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          104 kB
+          87.6 kB
         </span>
       </span>
       <span className="line">
@@ -358,7 +358,7 @@ function buildOutput() {
         <span style={{color: 'var(--shiki-color-text)'}}> B</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          97.5 kB
+          80.2 kB
         </span>
       </span>
       <span className="line">
@@ -368,7 +368,7 @@ function buildOutput() {
         <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          106 kB
+          89.3 kB
         </span>
       </span>
       <span className="line"> </span>

@@ -1,4 +1,4 @@
-import {createTranslator, createIntl} from 'next-intl';
+import {createTranslator, createFormatter} from 'next-intl';
 
 export default function CoreLibrary() {
   const t = createTranslator({
@@ -7,12 +7,12 @@ export default function CoreLibrary() {
   });
 
   const now = new Date(2022, 10, 6, 20, 20, 0, 0);
-  const intl = createIntl({locale: 'en', now});
+  const format = createFormatter({locale: 'en', now});
   const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
   return (
     <p data-testid="CoreLibrary">
-      {t('Index.title')} {intl.formatRelativeTime(tomorrow)}
+      {t('Index.title')} {format.relativeTime(tomorrow)}
     </p>
   );
 }

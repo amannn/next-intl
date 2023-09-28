@@ -32,15 +32,6 @@
       "react-server": "./dist/esm/server.react-server.js",
       "default": "./dist/server.js"
     },
-    "./client": {
-      "types": "./client.d.ts",
-      "default": "./dist/client.js"
-    },
-    "./link": {
-      "types": "./link.d.ts",
-      "react-server": "./dist/esm/link.react-server.js",
-      "default": "./dist/link.js"
-    },
     "./config": {
       "types": "./config.d.ts",
       "default": "./dist/config.js"
@@ -54,7 +45,6 @@
       "react-server": "./dist/esm/navigation.react-server.js",
       "default": "./dist/navigation.js"
     },
-    "./withNextIntl": "./withNextIntl.js",
     "./plugin": {
       "types": "./plugin.d.ts",
       "default": "./dist/plugin.js"
@@ -63,12 +53,8 @@
   "files": [
     "dist",
     "server.d.ts",
-    "client.d.ts",
     "navigation.d.ts",
-    "link.d.ts",
     "middleware.d.ts",
-    "withNextIntl.js",
-    "withNextIntl.d.ts",
     "plugin.d.ts",
     "config.d.ts"
   ],
@@ -118,23 +104,15 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "13.65 KB"
+      "limit": "12.7 KB"
     },
     {
       "path": "dist/production/navigation.js",
-      "limit": "2.5 KB"
+      "limit": "2.6 KB"
     },
     {
       "path": "dist/production/server.js",
       "limit": "1.3 KB"
-    },
-    {
-      "path": "dist/production/client.js",
-      "limit": "1.8 KB"
-    },
-    {
-      "path": "dist/production/link.js",
-      "limit": "1.4 KB"
     },
     {
       "path": "dist/production/middleware.js",

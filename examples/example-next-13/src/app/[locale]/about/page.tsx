@@ -12,7 +12,7 @@ export default function AboutPage({params: {locale}}: Props) {
 
   return (
     <PageLayout title={t('title')}>
-      <div className="max-w-[520px]">
+      <div className="max-w-[530px]">
         {t.rich('description', {
           p: (chunks) => <p className="mt-4">{chunks}</p>,
           code: (chunks) => (
