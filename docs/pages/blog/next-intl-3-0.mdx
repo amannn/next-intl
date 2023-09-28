@@ -82,14 +82,14 @@ By using a similar API, you can upgrade from shared pathnames to localized pathn
 
 ### Switching the middleware default of `localePrefix` to `always`
 
-Previously, the [`localePrefix` of the middleware](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix) defaulted to `as-necessary`, meaning that a locale prefix was only added for non-default locales.
+Previously, the [`localePrefix` of the middleware](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
 
 This default has now been changed to `always` since this has two advantages:
 
 1. We can recommend [a safer default `matcher`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
-2. It avoids an [edge case of `Link`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-necessary) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
+2. It avoids an [edge case of `Link`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
 
-If you want to stay on the `as-necessary` strategy, you can [configure this option](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-necessary) in the middleware.
+If you want to stay on the `as-needed` strategy, you can [configure this option](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware#locale-prefix-as-needed) in the middleware.
 
 ### Static rendering of Server Components
 
