@@ -154,7 +154,7 @@ export default createMiddleware({
 });
 ```
 
-#### Don't use a locale prefix for the default locale [#locale-prefix-as-necessary]
+#### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
 If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly.
 
@@ -164,7 +164,7 @@ import createMiddleware from 'next-intl/middleware';
 export default createMiddleware({
   // ... other config
 
-  localePrefix: 'as-necessary'
+  localePrefix: 'as-needed'
 });
 ```
 
