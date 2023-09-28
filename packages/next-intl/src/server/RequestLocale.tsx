@@ -14,7 +14,7 @@ const getLocaleFromHeader = cache(() => {
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
       throw new Error(
-        'Usage of next-intl APIs in Server Components is currently only available for dynamic rendering (i.e. no `generateStaticParams`).\n\nSupport for static rendering is under consideration, please refer to the roadmap: https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components#roadmap',
+        'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `unstable_setRequestLocale` API to enable static rendering, see https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components#static-rendering',
         {cause: error}
       );
     } else {
@@ -25,7 +25,7 @@ const getLocaleFromHeader = cache(() => {
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? 'Unable to find `next-intl` locale, have you configured the middleware?`'
+        ? `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale`
         : undefined
     );
   }
