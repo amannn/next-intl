@@ -486,3 +486,24 @@ module.exports = {
   output: 'export'
 };
 ```
+
+## Troubleshooting
+
+### "Unable to find `next-intl` locale because the middleware didn't run on this request." [#unable-to-find-locale]
+
+This can happen either because:
+
+1. The middleware was not set up
+2. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component
+
+To address the latter case, you should validate that only valid locales are handled by the `[locale]` layout segment since this effectively acts as a catch-all.
+
+**Example:**
+
+1. You use [the recommended matcher](#matcher-config) that excludes all pathnames with a dot (`.`)
+2. The user requests a pathname that includes a dot (e.g. `favicon.ico`)
+3. If there's no static asset available that matches the request, your layout renders with an invalid `locale` param (i.e. `params.locale === 'favicon.ico'`)
+
+In this case, you want to [interrupt the render and return a 404 status code](/docs/getting-started/app-router-server-components#applocalelayouttsx).
+
+Note that if you expect certain pathnames to include a dot (e.g. `/users/jane.doe`), you should ensure that they are [matched by the middleware](#matcher-config).

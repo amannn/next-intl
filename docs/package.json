@@ -32,5 +32,6 @@
     "eslint-config-next": "^13.4.0",
     "next-sitemap": "^4.0.7",
     "typescript": "^5.0.0"
-  }
+  },
+  "funding": "https://github.com/amannn/next-intl?sponsor=1"
 }

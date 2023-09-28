@@ -229,6 +229,6 @@ export default async function IndexPage({
 
 `unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early). When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
-Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `settings/page.tsx`.
+Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
