@@ -33,7 +33,7 @@ If you haven't done so already, [create a Next.js 13 app that uses the App Route
 
 Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
 
-The simplest option is to create JSON files locally based on locales, e.g. `en.json`.
+The simplest option is to add JSON files in your project based on locales, e.g. `en.json`.
 
 ```json filename="messages/en.json"
 {
@@ -45,7 +45,7 @@ The simplest option is to create JSON files locally based on locales, e.g. `en.j
 
 ### `next.config.js`
 
-Now, set up the plugin which provides i18n configuration to Server Components.
+Now, set up the plugin which provides i18n configuration for Server Components.
 
 ```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')();
@@ -55,7 +55,7 @@ module.exports = withNextIntl({
 });
 ```
 
-### `src/i18n.ts`
+### `src/i18n.ts` [#i18nts]
 
 `next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
 
@@ -147,8 +147,6 @@ export default function Index() {
 
 That's all it takes!
 
-After completing these setup steps, all APIs from `next-intl` can be used in Server Components. If you have a need for using `next-intl` in Client Components too, please refer to [the Server & Client Components guide](/docs/environments/server-client-components).
-
 <Callout>
 
 **Next steps:**
@@ -160,6 +158,8 @@ After completing these setup steps, all APIs from `next-intl` can be used in Ser
     example](https://next-intl-example-next-13.vercel.app/)
     ([source](https://github.com/amannn/next-intl/tree/main/examples/example-next-13)).
   </li>
+  <li>Considering using `next-intl` in Client Components? Check out [the Client Components guide](/docs/environments/server-client-components).</li>
+  <li>Wondering how to link between internationalized pages? Have a look at [the navigation docs](/docs/routing/navigation).</li>
 </ul>
 
 </Callout>
