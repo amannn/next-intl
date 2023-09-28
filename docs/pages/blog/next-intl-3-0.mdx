@@ -6,7 +6,7 @@ title: next-intl 3.0 release candidate
 
 <small>Sep 28, 2023 · by Jan Amann</small>
 
-Almost one year ago, on Oct 25, 2022, [Next.js 13 was announced](https://nextjs.org/blog/next-13) with beta support for the App Router and Server Components. Ever since then, `next-intl` began an exploration on what it means to provide an optimal experience for implementing i18n with these new capabilities.
+Almost one year ago, on Oct 25, 2022, [Next.js 13 was announced](https://nextjs.org/blog/next-13) with beta support for the App Router and Server Components. Ever since then, `next-intl` began an exploration on what it means to provide an ideal experience for implementing i18n with the newly added capabilities.
 
 Today, [after more than 300 commits and the involvement of over 50 community members](https://github.com/amannn/next-intl/pull/149), I'm absolutely thrilled to share the **first release candidate of `next-intl` 3.0**, which is now App Router-first.
 
@@ -51,7 +51,34 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 
 Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the proposed navigation docs](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#shared-pathnames)).
 
-These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames. By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the factory function.
+These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs-git-feat-next-13-rsc-rc-next-intl.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames:
+
+```tsx filename="navigation.ts"
+import {createLocalizedPathnamesNavigation, Pathnames} from 'next-intl/navigation';
+ 
+export const locales = ['en', 'de'] as const;
+ 
+// The `pathnames` object holds pairs of internal
+// and external paths, separated by locale.
+export const pathnames = {
+  // If all locales use the same pathname, a
+  // single external path can be provided.
+  '/': '/',
+  '/blog': '/blog',
+ 
+  // If locales use different paths, you can
+  // specify each external path per locale.
+  '/about': {
+    en: '/about',
+    de: '/ueber-uns'
+  }
+} satisfies Pathnames<typeof locales>;
+ 
+export const {Link, redirect, usePathname, useRouter} =
+  createLocalizedPathnamesNavigation({locales, pathnames});
+```
+
+By using a similar API, you can upgrade from shared pathnames to localized pathnames by replacing the factory function.
 
 ### Switching the middleware default of `localePrefix` to `always`
 
@@ -92,3 +119,5 @@ We're still looking for more feedback, please try out the release candidate and 
 ```
 npm install next-intl@3.0.0-rc.1
 ```
+
+This release was truly a team effort and couldn't be nearly where it is today without the involvement of the community. Thank you so much for being part of this!
