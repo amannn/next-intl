@@ -18,6 +18,39 @@ export default function Index() {
 }
 ```
 
+Depending on if you import `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` from a Server or Client Component, `next-intl` will automatically provide an implementation that works best for the given environment.
+
+<details>
+<summary>Deep dive: How does the Server Components integration work?</summary>
+
+`next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n.ts`](/docs/usage/configuration#i18nts).
+
+Hooks are currently known for being used in Client Components since they are either stateful or don't apply to a server environment. However, there's a proposed [`use` hook](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md#usepromise), which is expected to [work in Server Components too](https://twitter.com/sebmarkbage/status/1587615489605369861?lang=en).
+
+`next-intl` already uses a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component. This becomes more important when you consider [shared components](https://github.com/reactjs/rfcs/blob/bf51f8755ddb38d92e23ad415fc4e3c02b95b331/text/0000-server-components.md#sharing-code-between-server-and-client), which can run both as a Server or a Client Component, depending on where they are imported from.
+
+The one restriction that currently comes with this pattern is that the hooks can not be called from `async` components. To resolve this,
+you can split your component into two, leaving the async code in the first one and
+moving the usage of the hook to the second one.
+
+**Example:**
+
+```tsx filename="app/[locale]/profile/page.tsx"
+export default async function Profile() {
+  // Use this component for all async code ...
+  const user = await getUser();
+  return <ProfileContent user={user} />;
+}
+
+function ProfileContent({user}) {
+  // ... and use this one for rendering the fetched data
+  const t = useTranslations('ProfileContent');
+  return <p><{t('title', {userName: user.name})}/p>
+}
+```
+
+</details>
+
 ## Benefits of handling i18n in Server Components [#server-components-benefits]
 
 Moving internationalization to the server side unlocks new levels of performance, leaving the client side for interactive features.
