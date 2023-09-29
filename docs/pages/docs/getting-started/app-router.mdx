@@ -225,10 +225,23 @@ export default async function IndexPage({
 
 </Steps>
 
-**What does "unstable" mean?**
+
+<details>
+<summary>What does "unstable" mean?</summary>
 
 `unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early). When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
 Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
+</details>
+
+
+<details>
+<summary>How does unstable_setRequestLocale work?</summary>
+
+`next-intl` uses [`cache()`](https://react.dev/reference/react/cache) to create a mutable store that holds the current locale. By calling `unstable_setRequestLocale`, the current locale will be written to the store, making it available to all APIs that require the locale.
+
+Note that the store is scoped to a request and therefore doesn't affect other requests that might be handled in parallel while a given request resolves asynchronously.
+
+</details>
