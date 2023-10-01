@@ -5,15 +5,14 @@ import Steps from 'components/Steps';
 
 Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization entirely on the server side. `next-intl` is adopting the new capabilities and is currently offering a preview version to early adopters, who are already building apps with Server Components.
 
-<Callout type="warning">
-  Support for React Server Components is currently available as a release candidate. Please use it at
-  your own risk, knowing that you may have to migrate upon a stable release.
+<Callout>
+  This page covers a getting started guide for the React Server Components beta that was running over the last couple of months. It's recommended to try out the [next-intl 3.0 release candidate](/blog/next-intl-3-0) if you'd like to use `next-intl` in Server Components.
 </Callout>
 
 ## Current version
 
 ```
-npm install next-intl@3.0.0-rc.2
+npm install next-intl@3.0.0-beta.19
 ```
 
 This version was tested with `next@13.5.1`.
@@ -190,9 +189,7 @@ That's all it takes! Now you can internationalize your apps on the server side.
 
 ## Static rendering
 
-By using APIs like `useTranslations` from `next-intl` in Server Components, your pages will currently opt into dynamic rendering. This is a limitation that will eventually be lifted once [`createServerContext`](https://react.dev/blog/2023/05/03/react-canaries#announcing-breaking-changes-and-new-features-early) is available and integrated in Next.js.
-
-As a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering:
+By using APIs like `useTranslations` from `next-intl` in Server Components, your pages will currently opt into dynamic rendering. This is a limitation that we aim to remove in the future, but as a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering:
 
 <Steps>
 
@@ -250,7 +247,7 @@ export default async function IndexPage({
 
 **What does "unstable" mean?**
 
-`unstable_setRequestLocale` is meant to be used as a stopgap solution and will eventually be replaced by an API that's based on `createServerContext`. When that time comes, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
+`unstable_setRequestLocale` is meant to be used as a stopgap solution and we aim to remove it in the future [in case Next.js adds an API to access parts of the URL](https://github.com/facebook/react/pull/27424#issuecomment-1739464985). If that's the case, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
 Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
