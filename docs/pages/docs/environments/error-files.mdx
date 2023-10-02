@@ -158,4 +158,13 @@ export default function Error({error, reset}) {
 }
 ```
 
-Note that `NextIntlClientProvider` only provides the messages to your error page, but doesn't load any runtime code for processing translations on the client side. Only the error page will include this code, so the performance of other pages isn't affected.
+Note that `error.tsx` is loaded as soon as the app starts. If your app is performance-senstive and you want to avoid loading translation functionality from `next-intl` as part of the initial bundle, you can export a lazy reference from your `error` file:
+
+```tsx filename="app/[locale]/error.tsx"
+'use client';
+
+import {lazy} from 'react';
+
+// Move error content to a separate chunk and load it only when needed
+export default lazy(() => import('./Error'));
+```
