@@ -210,16 +210,22 @@ export default async function LocaleLayout({
 import {unstable_setRequestLocale} from 'next-intl/server';
 import {locales} from '..';
 
-export default async function IndexPage({
+export default function IndexPage({
   params: {locale}
 }) {
   unstable_setRequestLocale(locale);
+
+  // Once the request locale is set, you 
+  // can call hooks from `next-intl`
+  const t = useTranslations('IndexPage');
 
   return (
     // ...
   );
 }
 ```
+
+**Important:** `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
 
 </Steps>
 
