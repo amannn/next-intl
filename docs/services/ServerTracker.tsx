@@ -1,3 +1,5 @@
+import * as vercel from '@vercel/analytics/server';
+
 export default class ServerTracker {
   private static postToCollect({
     auth,
@@ -46,7 +48,7 @@ export default class ServerTracker {
       res.text().then((nextAuth) => {
         if (!nextAuth || !res.ok) {
           throw new Error(
-            'Failed to track event: ' + res.status + nextAuth + ' '
+            'Failed to track umami event: ' + res.status + nextAuth + ' '
           );
         }
         return nextAuth;
@@ -69,20 +71,34 @@ export default class ServerTracker {
     name,
     request
   }: {
-    data: unknown;
+    data?: Record<string, string>;
     name: string;
     request: Request;
   }) {
-    return ServerTracker.postToCollect({
-      request,
-      auth: await ServerTracker.createAuth(request),
-      body: {
-        type: 'event',
-        payload: {
-          event_name: name,
-          event_data: data
+    const promises = [];
+
+    promises.push(
+      vercel.track(name, data).catch((error) => {
+        throw new Error('Vercel tracking failed', {cause: error});
+      })
+    );
+
+    promises.push(
+      ServerTracker.postToCollect({
+        request,
+        auth: await ServerTracker.createAuth(request),
+        body: {
+          type: 'event',
+          payload: {
+            event_name: name,
+            event_data: data
+          }
         }
-      }
-    });
+      }).catch((error) => {
+        throw new Error('Umami tracking failed', {cause: error});
+      })
+    );
+
+    return Promise.all(promises);
   }
 }
