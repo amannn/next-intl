@@ -3,11 +3,20 @@ import React from 'react';
 import {it, expect} from 'vitest';
 import {IntlProvider, useMessages} from '../../src';
 
-it('returns messages when they are configured', () => {
-  function Component() {
-    return <>{JSON.stringify(useMessages())}</>;
-  }
+function Component() {
+  const messages = useMessages();
+  return (
+    <>
+      {JSON.stringify(messages)}
+      {/* The returned value can be passed to the provider */}
+      <IntlProvider locale="de" messages={messages}>
+        <p />
+      </IntlProvider>
+    </>
+  );
+}
 
+it('returns messages when they are configured', () => {
   render(
     <IntlProvider locale="de" messages={{About: {title: 'Hello'}}}>
       <Component />
@@ -17,16 +26,12 @@ it('returns messages when they are configured', () => {
   screen.getByText('{"About":{"title":"Hello"}}');
 });
 
-it('returns undefined when no messages are configured', () => {
-  function Component() {
-    return <>{useMessages()}</>;
-  }
-
-  const {container} = render(
-    <IntlProvider locale="de">
-      <Component />
-    </IntlProvider>
-  );
-
-  expect(container.textContent).toBe('');
+it('throws when no messages are configured', () => {
+  expect(() =>
+    render(
+      <IntlProvider locale="de">
+        <Component />
+      </IntlProvider>
+    )
+  ).toThrow('No messages found.');
 });
