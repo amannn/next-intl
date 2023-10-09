@@ -139,6 +139,8 @@ To work with ICU messages, it can be helpful to use an editor that supports this
 
 ### Static messages
 
+Static messages will be used as-is:
+
 ```json filename="en.json"
 "message": "Hello world!"
 ```
@@ -149,6 +151,8 @@ t('message'); // "Hello world!"
 
 ### Interpolation of dynamic values
 
+Dynamic values can be inserted into messages by using curly braces:
+
 ```json filename="en.json"
 "message": "Hello {name}!"
 ```
@@ -157,83 +161,93 @@ t('message'); // "Hello world!"
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
-### Formatting Interpolated daynamic values
+### Cardinal pluralization
 
-Values can also be formatted based on their type. You use a `{key, type, format}` argument to do that.
+To express the pluralization of a given number of items, the `plural` argument can be used:
 
-The elements of the argument are:
-
-- `key` is where in the input data to find the data
-- `type` is where in the input data to find the data
-- `format` is optional, and is a further refinement on how to display that type of data
-
-The available format `type`s available are:
-
-- [`{number}`](/docs/usage/numbers#numbers-within-messages) This type is used to format numbers in a way that is sensitive to the locale.
-- [`{date}`](/docs/usage/dates-times#dates-and-times-within-messages) This type is used to format dates in a way that is sensitive to the locale.
-- [`{time}`](/docs/usage/dates-times#dates-and-times-within-messages) This type is used to format times in a way that is sensitive to the locale.
-- [`{select}`](/docs/usage/plurals-enums#selecting-enum-based-values) This type is used to choose output by matching a value to one of many choices.
-- [`{plural}`](/docs/usage/plurals-enums#cardinal-pluralization) This type is used to choose output based on the cardinal pluralization rules of the current locale.
-- [`{selectordinal}`](/docs/usage/plurals-enums#ordinal-pluralization) This type is used to choose output based on the ordinal pluralization rules of the current locale.
-
-<Callout type="warning">
-  **Important**: If your setup only includes the language in the locale string like this:
+```js filename="en.json"
+"message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
+```
 
 ```js
-{
-  locales: ['en', 'ar'],
-  defaultLocale: 'en'
-}
+t('message', {count: 3580}); // "You have 3,580 followers."
 ```
 
-Formatting might cause hydration errors because the locale strings that you have in your setup only contain the language with no extra data in it to help the [Intl API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) match the proper locale rules, so the Intl API resorts to a `localeMatcher` algorithm, and this algorirthm can result in different formatting rules in different hosting environments.
-For example, on the server `ar` as a locale string will result in Arabic digits, but on chrome Latin digits.
+Note that by using the `#` marker, the value will be [formatted as a number](/docs/usage/numbers).
 
-To solve this hydration error you can override the global formatting options as desired following the Intl API to ensure consistent formatting.
+<details>
+<summary>Which plural forms are supported?</summary>
 
-```ts
-import {type IntlConfig} from 'next-intl';
-import {getRequestConfig} from 'next-intl/server';
+Depending on the language, different forms of cardinal pluralization are supported.
 
-export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`./translations/${locale}.json`)).default,
-  formats: getGlobalFormatOptions(locale)
-}));
+For example, English has two forms: One for the singular (e.g. "1 _follower_") and one for everything else (e.g. "0 _followers_" and "2 _followers_"). In contrast, Chinese only has one form, while Arabic has six.
 
-export function getGlobalFormatOptions(locale: Locale): IntlConfig['formats'] {
-  return {
-    dateTime: {
-      date: {
-        // ...
-        numberingSystem: locale === 'ar' ? 'arab' : 'latn'
-      }
-    },
-    number: {
-      currency: {
-        // ...
-        numberingSystem: locale === 'ar' ? 'arab' : 'latn'
-      }
-    }
-  };
-}
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+
+**These tags are supported:**
+
+- `zero`
+- `one`
+- `two`
+- `few`
+- `many`
+- `other`
+
+The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+
+To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
+
+</details>
+
+### Ordinal pluralization
+
+To apply pluralization based on an order of items, the `selectordinal` argument can be used:
+
+```js filename="en.json"
+"message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
-Another solution if you're already handling different locales for the same language, you'll need to add the different locales any way, so you can make your locale strings more specific to make sure that the formatting rules will match on every environment as follows:
+<details>
+<summary>Which plural forms are supported?</summary>
+
+Depending on the language, different forms of ordinal pluralization are supported.
+
+For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
+
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+
+**These tags are supported:**
+
+- `zero`
+- `one`
+- `two`
+- `few`
+- `many`
+- `other`
+
+The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+
+To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
+
+</details>
+
+### Selecting enum-based values
+
+To map identifiers to human readable labels, you can use the `select` argument:
+
+```js filename="en.json"
+"message": "{gender, select, female {She} male {He} other {They}} is online."
+```
 
 ```js
-{
-  locales: ['en-US', 'ar-AE'],
-  defaultLocale: 'en-US'
-}
+t('message', {gender: 'female'}); // "She is online."
 ```
 
-And adjust the rest of the files accordingly.
-
-Now, this should laser focus your desired locale which can ensure the same formatting rules in different hosting environments.
-
-</Callout>
+**Note**: The `other` case is required and will be used when none of the specific values match.
 
 ### Escaping
+
+Since curly braces are used for [interpolating dynamic values](/docs/usage/messages#interpolation-of-dynamic-values), you can escape them with the `'` marker to use the actual symbol in messages:
 
 ```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
@@ -245,7 +259,7 @@ t('message'); // "Escape curly braces with single quotes (e.g. {name})"
 
 ## Rich text
 
-You can format rich text with custom tags and map them to React components.
+You can format rich text with custom tags and map them to React components:
 
 ```json filename="en.json"
 {
@@ -266,7 +280,7 @@ Note that the ICU parser doesn't support self-closing tags at this point, theref
 
 ## Arrays of messages
 
-If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
+If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages:
 
 ```json filename="en.json"
 {
@@ -359,7 +373,7 @@ function Benefits() {
 
 ## Raw messages
 
-Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case.
+Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
 
 ```json filename="en.json"
 {

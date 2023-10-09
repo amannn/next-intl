@@ -12,8 +12,7 @@ type Props = {
 const TypeToEmoji = {
   default: '💡',
   warning: '⚠️',
-  question: '🤔',
-  danger: '⛔'
+  question: '🤔'
 };
 
 const classes = {
@@ -25,9 +24,6 @@ const classes = {
   ),
   question: cn(
     'border-sky-700/20 bg-sky-50 text-sky-800 dark:border-sky-400/40 dark:bg-sky-700/30 dark:text-white/90'
-  ),
-  danger: cn(
-    'border-red-700/20 bg-red-50 text-red-800 dark:border-red-400/40 dark:bg-red-700/30 dark:text-white/90'
   )
 };
 
