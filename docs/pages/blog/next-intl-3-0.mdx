@@ -107,8 +107,9 @@ Note that if you're using `next-intl` exclusively in Client Components, this doe
 4. [The middleware](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server` (deprecated since v2.14).
 5. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 6. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
-7. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
-8. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
+7. `useMessages` now has a non-nullable return type for easier consumption and will throw if no messages are configured.
+8. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
+9. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
 
 ## Upgrade now
 
@@ -117,7 +118,7 @@ Along with the release candidate also comes a [preview of the updated docs](http
 We're still looking for more feedback, please try out the release candidate and [reach out](https://github.com/amannn/next-intl/pull/149)!
 
 ```
-npm install next-intl@3.0.0-rc.3
+npm install next-intl@3.0.0-rc.4
 ```
 
 This release was truly a team effort and couldn't be nearly where it is today without the involvement of the community. Thank you so much for being part of this!
