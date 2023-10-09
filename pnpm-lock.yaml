@@ -60,8 +60,8 @@ importers:
         specifier: ^0.5.9
         version: 0.5.9(tailwindcss@3.3.2)
       '@vercel/analytics':
-        specifier: 1.1.0-beta.5
-        version: 1.1.0-beta.5
+        specifier: 1.1.0
+        version: 1.1.0
       clsx:
         specifier: ^1.2.1
         version: 1.2.1
@@ -7153,8 +7153,10 @@ packages:
     resolution: {integrity: sha512-17kVyLq3ePTKOkveHxXuIJZtGYs+cSoev7BlP+Lf4916qfDhk/HBjvlYDe8egrea7LNPHKwSZJK/bzZC+Q6AwQ==}
     dev: true
 
-  /@vercel/analytics@1.1.0-beta.5:
-    resolution: {integrity: sha512-AieTb7zA8j6N7QBmwBhHW5XWGoH2F7qLCJRG1uwhpzxGLqd0PYoboZrrGy63S/PVxw+bsyloGz0ceXpOKoa2VQ==}
+  /@vercel/analytics@1.1.0:
+    resolution: {integrity: sha512-k5ePYZPxitxxD1eJenPUUuH3qK+EtaA9OVD3oO0BRbyT/LarmZF0qdkptRSidip1arQxsTEIWvHbTuj1oksl+Q==}
+    dependencies:
+      server-only: 0.0.1
     dev: false
 
   /@vitest/expect@0.32.2:
