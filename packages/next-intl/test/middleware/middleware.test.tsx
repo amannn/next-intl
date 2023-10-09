@@ -35,13 +35,13 @@ vi.mock('next/server', async (importActual) => {
 
 function createMockRequest(
   pathnameWithSearch = '/',
-  locale = 'en',
+  acceptLanguageLocale = 'en',
   host = 'http://localhost:3000',
   localeCookieValue?: string,
   customHeaders?: HeadersInit
 ) {
   const headers = new Headers({
-    'accept-language': `${locale};q=0.9,en;q=0.8`,
+    'accept-language': `${acceptLanguageLocale};q=0.9,en;q=0.8`,
     host: new URL(host).host,
     ...(localeCookieValue && {
       cookie: `${COOKIE_LOCALE_NAME}=${localeCookieValue}`
@@ -156,6 +156,15 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/'
+      );
+    });
+
+    it('redirects requests for the default locale when prefixed at the root with search params', () => {
+      middleware(createMockRequest('/en?search'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/?search'
       );
     });
 
