@@ -20,7 +20,7 @@ jobs:
 
             **Templates:**
              - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
-             - [CodeSandbox (`app` directory, RSC beta)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
+             - [CodeSandbox (`app` directory, RSC RC)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
              - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
             
             **Creating a good bug report takes time.**
