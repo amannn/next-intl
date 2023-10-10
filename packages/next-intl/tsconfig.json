@@ -4,7 +4,6 @@
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "target": "ES2019",
     "importHelpers": false,
     "declaration": true,
     "sourceMap": true,

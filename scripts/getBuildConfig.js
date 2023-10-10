@@ -75,7 +75,14 @@ module.exports = function getConfig({
             '@babel/preset-env',
             {
               targets: {
-                browsers: ['>0.25%', 'not ie 11', 'not op_mini all']
+                // Same as https://nextjs.org/docs/architecture/supported-browsers#browserslist
+                browsers: [
+                  "chrome 64",
+                  "edge 79",
+                  "firefox 67",
+                  "opera 51",
+                  "safari 12"
+                ]
               }
             }
           ]
