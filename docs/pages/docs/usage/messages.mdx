@@ -129,7 +129,7 @@ There's one exception however: [Using `next-intl` with the Next.js Metadata API 
 
 ## Rendering ICU messages
 
-`next-intl` uses ICU message syntax that allows you to express language nuances and separates state handling within messages from your app code.
+`next-intl` uses [ICU message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) that allows you to express language nuances and separates state handling within messages from your app code.
 
 <Callout>
 
@@ -138,6 +138,8 @@ To work with ICU messages, it can be helpful to use an editor that supports this
 </Callout>
 
 ### Static messages
+
+Static messages will be used as-is:
 
 ```json filename="en.json"
 "message": "Hello world!"
@@ -149,6 +151,8 @@ t('message'); // "Hello world!"
 
 ### Interpolation of dynamic values
 
+Dynamic values can be inserted into messages by using curly braces:
+
 ```json filename="en.json"
 "message": "Hello {name}!"
 ```
@@ -157,7 +161,9 @@ t('message'); // "Hello world!"
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
-### Pluralization
+### Cardinal pluralization
+
+To express the pluralization of a given number of items, the `plural` argument can be used:
 
 ```json filename="en.json"
 "message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
@@ -167,19 +173,69 @@ t('message', {name: 'Jane'}); // "Hello Jane!"
 t('message', {count: 3580}); // "You have 3,580 followers."
 ```
 
+Note that by using the `#` marker, the value will be [formatted as a number](/docs/usage/numbers).
+
+<details>
+<summary>Which plural forms are supported?</summary>
+
+Depending on the language, different forms of cardinal pluralization are supported.
+
+For example, English has two forms: One for the singular (e.g. "1 _follower_") and one for everything else (e.g. "0 _followers_" and "2 _followers_"). In contrast, Chinese only has one form, while Arabic has six.
+
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+
+**These tags are supported:**
+
+- `zero`
+- `one`
+- `two`
+- `few`
+- `many`
+- `other`
+
+The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+
+To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
+
+</details>
+
 ### Ordinal pluralization
 
-```json filename="en.json"
+To apply pluralization based on an order of items, the `selectordinal` argument can be used:
+
+```js filename="en.json"
 "message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
-```js
-t('message', {year: 21}); // "It's your 21st birthday!"
-```
+<details>
+<summary>Which plural forms are supported?</summary>
+
+Depending on the language, different forms of ordinal pluralization are supported.
+
+For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
+
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+
+**These tags are supported:**
+
+- `zero`
+- `one`
+- `two`
+- `few`
+- `many`
+- `other`
+
+The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+
+To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
+
+</details>
 
 ### Selecting enum-based values
 
-```json filename="en.json"
+To map identifiers to human readable labels, you can use the `select` argument:
+
+```js filename="en.json"
 "message": "{gender, select, female {She} male {He} other {They}} is online."
 ```
 
@@ -187,7 +243,11 @@ t('message', {year: 21}); // "It's your 21st birthday!"
 t('message', {gender: 'female'}); // "She is online."
 ```
 
+**Note**: The `other` case is required and will be used when none of the specific values match.
+
 ### Escaping
+
+Since curly braces are used for [interpolating dynamic values](/docs/usage/messages#interpolation-of-dynamic-values), you can escape them with the `'` marker to use the actual symbol in messages:
 
 ```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
@@ -199,7 +259,7 @@ t('message'); // "Escape curly braces with single quotes (e.g. {name})"
 
 ## Rich text
 
-You can format rich text with custom tags and map them to React components.
+You can format rich text with custom tags and map them to React components:
 
 ```json filename="en.json"
 {
@@ -220,7 +280,7 @@ Note that the ICU parser doesn't support self-closing tags at this point, theref
 
 ## Arrays of messages
 
-If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages.
+If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages:
 
 ```json filename="en.json"
 {
@@ -313,7 +373,7 @@ function Benefits() {
 
 ## Raw messages
 
-Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case.
+Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
 
 ```json filename="en.json"
 {

@@ -32,7 +32,7 @@ See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs
 
 Numbers can be embedded within messages by using the ICU syntax.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "basic": "Basic formatting: {value, number}",
   "percentage": "Displayed as a percentage: {value, number, percent}",
@@ -54,7 +54,7 @@ If you work with translators, it can be helpful for them to use an editor that s
 
 To use custom formats in messages, you can provide formatters that can be referenced by name.
 
-```js filename="en.json"
+```json filename="en.json"
 {
   "price": "This product costs {price, number, currency}"
 }
