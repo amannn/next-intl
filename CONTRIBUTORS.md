@@ -15,6 +15,16 @@ Open source work should be fun for everyone involved. Let's make sure it stays t
 
 Thank you for being a part of this project! 🙌
 
+## Documentation guidelines
+
+The docs are consulted by developers with different levels of professional experience, different proficiencies of language & reading comprehension and at various points of their app development journey.
+
+We aim to create resources that help developers in the following situations:
+
+1. **Getting started**: Developers have limited time and need to get a job done quickly. We try to limit the necessary information to get started, use simple & friendly language and rely on good defaults to support developers. Snippets that can be copy-pasted are frequently used and provide the possibility to include important information as code comments which are typically copied along.
+2. **Going deeper**: Developers who are already (somewhat) invested into `next-intl` will consult the docs to learn about advanced use cases. We use precise language so developers trust the library to work as expected, while optionally providing deep dives in expandable areas. We strive to provide relevant information that developers will likely need within the docs, but will use external links to trusted sources like MDN, Wikipedia and the Next.js docs to provide supplemental information for deep dives that aren't the main focus of `next-intl`.
+3. **Fixing a bug**: Developers may run into difficult bugs and need all the help they can get. When there are missing pieces within the library, we don't try to hide them, but instead provide documentation for workarounds. Especially in the case of bugs, it's important to provide optional deep dives that include all relevant details. Still, developers typically consult the GitHub issues & discussions of the project, therefore we can provide certain solutions to specific problems there too. Developers will also google their errors, therefore common errors can be addressed with troubleshooting sections that are indexed.
+
 ## Development
 
 ### Setup
