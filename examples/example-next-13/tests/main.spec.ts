@@ -58,3 +58,9 @@ it('sets a cookie', async ({page}) => {
   expect(value).toContain('Max-Age=31536000;');
   expect(value).toContain('Expires=');
 });
+
+it('serves a robots.txt', async ({page}) => {
+  const response = await page.goto('/robots.txt');
+  const body = await response?.body();
+  expect(body?.toString()).toEqual('User-Agent: *\nAllow: *\n');
+});
