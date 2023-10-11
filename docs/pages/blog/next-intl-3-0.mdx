@@ -32,7 +32,7 @@ If you've been part of the Server Components beta and have already tried out pre
 1.  [The `i18n.ts` module](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/getting-started/app-router-server-components#i18nts) provides configuration for Server Components
 2.  [`next-intl/plugin`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/getting-started/app-router-server-components#nextconfigjs) needs to be added to link your `i18n.ts` module to `next-intl`
 
-### New navigation APIs
+### New navigation APIs for the App Router
 
 With [v2.14](https://github.com/amannn/next-intl/blob/main/CHANGELOG.md#2140-2023-05-10), the navigation APIs `useRouter`, `usePathname` and `Link` were added to `next-intl` that enabled you to use the APIs you're used to from Next.js while automatically considering a `locale` behind the scenes.
 
@@ -55,9 +55,9 @@ These changes bring the existing APIs in line with the new [`createLocalizedPath
 
 ```tsx filename="navigation.ts"
 import {createLocalizedPathnamesNavigation, Pathnames} from 'next-intl/navigation';
- 
+
 export const locales = ['en', 'de'] as const;
- 
+
 // The `pathnames` object holds pairs of internal
 // and external paths, separated by locale.
 export const pathnames = {
@@ -65,7 +65,7 @@ export const pathnames = {
   // single external path can be provided.
   '/': '/',
   '/blog': '/blog',
- 
+
   // If locales use different paths, you can
   // specify each external path per locale.
   '/about': {
@@ -73,7 +73,7 @@ export const pathnames = {
     de: '/ueber-uns'
   }
 } satisfies Pathnames<typeof locales>;
- 
+
 export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({locales, pathnames});
 ```
