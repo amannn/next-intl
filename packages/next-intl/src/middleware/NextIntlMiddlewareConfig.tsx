@@ -1,3 +1,4 @@
+import type {NextRequest, NextResponse} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
 
 type LocalePrefix = 'as-needed' | 'always' | 'never';
@@ -25,6 +26,11 @@ export type DomainConfig<Locales extends AllLocales> = Omit<
   locales?: RoutingBaseConfig<Array<Locales[number]>>['locales'];
 };
 
+type AsyncRewriteFn = (
+  request: NextRequest,
+  ...args: Parameters<typeof NextResponse.rewrite>
+) => Promise<ReturnType<typeof NextResponse.rewrite>>;
+
 type MiddlewareConfig<Locales extends AllLocales> =
   RoutingBaseConfig<Locales> & {
     /** Can be used to change the locale handling per domain. */
@@ -42,6 +48,9 @@ type MiddlewareConfig<Locales extends AllLocales> =
     // of inferring it from `next-intl/config` so that:
     // a) The user gets TypeScript errors when there's a mismatch
     // b) The middleware can be used in a standalone fashion
+
+    /** Allow using a function other than NextResponse.rewrite if needed (e.g. netlify) */
+    rewrite?: AsyncRewriteFn;
   };
 
 export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =
@@ -49,6 +58,7 @@ export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =
     alternateLinks: boolean;
     localePrefix: LocalePrefix;
     localeDetection: boolean;
+    rewrite: AsyncRewriteFn;
   };
 
 export default MiddlewareConfig;

@@ -1,10 +1,17 @@
 // @vitest-environment edge-runtime
 
-import {NextRequest} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 import {Pathnames} from '../../src/navigation';
+
+function rewrite(
+  _: NextRequest,
+  ...args: Parameters<typeof NextResponse.rewrite>
+) {
+  return Promise.resolve(NextResponse.rewrite(...args));
+}
 
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
@@ -12,7 +19,8 @@ it('works for prefixed routing (as-needed)', () => {
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
 
   expect(
@@ -46,7 +54,8 @@ it('works for prefixed routing (as-needed) with `pathnames`', () => {
     locales: ['en', 'de'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
   const pathnames = {
     '/': '/',
@@ -123,7 +132,8 @@ it('works for prefixed routing (always)', () => {
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'always',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
 
   expect(
@@ -158,6 +168,7 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
     alternateLinks: true,
     localePrefix: 'as-needed',
     localeDetection: true,
+    rewrite,
     domains: [
       {
         domain: 'example.com',
@@ -222,6 +233,7 @@ it("works for type domain with `localePrefix: 'always'`", () => {
     alternateLinks: true,
     localePrefix: 'always',
     localeDetection: true,
+    rewrite,
     domains: [
       {
         domain: 'example.com',
@@ -286,6 +298,7 @@ it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", ()
     localeDetection: true,
     defaultLocale: 'en',
     locales: ['en', 'fr'],
+    rewrite,
     domains: [
       {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
       {
@@ -435,7 +448,8 @@ it('uses the external host name from headers instead of the url of the incoming 
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
 
   expect(
@@ -463,7 +477,8 @@ it('keeps the port of an external host if provided', () => {
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
 
   expect(
@@ -491,7 +506,8 @@ it('uses the external host name and the port from headers instead of the url wit
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    rewrite
   };
 
   expect(

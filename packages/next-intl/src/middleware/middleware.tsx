@@ -24,10 +24,16 @@ function receiveConfig<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ): MiddlewareConfigWithDefaults<Locales> {
   const result: MiddlewareConfigWithDefaults<Locales> = {
-    ...config,
+    locales: config.locales,
+    defaultLocale: config.defaultLocale,
+    domains: config.domains,
+    pathnames: config.pathnames,
     alternateLinks: config.alternateLinks ?? true,
     localePrefix: config.localePrefix ?? 'always',
-    localeDetection: config.localeDetection ?? true
+    localeDetection: config.localeDetection ?? true,
+    rewrite:
+      config.rewrite ??
+      ((_, ...args) => Promise.resolve(NextResponse.rewrite(...args)))
   };
 
   return result;
@@ -38,7 +44,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 ) {
   const configWithDefaults = receiveConfig(config);
 
-  return function middleware(request: NextRequest) {
+  return async function middleware(request: NextRequest) {
     const {domain, locale} = resolveLocale(
       configWithDefaults,
       request.headers,
@@ -65,7 +71,11 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     function rewrite(url: string) {
-      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
+      return configWithDefaults.rewrite(
+        request,
+        new URL(url, request.url),
+        getResponseInit()
+      );
     }
 
     function redirect(url: string, host?: string) {
@@ -165,7 +175,7 @@ export default function createMiddleware<Locales extends AllLocales>(
           (hasMatchedDefaultLocale &&
             configWithDefaults.localePrefix === 'as-needed')
         ) {
-          response = rewrite(pathWithSearch);
+          response = await rewrite(pathWithSearch);
         } else {
           response = redirect(pathWithSearch);
         }
@@ -197,10 +207,10 @@ export default function createMiddleware<Locales extends AllLocales>(
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
                   response = redirect(basePath, pathDomain?.domain);
                 } else {
-                  response = rewrite(pathWithSearch);
+                  response = await rewrite(pathWithSearch);
                 }
               } else {
-                response = rewrite(pathWithSearch);
+                response = await rewrite(pathWithSearch);
               }
             }
           } else {
@@ -213,7 +223,7 @@ export default function createMiddleware<Locales extends AllLocales>(
               (configWithDefaults.localePrefix === 'as-needed' ||
                 configWithDefaults.domains))
           ) {
-            response = rewrite(`/${locale}${pathWithSearch}`);
+            response = await rewrite(`/${locale}${pathWithSearch}`);
           } else {
             response = redirect(`/${locale}${pathWithSearch}`);
           }

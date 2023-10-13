@@ -123,8 +123,8 @@ describe('prefix-based routing', () => {
       localePrefix: 'as-needed'
     });
 
-    it('rewrites requests for the default locale', () => {
-      middleware(createMockRequest('/'));
+    it('rewrites requests for the default locale', async () => {
+      await middleware(createMockRequest('/'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -132,8 +132,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for the default locale with query params at the root', () => {
-      middleware(createMockRequest('/?sort=asc'));
+    it('rewrites requests for the default locale with query params at the root', async () => {
+      await middleware(createMockRequest('/?sort=asc'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -141,8 +141,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for the default locale with query params at a nested path', () => {
-      middleware(createMockRequest('/list?sort=asc'));
+    it('rewrites requests for the default locale with query params at a nested path', async () => {
+      await middleware(createMockRequest('/list?sort=asc'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -150,8 +150,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for the default locale when prefixed at the root', () => {
-      middleware(createMockRequest('/en'));
+    it('redirects requests for the default locale when prefixed at the root', async () => {
+      await middleware(createMockRequest('/en'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -159,8 +159,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for the default locale when prefixed at the root with search params', () => {
-      middleware(createMockRequest('/en?search'));
+    it('redirects requests for the default locale when prefixed at the root with search params', async () => {
+      await middleware(createMockRequest('/en?search'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -168,8 +168,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for the default locale when prefixed at sub paths', () => {
-      middleware(createMockRequest('/en/about'));
+    it('redirects requests for the default locale when prefixed at sub paths', async () => {
+      await middleware(createMockRequest('/en/about'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -177,8 +177,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for other locales', () => {
-      middleware(createMockRequest('/', 'de'));
+    it('redirects requests for other locales', async () => {
+      await middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -186,8 +186,10 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for the root if a cookie exists with a non-default locale', () => {
-      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
+    it('redirects requests for the root if a cookie exists with a non-default locale', async () => {
+      await middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', 'de')
+      );
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -195,8 +197,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves requests for other locales when prefixed', () => {
-      middleware(createMockRequest('/de'));
+    it('serves requests for other locales when prefixed', async () => {
+      await middleware(createMockRequest('/de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -205,8 +207,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves requests for other locales when prefixed with a trailing slash', () => {
-      middleware(createMockRequest('/de/'));
+    it('serves requests for other locales when prefixed with a trailing slash', async () => {
+      await middleware(createMockRequest('/de/'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -215,8 +217,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves requests for other locales with query params at the root', () => {
-      middleware(createMockRequest('/de?sort=asc'));
+    it('serves requests for other locales with query params at the root', async () => {
+      await middleware(createMockRequest('/de?sort=asc'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -225,8 +227,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves requests for other locales with query params at a nested path', () => {
-      middleware(createMockRequest('/de/list?sort=asc'));
+    it('serves requests for other locales with query params at a nested path', async () => {
+      await middleware(createMockRequest('/de/list?sort=asc'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -235,16 +237,16 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('sets a cookie', () => {
-      const response = middleware(createMockRequest('/'));
+    it('sets a cookie', async () => {
+      const response = await middleware(createMockRequest('/'));
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'en'
       });
     });
 
-    it('retains request headers for the default locale', () => {
-      middleware(
+    it('retains request headers for the default locale', async () => {
+      await middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
           'x-test': 'test'
         })
@@ -256,8 +258,8 @@ describe('prefix-based routing', () => {
       ).toBe('test');
     });
 
-    it('retains request headers for secondary locales', () => {
-      middleware(
+    it('retains request headers for secondary locales', async () => {
+      await middleware(
         createMockRequest('/de', 'de', 'http://localhost:3000', undefined, {
           'x-test': 'test'
         })
@@ -272,8 +274,8 @@ describe('prefix-based routing', () => {
       ).toBe('test');
     });
 
-    it('returns alternate links', () => {
-      const response = middleware(createMockRequest('/'));
+    it('returns alternate links', async () => {
+      const response = await middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(
         [
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
@@ -283,8 +285,10 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('always provides the locale via a request header, even if a cookie exists with the correct value (see https://github.com/amannn/next-intl/discussions/446)', () => {
-      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'en'));
+    it('always provides the locale via a request header, even if a cookie exists with the correct value (see https://github.com/amannn/next-intl/discussions/446)', async () => {
+      await middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', 'en')
+      );
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
       expect(
         MockedNextResponse.rewrite.mock.calls[0][1]?.request?.headers?.get(
@@ -327,8 +331,8 @@ describe('prefix-based routing', () => {
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
-      it('serves requests for the default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/', 'en'));
+      it('serves requests for the default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/', 'en'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -336,17 +340,17 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/about', 'en'));
-        middlewareWithPathnames(createMockRequest('/users', 'en'));
-        middlewareWithPathnames(createMockRequest('/users/1', 'en'));
-        middlewareWithPathnames(
+      it('serves requests for the default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/about', 'en'));
+        await middlewareWithPathnames(createMockRequest('/users', 'en'));
+        await middlewareWithPathnames(createMockRequest('/users/1', 'en'));
+        await middlewareWithPathnames(
           createMockRequest('/news/happy-newyear-g5b116754', 'en')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/products/apparel/t-shirts', 'en')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/categories/women/t-shirts', 'en')
         );
 
@@ -373,8 +377,8 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/de', 'de'));
+      it('serves requests for a non-default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/de', 'de'));
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled(); // We rewrite just in case
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
@@ -383,17 +387,19 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
-        middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
-        middlewareWithPathnames(createMockRequest('/de/benutzer/1', 'de'));
-        middlewareWithPathnames(
+      it('serves requests for a non-default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
+        await middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
+        await middlewareWithPathnames(
+          createMockRequest('/de/benutzer/1', 'de')
+        );
+        await middlewareWithPathnames(
           createMockRequest('/de/neuigkeiten/happy-newyear-g5b116754', 'de')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/de/produkte/kleidung/t-shirts', 'de')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/de/kategorien/frauen/t-shirts', 'de')
         );
 
@@ -420,8 +426,8 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a request for a localized route that is not associated with the requested locale', () => {
-        middlewareWithPathnames(createMockRequest('/ueber', 'en'));
+      it('redirects a request for a localized route that is not associated with the requested locale', async () => {
+        await middlewareWithPathnames(createMockRequest('/ueber', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
@@ -430,10 +436,10 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects when a pathname from the default locale ends up with a different locale', () => {
+      it('redirects when a pathname from the default locale ends up with a different locale', async () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(createMockRequest('/de/about', 'de'));
-        middlewareWithPathnames(createMockRequest('/de/users/2', 'de'));
+        await middlewareWithPathnames(createMockRequest('/de/about', 'de'));
+        await middlewareWithPathnames(createMockRequest('/de/users/2', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
@@ -445,9 +451,9 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a non-prefixed nested path to a localized alternative if another locale was detected', () => {
-        middlewareWithPathnames(createMockRequest('/about', 'de'));
-        middlewareWithPathnames(createMockRequest('/users/2', 'de'));
+      it('redirects a non-prefixed nested path to a localized alternative if another locale was detected', async () => {
+        await middlewareWithPathnames(createMockRequest('/about', 'de'));
+        await middlewareWithPathnames(createMockRequest('/users/2', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
@@ -459,70 +465,74 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('sets alternate links', () => {
-        function getLinks(request: NextRequest) {
-          return middlewareWithPathnames(request)
-            .headers.get('link')
+      it('sets alternate links', async () => {
+        async function getLinks(request: NextRequest) {
+          return (await middlewareWithPathnames(request)).headers
+            .get('link')
             ?.split(', ');
         }
 
-        expect(getLinks(createMockRequest('/', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/', 'en'))).toEqual([
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/de', 'de'))).toEqual([
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/about', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/about', 'en'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/users/1', 'en'))).toEqual([
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
-        ]);
-        expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/users/1', 'en'))).toEqual([
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
-          getLinks(createMockRequest('/products/apparel/t-shirts', 'en'))
+          await getLinks(createMockRequest('/de/benutzer/1', 'de'))
+        ).toEqual([
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          await getLinks(createMockRequest('/products/apparel/t-shirts', 'en'))
         ).toEqual([
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
-          getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
+          await getLinks(
+            createMockRequest('/de/produkte/apparel/t-shirts', 'de')
+          )
         ).toEqual([
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/unknown', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/unknown', 'en'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/de/unknown', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/de/unknown', 'de'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
       });
 
-      it('rewrites requests when the pathname is mapped for the default locale as well', () => {
+      it('rewrites requests when the pathname is mapped for the default locale as well', async () => {
         const callMiddleware = createIntlMiddleware({
           defaultLocale: 'en',
           locales: ['en', 'de'],
@@ -538,10 +548,10 @@ describe('prefix-based routing', () => {
             }
           }
         });
-        callMiddleware(createMockRequest('/one', 'en'));
-        callMiddleware(createMockRequest('/de/eins', 'de'));
-        callMiddleware(createMockRequest('/two/2', 'en'));
-        callMiddleware(createMockRequest('/de/zwei/2', 'de'));
+        await callMiddleware(createMockRequest('/one', 'en'));
+        await callMiddleware(createMockRequest('/de/eins', 'de'));
+        await callMiddleware(createMockRequest('/two/2', 'en'));
+        await callMiddleware(createMockRequest('/de/zwei/2', 'de'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(4);
@@ -569,8 +579,8 @@ describe('prefix-based routing', () => {
       localeDetection: false
     });
 
-    it('serves non-prefixed requests with the default locale and ignores the accept-language header', () => {
-      middleware(createMockRequest('/', 'de'));
+    it('serves non-prefixed requests with the default locale and ignores the accept-language header', async () => {
+      await middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -578,8 +588,10 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves non-prefixed requests with the default locale and ignores an existing cookie value', () => {
-      middleware(createMockRequest('/', 'de', 'http://localhost:3000', 'de'));
+    it('serves non-prefixed requests with the default locale and ignores an existing cookie value', async () => {
+      await middleware(
+        createMockRequest('/', 'de', 'http://localhost:3000', 'de')
+      );
 
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
@@ -589,15 +601,15 @@ describe('prefix-based routing', () => {
     });
   });
 
-  describe('localePrefix: always', () => {
+  describe('localePrefix: always', async () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'always'
     });
 
-    it('redirects non-prefixed requests for the default locale', () => {
-      middleware(createMockRequest('/'));
+    it('redirects non-prefixed requests for the default locale', async () => {
+      await middleware(createMockRequest('/'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -605,8 +617,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests for other locales', () => {
-      middleware(createMockRequest('/', 'de'));
+    it('redirects requests for other locales', async () => {
+      await middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -614,27 +626,27 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects when a pathname starts with the locale characters', () => {
-      middleware(createMockRequest('/engage'));
+    it('redirects when a pathname starts with the locale characters', async () => {
+      await middleware(createMockRequest('/engage'));
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/en/engage'
       );
 
-      middleware(createMockRequest('/engage?test'));
+      await middleware(createMockRequest('/engage?test'));
       expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
         'http://localhost:3000/en/engage?test'
       );
 
-      middleware(createMockRequest('/engage/test'));
+      await middleware(createMockRequest('/engage/test'));
       expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
         'http://localhost:3000/en/engage/test'
       );
     });
 
-    it('serves requests for the default locale', () => {
-      middleware(createMockRequest('/en'));
+    it('serves requests for the default locale', async () => {
+      await middleware(createMockRequest('/en'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -643,8 +655,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales', () => {
-      middleware(createMockRequest('/de'));
+    it('serves requests for non-default locales', async () => {
+      await middleware(createMockRequest('/de'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -683,8 +695,8 @@ describe('prefix-based routing', () => {
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
-      it('serves requests for the default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/en', 'en'));
+      it('serves requests for the default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/en', 'en'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -693,11 +705,11 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/en/about', 'en'));
-        middlewareWithPathnames(createMockRequest('/en/users', 'en'));
-        middlewareWithPathnames(createMockRequest('/en/users/1', 'en'));
-        middlewareWithPathnames(
+      it('serves requests for the default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/en/about', 'en'));
+        await middlewareWithPathnames(createMockRequest('/en/users', 'en'));
+        await middlewareWithPathnames(createMockRequest('/en/users/1', 'en'));
+        await middlewareWithPathnames(
           createMockRequest('/en/news/happy-newyear-g5b116754', 'en')
         );
 
@@ -716,8 +728,8 @@ describe('prefix-based routing', () => {
         ]);
       });
 
-      it('serves requests for a non-default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/de', 'de'));
+      it('serves requests for a non-default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/de', 'de'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -726,11 +738,13 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
-        middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
-        middlewareWithPathnames(createMockRequest('/de/benutzer/1', 'de'));
-        middlewareWithPathnames(
+      it('serves requests for a non-default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
+        await middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
+        await middlewareWithPathnames(
+          createMockRequest('/de/benutzer/1', 'de')
+        );
+        await middlewareWithPathnames(
           createMockRequest('/de/neuigkeiten/gutes-neues-jahr-g5b116754', 'de')
         );
 
@@ -750,10 +764,12 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a request for a localized route that is not associated with the requested locale', () => {
+      it('redirects a request for a localized route that is not associated with the requested locale', async () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
-        middlewareWithPathnames(createMockRequest('/en/benutzer/12', 'en'));
+        await middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
+        await middlewareWithPathnames(
+          createMockRequest('/en/benutzer/12', 'en')
+        );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
@@ -765,58 +781,64 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('sets alternate links', () => {
-        function getLinks(request: NextRequest) {
-          return middlewareWithPathnames(request)
-            .headers.get('link')
+      it('sets alternate links', async () => {
+        async function getLinks(request: NextRequest) {
+          return (await middlewareWithPathnames(request)).headers
+            .get('link')
             ?.split(', ');
         }
 
-        expect(getLinks(createMockRequest('/en', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/en', 'en'))).toEqual([
           '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/de', 'de'))).toEqual([
           '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/en/about', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/en/about', 'en'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/en/users/1', 'en'))).toEqual([
-          '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
-        ]);
-        expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
+        expect(await getLinks(createMockRequest('/en/users/1', 'en'))).toEqual([
           '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
-          getLinks(createMockRequest('/en/products/apparel/t-shirts', 'en'))
+          await getLinks(createMockRequest('/de/benutzer/1', 'de'))
+        ).toEqual([
+          '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+        ]);
+        expect(
+          await getLinks(
+            createMockRequest('/en/products/apparel/t-shirts', 'en')
+          )
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
-          getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
+          await getLinks(
+            createMockRequest('/de/produkte/apparel/t-shirts', 'de')
+          )
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
-        expect(getLinks(createMockRequest('/en/unknown', 'en'))).toEqual([
+        expect(await getLinks(createMockRequest('/en/unknown', 'en'))).toEqual([
           '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
@@ -832,8 +854,8 @@ describe('prefix-based routing', () => {
       localePrefix: 'never'
     });
 
-    it('rewrites requests for the default locale', () => {
-      middleware(createMockRequest('/'));
+    it('rewrites requests for the default locale', async () => {
+      await middleware(createMockRequest('/'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -841,8 +863,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for other locales', () => {
-      middleware(createMockRequest('/', 'de'));
+    it('rewrites requests for other locales', async () => {
+      await middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -850,8 +872,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for the default locale at a nested path', () => {
-      middleware(createMockRequest('/list'));
+    it('rewrites requests for the default locale at a nested path', async () => {
+      await middleware(createMockRequest('/list'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -859,8 +881,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for other locales at a nested path', () => {
-      middleware(createMockRequest('/list', 'de'));
+    it('rewrites requests for other locales at a nested path', async () => {
+      await middleware(createMockRequest('/list', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -868,8 +890,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests with default locale in the path', () => {
-      middleware(createMockRequest('/en'));
+    it('redirects requests with default locale in the path', async () => {
+      await middleware(createMockRequest('/en'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -877,8 +899,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests with other locales in the path', () => {
-      middleware(createMockRequest('/de', 'de'));
+    it('redirects requests with other locales in the path', async () => {
+      await middleware(createMockRequest('/de', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -886,8 +908,8 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('redirects requests with default locale in a nested path', () => {
-      middleware(createMockRequest('/en/list'));
+    it('redirects requests with default locale in a nested path', async () => {
+      await middleware(createMockRequest('/en/list'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -895,8 +917,10 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for the root if a cookie exists with a non-default locale', () => {
-      middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'de'));
+    it('rewrites requests for the root if a cookie exists with a non-default locale', async () => {
+      await middleware(
+        createMockRequest('/', 'en', 'http://localhost:3000', 'de')
+      );
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -904,8 +928,10 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('rewrites requests for the root if a cookie exists with the default locale', () => {
-      middleware(createMockRequest('/', 'de', 'http://localhost:3000', 'en'));
+    it('rewrites requests for the root if a cookie exists with the default locale', async () => {
+      await middleware(
+        createMockRequest('/', 'de', 'http://localhost:3000', 'en')
+      );
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -913,24 +939,24 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('sets a cookie', () => {
-      const response = middleware(createMockRequest('/'));
+    it('sets a cookie', async () => {
+      const response = await middleware(createMockRequest('/'));
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'en'
       });
     });
 
-    it('sets a cookie based on accept-language header', () => {
-      const response = middleware(createMockRequest('/', 'de'));
+    it('sets a cookie based on accept-language header', async () => {
+      const response = await middleware(createMockRequest('/', 'de'));
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'de'
       });
     });
 
-    it('keeps a cookie if already set', () => {
-      const response = middleware(
+    it('keeps a cookie if already set', async () => {
+      const response = await middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', 'de')
       );
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
@@ -939,16 +965,16 @@ describe('prefix-based routing', () => {
       });
     });
 
-    it('sets a cookie with locale in the path', () => {
-      const response = middleware(createMockRequest('/de'));
+    it('sets a cookie with locale in the path', async () => {
+      const response = await middleware(createMockRequest('/de'));
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'de'
       });
     });
 
-    it('updates a cookie with locale in the path', () => {
-      const response = middleware(
+    it('updates a cookie with locale in the path', async () => {
+      const response = await middleware(
         createMockRequest('/de', 'en', 'http://localhost:3000', 'en')
       );
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
@@ -957,8 +983,8 @@ describe('prefix-based routing', () => {
       });
     });
 
-    it('retains request headers for the default locale', () => {
-      middleware(
+    it('retains request headers for the default locale', async () => {
+      await middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
           'x-test': 'test'
         })
@@ -970,8 +996,8 @@ describe('prefix-based routing', () => {
       ).toBe('test');
     });
 
-    it('retains request headers for secondary locales', () => {
-      middleware(
+    it('retains request headers for secondary locales', async () => {
+      await middleware(
         createMockRequest('/', 'de', 'http://localhost:3000', undefined, {
           'x-test': 'test'
         })
@@ -983,8 +1009,8 @@ describe('prefix-based routing', () => {
       ).toBe('test');
     });
 
-    it('disables the alternate links', () => {
-      const response = middleware(createMockRequest('/'));
+    it('disables the alternate links', async () => {
+      const response = await middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(null);
     });
 
@@ -1018,8 +1044,8 @@ describe('prefix-based routing', () => {
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
-      it('serves requests for the default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/', 'en'));
+      it('serves requests for the default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/', 'en'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1028,11 +1054,11 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/about', 'en'));
-        middlewareWithPathnames(createMockRequest('/users', 'en'));
-        middlewareWithPathnames(createMockRequest('/users/1', 'en'));
-        middlewareWithPathnames(
+      it('serves requests for the default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/about', 'en'));
+        await middlewareWithPathnames(createMockRequest('/users', 'en'));
+        await middlewareWithPathnames(createMockRequest('/users/1', 'en'));
+        await middlewareWithPathnames(
           createMockRequest('/news/happy-newyear-g5b116754', 'en')
         );
 
@@ -1051,8 +1077,8 @@ describe('prefix-based routing', () => {
         ]);
       });
 
-      it('serves requests for a non-default locale at the root', () => {
-        middlewareWithPathnames(createMockRequest('/', 'de'));
+      it('serves requests for a non-default locale at the root', async () => {
+        await middlewareWithPathnames(createMockRequest('/', 'de'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1061,11 +1087,11 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/ueber', 'de'));
-        middlewareWithPathnames(createMockRequest('/benutzer', 'de'));
-        middlewareWithPathnames(createMockRequest('/benutzer/1', 'de'));
-        middlewareWithPathnames(
+      it('serves requests for a non-default locale at nested paths', async () => {
+        await middlewareWithPathnames(createMockRequest('/ueber', 'de'));
+        await middlewareWithPathnames(createMockRequest('/benutzer', 'de'));
+        await middlewareWithPathnames(createMockRequest('/benutzer/1', 'de'));
+        await middlewareWithPathnames(
           createMockRequest('/neuigkeiten/gutes-neues-jahr-g5b116754', 'de')
         );
 
@@ -1085,10 +1111,12 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a request for a localized route that is not associated with the requested locale', () => {
+      it('redirects a request for a localized route that is not associated with the requested locale', async () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
-        middlewareWithPathnames(createMockRequest('/en/benutzer/12', 'en'));
+        await middlewareWithPathnames(createMockRequest('/en/ueber', 'en'));
+        await middlewareWithPathnames(
+          createMockRequest('/en/benutzer/12', 'en')
+        );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
@@ -1120,8 +1148,8 @@ describe('domain-based routing', () => {
       ]
     });
 
-    it('serves requests for the default locale at the root', () => {
-      middleware(createMockRequest('/', 'en', 'http://en.example.com'));
+    it('serves requests for the default locale at the root', async () => {
+      await middleware(createMockRequest('/', 'en', 'http://en.example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1129,8 +1157,10 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for the default locale at sub paths', () => {
-      middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
+    it('serves requests for the default locale at sub paths', async () => {
+      await middleware(
+        createMockRequest('/about', 'en', 'http://en.example.com')
+      );
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1138,8 +1168,8 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for the default locale at unknown hosts', () => {
-      middleware(createMockRequest('/', 'en', 'http://localhost:3000'));
+    it('serves requests for the default locale at unknown hosts', async () => {
+      await middleware(createMockRequest('/', 'en', 'http://localhost:3000'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1147,8 +1177,8 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales at the locale root', () => {
-      middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
+    it('serves requests for non-default locales at the locale root', async () => {
+      await middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1157,8 +1187,8 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales at the locale root when the accept-language header points to the default locale', () => {
-      middleware(createMockRequest('/fr', 'en', 'http://ca.example.com'));
+    it('serves requests for non-default locales at the locale root when the accept-language header points to the default locale', async () => {
+      await middleware(createMockRequest('/fr', 'en', 'http://ca.example.com'));
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1167,8 +1197,10 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales at sub paths', () => {
-      middleware(createMockRequest('/fr/about', 'fr', 'http://ca.example.com'));
+    it('serves requests for non-default locales at sub paths', async () => {
+      await middleware(
+        createMockRequest('/fr/about', 'fr', 'http://ca.example.com')
+      );
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1177,8 +1209,8 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('returns alternate links', () => {
-      const response = middleware(createMockRequest('/'));
+    it('returns alternate links', async () => {
+      const response = await middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(
         [
           '<http://en.example.com/>; rel="alternate"; hreflang="en"',
@@ -1190,8 +1222,8 @@ describe('domain-based routing', () => {
     });
 
     describe('unknown hosts', () => {
-      it('serves requests for unknown hosts at the root', () => {
-        middleware(createMockRequest('/', 'en', 'http://localhost'));
+      it('serves requests for unknown hosts at the root', async () => {
+        await middleware(createMockRequest('/', 'en', 'http://localhost'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1199,8 +1231,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for unknown hosts at sub paths', () => {
-        middleware(createMockRequest('/about', 'en', 'http://localhost'));
+      it('serves requests for unknown hosts at sub paths', async () => {
+        await middleware(createMockRequest('/about', 'en', 'http://localhost'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1208,8 +1240,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for unknown hosts and non-default locales at the locale root', () => {
-        middleware(createMockRequest('/fr', 'fr', 'http://localhost'));
+      it('serves requests for unknown hosts and non-default locales at the locale root', async () => {
+        await middleware(createMockRequest('/fr', 'fr', 'http://localhost'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1218,8 +1250,10 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for unknown hosts and non-default locales at sub paths', () => {
-        middleware(createMockRequest('/fr/about', 'fr', 'http://localhost'));
+      it('serves requests for unknown hosts and non-default locales at sub paths', async () => {
+        await middleware(
+          createMockRequest('/fr/about', 'fr', 'http://localhost')
+        );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1230,8 +1264,8 @@ describe('domain-based routing', () => {
     });
 
     describe('locales-restricted domain', () => {
-      it('serves requests for the default locale at the root when the accept-language header matches', () => {
-        middleware(createMockRequest('/', 'en', 'http://ca.example.com'));
+      it('serves requests for the default locale at the root when the accept-language header matches', async () => {
+        await middleware(createMockRequest('/', 'en', 'http://ca.example.com'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1239,8 +1273,10 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at the root when the accept-language header matches the top-level locale', () => {
-        middleware(createMockRequest('/', 'en-CA', 'http://ca.example.com'));
+      it('serves requests for the default locale at the root when the accept-language header matches the top-level locale', async () => {
+        await middleware(
+          createMockRequest('/', 'en-CA', 'http://ca.example.com')
+        );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1248,8 +1284,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it("serves requests for the default locale at the root when the accept-language header doesn't match", () => {
-        middleware(createMockRequest('/', 'en', 'http://fr.example.com'));
+      it("serves requests for the default locale at the root when the accept-language header doesn't match", async () => {
+        await middleware(createMockRequest('/', 'en', 'http://fr.example.com'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1257,8 +1293,10 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at sub paths when the accept-langauge header matches', () => {
-        middleware(createMockRequest('/about', 'en', 'http://ca.example.com'));
+      it('serves requests for the default locale at sub paths when the accept-langauge header matches', async () => {
+        await middleware(
+          createMockRequest('/about', 'en', 'http://ca.example.com')
+        );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1266,8 +1304,10 @@ describe('domain-based routing', () => {
         );
       });
 
-      it("serves requests for the default locale at sub paths when the accept-langauge header doesn't match", () => {
-        middleware(createMockRequest('/about', 'en', 'http://fr.example.com'));
+      it("serves requests for the default locale at sub paths when the accept-langauge header doesn't match", async () => {
+        await middleware(
+          createMockRequest('/about', 'en', 'http://fr.example.com')
+        );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
@@ -1275,8 +1315,10 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for non-default locales at the locale root', () => {
-        middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
+      it('serves requests for non-default locales at the locale root', async () => {
+        await middleware(
+          createMockRequest('/fr', 'fr', 'http://ca.example.com')
+        );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1285,8 +1327,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for non-default locales at sub paths', () => {
-        middleware(
+      it('serves requests for non-default locales at sub paths', async () => {
+        await middleware(
           createMockRequest('/fr/about', 'fr', 'http://ca.example.com')
         );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
@@ -1299,8 +1341,8 @@ describe('domain-based routing', () => {
     });
 
     describe('redirects for locale prefixes', () => {
-      it('redirects for the locale root when the locale matches', () => {
-        middleware(
+      it('redirects for the locale root when the locale matches', async () => {
+        await middleware(
           createMockRequest('/en/about', 'en', 'http://en.example.com')
         );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1310,8 +1352,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects for sub paths when the locale matches', () => {
-        middleware(
+      it('redirects for sub paths when the locale matches', async () => {
+        await middleware(
           createMockRequest('/en/about', 'en', 'http://en.example.com')
         );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1321,8 +1363,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it("redirects to another domain for the locale root when the locale doesn't match", () => {
-        middleware(
+      it("redirects to another domain for the locale root when the locale doesn't match", async () => {
+        await middleware(
           createMockRequest('/fr/about', 'fr', 'http://en.example.com')
         );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1332,8 +1374,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it("redirects to another domain for sub paths when the locale doesn't match", () => {
-        middleware(
+      it("redirects to another domain for sub paths when the locale doesn't match", async () => {
+        await middleware(
           createMockRequest('/fr/about', 'fr', 'http://en.example.com')
         );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1387,11 +1429,11 @@ describe('domain-based routing', () => {
         } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
       });
 
-      it('serves requests for the default locale at the root', () => {
-        middlewareWithPathnames(
+      it('serves requests for the default locale at the root', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/', 'en', 'http://en.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/', 'en', 'http://ca.example.com')
         );
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
@@ -1405,31 +1447,31 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for the default locale at nested paths', () => {
-        middlewareWithPathnames(
+      it('serves requests for the default locale at nested paths', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/about', 'en', 'http://en.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/users', 'en', 'http://en.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/users/1', 'en', 'http://en.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/news/happy-newyear-g5b116754',
             'en',
             'http://en.example.com'
           )
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/products/apparel/t-shirts',
             'en',
             'http://en.example.com'
           )
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/categories/women/t-shirts',
             'en',
@@ -1460,8 +1502,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at the root', () => {
-        middlewareWithPathnames(
+      it('serves requests for a non-default locale at the root', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/fr', 'fr', 'http://ca.example.com')
         );
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
@@ -1472,31 +1514,31 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
-        middlewareWithPathnames(
+      it('serves requests for a non-default locale at nested paths', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/fr/a-propos', 'fr', 'http://ca.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/fr/utilisateurs', 'fr', 'http://ca.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/fr/utilisateurs/1', 'fr', 'http://ca.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/fr/nouvelles/happy-newyear-g5b116754',
             'fr',
             'http://ca.example.com'
           )
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/fr/produits/vetements/t-shirts',
             'fr',
             'http://ca.example.com'
           )
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest(
             '/fr/categories/femmes/t-shirts',
             'fr',
@@ -1527,8 +1569,8 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects a request for a localized route that is not associated with the requested locale', () => {
-        middlewareWithPathnames(
+      it('redirects a request for a localized route that is not associated with the requested locale', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/a-propos', 'en', 'http://en.example.com')
         );
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1539,12 +1581,12 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects when a pathname from the default locale ends up with a different locale that is the default locale on the domain', () => {
+      it('redirects when a pathname from the default locale ends up with a different locale that is the default locale on the domain', async () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/about', 'fr', 'http://fr.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/users/2', 'fr', 'http://fr.example.com')
         );
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -1558,12 +1600,12 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects when a pathname from the default locale ends up with a different locale that is a secondary locale on the domain', () => {
+      it('redirects when a pathname from the default locale ends up with a different locale that is a secondary locale on the domain', async () => {
         // Relevant to avoid duplicate content issues
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/about', 'fr', 'http://ca.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/users/2', 'fr', 'http://ca.example.com')
         );
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -1577,11 +1619,11 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects a non-prefixed nested path to a localized alternative if another locale was detected', () => {
-        middlewareWithPathnames(
+      it('redirects a non-prefixed nested path to a localized alternative if another locale was detected', async () => {
+        await middlewareWithPathnames(
           createMockRequest('/about', 'fr', 'http://ca.example.com')
         );
-        middlewareWithPathnames(
+        await middlewareWithPathnames(
           createMockRequest('/users/2', 'fr', 'http://ca.example.com')
         );
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -1595,15 +1637,15 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('sets alternate links', () => {
-        function getLinks(request: NextRequest) {
-          return middlewareWithPathnames(request)
-            .headers.get('link')
+      it('sets alternate links', async () => {
+        async function getLinks(request: NextRequest) {
+          return (await middlewareWithPathnames(request)).headers
+            .get('link')
             ?.split(', ');
         }
 
         expect(
-          getLinks(createMockRequest('/', 'en', 'http://en.example.com'))
+          await getLinks(createMockRequest('/', 'en', 'http://en.example.com'))
         ).toEqual([
           '<http://en.example.com/>; rel="alternate"; hreflang="en"',
           '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
@@ -1611,7 +1653,9 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(createMockRequest('/fr', 'fr', 'http://ca.example.com'))
+          await getLinks(
+            createMockRequest('/fr', 'fr', 'http://ca.example.com')
+          )
         ).toEqual([
           '<http://en.example.com/>; rel="alternate"; hreflang="en"',
           '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
@@ -1619,7 +1663,9 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(createMockRequest('/about', 'en', 'http://en.example.com'))
+          await getLinks(
+            createMockRequest('/about', 'en', 'http://en.example.com')
+          )
         ).toEqual([
           '<http://en.example.com/about>; rel="alternate"; hreflang="en"',
           '<http://ca.example.com/about>; rel="alternate"; hreflang="en"',
@@ -1627,7 +1673,7 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(
+          await getLinks(
             createMockRequest('/a-propos', 'fr', 'http://ca.example.com')
           )
         ).toEqual([
@@ -1637,7 +1683,9 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(createMockRequest('/users/1', 'en', 'http://en.example.com'))
+          await getLinks(
+            createMockRequest('/users/1', 'en', 'http://en.example.com')
+          )
         ).toEqual([
           '<http://en.example.com/users/1>; rel="alternate"; hreflang="en"',
           '<http://ca.example.com/users/1>; rel="alternate"; hreflang="en"',
@@ -1645,7 +1693,7 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/utilisateurs/1>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(
+          await getLinks(
             createMockRequest('/utilisateurs/1', 'fr', 'http://fr.example.com')
           )
         ).toEqual([
@@ -1655,7 +1703,7 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/utilisateurs/1>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(
+          await getLinks(
             createMockRequest(
               '/products/apparel/t-shirts',
               'en',
@@ -1669,7 +1717,7 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(
+          await getLinks(
             createMockRequest(
               '/fr/produits/apparel/t-shirts',
               'fr',
@@ -1683,7 +1731,9 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/produits/apparel/t-shirts>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(createMockRequest('/unknown', 'en', 'http://en.example.com'))
+          await getLinks(
+            createMockRequest('/unknown', 'en', 'http://en.example.com')
+          )
         ).toEqual([
           '<http://en.example.com/unknown>; rel="alternate"; hreflang="en"',
           '<http://ca.example.com/unknown>; rel="alternate"; hreflang="en"',
@@ -1691,7 +1741,7 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/unknown>; rel="alternate"; hreflang="fr"'
         ]);
         expect(
-          getLinks(
+          await getLinks(
             createMockRequest('/fr/unknown', 'fr', 'http://ca.example.com')
           )
         ).toEqual([
@@ -1719,8 +1769,8 @@ describe('domain-based routing', () => {
       ]
     });
 
-    it('redirects non-prefixed requests for the default locale', () => {
-      middleware(createMockRequest('/', 'en', 'http://example.com'));
+    it('redirects non-prefixed requests for the default locale', async () => {
+      await middleware(createMockRequest('/', 'en', 'http://example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -1728,8 +1778,8 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('redirects requests for other locales', () => {
-      middleware(createMockRequest('/', 'fr', 'http://ca.example.com'));
+    it('redirects requests for other locales', async () => {
+      await middleware(createMockRequest('/', 'fr', 'http://ca.example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
@@ -1737,9 +1787,11 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for the default locale', () => {
-      middleware(createMockRequest('/en', 'en', 'http://ca.example.com'));
-      middleware(createMockRequest('/en/about', 'en', 'http://ca.example.com'));
+    it('serves requests for the default locale', async () => {
+      await middleware(createMockRequest('/en', 'en', 'http://ca.example.com'));
+      await middleware(
+        createMockRequest('/en/about', 'en', 'http://ca.example.com')
+      );
 
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1752,9 +1804,11 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('serves requests for non-default locales', () => {
-      middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
-      middleware(createMockRequest('/fr/about', 'fr', 'http://ca.example.com'));
+    it('serves requests for non-default locales', async () => {
+      await middleware(createMockRequest('/fr', 'fr', 'http://ca.example.com'));
+      await middleware(
+        createMockRequest('/fr/about', 'fr', 'http://ca.example.com')
+      );
 
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
