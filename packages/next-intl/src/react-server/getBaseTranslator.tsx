@@ -13,20 +13,13 @@ import getConfig from '../server/getConfig';
 
 const getMessageFormatCache = cache(() => new Map());
 
-let hasWarned = false;
-
 async function getTranslatorImpl<
   NestedKey extends NamespaceKeys<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
 >(
-  locale:
-    | string
-    | {
-        namespace?: NestedKey;
-        locale: string;
-      },
+  locale: string,
   namespace?: NestedKey
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
@@ -88,28 +81,6 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  if (typeof locale === 'object') {
-    const opts = locale;
-    namespace = opts.namespace;
-    locale = opts.locale;
-    if (process.env.NODE_ENV !== 'production' && !hasWarned) {
-      console.warn(
-        `
-DEPRECATION WARNING: Calling \`getTranslator\` with an object argument is deprecated, please update your call site accordingly.
-
-// Previously
-getTranslator({locale: 'en', namespace: 'About'});
-
-// Now
-getTranslator('en', 'About');
-
-See also https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers
-`
-      );
-      hasWarned = true;
-    }
-  }
-
   const config = await getConfig(locale);
   return createBaseTranslator({
     ...config,
