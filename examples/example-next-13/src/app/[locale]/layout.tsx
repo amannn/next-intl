@@ -33,6 +33,8 @@ export default async function LocaleLayout({
 }: Props) {
   // Validate that the incoming `locale` parameter is valid
   if (!locales.includes(locale as any)) notFound();
+
+  // Enable static rendering
   unstable_setRequestLocale(locale);
 
   return (

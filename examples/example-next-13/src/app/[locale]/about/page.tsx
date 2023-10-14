@@ -7,7 +7,9 @@ type Props = {
 };
 
 export default function AboutPage({params: {locale}}: Props) {
+  // Enable static rendering
   unstable_setRequestLocale(locale);
+
   const t = useTranslations('AboutPage');
 
   return (

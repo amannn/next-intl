@@ -23,7 +23,14 @@ function callHook(name: string, hook: Function) {
     } catch (e) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Failed to call \`${name}\`, because the context from \`NextIntlClientProvider\` was not found.\n\nLearn more about this error here: https://next-intl-docs.vercel.app/docs/environments/server-client-components#missing-context`
+          ? `Failed to call \`${name}\` because the context from \`NextIntlClientProvider\` was not found.
+
+This can happen because:
+1) You intended to render this component as a Server Component, the render
+   failed, and therefore React attempted to render the component on the client
+   instead. If this is the case, check the console for server errors.
+2) You intended to render this component on the client side, but no context was found.
+   Learn more about this error here: https://next-intl-docs.vercel.app/docs/environments/server-client-components#missing-context`
           : undefined
       );
     }

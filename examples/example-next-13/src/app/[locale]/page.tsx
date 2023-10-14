@@ -12,6 +12,8 @@ export default function IndexPage({params: {locale}}: Props) {
   // Validate that the incoming `locale` parameter is valid
   const isValidLocale = locales.some((cur) => cur === locale);
   if (!isValidLocale) notFound();
+
+  // Enable static rendering
   unstable_setRequestLocale(locale);
 
   const t = useTranslations('IndexPage');
