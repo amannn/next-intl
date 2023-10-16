@@ -49,7 +49,7 @@ function createMockRequest(
     ...customHeaders
   });
   const url = host + pathnameWithSearch;
-  return new NextRequest(url, {headers});
+  return new NextRequest(new URL(url), {headers});
 }
 
 const MockedNextResponse = NextResponse as unknown as {
@@ -434,14 +434,19 @@ describe('prefix-based routing', () => {
         // Relevant to avoid duplicate content issues
         middlewareWithPathnames(createMockRequest('/de/about', 'de'));
         middlewareWithPathnames(createMockRequest('/de/users/2', 'de'));
+        middlewareWithPathnames(createMockRequest('/de/users/2?page=1', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(3);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de/ueber'
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/benutzer/2'
+        );
+        //
+        expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/de/benutzer/2?page=1'
         );
       });
 

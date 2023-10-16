@@ -147,7 +147,7 @@ export default function createMiddleware<Locales extends AllLocales>(
                 : pathnameConfig[resolvedTemplateLocale],
               localeTemplate,
               pathLocale || !isDefaultLocale ? locale : undefined
-            )
+            ).concat(request.nextUrl.search)
           );
         }
       }
