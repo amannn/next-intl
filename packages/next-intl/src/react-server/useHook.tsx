@@ -12,8 +12,7 @@ export default function useHook<Value>(
       error.message.includes("Cannot read properties of null (reading 'use')")
     ) {
       throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? `\`${hookName}\` is not callable within an async component. To resolve this, you can split your component into two, leaving the async code in the first one and moving the usage of \`${hookName}\` to the second one.
+        `\`${hookName}\` is not callable within an async component. To resolve this, you can split your component into two, leaving the async code in the first one and moving the usage of \`${hookName}\` to the second one.
 
 Example:
 
@@ -25,8 +24,7 @@ async function Profile() {
 function ProfileContent({user}) {
   // Call \`${hookName}\` here and use the \`user\` prop
   return ...;
-}`
-          : undefined,
+}`,
         {cause: error}
       );
     } else {

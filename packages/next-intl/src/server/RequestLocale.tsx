@@ -9,7 +9,6 @@ const getLocaleFromHeader = cache(() => {
     locale = headers().get(HEADER_LOCALE_NAME);
   } catch (error) {
     if (
-      process.env.NODE_ENV !== 'production' &&
       error instanceof Error &&
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
@@ -24,9 +23,7 @@ const getLocaleFromHeader = cache(() => {
 
   if (!locale) {
     throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale`
-        : undefined
+      `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale`
     );
   }
 

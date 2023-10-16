@@ -6,9 +6,7 @@ const getMessages = cache(async (locale: string) => {
 
   if (!config.messages) {
     throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? 'No messages found. Have you configured them correctly? See https://next-intl-docs.vercel.app/docs/configuration#messages'
-        : undefined
+      'No messages found. Have you configured them correctly? See https://next-intl-docs.vercel.app/docs/configuration#messages'
     );
   }
 
