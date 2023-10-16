@@ -49,7 +49,7 @@ function createMockRequest(
     ...customHeaders
   });
   const url = host + pathnameWithSearch;
-  return new NextRequest(new URL(url), {headers});
+  return new NextRequest(url, {headers});
 }
 
 const MockedNextResponse = NextResponse as unknown as {
