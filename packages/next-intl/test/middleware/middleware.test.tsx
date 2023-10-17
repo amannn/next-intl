@@ -124,11 +124,15 @@ it('has docs that suggest a reasonable matcher', () => {
   ).toEqual(test.map(([pathname, expected]) => pathname + ': ' + expected));
 });
 
-describe('prefix-based routing', () => {
+describe.each([
+  { basePath: undefined},
+  { basePath: '/sample'},
+])('prefix-based routing with basePath: $basePath', ({basePath}: { basePath: string | undefined}) => {
   describe('localePrefix: as-needed', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
-      locales: ['en', 'de']
+      locales: ['en', 'de'],
+      basePath,
     });
 
     it('rewrites requests for the default locale', () => {
@@ -136,7 +140,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -145,7 +149,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en?sort=asc'
+        `http://localhost:3000${basePath ?? ''}/en?sort=asc`
       );
     });
 
@@ -154,7 +158,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en/list?sort=asc'
+        `http://localhost:3000${basePath ?? ''}/en/list?sort=asc`
       );
     });
 
@@ -163,7 +167,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en/#asdf'
+        `http://localhost:3000${basePath ?? ''}/en/#asdf`
       );
     });
 
@@ -172,7 +176,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/'
+        `http://localhost:3000${basePath ?? ''}/`
       );
     });
 
@@ -181,7 +185,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/about'
+        `http://localhost:3000${basePath ?? ''}/about`
       );
     });
 
@@ -190,7 +194,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de'
+        `http://localhost:3000${basePath ?? ''}/de`
       );
     });
 
@@ -199,7 +203,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de'
+        `http://localhost:3000${basePath ?? ''}/de`
       );
     });
 
@@ -269,9 +273,9 @@ describe('prefix-based routing', () => {
       const response = middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(
         [
-          '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+          `<http://localhost:3000${basePath ?? '/'}>; rel="alternate"; hreflang="en"`,
+          `<http://localhost:3000${basePath ?? ''}/de>; rel="alternate"; hreflang="de"`,
+          `<http://localhost:3000${basePath ?? '/'}>; rel="alternate"; hreflang="x-default"`,
         ].join(', ')
       );
     });
@@ -282,7 +286,8 @@ describe('prefix-based routing', () => {
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'as-needed',
-      localeDetection: false
+      localeDetection: false,
+      basePath,
     });
 
     it('serves non-prefixed requests with the default locale and ignores the accept-language header', () => {
@@ -290,7 +295,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -300,7 +305,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
   });
@@ -309,7 +314,8 @@ describe('prefix-based routing', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
-      localePrefix: 'always'
+      localePrefix: 'always',
+      basePath,
     });
 
     it('redirects non-prefixed requests for the default locale', () => {
@@ -317,7 +323,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -326,7 +332,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de'
+        `http://localhost:3000${basePath ?? ''}/de`
       );
     });
 
@@ -335,17 +341,17 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en/engage'
+        `http://localhost:3000${basePath ?? ''}/en/engage`
       );
 
       middleware(createMockRequest('/engage?test'));
       expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-        'http://localhost:3000/en/engage?test'
+        `http://localhost:3000${basePath ?? ''}/en/engage?test`
       );
 
       middleware(createMockRequest('/engage/test'));
       expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
-        'http://localhost:3000/en/engage/test'
+        `http://localhost:3000${basePath ?? ''}/en/engage/test`
       );
     });
 
@@ -368,7 +374,8 @@ describe('prefix-based routing', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
-      localePrefix: 'never'
+      localePrefix: 'never',
+      basePath,
     });
 
     it('rewrites requests for the default locale', () => {
@@ -376,7 +383,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -385,7 +392,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de'
+        `http://localhost:3000${basePath ?? ''}/de`
       );
     });
 
@@ -394,7 +401,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en/list'
+        `http://localhost:3000${basePath ?? ''}/en/list`
       );
     });
 
@@ -403,7 +410,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de/list'
+        `http://localhost:3000${basePath ?? ''}/de/list`
       );
     });
 
@@ -412,7 +419,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/'
+        `http://localhost:3000${basePath ?? ''}/`
       );
     });
 
@@ -421,7 +428,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/'
+        `http://localhost:3000${basePath ?? ''}/`
       );
     });
 
@@ -430,7 +437,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/list'
+        `http://localhost:3000${basePath ?? ''}/list`
       );
     });
 
@@ -439,7 +446,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de'
+        `http://localhost:3000${basePath ?? ''}/de`
       );
     });
 
@@ -448,7 +455,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -529,7 +536,10 @@ describe('prefix-based routing', () => {
   });
 });
 
-describe('domain-based routing', () => {
+describe.each([
+  { basePath: undefined},
+  { basePath: '/sample'},
+])('domain-based routing with basePath: $basePath', ({ basePath }: { basePath: string | undefined }) => {
   describe('localePrefix: as-needed', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
@@ -542,7 +552,8 @@ describe('domain-based routing', () => {
           locales: ['en', 'fr']
         },
         {defaultLocale: 'fr', domain: 'fr.example.com', locales: ['fr']}
-      ]
+      ],
+      basePath,
     });
 
     it('serves requests for the default locale at the root', () => {
@@ -550,7 +561,7 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://en.example.com/en'
+        `http://en.example.com${basePath ?? ''}/en`
       );
     });
 
@@ -559,7 +570,7 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://en.example.com/en/about'
+        `http://en.example.com${basePath ?? ''}/en/about`
       );
     });
 
@@ -568,7 +579,7 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/en'
+        `http://localhost:3000${basePath ?? ''}/en`
       );
     });
 
@@ -597,10 +608,10 @@ describe('domain-based routing', () => {
       const response = middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(
         [
-          '<http://en.example.com/>; rel="alternate"; hreflang="en"',
-          '<http://ca.example.com/>; rel="alternate"; hreflang="en"',
-          '<http://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
-          '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
+          `<http://en.example.com${ basePath ?? '/'}>; rel="alternate"; hreflang="en"`,
+          `<http://ca.example.com${ basePath ?? '/'}>; rel="alternate"; hreflang="en"`,
+          `<http://ca.example.com${ basePath ?? ''}/fr>; rel="alternate"; hreflang="fr"`,
+          `<http://fr.example.com${ basePath ?? '/'}>; rel="alternate"; hreflang="fr"`,
         ].join(', ')
       );
     });
@@ -611,7 +622,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost/en'
+          `http://localhost${basePath ?? ''}/en`
         );
       });
 
@@ -620,7 +631,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost/en/about'
+          `http://localhost${basePath ?? ''}/en/about`
         );
       });
 
@@ -645,7 +656,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://ca.example.com/en'
+          `http://ca.example.com${basePath ?? ''}/en`
         );
       });
 
@@ -654,7 +665,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://ca.example.com/en'
+          `http://ca.example.com${basePath ?? ''}/en`
         );
       });
 
@@ -663,7 +674,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/fr'
+          `http://fr.example.com${basePath ?? ''}/fr`
         );
       });
 
@@ -672,7 +683,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://ca.example.com/en/about'
+          `http://ca.example.com${basePath ?? ''}/en/about`
         );
       });
 
@@ -681,7 +692,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/fr/about'
+          `http://fr.example.com${basePath ?? ''}/fr/about`
         );
       });
 
@@ -710,7 +721,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://en.example.com/about'
+          `http://en.example.com${basePath ?? ''}/about`
         );
       });
 
@@ -721,7 +732,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://en.example.com/about'
+          `http://en.example.com${basePath ?? ''}/about`
         );
       });
 
@@ -732,7 +743,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/about'
+          `http://fr.example.com${basePath ?? ''}/about`
         );
       });
 
@@ -743,7 +754,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/about'
+          `http://fr.example.com${basePath ?? ''}/about`
         );
       });
     });
@@ -761,7 +772,8 @@ describe('domain-based routing', () => {
           domain: 'ca.example.com',
           locales: ['en', 'fr']
         }
-      ]
+      ],
+      basePath,
     });
 
     it('redirects non-prefixed requests for the default locale', () => {
@@ -769,7 +781,7 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://example.com/en'
+        `http://example.com${basePath ?? ''}/en`
       );
     });
 
@@ -778,7 +790,7 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-        'http://ca.example.com/fr'
+        `http://ca.example.com${basePath ?? ''}/fr`
       );
     });
 

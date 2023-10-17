@@ -1,6 +1,9 @@
 type LocalePrefix = 'as-needed' | 'always' | 'never';
 
 type RoutingBaseConfig = {
+  /** The base path of your application (optional). */
+  basePath?: string;
+
   /** A list of all locales that are supported. */
   locales: Array<string>;
 
@@ -37,6 +40,7 @@ export type MiddlewareConfigWithDefaults = MiddlewareConfig & {
   alternateLinks: boolean;
   localePrefix: LocalePrefix;
   localeDetection: boolean;
+  basePath: string;
 };
 
 export default MiddlewareConfig;

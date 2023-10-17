@@ -6,6 +6,11 @@ import {getHost, isLocaleSupportedOnDomain} from './utils';
 
 function getUnprefixedUrl(config: MiddlewareConfig, request: NextRequest) {
   const url = new URL(request.url);
+
+  if (config.basePath && !url.pathname.startsWith(config.basePath)) {
+    url.pathname = `${config.basePath}${url.pathname}`;
+  }
+
   const host = getHost(request.headers);
   if (host) {
     url.port = '';
@@ -45,10 +50,12 @@ export default function getAlternateLinksHeaderValue(
 
   const links = config.locales.flatMap((locale) => {
     function localizePathname(url: URL) {
-      if (url.pathname === '/') {
-        url.pathname = `/${locale}`;
+      if(url.pathname === config.basePath) {
+        url.pathname = `${url.pathname}/${locale}`;
+      } else if(config.basePath && url.pathname.startsWith(config.basePath)) {
+        url.pathname = url.pathname.replace(config.basePath, `${config.basePath}/${locale}`);
       } else {
-        url.pathname = `/${locale}${url.pathname}`;
+        url.pathname = `/${locale}`;
       }
       return url;
     }
@@ -71,6 +78,10 @@ export default function getAlternateLinksHeaderValue(
           config.localePrefix === 'always'
         ) {
           localizePathname(url);
+        }
+
+        if(config.basePath && !url.pathname.startsWith(config.basePath)) {
+          url.pathname = `${config.basePath}${url.pathname}`;
         }
 
         return getAlternateEntry(url.toString(), locale);

@@ -18,7 +18,8 @@ function receiveConfig(config: MiddlewareConfig) {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
     localePrefix: config.localePrefix ?? 'as-needed',
-    localeDetection: config.localeDetection ?? true
+    localeDetection: config.localeDetection ?? true,
+    basePath: config.basePath ?? '',
   };
 
   return result;
@@ -68,7 +69,10 @@ export default function createMiddleware(config: MiddlewareConfig) {
     }
 
     function rewrite(url: string) {
-      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
+      if (configWithDefaults.basePath && !url.startsWith(configWithDefaults.basePath)) {
+        url = `${configWithDefaults.basePath}${url}`;
+      }
+      return NextResponse.rewrite(new URL(url,request.url), getResponseInit());
     }
 
     function next() {
@@ -93,7 +97,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
               bestMatchingDomain.defaultLocale === locale &&
               configWithDefaults.localePrefix === 'as-needed'
             ) {
-              urlObj.pathname = urlObj.pathname.replace(`/${locale}`, '');
+              urlObj.pathname = urlObj.pathname.replace(`${configWithDefaults.basePath}/${locale}`, '');
             }
           }
         }
@@ -102,13 +106,15 @@ export default function createMiddleware(config: MiddlewareConfig) {
       if (host) {
         urlObj.host = host;
       }
-
+      if (configWithDefaults.basePath && !urlObj.pathname.startsWith(configWithDefaults.basePath)) {
+        urlObj.pathname = `${configWithDefaults.basePath}${urlObj.pathname}`;
+      }
       return NextResponse.redirect(urlObj.toString());
     }
 
     let response;
     if (isRoot) {
-      let pathWithSearch = `/${locale}`;
+      let pathWithSearch = `${configWithDefaults.basePath}/${locale}`;
       if (request.nextUrl.search) {
         pathWithSearch += request.nextUrl.search;
       }
@@ -167,7 +173,7 @@ export default function createMiddleware(config: MiddlewareConfig) {
             }
           }
         } else {
-          response = redirect(`/${locale}${basePath}`);
+          response = redirect(`/${locale}`);
         }
       } else {
         if (

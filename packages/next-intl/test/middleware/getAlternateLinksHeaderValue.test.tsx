@@ -1,17 +1,22 @@
 // @vitest-environment edge-runtime
 
 import {NextRequest} from 'next/server';
-import {it, expect} from 'vitest';
+import {it, expect, describe} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 
+describe.each([
+  { basePath: undefined },
+  { basePath: '/sample' }
+])('when basePath is $basePath', ({ basePath }: { basePath: string }) => {
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults = {
     defaultLocale: 'en',
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    basePath
   };
 
   expect(
@@ -20,9 +25,9 @@ it('works for prefixed routing (as-needed)', () => {
       new NextRequest('https://example.com/')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es>; rel="alternate"; hreflang="es"',
-    '<https://example.com/>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}>; rel="alternate"; hreflang="x-default"`
   ]);
 
   expect(
@@ -31,9 +36,9 @@ it('works for prefixed routing (as-needed)', () => {
       new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`,
   ]);
 });
 
@@ -43,7 +48,8 @@ it('works for prefixed routing (always)', () => {
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'always',
-    localeDetection: true
+    localeDetection: true,
+    basePath,
   };
 
   expect(
@@ -52,9 +58,9 @@ it('works for prefixed routing (always)', () => {
       new NextRequest('https://example.com/')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/en>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es>; rel="alternate"; hreflang="es"',
-    '<https://example.com/>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}>; rel="alternate"; hreflang="x-default"`,
   ]);
 
   expect(
@@ -63,9 +69,9 @@ it('works for prefixed routing (always)', () => {
       new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}/en/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
   ]);
 });
 
@@ -92,7 +98,8 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
         defaultLocale: 'en',
         locales: ['en', 'fr']
       }
-    ]
+    ],
+    basePath,
   };
 
   [
@@ -106,12 +113,12 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
     ).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
-      '<https://example.com/>; rel="alternate"; hreflang="en"',
-      '<https://example.ca/>; rel="alternate"; hreflang="en"',
-      '<https://example.com/es>; rel="alternate"; hreflang="es"',
-      '<https://example.es/>; rel="alternate"; hreflang="es"',
-      '<https://example.com/fr>; rel="alternate"; hreflang="fr"',
-      '<https://example.ca/fr>; rel="alternate"; hreflang="fr"'
+      `<https://example.com${basePath}>; rel="alternate"; hreflang="en"`,
+      `<https://example.ca${basePath}>; rel="alternate"; hreflang="en"`,
+      `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
+      `<https://example.es${basePath}>; rel="alternate"; hreflang="es"`,
+      `<https://example.com${basePath}/fr>; rel="alternate"; hreflang="fr"`,
+      `<https://example.ca${basePath}/fr>; rel="alternate"; hreflang="fr"`
     ]);
   });
 
@@ -121,12 +128,12 @@ it("works for type domain with `localePrefix: 'as-needed'`", () => {
       new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/about>; rel="alternate"; hreflang="en"',
-    '<https://example.ca/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/fr/about>; rel="alternate"; hreflang="fr"',
-    '<https://example.ca/fr/about>; rel="alternate"; hreflang="fr"'
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.ca${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.es${basePath}/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/fr/about>; rel="alternate"; hreflang="fr"`,
+    `<https://example.ca${basePath}/fr/about>; rel="alternate"; hreflang="fr"`
   ]);
 });
 
@@ -153,7 +160,8 @@ it("works for type domain with `localePrefix: 'always'`", () => {
         defaultLocale: 'en',
         locales: ['en', 'fr']
       }
-    ]
+    ],
+    basePath,
   };
 
   [
@@ -167,12 +175,12 @@ it("works for type domain with `localePrefix: 'always'`", () => {
     ).split(', ')
   ].forEach((links) => {
     expect(links).toEqual([
-      '<https://example.com/en>; rel="alternate"; hreflang="en"',
-      '<https://example.ca/en>; rel="alternate"; hreflang="en"',
-      '<https://example.com/es>; rel="alternate"; hreflang="es"',
-      '<https://example.es/es>; rel="alternate"; hreflang="es"',
-      '<https://example.com/fr>; rel="alternate"; hreflang="fr"',
-      '<https://example.ca/fr>; rel="alternate"; hreflang="fr"'
+      `<https://example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
+      `<https://example.ca${basePath}/en>; rel="alternate"; hreflang="en"`,
+      `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
+      `<https://example.es${basePath}/es>; rel="alternate"; hreflang="es"`,
+      `<https://example.com${basePath}/fr>; rel="alternate"; hreflang="fr"`,
+      `<https://example.ca${basePath}/fr>; rel="alternate"; hreflang="fr"`,
     ]);
   });
 
@@ -182,12 +190,12 @@ it("works for type domain with `localePrefix: 'always'`", () => {
       new NextRequest('https://example.com/about')
     ).split(', ')
   ).toEqual([
-    '<https://example.com/en/about>; rel="alternate"; hreflang="en"',
-    '<https://example.ca/en/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.es/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/fr/about>; rel="alternate"; hreflang="fr"',
-    '<https://example.ca/fr/about>; rel="alternate"; hreflang="fr"'
+    `<https://example.com${basePath}/en/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.ca${basePath}/en/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.es${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/fr/about>; rel="alternate"; hreflang="fr"`,
+    `<https://example.ca${basePath}/fr/about>; rel="alternate"; hreflang="fr"`,
   ]);
 });
 
@@ -197,7 +205,8 @@ it('uses the external host name from headers instead of the url of the incoming 
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true, 
+    basePath,
   };
 
   expect(
@@ -212,9 +221,9 @@ it('uses the external host name from headers instead of the url of the incoming 
       })
     ).split(', ')
   ).toEqual([
-    '<https://example.com/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
   ]);
 });
 
@@ -224,7 +233,8 @@ it('keeps the port of an external host if provided', () => {
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    basePath,
   };
 
   expect(
@@ -239,9 +249,9 @@ it('keeps the port of an external host if provided', () => {
       })
     ).split(', ')
   ).toEqual([
-    '<https://example.com:3000/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com:3000/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com:3000/about>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com:3000${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com:3000${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com:3000${basePath}/about>; rel="alternate"; hreflang="x-default"`
   ]);
 });
 
@@ -251,7 +261,8 @@ it('uses the external host name and the port from headers instead of the url wit
     locales: ['en', 'es'],
     alternateLinks: true,
     localePrefix: 'as-needed',
-    localeDetection: true
+    localeDetection: true,
+    basePath,
   };
 
   expect(
@@ -266,8 +277,9 @@ it('uses the external host name and the port from headers instead of the url wit
       })
     ).split(', ')
   ).toEqual([
-    '<https://example.com/about>; rel="alternate"; hreflang="en"',
-    '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
-    '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+    `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+    `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
   ]);
+});
 });

@@ -50,7 +50,7 @@ function getAcceptLanguageLocale(
 }
 
 function resolveLocaleFromPrefix(
-  {defaultLocale, localeDetection, locales}: MiddlewareConfigWithDefaults,
+  {defaultLocale, localeDetection, locales, basePath}: MiddlewareConfigWithDefaults,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -59,7 +59,7 @@ function resolveLocaleFromPrefix(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const pathLocale = getLocaleFromPathname(pathname);
+    const pathLocale = getLocaleFromPathname(pathname, basePath);
     if (locales.includes(pathLocale)) {
       locale = pathLocale;
     }
@@ -94,7 +94,7 @@ function resolveLocaleFromDomain(
   requestCookies: RequestCookies,
   pathname: string
 ) {
-  const {domains} = config;
+  const {domains, basePath} = config;
 
   const localeFromPrefixStrategy = resolveLocaleFromPrefix(
     config,
@@ -107,7 +107,7 @@ function resolveLocaleFromDomain(
   if (domains) {
     const domain = findDomainFromHost(requestHeaders, domains);
     const hasLocalePrefix =
-      pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`);
+      pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`) || pathname.startsWith(`${basePath}/${localeFromPrefixStrategy}`);
 
     if (domain) {
       return {

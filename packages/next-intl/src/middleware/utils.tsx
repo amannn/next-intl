@@ -1,6 +1,9 @@
 import {DomainConfig} from './NextIntlMiddlewareConfig';
 
-export function getLocaleFromPathname(pathname: string) {
+export function getLocaleFromPathname(pathname: string, basePath?: string) {
+  if (basePath && pathname.startsWith(basePath)) {
+    return pathname.split('/')[2];
+  }
   return pathname.split('/')[1];
 }
 
