@@ -68,6 +68,21 @@ function Component() {
 
 Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
 
+If you want to use a specific unit, you can pass options with the second argument:
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+  const dateTime = new Date('2020-11-20T08:30:00.000Z');
+  const now = new Date('2020-11-20T10:36:00.000Z');
+
+  // Renders "today"
+  format.relativeTime(dateTime, { now, unit: 'day' });
+}
+```
+
 Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now`](/docs/usage/configuration#now), you can omit the second argument:
 
 ```js

@@ -2,47 +2,64 @@ import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
+import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
 
-const MINUTE = 60;
+const SECOND = 1;
+const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 const WEEK = DAY * 7;
 const MONTH = DAY * (365 / 12); // Approximation
+const QUARTER = MONTH * 3;
 const YEAR = DAY * 365;
 
-function getRelativeTimeFormatConfig(seconds: number) {
-  const absValue = Math.abs(seconds);
-  let value, unit: Intl.RelativeTimeFormatUnit;
+const UNIT_SECONDS: Record<Intl.RelativeTimeFormatUnit, number> = {
+  second: SECOND,
+  seconds: SECOND,
+  minute: MINUTE,
+  minutes: MINUTE,
+  hour: HOUR,
+  hours: HOUR,
+  day: DAY,
+  days: DAY,
+  week: WEEK,
+  weeks: WEEK,
+  month: MONTH,
+  months: MONTH,
+  quarter: QUARTER,
+  quarters: QUARTER,
+  year: YEAR,
+  years: YEAR
+} as const;
 
-  // We have to round the resulting values, as `Intl.RelativeTimeFormat`
-  // will include fractions like '2.1 hours ago'.
+function resolveRelativeTimeUnit(seconds: number) {
+  const absValue = Math.abs(seconds);
 
   if (absValue < MINUTE) {
-    unit = 'second';
-    value = Math.round(seconds);
+    return 'second';
   } else if (absValue < HOUR) {
-    unit = 'minute';
-    value = Math.round(seconds / MINUTE);
+    return 'minute';
   } else if (absValue < DAY) {
-    unit = 'hour';
-    value = Math.round(seconds / HOUR);
+    return 'hour';
   } else if (absValue < WEEK) {
-    unit = 'day';
-    value = Math.round(seconds / DAY);
+    return 'day';
   } else if (absValue < MONTH) {
-    unit = 'week';
-    value = Math.round(seconds / WEEK);
+    return 'week';
   } else if (absValue < YEAR) {
-    unit = 'month';
-    value = Math.round(seconds / MONTH);
-  } else {
-    unit = 'year';
-    value = Math.round(seconds / YEAR);
+    return 'month';
   }
+  return 'year';
+}
 
-  return {value, unit};
+function calculateRelativeTimeValue(
+  seconds: number,
+  unit: Intl.RelativeTimeFormatUnit
+) {
+  // We have to round the resulting values, as `Intl.RelativeTimeFormat`
+  // will include fractions like '2.1 hours ago'.
+  return Math.round(seconds / UNIT_SECONDS[unit]);
 }
 
 type Props = {
@@ -153,37 +170,53 @@ export default function createFormatter({
     );
   }
 
+  function getGlobalNow() {
+    if (globalNow) {
+      return globalNow;
+    } else {
+      onError(
+        new IntlError(
+          IntlErrorCode.ENVIRONMENT_FALLBACK,
+          process.env.NODE_ENV !== 'production'
+            ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+            : undefined
+        )
+      );
+      return new Date();
+    }
+  }
+
+  function extractNowDate(
+    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
+  ) {
+    if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+      return new Date(nowOrOptions);
+    }
+    if (nowOrOptions?.now !== undefined) {
+      return new Date(nowOrOptions.now);
+    }
+    return getGlobalNow();
+  }
+
   function relativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
     /** The reference point in time to which `date` will be formatted in relation to.  */
-    now?: number | Date
+    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
-      if (!now) {
-        if (globalNow) {
-          now = globalNow;
-        } else {
-          onError(
-            new IntlError(
-              IntlErrorCode.ENVIRONMENT_FALLBACK,
-              process.env.NODE_ENV !== 'production'
-                ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
-                : undefined
-            )
-          );
-        }
-      }
-
-      const dateDate = date instanceof Date ? date : new Date(date);
-      const nowDate =
-        now instanceof Date
-          ? now
-          : // @ts-expect-error -- `undefined` is fine for the `Date` constructor
-            new Date(now);
-
+      const dateDate = new Date(date);
+      const nowDate = extractNowDate(nowOrOptions);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
-      const {unit, value} = getRelativeTimeFormatConfig(seconds);
+
+      const unit =
+        typeof nowOrOptions === 'number' ||
+        nowOrOptions instanceof Date ||
+        nowOrOptions?.unit === undefined
+          ? resolveRelativeTimeUnit(seconds)
+          : nowOrOptions.unit;
+
+      const value = calculateRelativeTimeValue(seconds, unit);
 
       return new Intl.RelativeTimeFormat(locale, {
         numeric: 'auto'
