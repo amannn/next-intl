@@ -15,7 +15,7 @@ const MONTH = DAY * (365 / 12); // Approximation
 const QUARTER = MONTH * 3;
 const YEAR = DAY * 365;
 
-const UNIT_SECONDS = {
+const UNIT_SECONDS: Record<Intl.RelativeTimeFormatUnit, number> = {
   second: SECOND,
   seconds: SECOND,
   minute: MINUTE,
@@ -187,7 +187,7 @@ export default function createFormatter({
   }
 
   function extractNowDate(
-    nowOrOptions?: number | Date | {now?: number | Date}
+    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
       return new Date(nowOrOptions);
@@ -202,7 +202,7 @@ export default function createFormatter({
     /** The date time that needs to be formatted. */
     date: number | Date,
     /** The reference point in time to which `date` will be formatted in relation to.  */
-    nowOrOptions?: number | Date | RelativeTimeFormatOptions
+    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
       const dateDate = new Date(date);
