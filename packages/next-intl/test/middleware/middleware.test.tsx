@@ -882,6 +882,19 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('keeps search params when removing the locale via a redirect', () => {
+      middleware(createMockRequest('/en?test=1'));
+      middleware(createMockRequest('/en/about?test=1'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/?test=1'
+      );
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'http://localhost:3000/about?test=1'
+      );
+    });
+
     it('redirects requests with other locales in the path', () => {
       middleware(createMockRequest('/de', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
