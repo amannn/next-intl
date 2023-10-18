@@ -434,14 +434,19 @@ describe('prefix-based routing', () => {
         // Relevant to avoid duplicate content issues
         middlewareWithPathnames(createMockRequest('/de/about', 'de'));
         middlewareWithPathnames(createMockRequest('/de/users/2', 'de'));
+        middlewareWithPathnames(createMockRequest('/de/users/2?page=1', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(3);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de/ueber'
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/benutzer/2'
+        );
+        //
+        expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/de/benutzer/2?page=1'
         );
       });
 
@@ -874,6 +879,19 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/'
+      );
+    });
+
+    it('keeps search params when removing the locale via a redirect', () => {
+      middleware(createMockRequest('/en?test=1'));
+      middleware(createMockRequest('/en/about?test=1'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/?test=1'
+      );
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'http://localhost:3000/about?test=1'
       );
     });
 

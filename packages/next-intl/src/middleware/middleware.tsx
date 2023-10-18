@@ -140,13 +140,16 @@ export default function createMiddleware<Locales extends AllLocales>(
             domain?.defaultLocale === locale;
 
           response = redirect(
-            formatTemplatePathname(
-              normalizedPathname,
-              typeof pathnameConfig === 'string'
-                ? pathnameConfig
-                : pathnameConfig[resolvedTemplateLocale],
-              localeTemplate,
-              pathLocale || !isDefaultLocale ? locale : undefined
+            getPathWithSearch(
+              formatTemplatePathname(
+                normalizedPathname,
+                typeof pathnameConfig === 'string'
+                  ? pathnameConfig
+                  : pathnameConfig[resolvedTemplateLocale],
+                localeTemplate,
+                pathLocale || !isDefaultLocale ? locale : undefined
+              ),
+              request.nextUrl.search
             )
           );
         }
