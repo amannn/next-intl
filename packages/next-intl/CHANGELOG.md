@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.21.0 (2023-10-18)
+
+
+### Features
+
+* Support custom units in `format.relativeTime` ([#566](https://github.com/amannn/next-intl/issues/566)) ([6e1bc35](https://github.com/amannn/next-intl/commit/6e1bc35388ccae9f594be6b2d3078a56a10b0a76))
+
+
+
+
+
 ## 2.20.2 (2023-09-22)
 
 
