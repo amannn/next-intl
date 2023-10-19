@@ -493,17 +493,12 @@ module.exports = {
 
 This can happen either because:
 
-1. The middleware was not set up
-2. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component
+1. The middleware is not set up.
+2. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component.
 
-To address the latter case, you should validate that only valid locales are handled by the `[locale]` layout segment since this effectively acts as a catch-all.
+To recover from this error, please make sure that:
 
-**Example:**
-
-1. You use [the recommended matcher](#matcher-config) that excludes all pathnames with a dot (`.`)
-2. The user requests a pathname that includes a dot (e.g. `favicon.ico`)
-3. If there's no static asset available that matches the request, your layout renders with an invalid `locale` param (i.e. `params.locale === 'favicon.ico'`)
-
-In this case, you want to [interrupt the render and return a 404 status code](/docs/getting-started/app-router-server-components#applocalelayouttsx).
-
-Note that if you expect certain pathnames to include a dot (e.g. `/users/jane.doe`), you should ensure that they are [matched by the middleware](#matcher-config).
+1. You've [set up the middleware](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/getting-started/app-router#middlewarets).
+2. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `locale` segment.
+3. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
+4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/getting-started/app-router#applocalelayouttsx) before it's used by any APIs from `next-intl`.
