@@ -9,29 +9,24 @@ function icu() {
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "UserDetails"
-        </span>
-        <span style={{color: 'var(--shiki-color-text)'}}>: {'{'}</span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>"UserProfile"</span>
+        <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
+        <span style={{color: 'var(--shiki-color-text)'}}> {'{'}</span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "title"
-        </span>
-        <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>"title"</span>
+        <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "User details"
+          "{'{'}username{'}'}'s profile"
         </span>
         <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "followers"
-        </span>
-        <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
+        <span style={{color: 'var(--shiki-token-keyword)'}}>"followers"</span>
+        <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
           "{'{'}count, plural,
@@ -39,40 +34,31 @@ function icu() {
         <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {'                    '}
-        </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          {'                    '}
           =0 {'{'}No followers yet{'}'}
         </span>
         <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {'                    '}
-        </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          {'                    '}
           =1 {'{'}One follower{'}'}
         </span>
         <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {'                    '}
-        </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          {'                    '}
           other {'{'}# followers{'}'}
         </span>
         <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>
-          {'                  '}
-        </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          {'                  '}
           {'}'}"
         </span>
-        <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
       </span>
     </code>
   );
@@ -142,7 +128,7 @@ function typeSafe() {
       <span className="line">
         <span style={{color: 'var(--shiki-token-keyword)'}}>function</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
-        <span style={{color: 'var(--shiki-token-function)'}}>UserDetails</span>
+        <span style={{color: 'var(--shiki-token-function)'}}>UserProfile</span>
         <span style={{color: 'var(--shiki-color-text)'}}>
           ({'{'}user{'}'}) {'{'}
         </span>
@@ -160,7 +146,7 @@ function typeSafe() {
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>(</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          'UserDetails'
+          'UserProfile'
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>);</span>
       </span>
@@ -179,7 +165,7 @@ function typeSafe() {
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h1</span>
         <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
         <span style={{color: 'var(--shiki-token-function)'}}>t</span>
         <span style={{color: 'var(--shiki-color-text)'}}>(</span>
@@ -195,7 +181,7 @@ function typeSafe() {
           </div>
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>){'}'}&lt;/</span>
-        <span style={{color: 'var(--shiki-token-string-expression)'}}>h2</span>
+        <span style={{color: 'var(--shiki-token-string-expression)'}}>h1</span>
         <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
       </span>
       <span className="line">
@@ -230,7 +216,7 @@ function hooks() {
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>(</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          'UserDetails'
+          'UserProfile'
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}>);</span>
       </span>
@@ -336,14 +322,14 @@ function buildOutput() {
       <span className="line"> </span>
       <span className="line">
         <span style={{color: 'var(--shiki-token-comment)'}}>
-          Route{'           '}Size{'       '}First load JS
+          Route{'            '}Size{'       '}First load JS
         </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>┌ ● /</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-color-text)'}}>
-          {'          '}1.4
+          {'           '}1.4
         </span>
         <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
@@ -353,7 +339,7 @@ function buildOutput() {
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>├ ● /about</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'       '}</span>
         <span style={{color: 'var(--shiki-color-text)'}}>205</span>
         <span style={{color: 'var(--shiki-color-text)'}}> B</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
@@ -362,8 +348,8 @@ function buildOutput() {
         </span>
       </span>
       <span className="line">
-        <span style={{color: 'var(--shiki-color-text)'}}>└ λ /contact</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>└ λ /[username]</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
         <span style={{color: 'var(--shiki-color-text)'}}>3.24</span>
         <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
