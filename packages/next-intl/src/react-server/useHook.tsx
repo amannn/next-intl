@@ -37,12 +37,7 @@ function ProfileContent({user}) {
 
 This allows you to use the extracted component both in Server as well as Client Components, depending on where it's imported from.${
           asyncAlternative
-            ? `\n\nFor edge cases in server-only components, you can use the \`await ${hookName
-                .replace('use', 'get')
-                .replace(
-                  'Translations',
-                  'Translator'
-                )}(locale)\` API from 'next-intl/server' instead.`
+            ? `\n\nFor edge cases in server-only components, you can use the \`await ${asyncAlternative}(locale)\` API from 'next-intl/server' instead.`
             : ''
         }`,
         {cause: error}
