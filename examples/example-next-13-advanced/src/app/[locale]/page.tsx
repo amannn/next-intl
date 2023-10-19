@@ -54,6 +54,7 @@ export default function Index({params, searchParams}: Props) {
       <ClientLink href="/">Link on client without provider</ClientLink>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
+      {/* @ts-ignore -- Waiting for TS support */}
       <AsyncComponent locale={params.locale} />
     </PageLayout>
   );
