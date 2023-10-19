@@ -1,13 +1,14 @@
-import {cache} from 'react';
+import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
   createTranslator,
   Formats,
   TranslationValues,
-  RichTranslationValuesPlain,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
-  NestedValueOf
+  NestedValueOf,
+  RichTranslationValues,
+  MarkupTranslationValues
 } from 'use-intl/core';
 import getConfig from './getConfig';
 
@@ -57,7 +58,27 @@ Promise<{
     >
   >(
     key: TargetKey,
-    values?: RichTranslationValuesPlain,
+    values?: RichTranslationValues,
+    formats?: Partial<Formats>
+  ): string | ReactElement | ReactNodeArray;
+
+  // `markup`
+  markup<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: MarkupTranslationValues,
     formats?: Partial<Formats>
   ): string;
 
@@ -84,7 +105,7 @@ Promise<{
   return createTranslator({
     ...config,
     namespace,
-    messages: config.messages || {}
+    messages: config.messages
   });
 }
 

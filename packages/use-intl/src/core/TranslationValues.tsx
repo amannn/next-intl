@@ -19,7 +19,7 @@ export type RichTranslationValues = Record<
   TranslationValue | ((chunks: ReactNode) => ReactNode)
 >;
 
-export type RichTranslationValuesPlain = Record<
+export type MarkupTranslationValues = Record<
   string,
   TranslationValue | ((chunks: string) => string)
 >;

@@ -5,6 +5,11 @@
     "rich": "This is a <important>rich</important> text.",
     "globalDefaults": "<highlight>{globalString}</highlight>"
   },
+  "AsyncComponent": {
+    "basic": "AsyncComponent",
+    "rich": "This is a <important>rich</important> text.",
+    "markup": "Markup with <b>{globalString}</b>"
+  },
   "LocaleLayout": {
     "title": "next-intl example",
     "description": "This is an example of using next-intl in the `app` directory."

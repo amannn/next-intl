@@ -108,8 +108,9 @@ Note that if you're using `next-intl` exclusively in Client Components, this doe
 5. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 6. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
 7. `useMessages` now has a non-nullable return type for easier consumption and will throw if no messages are configured.
-8. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
-9. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
+8. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`]() function has been added to generate markup strings like `<b>Hello</b>` which are not React elements.
+9. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
+10. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
 
 ## Upgrade now
 

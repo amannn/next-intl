@@ -12,7 +12,10 @@ import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
 import MessageFormatCache from './MessageFormatCache';
-import TranslationValues, {RichTranslationValues} from './TranslationValues';
+import TranslationValues, {
+  MarkupTranslationValues,
+  RichTranslationValues
+} from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import MessageKeys from './utils/MessageKeys';
@@ -338,6 +341,40 @@ function createBaseTranslatorImpl<
   }
 
   translateFn.rich = translateBaseFn;
+
+  // Augment `translateBaseFn` to return plain strings
+  translateFn.markup = (
+    key: Parameters<typeof translateBaseFn>[0],
+    /** Key value pairs for values to interpolate into the message. */
+    values: MarkupTranslationValues,
+    formats?: Parameters<typeof translateBaseFn>[2]
+  ): string => {
+    const result = translateBaseFn(
+      key,
+      // @ts-expect-error -- `MarkupTranslationValues` is practically a sub type
+      // of `RichTranslationValues` but TypeScript isn't smart enough here.
+      values,
+      formats
+    );
+
+    // When only string chunks are provided to the parser, only
+    // strings should be returned here. Note that we need a runtime
+    // check for this since rich text values could be accidentally
+    // inherited from `defaultTranslationValues`.
+    if (typeof result !== 'string') {
+      const error = new IntlError(
+        IntlErrorCode.FORMATTING_ERROR,
+        process.env.NODE_ENV !== 'production'
+          ? "`t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
+          : undefined
+      );
+
+      onError(error);
+      return getMessageFallback({error, key, namespace});
+    }
+
+    return result;
+  };
 
   translateFn.raw = (
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */

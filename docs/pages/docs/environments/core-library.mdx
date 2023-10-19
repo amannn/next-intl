@@ -18,15 +18,15 @@ const t = createTranslator({locale: 'en', messages});
 // Result: "Hello world!"
 t('basic', {name: 'world'});
 
-// Rich text uses functions that accept and return a string.
-// Result: "Hello <b>world</b>!"
-t.rich('rich', {
+// To generate HTML markup, you can consider using the `markup`
+// function which in contrast to `t.rich` returns a markup string.
+t.markup('rich', {
   name: 'world',
   b: (chunks) => `<b>${chunks}</b>`
 });
 ```
 
-For date, time and number formatting, the `intl` object can be created outside of React as well:
+For date, time and number formatting, the `format` object can be created outside of React as well:
 
 ```js
 import {createFormatter} from 'next-intl';

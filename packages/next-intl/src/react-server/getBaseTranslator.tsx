@@ -7,7 +7,8 @@ import {
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
-  createBaseTranslator
+  createTranslator,
+  MarkupTranslationValues
 } from 'use-intl/core';
 import getConfig from '../server/getConfig';
 
@@ -63,6 +64,26 @@ Promise<{
     formats?: Partial<Formats>
   ): string | ReactElement | ReactNodeArray;
 
+  // `markup`
+  markup<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: MarkupTranslationValues,
+    formats?: Partial<Formats>
+  ): string;
+
   // `raw`
   raw<
     TargetKey extends MessageKeys<
@@ -82,7 +103,7 @@ Promise<{
   ): any;
 }> {
   const config = await getConfig(locale);
-  return createBaseTranslator({
+  return createTranslator({
     ...config,
     messageFormatCache: getMessageFormatCache(),
     namespace,

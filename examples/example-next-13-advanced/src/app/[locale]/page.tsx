@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import AsyncComponent from '../../components/AsyncComponent';
 import ClientLink from '../../components/ClientLink';
 import ClientRouterWithoutProvider from '../../components/ClientRouterWithoutProvider';
 import CoreLibrary from '../../components/CoreLibrary';
@@ -11,9 +12,10 @@ import {Link} from '../../navigation';
 
 type Props = {
   searchParams: Record<string, string>;
+  params: {locale: string};
 };
 
-export default function Index({searchParams}: Props) {
+export default function Index({params, searchParams}: Props) {
   const t = useTranslations('Index');
   const format = useFormatter();
   const now = useNow();
@@ -52,6 +54,7 @@ export default function Index({searchParams}: Props) {
       <ClientLink href="/">Link on client without provider</ClientLink>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
+      <AsyncComponent locale={params.locale} />
     </PageLayout>
   );
 }
