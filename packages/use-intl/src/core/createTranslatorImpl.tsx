@@ -1,10 +1,6 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
 import {InitializedIntlConfig} from './IntlConfig';
-import IntlError, {IntlErrorCode} from './IntlError';
-import {
-  RichTranslationValues,
-  RichTranslationValuesPlain
-} from './TranslationValues';
+import MessageFormatCache from './MessageFormatCache';
 import createBaseTranslator from './createBaseTranslator';
 import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
@@ -15,6 +11,7 @@ export type CreateTranslatorImplProps<Messages> = Omit<
 > & {
   namespace: string;
   messages: Messages;
+  messageFormatCache?: MessageFormatCache;
 };
 
 export default function createTranslatorImpl<
@@ -35,48 +32,11 @@ export default function createTranslatorImpl<
   messages = messages[namespacePrefix] as Messages;
   namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
 
-  const translator = createBaseTranslator<Messages, NestedKey>({
+  return createBaseTranslator<Messages, NestedKey>({
     ...rest,
     onError,
     getMessageFallback,
     messages,
     namespace
   });
-
-  const originalRich = translator.rich;
-
-  function base(...args: Parameters<typeof translator>) {
-    return translator(...args);
-  }
-
-  // Augment `t.rich` to return plain strings
-  base.rich = (
-    key: Parameters<typeof originalRich>[0],
-    /** Key value pairs for values to interpolate into the message. */
-    values: RichTranslationValuesPlain,
-    formats?: Parameters<typeof originalRich>[2]
-  ): string => {
-    // `chunks` is returned as a string when no React element
-    // is used, therefore it's safe to cast this type.
-    const result = originalRich(key, values as RichTranslationValues, formats);
-
-    // When only string chunks are provided to the parser, only strings should be returned here.
-    if (typeof result !== 'string') {
-      const error = new IntlError(
-        IntlErrorCode.FORMATTING_ERROR,
-        process.env.NODE_ENV !== 'production'
-          ? "`createTranslator` only accepts functions for rich text formatting that receive and return strings.\n\nE.g. t.rich('rich', {b: (chunks) => `<b>${chunks}</b>`})"
-          : undefined
-      );
-
-      onError(error);
-      return getMessageFallback({error, key, namespace});
-    }
-
-    return result;
-  };
-
-  base.raw = translator.raw;
-
-  return base;
 }

@@ -91,8 +91,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.0(postcss@8.4.24)
@@ -137,8 +137,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       eslint:
         specifier: ^8.46.0
         version: 8.46.0
@@ -189,8 +189,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       eslint:
         specifier: ^8.46.0
         version: 8.46.0
@@ -250,8 +250,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.0(postcss@8.4.23)
@@ -311,8 +311,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       chokidar-cli:
         specifier: 3.0.0
         version: 3.0.0
@@ -357,8 +357,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       eslint:
         specifier: ^8.46.0
         version: 8.46.0
@@ -394,8 +394,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       eslint:
         specifier: ^8.46.0
         version: 8.46.0
@@ -471,8 +471,8 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       '@types/react-dom':
         specifier: ^18.2.1
         version: 18.2.2
@@ -517,8 +517,8 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.5
-        version: 18.2.5
+        specifier: ^18.2.29
+        version: 18.2.29
       eslint:
         specifier: ^8.46.0
         version: 8.46.0
@@ -575,8 +575,11 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
+        specifier: ^18.2.29
+        version: 18.2.29
+      '@types/react-dom':
         specifier: ^18.2.5
-        version: 18.2.5
+        version: 18.2.14
       date-fns:
         specifier: ^2.16.1
         version: 2.16.1
@@ -5012,7 +5015,7 @@ packages:
       react: '>=16'
     dependencies:
       '@types/mdx': 2.0.5
-      '@types/react': 18.2.5
+      '@types/react': 18.2.29
       react: 18.2.0
     dev: false
 
@@ -6104,7 +6107,7 @@ packages:
     dependencies:
       '@remix-run/router': 1.5.0
       '@types/cookie': 0.4.1
-      '@types/react': 18.2.5
+      '@types/react': 18.2.29
       '@web3-storage/multipart-parser': 1.0.0
       cookie: 0.4.2
       set-cookie-parser: 2.6.0
@@ -6698,14 +6701,20 @@ packages:
     resolution: {integrity: sha512-L28j2FcJfSZOnL1WBjDYp2vUHCeIFlyYI/53EwD/rKUBQ7MtUUfbQWiyKJGpcnv4/WgrhWsFKrcPstcAt/J0tQ==}
     dev: false
 
+  /@types/react-dom@18.2.14:
+    resolution: {integrity: sha512-V835xgdSVmyQmI1KLV2BEIUgqEuinxp9O4G6g3FqO/SqLac049E53aysv0oEFD2kHfejeKU+ZqL2bcFWj9gLAQ==}
+    dependencies:
+      '@types/react': 18.2.29
+    dev: true
+
   /@types/react-dom@18.2.2:
     resolution: {integrity: sha512-IGuuCsLmAH0f3KksOZp/vkpUtO2YrIwob4YxvoFQR2XvkLL7tf7mLYcXiyG47KgTKngI4+7lNm4dM4eBTbG1Bw==}
     dependencies:
-      '@types/react': 18.2.5
+      '@types/react': 18.2.29
     dev: true
 
-  /@types/react@18.2.5:
-    resolution: {integrity: sha512-RuoMedzJ5AOh23Dvws13LU9jpZHIc/k90AgmK7CecAYeWmSr3553L4u5rk4sWAPBuQosfT7HmTfG4Rg5o4nGEA==}
+  /@types/react@18.2.29:
+    resolution: {integrity: sha512-Z+ZrIRocWtdD70j45izShRwDuiB4JZqDegqMFW/I8aG5DxxLKOzVNoq62UIO82v9bdgi+DO1jvsb9sTEZUSm+Q==}
     dependencies:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.3

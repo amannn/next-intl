@@ -562,3 +562,11 @@ it('supports opengraph images', async ({page, request}) => {
   const result = await request.get(ogImageUrl.pathname);
   expect(result.ok()).toBe(true);
 });
+
+it('can use async APIs in async components', async ({page}) => {
+  await page.goto('/');
+  const element = page.getByTestId('AsyncComponent');
+  element.getByText('AsyncComponent');
+  expect(await element.innerHTML()).toContain('This is a <b>rich</b> text.');
+  element.getByText('Markup with <b>Global string</b>');
+});

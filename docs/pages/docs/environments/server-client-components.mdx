@@ -27,7 +27,7 @@ Depending on if you import `useTranslations`, `useFormatter`, `useLocale`, `useN
 
 Hooks are currently primarly known for being used in Client Components since they are typically stateful or don't apply to a server environment. However, hooks like [`useId`](https://react.dev/reference/react/useId) can be used in Server Components too. Similarly, `next-intl` uses a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component. This allows to use hooks like `useTranslations` in [shared components](https://github.com/reactjs/rfcs/blob/bf51f8755ddb38d92e23ad415fc4e3c02b95b331/text/0000-server-components.md#sharing-code-between-server-and-client), which can run both as a Server or a Client Component, depending on where they are imported from.
 
-The one restriction that currently comes with this pattern is that the hooks can not be called from `async` components. To resolve this,
+The one restriction that currently comes with this pattern is that hooks can not be called from `async` components. To resolve this,
 you can split your component into two, leaving the async code in the first one and
 moving the usage of the hook to the second one.
 
@@ -46,6 +46,10 @@ function ProfileContent({user}) {
   return <p><{t('title', {userName: user.name})}/p>
 }
 ```
+
+As a benefit, the extracted component now works both in Server as well as Client Components, depending on where it is rendered.
+
+For edge cases in server-only components, you can use [awaitable APIs from `next-intl`](/docs/environments/metadata-route-handlers).
 
 </details>
 

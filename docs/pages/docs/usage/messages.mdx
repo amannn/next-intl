@@ -268,6 +268,7 @@ You can format rich text with custom tags and map them to React components:
 ```
 
 ```js
+// Returns `<>This is <b><i>very</i> important</b></>`
 t.rich('richText', {
   important: (chunks) => <b>{chunks}</b>,
   very: (chunks) => <i>{chunks}</i>
@@ -277,6 +278,48 @@ t.rich('richText', {
 If you want to use the same tag across your app, you can configure it via the [default translation values](/docs/usage/configuration#default-translation-values).
 
 Note that the ICU parser doesn't support self-closing tags at this point, therefore you have to use syntax like `<br></br>` if your rich text function doesn't intend to receive any `chunks` (e.g. `br: () => <br />`).
+
+
+## HTML markup
+
+To render rich text, you typically want to use [rich text formatting](#rich-text). However, if you have a use case where you need to emit raw HTML markup, you can use the `t.markup` function:
+
+```json filename="en.json"
+{
+  "markup": "This is <important>important</important>"
+}
+```
+
+```js
+// Returns 'This is <b>important</b>'
+t.markup('markup', {
+  important: (chunks) => `<b>${chunks}</b>`
+});
+```
+
+Note that unlike `t.rich`, the provided markup functions accept `chunks` as a `string` and also return a `string` where the `chunks` are wrapped accordingly.
+
+## Raw messages
+
+Messages are always parsed and therefore e.g. for rich text formatting you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
+
+```json filename="en.json"
+{
+  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+}
+```
+
+```js
+<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
+```
+
+<Callout type="warning">
+  **Important**: You should always sanitize the content that you pass to
+  [`dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
+  to avoid cross-site scripting attacks.
+</Callout>
+
+The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
 
 ## Arrays of messages
 
@@ -370,28 +413,6 @@ function Benefits() {
 ```
 
 </details>
-
-## Raw messages
-
-Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
-
-```json filename="en.json"
-{
-  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
-}
-```
-
-```js
-<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
-```
-
-<Callout type="warning">
-  **Important**: You should always sanitize the content that you pass to
-  [`dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
-  to avoid cross-site scripting attacks.
-</Callout>
-
-The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
 
 ## Right-to-left languages
 

@@ -87,7 +87,7 @@
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^17.0.23",
-    "@types/react": "^18.2.5",
+    "@types/react": "^18.2.29",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
@@ -104,7 +104,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "12.72 KB"
+      "limit": "12.75 KB"
     },
     {
       "path": "dist/production/navigation.js",
