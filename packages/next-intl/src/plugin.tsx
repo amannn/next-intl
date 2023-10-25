@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
 
-function resolveI18nPath(providedPath?: string) {
+function resolveI18nPath(cwd: string, providedPath?: string) {
   let i18nPath = providedPath;
 
   if (i18nPath) {
@@ -26,7 +26,7 @@ function resolveI18nPath(providedPath?: string) {
       './src/i18n.js',
       './src/i18n.jsx'
     ]
-      .map((cur) => path.resolve(cur))
+      .map((cur) => path.resolve(cwd, cur))
       .find((cur) => fs.existsSync(cur));
 
     if (!i18nPath) {
@@ -57,7 +57,7 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
       ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
     ) {
       config.resolve.alias['next-intl/config'] = require.resolve(
-        resolveI18nPath(i18nPath)
+        resolveI18nPath(config.context, i18nPath)
       );
 
       if (typeof nextConfig?.webpack === 'function') {
@@ -72,5 +72,3 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
 module.exports = function withNextIntl(i18nPath?: string) {
   return (nextConfig?: NextConfig) => initPlugin(i18nPath, nextConfig);
 };
-
-module.exports.initPlugin = initPlugin;
