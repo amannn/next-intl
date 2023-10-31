@@ -8,6 +8,11 @@ The middleware handles redirects and rewrites based on the detected user locale.
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
+  // Use `basepath` to deploy to a sub-path like `/blog`.
+  // Typically `basePath` is set to the same value in
+  // `next.config.js` options
+  basePath: '/blog',
+
   // A list of all locales that are supported
   locales: ['en', 'de'],
 
