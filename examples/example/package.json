@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "date-fns": "^2.16.1",
-    "next": "13.5.1",
+    "next": "14.0.1",
     "next-intl": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
