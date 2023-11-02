@@ -373,7 +373,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^2.22.0
+        specifier: ^2.22.1
         version: link:../use-intl
     devDependencies:
       '@edge-runtime/vm':
