@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.22.0 (2023-11-02)
+
+
+### Features
+
+* Support Next.js 14 ([#593](https://github.com/amannn/next-intl/issues/593)) ([5c449f5](https://github.com/amannn/next-intl/commit/5c449f565f4ef3587555865d86775dd9c06b8a4d))
+
+
+
+
+
 # 2.21.0 (2023-10-18)
 
 

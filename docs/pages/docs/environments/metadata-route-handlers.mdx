@@ -57,7 +57,7 @@ export async function generateMetadata({params: {locale}}) {
 If you need to internationalize content within [metadata files](https://nextjs.org/docs/app/api-reference/file-conventions/metadata), such as an Open Graph image, you can call APIs from `next-intl` in the exported function.
 
 ```tsx filename="app/[locale]/opengraph-image.tsx"
-import {ImageResponse} from 'next/server';
+import {ImageResponse} from 'next/og';
 import {getTranslator} from 'next-intl/server';
 
 export default async function Image({params: {locale}}) {
