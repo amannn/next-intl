@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.22.1 (2023-11-02)
+
+
+### Bug Fixes
+
+* Correct version range ([ffbff8e](https://github.com/amannn/next-intl/commit/ffbff8ef6c028f61bf6d239dbc232e4a86cb452a))
+
+
+
+
+
 # 2.22.0 (2023-11-02)
 
 
