@@ -109,7 +109,7 @@ If you need to internationalize content within [metadata files](https://nextjs.o
 <Tab>
 
 ```tsx filename="app/[locale]/opengraph-image.tsx"
-import {ImageResponse} from 'next/server';
+import {ImageResponse} from 'next/og';
 import {createTranslator} from 'next-intl';
 
 export default async function Image({params: {locale}}) {
@@ -124,7 +124,7 @@ export default async function Image({params: {locale}}) {
 <Tab>
 
 ```tsx filename="app/[locale]/opengraph-image.tsx"
-import {ImageResponse} from 'next/server';
+import {ImageResponse} from 'next/og';
 import {getTranslator} from 'next-intl/server';
 
 export default async function Image({params: {locale}}) {
