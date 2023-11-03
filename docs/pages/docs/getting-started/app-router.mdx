@@ -1,9 +1,9 @@
 import Callout from 'components/Callout';
 import Steps from 'components/Steps';
 
-# Next.js 13: Internationalization (i18n)
+# Next.js App Router Internationalization (i18n)
 
-Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side.
+Next.js 13 introduces support for [React Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components) with the App Router and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side.
 
 ## Getting started
 
@@ -155,11 +155,17 @@ That's all it takes!
   <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
   <li>
     Ran into an issue? Have a look at [the App Router
-    example](https://next-intl-example-next-13.vercel.app/)
-    ([source](https://github.com/amannn/next-intl/tree/main/examples/example-next-13)).
+    example](https://next-intl-example-next-13.vercel.app/).
   </li>
-  <li>Considering using `next-intl` in Client Components? Check out [the Client Components guide](/docs/environments/server-client-components).</li>
-  <li>Wondering how to link between internationalized pages? Have a look at [the navigation docs](/docs/routing/navigation).</li>
+  <li>
+    Want to learn more about about using translations across the server and
+    client? Check out [the Server & Client Components
+    guide](/docs/environments/server-client-components).
+  </li>
+  <li>
+    Wondering how to link between internationalized pages? Have a look at [the
+    navigation docs](/docs/routing/navigation).
+  </li>
 </ul>
 
 </Callout>
@@ -215,7 +221,7 @@ export default function IndexPage({
 }) {
   unstable_setRequestLocale(locale);
 
-  // Once the request locale is set, you 
+  // Once the request locale is set, you
   // can call hooks from `next-intl`
   const t = useTranslations('IndexPage');
 
@@ -227,8 +233,6 @@ export default function IndexPage({
 
 **Important:** `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
 
-</Steps>
-
 <details>
 <summary>What does "unstable" mean?</summary>
 
@@ -237,8 +241,8 @@ export default function IndexPage({
 Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
-</details>
 
+</details>
 
 <details>
 <summary>How does unstable_setRequestLocale work?</summary>
@@ -248,3 +252,23 @@ That being said, the API is expected to work reliably if you're cautious to appl
 Note that the store is scoped to a request and therefore doesn't affect other requests that might be handled in parallel while a given request resolves asynchronously.
 
 </details>
+
+### Use the `locale` param in metadata
+
+In addition to the rendering of your pages, also page metadata needs to qualify for static rendering.
+
+To achieve this, you can forward the `locale` that you receive from Next.js via `params` to [the awaitable functions from `next-intl`](/docs/environments/server-client-components#async-components).
+
+```tsx filename="page.tsx"
+import {getTranslator} from 'next-intl/server';
+
+export async function generateMetadata({params: {locale}}) {
+  const t = await getTranslator({locale, namespace: 'Metadata'});
+
+  return {
+    title: t('title')
+  };
+}
+```
+
+</Steps>
