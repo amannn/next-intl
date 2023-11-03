@@ -23,6 +23,8 @@ For example:
 - `/en/about`
 - `/de/ueber-uns`
 
+**Note:** The terms "shared" and "localized" pathnames are used to refer to pathnames that are created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.
+
 ---
 
 Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `src/navigation.ts`).
