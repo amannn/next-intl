@@ -8,5 +8,5 @@ export default function useTimeZone(
   ...[]: Parameters<typeof useTimeZoneType>
 ): ReturnType<typeof useTimeZoneType> {
   const locale = useLocale();
-  return useHook('useTimeZone', getTimeZone(locale));
+  return useHook('useTimeZone', getTimeZone({locale}));
 }

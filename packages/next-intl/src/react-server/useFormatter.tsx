@@ -8,5 +8,5 @@ export default function useFormatter(
   ...[]: Parameters<typeof useFormatterType>
 ): ReturnType<typeof useFormatterType> {
   const locale = useLocale();
-  return useHook('useFormatter', getFormatter(locale));
+  return useHook('useFormatter', getFormatter({locale}));
 }

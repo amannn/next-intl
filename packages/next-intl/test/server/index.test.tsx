@@ -38,12 +38,12 @@ vi.mock('react', async (importOriginal) => {
 
 describe('getTranslator', () => {
   it('can interpolate variables', async () => {
-    const t = await getTranslator('en', 'About');
+    const t = await getTranslator({locale: 'en', namespace: 'About'});
     expect(t('interpolation', {name: 'Jane'})).toBe('Hello Jane');
   });
 
   it('renders rich text to a string', async () => {
-    const t = await getTranslator('en', 'About');
+    const t = await getTranslator({locale: 'en', namespace: 'About'});
     expect(
       t.rich('rich', {
         name: 'Example',
@@ -53,14 +53,14 @@ describe('getTranslator', () => {
   });
 
   it('renders raw text to a string', async () => {
-    const t = await getTranslator('en', 'About');
+    const t = await getTranslator({locale: 'en', namespace: 'About'});
     expect(t.raw('rich')).toBe('<link>{name}</link>');
   });
 });
 
 describe('getFormatter', () => {
   it('can format a date', async () => {
-    const format = await getFormatter('en');
+    const format = await getFormatter({locale: 'en'});
     expect(format.dateTime(new Date('2020-01-01T00:00:00.000Z'))).toBe(
       '1/1/2020'
     );
@@ -69,18 +69,20 @@ describe('getFormatter', () => {
 
 describe('getNow', () => {
   it('returns the current time', async () => {
-    expect((await getNow('en')).toISOString()).toBe('2020-01-01T00:00:00.000Z');
+    expect((await getNow({locale: 'en'})).toISOString()).toBe(
+      '2020-01-01T00:00:00.000Z'
+    );
   });
 });
 
 describe('getMessages', () => {
   it('returns the messages', async () => {
-    expect(await getMessages('en')).toHaveProperty('About');
+    expect(await getMessages({locale: 'en'})).toHaveProperty('About');
   });
 });
 
 describe('getTimeZone', () => {
   it('returns the time zone', async () => {
-    expect(await getTimeZone('en')).toBe('Europe/London');
+    expect(await getTimeZone({locale: 'en'})).toBe('Europe/London');
   });
 });

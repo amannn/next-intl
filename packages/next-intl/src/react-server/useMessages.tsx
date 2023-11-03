@@ -8,5 +8,5 @@ export default function useMessages(
   ...[]: Parameters<typeof useMessagesType>
 ): ReturnType<typeof useMessagesType> {
   const locale = useLocale();
-  return useHook('useMessages', getMessages(locale));
+  return useHook('useMessages', getMessages({locale}));
 }

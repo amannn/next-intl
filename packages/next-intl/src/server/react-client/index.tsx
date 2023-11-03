@@ -33,4 +33,6 @@ export const getTranslator = notSupported('getTranslator') as unknown as typeof 
 // prettier-ignore
 export const getMessages = notSupported('getMessages') as unknown as typeof getMessages_type;
 // prettier-ignore
+export const getLocale = notSupported('getLocale') as unknown as typeof getMessages_type;
+// prettier-ignore
 export const unstable_setRequestLocale = notSupported('unstable_setRequestLocale') as unknown as typeof unstable_setRequestLocale_type;
