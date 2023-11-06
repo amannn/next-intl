@@ -1,10 +1,9 @@
 import {cache} from 'react';
 import getConfig from './getConfig';
-import getLocale from './getLocale';
 import resolveLocaleArg from './resolveLocaleArg';
 
-const getNowImpl = cache(async (locale?: string) => {
-  const config = await getConfig(locale || getLocale());
+const getNowImpl = cache(async (locale: string) => {
+  const config = await getConfig(locale);
   return config.now;
 });
 

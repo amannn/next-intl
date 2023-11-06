@@ -3,8 +3,8 @@ import {createFormatter} from 'use-intl/core';
 import getConfig from './getConfig';
 import resolveLocaleArg from './resolveLocaleArg';
 
-const getFormatterImpl = cache(async (locale?: string) => {
-  const config = await getConfig(resolveLocaleArg('getFormatter', locale));
+const getFormatterImpl = cache(async (locale: string) => {
+  const config = await getConfig(locale);
   return createFormatter(config);
 });
 
