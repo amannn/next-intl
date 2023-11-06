@@ -4,7 +4,6 @@ import ClientCounter from './ClientCounter';
 
 export default function Counter() {
   const messages = useMessages();
-  if (!messages) return null;
 
   return (
     <NextIntlClientProvider

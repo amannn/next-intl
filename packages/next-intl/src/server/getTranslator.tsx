@@ -11,7 +11,7 @@ import {
   MarkupTranslationValues
 } from 'use-intl/core';
 import getConfig from './getConfig';
-import resolveLocaleArg from './resolveLocaleArg';
+import getLocale from './getLocale';
 
 async function getTranslatorImpl<
   NestedKey extends NamespaceKeys<
@@ -19,8 +19,7 @@ async function getTranslatorImpl<
     NestedKeyOf<IntlMessages>
   > = never
 >(
-  optsOrDeprecatedLocale?: {locale?: string; namespace?: NestedKey} | string,
-  deprecatedNamespace?: NestedKey
+  namespaceOrOpts?: NestedKey | {locale: string; namespace: NestedKey}
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
   // Default invocation
@@ -101,14 +100,19 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  const config = await getConfig(
-    resolveLocaleArg('getTranslator', optsOrDeprecatedLocale)
-  );
-  const namespace =
-    typeof optsOrDeprecatedLocale === 'object' &&
-    'namespace' in optsOrDeprecatedLocale
-      ? optsOrDeprecatedLocale.namespace
-      : deprecatedNamespace;
+  let namespace: NestedKey | undefined, locale: string;
+
+  if (typeof namespaceOrOpts === 'string') {
+    namespace = namespaceOrOpts;
+    locale = getLocale();
+  } else if (namespaceOrOpts) {
+    namespace = namespaceOrOpts.namespace;
+    locale = namespaceOrOpts.locale;
+  } else {
+    locale = getLocale();
+  }
+
+  const config = await getConfig(locale);
 
   return createTranslator({
     ...config,

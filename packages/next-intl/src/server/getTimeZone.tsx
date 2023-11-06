@@ -1,14 +1,10 @@
 import {cache} from 'react';
 import getConfig from './getConfig';
-import resolveLocaleArg from './resolveLocaleArg';
+import getLocale from './getLocale';
 
-const getTimeZone = cache(
-  async (optsOrDeprecatedLocale?: {locale?: string} | string) => {
-    const config = await getConfig(
-      resolveLocaleArg('getTimeZone', optsOrDeprecatedLocale)
-    );
-    return config.timeZone;
-  }
-);
+const getTimeZone = cache(async (opts?: {locale?: string}) => {
+  const config = await getConfig(opts?.locale || getLocale());
+  return config.timeZone;
+});
 
 export default getTimeZone;
