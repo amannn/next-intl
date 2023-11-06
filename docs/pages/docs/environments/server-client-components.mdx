@@ -32,42 +32,14 @@ Moving internationalization to the server side unlocks new levels of performance
 
 Server Components can be declared in two ways:
 
-**Async components**
-
-```tsx filename="[locale]/profile/page.tsx"
-// Async components are typically used to fetch data
-// in order to pass it on to child components.
-export default async function ProfilePage() {
-  const user = await fetchUser();
-
-  return (
-    <PageLayout title={user.name + '‘s profile'}>
-      <UserDetails user={user} />
-    </PageLayout>
-  );
-}
-```
-
-**Non-async, regular components**
-
-```tsx filename="UserDetails.tsx"
-// Non-async components receive data
-// via props and transform it to JSX.
-export default function UserDetails({user}) {
-  return (
-    <section>
-      <h2>User details</h2>
-      <p>{user.numFollowers} follower(s)</p>
-    </section>
-  );
-}
-```
+1. Async components
+2. Non-async, regular components
 
 In a typical app, you'll likely find both types of components. `next-intl` provides corresponding APIs that work for the given component type.
 
 ### Async components
 
-These components are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
+These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
 
 ```tsx filename="[locale]/profile/page.tsx"
 import {getTranslator} from 'next-intl/server';
@@ -139,9 +111,8 @@ The one restriction that currently comes with this pattern is that hooks can not
 
 <details>
 <summary>Should I use async or non-async functions for my components?</summary>
-If you implement components that qualify as shared components, it's beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible.
 
-Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing.
+If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing. However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
 
 </details>
 
