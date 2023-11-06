@@ -13,6 +13,6 @@ export async function GET(request: NextRequest, {params: {locale}}: Props) {
     return new Response('Search param `name` was not provided.', {status: 400});
   }
 
-  const t = await getTranslator(locale, 'ApiRoute');
+  const t = await getTranslator({locale, namespace: 'ApiRoute'});
   return NextResponse.json({message: t('hello', {name})});
 }

@@ -5,7 +5,7 @@ type Props = {
 };
 
 export default async function AsyncComponent({locale}: Props) {
-  const t = await getTranslator(locale, 'AsyncComponent');
+  const t = await getTranslator({locale, namespace: 'AsyncComponent'});
 
   return (
     <div data-testid="AsyncComponent">
