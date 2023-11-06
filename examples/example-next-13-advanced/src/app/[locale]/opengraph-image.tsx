@@ -1,5 +1,5 @@
 import {ImageResponse} from 'next/server';
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 type Props = {
   params: {
@@ -8,6 +8,6 @@ type Props = {
 };
 
 export default async function Image({params: {locale}}: Props) {
-  const t = await getTranslator(locale, 'OpenGraph');
+  const t = await getTranslations({locale, namespace: 'OpenGraph'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }

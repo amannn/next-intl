@@ -1,11 +1,7 @@
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
-type Props = {
-  locale: string;
-};
-
-export default async function AsyncComponent({locale}: Props) {
-  const t = await getTranslator(locale, 'AsyncComponent');
+export default async function AsyncComponent() {
+  const t = await getTranslations('AsyncComponent');
 
   return (
     <div data-testid="AsyncComponent">
