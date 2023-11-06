@@ -260,10 +260,10 @@ In addition to the rendering of your pages, also page metadata needs to qualify 
 To achieve this, you can forward the `locale` that you receive from Next.js via `params` to [the awaitable functions from `next-intl`](/docs/environments/server-client-components#async-components).
 
 ```tsx filename="page.tsx"
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
-  const t = await getTranslator({locale, namespace: 'Metadata'});
+  const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
     title: t('title')

@@ -4,6 +4,7 @@ import type {
   getNow as getNow_type,
   getTimeZone as getTimeZone_type,
   getTranslator as getTranslator_type,
+  getTranslations as getTranslations_type,
   getMessages as getMessages_type,
   unstable_setRequestLocale as unstable_setRequestLocale_type
 } from '..';
@@ -29,7 +30,10 @@ export const getNow = notSupported('getNow') as unknown as typeof getNow_type;
 // prettier-ignore
 export const getTimeZone = notSupported('getTimeZone') as unknown as typeof getTimeZone_type;
 // prettier-ignore
+/** @deprecated Deprecated in favor of `getTranslations`. See https://github.com/amannn/next-intl/pull/600 */
 export const getTranslator = notSupported('getTranslator') as unknown as typeof getTranslator_type;
+// prettier-ignore
+export const getTranslations = notSupported('getTranslations') as unknown as typeof getTranslations_type;
 // prettier-ignore
 export const getMessages = notSupported('getMessages') as unknown as typeof getMessages_type;
 // prettier-ignore

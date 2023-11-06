@@ -42,11 +42,11 @@ In a typical app, you'll likely find both types of components. `next-intl` provi
 These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
 
 ```tsx filename="[locale]/profile/page.tsx"
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export default async function ProfilePage() {
   const user = await fetchUser();
-  const t = await getTranslator('ProfilePage');
+  const t = await getTranslations('ProfilePage');
 
   return (
     <PageLayout title={t('title', {username: user.name})}>
@@ -60,7 +60,7 @@ These functions are available:
 
 ```tsx
 import {
-  getTranslator,
+  getTranslations,
   getFormatter,
   getNow,
   getTimeZone,
@@ -68,7 +68,7 @@ import {
   getLocale
 } from 'next-intl/server';
 
-const t = await getTranslator('ProfilePage');
+const t = await getTranslations('ProfilePage');
 const format = await getFormatter();
 const now = await getNow();
 const timeZone = await getTimeZone();

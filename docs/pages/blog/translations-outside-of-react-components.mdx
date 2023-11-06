@@ -116,13 +116,13 @@ If you’re working with Next.js, you might want to translate i18n messages in [
 `next-intl/server` provides a set of awaitable versions of the functions that you usually call as hooks from within components. These are agnostic from React and can be used for these cases.
 
 ```tsx
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 // The `locale` is received from Next.js via `params`
 const locale = params.locale;
 
 // This creates the same function that is returned by `useTranslations`.
-const t = await getTranslator(locale);
+const t = await getTranslations(locale);
 
 // Result: "Hello world!"
 t('hello', {name: 'world'});

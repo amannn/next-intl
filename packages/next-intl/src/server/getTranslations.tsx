@@ -1,5 +1,6 @@
 import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
+  createTranslator,
   Formats,
   TranslationValues,
   MessageKeys,
@@ -9,20 +10,16 @@ import {
   RichTranslationValues,
   MarkupTranslationValues
 } from 'use-intl/core';
-import getTranslations from './getTranslations';
+import getConfig from './getConfig';
+import getLocale from './getLocale';
 
-// TODO: Remove
-const getDeprecation = cache(() => ({hasWarned: false}));
-
-/** @deprecated Deprecated in favor of `getTranslations`. See https://github.com/amannn/next-intl/pull/600 */
-export default async function getTranslator<
+async function getTranslations<
   NestedKey extends NamespaceKeys<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
 >(
-  locale: string,
-  namespace?: NestedKey
+  namespaceOrOpts?: NestedKey | {locale: string; namespace?: NestedKey}
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
   // Default invocation
@@ -103,22 +100,25 @@ Promise<{
     key: TargetKey
   ): any;
 }> {
-  if (!getDeprecation().hasWarned) {
-    console.error(
-      `\nDEPRECATION WARNING: \`getTranslator\` has been deprecated in favor of \`getTranslations\`:
+  let namespace: NestedKey | undefined, locale: string;
 
-import {getTranslations} from 'next-intl/server';
-
-// With implicit request locale
-const t = await getTranslator('${namespace}'); 
-
-// With explicit locale
-const t = await getTranslator({locale: '${locale}', namespace: '${namespace}'}); 
-
-See https://github.com/amannn/next-intl/pull/600\n`
-    );
-    getDeprecation().hasWarned = true;
+  if (typeof namespaceOrOpts === 'string') {
+    namespace = namespaceOrOpts;
+    locale = getLocale();
+  } else if (namespaceOrOpts) {
+    namespace = namespaceOrOpts.namespace;
+    locale = namespaceOrOpts.locale;
+  } else {
+    locale = getLocale();
   }
 
-  return getTranslations({locale, namespace});
+  const config = await getConfig(locale);
+
+  return createTranslator({
+    ...config,
+    namespace,
+    messages: config.messages
+  });
 }
+
+export default cache(getTranslations);

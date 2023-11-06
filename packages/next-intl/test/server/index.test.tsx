@@ -2,7 +2,7 @@
 
 import {it, vi, expect, describe} from 'vitest';
 import {
-  getTranslator,
+  getTranslations,
   getMessages,
   getFormatter,
   getNow,
@@ -50,24 +50,24 @@ vi.mock('react', async (importOriginal) => {
   };
 });
 
-describe('getTranslator', () => {
+describe('getTranslations', () => {
   it('works with an implicit locale', async () => {
-    const t = await getTranslator('About');
+    const t = await getTranslations('About');
     expect(t('basic')).toBe('Hello');
   });
 
   it('works without a namespace', async () => {
-    const t = await getTranslator();
+    const t = await getTranslations();
     expect(t('About.basic')).toBe('Hello');
   });
 
   it('can interpolate variables', async () => {
-    const t = await getTranslator({locale: 'en', namespace: 'About'});
+    const t = await getTranslations({locale: 'en', namespace: 'About'});
     expect(t('interpolation', {name: 'Jane'})).toBe('Hello Jane');
   });
 
   it('renders rich text to a string', async () => {
-    const t = await getTranslator({locale: 'en', namespace: 'About'});
+    const t = await getTranslations({locale: 'en', namespace: 'About'});
     expect(
       t.rich('rich', {
         name: 'Example',
@@ -77,7 +77,7 @@ describe('getTranslator', () => {
   });
 
   it('renders raw text to a string', async () => {
-    const t = await getTranslator({locale: 'en', namespace: 'About'});
+    const t = await getTranslations({locale: 'en', namespace: 'About'});
     expect(t.raw('rich')).toBe('<link>{name}</link>');
   });
 });

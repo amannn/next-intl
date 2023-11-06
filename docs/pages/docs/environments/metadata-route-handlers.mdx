@@ -16,10 +16,10 @@ There are a few places in Next.js apps where you might need to apply internation
 To internationalize metadata like the page title, you can use functionality from `next-intl` in the [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) function that can be exported from pages and layouts.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
-  const t = await getTranslator({locale, namespace: 'Metadata'});
+  const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
     title: t('title')
@@ -33,10 +33,10 @@ If you need to internationalize content within [metadata files](https://nextjs.o
 
 ```tsx filename="app/[locale]/opengraph-image.tsx"
 import {ImageResponse} from 'next/og';
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export default async function OpenGraphImage({params: {locale}}) {
-  const t = await getTranslator({locale, namespace: 'OpenGraphImage'});
+  const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
 ```
@@ -47,14 +47,14 @@ You can use `next-intl` in [Route Handlers](https://nextjs.org/docs/app/building
 
 ```tsx filename="app/api/hello/route.tsx"
 import {NextResponse} from 'next/server';
-import {getTranslator} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export async function GET(request) {
   // Example: Receive the `locale` via a search param
   const {searchParams} = new URL(request.url);
   const locale = searchParams.get('locale');
 
-  const t = await getTranslator({locale, namespace: 'Hello'});
+  const t = await getTranslations({locale, namespace: 'Hello'});
   return NextResponse.json({title: t('title')});
 }
 ```
