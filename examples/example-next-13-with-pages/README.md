@@ -1,6 +1,6 @@
 # example-next-13-with-pages
 
-An example that showcases a basic installation of `next-intl` in a Next.js app that uses both the pages and the new app folder.
+An example that showcases a basic installation of `next-intl` in a Next.js app that uses both the Pages as well as the App Router.
 
 **Important**: Do not add an `i18n` config to `next.config.js`, as it will cause the `app` directory to be ignored.
 
