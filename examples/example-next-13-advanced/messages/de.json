@@ -5,6 +5,11 @@
     "rich": "Das ist <important>formatierter</important> Test.",
     "globalDefaults": "<highlight>{globalString}</highlight>"
   },
+  "AsyncComponent": {
+    "basic": "AsyncComponent",
+    "rich": "This is a <important>rich</important> text.",
+    "markup": "Markup with <b>{globalString}</b>"
+  },
   "LocaleLayout": {
     "title": "next-intl Beispiel",
     "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann."
@@ -45,5 +50,8 @@
   },
   "OpenGraph": {
     "title": "next-intl Beispiel"
+  },
+  "ServerActions": {
+    "item": "Element #{id}"
   }
 }
