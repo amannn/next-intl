@@ -419,6 +419,12 @@ it('can set `now` and `timeZone` at runtime', async ({page}) => {
   await expect(element).toHaveText('Jan 1, 2020, 08:00 (Asia/Shanghai)');
 });
 
+it('automatically inherits a time zone on the client side', async ({page}) => {
+  await page.goto('/client');
+  await expect(page.getByTestId('TimeZone')).toHaveText('Europe/Vienna');
+  await expect(page.getByTestId('Locale')).toHaveText('en');
+});
+
 it('keeps search params for directly matched pages', async ({page}) => {
   await page.goto('/de?param=true');
   await expect(page).toHaveURL('/de?param=true');

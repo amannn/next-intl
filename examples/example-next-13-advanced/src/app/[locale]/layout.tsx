@@ -24,6 +24,7 @@ export async function generateMetadata({
   const timeZone = await getTimeZone({locale});
 
   return {
+    metadataBase: new URL('http://localhost:3000'),
     title: t('title'),
     description: t('description'),
     other: {
