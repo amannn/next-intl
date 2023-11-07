@@ -12,19 +12,9 @@ export default function NextIntlClientProvider({
   timeZone,
   ...rest
 }: Props) {
-  let defaultLocale, defaultNow, defaultTimeZone;
-
-  // These hook calls can fail if this component is rendered in RSC, but the
-  // plugin has not been added. This is mostly for backwards compatibility.
-  try {
-    /* eslint-disable react-hooks/rules-of-hooks -- */
-    defaultLocale = useLocale();
-    defaultNow = useNow();
-    defaultTimeZone = useTimeZone();
-    /* eslint-enable react-hooks/rules-of-hooks */
-  } catch (e) {
-    // Ignore
-  }
+  const defaultLocale = useLocale();
+  const defaultNow = useNow();
+  const defaultTimeZone = useTimeZone();
 
   return (
     <BaseNextIntlClientProvider

@@ -1,5 +1,5 @@
 import {getRequestLocale} from './RequestLocale';
 
 export default function getLocale() {
-  return getRequestLocale();
+  return Promise.resolve(getRequestLocale());
 }

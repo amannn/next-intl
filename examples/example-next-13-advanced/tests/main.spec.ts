@@ -419,6 +419,14 @@ it('can set `now` and `timeZone` at runtime', async ({page}) => {
   await expect(element).toHaveText('Jan 1, 2020, 08:00 (Asia/Shanghai)');
 });
 
+it('automatically inherits a time zone and locale on the client side when using the provider in an RSC', async ({
+  page
+}) => {
+  await page.goto('/client');
+  await expect(page.getByTestId('TimeZone')).toHaveText('Europe/Vienna');
+  await expect(page.getByTestId('Locale')).toHaveText('en');
+});
+
 it('keeps search params for directly matched pages', async ({page}) => {
   await page.goto('/de?param=true');
   await expect(page).toHaveURL('/de?param=true');
@@ -565,8 +573,17 @@ it('supports opengraph images', async ({page, request}) => {
 
 it('can use async APIs in async components', async ({page}) => {
   await page.goto('/');
-  const element = page.getByTestId('AsyncComponent');
-  element.getByText('AsyncComponent');
-  expect(await element.innerHTML()).toContain('This is a <b>rich</b> text.');
-  element.getByText('Markup with <b>Global string</b>');
+
+  const element1 = page.getByTestId('AsyncComponent');
+  element1.getByText('AsyncComponent');
+  expect(await element1.innerHTML()).toContain('This is a <b>rich</b> text.');
+  element1.getByText('Markup with <b>Global string</b>');
+
+  page
+    .getByTestId('AsyncComponentWithoutNamespace')
+    .getByText('AsyncComponent');
+
+  page
+    .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
+    .getByText('AsyncComponent');
 });

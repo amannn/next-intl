@@ -31,7 +31,7 @@
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^13.4.0",
     "next-sitemap": "^4.0.7",
-    "typescript": "^5.0.0"
+    "typescript": "^5.2.2"
   },
   "funding": "https://github.com/amannn/next-intl?sponsor=1"
 }
