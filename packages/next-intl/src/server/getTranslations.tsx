@@ -198,24 +198,21 @@ async function getTranslations<
     NestedKeyOf<IntlMessages>
   > = never
 >(namespaceOrOpts?: NestedKey | {locale: string; namespace?: NestedKey}) {
-  let locale: string;
+  let namespace: NestedKey | undefined;
+  let locale: string | undefined;
+
   if (typeof namespaceOrOpts === 'string') {
-    locale = await getLocale();
+    namespace = namespaceOrOpts;
   } else if (namespaceOrOpts) {
     locale = namespaceOrOpts.locale;
-  } else {
-    locale = await getLocale();
+    namespace = namespaceOrOpts.namespace;
   }
 
-  const config = await getConfig(locale);
+  const config = await getConfig(locale || (await getLocale()));
 
   return createTranslator({
     ...config,
-    namespace:
-      typeof namespaceOrOpts === 'string'
-        ? (namespaceOrOpts as NestedKey)
-        : namespaceOrOpts?.namespace,
-
+    namespace,
     messages: config.messages
   });
 }
