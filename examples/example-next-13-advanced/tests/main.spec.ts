@@ -419,7 +419,9 @@ it('can set `now` and `timeZone` at runtime', async ({page}) => {
   await expect(element).toHaveText('Jan 1, 2020, 08:00 (Asia/Shanghai)');
 });
 
-it('automatically inherits a time zone on the client side', async ({page}) => {
+it('automatically inherits a time zone and locale on the client side when using the provider in an RSC', async ({
+  page
+}) => {
   await page.goto('/client');
   await expect(page.getByTestId('TimeZone')).toHaveText('Europe/Vienna');
   await expect(page.getByTestId('Locale')).toHaveText('en');
