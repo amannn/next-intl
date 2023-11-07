@@ -1,4 +1,4 @@
-import {ImageResponse} from 'next/server';
+import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 
 type Props = {
