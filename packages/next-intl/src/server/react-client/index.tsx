@@ -6,6 +6,7 @@ import type {
   getTranslator as getTranslator_type,
   getTranslations as getTranslations_type,
   getMessages as getMessages_type,
+  getLocale as getLocale_type,
   unstable_setRequestLocale as unstable_setRequestLocale_type
 } from '..';
 
@@ -37,6 +38,6 @@ export const getTranslations = notSupported('getTranslations') as unknown as typ
 // prettier-ignore
 export const getMessages = notSupported('getMessages') as unknown as typeof getMessages_type;
 // prettier-ignore
-export const getLocale = notSupported('getLocale') as unknown as typeof getMessages_type;
+export const getLocale = notSupported('getLocale') as unknown as typeof getLocale_type;
 // prettier-ignore
 export const unstable_setRequestLocale = notSupported('unstable_setRequestLocale') as unknown as typeof unstable_setRequestLocale_type;

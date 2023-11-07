@@ -104,12 +104,12 @@ Promise<{
 
   if (typeof namespaceOrOpts === 'string') {
     namespace = namespaceOrOpts;
-    locale = getLocale();
+    locale = await getLocale();
   } else if (namespaceOrOpts) {
     namespace = namespaceOrOpts.namespace;
     locale = namespaceOrOpts.locale;
   } else {
-    locale = getLocale();
+    locale = await getLocale();
   }
 
   const config = await getConfig(locale);

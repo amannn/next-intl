@@ -1,10 +1,9 @@
 import {cache} from 'react';
 import getConfig from './getConfig';
-import getLocale from './getLocale';
 import resolveLocaleArg from './resolveLocaleArg';
 
-const getMessagesImpl = cache(async (locale?: string) => {
-  const config = await getConfig(locale || getLocale());
+const getMessagesImpl = cache(async (locale: string) => {
+  const config = await getConfig(locale);
 
   if (!config.messages) {
     throw new Error(
@@ -15,7 +14,7 @@ const getMessagesImpl = cache(async (locale?: string) => {
   return config.messages;
 });
 
-export default function getMessages(opts?: {locale?: string} | string) {
-  const locale = resolveLocaleArg('getMessages', opts);
+export default async function getMessages(opts?: {locale?: string} | string) {
+  const locale = await resolveLocaleArg('getMessages', opts);
   return getMessagesImpl(locale);
 }
