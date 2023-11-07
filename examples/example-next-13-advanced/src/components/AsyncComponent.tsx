@@ -11,3 +11,10 @@ export default async function AsyncComponent() {
     </div>
   );
 }
+
+export async function TypeTest() {
+  const t = await getTranslations('AsyncComponent');
+
+  // @ts-expect-error
+  t('unknown');
+}

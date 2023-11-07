@@ -565,8 +565,17 @@ it('supports opengraph images', async ({page, request}) => {
 
 it('can use async APIs in async components', async ({page}) => {
   await page.goto('/');
-  const element = page.getByTestId('AsyncComponent');
-  element.getByText('AsyncComponent');
-  expect(await element.innerHTML()).toContain('This is a <b>rich</b> text.');
-  element.getByText('Markup with <b>Global string</b>');
+
+  const element1 = page.getByTestId('AsyncComponent');
+  element1.getByText('AsyncComponent');
+  expect(await element1.innerHTML()).toContain('This is a <b>rich</b> text.');
+  element1.getByText('Markup with <b>Global string</b>');
+
+  page
+    .getByTestId('AsyncComponentWithoutNamespace')
+    .getByText('AsyncComponent');
+
+  page
+    .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
+    .getByText('AsyncComponent');
 });
