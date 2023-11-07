@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
-import {getTranslator, unstable_setRequestLocale} from 'next-intl/server';
+import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
 import {locales} from 'navigation';
@@ -20,7 +20,7 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params: {locale}
 }: Omit<Props, 'children'>) {
-  const t = await getTranslator(locale, 'LocaleLayout');
+  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
 
   return {
     title: t('title')

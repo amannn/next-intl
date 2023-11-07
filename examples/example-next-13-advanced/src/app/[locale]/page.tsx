@@ -12,10 +12,9 @@ import {Link} from '../../navigation';
 
 type Props = {
   searchParams: Record<string, string>;
-  params: {locale: string};
 };
 
-export default function Index({params, searchParams}: Props) {
+export default function Index({searchParams}: Props) {
   const t = useTranslations('Index');
   const format = useFormatter();
   const now = useNow();
@@ -55,7 +54,7 @@ export default function Index({params, searchParams}: Props) {
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       {/* @ts-ignore -- Waiting for TS support */}
-      <AsyncComponent locale={params.locale} />
+      <AsyncComponent />
     </PageLayout>
   );
 }

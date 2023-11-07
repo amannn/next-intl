@@ -1,6 +1,12 @@
 import {cache} from 'react';
 import {createFormatter} from 'use-intl/core';
 import getConfig from './getConfig';
+import resolveLocaleArg from './resolveLocaleArg';
+
+const getFormatterImpl = cache(async (locale: string) => {
+  const config = await getConfig(locale);
+  return createFormatter(config);
+});
 
 /**
  * Returns a formatter based on the given locale.
@@ -8,9 +14,7 @@ import getConfig from './getConfig';
  * The formatter automatically receives the request config, but
  * you can override it by passing in additional options.
  */
-const getFormatter = cache(async (locale: string) => {
-  const config = await getConfig(locale);
-  return createFormatter(config);
-});
-
-export default getFormatter;
+export default function getFormatter(opts?: {locale?: string} | string) {
+  const locale = resolveLocaleArg('getFormatter', opts);
+  return getFormatterImpl(locale);
+}

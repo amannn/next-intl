@@ -27,6 +27,7 @@
     "eslint": "^8.46.0",
     "eslint-config-molindo": "7.0.0-alpha.7",
     "eslint-config-next": "^13.4.0",
+    "sharp": "^0.32.6",
     "typescript": "^5.0.0"
   }
 }
