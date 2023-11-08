@@ -496,6 +496,7 @@ This can happen either because:
 1. The middleware is not set up.
 2. The middleware is set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder).
 3. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component.
+4. You're attempting to implement static rendering via [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
 To recover from this error, please make sure that:
 
@@ -503,3 +504,4 @@ To recover from this error, please make sure that:
 2. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `locale` segment.
 3. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
 4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/getting-started/app-router#applocalelayouttsx) before it's used by any APIs from `next-intl`.
+5. To implement static rendering properly, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl`.
