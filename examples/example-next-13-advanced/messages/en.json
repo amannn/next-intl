@@ -50,5 +50,8 @@
   },
   "OpenGraph": {
     "title": "next-intl example"
+  },
+  "ServerActions": {
+    "item": "Item #{id}"
   }
 }
