@@ -261,6 +261,19 @@ Note that the store is scoped to a request and therefore doesn't affect other re
 
 </details>
 
+<details>
+<summary>Why is this API necessary?</summary>
+
+Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components. The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
+
+Due to this, `next-intl` uses its middleware to attach an `x-next-intl-locale` header to the incoming request, holding the negotiated locale as a value. This technique allows the locale to be read at arbitrary places via `headers().get('x-next-intl-locale')`.
+
+However, the usage of `headers` opts the route into dynamic rendering.
+
+By using `unstable_setRequestLocale`, you can provide the locale that is received in layouts and pages via `params` to `next-intl`. By doing this, all APIs from `next-intl` can now read from this value instead of the header, enabling static rendering.
+
+</details>
+
 ### Use the `locale` param in metadata
 
 In addition to the rendering of your pages, also page metadata needs to qualify for static rendering.
