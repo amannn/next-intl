@@ -11,7 +11,6 @@ const config = {
     'navigation.react-server': 'src/navigation.react-server.tsx',
 
     server: 'src/server.tsx',
-    'server.react-server': 'src/server.react-server.tsx',
 
     middleware: 'src/middleware.tsx',
     plugin: 'src/plugin.tsx',

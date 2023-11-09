@@ -16,5 +16,8 @@ export async function TypeTest() {
   const t = await getTranslations('AsyncComponent');
 
   // @ts-expect-error
+  await getTranslations('Unknown');
+
+  // @ts-expect-error
   t('unknown');
 }

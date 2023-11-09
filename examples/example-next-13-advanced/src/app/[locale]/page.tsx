@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
 import AsyncComponent from '../../components/AsyncComponent';
+import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
 import AsyncComponentWithoutNamespaceAndLocale from '../../components/AsyncComponentWithoutNamespaceAndLocale';
 import ClientLink from '../../components/ClientLink';
@@ -56,6 +57,7 @@ export default function Index({searchParams}: Props) {
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       <AsyncComponent />
+      <AsyncComponentWithNamespaceAndLocale />
       <AsyncComponentWithoutNamespace />
       <AsyncComponentWithoutNamespaceAndLocale />
     </PageLayout>

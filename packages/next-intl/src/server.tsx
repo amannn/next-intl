@@ -1,1 +1,1 @@
-export * from './server/react-client';
+export * from './server/index';
