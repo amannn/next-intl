@@ -464,7 +464,8 @@ module.exports = {
 This can happen either because:
 
 1. The middleware was not set up
-2. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component
+2. The middleware was set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder)
+3. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component
 
 To address the latter case, you should validate that only valid locales are handled by the `[locale]` layout segment since this effectively acts as a catch-all.
 

@@ -263,20 +263,79 @@ You can format rich text with custom tags and map them to React components:
 
 ```json filename="en.json"
 {
-  "richText": "This is <important><very>very</very> important</important>"
+  "message": "Please refer to <guidelines>the guidelines</guidelines>."
 }
 ```
 
 ```js
-t.rich('richText', {
-  important: (chunks) => <b>{chunks}</b>,
-  very: (chunks) => <i>{chunks}</i>
+t.rich('message', {
+  guidelines: (chunks) => <a href="/guidelines">{chunks}</a>
 });
 ```
 
-If you want to use the same tag across your app, you can configure it via the [default translation values](/docs/configuration#default-translation-values).
+Tags can be arbitrarily nested (e.g. `This is <important><very>very</very> important</important>`).
 
-Note that the ICU parser doesn't support self-closing tags at this point, therefore you have to use syntax like `<br></br>` if your rich text function doesn't intend to receive any `chunks` (e.g. `br: () => <br />`).
+<details>
+<summary>How can I reuse a tag across my app?</summary>
+
+If you want to use the same tag across your app, you can configure it via [default translation values](/docs/configuration#default-translation-values).
+
+</details>
+
+<details>
+<summary>How can I use "self-closing" tags without any chunks?</summary>
+
+Messages can use tags without any chunks as children, but syntax-wise, a closing tag is required by the ICU parser:
+
+```json filename="en.json"
+{
+  "message": "Hello,<br></br>how are you?"
+}
+```
+
+```js
+t.rich('message', {
+  br: (chunks) => <br />
+});
+```
+
+</details>
+
+<details>
+<summary>How can I pass attributes to tags?</summary>
+
+Attributes can only be set on the call site, not within messages:
+
+```json filename="en.json"
+{
+  "message": "Go to <profile>my profile</profile>"
+}
+```
+
+```js
+t.rich('message', {
+  profile: (chunks) => <Link href="/profile">{chunks}</Link>
+});
+```
+
+For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation#localized-pathnames).
+
+In case you have attribute values that are required to be configured as part of your messages, you can retrieve them from a separate message and pass them to another one as an attribute:
+
+```json filename="en.json"
+{
+  "message": "See this <partner>partner website</partner>.",
+  "partnerHref": "https://partner.example.com"
+}
+```
+
+```js
+t.rich('message', {
+  partner: (chunks) => <a href={t('partnerHref')}>{chunks}</a>
+});
+```
+
+</details>
 
 ## Arrays of messages
 

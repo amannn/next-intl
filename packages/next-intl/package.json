@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "2.20.2",
+  "version": "2.22.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
@@ -68,10 +68,10 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^2.20.2"
+    "use-intl": "^2.22.1"
   },
   "peerDependencies": {
-    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0",
+    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
@@ -85,7 +85,7 @@
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "13.5.1",
+    "next": "14.0.1",
     "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

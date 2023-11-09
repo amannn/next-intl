@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.22.1 (2023-11-02)
+
+
+### Bug Fixes
+
+* Correct version range ([ffbff8e](https://github.com/amannn/next-intl/commit/ffbff8ef6c028f61bf6d239dbc232e4a86cb452a))
+
+
+
+
+
+# 2.22.0 (2023-11-02)
+
+
+### Features
+
+* Support Next.js 14 ([#593](https://github.com/amannn/next-intl/issues/593)) ([5c449f5](https://github.com/amannn/next-intl/commit/5c449f565f4ef3587555865d86775dd9c06b8a4d))
+
+
+
+
+
+# 2.21.0 (2023-10-18)
+
+
+### Features
+
+* Support custom units in `format.relativeTime` ([#566](https://github.com/amannn/next-intl/issues/566)) ([6e1bc35](https://github.com/amannn/next-intl/commit/6e1bc35388ccae9f594be6b2d3078a56a10b0a76))
+
+
+
+
+
 ## 2.20.2 (2023-09-22)
 
 

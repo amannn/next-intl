@@ -15,7 +15,7 @@ If you're still happy with the Pages Router, rest assured that `next-intl` is de
 ## New features
 
 1. **Support for React Server Components**: The APIs `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` can now be used in Server Components ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/server-client-components)).
-2. **New async APIs to handle i18n outside of components**: To handle i18n in the Metadata API and Route Handlers, the APIs `getTranslator`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/metadata-route-handlers)).
+2. **New async APIs to handle i18n outside of components**: To handle i18n in the Metadata API and Route Handlers, the APIs `getTranslations`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/metadata-route-handlers)).
 3. **Middleware for internationalized routing**: While Next.js has built-in support for this with the Pages Router, the App Router doesn't include a built-in solution anymore. `next-intl` now provides a drop-in solution that has you covered ([proposed docs](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/middleware)).
 4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect`. These APIs allow you to handle locale prefixes behind the scenes and also provide support for localizing pathnames (e.g. `/en/about` vs. `/de/ueber-uns`, see the [proposed docs](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/routing/navigation)).
 
@@ -108,8 +108,9 @@ Note that if you're using `next-intl` exclusively in Client Components, this doe
 5. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 6. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
 7. `useMessages` now has a non-nullable return type for easier consumption and will throw if no messages are configured.
-8. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
-9. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
+8. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/messages#html-markup) function has been added to generate markup strings like `'<b>Hello</b>'` outside of React components.
+9. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
+10. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/core-library) (deprecated since v2.11).
 
 ## Upgrade now
 
@@ -118,7 +119,7 @@ Along with the release candidate also comes a [preview of the updated docs](http
 We're still looking for more feedback, please try out the release candidate and [reach out](https://github.com/amannn/next-intl/pull/149)!
 
 ```
-npm install next-intl@3.0.0-rc.4
+npm install next-intl@3.0.0-rc.9
 ```
 
 This release was truly a team effort and couldn't be nearly where it is today without the involvement of the community. Thank you so much for being part of this!
