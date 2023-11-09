@@ -584,6 +584,10 @@ it('can use async APIs in async components', async ({page}) => {
     .getByText('AsyncComponent');
 
   page
+    .getByTestId('AsyncComponentWithNamespaceAndLocale')
+    .getByText('AsyncComponent');
+
+  page
     .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
     .getByText('AsyncComponent');
 });

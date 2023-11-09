@@ -7,13 +7,13 @@ import {
   getFormatter,
   getNow,
   getTimeZone
-} from '../../src/server.react-server';
+} from '../../src/server';
 import {HEADER_LOCALE_NAME} from '../../src/shared/constants';
 
 vi.mock('next-intl/config', () => ({
   default: async () =>
     (
-      (await vi.importActual('../../src/server.react-server')) as any
+      (await vi.importActual('../../src/server')) as any
     ).getRequestConfig({
       locale: 'en',
       now: new Date('2020-01-01T00:00:00.000Z'),

@@ -517,7 +517,7 @@ importers:
         specifier: ^17.0.23
         version: 17.0.23
       '@types/react':
-        specifier: ^18.2.29
+        specifier: 18.2.34
         version: 18.2.34
       eslint:
         specifier: ^8.46.0

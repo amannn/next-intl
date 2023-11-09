@@ -29,8 +29,7 @@
     },
     "./server": {
       "types": "./server.d.ts",
-      "react-server": "./dist/esm/server.react-server.js",
-      "default": "./dist/server.js"
+      "default": "./dist/esm/server.js"
     },
     "./config": {
       "types": "./config.d.ts",
@@ -86,7 +85,7 @@
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^17.0.23",
-    "@types/react": "^18.2.29",
+    "@types/react": "18.2.34",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
