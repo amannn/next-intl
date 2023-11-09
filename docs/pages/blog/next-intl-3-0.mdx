@@ -95,7 +95,7 @@ If you want to stay on the `as-needed` strategy, you can [configure this option]
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs like `useTranslations` in a Server Component, by default, the hook will opt the page into dynamic rendering. This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
+If you call APIs like `useTranslations` in a Server Component, by default, the hook will opt the page into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
 
 Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 
