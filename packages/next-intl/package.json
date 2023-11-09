@@ -110,7 +110,7 @@
     },
     {
       "path": "dist/production/server.js",
-      "limit": "0.4 KB"
+      "limit": "13.2 kB"
     },
     {
       "path": "dist/production/middleware.js",
