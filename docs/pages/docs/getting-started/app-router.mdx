@@ -113,7 +113,6 @@ export const config = {
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 const locales = ['en', 'de'];
