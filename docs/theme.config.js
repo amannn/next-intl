@@ -82,7 +82,7 @@ export default {
   banner: {
     text: (
       <>
-        3.0 preview (see{' '}
+        next-intl 3.0 is out! (
         <a
           className="underline"
           href="https://next-intl-docs.vercel.app/blog/next-intl-3-0"
