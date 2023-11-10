@@ -1,5 +1,6 @@
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
+import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
 
@@ -83,12 +84,9 @@ export default {
     text: (
       <>
         next-intl 3.0 is out! (
-        <a
-          className="underline"
-          href="https://next-intl-docs.vercel.app/blog/next-intl-3-0"
-        >
+        <Link className="underline" href="/blog/next-intl-3-0">
           announcement
-        </a>
+        </Link>
         )
       </>
     )
