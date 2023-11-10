@@ -156,24 +156,31 @@ export default {
       <meta content="#ffffff" name="theme-color" />
 
       <meta content="next-intl" name="og:title" />
+      <meta content="next-intl" name="twitter:title" />
+
+      <meta
+        content="Internationalization (i18n) for Next.js that gets out of your way."
+        name="description"
+      />
       <meta
         content="Internationalization (i18n) for Next.js that gets out of your way."
         name="og:description"
       />
-      <meta content="summary_large_image" name="twitter:card" />
+      <meta
+        content="Internationalization (i18n) for Next.js that gets out of your way."
+        name="twitter:description"
+      />
+
       <meta content="jamannnnnn" name="twitter:site" />
+      <meta content="summary_large_image" name="twitter:card" />
+
       <meta
         content="https://next-intl-docs.vercel.app/twitter-image.png"
         name="twitter:image"
       />
-      <meta content="next-intl" name="og:title" />
       <meta
         content="https://next-intl-docs.vercel.app/og-image.png"
         name="og:image"
-      />
-      <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
-        name="description"
       />
     </>
   )
