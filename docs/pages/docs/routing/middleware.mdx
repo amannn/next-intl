@@ -368,6 +368,41 @@ export const config = {
 };
 ```
 
+### Example: Additional rewrites
+
+If you need to handle rewrites apart from the ones provided by `next-intl`, you can adjust the `pathname` of the `request` before invoking the `next-intl` middleware (based on ["A/B Testing with Cookies" by Vercel](https://vercel.com/templates/next.js/cookies)).
+
+This example rewrites requests for `/[locale]/profile` to `/[locale]/profile/new` if a special cookie is set.
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+import {NextRequest} from 'next/server';
+
+export default async function middleware(request: NextRequest) {
+  const [, locale, pathname] = request.nextUrl.pathname.split('/');
+
+  if (pathname === 'profile') {
+    const usesNewProfile =
+      (request.cookies.get('NEW_PROFILE')?.value || 'false') === 'true';
+
+    if (usesNewProfile) {
+      request.nextUrl.pathname = `/${locale}/profile/new`;
+    }
+  }
+
+  const handleI18nRouting = createIntlMiddleware({
+    locales: ['en', 'de'],
+    defaultLocale: 'en'
+  });
+  const response = handleI18nRouting(request);
+  return response;
+}
+
+export const config = {
+  matcher: ['/', '/(de|en)/:path*']
+};
+```
+
 ### Example: Integrating with Clerk
 
 [`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be integrated with `next-intl` by using the [`beforeAuth` hook](https://clerk.com/docs/references/nextjs/auth-middleware#using-before-auth-to-execute-middleware-before-authentication). By doing this, the middleware from `next-intl` will run first, potentially redirect or rewrite incoming requests, followed by the middleware from `@clerk/next` acting on the response.
