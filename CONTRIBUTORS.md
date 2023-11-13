@@ -59,6 +59,8 @@ Prettier is integrated via an autofixable ESLint rule, therefore it's recommende
 }
 ```
 
+For ESLint to work correctly, you should open individual packages you work on as the workspace root (e.g. `./packages/next-intl`).
+
 Alternatively, you can run ESLint via the command line:
 
 ```sh
