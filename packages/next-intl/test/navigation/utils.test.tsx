@@ -1,5 +1,8 @@
 import {describe, expect, it} from 'vitest';
-import {serializeSearchParams} from '../../src/navigation/utils';
+import {
+  compileLocalizedPathname,
+  serializeSearchParams
+} from '../../src/navigation/utils';
 
 describe('serializeSearchParams', () => {
   it('handles strings', () => {
@@ -16,5 +19,26 @@ describe('serializeSearchParams', () => {
 
   it('handles arrays', () => {
     expect(serializeSearchParams({v: ['a', 'b']})).toEqual('?v=a&v=b');
+  });
+});
+
+describe('compileLocalizedPathname', () => {
+  it('throws when params were not resolved', () => {
+    const locales: ReadonlyArray<string> = ['en'];
+    expect(() =>
+      // @ts-expect-error -- Purposefully miss a param
+      compileLocalizedPathname<typeof locales, '/test/[one]/[two]'>({
+        locale: 'en',
+        pathname: '/test/[one]/[two]',
+        pathnames: '/test/[one]/[two]',
+        params: {one: '1'}
+      })
+    ).toThrow(
+      [
+        'Insufficient params provided for localized pathname.',
+        'Template: /test/[one]/[two]',
+        'Params: {"one":"1"}'
+      ].join('\n')
+    );
   });
 });

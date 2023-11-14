@@ -14,7 +14,7 @@ const getMessagesImpl = cache(async (locale: string) => {
   return config.messages;
 });
 
-export default async function getMessages(opts?: {locale?: string} | string) {
-  const locale = await resolveLocaleArg('getMessages', opts);
+export default async function getMessages(opts?: {locale?: string}) {
+  const locale = await resolveLocaleArg(opts);
   return getMessagesImpl(locale);
 }
