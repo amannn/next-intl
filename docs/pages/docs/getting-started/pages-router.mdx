@@ -21,6 +21,7 @@ export default function App({Component, pageProps}) {
   return (
     <NextIntlClientProvider
       locale={router.locale}
+      timeZone="Europe/Vienna"
       messages={pageProps.messages}
     >
       <Component {...pageProps} />
@@ -59,7 +60,11 @@ import {NextIntlClientProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
   return (
-    <NextIntlClientProvider locale="en" messages={pageProps.messages}>
+    <NextIntlClientProvider
+      locale="en"
+      timeZone="Europe/Vienna"
+      messages={pageProps.messages}
+    >
       <Component {...pageProps} />
     </NextIntlClientProvider>
   );
