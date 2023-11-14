@@ -106,8 +106,9 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   function compilePath(
     namedPath: Pathnames<Locales>[keyof Pathnames<Locales>]
   ) {
-    let compiled =
+    const template =
       typeof namedPath === 'string' ? namedPath : namedPath[locale];
+    let compiled = template;
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -120,6 +121,15 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
           compiled = compiled.replace(`[${key}]`, String(value));
         }
       });
+    }
+
+    if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
+      // Next.js throws anyway, therefore better provide a more helpful error message
+      throw new Error(
+        `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(
+          params
+        )}`
+      );
     }
 
     if (query) {
