@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.0.1 (2023-11-14)
+
+
+### Bug Fixes
+
+* Bump lerna version ([c2fb2ba](https://github.com/amannn/next-intl/commit/c2fb2badffc757e10444cef5ab68361283ab8cc9))
+
+
+
+
+
 ## 2.22.3 (2023-11-14)
 
 
