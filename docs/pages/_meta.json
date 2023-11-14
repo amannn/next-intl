@@ -11,7 +11,11 @@
   },
   "examples": {
     "title": "Examples",
-    "type": "page"
+    "type": "page",
+    "theme": {
+      "sidebar": false,
+      "toc": false
+    }
   },
   "blog": {
     "title": "Blog",

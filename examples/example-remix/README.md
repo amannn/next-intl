@@ -1,6 +1,6 @@
 # example-remix
 
-An example that showcases a basic installation of `use-intl` in a [Remix app](https://remix.run/) based on the `accept-language` header.
+An example that showcases a basic installation of `use-intl` in a [Remix app](https://remix.run/).
 
 The relevant integration code is:
 
