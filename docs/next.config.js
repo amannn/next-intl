@@ -16,11 +16,6 @@ module.exports = withNextra({
       destination: '/docs/getting-started',
       permanent: false
     },
-    {
-      source: '/examples',
-      destination: '/examples/app-router',
-      permanent: false
-    },
 
     // Moved pages
     {
@@ -105,7 +100,7 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/error-handling',
-      destination: '/docs/usage/configuration#error-handling',
+      destination: '/docs/usage/configuration',
       permanent: true
     },
     {
@@ -120,17 +115,17 @@ module.exports = withNextra({
     },
     {
       source: '/examples/next-13',
-      destination: '/examples/app-router',
+      destination: '/examples',
       permanent: true
     },
     {
       source: '/examples/minimal',
-      destination: '/examples/pages-router',
+      destination: '/examples',
       permanent: true
     },
     {
       source: '/examples/advanced',
-      destination: '/examples/pages-router-advanced',
+      destination: '/examples',
       permanent: true
     }
   ],

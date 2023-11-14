@@ -5,7 +5,7 @@
   },
   "AboutPage": {
     "title": "About",
-    "description": "<p>The routing is internationalized too.</p><p>If you're using the default language English, you'll see <code>/en/about</code> in the browser address bar on this page.</p><p>If you change the locale to German, the URL is localized accordingly (<code>/de/über</code>).</p>"
+    "description": "<p>The routing is internationalized too.</p><p>If you're using the default language English, you'll see <code>/en/about</code> in the browser address bar on this page.</p><p>If you change the locale to German, the URL is localized accordingly (<code>/de/ueber</code>).</p>"
   },
   "Error": {
     "title": "Something went wrong!",

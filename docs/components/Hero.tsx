@@ -38,7 +38,7 @@ export default function Hero({
               <div className="mt-8 flex gap-4 lg:mt-10">
                 <LinkButton href="/docs">{getStarted}</LinkButton>
                 <LinkButton
-                  href="https://next-intl-example-next-13.vercel.app"
+                  href="https://next-intl-example-app-router.vercel.app"
                   target="_blank"
                   variant="secondary"
                 >

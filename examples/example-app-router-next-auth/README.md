@@ -1,6 +1,6 @@
-# example-next-13-next-auth
+# example-app-router-next-auth
 
-An example that showcases the usage of `next-intl` together with Auth.js in the `app` directory of Next.js 13.
+An example that showcases the usage of `next-intl` together with Auth.js and the App Router.
 
 **Credentials**: admin / admin
 

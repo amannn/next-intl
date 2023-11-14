@@ -1,6 +1,6 @@
-# example
+# example-pages-router
 
-An example that showcases a basic installation of `next-intl`.
+An example that showcases a basic installation of `next-intl` with the Pages Router.
 
 The relevant integration code is:
 

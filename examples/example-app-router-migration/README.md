@@ -1,4 +1,4 @@
-# example-next-13-with-pages
+# example-app-router-migration
 
 An example that showcases a basic installation of `next-intl` in a Next.js app that uses both the Pages as well as the App Router.
 
