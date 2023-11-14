@@ -41,7 +41,7 @@ export default function CatchAllPage() {
 }
 ```
 
-After this change, all requests that are matched within the `[locale]` segment will render the `not-found` page when an unknown route is encountered.
+After this change, all requests that are matched within the `[locale]` segment will render the `not-found` page when an unknown route is encountered (e.g. `/en/unknown`).
 
 ### Catching non-localized requests
 
@@ -54,6 +54,7 @@ You can add a root `not-found` page to handle these cases too.
 
 import {redirect, usePathname} from 'next/navigation';
 
+// Can be imported from a shared config
 const defaultLocale = 'en';
 
 export default function NotFound() {

@@ -27,6 +27,12 @@ export async function generateMetadata({params: {locale}}) {
 }
 ```
 
+<Callout>
+  By passing an explicit `locale` to the awaitable functions from `next-intl`,
+  you can make the metadata handler eligable for [static
+  rendering](/docs/getting-started/app-router#static-rendering).
+</Callout>
+
 ### Metadata files
 
 If you need to internationalize content within [metadata files](https://nextjs.org/docs/app/api-reference/file-conventions/metadata), such as an Open Graph image, you can call APIs from `next-intl` in the exported function.

@@ -113,7 +113,9 @@ The one restriction that currently comes with this pattern is that hooks can not
 <details>
 <summary>Should I use async or non-async functions for my components?</summary>
 
-If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing. However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
+If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing.
+
+However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
 
 </details>
 

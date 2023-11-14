@@ -122,7 +122,7 @@ import {getTranslations} from 'next-intl/server';
 const locale = params.locale;
 
 // This creates the same function that is returned by `useTranslations`.
-const t = await getTranslations(locale);
+const t = await getTranslations({locale});
 
 // Result: "Hello world!"
 t('hello', {name: 'world'});

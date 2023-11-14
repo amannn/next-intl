@@ -7,8 +7,8 @@
     "title": "Pages Router",
     "theme": {"layout": "full"}
   },
-  "pages-router-advanced": {
-    "title": "Pages Router (advanced)",
+  "app-router-migration": {
+    "title": "App Router migration",
     "theme": {"layout": "full"}
   }
 }
