@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2.22.3 (2023-11-14)
+
+
+### Bug Fixes
+
+* Trigger 3.0 release on CI ([5901439](https://github.com/amannn/next-intl/commit/5901439efe34c4e11ef718ffc414d5d051f8f79d))
+
+
+
+
+
 ## 2.22.2 (2023-11-14)
 
 **Note:** Version bump only for package next-intl
