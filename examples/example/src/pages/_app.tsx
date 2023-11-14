@@ -9,6 +9,7 @@ export default function App({Component, pageProps}: AppProps) {
     <NextIntlClientProvider
       locale={router.locale}
       messages={pageProps.messages}
+      timeZone="Europe/Vienna"
     >
       <Component {...pageProps} />
     </NextIntlClientProvider>
