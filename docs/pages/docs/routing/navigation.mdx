@@ -126,7 +126,7 @@ export default createMiddleware({
 
 This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
@@ -318,7 +318,7 @@ Just like `next/link`, by default all links are prefetched. The one exception to
 
 If you need to navigate programmatically, e.g. in an event handler, `next-intl` provides a convience API that wraps [`useRouter` from Next.js](https://nextjs.org/docs/app/api-reference/functions/use-router) and automatically applies the locale of the user.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 ```tsx
 'use client';
@@ -423,7 +423,7 @@ router.replace(
 
 To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
@@ -458,7 +458,7 @@ Note that internal pathnames are returned without params being resolved (e.g. `/
 
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
@@ -502,7 +502,7 @@ redirect({
 
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 (This API is only available for localized pathnames, since it is not necessary for shared pathnames.)
