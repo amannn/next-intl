@@ -1,8 +1,8 @@
 import {useRouter as useNextRouter} from 'next/navigation';
 import {useMemo} from 'react';
-import useLocale from '../react-client/useLocale';
-import {AllLocales} from '../shared/types';
-import {localizeHref} from '../shared/utils';
+import useLocale from '../../react-client/useLocale';
+import {AllLocales} from '../../shared/types';
+import {localizeHref} from '../../shared/utils';
 
 type IntlNavigateOptions<Locales extends AllLocales> = {
   locale?: Locales[number];

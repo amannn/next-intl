@@ -2,8 +2,8 @@
 
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
-import useLocale from '../react-client/useLocale';
-import {hasPathnamePrefixed, unlocalizePathname} from '../shared/utils';
+import useLocale from '../../react-client/useLocale';
+import {hasPathnamePrefixed, unlocalizePathname} from '../../shared/utils';
 
 /**
  * Returns the pathname without a potential locale prefix.

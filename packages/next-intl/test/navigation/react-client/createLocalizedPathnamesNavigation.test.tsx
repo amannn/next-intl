@@ -10,7 +10,7 @@ import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import {
   Pathnames,
   createLocalizedPathnamesNavigation
-} from '../../src/navigation';
+} from '../../../src/navigation/react-client';
 
 vi.mock('next/navigation');
 

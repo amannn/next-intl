@@ -1,4 +1,4 @@
-import {AllLocales} from '../shared/types';
+import {AllLocales} from '../../shared/types';
 import BaseLink from './BaseLink';
 import baseRedirect from './baseRedirect';
 import useBasePathname from './useBasePathname';

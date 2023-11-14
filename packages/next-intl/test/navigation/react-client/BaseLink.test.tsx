@@ -2,8 +2,8 @@ import {render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
-import {NextIntlClientProvider} from '../../src';
-import BaseLink from '../../src/navigation/BaseLink';
+import {NextIntlClientProvider} from '../../../src/index.react-client';
+import BaseLink from '../../../src/navigation/react-client/BaseLink';
 
 vi.mock('next/navigation');
 

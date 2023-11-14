@@ -18,14 +18,14 @@
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/esm/index.js",
-  "typings": "./dist/types/src/index.d.ts",
+  "main": "./dist/index.react-client.js",
+  "module": "./dist/esm/index.react-client.js",
+  "typings": "./dist/types/src/index.react-client.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.d.ts",
+      "types": "./dist/types/src/index.react-client.d.ts",
       "react-server": "./dist/esm/index.react-server.js",
-      "default": "./dist/index.js"
+      "default": "./dist/index.react-client.js"
     },
     "./server": {
       "types": "./server.d.ts",
@@ -42,7 +42,7 @@
     "./navigation": {
       "types": "./navigation.d.ts",
       "react-server": "./dist/esm/navigation.react-server.js",
-      "default": "./dist/navigation.js"
+      "default": "./dist/navigation.react-client.js"
     },
     "./plugin": {
       "types": "./plugin.d.ts",

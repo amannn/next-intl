@@ -1,7 +1,10 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {it} from 'vitest';
-import {useTranslations, NextIntlClientProvider} from '../../src';
+import {
+  useTranslations,
+  NextIntlClientProvider
+} from '../../src/index.react-client';
 
 it('can use messages from the provider', () => {
   function Component() {

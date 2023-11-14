@@ -2,7 +2,6 @@
  * Server-only APIs available via `next-intl/server`.
  */
 
-// Must match `./react-client/index.tsx`
 export {default as getRequestConfig} from './getRequestConfig';
 export {default as getFormatter} from './getFormatter';
 export {default as getNow} from './getNow';

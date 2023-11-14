@@ -2,7 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {
   compileLocalizedPathname,
   serializeSearchParams
-} from '../../src/navigation/utils';
+} from '../../../src/navigation/shared/utils';
 
 describe('serializeSearchParams', () => {
   it('handles strings', () => {
