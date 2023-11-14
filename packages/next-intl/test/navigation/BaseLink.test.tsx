@@ -91,6 +91,13 @@ describe('unprefixed routing', () => {
 
     expect(ref).toBeDefined();
   });
+
+  it('sets an hreflang', () => {
+    render(<BaseLink href="/test">Test</BaseLink>);
+    expect(
+      screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
+    ).toBe('en');
+  });
 });
 
 describe('prefixed routing', () => {

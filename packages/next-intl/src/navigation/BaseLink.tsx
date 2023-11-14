@@ -15,8 +15,14 @@ function BaseLink<Locales extends AllLocales>(
   ref: Props<Locales>['ref']
 ) {
   const defaultLocale = useLocale();
+  const linkLocale = locale || defaultLocale;
   return (
-    <BaseLinkWithLocale ref={ref} locale={locale || defaultLocale} {...rest} />
+    <BaseLinkWithLocale
+      ref={ref}
+      hrefLang={linkLocale}
+      locale={linkLocale}
+      {...rest}
+    />
   );
 }
 
