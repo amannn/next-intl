@@ -3,9 +3,9 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 2.22.2 (2023-11-14)
+## 3.0.0 (2023-11-14)
 
-**Note:** Version bump only for package use-intl
+Please refer to [the release notes](https://next-intl-docs.vercel.app/blog/next-intl-3-0).
 
 
 

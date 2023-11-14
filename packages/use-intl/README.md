@@ -1,7 +1,5 @@
 # 🌐 use-intl
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) [<img src="https://img.shields.io/npm/dw/use-intl.svg" />](https://www.npmjs.com/package/use-intl)
-
 > Internationalization for React that gets out of your way.
 
 ## Features

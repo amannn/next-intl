@@ -11,8 +11,6 @@
 
 > Internationalization (i18n) for Next.js that gets out of your way.
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) [<img src="https://img.shields.io/npm/dw/next-intl.svg" />](https://www.npmjs.com/package/next-intl)
-
 <hr />
 
 📣 [Support for Next.js 13 and the App Router has arrived →](https://next-intl-docs.vercel.app/docs/next-13)
