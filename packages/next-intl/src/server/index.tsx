@@ -12,6 +12,3 @@ export {default as getMessages} from './getMessages';
 export {default as getLocale} from './getLocale';
 
 export {setRequestLocale as unstable_setRequestLocale} from './RequestLocale';
-
-// TODO: Remove
-export {default as getTranslator} from './getTranslator';

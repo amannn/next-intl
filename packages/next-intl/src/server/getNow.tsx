@@ -7,7 +7,7 @@ const getNowImpl = cache(async (locale: string) => {
   return config.now;
 });
 
-export default async function getNow(opts?: {locale?: string} | string) {
-  const locale = await resolveLocaleArg('getNow', opts);
+export default async function getNow(opts?: {locale?: string}) {
+  const locale = await resolveLocaleArg(opts);
   return getNowImpl(locale);
 }
