@@ -10,7 +10,7 @@ export default function Navigation() {
       <nav className="container flex justify-between p-2 text-white">
         <div>
           <NavigationLink href="/">{t('home')}</NavigationLink>
-          <NavigationLink href="/about">{t('about')}</NavigationLink>
+          <NavigationLink href="/pathnames">{t('pathnames')}</NavigationLink>
         </div>
         <LocaleSwitcher />
       </nav>

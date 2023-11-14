@@ -6,15 +6,15 @@ type Props = {
   params: {locale: string};
 };
 
-export default function AboutPage({params: {locale}}: Props) {
+export default function PathnamesPage({params: {locale}}: Props) {
   // Enable static rendering
   unstable_setRequestLocale(locale);
 
-  const t = useTranslations('AboutPage');
+  const t = useTranslations('PathnamesPage');
 
   return (
     <PageLayout title={t('title')}>
-      <div className="max-w-[530px]">
+      <div className="max-w-[490px]">
         {t.rich('description', {
           p: (chunks) => <p className="mt-4">{chunks}</p>,
           code: (chunks) => (

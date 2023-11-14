@@ -34,7 +34,7 @@ it("handles not found pages for routes that don't match the middleware", async (
 });
 
 it('sets caching headers', async ({request}) => {
-  for (const pathname of ['/en', '/en/about', '/de', '/de/ueber']) {
+  for (const pathname of ['/en', '/en/pathnames', '/de', '/de/pfadnamen']) {
     expect((await request.get(pathname)).headers()['cache-control']).toBe(
       's-maxage=31536000, stale-while-revalidate'
     );
