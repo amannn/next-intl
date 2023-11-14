@@ -27,7 +27,7 @@ export default function Example({
         {featured && <Chip className="ml-3">Featured</Chip>}
       </h2>
       <div className="mt-2">
-        <p className="mt-2 text-base text-slate-600 dark:text-slate-400">
+        <p className="mt-2 max-w-lg text-base text-slate-600 dark:text-slate-400">
           {description}
         </p>
         <div className="mt-2">
