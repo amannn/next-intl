@@ -6,33 +6,33 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 # next-intl 3.0
 
-<small>Nov 10, 2023 · by Jan Amann</small>
+<small>Nov 14, 2023 · by Jan Amann</small>
 
 More than a year ago, on Oct 25, 2022, [Next.js 13 was announced](https://nextjs.org/blog/next-13) with beta support for the App Router and Server Components. Ever since then, `next-intl` began an exploration on what it means to provide an ideal experience for implementing i18n with the newly added capabilities.
 
-Today, [after more than 360 commits and the involvement of over 60 community members](https://github.com/amannn/next-intl/pull/149), I'm absolutely thrilled to announce **next-intl 3.0**, which is now App Router-first.
+Today, [after more than 370 commits and the involvement of over 60 community members](https://github.com/amannn/next-intl/pull/149), I'm absolutely thrilled to announce **next-intl 3.0**, which is now App Router-first.
 
-If you're still happy with the Pages Router, rest assured that `next-intl` is dedicated to support this paradigm for as long as Next.js does. For those who have already migrated to the App Router, this means that `next-intl` now takes full advantage of the new capabilities.
+If you're still happy with the Pages Router, rest assured that `next-intl` is dedicated to support this paradigm for as long as Next.js does. For those who have already migrated to the App Router, this means that you can take full advantage of the new capabilities with `next-intl`.
 
 ## New features
 
-1. **Support for React Server Components**: The APIs `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` can now be used in Server Components ([docs](https://next-intl-docs.vercel.app/docs/environments/server-client-components)).
-2. **New async APIs**: To handle i18n in async components, the Metadata API and Route Handlers, the APIs `getTranslations`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([docs](https://next-intl-docs.vercel.app/docs/environments/metadata-route-handlers)).
-3. **Middleware for internationalized routing**: While Next.js has built-in support for this with the Pages Router, the App Router doesn't include a built-in solution anymore. `next-intl` now provides a drop-in solution that has you covered ([docs](https://next-intl-docs.vercel.app/docs/routing/middleware)).
-4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect`. These APIs allow you to handle locale prefixes behind the scenes and also provide support for localizing pathnames (e.g. `/en/about` vs. `/de/ueber-uns`, see the [docs](https://next-intl-docs.vercel.app/docs/routing/navigation)).
+1. **Support for React Server Components**: The APIs `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` can now be used in Server Components ([docs](/docs/environments/server-client-components)).
+2. **New async APIs**: To handle i18n in async components, the Metadata API and Route Handlers, the APIs `getTranslations`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([docs](/docs/environments/metadata-route-handlers)).
+3. **Middleware for internationalized routing**: While Next.js has built-in support for this with the Pages Router, the App Router doesn't include a built-in solution anymore. `next-intl` now provides a drop-in solution that has you covered ([docs](/docs/routing/middleware)).
+4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect`. These APIs allow you to handle locale prefixes behind the scenes and also provide support for localizing pathnames (e.g. `/en/about` vs. `/de/ueber-uns`, see the [docs](/docs/routing/navigation)).
 
 The latter two have already been added in minor versions, but 3.0 cleans up the API and includes many improvements and bug fixes.
 
 ## Breaking changes
 
-If you've been part of the Server Components beta and have already tried out previous releases, first of all, thank you so much! Second: Some APIs saw iterations over the beta period, please carefully review the breaking changes below, even if you're already using some of the new APIs.
+If you've already tried out pre-release versions, first of all, thank you so much! Second: Some APIs saw iterations over the beta period, please carefully review the breaking changes below, even if you're already using some of the new APIs.
 
 ### Updated setup
 
 `next-intl` now requires two additional setup steps when you're using the App Router:
 
-1.  [The `i18n.ts` module](https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components#i18nts) provides configuration for Server Components
-2.  [`next-intl/plugin`](https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components#nextconfigjs) needs to be added to link your `i18n.ts` module to `next-intl`
+1.  [The `i18n.ts` module](/docs/getting-started/app-router#i18nts) provides configuration for Server Components
+2.  [`next-intl/plugin`](/docs/getting-started/app-router#nextconfigjs) needs to be added to link your `i18n.ts` module to `next-intl`
 
 ### New navigation APIs for the App Router
 
@@ -51,9 +51,9 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 + const {Link, useRouter, usePathname, redirect} = createSharedPathnamesNavigation({locales});
 ```
 
-Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the navigation docs](https://next-intl-docs.vercel.app/docs/routing/navigation#shared-pathnames)).
+Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the navigation docs](/docs/routing/navigation#shared-pathnames)).
 
-These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](https://next-intl-docs.vercel.app/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames:
+These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames:
 
 ```tsx filename="navigation.ts"
 import {createLocalizedPathnamesNavigation, Pathnames} from 'next-intl/navigation';
@@ -84,35 +84,35 @@ By using a similar API, you can upgrade from shared pathnames to localized pathn
 
 ### Switching the middleware default of `localePrefix` to `always`
 
-Previously, the [`localePrefix` of the middleware](https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
+Previously, the [`localePrefix` of the middleware](/docs/routing/middleware#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
 
 This default has now been changed to `always` since this has two advantages:
 
-1. We can recommend [a safer default `matcher`](https://next-intl-docs.vercel.app/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
-2. It avoids an [edge case of `Link`](https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
+1. We can recommend [a safer default `matcher`](/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
+2. It avoids an [edge case of `Link`](/docs/routing/middleware#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
 
-If you want to stay on the `as-needed` strategy, you can [configure this option](https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix-as-needed) in the middleware.
+If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing/middleware#locale-prefix-as-needed) in the middleware.
 
 ### Static rendering of Server Components
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](https://next-intl-docs.vercel.app/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
+If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
 
 Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 
 ### Other notable changes
 
 1. `next-intl` now uses [`exports` in `package.json`](https://nodejs.org/api/packages.html#subpath-exports) to clearly define which modules are exported. This should not affect you, unless you've previously imported undocumented internals.
-2. `NextIntlProvider` has been removed in favor of [`NextIntlClientProvider`](https://next-intl-docs.vercel.app/docs/configuration#client-server-components)
+2. `NextIntlProvider` has been removed in favor of [`NextIntlClientProvider`](/docs/usage/configuration#client-server-components)
 3. `NextIntlClientProvider` now needs to be imported from `next-intl` instead of `next-intl/client`.
-4. [The middleware](https://next-intl-docs.vercel.app/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server` (deprecated since v2.14).
+4. [The middleware](/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server` (deprecated since v2.14).
 5. `next@^13.4` is now required for the RSC APIs. Next.js 12 is still supported for the Pages Router integration.
 6. If you're using `NextIntlClientProvider` outside of the App Router (e.g. with the Pages Router), you need to define the `locale` prop explicitly.
 7. `useMessages` now has a non-nullable return type for easier consumption and will throw if no messages are configured.
 8. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`](/docs/usage/messages#html-markup) function has been added to generate markup strings like `'<b>Hello</b>'` outside of React components.
-9. `useIntl` has been replaced with [`useFormatter`](https://next-intl-docs.vercel.app/docs/usage/dates-times) (deprecated since v2.11).
-10. `createIntl` has been replaced with [`createFormatter`](https://next-intl-docs.vercel.app/docs/environments/core-library) (deprecated since v2.11).
+9. `useIntl` has been replaced with [`useFormatter`](/docs/usage/dates-times) (deprecated since v2.11).
+10. `createIntl` has been replaced with [`createFormatter`](/docs/environments/core-library) (deprecated since v2.11).
 
 ## Upgrade now
 
