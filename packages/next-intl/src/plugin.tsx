@@ -48,7 +48,7 @@ module.exports = withNextIntl({
 function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   if (nextConfig?.i18n != null) {
     console.warn(
-      "\nnext-intl has found an `i18n` config in your next.config.js. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the `pages` folder, you can refer to this example: https://github.com/amannn/next-intl/tree/main/packages/example-next-13-with-pages\n"
+      "\nnext-intl has found an `i18n` config in your next.config.js. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the `pages` folder, you can refer to this example: https://github.com/amannn/next-intl/tree/main/packages/example-app-router-migration\n"
     );
   }
 

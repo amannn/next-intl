@@ -2,4 +2,4 @@
 
 An example that showcases usage of `next-intl` with the App Router.
 
-[Demo](https://next-intl-example-next-13.vercel.app/)
+[Demo](https://next-intl-example-app-router.vercel.app/)
