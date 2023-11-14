@@ -1,5 +1,6 @@
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
+import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
 
@@ -82,13 +83,10 @@ export default {
   banner: {
     text: (
       <>
-        3.0 preview (see{' '}
-        <a
-          className="underline"
-          href="https://next-intl-docs.vercel.app/blog/next-intl-3-0"
-        >
+        next-intl 3.0 is out! (
+        <Link className="underline" href="/blog/next-intl-3-0">
           announcement
-        </a>
+        </Link>
         )
       </>
     )
@@ -156,24 +154,31 @@ export default {
       <meta content="#ffffff" name="theme-color" />
 
       <meta content="next-intl" name="og:title" />
+      <meta content="next-intl" name="twitter:title" />
+
+      <meta
+        content="Internationalization (i18n) for Next.js that gets out of your way."
+        name="description"
+      />
       <meta
         content="Internationalization (i18n) for Next.js that gets out of your way."
         name="og:description"
       />
-      <meta content="summary_large_image" name="twitter:card" />
+      <meta
+        content="Internationalization (i18n) for Next.js that gets out of your way."
+        name="twitter:description"
+      />
+
       <meta content="jamannnnnn" name="twitter:site" />
+      <meta content="summary_large_image" name="twitter:card" />
+
       <meta
         content="https://next-intl-docs.vercel.app/twitter-image.png"
         name="twitter:image"
       />
-      <meta content="next-intl" name="og:title" />
       <meta
         content="https://next-intl-docs.vercel.app/og-image.png"
         name="og:image"
-      />
-      <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
-        name="description"
       />
     </>
   )

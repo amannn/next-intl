@@ -29,6 +29,11 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/configuration',
+      destination: '/docs/usage/configuration',
+      permanent: true
+    },
+    {
       source: '/docs/getting-started/production-checklist',
       destination: '/docs/environments/runtime-requirements',
       permanent: true
