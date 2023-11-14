@@ -4,7 +4,7 @@ import {NextRequest} from 'next/server';
 import {it, expect} from 'vitest';
 import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
-import {Pathnames} from '../../src/navigation';
+import {Pathnames} from '../../src/navigation/react-client';
 
 it('works for prefixed routing (as-needed)', () => {
   const config: MiddlewareConfigWithDefaults<['en', 'es']> = {

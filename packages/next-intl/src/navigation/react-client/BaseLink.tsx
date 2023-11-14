@@ -1,7 +1,7 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import useLocale from '../react-client/useLocale';
-import BaseLinkWithLocale from '../shared/BaseLinkWithLocale';
-import {AllLocales} from '../shared/types';
+import useLocale from '../../react-client/useLocale';
+import BaseLinkWithLocale from '../../shared/BaseLinkWithLocale';
+import {AllLocales} from '../../shared/types';
 
 type Props<Locales extends AllLocales> = Omit<
   ComponentProps<typeof BaseLinkWithLocale>,

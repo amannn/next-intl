@@ -1,7 +1,7 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {AllLocales, Pathnames} from '../shared/types';
-import {matchesPathname, unlocalizePathname} from '../shared/utils';
+import {AllLocales, Pathnames} from '../../shared/types';
+import {matchesPathname, unlocalizePathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];

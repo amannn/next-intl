@@ -6,7 +6,7 @@ import {
   HrefOrUrlObjectWithParams,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
-} from '../utils';
+} from '../shared/utils';
 import BaseLink from './BaseLink';
 import baseRedirect from './baseRedirect';
 

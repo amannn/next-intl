@@ -4,10 +4,10 @@ const getBuildConfig = require('../../scripts/getBuildConfig');
 
 const config = {
   input: {
-    index: 'src/index.tsx',
+    'index.react-client': 'src/index.react-client.tsx',
     'index.react-server': 'src/index.react-server.tsx',
 
-    navigation: 'src/navigation.tsx',
+    'navigation.react-client': 'src/navigation.react-client.tsx',
     'navigation.react-server': 'src/navigation.react-server.tsx',
 
     server: 'src/server.tsx',

@@ -1,17 +1,17 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import useLocale from '../react-client/useLocale';
-import {AllLocales, ParametersExceptFirst, Pathnames} from '../shared/types';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
-import useBasePathname from './useBasePathname';
-import useBaseRouter from './useBaseRouter';
+import useLocale from '../../react-client/useLocale';
+import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
 import {
   compileLocalizedPathname,
   getRoute,
   normalizeNameOrNameWithParams,
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams
-} from './utils';
+} from '../shared/utils';
+import BaseLink from './BaseLink';
+import baseRedirect from './baseRedirect';
+import useBasePathname from './useBasePathname';
+import useBaseRouter from './useBaseRouter';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,

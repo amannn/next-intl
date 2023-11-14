@@ -18,14 +18,14 @@
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/esm/index.js",
-  "typings": "./dist/types/src/index.d.ts",
+  "main": "./dist/index.react-client.js",
+  "module": "./dist/esm/index.react-client.js",
+  "typings": "./dist/types/src/index.react-client.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.d.ts",
+      "types": "./dist/types/src/index.react-client.d.ts",
       "react-server": "./dist/esm/index.react-server.js",
-      "default": "./dist/index.js"
+      "default": "./dist/index.react-client.js"
     },
     "./server": {
       "types": "./server.d.ts",
@@ -42,7 +42,7 @@
     "./navigation": {
       "types": "./navigation.d.ts",
       "react-server": "./dist/esm/navigation.react-server.js",
-      "default": "./dist/navigation.js"
+      "default": "./dist/navigation.react-client.js"
     },
     "./plugin": {
       "types": "./plugin.d.ts",
@@ -101,12 +101,20 @@
   },
   "size-limit": [
     {
-      "path": "dist/production/index.js",
+      "path": "dist/production/index.react-client.js",
       "limit": "12.81 KB"
     },
     {
-      "path": "dist/production/navigation.js",
+      "path": "dist/production/index.react-server.js",
+      "limit": "13.57 KB"
+    },
+    {
+      "path": "dist/production/navigation.react-client.js",
       "limit": "2.6 KB"
+    },
+    {
+      "path": "dist/production/navigation.react-server.js",
+      "limit": "2.75 KB"
     },
     {
       "path": "dist/production/server.js",

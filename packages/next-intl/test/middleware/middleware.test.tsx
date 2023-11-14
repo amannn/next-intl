@@ -5,7 +5,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
-import {Pathnames} from '../../src/navigation';
+import {Pathnames} from '../../src/navigation/react-client';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 vi.mock('next/server', async (importActual) => {
