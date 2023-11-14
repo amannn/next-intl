@@ -12,7 +12,7 @@ export default function useHook<Value>(
       error.message.includes("Cannot read properties of null (reading 'use')")
     ) {
       throw new Error(
-        `\`${hookName}\` is not callable within an async component. Please refer to https://next-intl-docs-git-feat-next-13-rsc-next-intl.vercel.app/docs/environments/server-client-components#async-components`,
+        `\`${hookName}\` is not callable within an async component. Please refer to https://next-intl-docs.vercel.app/docs/environments/server-client-components#async-components`,
         {cause: error}
       );
     } else {

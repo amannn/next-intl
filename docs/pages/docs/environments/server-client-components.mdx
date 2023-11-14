@@ -132,7 +132,10 @@ import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
 export default function FAQEntry() {
+  // Call `useTranslations` in a Server Component ...
   const t = useTranslations('FAQEntry');
+
+  // ... and pass translated content to a Client Component
   return (
     <Expandable title={t('title')}>
       <FAQContent content={t('description')} />
