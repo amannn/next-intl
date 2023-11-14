@@ -1,6 +1,7 @@
 import {ReactElement, ReactNodeArray} from 'react';
 import Formats from '../core/Formats';
 import TranslationValues, {
+  MarkupTranslationValues,
   RichTranslationValues
 } from '../core/TranslationValues';
 import MessageKeys from '../core/utils/MessageKeys';
@@ -66,6 +67,26 @@ export default function useTranslations<
     values?: RichTranslationValues,
     formats?: Partial<Formats>
   ): string | ReactElement | ReactNodeArray;
+
+  // `markup`
+  markup<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: MarkupTranslationValues,
+    formats?: Partial<Formats>
+  ): string;
 
   // `raw`
   raw<

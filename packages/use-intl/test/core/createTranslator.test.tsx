@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {isValidElement} from 'react';
+import {renderToString} from 'react-dom/server';
 import {it, expect, describe, vi} from 'vitest';
 import {createTranslator, IntlError, IntlErrorCode} from '../../src';
 
 const messages = {
   Home: {
     title: 'Hello world!',
-    rich: '<b>Hello <i>{name}</i>!</b>'
+    rich: '<b>Hello <i>{name}</i>!</b>',
+    markup: '<b>Hello <i>{name}</i>!</b>'
   }
 };
 
@@ -48,6 +50,25 @@ it('handles formatting errors', () => {
 });
 
 describe('t.rich', () => {
+  it('can translate a message to a ReactNode', () => {
+    const t = createTranslator({
+      locale: 'en',
+      namespace: 'Home',
+      messages
+    });
+
+    const result = t.rich('rich', {
+      name: 'world',
+      b: (chunks) => <b>{chunks}</b>,
+      i: (chunks) => <i>{chunks}</i>
+    });
+
+    expect(isValidElement(result)).toBe(true);
+    expect(renderToString(result as any)).toBe('<b>Hello <i>world</i>!</b>');
+  });
+});
+
+describe('t.markup', () => {
   it('can translate a message', () => {
     const t = createTranslator({
       locale: 'en',
@@ -56,7 +77,7 @@ describe('t.rich', () => {
     });
 
     expect(
-      t.rich('rich', {
+      t.markup('markup', {
         name: 'world',
         b: (chunks) => `<b>${chunks}</b>`,
         i: (chunks) => `<i>${chunks}</i>`
@@ -66,6 +87,7 @@ describe('t.rich', () => {
 
   it('handles errors when React components are provided', () => {
     const onError = vi.fn();
+
     const t = createTranslator({
       locale: 'en',
       namespace: 'Home',
@@ -73,7 +95,7 @@ describe('t.rich', () => {
       onError
     });
 
-    const result = t.rich('rich', {
+    const result = t.markup('markup', {
       name: 'world',
       // @ts-expect-error Intentionally broken call site
       b: (chunks) => <b>{chunks}</b>,
@@ -85,9 +107,9 @@ describe('t.rich', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
     expect(error.message).toBe(
-      "FORMATTING_ERROR: `createTranslator` only accepts functions for rich text formatting that receive and return strings.\n\nE.g. t.rich('rich', {b: (chunks) => `<b>${chunks}</b>`})"
+      "FORMATTING_ERROR: `t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
     );
-    expect(result).toBe('Home.rich');
+    expect(result).toBe('Home.markup');
   });
 });
 

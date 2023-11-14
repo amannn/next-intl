@@ -19,9 +19,8 @@ jobs:
             Unfortunately, the reproduction is missing or incomplete, and as such we cannot investigate this issue. Please add a reproduction to the issue, otherwise it will be closed automatically.
 
             **Templates:**
-             - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
-             - [CodeSandbox (`app` directory, RSC RC)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
-             - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
+             - [CodeSandbox (App Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
+             - [CodeSandbox (Pages Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
             
             **Creating a good bug report takes time.**
             

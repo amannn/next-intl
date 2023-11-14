@@ -51,7 +51,7 @@ export default function UserProfile({user}) {
 }
 ```
 
-```json
+```js
 // en.json
 {
   "UserProfile": {

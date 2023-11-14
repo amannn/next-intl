@@ -24,14 +24,14 @@
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
-    "@types/node": "20.1.2",
-    "@types/react": "^18.2.5",
+    "@types/node": "^20.1.2",
+    "@types/react": "^18.2.29",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^13.4.0",
     "next-sitemap": "^4.0.7",
-    "typescript": "^5.0.0"
+    "typescript": "^5.2.2"
   },
   "funding": "https://github.com/amannn/next-intl?sponsor=1"
 }

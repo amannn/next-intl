@@ -1,8 +1,7 @@
 import Callout from 'components/Callout';
-import VersionTabs from 'components/VersionTabs';
 import {Tab, Tabs} from 'nextra-theme-docs';
 
-# Next.js 13 internationalized navigation
+# Next.js App Router internationalized navigation
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
@@ -17,47 +16,53 @@ For example:
 - `/en/about`
 - `/de/about`
 
-**Localized pathnames:** Many apps choose to localize pathnames however, especially when search engine optimization is relevant. In this case, you'll provide distinct pathnames based on the user locale.
+**Localized pathnames:** Many apps choose to localize pathnames, especially when search engine optimization is relevant. In this case, you'll provide distinct pathnames based on the user locale.
 
 For example:
 
 - `/en/about`
 - `/de/ueber-uns`
 
+**Note:** The terms "shared" and "localized" pathnames are used to refer to pathnames that are created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.
+
 ---
 
-Each strategy will provide you with corresponding [navigation APIs](#apis).
+Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `src/navigation.ts`).
 
 ### Strategy 1: Shared pathnames [#shared-pathnames]
 
 With this strategy, the pathnames of your app are identical for all locales. This is the simplest case, because the routes you define in Next.js will map directly to the pathnames that a user can request.
 
-You can import all relevant [navigation APIs](#apis) directly from `next-intl`:
+To create [navigation APIs](#apis) for this strategy, use the `createSharedPathnamesNavigation` function:
 
-```tsx
-import Link from 'next-intl/link';
-import {usePathname, useRouter} from 'next-intl/client';
-import {redirect} from 'next-intl/server';
+```tsx filename="navigation.ts"
+import {createSharedPathnamesNavigation} from 'next-intl/navigation';
+
+export const locales = ['en', 'de'] as const;
+
+export const {Link, redirect, usePathname, useRouter} =
+  createSharedPathnamesNavigation({locales});
 ```
 
-<Callout>
+The `locales` argument is identical to the configuration that you pass to the middleware. To reuse it there, you can import the `locales` into the middleware.
 
-There's [an open RFC](https://github.com/amannn/next-intl/issues/402) to move all navigation APIs to a single `next-intl/navigation` namespace, providing a factory function that provides strict typing for the supported locales. Leave a comment there if you have feedback!
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {locales} from './navigation';
 
-</Callout>
+export default createMiddleware({
+  defaultLocale: 'en',
+  locales
+});
+```
 
 ### Strategy 2: Localized pathnames [#localized-pathnames]
 
-<Callout type="warning">
-  This API is only available in [the Server Components
-  beta](/docs/getting-started/app-router-server-components).
-</Callout>
-
 When using this strategy, you have to provide distinct pathnames for every locale that your app supports. However, the localized variants will be handled by a single route internally, therefore a mapping needs to be provided that is also [consumed by the middleware](/docs/routing/middleware#localizing-pathnames).
 
-You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis) in a central module to easily access the returned functions in your components:
+You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis):
 
-```tsx filename="./navigation.ts"
+```tsx filename="navigation.ts"
 import {
   createLocalizedPathnamesNavigation,
   Pathnames
@@ -111,10 +116,8 @@ export default createMiddleware({
 ```
 
 <Callout>
-  Have a look at the [App Router example with RSC
-  support](https://github.com/amannn/next-intl/tree/feat/next-13-rsc/examples/example-next-13)
-  to explore a working implementation of localized pathnames
-  ([demo](https://next-intl-example-next-13-git-feat-next-13-rsc-next-intl.vercel.app/)).
+  Have a look at the [App Router example](/examples/app-router) to explore a
+  working implementation of localized pathnames.
 </Callout>
 
 ## APIs
@@ -123,11 +126,11 @@ export default createMiddleware({
 
 This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
 
-<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
-import Link from 'next-intl/link';
+import {Link} from '../navigation';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>
@@ -149,7 +152,7 @@ The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import Link from 'next-intl/link';
+import {Link} from '../navigation';
 
 export default function NavigationLink({
   href,
@@ -290,7 +293,7 @@ The [navigation APIs](#apis) are strictly typed and only allow routes specified 
 
 … or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
 
-```tsx filename="./navigation.ts"
+```tsx filename="navigation.ts"
 // ...
 
 export const {Link, redirect, usePathname, useRouter} =
@@ -303,7 +306,7 @@ export const {Link, redirect, usePathname, useRouter} =
 </details>
 
 </Tab>
-</VersionTabs>
+</Tabs>
 
 <details>
 <summary>How does prefetching of localized links work?</summary>
@@ -315,12 +318,12 @@ Just like `next/link`, by default all links are prefetched. The one exception to
 
 If you need to navigate programmatically, e.g. in an event handler, `next-intl` provides a convience API that wraps [`useRouter` from Next.js](https://nextjs.org/docs/app/api-reference/functions/use-router) and automatically applies the locale of the user.
 
-<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 ```tsx
 'use client';
 
-import {useRouter} from 'next-intl/client';
+import {useRouter} from '../navigation';
 
 const router = useRouter();
 
@@ -343,7 +346,7 @@ By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you c
 ```tsx
 'use client';
 
-import {usePathname, useRouter} from 'next-intl/client';
+import {usePathname, useRouter} from '../navigation';
 
 const pathname = usePathname();
 const router = useRouter();
@@ -414,19 +417,19 @@ router.replace(
 
 </details>
 </Tab>
-</VersionTabs>
+</Tabs>
 
 ### `usePathname`
 
 To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
-<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
 'use client';
 
-import {usePathname} from 'next-intl/client';
+import {usePathname} from '../navigation';
 
 // When the user is on `/en`, this will be `/`
 const pathname = usePathname();
@@ -449,22 +452,17 @@ const pathname = usePathname();
 Note that internal pathnames are returned without params being resolved (e.g. `/users/[userId]`).
 
 </Tab>
-</VersionTabs>
+</Tabs>
 
 ### `redirect`
 
-<Callout type="warning">
-  This API is only available in [the Server Components
-  beta](/docs/getting-started/app-router-server-components).
-</Callout>
-
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
-<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
 ```tsx
-import {redirect} from 'next-intl/server';
+import {redirect} from '../navigation';
 
 // When the user is on `/en`, this will be `/en/login`
 redirect('/login');
@@ -498,19 +496,16 @@ redirect({
 ```
 
 </Tab>
-</VersionTabs>
+</Tabs>
 
 ### `getPathname`
 
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
 
-<VersionTabs defaultLabel="Shared pathnames" rscLabel="Localized pathnames">
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
-<Callout>
-  This API is only available for localized pathnames, since it is not necessary
-  for shared pathnames.
-</Callout>
+(This API is only available for localized pathnames, since it is not necessary for shared pathnames.)
 
 </Tab>
 <Tab>
@@ -534,4 +529,4 @@ export async function generateMetadata({params}) {
 ```
 
 </Tab>
-</VersionTabs>
+</Tabs>

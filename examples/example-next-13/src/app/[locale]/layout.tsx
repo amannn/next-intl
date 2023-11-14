@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
-import {createTranslator, NextIntlClientProvider} from 'next-intl';
+import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
+import {locales} from 'navigation';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -12,28 +13,17 @@ type Props = {
   params: {locale: string};
 };
 
-async function getMessages(locale: string) {
-  try {
-    return (await import(`../../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
 }
 
-export async function generateStaticParams() {
-  return ['en', 'de'].map((locale) => ({locale}));
-}
-
-export async function generateMetadata({params: {locale}}: Props) {
-  const messages = await getMessages(locale);
-
-  // You can use the core (non-React) APIs when you have to use next-intl
-  // outside of components. Potentially this will be simplified in the future
-  // (see https://next-intl-docs.vercel.app/docs/next-13/server-components).
-  const t = createTranslator({locale, messages});
+export async function generateMetadata({
+  params: {locale}
+}: Omit<Props, 'children'>) {
+  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
 
   return {
-    title: t('LocaleLayout.title')
+    title: t('title')
   };
 }
 
@@ -41,15 +31,17 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  const messages = await getMessages(locale);
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  // Enable static rendering
+  unstable_setRequestLocale(locale);
 
   return (
     <html className="h-full" lang={locale}>
       <body className={clsx(inter.className, 'flex h-full flex-col')}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <Navigation />
-          {children}
-        </NextIntlClientProvider>
+        <Navigation />
+        {children}
       </body>
     </html>
   );

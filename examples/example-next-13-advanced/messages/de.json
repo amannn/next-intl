@@ -1,0 +1,57 @@
+{
+  "Index": {
+    "title": "Start",
+    "description": "Das ist die Startseite.",
+    "rich": "Das ist <important>formatierter</important> Test.",
+    "globalDefaults": "<highlight>{globalString}</highlight>"
+  },
+  "AsyncComponent": {
+    "basic": "AsyncComponent",
+    "rich": "This is a <important>rich</important> text.",
+    "markup": "Markup with <b>{globalString}</b>"
+  },
+  "LocaleLayout": {
+    "title": "next-intl Beispiel",
+    "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann."
+  },
+  "Client": {
+    "title": "Client",
+    "description": "Dise Seite wird auf der Client-Seite initialisiert."
+  },
+  "Nested": {
+    "title": "Verschachtelt",
+    "description": "Das ist eine verschachtelte Seite."
+  },
+  "Navigation": {
+    "home": "Start",
+    "client": "Client-Seite",
+    "nested": "Verschachtelte Seite",
+    "newsArticle": "News-Artikel #{articleId}"
+  },
+  "NewsArticle": {
+    "title": "News-Artikel #{articleId}"
+  },
+  "NotFound": {
+    "title": "Diese Seite wurde nicht gefunden (404)"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
+  },
+  "Counter": {
+    "count": "Aktuell:",
+    "increment": "Erhöhen"
+  },
+  "ClientCounter": {
+    "count": "Aktuell: {count}",
+    "increment": "Erhöhen"
+  },
+  "ApiRoute": {
+    "hello": "Hallo {name}!"
+  },
+  "OpenGraph": {
+    "title": "next-intl Beispiel"
+  },
+  "ServerActions": {
+    "item": "Element #{id}"
+  }
+}

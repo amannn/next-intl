@@ -1,5 +1,10 @@
 module.exports = {
-  extends: ['molindo/typescript', 'molindo/react', 'molindo/jest'],
+  extends: [
+    'molindo/typescript',
+    'molindo/react',
+    'molindo/jest',
+    'molindo/cypress'
+  ],
   plugins: ['deprecation'],
   overrides: [
     {

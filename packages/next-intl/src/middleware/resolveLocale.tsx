@@ -2,6 +2,7 @@ import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
+import {AllLocales} from '../shared/types';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -12,9 +13,9 @@ import {
   isLocaleSupportedOnDomain
 } from './utils';
 
-function findDomainFromHost(
+function findDomainFromHost<Locales extends AllLocales>(
   requestHeaders: Headers,
-  domains: Array<DomainConfig>
+  domains: Array<DomainConfig<Locales>>
 ) {
   let host = getHost(requestHeaders);
 
@@ -28,9 +29,9 @@ function findDomainFromHost(
   return undefined;
 }
 
-function getAcceptLanguageLocale(
+function getAcceptLanguageLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
-  locales: Array<string>,
+  locales: Locales,
   defaultLocale: string
 ) {
   let locale;
@@ -41,7 +42,11 @@ function getAcceptLanguageLocale(
     }
   }).languages();
   try {
-    locale = match(languages, locales, defaultLocale);
+    locale = match(
+      languages,
+      locales as unknown as Array<string>,
+      defaultLocale
+    );
   } catch (e) {
     // Invalid language
   }
@@ -49,8 +54,12 @@ function getAcceptLanguageLocale(
   return locale;
 }
 
-function resolveLocaleFromPrefix(
-  {defaultLocale, localeDetection, locales}: MiddlewareConfigWithDefaults,
+function resolveLocaleFromPrefix<Locales extends AllLocales>(
+  {
+    defaultLocale,
+    localeDetection,
+    locales
+  }: MiddlewareConfigWithDefaults<Locales>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -88,8 +97,8 @@ function resolveLocaleFromPrefix(
   return locale;
 }
 
-function resolveLocaleFromDomain(
-  config: MiddlewareConfigWithDefaults,
+function resolveLocaleFromDomain<Locales extends AllLocales>(
+  config: MiddlewareConfigWithDefaults<Locales>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -112,8 +121,10 @@ function resolveLocaleFromDomain(
     if (domain) {
       return {
         locale:
-          isLocaleSupportedOnDomain(localeFromPrefixStrategy, domain) ||
-          hasLocalePrefix
+          isLocaleSupportedOnDomain<Locales>(
+            localeFromPrefixStrategy,
+            domain
+          ) || hasLocalePrefix
             ? localeFromPrefixStrategy
             : domain.defaultLocale,
         domain
@@ -125,12 +136,12 @@ function resolveLocaleFromDomain(
   return {locale: localeFromPrefixStrategy};
 }
 
-export default function resolveLocale(
-  config: MiddlewareConfigWithDefaults,
+export default function resolveLocale<Locales extends AllLocales>(
+  config: MiddlewareConfigWithDefaults<Locales>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
-): {locale: string; domain?: DomainConfig} {
+): {locale: Locales[number]; domain?: DomainConfig<Locales>} {
   if (config.domains) {
     return resolveLocaleFromDomain(
       config,

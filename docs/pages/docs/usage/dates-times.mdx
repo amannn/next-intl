@@ -5,12 +5,6 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle all i18n differences in your Next.js app automatically.
 
-<Callout>
-
-If you're formatting dates and times, you should [set up a global time zone](/docs/configuration#time-zone).
-
-</Callout>
-
 ## Formatting dates and times
 
 You can format plain dates that are not part of a message with the `useFormatter` hook:
@@ -39,9 +33,9 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 <details>
 <summary>How can I parse dates or manipulate them?</summary>
 
-To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
-
 Since `next-intl` is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
+
+To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
 
 ```tsx
 import {subDays} from 'date-fns';
@@ -89,7 +83,7 @@ function Component() {
 }
 ```
 
-Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now` on the provider](/docs/configuration#global-now-value), you can omit the second argument:
+Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now`](/docs/usage/configuration#now), you can omit the second argument:
 
 ```js
 format.relativeTime(dateTime);
@@ -192,5 +186,5 @@ t(
 
 <Callout>
   To reuse date and time formats for multiple components, you can configure
-  [global formats](/docs/configuration#formats).
+  [global formats](/docs/usage/configuration#formats).
 </Callout>

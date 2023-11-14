@@ -1,11 +1,13 @@
 import {useMemo} from 'react';
+import {IntlError, IntlErrorCode} from '../core';
 import AbstractIntlMessages from '../core/AbstractIntlMessages';
-import createBaseTranslator, {
-  getMessagesOrError
-} from '../core/createBaseTranslator';
+import createBaseTranslator from '../core/createBaseTranslator';
 import resolveNamespace from '../core/resolveNamespace';
 import NestedKeyOf from '../core/utils/NestedKeyOf';
 import useIntlContext from './useIntlContext';
+
+let hasWarnedForMissingTimezone = false;
+const isServer = typeof window === 'undefined';
 
 export default function useTranslationsImpl<
   Messages extends AbstractIntlMessages,
@@ -26,17 +28,24 @@ export default function useTranslationsImpl<
   allMessages = allMessages[namespacePrefix] as Messages;
   namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
 
-  const messagesOrError = useMemo(
-    () => getMessagesOrError({messages: allMessages, namespace, onError}),
-    [allMessages, namespace, onError]
-  );
+  if (!timeZone && !hasWarnedForMissingTimezone && isServer) {
+    hasWarnedForMissingTimezone = true;
+    onError(
+      new IntlError(
+        IntlErrorCode.ENVIRONMENT_FALLBACK,
+        process.env.NODE_ENV !== 'production'
+          ? `There is no \`timeZone\` configured, this can lead to markup mismatches caused by environment differences. Consider adding a global default: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+          : undefined
+      )
+    );
+  }
 
   const translate = useMemo(
     () =>
       createBaseTranslator({
         messageFormatCache,
         getMessageFallback,
-        messagesOrError,
+        messages: allMessages,
         defaultTranslationValues,
         namespace,
         onError,
@@ -47,10 +56,10 @@ export default function useTranslationsImpl<
     [
       messageFormatCache,
       getMessageFallback,
-      messagesOrError,
-      defaultTranslationValues,
+      allMessages,
       namespace,
       onError,
+      defaultTranslationValues,
       globalFormats,
       locale,
       timeZone

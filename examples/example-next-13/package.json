@@ -21,12 +21,12 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.33.0",
     "@testing-library/react": "^13.0.0",
     "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^17.0.23",
-    "@types/react": "^18.2.5",
+    "@types/react": "^18.2.29",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
@@ -35,6 +35,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "postcss": "^8.4.23",
     "prettier-plugin-tailwindcss": "^0.2.3",
-    "typescript": "^5.0.0"
+    "typescript": "^5.2.2"
   }
 }

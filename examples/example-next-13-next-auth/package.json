@@ -17,13 +17,13 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.33.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^17.0.23",
-    "@types/react": "^18.2.5",
+    "@types/react": "^18.2.29",
     "eslint": "^8.46.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^13.4.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.2.2"
   }
 }

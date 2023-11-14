@@ -78,9 +78,12 @@ export function unlocalizePathname(pathname: string, locale: string) {
 export function localizePathname(locale: string, pathname: string) {
   let localizedHref = '/' + locale;
 
-  if (pathname !== '/') {
-    localizedHref += pathname;
+  // Avoid trailing slashes
+  if (/^\/(\?.*)?$/.test(pathname)) {
+    pathname = pathname.slice(1);
   }
+
+  localizedHref += pathname;
 
   return localizedHref;
 }
@@ -88,4 +91,27 @@ export function localizePathname(locale: string, pathname: string) {
 export function hasPathnamePrefixed(locale: string, pathname: string) {
   const prefix = `/${locale}`;
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
+export function matchesPathname(
+  /** E.g. `/users/[userId]-[userName]` */
+  template: string,
+  /** E.g. `/users/23-jane` */
+  pathname: string
+) {
+  const regex = templateToRegex(template);
+  return regex.test(pathname);
+}
+
+export function templateToRegex(template: string): RegExp {
+  const regexPattern = template
+    .replace(/\[([^\]]+)\]/g, (match) => {
+      if (match.startsWith('[...')) return '(.*)';
+      if (match.startsWith('[[...')) return '(.*)';
+      return '([^/]+)';
+    })
+    // Clean up regex match remainders from optional catchall ('[[...slug]]')
+    .replaceAll('(.*)]', '(.*)');
+
+  return new RegExp(`^${regexPattern}$`);
 }

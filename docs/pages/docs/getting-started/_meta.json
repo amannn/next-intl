@@ -1,6 +1,5 @@
 {
   "index": "Welcome!",
-  "app-router-client-components": "App Router (Client Components)",
-  "app-router-server-components": "App Router (Server Components)",
+  "app-router": "App Router",
   "pages-router": "Pages Router"
 }

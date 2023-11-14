@@ -29,13 +29,23 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/configuration',
+      destination: '/docs/usage/configuration',
+      permanent: true
+    },
+    {
       source: '/docs/getting-started/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
+      permanent: true
+    },
+    {
+      source: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
@@ -45,12 +55,22 @@ module.exports = withNextra({
     },
     {
       source: '/docs/next-13/client-components',
-      destination: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {
       source: '/docs/next-13/server-components',
-      destination: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {
@@ -75,22 +95,17 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/runtime-requirements-polyfills',
-      destination: '/docs/production-checklist#runtime-requirements',
-      permanent: true
-    },
-    {
-      source: '/docs/usage/configuration',
-      destination: '/docs/configuration',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/error-handling',
-      destination: '/docs/configuration#error-handling',
+      destination: '/docs/usage/configuration#error-handling',
       permanent: true
     },
     {

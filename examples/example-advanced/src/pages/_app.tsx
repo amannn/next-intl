@@ -1,4 +1,5 @@
 import {AppProps} from 'next/app';
+import {useRouter} from 'next/router';
 import {NextIntlClientProvider} from 'next-intl';
 
 type PageProps = {
@@ -11,6 +12,8 @@ type Props = Omit<AppProps<PageProps>, 'pageProps'> & {
 };
 
 export default function App({Component, pageProps}: Props) {
+  const router = useRouter();
+
   return (
     <NextIntlClientProvider
       // To achieve consistent date, time and number formatting
@@ -24,6 +27,7 @@ export default function App({Component, pageProps}: Props) {
           }
         }
       }}
+      locale={router.locale}
       // Messages can be received from individual pages or configured
       // globally in this module (`App.getInitialProps`). Note that in
       // the latter case the messages are available as a top-level prop

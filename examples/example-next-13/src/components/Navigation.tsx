@@ -1,5 +1,3 @@
-'use client';
-
 import {useTranslations} from 'next-intl';
 import LocaleSwitcher from './LocaleSwitcher';
 import NavigationLink from './NavigationLink';

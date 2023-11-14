@@ -1,14 +1,8 @@
 import Callout from 'components/Callout';
 
-# Internationalization of Server & Client Components in Next.js 13
+# Internationalization of Server & Client Components
 
-<Callout type="warning">
-
-This page contains background information about the advantages of moving internationalization to Server Components. Note that this is currently only available in [the Server Components beta version](/docs/getting-started/app-router-server-components).
-
-</Callout>
-
-With the introduction of the App Router in Next.js 13, [React Server Components](https://nextjs.org/docs/getting-started/react-essentials) became publicly available. This new paradigm allows components that don’t require React’s interactive features, such as `useState` and `useEffect`, to remain server-side only.
+[React Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components) allow you to implement components that remain server-side only if they don’t require React’s interactive features, such as `useState` and `useEffect`.
 
 This applies to handling internationalization too.
 
@@ -16,7 +10,7 @@ This applies to handling internationalization too.
 import {useTranslations} from 'next-intl';
 
 // Since this component doesn't use any interactive features
-// from React, it can be implemented as a Server Component.
+// from React, it can be run as a Server Component.
 
 export default function Index() {
   const t = useTranslations('Index');
@@ -24,28 +18,106 @@ export default function Index() {
 }
 ```
 
-## Benefits of handling i18n in Server Components [#server-components-benefits]
-
 Moving internationalization to the server side unlocks new levels of performance, leaving the client side for interactive features.
 
-<Callout emoji="✅" title="Benefits of server-side internationalization:">
-  <ol className="ml-4 list-decimal">
-    <li>
-      Your messages never leave the server and don't need to be serialized for
-      the client side
-    </li>
-    <li>
-      Library code for internationalization doesn't need to be loaded on the
-      client side
-    </li>
-    <li>No need to split your messages, e.g. based on routes or components</li>
-    <li>No runtime cost on the client side</li>
-    <li>
-      No need to handle environment differences like different time zones on the
-      server and client
-    </li>
-  </ol>
-</Callout>
+**Benefits of server-side internationalization:**
+
+1. Your messages never leave the server and don't need to be serialized for the client side
+2. Library code for internationalization doesn't need to be loaded on the client side
+3. No need to split your messages, e.g. based on routes or components
+4. No runtime cost on the client side
+5. No need to handle environment differences like different time zones on the server and client
+
+## Using internationalization in Server Components
+
+Server Components can be declared in two ways:
+
+1. Async components
+2. Non-async, regular components
+
+In a typical app, you'll likely find both types of components. `next-intl` provides corresponding APIs that work for the given component type.
+
+### Async components
+
+These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
+
+```tsx filename="[locale]/profile/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function ProfilePage() {
+  const user = await fetchUser();
+  const t = await getTranslations('ProfilePage');
+
+  return (
+    <PageLayout title={t('title', {username: user.name})}>
+      <UserDetails user={user} />
+    </PageLayout>
+  );
+}
+```
+
+These functions are available:
+
+```tsx
+import {
+  getTranslations,
+  getFormatter,
+  getNow,
+  getTimeZone,
+  getMessages,
+  getLocale
+} from 'next-intl/server';
+
+const t = await getTranslations('ProfilePage');
+const format = await getFormatter();
+const now = await getNow();
+const timeZone = await getTimeZone();
+const messages = await getMessages();
+const locale = await getLocale();
+```
+
+### Non-async components [#shared-components]
+
+Components that aren't declared with the `async` keyword and don't use interactive features like `useState`, are referred to as [shared components](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#sharing-code-between-server-and-client). These can render either as a Server or Client Component, depending on where they are imported from.
+
+In Next.js, Server Components are the default, and therefore shared components will typically execute as Server Components.
+
+```tsx filename="UserDetails.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function UserDetails({user}) {
+  const t = useTranslations('UserProfile');
+
+  return (
+    <section>
+      <h2>{t('title')}</h2>
+      <p>{t('followers', {count: user.numFollowers})}</p>
+    </section>
+  );
+}
+```
+
+If you import `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` from a shared component, `next-intl` will automatically provide an implementation that works best for the environment this component executes in (server or client).
+
+<details>
+<summary>How does the Server Components integration work?</summary>
+
+`next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n.ts`](/docs/usage/configuration#i18nts).
+
+Hooks are currently primarly known for being used in Client Components since they are typically stateful or don't apply to a server environment. However, hooks like [`useId`](https://react.dev/reference/react/useId) can be used in Server Components too. Similarly, `next-intl` provides a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component.
+
+The one restriction that currently comes with this pattern is that hooks can not be called from `async` components. `next-intl` therefore provides a separate set of [awaitable APIs](#async-components) for this use case.
+
+</details>
+
+<details>
+<summary>Should I use async or non-async functions for my components?</summary>
+
+If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing.
+
+However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
+
+</details>
 
 ## Using internationalization in Client Components
 
@@ -60,7 +132,10 @@ import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
 export default function FAQEntry() {
+  // Call `useTranslations` in a Server Component ...
   const t = useTranslations('FAQEntry');
+
+  // ... and pass translated content to a Client Component
   return (
     <Expandable title={t('title')}>
       <FAQContent content={t('description')} />
@@ -92,7 +167,7 @@ function Expandable({title, children}) {
 
 As you see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
 
-Learn more in the Next.js docs: [Nesting Server Components inside Client Components](https://nextjs.org/docs/getting-started/react-essentials#nesting-server-components-inside-client-components)
+Learn more in the Next.js docs: [Passing Server Components to Client Components as Props](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props)
 
 ### Option 2: Moving state to the server side
 
@@ -127,18 +202,15 @@ If you need to incorporate dynamic state that can not be moved to the server sid
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';
-import {useLocale, NextIntlClientProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
 export default function Counter() {
-  const locale = useLocale();
-
   // Receive messages provided in `i18n.ts`
   const messages = useMessages();
 
   return (
     <NextIntlClientProvider
-      locale={locale}
       messages={
         // Only provide the minimum of messages
         pick(messages, 'ClientCounter')
@@ -153,11 +225,9 @@ export default function Counter() {
 ([working example](https://github.com/amannn/next-intl/blob/feat/next-13-rsc/examples/example-next-13-advanced/src/components/client/02-MessagesOnClientCounter/Counter.tsx))
 
 <Callout>
-  `NextIntlClientProvider` doesn't automatically inherit configuration from
-  `i18n.ts`, therefore make sure to provide all relevant props on the component.
-  If you're configuring non-serializable values like functions, you have to mark
-  the component that renders `NextIntlClientProvider` with `'use client'`
-  ([example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx)).
+  `NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone`
+  when the component is rendered from a Server Component. Other configuration
+  properties like `messages` and `formats` can be provided as necessary.
 </Callout>
 
 ### Option 4: Providing all messages
@@ -169,6 +239,8 @@ import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({children, params: {locale}}) {
+  // ...
+
   // Receive messages provided in `i18n.ts`
   const messages = useMessages();
 
@@ -185,13 +257,13 @@ export default async function LocaleLayout({children, params: {locale}}) {
 ```
 
 <Callout type="warning">
-  Note that this is a tradeoff in regard to performance (see [the bullet points
-  above](#server-components-benefits)).
+  Note that this is a tradeoff in regard to performance (see the bullet points
+  at the top of this page).
 </Callout>
 
 ## Troubleshooting
 
-### "Failed to call `useTranslations`, because the context from `NextIntlClientProvider` was not found." [#missing-context]
+### "Failed to call `useTranslations` because the context from `NextIntlClientProvider` was not found." [#missing-context]
 
 You might encounter this error or a similar one referencing `useFormatter` while working on your app.
 
@@ -199,3 +271,48 @@ This can happen because:
 
 1. The component that calls the hook accidentally ended up in a client-side module graph, but you expected it to render as a Server Component. If this is the case, try to [pass this component via `children`](#option-1-passing-translations-to-client-components) to the Client Component instead.
 2. You're intentionally calling the hook from a Client Component, but `NextIntlClientProvider` is not present as an ancestor in the component tree. If this is the case, you can [wrap your component in `NextIntlClientProvider`](#option-3-providing-individual-messages) to resolve this error.
+
+### "Functions cannot be passed directly to Client Components because they're not serializable." [#non-serializable-props]
+
+You might encounter this error when you try to pass a non-serializable prop to `NextIntlClientProvider`.
+
+The component accepts the following props that are not serializable:
+
+1. [`onError`](/docs/usage/configuration#error-handling)
+2. [`getMessageFallback`](/docs/usage/configuration#error-handling)
+3. Rich text elements for [`defaultTranslationValues`](/docs/usage/configuration#default-translation-values)
+
+To configure these, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props:
+
+```tsx filename="MyCustomNextIntlClientProvider.tsx"
+'use client';
+
+import {NextIntlClientProvider} from 'next-intl';
+
+export default function MyCustomNextIntlClientProvider({
+  locale,
+  timeZone,
+  now,
+  ...rest
+}) {
+  return (
+    <NextIntlClientProvider
+      // Define non-serializable props here
+      defaultTranslationValues={{
+        i: (text) => <i>{text}</i>
+      }}
+      // Make sure to forward these props to avoid markup mismatches
+      locale={locale}
+      timeZone={timeZone}
+      now={now}
+      {...props}
+    />
+  );
+}
+```
+
+([working example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx))
+
+By doing this, your custom provider will already be part of the client-side bundle and can therefore define and pass functions as props.
+
+**Important:** Be sure to pass explicit `locale`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since the props aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.
