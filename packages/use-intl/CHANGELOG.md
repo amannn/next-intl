@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.0.2 (2023-11-15)
+
+
+### Bug Fixes
+
+* Allow usage of `getTranslations({namespace})` without TypeScript integration for messages ([#630](https://github.com/amannn/next-intl/issues/630)) ([62cf29c](https://github.com/amannn/next-intl/commit/62cf29c978863cf65f62e34f739775901f0f6d8a)), closes [#625](https://github.com/amannn/next-intl/issues/625)
+
+
+
+
+
 
 
 
