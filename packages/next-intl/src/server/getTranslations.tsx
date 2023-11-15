@@ -41,7 +41,7 @@ Promise<{
       >
     >
   >(
-    key: TargetKey,
+    key: [TargetKey] extends [never] ? string : TargetKey,
     values?: TranslationValues,
     formats?: Partial<Formats>
   ): string;
@@ -61,7 +61,7 @@ Promise<{
       >
     >
   >(
-    key: TargetKey,
+    key: [TargetKey] extends [never] ? string : TargetKey,
     values?: RichTranslationValues,
     formats?: Partial<Formats>
   ): string | ReactElement | ReactNodeArray;
@@ -81,7 +81,7 @@ Promise<{
       >
     >
   >(
-    key: TargetKey,
+    key: [TargetKey] extends [never] ? string : TargetKey,
     values?: MarkupTranslationValues,
     formats?: Partial<Formats>
   ): string;
@@ -101,7 +101,7 @@ Promise<{
       >
     >
   >(
-    key: TargetKey
+    key: [TargetKey] extends [never] ? string : TargetKey
   ): any;
 }>;
 function getTranslations<
