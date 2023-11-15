@@ -1,26 +1,22 @@
 import React, {ComponentProps} from 'react';
+import {getLocale, getNow, getTimeZone} from '../server';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider';
-import useLocale from './useLocale';
-import useNow from './useNow';
-import useTimeZone from './useTimeZone';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 
-export default function NextIntlClientProvider({
+export default async function NextIntlClientProvider({
   locale,
   now,
   timeZone,
   ...rest
 }: Props) {
-  const defaultLocale = useLocale();
-  const defaultNow = useNow();
-  const defaultTimeZone = useTimeZone();
-
   return (
     <BaseNextIntlClientProvider
-      locale={locale ?? defaultLocale}
-      now={now ?? defaultNow}
-      timeZone={timeZone ?? defaultTimeZone}
+      // We need to be careful about potentially reading from headers here.
+      // See https://github.com/amannn/next-intl/issues/631
+      locale={locale ?? (await getLocale())}
+      now={now ?? (await getNow())}
+      timeZone={timeZone ?? (await getTimeZone())}
       {...rest}
     />
   );
