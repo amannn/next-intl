@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {unstable_setRequestLocale} from 'next-intl/server';
 import PageLayout from 'components/PageLayout';
-import {locales} from 'navigation';
+import {locales} from 'config';
 
 type Props = {
   params: {locale: string};

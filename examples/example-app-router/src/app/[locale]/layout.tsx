@@ -4,7 +4,7 @@ import {notFound} from 'next/navigation';
 import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
-import {locales} from 'navigation';
+import {locales} from 'config';
 
 const inter = Inter({subsets: ['latin']});
 
