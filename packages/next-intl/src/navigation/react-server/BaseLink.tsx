@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import useLocale from '../../react-server/useLocale';
+import {getLocale} from '../../server';
 import BaseLinkWithLocale from '../../shared/BaseLinkWithLocale';
 import {AllLocales} from '../../shared/types';
 
@@ -10,10 +10,11 @@ type Props<Locales extends AllLocales> = Omit<
   locale?: Locales[number];
 };
 
-export default function BaseLink<Locales extends AllLocales>({
+export default async function BaseLink<Locales extends AllLocales>({
   locale,
   ...rest
 }: Props<Locales>) {
-  const defaultLocale = useLocale();
-  return <BaseLinkWithLocale locale={locale || defaultLocale} {...rest} />;
+  return (
+    <BaseLinkWithLocale locale={locale || (await getLocale())} {...rest} />
+  );
 }
