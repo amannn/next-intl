@@ -3,10 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 3.0.0 (2023-11-14)
+## 3.0.1 (2023-11-14)
+
+Add provenance statement to published packages.
+
+# 3.0.0 (2023-11-14)
 
 Please refer to [the release notes](https://next-intl-docs.vercel.app/blog/next-intl-3-0).
-
 
 
 
