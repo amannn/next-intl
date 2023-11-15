@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.0.3 (2023-11-15)
+
+
+### Bug Fixes
+
+* Don't retrieve defaults for `locale`, `now` and `timeZone` if these options have been provided to `NextIntlClientProvider` ([#633](https://github.com/amannn/next-intl/issues/633)) ([824363a](https://github.com/amannn/next-intl/commit/824363a97d4cc735cb627349e7e16c80fd22b25a)), closes [#631](https://github.com/amannn/next-intl/issues/631)
+
+
+
+
+
 ## 3.0.2 (2023-11-15)
 
 
