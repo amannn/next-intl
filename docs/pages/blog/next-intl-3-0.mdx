@@ -93,6 +93,14 @@ This default has now been changed to `always` since this has two advantages:
 
 If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing/middleware#locale-prefix-as-needed) in the middleware.
 
+### Static rendering of Server Components
+
+With the newly introduced Server Components support comes a temporary workaround for static rendering.
+
+If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
+
+Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
+
 ### Changes to [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider)
 
 First, the import for this component has changed:
@@ -114,15 +122,7 @@ If you're using `NextIntlClientProvider` _with the App Router_, there has been a
 
 If you're already providing these options, then you're set.
 
-If you're not, be aware that this will by default opt the corresponding page into dynamic rendering. If your app relies on static rendering, you can avoid this by passing all of the mentioned options, or by enabling static rendering explicitly (see the next section).
-
-### Static rendering of Server Components
-
-With the newly introduced Server Components support comes a temporary workaround for static rendering.
-
-If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router-server-components#static-rendering) API so that you can keep your pages fully static.
-
-Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
+If you're not, be aware that this will by default opt the corresponding page into dynamic rendering. If your app relies on static rendering, you can avoid this by passing all of the mentioned options, or by enabling static rendering explicitly (see the previous section).
 
 ### Other notable changes
 
@@ -138,7 +138,7 @@ Note that if you're using `next-intl` exclusively in Client Components, this doe
 ## Upgrade now
 
 ```
-npm install next-intl@3.0.2
+npm install next-intl@latest
 ```
 
 ## Thank you
