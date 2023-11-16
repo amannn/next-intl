@@ -238,7 +238,7 @@ If you're building a highly dynamic app where most components use React's intera
 import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default function LocaleLayout({children, params: {locale}}) {
   // ...
 
   // Receive messages provided in `i18n.ts`
