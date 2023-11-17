@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.1.0 (2023-11-17)
+
+
+### Features
+
+* Experimental support for `--turbo` (requires `next@^14.0.3`) ([#641](https://github.com/amannn/next-intl/issues/641)) ([46c6ec7](https://github.com/amannn/next-intl/commit/46c6ec751651ac6d827fec6544a26d3abd5bb70a)), closes [#250](https://github.com/amannn/next-intl/issues/250)
+
+
+
+
+
 ## 3.0.3 (2023-11-15)
 
 
