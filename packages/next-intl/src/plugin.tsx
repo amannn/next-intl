@@ -72,6 +72,7 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
 
     nextIntlConfig = {
       experimental: {
+        ...nextConfig?.experimental,
         turbo: {
           ...nextConfig?.experimental?.turbo,
           resolveAlias: {
