@@ -216,7 +216,7 @@ export default function createMiddleware<Locales extends AllLocales>(
               (configWithDefaults.localePrefix === 'as-needed' ||
                 configWithDefaults.domains))
           ) {
-            response = rewrite(`/${locale}${pathWithSearch}`);
+            response = rewrite(`/${pathWithSearch}`);
           } else {
             response = redirect(`/${locale}${pathWithSearch}`);
           }
