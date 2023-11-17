@@ -4,19 +4,27 @@ import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
 
-function resolveI18nPath(cwd: string, providedPath?: string) {
-  let i18nPath = providedPath;
+function resolveI18nPath(providedPath?: string, cwd?: string) {
+  function resolvePath(pathname: string) {
+    const parts = [];
+    if (cwd) parts.push(cwd);
+    parts.push(pathname);
+    return path.resolve(...parts);
+  }
 
-  if (i18nPath) {
-    i18nPath = path.resolve(i18nPath);
+  function pathExists(pathname: string) {
+    return fs.existsSync(resolvePath(pathname));
+  }
 
-    if (!fs.existsSync(i18nPath)) {
+  if (providedPath) {
+    if (!pathExists(providedPath)) {
       throw new Error(
-        `Could not find i18n config at ${i18nPath}, please provide a valid path.`
+        `Could not find i18n config at ${providedPath}, please provide a valid path.`
       );
     }
+    return providedPath;
   } else {
-    i18nPath = [
+    for (const candidate of [
       './i18n.tsx',
       './i18n.ts',
       './i18n.js',
@@ -25,12 +33,13 @@ function resolveI18nPath(cwd: string, providedPath?: string) {
       './src/i18n.ts',
       './src/i18n.js',
       './src/i18n.jsx'
-    ]
-      .map((cur) => path.resolve(cwd, cur))
-      .find((cur) => fs.existsSync(cur));
+    ]) {
+      if (pathExists(candidate)) {
+        return candidate;
+      }
+    }
 
-    if (!i18nPath) {
-      throw new Error(`\n\nCould not locate i18n config. Create one at \`./(src/)i18n.{js,jsx,ts,tsx}\` or specify a custom location:
+    throw new Error(`\n\nCould not locate i18n config. Create one at \`./(src/)i18n.{js,jsx,ts,tsx}\` or specify a custom location:
 
 const withNextIntl = require('next-intl/plugin')(
   './path/to/i18n.tsx'
@@ -39,10 +48,7 @@ const withNextIntl = require('next-intl/plugin')(
 module.exports = withNextIntl({
   // Other Next.js configuration ...
 });\n`);
-    }
   }
-
-  return i18nPath;
 }
 
 function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
@@ -52,21 +58,57 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
     );
   }
 
-  return Object.assign({}, nextConfig, {
-    webpack(
-      ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
-    ) {
-      config.resolve.alias['next-intl/config'] = require.resolve(
-        resolveI18nPath(config.context, i18nPath)
+  const useTurbo = process.env.TURBOPACK != null;
+
+  let nextIntlConfig;
+  if (useTurbo) {
+    console.warn(
+      '\n⚠️ Turbopack support for next-intl is currently experimental.\n'
+    );
+
+    if (i18nPath && i18nPath.startsWith('/')) {
+      throw new Error(
+        "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
+          i18nPath +
+          '\n'
       );
-
-      if (typeof nextConfig?.webpack === 'function') {
-        return nextConfig.webpack(config, options);
-      }
-
-      return config;
     }
-  });
+
+    nextIntlConfig = {
+      experimental: {
+        turbo: {
+          ...nextConfig?.experimental?.turbo,
+          resolveAlias: {
+            ...nextConfig?.experimental?.turbo?.resolveAlias,
+            // Turbo aliases don't work with absolute
+            // paths (see error handling above)
+            'next-intl/config': resolveI18nPath(i18nPath)
+          }
+        }
+      }
+    };
+  } else {
+    nextIntlConfig = {
+      webpack(
+        ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
+      ) {
+        // Webpack docs teach alias with `require.resolve`,
+        // let's use that and provide an absolute path
+        config.resolve.alias['next-intl/config'] = path.resolve(
+          config.context,
+          resolveI18nPath(i18nPath, config.context)
+        );
+
+        if (typeof nextConfig?.webpack === 'function') {
+          return nextConfig.webpack(config, options);
+        }
+
+        return config;
+      }
+    };
+  }
+
+  return Object.assign({}, nextConfig, nextIntlConfig);
 }
 
 module.exports = function withNextIntl(i18nPath?: string) {
