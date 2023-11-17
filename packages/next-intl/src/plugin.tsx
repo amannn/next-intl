@@ -62,10 +62,6 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
 
   let nextIntlConfig;
   if (useTurbo) {
-    console.warn(
-      '\n⚠️ Turbopack support for next-intl is currently experimental.\n'
-    );
-
     if (i18nPath && i18nPath.startsWith('/')) {
       throw new Error(
         "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
@@ -92,8 +88,7 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
       webpack(
         ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
       ) {
-        // Webpack docs teach alias with `require.resolve`,
-        // let's use that and provide an absolute path
+        // Webpack requires absolute paths
         config.resolve.alias['next-intl/config'] = path.resolve(
           config.context,
           resolveI18nPath(i18nPath, config.context)
