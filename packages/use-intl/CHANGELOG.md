@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.1.2 (2023-11-20)
+
+
+### Bug Fixes
+
+* Update link to migration example in error messages ([#648](https://github.com/amannn/next-intl/issues/648) by [@outloudvi](https://github.com/outloudvi)) ([1f3b226](https://github.com/amannn/next-intl/commit/1f3b22672938dbc8421c918ed11438eca5436a32))
+
+
+
+
+
 ## 3.1.1 (2023-11-20)
 
 **Note:** Version bump only for package use-intl
