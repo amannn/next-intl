@@ -74,3 +74,9 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 ## Repository workflows
 
 - Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.
+
+## Releases
+
+Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main`. Due to this, it's important to make sure to clean up commit messages of merged PRs since the commit title will appear in the changelog.
+
+The exception to every commit being released are are commits that are prefixed with `docs: `—these will not result in a version bump. Note however that also `docs(examples): ` would trigger a release, since we only match `docs: ` to abort the release workflow.
