@@ -98,7 +98,7 @@ As your app grows, you'll want to reuse messages among your components. If you u
 
 There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
 
-For edge cases where the reuse of messages among different components is hard to achieve with shared components, you can consider adding a hook that shares the translation behavior:
+For edge cases where the reuse of messages among different components is hard to achieve with shared components, you can either use messages from different namespaces via `useTranslations()`, or you can consider adding a hook that shares the translation behavior:
 
 ```tsx filename="useLocaleLabel.tsx"
 export default function useLocaleLabel() {
@@ -109,6 +109,14 @@ export default function useLocaleLabel() {
   }
 
   return getLocaleLabel;
+}
+```
+
+```json
+{
+  "useLocaleLabel": {
+    "label": "{locale, select, en {English} de {German} other {Unknown}}"
+  }
 }
 ```
 
