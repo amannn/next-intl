@@ -38,10 +38,10 @@ Now, you're all set and you can work on individual packages.
 ### Tests
 
 There are currently two test setups:
-1. **Packages**: These use [Jest](https://jestjs.io/) and support a watch mode via `pnpm test -- --watch`.
-2. **Examples**: These use [Playwright](https://playwright.dev/) and currently don't have a watch mode.
+1. Packages use [Vitest](https://vitest.dev/)
+2. Examples use [Playwright](https://playwright.dev/)
 
-In either case, you can focus individual tests during development via [`it.only`](https://jestjs.io/docs/api#testonlyname-fn-timeout).
+In either case, you can focus individual tests during development via `it.only`.
 
 ### Code formatting (ESLint & Prettier)
 
@@ -69,7 +69,7 @@ pnpm eslint src --fix
 
 ### Pull requests
 
-This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to automate the releases.
+This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to [automate releases](#releases).
 
 ## Repository workflows
 
