@@ -202,7 +202,7 @@ If you need to incorporate dynamic state that can not be moved to the server sid
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';
-import {NextIntlClientProvider,useMessages} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
 export default function Counter() {
@@ -235,7 +235,7 @@ export default function Counter() {
 If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
 
 ```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
-import {NextIntlClientProvider,useMessages} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
 
 export default function LocaleLayout({children, params: {locale}}) {
