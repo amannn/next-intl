@@ -1,0 +1,18 @@
+name: Update docs
+description: Found a mistake in the docs, or you have a suggestion to improve them? Let us know here!
+title: '[Docs]: '
+labels:
+  - unconfirmed
+  - documentation
+body:
+  - type: input
+    attributes:
+      label: Link to page
+      description: A link to an existing page in the docs (if any)
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the problem
+      description: A clear description of what is wrong in the docs or what you would like to improve.
+    validations:
+      required: true
