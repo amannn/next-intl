@@ -13,7 +13,7 @@
 
 <hr />
 
-📣 [Support for Next.js 13 and the App Router has arrived →](https://next-intl-docs.vercel.app/docs/next-13)
+📣 [Support for the App Router and Server Components has arrived →](https://next-intl-docs.vercel.app/docs/getting-started/app-router)
 
 <hr />
 
