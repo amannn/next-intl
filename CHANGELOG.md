@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.1.3 (2023-11-22)
+
+
+### Bug Fixes
+
+* Don't set cookie on response if `localeDetection: false` ([#654](https://github.com/amannn/next-intl/issues/654)) ([e85149c](https://github.com/amannn/next-intl/commit/e85149cb27d9e036dda1712a03a152d5fe241986)), closes [#609](https://github.com/amannn/next-intl/issues/609)
+
+
+
+
+
 ## 3.1.2 (2023-11-20)
 
 
