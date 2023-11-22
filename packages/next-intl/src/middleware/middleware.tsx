@@ -47,7 +47,9 @@ export default function createMiddleware<Locales extends AllLocales>(
     );
 
     const hasOutdatedCookie =
+      configWithDefaults.localeDetection &&
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
+
     const hasMatchedDefaultLocale = domain
       ? domain.defaultLocale === locale
       : locale === configWithDefaults.defaultLocale;
