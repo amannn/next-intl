@@ -1,4 +1,5 @@
 import IntlError from './IntlError';
+import {RichTranslationValues} from './TranslationValues';
 
 /**
  * Contains defaults that are used for all entry points into the core.
@@ -9,6 +10,7 @@ export function defaultGetMessageFallback(props: {
   error: IntlError;
   key: string;
   namespace?: string;
+  values?: RichTranslationValues;
 }) {
   return [props.namespace, props.key].filter((part) => part != null).join('.');
 }

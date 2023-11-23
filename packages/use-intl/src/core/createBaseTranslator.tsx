@@ -182,11 +182,12 @@ function createBaseTranslatorImpl<
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,
-    message?: string
+    message?: string,
+    values?: RichTranslationValues
   ) {
     const error = new IntlError(code, message);
     onError(error);
-    return getMessageFallback({error, key, namespace});
+    return getMessageFallback({error, key, namespace, values});
   }
 
   function translateBaseFn(
@@ -202,7 +203,8 @@ function createBaseTranslatorImpl<
       return getMessageFallback({
         error: messagesOrError,
         key,
-        namespace
+        namespace,
+        values
       });
     }
     const messages = messagesOrError;
@@ -214,7 +216,8 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.MISSING_MESSAGE,
-        (error as Error).message
+        (error as Error).message,
+        values
       );
     }
 
@@ -248,7 +251,7 @@ function createBaseTranslatorImpl<
           }
         }
 
-        return getFallbackFromErrorAndNotify(key, code, errorMessage);
+        return getFallbackFromErrorAndNotify(key, code, errorMessage, values);
       }
 
       // Hot path that avoids creating an `IntlMessageFormat` instance
@@ -268,7 +271,8 @@ function createBaseTranslatorImpl<
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.INVALID_MESSAGE,
-          (error as Error).message
+          (error as Error).message,
+          values
         );
       }
 
@@ -305,7 +309,8 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.FORMATTING_ERROR,
-        (error as Error).message
+        (error as Error).message,
+        values
       );
     }
   }
@@ -333,7 +338,8 @@ function createBaseTranslatorImpl<
           ? `The message \`${key}\` in ${
               namespace ? `namespace \`${namespace}\`` : 'messages'
             } didn't resolve to a string. If you want to format rich text, use \`t.rich\` instead.`
-          : undefined
+          : undefined,
+        values
       );
     }
 
@@ -370,7 +376,9 @@ function createBaseTranslatorImpl<
       );
 
       onError(error);
-      return getMessageFallback({error, key, namespace});
+      // @ts-expect-error -- `MarkupTranslationValues` is practically a sub type
+      // of `RichTranslationValues` but TypeScript isn't smart enough here.
+      return getMessageFallback({error, key, namespace, values});
     }
 
     return result;

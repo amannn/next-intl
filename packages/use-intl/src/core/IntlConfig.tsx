@@ -27,6 +27,7 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
     error: IntlError;
     key: string;
     namespace?: string;
+    values?: RichTranslationValues;
   }): string;
   /**
    * Providing this value will have two effects:
