@@ -6,6 +6,7 @@ labels:
   - documentation
 body:
   - type: input
+    id: pageLink
     attributes:
       label: Link to page
       description: A link to an existing page in the docs (if any)

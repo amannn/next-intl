@@ -2,7 +2,10 @@ import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {Navbar, ThemeSwitch} from 'nextra-theme-docs';
+import {ThemeConfig} from 'nextra';
+import {Navbar, ThemeSwitch, useConfig} from 'nextra-theme-docs';
+import {ComponentProps} from 'react';
+import config from './config';
 
 const logo = (
   <svg
@@ -72,9 +75,9 @@ const logo = (
 
 export default {
   project: {
-    link: 'https://github.com/amannn/next-intl'
+    link: config.githubUrl
   },
-  docsRepositoryBase: 'https://github.com/amannn/next-intl/blob/main/docs',
+  docsRepositoryBase: config.githubUrl + '/blob/main/docs',
   useNextSeoProps() {
     return {
       titleTemplate: '%s – Internationalization (i18n) for Next.js'
@@ -103,7 +106,7 @@ export default {
     defaultMenuCollapseLevel: 1
   },
   themeSwitch: {
-    component(props) {
+    component(props: ComponentProps<typeof ThemeSwitch>) {
       return (
         <div className="flex items-end justify-between">
           <PartnerSidebar />
@@ -113,7 +116,7 @@ export default {
     }
   },
   navbar: {
-    component: function CustomNavbar(props) {
+    component: function CustomNavbar(props: ComponentProps<typeof Navbar>) {
       const router = useRouter();
       const isRoot = router.pathname === '/';
       if (!isRoot) return <Navbar {...props} />;
@@ -123,6 +126,21 @@ export default {
           <Navbar {...props} />
         </div>
       );
+    }
+  },
+  feedback: {
+    content: 'Provide feedback on this page',
+    useLink: () => {
+      const router = useRouter();
+      const pageConfig = useConfig();
+
+      const url = new URL(config.githubUrl);
+      url.pathname += '/issues/new';
+      url.searchParams.set('title', `[Docs]: ${pageConfig.title}`);
+      url.searchParams.set('template', 'update_docs.yml');
+      url.searchParams.set('pageLink', config.baseUrl + router.pathname);
+
+      return url.href;
     }
   },
   head: () => (
@@ -173,13 +191,10 @@ export default {
       <meta content="summary_large_image" name="twitter:card" />
 
       <meta
-        content="https://next-intl-docs.vercel.app/twitter-image.png"
+        content={config.baseUrl + '/twitter-image.png'}
         name="twitter:image"
       />
-      <meta
-        content="https://next-intl-docs.vercel.app/og-image.png"
-        name="og:image"
-      />
+      <meta content={config.baseUrl + '/og-image.png'} name="og:image" />
     </>
   )
-};
+} satisfies ThemeConfig;

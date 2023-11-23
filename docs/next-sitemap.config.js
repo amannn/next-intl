@@ -1,5 +1,7 @@
+const config = require('./config');
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://next-intl-docs.vercel.app',
+  siteUrl: config.baseUrl,
   generateRobotsTxt: true
 };
