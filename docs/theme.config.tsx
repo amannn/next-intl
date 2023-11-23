@@ -134,13 +134,13 @@ export default {
       const router = useRouter();
       const pageConfig = useConfig();
 
-      return (
-        config.githubUrl +
-        '/issues/new?template=update_docs.yml&title=%5BDocs%5D%3A%20' +
-        encodeURIComponent(pageConfig.title) +
-        '&pageLink=' +
-        encodeURI(config.baseUrl + router.pathname)
-      );
+      const url = new URL(config.githubUrl);
+      url.pathname += '/issues/new';
+      url.searchParams.set('title', `[Docs]: ${pageConfig.title}`);
+      url.searchParams.set('template', 'update_docs.yml');
+      url.searchParams.set('pageLink', config.baseUrl + router.pathname);
+
+      return url.href;
     }
   },
   head: () => (
