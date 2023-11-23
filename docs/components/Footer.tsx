@@ -1,3 +1,4 @@
+import config from 'config';
 import {useRouter} from 'next/router';
 import FooterLink from './FooterLink';
 import FooterSeparator from './FooterSeparator';
@@ -20,10 +21,7 @@ export default function Footer() {
           <FooterLink href="/blog">Blog</FooterLink>
         </div>
         <div>
-          <FooterLink
-            href="https://github.com/amannn/next-intl"
-            target="_blank"
-          >
+          <FooterLink href={config.githubUrl} target="_blank">
             GitHub
           </FooterLink>
           <FooterSeparator />
