@@ -240,14 +240,18 @@ export default function IndexPage({
 }
 ```
 
-**Important:** `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
+**Keep in mind that:**
 
-Note that Next.js can render layouts and pages indepently. This means that e.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
+1. `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
+
+2. You need to call this function in every page and every layout that you intend to enable static rendering for since Next.js can render layouts and pages independently.
+
+E.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
 <details>
 <summary>What does "unstable" mean?</summary>
 
-`unstable_setRequestLocale` is meant to be used as a stopgap solution and we aim to remove it in the future [in case Next.js adds an API to access parts of the URL](https://github.com/facebook/react/pull/27424#issuecomment-1739464985). If that's the case, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
+`unstable_setRequestLocale` is meant to be used as a stopgap solution and we aim to remove it in the future [in case Next.js adds an API to access parts of the URL](https://github.com/vercel/next.js/discussions/58862). If that's the case, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
 
@@ -265,7 +269,7 @@ Note that the store is scoped to a request and therefore doesn't affect other re
 <details>
 <summary>Why is this API necessary?</summary>
 
-Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components. The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
+Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
 
 Due to this, `next-intl` uses its middleware to attach an `x-next-intl-locale` header to the incoming request, holding the negotiated locale as a value. This technique allows the locale to be read at arbitrary places via `headers().get('x-next-intl-locale')`.
 
