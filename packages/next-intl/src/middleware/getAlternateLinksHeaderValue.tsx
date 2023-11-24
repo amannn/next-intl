@@ -36,6 +36,7 @@ export default function getAlternateLinksHeaderValue<
   }
   normalizedUrl.protocol =
     request.headers.get('x-forwarded-proto') ?? normalizedUrl.protocol;
+
   normalizedUrl.pathname = getNormalizedPathname(
     normalizedUrl.pathname,
     config.locales

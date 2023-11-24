@@ -70,11 +70,11 @@ export default function createMiddleware<Locales extends AllLocales>(
       return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
     }
 
-    function redirect(url: string, host?: string) {
+    function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(url, request.url);
 
       if (domainConfigs.length > 0) {
-        if (!host) {
+        if (!redirectDomain) {
           const bestMatchingDomain = getBestMatchingDomain(
             domain,
             locale,
@@ -82,7 +82,7 @@ export default function createMiddleware<Locales extends AllLocales>(
           );
 
           if (bestMatchingDomain) {
-            host = bestMatchingDomain.domain;
+            redirectDomain = bestMatchingDomain.domain;
 
             if (
               bestMatchingDomain.defaultLocale === locale &&
@@ -94,8 +94,11 @@ export default function createMiddleware<Locales extends AllLocales>(
         }
       }
 
-      if (host) {
-        urlObj.host = host;
+      if (redirectDomain) {
+        urlObj.protocol =
+          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
+        urlObj.port = '';
+        urlObj.host = redirectDomain;
       }
 
       return NextResponse.redirect(urlObj.toString());

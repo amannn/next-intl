@@ -1735,7 +1735,11 @@ describe('domain-based routing', () => {
       locales: ['en', 'fr'],
       localePrefix: 'always',
       domains: [
-        {defaultLocale: 'en', domain: 'example.com', locales: ['en']},
+        {
+          defaultLocale: 'en',
+          domain: 'example.com',
+          locales: ['en']
+        },
         {
           defaultLocale: 'en',
           domain: 'ca.example.com',
@@ -1750,6 +1754,20 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://example.com/en'
+      );
+    });
+
+    it('uses the correct port and protocol when being called from an internal address', () => {
+      middleware(
+        createMockRequest('/', 'fr', 'http://192.168.0.1:3000', undefined, {
+          'x-forwarded-host': 'ca.example.com',
+          'x-forwarded-proto': 'https'
+        })
+      );
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'https://ca.example.com/fr'
       );
     });
 
