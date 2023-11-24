@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.1.4 (2023-11-24)
+
+
+### Bug Fixes
+
+* Apply correct port and protocol during domain-based redirects when called from an internal address (e.g. from a proxy) ([#662](https://github.com/amannn/next-intl/issues/662)) ([2bb867d](https://github.com/amannn/next-intl/commit/2bb867d1747123763a4e0144a99236ca3a8bc884)), closes [#658](https://github.com/amannn/next-intl/issues/658)
+
+
+
+
+
 ## 3.1.3 (2023-11-22)
 
 
