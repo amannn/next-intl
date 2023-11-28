@@ -79,6 +79,19 @@ describe('useRouter', () => {
       expect(push).toHaveBeenCalledTimes(1);
       expect(push).toHaveBeenCalledWith('/de/about');
     });
+
+    it('passes through unknown options to the Next.js router', () => {
+      function Component() {
+        const router = useRouter();
+        // @ts-expect-error -- Wait for https://github.com/vercel/next.js/pull/59001
+        router.push('/about', {locale: 'de', scroll: false});
+        return null;
+      }
+      render(<Component />);
+      const push = useNextRouter().push as Mock;
+      expect(push).toHaveBeenCalledTimes(1);
+      expect(push).toHaveBeenCalledWith('/de/about', {scroll: false});
+    });
   });
 });
 
