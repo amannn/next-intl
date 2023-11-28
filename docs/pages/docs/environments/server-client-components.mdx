@@ -127,7 +127,7 @@ Depending on your situation, you may need to handle internationalization in Clie
 
 The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx"
+```tsx filename="[locale]/faq/page.tsx" {10-12}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable';
 
@@ -165,9 +165,90 @@ function Expandable({title, children}) {
 }
 ```
 
-As you see, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
+By doing this, we can use interactive features from React like `useState` on translated content, even though the translation only runs on the server side.
 
 Learn more in the Next.js docs: [Passing Server Components to Client Components as Props](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props)
+
+<details>
+<summary>Example: How can I implement a form?</summary>
+
+Forms need client-side state for showing loading indicators and validation errors.
+
+To keep internationalization on the server side, it can be helpful to structure your components in a way where the interactive parts are moved out to leaf components instead of marking the whole form with `'use client';`.
+
+**Example:**
+
+```tsx filename="app/register/page.tsx"
+import {useTranslations} from 'next-intl';
+
+// A Client Component, so that it can use `useFormState` to
+// potentially display errors received after submission.
+import RegisterForm from './RegisterForm';
+
+// A Client Component, so that it can use `useFormStatus`
+// to disable the input field during submission.
+import FormField from './FormField';
+
+// A Client Component, so that it can use `useFormStatus`
+// to disable the submit button during submission.
+import FormSubmitButton from './FormSubmitButton';
+
+export default function RegisterPage() {
+  const t = useTranslations('RegisterPage');
+
+  function registerUser() {
+    'use server';
+    // ...
+  }
+
+  return (
+    <RegisterForm action={registerUser}>
+      <FormField label={t('firstName')} name="firstName" />
+      <FormField label={t('lastName')} name="lastName" />
+      <FormField label={t('email')} name="email" />
+      <FormField label={t('password')} name="password" />
+      <FormSubmitButton label={t('submit')} />
+    </RegisterForm>
+  );
+}
+```
+
+</details>
+
+<details>
+<summary>Example: How can I implement a locale switcher?</summary>
+
+If you implement a locale switcher as an interactive select, you can keep internationalization on the server side by rendering the labels from a Server Component and only marking the select element as a Client Component.
+
+```tsx filename="LocaleSwitcher.tsx"
+import {useLocale, useTranslations} from 'next-intl';
+import {locales} from 'config';
+
+// A Client Component that registers an event listener for
+// the `change` event of the select, uses `useRouter`
+// to change the locale and uses `useTransition` to display
+// a loading state during the transition.
+import LocaleSwitcherSelect from './LocaleSwitcherSelect';
+
+export default function LocaleSwitcher() {
+  const t = useTranslations('LocaleSwitcher');
+  const locale = useLocale();
+
+  return (
+    <LocaleSwitcherSelect defaultValue={locale} label={t('label')}>
+      {locales.map((cur) => (
+        <option key={cur} value={cur}>
+          {t('locale', {locale: cur})}
+        </option>
+      ))}
+    </LocaleSwitcherSelect>
+  );
+}
+```
+
+[Example implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/LocaleSwitcher.tsx) ([demo](https://next-intl-example-app-router.vercel.app/en))
+
+</details>
 
 ### Option 2: Moving state to the server side
 
