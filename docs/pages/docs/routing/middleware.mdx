@@ -125,7 +125,7 @@ Since the middleware is aware of all your domains, the domain will automatically
 
 <details>
 <summary>How is the best matching domain for a given locale detected?</summary>
-  
+
 The bestmatching domain is detected based on these priorities:
 
 1. Stay on the current domain if the locale is supported here
@@ -427,6 +427,34 @@ export default authMiddleware({
 
 export const config = {
   // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
+};
+```
+
+### Example: Integrating with Supabase Authentication
+
+[`@supabase/auth-helpers-nextjs`](https://supabase.com/docs/guides/auth/auth-helpers/nextjs?language=ts#managing-session-with-middleware) exports `createMiddlewareClient` that accepts a `req` and `res` object. We can pass the incoming `req` and the `res` created with `createIntlMiddleware` to it.
+
+```tsx filename="middleware.ts"
+import {createMiddlewareClient} from '@supabase/auth-helpers-nextjs';
+import createIntlMiddleware from 'next-intl/middleware';
+import type {NextRequest} from 'next/server';
+import type {Database} from '@/lib/database.types';
+
+export default async function middleware(req: NextRequest) {
+  const handleI18nRouting = createIntlMiddleware({
+    locales: ['en', 'de'],
+    defaultLocale: 'en'
+  });
+  const res = handleI18nRouting(req);
+
+  const supabase = createMiddlewareClient<Database>({ req, res })
+  await supabase.auth.getSession()
+
+  return res;
+}
+
+export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
