@@ -80,3 +80,5 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main`. Due to this, it's important to make sure to clean up commit messages of merged PRs since the commit title will appear in the changelog.
 
 The exception to every commit being released are are commits that are prefixed with `docs: `—these will not result in a version bump. Note however that also `docs(examples): ` would trigger a release, since we only match `docs: ` to abort the release workflow.
+
+Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
