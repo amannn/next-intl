@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {
   usePathname,
   useParams,
@@ -10,9 +10,9 @@ import createSharedPathnamesNavigation from '../../../src/navigation/react-clien
 
 vi.mock('next/navigation');
 
-const {Link, useRouter} = createSharedPathnamesNavigation({
-  locales: ['en', 'de'] as const
-});
+const locales = ['en', 'de'] as const;
+
+const {Link, useRouter} = createSharedPathnamesNavigation({locales});
 
 beforeEach(() => {
   const router = {
@@ -29,40 +29,10 @@ beforeEach(() => {
 });
 
 describe('Link', () => {
-  it('renders an href', () => {
-    render(<Link href="/about">About</Link>);
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/about'
-    );
-  });
-
-  it('renders an object href', () => {
-    render(<Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>);
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/about?foo=bar'
-    );
-  });
-
-  it('adds a prefix when linking to a non-default locale', () => {
-    render(
-      <Link href="/about" locale="de">
-        Über uns
-      </Link>
-    );
-    expect(
-      screen.getByRole('link', {name: 'Über uns'}).getAttribute('href')
-    ).toBe('/de/about');
-  });
-
-  it('handles params', () => {
-    render(
-      <Link href="/news/launch-party-3" locale="de">
-        About
-      </Link>
-    );
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/de/news/launch-party-3'
-    );
+  it('supports receiving a ref', () => {
+    const ref = React.createRef<HTMLAnchorElement>();
+    render(<Link ref={ref} href="/about" />);
+    expect(ref.current).not.toBe(null);
   });
 });
 

@@ -1,6 +1,11 @@
 import React, {ComponentProps} from 'react';
 import {getRequestLocale} from '../../server/RequestLocale';
-import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst,
+  Pathnames
+} from '../../shared/types';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -13,7 +18,15 @@ import baseRedirect from './baseRedirect';
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
->({locales, pathnames}: {locales: Locales; pathnames: Pathnames<Locales>}) {
+>({
+  localePrefix,
+  locales,
+  pathnames
+}: {
+  locales: Locales;
+  pathnames: Pathnames<Locales>;
+  localePrefix?: LocalePrefix;
+}) {
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
     ComponentProps<typeof BaseLink>,
     'href' | 'name'
@@ -40,6 +53,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames
         })}
         locale={locale}
+        localePrefix={localePrefix}
         {...rest}
       />
     );

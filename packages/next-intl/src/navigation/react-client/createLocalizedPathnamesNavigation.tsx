@@ -1,6 +1,11 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, ParametersExceptFirst, Pathnames} from '../../shared/types';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst,
+  Pathnames
+} from '../../shared/types';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -16,7 +21,15 @@ import useBaseRouter from './useBaseRouter';
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
->({locales, pathnames}: {locales: Locales; pathnames: PathnamesConfig}) {
+>({
+  localePrefix,
+  locales,
+  pathnames
+}: {
+  locales: Locales;
+  pathnames: PathnamesConfig;
+  localePrefix?: LocalePrefix;
+}) {
   function useTypedLocale(): (typeof locales)[number] {
     const locale = useLocale();
     const isValid = locales.includes(locale as any);
@@ -56,6 +69,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames
         })}
         locale={locale}
+        localePrefix={localePrefix}
         {...rest}
       />
     );

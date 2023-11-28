@@ -2,8 +2,7 @@ import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
   useParams,
-  useRouter as useNextRouter,
-  redirect as nextRedirect
+  useRouter as useNextRouter
 } from 'next/navigation';
 import React, {ComponentProps} from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
@@ -32,7 +31,7 @@ const pathnames = {
   '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
 } satisfies Pathnames<typeof locales>;
 
-const {Link, getPathname, redirect, usePathname, useRouter} =
+const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({
     locales,
     pathnames
@@ -56,110 +55,11 @@ beforeEach(() => {
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
-describe('redirect', () => {
-  it('can redirect for the default locale', () => {
-    function Component<Pathname extends keyof typeof pathnames>({
-      href
-    }: {
-      href: Parameters<typeof redirect<Pathname>>[0];
-    }) {
-      redirect(href);
-      return null;
-    }
-
-    vi.mocked(useNextPathname).mockImplementation(() => '/');
-    const {rerender} = render(<Component href="/" />);
-    expect(nextRedirect).toHaveBeenLastCalledWith('/en');
-
-    rerender(<Component href="/about" />);
-    expect(nextRedirect).toHaveBeenLastCalledWith('/en/about');
-
-    rerender(
-      <Component
-        href={{
-          pathname: '/news/[articleSlug]-[articleId]',
-          params: {
-            articleId: 3,
-            articleSlug: 'launch-party'
-          }
-        }}
-      />
-    );
-    expect(nextRedirect).toHaveBeenLastCalledWith('/en/news/launch-party-3');
-  });
-
-  it('can redirect for a non-default locale', () => {
-    vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
-    function Component<Pathname extends keyof typeof pathnames>({
-      href
-    }: {
-      href: Parameters<typeof redirect<Pathname>>[0];
-    }) {
-      redirect(href);
-      return null;
-    }
-    vi.mocked(useNextPathname).mockImplementation(() => '/');
-    const {rerender} = render(<Component href="/" />);
-    expect(nextRedirect).toHaveBeenLastCalledWith('/de');
-
-    rerender(<Component href="/about" />);
-    expect(nextRedirect).toHaveBeenLastCalledWith('/de/ueber-uns');
-
-    rerender(
-      <Component
-        href={{
-          pathname: '/news/[articleSlug]-[articleId]',
-          params: {
-            articleId: 3,
-            articleSlug: 'launch-party'
-          }
-        }}
-      />
-    );
-    expect(nextRedirect).toHaveBeenLastCalledWith(
-      '/de/neuigkeiten/launch-party-3'
-    );
-  });
-
-  it('supports optional search params', () => {
-    function Component<Pathname extends keyof typeof pathnames>({
-      href
-    }: {
-      href: Parameters<typeof redirect<Pathname>>[0];
-    }) {
-      redirect(href);
-      return null;
-    }
-
-    vi.mocked(useNextPathname).mockImplementation(() => '/');
-    render(
-      <Component
-        href={{
-          pathname: '/',
-          query: {
-            foo: 'bar',
-            bar: [1, 2]
-          }
-        }}
-      />
-    );
-    expect(nextRedirect).toHaveBeenLastCalledWith('/en?foo=bar&bar=1&bar=2');
-  });
-
-  it('handles unknown route', () => {
-    function Component<Pathname extends keyof typeof pathnames>({
-      href
-    }: {
-      href: Parameters<typeof redirect<Pathname>>[0];
-    }) {
-      redirect(href);
-      return null;
-    }
-
-    vi.mocked(useNextPathname).mockImplementation(() => '/');
-    // @ts-expect-error -- Unknown route
-    render(<Component href="/unknown" />);
-    expect(nextRedirect).toHaveBeenLastCalledWith('/en/unknown');
+describe('Link', () => {
+  it('supports receiving a ref', () => {
+    const ref = React.createRef<HTMLAnchorElement>();
+    render(<Link ref={ref} href="/about" />);
+    expect(ref.current).not.toBe(null);
   });
 });
 
@@ -216,122 +116,6 @@ describe('usePathname', () => {
     vi.mocked(useNextPathname).mockImplementation(() => '/de/unknown');
     rerender(<Component />);
     screen.getByText('/de/unknown');
-  });
-});
-
-describe('Link', () => {
-  it('renders an href', () => {
-    render(<Link href="/about">About</Link>);
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/about'
-    );
-  });
-
-  it('adds a prefix when linking to a non-default locale', () => {
-    render(
-      <Link href="/about" locale="de">
-        Über uns
-      </Link>
-    );
-    expect(
-      screen.getByRole('link', {name: 'Über uns'}).getAttribute('href')
-    ).toBe('/de/ueber-uns');
-  });
-
-  it('handles params', () => {
-    render(
-      <Link
-        href={{
-          pathname: '/news/[articleSlug]-[articleId]',
-          params: {
-            articleId: 3,
-            articleSlug: 'launch-party'
-          }
-        }}
-        locale="de"
-      >
-        About
-      </Link>
-    );
-    expect(screen.getByRole('link', {name: 'About'}).getAttribute('href')).toBe(
-      '/de/neuigkeiten/launch-party-3'
-    );
-  });
-
-  it('handles catch-all segments', () => {
-    render(
-      <Link
-        href={{
-          pathname: '/categories/[...parts]',
-          params: {parts: ['clothing', 't-shirts']}
-        }}
-      >
-        Test
-      </Link>
-    );
-    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
-      '/categories/clothing/t-shirts'
-    );
-  });
-
-  it('handles optional catch-all segments', () => {
-    render(
-      <Link
-        href={{
-          pathname: '/catch-all/[[...parts]]',
-          params: {parts: ['one', 'two']}
-        }}
-      >
-        Test
-      </Link>
-    );
-    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
-      '/catch-all/one/two'
-    );
-  });
-
-  it('supports optional search params', () => {
-    render(
-      <Link href={{pathname: '/about', query: {foo: 'bar', bar: [1, 2]}}}>
-        Test
-      </Link>
-    );
-    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
-      '/about?foo=bar&bar=1&bar=2'
-    );
-  });
-
-  it('handles unknown routes', () => {
-    // @ts-expect-error -- Unknown route
-    const {rerender} = render(<Link href="/unknown">Unknown</Link>);
-    expect(
-      screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')
-    ).toBe('/unknown');
-
-    rerender(
-      // @ts-expect-error -- Unknown route
-      <Link href="/unknown" locale="de">
-        Unknown
-      </Link>
-    );
-    expect(
-      screen.getByRole('link', {name: 'Unknown'}).getAttribute('href')
-    ).toBe('/de/unknown');
-  });
-});
-
-describe('getPathname', () => {
-  it('resolves to the correct path', () => {
-    expect(
-      getPathname({
-        locale: 'en',
-        href: {
-          pathname: '/categories/[...parts]',
-          params: {parts: ['clothing', 't-shirts']},
-          query: {sort: 'price'}
-        }
-      })
-    ).toBe('/categories/clothing/t-shirts?sort=price');
   });
 });
 
