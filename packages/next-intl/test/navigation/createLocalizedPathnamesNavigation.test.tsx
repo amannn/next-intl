@@ -13,9 +13,6 @@ import {Pathnames} from '../../src/navigation.react-client';
 import {getRequestLocale} from '../../src/server/RequestLocale';
 import BaseLinkWithLocale from '../../src/shared/BaseLinkWithLocale';
 
-vi.mock('../../src/server/RequestLocale', () => ({
-  getRequestLocale: vi.fn(() => 'en')
-}));
 vi.mock('next/navigation');
 vi.mock('next-intl/config', () => ({
   default: async () =>
@@ -34,6 +31,9 @@ vi.mock('../../src/navigation/react-server/BaseLink', () => ({
   default({locale, ...rest}: any) {
     return <BaseLinkWithLocale locale={locale || 'en'} {...rest} />;
   }
+}));
+vi.mock('../../src/server/RequestLocale', () => ({
+  getRequestLocale: vi.fn(() => 'en')
 }));
 
 beforeEach(() => {
@@ -221,16 +221,16 @@ describe.each([
       });
 
       describe('redirect', () => {
-        it('can redirect for the default locale', () => {
-          function Component<Pathname extends keyof typeof pathnames>({
-            href
-          }: {
-            href: Parameters<typeof redirect<Pathname>>[0];
-          }) {
-            redirect(href);
-            return null;
-          }
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof redirect<Pathname>>[0];
+        }) {
+          redirect(href);
+          return null;
+        }
 
+        it('can redirect for the default locale', () => {
           vi.mocked(useNextPathname).mockImplementation(() => '/');
           const {rerender} = render(<Component href="/" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/en');
@@ -257,16 +257,8 @@ describe.each([
         it('can redirect for a non-default locale', () => {
           vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'de');
-
-          function Component<Pathname extends keyof typeof pathnames>({
-            href
-          }: {
-            href: Parameters<typeof redirect<Pathname>>[0];
-          }) {
-            redirect(href);
-            return null;
-          }
           vi.mocked(useNextPathname).mockImplementation(() => '/');
+
           const {rerender} = render(<Component href="/" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/de');
 
@@ -290,15 +282,6 @@ describe.each([
         });
 
         it('supports optional search params', () => {
-          function Component<Pathname extends keyof typeof pathnames>({
-            href
-          }: {
-            href: Parameters<typeof redirect<Pathname>>[0];
-          }) {
-            redirect(href);
-            return null;
-          }
-
           vi.mocked(useNextPathname).mockImplementation(() => '/');
           render(
             <Component
@@ -317,15 +300,6 @@ describe.each([
         });
 
         it('handles unknown route', () => {
-          function Component<Pathname extends keyof typeof pathnames>({
-            href
-          }: {
-            href: Parameters<typeof redirect<Pathname>>[0];
-          }) {
-            redirect(href);
-            return null;
-          }
-
           vi.mocked(useNextPathname).mockImplementation(() => '/');
           // @ts-expect-error -- Unknown route
           render(<Component href="/unknown" />);
