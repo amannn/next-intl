@@ -25,7 +25,7 @@ function BaseLinkWithLocale(
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
     isLocalHref(href) && (localePrefix !== 'never' || isChangingLocale)
-      ? // For the `localePrefix: 'as-necessary' strategy, the href shouldn't
+      ? // For the `localePrefix: 'as-needed' strategy, the href shouldn't
         // be prefixed if the locale is the default locale. To termine this, we
         // need a) the default locale and b) the information if we use prefixed
         // routing. The default locale can vary by domain, therefore during the
