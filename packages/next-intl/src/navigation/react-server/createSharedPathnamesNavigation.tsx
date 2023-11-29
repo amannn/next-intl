@@ -4,7 +4,7 @@ import {
   LocalePrefix,
   ParametersExceptFirst
 } from '../../shared/types';
-import BaseLink from './ServerLink';
+import ServerLink from './ServerLink';
 import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
@@ -18,8 +18,8 @@ export default function createSharedPathnamesNavigation<
     };
   }
 
-  function Link(props: ComponentProps<typeof BaseLink<Locales>>) {
-    return <BaseLink<Locales> localePrefix={opts.localePrefix} {...props} />;
+  function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
+    return <ServerLink<Locales> localePrefix={opts.localePrefix} {...props} />;
   }
 
   function redirect(

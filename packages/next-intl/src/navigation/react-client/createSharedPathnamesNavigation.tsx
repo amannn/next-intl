@@ -4,7 +4,7 @@ import {
   LocalePrefix,
   ParametersExceptFirst
 } from '../../shared/types';
-import BaseLink from './ClientLink';
+import ClientLink from './ClientLink';
 import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
@@ -13,12 +13,12 @@ export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
 >(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
   type LinkProps = Omit<
-    ComponentProps<typeof BaseLink<Locales>>,
+    ComponentProps<typeof ClientLink<Locales>>,
     'localePrefix'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
-      <BaseLink<Locales>
+      <ClientLink<Locales>
         ref={ref}
         localePrefix={opts.localePrefix}
         {...props}

@@ -13,7 +13,7 @@ import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams
 } from '../shared/utils';
-import BaseLink from './ClientLink';
+import ClientLink from './ClientLink';
 import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
@@ -40,7 +40,7 @@ export default function createLocalizedPathnamesNavigation<
   }
 
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
-    ComponentProps<typeof BaseLink>,
+    ComponentProps<typeof ClientLink>,
     'href' | 'name'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
@@ -48,13 +48,13 @@ export default function createLocalizedPathnamesNavigation<
   };
   function Link<Pathname extends keyof PathnamesConfig>(
     {href, locale, ...rest}: LinkProps<Pathname>,
-    ref?: ComponentProps<typeof BaseLink>['ref']
+    ref?: ComponentProps<typeof ClientLink>['ref']
   ) {
     const defaultLocale = useTypedLocale();
     const finalLocale = locale || defaultLocale;
 
     return (
-      <BaseLink
+      <ClientLink
         ref={ref}
         href={compileLocalizedPathname<Locales, Pathname>({
           locale: finalLocale,
@@ -73,7 +73,9 @@ export default function createLocalizedPathnamesNavigation<
   const LinkWithRef = forwardRef(Link) as unknown as <
     Pathname extends keyof PathnamesConfig
   >(
-    props: LinkProps<Pathname> & {ref?: ComponentProps<typeof BaseLink>['ref']}
+    props: LinkProps<Pathname> & {
+      ref?: ComponentProps<typeof ClientLink>['ref'];
+    }
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 
