@@ -1,10 +1,10 @@
 import useLocale from '../../react-client/useLocale';
-import redirectWithLocale from '../../shared/redirectWithLocale';
-import {ParametersExceptFirstTwo} from '../../shared/types';
+import {LocalePrefix, ParametersExceptFirstTwo} from '../../shared/types';
+import baseRedirect from '../shared/baseRedirect';
 
-export default function baseRedirect(
-  pathname: string,
-  ...args: ParametersExceptFirstTwo<typeof redirectWithLocale>
+export default function clientRedirect(
+  params: {localePrefix?: LocalePrefix; pathname: string},
+  ...args: ParametersExceptFirstTwo<typeof baseRedirect>
 ) {
   let locale;
   try {
@@ -18,5 +18,5 @@ export default function baseRedirect(
     );
   }
 
-  return redirectWithLocale(pathname, locale, ...args);
+  return baseRedirect({...params, locale}, ...args);
 }

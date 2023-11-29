@@ -39,19 +39,21 @@ To create [navigation APIs](#apis) for this strategy, use the `createSharedPathn
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
 
 export const locales = ['en', 'de'] as const;
+export const localePrefix = 'always'; // Default
 
 export const {Link, redirect, usePathname, useRouter} =
-  createSharedPathnamesNavigation({locales});
+  createSharedPathnamesNavigation({locales, localePrefix});
 ```
 
-The `locales` argument is identical to the configuration that you pass to the middleware. To reuse it there, you can import the `locales` into the middleware.
+The `locales` as well as the `localePrefix` argument is identical to the configuration that you pass to the middleware. You might want to share these values via a central configuration to keep them in sync.
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
-import {locales} from './navigation';
+import {locales, localePrefix} from './navigation';
 
 export default createMiddleware({
   defaultLocale: 'en',
+  localePrefix,
   locales
 });
 ```
@@ -69,6 +71,7 @@ import {
 } from 'next-intl/navigation';
 
 export const locales = ['en', 'de'] as const;
+export const localePrefix = 'always'; // Default
 
 // The `pathnames` object holds pairs of internal
 // and external paths, separated by locale.
@@ -99,17 +102,18 @@ export const pathnames = {
 } satisfies Pathnames<typeof locales>;
 
 export const {Link, redirect, usePathname, useRouter, getPathname} =
-  createLocalizedPathnamesNavigation({locales, pathnames});
+  createLocalizedPathnamesNavigation({locales, localePrefix, pathnames});
 ```
 
-The `pathnames` argument is identical to the configuration that you pass to the middleware for [localizing pathnames](/docs/routing/middleware#localizing-pathnames). Because of this, you might want to import the `locales` and `pathnames` into the middleware.
+The arguments `locales`, `localePrefix` as well as `pathnames` are identical to the configuration that you pass to the middleware. You might want to share these values via a central configuration to make sure they stay in sync.
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
-import {locales, pathnames} from './navigation';
+import {locales, localePrefix, pathnames} from './navigation';
 
 export default createMiddleware({
   defaultLocale: 'en',
+  localePrefix,
   locales,
   pathnames
 });

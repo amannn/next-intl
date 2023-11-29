@@ -1,11 +1,15 @@
-import {AllLocales} from '../../shared/types';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
+import React, {ComponentProps} from 'react';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst
+} from '../../shared/types';
+import ServerLink from './ServerLink';
+import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- The value is not used yet, only the type information is important
->(opts: {locales: Locales}) {
+>(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
   function notSupported(message: string) {
     return () => {
       throw new Error(
@@ -14,9 +18,20 @@ export default function createSharedPathnamesNavigation<
     };
   }
 
+  function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
+    return <ServerLink<Locales> localePrefix={opts.localePrefix} {...props} />;
+  }
+
+  function redirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof serverRedirect>
+  ) {
+    return serverRedirect({...opts, pathname}, ...args);
+  }
+
   return {
-    Link: BaseLink<Locales>,
-    redirect: baseRedirect,
+    Link,
+    redirect,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };

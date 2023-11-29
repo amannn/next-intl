@@ -140,6 +140,8 @@ The bestmatching domain is detected based on these priorities:
 
 ### Locale prefix
 
+If you're using [the navigation APIs from `next-intl`](/docs/routing/navigation), you want to make sure your `localePrefix` setting matches your middleware configuration.
+
 #### Always use a locale prefix [#locale-prefix-always]
 
 By default, pathnames always start with the locale (e.g. `/en/about`).
@@ -200,7 +202,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 <Callout>
   Note that [alternate links](#disable-alternate-links) are disabled in this
-  mode since there are no distinct URLs per language.
+  mode since there might not be distinct URLs per locale.
 </Callout>
 
 ### Disable automatic locale detection

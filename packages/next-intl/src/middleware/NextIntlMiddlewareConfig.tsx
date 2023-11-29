@@ -1,6 +1,4 @@
-import {AllLocales, Pathnames} from '../shared/types';
-
-type LocalePrefix = 'as-needed' | 'always' | 'never';
+import {AllLocales, LocalePrefix, Pathnames} from '../shared/types';
 
 type RoutingBaseConfig<Locales extends AllLocales> = {
   /** A list of all locales that are supported. */

@@ -564,6 +564,37 @@ describe('prefix-based routing', () => {
         );
       });
     });
+
+    describe('localized pathnames with different pathnames for internal and external pathnames for the default locale', () => {
+      const middlewareWithPathnames = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'de'],
+        localePrefix: 'as-needed',
+        pathnames: {
+          '/internal': '/external'
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
+      });
+
+      it('redirects a request for a localized route to remove the locale prefix while keeping search params at the root', () => {
+        middlewareWithPathnames(createMockRequest('/en?hello', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/?hello'
+        );
+      });
+
+      it('redirects a request for a localized route to remove the locale prefix while keeping search params', () => {
+        middlewareWithPathnames(createMockRequest('/en/external?hello', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external?hello'
+        );
+      });
+    });
   });
 
   describe('localePrefix: as-needed, localeDetection: false', () => {
@@ -1122,6 +1153,16 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/en/users/12'
+        );
+      });
+
+      it('redirects a request for a localized route to remove the locale prefix while keeping search params', () => {
+        middlewareWithPathnames(createMockRequest('/de/ueber?hello', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/ueber?hello'
         );
       });
     });

@@ -1,16 +1,45 @@
-import {AllLocales} from '../../shared/types';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
+import React, {ComponentProps, ReactElement, forwardRef} from 'react';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst
+} from '../../shared/types';
+import ClientLink from './ClientLink';
+import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- The value is not used yet, only the type information is important
->(opts: {locales: Locales}) {
+>(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
+  type LinkProps = Omit<
+    ComponentProps<typeof ClientLink<Locales>>,
+    'localePrefix'
+  >;
+  function Link(props: LinkProps, ref: LinkProps['ref']) {
+    return (
+      <ClientLink<Locales>
+        ref={ref}
+        localePrefix={opts.localePrefix}
+        {...props}
+      />
+    );
+  }
+  const LinkWithRef = forwardRef(Link) as (
+    props: LinkProps & {ref?: LinkProps['ref']}
+  ) => ReactElement;
+  (LinkWithRef as any).displayName = 'Link';
+
+  function redirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof clientRedirect>
+  ) {
+    return clientRedirect({...opts, pathname}, ...args);
+  }
+
   return {
-    Link: BaseLink as typeof BaseLink<Locales>,
-    redirect: baseRedirect,
+    Link: LinkWithRef,
+    redirect,
     usePathname: useBasePathname,
     useRouter: useBaseRouter
   };

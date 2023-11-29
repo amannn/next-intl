@@ -1,5 +1,7 @@
 export type AllLocales = ReadonlyArray<string>;
 
+export type LocalePrefix = 'as-needed' | 'always' | 'never';
+
 export type Pathnames<Locales extends AllLocales> = Record<
   string,
   {[Key in Locales[number]]: string} | string
