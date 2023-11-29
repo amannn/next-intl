@@ -9,9 +9,9 @@ import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createLocalizedPathnamesNavigationClient from '../../src/navigation/react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
+import BaseLink from '../../src/navigation/shared/BaseLink';
 import {Pathnames} from '../../src/navigation.react-client';
 import {getRequestLocale} from '../../src/server/RequestLocale';
-import BaseLinkWithLocale from '../../src/shared/BaseLinkWithLocale';
 
 vi.mock('next/navigation');
 vi.mock('next-intl/config', () => ({
@@ -27,9 +27,9 @@ vi.mock('react', async (importOriginal) => ({
   }
 }));
 // Avoids handling an async component (not supported by renderToString)
-vi.mock('../../src/navigation/react-server/BaseLink', () => ({
+vi.mock('../../src/navigation/react-server/ServerLink', () => ({
   default({locale, ...rest}: any) {
-    return <BaseLinkWithLocale locale={locale || 'en'} {...rest} />;
+    return <BaseLink locale={locale || 'en'} {...rest} />;
   }
 }));
 vi.mock('../../src/server/RequestLocale', () => ({
@@ -299,7 +299,7 @@ describe.each([
           );
         });
 
-        it('handles unknown route', () => {
+        it('handles unknown routes', () => {
           vi.mocked(useNextPathname).mockImplementation(() => '/');
           // @ts-expect-error -- Unknown route
           render(<Component href="/unknown" />);
@@ -324,13 +324,13 @@ describe.each([
     });
 
     describe("localePrefix: 'never'", () => {
-      describe('Link', () => {
-        const {Link} = createLocalizedPathnamesNavigation({
-          pathnames,
-          locales,
-          localePrefix: 'never'
-        });
+      const {Link, redirect} = createLocalizedPathnamesNavigation({
+        pathnames,
+        locales,
+        localePrefix: 'never'
+      });
 
+      describe('Link', () => {
         it("doesn't render a prefix for the default locale", () => {
           const markup = renderToString(<Link href="/about">About</Link>);
           expect(markup).toContain('href="/about"');
@@ -343,6 +343,91 @@ describe.each([
             </Link>
           );
           expect(markup).toContain('href="/de/ueber-uns"');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof redirect<Pathname>>[0];
+        }) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/about');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextRedirect).toHaveBeenLastCalledWith('/news/launch-party-3');
+        });
+
+        it('can redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          const {rerender} = render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/ueber-uns');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextRedirect).toHaveBeenLastCalledWith(
+            '/neuigkeiten/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(
+            <Component
+              href={{
+                pathname: '/',
+                query: {
+                  foo: 'bar',
+                  bar: [1, 2]
+                }
+              }}
+            />
+          );
+          expect(nextRedirect).toHaveBeenLastCalledWith(
+            '/?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('handles unknown routes', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          // @ts-expect-error -- Unknown route
+          render(<Component href="/unknown" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/unknown');
         });
       });
     });

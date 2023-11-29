@@ -12,8 +12,6 @@ vi.mock('next/navigation');
 
 const locales = ['en', 'de'] as const;
 
-const {Link, useRouter} = createSharedPathnamesNavigation({locales});
-
 beforeEach(() => {
   const router = {
     push: vi.fn(),
@@ -28,70 +26,116 @@ beforeEach(() => {
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
-describe('Link', () => {
-  it('supports receiving a ref', () => {
-    const ref = React.createRef<HTMLAnchorElement>();
-    render(<Link ref={ref} href="/about" />);
-    expect(ref.current).not.toBe(null);
+describe("localePrefix: 'as-needed'", () => {
+  const {Link, useRouter} = createSharedPathnamesNavigation({
+    locales,
+    localePrefix: 'as-needed'
   });
-});
 
-describe('useRouter', () => {
-  describe('push', () => {
-    it('resolves to the correct path when passing another locale', () => {
-      function Component() {
-        const router = useRouter();
-        router.push('/about', {locale: 'de'});
-        return null;
-      }
-      render(<Component />);
-      const push = useNextRouter().push as Mock;
-      expect(push).toHaveBeenCalledTimes(1);
-      expect(push).toHaveBeenCalledWith('/de/about');
-    });
-
-    it('passes through unknown options to the Next.js router', () => {
-      function Component() {
-        const router = useRouter();
-        // @ts-expect-error -- Wait for https://github.com/vercel/next.js/pull/59001
-        router.push('/about', {locale: 'de', scroll: false});
-        return null;
-      }
-      render(<Component />);
-      const push = useNextRouter().push as Mock;
-      expect(push).toHaveBeenCalledTimes(1);
-      expect(push).toHaveBeenCalledWith('/de/about', {scroll: false});
+  describe('Link', () => {
+    it('supports receiving a ref', () => {
+      const ref = React.createRef<HTMLAnchorElement>();
+      render(<Link ref={ref} href="/about" />);
+      expect(ref.current).not.toBe(null);
     });
   });
+
+  describe('useRouter', () => {
+    describe('push', () => {
+      it('resolves to the correct path when passing another locale', () => {
+        function Component() {
+          const router = useRouter();
+          router.push('/about', {locale: 'de'});
+          return null;
+        }
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/de/about');
+      });
+
+      it('passes through unknown options to the Next.js router', () => {
+        function Component() {
+          const router = useRouter();
+          // @ts-expect-error -- Wait for https://github.com/vercel/next.js/pull/59001
+          router.push('/about', {locale: 'de', scroll: false});
+          return null;
+        }
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/de/about', {scroll: false});
+      });
+    });
+  });
+
+  /**
+   * Type tests
+   */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function TypeTests() {
+    const router = useRouter();
+
+    // @ts-expect-error -- Only supports string paths
+    router.push({pathname: '/about'});
+
+    // Valid
+    router.push('/about');
+    router.push('/about', {locale: 'de'});
+    router.push('/unknown'); // No error since routes are unknown
+
+    // @ts-expect-error -- No params supported
+    <Link href="/users/[userId]" params={{userId: 2}}>
+      User
+    </Link>;
+
+    // @ts-expect-error -- Unknown locale
+    <Link href="/about" locale="unknown">
+      User
+    </Link>;
+
+    // Valid
+    <Link href="/about">Über uns</Link>;
+    <Link href="/unknown">About</Link>; // No error since routes are unknown
+  }
 });
 
-/**
- * Type tests
- */
+describe("localePrefix: 'never'", () => {
+  const {useRouter} = createSharedPathnamesNavigation({
+    locales,
+    localePrefix: 'never'
+  });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TypeTests() {
-  const router = useRouter();
+  describe('useRouter', () => {
+    function Component({locale}: {locale?: string}) {
+      const router = useRouter();
+      router.push('/about', {locale});
+      return null;
+    }
 
-  // @ts-expect-error -- Only supports string paths
-  router.push({pathname: '/about'});
+    describe('push', () => {
+      it('can push a pathname for the default locale', () => {
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/about');
+      });
 
-  // Valid
-  router.push('/about');
-  router.push('/about', {locale: 'de'});
-  router.push('/unknown'); // No error since routes are unknown
+      it('can push a pathname for a secondary locale', () => {
+        vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+        render(<Component locale="de" />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/about');
+      });
 
-  // @ts-expect-error -- No params supported
-  <Link href="/users/[userId]" params={{userId: 2}}>
-    User
-  </Link>;
-
-  // @ts-expect-error -- Unknown locale
-  <Link href="/about" locale="unknown">
-    User
-  </Link>;
-
-  // Valid
-  <Link href="/about">Über uns</Link>;
-  <Link href="/unknown">About</Link>; // No error since routes are unknown
-}
+      it('resolves to the correct path when passing another locale', () => {
+        render(<Component locale="de" />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/de/about');
+      });
+    });
+  });
+});

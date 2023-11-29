@@ -1,28 +1,23 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import BaseLinkWithLocale from '../../shared/BaseLinkWithLocale';
 import {AllLocales} from '../../shared/types';
+import BaseLink from '../shared/BaseLink';
 
 type Props<Locales extends AllLocales> = Omit<
-  ComponentProps<typeof BaseLinkWithLocale>,
+  ComponentProps<typeof BaseLink>,
   'locale'
 > & {
   locale?: Locales[number];
 };
 
-function BaseLink<Locales extends AllLocales>(
+function ClientLink<Locales extends AllLocales>(
   {locale, ...rest}: Props<Locales>,
   ref: Props<Locales>['ref']
 ) {
   const defaultLocale = useLocale();
   const linkLocale = locale || defaultLocale;
   return (
-    <BaseLinkWithLocale
-      ref={ref}
-      hrefLang={linkLocale}
-      locale={linkLocale}
-      {...rest}
-    />
+    <BaseLink ref={ref} hrefLang={linkLocale} locale={linkLocale} {...rest} />
   );
 }
 
@@ -46,8 +41,10 @@ function BaseLink<Locales extends AllLocales>(
  * the `set-cookie` response header would cause the locale cookie on the current
  * page to be overwritten before the user even decides to change the locale.
  */
-const BaseLinkWithRef = forwardRef(BaseLink) as <Locales extends AllLocales>(
+const ClientLinkWithRef = forwardRef(ClientLink) as <
+  Locales extends AllLocales
+>(
   props: Props<Locales> & {ref?: Props<Locales>['ref']}
 ) => ReactElement;
-(BaseLinkWithRef as any).displayName = 'Link';
-export default BaseLinkWithRef;
+(ClientLinkWithRef as any).displayName = 'ClientLink';
+export default ClientLinkWithRef;

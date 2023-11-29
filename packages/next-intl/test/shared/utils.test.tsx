@@ -3,20 +3,20 @@ import {
   hasPathnamePrefixed,
   unlocalizePathname,
   matchesPathname,
-  localizePathname
+  prefixPathname
 } from '../../src/shared/utils';
 
-describe('localizePathname', () => {
+describe('prefixPathname', () => {
   it("doesn't add trailing slashes for the root", () => {
-    expect(localizePathname('en', '/')).toEqual('/en');
+    expect(prefixPathname('en', '/')).toEqual('/en');
   });
 
   it("doesn't add trailing slashes for search params", () => {
-    expect(localizePathname('en', '/?foo=bar')).toEqual('/en?foo=bar');
+    expect(prefixPathname('en', '/?foo=bar')).toEqual('/en?foo=bar');
   });
 
   it('localizes nested paths', () => {
-    expect(localizePathname('en', '/nested')).toEqual('/en/nested');
+    expect(prefixPathname('en', '/nested')).toEqual('/en/nested');
   });
 });
 

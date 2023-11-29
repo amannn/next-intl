@@ -1,20 +1,18 @@
 import React, {ComponentProps} from 'react';
 import {getLocale} from '../../server';
-import BaseLinkWithLocale from '../../shared/BaseLinkWithLocale';
 import {AllLocales} from '../../shared/types';
+import BaseLink from '../shared/BaseLink';
 
 type Props<Locales extends AllLocales> = Omit<
-  ComponentProps<typeof BaseLinkWithLocale>,
+  ComponentProps<typeof BaseLink>,
   'locale'
 > & {
   locale?: Locales[number];
 };
 
-export default async function BaseLink<Locales extends AllLocales>({
+export default async function ServerLink<Locales extends AllLocales>({
   locale,
   ...rest
 }: Props<Locales>) {
-  return (
-    <BaseLinkWithLocale locale={locale || (await getLocale())} {...rest} />
-  );
+  return <BaseLink locale={locale || (await getLocale())} {...rest} />;
 }

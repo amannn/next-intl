@@ -1,7 +1,11 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import {AllLocales, LocalePrefix} from '../../shared/types';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst
+} from '../../shared/types';
+import BaseLink from './ClientLink';
+import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
@@ -26,9 +30,16 @@ export default function createSharedPathnamesNavigation<
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 
+  function redirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof clientRedirect>
+  ) {
+    return clientRedirect({...opts, pathname}, ...args);
+  }
+
   return {
     Link: LinkWithRef,
-    redirect: baseRedirect,
+    redirect,
     usePathname: useBasePathname,
     useRouter: useBaseRouter
   };

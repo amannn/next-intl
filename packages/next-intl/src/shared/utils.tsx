@@ -21,29 +21,29 @@ export function isLocalHref(href: Href) {
 export function localizeHref(
   href: string,
   locale: string,
-  defaultLocale: string,
+  curLocale: string,
   pathname: string
 ): string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
-  defaultLocale: string,
+  curLocale: string,
   pathname: string
 ): UrlObject | string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
-  defaultLocale: string = locale,
+  curLocale: string = locale,
   pathname: string
 ) {
   if (!isLocalHref(href) || isRelativeHref(href)) {
     return href;
   }
 
-  const isSwitchingLocale = locale !== defaultLocale;
+  const isSwitchingLocale = locale !== curLocale;
   const isPathnamePrefixed =
     locale == null || hasPathnamePrefixed(locale, pathname);
-  const shouldPrefix = isPathnamePrefixed || isSwitchingLocale;
+  const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
 
   if (shouldPrefix && locale != null) {
     return prefixHref(href, locale);
@@ -60,11 +60,11 @@ export function prefixHref(
 export function prefixHref(href: UrlObject | string, locale: string) {
   let prefixedHref;
   if (typeof href === 'string') {
-    prefixedHref = localizePathname(locale, href);
+    prefixedHref = prefixPathname(locale, href);
   } else {
     prefixedHref = {...href};
     if (href.pathname) {
-      prefixedHref.pathname = localizePathname(locale, href.pathname);
+      prefixedHref.pathname = prefixPathname(locale, href.pathname);
     }
   }
 
@@ -75,7 +75,7 @@ export function unlocalizePathname(pathname: string, locale: string) {
   return pathname.replace(new RegExp(`^/${locale}`), '') || '/';
 }
 
-export function localizePathname(locale: string, pathname: string) {
+export function prefixPathname(locale: string, pathname: string) {
   let localizedHref = '/' + locale;
 
   // Avoid trailing slashes

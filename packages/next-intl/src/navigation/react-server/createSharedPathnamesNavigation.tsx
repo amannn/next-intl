@@ -1,7 +1,11 @@
 import React, {ComponentProps} from 'react';
-import {AllLocales, LocalePrefix} from '../../shared/types';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
+import {
+  AllLocales,
+  LocalePrefix,
+  ParametersExceptFirst
+} from '../../shared/types';
+import BaseLink from './ServerLink';
+import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
@@ -18,9 +22,16 @@ export default function createSharedPathnamesNavigation<
     return <BaseLink<Locales> localePrefix={opts.localePrefix} {...props} />;
   }
 
+  function redirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof serverRedirect>
+  ) {
+    return serverRedirect({...opts, pathname}, ...args);
+  }
+
   return {
     Link,
-    redirect: baseRedirect,
+    redirect,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };

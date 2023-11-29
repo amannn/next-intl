@@ -12,8 +12,8 @@ import {
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
 } from '../shared/utils';
-import BaseLink from './BaseLink';
-import baseRedirect from './baseRedirect';
+import ServerLink from './ServerLink';
+import serverRedirect from './serverRedirect';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
@@ -28,7 +28,7 @@ export default function createLocalizedPathnamesNavigation<
   localePrefix?: LocalePrefix;
 }) {
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
-    ComponentProps<typeof BaseLink>,
+    ComponentProps<typeof ServerLink>,
     'href' | 'name'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
@@ -43,7 +43,7 @@ export default function createLocalizedPathnamesNavigation<
     const finalLocale = locale || defaultLocale;
 
     return (
-      <BaseLink
+      <ServerLink
         href={compileLocalizedPathname<Locales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- This is ok
@@ -61,11 +61,11 @@ export default function createLocalizedPathnamesNavigation<
 
   function redirect<Pathname extends keyof PathnamesConfig>(
     href: HrefOrHrefWithParams<Pathname>,
-    ...args: ParametersExceptFirst<typeof baseRedirect>
+    ...args: ParametersExceptFirst<typeof serverRedirect>
   ) {
     const locale = getRequestLocale();
-    const resolvedHref = getPathname({href, locale});
-    return baseRedirect(resolvedHref, ...args);
+    const pathname = getPathname({href, locale});
+    return serverRedirect({localePrefix, pathname}, ...args);
   }
 
   function getPathname({
