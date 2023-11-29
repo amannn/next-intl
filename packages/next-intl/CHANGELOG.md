@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.2.0 (2023-11-29)
+
+
+### Features
+
+* Add `localePrefix` for navigation APIs for an improved initial render of `Link` when using `localePrefix: never`. Also fix edge case in middleware when using localized pathnames for redirects that remove a locale prefix (fixes an infinite loop). ([#678](https://github.com/amannn/next-intl/issues/678)) ([1c68e3b](https://github.com/amannn/next-intl/commit/1c68e3b549e2029cbae62d549f609e1d76ca6490)), closes [#444](https://github.com/amannn/next-intl/issues/444)
+
+
+
+
+
 ## 3.1.4 (2023-11-24)
 
 
