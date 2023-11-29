@@ -178,13 +178,16 @@ export default function createMiddleware<Locales extends AllLocales>(
           response = redirect(pathWithSearch);
         }
       } else {
-        const pathWithSearch = getPathWithSearch(
+        const internalPathWithSearch = getPathWithSearch(
           pathname,
           request.nextUrl.search
         );
 
         if (hasLocalePrefix) {
-          const basePath = getBasePath(pathWithSearch, pathLocale);
+          const basePath = getBasePath(
+            getPathWithSearch(normalizedPathname, request.nextUrl.search),
+            pathLocale
+          );
 
           if (configWithDefaults.localePrefix === 'never') {
             response = redirect(basePath);
@@ -205,10 +208,10 @@ export default function createMiddleware<Locales extends AllLocales>(
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
                   response = redirect(basePath, pathDomain?.domain);
                 } else {
-                  response = rewrite(pathWithSearch);
+                  response = rewrite(internalPathWithSearch);
                 }
               } else {
-                response = rewrite(pathWithSearch);
+                response = rewrite(internalPathWithSearch);
               }
             }
           } else {
@@ -221,9 +224,9 @@ export default function createMiddleware<Locales extends AllLocales>(
               (configWithDefaults.localePrefix === 'as-needed' ||
                 configWithDefaults.domains))
           ) {
-            response = rewrite(`/${locale}${pathWithSearch}`);
+            response = rewrite(`/${locale}${internalPathWithSearch}`);
           } else {
-            response = redirect(`/${locale}${pathWithSearch}`);
+            response = redirect(`/${locale}${internalPathWithSearch}`);
           }
         }
       }
