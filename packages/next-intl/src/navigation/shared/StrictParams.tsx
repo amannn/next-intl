@@ -11,16 +11,16 @@ type ReadUntil<Path> = Path extends `${infer Match}]${infer Rest}`
 type RemovePrefixes<Key> = Key extends `[...${infer Name}`
   ? Name
   : Key extends `...${infer Name}`
-  ? Name
-  : Key;
+    ? Name
+    : Key;
 
 type StrictParams<Pathname> = Pathname extends `${string}[${string}`
   ? {
       [Key in ReadFrom<Pathname>[number] as RemovePrefixes<Key>]: Key extends `[...${string}`
         ? Array<ParamValue> | undefined
         : Key extends `...${string}`
-        ? Array<ParamValue>
-        : ParamValue;
+          ? Array<ParamValue>
+          : ParamValue;
     }
   : never;
 
