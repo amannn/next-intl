@@ -67,7 +67,7 @@ it('has docs that suggest a reasonable matcher', () => {
     // Match all pathnames without `.`
     '/((?!api|_next|_vercel|.*\\..*).*)',
     // Match all pathnames within `/users`, optionally with a locale prefix
-    '/(.+)?/users/(.+)'
+    '/([\\w-]+)?/users/(.+)'
   ];
 
   const test = [
@@ -78,6 +78,7 @@ it('has docs that suggest a reasonable matcher', () => {
     ['/encoded%20BV', true],
     ['/users/jane.doe', true],
     ['/de/users/jane.doe', true],
+    ['/de-AT/users/jane.doe', true],
     ['/users/jane.doe/profile', true],
 
     ['/favicon.ico', false],
@@ -102,7 +103,8 @@ it('has docs that suggest a reasonable matcher', () => {
     ['/test.html', false],
     ['/_next/static/chunks/main-app-123.js?23', false],
     ['/test.html?searchParam=2', false],
-    ['/hello/text.txt', false]
+    ['/hello/text.txt', false],
+    ['/_next/static/chunks/app/%5Blocale%5D/users/%5Bslug%5D/page.js', false]
   ] as const;
 
   expect(
