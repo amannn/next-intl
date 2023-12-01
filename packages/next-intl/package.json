@@ -29,7 +29,8 @@
     },
     "./server": {
       "types": "./server.d.ts",
-      "default": "./dist/esm/server.js"
+      "react-server": "./dist/esm/server.react-server.js",
+      "default": "./dist/server.react-client.js"
     },
     "./config": {
       "types": "./config.d.ts",
@@ -107,7 +108,7 @@
     },
     {
       "path": "dist/production/index.react-server.js",
-      "limit": "13.57 KB"
+      "limit": "13.58 KB"
     },
     {
       "path": "dist/production/navigation.react-client.js",
@@ -118,8 +119,12 @@
       "limit": "2.8 KB"
     },
     {
-      "path": "dist/production/server.js",
-      "limit": "13.2 kB"
+      "path": "dist/production/server.react-client.js",
+      "limit": "1 KB"
+    },
+    {
+      "path": "dist/production/server.react-server.js",
+      "limit": "12.8 KB"
     },
     {
       "path": "dist/production/middleware.js",

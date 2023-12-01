@@ -1,6 +1,6 @@
 import {headers} from 'next/headers';
 import {cache} from 'react';
-import {HEADER_LOCALE_NAME} from '../shared/constants';
+import {HEADER_LOCALE_NAME} from '../../shared/constants';
 
 const getLocaleFromHeader = cache(() => {
   let locale;

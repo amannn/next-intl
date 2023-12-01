@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import {getLocale, getNow, getTimeZone} from '../server';
+import {getLocale, getNow, getTimeZone} from '../server.react-server';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;

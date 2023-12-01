@@ -10,7 +10,7 @@ import {
   createTranslator,
   MarkupTranslationValues
 } from 'use-intl/core';
-import getConfig from '../server/getConfig';
+import getConfig from '../server/react-server/getConfig';
 
 const getMessageFormatCache = cache(() => new Map());
 

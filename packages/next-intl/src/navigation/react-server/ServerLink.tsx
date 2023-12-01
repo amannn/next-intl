@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import {getLocale} from '../../server';
+import {getLocale} from '../../server.react-server';
 import {AllLocales} from '../../shared/types';
 import BaseLink from '../shared/BaseLink';
 

@@ -1,5 +1,5 @@
 import type {useNow as useNowType} from 'use-intl';
-import getNow from '../server/getNow';
+import getNow from '../server/react-server/getNow';
 import useHook from './useHook';
 import useLocale from './useLocale';
 

@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import {getRequestLocale} from '../../server/RequestLocale';
+import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {
   AllLocales,
   LocalePrefix,
@@ -82,10 +82,10 @@ export default function createLocalizedPathnamesNavigation<
     });
   }
 
-  function notSupported(message: string) {
+  function notSupported(hookName: string) {
     return () => {
       throw new Error(
-        `\`${message}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
+        `\`${hookName}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
       );
     };
   }

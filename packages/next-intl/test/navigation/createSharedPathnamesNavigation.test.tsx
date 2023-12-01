@@ -10,7 +10,7 @@ import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createSharedPathnamesNavigationClient from '../../src/navigation/react-client/createSharedPathnamesNavigation';
 import createSharedPathnamesNavigationServer from '../../src/navigation/react-server/createSharedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
-import {getRequestLocale} from '../../src/server/RequestLocale';
+import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
 
 vi.mock('next/navigation', () => ({
   useParams: vi.fn(() => ({locale: 'en'})),
@@ -35,7 +35,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     return <BaseLink locale={locale || 'en'} {...rest} />;
   }
 }));
-vi.mock('../../src/server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
