@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import {initializeConfig} from 'use-intl/core';
-import createRequestConfig from '../server/createRequestConfig';
+import createRequestConfig from './createRequestConfig';
 
 // Make sure `now` is consistent across the request in case none was configured
 const getDefaultNow = cache(() => new Date());

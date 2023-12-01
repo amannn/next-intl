@@ -1,5 +1,5 @@
 import type {useTimeZone as useTimeZoneType} from 'use-intl';
-import getTimeZone from '../server/getTimeZone';
+import getTimeZone from '../server/react-server/getTimeZone';
 import useHook from './useHook';
 import useLocale from './useLocale';
 

@@ -11,7 +11,7 @@ import createLocalizedPathnamesNavigationClient from '../../src/navigation/react
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
 import {Pathnames} from '../../src/navigation.react-client';
-import {getRequestLocale} from '../../src/server/RequestLocale';
+import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
 
 vi.mock('next/navigation');
 vi.mock('next-intl/config', () => ({
@@ -32,7 +32,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     return <BaseLink locale={locale || 'en'} {...rest} />;
   }
 }));
-vi.mock('../../src/server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 

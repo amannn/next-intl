@@ -10,10 +10,10 @@ import serverRedirect from './serverRedirect';
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
 >(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
-  function notSupported(message: string) {
+  function notSupported(hookName: string) {
     return () => {
       throw new Error(
-        `\`${message}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
+        `\`${hookName}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
       );
     };
   }

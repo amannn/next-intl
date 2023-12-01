@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "playwright test",
-    "test:watch": "chokidar 'tests/main.spec.ts' -c 'npm run test'",
+    "test": "pnpm run test:playwright && pnpm run test:jest",
+    "test:playwright": "playwright test",
+    "test:playwright:watch": "chokidar 'tests/main.spec.ts' -c 'npm run test:playwright'",
+    "test:jest": "jest",
     "build": "next build",
     "start": "next start"
   },
@@ -19,7 +21,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "@playwright/test": "^1.33.0",
+    "@testing-library/react": "^13.0.0",
+    "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^17.0.23",
     "@types/react": "^18.2.29",
@@ -27,6 +32,8 @@
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.0.3",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "sharp": "^0.32.6",
     "typescript": "^5.2.2"
   }

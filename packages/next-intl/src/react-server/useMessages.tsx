@@ -1,5 +1,5 @@
 import type {useMessages as useMessagesType} from 'use-intl';
-import getMessages from '../server/getMessages';
+import getMessages from '../server/react-server/getMessages';
 import useHook from './useHook';
 import useLocale from './useLocale';
 

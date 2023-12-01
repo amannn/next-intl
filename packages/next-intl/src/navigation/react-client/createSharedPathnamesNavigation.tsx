@@ -37,10 +37,15 @@ export default function createSharedPathnamesNavigation<
     return clientRedirect({...opts, pathname}, ...args);
   }
 
+  function usePathname(): string {
+    // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
+    return useBasePathname();
+  }
+
   return {
     Link: LinkWithRef,
     redirect,
-    usePathname: useBasePathname,
+    usePathname,
     useRouter: useBaseRouter
   };
 }

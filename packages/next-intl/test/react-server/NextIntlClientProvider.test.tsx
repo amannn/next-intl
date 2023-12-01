@@ -1,9 +1,9 @@
 import {expect, it, vi} from 'vitest';
 import NextIntlClientProvider from '../../src/react-server/NextIntlClientProvider';
-import {getLocale, getNow, getTimeZone} from '../../src/server';
+import {getLocale, getNow, getTimeZone} from '../../src/server.react-server';
 import BaseNextIntlClientProvider from '../../src/shared/NextIntlClientProvider';
 
-vi.mock('../../src/server', async () => ({
+vi.mock('../../src/server/react-server', async () => ({
   getLocale: vi.fn(async () => 'en-US'),
   getNow: vi.fn(async () => new Date('2020-01-01T00:00:00.000Z')),
   getTimeZone: vi.fn(async () => 'America/New_York')
