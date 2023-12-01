@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.1 (2023-12-01)
+
+
+### Bug Fixes
+
+* Allow to import `next-intl/server` into Client Components (however not call any functions). This allows for easier testing of page components with multiple exports. ([#683](https://github.com/amannn/next-intl/issues/683)) ([5ca4075](https://github.com/amannn/next-intl/commit/5ca4075e58c152e898e9048f3002c11c7aef2dd9)), closes [#681](https://github.com/amannn/next-intl/issues/681)
+
+
+
+
+
 # 3.2.0 (2023-11-29)
 
 
