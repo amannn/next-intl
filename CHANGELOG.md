@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.2 (2023-12-04)
+
+
+### Bug Fixes
+
+* Allow to call `getRequestConfig` in outer module closure in a Client Component module graph ([#687](https://github.com/amannn/next-intl/issues/687)) ([0f16f10](https://github.com/amannn/next-intl/commit/0f16f106a68a2a443eb0ec3671084d40bf466d2f)), closes [#685](https://github.com/amannn/next-intl/issues/685)
+
+
+
+
+
 ## 3.2.1 (2023-12-01)
 
 
