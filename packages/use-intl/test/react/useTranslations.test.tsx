@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
-import React, {ReactNode} from 'react';
+import React, {ComponentProps, ReactNode} from 'react';
 import {it, expect, vi, describe, beforeEach} from 'vitest';
 import {
   Formats,
@@ -44,7 +44,8 @@ vi.mock('intl-messageformat', async (importOriginal) => {
 function renderMessage(
   message: string,
   values?: TranslationValues,
-  formats?: Partial<Formats>
+  formats?: Partial<Formats>,
+  providerProps?: Partial<ComponentProps<typeof IntlProvider>>
 ) {
   function Component() {
     const t = useTranslations();
@@ -57,6 +58,7 @@ function renderMessage(
       locale="en"
       messages={{message}}
       timeZone="Etc/UTC"
+      {...providerProps}
     >
       <Component />
     </IntlProvider>
@@ -145,6 +147,14 @@ it('applies a time zone when using a built-in format', () => {
   expectFormatted('date', 'long', 'May 8, 2023');
   expectFormatted('date', 'medium', 'May 8, 2023');
   expectFormatted('date', 'short', '5/8/23');
+});
+
+it('applies a time zone when using a skeleton', () => {
+  const now = new Date('2024-01-01T00:00:00.000+0530');
+  renderMessage(`{now, date, ::yyyyMdHm}`, {now}, undefined, {
+    timeZone: 'Asia/Kolkata'
+  });
+  screen.getByText('1/1/2024, 00:00');
 });
 
 it('handles pluralisation', () => {
