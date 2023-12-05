@@ -70,7 +70,7 @@
   "devDependencies": {
     "@size-limit/preset-big-lib": "^8.2.6",
     "@testing-library/react": "^13.0.0",
-    "@types/node": "^17.0.23",
+    "@types/node": "^20.1.2",
     "@types/react": "^18.2.29",
     "@types/react-dom": "^18.2.5",
     "date-fns": "^2.16.1",
@@ -81,7 +81,7 @@
     "rollup": "^3.28.1",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
-    "vitest": "^0.32.2"
+    "vitest": "^1.0.1"
   },
   "size-limit": [
     {

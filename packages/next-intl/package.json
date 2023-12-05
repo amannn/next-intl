@@ -3,6 +3,12 @@
   "version": "3.2.2",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://github.com/sponsors/amannn"
+    }
+  ],
   "description": "A minimal, but complete solution for internationalization in Next.js apps.",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app",
@@ -85,7 +91,7 @@
     "@size-limit/preset-big-lib": "^8.2.6",
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
-    "@types/node": "^17.0.23",
+    "@types/node": "^20.1.2",
     "@types/react": "18.2.34",
     "@types/react-dom": "^18.2.17",
     "eslint": "^8.54.0",
@@ -99,7 +105,7 @@
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
-    "vitest": "^0.32.2"
+    "vitest": "^1.0.1"
   },
   "size-limit": [
     {
