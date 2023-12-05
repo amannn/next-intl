@@ -3,7 +3,6 @@ import getRuntimeConfig from 'next-intl/config';
 import type {IntlConfig} from 'use-intl/core';
 import type {GetRequestConfigParams} from './getRequestConfig';
 
-// @ts-expect-error
-export default getRuntimeConfig as (
+export default getRuntimeConfig as unknown as (
   params: GetRequestConfigParams
 ) => IntlConfig | Promise<IntlConfig>;
