@@ -96,7 +96,10 @@ export function getKnownLocaleFromPathname<Locales extends AllLocales>(
 }
 
 export function getBasePath(pathname: string, pathLocale: string) {
-  let result = pathname.replace(new RegExp(`\\/${pathLocale}\\b`), '');
+  let result = pathname;
+  if (pathname.startsWith(`/${pathLocale}`)) {
+    result = pathname.replace(new RegExp(`\\/${pathLocale}\\b`), '');
+  }
   if (!result.startsWith('/')) {
     result = `/${result}`;
   }
