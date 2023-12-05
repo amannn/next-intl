@@ -17,6 +17,7 @@ import getLocale from './getLocale';
 // We need to define these with function overloads, otherwise TypeScript
 // messes up the return type.
 
+// CALL SIGNATURE 1: `getTranslations(namespace)`
 function getTranslations<
   NestedKey extends NamespaceKeys<
     IntlMessages,
@@ -104,6 +105,7 @@ Promise<{
     key: [TargetKey] extends [never] ? string : TargetKey
   ): any;
 }>;
+// CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
   NestedKey extends NamespaceKeys<
     IntlMessages,
@@ -192,6 +194,7 @@ Promise<{
     key: TargetKey
   ): any;
 }>;
+// IMPLEMENTATION
 async function getTranslations<
   NestedKey extends NamespaceKeys<
     IntlMessages,

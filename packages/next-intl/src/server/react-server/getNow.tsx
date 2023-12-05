@@ -7,7 +7,7 @@ const getNowImpl = cache(async (locale: string) => {
   return config.now;
 });
 
-export default async function getNow(opts?: {locale?: string}) {
+export default async function getNow(opts?: {locale?: string}): Promise<Date> {
   const locale = await resolveLocaleArg(opts);
   return getNowImpl(locale);
 }

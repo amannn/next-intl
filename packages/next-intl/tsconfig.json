@@ -2,6 +2,8 @@
   "extends": "eslint-config-molindo/tsconfig.json",
   "include": ["src", "test", "types", "next-env.d.ts"],
   "compilerOptions": {
+    "moduleDetection": "force",
+    "isolatedModules": true,
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "target": "ES2020",
@@ -9,7 +11,7 @@
     "declaration": true,
     "sourceMap": true,
     "rootDir": ".",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
