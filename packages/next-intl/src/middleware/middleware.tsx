@@ -87,8 +87,9 @@ export default function createMiddleware<Locales extends AllLocales>(
             if (
               bestMatchingDomain.defaultLocale === locale &&
               configWithDefaults.localePrefix === 'as-needed'
-            ) {              
-              urlObj.pathname = urlObj.pathname.replace(new RegExp(`\\/${locale}\\b`), '');
+            ) {
+              const regex = new RegExp(`\\/${locale}\\b`);
+              urlObj.pathname = urlObj.pathname.replace(regex, '');
             }
           }
         }
