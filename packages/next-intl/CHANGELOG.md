@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.4 (2023-12-05)
+
+
+### Bug Fixes
+
+* Fix compatibility with `moduleResolution: 'Bundler'` ([#694](https://github.com/amannn/next-intl/issues/694)) ([f7425a5](https://github.com/amannn/next-intl/commit/f7425a54a1d35235ec84d2937006d43152cbbe16)), closes [#690](https://github.com/amannn/next-intl/issues/690)
+
+
+
+
+
 ## 3.2.3 (2023-12-05)
 
 

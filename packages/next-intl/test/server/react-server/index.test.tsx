@@ -80,6 +80,17 @@ describe('getTranslations', () => {
     const t = await getTranslations({locale: 'en', namespace: 'About'});
     expect(t.raw('rich')).toBe('<link>{name}</link>');
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function TypeTests() {
+    const t = await getTranslations();
+
+    // Valid
+    t('About.basic');
+
+    // @ts-expect-error Invalid argument
+    t(2);
+  }
 });
 
 describe('getFormatter', () => {
@@ -96,6 +107,18 @@ describe('getFormatter', () => {
       '1/1/2020'
     );
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function TypeTests() {
+    const format = await getFormatter();
+    const date = new Date('2020-01-01T00:00:00.000Z');
+
+    // Valid
+    format.dateTime(date, {dateStyle: 'full'});
+
+    // @ts-expect-error Invalid argument
+    format.dateTime(date, {dateStyle: 'unknown'});
+  }
 });
 
 describe('getNow', () => {
@@ -108,6 +131,17 @@ describe('getNow', () => {
       '2020-01-01T00:00:00.000Z'
     );
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function TypeTests() {
+    const now = await getNow();
+
+    // Valid
+    now.toISOString();
+
+    // @ts-expect-error Invalid argument
+    now.unknown();
+  }
 });
 
 describe('getMessages', () => {
@@ -118,6 +152,17 @@ describe('getMessages', () => {
   it('returns the messages', async () => {
     expect(await getMessages({locale: 'en'})).toHaveProperty('About');
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function TypeTests() {
+    const messages = await getMessages();
+
+    // @ts-expect-error
+    messages.about();
+
+    // Valid
+    return messages.about;
+  }
 });
 
 describe('getTimeZone', () => {
@@ -128,4 +173,15 @@ describe('getTimeZone', () => {
   it('returns the time zone', async () => {
     expect(await getTimeZone({locale: 'en'})).toBe('Europe/London');
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function TypeTests() {
+    const timeZone = await getTimeZone();
+
+    // Valid
+    timeZone.toUpperCase();
+
+    // @ts-expect-error Invalid argument
+    timeZone.unknown();
+  }
 });
