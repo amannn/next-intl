@@ -73,8 +73,8 @@ export function getNormalizedPathname<Locales extends AllLocales>(
     pathname += '/';
   }
 
-  const match = pathname.match(`^/(${locales.join('|')})(.*)`);
-  let result = match ? match[2] : pathname;
+  const match = pathname.match(`^/(${locales.join('|')})/(.*)`);
+  let result = match ? '/' + match[2] : pathname;
 
   // Remove trailing slash
   if (result.endsWith('/') && result !== '/') {
@@ -93,17 +93,6 @@ export function getKnownLocaleFromPathname<Locales extends AllLocales>(
     ? pathLocaleCandidate
     : undefined;
   return pathLocale;
-}
-
-export function getBasePath(pathname: string, pathLocale: string) {
-  let result = pathname;
-  if (pathname.startsWith(`/${pathLocale}`)) {
-    result = pathname.replace(new RegExp(`\\/${pathLocale}\\b`), '');
-  }
-  if (!result.startsWith('/')) {
-    result = `/${result}`;
-  }
-  return result;
 }
 
 export function getRouteParams(template: string, pathname: string) {

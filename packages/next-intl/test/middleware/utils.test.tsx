@@ -8,6 +8,8 @@ import {
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {
     expect(getNormalizedPathname('/en/about', ['en', 'de'])).toBe('/about');
+    expect(getNormalizedPathname('/en/energy', ['en', 'de'])).toBe('/energy');
+    expect(getNormalizedPathname('/energy', ['en'])).toBe('/energy');
     expect(getNormalizedPathname('/de/about', ['en', 'de'])).toBe('/about');
     expect(getNormalizedPathname('/about', ['en', 'de'])).toBe('/about');
     expect(getNormalizedPathname('/', ['en', 'de'])).toBe('/');
