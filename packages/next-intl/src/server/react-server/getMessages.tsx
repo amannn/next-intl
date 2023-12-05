@@ -1,4 +1,5 @@
 import {cache} from 'react';
+import type {AbstractIntlMessages} from 'use-intl';
 import getConfig from './getConfig';
 import resolveLocaleArg from './resolveLocaleArg';
 
@@ -14,7 +15,9 @@ const getMessagesImpl = cache(async (locale: string) => {
   return config.messages;
 });
 
-export default async function getMessages(opts?: {locale?: string}) {
+export default async function getMessages(opts?: {
+  locale?: string;
+}): Promise<AbstractIntlMessages> {
   const locale = await resolveLocaleArg(opts);
   return getMessagesImpl(locale);
 }

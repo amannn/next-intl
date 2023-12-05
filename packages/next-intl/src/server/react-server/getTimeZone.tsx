@@ -7,7 +7,9 @@ const getTimeZoneImpl = cache(async (locale: string) => {
   return config.timeZone;
 });
 
-export default async function getTimeZone(opts?: {locale?: string}) {
+export default async function getTimeZone(opts?: {
+  locale?: string;
+}): Promise<string> {
   const locale = await resolveLocaleArg(opts);
   return getTimeZoneImpl(locale);
 }

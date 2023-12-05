@@ -8,7 +8,7 @@ import validateMessages from './validateMessages';
 export default function initializeConfig<
   // This is a generic to allow for stricter typing. E.g.
   // the RSC integration always provides a `now` value.
-  Props extends Omit<IntlConfig, 'children'>
+  Props extends IntlConfig
 >({getMessageFallback, messages, onError, ...rest}: Props) {
   const finalOnError = onError || defaultOnError;
   const finalGetMessageFallback =
