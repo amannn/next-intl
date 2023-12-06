@@ -10,7 +10,6 @@ import resolveLocale from './resolveLocale';
 import {
   getInternalTemplate,
   formatTemplatePathname,
-  getBasePath,
   getBestMatchingDomain,
   getKnownLocaleFromPathname,
   getNormalizedPathname,
@@ -86,9 +85,13 @@ export default function createMiddleware<Locales extends AllLocales>(
 
             if (
               bestMatchingDomain.defaultLocale === locale &&
-              configWithDefaults.localePrefix === 'as-needed'
+              configWithDefaults.localePrefix === 'as-needed' &&
+              urlObj.pathname.startsWith(`/${locale}`)
             ) {
-              urlObj.pathname = urlObj.pathname.replace(`/${locale}`, '');
+              urlObj.pathname = getNormalizedPathname(
+                urlObj.pathname,
+                configWithDefaults.locales
+              );
             }
           }
         }
@@ -184,9 +187,9 @@ export default function createMiddleware<Locales extends AllLocales>(
         );
 
         if (hasLocalePrefix) {
-          const basePath = getBasePath(
+          const basePath = getNormalizedPathname(
             getPathWithSearch(normalizedPathname, request.nextUrl.search),
-            pathLocale
+            configWithDefaults.locales
           );
 
           if (configWithDefaults.localePrefix === 'never') {

@@ -38,6 +38,18 @@ it('works for prefixed routing (as-needed)', () => {
     '<https://example.com/es/about>; rel="alternate"; hreflang="es"',
     '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
   ]);
+
+  expect(
+    getAlternateLinksHeaderValue({
+      config,
+      request: new NextRequest('https://example.com/energy/es'),
+      resolvedLocale: 'en'
+    }).split(', ')
+  ).toEqual([
+    '<https://example.com/energy/es>; rel="alternate"; hreflang="en"',
+    '<https://example.com/es/energy/es>; rel="alternate"; hreflang="es"',
+    '<https://example.com/energy/es>; rel="alternate"; hreflang="x-default"'
+  ]);
 });
 
 it('works for prefixed routing (as-needed) with `pathnames`', () => {

@@ -179,6 +179,15 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('keeps route segments intact that start with the same characters as the locale', () => {
+      middleware(createMockRequest('/en/energy/overview/entry'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/energy/overview/entry'
+      );
+    });
+
     it('redirects requests for other locales', () => {
       middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -932,6 +941,24 @@ describe('prefix-based routing', () => {
       );
       expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
         'http://localhost:3000/about?test=1'
+      );
+    });
+
+    it('keeps route segments intact that start with the same characters as the default locale', () => {
+      middleware(createMockRequest('/en/energy/overview/entry'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/energy/overview/entry'
+      );
+    });
+
+    it('keeps route segments intact that start with the same characters as a non-default locale', () => {
+      middleware(createMockRequest('/de/dentist/overview/delete'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/dentist/overview/delete'
       );
     });
 
