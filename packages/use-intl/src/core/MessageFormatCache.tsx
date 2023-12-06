@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
-import type IntlMessageFormat from 'intl-messageformat';
+import MessageFormat from './MessageFormat';
 
 type MessageFormatCache = Map<
   /** Format: `${locale}.${namespace}.${key}.${message}` */
-  string,
-  IntlMessageFormat
+  string, // Could simplify the key here
+  MessageFormat
 >;
 
 export default MessageFormatCache;

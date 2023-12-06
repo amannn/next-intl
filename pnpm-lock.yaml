@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -101,7 +101,7 @@ importers:
         version: 8.54.0
       eslint-config-molindo:
         specifier: ^7.0.0
-        version: 7.0.0(eslint@8.54.0)(jest@29.5.0)(tailwindcss@3.3.5)(typescript@5.2.2)
+        version: 7.0.0(eslint@8.54.0)(tailwindcss@3.3.2)(typescript@5.2.2)
       eslint-config-next:
         specifier: ^14.0.3
         version: 14.0.3(eslint@8.54.0)(typescript@5.2.2)
@@ -579,9 +579,12 @@ importers:
       '@formatjs/ecma402-abstract':
         specifier: ^1.11.4
         version: 1.11.4
-      intl-messageformat:
-        specifier: ^9.3.18
-        version: 9.3.18
+      '@messageformat/runtime':
+        specifier: ^3.0.1
+        version: 3.0.1
+      icu-to-json:
+        specifier: 0.0.20
+        version: 0.0.20
     devDependencies:
       '@size-limit/preset-big-lib':
         specifier: ^8.2.6
@@ -5837,9 +5840,31 @@ packages:
       tslib: 2.3.1
     dev: false
 
+  /@formatjs/ecma402-abstract@1.17.2:
+    resolution: {integrity: sha512-k2mTh0m+IV1HRdU0xXM617tSQTi53tVR2muvYOsBeYcUgEAyxV1FOC7Qj279th3fBVQ+Dj6muvNJZcHSPNdbKg==}
+    dependencies:
+      '@formatjs/intl-localematcher': 0.4.2
+      tslib: 2.5.0
+    dev: false
+
   /@formatjs/ecma402-abstract@1.4.0:
     resolution: {integrity: sha512-Mv027hcLFjE45K8UJ8PjRpdDGfR0aManEFj1KzoN8zXNveHGEygpZGfFf/FTTMl+QEVSrPAUlyxaCApvmv47AQ==}
     dependencies:
+      tslib: 2.5.0
+    dev: false
+
+  /@formatjs/icu-messageformat-parser@2.7.0:
+    resolution: {integrity: sha512-7uqC4C2RqOaBQtcjqXsSpGRYVn+ckjhNga5T/otFh6MgxRrCJQqvjfbrGLpX1Lcbxdm5WH3Z2WZqt1+Tm/cn/Q==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.2
+      '@formatjs/icu-skeleton-parser': 1.6.2
+      tslib: 2.5.0
+    dev: false
+
+  /@formatjs/icu-skeleton-parser@1.6.2:
+    resolution: {integrity: sha512-VtB9Slo4ZL6QgtDFJ8Injvscf0xiDd4bIV93SOJTBjUF4xe2nAWOoSjLEtqIG+hlIs1sNrVKAaFo3nuTI4r5ZA==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.2
       tslib: 2.5.0
     dev: false
 
@@ -5851,6 +5876,12 @@ packages:
 
   /@formatjs/intl-localematcher@0.2.32:
     resolution: {integrity: sha512-k/MEBstff4sttohyEpXxCmC3MqbUn9VvHGlZ8fauLzkbwXmVrEeyzS+4uhrvAk9DWU9/7otYWxyDox4nT/KVLQ==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
+
+  /@formatjs/intl-localematcher@0.4.2:
+    resolution: {integrity: sha512-BGdtJFmaNJy5An/Zan4OId/yR9Ih1OojFjcduX/xOvq798OgWSyDtd6Qd5jqJXwJs1ipe4Fxu9+cshic5Ox2tA==}
     dependencies:
       tslib: 2.5.0
     dev: false
@@ -6381,6 +6412,12 @@ packages:
       '@types/mdx': 2.0.5
       '@types/react': 18.2.34
       react: 18.2.0
+    dev: false
+
+  /@messageformat/runtime@3.0.1:
+    resolution: {integrity: sha512-6RU5ol2lDtO8bD9Yxe6CZkl0DArdv0qkuoZC+ZwowU+cdRlVE1157wjCmlA5Rsf1Xc/brACnsZa5PZpEDfTFFg==}
+    dependencies:
+      make-plural: 7.3.0
     dev: false
 
   /@napi-rs/simple-git-android-arm-eabi@0.1.9:
@@ -12951,6 +12988,38 @@ packages:
       - typescript
     dev: true
 
+  /eslint-config-molindo@7.0.0(eslint@8.54.0)(tailwindcss@3.3.2)(typescript@5.2.2):
+    resolution: {integrity: sha512-jsy+1xutRhBYOD8EyyOlQRPK9n23yxixfXWEl6ttzTNhV/B8893e09sZDGRc+VK7z4yGW6Pe6cQM9oZkJuEu3Q==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^8.0.0
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 6.4.1(@typescript-eslint/parser@6.4.1)(eslint@8.54.0)(typescript@5.2.2)
+      '@typescript-eslint/parser': 6.4.1(eslint@8.54.0)(typescript@5.2.2)
+      confusing-browser-globals: 1.0.11
+      eslint: 8.54.0
+      eslint-plugin-css-modules: 2.11.0(eslint@8.54.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@6.4.1)(eslint@8.54.0)
+      eslint-plugin-jest: 27.2.3(@typescript-eslint/eslint-plugin@6.4.1)(eslint@8.54.0)(jest@29.5.0)(typescript@5.2.2)
+      eslint-plugin-jsx-a11y: 6.7.1(eslint@8.54.0)
+      eslint-plugin-prettier: 5.0.0(eslint@8.54.0)(prettier@3.1.0)
+      eslint-plugin-react: 7.33.2(eslint@8.54.0)
+      eslint-plugin-react-hooks: 4.6.0(eslint@8.54.0)
+      eslint-plugin-sort-destructure-keys: 1.5.0(eslint@8.54.0)
+      eslint-plugin-tailwindcss: 3.13.0(tailwindcss@3.3.2)
+      eslint-plugin-unicorn: 48.0.1(eslint@8.54.0)
+      prettier: 3.1.0
+    transitivePeerDependencies:
+      - '@types/eslint'
+      - eslint-config-prettier
+      - eslint-import-resolver-typescript
+      - eslint-import-resolver-webpack
+      - jest
+      - supports-color
+      - tailwindcss
+      - typescript
+    dev: true
+
   /eslint-config-next@14.0.3(eslint@8.54.0)(typescript@5.2.2):
     resolution: {integrity: sha512-IKPhpLdpSUyKofmsXUfrvBC49JMUTdeaD8ZIH4v9Vk0sC1X6URTuTJCLtA0Vwuj7V/CQh0oISuSTvNn5//Buew==}
     peerDependencies:
@@ -13124,7 +13193,7 @@ packages:
       doctrine: 2.1.0
       eslint: 8.54.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.4.1)(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.5.5)(eslint@8.54.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.4.1)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@3.5.5)(eslint@8.54.0)
       has: 1.0.3
       is-core-module: 2.12.0
       is-glob: 4.0.3
@@ -13283,6 +13352,17 @@ packages:
     dependencies:
       eslint: 8.54.0
       natural-compare-lite: 1.4.0
+    dev: true
+
+  /eslint-plugin-tailwindcss@3.13.0(tailwindcss@3.3.2):
+    resolution: {integrity: sha512-Fcep4KDRLWaK3KmkQbdyKHG0P4GdXFmXdDaweTIPcgOP60OOuWFbh1++dufRT28Q4zpKTKaHwTsXPJ4O/EjU2Q==}
+    engines: {node: '>=12.13.0'}
+    peerDependencies:
+      tailwindcss: ^3.3.2
+    dependencies:
+      fast-glob: 3.2.12
+      postcss: 8.4.31
+      tailwindcss: 3.3.2
     dev: true
 
   /eslint-plugin-tailwindcss@3.13.0(tailwindcss@3.3.3):
@@ -15586,6 +15666,14 @@ packages:
       postcss: 8.4.31
     dev: true
 
+  /icu-to-json@0.0.20:
+    resolution: {integrity: sha512-feRoxVbR9PZ6dipmbjE5Kj3iD+irwMtAi6KF8X6UyuSDiIJ6oJZglWQRtUwY3iFxRvsRmsZTLrLoezU1N9ByGQ==}
+    hasBin: true
+    dependencies:
+      '@formatjs/icu-messageformat-parser': 2.7.0
+      '@messageformat/runtime': 3.0.1
+    dev: false
+
   /ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
@@ -17747,6 +17835,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /make-plural@7.3.0:
+    resolution: {integrity: sha512-/K3BC0KIsO+WK2i94LkMPv3wslMrazrQhfi5We9fMbLlLjzoOSJWr7TAdupLlDWaJcWxwoNosBkhFDejiu5VDw==}
+    dev: false
 
   /makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
@@ -21038,7 +21130,6 @@ packages:
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.2
-    dev: false
 
   /postcss-import@15.1.0(postcss@8.4.31):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -21071,7 +21162,6 @@ packages:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.4.24
-    dev: false
 
   /postcss-js@4.0.1(postcss@8.4.31):
     resolution: {integrity: sha512-dDLF8pEO191hJMtlHFPRa8xsizHaM82MLfNkUHdUtVEV3tgTp5oj+8qbEqYM57SLfc74KSbw//4SeJma2LRVIw==}
@@ -21107,7 +21197,6 @@ packages:
       lilconfig: 2.1.0
       postcss: 8.4.24
       yaml: 2.2.2
-    dev: false
 
   /postcss-load-config@4.0.1(postcss@8.4.31):
     resolution: {integrity: sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==}
@@ -21301,7 +21390,6 @@ packages:
     dependencies:
       postcss: 8.4.24
       postcss-selector-parser: 6.0.12
-    dev: false
 
   /postcss-nested@6.0.1(postcss@8.4.31):
     resolution: {integrity: sha512-mEp4xPMi5bSWiMbsgoPfcP74lsWLHkQbZc3sY+jWYd65CUwXrUaTp0fmNpa01ZcETKlIgUdFN/MpS2xZtqL9dQ==}
@@ -21511,7 +21599,6 @@ packages:
       nanoid: 3.3.6
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: false
 
   /postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
@@ -24201,7 +24288,6 @@ packages:
       sucrase: 3.32.0
     transitivePeerDependencies:
       - ts-node
-    dev: false
 
   /tailwindcss@3.3.3:
     resolution: {integrity: sha512-A0KgSkef7eE4Mf+nKJ83i75TMyq8HqY3qmFIJSWy8bNt0v1lG7jUcpGpoTFxAwYcWOphcTBLPPJg+bDfhDf52w==}
