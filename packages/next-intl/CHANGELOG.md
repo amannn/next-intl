@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.5 (2023-12-06)
+
+
+### Bug Fixes
+
+* Correctly normalize pathname for redirects and alternate links when `localePrefix: 'as-needed'` is used with the default locale ([#698](https://github.com/amannn/next-intl/issues/698) by [@anna-colenso](https://github.com/anna-colenso)) ([48e9523](https://github.com/amannn/next-intl/commit/48e9523863b99b363f63f0aa991c72860d814d7e))
+
+
+
+
+
 ## 3.2.4 (2023-12-05)
 
 
