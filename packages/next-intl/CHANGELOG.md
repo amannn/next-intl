@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.3.0 (2023-12-06)
+
+
+### Features
+
+* Add support for `basePath` in middleware and navigation APIs ([#699](https://github.com/amannn/next-intl/issues/699) by @Robjam and [@amannn](https://github.com/amannn)) ([f670f1b](https://github.com/amannn/next-intl/commit/f670f1b37d803c7fbb6fbaa1c8d10f88cf141a84))
+
+
+
+
+
 ## 3.2.5 (2023-12-06)
 
 
