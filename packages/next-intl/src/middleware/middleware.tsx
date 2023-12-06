@@ -257,7 +257,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
-        path: request.nextUrl.basePath || '/',
+        path: request.nextUrl.basePath || undefined,
         sameSite: 'strict',
         maxAge: 31536000 // 1 year
       });
