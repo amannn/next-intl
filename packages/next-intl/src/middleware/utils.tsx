@@ -51,11 +51,9 @@ export function formatTemplatePathname(
   if (localePrefix) {
     targetPathname = `/${localePrefix}`;
   }
-  targetPathname += formatPathname(targetTemplate, params);
 
-  if (targetPathname.endsWith('/')) {
-    targetPathname = targetPathname.slice(0, -1);
-  }
+  targetPathname += formatPathname(targetTemplate, params);
+  targetPathname = normalizeTrailingSlash(targetPathname);
 
   return targetPathname;
 }
@@ -76,9 +74,8 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   const match = pathname.match(`^/(${locales.join('|')})/(.*)`);
   let result = match ? '/' + match[2] : pathname;
 
-  // Remove trailing slash
-  if (result.endsWith('/') && result !== '/') {
-    result = result.slice(0, -1);
+  if (result !== '/') {
+    result = normalizeTrailingSlash(result);
   }
 
   return result;
@@ -187,4 +184,15 @@ export function getBestMatchingDomain<Locales extends AllLocales>(
   }
 
   return domainConfig;
+}
+
+export function applyBasePath(pathname: string, basePath: string) {
+  return normalizeTrailingSlash(basePath + pathname);
+}
+
+function normalizeTrailingSlash(pathname: string) {
+  if (pathname.endsWith('/')) {
+    pathname = pathname.slice(0, -1);
+  }
+  return pathname;
 }

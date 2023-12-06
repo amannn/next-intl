@@ -10,13 +10,22 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',
   ({basePath = ''}: {basePath?: string}) => {
     function getMockRequest(
-      ...args: ConstructorParameters<typeof NextRequest>
+      href: string,
+      init?: ConstructorParameters<typeof NextRequest>[1]
     ) {
-      const request = new NextRequest(...args);
+      const url = new URL(href);
       if (basePath) {
-        request.nextUrl.basePath = basePath;
+        url.pathname = basePath + url.pathname;
+        if (url.pathname.endsWith('/')) {
+          url.pathname = url.pathname.slice(0, -1);
+        }
       }
-      return request;
+
+      return new NextRequest(url, {
+        ...init,
+        headers: init?.headers,
+        nextConfig: {basePath: basePath || undefined}
+      });
     }
 
     it('works for prefixed routing (as-needed)', () => {

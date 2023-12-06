@@ -58,6 +58,27 @@ const MockedNextResponse = NextResponse as unknown as {
   redirect: Mock<Parameters<(typeof NextResponse)['redirect']>>;
 };
 
+function withBasePath(request: NextRequest, basePath = '/base') {
+  const url = new URL(request.url);
+
+  url.pathname = basePath + url.pathname;
+  if (url.pathname.endsWith('/')) {
+    url.pathname = url.pathname.slice(0, -1);
+  }
+
+  if (url.pathname.endsWith('/')) {
+    url.pathname = url.pathname.slice(0, -1);
+  }
+
+  const adapted = new NextRequest(url.toString(), {
+    ...request,
+    headers: request.headers,
+    nextConfig: {basePath}
+  });
+
+  return adapted;
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -305,9 +326,16 @@ describe('prefix-based routing', () => {
     });
 
     describe('base path', () => {
+      it('rewrites correctly for the default locale at the root', () => {
+        const request = withBasePath(createMockRequest('/'));
+        middleware(request);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base/en'
+        );
+      });
+
       it('redirects correctly when removing the default locale at the root', () => {
-        const request = createMockRequest('/en');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/en'));
         middleware(request);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/base'
@@ -315,8 +343,7 @@ describe('prefix-based routing', () => {
       });
 
       it('redirects correctly when removing the default locale at sub paths', () => {
-        const request = createMockRequest('/en/about');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/en/about'));
         middleware(request);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/base/about'
@@ -324,17 +351,17 @@ describe('prefix-based routing', () => {
       });
 
       it('redirects correctly when adding a prefix for a non-default locale', () => {
-        const request = createMockRequest('/', 'de');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/', 'de'));
         middleware(request);
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/base/de'
         );
       });
 
       it('returns alternate links', () => {
-        const request = createMockRequest('/');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/'));
         const response = middleware(request);
         expect(response.headers.get('link')?.split(', ')).toEqual([
           '<http://localhost:3000/base>; rel="alternate"; hreflang="en"',
@@ -749,8 +776,7 @@ describe('prefix-based routing', () => {
 
     describe('base path', () => {
       it('redirects non-prefixed requests for the default locale', () => {
-        const request = createMockRequest('/');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/'));
         middleware(request);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/base/en'
@@ -1126,8 +1152,7 @@ describe('prefix-based routing', () => {
 
     describe('base path', () => {
       it('redirects requests with default locale in the path', () => {
-        const request = createMockRequest('/en');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(createMockRequest('/en'));
         middleware(request);
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -1504,12 +1529,9 @@ describe('domain-based routing', () => {
 
       describe('base path', () => {
         it('redirects requests with default locale in the path', () => {
-          const request = createMockRequest(
-            '/en/about',
-            'en',
-            'http://en.example.com'
+          const request = withBasePath(
+            createMockRequest('/en/about', 'en', 'http://en.example.com')
           );
-          request.nextUrl.basePath = '/base';
           middleware(request);
           expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
             'http://en.example.com/base/about'
@@ -1517,8 +1539,9 @@ describe('domain-based routing', () => {
         });
 
         it('returns alternate links', () => {
-          const request = createMockRequest('/', 'en', 'http://en.example.com');
-          request.nextUrl.basePath = '/base';
+          const request = withBasePath(
+            createMockRequest('/', 'en', 'http://en.example.com')
+          );
           const response = middleware(request);
           expect(response.headers.get('link')?.split(', ')).toEqual([
             '<http://en.example.com/base>; rel="alternate"; hreflang="en"',
@@ -1890,12 +1913,9 @@ describe('domain-based routing', () => {
 
       describe('base path', () => {
         it('redirects requests with default locale in the path', () => {
-          const request = createMockRequest(
-            '/en/about',
-            'en',
-            'http://en.example.com'
+          const request = withBasePath(
+            createMockRequest('/en/about', 'en', 'http://en.example.com')
           );
-          request.nextUrl.basePath = '/base';
           middlewareWithPathnames(request);
           expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
             'http://en.example.com/base/about'
@@ -1903,8 +1923,9 @@ describe('domain-based routing', () => {
         });
 
         it('returns alternate links', () => {
-          const request = createMockRequest('/', 'en', 'http://en.example.com');
-          request.nextUrl.basePath = '/base';
+          const request = withBasePath(
+            createMockRequest('/', 'en', 'http://en.example.com')
+          );
           const response = middlewareWithPathnames(request);
           expect(response.headers.get('link')?.split(', ')).toEqual([
             '<http://en.example.com/base>; rel="alternate"; hreflang="en"',
@@ -2000,8 +2021,9 @@ describe('domain-based routing', () => {
 
     describe('base path', () => {
       it('redirects non-prefixed requests for the default locale', () => {
-        const request = createMockRequest('/', 'en', 'http://example.com');
-        request.nextUrl.basePath = '/base';
+        const request = withBasePath(
+          createMockRequest('/', 'en', 'http://example.com')
+        );
         middleware(request);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://example.com/base/en'

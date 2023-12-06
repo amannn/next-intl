@@ -14,7 +14,8 @@ import {
   getKnownLocaleFromPathname,
   getNormalizedPathname,
   getPathWithSearch,
-  isLocaleSupportedOnDomain
+  isLocaleSupportedOnDomain,
+  applyBasePath
 } from './utils';
 
 const ROOT_URL = '/';
@@ -66,7 +67,16 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     function rewrite(url: string) {
-      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
+      const urlObj = new URL(url, request.url);
+
+      if (request.nextUrl.basePath) {
+        urlObj.pathname = applyBasePath(
+          urlObj.pathname,
+          request.nextUrl.basePath
+        );
+      }
+
+      return NextResponse.rewrite(urlObj, getResponseInit());
     }
 
     function redirect(url: string, redirectDomain?: string) {
@@ -105,10 +115,10 @@ export default function createMiddleware<Locales extends AllLocales>(
       }
 
       if (request.nextUrl.basePath) {
-        urlObj.pathname = request.nextUrl.basePath + urlObj.pathname;
-        if (urlObj.pathname.endsWith('/')) {
-          urlObj.pathname = urlObj.pathname.slice(0, -1);
-        }
+        urlObj.pathname = applyBasePath(
+          urlObj.pathname,
+          request.nextUrl.basePath
+        );
       }
 
       return NextResponse.redirect(urlObj.toString());

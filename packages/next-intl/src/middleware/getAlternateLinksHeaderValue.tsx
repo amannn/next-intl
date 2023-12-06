@@ -2,6 +2,7 @@ import {NextRequest} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
 import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
+  applyBasePath,
   formatTemplatePathname,
   getHost,
   getNormalizedPathname,
@@ -34,15 +35,6 @@ export default function getAlternateLinksHeaderValue<
   normalizedUrl.protocol =
     request.headers.get('x-forwarded-proto') ?? normalizedUrl.protocol;
 
-  // Remove the base path and apply it later again to avoid
-  // confusing it with an actual pathname
-  if (request.nextUrl.basePath) {
-    normalizedUrl.pathname = normalizedUrl.pathname.replace(
-      new RegExp(`^${request.nextUrl.basePath}`),
-      ''
-    );
-  }
-
   normalizedUrl.pathname = getNormalizedPathname(
     normalizedUrl.pathname,
     config.locales
@@ -51,10 +43,7 @@ export default function getAlternateLinksHeaderValue<
   function getAlternateEntry(url: URL, locale: string) {
     if (request.nextUrl.basePath) {
       url = new URL(url);
-      url.pathname = `${request.nextUrl.basePath}${url.pathname}`;
-      if (url.pathname.endsWith('/')) {
-        url.pathname = url.pathname.slice(0, -1);
-      }
+      url.pathname = applyBasePath(url.pathname, request.nextUrl.basePath);
     }
 
     return `<${url.toString()}>; rel="alternate"; hreflang="${locale}"`;
@@ -93,7 +82,10 @@ export default function getAlternateLinksHeaderValue<
         url = new URL(normalizedUrl);
         url.port = '';
         url.host = domainConfig.domain;
-        url.pathname = getLocalizedPathname(url.pathname, locale);
+
+        // Important: Use `normalizedUrl` here, as `url` potentially uses
+        // a `basePath` that automatically gets applied to the pathname
+        url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
         if (
           locale !== domainConfig.defaultLocale ||
