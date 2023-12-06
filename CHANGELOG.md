@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Add support for `basePath` in middleware and navigation APIs ([#699](https://github.com/amannn/next-intl/issues/699) by @Robjam and [@amannn](https://github.com/amannn)) ([f670f1b](https://github.com/amannn/next-intl/commit/f670f1b37d803c7fbb6fbaa1c8d10f88cf141a84))
+* Add support for `basePath` in middleware and navigation APIs ([#699](https://github.com/amannn/next-intl/issues/699) by [@Robjam](https://github.com/Robjam) and [@amannn](https://github.com/amannn)) ([f670f1b](https://github.com/amannn/next-intl/commit/f670f1b37d803c7fbb6fbaa1c8d10f88cf141a84))
 
 
 
