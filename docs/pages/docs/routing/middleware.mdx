@@ -333,6 +333,26 @@ export const config = {
 
 Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
 
+### Base path
+
+The `next-intl` middleware as well as [the navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
+
+Note however that you should make sure that your [middleware `matcher`](#matcher-config) matches the root of your base path:
+
+```tsx filename="middleware.ts"
+// ...
+
+export const config = {
+  matcher: [
+    '/' // Make sure the root of your base path is matched
+
+    // ... other matcher config
+  ]
+};
+```
+
+See also [`vercel/next.js#47085`](https://github.com/vercel/next.js/issues/47085).
+
 ## Composing other middlewares
 
 By calling `createMiddleware`, you'll receive a function of the following type:
