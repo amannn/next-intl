@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {initializeConfig} from 'use-intl/core';
+import {initializeConfig, IntlConfig} from 'use-intl/core';
 import createRequestConfig from './createRequestConfig';
 
 // Make sure `now` is consistent across the request in case none was configured
@@ -25,10 +25,24 @@ const receiveRuntimeConfig = cache(
   }
 );
 
-const getConfig = cache(async (locale: string) => {
-  const runtimeConfig = await receiveRuntimeConfig(locale, createRequestConfig);
-  const opts = {...runtimeConfig, locale};
-  return initializeConfig(opts);
-});
+const getConfig = cache(
+  async (
+    locale: string
+  ): Promise<
+    IntlConfig & {
+      getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+      now: NonNullable<IntlConfig['now']>;
+      onError: NonNullable<IntlConfig['onError']>;
+      timeZone: NonNullable<IntlConfig['timeZone']>;
+    }
+  > => {
+    const runtimeConfig = await receiveRuntimeConfig(
+      locale,
+      createRequestConfig
+    );
+    const opts = {...runtimeConfig, locale};
+    return initializeConfig(opts);
+  }
+);
 
 export default getConfig;

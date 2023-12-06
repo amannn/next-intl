@@ -14,7 +14,9 @@ const getFormatterImpl = cache(async (locale: string) => {
  * The formatter automatically receives the request config, but
  * you can override it by passing in additional options.
  */
-export default async function getFormatter(opts?: {locale?: string}) {
+export default async function getFormatter(opts?: {
+  locale?: string;
+}): Promise<ReturnType<typeof createFormatter>> {
   const locale = await resolveLocaleArg(opts);
   return getFormatterImpl(locale);
 }

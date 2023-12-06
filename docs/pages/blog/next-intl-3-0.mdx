@@ -134,6 +134,7 @@ If you're not, be aware that this will by default opt the corresponding page int
 6. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`](/docs/usage/messages#html-markup) function has been added to generate markup strings like `'<b>Hello</b>'` outside of React components.
 7. `useIntl` has been replaced with [`useFormatter`](/docs/usage/dates-times) (deprecated since v2.11).
 8. `createIntl` has been replaced with [`createFormatter`](/docs/environments/core-library) (deprecated since v2.11).
+9. `useLocale` now requires `next@>=13.3.0`. If you're on an older version of Next.js and you're using the Pages Router, please use `useRouter().locale` instead.
 
 ## Upgrade now
 

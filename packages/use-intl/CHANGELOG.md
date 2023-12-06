@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.4 (2023-12-05)
+
+
+### Bug Fixes
+
+* Fix compatibility with `moduleResolution: 'Bundler'` ([#694](https://github.com/amannn/next-intl/issues/694)) ([f7425a5](https://github.com/amannn/next-intl/commit/f7425a54a1d35235ec84d2937006d43152cbbe16)), closes [#690](https://github.com/amannn/next-intl/issues/690)
+
+
+
+
+
+## 3.2.3 (2023-12-05)
+
+
+### Bug Fixes
+
+* Prefer `locale` from `NextIntlClientProvider` when using `useLocale` in Client Components. `useParams().locale` is still used as a fallback. ([#691](https://github.com/amannn/next-intl/issues/691)) ([e00ed97](https://github.com/amannn/next-intl/commit/e00ed97746dc8d6c264b2f4aa9162681c1a89919)), closes [#688](https://github.com/amannn/next-intl/issues/688)
+
+
+
+
+
 ## 3.2.2 (2023-12-04)
 
 
