@@ -1,9 +1,6 @@
 import {AllLocales, LocalePrefix, Pathnames} from '../shared/types';
 
 type RoutingBaseConfig<Locales extends AllLocales> = {
-  /** The base path of your application (optional). */
-  basePath?: string; // TODO: Remove
-
   /** A list of all locales that are supported. */
   locales: Locales;
 
@@ -50,7 +47,6 @@ export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =
     alternateLinks: boolean;
     localePrefix: LocalePrefix;
     localeDetection: boolean;
-    basePath: string; // TODO: Remove
   };
 
 export default MiddlewareConfig;

@@ -5,10 +5,7 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 
-export function getLocaleFromPathname(pathname: string, basePath?: string) {
-  if (basePath && pathname.startsWith(basePath)) {
-    return pathname.split('/')[2];
-  }
+export function getLocaleFromPathname(pathname: string) {
   return pathname.split('/')[1];
 }
 

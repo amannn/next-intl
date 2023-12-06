@@ -6,35 +6,48 @@ import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlew
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 import {Pathnames} from '../../src/navigation/react-client';
 
-describe.each([{basePath: ''}, {basePath: '/sample'}])(
-  'when basePath is $basePath',
-  ({basePath}: {basePath: string}) => {
+describe.each([{basePath: undefined}, {basePath: '/base'}])(
+  'basePath: $basePath',
+  ({basePath = ''}: {basePath?: string}) => {
+    function getMockRequest(
+      ...args: ConstructorParameters<typeof NextRequest>
+    ) {
+      const request = new NextRequest(...args);
+      if (basePath) {
+        request.nextUrl.basePath = basePath;
+      }
+      return request;
+    }
+
     it('works for prefixed routing (as-needed)', () => {
       const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/'),
+          request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
-        `<https://example.com${basePath}>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${
+          basePath || '/'
+        }>; rel="alternate"; hreflang="en"`,
         `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
-        `<https://example.com${basePath}>; rel="alternate"; hreflang="x-default"`
+        `<https://example.com${
+          basePath || '/'
+        }>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/about'),
+          request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
@@ -46,13 +59,13 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/energy/es'),
+          request: getMockRequest('https://example.com/energy/es'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
-        '<https://example.com/energy/es>; rel="alternate"; hreflang="en"',
-        '<https://example.com/es/energy/es>; rel="alternate"; hreflang="es"',
-        '<https://example.com/energy/es>; rel="alternate"; hreflang="x-default"'
+        `<https://example.com${basePath}/energy/es>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/es/energy/es>; rel="alternate"; hreflang="es"`,
+        `<https://example.com${basePath}/energy/es>; rel="alternate"; hreflang="x-default"`
       ]);
     });
 
@@ -62,8 +75,7 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         locales: ['en', 'de'],
         alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
       const pathnames = {
         '/': '/',
@@ -84,53 +96,57 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/'),
+          request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/']
         }).split(', ')
       ).toEqual([
-        '<https://example.com/>; rel="alternate"; hreflang="en"',
-        '<https://example.com/de>; rel="alternate"; hreflang="de"',
-        '<https://example.com/>; rel="alternate"; hreflang="x-default"'
+        `<https://example.com${
+          basePath || '/'
+        }>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/de>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${
+          basePath || '/'
+        }>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/about'),
+          request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/about']
         }).split(', ')
       ).toEqual([
-        '<https://example.com/about>; rel="alternate"; hreflang="en"',
-        '<https://example.com/de/ueber>; rel="alternate"; hreflang="de"',
-        '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/de/ueber'),
+          request: getMockRequest('https://example.com/de/ueber'),
           resolvedLocale: 'de',
           localizedPathnames: pathnames['/about']
         }).split(', ')
       ).toEqual([
-        '<https://example.com/about>; rel="alternate"; hreflang="en"',
-        '<https://example.com/de/ueber>; rel="alternate"; hreflang="de"',
-        '<https://example.com/about>; rel="alternate"; hreflang="x-default"'
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/users/2'),
+          request: getMockRequest('https://example.com/users/2'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/users/[userId]']
         }).split(', ')
       ).toEqual([
-        '<https://example.com/users/2>; rel="alternate"; hreflang="en"',
-        '<https://example.com/de/benutzer/2>; rel="alternate"; hreflang="de"',
-        '<https://example.com/users/2>; rel="alternate"; hreflang="x-default"'
+        `<https://example.com${basePath}/users/2>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/de/benutzer/2>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/users/2>; rel="alternate"; hreflang="x-default"`
       ]);
     });
 
@@ -140,26 +156,27 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         locales: ['en', 'es'],
         alternateLinks: true,
         localePrefix: 'always',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/'),
+          request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/en>; rel="alternate"; hreflang="en"`,
         `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
-        `<https://example.com${basePath}>; rel="alternate"; hreflang="x-default"`
+        `<https://example.com${
+          basePath || '/'
+        }>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/about'),
+          request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
@@ -192,27 +209,32 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
             defaultLocale: 'en',
             locales: ['en', 'fr']
           }
-        ],
-        basePath
+        ]
       };
 
       [
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/'),
+          request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', '),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.es'),
+          request: getMockRequest('https://example.es'),
           resolvedLocale: 'es'
         }).split(', ')
       ].forEach((links) => {
         expect(links).toEqual([
-          `<https://example.com${basePath}>; rel="alternate"; hreflang="en"`,
-          `<https://example.ca${basePath}>; rel="alternate"; hreflang="en"`,
+          `<https://example.com${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="en"`,
+          `<https://example.ca${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="en"`,
           `<https://example.com${basePath}/es>; rel="alternate"; hreflang="es"`,
-          `<https://example.es${basePath}>; rel="alternate"; hreflang="es"`,
+          `<https://example.es${
+            basePath || '/'
+          }>; rel="alternate"; hreflang="es"`,
           `<https://example.com${basePath}/fr>; rel="alternate"; hreflang="fr"`,
           `<https://example.ca${basePath}/fr>; rel="alternate"; hreflang="fr"`
         ]);
@@ -221,7 +243,7 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/about'),
+          request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
@@ -257,19 +279,18 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
             defaultLocale: 'en',
             locales: ['en', 'fr']
           }
-        ],
-        basePath
+        ]
       };
 
       [
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/'),
+          request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', '),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.es'),
+          request: getMockRequest('https://example.es'),
           resolvedLocale: 'es'
         }).split(', ')
       ].forEach((links) => {
@@ -286,7 +307,7 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://example.com/about'),
+          request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
       ).toEqual([
@@ -306,7 +327,6 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         localeDetection: true,
         defaultLocale: 'en',
         locales: ['en', 'fr'],
-        basePath,
         domains: [
           {defaultLocale: 'en', domain: 'en.example.com', locales: ['en']},
           {
@@ -348,57 +368,63 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
       [
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://en.example.com/'),
+          request: getMockRequest('https://en.example.com/'),
           resolvedLocale: 'en'
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com'),
+          request: getMockRequest('https://ca.example.com'),
           resolvedLocale: 'en'
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com/fr'),
+          request: getMockRequest('https://ca.example.com/fr'),
           resolvedLocale: 'fr'
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://fr.example.com'),
+          request: getMockRequest('https://fr.example.com'),
           resolvedLocale: 'fr'
         })
       ]
         .map((links) => links.split(', '))
         .forEach((links) => {
           expect(links).toEqual([
-            '<https://en.example.com/>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
-            '<https://fr.example.com/>; rel="alternate"; hreflang="fr"'
+            `<https://en.example.com${
+              basePath || '/'
+            }>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${
+              basePath || '/'
+            }>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${basePath}/fr>; rel="alternate"; hreflang="fr"`,
+            `<https://fr.example.com${
+              basePath || '/'
+            }>; rel="alternate"; hreflang="fr"`
           ]);
         });
 
       [
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://en.example.com/about'),
+          request: getMockRequest('https://en.example.com/about'),
           resolvedLocale: 'en',
           localizedPathnames: config.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com/about'),
+          request: getMockRequest('https://ca.example.com/about'),
           resolvedLocale: 'en',
           localizedPathnames: config.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com/fr/a-propos'),
+          request: getMockRequest('https://ca.example.com/fr/a-propos'),
           resolvedLocale: 'fr',
           localizedPathnames: config.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://fr.example.com/a-propos'),
+          request: getMockRequest('https://fr.example.com/a-propos'),
           resolvedLocale: 'fr',
           localizedPathnames: config.pathnames!['/about']
         })
@@ -406,35 +432,35 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         .map((links) => links.split(', '))
         .forEach((links) => {
           expect(links).toEqual([
-            '<https://en.example.com/about>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/about>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/fr/a-propos>; rel="alternate"; hreflang="fr"',
-            '<https://fr.example.com/a-propos>; rel="alternate"; hreflang="fr"'
+            `<https://en.example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${basePath}/fr/a-propos>; rel="alternate"; hreflang="fr"`,
+            `<https://fr.example.com${basePath}/a-propos>; rel="alternate"; hreflang="fr"`
           ]);
         });
 
       [
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://en.example.com/users/42'),
+          request: getMockRequest('https://en.example.com/users/42'),
           resolvedLocale: 'en',
           localizedPathnames: config.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com/users/42'),
+          request: getMockRequest('https://ca.example.com/users/42'),
           resolvedLocale: 'en',
           localizedPathnames: config.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://ca.example.com/fr/utilisateurs/42'),
+          request: getMockRequest('https://ca.example.com/fr/utilisateurs/42'),
           resolvedLocale: 'fr',
           localizedPathnames: config.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('https://fr.example.com/utilisateurs/42'),
+          request: getMockRequest('https://fr.example.com/utilisateurs/42'),
           resolvedLocale: 'fr',
           localizedPathnames: config.pathnames!['/users/[userId]']
         })
@@ -442,10 +468,10 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         .map((links) => links.split(', '))
         .forEach((links) => {
           expect(links).toEqual([
-            '<https://en.example.com/users/42>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/users/42>; rel="alternate"; hreflang="en"',
-            '<https://ca.example.com/fr/utilisateurs/42>; rel="alternate"; hreflang="fr"',
-            '<https://fr.example.com/utilisateurs/42>; rel="alternate"; hreflang="fr"'
+            `<https://en.example.com${basePath}/users/42>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${basePath}/users/42>; rel="alternate"; hreflang="en"`,
+            `<https://ca.example.com${basePath}/fr/utilisateurs/42>; rel="alternate"; hreflang="fr"`,
+            `<https://fr.example.com${basePath}/utilisateurs/42>; rel="alternate"; hreflang="fr"`
           ]);
         });
     });
@@ -456,14 +482,13 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         locales: ['en', 'es'],
         alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('http://127.0.0.1/about', {
+          request: getMockRequest('http://127.0.0.1/about', {
             headers: {
               host: 'example.com',
               'x-forwarded-host': 'example.com',
@@ -485,14 +510,13 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         locales: ['en', 'es'],
         alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('http://127.0.0.1/about', {
+          request: getMockRequest('http://127.0.0.1/about', {
             headers: {
               host: 'example.com:3000',
               'x-forwarded-host': 'example.com:3000',
@@ -514,14 +538,13 @@ describe.each([{basePath: ''}, {basePath: '/sample'}])(
         locales: ['en', 'es'],
         alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
-        basePath
+        localeDetection: true
       };
 
       expect(
         getAlternateLinksHeaderValue({
           config,
-          request: new NextRequest('http://127.0.0.1:3000/about', {
+          request: getMockRequest('http://127.0.0.1:3000/about', {
             headers: {
               host: 'example.com',
               'x-forwarded-host': 'example.com',

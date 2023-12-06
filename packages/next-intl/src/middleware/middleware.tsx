@@ -26,8 +26,7 @@ function receiveConfig<Locales extends AllLocales>(
     ...config,
     alternateLinks: config.alternateLinks ?? true,
     localePrefix: config.localePrefix ?? 'always',
-    localeDetection: config.localeDetection ?? true,
-    basePath: config.basePath ?? '' // TODO: Remove
+    localeDetection: config.localeDetection ?? true
   };
 
   return result;
@@ -67,12 +66,6 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     function rewrite(url: string) {
-      if (
-        configWithDefaults.basePath &&
-        !url.startsWith(configWithDefaults.basePath)
-      ) {
-        url = `${configWithDefaults.basePath}${url}`;
-      }
       return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
     }
 
@@ -110,12 +103,14 @@ export default function createMiddleware<Locales extends AllLocales>(
         urlObj.port = '';
         urlObj.host = redirectDomain;
       }
-      if (
-        configWithDefaults.basePath &&
-        !urlObj.pathname.startsWith(configWithDefaults.basePath)
-      ) {
-        urlObj.pathname = `${configWithDefaults.basePath}${urlObj.pathname}`;
+
+      if (request.nextUrl.basePath) {
+        urlObj.pathname = request.nextUrl.basePath + urlObj.pathname;
+        if (urlObj.pathname.endsWith('/')) {
+          urlObj.pathname = urlObj.pathname.slice(0, -1);
+        }
       }
+
       return NextResponse.redirect(urlObj.toString());
     }
 
@@ -199,19 +194,19 @@ export default function createMiddleware<Locales extends AllLocales>(
         );
 
         if (hasLocalePrefix) {
-          const basePath = getNormalizedPathname(
-            getPathWithSearch(normalizedPathname, request.nextUrl.search),
-            configWithDefaults.locales
+          const normalizedPathnameWithSearch = getPathWithSearch(
+            normalizedPathname,
+            request.nextUrl.search
           );
 
           if (configWithDefaults.localePrefix === 'never') {
-            response = redirect(basePath);
+            response = redirect(normalizedPathnameWithSearch);
           } else if (pathLocale === locale) {
             if (
               hasMatchedDefaultLocale &&
               configWithDefaults.localePrefix === 'as-needed'
             ) {
-              response = redirect(basePath);
+              response = redirect(normalizedPathnameWithSearch);
             } else {
               if (configWithDefaults.domains) {
                 const pathDomain = getBestMatchingDomain(
@@ -221,7 +216,10 @@ export default function createMiddleware<Locales extends AllLocales>(
                 );
 
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
-                  response = redirect(basePath, pathDomain?.domain);
+                  response = redirect(
+                    normalizedPathnameWithSearch,
+                    pathDomain?.domain
+                  );
                 } else {
                   response = rewrite(internalPathWithSearch);
                 }
@@ -230,7 +228,7 @@ export default function createMiddleware<Locales extends AllLocales>(
               }
             }
           } else {
-            response = redirect(`/${locale}${basePath}`);
+            response = redirect(`/${locale}${normalizedPathnameWithSearch}`);
           }
         } else {
           if (
@@ -249,6 +247,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
+        path: request.nextUrl.basePath || '/',
         sameSite: 'strict',
         maxAge: 31536000 // 1 year
       });
