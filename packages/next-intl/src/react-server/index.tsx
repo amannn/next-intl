@@ -6,24 +6,14 @@
  * Make sure this mirrors the API from '../react-client'.
  */
 
-export * from 'use-intl/dist/src/core';
-export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
+// Replaced exports from the `react` package
+export {default as useLocale} from './useLocale';
+export {default as useTranslations} from './useTranslations';
+export {default as useFormatter} from './useFormatter';
+export {default as useNow} from './useNow';
+export {default as useTimeZone} from './useTimeZone';
+export {default as useMessages} from './useMessages';
+export {default as NextIntlClientProvider} from './NextIntlClientProvider';
 
-function notSupported() {
-  throw new Error(
-    `The React APIs of next-intl are currently not available in Server Components.
-
-You can try one of these options:
-1. Try out the Server Components beta, see https://next-intl-docs.vercel.app/docs/getting-started
-2. Use the core library as a stopgap solution, see https://next-intl-docs.vercel.app/docs/environments/core-library
-`
-  );
-}
-
-export const IntlProvider = notSupported;
-export const useTranslations = notSupported;
-export const useIntl = notSupported;
-export const useLocale = notSupported;
-export const useNow = notSupported;
-export const useTimeZone = notSupported;
-export const Link = notSupported;
+// Everything from `core`
+export * from 'use-intl/core';

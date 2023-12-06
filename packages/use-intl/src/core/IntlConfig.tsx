@@ -31,7 +31,7 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
   /**
    * Providing this value will have two effects:
    * 1. It will be used as the default for the `now` argument of
-   *    `useIntl().formatRelativeTime` if no explicit value is provided.
+   *    `useFormatter().formatRelativeTime` if no explicit value is provided.
    * 2. It will be returned as a static value from the `useNow` hook. Note
    *    however that when `updateInterval` is configured on the `useNow` hook,
    *    the global `now` value will only be used for the initial render, but

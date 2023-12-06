@@ -195,7 +195,7 @@ const files = [
           <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
           <span style={{color: 'var(--shiki-color-text)'}}> </span>
           <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "{'{'}username{'}'}'s profile"
+            "{'{'}firstname{'}'}'s profile"
           </span>
           <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
         </span>

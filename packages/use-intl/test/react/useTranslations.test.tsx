@@ -439,6 +439,35 @@ describe('t.rich', () => {
   });
 });
 
+describe('t.markup', () => {
+  it('returns markup text', () => {
+    let result;
+
+    function Component() {
+      const t = useTranslations();
+      result = t.markup('message', {
+        important: (children) => `<b>${children}</b>`
+      });
+      return null;
+    }
+
+    render(
+      <IntlProvider
+        locale="en"
+        messages={{
+          message:
+            'This is <important>important</important> and <important>this as well</important>'
+        }}
+        timeZone="Europe/London"
+      >
+        <Component />
+      </IntlProvider>
+    );
+
+    expect(result).toBe('This is <b>important</b> and <b>this as well</b>');
+  });
+});
+
 describe('t.raw', () => {
   function renderRawMessage(
     message: any,

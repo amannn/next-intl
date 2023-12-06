@@ -1,6 +1,6 @@
 const withNextra = require('nextra')({
   theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.js',
+  themeConfig: './theme.config.tsx',
   staticImage: true,
   defaultShowCopyCode: true,
   flexsearch: {
@@ -16,11 +16,6 @@ module.exports = withNextra({
       destination: '/docs/getting-started',
       permanent: false
     },
-    {
-      source: '/examples',
-      destination: '/examples/app-router',
-      permanent: false
-    },
 
     // Moved pages
     {
@@ -29,13 +24,23 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/configuration',
+      destination: '/docs/usage/configuration',
+      permanent: true
+    },
+    {
       source: '/docs/getting-started/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
+      permanent: true
+    },
+    {
+      source: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
@@ -45,12 +50,22 @@ module.exports = withNextra({
     },
     {
       source: '/docs/next-13/client-components',
-      destination: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {
       source: '/docs/next-13/server-components',
-      destination: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-server-components',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router-client-components',
+      destination: '/docs/getting-started/app-router',
       permanent: true
     },
     {
@@ -75,22 +90,17 @@ module.exports = withNextra({
     },
     {
       source: '/docs/usage/production-checklist',
-      destination: '/docs/production-checklist',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/runtime-requirements-polyfills',
-      destination: '/docs/production-checklist#runtime-requirements',
-      permanent: true
-    },
-    {
-      source: '/docs/usage/configuration',
-      destination: '/docs/configuration',
+      destination: '/docs/environments/runtime-requirements',
       permanent: true
     },
     {
       source: '/docs/usage/error-handling',
-      destination: '/docs/configuration#error-handling',
+      destination: '/docs/usage/configuration',
       permanent: true
     },
     {
@@ -105,17 +115,17 @@ module.exports = withNextra({
     },
     {
       source: '/examples/next-13',
-      destination: '/examples/app-router',
+      destination: '/examples',
       permanent: true
     },
     {
       source: '/examples/minimal',
-      destination: '/examples/pages-router',
+      destination: '/examples',
       permanent: true
     },
     {
       source: '/examples/advanced',
-      destination: '/examples/pages-router-advanced',
+      destination: '/examples',
       permanent: true
     }
   ],

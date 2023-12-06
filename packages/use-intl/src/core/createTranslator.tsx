@@ -1,9 +1,12 @@
+import {ReactElement, ReactNodeArray} from 'react';
 import Formats from './Formats';
 import IntlConfig from './IntlConfig';
-import TranslationValues from './TranslationValues';
-import createTranslatorImpl, {
-  CoreRichTranslationValues
-} from './createTranslatorImpl';
+import MessageFormatCache from './MessageFormatCache';
+import TranslationValues, {
+  MarkupTranslationValues,
+  RichTranslationValues
+} from './TranslationValues';
+import createTranslatorImpl from './createTranslatorImpl';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
@@ -30,8 +33,10 @@ export default function createTranslator<
   onError = defaultOnError,
   ...rest
 }: Omit<IntlConfig<IntlMessages>, 'defaultTranslationValues' | 'messages'> & {
-  messages: NonNullable<IntlConfig<IntlMessages>['messages']>;
+  messages: IntlConfig<IntlMessages>['messages'];
   namespace?: NestedKey;
+  /** @private */
+  messageFormatCache?: MessageFormatCache;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 {
   // Default invocation
@@ -70,7 +75,27 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    values?: CoreRichTranslationValues,
+    values?: RichTranslationValues,
+    formats?: Partial<Formats>
+  ): string | ReactElement | ReactNodeArray;
+
+  // `markup`
+  markup<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey,
+    values?: MarkupTranslationValues,
     formats?: Partial<Formats>
   ): string;
 
@@ -103,6 +128,7 @@ export default function createTranslator<
       ...rest,
       onError,
       getMessageFallback,
+      // @ts-expect-error `messages` is allowed to be `undefined` here and will be handled internally
       messages: {'!': messages},
       namespace: namespace ? `!.${namespace}` : '!'
     },

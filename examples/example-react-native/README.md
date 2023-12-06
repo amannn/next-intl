@@ -1,0 +1,12 @@
+# example-react-native
+
+An example that showcases the usage of `use-intl` with React Native.
+
+```
+pnpm install
+
+# Run the app with one of:
+pnpm run android
+pnpm run ios
+pnpm run web
+```

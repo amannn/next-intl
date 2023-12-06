@@ -1,0 +1,19 @@
+name: Update docs
+description: Suggest an update to the docs
+title: '[Docs]: '
+labels:
+  - unconfirmed
+  - documentation
+body:
+  - type: input
+    id: pageLink
+    attributes:
+      label: Link to page
+      description: A link to an existing page in the docs (if any)
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the problem
+      description: A clear description of what is wrong in the docs or what you would like to improve.
+    validations:
+      required: true

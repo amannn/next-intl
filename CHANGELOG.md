@@ -3,6 +3,158 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.2.5 (2023-12-06)
+
+
+### Bug Fixes
+
+* Correctly normalize pathname for redirects and alternate links when `localePrefix: 'as-needed'` is used with the default locale ([#698](https://github.com/amannn/next-intl/issues/698) by [@anna-colenso](https://github.com/anna-colenso)) ([48e9523](https://github.com/amannn/next-intl/commit/48e9523863b99b363f63f0aa991c72860d814d7e))
+
+
+
+
+
+## 3.2.4 (2023-12-05)
+
+
+### Bug Fixes
+
+* Fix compatibility with `moduleResolution: 'Bundler'` ([#694](https://github.com/amannn/next-intl/issues/694)) ([f7425a5](https://github.com/amannn/next-intl/commit/f7425a54a1d35235ec84d2937006d43152cbbe16)), closes [#690](https://github.com/amannn/next-intl/issues/690)
+
+
+
+
+
+## 3.2.3 (2023-12-05)
+
+
+### Bug Fixes
+
+* Prefer `locale` from `NextIntlClientProvider` when using `useLocale` in Client Components. `useParams().locale` is still used as a fallback. ([#691](https://github.com/amannn/next-intl/issues/691)) ([e00ed97](https://github.com/amannn/next-intl/commit/e00ed97746dc8d6c264b2f4aa9162681c1a89919)), closes [#688](https://github.com/amannn/next-intl/issues/688)
+
+
+
+
+
+## 3.2.2 (2023-12-04)
+
+
+### Bug Fixes
+
+* Allow to call `getRequestConfig` in outer module closure in a Client Component module graph ([#687](https://github.com/amannn/next-intl/issues/687)) ([0f16f10](https://github.com/amannn/next-intl/commit/0f16f106a68a2a443eb0ec3671084d40bf466d2f)), closes [#685](https://github.com/amannn/next-intl/issues/685)
+
+
+
+
+
+## 3.2.1 (2023-12-01)
+
+
+### Bug Fixes
+
+* Allow to import `next-intl/server` into Client Components (however not call any functions). This allows for easier testing of page components with multiple exports. ([#683](https://github.com/amannn/next-intl/issues/683)) ([5ca4075](https://github.com/amannn/next-intl/commit/5ca4075e58c152e898e9048f3002c11c7aef2dd9)), closes [#681](https://github.com/amannn/next-intl/issues/681)
+
+
+
+
+
+# 3.2.0 (2023-11-29)
+
+
+### Features
+
+* Add `localePrefix` for navigation APIs for an improved initial render of `Link` when using `localePrefix: never`. Also fix edge case in middleware when using localized pathnames for redirects that remove a locale prefix (fixes an infinite loop). ([#678](https://github.com/amannn/next-intl/issues/678)) ([1c68e3b](https://github.com/amannn/next-intl/commit/1c68e3b549e2029cbae62d549f609e1d76ca6490)), closes [#444](https://github.com/amannn/next-intl/issues/444)
+
+
+
+
+
+## 3.1.4 (2023-11-24)
+
+
+### Bug Fixes
+
+* Apply correct port and protocol during domain-based redirects when called from an internal address (e.g. from a proxy) ([#662](https://github.com/amannn/next-intl/issues/662)) ([2bb867d](https://github.com/amannn/next-intl/commit/2bb867d1747123763a4e0144a99236ca3a8bc884)), closes [#658](https://github.com/amannn/next-intl/issues/658)
+
+
+
+
+
+## 3.1.3 (2023-11-22)
+
+
+### Bug Fixes
+
+* Don't set cookie on response if `localeDetection: false` ([#654](https://github.com/amannn/next-intl/issues/654)) ([e85149c](https://github.com/amannn/next-intl/commit/e85149cb27d9e036dda1712a03a152d5fe241986)), closes [#609](https://github.com/amannn/next-intl/issues/609)
+
+
+
+
+
+## 3.1.2 (2023-11-20)
+
+
+### Bug Fixes
+
+* Update link to migration example in error messages ([#648](https://github.com/amannn/next-intl/issues/648) by [@outloudvi](https://github.com/outloudvi)) ([1f3b226](https://github.com/amannn/next-intl/commit/1f3b22672938dbc8421c918ed11438eca5436a32))
+
+
+
+
+
+## 3.1.1 (2023-11-20)
+
+**Note:** Version bump only for package root
+
+
+
+
+
+# 3.1.0 (2023-11-17)
+
+
+### Features
+
+* Experimental support for `--turbo` (requires `next@^14.0.3`) ([#641](https://github.com/amannn/next-intl/issues/641)) ([46c6ec7](https://github.com/amannn/next-intl/commit/46c6ec751651ac6d827fec6544a26d3abd5bb70a)), closes [#250](https://github.com/amannn/next-intl/issues/250)
+
+
+
+
+
+## 3.0.3 (2023-11-15)
+
+
+### Bug Fixes
+
+* Don't retrieve defaults for `locale`, `now` and `timeZone` if these options have been provided to `NextIntlClientProvider` ([#633](https://github.com/amannn/next-intl/issues/633)) ([824363a](https://github.com/amannn/next-intl/commit/824363a97d4cc735cb627349e7e16c80fd22b25a)), closes [#631](https://github.com/amannn/next-intl/issues/631)
+
+
+
+
+
+## 3.0.2 (2023-11-15)
+
+
+### Bug Fixes
+
+* Allow usage of `getTranslations({namespace})` without TypeScript integration for messages ([#630](https://github.com/amannn/next-intl/issues/630)) ([62cf29c](https://github.com/amannn/next-intl/commit/62cf29c978863cf65f62e34f739775901f0f6d8a)), closes [#625](https://github.com/amannn/next-intl/issues/625)
+
+
+
+
+
+## 3.0.1 (2023-11-14)
+
+Add provenance statement to published packages.
+
+# 3.0.0 (2023-11-14)
+
+Please refer to [the release notes](https://next-intl-docs.vercel.app/blog/next-intl-3-0).
+
+
+
+
+
 ## 2.22.1 (2023-11-02)
 
 

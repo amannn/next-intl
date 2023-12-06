@@ -1,0 +1,490 @@
+import PartnerContentLink from 'components/PartnerContentLink';
+import Callout from 'components/Callout';
+import {Tab, Tabs} from 'nextra-theme-docs';
+
+# Global configuration
+
+Configuration properties that you use across your Next.js app can be set globally.
+
+## Client- and Server Components [#client-server-components]
+
+Depending on if you handle [internationalization in Client- or Server Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
+
+### `i18n.ts`
+  
+`i18n.ts` can be used to provide configuration for **Server Components**.
+
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default
+}));
+```
+
+The configuration object is created once for each request by internally using React's [`cache`](https://nextjs.org/docs/app/building-your-application/data-fetching/caching#react-cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
+
+### `NextIntlClientProvider`
+
+`NextIntlClientProvider` can be used to provide configuration for **Client Components**.
+
+```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+import {NextIntlClientProvider} from 'next-intl';
+import {notFound} from 'next/navigation';
+
+export default async function LocaleLayout({children, params: {locale}}) {
+  let messages;
+  try {
+    messages = (await import(`../../messages/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+<Callout>
+  `NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone` when the component is rendered from a Server Component. Other configuration like `messages` and `formats` can be provided as necessary.
+</Callout>
+
+## Messages
+
+The most crucial aspect of internationalization is providing labels based on the user's language. The recommended workflow is to store your messages in your repository along with the code.
+
+```
+├── messages
+│   ├── en.json
+│   ├── de-AT.json
+│   └── ...
+...
+```
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+import {NextIntlClientProvider} from 'next-intl';
+
+// ...
+
+const messages = useMessages();
+
+return (
+  <NextIntlClientProvider messages={messages}>
+    {children}
+  </NextIntlClientProvider>
+);
+```
+
+</Tab>
+</Tabs>
+
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/workflows/typescript).
+
+Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+
+<details>
+<summary>How can I load messages from remote sources?</summary>
+
+While it's recommended to colocate at least the messages for the default locale, you can also load messages from remote sources, e.g. with <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
+
+```tsx
+import OtaClient from '@crowdin/ota-client';
+
+const defaultLocale = 'en';
+const client = new OtaClient('<distribution-hash>');
+const messages =
+  locale === defaultLocale
+    ? (await import(`../../messages/en.json`)).default
+    : await client.getStringsByLocale(locale);
+```
+
+</details>
+
+<details>
+<summary>How can I split my messages into multiple files?</summary>
+
+Since the messages can be freely defined and loaded, you can split your messages into multiple files and merge them later at runtime if you prefer:
+
+```tsx
+const messages = {
+  ...(await import(`../../messages/${locale}/login.json`)).default,
+  ...(await import(`../../messages/${locale}/dashboard.json`)).default
+};
+```
+
+</details>
+
+<details>
+<summary>How can I use messages from another locale as fallbacks?</summary>
+
+If you have incomplete messages for a given locale and would like to use messages from another locale as a fallback, you can merge the two accordingly.
+
+```tsx
+import deepmerge from 'deepmerge';
+
+const userMessages = (await import(`../../messages/${locale}.json`)).default;
+const defaultMessages = (await import(`../../messages/en.json`)).default;
+const messages = deepmerge(defaultMessages, userMessages);
+```
+
+</details>
+
+## Time zone
+
+Specifying a time zone affects the rendering of dates and times. By default, the time zone of the server runtime will be used, but can be customized as necessary.
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  // The time zone can either be statically defined, read from the
+  // user profile if you store such a setting, or based on dynamic 
+  // request information like the locale or headers.
+  timeZone: 'Europe/Vienna',
+  // ...
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+// The time zone can either be statically defined, read from the
+// user profile if you store such a setting, or based on dynamic
+// request information like the locale or headers.
+const timeZone = 'Europe/Vienna';
+
+<NextIntlClientProvider timeZone={timeZone}>...<NextIntlClientProvider>
+```
+
+</Tab>
+</Tabs>
+
+The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+<Callout>
+The time zone in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component. For all other cases, you can specify the value explicitly.
+</Callout>
+
+## Now value [#now]
+
+When formatting [relative dates and times](/docs/usage/dates-times#formatting-relative-time), `next-intl` will format times in relation to a reference point in time that is referred to as "now". By default, this is the time a component renders.
+
+If you prefer to override the default, you can provide an explicit value for `now`:
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  // This is the default, a single date instance will be used 
+  // by all Server Components to ensure consistency
+  now: new Date(), 
+  // ...
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+const now = new Date('2020-11-20T10:36:01.516Z');
+
+<NextIntlClientProvider now={now}>...</NextIntlClientProvider>
+```
+
+</Tab>
+</Tabs>
+
+**Tip:** For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
+
+<Callout type="warning">
+  **Important:** When you cache the rendered markup (e.g. when using [static
+  rendering](https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering#static-rendering-default)),
+  the formatted value will become stale. Therefore either regenerate these pages
+  regularly or use the `updateInterval` option of
+  [`useNow`](/docs/usage/dates-times#usenow) on the client side.
+</Callout>
+
+<Callout>
+Similarly to the `timeZone`, the `now` value in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
+</Callout>
+
+## Formats
+
+To achieve consistent date, time, number and list formatting, you can define a set of global formats.
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  formats: {
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    },
+    list: {
+      enumeration: {
+        style: 'long',
+        type: 'conjunction'
+      }
+    }
+  },
+  // ...
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+<NextIntlClientProvider
+  formats={{
+    dateTime: {
+      short: {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }
+    },
+    number: {
+      precise: {
+        maximumFractionDigits: 5
+      }
+    },
+    list: {
+      enumeration: {
+        style: 'long',
+        type: 'conjunction'
+      }
+    }
+  }}
+>
+  ...
+</NextIntlClientProvider>
+```
+
+</Tab>
+</Tabs>
+
+Usage in components:
+
+```tsx
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+
+  format.dateTime(new Date('2020-11-20T10:36:01.516Z'), 'short');
+  format.number(47.414329182, 'precise');
+  format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
+}
+```
+
+Global formats for numbers, dates and times can be referenced in messages too.
+
+```json filename="en.json"
+{
+  "ordered": "You've ordered this product on {orderDate, date, short}",
+  "latitude": "Latitude: {latitude, number, precise}"
+}
+```
+
+```tsx
+import {useTranslations} from 'next-intl';
+
+function Component() {
+  const t = useTranslations();
+
+  t('ordered', {orderDate: new Date('2020-11-20T10:36:01.516Z')});
+  t('latitude', {latitude: 47.414329182});
+}
+```
+
+## Default translation values
+
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  defaultTranslationValues: {
+    important: (chunks) => <b>{chunks}</b>,
+    value: 123
+  }
+  // ...
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+<NextIntlClientProvider
+  defaultTranslationValues={{
+    important: (chunks) => <b>{chunks}</b>,
+    value: 123
+  }}
+>
+  ...
+</NextIntlClientProvider>
+```
+
+</Tab>
+</Tabs>
+
+The defaults will be overridden if local formats are provided at a specific call site.
+
+## Error handling
+
+By default, when a message fails to resolve or when the formatting failed, an error will be printed on the console. In this case `${namespace}.${key}` will be rendered instead to keep your app running.
+
+This behavior can be customized with the `onError` and `getMessageFallback` configuration option.
+
+<Tabs items={['i18n.ts', 'Provider']}>
+<Tab>
+  
+```tsx filename="i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+import {IntlErrorCode} from 'next-intl';
+
+export default getRequestConfig(async ({locale}) => ({
+  onError(error) {
+    if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+      // Missing translations are expected and should only log an error
+      console.error(error);
+    } else {
+      // Other errors indicate a bug in the app and should be reported
+      reportToErrorTracking(error);
+    }
+  },
+  getMessageFallback({namespace, key, error}) {
+    const path = [namespace, key].filter((part) => part != null).join('.');
+
+    if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+      return path + ' is not yet translated';
+    } else {
+      return 'Dear developer, please fix this message: ' + path;
+    }
+  },
+  // ...
+}));
+```
+
+</Tab>
+<Tab>
+
+```tsx
+import {NextIntlClientProvider, IntlErrorCode} from 'next-intl';
+
+function onError(error) {
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    // Missing translations are expected and should only log an error
+    console.error(error);
+  } else {
+    // Other errors indicate a bug in the app and should be reported
+    reportToErrorTracking(error);
+  }
+}
+
+function getMessageFallback({namespace, key, error}) {
+  const path = [namespace, key].filter((part) => part != null).join('.');
+
+  if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+    return path + ' is not yet translated';
+  } else {
+    return 'Dear developer, please fix this message: ' + path;
+  }
+}
+
+<NextIntlClientProvider onError={onError} getMessageFallback={getMessageFallback}>
+  ...
+</NextIntlClientProvider>
+```
+
+</Tab>
+</Tabs>
+
+## Locale
+
+`NextIntlClientProvider` requires a `locale` that it provides to all hooks from `next-intl`.
+
+If you render `NextIntlClientProvider` from a Server Component, the `locale` will automatically be received.
+
+In all other cases, e.g. when being rendered from a Client Component, a unit test or within the Pages Router, you need to pass this prop explicitly. Be sure to also set a [`timeZone`](#time-zone) and a value for [`now`](#now) in this case to avoid potential markup mismatches.
+
+<details>
+<summary>I'm using the Pages Router, how can I provide the locale?</summary>
+
+If you use [internationalized routing with the Pages Router](https://nextjs.org/docs/pages/building-your-application/routing/internationalization), you can receive the locale from the router in order to pass it to `NextIntlClientProvider`:
+
+```tsx filename="_app.tsx"
+import {useRouter} from 'next/router';
+
+// ...
+
+const router = useRouter();
+
+return (
+  <NextIntlClientProvider locale={router.locale}>
+    ...
+  </NextIntlClientProvider>;
+);
+```
+
+</details>
+
+## Retrieve global configuration
+
+As a convenience, there are a couple of hooks that allow you to read global configuration.
+
+```tsx
+import {useLocale, useTimeZone, useMessages} from 'next-intl';
+
+function Component() {
+  const locale = useLocale();
+  const timeZone = useTimeZone();
+  const messages = useMessages();
+}
+```

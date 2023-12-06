@@ -1,8 +1,7 @@
 import Callout from 'components/Callout';
-import VersionTabs from 'components/VersionTabs';
 import {Tab} from 'nextra-theme-docs';
 
-# Internationalization of Metadata & Route Handlers in Next.js 13
+# Internationalization of Metadata & Route Handlers with the Next.js App Router
 
 There are a few places in Next.js apps where you might need to apply internationalization outside of React components:
 
@@ -10,87 +9,17 @@ There are a few places in Next.js apps where you might need to apply internation
 2. [Metadata files](https://nextjs.org/docs/app/api-reference/file-conventions/metadata)
 3. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers)
 
-For these cases, you can either use:
-
-1. The [core library](/docs/environments/core-library) from `next-intl`, if you're using [the latest stable version](/docs/getting-started/app-router-client-components)
-2. A set of new APIs that automatically pick up your request configuration, if you're using [the Server Components beta version](/docs/getting-started/app-router-server-components)
-
-<VersionTabs defaultLabel="Core library">
-<Tab>
-
-```tsx
-import {createTranslator, createFormatter} from 'next-intl';
-
-// The `locale` is received from Next.js via `params`
-const locale = params.locale;
-
-// You can use the core (non-React) APIs when you
-// have to use next-intl outside of components.
-const t = createTranslator({locale, messages});
-const format = createFormatter({locale: 'en'});
-```
-
-</Tab>
-<Tab>
-`next-intl/server` provides a set of awaitable versions of the functions that you usually call as hooks from within components. Unlike the hooks, these functions require a `locale` that you receive from Next.js.
-
-```tsx
-import {
-  getTranslator,
-  getFormatter,
-  getNow,
-  getTimeZone,
-  getMessages
-} from 'next-intl/server';
-
-// The `locale` is received from Next.js via `params`
-const locale = params.locale;
-
-const t = await getTranslator(locale, 'Metadata');
-const format = await getFormatter(locale);
-const now = await getNow(locale);
-const timeZone = await getTimeZone(locale);
-const messages = await getMessages(locale);
-```
-
-<Callout>
-  The [global request configuration]((#global-request-configuration)) that
-  you've set up in `i18n.ts` is automatically inherited by these functions. The
-  `locale` is the only exception that needs to be provided in comparison to the
-  hooks.
-</Callout>
-
-</Tab>
-</VersionTabs>
+`next-intl/server` provides a set of [awaitable functions](/docs/environments/server-client-components#async-components) that can be used in these cases.
 
 ### Metadata API
 
 To internationalize metadata like the page title, you can use functionality from `next-intl` in the [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) function that can be exported from pages and layouts.
 
-<VersionTabs defaultLabel="Core library">
-<Tab>
-
 ```tsx filename="app/[locale]/layout.tsx"
-import {createTranslator} from 'next-intl';
+import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
-  const t = createTranslator({locale, messages});
-
-  return {
-    title: t('LocaleLayout.title')
-  };
-}
-```
-
-</Tab>
-<Tab>
-
-```tsx filename="app/[locale]/layout.tsx"
-import {getTranslator} from 'next-intl/server';
-
-export async function generateMetadata({params: {locale}}) {
-  const t = await getTranslator(locale, 'Metadata');
+  const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
     title: t('title')
@@ -98,74 +27,40 @@ export async function generateMetadata({params: {locale}}) {
 }
 ```
 
-</Tab>
-</VersionTabs>
+<Callout>
+  By passing an explicit `locale` to the awaitable functions from `next-intl`,
+  you can make the metadata handler eligable for [static
+  rendering](/docs/getting-started/app-router#static-rendering).
+</Callout>
 
 ### Metadata files
 
 If you need to internationalize content within [metadata files](https://nextjs.org/docs/app/api-reference/file-conventions/metadata), such as an Open Graph image, you can call APIs from `next-intl` in the exported function.
 
-<VersionTabs defaultLabel="Core library">
-<Tab>
-
 ```tsx filename="app/[locale]/opengraph-image.tsx"
 import {ImageResponse} from 'next/og';
-import {createTranslator} from 'next-intl';
+import {getTranslations} from 'next-intl/server';
 
-export default async function Image({params: {locale}}) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
-  const t = createTranslator({locale, messages, namespace: 'OpenGraph'});
-
+export default async function OpenGraphImage({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
 ```
-
-</Tab>
-<Tab>
-
-```tsx filename="app/[locale]/opengraph-image.tsx"
-import {ImageResponse} from 'next/og';
-import {getTranslator} from 'next-intl/server';
-
-export default async function Image({params: {locale}}) {
-  const t = await getTranslator(locale, 'OpenGraph');
-  return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
-}
-```
-
-</Tab>
-</VersionTabs>
 
 ### Route Handlers
 
-If you put [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) in your `[locale]` folder, you can use functionality from `next-intl` to localize the response based on the `locale`. Note however that you should make sure that the route is matched by your [middleware `config`](/docs/routing/middleware).
+You can use `next-intl` in [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers) too. The `locale` can either be received from a search param, a layout segment or by parsing the `accept-language` header of the request.
 
-<VersionTabs defaultLabel="Core library">
-<Tab>
-
-```tsx filename="app/[locale]/hello/route.tsx"
+```tsx filename="app/api/hello/route.tsx"
 import {NextResponse} from 'next/server';
-import {createTranslator} from 'next-intl';
+import {getTranslations} from 'next-intl/server';
 
-export async function GET(request, {params: {locale}}) {
-  const messages = (await import(`../../../messages/${locale}.json`)).default;
-  const t = createTranslator({locale, messages, namespace: 'Hello'});
+export async function GET(request) {
+  // Example: Receive the `locale` via a search param
+  const {searchParams} = new URL(request.url);
+  const locale = searchParams.get('locale');
+
+  const t = await getTranslations({locale, namespace: 'Hello'});
   return NextResponse.json({title: t('title')});
 }
 ```
-
-</Tab>
-<Tab>
-
-```tsx filename="app/[locale]/hello/route.tsx"
-import {NextResponse} from 'next/server';
-import {getTranslator} from 'next-intl/server';
-
-export async function GET(request, {params: {locale}}) {
-  const t = await getTranslator(locale, 'Hello');
-  return NextResponse.json({title: t('title')});
-}
-```
-
-</Tab>
-</VersionTabs>

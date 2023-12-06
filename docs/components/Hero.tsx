@@ -38,7 +38,7 @@ export default function Hero({
               <div className="mt-8 flex gap-4 lg:mt-10">
                 <LinkButton href="/docs">{getStarted}</LinkButton>
                 <LinkButton
-                  href="https://next-intl-example-next-13.vercel.app"
+                  href="https://next-intl-example-app-router.vercel.app"
                   target="_blank"
                   variant="secondary"
                 >
@@ -47,7 +47,7 @@ export default function Hero({
               </div>
               <Link
                 className="mt-10 inline-flex border border-green-300/50 px-4 py-2 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-20"
-                href="/docs"
+                href="/docs/getting-started/app-router"
               >
                 <span className="mr-3 inline-block">📣</span>{' '}
                 <span>{rscAnnouncement}</span>

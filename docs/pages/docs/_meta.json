@@ -2,9 +2,7 @@
   "getting-started": "Getting started",
   "usage": "Usage guide",
   "environments": "Environments",
-  "configuration": "Global configuration",
   "routing": "Routing",
   "workflows": "Workflows & integrations",
-  "production-checklist": "Production checklist",
   "faq": "FAQ"
 }

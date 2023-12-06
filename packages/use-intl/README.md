@@ -1,7 +1,5 @@
 # 🌐 use-intl
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/use-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/use-intl) [<img src="https://img.shields.io/npm/dw/use-intl.svg" />](https://www.npmjs.com/package/use-intl)
-
 > Internationalization for React that gets out of your way.
 
 ## Features
@@ -11,7 +9,7 @@ Internationalization is an essential part of the user experience. use-intl gives
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
-- 💡 **Hooks-only API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
+- 💡 **Hooks-based API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
 - ⚔️ **Standards-based**: Use the best parts of built-in JavaScript APIs and supplemental lower-level APIs from Format.JS.
 
 ## What does it look like?
@@ -35,7 +33,7 @@ export default function UserProfile({user}) {
 }
 ```
 
-```json
+```js
 // en.json
 {
   "UserProfile": {

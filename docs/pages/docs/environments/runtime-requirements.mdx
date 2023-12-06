@@ -1,0 +1,64 @@
+import Callout from 'components/Callout';
+
+# Runtime requirements
+
+## Browser
+
+The source code of `next-intl` is compiled for [the same browsers that Next.js supports](https://nextjs.org/docs/architecture/supported-browsers).
+
+Based on the features you're using, you have to make sure your target browsers support the following APIs:
+
+- Basic usage: `Intl.Locale` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/Locale#browser_compatibility))
+- Date & time formatting: `Intl.DateTimeFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#browser_compatibility))
+- Number formatting: `Intl.NumberFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#browser_compatibility))
+- Pluralization: `Intl.PluralRules` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules/PluralRules#browser_compatibility))
+- Relative time formatting: `Intl.RelativeTimeFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/RelativeTimeFormat#browser_compatibility))
+- List formatting: `Intl.ListFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat#browser_compatibility))
+
+If you target a browser that doesn't support all the required APIs, consider using polyfills. [Polyfill.io](https://polyfill.io/v3/) is a valuable solution for this that helps you to load only the polyfills you need for a given locale.
+
+**Example:**
+
+```js filename="IntlPolyfills.tsx"
+import {useLocale} from 'next-intl';
+import Script from 'next/script';
+
+function IntlPolyfills() {
+  const locale = useLocale();
+
+  const polyfills = [
+    'Intl',
+    'Intl.Locale',
+    'Intl.DateTimeFormat',
+    `Intl.DateTimeFormat.~locale.${locale}`,
+    `Intl.NumberFormat`,
+    `Intl.NumberFormat.~locale.${locale}`,
+    'Intl.PluralRules',
+    `Intl.PluralRules.~locale.${locale}`,
+    'Intl.RelativeTimeFormat',
+    `Intl.RelativeTimeFormat.~locale.${locale}`,
+    'Intl.ListFormat',
+    `Intl.ListFormat.~locale.${locale}`
+  ];
+
+  return (
+    <Script
+      strategy="beforeInteractive"
+      src={
+        'https://polyfill.io/v3/polyfill.min.js?features=' + polyfills.join(',')
+      }
+    />
+  );
+}
+```
+
+<Callout type="warning">
+  Note that Polyfill.io doesn't support every locale. You can find a list of the
+  available polyfills in the [`polyfill-service` GitHub
+  repository](https://github.com/Financial-Times/polyfill-service/tree/main/app/polyfill-libraries/polyfill-library/polyfills/__dist)
+  (e.g. search for `Intl.DateTimeFormat.~locale.de-AT`).
+</Callout>
+
+## Node
+
+The minimum version to support all relevant `Intl` APIs is **Node.js 13**. Starting from this version, all required APIs are available.

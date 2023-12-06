@@ -7,12 +7,12 @@ The main part of handling internationalization (typically referred to as _i18n_)
 
 ## Terminology
 
-- **Locale**: We use this term to describe an identifier that contains the language and formatting preferences of users. Apart from the language, this includes optional regional information (e.g. `en-US`, `de`).
-- **Messages**: These are collections of namespace-label pairs that provide grouping by locale (e.g. `en-US.json`, `de.json`).
+- **Locale**: We use this term to describe an identifier that contains the language and formatting preferences of users. Apart from the language, a locale can include optional regional information (e.g. `en-US`). Locales are specified as [IETF BCP 47 language tags](https://en.wikipedia.org/wiki/IETF_language_tag).
+- **Messages**: These are collections of namespace-label pairs that are grouped by locale (e.g. `en-US.json`).
 
 ## Structuring messages
 
-To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app.
+To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app. You can of course also use a different structure, depending on what suits your app best.
 
 ```json filename="en.json"
 {
@@ -22,9 +22,9 @@ To group your messages within a locale, it's recommended to use component names 
 }
 ```
 
-Now, you can render messages from within a React component via the `useTranslations` hook:
+You can render messages from within a React component via the `useTranslations` hook:
 
-```js filename="About.tsx"
+```tsx filename="About.tsx"
 import {useTranslations} from 'next-intl';
 
 function About() {
@@ -60,7 +60,7 @@ Optionally, you can structure your messages as nested objects.
 }
 ```
 
-```js filename="SignUp.tsx"
+```tsx filename="SignUp.tsx"
 import {useTranslations} from 'next-intl';
 
 function SignUp() {
@@ -98,7 +98,7 @@ As your app grows, you'll want to reuse messages among your components. If you u
 
 There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
 
-For edge cases where the reuse of messages among different components is hard to achieve with shared components, you can consider adding a hook that shares the translation behavior:
+For edge cases where the reuse of messages among different components is hard to achieve with shared components, you can either use messages from different namespaces via `useTranslations()`, or you can consider adding a hook that shares the translation behavior:
 
 ```tsx filename="useLocaleLabel.tsx"
 export default function useLocaleLabel() {
@@ -112,14 +112,20 @@ export default function useLocaleLabel() {
 }
 ```
 
+```json
+{
+  "useLocaleLabel": {
+    "label": "{locale, select, en {English} de {German} other {Unknown}}"
+  }
+}
+```
+
 </details>
 
 <details>
 <summary>How can I use translations outside of components?</summary>
 
-`next-intl` only offers an API to use translations from within React components.
-
-This may seem like an unnecessary limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
+`next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components. This may seem like a limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
 
 If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
 
@@ -165,7 +171,7 @@ t('message', {name: 'Jane'}); // "Hello Jane!"
 
 To express the pluralization of a given number of items, the `plural` argument can be used:
 
-```js filename="en.json"
+```json filename="en.json"
 "message": "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
 ```
 
@@ -203,7 +209,7 @@ To match a specific number, `next-intl` additionally supports the special `=valu
 
 To apply pluralization based on an order of items, the `selectordinal` argument can be used:
 
-```js filename="en.json"
+```tsx filename="en.json"
 "message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
@@ -235,7 +241,7 @@ To match a specific number, `next-intl` additionally supports the special `=valu
 
 To map identifiers to human readable labels, you can use the `select` argument:
 
-```js filename="en.json"
+```tsx filename="en.json"
 "message": "{gender, select, female {She} male {He} other {They}} is online."
 ```
 
@@ -268,6 +274,7 @@ You can format rich text with custom tags and map them to React components:
 ```
 
 ```js
+// Returns `<>Please refer to <a href="/guidelines">the guidelines</a>.</>`
 t.rich('message', {
   guidelines: (chunks) => <a href="/guidelines">{chunks}</a>
 });
@@ -295,7 +302,7 @@ Messages can use tags without any chunks as children, but syntax-wise, a closing
 
 ```js
 t.rich('message', {
-  br: (chunks) => <br />
+  br: () => <br />
 });
 ```
 
@@ -337,57 +344,85 @@ t.rich('message', {
 
 </details>
 
+## HTML markup
+
+To render rich text, you typically want to use [rich text formatting](#rich-text). However, if you have a use case where you need to emit raw HTML markup, you can use the `t.markup` function:
+
+```json filename="en.json"
+{
+  "markup": "This is <important>important</important>"
+}
+```
+
+```js
+// Returns 'This is <b>important</b>'
+t.markup('markup', {
+  important: (chunks) => `<b>${chunks}</b>`
+});
+```
+
+Note that unlike `t.rich`, the provided markup functions accept `chunks` as a `string` and also return a `string` where the `chunks` are wrapped accordingly.
+
+## Raw messages
+
+Messages are always parsed and therefore e.g. for rich text formatting you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
+
+```json filename="en.json"
+{
+  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+}
+```
+
+```js
+<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
+```
+
+<Callout type="warning">
+  **Important**: You should always sanitize the content that you pass to
+  [`dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
+  to avoid cross-site scripting attacks.
+</Callout>
+
+The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
+
 ## Arrays of messages
 
 If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages:
 
 ```json filename="en.json"
 {
-  "Benefits": {
-    "zero-config": "Works with zero config",
-    "customizable": "Easy to customize",
-    "fast": "Blazingly fast"
+  "CompanyStats": {
+    "yearsOfService": {
+      "title": "Years of service",
+      "value": "34"
+    },
+    "happyClients": {
+      "title": "Happy clients",
+      "value": "1.000+"
+    },
+    "partners": {
+      "title": "Products",
+      "value": "5.000+"
+    }
   }
 }
 ```
 
-```js filename="Benefits.tsx"
+```tsx filename="CompanyStats.tsx"
 import {useTranslations} from 'next-intl';
 
-function Benefits() {
-  const t = useTranslations('Benefits');
-  const keys = ['zero-config', 'customizable', 'fast'] as const;
+function CompanyStats() {
+  const t = useTranslations('CompanyStats');
+  const keys = ['yearsOfService', 'happyClients', 'partners'] as const;
 
   return (
     <ul>
       {keys.map((key) => (
-        <li key={key}>{t(key)}</li>
+        <li key={key}>
+          <h2>{t(`${key}.title`)}</h2>
+          <p>{t(`${key}.value`)}</p>
+        </li>
       ))}
-    </ul>
-  );
-}
-```
-
-If the number of items varies between locales, you can solve this by using [rich text](#rich-text).
-
-```json filename="en.json"
-{
-  "Benefits": {
-    "items": "<item>Works with zero config</item><item>Easy to customize</item><item>Blazingly fast</item>"
-  }
-}
-```
-
-```js filename="Benefits.tsx"
-import {useTranslations} from 'next-intl';
-
-function Benefits() {
-  const t = useTranslations('Benefits');
-  return (
-    <ul>
-      {t.rich('items', {
-        item: (chunks) => <li>{chunks}</li>
-      })}
     </ul>
   );
 }
@@ -408,7 +443,7 @@ The advantage of this approach over supporting arrays in messages is that this w
 }
 ```
 
-```js filename="Benefits.tsx"
+```tsx filename="Benefits.tsx"
 import {useTranslations} from 'next-intl';
 
 function Benefits() {
@@ -429,28 +464,6 @@ function Benefits() {
 ```
 
 </details>
-
-## Raw messages
-
-Messages are always parsed and therefore e.g. for rich text you need to supply the necessary tags. If you want to avoid the parsing, e.g. because you have raw HTML stored in a message, there's a separate API for this use case:
-
-```json filename="en.json"
-{
-  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
-}
-```
-
-```js
-<div dangerouslySetInnerHTML={{__html: t.raw('content')}} />
-```
-
-<Callout type="warning">
-  **Important**: You should always sanitize the content that you pass to
-  [`dangerouslySetInnerHTML`](https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html)
-  to avoid cross-site scripting attacks.
-</Callout>
-
-The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
 
 ## Right-to-left languages
 

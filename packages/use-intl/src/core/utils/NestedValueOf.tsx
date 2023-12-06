@@ -6,7 +6,7 @@ type NestedValueOf<
     ? NestedValueOf<ObjectType[Key], Rest>
     : never
   : Property extends keyof ObjectType
-  ? ObjectType[Property]
-  : never;
+    ? ObjectType[Property]
+    : never;
 
 export default NestedValueOf;

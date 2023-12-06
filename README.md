@@ -11,11 +11,9 @@
 
 > Internationalization (i18n) for Next.js that gets out of your way.
 
-![Gzipped size](https://badgen.net/bundlephobia/minzip/next-intl) ![Tree shaking supported](https://badgen.net/bundlephobia/tree-shaking/next-intl) [<img src="https://img.shields.io/npm/dw/next-intl.svg" />](https://www.npmjs.com/package/next-intl)
-
 <hr />
 
-📣 [Support for Next.js 13 and the App Router has arrived →](https://next-intl-docs.vercel.app/docs/next-13)
+📣 [Support for the App Router and Server Components has arrived →](https://next-intl-docs.vercel.app/docs/getting-started/app-router)
 
 <hr />
 
@@ -26,7 +24,7 @@ Internationalization is an essential part of the user experience. next-intl give
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
-- 💡 **Hooks-only API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
+- 💡 **Hooks-based API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
 - 🚀 **Next.js-native and performance-obsessed**: App Router, Server Components, static rendering—pick the right tool for the right job, next-intl works everywhere.
 - ⚔️ **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
 
@@ -51,7 +49,7 @@ export default function UserProfile({user}) {
 }
 ```
 
-```json
+```js
 // en.json
 {
   "UserProfile": {

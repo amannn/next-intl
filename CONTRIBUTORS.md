@@ -38,10 +38,10 @@ Now, you're all set and you can work on individual packages.
 ### Tests
 
 There are currently two test setups:
-1. **Packages**: These use [Jest](https://jestjs.io/) and support a watch mode via `pnpm test -- --watch`.
-2. **Examples**: These use [Playwright](https://playwright.dev/) and currently don't have a watch mode.
+1. Packages use [Vitest](https://vitest.dev/)
+2. Examples use [Playwright](https://playwright.dev/)
 
-In either case, you can focus individual tests during development via [`it.only`](https://jestjs.io/docs/api#testonlyname-fn-timeout).
+In either case, you can focus individual tests during development via `it.only`.
 
 ### Code formatting (ESLint & Prettier)
 
@@ -59,6 +59,8 @@ Prettier is integrated via an autofixable ESLint rule, therefore it's recommende
 }
 ```
 
+For ESLint to work correctly, you should open individual packages you work on as the workspace root (e.g. `./packages/next-intl`).
+
 Alternatively, you can run ESLint via the command line:
 
 ```sh
@@ -67,8 +69,16 @@ pnpm eslint src --fix
 
 ### Pull requests
 
-This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to automate the releases.
+This repository uses [action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) to ensure that pull request titles match the [Conventional Commits spec](https://www.conventionalcommits.org/en/v1.0.0/). This is due to PR titles being used as commit messages to [automate releases](#releases).
 
 ## Repository workflows
 
 - Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.
+
+## Releases
+
+Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main`. Due to this, it's important to make sure to clean up commit messages of merged PRs since the commit title will appear in the changelog.
+
+The exception to every commit being released are are commits that are prefixed with `docs: `—these will not result in a version bump. Note however that also `docs(examples): ` would trigger a release, since we only match `docs: ` to abort the release workflow.
+
+Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.

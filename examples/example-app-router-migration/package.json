@@ -1,0 +1,27 @@
+{
+  "name": "example-app-router-migration",
+  "version": "2.10.2",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "lint": "eslint src && tsc",
+    "test": "echo 'No tests yet'",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^14.0.3",
+    "next-intl": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.176",
+    "@types/node": "^20.1.2",
+    "@types/react": "^18.2.29",
+    "eslint": "^8.54.0",
+    "eslint-config-molindo": "^7.0.0",
+    "eslint-config-next": "^14.0.3",
+    "typescript": "^5.2.2"
+  }
+}

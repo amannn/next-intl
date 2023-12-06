@@ -29,9 +29,8 @@ body:
       label: Mandatory reproduction URL (CodeSandbox or GitHub repository)
       description: |
         **Templates:**
-        - [CodeSandbox (`app` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-forked-yow8ep)
-        - [CodeSandbox (`app` directory, RSC RC)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
-        - [CodeSandbox (`pages` directory)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
+        - [CodeSandbox (App Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
+        - [CodeSandbox (Pages Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
     validations:
       required: true
   - type: textarea

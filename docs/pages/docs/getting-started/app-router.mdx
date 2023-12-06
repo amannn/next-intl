@@ -1,0 +1,300 @@
+import Callout from 'components/Callout';
+import Steps from 'components/Steps';
+
+# Next.js App Router Internationalization (i18n)
+
+The Next.js App Router introduces support for [React Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components) and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side.
+
+## Getting started
+
+If you haven't done so already, [create a Next.js app that uses the App Router](https://nextjs.org/docs/getting-started/installation).
+
+`next-intl` integrates with the App Router, by using a `[locale]` [dynamic segment](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+
+Let's get started!
+
+**Run `npm install next-intl` and create the following file structure:**
+
+```
+├── messages (1)
+│   ├── en.json
+│   └── ...
+├── next.config.js (2)
+└── src
+    ├── i18n.ts (3)
+    ├── middleware.ts (4)
+    └── app
+        └── [locale]
+            ├── layout.tsx (5)
+            └── page.tsx (6)
+```
+
+**Now, set up the files as follows:**
+
+<Steps>
+
+### `messages/en.json`
+
+Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+
+The simplest option is to add JSON files in your project based on locales, e.g. `en.json`.
+
+```json filename="messages/en.json"
+{
+  "Index": {
+    "title": "Hello world!"
+  }
+}
+```
+
+### `next.config.js`
+
+Now, set up the plugin which creates an alias to import your i18n configuration (specified in the next step) into Server Components.
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')();
+
+module.exports = withNextIntl({
+  // Other Next.js configuration ...
+});
+```
+
+### `src/i18n.ts` [#i18nts]
+
+`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
+
+```tsx filename="src/i18n.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async ({locale}) => ({
+  messages: (await import(`../messages/${locale}.json`)).default
+}));
+```
+
+<details>
+  <summary>Can I move this file somewhere else?</summary>
+
+This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can provide an optional path to the plugin:
+
+```js filename="next.config.js"
+const withNextIntl = require('next-intl/plugin')(
+  // Specify a custom path here
+  './somewhere/else/i18n.ts'
+);
+
+module.exports = withNextIntl({
+  // Other Next.js configuration ...
+});
+```
+
+</details>
+
+### `middleware.ts`
+
+The middleware matches a locale for the request and handles redirects and rewrites accordingly.
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // Used when no locale matches
+  defaultLocale: 'en'
+});
+
+export const config = {
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
+};
+```
+
+### `app/[locale]/layout.tsx`
+
+The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
+
+```tsx filename="app/[locale]/layout.tsx"
+import {notFound} from 'next/navigation';
+
+// Can be imported from a shared config
+const locales = ['en', 'de'];
+
+export default function LocaleLayout({children, params: {locale}}) {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  return (
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+### `app/[locale]/page.tsx`
+
+Use translations in your page components or anywhere else!
+
+```tsx filename="app/[locale]/page.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function Index() {
+  const t = useTranslations('Index');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+</Steps>
+
+That's all it takes!
+
+<Callout>
+
+**Next steps:**
+
+<ul className="ml-4 list-disc">
+  <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
+  <li>
+    Ran into an issue? Have a look at [the App Router
+    example](https://next-intl-example-app-router.vercel.app/).
+  </li>
+  <li>
+    Want to learn more about about using translations across the server and
+    client? Check out [the Server & Client Components
+    guide](/docs/environments/server-client-components).
+  </li>
+  <li>
+    Wondering how to link between internationalized pages? Have a look at [the
+    navigation docs](/docs/routing/navigation).
+  </li>
+  <li>
+    Are you transitioning from the Pages to the App Router? Check out [the
+    migration
+    example](https://github.com/amannn/next-intl/tree/main/examples/example-app-router-migration).
+  </li>
+</ul>
+
+</Callout>
+
+## Static rendering
+
+By using APIs like `useTranslations` from `next-intl` in Server Components, your pages will currently opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering:
+
+<Steps>
+
+### Add `generateStaticParams` to `app/[locale]/layout.tsx`
+
+Since we use a dynamic route segment for the `[locale]` param, we need to provide all possible values via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to Next.js, so the routes can be rendered at build time.
+
+```tsx filename="app/[locale]/layout.tsx"
+const locales = ['en', 'de'];
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
+```
+
+### Add `unstable_setRequestLocale` to all layouts and pages
+
+`next-intl` provides a temporary API that can be used to distribute the locale that is received via `params` in a layout or page for usage in all Server Components that are rendered as part of the request.
+
+```tsx filename="app/[locale]/layout.tsx"
+import {unstable_setRequestLocale} from 'next-intl/server';
+
+const locales = ['en', 'de'];
+
+export default async function LocaleLayout({
+  children,
+  params: {locale}
+}) {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  unstable_setRequestLocale(locale);
+
+  return (
+    // ...
+  );
+}
+```
+
+```tsx filename="app/[locale]/page.tsx"
+import {unstable_setRequestLocale} from 'next-intl/server';
+import {locales} from '..';
+
+export default function IndexPage({
+  params: {locale}
+}) {
+  unstable_setRequestLocale(locale);
+
+  // Once the request locale is set, you
+  // can call hooks from `next-intl`
+  const t = useTranslations('IndexPage');
+
+  return (
+    // ...
+  );
+}
+```
+
+**Keep in mind that:**
+
+1. `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
+
+2. You need to call this function in every page and every layout that you intend to enable static rendering for since Next.js can render layouts and pages independently.
+
+E.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
+
+<details>
+<summary>What does "unstable" mean?</summary>
+
+`unstable_setRequestLocale` is meant to be used as a stopgap solution and we aim to remove it in the future [in case Next.js adds an API to access parts of the URL](https://github.com/vercel/next.js/discussions/58862). If that's the case, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
+
+That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
+
+</details>
+
+<details>
+<summary>How does unstable_setRequestLocale work?</summary>
+
+`next-intl` uses [`cache()`](https://react.dev/reference/react/cache) to create a mutable store that holds the current locale. By calling `unstable_setRequestLocale`, the current locale will be written to the store, making it available to all APIs that require the locale.
+
+Note that the store is scoped to a request and therefore doesn't affect other requests that might be handled in parallel while a given request resolves asynchronously.
+
+</details>
+
+<details>
+<summary>Why is this API necessary?</summary>
+
+Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
+
+Due to this, `next-intl` uses its middleware to attach an `x-next-intl-locale` header to the incoming request, holding the negotiated locale as a value. This technique allows the locale to be read at arbitrary places via `headers().get('x-next-intl-locale')`.
+
+However, the usage of `headers` opts the route into dynamic rendering.
+
+By using `unstable_setRequestLocale`, you can provide the locale that is received in layouts and pages via `params` to `next-intl`. By doing this, all APIs from `next-intl` can now read from this value instead of the header, enabling static rendering.
+
+</details>
+
+### Use the `locale` param in metadata
+
+In addition to the rendering of your pages, also page metadata needs to qualify for static rendering.
+
+To achieve this, you can forward the `locale` that you receive from Next.js via `params` to [the awaitable functions from `next-intl`](/docs/environments/server-client-components#async-components).
+
+```tsx filename="page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export async function generateMetadata({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'Metadata'});
+
+  return {
+    title: t('title')
+  };
+}
+```
+
+</Steps>

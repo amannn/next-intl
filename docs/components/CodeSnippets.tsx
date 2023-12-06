@@ -19,7 +19,7 @@ function icu() {
         <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          "{'{'}username{'}'}'s profile"
+          "{'{'}firstName{'}'}'s profile"
         </span>
         <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
       </span>
@@ -344,7 +344,7 @@ function buildOutput() {
         <span style={{color: 'var(--shiki-color-text)'}}> B</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          80.2 kB
+          86.2 kB
         </span>
       </span>
       <span className="line">

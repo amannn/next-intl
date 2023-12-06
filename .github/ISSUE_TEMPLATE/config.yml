@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: View documentation
+    url: https://next-intl-docs.vercel.app/
+    about: Check out the official docs for answers to common questions
   - name: Ask a question
     url: https://stackoverflow.com/questions/ask
     about: Ask questions and discuss with other community members
