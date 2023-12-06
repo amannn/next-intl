@@ -62,7 +62,8 @@
   ],
   "dependencies": {
     "@formatjs/ecma402-abstract": "^1.11.4",
-    "intl-messageformat": "^9.3.18"
+    "@messageformat/runtime": "^3.0.1",
+    "icu-to-json": "0.0.20"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

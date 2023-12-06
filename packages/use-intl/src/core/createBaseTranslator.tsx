@@ -1,5 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default -- False positive
-import IntlMessageFormat from 'intl-messageformat';
+// import IntlMessageFormat from 'intl-messageformat';
+import {run, evaluateAst} from 'icu-to-json';
+import {compile} from 'icu-to-json/compiler';
 import {
   cloneElement,
   isValidElement,
@@ -11,13 +13,14 @@ import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
+import MessageFormat from './MessageFormat';
 import MessageFormatCache from './MessageFormatCache';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues';
-import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
+import getFormatters from './getFormatters';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
@@ -224,7 +227,7 @@ function createBaseTranslatorImpl<
 
     const cacheKey = joinPath([locale, namespace, key, String(message)]);
 
-    let messageFormat: IntlMessageFormat;
+    let messageFormat: MessageFormat;
     if (messageFormatCache?.has(cacheKey)) {
       messageFormat = messageFormatCache.get(cacheKey)!;
     } else {
@@ -252,18 +255,12 @@ function createBaseTranslatorImpl<
       }
 
       // Hot path that avoids creating an `IntlMessageFormat` instance
+      // TODO: We can get rid of this with icu-to-json
       const plainMessage = getPlainMessage(message as string, values);
       if (plainMessage) return plainMessage;
 
       try {
-        messageFormat = new IntlMessageFormat(
-          message,
-          locale,
-          convertFormatsToIntlMessageFormat(
-            {...globalFormats, ...formats},
-            timeZone
-          )
-        );
+        messageFormat = compile(message);
       } catch (error) {
         return getFallbackFromErrorAndNotify(
           key,
@@ -276,13 +273,15 @@ function createBaseTranslatorImpl<
     }
 
     try {
-      const formattedMessage = messageFormat.format(
-        // @ts-expect-error `intl-messageformat` expects a different format
-        // for rich text elements since a recent minor update. This
-        // needs to be evaluated in detail, possibly also in regards
-        // to be able to format to parts.
-        prepareTranslationValues({...defaultTranslationValues, ...values})
+      const evaluated = evaluateAst(
+        messageFormat.json,
+        locale,
+        {...defaultTranslationValues, ...values},
+        getFormatters(timeZone, formats, globalFormats)
       );
+
+      const isRichText = evaluated.length > 1;
+      const formattedMessage = isRichText ? evaluated : evaluated.join('');
 
       if (formattedMessage == null) {
         throw new Error(
