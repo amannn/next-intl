@@ -146,7 +146,7 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
-  ): string | ReactElement {
+  ): string | ReactElement | Array<ReactElement> {
     if (messagesOrError instanceof IntlError) {
       // We have already warned about this during render
       return getMessageFallback({
@@ -216,6 +216,8 @@ function createBaseTranslatorImpl<
 
     try {
       const allValues = {...defaultTranslationValues, ...values};
+      // TODO: The return type seems to be a bit off, not sure if
+      // this should be handled in `icu-to-json` or here.
       const evaluated = evaluateAst(
         messageFormat.json,
         locale,
@@ -246,10 +248,9 @@ function createBaseTranslatorImpl<
         );
       }
 
-      // TODO: Verify the correct way to return rich text
-      const isRichText = Array.isArray(formattedMessage);
-      return isRichText
-        ? (formattedMessage as unknown as ReactElement)
+      // @ts-expect-error Verify return type (see comment above)
+      return Array.isArray(formattedMessage)
+        ? formattedMessage
         : String(formattedMessage);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
