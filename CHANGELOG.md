@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.3.1 (2023-12-07)
+
+
+### Bug Fixes
+
+* Improve error message when encountering a missing message in production ([#706](https://github.com/amannn/next-intl/issues/706)) ([515891b](https://github.com/amannn/next-intl/commit/515891b539c723778d2a5a2e6c0186bb6f916071))
+
+
+
+
+
 # 3.3.0 (2023-12-06)
 
 
