@@ -595,7 +595,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'MISSING_MESSAGE: Could not resolve `label` in `Component`.'
+      'MISSING_MESSAGE: Could not resolve `Component.label` in messages.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
     screen.getByText('Component.label');
