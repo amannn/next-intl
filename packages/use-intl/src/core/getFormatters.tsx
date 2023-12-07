@@ -31,6 +31,14 @@ const defaults = {
   }
 } as const;
 
+type FormatNameOrArgs<Options> =
+  | string
+  | {
+      type: number; // TODO: Unused, is this necessary?
+      tokens: Array<unknown>; // TODO: Unused, is this necessary?
+      parsedOptions?: Options;
+    };
+
 export default function getFormatters(
   timeZone?: string,
   formats?: Partial<Formats>,
@@ -40,7 +48,7 @@ export default function getFormatters(
     date(
       value: number | string,
       locale: string,
-      formatName?: keyof typeof defaults.date
+      formatNameOrArgs?: FormatNameOrArgs<Intl.DateTimeFormatOptions>
     ) {
       const allFormats = {
         ...defaults.date,
@@ -50,8 +58,15 @@ export default function getFormatters(
       };
 
       const options: Intl.DateTimeFormatOptions = {timeZone};
-      if (formatName && formatName in allFormats) {
-        Object.assign(options, allFormats[formatName]);
+      if (formatNameOrArgs) {
+        if (typeof formatNameOrArgs === 'string') {
+          if (formatNameOrArgs in allFormats) {
+            Object.assign(options, (allFormats as any)[formatNameOrArgs]);
+          }
+        }
+        if (typeof formatNameOrArgs === 'object') {
+          Object.assign(options, formatNameOrArgs.parsedOptions);
+        }
       }
 
       // TODO: Use Intl.DateTimeFormat and caching?
@@ -61,7 +76,7 @@ export default function getFormatters(
     time(
       value: number | string,
       locale: string,
-      formatName?: keyof typeof defaults.time
+      formatNameOrArgs?: FormatNameOrArgs<Intl.DateTimeFormatOptions>
     ) {
       const allFormats = {
         ...defaults.time,
@@ -69,27 +84,48 @@ export default function getFormatters(
       };
 
       const options: Intl.DateTimeFormatOptions = {timeZone};
-      if (formatName && formatName in allFormats) {
-        Object.assign(options, allFormats[formatName]);
+      if (formatNameOrArgs) {
+        if (typeof formatNameOrArgs === 'string') {
+          if (formatNameOrArgs in allFormats) {
+            Object.assign(options, (allFormats as any)[formatNameOrArgs]);
+          }
+        }
+        if (typeof formatNameOrArgs === 'object') {
+          Object.assign(options, formatNameOrArgs.parsedOptions);
+        }
       }
 
       // TODO: Use Intl.DateTimeFormat and caching?
       return new Date(value).toLocaleTimeString(locale, options);
     },
 
-    numberFmt(value: number, locale: string, arg: string) {
+    numberFmt(
+      value: number,
+      locale: string,
+      formatNameOrArgs?: FormatNameOrArgs<Intl.NumberFormatOptions>
+    ) {
       const allFormats = {
         ...defaults.number,
         ...globalFormats?.number,
         ...formats?.number
       };
 
-      // Based on https://github.com/messageformat/messageformat/blob/main/packages/runtime/src/fmt/number.ts
-      const [formatName, currency] = (arg && arg.split(':')) || [];
+      const options: Intl.NumberFormatOptions = {};
+      if (formatNameOrArgs) {
+        if (typeof formatNameOrArgs === 'string') {
+          // Based on https://github.com/messageformat/messageformat/blob/main/packages/runtime/src/fmt/number.ts
+          const [formatName, currency] = formatNameOrArgs.split(':') || [];
 
-      const options: Intl.NumberFormatOptions = {currency};
-      if (formatName && formatName in allFormats) {
-        Object.assign(options, (allFormats as any)[formatName]);
+          if (formatNameOrArgs in allFormats) {
+            Object.assign(options, (allFormats as any)[formatName]);
+          }
+          if (currency) {
+            options.currency = currency;
+          }
+        }
+        if (typeof formatNameOrArgs === 'object') {
+          Object.assign(options, formatNameOrArgs.parsedOptions);
+        }
       }
 
       // TODO: Caching?
