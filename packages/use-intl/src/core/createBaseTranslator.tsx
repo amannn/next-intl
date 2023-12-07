@@ -280,8 +280,17 @@ function createBaseTranslatorImpl<
         getFormatters(timeZone, formats, globalFormats)
       );
 
-      const isRichText = evaluated.length > 1;
-      const formattedMessage = isRichText ? evaluated : evaluated.join('');
+      let formattedMessage;
+      if (evaluated.length === 0) {
+        // Empty
+        formattedMessage = '';
+      } else if (evaluated.length === 1) {
+        // Plain text
+        formattedMessage = evaluated[0];
+      } else {
+        // Rich text
+        formattedMessage = evaluated;
+      }
 
       if (formattedMessage == null) {
         throw new Error(
