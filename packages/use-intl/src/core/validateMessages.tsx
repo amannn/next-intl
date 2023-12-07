@@ -1,5 +1,6 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
 import IntlError, {IntlErrorCode} from './IntlError';
+import joinPath from './joinPath';
 
 function validateMessagesSegment(
   messages: AbstractIntlMessages,
@@ -17,7 +18,7 @@ function validateMessagesSegment(
       validateMessagesSegment(
         messageOrMessages,
         invalidKeyLabels,
-        [parentPath, key].filter((part) => part != null).join('.')
+        joinPath(parentPath, key)
       );
     }
   });
