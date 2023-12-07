@@ -1,14 +1,6 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
-// import IntlMessageFormat from 'intl-messageformat';
 import {evaluateAst} from 'icu-to-json';
 import {compile} from 'icu-to-json/compiler';
-import {
-  cloneElement,
-  isValidElement,
-  ReactElement,
-  ReactNode,
-  ReactNodeArray
-} from 'react';
+import {ReactElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
@@ -107,23 +99,6 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   messagesOrError: Messages | IntlError;
 };
 
-function getPlainMessage(candidate: string, values?: unknown) {
-  if (values) return undefined;
-
-  const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
-
-  // Placeholders can be in the message if there are default values,
-  // or if the user has forgotten to provide values. In the latter
-  // case we need to compile the message to receive an error.
-  const hasPlaceholders = /<|{/.test(unescapedMessage);
-
-  if (!hasPlaceholders) {
-    return unescapedMessage;
-  }
-
-  return undefined;
-}
-
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -171,7 +146,7 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
-  ): string | ReactElement | ReactNodeArray {
+  ): string | ReactElement {
     if (messagesOrError instanceof IntlError) {
       // We have already warned about this during render
       return getMessageFallback({
@@ -226,11 +201,6 @@ function createBaseTranslatorImpl<
         return getFallbackFromErrorAndNotify(key, code, errorMessage);
       }
 
-      // Hot path that avoids creating an `IntlMessageFormat` instance
-      // TODO: We can get rid of this with icu-to-json
-      const plainMessage = getPlainMessage(message as string, values);
-      if (plainMessage) return plainMessage;
-
       try {
         messageFormat = compile(message);
       } catch (error) {
@@ -245,10 +215,11 @@ function createBaseTranslatorImpl<
     }
 
     try {
+      const allValues = {...defaultTranslationValues, ...values};
       const evaluated = evaluateAst(
         messageFormat.json,
         locale,
-        {...defaultTranslationValues, ...values},
+        allValues,
         getFormatters(timeZone, formats, globalFormats)
       );
 
@@ -256,7 +227,7 @@ function createBaseTranslatorImpl<
       if (evaluated.length === 0) {
         // Empty
         formattedMessage = '';
-      } else if (evaluated.length === 1) {
+      } else if (evaluated.length === 1 && typeof evaluated[0] === 'string') {
         // Plain text
         formattedMessage = evaluated[0];
       } else {
@@ -264,6 +235,7 @@ function createBaseTranslatorImpl<
         formattedMessage = evaluated;
       }
 
+      // TODO: Add a test that verifies when we need this
       if (formattedMessage == null) {
         throw new Error(
           process.env.NODE_ENV !== 'production'
@@ -274,12 +246,10 @@ function createBaseTranslatorImpl<
         );
       }
 
-      // Limit the function signature to return strings or React elements
-      return isValidElement(formattedMessage) ||
-        // Arrays of React elements
-        Array.isArray(formattedMessage) ||
-        typeof formattedMessage === 'string'
-        ? formattedMessage
+      // TODO: Verify the correct way to return rich text
+      const isRichText = Array.isArray(formattedMessage);
+      return isRichText
+        ? (formattedMessage as unknown as ReactElement)
         : String(formattedMessage);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
