@@ -122,7 +122,7 @@ importers:
         version: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -189,7 +189,7 @@ importers:
         version: 14.0.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -229,7 +229,7 @@ importers:
         version: 4.24.4(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -275,7 +275,7 @@ importers:
         version: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -339,7 +339,7 @@ importers:
         version: 14.0.3(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -382,7 +382,7 @@ importers:
         version: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
       next-intl:
         specifier: latest
-        version: link:../../packages/next-intl
+        version: 3.3.1(next@14.0.3)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -514,7 +514,7 @@ importers:
         version: 0.6.3
       use-intl:
         specifier: ^3.3.0
-        version: link:../use-intl
+        version: 3.3.1(react@18.2.0)
     devDependencies:
       '@edge-runtime/vm':
         specifier: ^3.1.3
@@ -579,9 +579,6 @@ importers:
       '@formatjs/ecma402-abstract':
         specifier: ^1.11.4
         version: 1.11.4
-      '@messageformat/runtime':
-        specifier: ^3.0.1
-        version: 3.0.1
       icu-to-json:
         specifier: 0.0.20
         version: 0.0.20
@@ -19463,6 +19460,19 @@ packages:
       uuid: 8.3.2
     dev: false
 
+  /next-intl@3.3.1(next@14.0.3)(react@18.2.0):
+    resolution: {integrity: sha512-/NXy0txAZihat2dkuTrrLWgQUkuJTIu7up1R+xXZbCj4mJX+1OkoRnt/BhhszqcOW6CkmfYfkAG8q7LoI5cOUw==}
+    peerDependencies:
+      next: ^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@formatjs/intl-localematcher': 0.2.32
+      negotiator: 0.6.3
+      next: 14.0.3(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      use-intl: 3.3.1(react@18.2.0)
+    dev: false
+
   /next-mdx-remote@4.4.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-1BvyXaIou6xy3XoNF4yaMZUCb6vD2GTAa5ciOa6WoO+gAUTYsb1K4rI/HSC2ogAWLrb/7VSV52skz07vOzmqIQ==}
     engines: {node: '>=14', npm: '>=7'}
@@ -25510,6 +25520,16 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@formatjs/ecma402-abstract': 1.11.4
+      intl-messageformat: 9.3.18
+      react: 18.2.0
+    dev: false
+
+  /use-intl@3.3.1(react@18.2.0):
+    resolution: {integrity: sha512-BAFmkbUvtU/9AnAM5fzc/mqz+KIsWGNJ1bJ9bxYB5UHvlxU5qTamYgPa8ZO94V7tOpAFFSskL3sPKKlknZLXlA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@formatjs/ecma402-abstract': 1.17.2
       intl-messageformat: 9.3.18
       react: 18.2.0
     dev: false

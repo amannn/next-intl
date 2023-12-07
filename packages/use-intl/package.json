@@ -62,7 +62,6 @@
   ],
   "dependencies": {
     "@formatjs/ecma402-abstract": "^1.11.4",
-    "@messageformat/runtime": "^3.0.1",
     "icu-to-json": "0.0.20"
   },
   "peerDependencies": {
