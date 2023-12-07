@@ -1,10 +1,5 @@
 import Formats from './Formats';
 
-// TODO: Move to a scoped cache to avoid memory leaks?
-const numberFormats: Record<string, Intl.NumberFormat> = {};
-
-// TODO: time & date vs dateTime. Maybe we should just use dateTime?
-
 // Copied from intl-messageformat
 const defaults = {
   number: {
@@ -36,17 +31,6 @@ const defaults = {
   }
 } as const;
 
-function formatNumber(
-  locale: string | Array<string>,
-  opt: Intl.NumberFormatOptions
-) {
-  const key = String(locale) + JSON.stringify(opt);
-  if (!numberFormats[key]) {
-    numberFormats[key] = new Intl.NumberFormat(locale, opt);
-  }
-  return numberFormats[key];
-}
-
 export default function getFormatters(
   timeZone?: string,
   formats?: Partial<Formats>,
@@ -60,11 +44,12 @@ export default function getFormatters(
     ) {
       const allFormats = {
         ...defaults.date,
+        // TODO: time & date vs dateTime. Maybe we should separate
+        // time and date, because ICU does this too?
         ...globalFormats?.dateTime
       };
 
       const options: Intl.DateTimeFormatOptions = {timeZone};
-
       if (formatName && formatName in allFormats) {
         Object.assign(options, allFormats[formatName]);
       }
@@ -72,6 +57,7 @@ export default function getFormatters(
       // TODO: Use Intl.DateTimeFormat and caching?
       return new Date(value).toLocaleDateString(locale, options);
     },
+
     time(
       value: number | string,
       locale: string,
@@ -83,7 +69,6 @@ export default function getFormatters(
       };
 
       const options: Intl.DateTimeFormatOptions = {timeZone};
-
       if (formatName && formatName in allFormats) {
         Object.assign(options, allFormats[formatName]);
       }
@@ -91,12 +76,8 @@ export default function getFormatters(
       // TODO: Use Intl.DateTimeFormat and caching?
       return new Date(value).toLocaleTimeString(locale, options);
     },
-    numberFmt(
-      value: number,
-      locale: string,
-      arg: string,
-      defaultCurrency: string
-    ) {
+
+    numberFmt(value: number, locale: string, arg: string) {
       const allFormats = {
         ...defaults.number,
         ...globalFormats?.number,
@@ -107,9 +88,8 @@ export default function getFormatters(
       const [formatName, currency] = (arg && arg.split(':')) || [];
 
       const options: Intl.NumberFormatOptions = {currency};
-
       if (formatName && formatName in allFormats) {
-        Object.assign(options, allFormats[formatName]);
+        Object.assign(options, (allFormats as any)[formatName]);
       }
 
       // TODO: Caching?
