@@ -2,7 +2,8 @@ import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
   useParams,
-  redirect as nextRedirect
+  redirect as nextRedirect,
+  RedirectType
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
@@ -12,11 +13,15 @@ import createSharedPathnamesNavigationServer from '../../src/navigation/react-se
 import BaseLink from '../../src/navigation/shared/BaseLink';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
 
-vi.mock('next/navigation', () => ({
-  useParams: vi.fn(() => ({locale: 'en'})),
-  usePathname: vi.fn(() => '/'),
-  redirect: vi.fn()
-}));
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation');
+  return {
+    ...actual,
+    useParams: vi.fn(() => ({locale: 'en'})),
+    usePathname: vi.fn(() => '/'),
+    redirect: vi.fn()
+  };
+});
 vi.mock('next-intl/config', () => ({
   default: async () =>
     ((await vi.importActual('../../src/server')) as any).getRequestConfig({
@@ -166,6 +171,15 @@ describe.each([
           expect(nextRedirect).toHaveBeenLastCalledWith(
             '/en?foo=bar&bar=1&bar=2'
           );
+        });
+
+        it('can supply a type', () => {
+          function Test() {
+            redirect('/', RedirectType.push);
+            return null;
+          }
+          render(<Test />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/en', 'push');
         });
       });
     });
