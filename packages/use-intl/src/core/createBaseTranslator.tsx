@@ -1,6 +1,6 @@
 import {evaluateAst} from 'icu-to-json';
-import {compile} from 'icu-to-json/compiler';
-import {ReactElement} from 'react';
+import {compileToJson} from 'icu-to-json/compiler';
+import React, {Fragment, ReactElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
@@ -146,7 +146,7 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
-  ): string | ReactElement | Array<ReactElement> {
+  ): string | ReactElement {
     if (messagesOrError instanceof IntlError) {
       // We have already warned about this during render
       return getMessageFallback({
@@ -202,7 +202,7 @@ function createBaseTranslatorImpl<
       }
 
       try {
-        messageFormat = compile(message);
+        messageFormat = compileToJson(message);
       } catch (error) {
         return getFallbackFromErrorAndNotify(
           key,
@@ -219,7 +219,7 @@ function createBaseTranslatorImpl<
       // TODO: The return type seems to be a bit off, not sure if
       // this should be handled in `icu-to-json` or here.
       const evaluated = evaluateAst(
-        messageFormat.json,
+        messageFormat,
         locale,
         allValues,
         getFormatters(timeZone, formats, globalFormats)
@@ -234,7 +234,10 @@ function createBaseTranslatorImpl<
         formattedMessage = evaluated[0];
       } else {
         // Rich text
-        formattedMessage = evaluated;
+        formattedMessage = evaluated.map((part, index) => (
+          // @ts-expect-error TODO
+          <Fragment key={index}>{part}</Fragment>
+        ));
       }
 
       // TODO: Add a test that verifies when we need this
@@ -249,9 +252,7 @@ function createBaseTranslatorImpl<
       }
 
       // @ts-expect-error Verify return type (see comment above)
-      return Array.isArray(formattedMessage)
-        ? formattedMessage
-        : String(formattedMessage);
+      return formattedMessage;
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,

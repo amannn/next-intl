@@ -1,9 +1,5 @@
-import type {compile} from 'icu-to-json/compiler';
+import type {CompiledAst} from 'icu-to-json';
 
-type MessageFormat = Omit<
-  ReturnType<typeof compile>,
-  // TODO: Do we need the args?
-  'args'
->;
+type MessageFormat = CompiledAst;
 
 export default MessageFormat;
