@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.3.2 (2023-12-11)
+
+
+### Bug Fixes
+
+* Fix types for passing a custom `type` to `redirect` ([#714](https://github.com/amannn/next-intl/issues/714)) ([db65cb7](https://github.com/amannn/next-intl/commit/db65cb7737a605bd8f2c69bf1b28cd076bf40fcf)), closes [#709](https://github.com/amannn/next-intl/issues/709)
+
+
+
+
+
 ## 3.3.1 (2023-12-07)
 
 
