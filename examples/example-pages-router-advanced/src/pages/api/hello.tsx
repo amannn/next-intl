@@ -15,7 +15,7 @@ export default async function handler(
   const locale = resolveLocale(req);
 
   // Fetch messages based on the locale.
-  const messages = await import(`../../../messages/${locale}.json`);
+  const messages = (await import(`../../../messages/${locale}.json`)).default;
 
   // This creates the same function that is returned by `useTranslations`.
   // Since there's no provider, you can pass all the properties you'd
