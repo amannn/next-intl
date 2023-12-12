@@ -156,6 +156,13 @@ export default createMiddleware({
 });
 ```
 
+<details>
+<summary>How can I redirect unprefixed pathnames?</summary>
+
+If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](#matcher-no-prefix) too.
+
+</details>
+
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
 If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly.
@@ -310,9 +317,14 @@ This enables:
 
 #### Pathnames without a locale prefix [#matcher-no-prefix]
 
-If you pick a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always), you need a more flexible matcher since you have to match pathnames without a locale prefix as well (e.g. `/about`).
+There are two use cases where you might want to match pathnames without a locale prefix:
 
-A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically are static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
+1. You're using a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always)
+2. You want to implement redirects that add a locale for unprefixed pathnames (e.g. `/about` → `/en/about`)
+
+For these cases, the middleware should run on requests for pathnames without a locale prefix as well.
+
+A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically indicate static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
 ```tsx filename="middleware.ts"
 export const config = {
@@ -323,7 +335,7 @@ export const config = {
     // - … if they start with `/api`, `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
     '/((?!api|_next|_vercel|.*\\..*).*)',
-    // Match all pathnames within `/users`, optionally with a locale prefix
+    // However, match all pathnames within `/users`, optionally with a locale prefix
     '/([\\w-]+)?/users/(.+)'
   ]
 };
