@@ -115,11 +115,18 @@ export default function getAlternateLinksHeaderValue<
 
   // Add x-default entry
   if (!config.domains) {
-    const url = new URL(
-      getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),
-      normalizedUrl
-    );
-    links.push(getAlternateEntry(url, 'x-default'));
+    const { alternateLinks } = config;
+    if (
+      typeof alternateLinks === 'boolean'
+        ? alternateLinks === true
+        : alternateLinks.enabled === true && alternateLinks.includeXDefault
+    ) {
+      const url = new URL(
+        getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),
+        normalizedUrl
+      );
+      links.push(getAlternateEntry(url, 'x-default'));
+    }
   } else {
     // For domain-based routing there is no reasonable x-default
   }

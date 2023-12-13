@@ -265,7 +265,10 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (
       configWithDefaults.localePrefix !== 'never' &&
-      configWithDefaults.alternateLinks &&
+      (typeof configWithDefaults.alternateLinks === 'boolean'
+        ? configWithDefaults.alternateLinks
+        : configWithDefaults.alternateLinks.enabled
+      ) &&
       configWithDefaults.locales.length > 1
     ) {
       response.headers.set(

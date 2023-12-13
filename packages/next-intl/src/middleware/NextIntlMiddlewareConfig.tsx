@@ -23,13 +23,21 @@ export type DomainConfig<Locales extends AllLocales> = Omit<
   locales?: RoutingBaseConfig<Array<Locales[number]>>['locales'];
 };
 
+type AlternateLinksConfig =
+  | {
+      enabled: true;
+      includeXDefault: boolean;
+    }
+  | { enabled: false }
+  | boolean;
+
 type MiddlewareConfig<Locales extends AllLocales> =
   RoutingBaseConfig<Locales> & {
     /** Can be used to change the locale handling per domain. */
     domains?: Array<DomainConfig<Locales>>;
 
     /** Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http */
-    alternateLinks?: boolean;
+    alternateLinks?: AlternateLinksConfig;
 
     /** By setting this to `false`, the cookie as well as the `accept-language` header will no longer be used for locale detection. */
     localeDetection?: boolean;
@@ -44,7 +52,7 @@ type MiddlewareConfig<Locales extends AllLocales> =
 
 export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =
   MiddlewareConfig<Locales> & {
-    alternateLinks: boolean;
+    alternateLinks: AlternateLinksConfig;
     localePrefix: LocalePrefix;
     localeDetection: boolean;
   };
