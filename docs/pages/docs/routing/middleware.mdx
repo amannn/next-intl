@@ -244,6 +244,34 @@ export default createMiddleware({
 });
 ```
 
+<details>
+<summary>Can I customize the alternate links?</summary>
+
+The alternate links can either be turned off or on, depending on the `alternateLinks` option.
+
+If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+import LinkHeader from 'http-link-header';
+import {NextRequest} from 'next/server';
+
+const handleI18nRouting = createIntlMiddleware(/* ... */);
+
+export default async function middleware(request: NextRequest) {
+  const response = handleI18nRouting(request);
+
+  // Example: Remove the `x-default` entry
+  const link = LinkHeader.parse(response.headers.get('link'));
+  link.refs = link.refs.filter((entry) => entry.hreflang !== 'x-default');
+  response.headers.set('link', link.toString());
+
+  return response;
+}
+```
+
+</details>
+
 ### Localizing pathnames
 
 Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
@@ -381,7 +409,7 @@ import {NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
   // Step 1: Use the incoming request (example)
-  const defaultLocale = request.headers.get('x-default-locale') || 'en';
+  const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
 
   // Step 2: Create and call the next-intl middleware (example)
   const handleI18nRouting = createIntlMiddleware({
@@ -391,7 +419,7 @@ export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
 
   // Step 3: Alter the response (example)
-  response.headers.set('x-default-locale', defaultLocale);
+  response.headers.set('x-your-custom-locale', defaultLocale);
 
   return response;
 }
