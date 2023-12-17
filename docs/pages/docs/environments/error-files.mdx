@@ -78,14 +78,21 @@ export default function RootLayout({children}) {
 For the 404 page to render, we need to call the `notFound` function within `[locale]/layout.tsx` when we detect an incoming `locale` param that isn't a valid locale.
 
 ```tsx filename="app/[locale]/layout.tsx"
+import {PropsWithChildren} from 'react';
 import {useLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 
-const locales = ['en', 'de'];
+const locales = ['en', 'de'] as const;
 
-export default function LocaleLayout({children, params}) {
+type Props = PropsWithChildren<{
+  params: {
+    locale: (typeof locales)[number];
+  };
+}>;
+
+export default function LocaleLayout({children, params: {locale}}: Props) {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!locales.includes(locale)) notFound();
 
   return (
     <html lang={locale}>
