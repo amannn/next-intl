@@ -105,7 +105,7 @@ it('sets the `path` for the cookie', async ({page}) => {
 
   // It's important that the cookie is set on the root path
   // https://www.rfc-editor.org/rfc/rfc6265#section-4.1.2.4
-  assertLocaleCookieValue(page, 'de', {path: '/'});
+  await assertLocaleCookieValue(page, 'de', {path: '/'});
 });
 
 it('remembers the last locale', async ({page}) => {
@@ -528,7 +528,7 @@ it('replaces invalid cookie locales', async ({page}) => {
     cookie: 'NEXT_LOCALE=zh'
   });
   await page.goto('/');
-  assertLocaleCookieValue(page, 'en');
+  await assertLocaleCookieValue(page, 'en');
 });
 
 it('can localize route handlers', async ({request}) => {
