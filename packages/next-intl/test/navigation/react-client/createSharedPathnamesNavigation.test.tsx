@@ -57,8 +57,7 @@ describe("localePrefix: 'as-needed'", () => {
       it('passes through unknown options to the Next.js router', () => {
         function Component() {
           const router = useRouter();
-          // @ts-expect-error -- Wait for https://github.com/vercel/next.js/pull/59001
-          router.push('/about', {locale: 'de', scroll: false});
+          router.push('/about', {locale: 'de', scroll: true});
           return null;
         }
         render(<Component />);
