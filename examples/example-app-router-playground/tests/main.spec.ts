@@ -1,15 +1,20 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
 
-async function assertLocaleCookieValue(page: Page, value: string) {
-  await expect(async () => {
-    const cookie = (await page.context().cookies()).find(
-      (cur) => cur.name === 'NEXT_LOCALE'
-    );
-    expect(cookie).toMatchObject({
-      name: 'NEXT_LOCALE',
-      value
-    });
-  }).toPass();
+it.describe.configure({mode: 'parallel'});
+
+async function assertLocaleCookieValue(
+  page: Page,
+  value: string,
+  otherProps?: Record<string, unknown>
+) {
+  const cookie = (await page.context().cookies()).find(
+    (cur) => cur.name === 'NEXT_LOCALE'
+  );
+  expect(cookie).toMatchObject({
+    name: 'NEXT_LOCALE',
+    value,
+    ...otherProps
+  });
 }
 
 function getPageLoadTracker(context: BrowserContext) {
@@ -93,6 +98,14 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   await page.goto('/nested');
   await expect(page).toHaveURL('/de/verschachtelt');
   page.getByRole('heading', {name: 'Verschachtelt'});
+});
+
+it('sets the `path` for the cookie', async ({page}) => {
+  await page.goto('/de/client');
+
+  // It's important that the cookie is set on the root path
+  // https://www.rfc-editor.org/rfc/rfc6265#section-4.1.2.4
+  await assertLocaleCookieValue(page, 'de', {path: '/'});
 });
 
 it('remembers the last locale', async ({page}) => {
@@ -515,7 +528,7 @@ it('replaces invalid cookie locales', async ({page}) => {
     cookie: 'NEXT_LOCALE=zh'
   });
   await page.goto('/');
-  assertLocaleCookieValue(page, 'en');
+  await assertLocaleCookieValue(page, 'en');
 });
 
 it('can localize route handlers', async ({request}) => {
