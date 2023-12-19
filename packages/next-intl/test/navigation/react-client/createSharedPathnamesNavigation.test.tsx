@@ -57,7 +57,7 @@ describe("localePrefix: 'as-needed'", () => {
       it('passes through unknown options to the Next.js router', () => {
         function Component() {
           const router = useRouter();
-          router.push('/about', {locale: 'de', scroll: true});
+          router.push('/about', {locale: 'de', scroll: false});
           return null;
         }
         render(<Component />);
