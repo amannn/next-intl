@@ -117,14 +117,21 @@ export const config = {
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
+import {PropsWithChildren} from 'react';
 import {notFound} from 'next/navigation';
 
 // Can be imported from a shared config
-const locales = ['en', 'de'];
+const locales = ['en', 'de'] as const;
 
-export default function LocaleLayout({children, params: {locale}}) {
+type Props = PropsWithChildren<{
+  params: {
+    locale: (typeof locales)[number];
+  };
+}>;
+
+export default function LocaleLayout({children, params: {locale}}: Props) {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!locales.includes(locale)) notFound();
 
   return (
     <html lang={locale}>
@@ -202,16 +209,23 @@ export function generateStaticParams() {
 `next-intl` provides a temporary API that can be used to distribute the locale that is received via `params` in a layout or page for usage in all Server Components that are rendered as part of the request.
 
 ```tsx filename="app/[locale]/layout.tsx"
+import {PropsWithChildren} from 'react';
 import {unstable_setRequestLocale} from 'next-intl/server';
 
-const locales = ['en', 'de'];
+const locales = ['en', 'de'] as const;
+
+type Props = PropsWithChildren<{
+  params: {
+    locale: (typeof locales)[number];
+  };
+}>;
 
 export default async function LocaleLayout({
   children,
   params: {locale}
-}) {
+}: Props) {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!locales.includes(locale)) notFound();
 
   unstable_setRequestLocale(locale);
 
