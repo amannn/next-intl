@@ -2,7 +2,7 @@ import {headers} from 'next/headers';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
 
-const getLocaleFromHeader = cache(() => {
+function getLocaleFromHeaderImpl() {
   let locale;
 
   try {
@@ -28,13 +28,15 @@ const getLocaleFromHeader = cache(() => {
   }
 
   return locale;
-});
+}
+const getLocaleFromHeader = cache(getLocaleFromHeaderImpl);
 
 // Workaround until `createServerContext` is available
-const getCache = cache(() => {
+function getCacheImpl() {
   const value: {locale?: string} = {locale: undefined};
   return value;
-});
+}
+const getCache = cache(getCacheImpl);
 
 export function setRequestLocale(locale: string) {
   getCache().locale = locale;

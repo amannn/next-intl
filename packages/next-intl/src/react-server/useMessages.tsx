@@ -1,12 +1,11 @@
 import type {useMessages as useMessagesType} from 'use-intl';
-import getMessages from '../server/react-server/getMessages';
-import useHook from './useHook';
-import useLocale from './useLocale';
+import {getMessagesFromConfig} from '../server/react-server/getMessages';
+import useConfig from './useConfig';
 
 export default function useMessages(
   // eslint-disable-next-line no-empty-pattern
   ...[]: Parameters<typeof useMessagesType>
 ): ReturnType<typeof useMessagesType> {
-  const locale = useLocale();
-  return useHook('useMessages', getMessages({locale}));
+  const config = useConfig('useMessages');
+  return getMessagesFromConfig(config);
 }

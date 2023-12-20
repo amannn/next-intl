@@ -10,20 +10,22 @@ import {
   createTranslator,
   MarkupTranslationValues
 } from 'use-intl/core';
-import getConfig from '../server/react-server/getConfig';
 
-const getMessageFormatCache = cache(() => new Map());
+function getMessageFormatCacheImpl() {
+  return new Map();
+}
+const getMessageFormatCache = cache(getMessageFormatCacheImpl);
 
-async function getTranslatorImpl<
+function getTranslatorImpl<
   NestedKey extends NamespaceKeys<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
 >(
-  locale: string,
+  config: Parameters<typeof createTranslator>[0],
   namespace?: NestedKey
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-Promise<{
+{
   // Default invocation
   <
     TargetKey extends MessageKeys<
@@ -101,13 +103,11 @@ Promise<{
   >(
     key: TargetKey
   ): any;
-}> {
-  const config = await getConfig(locale);
+} {
   return createTranslator({
     ...config,
     messageFormatCache: getMessageFormatCache(),
-    namespace,
-    messages: config.messages
+    namespace
   });
 }
 

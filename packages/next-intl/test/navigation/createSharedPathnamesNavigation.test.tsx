@@ -28,12 +28,7 @@ vi.mock('next-intl/config', () => ({
       locale: 'en'
     })
 }));
-vi.mock('react', async (importOriginal) => ({
-  ...((await importOriginal()) as typeof import('react')),
-  cache(fn: (...args: Array<unknown>) => unknown) {
-    return (...args: Array<unknown>) => fn(...args);
-  }
-}));
+vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
   default({locale, ...rest}: any) {
