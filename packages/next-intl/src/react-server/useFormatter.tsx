@@ -1,5 +1,6 @@
 import {cache} from 'react';
-import {createFormatter, type useFormatter as useFormatterType} from 'use-intl';
+import {type useFormatter as useFormatterType} from 'use-intl';
+import {createFormatter} from 'use-intl/core';
 import useConfig from './useConfig';
 
 const createFormatterCached = cache(createFormatter);
