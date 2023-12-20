@@ -632,3 +632,5 @@ To recover from this error, please make sure that:
 3. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
 4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/getting-started/app-router#applocalelayouttsx) before it's used by any APIs from `next-intl`.
 5. To implement static rendering properly, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl`.
+
+Note that `next-intl` will print this warning only during development and will invoke the `notFound()` function to abort the render.

@@ -1,4 +1,5 @@
 import {headers} from 'next/headers';
+import {notFound} from 'next/navigation';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
 
@@ -22,9 +23,12 @@ function getLocaleFromHeaderImpl() {
   }
 
   if (!locale) {
-    throw new Error(
-      `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale`
-    );
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        `Unable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.`
+      );
+    }
+    notFound();
   }
 
   return locale;

@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import {Inter} from 'next/font/google';
-import {notFound} from 'next/navigation';
 import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from 'components/Navigation';
@@ -31,9 +30,6 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
   // Enable static rendering
   unstable_setRequestLocale(locale);
 

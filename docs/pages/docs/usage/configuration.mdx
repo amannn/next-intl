@@ -11,15 +11,23 @@ Configuration properties that you use across your Next.js app can be set globall
 Depending on if you handle [internationalization in Client- or Server Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
 
 ### `i18n.ts`
-  
+
 `i18n.ts` can be used to provide configuration for **Server Components**.
 
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`../messages/${locale}.json`)).default
-}));
+// Can be imported from a shared config
+const locales = ['en', 'de'];
+
+export default getRequestConfig(async ({locale}) => {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  return {
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
 ```
 
 The configuration object is created once for each request by internally using React's [`cache`](https://nextjs.org/docs/app/building-your-application/data-fetching/caching#react-cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
@@ -29,16 +37,11 @@ The configuration object is created once for each request by internally using Re
 `NextIntlClientProvider` can be used to provide configuration for **Client Components**.
 
 ```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
-import {NextIntlClientProvider} from 'next-intl';
+import {NextIntlClientProvider, useMessages} from 'next-intl';
 import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
-  let messages;
-  try {
-    messages = (await import(`../../messages/${locale}.json`)).default;
-  } catch (error) {
-    notFound();
-  }
+export default function LocaleLayout({children, params: {locale}}) {
+  const messages = useMessages();
 
   return (
     <html lang={locale}>
@@ -52,8 +55,12 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
+`NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone` when the component is rendered from a Server Component. Other configuration like `messages` and `formats` can be provided as necessary.
+
 <Callout>
-  `NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone` when the component is rendered from a Server Component. Other configuration like `messages` and `formats` can be provided as necessary.
+  Before passing all messages to the client side, learn more about the options
+  you have to [use internationalization in Client
+  Components](/docs/environments/server-client-components).
 </Callout>
 
 ## Messages
@@ -74,9 +81,13 @@ The most crucial aspect of internationalization is providing labels based on the
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`../messages/${locale}.json`)).default
-}));
+export default getRequestConfig(async ({locale}) => {
+  // ...
+
+  return {
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
 ```
 
 </Tab>
@@ -156,17 +167,20 @@ Specifying a time zone affects the rendering of dates and times. By default, the
 
 <Tabs items={['i18n.ts', 'Provider']}>
 <Tab>
-  
+
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  // The time zone can either be statically defined, read from the
-  // user profile if you store such a setting, or based on dynamic 
-  // request information like the locale or headers.
-  timeZone: 'Europe/Vienna',
+export default getRequestConfig(async ({locale}) => {
   // ...
-}));
+
+  return {
+    // The time zone can either be statically defined, read from the
+    // user profile if you store such a setting, or based on dynamic 
+    // request information like the locale or headers.
+    timeZone: 'Europe/Vienna'
+  };
+});
 ```
 
 </Tab>
@@ -187,7 +201,10 @@ const timeZone = 'Europe/Vienna';
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 <Callout>
-The time zone in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component. For all other cases, you can specify the value explicitly.
+  The time zone in Client Components is automatically inherited from the server
+  side if you wrap the relevant components in a `NextIntlClientProvider` that is
+  rendered by a Server Component. For all other cases, you can specify the value
+  explicitly.
 </Callout>
 
 ## Now value [#now]
@@ -202,12 +219,15 @@ If you prefer to override the default, you can provide an explicit value for `no
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  // This is the default, a single date instance will be used 
-  // by all Server Components to ensure consistency
-  now: new Date(), 
+export default getRequestConfig(async ({locale}) => {
   // ...
-}));
+
+  return {
+    // This is the default, a single date instance will be used 
+    // by all Server Components to ensure consistency
+    now: new Date()
+  };
+});
 ```
 
 </Tab>
@@ -216,7 +236,7 @@ export default getRequestConfig(async ({locale}) => ({
 ```tsx
 const now = new Date('2020-11-20T10:36:01.516Z');
 
-<NextIntlClientProvider now={now}>...</NextIntlClientProvider>
+<NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
 
 </Tab>
@@ -224,16 +244,11 @@ const now = new Date('2020-11-20T10:36:01.516Z');
 
 **Tip:** For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
 
-<Callout type="warning">
-  **Important:** When you cache the rendered markup (e.g. when using [static
-  rendering](https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering#static-rendering-default)),
-  the formatted value will become stale. Therefore either regenerate these pages
-  regularly or use the `updateInterval` option of
-  [`useNow`](/docs/usage/dates-times#usenow) on the client side.
-</Callout>
-
 <Callout>
-Similarly to the `timeZone`, the `now` value in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
+  Similarly to the `timeZone`, the `now` value in Client Components is
+  automatically inherited from the server side if you wrap the relevant
+  components in a `NextIntlClientProvider` that is rendered by a Server
+  Component.
 </Callout>
 
 ## Formats
@@ -246,29 +261,32 @@ To achieve consistent date, time, number and list formatting, you can define a s
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  formats: {
-    dateTime: {
-      short: {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      }
-    },
-    number: {
-      precise: {
-        maximumFractionDigits: 5
-      }
-    },
-    list: {
-      enumeration: {
-        style: 'long',
-        type: 'conjunction'
+export default getRequestConfig(async ({locale}) => {
+  // ...
+
+  return {
+    formats: {
+      dateTime: {
+        short: {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }
+      },
+      number: {
+        precise: {
+          maximumFractionDigits: 5
+        }
+      },
+      list: {
+        enumeration: {
+          style: 'long',
+          type: 'conjunction'
+        }
       }
     }
-  },
-  // ...
-}));
+  };
+});
 ```
 
 </Tab>
@@ -348,13 +366,16 @@ To achieve consistent usage of translation values and reduce redundancy, you can
 ```tsx filename="i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  defaultTranslationValues: {
-    important: (chunks) => <b>{chunks}</b>,
-    value: 123
-  }
+export default getRequestConfig(async ({locale}) => {
   // ...
-}));
+
+  return {
+    defaultTranslationValues: {
+      important: (chunks) => <b>{chunks}</b>,
+      value: 123
+    }
+  };
+});
 ```
 
 </Tab>
@@ -389,28 +410,31 @@ This behavior can be customized with the `onError` and `getMessageFallback` conf
 import {getRequestConfig} from 'next-intl/server';
 import {IntlErrorCode} from 'next-intl';
 
-export default getRequestConfig(async ({locale}) => ({
-  onError(error) {
-    if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-      // Missing translations are expected and should only log an error
-      console.error(error);
-    } else {
-      // Other errors indicate a bug in the app and should be reported
-      reportToErrorTracking(error);
-    }
-  },
-  getMessageFallback({namespace, key, error}) {
-    const path = [namespace, key].filter((part) => part != null).join('.');
-
-    if (error.code === IntlErrorCode.MISSING_MESSAGE) {
-      return path + ' is not yet translated';
-    } else {
-      return 'Dear developer, please fix this message: ' + path;
-    }
-  },
+export default getRequestConfig(async ({locale}) => {
   // ...
-}));
-```
+
+  return {
+    onError(error) {
+      if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+        // Missing translations are expected and should only log an error
+        console.error(error);
+      } else {
+        // Other errors indicate a bug in the app and should be reported
+        reportToErrorTracking(error);
+      }
+    },
+    getMessageFallback({namespace, key, error}) {
+      const path = [namespace, key].filter((part) => part != null).join('.');
+
+      if (error.code === IntlErrorCode.MISSING_MESSAGE) {
+        return path + ' is not yet translated';
+      } else {
+        return 'Dear developer, please fix this message: ' + path;
+      }
+    }
+  };
+});
+````
 
 </Tab>
 <Tab>

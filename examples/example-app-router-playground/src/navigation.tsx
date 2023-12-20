@@ -3,6 +3,8 @@ import {
   Pathnames
 } from 'next-intl/navigation';
 
+export const defaultLocale = 'en';
+
 export const locales = ['en', 'de', 'es'] as const;
 
 export const localePrefix = 'as-needed';
