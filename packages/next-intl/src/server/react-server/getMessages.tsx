@@ -3,7 +3,7 @@ import type {AbstractIntlMessages} from 'use-intl';
 import getConfig from './getConfig';
 import resolveLocaleArg from './resolveLocaleArg';
 
-const getMessagesImpl = cache(async (locale: string) => {
+async function getMessagesCachedImpl(locale: string) {
   const config = await getConfig(locale);
 
   if (!config.messages) {
@@ -13,11 +13,12 @@ const getMessagesImpl = cache(async (locale: string) => {
   }
 
   return config.messages;
-});
+}
+const getMessagesCached = cache(getMessagesCachedImpl);
 
 export default async function getMessages(opts?: {
   locale?: string;
 }): Promise<AbstractIntlMessages> {
   const locale = await resolveLocaleArg(opts);
-  return getMessagesImpl(locale);
+  return getMessagesCached(locale);
 }

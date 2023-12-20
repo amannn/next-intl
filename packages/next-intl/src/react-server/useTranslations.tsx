@@ -1,5 +1,6 @@
 import type {useTranslations as useTranslationsType} from 'use-intl';
-import getBaseTranslator from './getBaseTranslator';
+import getConfig from '../server/react-server/getConfig';
+import getBaseTranslator from './getTranslator';
 import useHook from './useHook';
 import useLocale from './useLocale';
 
@@ -7,11 +8,6 @@ export default function useTranslations(
   ...[namespace]: Parameters<typeof useTranslationsType>
 ): ReturnType<typeof useTranslationsType> {
   const locale = useLocale();
-
-  const result = useHook(
-    'useTranslations',
-    getBaseTranslator(locale, namespace)
-  );
-
-  return result;
+  const config = useHook('useTranslations', getConfig(locale));
+  return getBaseTranslator(config, namespace);
 }
