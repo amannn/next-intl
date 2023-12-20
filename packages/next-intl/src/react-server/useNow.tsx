@@ -1,7 +1,5 @@
 import type {useNow as useNowType} from 'use-intl';
-import getNow from '../server/react-server/getNow';
-import useHook from './useHook';
-import useLocale from './useLocale';
+import useConfig from './useConfig';
 
 export default function useNow(
   ...[options]: Parameters<typeof useNowType>
@@ -12,6 +10,6 @@ export default function useNow(
     );
   }
 
-  const locale = useLocale();
-  return useHook('useNow', getNow({locale}));
+  const config = useConfig('useNow');
+  return config.now;
 }

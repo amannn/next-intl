@@ -1,12 +1,13 @@
-import type {useFormatter as useFormatterType} from 'use-intl';
-import getFormatter from '../server/react-server/getFormatter';
-import useHook from './useHook';
-import useLocale from './useLocale';
+import {cache} from 'react';
+import {createFormatter, type useFormatter as useFormatterType} from 'use-intl';
+import useConfig from './useConfig';
+
+const createFormatterCached = cache(createFormatter);
 
 export default function useFormatter(
   // eslint-disable-next-line no-empty-pattern
   ...[]: Parameters<typeof useFormatterType>
 ): ReturnType<typeof useFormatterType> {
-  const locale = useLocale();
-  return useHook('useFormatter', getFormatter({locale}));
+  const config = useConfig('useFormatter');
+  return createFormatterCached(config);
 }

@@ -1,16 +1,7 @@
-import React, {Suspense, cache} from 'react';
-import {ReactDOMServerReadableStream} from 'react-dom/server';
-// @ts-expect-error -- Not available in types
-import {renderToReadableStream as _renderToReadableStream} from 'react-dom/server.browser';
+import React, {cache} from 'react';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
 import {createTranslator, useTranslations} from '../../src/react-server';
-
-global.ReadableStream =
-  require('web-streams-polyfill/ponyfill/es6').ReadableStream;
-global.TextEncoder = require('util').TextEncoder;
-
-const renderToReadableStream: typeof import('react-dom/server').renderToReadableStream =
-  _renderToReadableStream;
+import {renderToStream} from './utils';
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({
@@ -42,18 +33,6 @@ vi.mock('use-intl/core', async (importActual) => {
     createTranslator: vi.fn(actualCreateTranslator)
   };
 });
-
-async function readStream(stream: ReactDOMServerReadableStream) {
-  const reader = stream.getReader();
-  let result = '';
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const {done, value} = await reader.read();
-    if (done) break;
-    result += Buffer.from(value).toString('utf8');
-  }
-  return result;
-}
 
 describe('performance', () => {
   let attemptedRenders: Record<string, number>;
@@ -88,13 +67,7 @@ describe('performance', () => {
       );
     }
 
-    await readStream(
-      await renderToReadableStream(
-        <Suspense>
-          <A />
-        </Suspense>
-      )
-    );
+    await renderToStream(<A />);
 
     expect({attemptedRenders, finishedRenders}).toMatchInlineSnapshot(`
       {
@@ -128,13 +101,7 @@ describe('performance', () => {
       return t('title');
     }
 
-    await readStream(
-      await renderToReadableStream(
-        <Suspense>
-          <A />
-        </Suspense>
-      )
-    );
+    await renderToStream(<A />);
 
     expect({attemptedRenders, finishedRenders}).toMatchInlineSnapshot(`
       {
@@ -191,15 +158,13 @@ describe('performance', () => {
       );
     }
 
-    await readStream(
-      await renderToReadableStream(
-        <Suspense>
-          <A />
-          <B />
-          <C />
-          <D />
-        </Suspense>
-      )
+    await renderToStream(
+      <>
+        <A />
+        <B />
+        <C />
+        <D />
+      </>
     );
 
     expect({attemptedRenders, finishedRenders}).toMatchInlineSnapshot(`
@@ -231,13 +196,7 @@ describe('performance', () => {
       useTranslations('CreateTranslatorInstancesTest-2');
       return null;
     }
-    await readStream(
-      await renderToReadableStream(
-        <>
-          <Component />
-        </>
-      )
-    );
+    await renderToStream(<Component />);
 
     function getCalls(namespace: string) {
       return vi
