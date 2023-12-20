@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.3.3 (2023-12-20)
+
+
+### Bug Fixes
+
+* Improve performance when calling hooks like `useTranslations` in Server Components by making sure we only suspend when i18n config is initially loaded and never for subsequent calls ([#741](https://github.com/amannn/next-intl/issues/741)) ([4185a72](https://github.com/amannn/next-intl/commit/4185a72525581dcd04f2646af00a0e330f8e02e0))
+
+
+
+
+
 ## 3.3.2 (2023-12-11)
 
 
