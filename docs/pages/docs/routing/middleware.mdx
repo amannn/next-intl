@@ -441,9 +441,9 @@ import createIntlMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
-  const [, locale, pathname] = request.nextUrl.pathname.split('/');
+  const [, locale, ...segments] = request.nextUrl.pathname.split('/');
 
-  if (pathname === 'profile') {
+  if (locale != null && segments.join('/') === 'profile') {
     const usesNewProfile =
       (request.cookies.get('NEW_PROFILE')?.value || 'false') === 'true';
 
@@ -464,6 +464,8 @@ export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
+
+Note that if you use a [`localePrefix`](#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too.
 
 ### Example: Integrating with Clerk
 
