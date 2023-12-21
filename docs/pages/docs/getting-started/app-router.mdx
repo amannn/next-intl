@@ -232,7 +232,7 @@ export default function IndexPage({params: {locale}}) {
 
 **Keep in mind that:**
 
-1. The locale that you pass to `unstable_setRequestLocale` should be validated (either immediately after receiving it via `params` or in [`i18n.ts`](/docs/usage/configuration#i18nts)). Otherwise, you'll get an error when trying to prerender the page.
+1. The locale that you pass to `unstable_setRequestLocale` should be validated (e.g. in [`i18n.ts`](/docs/usage/configuration#i18nts)).
 
 2. You need to call this function in every page and every layout that you intend to enable static rendering for since Next.js can render layouts and pages independently.
 
