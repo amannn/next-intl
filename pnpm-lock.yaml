@@ -513,7 +513,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^3.3.3
+        specifier: ^3.4.0
         version: link:../use-intl
     devDependencies:
       '@edge-runtime/vm':

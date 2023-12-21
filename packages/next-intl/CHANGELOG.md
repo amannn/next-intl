@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.4.0 (2023-12-21)
+
+
+### Features
+
+* Invoke `notFound()` when no locale was attached to the request and update docs to suggest validating the locale in `i18n.ts` ([#742](https://github.com/amannn/next-intl/issues/742)) ([e6d9878](https://github.com/amannn/next-intl/commit/e6d98787ad43aec50dcb6594353da83a958a81d1)), closes [#736](https://github.com/amannn/next-intl/issues/736) [#716](https://github.com/amannn/next-intl/issues/716) [/next-intl-docs.vercel.app/docs/usage/configuration#i18](https://github.com//next-intl-docs.vercel.app/docs/usage/configuration/issues/i18)
+
+
+
+
+
 ## 3.3.3 (2023-12-20)
 
 
