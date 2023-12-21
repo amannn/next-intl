@@ -66,9 +66,17 @@ module.exports = withNextIntl({
 ```tsx filename="src/i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => ({
-  messages: (await import(`../messages/${locale}.json`)).default
-}));
+// Can be imported from a shared config
+const locales = ['en', 'de'];
+
+export default getRequestConfig(async ({locale}) => {
+  // Validate that the incoming `locale` parameter is valid
+  if (!locales.includes(locale as any)) notFound();
+
+  return {
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
 ```
 
 <details>
@@ -117,15 +125,7 @@ export const config = {
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {notFound} from 'next/navigation';
-
-// Can be imported from a shared config
-const locales = ['en', 'de'];
-
 export default function LocaleLayout({children, params: {locale}}) {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
   return (
     <html lang={locale}>
       <body>{children}</body>
@@ -190,6 +190,7 @@ By using APIs like `useTranslations` from `next-intl` in Server Components, your
 Since we use a dynamic route segment for the `[locale]` param, we need to provide all possible values via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to Next.js, so the routes can be rendered at build time.
 
 ```tsx filename="app/[locale]/layout.tsx"
+// Can be imported from a shared config
 const locales = ['en', 'de'];
 
 export function generateStaticParams() {
@@ -199,20 +200,12 @@ export function generateStaticParams() {
 
 ### Add `unstable_setRequestLocale` to all layouts and pages
 
-`next-intl` provides a temporary API that can be used to distribute the locale that is received via `params` in a layout or page for usage in all Server Components that are rendered as part of the request.
+`next-intl` provides a temporary API that can be used to distribute the locale that is received via `params` in layouts and pages for usage in all Server Components that are rendered as part of the request.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {unstable_setRequestLocale} from 'next-intl/server';
 
-const locales = ['en', 'de'];
-
-export default async function LocaleLayout({
-  children,
-  params: {locale}
-}) {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
+export default async function LocaleLayout({children, params: {locale}}) {
   unstable_setRequestLocale(locale);
 
   return (
@@ -223,11 +216,8 @@ export default async function LocaleLayout({
 
 ```tsx filename="app/[locale]/page.tsx"
 import {unstable_setRequestLocale} from 'next-intl/server';
-import {locales} from '..';
 
-export default function IndexPage({
-  params: {locale}
-}) {
+export default function IndexPage({params: {locale}}) {
   unstable_setRequestLocale(locale);
 
   // Once the request locale is set, you
@@ -242,7 +232,7 @@ export default function IndexPage({
 
 **Keep in mind that:**
 
-1. `unstable_setRequestLocale` needs to be called after the `locale` is validated, but before you call any hooks from `next-intl`. Otherwise, you'll get an error when trying to prerender the page.
+1. The locale that you pass to `unstable_setRequestLocale` should be validated (e.g. in [`i18n.ts`](/docs/usage/configuration#i18nts)).
 
 2. You need to call this function in every page and every layout that you intend to enable static rendering for since Next.js can render layouts and pages independently.
 
@@ -275,7 +265,7 @@ Due to this, `next-intl` uses its middleware to attach an `x-next-intl-locale` h
 
 However, the usage of `headers` opts the route into dynamic rendering.
 
-By using `unstable_setRequestLocale`, you can provide the locale that is received in layouts and pages via `params` to `next-intl`. By doing this, all APIs from `next-intl` can now read from this value instead of the header, enabling static rendering.
+By using `unstable_setRequestLocale`, you can provide the locale that is received in layouts and pages via `params` to `next-intl`. All APIs from `next-intl` can now read from this value instead of the header, enabling static rendering.
 
 </details>
 

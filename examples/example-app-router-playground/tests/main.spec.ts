@@ -39,6 +39,13 @@ it('handles unknown locales', async ({page}) => {
   ).toBeVisible();
 });
 
+it('handles pathnames that are not matched by the middleware', async ({
+  page
+}) => {
+  const response = await page.goto('/unknown.txt');
+  expect(response?.status()).toBe(404);
+});
+
 it('redirects to a matched locale at the root for non-default locales', async ({
   browser
 }) => {

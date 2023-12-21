@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-head-element */
-import {useLocale} from 'next-intl';
 import {ReactNode} from 'react';
 
 type Props = {
@@ -7,14 +5,11 @@ type Props = {
   params: {locale: string};
 };
 
-export default async function LocaleLayout({children}: Props) {
-  const locale = useLocale();
-
+export default async function LocaleLayout({children, params}: Props) {
   return (
-    <html lang={locale}>
+    <html lang={params.locale}>
       <head>
         <title>next-intl</title>
-        <meta content="width=device-width, initial-scale=1" name="viewport" />
       </head>
       <body>{children}</body>
     </html>
