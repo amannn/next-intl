@@ -78,6 +78,7 @@ export default function RootLayout({children}) {
 For the 404 page to render, we need to call the `notFound` function in [`i18n.ts`](/docs/usage/configuration#i18nts) when we detect an incoming `locale` param that isn't a valid locale.
 
 ```tsx filename="i18n.ts"
+import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config
