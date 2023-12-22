@@ -13,9 +13,9 @@ export default function FeaturePanel({code, description, title}: Props) {
         </div>
       )}
       <div className="p-4 md:p-6">
-        <h2 className="font-semibold text-slate-900 dark:text-white">
+        <h3 className="font-semibold text-slate-900 dark:text-white">
           {title}
-        </h2>
+        </h3>
         <p className="mt-2 max-w-md text-slate-600 dark:text-slate-400">
           {description}
         </p>
