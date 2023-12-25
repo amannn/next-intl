@@ -34,8 +34,8 @@ export default function UserTestimonial({
     <div
       className={clsx(
         className,
-        'relative -mx-4 flex overflow-hidden rounded-sm p-4 lg:mx-0 lg:p-6',
-        featured ? 'bg-white pt-24 dark:bg-slate-800 lg:col-span-2' : 'lg:pt-24'
+        'relative flex overflow-hidden rounded-sm p-6 pt-24',
+        featured && 'bg-white dark:bg-slate-800 md:col-span-2'
       )}
     >
       {bgUrlBright && <BgImage className="dark:hidden" src={bgUrlBright} />}
