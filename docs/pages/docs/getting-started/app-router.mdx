@@ -64,6 +64,7 @@ module.exports = withNextIntl({
 `next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
 
 ```tsx filename="src/i18n.ts"
+import {notFound} from "next/navigation";
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config
