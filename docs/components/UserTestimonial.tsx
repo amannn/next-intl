@@ -35,7 +35,7 @@ export default function UserTestimonial({
       className={clsx(
         className,
         'relative -mx-4 flex overflow-hidden rounded-sm p-4 lg:mx-0 lg:p-6',
-        featured ? 'bg-white pt-24 dark:bg-slate-800 lg:col-span-2' : 'lg:pt-24'
+        featured && 'bg-white dark:bg-slate-800 lg:col-span-2'
       )}
     >
       {bgUrlBright && <BgImage className="dark:hidden" src={bgUrlBright} />}
@@ -52,7 +52,12 @@ export default function UserTestimonial({
           style={{boxShadow: 'rgba(255,255,255,0.2) 0px 0px 190px 140px'}}
         />
       )}
-      <div className="relative flex flex-col gap-4">
+      <div
+        className={clsx(
+          'relative mt-auto flex flex-col gap-4',
+          featured && 'pt-20'
+        )}
+      >
         <div>
           <div className="flex items-center">
             <Image
