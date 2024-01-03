@@ -107,6 +107,11 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   return Object.assign({}, nextConfig, nextIntlConfig);
 }
 
-module.exports = function withNextIntl(i18nPath?: string) {
+export default function withNextIntl(i18nPath?: string) {
   return (nextConfig?: NextConfig) => initPlugin(i18nPath, nextConfig);
-};
+}
+
+// Compat with CJS default export
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = withNextIntl;
+}

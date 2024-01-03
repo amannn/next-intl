@@ -1,5 +1,3 @@
-'use client';
-
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';

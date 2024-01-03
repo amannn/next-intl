@@ -1,5 +1,6 @@
+// @ts-ignore -- Only available after build
+import {_getRequestLocale as getRequestLocale} from 'next-intl/server';
 import React, {ComponentProps} from 'react';
-import {getLocale} from '../../server.react-server';
 import {AllLocales} from '../../shared/types';
 import BaseLink from '../shared/BaseLink';
 
@@ -14,5 +15,5 @@ export default async function ServerLink<Locales extends AllLocales>({
   locale,
   ...rest
 }: Props<Locales>) {
-  return <BaseLink locale={locale || (await getLocale())} {...rest} />;
+  return <BaseLink locale={locale || getRequestLocale()} {...rest} />;
 }

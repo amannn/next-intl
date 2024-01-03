@@ -1,6 +1,15 @@
+import type {IntlConfig} from 'use-intl/core';
+
 export type AllLocales = ReadonlyArray<string>;
 
 export type LocalePrefix = 'as-needed' | 'always' | 'never';
+
+export type ServerIntlConfig = IntlConfig & {
+  getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+  now: NonNullable<IntlConfig['now']>;
+  onError: NonNullable<IntlConfig['onError']>;
+  timeZone: NonNullable<IntlConfig['timeZone']>;
+};
 
 export type Pathnames<Locales extends AllLocales> = Record<
   string,

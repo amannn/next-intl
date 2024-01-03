@@ -1,6 +1,3 @@
-import {NextConfig} from 'next';
+import withNextIntl from './dist/plugin';
 
-function withNextIntl(i18nPath?: string): (config?: NextConfig) => NextConfig;
-
-// Currently only available via CJS
 export = withNextIntl;

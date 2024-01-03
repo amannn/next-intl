@@ -1,5 +1,9 @@
+import {
+  _getRequestLocale as getRequestLocale,
+  _getConfig as getConfig
+  // @ts-ignore -- Only available after build
+} from 'next-intl/server';
 import React, {ComponentProps} from 'react';
-import {getLocale, getNow, getTimeZone} from '../server.react-server';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
@@ -10,13 +14,17 @@ export default async function NextIntlClientProvider({
   timeZone,
   ...rest
 }: Props) {
+  // We need to be careful about potentially reading from headers here.
+  // See https://github.com/amannn/next-intl/issues/631
+  if (!locale) locale = getRequestLocale();
+  if (!now) now = await getConfig(locale).now;
+  if (!timeZone) timeZone = await getConfig(locale).timeZone;
+
   return (
     <BaseNextIntlClientProvider
-      // We need to be careful about potentially reading from headers here.
-      // See https://github.com/amannn/next-intl/issues/631
-      locale={locale ?? (await getLocale())}
-      now={now ?? (await getNow())}
-      timeZone={timeZone ?? (await getTimeZone())}
+      locale={locale}
+      now={now}
+      timeZone={timeZone}
       {...rest}
     />
   );

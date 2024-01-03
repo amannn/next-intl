@@ -9,7 +9,7 @@
       "url": "https://github.com/sponsors/amannn"
     }
   ],
-  "description": "A minimal, but complete solution for internationalization in Next.js apps.",
+  "description": "Internationalization (i18n) for Next.js that gets out of your way.",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app",
   "repository": {
@@ -17,7 +17,7 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "rm -rf dist && bunchee --external next-intl/config",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
@@ -26,40 +26,77 @@
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.react-client.js",
-  "module": "./dist/esm/index.react-client.js",
-  "typings": "./dist/types/src/index.react-client.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.react-client.d.ts",
-      "react-server": "./dist/esm/index.react-server.js",
-      "import": "./dist/esm/index.react-client.js",
-      "default": "./dist/index.react-client.js"
+      "react-server": "./dist/index.react-server.mjs",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
     },
     "./server": {
-      "types": "./server.d.ts",
-      "react-server": "./dist/esm/server.react-server.js",
-      "import": "./dist/esm/server.react-client.js",
-      "default": "./dist/server.react-client.js"
+      "react-server": "./dist/server.react-server.mjs",
+      "import": {
+        "types": "./dist/server.d.mts",
+        "default": "./dist/server.mjs"
+      },
+      "require": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "default": "./dist/server.js"
+    },
+    "./navigation": {
+      "react-server": "./dist/navigation.react-server.mjs",
+      "import": {
+        "types": "./dist/navigation.d.mts",
+        "default": "./dist/navigation.mjs"
+      },
+      "require": {
+        "types": "./dist/navigation.d.ts",
+        "default": "./dist/navigation.js"
+      },
+      "default": "./dist/navigation.js"
     },
     "./config": {
-      "types": "./config.d.ts",
+      "import": {
+        "types": "./dist/config.d.mts",
+        "default": "./dist/config.mjs"
+      },
+      "require": {
+        "types": "./dist/config.d.ts",
+        "default": "./dist/config.js"
+      },
       "default": "./dist/config.js"
     },
     "./middleware": {
-      "types": "./middleware.d.ts",
-      "import": "./dist/esm/middleware.js",
+      "import": {
+        "types": "./dist/middleware.d.mts",
+        "default": "./dist/middleware.mjs"
+      },
+      "require": {
+        "types": "./dist/middleware.d.ts",
+        "default": "./dist/middleware.js"
+      },
       "default": "./dist/middleware.js"
     },
-    "./navigation": {
-      "types": "./navigation.d.ts",
-      "react-server": "./dist/esm/navigation.react-server.js",
-      "import": "./dist/esm/navigation.react-client.js",
-      "default": "./dist/navigation.react-client.js"
-    },
     "./plugin": {
-      "types": "./plugin.d.ts",
-      "import": "./dist/esm/plugin.js",
+      "import": {
+        "types": "./dist/plugin.d.mts",
+        "default": "./dist/plugin.mjs"
+      },
+      "require": {
+        "types": "./dist/plugin.d.ts",
+        "default": "./dist/plugin.js"
+      },
       "default": "./dist/plugin.js"
     }
   },
@@ -102,6 +139,7 @@
     "@types/node": "^20.1.2",
     "@types/react": "18.2.34",
     "@types/react-dom": "^18.2.17",
+    "bunchee": "^4.2.11",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
@@ -110,8 +148,6 @@
     "publint": "^0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rollup": "^3.28.1",
-    "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"

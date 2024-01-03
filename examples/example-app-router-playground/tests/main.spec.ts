@@ -348,6 +348,8 @@ it('supports a consistent `now` value across the server and client', async ({
 }) => {
   await page.goto('/en/client');
 
+  // ensure this is consistent across main entry, /server and also /navigation
+
   const serverDate = await page.getByTestId('NowFromServer').textContent();
   const serverDateDelayed = await page
     .getByTestId('NowFromServerDelayed')
