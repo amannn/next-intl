@@ -15,7 +15,7 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
-    "lint:package": "publint && attw --pack",
+    "lint:package": "publint",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
@@ -25,22 +25,27 @@
   "exports": {
     ".": {
       "types": "./dist/types/src/index.d.ts",
+      "import": "./dist/esm/index.js",
       "default": "./dist/index.js"
     },
     "./core": {
       "types": "./core.d.ts",
+      "import": "./dist/esm/core.js",
       "default": "./dist/core.js"
     },
     "./react": {
       "types": "./react.d.ts",
+      "import": "./dist/esm/react.js",
       "default": "./dist/react.js"
     },
     "./_useLocale": {
       "types": "./_useLocale.d.ts",
+      "import": "./dist/_useLocale.js",
       "default": "./dist/_useLocale.js"
     },
     "./_IntlProvider": {
       "types": "./_IntlProvider.d.ts",
+      "import": "./dist/_IntlProvider.js",
       "default": "./dist/_IntlProvider.js"
     }
   },

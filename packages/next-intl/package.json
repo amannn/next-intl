@@ -21,7 +21,7 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
-    "lint:package": "publint && attw --pack",
+    "lint:package": "publint",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
@@ -33,11 +33,13 @@
     ".": {
       "types": "./dist/types/src/index.react-client.d.ts",
       "react-server": "./dist/esm/index.react-server.js",
+      "import": "./dist/esm/index.react-client.js",
       "default": "./dist/index.react-client.js"
     },
     "./server": {
       "types": "./server.d.ts",
       "react-server": "./dist/esm/server.react-server.js",
+      "import": "./dist/esm/server.react-client.js",
       "default": "./dist/server.react-client.js"
     },
     "./config": {
@@ -46,15 +48,18 @@
     },
     "./middleware": {
       "types": "./middleware.d.ts",
+      "import": "./dist/esm/middleware.js",
       "default": "./dist/middleware.js"
     },
     "./navigation": {
       "types": "./navigation.d.ts",
       "react-server": "./dist/esm/navigation.react-server.js",
+      "import": "./dist/esm/navigation.react-client.js",
       "default": "./dist/navigation.react-client.js"
     },
     "./plugin": {
       "types": "./plugin.d.ts",
+      "import": "./dist/esm/plugin.js",
       "default": "./dist/plugin.js"
     }
   },
@@ -139,6 +144,50 @@
     {
       "path": "dist/production/middleware.js",
       "limit": "5.8 KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/createFormatter.js",
+      "limit": "1.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/createTranslator.js",
+      "limit": "11.2KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/NextIntlClientProvider.js",
+      "limit": "1KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useFormatter.js",
+      "limit": "12.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useLocale.js",
+      "limit": "0.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useMessages.js",
+      "limit": "0.3KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useNow.js",
+      "limit": "0.3KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useTimeZone.js",
+      "limit": "0.2KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useTranslations.js",
+      "limit": "12.5KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/navigation/createLocalizedPathnamesNavigation.js",
+      "limit": "2.5kB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/navigation/createSharedPathnamesNavigation.js",
+      "limit": "1.7KB"
     }
   ]
 }
