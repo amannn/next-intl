@@ -3,7 +3,7 @@
   "version": "3.4.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
-  "description": "Minimal, but complete solution for managing internationalization in React apps.",
+  "description": "Internationalization (i18n) for React that gets out of your way. ",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app/",
   "repository": {
@@ -11,50 +11,57 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "rm -rf dist && bunchee",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
-    "lint:package": "publint",
+    "lint:package": "publint && attw --pack",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
   "main": "./dist/index.js",
-  "module": "dist/esm/index.js",
-  "typings": "./dist/types/src/index.d.ts",
+  "module": "dist/index.mjs",
+  "type": "commonjs",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.d.ts",
-      "import": "./dist/esm/index.js",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
       "default": "./dist/index.js"
     },
     "./core": {
-      "types": "./core.d.ts",
-      "import": "./dist/esm/core.js",
+      "import": {
+        "types": "./dist/core.d.mts",
+        "default": "./dist/core.mjs"
+      },
+      "require": {
+        "types": "./dist/core.d.ts",
+        "default": "./dist/core.js"
+      },
       "default": "./dist/core.js"
     },
     "./react": {
-      "types": "./react.d.ts",
-      "import": "./dist/esm/react.js",
+      "import": {
+        "types": "./dist/react.d.mts",
+        "default": "./dist/react.mjs"
+      },
+      "require": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
       "default": "./dist/react.js"
-    },
-    "./_useLocale": {
-      "types": "./_useLocale.d.ts",
-      "import": "./dist/_useLocale.js",
-      "default": "./dist/_useLocale.js"
-    },
-    "./_IntlProvider": {
-      "types": "./_IntlProvider.d.ts",
-      "import": "./dist/_IntlProvider.js",
-      "default": "./dist/_IntlProvider.js"
     }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts",
-    "_useLocale.d.ts",
-    "_IntlProvider.d.ts"
+    "react.d.ts"
   ],
   "keywords": [
     "react",
@@ -81,20 +88,24 @@
     "@types/node": "^20.1.2",
     "@types/react": "^18.2.29",
     "@types/react-dom": "^18.2.5",
+    "bunchee": "^4.2.11",
     "date-fns": "^2.16.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "publint": "^0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rollup": "^3.28.1",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
   },
   "size-limit": [
     {
-      "path": "dist/production/index.js",
+      "path": "dist/index.js",
+      "limit": "12.385 kB"
+    },
+    {
+      "path": "dist/index.mjs",
       "limit": "12.385 kB"
     }
   ]
