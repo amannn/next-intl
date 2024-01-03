@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.1 (2024-01-03)
+
+
+### Bug Fixes
+
+* Fix ESM output of `use-intl` ([#754](https://github.com/amannn/next-intl/issues/754)) ([e73fb38](https://github.com/amannn/next-intl/commit/e73fb381c3f0eaeb15b3d9ab9aebc2c567c766ae))
+
+
+
+
+
 # 3.4.0 (2023-12-21)
 
 
