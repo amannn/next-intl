@@ -13,7 +13,9 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
-    "lint": "eslint src test && tsc --noEmit",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src test && tsc --noEmit",
+    "lint:package": "publint && attw --pack",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build",
     "size": "size-limit"
   },
@@ -68,6 +70,7 @@
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.13.5",
     "@size-limit/preset-big-lib": "^8.2.6",
     "@testing-library/react": "^13.0.0",
     "@types/node": "^20.1.2",
@@ -76,6 +79,7 @@
     "date-fns": "^2.16.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
+    "publint": "^0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rollup": "^3.28.1",
