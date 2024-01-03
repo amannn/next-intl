@@ -1,7 +1,8 @@
+import type AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import IntlError from './IntlError';
 import TimeZone from './TimeZone';
-import {AbstractIntlMessages, RichTranslationValues} from '.';
+import type {RichTranslationValues} from './TranslationValues';
 
 /**
  * Should be used for entry points that configure the library.
