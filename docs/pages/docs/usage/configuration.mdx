@@ -15,7 +15,7 @@ Depending on if you handle [internationalization in Client- or Server Components
 `i18n.ts` can be used to provide configuration for **Server Components**.
 
 ```tsx filename="i18n.ts"
-import {notFound} from "next/navigation";
+import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config
@@ -462,9 +462,12 @@ function getMessageFallback({namespace, key, error}) {
   }
 }
 
-<NextIntlClientProvider onError={onError} getMessageFallback={getMessageFallback}>
+<NextIntlClientProvider
+  onError={onError}
+  getMessageFallback={getMessageFallback}
+>
   ...
-</NextIntlClientProvider>
+</NextIntlClientProvider>;
 ```
 
 </Tab>
@@ -504,11 +507,12 @@ return (
 As a convenience, there are a couple of hooks that allow you to read global configuration.
 
 ```tsx
-import {useLocale, useTimeZone, useMessages} from 'next-intl';
+import {useLocale, useTimeZone, useMessages, useNow} from 'next-intl';
 
 function Component() {
   const locale = useLocale();
   const timeZone = useTimeZone();
   const messages = useMessages();
+  const now = useNow();
 }
 ```

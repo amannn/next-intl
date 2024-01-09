@@ -3,11 +3,11 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 # Date and time formatting
 
-The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle all i18n differences in your Next.js app automatically.
+The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle i18n differences in your Next.js app automatically.
 
 ## Formatting dates and times
 
-You can format plain dates that are not part of a message with the `useFormatter` hook:
+You can format plain dates that are not part of a message with the `dateTime` function that is returned from the `useFormatter` hook:
 
 ```js
 import {useFormatter} from 'next-intl';
@@ -51,7 +51,26 @@ const twoDaysAgo = subDays(date, 2);
 
 ## Formatting relative time
 
-Relative time durations can be formatted with a separate function:
+You can format plain dates that are not part of a message with the `relativeTime` function:
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+  const dateTime = new Date('2020-11-20T08:30:00.000Z');
+
+  // At 2020-11-20T10:36:00.000Z,
+  // this will render "2 hours ago"
+  format.relativeTime(dateTime);
+}
+```
+
+Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" will be returned.
+
+### Supplying `now`
+
+By default, `relativeTime` will use [the global value for `now`](/docs/usage/configuration#now). If you want to use a different value, you can explicitly pass this as the second parameter.
 
 ```js
 import {useFormatter} from 'next-intl';
@@ -66,46 +85,42 @@ function Component() {
 }
 ```
 
-Note that values are rounded, so e.g. if 100 seconds have passed, "2 minutes ago" will be returned.
+If you want the relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#retrieve-global-configuration):
 
-If you want to use a specific unit, you can pass options with the second argument:
+```js
+import {useNow, useFormatter} from 'next-intl';
+
+function Component() {
+  // Use the global now value initially …
+  const now = useNow({
+    // … and update it every 10 seconds
+    updateInterval: 1000 * 10
+  });
+
+  const format = useFormatter();
+  const dateTime = new Date('2020-11-20T10:36:01.516Z');
+
+  // Renders e.g. "2 hours ago" and updates continuously
+  format.relativeTime(dateTime, now);
+}
+```
+
+### Customizing the unit
+
+By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` (e.g. 3 seconds, 40 minutes, 4 days, etc.).
+
+If you want to use a specific unit, you can provide options via the second argument:
 
 ```js
 import {useFormatter} from 'next-intl';
 
 function Component() {
   const format = useFormatter();
-  const dateTime = new Date('2020-11-20T08:30:00.000Z');
-  const now = new Date('2020-11-20T10:36:00.000Z');
+  const dateTime = new Date('2020-03-20T08:30:00.000Z');
+  const now = new Date('2020-11-22T10:36:00.000Z');
 
-  // Renders "today"
-  format.relativeTime(dateTime, { now, unit: 'day' });
-}
-```
-
-Supplying `now` is necessary for the function to return consistent results. If you have [configured a global value for `now`](/docs/usage/configuration#now), you can omit the second argument:
-
-```js
-format.relativeTime(dateTime);
-```
-
-### `useNow`
-
-If you want the relative time value to update over time, you can do so with the `useNow` hook:
-
-```js
-import {useNow, useFormatter} from 'next-intl';
-
-function Component() {
-  const now = useNow({
-    // Update every 10 seconds
-    updateInterval: 1000 * 10
-  });
-  const format = useFormatter();
-  const dateTime = new Date('2020-11-20T10:36:01.516Z');
-
-  // Renders e.g. "2 hours ago" and updates continuously
-  format.relativeTime(dateTime, now);
+  // Renders "247 days ago"
+  format.relativeTime(dateTime, {now, unit: 'day'});
 }
 ```
 
