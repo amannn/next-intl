@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.2 (2024-01-09)
+
+
+### Bug Fixes
+
+* Change `numeric` option from `auto` to `always` for `format.relativeTime` ([#765](https://github.com/amannn/next-intl/issues/765)) ([246d373](https://github.com/amannn/next-intl/commit/246d37320669c3525db03dc635b6cfcac8591b4a)), closes [#757](https://github.com/amannn/next-intl/issues/757)
+
+
+
+
+
 ## 3.4.1 (2024-01-03)
 
 
