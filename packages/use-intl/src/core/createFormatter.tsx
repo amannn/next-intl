@@ -219,7 +219,14 @@ export default function createFormatter({
       const value = calculateRelativeTimeValue(seconds, unit);
 
       return new Intl.RelativeTimeFormat(locale, {
-        numeric: 'auto'
+        // `numeric: 'auto'` can theoretically produce output like "yesterday",
+        // but it only works with integers. E.g. -1 day will produce "yesterday",
+        // but -1.1 days will produce "-1.1 days". Rounding before formatting is
+        // not desired, as the given dates might cross a threshold were the
+        // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
+        // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
+        // case. By using `always` we can ensure correct output.
+        numeric: 'always'
       }).format(value, unit);
     } catch (error) {
       onError(
