@@ -219,11 +219,11 @@ describe('relativeTime', () => {
       timeZone: 'Europe/Berlin'
     });
     expect(
-      formatter.relativeTime(parseISO('2020-11-20T08:30:00.000Z'), {
+      formatter.relativeTime(parseISO('2020-03-20T08:30:00.000Z'), {
         now: parseISO('2020-11-22T10:36:00.000Z'),
         unit: 'day'
       })
-    ).toBe('2 days ago');
+    ).toBe('247 days ago');
   });
 
   it('supports the quarter unit', () => {
