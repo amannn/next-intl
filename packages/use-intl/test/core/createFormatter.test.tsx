@@ -145,7 +145,7 @@ describe('relativeTime', () => {
     });
     const now = new Date('2024-01-09T15:00:00.000Z');
 
-    it.only.each([
+    it.each([
       ['2022-07-10T15:00:00.000Z', '2 years ago'],
       ['2022-07-11T15:00:00.000Z', '1 year ago'],
       ['2023-01-09T15:00:00.000Z', '1 year ago'],
@@ -162,7 +162,9 @@ describe('relativeTime', () => {
       ['2024-01-09T14:59:00.000Z', '1 minute ago'],
       ['2024-01-09T14:59:01.000Z', '59 seconds ago'],
       ['2024-01-09T14:59:59.000Z', '1 second ago'],
+      ['2024-01-09T14:59:59.999Z', 'now'],
 
+      ['2024-01-09T15:00:00.001Z', 'now'],
       ['2024-01-09T15:00:01.000Z', 'in 1 second'],
       ['2024-01-09T15:00:59.000Z', 'in 59 seconds'],
       ['2024-01-09T15:01:00.000Z', 'in 1 minute'],
@@ -218,11 +220,10 @@ describe('relativeTime', () => {
     });
     expect(
       formatter.relativeTime(parseISO('2020-11-20T08:30:00.000Z'), {
-        now: parseISO('2020-11-20T10:36:00.000Z'),
-        unit: 'day',
-        numeric: 'auto'
+        now: parseISO('2020-11-22T10:36:00.000Z'),
+        unit: 'day'
       })
-    ).toBe('today');
+    ).toBe('2 days ago');
   });
 
   it('supports the quarter unit', () => {
@@ -245,10 +246,10 @@ describe('relativeTime', () => {
       timeZone: 'Europe/Berlin'
     });
     expect(
-      formatter.relativeTime(parseISO('2020-11-20T00:00:00.000Z'), {
+      formatter.relativeTime(parseISO('2020-11-22T00:00:00.000Z'), {
         unit: 'day'
       })
-    ).toBe('today');
+    ).toBe('in 2 days');
   });
 });
 

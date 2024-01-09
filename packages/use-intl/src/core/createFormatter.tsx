@@ -225,8 +225,9 @@ export default function createFormatter({
         // not desired, as the given dates might cross a threshold were the
         // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
         // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
-        // case. By using `always` we can ensure correct output.
-        numeric: 'always'
+        // case. By using `always` we can ensure correct output. The only exception
+        // is the formatting of times <1 second as "now".
+        numeric: unit === 'second' ? 'auto' : 'always'
       }).format(value, unit);
     } catch (error) {
       onError(
