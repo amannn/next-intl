@@ -250,29 +250,42 @@ describe('relativeTime', () => {
         unit: 'day'
       })
     ).toBe('in 2 days');
-it('formats a date range', () => {
-  const formatter = createFormatter({
-    locale: 'en',
-    timeZone: 'Europe/Berlin',
   });
-  expect(
-    formatter.dateTimeRange(
-      new Date(2007, 0, 10, 10, 0, 0),
-      new Date(2008, 0, 10, 11, 0, 0),
-      {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }
-    )
-  ).toBe('Wednesday, January 10, 2007 – Thursday, January 10, 2008');
 });
 
-it('formats a number', () => {
-  const formatter = createFormatter({
-    locale: 'en',
-    timeZone: 'Europe/Berlin',
+describe('dateTimeRange', () => {
+  it('formats a date range', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }
+      )
+    ).toBe('Wednesday, January 10, 2007 – Thursday, January 10, 2008');
+
+    expect(
+      formatter.dateTimeRange(
+        new Date(Date.UTC(1906, 0, 10, 10, 0, 0)), // Wed, 10 Jan 1906 10:00:00 GMT
+        new Date(Date.UTC(1906, 0, 10, 11, 0, 0)), // Wed, 10 Jan 1906 11:00:00 GMT
+        {
+          year: '2-digit',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric'
+        }
+      )
+    // 1 hour more given that the timezone is Europe/Berlin and the date is in UTC
+    ).toBe('1/10/06, 11:00 AM – 12:00 PM');
   });
 });
 
