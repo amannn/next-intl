@@ -6,7 +6,7 @@ export enum IntlErrorCode {
   INVALID_MESSAGE = 'INVALID_MESSAGE',
   INVALID_KEY = 'INVALID_KEY',
   INVALID_FORMAT = 'INVALID_FORMAT',
-  FORMATTING_ERROR = 'FORMATTING_ERROR',
+  FORMATTING_ERROR = 'FORMATTING_ERROR'
 }
 
 export default class IntlError extends Error {

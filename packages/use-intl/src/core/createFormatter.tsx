@@ -1,10 +1,10 @@
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
-import IntlError, { IntlErrorCode } from './IntlError';
+import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
-import { defaultOnError } from './defaults';
+import {defaultOnError} from './defaults';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -31,7 +31,7 @@ const UNIT_SECONDS: Record<Intl.RelativeTimeFormatUnit, number> = {
   quarter: QUARTER,
   quarters: QUARTER,
   year: YEAR,
-  years: YEAR,
+  years: YEAR
 } as const;
 
 function resolveRelativeTimeUnit(seconds: number) {
@@ -75,7 +75,7 @@ export default function createFormatter({
   locale,
   now: globalNow,
   onError = defaultOnError,
-  timeZone: globalTimeZone,
+  timeZone: globalTimeZone
 }: Props) {
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
@@ -140,7 +140,7 @@ export default function createFormatter({
       (options) => {
         if (!options?.timeZone) {
           if (globalTimeZone) {
-            options = { ...options, timeZone: globalTimeZone };
+            options = {...options, timeZone: globalTimeZone};
           } else {
             onError(
               new IntlError(
@@ -235,7 +235,7 @@ export default function createFormatter({
       const value = calculateRelativeTimeValue(seconds, unit);
 
       return new Intl.RelativeTimeFormat(locale, {
-        numeric: 'auto',
+        numeric: 'auto'
       }).format(value, unit);
     } catch (error) {
       onError(
@@ -254,5 +254,5 @@ export default function createFormatter({
     );
   }
 
-  return { dateTime, number, relativeTime, list };
+  return {dateTime, number, relativeTime, list};
 }
