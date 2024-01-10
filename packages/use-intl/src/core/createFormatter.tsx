@@ -127,8 +127,10 @@ export default function createFormatter({
   }
 
   function dateTime(
-    /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    /** If a string is supplied, this is interpreted as an ISO 8601 string. */
+    /** 
+     * If a number is supplied, this is interpreted as a UTC timestamp.
+     * 
+     * If a string is supplied, this is interpreted as an ISO 8601 string. */
     value: Date | number | string,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
