@@ -14,7 +14,7 @@ it('formats a date and time', () => {
   ).toBe('Nov 20, 2020');
 });
 
-it('formats a ISO 8601 datetime string', () => {
+it('formats an ISO 8601 datetime string', () => {
   const formatter = createFormatter({
     locale: 'en',
     timeZone: 'Europe/Berlin',
