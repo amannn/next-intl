@@ -250,6 +250,29 @@ describe('relativeTime', () => {
         unit: 'day'
       })
     ).toBe('in 2 days');
+it('formats a date range', () => {
+  const formatter = createFormatter({
+    locale: 'en',
+    timeZone: 'Europe/Berlin',
+  });
+  expect(
+    formatter.dateTimeRange(
+      new Date(2007, 0, 10, 10, 0, 0),
+      new Date(2008, 0, 10, 11, 0, 0),
+      {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }
+    )
+  ).toBe('Wednesday, January 10, 2007 – Thursday, January 10, 2008');
+});
+
+it('formats a number', () => {
+  const formatter = createFormatter({
+    locale: 'en',
+    timeZone: 'Europe/Berlin',
   });
 });
 
