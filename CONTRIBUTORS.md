@@ -1,6 +1,6 @@
 # Contributing to `next-intl`
 
-Thank you so much for contributing to `next-intl`!
+Thank you so much for considering to contribute to `next-intl`!
 
 This project is a team effort and we rely on individuals working together to build a sustainable and reliable project.
 
