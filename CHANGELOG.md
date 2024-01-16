@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.3 (2024-01-16)
+
+
+### Bug Fixes
+
+* Apply global `timeZone` when using date skeletons in messages (e.g. `Ordered on {orderDate, date, ::yyyyMd}`) ([#695](https://github.com/amannn/next-intl/issues/695)) ([8940192](https://github.com/amannn/next-intl/commit/8940192664ffe10f70a0526c1f4d6cbfc942faab)), closes [#693](https://github.com/amannn/next-intl/issues/693)
+
+
+
+
+
 ## 3.4.2 (2024-01-09)
 
 
