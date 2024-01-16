@@ -10,12 +10,12 @@ import resolveLocale from './resolveLocale';
 import {
   getInternalTemplate,
   formatTemplatePathname,
-  getBasePath,
   getBestMatchingDomain,
   getKnownLocaleFromPathname,
   getNormalizedPathname,
   getPathWithSearch,
-  isLocaleSupportedOnDomain
+  isLocaleSupportedOnDomain,
+  applyBasePath
 } from './utils';
 
 const ROOT_URL = '/';
@@ -67,7 +67,16 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     function rewrite(url: string) {
-      return NextResponse.rewrite(new URL(url, request.url), getResponseInit());
+      const urlObj = new URL(url, request.url);
+
+      if (request.nextUrl.basePath) {
+        urlObj.pathname = applyBasePath(
+          urlObj.pathname,
+          request.nextUrl.basePath
+        );
+      }
+
+      return NextResponse.rewrite(urlObj, getResponseInit());
     }
 
     function redirect(url: string, redirectDomain?: string) {
@@ -86,9 +95,13 @@ export default function createMiddleware<Locales extends AllLocales>(
 
             if (
               bestMatchingDomain.defaultLocale === locale &&
-              configWithDefaults.localePrefix === 'as-needed'
+              configWithDefaults.localePrefix === 'as-needed' &&
+              urlObj.pathname.startsWith(`/${locale}`)
             ) {
-              urlObj.pathname = urlObj.pathname.replace(`/${locale}`, '');
+              urlObj.pathname = getNormalizedPathname(
+                urlObj.pathname,
+                configWithDefaults.locales
+              );
             }
           }
         }
@@ -99,6 +112,13 @@ export default function createMiddleware<Locales extends AllLocales>(
           request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
         urlObj.port = '';
         urlObj.host = redirectDomain;
+      }
+
+      if (request.nextUrl.basePath) {
+        urlObj.pathname = applyBasePath(
+          urlObj.pathname,
+          request.nextUrl.basePath
+        );
       }
 
       return NextResponse.redirect(urlObj.toString());
@@ -184,19 +204,19 @@ export default function createMiddleware<Locales extends AllLocales>(
         );
 
         if (hasLocalePrefix) {
-          const basePath = getBasePath(
-            getPathWithSearch(normalizedPathname, request.nextUrl.search),
-            pathLocale
+          const normalizedPathnameWithSearch = getPathWithSearch(
+            normalizedPathname,
+            request.nextUrl.search
           );
 
           if (configWithDefaults.localePrefix === 'never') {
-            response = redirect(basePath);
+            response = redirect(normalizedPathnameWithSearch);
           } else if (pathLocale === locale) {
             if (
               hasMatchedDefaultLocale &&
               configWithDefaults.localePrefix === 'as-needed'
             ) {
-              response = redirect(basePath);
+              response = redirect(normalizedPathnameWithSearch);
             } else {
               if (configWithDefaults.domains) {
                 const pathDomain = getBestMatchingDomain(
@@ -206,7 +226,10 @@ export default function createMiddleware<Locales extends AllLocales>(
                 );
 
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
-                  response = redirect(basePath, pathDomain?.domain);
+                  response = redirect(
+                    normalizedPathnameWithSearch,
+                    pathDomain?.domain
+                  );
                 } else {
                   response = rewrite(internalPathWithSearch);
                 }
@@ -215,7 +238,7 @@ export default function createMiddleware<Locales extends AllLocales>(
               }
             }
           } else {
-            response = redirect(`/${locale}${basePath}`);
+            response = redirect(`/${locale}${normalizedPathnameWithSearch}`);
           }
         } else {
           if (
@@ -234,6 +257,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
+        path: request.nextUrl.basePath || undefined,
         sameSite: 'strict',
         maxAge: 31536000 // 1 year
       });

@@ -1,15 +1,20 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
 
-async function assertLocaleCookieValue(page: Page, value: string) {
-  await expect(async () => {
-    const cookie = (await page.context().cookies()).find(
-      (cur) => cur.name === 'NEXT_LOCALE'
-    );
-    expect(cookie).toMatchObject({
-      name: 'NEXT_LOCALE',
-      value
-    });
-  }).toPass();
+it.describe.configure({mode: 'parallel'});
+
+async function assertLocaleCookieValue(
+  page: Page,
+  value: string,
+  otherProps?: Record<string, unknown>
+) {
+  const cookie = (await page.context().cookies()).find(
+    (cur) => cur.name === 'NEXT_LOCALE'
+  );
+  expect(cookie).toMatchObject({
+    name: 'NEXT_LOCALE',
+    value,
+    ...otherProps
+  });
 }
 
 function getPageLoadTracker(context: BrowserContext) {
@@ -32,6 +37,13 @@ it('handles unknown locales', async ({page}) => {
   await expect(
     page.getByRole('heading', {name: 'This page was not found (404)'})
   ).toBeVisible();
+});
+
+it('handles pathnames that are not matched by the middleware', async ({
+  page
+}) => {
+  const response = await page.goto('/unknown.txt');
+  expect(response?.status()).toBe(404);
 });
 
 it('redirects to a matched locale at the root for non-default locales', async ({
@@ -93,6 +105,14 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   await page.goto('/nested');
   await expect(page).toHaveURL('/de/verschachtelt');
   page.getByRole('heading', {name: 'Verschachtelt'});
+});
+
+it('sets the `path` for the cookie', async ({page}) => {
+  await page.goto('/de/client');
+
+  // It's important that the cookie is set on the root path
+  // https://www.rfc-editor.org/rfc/rfc6265#section-4.1.2.4
+  await assertLocaleCookieValue(page, 'de', {path: '/'});
 });
 
 it('remembers the last locale', async ({page}) => {
@@ -175,7 +195,7 @@ it('can use `getMessageFallback`', async ({page}) => {
 it('can use the core library', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('CoreLibrary');
-  await expect(element).toHaveText('Relative time: tomorrow');
+  await expect(element).toHaveText('Relative time: in 1 day');
 });
 
 it('can use `Link` on the server', async ({page}) => {
@@ -515,7 +535,7 @@ it('replaces invalid cookie locales', async ({page}) => {
     cookie: 'NEXT_LOCALE=zh'
   });
   await page.goto('/');
-  assertLocaleCookieValue(page, 'en');
+  await assertLocaleCookieValue(page, 'en');
 });
 
 it('can localize route handlers', async ({request}) => {

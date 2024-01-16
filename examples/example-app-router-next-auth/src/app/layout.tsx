@@ -4,9 +4,8 @@ type Props = {
   children: ReactNode;
 };
 
-// Even though this component is just passing its children through, the presence
-// of this file fixes an issue in Next.js 13.3.0 where link clicks that switch
-// the locale would otherwise be ignored.
+// Since we have a `not-found.tsx` page on the root, a layout file
+// is required, even if it's just passing children through.
 export default function RootLayout({children}: Props) {
   return children;
 }

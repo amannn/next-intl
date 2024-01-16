@@ -156,6 +156,13 @@ export default createMiddleware({
 });
 ```
 
+<details>
+<summary>How can I redirect unprefixed pathnames?</summary>
+
+If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](#matcher-no-prefix) too.
+
+</details>
+
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
 If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly.
@@ -237,6 +244,34 @@ export default createMiddleware({
 });
 ```
 
+<details>
+<summary>Can I customize the alternate links?</summary>
+
+The alternate links can either be turned off or on, depending on the `alternateLinks` option.
+
+If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
+
+```tsx filename="middleware.ts"
+import createIntlMiddleware from 'next-intl/middleware';
+import LinkHeader from 'http-link-header';
+import {NextRequest} from 'next/server';
+
+const handleI18nRouting = createIntlMiddleware(/* ... */);
+
+export default async function middleware(request: NextRequest) {
+  const response = handleI18nRouting(request);
+
+  // Example: Remove the `x-default` entry
+  const link = LinkHeader.parse(response.headers.get('link'));
+  link.refs = link.refs.filter((entry) => entry.hreflang !== 'x-default');
+  response.headers.set('link', link.toString());
+
+  return response;
+}
+```
+
+</details>
+
 ### Localizing pathnames
 
 Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
@@ -310,9 +345,14 @@ This enables:
 
 #### Pathnames without a locale prefix [#matcher-no-prefix]
 
-If you pick a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always), you need a more flexible matcher since you have to match pathnames without a locale prefix as well (e.g. `/about`).
+There are two use cases where you might want to match pathnames without a locale prefix:
 
-A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically are static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
+1. You're using a config for [`localePrefix`](#locale-prefix) other than [`always`](#locale-prefix-always)
+2. You want to implement redirects that add a locale for unprefixed pathnames (e.g. `/about` → `/en/about`)
+
+For these cases, the middleware should run on requests for pathnames without a locale prefix as well.
+
+A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically indicate static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
 ```tsx filename="middleware.ts"
 export const config = {
@@ -323,7 +363,7 @@ export const config = {
     // - … if they start with `/api`, `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
     '/((?!api|_next|_vercel|.*\\..*).*)',
-    // Match all pathnames within `/users`, optionally with a locale prefix
+    // However, match all pathnames within `/users`, optionally with a locale prefix
     '/([\\w-]+)?/users/(.+)'
   ]
 };
@@ -332,6 +372,26 @@ export const config = {
 {/* Keep this in sync with `packages/next-intl/test/middleware/middleware.test.tsx` */}
 
 Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
+
+### Base path
+
+The `next-intl` middleware as well as [the navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
+
+Note however that you should make sure that your [middleware `matcher`](#matcher-config) matches the root of your base path:
+
+```tsx filename="middleware.ts"
+// ...
+
+export const config = {
+  matcher: [
+    '/' // Make sure the root of your base path is matched
+
+    // ... other matcher config
+  ]
+};
+```
+
+See also: [`vercel/next.js#47085`](https://github.com/vercel/next.js/issues/47085)
 
 ## Composing other middlewares
 
@@ -349,7 +409,7 @@ import {NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
   // Step 1: Use the incoming request (example)
-  const defaultLocale = request.headers.get('x-default-locale') || 'en';
+  const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
 
   // Step 2: Create and call the next-intl middleware (example)
   const handleI18nRouting = createIntlMiddleware({
@@ -359,7 +419,7 @@ export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
 
   // Step 3: Alter the response (example)
-  response.headers.set('x-default-locale', defaultLocale);
+  response.headers.set('x-your-custom-locale', defaultLocale);
 
   return response;
 }
@@ -381,9 +441,9 @@ import createIntlMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 
 export default async function middleware(request: NextRequest) {
-  const [, locale, pathname] = request.nextUrl.pathname.split('/');
+  const [, locale, ...segments] = request.nextUrl.pathname.split('/');
 
-  if (pathname === 'profile') {
+  if (locale != null && segments.join('/') === 'profile') {
     const usesNewProfile =
       (request.cookies.get('NEW_PROFILE')?.value || 'false') === 'true';
 
@@ -404,6 +464,8 @@ export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
+
+Note that if you use a [`localePrefix`](#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too.
 
 ### Example: Integrating with Clerk
 
@@ -570,5 +632,7 @@ To recover from this error, please make sure that:
 1. You've [set up the middleware](/docs/getting-started/app-router#middlewarets).
 2. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `locale` segment.
 3. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
-4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/getting-started/app-router#applocalelayouttsx) before it's used by any APIs from `next-intl`.
-5. To implement static rendering properly, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl`.
+4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/usage/configuration#i18nts) before it's used by any APIs from `next-intl`.
+5. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl` instead of using `force-static`.
+
+Note that `next-intl` will print this warning only during development and will invoke the `notFound()` function to abort the render. You should consider adding [a `not-found` page](/docs/environments/error-files#not-foundjs) due to this.

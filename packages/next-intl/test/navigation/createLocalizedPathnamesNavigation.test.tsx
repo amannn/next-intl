@@ -2,7 +2,8 @@ import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
   useParams,
-  redirect as nextRedirect
+  redirect as nextRedirect,
+  RedirectType
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
@@ -13,19 +14,22 @@ import BaseLink from '../../src/navigation/shared/BaseLink';
 import {Pathnames} from '../../src/navigation.react-client';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation');
+  return {
+    ...actual,
+    usePathname: vi.fn(),
+    useParams: vi.fn(),
+    redirect: vi.fn()
+  };
+});
 vi.mock('next-intl/config', () => ({
   default: async () =>
     ((await vi.importActual('../../src/server')) as any).getRequestConfig({
       locale: 'en'
     })
 }));
-vi.mock('react', async (importOriginal) => ({
-  ...((await importOriginal()) as typeof import('react')),
-  cache(fn: (...args: Array<unknown>) => unknown) {
-    return (...args: Array<unknown>) => fn(...args);
-  }
-}));
+vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
   default({locale, ...rest}: any) {
@@ -304,6 +308,15 @@ describe.each([
           // @ts-expect-error -- Unknown route
           render(<Component href="/unknown" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/en/unknown');
+        });
+
+        it('can supply a type', () => {
+          function Test() {
+            redirect('/', RedirectType.push);
+            return null;
+          }
+          render(<Test />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/en', 'push');
         });
       });
 

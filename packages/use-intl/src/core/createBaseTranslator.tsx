@@ -18,6 +18,7 @@ import TranslationValues, {
 } from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
+import joinPath from './joinPath';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
@@ -27,11 +28,13 @@ function resolvePath(
   key: string,
   namespace?: string
 ) {
+  const fullKey = joinPath(namespace, key);
+
   if (!messages) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
         ? `No messages available at \`${namespace}\`.`
-        : undefined
+        : fullKey
     );
   }
 
@@ -43,10 +46,8 @@ function resolvePath(
     if (part == null || next == null) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Could not resolve \`${key}\` in ${
-              namespace ? `\`${namespace}\`` : 'messages'
-            }.`
-          : undefined
+          ? `Could not resolve \`${fullKey}\` in messages.`
+          : fullKey
       );
     }
 
@@ -110,7 +111,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>({
       throw new Error(
         process.env.NODE_ENV !== 'production'
           ? `No messages for namespace \`${namespace}\` found.`
-          : undefined
+          : namespace
       );
     }
 
@@ -218,11 +219,7 @@ function createBaseTranslatorImpl<
       );
     }
 
-    function joinPath(parts: Array<string | undefined>) {
-      return parts.filter((part) => part != null).join('.');
-    }
-
-    const cacheKey = joinPath([locale, namespace, key, String(message)]);
+    const cacheKey = joinPath(locale, namespace, key, String(message));
 
     let messageFormat: IntlMessageFormat;
     if (messageFormatCache?.has(cacheKey)) {
@@ -233,18 +230,18 @@ function createBaseTranslatorImpl<
         if (Array.isArray(message)) {
           code = IntlErrorCode.INVALID_MESSAGE;
           if (process.env.NODE_ENV !== 'production') {
-            errorMessage = `Message at \`${joinPath([
+            errorMessage = `Message at \`${joinPath(
               namespace,
               key
-            ])}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
+            )}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
           }
         } else {
           code = IntlErrorCode.INSUFFICIENT_PATH;
           if (process.env.NODE_ENV !== 'production') {
-            errorMessage = `Message at \`${joinPath([
+            errorMessage = `Message at \`${joinPath(
               namespace,
               key
-            ])}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
+            )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
           }
         }
 

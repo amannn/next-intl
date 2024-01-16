@@ -14,7 +14,7 @@ export async function getStaticProps({locale}: GetStaticPropsContext) {
   return {
     props: {
       messages: pick(
-        await import(`../../messages/${locale}.json`),
+        (await import(`../../messages/${locale}.json`)).default,
         NotFound.messages
       )
     }

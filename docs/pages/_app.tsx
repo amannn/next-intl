@@ -1,3 +1,4 @@
+import {SpeedInsights} from '@vercel/speed-insights/next';
 import Analytics from 'components/Analytics';
 import {AppProps} from 'next/app';
 import {Inter} from 'next/font/google';
@@ -17,6 +18,7 @@ export default function App({Component, pageProps}: Props) {
     <div className={inter.className}>
       {getLayout(<Component {...pageProps} />)}
       <Analytics />
+      <SpeedInsights />
     </div>
   );
 }

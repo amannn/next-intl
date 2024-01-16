@@ -2,15 +2,12 @@ import {NextRequest} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
 import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
+  applyBasePath,
   formatTemplatePathname,
   getHost,
   getNormalizedPathname,
   isLocaleSupportedOnDomain
 } from './utils';
-
-function getAlternateEntry(url: string, locale: string) {
-  return `<${url}>; rel="alternate"; hreflang="${locale}"`;
-}
 
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
@@ -29,6 +26,7 @@ export default function getAlternateLinksHeaderValue<
   localizedPathnames?: Pathnames<Locales>[string];
 }) {
   const normalizedUrl = request.nextUrl.clone();
+
   const host = getHost(request.headers);
   if (host) {
     normalizedUrl.port = '';
@@ -41,6 +39,15 @@ export default function getAlternateLinksHeaderValue<
     normalizedUrl.pathname,
     config.locales
   );
+
+  function getAlternateEntry(url: URL, locale: string) {
+    if (request.nextUrl.basePath) {
+      url = new URL(url);
+      url.pathname = applyBasePath(url.pathname, request.nextUrl.basePath);
+    }
+
+    return `<${url.toString()}>; rel="alternate"; hreflang="${locale}"`;
+  }
 
   function getLocalizedPathname(pathname: string, locale: Locales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
@@ -75,7 +82,10 @@ export default function getAlternateLinksHeaderValue<
         url = new URL(normalizedUrl);
         url.port = '';
         url.host = domainConfig.domain;
-        url.pathname = getLocalizedPathname(url.pathname, locale);
+
+        // Important: Use `normalizedUrl` here, as `url` potentially uses
+        // a `basePath` that automatically gets applied to the pathname
+        url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
         if (
           locale !== domainConfig.defaultLocale ||
@@ -84,7 +94,7 @@ export default function getAlternateLinksHeaderValue<
           url.pathname = prefixPathname(url.pathname);
         }
 
-        return getAlternateEntry(url.toString(), locale);
+        return getAlternateEntry(url, locale);
       });
     } else {
       let pathname: string;
@@ -100,7 +110,7 @@ export default function getAlternateLinksHeaderValue<
       url = new URL(pathname, normalizedUrl);
     }
 
-    return getAlternateEntry(url.toString(), locale);
+    return getAlternateEntry(url, locale);
   });
 
   // Add x-default entry
@@ -109,7 +119,7 @@ export default function getAlternateLinksHeaderValue<
       getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),
       normalizedUrl
     );
-    links.push(getAlternateEntry(url.toString(), 'x-default'));
+    links.push(getAlternateEntry(url, 'x-default'));
   } else {
     // For domain-based routing there is no reasonable x-default
   }

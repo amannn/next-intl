@@ -122,7 +122,22 @@ If you're using `NextIntlClientProvider` _with the App Router_, there has been a
 
 If you're already providing these options, then you're set.
 
-If you're not, be aware that this will by default opt the corresponding page into dynamic rendering. If your app relies on static rendering, you can avoid this by passing all of the mentioned options, or by enabling static rendering explicitly (see the previous section).
+If you're not, be aware that this will by default opt the corresponding page into dynamic rendering. If your app relies on static rendering, you can avoid this by passing all of the mentioned options:
+
+```tsx
+<NextIntlClientProvider
+  messages={messages}
+  // By providing these props explicitly,
+  // the provider can render statically.
+  timeZone="Europe/Vienna"
+  now={new Date()}
+  locale={locale}
+>
+  ...
+</NextIntlClientProvider>
+```
+
+Alternatively, you can explicitly enable static rendering—see [the previous section](#static-rendering-of-server-components).
 
 ### Other notable changes
 

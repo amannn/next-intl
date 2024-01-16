@@ -4,4 +4,4 @@ An example that showcases the usage of `next-intl` together with Auth.js and the
 
 **Credentials**: admin / admin
 
-Many thanks to [narakhan](https://github.com/narakhan) for [sharing his middleware implementation](https://github.com/amannn/next-intl/pull/149#issuecomment-1509990635)!
+See [the corresponding docs for this example](https://next-intl-docs.vercel.app/docs/routing/middleware#example-auth-js).

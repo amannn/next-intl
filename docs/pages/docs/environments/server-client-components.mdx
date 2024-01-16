@@ -26,7 +26,6 @@ Moving internationalization to the server side unlocks new levels of performance
 2. Library code for internationalization doesn't need to be loaded on the client side
 3. No need to split your messages, e.g. based on routes or components
 4. No runtime cost on the client side
-5. No need to handle environment differences like different time zones on the server and client
 
 ## Using internationalization in Server Components
 
@@ -116,6 +115,8 @@ The one restriction that currently comes with this pattern is that hooks can not
 If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing.
 
 However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
+
+In regard to performance, async functions and hooks can be used very much interchangeably. The configuration from [`i18n.ts`](/docs/usage/configuration#i18nts) is only loaded once upon first usage and both implementations use request-based caching internally where relevant. The only minor difference is that async functions have the benefit that rendering can be resumed right after an async function has been invoked. In contrast, in case a hook call triggers the initialization in `i18n.ts`, the component will suspend until the config is resolved and will re-render subsequently, possibly re-executing component logic prior to the hook call. However, once config has been resolved as part of a request, hooks will execute synchronously without suspending, resulting in less overhead in comparison to async functions since rendering can be resumed without having to wait for the microtask queue to flush (see [resuming a suspended component by replaying its execution](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md#resuming-a-suspended-component-by-replaying-its-execution) in the corresponding React RFC).
 
 </details>
 

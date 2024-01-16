@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Get paid support
+    url: https://github.com/sponsors/amannn?frequency=one-time
+    about: Book a consulting session to get help with your specific project
   - name: View documentation
     url: https://next-intl-docs.vercel.app/
     about: Check out the official docs for answers to common questions

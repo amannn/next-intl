@@ -26,7 +26,7 @@ export async function getServerSideProps({locale}: GetServerSidePropsContext) {
   return {
     props: {
       messages: pick(
-        await import(`../../messages/${locale}.json`),
+        (await import(`../../messages/${locale}.json`)).default,
         About.messages
       ),
       // Note that when `now` is passed to the app, you need to make sure the

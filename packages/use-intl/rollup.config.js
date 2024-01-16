@@ -11,6 +11,10 @@ const input = {
 
 module.exports = [
   getBuildConfig({input, env: 'development'}),
-  getBuildConfig({input, env: 'esm'}),
+  getBuildConfig({
+    input,
+    env: 'esm',
+    output: {format: 'es'}
+  }),
   getBuildConfig({input, env: 'production'})
 ];

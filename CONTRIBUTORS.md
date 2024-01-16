@@ -1,6 +1,6 @@
 # Contributing to `next-intl`
 
-Thank you so much for contributing to `next-intl`!
+Thank you so much for considering to contribute to `next-intl`!
 
 This project is a team effort and we rely on individuals working together to build a sustainable and reliable project.
 
@@ -8,8 +8,9 @@ There are several ways you can contribute:
 
 1. **Helping others by answering questions**: Developers often seek guidance by posting questions in [issues](https://github.com/amannn/next-intl/issues), [discussions](https://github.com/amannn/next-intl/discussions), and [on Stack Overflow](https://stackoverflow.com/search?q=%22next-intl%22). Your responses, based on your experience, are greatly appreciated and help foster a supportive community.
 2. **Docs**: We focus on documentation as much as we do on the code itself. We strive to create helpful learning resources that efficiently communicate concepts and address common user issues. If you encounter areas that need clarification or have ideas to improve our documentation, we welcome and appreciate your contributions!
-3. **Bug fixes**: Fixing a bug always starts with creating a regression test that reliably reproduces the broken behavior. This alone is a valuable contribution and can be submitted as a pull request. If you're up for the challenge, feel free to provide the bug fix yourself!
-4. **New features**: We encourage proposing feature ideas as issues prior to starting development. This practice helps to avoid duplicated efforts and allows us to align on the direction before investing significant development time.
+3. **Bug fixes**: Fixing a bug always starts with creating a regression test that reliably reproduces the broken behavior. This alone is a valuable contribution and can be submitted as a pull request. If you're up for the challenge, feel free to provide the bug fix as well!
+4. **New features**: We encourage proposing feature ideas as issues prior to starting development. This practice helps to avoid duplicated efforts and allows us to align on the direction before investing significant development time. Note that features for exotic use cases that can already be achieved with the current feature set are unlikely to get merged, as the maintainence of such features over time takes significant effort.
+5. **Sponsorship**: `next-intl` is provided free of charge, but the project takes significant time to maintain. Luckily, `next-intl` receives regular funding from its primary sponsor [Crowdin](https://crowdin.com). However, features still need to be prioritized and user support is limited. If you'd like to give back in a financial way, you can consider [providing sponsorship](https://github.com/sponsors/amannn) for the lead maintainer [@amannn](https://github.com/amannn).
 
 Open source work should be fun for everyone involved. Let's make sure it stays that way! Our communication style aims to be clear and friendly. We value empathy, respect, and understanding different perspectives.
 

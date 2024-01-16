@@ -55,7 +55,7 @@ module.exports = function getConfig({
       freeze: false,
       esModule: true,
       exports: 'named',
-      ...output,
+      ...output
     },
     treeshake: {
       moduleSideEffects: false,
@@ -77,11 +77,11 @@ module.exports = function getConfig({
               targets: {
                 // Same as https://nextjs.org/docs/architecture/supported-browsers#browserslist
                 browsers: [
-                  "chrome 64",
-                  "edge 79",
-                  "firefox 67",
-                  "opera 51",
-                  "safari 12"
+                  'chrome 64',
+                  'edge 79',
+                  'firefox 67',
+                  'opera 51',
+                  'safari 12'
                 ]
               }
             }

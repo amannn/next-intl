@@ -58,6 +58,23 @@ const MockedNextResponse = NextResponse as unknown as {
   redirect: Mock<Parameters<(typeof NextResponse)['redirect']>>;
 };
 
+function withBasePath(request: NextRequest, basePath = '/base') {
+  const url = new URL(request.url);
+
+  url.pathname = basePath + url.pathname;
+  if (url.pathname.endsWith('/')) {
+    url.pathname = url.pathname.slice(0, -1);
+  }
+
+  const adapted = new NextRequest(url.toString(), {
+    ...request,
+    headers: request.headers,
+    nextConfig: {basePath}
+  });
+
+  return adapted;
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -179,6 +196,15 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('keeps route segments intact that start with the same characters as the locale', () => {
+      middleware(createMockRequest('/en/energy/overview/entry'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/energy/overview/entry'
+      );
+    });
+
     it('redirects requests for other locales', () => {
       middleware(createMockRequest('/', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -293,6 +319,45 @@ describe('prefix-based routing', () => {
           'x-next-intl-locale'
         )
       ).toBe('en');
+    });
+
+    describe('base path', () => {
+      it('rewrites correctly for the default locale at the root', () => {
+        middleware(withBasePath(createMockRequest('/')));
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base/en'
+        );
+      });
+
+      it('redirects correctly when removing the default locale at the root', () => {
+        middleware(withBasePath(createMockRequest('/en')));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base'
+        );
+      });
+
+      it('redirects correctly when removing the default locale at sub paths', () => {
+        middleware(withBasePath(createMockRequest('/en/about')));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base/about'
+        );
+      });
+
+      it('redirects correctly when adding a prefix for a non-default locale', () => {
+        middleware(withBasePath(createMockRequest('/', 'de')));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base/de'
+        );
+      });
+
+      it('returns alternate links', () => {
+        const response = middleware(withBasePath(createMockRequest('/')));
+        expect(response.headers.get('link')?.split(', ')).toEqual([
+          '<http://localhost:3000/base>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/base/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/base>; rel="alternate"; hreflang="x-default"'
+        ]);
+      });
     });
 
     describe('localized pathnames', () => {
@@ -698,6 +763,15 @@ describe('prefix-based routing', () => {
       );
     });
 
+    describe('base path', () => {
+      it('redirects non-prefixed requests for the default locale', () => {
+        middleware(withBasePath(createMockRequest('/')));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base/en'
+        );
+      });
+    });
+
     describe('localized pathnames', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
@@ -935,6 +1009,24 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('keeps route segments intact that start with the same characters as the default locale', () => {
+      middleware(createMockRequest('/en/energy/overview/entry'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/energy/overview/entry'
+      );
+    });
+
+    it('keeps route segments intact that start with the same characters as a non-default locale', () => {
+      middleware(createMockRequest('/de/dentist/overview/delete'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/dentist/overview/delete'
+      );
+    });
+
     it('redirects requests with other locales in the path', () => {
       middleware(createMockRequest('/de', 'de'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -1044,6 +1136,17 @@ describe('prefix-based routing', () => {
     it('disables the alternate links', () => {
       const response = middleware(createMockRequest('/'));
       expect(response.headers.get('link')).toBe(null);
+    });
+
+    describe('base path', () => {
+      it('redirects requests with default locale in the path', () => {
+        middleware(withBasePath(createMockRequest('/en')));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/base'
+        );
+      });
     });
 
     describe('localized pathnames', () => {
@@ -1410,6 +1513,31 @@ describe('domain-based routing', () => {
           'http://fr.example.com/about'
         );
       });
+
+      describe('base path', () => {
+        it('redirects requests with default locale in the path', () => {
+          middleware(
+            withBasePath(
+              createMockRequest('/en/about', 'en', 'http://en.example.com')
+            )
+          );
+          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+            'http://en.example.com/base/about'
+          );
+        });
+
+        it('returns alternate links', () => {
+          const response = middleware(
+            withBasePath(createMockRequest('/', 'en', 'http://en.example.com'))
+          );
+          expect(response.headers.get('link')?.split(', ')).toEqual([
+            '<http://en.example.com/base>; rel="alternate"; hreflang="en"',
+            '<http://ca.example.com/base>; rel="alternate"; hreflang="en"',
+            '<http://ca.example.com/base/fr>; rel="alternate"; hreflang="fr"',
+            '<http://fr.example.com/base>; rel="alternate"; hreflang="fr"'
+          ]);
+        });
+      });
     });
 
     describe('localized pathnames', () => {
@@ -1769,6 +1897,31 @@ describe('domain-based routing', () => {
           '<http://fr.example.com/unknown>; rel="alternate"; hreflang="fr"'
         ]);
       });
+
+      describe('base path', () => {
+        it('redirects requests with default locale in the path', () => {
+          const request = withBasePath(
+            createMockRequest('/en/about', 'en', 'http://en.example.com')
+          );
+          middlewareWithPathnames(request);
+          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+            'http://en.example.com/base/about'
+          );
+        });
+
+        it('returns alternate links', () => {
+          const request = withBasePath(
+            createMockRequest('/', 'en', 'http://en.example.com')
+          );
+          const response = middlewareWithPathnames(request);
+          expect(response.headers.get('link')?.split(', ')).toEqual([
+            '<http://en.example.com/base>; rel="alternate"; hreflang="en"',
+            '<http://ca.example.com/base>; rel="alternate"; hreflang="en"',
+            '<http://ca.example.com/base/fr>; rel="alternate"; hreflang="fr"',
+            '<http://fr.example.com/base>; rel="alternate"; hreflang="fr"'
+          ]);
+        });
+      });
     });
   });
 
@@ -1851,6 +2004,17 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
         'http://ca.example.com/fr/about'
       );
+    });
+
+    describe('base path', () => {
+      it('redirects non-prefixed requests for the default locale', () => {
+        middleware(
+          withBasePath(createMockRequest('/', 'en', 'http://example.com'))
+        );
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://example.com/base/en'
+        );
+      });
     });
   });
 });

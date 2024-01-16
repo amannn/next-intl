@@ -1,4 +1,5 @@
 import IntlError from './IntlError';
+import joinPath from './joinPath';
 
 /**
  * Contains defaults that are used for all entry points into the core.
@@ -10,7 +11,7 @@ export function defaultGetMessageFallback(props: {
   key: string;
   namespace?: string;
 }) {
-  return [props.namespace, props.key].filter((part) => part != null).join('.');
+  return joinPath(props.namespace, props.key);
 }
 
 export function defaultOnError(error: IntlError) {

@@ -3,6 +3,94 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.2 (2024-01-09)
+
+
+### Bug Fixes
+
+* Change `numeric` option from `auto` to `always` for `format.relativeTime` ([#765](https://github.com/amannn/next-intl/issues/765)) ([246d373](https://github.com/amannn/next-intl/commit/246d37320669c3525db03dc635b6cfcac8591b4a)), closes [#757](https://github.com/amannn/next-intl/issues/757)
+
+
+
+
+
+## 3.4.1 (2024-01-03)
+
+
+### Bug Fixes
+
+* Fix ESM output of `use-intl` ([#754](https://github.com/amannn/next-intl/issues/754)) ([e73fb38](https://github.com/amannn/next-intl/commit/e73fb381c3f0eaeb15b3d9ab9aebc2c567c766ae))
+
+
+
+
+
+# 3.4.0 (2023-12-21)
+
+
+### Features
+
+* Invoke `notFound()` when no locale was attached to the request and update docs to suggest validating the locale in `i18n.ts` ([#742](https://github.com/amannn/next-intl/issues/742)) ([e6d9878](https://github.com/amannn/next-intl/commit/e6d98787ad43aec50dcb6594353da83a958a81d1)), closes [#736](https://github.com/amannn/next-intl/issues/736) [#716](https://github.com/amannn/next-intl/issues/716) [/next-intl-docs.vercel.app/docs/usage/configuration#i18](https://github.com//next-intl-docs.vercel.app/docs/usage/configuration/issues/i18)
+
+
+
+
+
+## 3.3.3 (2023-12-20)
+
+
+### Bug Fixes
+
+* Improve performance when calling hooks like `useTranslations` in Server Components by making sure we only suspend when i18n config is initially loaded and never for subsequent calls ([#741](https://github.com/amannn/next-intl/issues/741)) ([4185a72](https://github.com/amannn/next-intl/commit/4185a72525581dcd04f2646af00a0e330f8e02e0))
+
+
+
+
+
+## 3.3.2 (2023-12-11)
+
+
+### Bug Fixes
+
+* Fix types for passing a custom `type` to `redirect` ([#714](https://github.com/amannn/next-intl/issues/714)) ([db65cb7](https://github.com/amannn/next-intl/commit/db65cb7737a605bd8f2c69bf1b28cd076bf40fcf)), closes [#709](https://github.com/amannn/next-intl/issues/709)
+
+
+
+
+
+## 3.3.1 (2023-12-07)
+
+
+### Bug Fixes
+
+* Improve error message when encountering a missing message in production ([#706](https://github.com/amannn/next-intl/issues/706)) ([515891b](https://github.com/amannn/next-intl/commit/515891b539c723778d2a5a2e6c0186bb6f916071))
+
+
+
+
+
+# 3.3.0 (2023-12-06)
+
+
+### Features
+
+* Add support for `basePath` in middleware and navigation APIs ([#699](https://github.com/amannn/next-intl/issues/699) by [@Robjam](https://github.com/Robjam) and [@amannn](https://github.com/amannn)) ([f670f1b](https://github.com/amannn/next-intl/commit/f670f1b37d803c7fbb6fbaa1c8d10f88cf141a84))
+
+
+
+
+
+## 3.2.5 (2023-12-06)
+
+
+### Bug Fixes
+
+* Correctly normalize pathname for redirects and alternate links when `localePrefix: 'as-needed'` is used with the default locale ([#698](https://github.com/amannn/next-intl/issues/698) by [@anna-colenso](https://github.com/anna-colenso)) ([48e9523](https://github.com/amannn/next-intl/commit/48e9523863b99b363f63f0aa991c72860d814d7e))
+
+
+
+
+
 ## 3.2.4 (2023-12-05)
 
 

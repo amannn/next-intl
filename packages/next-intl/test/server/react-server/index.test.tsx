@@ -40,15 +40,7 @@ vi.mock('next/headers', () => ({
   })
 }));
 
-vi.mock('react', async (importOriginal) => {
-  const React = (await importOriginal()) as typeof import('react');
-  return {
-    ...React,
-    cache(fn: (...args: Array<unknown>) => unknown) {
-      return (...args: Array<unknown>) => fn(...args);
-    }
-  };
-});
+vi.mock('react');
 
 describe('getTranslations', () => {
   it('works with an implicit locale', async () => {
