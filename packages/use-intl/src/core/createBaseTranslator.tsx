@@ -263,8 +263,6 @@ function createBaseTranslatorImpl<
           {
             formatters: {
               getNumberFormat(locales, options) {
-                // @ts-expect-error -- intl-messageformat does the same, maybe an issue on their side
-                // https://github.com/formatjs/formatjs/blob/f49187da6dd9ff9142f8e4026a4ab8b1276c3af1/packages/intl-messageformat/src/core.ts#L93
                 return new Intl.NumberFormat(locales, options);
               },
               getDateTimeFormat(locales, options) {
