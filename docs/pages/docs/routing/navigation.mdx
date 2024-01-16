@@ -517,11 +517,11 @@ If you need to construct a particular pathname based on a locale, you can call t
 ```tsx filename="page.tsx"
 import {getPathname} from '../navigation';
 
-export async function generateMetadata({params}) {
+export async function generateMetadata({params: {locale}}) {
   return {
     alternates: {
-      canonical: getPathname({
-        locale: props.params.locale,
+      canonical: '/' + locale + getPathname({
+        locale,
         href: {
           pathname: '/users/[userId]',
           params: {userId: '5'}
