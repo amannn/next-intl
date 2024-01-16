@@ -16096,7 +16096,7 @@ packages:
     dependencies:
       fast-memoize: 2.5.2
       intl-messageformat-parser: 6.0.16
-      tslib: 2.3.1
+      tslib: 2.5.0
     dev: false
 
   /invariant@2.2.4:

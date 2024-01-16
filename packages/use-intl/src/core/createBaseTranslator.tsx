@@ -259,13 +259,33 @@ function createBaseTranslatorImpl<
           convertFormatsToIntlMessageFormat(
             {...globalFormats, ...formats},
             timeZone
-          )
+          ),
+          {
+            formatters: {
+              getNumberFormat(locales, options) {
+                return new Intl.NumberFormat(locales, options);
+              },
+              getDateTimeFormat(locales, options) {
+                // Workaround for https://github.com/formatjs/formatjs/issues/4279
+                return new Intl.DateTimeFormat(locales, {timeZone, ...options});
+              },
+              getPluralRules(locales, options) {
+                return new Intl.PluralRules(locales, options);
+              }
+            }
+          }
         );
       } catch (error) {
+        const thrownError = error as Error;
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.INVALID_MESSAGE,
-          (error as Error).message
+          process.env.NODE_ENV !== 'production'
+            ? thrownError.message +
+                ('originalMessage' in thrownError
+                  ? ` (${thrownError.originalMessage})`
+                  : '')
+            : thrownError.message
         );
       }
 
