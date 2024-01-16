@@ -259,13 +259,35 @@ function createBaseTranslatorImpl<
           convertFormatsToIntlMessageFormat(
             {...globalFormats, ...formats},
             timeZone
-          )
+          ),
+          {
+            formatters: {
+              getNumberFormat(locales, options) {
+                // @ts-expect-error -- intl-messageformat does the same, maybe an issue on their side
+                // https://github.com/formatjs/formatjs/blob/f49187da6dd9ff9142f8e4026a4ab8b1276c3af1/packages/intl-messageformat/src/core.ts#L93
+                return new Intl.NumberFormat(locales, options);
+              },
+              getDateTimeFormat(locales, options) {
+                // Workaround for https://github.com/formatjs/formatjs/issues/4279
+                return new Intl.DateTimeFormat(locales, {timeZone, ...options});
+              },
+              getPluralRules(locales, options) {
+                return new Intl.PluralRules(locales, options);
+              }
+            }
+          }
         );
       } catch (error) {
+        const thrownError = error as Error;
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.INVALID_MESSAGE,
-          (error as Error).message
+          process.env.NODE_ENV !== 'production'
+            ? thrownError.message +
+                ('originalMessage' in thrownError
+                  ? ` (${thrownError.originalMessage})`
+                  : '')
+            : thrownError.message
         );
       }
 
