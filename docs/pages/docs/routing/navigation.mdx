@@ -518,6 +518,9 @@ If you need to construct a particular pathname based on a locale, you can call t
 import {getPathname} from '../navigation';
 
 export async function generateMetadata({params: {locale}}) {
+  // Example: This page accepts search params like `?sort=asc`.
+  // A canonical link informs search engines that only the
+  // version without search params should be indexed.
   return {
     alternates: {
       canonical: '/' + locale + getPathname({
