@@ -247,7 +247,7 @@ describe.each([
           );
         });
 
-        it('can receive a locale', () => {
+        it('can use a non-default locale', () => {
           expect(
             renderToString(
               <Link href="/about" locale="de">
