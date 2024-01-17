@@ -238,9 +238,7 @@ describe.each([
     });
 
     describe('usage without statically known locales', () => {
-      const {Link} = createSharedPathnamesNavigation({
-        localePrefix: 'always'
-      });
+      const {Link} = createSharedPathnamesNavigation();
 
       describe('Link', () => {
         it('uses the default locale', () => {
