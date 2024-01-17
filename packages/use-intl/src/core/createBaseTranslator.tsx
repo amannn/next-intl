@@ -24,9 +24,9 @@ import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
 
 function resolvePath(
+  locale: string,
   messages: AbstractIntlMessages | undefined,
   key: string,
-  locale: string,
   namespace?: string
 ) {
   const fullKey = joinPath(namespace, key);
@@ -102,7 +102,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
     }
 
     const retrievedMessages = namespace
-      ? resolvePath(messages, namespace, locale)
+      ? resolvePath(locale, messages, namespace)
       : messages;
 
     if (!retrievedMessages) {
@@ -209,7 +209,7 @@ function createBaseTranslatorImpl<
 
     let message;
     try {
-      message = resolvePath(messages, key, locale, namespace);
+      message = resolvePath(locale, messages, key, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,
@@ -407,7 +407,7 @@ function createBaseTranslatorImpl<
     const messages = messagesOrError;
 
     try {
-      return resolvePath(messages, key, locale, namespace);
+      return resolvePath(locale, messages, key, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,
