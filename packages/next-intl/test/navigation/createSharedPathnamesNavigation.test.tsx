@@ -57,6 +57,7 @@ describe.each([
         locales,
         localePrefix: 'always'
       });
+
       describe('Link', () => {
         it('renders a prefix for the default locale', () => {
           const markup = renderToString(<Link href="/about">About</Link>);
@@ -232,6 +233,37 @@ describe.each([
 
           rerender(<Component href="/news/launch-party-3" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/news/launch-party-3');
+        });
+      });
+    });
+
+    describe('usage without statically known locales', () => {
+      const {Link} = createSharedPathnamesNavigation({
+        localePrefix: 'always'
+      });
+
+      describe('Link', () => {
+        it('uses the default locale', () => {
+          expect(renderToString(<Link href="/about">About</Link>)).toContain(
+            'href="/en/about"'
+          );
+        });
+
+        it('can receive a locale', () => {
+          expect(
+            renderToString(
+              <Link href="/about" locale="de">
+                About
+              </Link>
+            )
+          ).toContain('href="/de/about"');
+          expect(
+            renderToString(
+              <Link href="/about" locale="en">
+                About
+              </Link>
+            )
+          ).toContain('href="/en/about"');
         });
       });
     });
