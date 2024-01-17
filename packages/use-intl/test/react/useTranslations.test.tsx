@@ -583,7 +583,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'MISSING_MESSAGE: Could not resolve `Component` in messages.'
+      'MISSING_MESSAGE: Could not resolve `Component` in messages for locale `en`.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
     screen.getByText('Component.label');
@@ -605,7 +605,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'MISSING_MESSAGE: Could not resolve `Component.label` in messages.'
+      'MISSING_MESSAGE: Could not resolve `Component.label` in messages for locale `en`.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
     screen.getByText('Component.label');

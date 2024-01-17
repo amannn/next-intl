@@ -26,6 +26,7 @@ import NestedValueOf from './utils/NestedValueOf';
 function resolvePath(
   messages: AbstractIntlMessages | undefined,
   key: string,
+  locale: string,
   namespace?: string
 ) {
   const fullKey = joinPath(namespace, key);
@@ -46,8 +47,8 @@ function resolvePath(
     if (part == null || next == null) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Could not resolve \`${fullKey}\` in messages.`
-          : fullKey
+          ? `Could not resolve \`${fullKey}\` in messages for locale \`${locale}\`.`
+          : fullKey + ` (${locale})`
       );
     }
 
@@ -85,15 +86,12 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
-function getMessagesOrError<Messages extends AbstractIntlMessages>({
-  messages,
-  namespace,
-  onError = defaultOnError
-}: {
-  messages?: Messages;
-  namespace?: string;
-  onError?(error: IntlError): void;
-}) {
+function getMessagesOrError<Messages extends AbstractIntlMessages>(
+  locale: string,
+  messages?: Messages,
+  namespace?: string,
+  onError: (error: IntlError) => void = defaultOnError
+) {
   try {
     if (!messages) {
       throw new Error(
@@ -104,7 +102,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>({
     }
 
     const retrievedMessages = namespace
-      ? resolvePath(messages, namespace)
+      ? resolvePath(messages, namespace, locale)
       : messages;
 
     if (!retrievedMessages) {
@@ -154,11 +152,12 @@ export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(config: Omit<CreateBaseTranslatorProps<Messages>, 'messagesOrError'>) {
-  const messagesOrError = getMessagesOrError({
-    messages: config.messages,
-    namespace: config.namespace,
-    onError: config.onError
-  }) as Messages | IntlError;
+  const messagesOrError = getMessagesOrError(
+    config.locale,
+    config.messages,
+    config.namespace,
+    config.onError
+  ) as Messages | IntlError;
 
   return createBaseTranslatorImpl<Messages, NestedKey>({
     ...config,
@@ -210,7 +209,7 @@ function createBaseTranslatorImpl<
 
     let message;
     try {
-      message = resolvePath(messages, key, namespace);
+      message = resolvePath(messages, key, locale, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,
@@ -408,7 +407,7 @@ function createBaseTranslatorImpl<
     const messages = messagesOrError;
 
     try {
-      return resolvePath(messages, key, namespace);
+      return resolvePath(messages, key, locale, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,
