@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.4 (2024-01-17)
+
+
+### Bug Fixes
+
+* Improve error message for missing messages by including the locale ([#782](https://github.com/amannn/next-intl/issues/782)) ([79eee9d](https://github.com/amannn/next-intl/commit/79eee9d0ca882b95d76007fed669b79c9b217d35))
+
+
+
+
+
 ## 3.4.3 (2024-01-16)
 
 
