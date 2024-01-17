@@ -130,7 +130,8 @@ The preferred approach is to pass the processed labels as props or `children` fr
 
 ```tsx filename="[locale]/faq/page.tsx" {10-12}
 import {useTranslations} from 'next-intl';
-import Expandable from './Expandable';
+import Expandable from './Expandable'; // A Client Component
+import FAQContent from './FAQContent';
 
 export default function FAQEntry() {
   // Call `useTranslations` in a Server Component ...
@@ -280,7 +281,9 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-If you need to incorporate dynamic state that can not be moved to the server side, you can wrap the respective components with `NextIntlClientProvider`.
+To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) or [formats](/docs/usage/configuration#formats) to Client Components.
+
+If you need to incorporate dynamic state into components that can not be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
 
 ```tsx filename="Counter.tsx"
 import pick from 'lodash/pick';
@@ -288,13 +291,13 @@ import {NextIntlClientProvider, useMessages} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
 export default function Counter() {
-  // Receive messages provided in `i18n.ts`
+  // Receive messages provided in `i18n.ts` …
   const messages = useMessages();
 
   return (
     <NextIntlClientProvider
       messages={
-        // Only provide the minimum of messages
+        // … and provide the relevant messages
         pick(messages, 'ClientCounter')
       }
     >
@@ -304,13 +307,14 @@ export default function Counter() {
 }
 ```
 
-([working example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router-playground/src/components/client/02-MessagesOnClientCounter/Counter.tsx))
+<details>
+<summary>How can I know the messages I need to provide to the client side?</summary>
 
-<Callout>
-  `NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone`
-  when the component is rendered from a Server Component. Other configuration
-  properties like `messages` and `formats` can be provided as necessary.
-</Callout>
+Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components. If this becomes too cumbersome, you can consider [providing all messages to the client side](#option-4-providing-all-messages).
+
+An automatic, compiler-driven approach is being evaluated in [`next-intl#2`](https://github.com/amannn/next-intl/issues/1).
+
+</details>
 
 ### Option 4: Providing all messages
 
