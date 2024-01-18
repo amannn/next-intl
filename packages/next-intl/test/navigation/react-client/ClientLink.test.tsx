@@ -94,11 +94,15 @@ describe('unprefixed routing', () => {
     expect(ref).toBeDefined();
   });
 
-  it('sets an hreflang', () => {
-    render(<ClientLink href="/test">Test</ClientLink>);
+  it('sets an hreflang when changing the locale', () => {
+    render(
+      <ClientLink href="/test" locale="de">
+        Test
+      </ClientLink>
+    );
     expect(
       screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
-    ).toBe('en');
+    ).toBe('de');
   });
 });
 
