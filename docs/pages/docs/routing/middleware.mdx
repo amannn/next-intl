@@ -205,14 +205,13 @@ export default createMiddleware({
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
 
-**Important:** If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
+**Important notes:**
 
-<Callout>
-  Note that [alternate links](#disable-alternate-links) are disabled in this
-  mode since there might not be distinct URLs per locale.
-</Callout>
+1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
+2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale in the middleware. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
+3. [Alternate links](#disable-alternate-links) are disabled in this mode since there might not be distinct URLs per locale.
 
-### Disable automatic locale detection
+### Disable locale detection [#disable-locale-detection]
 
 If you want to rely entirely on the URL to resolve the locale, you can disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
@@ -227,6 +226,8 @@ export default createMiddleware({
 ```
 
 In this case, only the locale prefix and a potentially [matching domain](#domain-based-routing) are used to determine the locale.
+
+Note that by setting this option, the middleware will no longer return a `set-cookie` response header, which can be beneficial for CDN caching (see e.g. [the Cloudflare Cache rules for `set-cookie`](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache)).
 
 ### Disable alternate links
 
@@ -594,7 +595,7 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 **Static export limitations:**
 
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#locale-prefix-always))
-2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-automatic-locale-detection))
+2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-locale-detection))
 3. You can't use [pathname localization](#localizing-pathnames)
 4. This requires [static rendering](/docs/getting-started/app-router#static-rendering)
 5. You need to add a redirect for the root of the app
