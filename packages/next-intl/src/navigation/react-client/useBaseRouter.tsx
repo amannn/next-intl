@@ -1,13 +1,9 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {
-  COOKIE_LOCALE_NAME,
-  COOKIE_MAX_AGE,
-  COOKIE_SAME_SITE
-} from '../../shared/constants';
 import {AllLocales} from '../../shared/types';
 import {localizeHref} from '../../shared/utils';
+import syncLocaleCookie from '../shared/syncLocaleCookie';
 
 type IntlNavigateOptions<Locales extends AllLocales> = {
   locale?: Locales[number];
@@ -57,19 +53,7 @@ export default function useBaseRouter<Locales extends AllLocales>() {
       ): void {
         const {locale: nextLocale, ...rest} = options || {};
 
-        // We have to keep the cookie value in sync as Next.js might
-        // skip a request to the server due to its router cache.
-        // See https://github.com/amannn/next-intl/issues/786.
-        const isSwitchingLocale = nextLocale !== locale;
-        if (isSwitchingLocale) {
-          const basePath = window.location.pathname.replace(pathname, '');
-          const hasBasePath = basePath !== '';
-          const path = hasBasePath ? basePath : '/';
-
-          // Note that writing to `document.cookie` doesn't overwrite all
-          // cookies, but only the ones referenced via the name here.
-          document.cookie = `${COOKIE_LOCALE_NAME}=${nextLocale}; path=${path}; max-age=${COOKIE_MAX_AGE}; sameSite=${COOKIE_SAME_SITE}`;
-        }
+        syncLocaleCookie(pathname, locale, nextLocale);
 
         const args: [
           href: string,
