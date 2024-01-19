@@ -1,8 +1,9 @@
-import {useRouter as useNextRouter} from 'next/navigation';
+import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {AllLocales} from '../../shared/types';
 import {localizeHref} from '../../shared/utils';
+import syncLocaleCookie from '../shared/syncLocaleCookie';
 
 type IntlNavigateOptions<Locales extends AllLocales> = {
   locale?: Locales[number];
@@ -30,6 +31,7 @@ type IntlNavigateOptions<Locales extends AllLocales> = {
 export default function useBaseRouter<Locales extends AllLocales>() {
   const router = useNextRouter();
   const locale = useLocale();
+  const pathname = usePathname();
 
   return useMemo(() => {
     function localize(href: string, nextLocale?: string) {
@@ -41,14 +43,18 @@ export default function useBaseRouter<Locales extends AllLocales>() {
       );
     }
 
-    return {
-      ...router,
-      push(
+    function createHandler<
+      Options,
+      Fn extends (href: string, options?: Options) => void
+    >(fn: Fn) {
+      return function handler(
         href: string,
-        options?: Parameters<typeof router.push>[1] &
-          IntlNavigateOptions<Locales>
-      ) {
+        options?: Options & IntlNavigateOptions<Locales>
+      ): void {
         const {locale: nextLocale, ...rest} = options || {};
+
+        syncLocaleCookie(pathname, locale, nextLocale);
+
         const args: [
           href: string,
           options?: Parameters<typeof router.push>[1]
@@ -56,41 +62,26 @@ export default function useBaseRouter<Locales extends AllLocales>() {
         if (Object.keys(rest).length > 0) {
           args.push(rest);
         }
-        return router.push(...args);
-      },
 
-      replace(
-        href: string,
-        options?: Parameters<typeof router.replace>[1] &
-          IntlNavigateOptions<Locales>
-      ) {
-        const {locale: nextLocale, ...rest} = options || {};
-        const args: [
-          href: string,
-          options?: Parameters<typeof router.replace>[1]
-        ] = [localize(href, nextLocale)];
-        if (Object.keys(rest).length > 0) {
-          args.push(rest);
-        }
-        return router.replace(...args);
-      },
+        // @ts-expect-error -- This is ok
+        return fn(...args);
+      };
+    }
 
-      prefetch(
-        href: string,
-        options?: Parameters<typeof router.prefetch>[1] &
-          IntlNavigateOptions<Locales>
-      ) {
-        const {locale: nextLocale, ...rest} = options || {};
-        const args: [
-          href: string,
-          options?: Parameters<typeof router.prefetch>[1]
-        ] = [localize(href, nextLocale)];
-        if (Object.keys(rest).length > 0) {
-          // @ts-expect-error TypeScript thinks `rest` can be an empty object
-          args.push(rest);
-        }
-        return router.prefetch(...args);
-      }
+    return {
+      ...router,
+      push: createHandler<
+        Parameters<typeof router.push>[1],
+        typeof router.push
+      >(router.push),
+      replace: createHandler<
+        Parameters<typeof router.replace>[1],
+        typeof router.replace
+      >(router.replace),
+      prefetch: createHandler<
+        Parameters<typeof router.prefetch>[1],
+        typeof router.prefetch
+      >(router.prefetch)
     };
-  }, [locale, router]);
+  }, [locale, pathname, router]);
 }
