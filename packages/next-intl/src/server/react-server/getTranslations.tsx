@@ -13,6 +13,11 @@ import {
 import getConfig from './getConfig';
 import getLocale from './getLocale';
 
+function getMessageFormatCacheImpl() {
+  return new Map();
+}
+const getMessageFormatCache = cache(getMessageFormatCacheImpl);
+
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
 // messes up the return type.
@@ -215,6 +220,7 @@ async function getTranslations<
 
   return createTranslator({
     ...config,
+    messageFormatCache: getMessageFormatCache(),
     namespace,
     messages: config.messages
   });
