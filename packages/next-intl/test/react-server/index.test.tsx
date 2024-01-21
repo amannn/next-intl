@@ -8,8 +8,8 @@ import {
   useNow,
   useTranslations
 } from '../../src/react-server';
+import {getTranslations} from '../../src/server.react-server';
 import {renderToStream} from './utils';
-import getTranslations from '../../src/server/react-server/getTranslations';
 
 vi.mock('react');
 
