@@ -11,7 +11,7 @@ import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<Locales>>,
     'localePrefix'
@@ -20,7 +20,7 @@ export default function createSharedPathnamesNavigation<
     return (
       <ClientLink<Locales>
         ref={ref}
-        localePrefix={opts.localePrefix}
+        localePrefix={opts?.localePrefix}
         {...props}
       />
     );

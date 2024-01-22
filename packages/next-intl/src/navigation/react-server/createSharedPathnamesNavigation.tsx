@@ -9,7 +9,7 @@ import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
   function notSupported(hookName: string) {
     return () => {
       throw new Error(
@@ -19,7 +19,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
-    return <ServerLink<Locales> localePrefix={opts.localePrefix} {...props} />;
+    return <ServerLink<Locales> localePrefix={opts?.localePrefix} {...props} />;
   }
 
   function redirect(
