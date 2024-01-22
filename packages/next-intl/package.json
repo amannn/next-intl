@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.4.4",
+  "version": "3.4.5",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -82,7 +82,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^3.4.4"
+    "use-intl": "^3.4.5"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
@@ -100,7 +100,7 @@
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "^14.0.4",
+    "next": "^14.1.0",
     "path-to-regexp": "^6.2.1",
     "publint": "^0.2.7",
     "react": "^18.2.0",
@@ -114,7 +114,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.react-client.js",
-      "limit": "12.855 KB"
+      "limit": "12.865 KB"
     },
     {
       "path": "dist/production/index.react-server.js",
@@ -122,11 +122,11 @@
     },
     {
       "path": "dist/production/navigation.react-client.js",
-      "limit": "2.63 KB"
+      "limit": "2.825 KB"
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "2.82 KB"
+      "limit": "2.935 KB"
     },
     {
       "path": "dist/production/server.react-client.js",

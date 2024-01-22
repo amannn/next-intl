@@ -16,9 +16,7 @@ function ClientLink<Locales extends AllLocales>(
 ) {
   const defaultLocale = useLocale();
   const linkLocale = locale || defaultLocale;
-  return (
-    <BaseLink ref={ref} hrefLang={linkLocale} locale={linkLocale} {...rest} />
-  );
+  return <BaseLink ref={ref} locale={linkLocale} {...rest} />;
 }
 
 /**

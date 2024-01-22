@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.4.5 (2024-01-19)
+
+
+### Bug Fixes
+
+* Make sure cookie value stays up to date when the Next.js Router Cache is used ([#790](https://github.com/amannn/next-intl/issues/790)) ([977b973](https://github.com/amannn/next-intl/commit/977b9732aa7b0a9cb0c26e8cf34ae30cc96f25b6)), closes [#786](https://github.com/amannn/next-intl/issues/786) [#786](https://github.com/amannn/next-intl/issues/786)
+
+
+
+
+
 ## 3.4.4 (2024-01-17)
 
 

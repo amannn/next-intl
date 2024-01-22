@@ -1,5 +1,10 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
+import {
+  COOKIE_LOCALE_NAME,
+  COOKIE_MAX_AGE,
+  COOKIE_SAME_SITE,
+  HEADER_LOCALE_NAME
+} from '../shared/constants';
 import {AllLocales} from '../shared/types';
 import {matchesPathname} from '../shared/utils';
 import MiddlewareConfig, {
@@ -258,8 +263,8 @@ export default function createMiddleware<Locales extends AllLocales>(
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
         path: request.nextUrl.basePath || undefined,
-        sameSite: 'strict',
-        maxAge: 31536000 // 1 year
+        sameSite: COOKIE_SAME_SITE,
+        maxAge: COOKIE_MAX_AGE
       });
     }
 

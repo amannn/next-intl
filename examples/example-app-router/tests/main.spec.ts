@@ -10,7 +10,7 @@ it('handles i18n routing', async ({page}) => {
   await expect(page).toHaveURL('/de');
   await page
     .getByRole('combobox', {name: 'Sprache ändern'})
-    .selectOption({label: 'Englisch'});
+    .selectOption({value: 'en'});
 
   await expect(page).toHaveURL('/en');
   page.getByRole('heading', {name: 'next-intl example'});
@@ -58,6 +58,10 @@ it('can be used to localize the page', async ({page}) => {
 });
 
 it('sets a cookie', async ({page}) => {
+  function getCookieValue() {
+    return page.evaluate(() => document.cookie);
+  }
+
   const response = await page.goto('/en');
   const value = await response?.headerValue('set-cookie');
   expect(value).toContain('NEXT_LOCALE=en;');
@@ -65,6 +69,27 @@ it('sets a cookie', async ({page}) => {
   expect(value).toContain('SameSite=strict');
   expect(value).toContain('Max-Age=31536000;');
   expect(value).toContain('Expires=');
+  expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
+
+  await page
+    .getByRole('combobox', {name: 'Change language'})
+    .selectOption({value: 'de'});
+  await expect(page).toHaveURL('/de');
+  expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
+
+  await page
+    .getByRole('combobox', {name: 'Sprache ändern'})
+    .selectOption({value: 'en'});
+  await expect(page).toHaveURL('/en');
+  expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
+
+  // The Next.js Router cache kicks in here
+  // https://nextjs.org/docs/app/building-your-application/caching#router-cache
+  await page
+    .getByRole('combobox', {name: 'Change language'})
+    .selectOption({value: 'de'});
+  await expect(page).toHaveURL('/de');
+  expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
 });
 
 it('serves a robots.txt', async ({page}) => {

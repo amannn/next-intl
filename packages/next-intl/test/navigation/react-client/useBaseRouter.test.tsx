@@ -17,7 +17,8 @@ vi.mock('next/navigation', () => {
   };
   return {
     useRouter: () => router,
-    useParams: () => ({locale: 'en'})
+    useParams: () => ({locale: 'en'}),
+    usePathname: () => '/'
   };
 });
 
@@ -86,6 +87,21 @@ describe('unprefixed routing', () => {
     expect(useNextRouter().prefetch).toHaveBeenCalledWith('/es/about', {
       kind: PrefetchKind.AUTO
     });
+  });
+
+  it('keeps the cookie value in sync', () => {
+    document.cookie = 'NEXT_LOCALE=en';
+
+    callRouter((router) => router.push('/about', {locale: 'de'}));
+    expect(document.cookie).toContain('NEXT_LOCALE=de');
+
+    callRouter((router) => router.replace('/about', {locale: 'es'}));
+    expect(document.cookie).toContain('NEXT_LOCALE=es');
+
+    callRouter((router) =>
+      router.prefetch('/about', {locale: 'it', kind: PrefetchKind.AUTO})
+    );
+    expect(document.cookie).toContain('NEXT_LOCALE=it');
   });
 });
 
