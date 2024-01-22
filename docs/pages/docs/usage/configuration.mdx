@@ -365,14 +365,13 @@ To achieve consistent usage of translation values and reduce redundancy, you can
 
 ```tsx filename="i18n.tsx"
 import {getRequestConfig} from 'next-intl/server';
-import { createComponent, ReactNode } from 'react;
 
 export default getRequestConfig(async ({locale}) => {
   // ...
 
   return {
     defaultTranslationValues: {
-      important: (chunks) => createComponent('b', null, chunks) as ReactNode,
+      important: (chunks) => <b>{chunks}</b>,
       value: 123
     }
   };
