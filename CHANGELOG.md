@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.5.0 (2024-01-22)
+
+
+### Features
+
+* Make options for `createSharedPathnamesNavigation` along with `locales` argument optional (relevant when `locales` aren't known statically) ([#784](https://github.com/amannn/next-intl/issues/784)) ([614053d](https://github.com/amannn/next-intl/commit/614053ddb40f83f7f4a122e5ffeb836d1ecbf63e))
+
+
+
+
+
 ## 3.4.5 (2024-01-19)
 
 
