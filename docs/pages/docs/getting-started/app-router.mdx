@@ -7,9 +7,9 @@ The Next.js App Router introduces support for [React Server Components](https://
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js app that uses the App Router](https://nextjs.org/docs/getting-started/installation).
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router.
 
-`next-intl` integrates with the App Router, by using a `[locale]` [dynamic segment](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+`next-intl` integrates with the App Router by using a `[locale]` [dynamic segment](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
 Let's get started!
 
@@ -49,7 +49,7 @@ The simplest option is to add JSON files in your project based on locales, e.g. 
 
 ### `next.config.js`
 
-Now, set up the plugin which creates an alias to import your i18n configuration (specified in the next step) into Server Components.
+Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
 
 ```js filename="next.config.js"
 const withNextIntl = require('next-intl/plugin')();
@@ -59,12 +59,26 @@ module.exports = withNextIntl({
 });
 ```
 
+<details>
+  <summary>How can I use the plugin in `next.config.mjs`?</summary>
+
+If you're using ECMAScript modules for your Next.js config, you can use the plugin as follows:
+
+```js filename="next.config.mjs"
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n.tsx');
+export default withNextIntl();
+```
+
+</details>
+
 ### `src/i18n.ts` [#i18nts]
 
 `next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
 
 ```tsx filename="src/i18n.ts"
-import {notFound} from "next/navigation";
+import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config

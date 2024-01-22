@@ -1,6 +1,6 @@
 // @ts-check
 
-import NextIntlPlugin from 'next-intl/plugin';
+import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = NextIntlPlugin('./src/i18n.tsx');
+const withNextIntl = createNextIntlPlugin('./src/i18n.tsx');
 export default withNextIntl();

@@ -140,9 +140,11 @@ The bestmatching domain is detected based on these priorities:
 
 ### Locale prefix
 
-If you're using [the navigation APIs from `next-intl`](/docs/routing/navigation), you want to make sure your `localePrefix` setting matches your middleware configuration.
+By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `src/app/[locale]/about/page.tsx` → `/en/about`). You can however customize the routing to optionally remove the prefix.
 
-#### Always use a locale prefix [#locale-prefix-always]
+Note that if you're using [the navigation APIs from `next-intl`](/docs/routing/navigation), you want to make sure your `localePrefix` setting matches your middleware configuration.
+
+#### Always use a locale prefix (default) [#locale-prefix-always]
 
 By default, pathnames always start with the locale (e.g. `/en/about`).
 
@@ -165,7 +167,7 @@ If you want to redirect unprefixed pathnames like `/about` to a prefixed alterna
 
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
-If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly.
+If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly:
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -179,15 +181,10 @@ export default createMiddleware({
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
 
-**Important:** If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
+**Note that:**
 
-<Callout>
-  If you use [the `Link` component](/docs/routing/navigation#link), the initial
-  render will point to the prefixed version but will be patched immediately on
-  the client once the component detects that the default locale has rendered.
-  The prefixed version is still valid, but SEO tools might report a hint that
-  the link points to a redirect.
-</Callout>
+1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
+2. If you use [the `Link` component](/docs/routing/navigation#link), the initial render will point to the prefixed version but will be patched immediately on the client once the component detects that the default locale has rendered. The prefixed version is still valid, but SEO tools might report a hint that the link points to a redirect.
 
 #### Never use a locale prefix [#locale-prefix-never]
 
@@ -205,7 +202,7 @@ export default createMiddleware({
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
 
-**Important notes:**
+**Note that:**
 
 1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
 2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale in the middleware. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
