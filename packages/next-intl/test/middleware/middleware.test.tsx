@@ -903,42 +903,35 @@ describe('prefix-based routing', () => {
         ]);
         expect(getLinks(createMockRequest('/en/about', 'en'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/en/users/1', 'en'))).toEqual([
           '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
           '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"'
         ]);
         expect(
           getLinks(createMockRequest('/en/products/apparel/t-shirts', 'en'))
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"'
         ]);
         expect(
           getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/en/unknown', 'en'))).toEqual([
           '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"'
         ]);
       });
     });

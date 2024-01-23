@@ -21,7 +21,7 @@ export const config = {
 };
 ```
 
-In addition to handling i18n routing, the middleware sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages.
+In addition to handling i18n routing, the middleware sets the `link` header to inform search engines that your content is available in different languages (see [alternate links](#alternate-links)).
 
 ## Strategies
 
@@ -36,7 +36,7 @@ Once a locale is detected, it will be saved in the `NEXT_LOCALE` cookie.
 
 Since your pages are nested within a `[locale]` folder, all routes are by default prefixed with one of your supported locales (e.g. `/en/about`).
 
-#### Locale detection
+#### Locale detection [#prefix-locale-detection]
 
 The locale is detected based on these priorities:
 
@@ -104,7 +104,7 @@ export default createMiddleware({
   [`localePrefix`](#locale-prefix) setting.
 </Callout>
 
-#### Locale detection
+#### Locale detection [#domain-locale-detection]
 
 To match the request against the available domains, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
 
@@ -206,9 +206,9 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
 2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale in the middleware. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. [Alternate links](#disable-alternate-links) are disabled in this mode since there might not be distinct URLs per locale.
+3. [Alternate links](#alternate-links) are disabled in this mode since there might not be distinct URLs per locale.
 
-### Disable locale detection [#disable-locale-detection]
+### Locale detection [#locale-detection]
 
 If you want to rely entirely on the URL to resolve the locale, you can disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
@@ -226,7 +226,7 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 Note that by setting this option, the middleware will no longer return a `set-cookie` response header, which can be beneficial for CDN caching (see e.g. [the Cloudflare Cache rules for `set-cookie`](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache)).
 
-### Disable alternate links
+### Alternate links [#alternate-links]
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
@@ -243,9 +243,29 @@ export default createMiddleware({
 ```
 
 <details>
-<summary>Can I customize the alternate links?</summary>
+<summary>Which alternate links are included?</summary>
 
-The alternate links can either be turned off or on, depending on the `alternateLinks` option.
+Using the middleware defaults, the `link` header of a response for `/` will look like this:
+
+```
+link: <https://example.com/en>; rel="alternate"; hreflang="en",
+      <https://example.com/de>; rel="alternate"; hreflang="de",
+      <https://example.com/>; rel="alternate"; hreflang="x-default"
+```
+
+The [`x-default`](https://developers.google.com/search/docs/specialty/international/localized-versions#xdefault) entry is included to point to a variant that can be used if no other language matches the user's browser setting. This special entry is reserved for language selection & detection, in our case issuing a 307 redirect to the best matching locale.
+
+Note that middleware configuration is automatically incorporated with the following special cases:
+
+1. **`localePrefix: 'always'` (default)**: The `x-default` entry is only included for `/`, not for nested pathnames like `/about`. The reason is that the default [matcher](#matcher-config) doesn't handle unprefixed pathnames apart from `/`, therefore these URLs could be 404s. Note that this only applies to the optional `x-default` entry, locale-specific URLs are always included.
+2. **`localePrefix: 'never'`**: Alternate links are entirely turned off since there might not be unique URLs per locale.
+
+Other configuration options like `domains`, `pathnames` and `basePath` are automatically considered.
+
+</details>
+
+<details>
+<summary>Can I customize the alternate links?</summary>
 
 If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
 
@@ -375,21 +395,22 @@ Note that some third-party providers like [Vercel Analytics](https://vercel.com/
 
 The `next-intl` middleware as well as [the navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
 
-Note however that you should make sure that your [middleware `matcher`](#matcher-config) matches the root of your base path:
+Note however that you should make sure that your [middleware `matcher`](#matcher-config) handles the root of your base path:
 
 ```tsx filename="middleware.ts"
 // ...
 
 export const config = {
+  // The `matcher` is relative to the `basePath`
   matcher: [
-    '/' // Make sure the root is matched
+    // This entry handles the root of the base
+    // path and should always be included
+    '/'
 
     // ... other matcher config
   ]
 };
 ```
-
-See also: [`vercel/next.js#47085`](https://github.com/vercel/next.js/issues/47085)
 
 ## Composing other middlewares
 
@@ -592,7 +613,7 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 **Static export limitations:**
 
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#locale-prefix-always))
-2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#disable-locale-detection))
+2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#locale-detection))
 3. You can't use [pathname localization](#localizing-pathnames)
 4. This requires [static rendering](/docs/getting-started/app-router#static-rendering)
 5. You need to add a redirect for the root of the app
