@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.5.1 (2024-01-23)
+
+
+### Bug Fixes
+
+* Remove `x-default` alternate links entry for non-root pathnames when using `localePrefix: 'always'`  ([#805](https://github.com/amannn/next-intl/issues/805)) ([c5bb0f5](https://github.com/amannn/next-intl/commit/c5bb0f50efbb5321181439c6d9e9aee08226b46a))
+
+
+
+
+
 # 3.5.0 (2024-01-22)
 
 
