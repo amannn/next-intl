@@ -2,7 +2,7 @@
 // https://nextjs.org/docs/advanced-features/i18n-routing#leveraging-the-next_locale-cookie
 export const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 export const COOKIE_MAX_AGE = 31536000; // 1 year
-export const COOKIE_SAME_SITE = 'Lax';
+export const COOKIE_SAME_SITE = 'lax';
 
 export const COOKIE_BASE_PATH_NAME = 'NEXT_INTL_BASE_PATH';
 
