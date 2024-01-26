@@ -52,7 +52,7 @@ The simplest option is to add JSON files in your project based on locales, e.g. 
 
 Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
 
-<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs items={['next.config.mjs', 'next.config.js','next.config.js [without src folder]']}>
 <Tab>
 
 If you're using ECMAScript modules for your Next.js config, you can use the plugin as follows:
@@ -82,6 +82,25 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {};
 
 export default withNextIntl(nextConfig);
+```
+
+</Tab>
+<Tab>
+
+ Next.js config without src folder
+
+```js const createNextIntlPlugin = require("next-intl/plugin");
+
+const withNextIntl = createNextIntlPlugin(
+	// Specify a custom path here
+	"./i18n.ts"
+);
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+};
+
+module.exports = withNextIntl(nextConfig);
+
 ```
 
 </Tab>
@@ -282,6 +301,7 @@ Note that the store is scoped to a request and therefore doesn't affect other re
 </details>
 
 <details>
+
 <summary>Why is this API necessary?</summary>
 
 Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
