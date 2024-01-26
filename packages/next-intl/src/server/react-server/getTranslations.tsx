@@ -10,9 +10,9 @@ import {
   RichTranslationValues,
   MarkupTranslationValues
 } from 'use-intl/core';
+import {getMessageFormatCache} from '../../shared/messageFormatCache';
 import getConfig from './getConfig';
 import getLocale from './getLocale';
-import {getMessageFormatCache} from '../../shared/messageFormatCache';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
