@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.5.2 (2024-01-25)
+
+
+### Bug Fixes
+
+* Set cookie to `SameSite: Lax` ([#817](https://github.com/amannn/next-intl/issues/817)) ([0e91e64](https://github.com/amannn/next-intl/commit/0e91e64412f919f70533c9d6189073780a5baae8)), closes [#527](https://github.com/amannn/next-intl/issues/527) [#811](https://github.com/amannn/next-intl/issues/811)
+
+
+
+
+
 ## 3.5.1 (2024-01-23)
 
 
