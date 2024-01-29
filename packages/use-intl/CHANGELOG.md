@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.5.3 (2024-01-29)
+
+
+### Bug Fixes
+
+* Improve RSC render performance by sharing a cache between `getTranslations` and `useTranslations` ([#798](https://github.com/amannn/next-intl/issues/798) by [@fkapsahili](https://github.com/fkapsahili)) ([73e8337](https://github.com/amannn/next-intl/commit/73e8337044a8cb187d6f96f9b5ea77f6252866bb))
+
+
+
+
+
 ## 3.5.2 (2024-01-25)
 
 
