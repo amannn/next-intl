@@ -11,7 +11,7 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && bunchee",
+    "build": "bunchee",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
@@ -27,10 +27,14 @@
     ".": {
       "import": {
         "types": "./dist/index.d.mts",
+        "production": "./dist/index.production.mjs",
+        "development": "./dist/index.development.mjs",
         "default": "./dist/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
+        "production": "./dist/index.production.js",
+        "development": "./dist/index.development.js",
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
@@ -38,10 +42,14 @@
     "./core": {
       "import": {
         "types": "./dist/core.d.mts",
+        "production": "./dist/core.production.mjs",
+        "development": "./dist/core.development.mjs",
         "default": "./dist/core.mjs"
       },
       "require": {
         "types": "./dist/core.d.ts",
+        "production": "./dist/core.production.js",
+        "development": "./dist/core.development.js",
         "default": "./dist/core.js"
       },
       "default": "./dist/core.js"
@@ -49,10 +57,14 @@
     "./react": {
       "import": {
         "types": "./dist/react.d.mts",
+        "production": "./dist/react.production.mjs",
+        "development": "./dist/react.development.mjs",
         "default": "./dist/react.mjs"
       },
       "require": {
         "types": "./dist/react.d.ts",
+        "production": "./dist/react.production.js",
+        "development": "./dist/react.development.js",
         "default": "./dist/react.js"
       },
       "default": "./dist/react.js"
@@ -88,7 +100,7 @@
     "@types/node": "^20.1.2",
     "@types/react": "^18.2.29",
     "@types/react-dom": "^18.2.5",
-    "bunchee": "^4.2.11",
+    "bunchee": "^4.4.3",
     "date-fns": "^2.16.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
