@@ -10,8 +10,9 @@ The Next.js App Router's file convention provides two files that can be used for
 This page provides practical guides for these cases.
 
 <Callout>
-  Have a look at [the App Router example](/examples#app-router) to explore a
-  working app with error handling.
+  Have a look at [the App Router
+  example](https://next-intl-example-app-router.vercel.app) to explore a working
+  app with error handling.
 </Callout>
 
 ## `not-found.js`
@@ -121,7 +122,7 @@ Since the `error` file must be defined as a Client Component, you have to use [`
 
 ```tsx filename="app/[locale]/layout.tsx"
 import pick from 'lodash/pick';
-import {NextIntlClientProvider, useMessages} from "next-intl";
+import {NextIntlClientProvider, useMessages} from 'next-intl';
 
 export default async function LocaleLayout({children}) {
   // ...
