@@ -361,6 +361,39 @@ This enables:
 1. A redirect at `/` to a suitable locale
 2. Internationalization of all pathnames starting with a locale (e.g. `/en/about`)
 
+<details>
+<summary>Can I avoid hardcoding the locales in the `matcher` config?</summary>
+
+A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, in case you're self-hosting Next.js via a Node.js server, you can implement the matcher dynamically instead:
+
+```tsx filename="middleware.ts"
+import {NextRequest} from 'next/server';
+import createIntlMiddleware from 'next-intl/middleware';
+
+// Can be imported from a shared module
+const locales = ['en', 'de'];
+
+const intlMiddleware = createIntlMiddleware({
+  locales
+  // ...
+});
+
+export default function middleware(request: NextRequest) {
+  const {pathname} = request.nextUrl;
+
+  const shouldHandle =
+    pathname === '/' ||
+    new RegExp(`^/(${locales.join('|')})(/.*)?$`).test(
+      request.nextUrl.pathname
+    );
+  if (!shouldHandle) return;
+
+  return intlMiddleware(request);
+}
+```
+
+</details>
+
 #### Pathnames without a locale prefix [#matcher-no-prefix]
 
 There are two use cases where you might want to match pathnames without a locale prefix:
