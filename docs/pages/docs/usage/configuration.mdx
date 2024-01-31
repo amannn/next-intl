@@ -75,6 +75,10 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can [use the shape of your local messages for type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+
+That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
+
 <Tabs items={['i18n.ts', 'Provider']}>
 <Tab>
 
@@ -90,14 +94,22 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
+To read configured messages in a component, you can use the `useMessages` hook:
+
+```tsx
+import {useMessages} from 'next-intl';
+
+const messages = useMessages();
+```
+
 </Tab>
 <Tab>
 
 ```tsx
-import {NextIntlClientProvider} from 'next-intl';
+import {NextIntlClientProvider, useMessages} from 'next-intl';
 
-// ...
-
+// Read messages configured via `i18n.ts`. Alternatively,
+// messages can be fetched from any other source too.
 const messages = useMessages();
 
 return (
@@ -109,10 +121,6 @@ return (
 
 </Tab>
 </Tabs>
-
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly. Additionally, you can [use the shape of your local messages for type checking](/docs/workflows/typescript).
-
-Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
 
 <details>
 <summary>How can I load messages from remote sources?</summary>
@@ -200,12 +208,18 @@ const timeZone = 'Europe/Vienna';
 
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-<Callout>
-  The time zone in Client Components is automatically inherited from the server
-  side if you wrap the relevant components in a `NextIntlClientProvider` that is
-  rendered by a Server Component. For all other cases, you can specify the value
-  explicitly.
-</Callout>
+To read the time zone in a component, you can use the `useTimeZone` hook:
+
+```tsx
+import {useTimeZone} from 'next-intl';
+
+const timeZone = useTimeZone();
+```
+
+The time zone in Client Components is automatically inherited from the server
+side if you wrap the relevant components in a `NextIntlClientProvider` that is
+rendered by a Server Component. For all other cases, you can specify the value
+explicitly.
 
 ## Now value [#now]
 
@@ -223,8 +237,10 @@ export default getRequestConfig(async ({locale}) => {
   // ...
 
   return {
-    // This is the default, a single date instance will be used
-    // by all Server Components to ensure consistency
+    // This is the default, a single date instance will be
+    // used by all Server Components to ensure consistency.
+    // Tip: This value can be mocked to a constant value
+    // for consistent results in end-to-end-tests.
     now: new Date()
   };
 });
@@ -242,14 +258,18 @@ const now = new Date('2020-11-20T10:36:01.516Z');
 </Tab>
 </Tabs>
 
-**Tip:** For consistent results in end-to-end tests, it can be helpful to mock this value to a constant value, e.g. based on an environment parameter.
+To read the now value in a component, you can use the `useNow` hook:
 
-<Callout>
-  Similarly to the `timeZone`, the `now` value in Client Components is
-  automatically inherited from the server side if you wrap the relevant
-  components in a `NextIntlClientProvider` that is rendered by a Server
-  Component.
-</Callout>
+```tsx
+import {useNow} from 'next-intl';
+
+const now = useNow();
+```
+
+Similarly to the `timeZone`, the `now` value in Client Components is
+automatically inherited from the server side if you wrap the relevant
+components in a `NextIntlClientProvider` that is rendered by a Server
+Component.
 
 ## Formats
 
@@ -475,11 +495,33 @@ function getMessageFallback({namespace, key, error}) {
 
 ## Locale
 
-`NextIntlClientProvider` requires a `locale` that it provides to all hooks from `next-intl`.
+The current locale of your app is automatically incorporated into hooks like `useTranslations` & `useFormatter` and will affect the rendered output.
 
-If you render `NextIntlClientProvider` from a Server Component, the `locale` will automatically be received.
+In case you need to use this value in other places of your app, you can read it via the `useLocale` hook:
 
-In all other cases, e.g. when being rendered from a Client Component, a unit test or within the Pages Router, you need to pass this prop explicitly. Be sure to also set a [`timeZone`](#time-zone) and a value for [`now`](#now) in this case to avoid potential markup mismatches.
+```tsx
+import {useLocale} from 'next-intl';
+
+const locale = useLocale();
+```
+
+<details>
+<summary>How can I change the locale?</summary>
+
+Since the locale is represented by the `[locale]` segment in the pathname, changing the locale really means changing the pathname. You can do this by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+
+</details>
+
+<details>
+<summary>Which value is returned from `useLocale`?</summary>
+
+The returned value is resolved based on these priorities:
+
+1. **Server Components**: A locale provided via [`unstable_setRequestLocale`](/docs/getting-started/app-router#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware.
+2. **Client Components**: A `locale` received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
+   explicitly.
+
+</details>
 
 <details>
 <summary>I'm using the Pages Router, how can I provide the locale?</summary>
@@ -501,18 +543,3 @@ return (
 ```
 
 </details>
-
-## Retrieve global configuration
-
-As a convenience, there are a couple of hooks that allow you to read global configuration.
-
-```tsx
-import {useLocale, useTimeZone, useMessages, useNow} from 'next-intl';
-
-function Component() {
-  const locale = useLocale();
-  const timeZone = useTimeZone();
-  const messages = useMessages();
-  const now = useNow();
-}
-```
