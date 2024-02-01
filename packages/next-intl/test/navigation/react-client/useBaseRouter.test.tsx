@@ -95,6 +95,9 @@ describe('unprefixed routing', () => {
     callRouter((router) => router.push('/about', {locale: 'de'}));
     expect(document.cookie).toContain('NEXT_LOCALE=de');
 
+    callRouter((router) => router.push('/test'));
+    expect(document.cookie).toContain('NEXT_LOCALE=de');
+
     callRouter((router) => router.replace('/about', {locale: 'es'}));
     expect(document.cookie).toContain('NEXT_LOCALE=es');
 

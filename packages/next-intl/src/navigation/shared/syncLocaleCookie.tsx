@@ -14,7 +14,7 @@ export default function syncLocaleCookie(
   locale: string,
   nextLocale?: string
 ) {
-  const isSwitchingLocale = nextLocale !== locale;
+  const isSwitchingLocale = nextLocale !== locale && nextLocale != null;
 
   if (
     !isSwitchingLocale ||
