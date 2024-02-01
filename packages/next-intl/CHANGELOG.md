@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.5.4 (2024-02-01)
+
+
+### Bug Fixes
+
+* Keep cookie value in sync when navigating within a locale ([#828](https://github.com/amannn/next-intl/issues/828)) ([1167523](https://github.com/amannn/next-intl/commit/1167523f01ed6363c3fe3bbb7aa925744eedd055)), closes [#826](https://github.com/amannn/next-intl/issues/826)
+
+
+
+
+
 ## 3.5.3 (2024-01-29)
 
 
