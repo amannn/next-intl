@@ -141,20 +141,6 @@ const messages =
 </details>
 
 <details>
-<summary>How can I split my messages into multiple files?</summary>
-
-Since the messages can be freely defined and loaded, you can split your messages into multiple files and merge them later at runtime if you prefer:
-
-```tsx
-const messages = {
-  ...(await import(`../../messages/${locale}/login.json`)).default,
-  ...(await import(`../../messages/${locale}/dashboard.json`)).default
-};
-```
-
-</details>
-
-<details>
 <summary>How can I use messages from another locale as fallbacks?</summary>
 
 If you have incomplete messages for a given locale and would like to use messages from another locale as a fallback, you can merge the two accordingly.
@@ -166,6 +152,22 @@ const userMessages = (await import(`../../messages/${locale}.json`)).default;
 const defaultMessages = (await import(`../../messages/en.json`)).default;
 const messages = deepmerge(defaultMessages, userMessages);
 ```
+
+</details>
+
+<details>
+<summary>How can I split my messages into multiple files?</summary>
+
+Since messages can be freely defined and loaded, you can split them into multiple files and merge them later at runtime if you prefer:
+
+```tsx
+const messages = {
+  ...(await import(`../../messages/${locale}/login.json`)).default,
+  ...(await import(`../../messages/${locale}/dashboard.json`)).default
+};
+```
+
+Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integration) can help you manage messages within a single, large file. If you're splitting messages purely for organizational reasons, you might want to consider using this instead.
 
 </details>
 
