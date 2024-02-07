@@ -74,7 +74,9 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 
 ## Repository workflows
 
+- New issues receive the `unconfirmed` label upon creation and should be regularly triaged. If the issue is actionable, the `unconfirmed` label should be removed. If this is not the case, the issue will be closed after 30 days.
 - Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.
+- Add the `needs-isolation` label to issues that require further isolation since they might contain extraneous code or 3rd party libraries that make it hard to understand if an issue is caused by `next-intl`.
 
 ## Releases
 
@@ -83,8 +85,15 @@ Releases are automated via Lerna. To determine the next version, [Conventional C
 1. `fix: `: Patch release
 2. `feat: `: Minor release
 
-Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog.
-
-Other prefixes like `docs: ` or `chore: ` are not released and will not result in a version bump.
+Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog and should contain relevant details.
 
 Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
+
+Other prefixes that are allowed and will *not* create a release are the following:
+
+1. `docs`: Documentation-only changes
+2. `test`: Missing tests were added or existing ones corrected
+3. `build`: Changes that affect the build system or external dependencies
+4. `ci`: Changes to CI configuration files and scripts
+5. `chore`: Other changes that don't modify src or test files
+

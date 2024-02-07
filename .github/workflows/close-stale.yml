@@ -13,7 +13,16 @@ jobs:
     steps:
       - uses: actions/stale@v8
         with:
-          days-before-stale: 10
+          days-before-stale: 14
           days-before-close: 0
           any-of-labels: reproduction-missing,needs-isolation
           stale-issue-message: "This issue has been automatically closed because it is currently not actionable and has become stale. If the problem persists, please create a new issue."
+  close-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          days-before-stale: 30
+          days-before-close: 0
+          any-of-labels: unconfirmed
+          stale-issue-message: "This issue has been automatically closed because there was no recent activity and it was marked as unconfirmed. Note that issues are regularly checked and if they remain in unconfirmed state, they might miss information required to be actionable or are potentially out-of-scope. If you'd like to discuss this topic further, feel free to open a discussion instead."
