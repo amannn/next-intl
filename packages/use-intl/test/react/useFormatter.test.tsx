@@ -513,6 +513,65 @@ describe('list', () => {
     screen.getByText('apple, banana, and orange');
   });
 
+  it('returns a string for non-JSX elements', () => {
+    function Component() {
+      const format = useFormatter();
+      const value = ['apple', 23, true, null, undefined];
+      const result = format.list(value);
+      expect(typeof result).toBe('string');
+
+      function expectString(v: string) {
+        return v;
+      }
+
+      return expectString(result);
+    }
+
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('apple, 23, true, null, and undefined');
+  });
+
+  it('formats a list of rich elements', () => {
+    const users = [
+      {id: 1, name: 'Alice'},
+      {id: 2, name: 'Bob'},
+      {id: 3, name: 'Charlie'}
+    ];
+
+    function Component() {
+      const format = useFormatter();
+      const result = format.list(
+        users.map((user) => (
+          <a key={user.id} href={`/user/${user.id}`}>
+            {user.name}
+          </a>
+        ))
+      );
+
+      function expectReactNode(v: ReactNode) {
+        return v;
+      }
+
+      expect(Array.isArray(result)).toBe(true);
+      return expectReactNode(result);
+    }
+
+    const {container} = render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+
+    expect(container.innerHTML).toEqual(
+      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, and <a href="/user/3">Charlie</a>'
+    );
+  });
+
   it('accepts a set', () => {
     renderList(new Set(['apple', 'banana', 'orange']));
     screen.getByText('apple, banana, and orange');

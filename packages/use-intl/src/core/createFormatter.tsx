@@ -1,3 +1,4 @@
+import {ReactNode} from 'react';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
@@ -5,6 +6,8 @@ import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
+
+type SimpleReactNodes = string | number | boolean | null | undefined;
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -103,17 +106,17 @@ export default function createFormatter({
     return options;
   }
 
-  function getFormattedValue<Value, Options>(
-    value: Value,
+  function getFormattedValue<Options, Output>(
     formatOrOptions: string | Options | undefined,
     typeFormats: Record<string, Options> | undefined,
-    formatter: (options?: Options) => string
+    formatter: (options?: Options) => Output,
+    getFallback: () => Output
   ) {
     let options;
     try {
       options = resolveFormatOrOptions(typeFormats, formatOrOptions);
     } catch (error) {
-      return String(value);
+      return getFallback();
     }
 
     try {
@@ -122,7 +125,7 @@ export default function createFormatter({
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
       );
-      return String(value);
+      return getFallback();
     }
   }
 
@@ -134,7 +137,6 @@ export default function createFormatter({
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.dateTime,
       (options) => {
@@ -154,7 +156,8 @@ export default function createFormatter({
         }
 
         return new Intl.DateTimeFormat(locale, options).format(value);
-      }
+      },
+      () => String(value)
     );
   }
 
@@ -163,10 +166,10 @@ export default function createFormatter({
     formatOrOptions?: string | NumberFormatOptions
   ) {
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.number,
-      (options) => new Intl.NumberFormat(locale, options).format(value)
+      (options) => new Intl.NumberFormat(locale, options).format(value),
+      () => String(value)
     );
   }
 
@@ -237,12 +240,53 @@ export default function createFormatter({
     }
   }
 
-  function list(
-    value: Iterable<string>,
+  function list<Value extends ReactNode>(
+    value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
-  ) {
-    return getFormattedValue(value, formatOrOptions, formats?.list, (options) =>
-      new Intl.ListFormat(locale, options).format(value)
+  ): Value extends SimpleReactNodes ? string : ReactNode {
+    const serializedValue: Array<string> = [];
+    let hasRichValues: boolean | undefined;
+    const richValues: Record<string, Value> = {};
+
+    let index = 0;
+    for (const item of value) {
+      if (
+        item && // `null` is an `object` too
+        typeof item === 'object'
+      ) {
+        const id = String(index);
+        richValues[id] = item;
+        serializedValue.push(id);
+        hasRichValues = true;
+      } else {
+        serializedValue.push(String(item));
+      }
+      index++;
+    }
+
+    return getFormattedValue<
+      Intl.ListFormatOptions,
+      Value extends SimpleReactNodes ? string : ReactNode
+    >(
+      formatOrOptions,
+      formats?.list,
+      // @ts-expect-error -- `hasRichValues` is used to determine the return type, but TypeScript can't infer the meaning of this variable correctly
+      (options) => {
+        const result = new Intl.ListFormat(locale, options)
+          .formatToParts(serializedValue)
+          .map((part) =>
+            part.type === 'literal'
+              ? part.value
+              : richValues[part.value] || part.value
+          );
+
+        if (hasRichValues) {
+          return result;
+        } else {
+          return result.join('');
+        }
+      },
+      () => String(value)
     );
   }
 
