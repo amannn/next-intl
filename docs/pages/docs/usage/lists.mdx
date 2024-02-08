@@ -30,10 +30,7 @@ See [the MDN docs about `ListFormat`](https://developer.mozilla.org/en-US/docs/W
 
 Note that lists can can currently only be formatted via `useFormatter`, there's no equivalent inline syntax for messages at this point.
 
-<Callout>
-  To reuse list formats for multiple components, you can configure [global
-  formats](/docs/usage/configuration#formats).
-</Callout>
+To reuse list formats for multiple components, you can configure [global formats](/docs/usage/configuration#formats).
 
 <details>
 <summary>How can I render an array of messages?</summary>
@@ -41,3 +38,39 @@ Note that lists can can currently only be formatted via `useFormatter`, there's 
 See the [arrays of messages guide](/docs/usage/messages#arrays-of-messages).
 
 </details>
+
+## Accepted values
+
+While [`Intl.ListFormat#format`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/format) only accepts `string` values, `format.list` accepts a broader range of values that can be formatted:
+
+- `string`
+- `number`
+- `boolean`
+- `ReactNode`
+- `null`
+- `undefined`
+
+Note that if you pass elements that are a non-primitive `ReactNode`, the formatter will return a `ReactNode` too.
+
+```tsx
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+
+  const users = [
+    {id: 1, name: 'Alice'},
+    {id: 2, name: 'Bob'},
+    {id: 3, name: 'Charlie'}
+  ];
+
+  // Returns a `ReactNode`
+  return format.list(
+    users.map((user) => (
+      <a key={user.id} href={`/user/${user.id}`}>
+        {user.name}
+      </a>
+    ))
+  );
+}
+```

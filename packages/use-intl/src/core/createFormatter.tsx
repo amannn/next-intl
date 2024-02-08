@@ -7,7 +7,7 @@ import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
 
-type SimpleReactNodes = string | number | boolean | null | undefined;
+type PrimitiveReactNodes = string | number | boolean | null | undefined;
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -243,7 +243,7 @@ export default function createFormatter({
   function list<Value extends ReactNode>(
     value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
-  ): Value extends SimpleReactNodes ? string : ReactNode {
+  ): Value extends PrimitiveReactNodes ? string : ReactNode {
     const serializedValue: Array<string> = [];
     let hasRichValues: boolean | undefined;
     const richValues: Record<string, Value> = {};
@@ -266,7 +266,7 @@ export default function createFormatter({
 
     return getFormattedValue<
       Intl.ListFormatOptions,
-      Value extends SimpleReactNodes ? string : ReactNode
+      Value extends PrimitiveReactNodes ? string : ReactNode
     >(
       formatOrOptions,
       formats?.list,
