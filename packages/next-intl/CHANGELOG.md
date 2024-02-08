@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.6.0 (2024-02-08)
+
+
+### Features
+
+* Support formatting of React elements via `format.list(…)`. ([#845](https://github.com/amannn/next-intl/issues/845)) ([7bf11d4](https://github.com/amannn/next-intl/commit/7bf11d42b26c66bcecaf69627e6bd1925d8ba49d))
+
+
+
+
+
 ## 3.5.4 (2024-02-01)
 
 
