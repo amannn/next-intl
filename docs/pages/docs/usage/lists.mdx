@@ -41,7 +41,7 @@ See the [arrays of messages guide](/docs/usage/messages#arrays-of-messages).
 
 ## Formatting of React elements [#react-elements]
 
-Apart from string values, you can also pass React elements to the formatting function:
+Apart from string values, you can also pass arrays of React elements to the formatting function:
 
 ```tsx
 import {useFormatter} from 'next-intl';
@@ -55,14 +55,24 @@ function Component() {
     {id: 3, name: 'Charlie'}
   ];
 
-  return format.list(
-    users.map((user) => (
-      <a key={user.id} href={`/user/${user.id}`}>
-        {user.name}
-      </a>
-    ))
-  );
+  const items = users.map((user) => (
+    <a key={user.id} href={`/user/${user.id}`}>
+      {user.name}
+    </a>
+  ));
+
+  return <div>{format.list(items)}</div>;
 }
+```
+
+**Result:**
+
+```html
+<div>
+  <a href="/user/1">Alice</a>,
+  <a href="/user/2">Bob</a>, and
+  <a href="/user/3">Charlie</a>
+</div>
 ```
 
 Note that `format.list` will return an `Iterable<ReactElement>` in this case.
