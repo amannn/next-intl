@@ -61,18 +61,18 @@ function Component() {
     </a>
   ));
 
-  return <div>{format.list(items)}</div>;
+  return <p>{format.list(items)}</p>;
 }
 ```
 
 **Result:**
 
 ```html
-<div>
-  <a href="/user/1">Alice</a>,
+<p>
+  <a href="/user/1">Alice</a>, 
   <a href="/user/2">Bob</a>, and
   <a href="/user/3">Charlie</a>
-</div>
+</p>
 ```
 
 Note that `format.list` will return an `Iterable<ReactElement>` in this case.
