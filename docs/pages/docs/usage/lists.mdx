@@ -39,18 +39,9 @@ See the [arrays of messages guide](/docs/usage/messages#arrays-of-messages).
 
 </details>
 
-## Accepted values
+## Formatting of React elements [#react-elements]
 
-While [`Intl.ListFormat#format`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/format) only accepts `string` values, `format.list` accepts a broader range of values that can be formatted:
-
-- `string`
-- `number`
-- `boolean`
-- `ReactNode`
-- `null`
-- `undefined`
-
-Note that if you pass elements that are a non-primitive `ReactNode`, the formatter will return a `ReactNode` too.
+Apart from string values, you can also pass React elements to the formatting function:
 
 ```tsx
 import {useFormatter} from 'next-intl';
@@ -64,7 +55,6 @@ function Component() {
     {id: 3, name: 'Charlie'}
   ];
 
-  // Returns a `ReactNode`
   return format.list(
     users.map((user) => (
       <a key={user.id} href={`/user/${user.id}`}>
@@ -74,3 +64,5 @@ function Component() {
   );
 }
 ```
+
+Note that `format.list` will return an `Iterable<ReactElement>` in this case.

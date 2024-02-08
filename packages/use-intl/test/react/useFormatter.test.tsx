@@ -509,14 +509,9 @@ describe('list', () => {
   }
 
   it('formats a list', () => {
-    renderList(['apple', 'banana', 'orange']);
-    screen.getByText('apple, banana, and orange');
-  });
-
-  it('returns a string for non-JSX elements', () => {
     function Component() {
       const format = useFormatter();
-      const value = ['apple', 23, true, null, undefined];
+      const value = ['apple', 'banana', 'orange'];
       const result = format.list(value);
       expect(typeof result).toBe('string');
 
@@ -533,7 +528,7 @@ describe('list', () => {
       </MockProvider>
     );
 
-    screen.getByText('apple, 23, true, null, and undefined');
+    screen.getByText('apple, banana, and orange');
   });
 
   it('formats a list of rich elements', () => {
@@ -545,13 +540,16 @@ describe('list', () => {
 
     function Component() {
       const format = useFormatter();
-      const result = format.list(
-        users.map((user) => (
+
+      const result = format.list([
+        ...users.map((user) => (
           <a key={user.id} href={`/user/${user.id}`}>
             {user.name}
           </a>
-        ))
-      );
+        )),
+        // An `Iterable<ReactElement>` as a single element
+        [<span key="one">One</span>, <span key="two">Two</span>]
+      ]);
 
       function expectReactNode(v: ReactNode) {
         return v;
@@ -568,7 +566,7 @@ describe('list', () => {
     );
 
     expect(container.innerHTML).toEqual(
-      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, and <a href="/user/3">Charlie</a>'
+      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, <a href="/user/3">Charlie</a>, and <span>One</span><span>Two</span>'
     );
   });
 

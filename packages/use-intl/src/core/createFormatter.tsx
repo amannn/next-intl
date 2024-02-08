@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import {ReactElement} from 'react';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
@@ -6,8 +6,6 @@ import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
-
-type PrimitiveReactNodes = string | number | boolean | null | undefined;
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -240,20 +238,18 @@ export default function createFormatter({
     }
   }
 
-  function list<Value extends ReactNode>(
+  type FormattableListValue = string | ReactElement | Iterable<ReactElement>;
+  function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
-  ): Value extends PrimitiveReactNodes ? string : ReactNode {
+  ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     let hasRichValues: boolean | undefined;
     const richValues: Record<string, Value> = {};
 
     let index = 0;
     for (const item of value) {
-      if (
-        item && // `null` is an `object` too
-        typeof item === 'object'
-      ) {
+      if (typeof item === 'object') {
         const id = String(index);
         richValues[id] = item;
         serializedValue.push(id);
@@ -266,7 +262,7 @@ export default function createFormatter({
 
     return getFormattedValue<
       Intl.ListFormatOptions,
-      Value extends PrimitiveReactNodes ? string : ReactNode
+      Value extends string ? string : Iterable<ReactElement>
     >(
       formatOrOptions,
       formats?.list,
