@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactNode} from 'react';
+import React, {ComponentProps, ReactNode, ReactElement} from 'react';
 import {it, expect, describe, vi} from 'vitest';
 import {
   DateTimeFormatOptions,
@@ -551,12 +551,12 @@ describe('list', () => {
         [<span key="one">One</span>, <span key="two">Two</span>]
       ]);
 
-      function expectReactNode(v: ReactNode) {
+      function expectIterableReactElement(v: Iterable<ReactElement>) {
         return v;
       }
 
       expect(Array.isArray(result)).toBe(true);
-      return expectReactNode(result);
+      return expectIterableReactElement(result);
     }
 
     const {container} = render(
