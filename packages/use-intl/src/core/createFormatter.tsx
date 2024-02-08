@@ -238,25 +238,27 @@ export default function createFormatter({
     }
   }
 
-  type FormattableListValue = string | ReactElement | Iterable<ReactElement>;
+  type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
-    let hasRichValues: boolean | undefined;
-    const richValues: Record<string, Value> = {};
+    const richValues = new Map<string, Value>();
 
+    // `formatToParts` only accepts strings, therefore we have to temporarily
+    // replace React elements with a placeholder ID that can be used to retrieve
+    // the original value afterwards.
     let index = 0;
     for (const item of value) {
+      let serializedItem;
       if (typeof item === 'object') {
-        const id = String(index);
-        richValues[id] = item;
-        serializedValue.push(id);
-        hasRichValues = true;
+        serializedItem = String(index);
+        richValues.set(serializedItem, item);
       } else {
-        serializedValue.push(String(item));
+        serializedItem = String(item);
       }
+      serializedValue.push(serializedItem);
       index++;
     }
 
@@ -266,17 +268,17 @@ export default function createFormatter({
     >(
       formatOrOptions,
       formats?.list,
-      // @ts-expect-error -- `hasRichValues` is used to determine the return type, but TypeScript can't infer the meaning of this variable correctly
+      // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
       (options) => {
         const result = new Intl.ListFormat(locale, options)
           .formatToParts(serializedValue)
           .map((part) =>
             part.type === 'literal'
               ? part.value
-              : richValues[part.value] || part.value
+              : richValues.get(part.value) || part.value
           );
 
-        if (hasRichValues) {
+        if (richValues.size > 0) {
           return result;
         } else {
           return result.join('');

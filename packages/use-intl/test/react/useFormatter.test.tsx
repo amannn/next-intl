@@ -541,15 +541,13 @@ describe('list', () => {
     function Component() {
       const format = useFormatter();
 
-      const result = format.list([
-        ...users.map((user) => (
+      const result = format.list(
+        users.map((user) => (
           <a key={user.id} href={`/user/${user.id}`}>
             {user.name}
           </a>
-        )),
-        // An `Iterable<ReactElement>` as a single element
-        [<span key="one">One</span>, <span key="two">Two</span>]
-      ]);
+        ))
+      );
 
       function expectIterableReactElement(v: Iterable<ReactElement>) {
         return v;
@@ -566,7 +564,7 @@ describe('list', () => {
     );
 
     expect(container.innerHTML).toEqual(
-      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, <a href="/user/3">Charlie</a>, and <span>One</span><span>Two</span>'
+      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, and <a href="/user/3">Charlie</a>'
     );
   });
 
