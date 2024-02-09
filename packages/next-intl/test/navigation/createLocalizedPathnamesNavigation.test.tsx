@@ -3,6 +3,7 @@ import {
   usePathname as useNextPathname,
   useParams,
   redirect as nextRedirect,
+  permanentRedirect as nextPermanentRedirect,
   RedirectType
 } from 'next/navigation';
 import React from 'react';
@@ -20,7 +21,8 @@ vi.mock('next/navigation', async () => {
     ...actual,
     usePathname: vi.fn(),
     useParams: vi.fn(),
-    redirect: vi.fn()
+    redirect: vi.fn(),
+    permanentRedirect: vi.fn()
   };
 });
 vi.mock('next-intl/config', () => ({
@@ -112,7 +114,7 @@ describe.each([
     });
 
     describe("localePrefix: 'as-needed'", () => {
-      const {Link, getPathname, redirect} = createLocalizedPathnamesNavigation({
+      const {Link, getPathname, redirect, permanentRedirect} = createLocalizedPathnamesNavigation({
         locales,
         pathnames,
         localePrefix: 'as-needed'
@@ -320,6 +322,102 @@ describe.each([
         });
       });
 
+      describe('permanentRedirect', () => {
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof permanentRedirect<Pathname>>[0];
+        }) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en/about');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en/news/launch-party-3'
+          );
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de/ueber-uns');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/de/neuigkeiten/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(
+            <Component
+              href={{
+                pathname: '/',
+                query: {
+                  foo: 'bar',
+                  bar: [1, 2]
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('handles unknown routes', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          // @ts-expect-error -- Unknown route
+          render(<Component href="/unknown" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en/unknown');
+        });
+
+        it('can supply a type', () => {
+          function Test() {
+            permanentRedirect('/', RedirectType.push);
+            return null;
+          }
+          render(<Test />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en', 'push');
+        });
+      });
+
       describe('getPathname', () => {
         it('resolves to the correct path', () => {
           expect(
@@ -337,7 +435,7 @@ describe.each([
     });
 
     describe("localePrefix: 'never'", () => {
-      const {Link, redirect} = createLocalizedPathnamesNavigation({
+      const {Link, redirect, permanentRedirect} = createLocalizedPathnamesNavigation({
         pathnames,
         locales,
         localePrefix: 'never'
@@ -441,6 +539,91 @@ describe.each([
           // @ts-expect-error -- Unknown route
           render(<Component href="/unknown" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/unknown');
+        });
+      });
+
+      describe('permanentRedirect', () => {
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof permanentRedirect<Pathname>>[0];
+        }) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/about');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/news/launch-party-3');
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/ueber-uns');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/neuigkeiten/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(
+            <Component
+              href={{
+                pathname: '/',
+                query: {
+                  foo: 'bar',
+                  bar: [1, 2]
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('handles unknown routes', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          // @ts-expect-error -- Unknown route
+          render(<Component href="/unknown" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/unknown');
         });
       });
     });
