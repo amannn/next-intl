@@ -1,4 +1,4 @@
-import {permanentRedirect as nextpermanentRedirect} from 'next/navigation';
+import {permanentRedirect as nextPermanentRedirect} from 'next/navigation';
 import {
   AllLocales,
   LocalePrefix,
@@ -12,11 +12,11 @@ export default function basePermanentRedirect(
     locale: AllLocales[number];
     localePrefix?: LocalePrefix;
   },
-  ...args: ParametersExceptFirst<typeof nextpermanentRedirect>
+  ...args: ParametersExceptFirst<typeof nextPermanentRedirect>
 ) {
   const localizedPathname =
     params.localePrefix === 'never'
       ? params.pathname
       : prefixPathname(params.locale, params.pathname);
-  return nextpermanentRedirect(localizedPathname, ...args);
+  return nextPermanentRedirect(localizedPathname, ...args);
 }

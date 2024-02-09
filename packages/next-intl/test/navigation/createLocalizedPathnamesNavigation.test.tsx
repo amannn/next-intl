@@ -114,11 +114,12 @@ describe.each([
     });
 
     describe("localePrefix: 'as-needed'", () => {
-      const {Link, getPathname, redirect, permanentRedirect} = createLocalizedPathnamesNavigation({
-        locales,
-        pathnames,
-        localePrefix: 'as-needed'
-      });
+      const {Link, getPathname, permanentRedirect, redirect} =
+        createLocalizedPathnamesNavigation({
+          locales,
+          pathnames,
+          localePrefix: 'as-needed'
+        });
 
       describe('Link', () => {
         it('renders a prefix for the default locale initially', () => {
@@ -365,7 +366,9 @@ describe.each([
           expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de');
 
           rerender(<Component href="/about" />);
-          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de/ueber-uns');
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/de/ueber-uns'
+          );
 
           rerender(
             <Component
@@ -435,11 +438,12 @@ describe.each([
     });
 
     describe("localePrefix: 'never'", () => {
-      const {Link, redirect, permanentRedirect} = createLocalizedPathnamesNavigation({
-        pathnames,
-        locales,
-        localePrefix: 'never'
-      });
+      const {Link, permanentRedirect, redirect} =
+        createLocalizedPathnamesNavigation({
+          pathnames,
+          locales,
+          localePrefix: 'never'
+        });
 
       describe('Link', () => {
         it("doesn't render a prefix for the default locale", () => {
@@ -571,7 +575,9 @@ describe.each([
               }}
             />
           );
-          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/news/launch-party-3');
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/news/launch-party-3'
+          );
         });
 
         it('can permanently redirect for a non-default locale', () => {
