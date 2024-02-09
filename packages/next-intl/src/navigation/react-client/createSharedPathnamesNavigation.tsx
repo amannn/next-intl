@@ -5,6 +5,7 @@ import {
   ParametersExceptFirst
 } from '../../shared/types';
 import ClientLink from './ClientLink';
+import clientPermanentRedirect from './clientPermanentRedirect';
 import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
@@ -37,6 +38,13 @@ export default function createSharedPathnamesNavigation<
     return clientRedirect({...opts, pathname}, ...args);
   }
 
+  function permanentRedirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
+  ) {
+    return clientPermanentRedirect({...opts, pathname}, ...args);
+  }
+
   function usePathname(): string {
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return useBasePathname();
@@ -45,6 +53,7 @@ export default function createSharedPathnamesNavigation<
   return {
     Link: LinkWithRef,
     redirect,
+    permanentRedirect,
     usePathname,
     useRouter: useBaseRouter
   };

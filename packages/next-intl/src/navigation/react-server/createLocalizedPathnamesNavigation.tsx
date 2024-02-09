@@ -13,6 +13,7 @@ import {
   normalizeNameOrNameWithParams
 } from '../shared/utils';
 import ServerLink from './ServerLink';
+import serverPermanentRedirect from './serverPermanentRedirect';
 import serverRedirect from './serverRedirect';
 
 export default function createLocalizedPathnamesNavigation<
@@ -68,6 +69,15 @@ export default function createLocalizedPathnamesNavigation<
     return serverRedirect({localePrefix, pathname}, ...args);
   }
 
+  function permanentRedirect<Pathname extends keyof PathnamesConfig>(
+    href: HrefOrHrefWithParams<Pathname>,
+    ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
+  ) {
+    const locale = getRequestLocale();
+    const pathname = getPathname({href, locale});
+    return serverPermanentRedirect({localePrefix, pathname}, ...args);
+  }
+
   function getPathname({
     href,
     locale
@@ -93,6 +103,7 @@ export default function createLocalizedPathnamesNavigation<
   return {
     Link,
     redirect,
+    permanentRedirect,
     getPathname,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')

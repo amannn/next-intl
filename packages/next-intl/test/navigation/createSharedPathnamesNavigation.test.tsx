@@ -3,6 +3,7 @@ import {
   usePathname as useNextPathname,
   useParams,
   redirect as nextRedirect,
+  permanentRedirect as nextPermanentRedirect,
   RedirectType
 } from 'next/navigation';
 import React from 'react';
@@ -19,7 +20,8 @@ vi.mock('next/navigation', async () => {
     ...actual,
     useParams: vi.fn(() => ({locale: 'en'})),
     usePathname: vi.fn(() => '/'),
-    redirect: vi.fn()
+    redirect: vi.fn(),
+    permanentRedirect: vi.fn()
   };
 });
 vi.mock('next-intl/config', () => ({
@@ -96,10 +98,11 @@ describe.each([
     });
 
     describe("localePrefix: 'as-needed'", () => {
-      const {Link, redirect} = createSharedPathnamesNavigation({
-        locales,
-        localePrefix: 'as-needed'
-      });
+      const {Link, permanentRedirect, redirect} =
+        createSharedPathnamesNavigation({
+          locales,
+          localePrefix: 'as-needed'
+        });
 
       describe('Link', () => {
         it('renders a prefix for the default locale initially', () => {
@@ -178,13 +181,69 @@ describe.each([
           expect(nextRedirect).toHaveBeenLastCalledWith('/en', 'push');
         });
       });
+
+      describe('permanentRedirect', () => {
+        function Component({href}: {href: string}) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en/about');
+
+          rerender(<Component href="/news/launch-party-3" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en/news/launch-party-3'
+          );
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de/about');
+
+          rerender(<Component href="/news/launch-party-3" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/de/news/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(<Component href="/?foo=bar&bar=1&bar=2" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('can supply a type', () => {
+          function Test() {
+            permanentRedirect('/', RedirectType.push);
+            return null;
+          }
+          render(<Test />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en', 'push');
+        });
+      });
     });
 
     describe("localePrefix: 'never'", () => {
-      const {Link, redirect} = createSharedPathnamesNavigation({
-        locales,
-        localePrefix: 'never'
-      });
+      const {Link, permanentRedirect, redirect} =
+        createSharedPathnamesNavigation({
+          locales,
+          localePrefix: 'never'
+        });
 
       describe('Link', () => {
         it("doesn't render a prefix for the default locale", () => {
@@ -233,6 +292,44 @@ describe.each([
 
           rerender(<Component href="/news/launch-party-3" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/news/launch-party-3');
+        });
+      });
+
+      describe('permanentRedirect', () => {
+        function Component({href}: {href: string}) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/about');
+
+          rerender(<Component href="/news/launch-party-3" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/news/launch-party-3'
+          );
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/about');
+
+          rerender(<Component href="/news/launch-party-3" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/news/launch-party-3'
+          );
         });
       });
     });

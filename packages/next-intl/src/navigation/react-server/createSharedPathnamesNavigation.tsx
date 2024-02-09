@@ -5,6 +5,7 @@ import {
   ParametersExceptFirst
 } from '../../shared/types';
 import ServerLink from './ServerLink';
+import serverPermanentRedirect from './serverPermanentRedirect';
 import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
@@ -29,9 +30,17 @@ export default function createSharedPathnamesNavigation<
     return serverRedirect({...opts, pathname}, ...args);
   }
 
+  function permanentRedirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
+  ) {
+    return serverPermanentRedirect({...opts, pathname}, ...args);
+  }
+
   return {
     Link,
     redirect,
+    permanentRedirect,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };
