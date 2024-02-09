@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.7.0 (2024-02-09)
+
+
+### Features
+
+* Add support for `permanentRedirect`in navigation APIs ([#850](https://github.com/amannn/next-intl/issues/850) by [@polvallverdu](https://github.com/polvallverdu)) ([6508ddc](https://github.com/amannn/next-intl/commit/6508ddc35ecc95f6dce8b95ecde2734a169579b8))
+
+
+
+
+
 # 3.6.0 (2024-02-08)
 
 
