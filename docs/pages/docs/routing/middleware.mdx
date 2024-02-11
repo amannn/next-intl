@@ -549,29 +549,113 @@ export const config = {
 
 ### Example: Integrating with Supabase Authentication
 
-[`@supabase/auth-helpers-nextjs`](https://supabase.com/docs/guides/auth/auth-helpers/nextjs?language=ts#managing-session-with-middleware) exports `createMiddlewareClient` that accepts a `req` and `res` object. We can pass the incoming `req` and the `res` created with `createIntlMiddleware` to it.
+[`@supabase/ssr`](https://supabase.com/docs/guides/auth/server-side/creating-a-client) exports a `createServerClient` function. First we're going to create a utils function that invokes the `createServerClient` function and returns the `supabase` object.
+
+```ts filename="utils/supabase/middleware.ts"
+import {createServerClient, type CookieOptions} from '@supabase/ssr';
+import {type NextRequest, NextResponse} from 'next/server';
+
+export const createClient = (request: NextRequest) => {
+  // Create an unmodified response
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers
+    }
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          // If the cookie is updated, update the cookies for the request and response
+          request.cookies.set({
+            name,
+            value,
+            ...options
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers
+            }
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          // If the cookie is removed, update the cookies for the request and response
+          request.cookies.set({
+            name,
+            value: '',
+            ...options
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers
+            }
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options
+          });
+        }
+      }
+    }
+  );
+
+  return {supabase, response};
+};
+```
+
+Next, we're going to set up two required environment variables in a `.env.local` file. The `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required to create the `supabase` object.
+
+```txt filename=".env.local"
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Finally, we're going to create a middleware file that uses the `createClient` function that we created and merges it with the `next-intl` middleware.
 
 ```tsx filename="middleware.ts"
-import {createMiddlewareClient} from '@supabase/auth-helpers-nextjs';
+import {NextResponse, type NextRequest} from 'next/server';
+import {createClient} from '@/utils/supabase/middleware';
 import createIntlMiddleware from 'next-intl/middleware';
-import type {NextRequest} from 'next/server';
-import type {Database} from '@/lib/database.types';
 
-export default async function middleware(req: NextRequest) {
+const defaultLocale = 'en';
+const locales = ['en', 'de'];
+
+export async function middleware(request: NextRequest) {
   const handleI18nRouting = createIntlMiddleware({
-    locales: ['en', 'de'],
-    defaultLocale: 'en'
+    locales,
+    defaultLocale
   });
-  const res = handleI18nRouting(req);
+  const response = handleI18nRouting(request);
 
-  const supabase = createMiddlewareClient<Database>({req, res});
-  await supabase.auth.getSession();
-
-  return res;
+  try {
+    const {supabase} = createClient(request);
+    await supabase.auth.getSession();
+    return response;
+  } catch (e) {
+    return NextResponse.next({
+      request: {
+        headers: request.headers
+      }
+    });
+  }
 }
 
 export const config = {
-  matcher: ['/', '/(de|en)/:path*']
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|assets|icon|sitemap.xml|robots.txt|auth|api).*)'
+  ]
 };
 ```
 
