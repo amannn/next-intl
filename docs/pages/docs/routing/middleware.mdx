@@ -549,113 +549,79 @@ export const config = {
 
 ### Example: Integrating with Supabase Authentication
 
-[`@supabase/ssr`](https://supabase.com/docs/guides/auth/server-side/creating-a-client) exports a `createServerClient` function. First we're going to create a utils function that invokes the `createServerClient` function and returns the `supabase` object.
+This example is mostly merging the next-intl middleware with the Supabase one. For more information on the Supabase middleware, check [this](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) guide from their website.
 
-```ts filename="utils/supabase/middleware.ts"
-import {createServerClient, type CookieOptions} from '@supabase/ssr';
-import {type NextRequest, NextResponse} from 'next/server';
-
-export const createClient = (request: NextRequest) => {
-  // Create an unmodified response
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers
-    }
-  });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // If the cookie is updated, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value,
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          // If the cookie is removed, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-        }
-      }
-    }
-  );
-
-  return {supabase, response};
-};
-```
-
-Next, we're going to set up two required environment variables in a `.env.local` file. The `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required to create the `supabase` object.
+First, we're going to set up two required environment variables in a `.env.local` file. The `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required to create the `supabase` object.
 
 ```txt filename=".env.local"
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
+[`@supabase/ssr`](https://supabase.com/docs/guides/auth/server-side/creating-a-client) exports a `createServerClient` function. First we're going to create a function that invokes the `createServerClient` function and returns the `supabase` object.
+
 Finally, we're going to create a middleware file that uses the `createClient` function that we created and merges it with the `next-intl` middleware.
 
 ```tsx filename="middleware.ts"
-import {NextResponse, type NextRequest} from 'next/server';
-import {createClient} from '@/utils/supabase/middleware';
+import {type NextRequest} from 'next/server';
+import {createServerClient, type CookieOptions} from '@supabase/ssr';
 import createIntlMiddleware from 'next-intl/middleware';
 
-const defaultLocale = 'en';
-const locales = ['en', 'de'];
-
 export async function middleware(request: NextRequest) {
-  const handleI18nRouting = createIntlMiddleware({
-    locales,
-    defaultLocale
-  });
-  const response = handleI18nRouting(request);
+  const response = createIntlMiddleware({
+    locales: ['en', 'de'],
+    defaultLocale: 'en'
+  })(request);
 
-  try {
-    const {supabase} = createClient(request);
-    await supabase.auth.getSession();
-    return response;
-  } catch (e) {
-    return NextResponse.next({
-      request: {
-        headers: request.headers
+  const createClient = (request: NextRequest) => {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            // If the cookie is updated, update the cookies for the request and response
+            request.cookies.set({
+              name,
+              value,
+              ...options
+            });
+            response.cookies.set({
+              name,
+              value,
+              ...options
+            });
+          },
+          remove(name: string, options: CookieOptions) {
+            // If the cookie is removed, update the cookies for the request and response
+            request.cookies.set({
+              name,
+              value: '',
+              ...options
+            });
+            response.cookies.set({
+              name,
+              value: '',
+              ...options
+            });
+          }
+        }
       }
-    });
-  }
+    );
+
+    return supabase;
+  };
+
+  const supabase = createClient(request);
+  await supabase.auth.getUser();
+  return response;
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|assets|icon|sitemap.xml|robots.txt|auth|api).*)'
-  ]
+  matcher: ['/', '/(de|en)/:path*']
 };
 ```
 
