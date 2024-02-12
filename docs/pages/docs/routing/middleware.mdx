@@ -549,73 +549,43 @@ export const config = {
 
 ### Example: Integrating with Supabase Authentication
 
-This example is mostly merging the next-intl middleware with the Supabase one. For more information on the Supabase middleware, check [this](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) guide from their website.
+In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
 
-First, we're going to set up two required environment variables in a `.env.local` file. The `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are required to create the `supabase` object.
-
-```txt filename=".env.local"
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-[`@supabase/ssr`](https://supabase.com/docs/guides/auth/server-side/creating-a-client) exports a `createServerClient` function. First we're going to create a function that invokes the `createServerClient` function and returns the `supabase` object.
-
-Finally, we're going to create a middleware file that uses the `createClient` function that we created and merges it with the `next-intl` middleware.
+You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware as follows:
 
 ```tsx filename="middleware.ts"
 import {type NextRequest} from 'next/server';
 import {createServerClient, type CookieOptions} from '@supabase/ssr';
 import createIntlMiddleware from 'next-intl/middleware';
 
-export async function middleware(request: NextRequest) {
-  const response = createIntlMiddleware({
-    locales: ['en', 'de'],
-    defaultLocale: 'en'
-  })(request);
+const handleI18nRouting = createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en'
+});
 
-  const createClient = (request: NextRequest) => {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value;
-          },
-          set(name: string, value: string, options: CookieOptions) {
-            // If the cookie is updated, update the cookies for the request and response
-            request.cookies.set({
-              name,
-              value,
-              ...options
-            });
-            response.cookies.set({
-              name,
-              value,
-              ...options
-            });
-          },
-          remove(name: string, options: CookieOptions) {
-            // If the cookie is removed, update the cookies for the request and response
-            request.cookies.set({
-              name,
-              value: '',
-              ...options
-            });
-            response.cookies.set({
-              name,
-              value: '',
-              ...options
-            });
-          }
+export async function middleware(request: NextRequest) {
+  const response = handleI18nRouting(request);
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({name, value, ...options});
+          response.cookies.set({name, value, ...options});
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({name, value: '', ...options});
+          response.cookies.set({name, value: '', ...options});
         }
       }
-    );
+    }
+  );
 
-    return supabase;
-  };
-
-  const supabase = createClient(request);
   await supabase.auth.getUser();
   return response;
 }
@@ -624,6 +594,8 @@ export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
+
+Note that cookies need to be set simultaneously for the request and the response.
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
