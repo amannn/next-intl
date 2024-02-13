@@ -332,7 +332,7 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  examples/example-bug-template-app-router:
+  examples/example-app-router-minimal:
     dependencies:
       next:
         specifier: ^14.1.0

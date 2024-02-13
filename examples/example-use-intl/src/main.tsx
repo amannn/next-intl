@@ -16,7 +16,7 @@ const node = document.getElementById('root');
 
 ReactDOM.createRoot(node!).render(
   <StrictMode>
-    <IntlProvider messages={messages} locale="en">
+    <IntlProvider locale="en" messages={messages}>
       <App user={{name: 'Jane'}} />
     </IntlProvider>
   </StrictMode>

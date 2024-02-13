@@ -1,5 +1,5 @@
 {
-  "name": "example-bug-template-app-router",
+  "name": "example-app-router-minimal",
   "version": "2.14.3",
   "private": true,
   "scripts": {
