@@ -397,8 +397,6 @@ export default function MyCustomNextIntlClientProvider({
 }
 ```
 
-([working example](https://codesandbox.io/p/sandbox/next-intl-non-serializable-props-on-nextintlclientprovider-r0h2hi?file=%2Fsrc%2Fapp%2F%5Blocale%5D%2FNextIntlProvider.tsx))
-
 By doing this, your custom provider will already be part of the client-side bundle and can therefore define and pass functions as props.
 
 **Important:** Be sure to pass explicit `locale`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since the props aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.

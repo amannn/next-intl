@@ -12,7 +12,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
-        <title>example-bug-template-app-router</title>
+        <title>example-app-router-minimal</title>
       </head>
       <body>{children}</body>
     </html>
