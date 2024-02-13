@@ -549,31 +549,53 @@ export const config = {
 
 ### Example: Integrating with Supabase Authentication
 
-[`@supabase/auth-helpers-nextjs`](https://supabase.com/docs/guides/auth/auth-helpers/nextjs?language=ts#managing-session-with-middleware) exports `createMiddlewareClient` that accepts a `req` and `res` object. We can pass the incoming `req` and the `res` created with `createIntlMiddleware` to it.
+In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
+
+You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware as follows:
 
 ```tsx filename="middleware.ts"
-import {createMiddlewareClient} from '@supabase/auth-helpers-nextjs';
+import {type NextRequest} from 'next/server';
+import {createServerClient, type CookieOptions} from '@supabase/ssr';
 import createIntlMiddleware from 'next-intl/middleware';
-import type {NextRequest} from 'next/server';
-import type {Database} from '@/lib/database.types';
 
-export default async function middleware(req: NextRequest) {
-  const handleI18nRouting = createIntlMiddleware({
-    locales: ['en', 'de'],
-    defaultLocale: 'en'
-  });
-  const res = handleI18nRouting(req);
+const handleI18nRouting = createIntlMiddleware({
+  locales: ['en', 'de'],
+  defaultLocale: 'en'
+});
 
-  const supabase = createMiddlewareClient<Database>({req, res});
-  await supabase.auth.getSession();
+export async function middleware(request: NextRequest) {
+  const response = handleI18nRouting(request);
 
-  return res;
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({name, value, ...options});
+          response.cookies.set({name, value, ...options});
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({name, value: '', ...options});
+          response.cookies.set({name, value: '', ...options});
+        }
+      }
+    }
+  );
+
+  await supabase.auth.getUser();
+  return response;
 }
 
 export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
+
+Note that cookies need to be set simultaneously for the request and the response.
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
