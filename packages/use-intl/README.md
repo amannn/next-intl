@@ -54,7 +54,7 @@ export default function UserProfile({user}) {
 2. Add the provider
 
 ```jsx
-import {IntlProvider} from 'use-intl';
+import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
 // fetch them from within a component and then render the provider 
