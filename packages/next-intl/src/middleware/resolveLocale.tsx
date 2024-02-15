@@ -68,7 +68,7 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const pathLocale = getLocaleFromPathname(pathname);
+    const pathLocale = getLocaleFromPathname(pathname, locales);
     if (locales.includes(pathLocale)) {
       locale = pathLocale;
     }
