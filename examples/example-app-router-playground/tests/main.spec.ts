@@ -57,6 +57,17 @@ it('redirects to a matched locale at the root for non-default locales', async ({
   page.getByRole('heading', {name: 'Start'});
 });
 
+it('redirects to a matched locale for invalid cased locales', async ({
+  browser
+  }) => {
+  const context = await browser.newContext({locale: 'de'});
+  const page = await context.newPage();
+
+  await page.goto('/DE');
+  await expect(page).toHaveURL('/DE');
+  page.getByRole('heading', {name: 'Start'});
+});
+
 it('redirects a prefixed pathname for the default locale to the unprefixed version', async ({
   request
 }) => {
