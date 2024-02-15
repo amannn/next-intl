@@ -10,14 +10,15 @@ export function getLocaleFromPathname<Locales extends AllLocales>(
   locales: Locales
 ) {
   // Get the potential locale from the pathname
-  const potentialLocale = pathname.split('/')[1];
+  const potentialLocale = pathname.split('/')[1].toLowerCase();
 
-  // Try to get a validated version of the potential locale in a case-insensitive manner
-  return (
-    locales.find(
-      (locale) => locale.toLowerCase() === potentialLocale.toLowerCase()
-    ) ?? ''
+  // Try to get a validated version of the potential locale with case-insensitive matching
+  const matchedLocale = locales.find(
+    (locale) => locale.toLowerCase() === potentialLocale
   );
+
+  // Return matched locale or default to an empty string if not found
+  return matchedLocale ?? '';
 }
 
 export function getInternalTemplate<

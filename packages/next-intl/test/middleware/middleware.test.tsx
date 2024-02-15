@@ -537,7 +537,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects an invalid, upper cased request for a localized route to the correct casing', () => {
+      it('redirects an invalid, upper-cased request for a localized route to the case-sensitive format', () => {
         middlewareWithPathnames(createMockRequest('/DE-AT', 'de-AT'));
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -547,7 +547,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects an invalid, lower cased request for a localized route to the correct casing', () => {
+      it('redirects an invalid, lower-cased request for a localized route to the case-sensitive format', () => {
         middlewareWithPathnames(createMockRequest('/de-at', 'de-AT'));
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
