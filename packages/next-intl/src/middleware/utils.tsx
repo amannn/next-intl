@@ -5,20 +5,8 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 
-export function getLocaleFromPathname<Locales extends AllLocales>(
-  pathname: string,
-  locales: Locales
-) {
-  // Get the potential locale from the pathname
-  const potentialLocale = pathname.split('/')[1].toLowerCase();
-
-  // Try to get a validated version of the potential locale with case-insensitive matching
-  const matchedLocale = locales.find(
-    (locale) => locale.toLowerCase() === potentialLocale
-  );
-
-  // Return matched locale or default to an empty string if not found
-  return matchedLocale ?? '';
+export function getLocaleFromPathname(pathname: string) {
+  return pathname.split('/')[1];
 }
 
 export function getInternalTemplate<
@@ -99,7 +87,7 @@ export function getKnownLocaleFromPathname<Locales extends AllLocales>(
   pathname: string,
   locales: Locales
 ): Locales[number] | undefined {
-  const pathLocaleCandidate = getLocaleFromPathname(pathname, locales);
+  const pathLocaleCandidate = getLocaleFromPathname(pathname);
   const pathLocale = locales.includes(pathLocaleCandidate)
     ? pathLocaleCandidate
     : undefined;

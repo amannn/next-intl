@@ -64,7 +64,7 @@ it('redirects to a matched locale for invalid cased locales', async ({
   const page = await context.newPage();
 
   await page.goto('/DE');
-  await expect(page).toHaveURL('/DE');
+  await expect(page).toHaveURL('/de');
   page.getByRole('heading', {name: 'Start'});
 });
 

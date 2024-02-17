@@ -539,20 +539,20 @@ describe('prefix-based routing', () => {
 
       it('redirects an invalid, upper-cased request for a localized route to the case-sensitive format', () => {
         middlewareWithPathnames(createMockRequest('/DE-AT', 'de-AT'));
-        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de-AT'
         );
       });
 
       it('redirects an invalid, lower-cased request for a localized route to the case-sensitive format', () => {
         middlewareWithPathnames(createMockRequest('/de-at', 'de-AT'));
-        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de-AT'
         );
       });
