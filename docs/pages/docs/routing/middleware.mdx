@@ -346,7 +346,7 @@ export default createMiddleware({
 <details>
 <summary>How to revalidate localized pathnames?</summary>
 
-Depending on how the route is generated, whether statically or dynamically, if you're trying to use Next.js's function `revalidatePath()`, you will need to call it twice.
+Depending on how the route is generated, whether statically or dynamically, if you're attempting to use Next.js's function `revalidatePath()`, you will need to call it with two different pathnames.
 
 Let's take an example with this folder structure:
 ```
@@ -372,9 +372,10 @@ export default createMiddleware({
 });
 ```
 
-Assuming the pathanme is `/fr/infos/some-article`, if the page is dynamically generated, you will need to revalidate like this : `revalidatePath('/fr/infos/some-article')`. But, if the page is statically rendered, the path to revalidate is this one : `revalidatePath('/fr/news/some-article')`. So, if you don't know if the page is statically or dynamically generated, we advise you to revalidate both.
+Assuming the pathname is `/fr/infos/some-article`, if the page is dynamically generated, you will need to revalidate like this: `revalidatePath('/fr/infos/some-article')`. However, if the page is statically rendered, the path to revalidate is this one: `revalidatePath('/fr/news/some-article')`. So, if you don't know if the page is statically or dynamically generated, we advise you to revalidate both.
 
-You can find more infos of issue [https://github.com/amannn/next-intl/issues/846](here).
+You can find more information on the issue [here](https://github.com/amannn/next-intl/issues/846).
+
 </details>
 
 
