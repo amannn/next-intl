@@ -77,6 +77,21 @@ export default function createFormatter({
   onError = defaultOnError,
   timeZone: globalTimeZone
 }: Props) {
+  function applyGlobalTimeZone(options?: DateTimeFormatOptions) {
+    if (globalTimeZone) {
+      options = {...options, timeZone: globalTimeZone};
+    } else {
+      onError(
+        new IntlError(
+          IntlErrorCode.ENVIRONMENT_FALLBACK,
+          process.env.NODE_ENV !== 'production'
+            ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+            : undefined
+        )
+      );
+    }
+    return options;
+  }
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options
@@ -138,20 +153,7 @@ export default function createFormatter({
       formatOrOptions,
       formats?.dateTime,
       (options) => {
-        if (!options?.timeZone) {
-          if (globalTimeZone) {
-            options = {...options, timeZone: globalTimeZone};
-          } else {
-            onError(
-              new IntlError(
-                IntlErrorCode.ENVIRONMENT_FALLBACK,
-                process.env.NODE_ENV !== 'production'
-                  ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
-                  : undefined
-              )
-            );
-          }
-        }
+        options = applyGlobalTimeZone(options);
 
         return new Intl.DateTimeFormat(locale, options).format(value);
       }
@@ -172,20 +174,7 @@ export default function createFormatter({
       formatOrOptions,
       formats?.dateTime,
       (options) => {
-        if (!options?.timeZone) {
-          if (globalTimeZone) {
-            options = {...options, timeZone: globalTimeZone};
-          } else {
-            onError(
-              new IntlError(
-                IntlErrorCode.ENVIRONMENT_FALLBACK,
-                process.env.NODE_ENV !== 'production'
-                  ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
-                  : undefined
-              )
-            );
-          }
-        }
+        options = applyGlobalTimeZone(options);
 
         return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
       }

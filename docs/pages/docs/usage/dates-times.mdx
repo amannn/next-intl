@@ -124,6 +124,28 @@ function Component() {
 }
 ```
 
+## Formatting time ranges
+
+You can format date ranges with the `dateTimeRange` function:
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+  const dateTimeA = new Date('2020-11-20T08:30:00.000Z');
+  const dateTimeB = new Date('2020-11-24T08:30:00.000Z');
+
+  format.dateTimeRange(dateTimeA, dateTimeB, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  // this will render "Friday, November 20 – Tuesday, November 24, 2020"
+}
+```
+
 ## Dates and times within messages
 
 Dates and times can be embedded within messages by using the ICU syntax.

@@ -284,8 +284,7 @@ describe('dateTimeRange', () => {
           minute: 'numeric'
         }
       )
-    // 1 hour more given that the timezone is Europe/Berlin and the date is in UTC
-    ).toBe('1/10/06, 11:00 AM – 12:00 PM');
+    ).toBe('1/10/06, 11:00 AM – 12:00 PM'); // 1 hour more given that the timezone is Europe/Berlin and the date is in UTC
   });
 });
 
