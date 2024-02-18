@@ -10,11 +10,7 @@ import {
   createTranslator,
   MarkupTranslationValues
 } from 'use-intl/core';
-
-function getMessageFormatCacheImpl() {
-  return new Map();
-}
-const getMessageFormatCache = cache(getMessageFormatCacheImpl);
+import {getMessageFormatCache} from '../shared/messageFormatCache';
 
 function getTranslatorImpl<
   NestedKey extends NamespaceKeys<

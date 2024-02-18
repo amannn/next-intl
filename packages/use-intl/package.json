@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.4.2",
+  "version": "3.7.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -90,7 +90,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "12.4 kB"
+      "limit": "12.5 kB"
     }
   ]
 }

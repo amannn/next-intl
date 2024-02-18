@@ -1,3 +1,4 @@
+import {ReactElement} from 'react';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
 import IntlError, {IntlErrorCode} from './IntlError';
@@ -118,17 +119,17 @@ export default function createFormatter({
     return options;
   }
 
-  function getFormattedValue<Value, Options>(
-    value: Value,
+  function getFormattedValue<Options, Output>(
     formatOrOptions: string | Options | undefined,
     typeFormats: Record<string, Options> | undefined,
-    formatter: (options?: Options) => string
+    formatter: (options?: Options) => Output,
+    getFallback: () => Output
   ) {
     let options;
     try {
       options = resolveFormatOrOptions(typeFormats, formatOrOptions);
     } catch (error) {
-      return String(value);
+      return getFallback();
     }
 
     try {
@@ -137,7 +138,7 @@ export default function createFormatter({
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
       );
-      return String(value);
+      return getFallback();
     }
   }
 
@@ -149,14 +150,14 @@ export default function createFormatter({
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.dateTime,
       (options) => {
         options = applyGlobalTimeZone(options);
 
         return new Intl.DateTimeFormat(locale, options).format(value);
-      }
+      },
+      () => String(value)
     );
   }
 
@@ -186,10 +187,10 @@ export default function createFormatter({
     formatOrOptions?: string | NumberFormatOptions
   ) {
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.number,
-      (options) => new Intl.NumberFormat(locale, options).format(value)
+      (options) => new Intl.NumberFormat(locale, options).format(value),
+      () => String(value)
     );
   }
 
@@ -260,12 +261,53 @@ export default function createFormatter({
     }
   }
 
-  function list(
-    value: Iterable<string>,
+  type FormattableListValue = string | ReactElement;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
-  ) {
-    return getFormattedValue(value, formatOrOptions, formats?.list, (options) =>
-      new Intl.ListFormat(locale, options).format(value)
+  ): Value extends string ? string : Iterable<ReactElement> {
+    const serializedValue: Array<string> = [];
+    const richValues = new Map<string, Value>();
+
+    // `formatToParts` only accepts strings, therefore we have to temporarily
+    // replace React elements with a placeholder ID that can be used to retrieve
+    // the original value afterwards.
+    let index = 0;
+    for (const item of value) {
+      let serializedItem;
+      if (typeof item === 'object') {
+        serializedItem = String(index);
+        richValues.set(serializedItem, item);
+      } else {
+        serializedItem = String(item);
+      }
+      serializedValue.push(serializedItem);
+      index++;
+    }
+
+    return getFormattedValue<
+      Intl.ListFormatOptions,
+      Value extends string ? string : Iterable<ReactElement>
+    >(
+      formatOrOptions,
+      formats?.list,
+      // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
+      (options) => {
+        const result = new Intl.ListFormat(locale, options)
+          .formatToParts(serializedValue)
+          .map((part) =>
+            part.type === 'literal'
+              ? part.value
+              : richValues.get(part.value) || part.value
+          );
+
+        if (richValues.size > 0) {
+          return result;
+        } else {
+          return result.join('');
+        }
+      },
+      () => String(value)
     );
   }
 

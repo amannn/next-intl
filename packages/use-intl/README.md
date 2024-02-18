@@ -54,7 +54,7 @@ export default function UserProfile({user}) {
 2. Add the provider
 
 ```jsx
-import {IntlProvider} from 'use-intl';
+import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
 // fetch them from within a component and then render the provider 
@@ -79,7 +79,7 @@ function App({user}) {
 }
 ```
 
-Have a look at [the minimal setup example](https://codesandbox.io/s/use-intl-cra-example-13w917?file=/src/Root.tsx) to explore a working app.
+Have a look at [the minimal setup example](https://github.com/amannn/next-intl/tree/main/examples/example-use-intl) to explore a working app.
 
 ## Usage
 

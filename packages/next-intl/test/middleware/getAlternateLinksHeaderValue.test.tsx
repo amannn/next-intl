@@ -190,8 +190,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/en/about>; rel="alternate"; hreflang="en"`,
-        `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
-        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
+        `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`
       ]);
     });
 

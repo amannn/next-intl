@@ -4,7 +4,7 @@ on:
     types:
       - labeled
 jobs:
-  add-comment:
+  reproduction-missing:
     if: github.event.label.name == 'reproduction-missing'
     runs-on: ubuntu-latest
     permissions:
@@ -14,13 +14,13 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Thank you for your report.
+            Thank you for your report!
             
             Unfortunately, the reproduction is missing or incomplete, and as such we cannot investigate this issue. Please add a reproduction to the issue, otherwise it will be closed automatically.
 
             **Templates:**
-             - [CodeSandbox (App Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-app-forked-zcymvq)
-             - [CodeSandbox (Pages Router)](https://codesandbox.io/p/sandbox/next-intl-bug-template-pages-krm37f)
+             - [App Router](https://github.com/amannn/next-intl/tree/main/examples/example-app-router-minimal)
+             - [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
             
             **Creating a good bug report takes time.**
             
@@ -39,10 +39,23 @@ jobs:
 
               **"I've included a reproduction, what is missing?"**
 
-              This comment might have been added because your reproduction doesn't point to either a CodeSandbox or a public GitHub repository where the issue can be reproduced.
-
-              Please make sure:
-              1. If you've linked to a CodeSandbox, make sure to save the latest changes.
-              2. If you've linked to a GitHub repository, make sure that you've committed and pushed the latest changes.
-              3. Linking to other resources, e.g. to the docs, unfortunately doesn't help to reproduce your issue.
+              This comment might have been added because your reproduction doesn't point to a destination where the issue can be reproduced. Please make sure that the latest changes were saved in the reproduction and that the link is correct.
             </details>
+
+  needs-isolation:
+    if: github.event.label.name == 'needs-isolation'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Thank you for your report!
+            
+            From the currently available context in this issue, it's unclear wether the erroneous behavior is caused by Next.js, `next-intl` or a 3rd party library that you're using. Please isolate the issue further to be sure that the issue is _caused_ by `next-intl`. When in doubt, please search on [the Next.js issue tracker](https://github.com/vercel/next.js/issues) or related resources of 3rd party libraries you might be using.
+
+            If you're able to isolate the issue to `next-intl`, please provide a minimal reproduction that ideally doesn't involve any 3rd party libraries or alternatively demonstrates that `next-intl` is causing the issue.
+
+            Thank you for your understanding!

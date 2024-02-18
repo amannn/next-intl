@@ -1,7 +1,7 @@
 import Callout from 'components/Callout';
 import {Tab, Tabs} from 'nextra-theme-docs';
 
-# Next.js App Router internationalized navigation
+# Navigation APIs
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
@@ -57,6 +57,15 @@ export default createMiddleware({
   locales
 });
 ```
+
+<details>
+<summary>What if the locales aren't known at build time?</summary>
+
+In case you're building an app where locales can be added and removed at runtime, you can omit the `locales` argument from the navigation APIs. The `locale` that can be passed to APIs like `Link` will now accept any string as a valid value.
+
+Note however that the `locales` argument for the middleware is mandatory. You can however [create the middleware dynamically](/docs/routing/middleware#composing-other-middlewares) on a per-request basis and provide the `locales` argument e.g. after fetching this from a database.
+
+</details>
 
 ### Strategy 2: Localized pathnames [#localized-pathnames]
 
@@ -120,8 +129,9 @@ export default createMiddleware({
 ```
 
 <Callout>
-  Have a look at the [App Router example](/examples#app-router) to explore a
-  working implementation of localized pathnames.
+  Have a look at the [App Router
+  example](https://next-intl-example-app-router.vercel.app) to explore a working
+  implementation of localized pathnames.
 </Callout>
 
 ## APIs
@@ -410,7 +420,7 @@ const params = useParams();
 router.replace(
   {
     pathname,
-    // TypeScript will validate that only known `params` are used in combination
+    // TypeScript validates that only known `params` are used in combination
     // with a given `pathname`. Since the two will always match for the current
     // route, we can skip runtime checks.
     params: params as any
@@ -502,6 +512,10 @@ redirect({
 </Tab>
 </Tabs>
 
+<Callout>
+  [`permanentRedirect`](https://nextjs.org/docs/app/api-reference/functions/permanentRedirect) is supported too.
+</Callout>
+
 ### `getPathname`
 
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
@@ -517,16 +531,22 @@ If you need to construct a particular pathname based on a locale, you can call t
 ```tsx filename="page.tsx"
 import {getPathname} from '../navigation';
 
-export async function generateMetadata({params}) {
+export async function generateMetadata({params: {locale}}) {
+  // Example: This page accepts search params like `?sort=asc`.
+  // A canonical link informs search engines that only the
+  // version without search params should be indexed.
+
+  const pathname = getPathname({
+    locale,
+    href: {
+      pathname: '/users/[userId]',
+      params: {userId: '5'}
+    }
+  });
+
   return {
     alternates: {
-      canonical: getPathname({
-        locale: props.params.locale,
-        href: {
-          pathname: '/users/[userId]',
-          params: {userId: '5'}
-        }
-      })
+      canonical: '/' + locale + pathname
     }
   };
 }

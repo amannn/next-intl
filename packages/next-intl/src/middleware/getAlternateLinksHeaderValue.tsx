@@ -114,14 +114,16 @@ export default function getAlternateLinksHeaderValue<
   });
 
   // Add x-default entry
-  if (!config.domains) {
+  const shouldAddXDefault =
+    // For domain-based routing there is no reasonable x-default
+    !config.domains &&
+    (config.localePrefix !== 'always' || normalizedUrl.pathname === '/');
+  if (shouldAddXDefault) {
     const url = new URL(
       getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),
       normalizedUrl
     );
     links.push(getAlternateEntry(url, 'x-default'));
-  } else {
-    // For domain-based routing there is no reasonable x-default
   }
 
   return links.join(', ');

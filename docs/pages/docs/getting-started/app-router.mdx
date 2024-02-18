@@ -1,3 +1,4 @@
+import {Tab, Tabs} from 'nextra-theme-docs';
 import Callout from 'components/Callout';
 import Steps from 'components/Steps';
 
@@ -7,9 +8,9 @@ The Next.js App Router introduces support for [React Server Components](https://
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js app that uses the App Router](https://nextjs.org/docs/getting-started/installation).
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router.
 
-`next-intl` integrates with the App Router, by using a `[locale]` [dynamic segment](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
+`next-intl` integrates with the App Router by using a `[locale]` [dynamic segment](https://nextjs.org/docs/pages/building-your-application/routing/dynamic-routes) so that we can use this segment to provide content in different languages (e.g. `/en`, `/en/about`, etc.).
 
 Let's get started!
 
@@ -19,7 +20,7 @@ Let's get started!
 ├── messages (1)
 │   ├── en.json
 │   └── ...
-├── next.config.js (2)
+├── next.config.mjs (2)
 └── src
     ├── i18n.ts (3)
     ├── middleware.ts (4)
@@ -33,7 +34,7 @@ Let's get started!
 
 <Steps>
 
-### `messages/en.json`
+### `messages/en.json` [#messages]
 
 Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
 
@@ -47,24 +48,51 @@ The simplest option is to add JSON files in your project based on locales, e.g. 
 }
 ```
 
-### `next.config.js`
+### `next.config.mjs` [#next-config]
 
-Now, set up the plugin which creates an alias to import your i18n configuration (specified in the next step) into Server Components.
+Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
 
-```js filename="next.config.js"
-const withNextIntl = require('next-intl/plugin')();
+<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tab>
 
-module.exports = withNextIntl({
-  // Other Next.js configuration ...
-});
+If you're using ECMAScript modules for your Next.js config, you can use the plugin as follows:
+
+```js filename="next.config.mjs"
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default withNextIntl(nextConfig);
 ```
 
-### `src/i18n.ts` [#i18nts]
+</Tab>
+<Tab>
+
+If you're using CommonJS for your Next.js config, you can use the plugin as follows:
+
+```js filename="next.config.js"
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = withNextIntl(nextConfig);
+```
+
+</Tab>
+</Tabs>
+
+### `i18n.ts` [#i18nts]
 
 `next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
 
 ```tsx filename="src/i18n.ts"
-import {notFound} from "next/navigation";
+import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
 // Can be imported from a shared config
@@ -87,24 +115,20 @@ This file is supported out-of-the-box both in the `src` folder as well as in the
 
 If you prefer to move this file somewhere else, you can provide an optional path to the plugin:
 
-```js filename="next.config.js"
-const withNextIntl = require('next-intl/plugin')(
+```js filename="next.config.mjs"
+const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/i18n.ts'
 );
-
-module.exports = withNextIntl({
-  // Other Next.js configuration ...
-});
 ```
 
 </details>
 
-### `middleware.ts`
+### `middleware.ts` [#middleware]
 
 The middleware matches a locale for the request and handles redirects and rewrites accordingly.
 
-```tsx filename="middleware.ts"
+```tsx filename="src/middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
@@ -121,12 +145,18 @@ export const config = {
 };
 ```
 
-### `app/[locale]/layout.tsx`
+### `app/[locale]/layout.tsx` [#layout]
 
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
 
 ```tsx filename="app/[locale]/layout.tsx"
-export default function LocaleLayout({children, params: {locale}}) {
+export default function LocaleLayout({
+  children,
+  params: {locale}
+}: {
+  children: React.ReactNode;
+  params: {locale: string};
+}) {
   return (
     <html lang={locale}>
       <body>{children}</body>
@@ -135,7 +165,7 @@ export default function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-### `app/[locale]/page.tsx`
+### `app/[locale]/page.tsx` [#page]
 
 Use translations in your page components or anywhere else!
 
@@ -152,29 +182,23 @@ export default function Index() {
 
 That's all it takes!
 
+In case you ran into an issue, have a look at [the App Router example](https://next-intl-example-app-router.vercel.app/) to explore a working app.
+
 <Callout>
 
 **Next steps:**
 
 <ul className="ml-4 list-disc">
-  <li>Exploring `next-intl`? Check out the [usage guide](/docs/usage).</li>
+  <li>[Usage guide](/docs/usage): Format messages, dates and times</li>
   <li>
-    Ran into an issue? Have a look at [the App Router
-    example](https://next-intl-example-app-router.vercel.app/).
+    [Environments](/docs/environments): Explore usage in Server & Client
+    Components and the Metadata API
   </li>
   <li>
-    Want to learn more about about using translations across the server and
-    client? Check out [the Server & Client Components
-    guide](/docs/environments/server-client-components).
+    [Routing](/docs/routing): Integrate i18n routing with `<Link />` & friends
   </li>
   <li>
-    Wondering how to link between internationalized pages? Have a look at [the
-    navigation docs](/docs/routing/navigation).
-  </li>
-  <li>
-    Are you transitioning from the Pages to the App Router? Check out [the
-    migration
-    example](https://github.com/amannn/next-intl/tree/main/examples/example-app-router-migration).
+    [Workflows](/docs/workflows): Make use of the TypeScript integration & more
   </li>
 </ul>
 

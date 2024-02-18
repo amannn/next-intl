@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactNode} from 'react';
+import React, {ComponentProps, ReactNode, ReactElement} from 'react';
 import {it, expect, describe, vi} from 'vitest';
 import {
   DateTimeFormatOptions,
@@ -509,8 +509,63 @@ describe('list', () => {
   }
 
   it('formats a list', () => {
-    renderList(['apple', 'banana', 'orange']);
+    function Component() {
+      const format = useFormatter();
+      const value = ['apple', 'banana', 'orange'];
+      const result = format.list(value);
+      expect(typeof result).toBe('string');
+
+      function expectString(v: string) {
+        return v;
+      }
+
+      return expectString(result);
+    }
+
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+
     screen.getByText('apple, banana, and orange');
+  });
+
+  it('formats a list of rich elements', () => {
+    const users = [
+      {id: 1, name: 'Alice'},
+      {id: 2, name: 'Bob'},
+      {id: 3, name: 'Charlie'}
+    ];
+
+    function Component() {
+      const format = useFormatter();
+
+      const result = format.list(
+        users.map((user) => (
+          <a key={user.id} href={`/user/${user.id}`}>
+            {user.name}
+          </a>
+        ))
+      );
+
+      function expectIterableReactElement(v: Iterable<ReactElement>) {
+        return v;
+      }
+
+      expect(Array.isArray(result)).toBe(true);
+      return expectIterableReactElement(result);
+    }
+
+    const {container} = render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+
+    expect(container.innerHTML).toEqual(
+      '<a href="/user/1">Alice</a>, <a href="/user/2">Bob</a>, and <a href="/user/3">Charlie</a>'
+    );
   });
 
   it('accepts a set', () => {

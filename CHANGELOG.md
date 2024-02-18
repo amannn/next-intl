@@ -3,6 +3,116 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.7.0 (2024-02-09)
+
+
+### Features
+
+* Add support for `permanentRedirect`in navigation APIs ([#850](https://github.com/amannn/next-intl/issues/850) by [@polvallverdu](https://github.com/polvallverdu)) ([6508ddc](https://github.com/amannn/next-intl/commit/6508ddc35ecc95f6dce8b95ecde2734a169579b8))
+
+
+
+
+
+# 3.6.0 (2024-02-08)
+
+
+### Features
+
+* Support formatting of React elements via `format.list(…)`. ([#845](https://github.com/amannn/next-intl/issues/845)) ([7bf11d4](https://github.com/amannn/next-intl/commit/7bf11d42b26c66bcecaf69627e6bd1925d8ba49d))
+
+
+
+
+
+## 3.5.4 (2024-02-01)
+
+
+### Bug Fixes
+
+* Keep cookie value in sync when navigating within a locale ([#828](https://github.com/amannn/next-intl/issues/828)) ([1167523](https://github.com/amannn/next-intl/commit/1167523f01ed6363c3fe3bbb7aa925744eedd055)), closes [#826](https://github.com/amannn/next-intl/issues/826)
+
+
+
+
+
+## 3.5.3 (2024-01-29)
+
+
+### Bug Fixes
+
+* Improve RSC render performance by sharing a cache between `getTranslations` and `useTranslations` ([#798](https://github.com/amannn/next-intl/issues/798) by [@fkapsahili](https://github.com/fkapsahili)) ([73e8337](https://github.com/amannn/next-intl/commit/73e8337044a8cb187d6f96f9b5ea77f6252866bb))
+
+
+
+
+
+## 3.5.2 (2024-01-25)
+
+
+### Bug Fixes
+
+* Set cookie to `SameSite: Lax` ([#817](https://github.com/amannn/next-intl/issues/817)) ([0e91e64](https://github.com/amannn/next-intl/commit/0e91e64412f919f70533c9d6189073780a5baae8)), closes [#527](https://github.com/amannn/next-intl/issues/527) [#811](https://github.com/amannn/next-intl/issues/811)
+
+
+
+
+
+## 3.5.1 (2024-01-23)
+
+
+### Bug Fixes
+
+* Remove `x-default` alternate links entry for non-root pathnames when using `localePrefix: 'always'`  ([#805](https://github.com/amannn/next-intl/issues/805)) ([c5bb0f5](https://github.com/amannn/next-intl/commit/c5bb0f50efbb5321181439c6d9e9aee08226b46a))
+
+
+
+
+
+# 3.5.0 (2024-01-22)
+
+
+### Features
+
+* Make options for `createSharedPathnamesNavigation` along with `locales` argument optional (relevant when `locales` aren't known statically) ([#784](https://github.com/amannn/next-intl/issues/784)) ([614053d](https://github.com/amannn/next-intl/commit/614053ddb40f83f7f4a122e5ffeb836d1ecbf63e))
+
+
+
+
+
+## 3.4.5 (2024-01-19)
+
+
+### Bug Fixes
+
+* Make sure cookie value stays up to date when the Next.js Router Cache is used ([#790](https://github.com/amannn/next-intl/issues/790)) ([977b973](https://github.com/amannn/next-intl/commit/977b9732aa7b0a9cb0c26e8cf34ae30cc96f25b6)), closes [#786](https://github.com/amannn/next-intl/issues/786) [#786](https://github.com/amannn/next-intl/issues/786)
+
+
+
+
+
+## 3.4.4 (2024-01-17)
+
+
+### Bug Fixes
+
+* Improve error message for missing messages by including the locale ([#782](https://github.com/amannn/next-intl/issues/782)) ([79eee9d](https://github.com/amannn/next-intl/commit/79eee9d0ca882b95d76007fed669b79c9b217d35))
+
+
+
+
+
+## 3.4.3 (2024-01-16)
+
+
+### Bug Fixes
+
+* Apply global `timeZone` when using date skeletons in messages (e.g. `Ordered on {orderDate, date, ::yyyyMd}`) ([#695](https://github.com/amannn/next-intl/issues/695)) ([8940192](https://github.com/amannn/next-intl/commit/8940192664ffe10f70a0526c1f4d6cbfc942faab)), closes [#693](https://github.com/amannn/next-intl/issues/693)
+
+
+
+
+
 ## 3.4.2 (2024-01-09)
 
 

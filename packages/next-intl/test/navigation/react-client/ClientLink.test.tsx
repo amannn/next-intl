@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
 import React from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
@@ -94,11 +94,15 @@ describe('unprefixed routing', () => {
     expect(ref).toBeDefined();
   });
 
-  it('sets an hreflang', () => {
-    render(<ClientLink href="/test">Test</ClientLink>);
+  it('sets an hreflang when changing the locale', () => {
+    render(
+      <ClientLink href="/test" locale="de">
+        Test
+      </ClientLink>
+    );
     expect(
       screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
-    ).toBe('en');
+    ).toBe('de');
   });
 });
 
@@ -190,4 +194,19 @@ describe('usage outside of Next.js', () => {
       'No intl context found. Have you configured the provider?'
     );
   });
+});
+
+it('keeps the cookie value in sync', () => {
+  vi.mocked(usePathname).mockImplementation(() => '/en');
+  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+  document.cookie = 'NEXT_LOCALE=en';
+
+  render(
+    <ClientLink href="/" locale="de">
+      Test
+    </ClientLink>
+  );
+  expect(document.cookie).toContain('NEXT_LOCALE=en');
+  fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+  expect(document.cookie).toContain('NEXT_LOCALE=de');
 });
