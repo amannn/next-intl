@@ -286,6 +286,19 @@ describe('dateTimeRange', () => {
       )
     ).toBe('1/10/06, 11:00 AM – 12:00 PM'); // 1 hour more given that the timezone is Europe/Berlin and the date is in UTC
   });
+  it('returns a reasonable fallback if an invalid format is provided', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        'unknown'
+      )
+    ).toBe('1/10/2007 – 1/10/2008');
+  });
 });
 
 describe('list', () => {

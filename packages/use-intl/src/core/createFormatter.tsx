@@ -171,14 +171,14 @@ export default function createFormatter({
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
     return getFormattedValue(
-      [start, end],
       formatOrOptions,
       formats?.dateTime,
       (options) => {
         options = applyGlobalTimeZone(options);
 
         return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
-      }
+      },
+      () => [dateTime(start), dateTime(end)].join(' – ')
     );
   }
 
