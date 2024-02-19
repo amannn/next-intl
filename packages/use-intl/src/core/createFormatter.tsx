@@ -78,6 +78,25 @@ export default function createFormatter({
   onError = defaultOnError,
   timeZone: globalTimeZone
 }: Props) {
+  function applyTimeZone(options?: DateTimeFormatOptions) {
+    if (!options?.timeZone) {
+      if (globalTimeZone) {
+        options = {...options, timeZone: globalTimeZone};
+      } else {
+        onError(
+          new IntlError(
+            IntlErrorCode.ENVIRONMENT_FALLBACK,
+            process.env.NODE_ENV !== 'production'
+              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+              : undefined
+          )
+        );
+      }
+    }
+
+    return options;
+  }
+
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options
@@ -138,24 +157,30 @@ export default function createFormatter({
       formatOrOptions,
       formats?.dateTime,
       (options) => {
-        if (!options?.timeZone) {
-          if (globalTimeZone) {
-            options = {...options, timeZone: globalTimeZone};
-          } else {
-            onError(
-              new IntlError(
-                IntlErrorCode.ENVIRONMENT_FALLBACK,
-                process.env.NODE_ENV !== 'production'
-                  ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
-                  : undefined
-              )
-            );
-          }
-        }
-
+        options = applyTimeZone(options);
         return new Intl.DateTimeFormat(locale, options).format(value);
       },
       () => String(value)
+    );
+  }
+
+  function dateTimeRange(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    start: Date | number,
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    end: Date | number,
+    /** If a time zone is supplied, the values are converted to that time zone.
+     * Otherwise the user time zone will be used. */
+    formatOrOptions?: string | DateTimeFormatOptions
+  ) {
+    return getFormattedValue(
+      formatOrOptions,
+      formats?.dateTime,
+      (options) => {
+        options = applyTimeZone(options);
+        return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
+      },
+      () => [dateTime(start), dateTime(end)].join(' – ')
     );
   }
 
@@ -288,5 +313,5 @@ export default function createFormatter({
     );
   }
 
-  return {dateTime, number, relativeTime, list};
+  return {dateTime, number, relativeTime, list, dateTimeRange};
 }

@@ -5,7 +5,7 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle i18n differences in your Next.js app automatically.
 
-## Formatting dates and times
+## Formatting dates and times [#dates-times]
 
 You can format plain dates that are not part of a message with the `dateTime` function that is returned from the `useFormatter` hook:
 
@@ -30,6 +30,12 @@ function Component() {
 
 See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to the `dateTime` function or [try the interactive explorer for `Intl.DateTimeFormat`](https://www.intl-explorer.com/DateTimeFormat).
 
+If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
+
+```js
+format.dateTime(dateTime, 'short');
+```
+
 <details>
 <summary>How can I parse dates or manipulate them?</summary>
 
@@ -49,7 +55,7 @@ const twoDaysAgo = subDays(date, 2);
 
 </details>
 
-## Formatting relative time
+## Formatting relative times [#relative-times]
 
 You can format plain dates that are not part of a message with the `relativeTime` function:
 
@@ -122,6 +128,33 @@ function Component() {
   // Renders "247 days ago"
   format.relativeTime(dateTime, {now, unit: 'day'});
 }
+```
+
+## Formatting date and time ranges [#date-time-ranges]
+
+You can format ranges of dates and times with the `dateTimeRange` function:
+
+```js
+import {useFormatter} from 'next-intl';
+
+function Component() {
+  const format = useFormatter();
+  const dateTimeA = new Date('2020-11-20T08:30:00.000Z');
+  const dateTimeB = new Date('2021-01-24T08:30:00.000Z');
+
+  // Renders "Nov 20, 2020 – Jan 24, 2021"
+  format.dateTimeRange(dateTimeA, dateTimeB, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+```
+
+If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the trailing argument:
+
+```js
+format.dateTimeRange(dateTimeA, dateTimeB, 'short');
 ```
 
 ## Dates and times within messages

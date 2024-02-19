@@ -14,6 +14,20 @@ describe('dateTime', () => {
       })
     ).toBe('Nov 20, 2020');
   });
+
+  it('allows to override a time zone', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTime(parseISO('2020-11-20T10:36:01.516Z'), {
+        timeStyle: 'medium',
+        dateStyle: 'medium',
+        timeZone: 'America/New_York'
+      })
+    ).toBe('Nov 20, 2020, 5:36:01 AM');
+  });
 });
 
 describe('number', () => {
@@ -250,6 +264,75 @@ describe('relativeTime', () => {
         unit: 'day'
       })
     ).toBe('in 2 days');
+  });
+});
+
+describe('dateTimeRange', () => {
+  it('formats a date range', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }
+      )
+    ).toBe('Wednesday, January 10, 2007 – Thursday, January 10, 2008');
+
+    expect(
+      formatter.dateTimeRange(
+        new Date(Date.UTC(1906, 0, 10, 10, 0, 0)), // Wed, 10 Jan 1906 10:00:00 GMT
+        new Date(Date.UTC(1906, 0, 10, 11, 0, 0)), // Wed, 10 Jan 1906 11:00:00 GMT
+        {
+          year: '2-digit',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric'
+        }
+      )
+    )
+      // 1 hour more given that the timezone is Europe/Berlin and the date is in UTC
+      .toBe('1/10/06, 11:00 AM – 12:00 PM');
+  });
+
+  it('returns a reasonable fallback if an invalid format is provided', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        'unknown'
+      )
+    ).toBe('1/10/2007 – 1/10/2008');
+  });
+
+  it('allows to override the time zone', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        {
+          timeStyle: 'medium',
+          dateStyle: 'medium',
+          timeZone: 'America/New_York'
+        }
+      )
+    ).toBe('Jan 10, 2007, 4:00:00 AM – Jan 10, 2008, 5:00:00 AM');
   });
 });
 
