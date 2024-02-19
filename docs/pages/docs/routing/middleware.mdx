@@ -372,7 +372,17 @@ export default createMiddleware({
 });
 ```
 
-Assuming the pathname is `/fr/infos/some-article`, if the page is dynamically generated, you will need to revalidate like this: `revalidatePath('/fr/infos/some-article')`. However, if the page is statically rendered, the path to revalidate is this one: `revalidatePath('/fr/news/some-article')`. So, if you don't know if the page is statically or dynamically generated, we advise you to revalidate both.
+Depending on whether `some-article` was included in [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or not, you can invalidate the route like this:
+
+```tsx
+// Statically generated at build time
+revalidatePath('/fr/news/some-article')
+
+// Dynamically generated at runtime:
+revalidatePath('/fr/infos/some-article')
+```-
+
+When in doubt, you can revalidate both paths to be on the safe side.
 
 See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825).
 
