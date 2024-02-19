@@ -88,7 +88,9 @@ export function getKnownLocaleFromPathname<Locales extends AllLocales>(
   locales: Locales
 ): Locales[number] | undefined {
   const pathLocaleCandidate = getLocaleFromPathname(pathname);
-  const pathLocale = locales.includes(pathLocaleCandidate)
+  const pathLocale = locales.find(
+    (locale) => locale.toLowerCase() === pathLocaleCandidate.toLowerCase()
+  )
     ? pathLocaleCandidate
     : undefined;
   return pathLocale;

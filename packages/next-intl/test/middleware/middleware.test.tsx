@@ -537,23 +537,63 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects an invalid, upper-cased request for a localized route to the case-sensitive format', () => {
+      it('redirects uppercase locale requests to case-sensitive defaults at the root', () => {
+        middlewareWithPathnames(createMockRequest('/EN', 'en'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/'
+        );
+      });
+
+      it('redirects uppercase locale requests to case-sensitive defaults for nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/EN/about', 'en'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+
+      it('redirects uppercase locale requests for non-default locales at the root', () => {
         middlewareWithPathnames(createMockRequest('/DE-AT', 'de-AT'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de-AT'
+          'http://localhost:3000/de-AT/'
         );
       });
 
-      it('redirects an invalid, lower-cased request for a localized route to the case-sensitive format', () => {
+      it('redirects uppercase locale requests for non-default locales and nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/DE-AT/ueber', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/ueber'
+        );
+      });
+
+      it('redirects lowercase locale requests for non-default locales to case-sensitive format at the root', () => {
         middlewareWithPathnames(createMockRequest('/de-at', 'de-AT'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de-AT'
+          'http://localhost:3000/de-AT/'
+        );
+      });
+
+      it('redirects lowercase locale requests for non-default locales to case-sensitive format for nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/de-at/ueber', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/ueber'
         );
       });
 
@@ -976,7 +1016,7 @@ describe('prefix-based routing', () => {
   describe('localePrefix: never', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
-      locales: ['en', 'de'],
+      locales: ['en', 'de', 'de-AT'],
       localePrefix: 'never'
     });
 
@@ -1069,6 +1109,36 @@ describe('prefix-based routing', () => {
       middleware(createMockRequest('/en/list'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with uppercase default locale in a nested path', () => {
+      middleware(createMockRequest('/EN/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with uppercase non-default locale in a nested path', () => {
+      middleware(createMockRequest('/DE-AT/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with lowercase non-default locale in a nested path', () => {
+      middleware(createMockRequest('/de-at/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/list'
       );
