@@ -57,7 +57,7 @@ it('redirects to a matched locale at the root for non-default locales', async ({
   page.getByRole('heading', {name: 'Start'});
 });
 
-it('redirects to a matched locale for invalid cased locales', async ({
+it('redirects to a matched locale for an invalid cased non-default locale', async ({
   browser
   }) => {
   const context = await browser.newContext({locale: 'de'});
@@ -66,6 +66,39 @@ it('redirects to a matched locale for invalid cased locales', async ({
   await page.goto('/DE');
   await expect(page).toHaveURL('/de');
   page.getByRole('heading', {name: 'Start'});
+});
+
+it('redirects to a matched locale for an invalid cased non-default locale in a nested path', async ({
+  browser
+  }) => {
+  const context = await browser.newContext({locale: 'de'});
+  const page = await context.newPage();
+
+  await page.goto('/DE/verschachtelt');
+  await expect(page).toHaveURL('/de/verschachtelt');
+  page.getByRole('heading', {name: 'Verschachtelt'});
+});
+
+it('redirects to a matched locale for an invalid cased default locale', async ({
+  browser
+  }) => {
+  const context = await browser.newContext({locale: 'en'});
+  const page = await context.newPage();
+
+  await page.goto('/EN');
+  await expect(page).toHaveURL('/');
+  page.getByRole('heading', {name: 'Home'});
+});
+
+it('redirects to a matched locale for an invalid cased default locale in a nested path', async ({
+  browser
+  }) => {
+  const context = await browser.newContext({locale: 'en'});
+  const page = await context.newPage();
+
+  await page.goto('/EN/nested');
+  await expect(page).toHaveURL('/nested');
+  page.getByRole('heading', {name: 'Nested'});
 });
 
 it('redirects a prefixed pathname for the default locale to the unprefixed version', async ({
