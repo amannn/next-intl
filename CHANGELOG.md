@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.8.0 (2024-02-19)
+
+
+### Features
+
+* Add `format.dateTimeRange` ([#769](https://github.com/amannn/next-intl/issues/769) by [@martinmunillas](https://github.com/martinmunillas)) ([9f12521](https://github.com/amannn/next-intl/commit/9f12521edecf1aeff40a49ce0c133c19bafa7cf5))
+
+
+
+
+
 # 3.7.0 (2024-02-09)
 
 
