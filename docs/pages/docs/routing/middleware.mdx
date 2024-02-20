@@ -343,6 +343,53 @@ export default createMiddleware({
   APIs](/docs/routing/navigation#localized-pathnames) in your components.
 </Callout>
 
+<details>
+<summary>How can I revalidate localized pathnames?</summary>
+
+Depending on if a route is generated statically (at build time) or dynamically (at runtime), [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) needs to be called either for the localized or the internal pathname.
+
+Let's take an example with this folder structure:
+```
+app
+└── [locale]
+    └── news
+        └── [slug]
+```
+
+… and this middleware configuration:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+ 
+export default createMiddleware({
+  defaultLocale: 'en',
+  locales: ['en', 'fr'],
+  pathnames: {
+    '/news/[slug]': {
+      en: '/news/[slug]',
+      fr: '/infos/[slug]'
+    }
+  }
+});
+```
+
+Depending on whether `some-article` was included in [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or not, you can revalidate the route like this:
+
+```tsx
+// Statically generated at build time
+revalidatePath('/fr/news/some-article')
+
+// Dynamically generated at runtime:
+revalidatePath('/fr/infos/some-article')
+```
+
+When in doubt, you can revalidate both paths to be on the safe side.
+
+See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825).
+
+</details>
+
+
 ### Matcher config
 
 The middleware is intended to only run on pages, not on arbitrary files that you serve independently of the user locale (e.g. `/favicon.ico`).
