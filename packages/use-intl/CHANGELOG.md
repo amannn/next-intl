@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.9.0 (2024-02-20)
+
+
+### Features
+
+* Add redirects for case mismatches in locale prefixes (e.g. `/EN` → `/en`) ([#861](https://github.com/amannn/next-intl/issues/861)) ([3b2b446](https://github.com/amannn/next-intl/commit/3b2b446a241ce2cd402181afb0398565ac4a2492))
+
+
+
+
+
 # 3.8.0 (2024-02-19)
 
 
