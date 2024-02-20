@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Add redirects for case mismatches in locale prefixes (e.g. `/EN` → `/en`) ([#861](https://github.com/amannn/next-intl/issues/861)) ([3b2b446](https://github.com/amannn/next-intl/commit/3b2b446a241ce2cd402181afb0398565ac4a2492))
+* Add redirects for case mismatches in locale prefixes (e.g. `/EN` → `/en`) ([#861](https://github.com/amannn/next-intl/issues/861) by [@fkapsahili](https://github.com/fkapsahili)) ([3b2b446](https://github.com/amannn/next-intl/commit/3b2b446a241ce2cd402181afb0398565ac4a2492))
 
 
 
