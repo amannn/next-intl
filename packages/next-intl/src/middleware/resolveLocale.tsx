@@ -8,7 +8,8 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import {
-  getLocaleFromPathname,
+  findCaseInsensitiveLocale,
+  getFirstPathnameSegment,
   getHost,
   isLocaleSupportedOnDomain
 } from './utils';
@@ -68,9 +69,13 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const pathLocale = getLocaleFromPathname(pathname);
-    if (locales.includes(pathLocale)) {
-      locale = pathLocale;
+    const pathLocaleCandidate = getFirstPathnameSegment(pathname);
+    const matchedLocale = findCaseInsensitiveLocale(
+      pathLocaleCandidate,
+      locales
+    );
+    if (matchedLocale) {
+      locale = matchedLocale;
     }
   }
 
