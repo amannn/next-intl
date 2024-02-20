@@ -16,7 +16,7 @@ import {
   getInternalTemplate,
   formatTemplatePathname,
   getBestMatchingDomain,
-  getKnownLocaleFromPathname,
+  getPathnameLocale,
   getNormalizedPathname,
   getPathWithSearch,
   isLocaleSupportedOnDomain,
@@ -134,7 +134,7 @@ export default function createMiddleware<Locales extends AllLocales>(
       configWithDefaults.locales
     );
 
-    const pathLocale = getKnownLocaleFromPathname(
+    const pathLocale = getPathnameLocale(
       request.nextUrl.pathname,
       configWithDefaults.locales
     );

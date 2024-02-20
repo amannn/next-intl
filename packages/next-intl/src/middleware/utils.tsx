@@ -5,7 +5,7 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 
-export function getLocaleFromPathname(pathname: string) {
+export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
 }
 
@@ -83,14 +83,21 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   return result;
 }
 
-export function getKnownLocaleFromPathname<Locales extends AllLocales>(
+export function findCaseInsensitiveLocale<Locales extends AllLocales>(
+  candidate: string,
+  locales: Locales
+) {
+  return locales.find(
+    (locale) => locale.toLowerCase() === candidate.toLowerCase()
+  );
+}
+
+export function getPathnameLocale<Locales extends AllLocales>(
   pathname: string,
   locales: Locales
 ): Locales[number] | undefined {
-  const pathLocaleCandidate = getLocaleFromPathname(pathname);
-  const pathLocale = locales.find(
-    (locale) => locale.toLowerCase() === pathLocaleCandidate.toLowerCase()
-  )
+  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
+  const pathLocale = findCaseInsensitiveLocale(pathLocaleCandidate, locales)
     ? pathLocaleCandidate
     : undefined;
   return pathLocale;

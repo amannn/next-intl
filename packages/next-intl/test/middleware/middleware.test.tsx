@@ -538,7 +538,7 @@ describe('prefix-based routing', () => {
       });
 
       it('redirects uppercase locale requests to case-sensitive defaults at the root', () => {
-        middlewareWithPathnames(createMockRequest('/EN', 'en'));
+        middlewareWithPathnames(createMockRequest('/EN', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
@@ -548,7 +548,7 @@ describe('prefix-based routing', () => {
       });
 
       it('redirects uppercase locale requests to case-sensitive defaults for nested paths', () => {
-        middlewareWithPathnames(createMockRequest('/EN/about', 'en'));
+        middlewareWithPathnames(createMockRequest('/EN/about', 'de'));
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
