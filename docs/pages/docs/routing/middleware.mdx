@@ -344,15 +344,15 @@ export default createMiddleware({
 </Callout>
 
 <details>
-<summary>How to revalidate localized pathnames?</summary>
+<summary>How can I revalidate localized pathnames?</summary>
 
 Depending on if a route is generated statically (at build time) or dynamically (at runtime), [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) needs to be called either for the localized or the internal pathname.
 
 Let's take an example with this folder structure:
 ```
 app
-└── [locale]/
-    └── news/
+└── [locale]
+    └── news
         └── [slug]
 ```
 
@@ -373,7 +373,7 @@ export default createMiddleware({
 });
 ```
 
-Depending on whether `some-article` was included in [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or not, you can invalidate the route like this:
+Depending on whether `some-article` was included in [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or not, you can revalidate the route like this:
 
 ```tsx
 // Statically generated at build time
