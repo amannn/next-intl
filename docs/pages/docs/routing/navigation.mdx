@@ -410,8 +410,8 @@ Note that if you have dynamic params on some routes, you should pass those as we
 ```tsx
 'use client';
 
-import {useParams} from 'next/navigation';
 import {usePathname, useRouter} from '../navigation';
+import {useParams} from 'next/navigation';
 
 const pathname = usePathname();
 const router = useRouter();

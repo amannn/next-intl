@@ -1,8 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import {ChangeEvent, ReactNode, useTransition} from 'react';
 import {useParams} from 'next/navigation';
+import {ChangeEvent, ReactNode, useTransition} from 'react';
 import {useRouter, usePathname} from '../navigation';
 
 type Props = {
@@ -28,7 +28,7 @@ export default function LocaleSwitcherSelect({
         // @ts-expect-error -- TypeScript will validate that only known `params`
         // are used in combination with a given `pathname`. Since the two will
         // always match for the current route, we can skip runtime checks.
-        { pathname, params },
+        {pathname, params},
         {locale: nextLocale}
       );
     });
