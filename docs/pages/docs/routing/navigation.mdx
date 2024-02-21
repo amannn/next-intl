@@ -410,21 +410,18 @@ Note that if you have dynamic params on some routes, you should pass those as we
 ```tsx
 'use client';
 
-import {useParams} from 'next/navigation';
 import {usePathname, useRouter} from '../navigation';
+import {useParams} from 'next/navigation';
 
 const pathname = usePathname();
 const router = useRouter();
 const params = useParams();
 
 router.replace(
-  {
-    pathname,
-    // TypeScript validates that only known `params` are used in combination
-    // with a given `pathname`. Since the two will always match for the current
-    // route, we can skip runtime checks.
-    params: params as any
-  },
+  // @ts-expect-error -- TypeScript will validate that only known `params`
+  // are used in combination with a given `pathname`. Since the two will
+  // always match for the current route, we can skip runtime checks.
+  {pathname, params},
   {locale: 'de'}
 );
 ```

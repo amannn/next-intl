@@ -172,6 +172,43 @@ By doing this, we can use interactive features from React like `useState` on tra
 Learn more in the Next.js docs: [Passing Server Components to Client Components as Props](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props)
 
 <details>
+<summary>Example: How can I implement a locale switcher?</summary>
+
+If you implement a locale switcher as an interactive select, you can keep internationalization on the server side by rendering the labels from a Server Component and only marking the `select` element as a Client Component.
+
+```tsx filename="LocaleSwitcher.tsx"
+import {useLocale, useTranslations} from 'next-intl';
+import {locales} from 'config';
+
+// A Client Component that registers an event listener for
+// the `change` event of the select, uses `useRouter`
+// to change the locale and uses `useTransition` to display
+// a loading state during the transition.
+import LocaleSwitcherSelect from './LocaleSwitcherSelect';
+
+export default function LocaleSwitcher() {
+  const t = useTranslations('LocaleSwitcher');
+  const locale = useLocale();
+
+  return (
+    <LocaleSwitcherSelect defaultValue={locale} label={t('label')}>
+      {locales.map((cur) => (
+        <option key={cur} value={cur}>
+          {t('locale', {locale: cur})}
+        </option>
+      ))}
+    </LocaleSwitcherSelect>
+  );
+}
+```
+
+[Example implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/LocaleSwitcher.tsx) ([demo](https://next-intl-example-app-router.vercel.app/en))
+
+See also: [`useRouter`](/docs/routing/navigation#userouter)
+
+</details>
+
+<details>
 <summary>Example: How can I implement a form?</summary>
 
 Forms need client-side state for showing loading indicators and validation errors.
@@ -214,41 +251,6 @@ export default function RegisterPage() {
   );
 }
 ```
-
-</details>
-
-<details>
-<summary>Example: How can I implement a locale switcher?</summary>
-
-If you implement a locale switcher as an interactive select, you can keep internationalization on the server side by rendering the labels from a Server Component and only marking the select element as a Client Component.
-
-```tsx filename="LocaleSwitcher.tsx"
-import {useLocale, useTranslations} from 'next-intl';
-import {locales} from 'config';
-
-// A Client Component that registers an event listener for
-// the `change` event of the select, uses `useRouter`
-// to change the locale and uses `useTransition` to display
-// a loading state during the transition.
-import LocaleSwitcherSelect from './LocaleSwitcherSelect';
-
-export default function LocaleSwitcher() {
-  const t = useTranslations('LocaleSwitcher');
-  const locale = useLocale();
-
-  return (
-    <LocaleSwitcherSelect defaultValue={locale} label={t('label')}>
-      {locales.map((cur) => (
-        <option key={cur} value={cur}>
-          {t('locale', {locale: cur})}
-        </option>
-      ))}
-    </LocaleSwitcherSelect>
-  );
-}
-```
-
-[Example implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/LocaleSwitcher.tsx) ([demo](https://next-intl-example-app-router.vercel.app/en))
 
 </details>
 
