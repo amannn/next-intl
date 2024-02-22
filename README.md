@@ -2,7 +2,11 @@
 	<br>
 	<br>
     <a href="https://next-intl-docs.vercel.app/">
-      <img width="400" src="media/logo.svg" alt="next-intl">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="media/logo-dark.svg">
+        <source media="(prefers-color-scheme: light)" srcset="media/logo.svg">
+        <img alt="next-intl" src="media/logo.svg" width="400">
+      </picture>
     </a>
 	<br>
 	<br>
