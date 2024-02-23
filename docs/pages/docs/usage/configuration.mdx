@@ -380,7 +380,7 @@ function Component() {
 
 ## Default translation values
 
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
+To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements. In case you provide values at a specific call site of `t`, these will potentially override global defaults.
 
 <Tabs items={['i18n.ts', 'Provider']}>
 <Tab>
@@ -414,55 +414,37 @@ export default getRequestConfig(async ({locale}) => {
 </NextIntlClientProvider>
 ```
 
-</Tab>
-</Tabs>
+Note that `NextIntlClientProvider` is a Client Component, therefore if you render it from a Server Component, the props need to be [serializable](https://react.dev/reference/react/use-client#serializable-types) across the server/client boundary.
 
-The defaults will be overridden if local formats are provided at a specific call site.
+If you provide rich text element functions, this means that you should render the provider along with the configuration for `defaultTranslationValues` from a component that is marked with `'use client'`:
 
-<details>
-<summary>How can I pass defaultTranslationValues to NextIntlClientProvider?</summary>
+```tsx filename="Provider.tsx"
+// Making this a Client Component allows us to provide
+// non-serializable props to `NextIntlClientProvider`
+'use client';
 
-If you want to configure defaultTranslationValues for the NextIntlClientProvider, you will need to render NextIntlProvider as a client component. In order to still receive the messages, call the useMessages hook in a parent component and pass the messages to NextIntlClientProvider as a prop. A common pattern is to use a Providers component to wrap providers that need to render client-side.
+import {NextIntlClientProvider} from 'next-intl';
 
-
-
-<Tabs items={['ParentComponent.tsx', 'Providers.tsx']}>
-<Tab>
-
-```tsx filename="ParentComponent.tsx"
-import {useMessages} from 'next-intl';
-
-const messages = useMessages();
-
-return (
-  <Providers messages={messages}>
-    ...
-  </Providers>
-);
+export default function Provider({messages, children}) {
+  return (
+    <NextIntlClientProvider
+      // Passing functions as props is fine here!
+      defaultTranslationValues={{
+        important: (chunks) => <b>{chunks}</b>
+      }}
+      // Forward messages from the server side
+      messages={messages}
+    >
+      {children}
+    </NextIntlClientProvider>
+  );
+}
 ```
 
-</Tab>
-<Tab>
-
-```tsx
-const Providers = ({messages, children}) => {
-  return <NextIntlClientProvider
-    messages={messages}
-    defaultTranslationValues={{
-      // Add default translation values here
-      important: (chunks) => <b>{chunks}</b>,
-      value: 123
-    }
-  >
-    {children}
-  </NextIntlClientProvider>
-);
-```
+In this case, `messages` should be provided from a Server Component, potentially as returned from the [`useMessages`](/docs/usage/configuration#messages) hook.
 
 </Tab>
 </Tabs>
-
-</details>
 
 ## Error handling
 
@@ -501,7 +483,7 @@ export default getRequestConfig(async ({locale}) => {
     }
   };
 });
-````
+```
 
 </Tab>
 <Tab>
