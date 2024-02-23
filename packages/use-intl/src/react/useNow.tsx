@@ -45,5 +45,5 @@ export default function useNow(options?: Options) {
     };
   }, [globalNow, updateInterval]);
 
-  return now;
+  return updateInterval == null && globalNow ? globalNow : now;
 }
