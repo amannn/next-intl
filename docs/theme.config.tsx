@@ -1,6 +1,5 @@
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
-import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {ThemeConfig} from 'nextra';
 import {Navbar, ThemeSwitch, useConfig} from 'nextra-theme-docs';
@@ -82,17 +81,6 @@ export default {
     return {
       titleTemplate: '%s – Internationalization (i18n) for Next.js'
     };
-  },
-  banner: {
-    text: (
-      <>
-        next-intl 3.0 is out! (
-        <Link className="underline" href="/blog/next-intl-3-0">
-          announcement
-        </Link>
-        )
-      </>
-    )
   },
   primaryHue: {light: 210, dark: 195},
   footer: {
