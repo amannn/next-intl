@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.1 (2024-02-23)
+
+
+### Bug Fixes
+
+* Return `now` from global context if no `updateInterval` has been set on `useNow` ([#881](https://github.com/amannn/next-intl/issues/881)) ([dbbefcf](https://github.com/amannn/next-intl/commit/dbbefcf145dfc8a924fbf685da87e276c8bb4d10))
+
+
+
+
+
 # 3.9.0 (2024-02-20)
 
 

@@ -575,7 +575,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^3.9.0
+        specifier: ^3.9.1
         version: link:../use-intl
     devDependencies:
       '@arethetypeswrong/cli':
