@@ -1,7 +1,7 @@
 import {expect, it, vi} from 'vitest';
-import NextIntlClientProvider from '../../src/react-server/NextIntlClientProvider';
+import NextIntlClientProviderServer from '../../src/react-server/NextIntlClientProviderServer';
 import {getLocale, getNow, getTimeZone} from '../../src/server.react-server';
-import BaseNextIntlClientProvider from '../../src/shared/NextIntlClientProvider';
+import NextIntlClientProvider from '../../src/shared/NextIntlClientProvider';
 
 vi.mock('../../src/server/react-server', async () => ({
   getLocale: vi.fn(async () => 'en-US'),
@@ -14,14 +14,14 @@ vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
 }));
 
 it("doesn't read from headers if all relevant configuration is passed", async () => {
-  const result = await NextIntlClientProvider({
+  const result = await NextIntlClientProviderServer({
     children: null,
     locale: 'en-GB',
     now: new Date('2020-02-01T00:00:00.000Z'),
     timeZone: 'Europe/London'
   });
 
-  expect(result.type).toBe(BaseNextIntlClientProvider);
+  expect(result.type).toBe(NextIntlClientProvider);
   expect(result.props).toEqual({
     children: null,
     locale: 'en-GB',
@@ -35,11 +35,11 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
 });
 
 it('reads missing configuration from getter functions', async () => {
-  const result = await NextIntlClientProvider({
+  const result = await NextIntlClientProviderServer({
     children: null
   });
 
-  expect(result.type).toBe(BaseNextIntlClientProvider);
+  expect(result.type).toBe(NextIntlClientProvider);
   expect(result.props).toEqual({
     children: null,
     locale: 'en-US',
