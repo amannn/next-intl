@@ -111,7 +111,7 @@ export function templateToRegex(template: string): RegExp {
       return '([^/]+)';
     })
     // Clean up regex match remainders from optional catchall ('[[...slug]]')
-    .replaceAll('(.*)]', '(.*)');
+    .replace(/(.*)\]/g, '(.*)');
 
   return new RegExp(`^${regexPattern}$`);
 }
