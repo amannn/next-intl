@@ -19,7 +19,7 @@ jobs:
             Unfortunately, the reproduction is missing or incomplete, and as such we cannot investigate this issue. Please add a reproduction to the issue, otherwise it will be closed automatically.
 
             **Templates:**
-             - [App Router](https://github.com/amannn/next-intl/tree/main/examples/example-app-router-minimal)
+             - [App Router](https://github.com/amannn/next-intl-bug-repro-app-router)
              - [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
             
             **Creating a good bug report takes time.**

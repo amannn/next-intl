@@ -29,7 +29,7 @@ body:
       label: Mandatory reproduction URL
       description: |
         **Templates:**
-        - [App Router](https://github.com/amannn/next-intl/tree/main/examples/example-app-router-minimal)
+        - [App Router](https://github.com/amannn/next-intl-bug-repro-app-router)
         - [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
     validations:
       required: true
