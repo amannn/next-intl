@@ -1,0 +1,22 @@
+{
+  "name": "example-app-router-next-auth-v5",
+  "private": true,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "next-auth": "beta",
+    "next-intl": "3.9.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.21",
+    "@types/react": "18.2.60",
+    "@types/react-dom": "18.2.19",
+    "typescript": "5.3.3"
+  }
+}

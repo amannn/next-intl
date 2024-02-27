@@ -1,0 +1,19 @@
+{
+  "Navigation": {
+    "home": "Acceuil",
+    "profile": "Profile"
+  },
+  "SignIn": {
+    "label": "Se connecter"
+  },
+  "SignOut": {
+    "label": "Se déconnecter"
+  },
+  "Login": {
+    "title": "Connexion",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Connexion",
+    "error": "{error, select, CredentialsSignin {Nom d'utilisateur ou mot de passe incorrect} other {Erreur inconnue}}"
+  }
+}

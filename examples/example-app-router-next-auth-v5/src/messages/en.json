@@ -1,0 +1,19 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "profile": "Profile"
+  },
+  "SignIn": {
+    "label": "Sign In"
+  },
+  "SignOut": {
+    "label": "Sign Out"
+  },
+  "Login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Login",
+    "error": "{error, select, CredentialsSignin {Invalid username or password} other {Unknown error}}"
+  }
+}
