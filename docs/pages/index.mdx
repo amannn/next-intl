@@ -95,6 +95,19 @@ import UserTestimonial from 'components/UserTestimonial';
       linkSubtitle="User management for Next.js"
     />
     <UserTestimonial
+      userName="Dawid Gaweł"
+      position="Frontend Engineer at Todoist"
+      featured
+      quote="We deeply care about internationalization. Our websites, apps, and materials are translated to almost 20 languages. Thanks a ton for working on this project!"
+      portraitUrl="/user-dawid-gawel.jpeg"
+      href="https://todoist.com"
+      linkTitle="Todoist"
+      linkSubtitle="Task managment"
+      blendModeDark="multiply"
+      bgUrlBright="/testimonial-bg-todoist-bright.png"
+      bgUrlDark="/testimonial-bg-todoist-dark.png"
+    />
+    <UserTestimonial
       userName="Lachlan Campbell"
       position="Web designer-developer at Watershed"
       featured
@@ -117,7 +130,7 @@ import UserTestimonial from 'components/UserTestimonial';
       linkTitle="Motatos"
       linkSubtitle="Grocery e-commerce"
     />
-    <UserTestimonial
+    {/* <UserTestimonial
       className="lg:-mt-16"
       userName="Jökull Solberg"
       position="CTO of Trip to Japan"
@@ -126,7 +139,7 @@ import UserTestimonial from 'components/UserTestimonial';
       href="https://www.triptojapan.com/"
       linkTitle="Trip to Japan"
       linkSubtitle="Booking platform"
-    />
+    /> */}
   </div>
   <div className="mt-10 lg:mt-24 text-sm lg:ml-6 text-slate-600 dark:text-slate-400">
     Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
