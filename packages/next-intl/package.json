@@ -95,7 +95,7 @@
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^20.1.2",
-    "@types/react": "18.2.34",
+    "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.17",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
@@ -108,7 +108,7 @@
     "rollup": "^3.28.1",
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "vitest": "^1.0.1"
   },
   "size-limit": [
