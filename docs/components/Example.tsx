@@ -1,3 +1,4 @@
+import useLocationHash from 'hooks/useLocationHash';
 import Chip from './Chip';
 
 type Props = {
@@ -17,8 +18,14 @@ export default function Example({
   name,
   sourceLink
 }: Props) {
+  const locationHash = useLocationHash();
+  const isActive = locationHash === hash;
+
   return (
-    <div className="py-2">
+    <div className="relative py-2">
+      {isActive && (
+        <div className="absolute -left-6 top-0 h-full w-1 bg-sky-200 dark:bg-sky-900" />
+      )}
       <h2
         className="flex scroll-mt-8 items-center text-xl font-semibold"
         id={hash}
