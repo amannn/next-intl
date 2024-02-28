@@ -76,7 +76,7 @@ export default function UserTestimonial({
           </div>
           <p
             className={clsx(
-              'mt-4 max-w-3xl indent-[-0.4rem] text-lg text-slate-900 dark:text-white'
+              'mt-4 max-w-3xl indent-[-0.4rem] text-slate-900 dark:text-white lg:text-lg'
             )}
           >
             “{quote}”
