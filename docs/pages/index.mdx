@@ -65,16 +65,15 @@ import UserTestimonial from 'components/UserTestimonial';
   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-20">
     <UserTestimonial
       featured
-      userName="Kieran McHugh"
-      position="Founder & CEO of Daybridge"
-      quote="We were initially worried that adding support for multiple languages to our app would add overwhelming complexity, but next-intl genuinely made the process so much smoother than we expected. We've been able to build a calendar that can feel like home for millions more people around the world."
-      portraitUrl="/user-kieran-mchugh.jpg"
-      href="https://www.daybridge.com"
-      bgUrlBright="/testimonial-bg-daybridge-bright.png"
-      bgUrlDark="/testimonial-bg-daybridge-dark.png"
-      blendModeDark="multiply"
-      linkTitle="Daybridge"
-      linkSubtitle="Calendar app"
+      userName="Claudio Wunder"
+      position="Cross Project Council at OpenJS Foundation"
+      quote="We love next-intl. We're adopting it on the Node.js website along with Next.js's App Router. From all the i18n solutions out there for React and Next.js, so far the API and the design of next-intl has definitely become my favorite."
+      portraitUrl="/user-claudio-wunder.jpeg"
+      href="https://nodejs.org"
+      bgUrlBright="/testimonial-bg-nodejs-5.png"
+      bgUrlDark="/todo.png"
+      linkTitle="Node.js website"
+      linkSubtitle="JavaScript runtime"
     />
     <UserTestimonial
       userName="Cali Castle"
@@ -95,6 +94,19 @@ import UserTestimonial from 'components/UserTestimonial';
       linkSubtitle="User management for Next.js"
     />
     <UserTestimonial
+      featured
+      userName="Kieran McHugh"
+      position="Founder & CEO of Daybridge"
+      quote="We were initially worried that adding support for multiple languages to our app would add overwhelming complexity, but next-intl genuinely made the process so much smoother than we expected. We've been able to build a calendar that can feel like home for millions more people around the world."
+      portraitUrl="/user-kieran-mchugh.jpg"
+      href="https://www.daybridge.com"
+      bgUrlBright="/testimonial-bg-daybridge-bright.png"
+      bgUrlDark="/testimonial-bg-daybridge-dark.png"
+      blendModeDark="multiply"
+      linkTitle="Daybridge"
+      linkSubtitle="Calendar app"
+    />
+    <UserTestimonial
       userName="Dawid Gaweł"
       position="Frontend Engineer at Todoist"
       featured
@@ -106,6 +118,26 @@ import UserTestimonial from 'components/UserTestimonial';
       blendModeDark="multiply"
       bgUrlBright="/testimonial-bg-todoist-bright.png"
       bgUrlDark="/testimonial-bg-todoist-dark.png"
+    />
+    <UserTestimonial
+      className="lg:-mt-16"
+      userName="Alvar Lagerlöf"
+      position="Senior Frontend Developer at Motatos"
+      quote="It's a great tool. We're using it now for our App Router rollout."
+      portraitUrl="/user-alvar-lagerlof.jpeg"
+      href="https://www.motatos.com/"
+      linkTitle="Motatos"
+      linkSubtitle="Grocery e-commerce"
+    />
+    <UserTestimonial
+      className="lg:-mt-16"
+      userName="Jökull Solberg"
+      position="CTO of Trip to Japan"
+      quote="Amazing work on this library, launching our site today."
+      portraitUrl="/user-jokull-solberg.jpeg"
+      href="https://www.triptojapan.com/"
+      linkTitle="Trip to Japan"
+      linkSubtitle="Booking platform"
     />
     <UserTestimonial
       userName="Lachlan Campbell"
@@ -120,26 +152,6 @@ import UserTestimonial from 'components/UserTestimonial';
       bgUrlBright="/testimonial-bg-watershed-bright.png"
       bgUrlDark="/testimonial-bg-watershed-dark.png"
     />
-    <UserTestimonial
-      className="lg:-mt-16"
-      userName="Alvar Lagerlöf"
-      position="Senior Frontend Developer at Motatos"
-      quote="It's a great tool. We're using it now for our App Router rollout."
-      portraitUrl="/user-alvar-lagerlof.jpeg"
-      href="https://www.motatos.com/"
-      linkTitle="Motatos"
-      linkSubtitle="Grocery e-commerce"
-    />
-    {/* <UserTestimonial
-      className="lg:-mt-16"
-      userName="Jökull Solberg"
-      position="CTO of Trip to Japan"
-      quote="Amazing work on this library, launching our site today."
-      portraitUrl="/user-jokull-solberg.jpeg"
-      href="https://www.triptojapan.com/"
-      linkTitle="Trip to Japan"
-      linkSubtitle="Booking platform"
-    /> */}
   </div>
   <div className="mt-10 lg:mt-24 text-sm lg:ml-6 text-slate-600 dark:text-slate-400">
     Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
