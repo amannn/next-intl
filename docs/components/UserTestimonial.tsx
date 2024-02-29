@@ -19,7 +19,7 @@ type Props = {
 export default function UserTestimonial({
   bgUrlBright,
   bgUrlDark,
-  blendModeDark = 'color-burn',
+  blendModeDark,
   className,
   featured,
   href,
