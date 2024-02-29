@@ -431,7 +431,7 @@ function CompanyStats() {
 <details>
 <summary>What if the amount of items varies depending on the locale?</summary>
 
-To dynamically iterate over all keys of a namespace, you can use the `useMessages` hook to retrieve all messages of a given namespace and extract the keys from there:
+To dynamically iterate over all keys of a namespace, you can use the [`useMessages`](/docs/usage/configuration#messages) hook to retrieve all messages of a given namespace and extract the keys from there:
 
 ```tsx filename="CompanyStats.tsx"
 import {useTranslations, useMessages} from 'next-intl';
