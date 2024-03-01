@@ -33,7 +33,7 @@ export default function createLocalizedPathnamesNavigation<
     if (!isValid) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Unknown locale encountered: "${locale}". Make sure to validate the locale in \`app/[locale]/layout.tsx\`.`
+          ? `Unknown locale encountered: "${locale}". Make sure to validate the locale in \`i18n.ts\`.`
           : undefined
       );
     }
