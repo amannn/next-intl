@@ -90,7 +90,11 @@ export function prefixPathname(locale: string, pathname: string) {
 
 export function hasPathnamePrefixed(locale: string, pathname: string) {
   const prefix = `/${locale}`;
-  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+  if (pathname === prefix) return true;
+  const hasPrefix = pathname.startsWith(prefix);
+  // check if the locale is the second segment of the URL to support basePath
+  if (!hasPrefix && pathname.split('/')?.[2] === locale) return true;
+  return hasPrefix;
 }
 
 export function matchesPathname(
