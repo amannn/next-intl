@@ -26,13 +26,13 @@
   },
   "devDependencies": {
     "@types/node": "^20.1.2",
-    "@types/react": "^18.2.29",
+    "@types/react": "^18.2.60",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.0.3",
     "next-sitemap": "^4.0.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "funding": "https://github.com/amannn/next-intl?sponsor=1"
 }

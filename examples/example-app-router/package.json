@@ -26,7 +26,7 @@
     "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.176",
     "@types/node": "^20.1.2",
-    "@types/react": "^18.2.29",
+    "@types/react": "^18.2.60",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
@@ -35,6 +35,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "postcss": "^8.4.23",
     "prettier-plugin-tailwindcss": "^0.2.3",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   }
 }

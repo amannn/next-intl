@@ -21,11 +21,11 @@
   "devDependencies": {
     "@remix-run/dev": "^1.15.0",
     "@types/accept-language-parser": "^1.5.3",
-    "@types/react": "^18.2.29",
+    "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=14"
