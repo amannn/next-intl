@@ -45,7 +45,7 @@ module.exports = withNextra({
     },
     {
       source: '/docs/next-13',
-      destination: '/docs/getting-started',
+      destination: '/',
       permanent: true
     },
     {

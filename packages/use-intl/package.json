@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.4.1",
+  "version": "3.9.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React that gets out of your way. ",
@@ -114,11 +114,11 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "12.385 kB"
+      "limit": "12.575 kB"
     },
     {
       "path": "dist/index.mjs",
-      "limit": "12.385 kB"
+      "limit": "12.575 kB"
     }
   ]
 }

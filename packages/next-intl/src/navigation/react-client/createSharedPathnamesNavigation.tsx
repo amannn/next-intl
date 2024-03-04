@@ -5,13 +5,14 @@ import {
   ParametersExceptFirst
 } from '../../shared/types';
 import ClientLink from './ClientLink';
+import clientPermanentRedirect from './clientPermanentRedirect';
 import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<Locales>>,
     'localePrefix'
@@ -20,7 +21,7 @@ export default function createSharedPathnamesNavigation<
     return (
       <ClientLink<Locales>
         ref={ref}
-        localePrefix={opts.localePrefix}
+        localePrefix={opts?.localePrefix}
         {...props}
       />
     );
@@ -37,6 +38,13 @@ export default function createSharedPathnamesNavigation<
     return clientRedirect({...opts, pathname}, ...args);
   }
 
+  function permanentRedirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
+  ) {
+    return clientPermanentRedirect({...opts, pathname}, ...args);
+  }
+
   function usePathname(): string {
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return useBasePathname();
@@ -45,6 +53,7 @@ export default function createSharedPathnamesNavigation<
   return {
     Link: LinkWithRef,
     redirect,
+    permanentRedirect,
     usePathname,
     useRouter: useBaseRouter
   };

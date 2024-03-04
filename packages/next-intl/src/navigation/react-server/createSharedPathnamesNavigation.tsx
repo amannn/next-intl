@@ -5,11 +5,12 @@ import {
   ParametersExceptFirst
 } from '../../shared/types';
 import ServerLink from './ServerLink';
+import serverPermanentRedirect from './serverPermanentRedirect';
 import serverRedirect from './serverRedirect';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts: {locales: Locales; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
   function notSupported(hookName: string) {
     return () => {
       throw new Error(
@@ -19,7 +20,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
-    return <ServerLink<Locales> localePrefix={opts.localePrefix} {...props} />;
+    return <ServerLink<Locales> localePrefix={opts?.localePrefix} {...props} />;
   }
 
   function redirect(
@@ -29,9 +30,17 @@ export default function createSharedPathnamesNavigation<
     return serverRedirect({...opts, pathname}, ...args);
   }
 
+  function permanentRedirect(
+    pathname: string,
+    ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
+  ) {
+    return serverPermanentRedirect({...opts, pathname}, ...args);
+  }
+
   return {
     Link,
     redirect,
+    permanentRedirect,
     usePathname: notSupported('usePathname'),
     useRouter: notSupported('useRouter')
   };

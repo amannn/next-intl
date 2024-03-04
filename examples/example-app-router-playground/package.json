@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "pnpm run test:playwright && pnpm run test:jest",
+    "test": "pnpm run test:playwright && pnpm run test:playwright:locale-prefix-never && pnpm run test:jest",
     "test:playwright": "playwright test",
-    "test:playwright:watch": "chokidar 'tests/main.spec.ts' -c 'npm run test:playwright'",
+    "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && NEXT_PUBLIC_LOCALE_PREFIX=never playwright test",
     "test:jest": "jest",
     "build": "next build",
     "start": "next start"
@@ -15,7 +15,7 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "ms": "2.1.3",
-    "next": "^14.0.4",
+    "next": "^14.1.0",
     "next-intl": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

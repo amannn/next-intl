@@ -14,6 +14,7 @@ import {
   HrefOrUrlObjectWithParams
 } from '../shared/utils';
 import ClientLink from './ClientLink';
+import clientPermanentRedirect from './clientPermanentRedirect';
 import clientRedirect from './clientRedirect';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
@@ -32,7 +33,7 @@ export default function createLocalizedPathnamesNavigation<
     if (!isValid) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Unknown locale encountered: "${locale}". Make sure to validate the locale in \`app/[locale]/layout.tsx\`.`
+          ? `Unknown locale encountered: "${locale}". Make sure to validate the locale in \`i18n.ts\`.`
           : undefined
       );
     }
@@ -87,6 +88,16 @@ export default function createLocalizedPathnamesNavigation<
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
     return clientRedirect({...opts, pathname: resolvedHref}, ...args);
+  }
+
+  function permanentRedirect<Pathname extends keyof PathnamesConfig>(
+    href: HrefOrHrefWithParams<Pathname>,
+    ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
+  ) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
+    const locale = useTypedLocale();
+    const resolvedHref = getPathname({href, locale});
+    return clientPermanentRedirect({...opts, pathname: resolvedHref}, ...args);
   }
 
   function useRouter() {
@@ -156,6 +167,7 @@ export default function createLocalizedPathnamesNavigation<
   return {
     Link: LinkWithRef,
     redirect,
+    permanentRedirect,
     usePathname,
     useRouter,
     getPathname

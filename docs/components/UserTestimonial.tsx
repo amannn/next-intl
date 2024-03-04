@@ -19,7 +19,7 @@ type Props = {
 export default function UserTestimonial({
   bgUrlBright,
   bgUrlDark,
-  blendModeDark = 'color-burn',
+  blendModeDark,
   className,
   featured,
   href,
@@ -49,7 +49,7 @@ export default function UserTestimonial({
       {featured && (
         <div
           className="absolute -right-1 -top-1 hidden h-1 w-1 dark:block"
-          style={{boxShadow: 'rgba(255,255,255,0.2) 0px 0px 190px 140px'}}
+          style={{boxShadow: 'rgba(255,255,255,0.15) 0px 0px 190px 140px'}}
         />
       )}
       <div
@@ -76,7 +76,7 @@ export default function UserTestimonial({
           </div>
           <p
             className={clsx(
-              'mt-4 max-w-3xl indent-[-0.4rem] text-lg text-slate-900 dark:text-white'
+              'mt-4 max-w-3xl indent-[-0.4rem] text-slate-900 dark:text-white lg:text-lg'
             )}
           >
             “{quote}”

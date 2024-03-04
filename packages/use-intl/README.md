@@ -4,7 +4,7 @@
 
 ## Features
 
-Internationalization is an essential part of the user experience. use-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
+Internationalization is an essential part of the user experience. `use-intl` gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
@@ -54,7 +54,7 @@ export default function UserProfile({user}) {
 2. Add the provider
 
 ```jsx
-import {IntlProvider} from 'use-intl';
+import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
 // fetch them from within a component and then render the provider 
@@ -79,7 +79,7 @@ function App({user}) {
 }
 ```
 
-Have a look at [the minimal setup example](https://codesandbox.io/s/use-intl-cra-example-13w917?file=/src/Root.tsx) to explore a working app.
+Have a look at [the minimal setup example](https://github.com/amannn/next-intl/tree/main/examples/example-use-intl) to explore a working app.
 
 ## Usage
 

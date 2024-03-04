@@ -4,9 +4,8 @@ An example that showcases a basic installation of `next-intl` in a Next.js app t
 
 **Important**: Do not add an `i18n` config to `next.config.js`, as it will cause the `app` directory to be ignored.
 
-You can run the example locally like this:
+## Deploy your own
 
-```
-yarn
-yarn dev
-```
+By deploying to [Vercel](https://vercel.com), you can check out the example in action. Note that you'll be prompted to create a new GitHub repository as part of this, allowing you to make subsequent changes.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/amannn/next-intl/tree/main/examples/example-app-router-migration)

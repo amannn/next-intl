@@ -8,7 +8,7 @@ import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 
-export default async function NextIntlClientProvider({
+export default async function NextIntlClientProviderServer({
   locale,
   now,
   timeZone,

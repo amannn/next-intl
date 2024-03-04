@@ -1,3 +1,3 @@
-import withNextIntl from './dist/plugin';
+import createNextIntlPlugin from './dist/plugin';
 
-export = withNextIntl;
+export = createNextIntlPlugin;

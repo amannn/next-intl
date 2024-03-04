@@ -363,35 +363,41 @@ describe('prefix-based routing', () => {
     describe('localized pathnames', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
-        locales: ['en', 'de'],
+        locales: ['en', 'de', 'de-AT'],
         localePrefix: 'as-needed',
         pathnames: {
           '/': '/',
           '/about': {
             en: '/about',
-            de: '/ueber'
+            de: '/ueber',
+            'de-AT': '/ueber'
           },
           '/users': {
             en: '/users',
-            de: '/benutzer'
+            de: '/benutzer',
+            'de-AT': '/benutzer'
           },
           '/users/[userId]': {
             en: '/users/[userId]',
-            de: '/benutzer/[userId]'
+            de: '/benutzer/[userId]',
+            'de-AT': '/benutzer/[userId]'
           },
           '/news/[articleSlug]-[articleId]': {
             en: '/news/[articleSlug]-[articleId]',
-            de: '/neuigkeiten/[articleSlug]-[articleId]'
+            de: '/neuigkeiten/[articleSlug]-[articleId]',
+            'de-AT': '/neuigkeiten/[articleSlug]-[articleId]'
           },
           '/products/[...slug]': {
             en: '/products/[...slug]',
-            de: '/produkte/[...slug]'
+            de: '/produkte/[...slug]',
+            'de-AT': '/produkte/[...slug]'
           },
           '/categories/[[...slug]]': {
             en: '/categories/[[...slug]]',
-            de: '/kategorien/[[...slug]]'
+            de: '/kategorien/[[...slug]]',
+            'de-AT': '/kategorien/[[...slug]]'
           }
-        } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT'>>
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -531,6 +537,66 @@ describe('prefix-based routing', () => {
         );
       });
 
+      it('redirects uppercase locale requests to case-sensitive defaults at the root', () => {
+        middlewareWithPathnames(createMockRequest('/EN', 'de'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/'
+        );
+      });
+
+      it('redirects uppercase locale requests to case-sensitive defaults for nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/EN/about', 'de'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+
+      it('redirects uppercase locale requests for non-default locales at the root', () => {
+        middlewareWithPathnames(createMockRequest('/DE-AT', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/'
+        );
+      });
+
+      it('redirects uppercase locale requests for non-default locales and nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/DE-AT/ueber', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/ueber'
+        );
+      });
+
+      it('redirects lowercase locale requests for non-default locales to case-sensitive format at the root', () => {
+        middlewareWithPathnames(createMockRequest('/de-at', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/'
+        );
+      });
+
+      it('redirects lowercase locale requests for non-default locales to case-sensitive format for nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/de-at/ueber', 'de-AT'));
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de-AT/ueber'
+        );
+      });
+
       it('sets alternate links', () => {
         function getLinks(request: NextRequest) {
           return middlewareWithPathnames(request)
@@ -541,31 +607,37 @@ describe('prefix-based routing', () => {
         expect(getLinks(createMockRequest('/', 'en'))).toEqual([
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/about', 'en'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/ueber>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/ueber>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/users/1', 'en'))).toEqual([
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/benutzer/1>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/benutzer/1>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
@@ -573,6 +645,7 @@ describe('prefix-based routing', () => {
         ).toEqual([
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
@@ -580,16 +653,19 @@ describe('prefix-based routing', () => {
         ).toEqual([
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/unknown', 'en'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/unknown>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/unknown', 'de'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
+          '<http://localhost:3000/de-AT/unknown>; rel="alternate"; hreflang="de-AT"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
       });
@@ -903,42 +979,35 @@ describe('prefix-based routing', () => {
         ]);
         expect(getLinks(createMockRequest('/en/about', 'en'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/en/users/1', 'en'))).toEqual([
           '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
           '<http://localhost:3000/en/users/1>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"'
         ]);
         expect(
           getLinks(createMockRequest('/en/products/apparel/t-shirts', 'en'))
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"'
         ]);
         expect(
           getLinks(createMockRequest('/de/produkte/apparel/t-shirts', 'de'))
         ).toEqual([
           '<http://localhost:3000/en/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"'
         ]);
         expect(getLinks(createMockRequest('/en/unknown', 'en'))).toEqual([
           '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
-          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+          '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"'
         ]);
       });
     });
@@ -947,7 +1016,7 @@ describe('prefix-based routing', () => {
   describe('localePrefix: never', () => {
     const middleware = createIntlMiddleware({
       defaultLocale: 'en',
-      locales: ['en', 'de'],
+      locales: ['en', 'de', 'de-AT'],
       localePrefix: 'never'
     });
 
@@ -1040,6 +1109,36 @@ describe('prefix-based routing', () => {
       middleware(createMockRequest('/en/list'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with uppercase default locale in a nested path', () => {
+      middleware(createMockRequest('/EN/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with uppercase non-default locale in a nested path', () => {
+      middleware(createMockRequest('/DE-AT/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/list'
+      );
+    });
+
+    it('redirects requests with lowercase non-default locale in a nested path', () => {
+      middleware(createMockRequest('/de-at/list'));
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://localhost:3000/list'
       );
