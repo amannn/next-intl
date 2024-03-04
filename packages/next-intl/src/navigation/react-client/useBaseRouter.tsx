@@ -35,12 +35,14 @@ export default function useBaseRouter<Locales extends AllLocales>() {
 
   return useMemo(() => {
     function localize(href: string, nextLocale?: string) {
-      return localizeHref(
-        href,
-        nextLocale || locale,
-        locale,
-        window.location.pathname
-      );
+      // Remove the basePath from the current pathname if it's there
+      const basePath = window.location.pathname.replace(pathname, '');
+      let currentPath = window.location.pathname;
+      if (basePath.endsWith(`/${locale}`)) {
+        currentPath = `/${locale}/${pathname}`;
+      }
+
+      return localizeHref(href, nextLocale || locale, locale, currentPath);
     }
 
     function createHandler<

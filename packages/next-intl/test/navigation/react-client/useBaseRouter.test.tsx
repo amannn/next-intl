@@ -141,7 +141,7 @@ describe('prefixed routing', () => {
 
 describe('basePath unprefixed routing', () => {
   beforeEach(() => {
-    mockLocation('/base/');
+    mockLocation('/base/path/');
   });
 
   it('can push', () => {
@@ -172,7 +172,7 @@ describe('basePath unprefixed routing', () => {
 
 describe('basePath prefixed routing', () => {
   beforeEach(() => {
-    mockLocation('/base/en');
+    mockLocation('/base/path/en');
   });
 
   it('can push', () => {
