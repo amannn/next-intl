@@ -578,8 +578,8 @@ importers:
         specifier: ^18.2.17
         version: 18.2.17
       bunchee:
-        specifier: ^4.4.3
-        version: 4.4.8(typescript@5.2.2)
+        specifier: 5.0.0-beta.1
+        version: 5.0.0-beta.1(typescript@5.2.2)
       eslint:
         specifier: ^8.54.0
         version: 8.54.0
@@ -642,8 +642,8 @@ importers:
         specifier: ^18.2.5
         version: 18.2.14
       bunchee:
-        specifier: ^4.4.3
-        version: 4.4.8(typescript@5.2.2)
+        specifier: 5.0.0-beta.1
+        version: 5.0.0-beta.1(typescript@5.2.2)
       date-fns:
         specifier: ^2.16.1
         version: 2.16.1
@@ -8277,12 +8277,12 @@ packages:
       rollup:
         optional: true
     dependencies:
-      '@rollup/pluginutils': 5.0.5(rollup@4.12.0)
+      '@rollup/pluginutils': 5.1.0(rollup@4.12.0)
       commondir: 1.0.1
       estree-walker: 2.0.2
       glob: 8.1.0
       is-reference: 1.2.1
-      magic-string: 0.30.5
+      magic-string: 0.30.8
       rollup: 4.12.0
     dev: true
 
@@ -11619,8 +11619,8 @@ packages:
       semver: 7.5.4
     dev: true
 
-  /bunchee@4.4.8(typescript@5.2.2):
-    resolution: {integrity: sha512-YfGENthKSPF94+vJqnV51yDwTv5r6YZoBISJBe6ZeD167QL+iwgpMk2IaZzLgawJGCcoybOqII5sRchALWHhEw==}
+  /bunchee@5.0.0-beta.1(typescript@5.2.2):
+    resolution: {integrity: sha512-7avhLZMcFMq0W+QtpoS+lHdwRYdfrSfpUAR/DWQBel1WPzT0Gq4dQ+vJHKS0tXIIjV4FzgcgM1QhsPHY5k4aYw==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:

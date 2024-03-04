@@ -100,7 +100,7 @@
     "@types/node": "^20.1.2",
     "@types/react": "^18.2.29",
     "@types/react-dom": "^18.2.5",
-    "bunchee": "^4.4.3",
+    "bunchee": "5.0.0-beta.1",
     "date-fns": "^2.16.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
@@ -114,7 +114,7 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "12.575 kB"
+      "limit": "12.665 kB"
     },
     {
       "path": "dist/index.mjs",
