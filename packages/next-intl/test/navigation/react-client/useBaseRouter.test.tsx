@@ -138,3 +138,65 @@ describe('prefixed routing', () => {
     expect(useNextRouter().push).toHaveBeenCalledWith('about');
   });
 });
+
+describe('basePath unprefixed routing', () => {
+  beforeEach(() => {
+    mockLocation('/base/');
+  });
+
+  it('can push', () => {
+    callRouter((router) => router.push('/test'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+  });
+
+  it('can replace', () => {
+    callRouter((router) => router.replace('/test'));
+    expect(useNextRouter().replace).toHaveBeenCalledWith('/test');
+  });
+
+  it('can prefetch', () => {
+    callRouter((router) => router.prefetch('/test'));
+    expect(useNextRouter().prefetch).toHaveBeenCalledWith('/test');
+  });
+
+  it('passes through absolute urls', () => {
+    callRouter((router) => router.push('https://example.com'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('https://example.com');
+  });
+
+  it('passes through relative urls', () => {
+    callRouter((router) => router.push('about'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('about');
+  });
+});
+
+describe('basePath prefixed routing', () => {
+  beforeEach(() => {
+    mockLocation('/base/en');
+  });
+
+  it('can push', () => {
+    callRouter((router) => router.push('/test'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
+  });
+
+  it('can replace', () => {
+    callRouter((router) => router.replace('/test'));
+    expect(useNextRouter().replace).toHaveBeenCalledWith('/en/test');
+  });
+
+  it('can prefetch', () => {
+    callRouter((router) => router.prefetch('/test'));
+    expect(useNextRouter().prefetch).toHaveBeenCalledWith('/en/test');
+  });
+
+  it('passes through absolute urls', () => {
+    callRouter((router) => router.push('https://example.com'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('https://example.com');
+  });
+
+  it('passes through relative urls', () => {
+    callRouter((router) => router.push('about'));
+    expect(useNextRouter().push).toHaveBeenCalledWith('about');
+  });
+});
