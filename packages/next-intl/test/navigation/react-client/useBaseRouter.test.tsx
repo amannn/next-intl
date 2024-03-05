@@ -1,7 +1,10 @@
 import {render} from '@testing-library/react';
 import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import {useRouter as useNextRouter} from 'next/navigation';
+import {
+  useRouter as useNextRouter,
+  usePathname as useNextPathname
+} from 'next/navigation';
 import React, {useEffect} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import useBaseRouter from '../../../src/navigation/react-client/useBaseRouter';
@@ -16,9 +19,9 @@ vi.mock('next/navigation', () => {
     refresh: vi.fn()
   };
   return {
-    useRouter: () => router,
-    useParams: () => ({locale: 'en'}),
-    usePathname: () => '/'
+    useRouter: vi.fn(() => router),
+    useParams: vi.fn(() => ({locale: 'en'})),
+    usePathname: vi.fn(() => '/')
   };
 });
 
@@ -34,15 +37,26 @@ function callRouter(cb: (router: ReturnType<typeof useBaseRouter>) => void) {
   render(<Component />);
 }
 
-function mockLocation(pathname: string) {
+function mockLocation(pathname: string, basePath = '') {
+  vi.mocked(useNextPathname).mockReturnValue(pathname);
+
   delete (global.window as any).location;
   global.window ??= Object.create(window);
-  (global.window as any).location = {pathname};
+  (global.window as any).location = {pathname: basePath + pathname};
+}
+
+function clearNextRouterMocks() {
+  ['push', 'replace', 'prefetch', 'back', 'forward', 'refresh'].forEach(
+    (fnName) => {
+      vi.mocked((useNextRouter() as any)[fnName]).mockClear();
+    }
+  );
 }
 
 describe('unprefixed routing', () => {
   beforeEach(() => {
     mockLocation('/');
+    clearNextRouterMocks();
   });
 
   it('can push', () => {
@@ -111,6 +125,7 @@ describe('unprefixed routing', () => {
 describe('prefixed routing', () => {
   beforeEach(() => {
     mockLocation('/en');
+    clearNextRouterMocks();
   });
 
   it('can push', () => {
@@ -141,7 +156,8 @@ describe('prefixed routing', () => {
 
 describe('basePath unprefixed routing', () => {
   beforeEach(() => {
-    mockLocation('/base/path/');
+    mockLocation('/', '/base/path');
+    clearNextRouterMocks();
   });
 
   it('can push', () => {
@@ -172,7 +188,8 @@ describe('basePath unprefixed routing', () => {
 
 describe('basePath prefixed routing', () => {
   beforeEach(() => {
-    mockLocation('/base/path/en');
+    mockLocation('/en', '/base/path');
+    clearNextRouterMocks();
   });
 
   it('can push', () => {
