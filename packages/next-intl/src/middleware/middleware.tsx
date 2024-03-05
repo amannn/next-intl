@@ -148,6 +148,9 @@ export default function createMiddleware<Locales extends AllLocales>(
       let resolvedTemplateLocale;
       [resolvedTemplateLocale = locale, internalTemplateName] =
         getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
+      const isDefaultLocale =
+        configWithDefaults.defaultLocale === locale ||
+        domain?.defaultLocale === locale;
 
       if (internalTemplateName) {
         const pathnameConfig =
@@ -165,10 +168,6 @@ export default function createMiddleware<Locales extends AllLocales>(
             pathLocale
           );
         } else {
-          const isDefaultLocale =
-            configWithDefaults.defaultLocale === locale ||
-            domain?.defaultLocale === locale;
-
           response = redirect(
             getPathWithSearch(
               formatTemplatePathname(
@@ -178,6 +177,37 @@ export default function createMiddleware<Locales extends AllLocales>(
                   : pathnameConfig[resolvedTemplateLocale],
                 localeTemplate,
                 pathLocale || !isDefaultLocale ? locale : undefined
+              ),
+              request.nextUrl.search
+            )
+          );
+        }
+      } else {
+        const pathnameWithoutLocale =
+          pathname.split(`/${locale}`)[1] ?? pathname;
+        const internalTemplateName = Object.keys(
+          configWithDefaults.pathnames
+        ).find((template) => matchesPathname(template, pathnameWithoutLocale));
+
+        if (internalTemplateName) {
+          const pathnameConfig =
+            configWithDefaults.pathnames[internalTemplateName];
+          const localeTemplate: string =
+            typeof pathnameConfig === 'string'
+              ? pathnameConfig
+              : pathnameConfig[locale];
+          const showLocale =
+            (configWithDefaults.localePrefix === 'as-needed' &&
+              !isDefaultLocale) ||
+            configWithDefaults.localePrefix === 'always';
+
+          response = redirect(
+            getPathWithSearch(
+              formatTemplatePathname(
+                normalizedPathname,
+                internalTemplateName,
+                localeTemplate,
+                showLocale ? locale : undefined
               ),
               request.nextUrl.search
             )
