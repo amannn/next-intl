@@ -22,19 +22,19 @@ export function localizeHref(
   href: string,
   locale: string,
   curLocale: string,
-  pathname: string
+  curPathname: string
 ): string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string,
-  pathname: string
+  curPathname: string
 ): UrlObject | string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string = locale,
-  pathname: string
+  curPathname: string
 ) {
   if (!isLocalHref(href) || isRelativeHref(href)) {
     return href;
@@ -42,7 +42,7 @@ export function localizeHref(
 
   const isSwitchingLocale = locale !== curLocale;
   const isPathnamePrefixed =
-    locale == null || hasPathnamePrefixed(locale, pathname);
+    locale == null || hasPathnamePrefixed(locale, curPathname);
   const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
 
   if (shouldPrefix && locale != null) {

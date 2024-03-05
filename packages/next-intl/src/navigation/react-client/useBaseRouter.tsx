@@ -4,6 +4,7 @@ import useLocale from '../../react-client/useLocale';
 import {AllLocales} from '../../shared/types';
 import {localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
+import {getBasePath} from '../shared/utils';
 
 type IntlNavigateOptions<Locales extends AllLocales> = {
   locale?: Locales[number];
@@ -35,14 +36,12 @@ export default function useBaseRouter<Locales extends AllLocales>() {
 
   return useMemo(() => {
     function localize(href: string, nextLocale?: string) {
-      // Remove the basePath from the current pathname if it's there
-      const basePath = window.location.pathname.replace(pathname, '');
-      let currentPath = window.location.pathname;
-      if (basePath.endsWith(`/${locale}`)) {
-        currentPath = `/${locale}/${pathname}`;
-      }
+      let curPathname = window.location.pathname;
 
-      return localizeHref(href, nextLocale || locale, locale, currentPath);
+      const basePath = getBasePath(pathname);
+      if (basePath) curPathname = curPathname.replace(basePath, '');
+
+      return localizeHref(href, nextLocale || locale, locale, curPathname);
     }
 
     function createHandler<
