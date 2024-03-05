@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Incorporate `basePath` correctly in `useRouter` functions ([#906](https://github.com/amannn/next-intl/issues/906)) ([4abcbeb](https://github.com/amannn/next-intl/commit/4abcbebdd603a18d9f1173709c174a8ac4210e37)), closes [#905](https://github.com/amannn/next-intl/issues/905) [#910](https://github.com/amannn/next-intl/issues/910)
+* Incorporate `basePath` correctly in `useRouter` functions ([#906](https://github.com/amannn/next-intl/issues/906) by [@Oberwaditzer](https://github.com/Oberwaditzer)) ([4abcbeb](https://github.com/amannn/next-intl/commit/4abcbebdd603a18d9f1173709c174a8ac4210e37)), closes [#905](https://github.com/amannn/next-intl/issues/905) [#910](https://github.com/amannn/next-intl/issues/910)
 
 
 
