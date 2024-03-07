@@ -105,13 +105,12 @@ export function matchesPathname(
 
 export function templateToRegex(template: string): RegExp {
   const regexPattern = template
-    .replace(/\[([^\]]+)\]/g, (match) => {
-      if (match.startsWith('[...')) return '(.*)';
-      if (match.startsWith('[[...')) return '(.*)';
-      return '([^/]+)';
-    })
-    // Clean up regex match remainders from optional catchall ('[[...slug]]')
-    .replaceAll('(.*)]', '(.*)');
+    // Replace optional catchall ('[[...slug]]')
+    .replaceAll(/\[\[(\.\.\.[^\]]+)\]\]/g, '?(.*)')
+    // Replace catchall ('[...slug]')
+    .replaceAll(/\[(\.\.\.[^\]]+)\]/g, '(.+)')
+    // Replace regular parameter ('[slug]')
+    .replaceAll(/\[([^\]]+)\]/g, '([^/]+)');
 
   return new RegExp(`^${regexPattern}$`);
 }

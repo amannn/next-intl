@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   formatPathname,
+  getInternalTemplate,
   getNormalizedPathname,
   getRouteParams
 } from '../../src/middleware/utils';
@@ -123,5 +124,28 @@ describe('formatPathname', () => {
     expect(formatPathname('/users/[userId]', {userId: '23/42'})).toBe(
       '/users/23/42'
     );
+  });
+});
+
+describe('getInternalTemplate', () => {
+  const pathnames = {
+    '/categories/[[...slug]]': {
+      en: '/categories/[[...slug]]',
+      de: '/kategorien/[[...slug]]'
+    }
+  };
+
+  it('works when passing no params to optional catch-all segments', () => {
+    expect(getInternalTemplate(pathnames, '/kategorien')).toEqual([
+      'de',
+      '/categories/[[...slug]]'
+    ]);
+  });
+
+  it('works when passing params to optional catch-all segments', () => {
+    expect(getInternalTemplate(pathnames, '/kategorien/neu')).toEqual([
+      'de',
+      '/categories/[[...slug]]'
+    ]);
   });
 });
