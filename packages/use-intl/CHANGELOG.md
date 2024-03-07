@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.3 (2024-03-07)
+
+
+### Bug Fixes
+
+* Handle optional params in catch-all segments correctly when using localized pathnames ([#925](https://github.com/amannn/next-intl/issues/925)) ([8ba8b69](https://github.com/amannn/next-intl/commit/8ba8b699b5343a816f725d329fdb1153fa647b99)), closes [#917](https://github.com/amannn/next-intl/issues/917)
+
+
+
+
+
 ## 3.9.2 (2024-03-05)
 
 
