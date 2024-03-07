@@ -874,6 +874,10 @@ describe('prefix-based routing', () => {
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]'
+          },
+          '/categories/[[...slug]]': {
+            en: '/categories/[[...slug]]',
+            de: '/kategorien/[[...slug]]'
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
@@ -895,10 +899,12 @@ describe('prefix-based routing', () => {
         middlewareWithPathnames(
           createMockRequest('/en/news/happy-newyear-g5b116754', 'en')
         );
+        middlewareWithPathnames(createMockRequest('/en/categories', 'en'));
+        middlewareWithPathnames(createMockRequest('/en/categories/new', 'en'));
 
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(4);
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
         expect(
           MockedNextResponse.rewrite.mock.calls.map((call) =>
             call[0].toString()
@@ -907,7 +913,9 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/en/about',
           'http://localhost:3000/en/users',
           'http://localhost:3000/en/users/1',
-          'http://localhost:3000/en/news/happy-newyear-g5b116754'
+          'http://localhost:3000/en/news/happy-newyear-g5b116754',
+          'http://localhost:3000/en/categories',
+          'http://localhost:3000/en/categories/new'
         ]);
       });
 
@@ -928,21 +936,24 @@ describe('prefix-based routing', () => {
         middlewareWithPathnames(
           createMockRequest('/de/neuigkeiten/gutes-neues-jahr-g5b116754', 'de')
         );
+        middlewareWithPathnames(createMockRequest('/de/kategorien', 'de'));
+        middlewareWithPathnames(createMockRequest('/de/kategorien/neu', 'de'));
 
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de/about'
-        );
-        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
-          'http://localhost:3000/de/users'
-        );
-        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
-          'http://localhost:3000/de/users/1'
-        );
-        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
-          'http://localhost:3000/de/news/gutes-neues-jahr-g5b116754'
-        );
+
+        expect(
+          MockedNextResponse.rewrite.mock.calls.map((call) =>
+            call[0].toString()
+          )
+        ).toEqual([
+          'http://localhost:3000/de/about',
+          'http://localhost:3000/de/users',
+          'http://localhost:3000/de/users/1',
+          'http://localhost:3000/de/news/gutes-neues-jahr-g5b116754',
+          'http://localhost:3000/de/categories',
+          'http://localhost:3000/de/categories/neu'
+        ]);
       });
 
       it('redirects a request for a localized route that is not associated with the requested locale', () => {
