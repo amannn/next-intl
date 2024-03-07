@@ -104,6 +104,28 @@ describe('unprefixed routing', () => {
       screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
     ).toBe('de');
   });
+
+  it('updates the href when the query changes for localePrefix=never', () => {
+    const {rerender} = render(
+      <ClientLink href={{pathname: '/'}} localePrefix="never">
+        Test
+      </ClientLink>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/'
+    );
+    rerender(
+      <ClientLink
+        href={{pathname: '/', query: {foo: 'bar'}}}
+        localePrefix="never"
+      >
+        Test
+      </ClientLink>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/?foo=bar'
+    );
+  });
 });
 
 describe('prefixed routing', () => {

@@ -52,12 +52,12 @@ function BaseLink(
   }
 
   useEffect(() => {
-    if (!pathname || localePrefix === 'never') return;
+    if (!pathname) return;
 
     setLocalizedHref(
       localizeHref(href, locale, defaultLocale, pathname ?? undefined)
     );
-  }, [defaultLocale, href, locale, localePrefix, pathname]);
+  }, [defaultLocale, href, locale, pathname]);
 
   if (isChangingLocale) {
     if (prefetch && process.env.NODE_ENV !== 'production') {
