@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.4 (2024-03-08)
+
+
+### Bug Fixes
+
+* Handle changing href for `<Link />` correctly when using `localePrefix: 'never'` ([#926](https://github.com/amannn/next-intl/issues/926)) ([b609dc0](https://github.com/amannn/next-intl/commit/b609dc05b31832af04ee57b73133568e43b69d1f)), closes [#918](https://github.com/amannn/next-intl/issues/918)
+
+
+
+
+
 ## 3.9.3 (2024-03-07)
 
 
