@@ -27,8 +27,8 @@ function BaseLink(
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
-  const defaultLocale = useLocale();
-  const isChangingLocale = locale !== defaultLocale;
+  const curLocale = useLocale();
+  const isChangingLocale = locale !== curLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
     isLocalHref(href) && (localePrefix !== 'never' || isChangingLocale)
@@ -47,17 +47,15 @@ function BaseLink(
   );
 
   function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
-    syncLocaleCookie(pathname, defaultLocale, locale);
+    syncLocaleCookie(pathname, curLocale, locale);
     if (onClick) onClick(event);
   }
 
   useEffect(() => {
-    if (!pathname || localePrefix === 'never') return;
+    if (!pathname) return;
 
-    setLocalizedHref(
-      localizeHref(href, locale, defaultLocale, pathname ?? undefined)
-    );
-  }, [defaultLocale, href, locale, localePrefix, pathname]);
+    setLocalizedHref(localizeHref(href, locale, curLocale, pathname));
+  }, [curLocale, href, locale, pathname]);
 
   if (isChangingLocale) {
     if (prefetch && process.env.NODE_ENV !== 'production') {
