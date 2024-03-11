@@ -398,6 +398,22 @@ See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825
 
 </details>
 
+<details>
+<summary>How can I localize dynamic segments?</summary>
+
+If you have a route like `/news/[articleSlug]-[articleId]`, you may want to localize the `articleSlug` part in the pathname like this:
+
+```
+/en/news/launch-of-new-product-94812
+/de/neuigkeiten/produktneuheit-94812
+```
+
+In this case, the localized slug can either be provided by the backend or generated in the frontend by slugifying the localized article title.
+
+A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` contains a typo.
+
+</details>
+
 ### Matcher config
 
 The middleware is intended to only run on pages, not on arbitrary files that you serve independently of the user locale (e.g. `/favicon.ico`).
