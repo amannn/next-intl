@@ -106,11 +106,11 @@ export function matchesPathname(
 export function templateToRegex(template: string): RegExp {
   const regexPattern = template
     // Replace optional catchall ('[[...slug]]')
-    .replaceAll(/\[\[(\.\.\.[^\]]+)\]\]/g, '?(.*)')
+    .replace(/\[\[(\.\.\.[^\]]+)\]\]/g, '?(.*)')
     // Replace catchall ('[...slug]')
-    .replaceAll(/\[(\.\.\.[^\]]+)\]/g, '(.+)')
+    .replace(/\[(\.\.\.[^\]]+)\]/g, '(.+)')
     // Replace regular parameter ('[slug]')
-    .replaceAll(/\[([^\]]+)\]/g, '([^/]+)');
+    .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
   return new RegExp(`^${regexPattern}$`);
 }
