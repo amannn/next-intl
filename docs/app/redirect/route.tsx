@@ -14,8 +14,7 @@ export async function GET(request: Request) {
   // exit too early and the tracking therefore doesn't succeed.
   await ServerTracker.trackEvent({
     name: 'partner-referral',
-    data: {href, name: 'redirect'},
-    request
+    data: {href, name: 'redirect'}
   }).catch((error) => {
     console.error('Failed to track redirect', error);
   });

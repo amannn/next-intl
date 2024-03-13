@@ -222,31 +222,6 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  examples/example-app-router-minimal:
-    dependencies:
-      next:
-        specifier: ^14.1.0
-        version: 14.1.0(@babel/core@7.22.5)(react-dom@18.2.0)(react@18.2.0)
-      next-intl:
-        specifier: latest
-        version: link:../../packages/next-intl
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-    devDependencies:
-      '@types/node':
-        specifier: ^20.1.2
-        version: 20.1.2
-      '@types/react':
-        specifier: ^18.2.29
-        version: 18.2.34
-      typescript:
-        specifier: ^5.2.2
-        version: 5.3.3
-
   examples/example-app-router-next-auth:
     dependencies:
       next:
@@ -575,7 +550,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^3.9.1
+        specifier: ^3.9.4
         version: link:../use-intl
     devDependencies:
       '@arethetypeswrong/cli':

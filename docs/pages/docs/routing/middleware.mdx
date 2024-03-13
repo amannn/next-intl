@@ -322,6 +322,14 @@ export default createMiddleware({
       de: '/ueber-uns'
     },
 
+    // Pathnames that overlap with dynamic segments should
+    // be listed first in the object, as the middleware will
+    // pick the first matching entry.
+    '/news/just-in': {
+      en: '/news/just-in',
+      de: '/neuigkeiten/aktuell'
+    },
+
     // Dynamic params are supported via square brackets
     '/news/[articleSlug]-[articleId]': {
       en: '/news/[articleSlug]-[articleId]',
@@ -348,7 +356,8 @@ export default createMiddleware({
 
 Depending on if a route is generated statically (at build time) or dynamically (at runtime), [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) needs to be called either for the localized or the internal pathname.
 
-Let's take an example with this folder structure:
+Consider this example:
+
 ```
 app
 └── [locale]
@@ -356,11 +365,11 @@ app
         └── [slug]
 ```
 
-… and this middleware configuration:
+… with this middleware configuration:
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
- 
+
 export default createMiddleware({
   defaultLocale: 'en',
   locales: ['en', 'fr'],
@@ -377,10 +386,10 @@ Depending on whether `some-article` was included in [`generateStaticParams`](htt
 
 ```tsx
 // Statically generated at build time
-revalidatePath('/fr/news/some-article')
+revalidatePath('/fr/news/some-article');
 
 // Dynamically generated at runtime:
-revalidatePath('/fr/infos/some-article')
+revalidatePath('/fr/infos/some-article');
 ```
 
 When in doubt, you can revalidate both paths to be on the safe side.
@@ -389,6 +398,21 @@ See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825
 
 </details>
 
+<details>
+<summary>How can I localize dynamic segments?</summary>
+
+If you have a route like `/news/[articleSlug]-[articleId]`, you may want to localize the `articleSlug` part in the pathname like this:
+
+```
+/en/news/launch-of-new-product-94812
+/de/neuigkeiten/produktneuheit-94812
+```
+
+In this case, the localized slug can either be provided by the backend or generated in the frontend by slugifying the localized article title.
+
+A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` contains a typo.
+
+</details>
 
 ### Matcher config
 

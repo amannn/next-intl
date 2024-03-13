@@ -128,14 +128,5 @@ module.exports = withNextra({
       destination: '/examples',
       permanent: true
     }
-  ],
-
-  ...(process.env.UMAMI_URL && {
-    rewrites: () => [
-      {
-        source: '/u/:match*',
-        destination: process.env.UMAMI_URL + '/:match*'
-      }
-    ]
-  })
+  ]
 });

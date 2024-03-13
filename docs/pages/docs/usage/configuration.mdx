@@ -187,7 +187,7 @@ export default getRequestConfig(async ({locale}) => {
   return {
     // The time zone can either be statically defined, read from the
     // user profile if you store such a setting, or based on dynamic
-    // request information like the locale or headers.
+    // request information like the locale or a cookie.
     timeZone: 'Europe/Vienna'
   };
 });
@@ -199,7 +199,7 @@ export default getRequestConfig(async ({locale}) => {
 ```tsx
 // The time zone can either be statically defined, read from the
 // user profile if you store such a setting, or based on dynamic
-// request information like the locale or headers.
+// request information like the locale or a cookie.
 const timeZone = 'Europe/Vienna';
 
 <NextIntlClientProvider timeZone={timeZone}>...<NextIntlClientProvider>
@@ -221,7 +221,7 @@ const timeZone = useTimeZone();
 The time zone in Client Components is automatically inherited from the server
 side if you wrap the relevant components in a `NextIntlClientProvider` that is
 rendered by a Server Component. For all other cases, you can specify the value
-explicitly.
+explicitly on a wrapping `NextIntlClientProvider`.
 
 ## Now value [#now]
 

@@ -21,7 +21,7 @@
 
 ## Features
 
-Internationalization is an essential part of the user experience. next-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
+Internationalization is an essential part of the user experience. `next-intl` gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.

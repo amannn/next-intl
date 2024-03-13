@@ -124,7 +124,7 @@ Since the `error` file must be defined as a Client Component, you have to use [`
 import pick from 'lodash/pick';
 import {NextIntlClientProvider, useMessages} from 'next-intl';
 
-export default async function LocaleLayout({children}) {
+export default function LocaleLayout({children}) {
   // ...
   const messages = useMessages();
 

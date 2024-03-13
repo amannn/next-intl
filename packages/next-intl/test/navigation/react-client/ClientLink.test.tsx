@@ -7,6 +7,14 @@ import ClientLink from '../../../src/navigation/react-client/ClientLink';
 
 vi.mock('next/navigation');
 
+function mockLocation(pathname: string, basePath = '') {
+  vi.mocked(usePathname).mockReturnValue(pathname);
+
+  delete (global.window as any).location;
+  global.window ??= Object.create(window);
+  (global.window as any).location = {pathname: basePath + pathname};
+}
+
 describe('unprefixed routing', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockImplementation(() => '/');
@@ -104,6 +112,52 @@ describe('unprefixed routing', () => {
       screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
     ).toBe('de');
   });
+
+  it('updates the href when the query changes for localePrefix=never', () => {
+    const {rerender} = render(
+      <ClientLink href={{pathname: '/'}} localePrefix="never">
+        Test
+      </ClientLink>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/'
+    );
+    rerender(
+      <ClientLink
+        href={{pathname: '/', query: {foo: 'bar'}}}
+        localePrefix="never"
+      >
+        Test
+      </ClientLink>
+    );
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      '/?foo=bar'
+    );
+  });
+
+  describe('base path', () => {
+    beforeEach(() => {
+      mockLocation('/', '/base/path');
+    });
+
+    it('renders an unprefixed href when staying on the same locale', () => {
+      render(<ClientLink href="/test">Test</ClientLink>);
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/test');
+    });
+
+    it('renders a prefixed href when switching the locale', () => {
+      render(
+        <ClientLink href="/test" locale="de">
+          Test
+        </ClientLink>
+      );
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/de/test');
+    });
+  });
 });
 
 describe('prefixed routing', () => {
@@ -171,6 +225,30 @@ describe('prefixed routing', () => {
       'https://example.com/test'
     );
   });
+
+  describe('base path', () => {
+    beforeEach(() => {
+      mockLocation('/en', '/base/path');
+    });
+
+    it('renders an unprefixed href when staying on the same locale', () => {
+      render(<ClientLink href="/test">Test</ClientLink>);
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/en/test');
+    });
+
+    it('renders a prefixed href when switching the locale', () => {
+      render(
+        <ClientLink href="/test" locale="de">
+          Test
+        </ClientLink>
+      );
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/de/test');
+    });
+  });
 });
 
 describe('usage outside of Next.js', () => {
@@ -196,17 +274,24 @@ describe('usage outside of Next.js', () => {
   });
 });
 
-it('keeps the cookie value in sync', () => {
-  vi.mocked(usePathname).mockImplementation(() => '/en');
-  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
-  document.cookie = 'NEXT_LOCALE=en';
+describe('cookie sync', () => {
+  beforeEach(() => {
+    vi.mocked(usePathname).mockImplementation(() => '/en');
+    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 
-  render(
-    <ClientLink href="/" locale="de">
-      Test
-    </ClientLink>
-  );
-  expect(document.cookie).toContain('NEXT_LOCALE=en');
-  fireEvent.click(screen.getByRole('link', {name: 'Test'}));
-  expect(document.cookie).toContain('NEXT_LOCALE=de');
+    mockLocation('/');
+
+    global.document.cookie = 'NEXT_LOCALE=en';
+  });
+
+  it('keeps the cookie value in sync', () => {
+    render(
+      <ClientLink href="/" locale="de">
+        Test
+      </ClientLink>
+    );
+    expect(document.cookie).toContain('NEXT_LOCALE=en');
+    fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+    expect(document.cookie).toContain('NEXT_LOCALE=de');
+  });
 });

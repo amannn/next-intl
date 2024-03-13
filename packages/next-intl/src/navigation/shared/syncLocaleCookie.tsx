@@ -3,6 +3,7 @@ import {
   COOKIE_MAX_AGE,
   COOKIE_SAME_SITE
 } from '../../shared/constants';
+import {getBasePath} from './utils';
 
 /**
  * We have to keep the cookie value in sync as Next.js might
@@ -25,7 +26,7 @@ export default function syncLocaleCookie(
     return;
   }
 
-  const basePath = window.location.pathname.replace(pathname, '');
+  const basePath = getBasePath(pathname);
   const hasBasePath = basePath !== '';
   const path = hasBasePath ? basePath : '/';
 

@@ -429,35 +429,27 @@ function CompanyStats() {
 ```
 
 <details>
-<summary>Why can't I just use arrays in my messages?</summary>
+<summary>What if the amount of items varies depending on the locale?</summary>
 
-The advantage of this approach over supporting arrays in messages is that this way you can use the formatting capabilities, e.g. to interpolate values into individual messages.
+To dynamically iterate over all keys of a namespace, you can use the [`useMessages`](/docs/usage/configuration#messages) hook to retrieve all messages of a given namespace and extract the keys from there:
 
-```json filename="en.json"
-{
-  "Benefits": {
-    "zero-config": "Works with <b>zero config</b>",
-    "customizable": "Easy to <b>customize</b>",
-    "fast": "Blazingly <b>fast</b>"
-  }
-}
-```
+```tsx filename="CompanyStats.tsx"
+import {useTranslations, useMessages} from 'next-intl';
 
-```tsx filename="Benefits.tsx"
-import {useTranslations} from 'next-intl';
+function CompanyStats() {
+  const t = useTranslations('CompanyStats');
 
-function Benefits() {
-  const t = useTranslations('Benefits');
+  const messages = useMessages();
+  const keys = Object.keys(messages.CompanyStats);
+
   return (
     <ul>
-      {['zero-config', 'customizable', 'fast'].map((key, index, arr) => {
-        const color = `hsl(${(index / (arr.length - 1)) * 360}deg 70% 50%)`;
-        return (
-          <li key={key}>
-            {t(key, {b: (chunks) => <b style={{color}}>{chunks}</b>})}
-          </li>
-        );
-      })}
+      {keys.map((key) => (
+        <li key={key}>
+          <h2>{t(`${key}.title`)}</h2>
+          <p>{t(`${key}.value`)}</p>
+        </li>
+      ))}
     </ul>
   );
 }

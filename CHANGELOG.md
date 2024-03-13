@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.4 (2024-03-08)
+
+
+### Bug Fixes
+
+* Handle changing href for `<Link />` correctly when using `localePrefix: 'never'` ([#926](https://github.com/amannn/next-intl/issues/926)) ([b609dc0](https://github.com/amannn/next-intl/commit/b609dc05b31832af04ee57b73133568e43b69d1f)), closes [#918](https://github.com/amannn/next-intl/issues/918)
+
+
+
+
+
+## 3.9.3 (2024-03-07)
+
+
+### Bug Fixes
+
+* Handle optional params in catch-all segments correctly when using localized pathnames ([#925](https://github.com/amannn/next-intl/issues/925)) ([8ba8b69](https://github.com/amannn/next-intl/commit/8ba8b699b5343a816f725d329fdb1153fa647b99)), closes [#917](https://github.com/amannn/next-intl/issues/917)
+
+
+
+
+
+## 3.9.2 (2024-03-05)
+
+
+### Bug Fixes
+
+* Incorporate `basePath` correctly in `useRouter` functions ([#906](https://github.com/amannn/next-intl/issues/906) by [@Oberwaditzer](https://github.com/Oberwaditzer)) ([4abcbeb](https://github.com/amannn/next-intl/commit/4abcbebdd603a18d9f1173709c174a8ac4210e37)), closes [#905](https://github.com/amannn/next-intl/issues/905) [#910](https://github.com/amannn/next-intl/issues/910)
+
+
+
+
+
 ## 3.9.1 (2024-02-23)
 
 
