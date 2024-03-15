@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.5 (2024-03-15)
+
+
+### Bug Fixes
+
+* Improve support for older browsers by switching from `replaceAll` to `replace` ([#885](https://github.com/amannn/next-intl/issues/885) by @MichalMoravik) ([080333a](https://github.com/amannn/next-intl/commit/080333aa8ec2e4e41dc740e370032ee429b190f0)), closes [#884](https://github.com/amannn/next-intl/issues/884)
+
+
+
+
+
 ## 3.9.4 (2024-03-08)
 
 
