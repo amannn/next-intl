@@ -410,7 +410,7 @@ If you have a route like `/news/[articleSlug]-[articleId]`, you may want to loca
 
 In this case, the localized slug can either be provided by the backend or generated in the frontend by slugifying the localized article title.
 
-A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` contains a typo.
+A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` doesn't match.
 
 </details>
 

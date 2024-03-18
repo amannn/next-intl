@@ -24,13 +24,21 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+  - type: checkboxes
+    attributes:
+      label: Verifications
+      options:
+        - label: I've verified that the problem I'm experiencing isn't covered in [the docs](https://next-intl-docs.vercel.app/).
+          required: true
+        - label: I've searched for similar, existing issues on GitHub and [Stack Overflow](https://stackoverflow.com/search?q=next-intl).
+          required: true
+        - label: I've compared my app to [a working example](https://next-intl-docs.vercel.app/examples) to look for differences.
+          required: true
   - type: input
     attributes:
       label: Mandatory reproduction URL
       description: |
-        **Templates:**
-        - [App Router](https://github.com/amannn/next-intl-bug-repro-app-router)
-        - [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
+        **Templates:** [App Router](https://github.com/amannn/next-intl-bug-repro-app-router), [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
     validations:
       required: true
   - type: textarea
