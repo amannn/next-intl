@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.9.5 (2024-03-15)
+
+
+### Bug Fixes
+
+* Improve support for older browsers by switching from `replaceAll` to `replace` ([#885](https://github.com/amannn/next-intl/issues/885) by @MichalMoravik) ([080333a](https://github.com/amannn/next-intl/commit/080333aa8ec2e4e41dc740e370032ee429b190f0)), closes [#884](https://github.com/amannn/next-intl/issues/884)
+
+
+
+
+
+## 3.9.4 (2024-03-08)
+
+
+### Bug Fixes
+
+* Handle changing href for `<Link />` correctly when using `localePrefix: 'never'` ([#926](https://github.com/amannn/next-intl/issues/926)) ([b609dc0](https://github.com/amannn/next-intl/commit/b609dc05b31832af04ee57b73133568e43b69d1f)), closes [#918](https://github.com/amannn/next-intl/issues/918)
+
+
+
+
+
+## 3.9.3 (2024-03-07)
+
+
+### Bug Fixes
+
+* Handle optional params in catch-all segments correctly when using localized pathnames ([#925](https://github.com/amannn/next-intl/issues/925)) ([8ba8b69](https://github.com/amannn/next-intl/commit/8ba8b699b5343a816f725d329fdb1153fa647b99)), closes [#917](https://github.com/amannn/next-intl/issues/917)
+
+
+
+
+
 ## 3.9.2 (2024-03-05)
 
 

@@ -72,6 +72,7 @@ describe('matchesPathname', () => {
     expect(matchesPathname('/[[...slug]]', '/products/clothing/t-shirts')).toBe(
       true
     );
+    expect(matchesPathname('/products/[[...slug]]', '/products')).toBe(true);
   });
 
   it('returns false for non-matching paths', () => {
