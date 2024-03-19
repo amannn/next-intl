@@ -183,8 +183,10 @@ export default function createMiddleware<Locales extends AllLocales>(
           );
         }
       } else {
-        const pathnameWithoutLocale =
-          pathname.split(`/${locale}`)[1] ?? pathname;
+        const segments = pathname.split('/');
+        if (segments[1] === locale) segments.splice(1, 1);
+        const pathnameWithoutLocale = segments.join('/');
+
         const internalTemplateName = Object.keys(
           configWithDefaults.pathnames
         ).find((template) => matchesPathname(template, pathnameWithoutLocale));
