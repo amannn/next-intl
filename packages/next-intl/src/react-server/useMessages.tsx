@@ -1,5 +1,5 @@
 import type {useMessages as useMessagesType} from 'use-intl';
-import {getMessagesFromConfig} from '../server/react-server/getMessages';
+import getMessagesFromConfig from '../shared/getMessagesFromConfig';
 import useConfig from './useConfig';
 
 export default function useMessages(

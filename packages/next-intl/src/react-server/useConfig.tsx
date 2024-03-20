@@ -1,5 +1,6 @@
+// @ts-ignore -- Only available after build
+import {_getConfig as getConfig} from 'next-intl/server';
 import {use} from 'react';
-import getConfig from '../server/react-server/getConfig';
 import useLocale from './useLocale';
 
 function useHook<Value>(hookName: string, promise: Promise<Value>) {

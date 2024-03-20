@@ -5,7 +5,8 @@ import type {
   getTimeZone as getTimeZone_type,
   getMessages as getMessages_type,
   getLocale as getLocale_type,
-  unstable_setRequestLocale as unstable_setRequestLocale_type
+  unstable_setRequestLocale as unstable_setRequestLocale_type,
+  _getRequestLocale as _getRequestLocale_type
 } from '../react-server';
 
 /**
@@ -43,7 +44,12 @@ export const getLocale = notSupported('getLocale') as typeof getLocale_type;
 // The type of `getTranslations` is not assigned here because it
 // causes a type error. The types use the `react-server` entry
 // anyway, therefore this is irrelevant.
+// TODO: Validate if this is still the case (probably not)
 export const getTranslations = notSupported('getTranslations');
+
+export const _getRequestLocale = notSupported(
+  '_getRequestLocale'
+) as typeof _getRequestLocale_type;
 
 export const unstable_setRequestLocale = notSupported(
   'unstable_setRequestLocale'

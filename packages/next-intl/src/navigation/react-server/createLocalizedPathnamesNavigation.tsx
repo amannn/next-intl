@@ -1,5 +1,6 @@
+// @ts-ignore -- Only available after build
+import {_getRequestLocale as getRequestLocale} from 'next-intl/server';
 import React, {ComponentProps} from 'react';
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {
   AllLocales,
   LocalePrefix,

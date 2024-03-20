@@ -1,4 +1,5 @@
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
+// @ts-ignore -- Only available after build
+import {_getRequestLocale as getRequestLocale} from 'next-intl/server';
 import {LocalePrefix, ParametersExceptFirst} from '../../shared/types';
 import baseRedirect from '../shared/baseRedirect';
 

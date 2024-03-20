@@ -4,7 +4,7 @@ import {ComponentProps} from 'react';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
-export function isRelativeHref(href: Href) {
+function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;
   return pathname != null && !pathname.startsWith('/');
 }

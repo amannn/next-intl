@@ -1,5 +1,6 @@
 import {cache} from 'react';
-import {initializeConfig, IntlConfig} from 'use-intl/core';
+import {initializeConfig} from 'use-intl/core';
+import {ServerIntlConfig} from '../../shared/types';
 import createRequestConfig from './createRequestConfig';
 
 // Make sure `now` is consistent across the request in case none was configured
@@ -31,14 +32,7 @@ async function receiveRuntimeConfigImpl(
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 
-async function getConfigImpl(locale: string): Promise<
-  IntlConfig & {
-    getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
-    now: NonNullable<IntlConfig['now']>;
-    onError: NonNullable<IntlConfig['onError']>;
-    timeZone: NonNullable<IntlConfig['timeZone']>;
-  }
-> {
+async function getConfigImpl(locale: string): Promise<ServerIntlConfig> {
   const runtimeConfig = await receiveRuntimeConfig(locale, createRequestConfig);
   const opts = {...runtimeConfig, locale};
   return initializeConfig(opts);

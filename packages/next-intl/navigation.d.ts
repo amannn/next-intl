@@ -1,1 +1,1 @@
-export * from './dist/types/src/navigation.react-client';
+export * from './dist/navigation';

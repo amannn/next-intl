@@ -44,13 +44,16 @@ module.exports = function getConfig({
   plugins = [],
   ...rest
 }) {
+  const format = output?.format || 'cjs';
+
   /** @type import('rollup').RollupOptions */
   const config = {
     input,
     external: [/node_modules/, ...external],
     output: {
       dir: outDir + env,
-      format: 'cjs',
+      format,
+      entryFileNames: '[name]' + (format === 'es' ? '.mjs' : '.js'),
       interop: 'auto',
       freeze: false,
       esModule: true,

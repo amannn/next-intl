@@ -9,7 +9,7 @@
       "url": "https://github.com/sponsors/amannn"
     }
   ],
-  "description": "A minimal, but complete solution for internationalization in Next.js apps.",
+  "description": "Internationalization (i18n) for Next.js that gets out of your way.",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app",
   "repository": {
@@ -17,44 +17,86 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "rm -rf dist && bunchee --external next-intl/config",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
-    "lint:package": "publint && attw --pack",
+    "lint:package": "publint",
     "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.react-client.js",
-  "module": "./dist/esm/index.react-client.js",
-  "typings": "./dist/types/src/index.react-client.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.react-client.d.ts",
-      "react-server": "./dist/esm/index.react-server.js",
-      "default": "./dist/index.react-client.js"
+      "react-server": "./dist/index.react-server.mjs",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
     },
     "./server": {
-      "types": "./server.d.ts",
-      "react-server": "./dist/esm/server.react-server.js",
-      "default": "./dist/server.react-client.js"
+      "react-server": "./dist/server.react-server.mjs",
+      "import": {
+        "types": "./dist/server.d.mts",
+        "default": "./dist/server.mjs"
+      },
+      "require": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "default": "./dist/server.js"
+    },
+    "./navigation": {
+      "react-server": "./dist/navigation.react-server.mjs",
+      "import": {
+        "types": "./dist/navigation.d.mts",
+        "default": "./dist/navigation.mjs"
+      },
+      "require": {
+        "types": "./dist/navigation.d.ts",
+        "default": "./dist/navigation.js"
+      },
+      "default": "./dist/navigation.js"
     },
     "./config": {
-      "types": "./config.d.ts",
+      "import": {
+        "types": "./dist/config.d.mts",
+        "default": "./dist/config.mjs"
+      },
+      "require": {
+        "types": "./dist/config.d.ts",
+        "default": "./dist/config.js"
+      },
       "default": "./dist/config.js"
     },
     "./middleware": {
-      "types": "./middleware.d.ts",
+      "import": {
+        "types": "./dist/middleware.d.mts",
+        "default": "./dist/middleware.mjs"
+      },
+      "require": {
+        "types": "./dist/middleware.d.ts",
+        "default": "./dist/middleware.js"
+      },
       "default": "./dist/middleware.js"
     },
-    "./navigation": {
-      "types": "./navigation.d.ts",
-      "react-server": "./dist/esm/navigation.react-server.js",
-      "default": "./dist/navigation.react-client.js"
-    },
     "./plugin": {
-      "types": "./plugin.d.ts",
+      "import": {
+        "types": "./dist/plugin.d.mts",
+        "default": "./dist/plugin.mjs"
+      },
+      "require": {
+        "types": "./dist/plugin.d.ts",
+        "default": "./dist/plugin.js"
+      },
       "default": "./dist/plugin.js"
     }
   },
@@ -97,6 +139,7 @@
     "@types/node": "^20.1.2",
     "@types/react": "18.2.34",
     "@types/react-dom": "^18.2.17",
+    "bunchee": "5.0.0-beta.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
@@ -105,8 +148,6 @@
     "publint": "^0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rollup": "^3.28.1",
-    "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
@@ -139,6 +180,50 @@
     {
       "path": "dist/production/middleware.js",
       "limit": "5.855 KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/createFormatter.js",
+      "limit": "1.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/createTranslator.js",
+      "limit": "11.2KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/NextIntlClientProvider.js",
+      "limit": "1KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useFormatter.js",
+      "limit": "12.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useLocale.js",
+      "limit": "0.4KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useMessages.js",
+      "limit": "0.3KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useNow.js",
+      "limit": "0.3KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useTimeZone.js",
+      "limit": "0.2KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/useTranslations.js",
+      "limit": "12.5KB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/navigation/createLocalizedPathnamesNavigation.js",
+      "limit": "2.5kB"
+    },
+    {
+      "path": "benchmarks/tree-shaking/navigation/createSharedPathnamesNavigation.js",
+      "limit": "1.7KB"
     }
   ]
 }
