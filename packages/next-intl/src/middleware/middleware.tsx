@@ -145,12 +145,12 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     let pathname = request.nextUrl.pathname;
     if (configWithDefaults.pathnames) {
-      let resolvedTemplateLocale;
-      [resolvedTemplateLocale = locale, internalTemplateName] =
-        getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
-      const isDefaultLocale =
-        configWithDefaults.defaultLocale === locale ||
-        domain?.defaultLocale === locale;
+      let resolvedTemplateLocale: Locales[number] | undefined;
+      [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
+        configWithDefaults.pathnames,
+        normalizedPathname,
+        locale
+      );
 
       if (internalTemplateName) {
         const pathnameConfig =
@@ -168,48 +168,32 @@ export default function createMiddleware<Locales extends AllLocales>(
             pathLocale
           );
         } else {
-          response = redirect(
-            getPathWithSearch(
-              formatTemplatePathname(
-                normalizedPathname,
-                typeof pathnameConfig === 'string'
-                  ? pathnameConfig
-                  : pathnameConfig[resolvedTemplateLocale],
-                localeTemplate,
-                pathLocale || !isDefaultLocale ? locale : undefined
-              ),
-              request.nextUrl.search
-            )
-          );
-        }
-      } else {
-        const segments = pathname.split('/');
-        if (segments[1] === locale) segments.splice(1, 1);
-        const pathnameWithoutLocale = segments.join('/');
+          let sourceTemplate;
+          if (resolvedTemplateLocale) {
+            // A localized pathname from another locale has matched
+            sourceTemplate =
+              typeof pathnameConfig === 'string'
+                ? pathnameConfig
+                : pathnameConfig[resolvedTemplateLocale];
+          } else {
+            // An internal pathname has matched that
+            // doesn't have a localized pathname
+            sourceTemplate = internalTemplateName;
+          }
 
-        const internalTemplateName = Object.keys(
-          configWithDefaults.pathnames
-        ).find((template) => matchesPathname(template, pathnameWithoutLocale));
-
-        if (internalTemplateName) {
-          const pathnameConfig =
-            configWithDefaults.pathnames[internalTemplateName];
-          const localeTemplate: string =
-            typeof pathnameConfig === 'string'
-              ? pathnameConfig
-              : pathnameConfig[locale];
-          const showLocale =
-            (configWithDefaults.localePrefix === 'as-needed' &&
-              !isDefaultLocale) ||
-            configWithDefaults.localePrefix === 'always';
+          const localePrefix =
+            (hasLocalePrefix || !hasMatchedDefaultLocale) &&
+            configWithDefaults.localePrefix !== 'never'
+              ? locale
+              : undefined;
 
           response = redirect(
             getPathWithSearch(
               formatTemplatePathname(
                 normalizedPathname,
-                internalTemplateName,
+                sourceTemplate,
                 localeTemplate,
-                showLocale ? locale : undefined
+                localePrefix
               ),
               request.nextUrl.search
             )

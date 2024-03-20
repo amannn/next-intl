@@ -708,7 +708,7 @@ describe('prefix-based routing', () => {
       });
     });
 
-    describe('localized pathnames with different pathnames for internal and external pathnames for the default locale', () => {
+    describe('localized pathnames with different internal and external pathnames', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
@@ -716,17 +716,17 @@ describe('prefix-based routing', () => {
         pathnames: {
           '/internal': '/external',
           '/internal/foo/bar': {
-            en: '/external/foo/bar',
-            de: '/external/foo/bar'
+            en: '/external-en/foo/bar',
+            de: '/external-de/foo/bar'
           },
           '/internal/[id]': {
-            en: '/external/[id]',
-            de: '/external/[id]'
+            en: '/external-en/[id]',
+            de: '/external-de/[id]'
           },
           '/internal/[...slug]': {
-            en: '/external/[...slug]',
-            de: '/external/[...slug]'
-          },
+            en: '/external-en/[...slug]',
+            de: '/external-de/[...slug]'
+          }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
@@ -750,47 +750,73 @@ describe('prefix-based routing', () => {
         );
       });
 
-      describe('redirects an internal route with localization to its localized pathname but removes the locale prefix while keeping search params', () => {
-        it('redirects an internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal?hello', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external?hello'
-          );
-        });
+      it('redirects an internal route for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/internal?hello', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external?hello'
+        );
+      });
 
-        it('redirects a multi level internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/foo/bar?hello', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/foo/bar?hello'
-          );
-        });
+      it('redirects an internal route for a secondary locale', () => {
+        middlewareWithPathnames(createMockRequest('/internal?hello', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/external?hello'
+        );
+      });
 
-        it('redirects a dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/22?hello', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/22?hello'
-          );
-        });
+      it('redirects a multi-level internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/foo/bar?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/foo/bar?hello'
+        );
+      });
 
-        it('redirects a multi-level dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/22/foo/bar?hello', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/22/foo/bar?hello'
-          );
-        });
-      })
+      it('redirects a dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/22?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/22?hello'
+        );
+      });
+
+      it('redirects a multi-level dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/22/foo/bar?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/22/foo/bar?hello'
+        );
+      });
+
+      it('redirects a multi-level dynamic internal route for a secondary locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/internal/22/foo/bar?hello', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/external-de/22/foo/bar?hello'
+        );
+      });
     });
   });
 
@@ -935,16 +961,16 @@ describe('prefix-based routing', () => {
           },
           '/internal': '/external',
           '/internal/foo/bar': {
-            en: '/external/foo/bar',
-            de: '/external/foo/bar'
+            en: '/external-en/foo/bar',
+            de: '/external-de/foo/bar'
           },
           '/internal/[id]': {
-            en: '/external/[id]',
-            de: '/external/[id]'
+            en: '/external-en/[id]',
+            de: '/external-de/[id]'
           },
           '/internal/[...slug]': {
-            en: '/external/[...slug]',
-            de: '/external/[...slug]'
+            en: '/external-en/[...slug]',
+            de: '/external-de/[...slug]'
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
@@ -1089,46 +1115,60 @@ describe('prefix-based routing', () => {
         ]);
       });
 
-      describe('redirects an internal route with localization to its localized pathname with the requested locale', () => {
-        it('redirects an internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/en/external'
-          );
-        });
+      it('redirects an internal route for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/en/internal', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external'
+        );
+      });
 
-        it('redirects a multi level internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/foo/bar', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/en/external/foo/bar'
-          );
-        });
+      it('redirects a multi-level internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/foo/bar', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/foo/bar'
+        );
+      });
 
-        it('redirects a dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/22', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/en/external/22'
-          );
-        });
+      it('redirects a dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/en/internal/22', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/22'
+        );
+      });
 
-        it('redirects a multi-level dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/en/internal/22/foo/bar', 'en'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/en/external/22/foo/bar'
-          );
-        });
+      it('redirects a multi-level dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/22/foo/bar', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/external-en/22/foo/bar'
+        );
+      });
+
+      it('redirects a multi-level dynamic internal route for a secondary locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/internal/22/foo/bar', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/external-de/22/foo/bar'
+        );
       });
     });
   });
@@ -1397,17 +1437,17 @@ describe('prefix-based routing', () => {
           },
           '/internal': '/external',
           '/internal/foo/bar': {
-            en: '/external/foo/bar',
-            de: '/external/foo/bar'
+            en: '/external-en/foo/bar',
+            de: '/external-de/foo/bar'
           },
           '/internal/[id]': {
-            en: '/external/[id]',
-            de: '/external/[id]'
+            en: '/external-en/[id]',
+            de: '/external-de/[id]'
           },
           '/internal/[...slug]': {
-            en: '/external/[...slug]',
-            de: '/external/[...slug]'
-          },
+            en: '/external-en/[...slug]',
+            de: '/external-de/[...slug]'
+          }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de'>>
       });
 
@@ -1486,10 +1526,10 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(2);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/about'
+          'http://localhost:3000/about'
         );
         expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
-          'http://localhost:3000/en/users/12'
+          'http://localhost:3000/users/12'
         );
       });
 
@@ -1503,43 +1543,82 @@ describe('prefix-based routing', () => {
         );
       });
 
-      describe('redirects an internal route with localization to its localized pathname and removes the locale prefix while keeping search params', () => {
-        it('redirects an internal route', () => {
-          middlewareWithPathnames(createMockRequest('/de/internal?hello', 'de'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external?hello'
-          );
-        });
-        it('redirects a multi level internal route', () => {
-          middlewareWithPathnames(createMockRequest('/de/internal/foo/bar?hello', 'de'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/foo/bar?hello'
-          );
-        });
-        it('redirects a dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/de/internal/22?hello', 'de'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/22?hello'
-          );
-        });
-        it('redirects a dynamic internal route', () => {
-          middlewareWithPathnames(createMockRequest('/de/internal/22/foo/bar?hello', 'de'));
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
-          expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
-          expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/external/22/foo/bar?hello'
-          );
-        });
+      it('redirects an internal route for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/internal?hello', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external?hello'
+        );
+      });
+
+      it('redirects an internal route for a secondary locale', () => {
+        middlewareWithPathnames(createMockRequest('/internal?hello', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external?hello'
+        );
+      });
+
+      it('redirects a multi-level internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/internal/foo/bar?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external-en/foo/bar?hello'
+        );
+      });
+
+      it('redirects a multi-level internal route for the default locale when a locale prefix is added', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/internal/foo/bar?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external-en/foo/bar?hello'
+        );
+      });
+
+      it('redirects a dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/internal/22?hello', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external-en/22?hello'
+        );
+      });
+
+      it('redirects a dynamic internal route for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/internal/22/foo/bar?hello', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external-en/22/foo/bar?hello'
+        );
+      });
+
+      it('redirects a dynamic internal route for a secondary locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/internal/22/foo/bar?hello', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/external-de/22/foo/bar?hello'
+        );
       });
     });
   });
@@ -1853,17 +1932,17 @@ describe('domain-based routing', () => {
           },
           '/internal': '/external',
           '/internal/foo/bar': {
-            en: '/external/foo/bar',
-            fr: '/external/foo/bar'
+            en: '/external-en/foo/bar',
+            fr: '/external-fr/foo/bar'
           },
           '/internal/[id]': {
-            en: '/external/[id]',
-            fr: '/external/[id]'
+            en: '/external-en/[id]',
+            fr: '/external-fr/[id]'
           },
           '/internal/[...slug]': {
-            en: '/external/[...slug]',
-            fr: '/external/[...slug]'
-          },
+            en: '/external-en/[...slug]',
+            fr: '/external-fr/[...slug]'
+          }
         } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
       });
 
@@ -2219,15 +2298,19 @@ describe('domain-based routing', () => {
             'http://ca.example.com/fr/external'
           );
         });
-        it('redirects a multi level internal route', () => {
+        it('redirects a multi-level internal route', () => {
           middlewareWithPathnames(
-            createMockRequest('/internal/foo/bar', 'fr', 'http://ca.example.com')
+            createMockRequest(
+              '/internal/foo/bar',
+              'fr',
+              'http://ca.example.com'
+            )
           );
           expect(MockedNextResponse.next).not.toHaveBeenCalled();
           expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
           expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
           expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://ca.example.com/fr/external/foo/bar'
+            'http://ca.example.com/fr/external-fr/foo/bar'
           );
         });
         it('redirects a dynamic internal route', () => {
@@ -2238,18 +2321,22 @@ describe('domain-based routing', () => {
           expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
           expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
           expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://ca.example.com/fr/external/22'
+            'http://ca.example.com/fr/external-fr/22'
           );
         });
         it('redirects a dynamic internal route', () => {
           middlewareWithPathnames(
-            createMockRequest('/internal/22/foo/bar', 'fr', 'http://ca.example.com')
+            createMockRequest(
+              '/internal/22/foo/bar',
+              'fr',
+              'http://ca.example.com'
+            )
           );
           expect(MockedNextResponse.next).not.toHaveBeenCalled();
           expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
           expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
           expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-            'http://ca.example.com/fr/external/22/foo/bar'
+            'http://ca.example.com/fr/external-fr/22/foo/bar'
           );
         });
       });

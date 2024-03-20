@@ -16,8 +16,10 @@ export function getInternalTemplate<
   >
 >(
   pathnames: Pathnames,
-  pathname: string
+  pathname: string,
+  locale: Locales[number]
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
+  // Try to find a localized pathname that matches
   for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
     pathnames
   )) {
@@ -27,16 +29,35 @@ export function getInternalTemplate<
         return [undefined, internalPathname];
       }
     } else {
-      for (const [locale, localizedPathname] of Object.entries(
-        localizedPathnamesOrPathname
-      )) {
-        if (matchesPathname(localizedPathname as string, pathname)) {
-          return [locale, internalPathname];
+      // Prefer the entry with the current locale in case multiple
+      // localized pathnames match the current pathname
+      const sortedEntries = Object.entries(localizedPathnamesOrPathname);
+      const curLocaleIndex = sortedEntries.findIndex(
+        ([entryLocale]) => entryLocale === locale
+      );
+      if (curLocaleIndex > 0) {
+        sortedEntries.unshift(sortedEntries.splice(curLocaleIndex, 1)[0]);
+      }
+
+      for (const [entryLocale, entryPathname] of sortedEntries) {
+        if (matchesPathname(entryPathname as string, pathname)) {
+          return [entryLocale, internalPathname];
         }
       }
     }
   }
 
+  // Try to find an internal pathname that matches (this can be the case
+  // if all localized pathnames are different from the internal pathnames).
+  for (const internalPathname of Object.keys(pathnames)) {
+    if (matchesPathname(internalPathname, pathname)) {
+      // resolve a localized pathname instead?
+
+      return [undefined, internalPathname];
+    }
+  }
+
+  // No match
   return [undefined, undefined];
 }
 
