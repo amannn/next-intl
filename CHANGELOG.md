@@ -8,7 +8,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* When using localized pathnames, allow access to internal pathnames only if they match an entry from a particular locale—otherwise redirect ([#914](https://github.com/amannn/next-intl/issues/914)) ([0658600](https://github.com/amannn/next-intl/commit/0658600ee323350dfeb2d616c38f6737674e76da))
+* When using localized pathnames, allow access to internal pathnames only if they match an entry from a particular locale—otherwise redirect ([#914](https://github.com/amannn/next-intl/issues/914) by [@RomainGueffier](https://github.com/RomainGueffier)) ([0658600](https://github.com/amannn/next-intl/commit/0658600ee323350dfeb2d616c38f6737674e76da))
 
 
 
