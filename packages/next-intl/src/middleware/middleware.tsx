@@ -145,9 +145,12 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     let pathname = request.nextUrl.pathname;
     if (configWithDefaults.pathnames) {
-      let resolvedTemplateLocale;
-      [resolvedTemplateLocale = locale, internalTemplateName] =
-        getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
+      let resolvedTemplateLocale: Locales[number] | undefined;
+      [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
+        configWithDefaults.pathnames,
+        normalizedPathname,
+        locale
+      );
 
       if (internalTemplateName) {
         const pathnameConfig =
@@ -165,19 +168,32 @@ export default function createMiddleware<Locales extends AllLocales>(
             pathLocale
           );
         } else {
-          const isDefaultLocale =
-            configWithDefaults.defaultLocale === locale ||
-            domain?.defaultLocale === locale;
+          let sourceTemplate;
+          if (resolvedTemplateLocale) {
+            // A localized pathname from another locale has matched
+            sourceTemplate =
+              typeof pathnameConfig === 'string'
+                ? pathnameConfig
+                : pathnameConfig[resolvedTemplateLocale];
+          } else {
+            // An internal pathname has matched that
+            // doesn't have a localized pathname
+            sourceTemplate = internalTemplateName;
+          }
+
+          const localePrefix =
+            (hasLocalePrefix || !hasMatchedDefaultLocale) &&
+            configWithDefaults.localePrefix !== 'never'
+              ? locale
+              : undefined;
 
           response = redirect(
             getPathWithSearch(
               formatTemplatePathname(
                 normalizedPathname,
-                typeof pathnameConfig === 'string'
-                  ? pathnameConfig
-                  : pathnameConfig[resolvedTemplateLocale],
+                sourceTemplate,
                 localeTemplate,
-                pathLocale || !isDefaultLocale ? locale : undefined
+                localePrefix
               ),
               request.nextUrl.search
             )

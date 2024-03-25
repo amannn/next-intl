@@ -131,21 +131,34 @@ describe('getInternalTemplate', () => {
   const pathnames = {
     '/categories/[[...slug]]': {
       en: '/categories/[[...slug]]',
-      de: '/kategorien/[[...slug]]'
+      de: '/kategorien/[[...slug]]',
+      it: '/categorie/[[...slug]]'
+    },
+    '/internal/[id]': {
+      en: '/external-en/[id]',
+      de: '/external/[id]',
+      it: '/external/[id]'
     }
   };
 
   it('works when passing no params to optional catch-all segments', () => {
-    expect(getInternalTemplate(pathnames, '/kategorien')).toEqual([
+    expect(getInternalTemplate(pathnames, '/kategorien', 'en')).toEqual([
       'de',
       '/categories/[[...slug]]'
     ]);
   });
 
   it('works when passing params to optional catch-all segments', () => {
-    expect(getInternalTemplate(pathnames, '/kategorien/neu')).toEqual([
+    expect(getInternalTemplate(pathnames, '/kategorien/neu', 'en')).toEqual([
       'de',
       '/categories/[[...slug]]'
+    ]);
+  });
+
+  it('prefers a template from the current locale', () => {
+    expect(getInternalTemplate(pathnames, '/external/2', 'it')).toEqual([
+      'it',
+      '/internal/[id]'
     ]);
   });
 });
