@@ -61,7 +61,7 @@ it('redirects to a matched locale at the root for non-default locales', async ({
 
 it('redirects to a matched locale for an invalid cased non-default locale', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'de'});
   const page = await context.newPage();
 
@@ -72,7 +72,7 @@ it('redirects to a matched locale for an invalid cased non-default locale', asyn
 
 it('redirects to a matched locale for an invalid cased non-default locale in a nested path', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'de'});
   const page = await context.newPage();
 
@@ -83,7 +83,7 @@ it('redirects to a matched locale for an invalid cased non-default locale in a n
 
 it('redirects to a matched locale for an invalid cased default locale', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'en'});
   const page = await context.newPage();
 
@@ -94,7 +94,7 @@ it('redirects to a matched locale for an invalid cased default locale', async ({
 
 it('redirects to a matched locale for an invalid cased default locale in a nested path', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'en'});
   const page = await context.newPage();
 
@@ -684,17 +684,13 @@ describe('handling of foreign characters', () => {
     await page.goto('/ja/ネスト');
     await expect(page).toHaveURL('/ja/ネスト');
     page.getByRole('heading', {name: 'ネステッド'});
-    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText(
-      '/%E3%83%8D%E3%82%B9%E3%83%88'
-    );
+    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
   });
 
   it('handles decoded localized pathnames', async ({page}) => {
     await page.goto('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
     await expect(page).toHaveURL('/ja/ネスト');
     page.getByRole('heading', {name: 'ネステッド'});
-    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText(
-      '/%E3%83%8D%E3%82%B9%E3%83%88'
-    );
+    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
   });
 });
