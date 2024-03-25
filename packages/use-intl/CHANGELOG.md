@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.10.0 (2024-03-25)
+
+
+### Features
+
+* When using localized pathnames, allow access to internal pathnames only if they match an entry from a particular locale—otherwise redirect ([#914](https://github.com/amannn/next-intl/issues/914)) ([0658600](https://github.com/amannn/next-intl/commit/0658600ee323350dfeb2d616c38f6737674e76da))
+
+
+
+
+
 ## 3.9.5 (2024-03-15)
 
 
