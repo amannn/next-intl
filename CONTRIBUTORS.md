@@ -85,7 +85,7 @@ Releases are automated via Lerna. To determine the next version, [Conventional C
 1. `fix: `: Patch release
 2. `feat: `: Minor release
 
-Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog and should contain relevant details. We also give credits to PR authors by linking them via `@{username}` in the commit title, which in turn creates a link in the changelog entry.
+Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog and should contain relevant details. We give credits to PR authors by linking them via `@{username}` in the commit title, which in turn creates a link in the changelog entry.
 
 Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
 
