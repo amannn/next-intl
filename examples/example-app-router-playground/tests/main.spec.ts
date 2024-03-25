@@ -2,6 +2,8 @@ import {test as it, expect, Page, BrowserContext} from '@playwright/test';
 
 it.describe.configure({mode: 'parallel'});
 
+const describe = it.describe;
+
 async function assertLocaleCookieValue(
   page: Page,
   value: string,
@@ -59,7 +61,7 @@ it('redirects to a matched locale at the root for non-default locales', async ({
 
 it('redirects to a matched locale for an invalid cased non-default locale', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'de'});
   const page = await context.newPage();
 
@@ -70,7 +72,7 @@ it('redirects to a matched locale for an invalid cased non-default locale', asyn
 
 it('redirects to a matched locale for an invalid cased non-default locale in a nested path', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'de'});
   const page = await context.newPage();
 
@@ -81,7 +83,7 @@ it('redirects to a matched locale for an invalid cased non-default locale in a n
 
 it('redirects to a matched locale for an invalid cased default locale', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'en'});
   const page = await context.newPage();
 
@@ -92,7 +94,7 @@ it('redirects to a matched locale for an invalid cased default locale', async ({
 
 it('redirects to a matched locale for an invalid cased default locale in a nested path', async ({
   browser
-  }) => {
+}) => {
   const context = await browser.newContext({locale: 'en'});
   const page = await context.newPage();
 
@@ -419,6 +421,9 @@ it('can use `usePathname` to get internal pathnames', async ({page}) => {
 
   await page.goto('/en/nested');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
+
+  await page.goto('/ja//ネスト');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
 });
 
 it('returns the correct value from `usePathname` in the initial render', async ({
@@ -536,6 +541,7 @@ it('sets alternate links', async ({request}) => {
       '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
       '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
     ]);
   }
@@ -545,6 +551,7 @@ it('sets alternate links', async ({request}) => {
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
       '<http://localhost:3000/es/anidada>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
     ]);
   }
@@ -654,4 +661,36 @@ it('can use async APIs in async components', async ({page}) => {
   page
     .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
     .getByText('AsyncComponent');
+});
+
+describe('handling of foreign characters', () => {
+  it('handles encoded search params', async ({page}) => {
+    await page.goto('/ja?param=テスト');
+    await expect(page).toHaveURL('/ja?param=テスト');
+    await expect(page.getByTestId('SearchParams')).toHaveText(
+      '{ "param": "テスト" }'
+    );
+  });
+
+  it('handles decoded search params', async ({page}) => {
+    await page.goto('/ja?param=%E3%83%86%E3%82%B9%E3%83%88');
+    await expect(page).toHaveURL('/ja?param=テスト');
+    await expect(page.getByTestId('SearchParams')).toHaveText(
+      '{ "param": "テスト" }'
+    );
+  });
+
+  it('handles encoded localized pathnames', async ({page}) => {
+    await page.goto('/ja/ネスト');
+    await expect(page).toHaveURL('/ja/ネスト');
+    page.getByRole('heading', {name: 'ネステッド'});
+    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
+  });
+
+  it('handles decoded localized pathnames', async ({page}) => {
+    await page.goto('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    await expect(page).toHaveURL('/ja/ネスト');
+    page.getByRole('heading', {name: 'ネステッド'});
+    await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
+  });
 });

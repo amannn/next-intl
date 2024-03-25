@@ -51,20 +51,23 @@ beforeEach(() => {
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
-const locales = ['en', 'de'] as const;
+const locales = ['en', 'de', 'ja'] as const;
 const pathnames = {
   '/': '/',
   '/about': {
     en: '/about',
-    de: '/ueber-uns'
+    de: '/ueber-uns',
+    ja: '/約'
   },
   '/news/[articleSlug]-[articleId]': {
     en: '/news/[articleSlug]-[articleId]',
-    de: '/neuigkeiten/[articleSlug]-[articleId]'
+    de: '/neuigkeiten/[articleSlug]-[articleId]',
+    ja: '/ニュース/[articleSlug]-[articleId]'
   },
   '/categories/[...parts]': {
     en: '/categories/[...parts]',
-    de: '/kategorien/[...parts]'
+    de: '/kategorien/[...parts]',
+    ja: '/カテゴリ/[...parts]'
   },
   '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
 } satisfies Pathnames<typeof locales>;
@@ -433,6 +436,18 @@ describe.each([
               }
             })
           ).toBe('/categories/clothing/t-shirts?sort=price');
+        });
+
+        it('handles foreign symbols', () => {
+          expect(
+            getPathname({
+              locale: 'ja',
+              href: {
+                pathname: '/about',
+                query: {foo: 'bar'}
+              }
+            })
+          ).toBe('/約?foo=bar');
         });
       });
     });

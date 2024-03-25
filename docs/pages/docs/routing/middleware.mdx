@@ -412,6 +412,8 @@ In this case, the localized slug can either be provided by the backend or genera
 
 A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` doesn't match.
 
+If you localize the values for dynamic segments, you might want to turn off [alternate links](#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
+
 </details>
 
 ### Matcher config

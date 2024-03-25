@@ -1,0 +1,12 @@
+{
+  "Index": {
+    "title": "Home (ja)",
+    "description": "This is the home page (ja).",
+    "rich": "This is a <important>rich</important> text (ja).",
+    "globalDefaults": "<highlight>{globalString}</highlight> (ja)"
+  },
+  "Nested": {
+    "title": "ネステッド",
+    "description": "これはネストされたページです。"
+  }
+}
