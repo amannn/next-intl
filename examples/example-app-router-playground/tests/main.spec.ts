@@ -421,6 +421,9 @@ it('can use `usePathname` to get internal pathnames', async ({page}) => {
 
   await page.goto('/en/nested');
   await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
+
+  await page.goto('/ja//ネスト');
+  await expect(page.getByTestId('UnlocalizedPathname')).toHaveText('/nested');
 });
 
 it('returns the correct value from `usePathname` in the initial render', async ({
