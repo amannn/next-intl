@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 describe("localePrefix: 'as-needed'", () => {
-  const {Link, useRouter} = createSharedPathnamesNavigation({
+  const {Link, redirect, useRouter} = createSharedPathnamesNavigation({
     locales,
     localePrefix: 'as-needed'
   });
@@ -97,6 +97,20 @@ describe("localePrefix: 'as-needed'", () => {
     // Valid
     <Link href="/about">Über uns</Link>;
     <Link href="/unknown">About</Link>; // No error since routes are unknown
+
+    <RedirectTypeNarrowing />;
+  }
+
+  function RedirectTypeNarrowing() {
+    function getUserId(): string | undefined {
+      return undefined;
+    }
+    const userId: string | undefined = getUserId();
+    if (!userId) {
+      redirect('/about');
+    }
+    const userId2: string = userId;
+    return <>{userId2}</>;
   }
 });
 

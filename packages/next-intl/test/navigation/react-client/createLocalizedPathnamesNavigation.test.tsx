@@ -321,6 +321,20 @@ describe("localePrefix: 'as-needed'", () => {
     const pathnameWithUnknown: ReturnType<typeof usePathnameWithUnkown> =
       '/unknown';
     useRouterWithUnknown().push('/unknown');
+
+    <RedirectTypeNarrowing />;
+  }
+
+  function RedirectTypeNarrowing() {
+    function getUserId(): string | undefined {
+      return undefined;
+    }
+    const userId: string | undefined = getUserId();
+    if (!userId) {
+      redirect('/about');
+    }
+    const userId2: string = userId;
+    return <>{userId2}</>;
   }
 });
 
