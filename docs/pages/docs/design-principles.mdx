@@ -37,9 +37,9 @@ Once internationalization is set up, adding a new language should be as simple a
 
 **Areas of improvement**:
  - While handling multiple languages is the common case, `next-intl` is also expected to work well for apps that only support a single language. After all, if using internationalization right from the start is easier than hardcoding text and formatting, then this should be a common workflow. The Pages Router integration was already capable of this, but ideally we support this similarly for the App Router as well (see [#960](https://github.com/amannn/next-intl/issues/960)).
- - With the introduction of Server Components, it became a difference in regard to [performance](#performant) which messages are made available to the client and which are only used on the server side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority, but we could improve the ergonomics for apps where it's common to split messages in a granular way (see [Providing individual messages to Client Components](/docs/environments/server-client-components#option-3-providing-individual-messages) and [#1](https://github.com/amannn/next-intl/issues/1)).
+ - With the introduction of Server Components, it became a difference in regard to [performance](#performance-obsessed) which messages are made available to the client and which are only used on the server side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority, but we could improve the ergonomics for apps where it's common to split messages in a granular way (see [Providing individual messages to Client Components](/docs/environments/server-client-components#option-3-providing-individual-messages) and [#1](https://github.com/amannn/next-intl/issues/1)).
 
-## Standardized
+## Standards-based
 
 With the introduction of [the ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), JavaScript has gotten very capable in the recent years in regard to formatting of dates, times, numbers, lists and pluralization. `next-intl` builds on top of this API and provides an ergonomic interface to work with these features, while considering your app-specic configuration & needs.
 
@@ -49,6 +49,19 @@ By being based on standards, `next-intl` ensures that your internationalization 
 
 `next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use another style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
 
+As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
+
+## Performance-obsessed
+
+`next-intl` was designed with high-traffic sites in mind that need to deliver a fast and reliable user experience. The library has proven to work on complex e-commerce pages with a Lighthouse performance score of >95.
+
+To achieve this, `next-intl` primarly relies on these techniques currently:
+1. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, and therefore reduce the runtime footprint of your app.
+2. **Caching**: Formatting of messages is cached. Therefore if components are re-rendered with the same data, the previous formatting result can be reused.
+3. **Shortcuts**: By detecting plain messages, these messages can be returned immediately without having to parse them first.
+4. **Splitting of messages**: By splitting messages by locale, server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
+
 **Areas of improvement**:
-1. As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
+ - It's being evaluated if messages can be compiled ahead of time, no longer requiring to load an ICU parser on the client side (see [#705](https://github.com/amannn/next-intl/pull/705)).
+ - Caching of `Intl.*` constructors for the `useFormatter` API is under investigation, but has generally improved in modern JavaScript runtimes (see [#215](https://github.com/amannn/next-intl/issues/215)).
 
