@@ -65,3 +65,20 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
  - It's being evaluated if messages can be compiled ahead of time, no longer requiring to load an ICU parser on the client side (see [#705](https://github.com/amannn/next-intl/pull/705)).
  - Caching of `Intl.*` constructors for the `useFormatter` API is under investigation, but has generally improved in modern JavaScript runtimes (see [#215](https://github.com/amannn/next-intl/issues/215)).
 
+## Integratable
+
+While `next-intl` is designed to tackle internationalization in [a holistic way](#holistic), it's important to consider that internationalization might require integration with other tools and services, enabling you to use the best tools for the job and to collaborate with non-developers.
+
+There are two primary services that are often used in conjunction with `next-intl`:
+
+### Translation Management Systems (TMS)
+
+These are typically used to manage translations and to [collaborate with translators](/docs/workflows/localization-management). Services like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink> provide a wide range of features, allowing translators to work in a web-based interface on translations, while providing different mechanisms to sync translations with your app.
+
+`next-intl` integrates well with these services, as it uses the ICU message syntax for defining text labels, which is a widely supported standard. This allows you to export messages from `next-intl` in a format that can be imported into a TMS, and to import translations from a TMS back into `next-intl`. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
+
+### Content Management Systems (CMS)
+
+If your app uses content from a CMS, you can use this alongside `next-intl`. For instance, you might want to manage content like blog posts, or marketing copy in a CMS, while managing UI labels in `next-intl`.
+
+A CMS typically provides a way to define content for multiple languages, and to fetch this content via a REST API. By using the negotiated app locale that is returned from `next-intl` via [`getLocale`](/docs/environments/server-client-components#async-components) and passing it to requests to your CMS API, you can retrieve content for the user's preferred language.
