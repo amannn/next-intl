@@ -136,7 +136,7 @@ There's one exception however: [Using `next-intl` with the Next.js Metadata API 
 <details>
 <summary>Can I use another style for structuring my messages?</summary>
 
-Namespace keys can not contain the character "." as this is used to express nesting.
+Namespace keys can not contain the character "." as this is used to express nesting—all other characters are fine to use.
 
 If you're migrating from a flat structure, you can convert your messages as follows:
 
@@ -171,7 +171,7 @@ const output = Object.entries(input).reduce(
 
 This keeps the hierarchy while removing the redundancy of repeated parent keys.
 
-If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration).
+If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
 
 </details>
 
