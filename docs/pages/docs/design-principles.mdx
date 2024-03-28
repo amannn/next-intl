@@ -19,11 +19,13 @@ Using **dynamic text labels** are the most obvious aspect of internationalizatio
 
 On top of this come typical app problems like:
 1. **Rich text formatting**: Many apps need to embed rich text into sentences (e.g. "Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
-2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference set by the user.
-3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right. Potentially, you also need a mechanism to update the displayed time regularly.
+2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
+3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server/client boundary. Potentially, you also need a mechanism to update the displayed time regularly.
 4. **Unique URLs**: Providing unique URLs that match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish) is crucial for the user experience as well as SEO.
 
-Considering this list, you might agree that internationalization is quite an interconnected topic. `next-intl` takes a holistic approach to internationalization that nudges you towards best practices for handling languages well. This way, you have more time to focus on what makes your app unique.
+Considering this list, you might agree that internationalization is quite an interconnected topic.
+
+`next-intl` takes a holistic approach to internationalization that nudges you towards best practices for handling languages and country-specific conventions. This way, you have more time to focus on what makes your app unique.
 
 **Area of improvement**: In regard to URL handling, `next-intl` currently works well with locale prefixes (e.g. `/en` or `/pt-BR`), and domain-based routing (e.g. `en.example.com`). However, `next-intl` should have built-in support for a mapping between custom prefixes and locales (e.g. `/uk` → `/en-UK`, see [#653](https://github.com/amannn/next-intl/issues/653)).
 
@@ -64,6 +66,7 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 **Areas of improvement**:
  - It's being evaluated if messages can be compiled ahead of time, no longer requiring to load an ICU parser on the client side (see [#705](https://github.com/amannn/next-intl/pull/705)).
  - Caching of `Intl.*` constructors for the `useFormatter` API is under investigation, but has generally improved in modern JavaScript runtimes (see [#215](https://github.com/amannn/next-intl/issues/215)).
+ - To achieve static rendering, we currently utilize a [workaround](https://github.com/amannn/next-intl/issues/663). It works reliably, but we've [reached out to the Next.js team](https://github.com/vercel/next.js/discussions/58862) to hopefully remove this in the future.
 
 ## Integratable
 
@@ -82,3 +85,25 @@ These are typically used to manage translations and to [collaborate with transla
 If your app uses content from a CMS, you can use this alongside `next-intl`. For instance, you might want to manage content like blog posts, or marketing copy in a CMS, while managing UI labels in `next-intl`.
 
 A CMS typically provides a way to define content for multiple languages, and to fetch this content via a REST API. By using the negotiated app locale that is returned from `next-intl` via [`getLocale`](/docs/environments/server-client-components#async-components) and passing it to requests to your CMS API, you can retrieve content for the user's preferred language.
+
+## Next.js-first
+
+Next.js comes with a lot of bells and whistles, but at the same time there are a number of aspects that need to be handled carefully to enable a reliable internationalization integration. `next-intl`, as the name implies, is primarly designed to work well with Next.js. Rather than trying to be a one-size-fits-all solution, `next-intl` integrates with Next.js as deeply as necessary and makes it a priority to stay on top of the latest developments in the Next.js ecosystem.
+
+That being said, `next-intl` has a Next.js-agnostic core that can be used in any React app, or even in plain JavaScript: [`use-intl`](/docs/environments/core-library). This core library contains most features of `next-intl`, but lacks Next.js-specific integrations like routing APIs. The goal of this library is to make it possibly to use familiar APIs in other parts of your stack (e.g. React Native) and to provide a straightforward way to [migrate away from Next.js](#ejectable), in case you ever decide to do so.
+
+## Ejectable
+
+We've all been there, technology moves on, and sometimes you need to move on as well. `next-intl` is designed to be a good citizen in your codebase, and to make it easy to migrate away from certain parts of your stack in case this becomes necessary.
+
+If you ever feel like Next.js or `next-intl` is not the right fit for your project anymore, you have multiple options here:
+1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in a Remix app, or just plain React.
+2. **Moving away from `next-intl`**: If you find that `next-intl` doesn't fit your needs anymore, you'll have to adapt app code that references the library, but you can still reuse your [standards-based](#standards-based) ICU messages and replace formatting APIs e.g. with direct calls to the [ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
+
+We wont hold you back, but if you like, we can stay friends.
+
+That being said, we're doing our best to make `next-intl` a good fit for your project. If you ever feel like something is not working as expected or if you have ideas for improvements, please let us know on the [issue tracker](https://github.com/amannn/next-intl/issues) and we'll do our best to help you out.
+
+---
+
+Woah, this was a long read. Did you really read all of this? `next-intl` was created out of a lot of curiosity and passion for internationalization, seems like we share that. We're always curious to hear how `next-intl` is working out for you. If you have any feedback or questions, please don't hesitate to [reach out](https://github.com/amannn/next-intl/discussions)!
