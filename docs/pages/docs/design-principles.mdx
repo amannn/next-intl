@@ -2,7 +2,7 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 # Design principles
 
-This page provides insights about the design decisions that were made for `next-intl` in order to help you understand if this library aligns with your expectations and is a good fit for your project.
+This page provides insights about the design principles that `next-intl` is based on. These principles are meant to give you a better understanding of the philosophy behind `next-intl` and can help you evaluate if this library is a good fit for your project.
 
 This also serves as a transparent reference for areas that are still being worked on for `next-intl` to realize its full potential.
 
@@ -14,16 +14,19 @@ Using **dynamic text labels** are the most obvious aspect of internationalizatio
 1. **Pluralization rules**: While a language like English has only two plural forms (singular and plural), other languages have up to six different forms.
 2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. Even the year displayed can vary from country to country; for example, Thailand uses the Buddhist calendar, which is 543 years ahead of the Gregorian calendar.
 3. **Number formatting**: Number formatting conventions vary across different languages. For instance, when comparing English and German, the separators for thousands and decimals are flipped.
-4. **List formatting**: Formatting lists like "HTML, CSS, and JavaScript" is not only a matter of assembling strings in the right order, but also of using the right conjunctions and punctuation marks.
+4. **List formatting**: Formatting lists like "HTML, CSS, and JavaScript" is not only a matter of assembling strings in the right order, but also of using language-specific conjunctions and punctuation marks.
 5. **Text direction**: While most languages are written from left to right, some languages like Arabic are written from right to left and require a mirrored layout.
 
 On top of this come typical app problems like:
-1. **Rich text formatting**: Many apps need to embed rich text into text labels (e.g. "Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
+1. **Rich text formatting**: Many apps need to embed rich text like links into text labels (e.g. "Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
 2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
 3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server and client. Potentially, you also need a mechanism to update the displayed time regularly.
-4. **Unique URLs**: Providing unique URLs that match the user's language preference is crucial for the user experience as well as SEO (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish).
+4. **Localized URLs**: URLs should be localized to match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish). Implementation-wise this requires mapping incoming requests to the right pages and providing streamlined APIs for developers to link between pages in a locale-agnostic way.
+5. **Language negotiation**: The user's language preference should be detected based on the browser's settings, but should also be manually configurable—even if a user hasn't signed in.
+6. **SEO**: Search engines need to be informed about [localized versions of your pages](https://developers.google.com/search/docs/specialty/international/localized-versions) in order to present the best-matching content to your users.
+7. **Country-specifics**: If you provide services or products in different countries, you might need to consider country-specifics like different currencies.
 
-Considering this list, you might agree that internationalization is quite an interconnected topic.
+Considering this list, it might be apparent how large the problem space is and how interconnected different pieces of internationalization are.
 
 `next-intl` takes a holistic approach to internationalization that nudges you towards best practices for handling languages and country-specific conventions. This way, you have more time to focus on what makes your app unique.
 
@@ -40,13 +43,13 @@ The bold claim of this library is that your app code will become simpler instead
 
 If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. 
 
-Once internationalization is set up, adding a new language is mostly a matter of adding a new JSON file with translations. Everything else is being taken care of by `next-intl`.
+Once internationalization is set up, adding a new language is in the simplest case only a matter of adding a new JSON file with translations—everything else is being taken care of by `next-intl`.
 
 <details>
 <summary>Areas of improvement</summary>
 
  - While handling multiple languages is the common case, `next-intl` is also expected to work well for apps that only support a single language. After all, if using internationalization right from the start is easier than hardcoding text and formatting, then this should be a common workflow. The Pages Router integration was already capable of this, but ideally we support this similarly for the App Router as well. This is being explored in [#960](https://github.com/amannn/next-intl/issues/960), but a workaround is currently available.
- - With the introduction of Server Components, React apps can now be split into server and client parts. This is a great opportunity to optimize the performance of internationalization since server-only messages don't need to be transferred to the client side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority, but we could improve the ergonomics for apps where it's common to split messages in a granular way. A compiler-driven approach is being explored in [#1](https://github.com/amannn/next-intl/issues/1), but manually splitting messages is [already possible](https://next-intl-docs.vercel.app/docs/environments/server-client-components#option-3-providing-individual-messages).
+ - With the introduction of Server Components, React apps can now be split into server and client parts. This is a great opportunity to optimize the performance of internationalization since server-only messages don't need to be transferred to the client side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority. We could however improve the ergonomics for apps where it's common to split messages in a granular way. A compiler-driven approach is being explored in [#1](https://github.com/amannn/next-intl/issues/1), but manually splitting messages is [already possible](https://next-intl-docs.vercel.app/docs/environments/server-client-components#option-3-providing-individual-messages).
 
 </details>
 
@@ -58,7 +61,7 @@ For text formatting, `next-intl` is based on [International Components for Unico
 
 By being based on standards, `next-intl` ensures that your internationalization code is future-proof and feels familiar to developers who have exisiting experience with internationalization. Additionally, relying on standards ensures that `next-intl` integrates well with translation management systems like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
 
-`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use another style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
+`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
 
 As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
 
@@ -66,7 +69,7 @@ As standards can change, `next-intl` is expected to keep up with the latest deve
 
 While `next-intl` is designed to tackle internationalization in [a holistic way](#holistic), it's important to consider that internationalization might require integration with other tools and services, enabling you to use the best tools for the job and to collaborate with non-developers.
 
-There are two primary services that are often used in conjunction with `next-intl`:
+Typical apps require some of the following integrations:
 
 **Translation Management Systems (TMS)**
 
@@ -80,6 +83,10 @@ If your app uses content from a CMS, you can use this alongside `next-intl`. For
 
 A CMS typically provides a way to define content for multiple languages, and to fetch this content via a REST API. By using the negotiated app locale that is returned from `next-intl` via [`getLocale`](/docs/environments/server-client-components#async-components) and passing it to requests to your CMS API, you can retrieve content for the user's preferred language.
 
+**Backend data**
+
+Similar to a CMS, you might have data in a backend service or database that needs to be queried based on the language and country of the user. For instance, you might want to show different prices & currencies for different countries, or you might want to show localized product names. By using the negotiated app locale from `next-intl` for requests to your backend, you can ensure localization reaches all parts of your app.
+
 ## Performance-obsessed
 
 `next-intl` was designed with high-traffic sites in mind that need to deliver a fast and reliable user experience and has proven to work on complex e-commerce pages with outstanding Core Web Vitals.
@@ -87,8 +94,8 @@ A CMS typically provides a way to define content for multiple languages, and to 
 To achieve this, `next-intl` primarly relies on these techniques currently:
 1. **Splitting of messages**: By splitting messages by locale, server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
 2. **Shortcuts**: By detecting plain messages, these messages can be returned immediately without having to parse them first.
-3. **Caching**: The formatting of messages is cached. Therefore if components are re-rendered with the same data, the previous formatting result can be reused, reducing the amount of necessary computation.
-4. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, therefore reducing the runtime footprint of your app.
+3. **Caching**: Parsing and formatting of messages is cached across your app, therefore reducing the amount of necessary computation.
+4. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, therefore reducing the runtime footprint of your app on the client side.
 
 <details>
 <summary>Areas of improvement</summary>
@@ -103,14 +110,14 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 
 Next.js comes with a lot of bells and whistles, but at the same time there are a number of aspects that need to be handled carefully to enable a reliable internationalization integration. `next-intl`, as the name implies, is primarly designed to work well with Next.js. Rather than trying to be a one-size-fits-all solution, `next-intl` integrates with Next.js as deeply as necessary and makes it a priority to stay on top of the latest developments in the Next.js ecosystem.
 
-That being said, `next-intl` has a Next.js-agnostic core that can be used in any React app, or even in plain JavaScript: [`use-intl`](/docs/environments/core-library). This core library contains most features of `next-intl`, but lacks Next.js-specific integrations like routing APIs. The goal of this library is to make it possibly to use familiar APIs in other parts of your stack (e.g. React Native) and to provide a straightforward way to [migrate away from Next.js](#ejectable), in case you ever decide to do so.
+That being said, `next-intl` has a Next.js-agnostic core that can be used in any React app, or even in plain JavaScript: [`use-intl`](/docs/environments/core-library). This core library contains most features of `next-intl`, but lacks Next.js-specific integrations like routing APIs. The goal of this library is to make it possibly to use familiar APIs in other parts of your stack (e.g. React Native) and to provide a straightforward way to [migrate away from Next.js](#migration-friendly), in case you ever decide to do so.
 
-## Ejectable
+## Migration-friendly
 
 We've all been there, technology moves on, and sometimes you need to move on as well. `next-intl` is designed to be a good citizen in your codebase, and to make it easy to migrate away from certain parts of your stack in case this becomes necessary.
 
 If you ever feel like Next.js or `next-intl` is not the right fit for your project anymore, you have multiple options here:
-1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in a Remix app, or just plain React.
+1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in a Remix app.
 2. **Moving away from `next-intl`**: If you find that `next-intl` doesn't fit your needs anymore, you'll have to adapt app code that references the library, but you can still reuse your [standards-based](#standards-based) ICU messages and replace formatting APIs e.g. with direct calls to the [ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
 
 We wont hold you back, but if you like, we can stay friends.
