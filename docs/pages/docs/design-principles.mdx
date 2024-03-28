@@ -4,25 +4,25 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 This page provides insights about the design principles that `next-intl` is based on. These principles are meant to give you a better understanding of the philosophy behind `next-intl` and can help you evaluate if this library is a good fit for your project.
 
-This also serves as a transparent reference for areas that are still being worked on for `next-intl` to realize its full potential.
+This page also links to planned improvements in order to act as a transparent reference for enhancements to expect from `next-intl` in the future.
 
 ## Holistic
 
 Internationalization clearly requires flexibility from your codebase. However, even implementing a single language properly can already be a challenge by itself.
 
-Using **dynamic text labels** are the most obvious aspect of internationalization, but supporting a language well also involves the following aspects:
+Using **dynamic text labels** is the most obvious aspect of internationalization, but supporting a language well also many other aspects:
 1. **Pluralization rules**: While a language like English has only two plural forms (singular and plural), other languages have up to six different forms.
 2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. Even the year displayed can vary from country to country; for example, Thailand uses the Buddhist calendar, which is 543 years ahead of the Gregorian calendar.
-3. **Number formatting**: Number formatting conventions vary across different languages. For instance, when comparing English and German, the separators for thousands and decimals are flipped.
+3. **Number formatting**: Formatting conventions for numbers vary across different languages. For instance, when comparing English and German, the separators for thousands and decimals are flipped.
 4. **List formatting**: Formatting lists like "HTML, CSS, and JavaScript" is not only a matter of assembling strings in the right order, but also of using language-specific conjunctions and punctuation marks.
 5. **Text direction**: While most languages are written from left to right, some languages like Arabic are written from right to left and require a mirrored layout.
 
 On top of this come typical app problems like:
-1. **Rich text formatting**: Many apps need to embed rich text like links into text labels (e.g. "Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
+1. **Rich text formatting**: Many apps need to support some way of rich text, e.g. to embed links into text labels ("Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
 2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
 3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server and client. Potentially, you also need a mechanism to update the displayed time regularly.
 4. **Localized URLs**: URLs should be localized to match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish). Implementation-wise this requires mapping incoming requests to the right pages and providing streamlined APIs for developers to link between pages in a locale-agnostic way.
-5. **Language negotiation**: The user's language preference should be detected based on the browser's settings, but should also be manually configurable—even if a user hasn't signed in.
+5. **Language negotiation**: The user's language preference should be detected based on browser settings, but should also be manually configurable—even if a user hasn't signed in.
 6. **SEO**: Search engines need to be informed about [localized versions of your pages](https://developers.google.com/search/docs/specialty/international/localized-versions) in order to present the best-matching content to your users.
 7. **Country-specifics**: If you provide services or products in different countries, you might need to consider country-specifics like different currencies.
 
@@ -30,28 +30,17 @@ Considering this list, it might be apparent how large the problem space is and h
 
 `next-intl` takes a holistic approach to internationalization that nudges you towards best practices for handling languages and country-specific conventions. This way, you have more time to focus on what makes your app unique.
 
-<details>
-<summary>Areas of improvement</summary>
-
-In regard to URL handling, `next-intl` currently works well with locale prefixes (e.g. `/en` or `/pt-BR`), and domain-based routing (e.g. `en.example.com`). However, `next-intl` should have built-in support for a mapping between custom prefixes and locales (e.g. `/uk` → `/en-UK`). Built-in support is being worked on in [#653](https://github.com/amannn/next-intl/issues/653), but workarounds are currently available.
-
-</details>
+→ [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20routing)
 
 ## Ergonomic
 
 The bold claim of this library is that your app code will become simpler instead of more complex when you implement internationalization.
 
-If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. 
+If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. As a developer, you should be able to focus solely on solving practical problems, with internationalization seamlessly integrated as a side effect of your efforts.
 
 Once internationalization is set up, adding a new language is in the simplest case only a matter of adding a new JSON file with translations—everything else is being taken care of by `next-intl`.
 
-<details>
-<summary>Areas of improvement</summary>
-
- - While handling multiple languages is the common case, `next-intl` is also expected to work well for apps that only support a single language. After all, if using internationalization right from the start is easier than hardcoding text and formatting, then this should be a common workflow. The Pages Router integration was already capable of this, but ideally we support this similarly for the App Router as well. This is being explored in [#960](https://github.com/amannn/next-intl/issues/960), but a workaround is currently available.
- - With the introduction of Server Components, React apps can now be split into server and client parts. This is a great opportunity to optimize the performance of internationalization since server-only messages don't need to be transferred to the client side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority. We could however improve the ergonomics for apps where it's common to split messages in a granular way. A compiler-driven approach is being explored in [#1](https://github.com/amannn/next-intl/issues/1), but manually splitting messages is [already possible](https://next-intl-docs.vercel.app/docs/environments/server-client-components#option-3-providing-individual-messages).
-
-</details>
+→ [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20ergonomics)
 
 ## Standards-based
 
@@ -65,7 +54,9 @@ By being based on standards, `next-intl` ensures that your internationalization 
 
 As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
 
-## Integratable
+→ [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20standards)
+
+## Integrable
 
 While `next-intl` is designed to tackle internationalization in [a holistic way](#holistic), it's important to consider that internationalization might require integration with other tools and services, enabling you to use the best tools for the job and to collaborate with non-developers.
 
@@ -87,6 +78,12 @@ A CMS typically provides a way to define content for multiple languages, and to 
 
 Similar to a CMS, you might have data in a backend service or database that needs to be queried based on the language and country of the user. For instance, you might want to show different prices & currencies for different countries, or you might want to show localized product names. By using the negotiated app locale from `next-intl` for requests to your backend, you can ensure localization reaches all parts of your app.
 
+**Other libraries**
+
+Next.js has a rich ecosystem of libraries that can be used alongside `next-intl`, e.g. to handle authentication. By providing [documentation and examples for common integrations](/docs/routing/middleware#composing-other-middlewares), `next-intl` ensures that you'll have a frictionless experience when integrating with other libraries.
+
+→ [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20integrations)
+
 ## Performance-obsessed
 
 `next-intl` was designed with high-traffic sites in mind that need to deliver a fast and reliable user experience and has proven to work on complex e-commerce pages with outstanding Core Web Vitals.
@@ -97,14 +94,7 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 3. **Caching**: Parsing and formatting of messages is cached across your app, therefore reducing the amount of necessary computation.
 4. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, therefore reducing the runtime footprint of your app on the client side.
 
-<details>
-<summary>Areas of improvement</summary>
-
- - It's being evaluated if messages can be compiled ahead of time, no longer requiring to load an ICU parser on the client side (see [#705](https://github.com/amannn/next-intl/pull/705)).
- - Caching of `Intl.*` constructors for the `useFormatter` API is under investigation, but has generally improved in modern JavaScript runtimes (see [#215](https://github.com/amannn/next-intl/issues/215)).
- - To achieve static rendering, we currently utilize a [workaround](https://github.com/amannn/next-intl/issues/663). It works reliably, but we've [reached out to the Next.js team](https://github.com/vercel/next.js/discussions/58862) to hopefully remove this in the future.
-
-</details>
+→ [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20performance)
 
 ## Next.js-first
 
