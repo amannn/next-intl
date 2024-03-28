@@ -4,15 +4,15 @@ import PartnerContentLink from 'components/PartnerContentLink';
 
 This page provides insights about the design decisions that were made for `next-intl` in order to help you understand if this library aligns with your expectations and is a good fit for your project.
 
-This list also serves as a transparent reference for areas that are still being worked on for `next-intl` to realize its full potential.
+This also serves as a transparent reference for areas that are still being worked on for `next-intl` to realize its full potential.
 
 ## Holistic
 
 Internationalization clearly requires flexibility from your codebase. However, even implementing a single language properly can already be a challenge by itself.
 
-Using **dynamic text labels** are the most obvious aspect of internationalization, but supporting a language really well also involves the following aspects:
+Using **dynamic text labels** are the most obvious aspect of internationalization, but supporting a language well also involves the following aspects:
 1. **Pluralization rules**: While a language like English has only two plural forms (singular and plural), other languages have up to six different forms.
-2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. While the Gregorian calendar is used in most parts of the world, countries like Thailand use the Buddhist calendar, which is 543 years ahead of the Gregorian one.
+2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. Even the year displayed can vary from country to country; for example, Thailand uses the Buddhist calendar, which is 543 years ahead of the Gregorian calendar.
 3. **Number formatting**: Number formatting conventions vary across different languages. For instance, in English, the decimal separator is a period, whereas in German, it is a comma.
 4. **Text direction**: While most languages are written from left to right, some languages like Arabic are written from right to left.
 5. **List formatting**: Formatting lists like "HTML, CSS, and JavaScript" is not only a matter of assembling strings in the right order, but also of using the right conjunctions and punctuation marks.
@@ -20,26 +20,35 @@ Using **dynamic text labels** are the most obvious aspect of internationalizatio
 On top of this come typical app problems like:
 1. **Rich text formatting**: Many apps need to embed rich text into sentences (e.g. "Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
 2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
-3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server/client boundary. Potentially, you also need a mechanism to update the displayed time regularly.
-4. **Unique URLs**: Providing unique URLs that match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish) is crucial for the user experience as well as SEO.
+3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server and client. Potentially, you also need a mechanism to update the displayed time regularly.
+4. **Unique URLs**: Providing unique URLs that match the user's language preference is crucial for the user experience as well as SEO (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish).
 
 Considering this list, you might agree that internationalization is quite an interconnected topic.
 
 `next-intl` takes a holistic approach to internationalization that nudges you towards best practices for handling languages and country-specific conventions. This way, you have more time to focus on what makes your app unique.
 
-**Area of improvement**: In regard to URL handling, `next-intl` currently works well with locale prefixes (e.g. `/en` or `/pt-BR`), and domain-based routing (e.g. `en.example.com`). However, `next-intl` should have built-in support for a mapping between custom prefixes and locales (e.g. `/uk` → `/en-UK`, see [#653](https://github.com/amannn/next-intl/issues/653)).
+<details>
+<summary>Areas of improvement</summary>
+
+In regard to URL handling, `next-intl` currently works well with locale prefixes (e.g. `/en` or `/pt-BR`), and domain-based routing (e.g. `en.example.com`). However, `next-intl` should have built-in support for a mapping between custom prefixes and locales (e.g. `/uk` → `/en-UK`). Built-in support is being worked on in [#653](https://github.com/amannn/next-intl/issues/653), but workarounds are currently available.
+
+</details>
 
 ## Ergonomic
 
 The bold claim of this library is that your app code will become simpler instead of more complex when you implement internationalization.
 
-If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that are ensure you feel productive and in control. 
+If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. 
 
-Once internationalization is set up, adding a new language should be as simple as adding a new JSON file with translations. For app-specific code, `next-intl` utilizes TypeScript, e.g. to ensure you've declared localized pathnames for all locales (in case you're using this feature).
+Once internationalization is set up, adding a new language is mostly a matter of adding a new JSON file with translations. Everything else is being taken care of by `next-intl`.
 
-**Areas of improvement**:
+<details>
+<summary>Areas of improvement</summary>
+
  - While handling multiple languages is the common case, `next-intl` is also expected to work well for apps that only support a single language. After all, if using internationalization right from the start is easier than hardcoding text and formatting, then this should be a common workflow. The Pages Router integration was already capable of this, but ideally we support this similarly for the App Router as well (see [#960](https://github.com/amannn/next-intl/issues/960)).
- - With the introduction of Server Components, it became a difference in regard to [performance](#performance-obsessed) which messages are made available to the client and which are only used on the server side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority, but we could improve the ergonomics for apps where it's common to split messages in a granular way (see [Providing individual messages to Client Components](/docs/environments/server-client-components#option-3-providing-individual-messages) and [#1](https://github.com/amannn/next-intl/issues/1)).
+ - With the introduction of Server Components, it became a difference in regard to [performance](#performance-obsessed) which messages are made available to the client and which are only used on the server side. The situation is arguably already good for apps that require messages either only on the server or the client side, or those where removing server-only messages is not a priority, but we could improve the ergonomics for apps where it's common to split messages in a granular way. A compiler-driven approach is being explored in [#1](https://github.com/amannn/next-intl/issues/1).
+
+</details>
 
 ## Standards-based
 
@@ -63,10 +72,14 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 3. **Shortcuts**: By detecting plain messages, these messages can be returned immediately without having to parse them first.
 4. **Splitting of messages**: By splitting messages by locale, server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
 
-**Areas of improvement**:
+<details>
+<summary>Areas of improvement</summary>
+
  - It's being evaluated if messages can be compiled ahead of time, no longer requiring to load an ICU parser on the client side (see [#705](https://github.com/amannn/next-intl/pull/705)).
  - Caching of `Intl.*` constructors for the `useFormatter` API is under investigation, but has generally improved in modern JavaScript runtimes (see [#215](https://github.com/amannn/next-intl/issues/215)).
  - To achieve static rendering, we currently utilize a [workaround](https://github.com/amannn/next-intl/issues/663). It works reliably, but we've [reached out to the Next.js team](https://github.com/vercel/next.js/discussions/58862) to hopefully remove this in the future.
+
+</details>
 
 ## Integratable
 
