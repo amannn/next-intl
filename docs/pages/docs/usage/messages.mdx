@@ -167,6 +167,12 @@ Dynamic values can be inserted into messages by using curly braces:
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
+<details>
+<summary>Which characters are supported for value names?</summary>
+
+Value names are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+</details>
+
 ### Cardinal pluralization
 
 To express the pluralization of a given number of items, the `plural` argument can be used:
@@ -248,6 +254,23 @@ t('message', {gender: 'female'}); // "She is online."
 ```
 
 **Note**: The `other` case is required and will be used when none of the specific values match.
+
+<details>
+<summary>Which characters are supported for select values?</summary>
+
+Values are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+
+Therefore, e.g. when you're mapping a locale to a human readable string, you should map the dash to an underscore first:
+
+```tsx filename="en.json"
+"label": "{locale, select, en_BR {British English} en_US {American English} other {Unknown}"
+```
+
+```tsx
+const locale = 'en-BR';
+t('message', {locale: locale.replaceAll('-', '_')};
+```
+</details>
 
 ### Escaping
 

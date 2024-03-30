@@ -49,6 +49,30 @@ it('handles formatting errors', () => {
   expect(result).toBe('price');
 });
 
+it('supports alphanumeric value names', () => {
+  const t = createTranslator({
+    locale: 'en',
+    messages: {label: '{val_u3}'}
+  });
+
+  const result = t('label', {val_u3: 'Hello'});
+  expect(result).toBe('Hello');
+});
+
+it('throws an error for non-alphanumeric value names', () => {
+  const onError = vi.fn();
+
+  const t = createTranslator({
+    locale: 'en',
+    messages: {label: '{val-u3}'},
+    onError
+  });
+
+  t('label', {'val-u3': 'Hello'});
+  const error: IntlError = onError.mock.calls[0][0];
+  expect(error.code).toBe('INVALID_MESSAGE');
+});
+
 describe('t.rich', () => {
   it('can translate a message to a ReactNode', () => {
     const t = createTranslator({
