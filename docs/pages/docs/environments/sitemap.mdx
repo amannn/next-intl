@@ -1,0 +1,88 @@
+import {Tab, Tabs} from 'nextra-theme-docs';
+import Callout from 'components/Callout';
+
+# Internationalization of sitemaps
+
+If you're using a sitemap to inform search engines about all pages of your site, you can attach [locale-specific alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL in the sitemap to indicate that a particular page is available in multiple languages or regions.
+
+Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Note that also the default locale should be included in the `alternates` object.
+
+<Tabs items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
+
+If you're using [shared pathnames](/docs/routing/navigation#shared-pathnames), you can iterate over an array of pathnames that your app supports and generate a sitemap entry for each pathname.
+
+**Example:**
+
+```tsx
+import {MetadataRoute} from 'next';
+
+// Can be imported from shared config
+const defaultLocale = 'en' as const;
+const locales = ['en', 'de'] as const;
+
+// Adapt this as necessary
+const pathnames = ['/', '/about'];
+const host = 'https://acme.com';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  function getUrl(pathname: string, locale: string) {
+    return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
+  }
+
+  return pathnames.map((pathname) => ({
+    url: getUrl(pathname, defaultLocale),
+    lastModified: new Date(),
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((locale) => [locale, getUrl(pathname, locale)])
+      )
+    }
+  }));
+}
+```
+
+</Tab>
+<Tab>
+
+If you're using [localized pathnames](/docs/routing/navigation#localized-pathnames), you can use the keys of your already declared `pathnames` and generate an entry for each locale via the [`getPathname`](/docs/routing/navigation#getpathname) function.
+
+```tsx
+import {MetadataRoute} from 'next';
+import {locales, pathnames, defaultLocale} from 'config';
+import {getPathname} from 'navigation';
+
+// Adapt this as necessary
+const host = 'https://acme.com';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
+
+  function getUrl(
+    key: keyof typeof pathnames,
+    locale: (typeof locales)[number]
+  ) {
+    const pathname = getPathname({locale, href: key});
+    return `${HOST}/${locale}${pathname === '/' ? '' : pathname}`;
+  }
+
+  return keys.map((key) => ({
+    url: getUrl(key, defaultLocale),
+    lastModified: new Date(),
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((locale) => [locale, getUrl(key, locale)])
+      )
+    }
+  }));
+}
+```
+
+[(working implementation)](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts)
+
+</Tab>
+</Tabs>
+
+<Callout>
+Note that your implementation may vary depending on your routing configuration (e.g. if you're using a [`localePrefix`](/docs/routing/middleware#locale-prefix) other than `always` or [locale-specific domains](/docs/routing/middleware#domain-based-routing)).
+</Callout>
