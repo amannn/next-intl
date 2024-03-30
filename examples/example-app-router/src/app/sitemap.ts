@@ -1,10 +1,6 @@
 import {MetadataRoute} from 'next';
-import {locales, pathnames, defaultLocale} from 'config';
+import {locales, pathnames, defaultLocale, host} from 'config';
 import {getPathname} from 'navigation';
-
-const HOST = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : `http://localhost:${process.env.PORT}`;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
@@ -14,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     locale: (typeof locales)[number]
   ) {
     const pathname = getPathname({locale, href: key});
-    return `${HOST}/${locale}${pathname === '/' ? '' : pathname}`;
+    return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
   }
 
   return keys.map((key) => ({
