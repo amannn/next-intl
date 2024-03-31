@@ -10,9 +10,9 @@ This page also links to planned improvements in order to act as a transparent re
 
 Internationalization clearly requires flexibility from your codebase. However, even implementing a single language properly can already be a challenge by itself.
 
-Using **dynamic text labels** is the most obvious aspect of internationalization, but supporting a language well also many other aspects:
+Using **dynamic text labels** is the most obvious aspect of internationalization, but supporting a language well also includes many other aspects:
 1. **Pluralization rules**: While a language like English has only two plural forms (singular and plural), other languages have up to six different forms.
-2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. Even the year displayed can vary from country to country; for example, Thailand uses the Buddhist calendar, which is 543 years ahead of the Gregorian calendar.
+2. **Date and time formatting**: Different languages have different conventions for formatting dates and times. Even the year displayed can vary from country to country; for example, Thailand uses the Buddhist calendar, which is 543 years ahead of the Gregorian one.
 3. **Number formatting**: Formatting conventions for numbers vary across different languages. For instance, when comparing English and German, the separators for thousands and decimals are flipped.
 4. **List formatting**: Formatting lists like "HTML, CSS, and JavaScript" is not only a matter of assembling strings in the right order, but also of using language-specific conjunctions and punctuation marks.
 5. **Text direction**: While most languages are written from left to right, some languages like Arabic are written from right to left and require a mirrored layout.
@@ -107,7 +107,7 @@ That being said, `next-intl` has a Next.js-agnostic core that can be used in any
 We've all been there, technology moves on, and sometimes you need to move on as well. `next-intl` is designed to be a good citizen in your codebase, and to make it possible to migrate away from certain parts of your stack in case this becomes necessary.
 
 If you ever feel like Next.js or `next-intl` is not the right fit for your project anymore, you have multiple options here:
-1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in a Remix app.
+1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in [a Remix app](/examples#remix).
 2. **Moving away from `next-intl`**: If you find that `next-intl` doesn't fit your needs anymore, you'll have to adapt app code that references the library, but you can still reuse your [standards-based](#standards-based) ICU messages and replace formatting APIs e.g. with direct calls to the [ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
 
 We wont hold you back, but if you like, we can stay friends.
