@@ -209,6 +209,12 @@ Dynamic values can be inserted into messages by using curly braces:
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
+<details>
+<summary>Which characters are supported for value names?</summary>
+
+Value names are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+</details>
+
 ### Cardinal pluralization
 
 To express the pluralization of a given number of items, the `plural` argument can be used:
@@ -226,24 +232,22 @@ Note that by using the `#` marker, the value will be [formatted as a number](/do
 <details>
 <summary>Which plural forms are supported?</summary>
 
-Depending on the language, different forms of cardinal pluralization are supported.
+Languages have different rules for pluralization and your messages should reflect these rules.
 
 For example, English has two forms: One for the singular (e.g. "1 _follower_") and one for everything else (e.g. "0 _followers_" and "2 _followers_"). In contrast, Chinese only has one form, while Arabic has six.
 
-`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+The other aspect to consider is that from a usability perspective, it can be helpful to consider additional cases on top—most commonly the special case for zero (e.g. "No followers yet" instead of "0 followers").
 
-**These tags are supported:**
+While you can always use the `=value` syntax to match a specific number (e.g. `=0`), you can choose from the following tags depending on what grammar rules apply to a given language:
 
-- `zero`
-- `one`
-- `two`
-- `few`
-- `many`
-- `other`
+- `zero`: For languages with zero-item grammar (e.g., Latvian, Welsh).
+- `one`: For languages with singular-item grammar (e.g., English, German).
+- `two`: For languages with dual-item grammar (e.g., Arabic, Welsh).
+- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Polish, Croatian).
+- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Polish, Croatian).
+- `other`: Used when the value doesn't match other plural categories.
 
-The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
-
-To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct tag that should be used for a given number. The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
 
 </details>
 
@@ -260,18 +264,18 @@ To apply pluralization based on an order of items, the `selectordinal` argument 
 
 Depending on the language, different forms of ordinal pluralization are supported.
 
-For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
+For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 11th, 12th, 13th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
 
 `next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
 
 **These tags are supported:**
 
-- `zero`
-- `one`
-- `two`
-- `few`
-- `many`
-- `other`
+- `zero`: For languages with zero-item grammar (e.g., Latvian, Welsh).
+- `one`: For languages with singular-item grammar (e.g., English, German).
+- `two`: For languages with dual-item grammar (e.g., Arabic, Welsh).
+- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Polish, Croatian).
+- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Polish, Croatian).
+- `other`: Used when the value doesn't match other plural categories.
 
 The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
 
@@ -292,6 +296,23 @@ t('message', {gender: 'female'}); // "She is online."
 ```
 
 **Note**: The `other` case is required and will be used when none of the specific values match.
+
+<details>
+<summary>Which characters are supported for select values?</summary>
+
+Values are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+
+Therefore, e.g. when you're mapping a locale to a human readable string, you should map the dash to an underscore first:
+
+```tsx filename="en.json"
+"label": "{locale, select, en_BR {British English} en_US {American English} other {Unknown}"
+```
+
+```tsx
+const locale = 'en-BR';
+t('message', {locale: locale.replaceAll('-', '_')};
+```
+</details>
 
 ### Escaping
 

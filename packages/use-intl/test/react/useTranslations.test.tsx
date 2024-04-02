@@ -157,12 +157,24 @@ it('applies a time zone when using a skeleton', () => {
   screen.getByText('1/1/2024, 00:00');
 });
 
-it('handles pluralisation', () => {
+it('supports pluralisation via specific numbers', () => {
   renderMessage(
     'You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.',
     {numMessages: 1}
   );
   screen.getByText('You have one message.');
+});
+
+it('supports pluralisation via tags like "zero" and "one" if the locale supports it', () => {
+  renderMessage(
+    'Jums ir {count, plural, zero {vēl nav sekotāju} one {viens sekotājs} other {# sekotāji}}.',
+    {count: 0},
+    undefined,
+    {
+      locale: 'lv'
+    }
+  );
+  screen.getByText('Jums ir vēl nav sekotāju.');
 });
 
 it('handles selects', () => {

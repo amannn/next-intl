@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Get paid support
-    url: https://github.com/sponsors/amannn?frequency=one-time
-    about: Book a consulting session to get help with your specific project
   - name: View documentation
     url: https://next-intl-docs.vercel.app/
     about: Check out the official docs for answers to common questions
-  - name: Ask a question
+  - name: Get community support
     url: https://stackoverflow.com/questions/ask
     about: Ask questions and discuss with other community members
+  - name: Get maintainer support
+    url: https://github.com/sponsors/amannn?frequency=one-time
+    about: Book a consulting session to get help with your specific project
