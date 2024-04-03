@@ -161,7 +161,11 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  const unlocalizedPathname = unlocalizePathname(pathname, locale);
+  const unlocalizedPathname = unlocalizePathname(
+    // Potentially handle foreign symbols
+    decodeURI(pathname),
+    locale
+  );
 
   let template = Object.entries(pathnames).find(([, routePath]) => {
     const routePathname =

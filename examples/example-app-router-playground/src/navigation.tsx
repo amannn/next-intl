@@ -5,7 +5,7 @@ import {
 
 export const defaultLocale = 'en';
 
-export const locales = ['en', 'de', 'es'] as const;
+export const locales = ['en', 'de', 'es', 'ja'] as const;
 
 export const localePrefix =
   process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed';
@@ -17,13 +17,15 @@ export const pathnames = {
   '/nested': {
     en: '/nested',
     de: '/verschachtelt',
-    es: '/anidada'
+    es: '/anidada',
+    ja: '/ネスト'
   },
   '/redirect': '/redirect',
   '/news/[articleId]': {
     en: '/news/[articleId]',
     de: '/neuigkeiten/[articleId]',
-    es: '/noticias/[articleId]'
+    es: '/noticias/[articleId]',
+    ja: '/ニュース/[articleId]'
   }
 } satisfies Pathnames<typeof locales>;
 
