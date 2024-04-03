@@ -89,7 +89,7 @@ Next.js has a rich ecosystem of libraries that can be used alongside `next-intl`
 `next-intl` was designed with high-traffic sites in mind that need to deliver a fast and reliable user experience and has proven to work on complex e-commerce pages with outstanding Core Web Vitals.
 
 To achieve this, `next-intl` primarly relies on these techniques currently:
-1. **Splitting of messages**: By splitting messages by locale, server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
+1. **Splitting of messages**: By splitting messages by locale, and optionally also by server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
 2. **Shortcuts**: By detecting plain messages, these messages can be returned immediately without having to parse them first.
 3. **Caching**: Parsing and formatting of messages is cached across your app, therefore reducing the amount of necessary computation.
 4. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, therefore reducing the runtime footprint of your app on the client side.
