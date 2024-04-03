@@ -1,9 +1,72 @@
 # Core library
 
-While `next-intl` is primarily intended to be used within React components, the core is agnostic and can be used independently of React.
+While `next-intl` is primarily intended to be used in Next.js apps, the core is agnostic and can be used independently either in React apps or any other JavaScript environment.
+
+## React apps
+
+`next-intl` is based on a library called [`use-intl`](https://www.npmjs.com/package/use-intl) that is developed in parallel.
+
+This core library contains most features of `next-intl`, but lacks the following Next.js-specific features:
+1. [Routing APIs](/docs/routing)
+2. [Awaitable APIs for the Metadata API and Route Handlers](/docs/environments/metadata-route-handlers)
+3. [Server Components integration](/docs/environments/server-client-components) along with `i18n.ts`
+
+In case Server Components establish themselves in React apps outside of Next.js, the support for Server Components might be moved to the core library in the future.
+
+In contrast, `use-intl` contains all APIs that are necessary for handling i18n in regular React apps:
+- [`useTranslations`](/docs/usage/messages) for translating messages
+- `useFormatter` for formatting of [numbers](/docs/usage/numbers), [dates & times](/docs/usage/dates-times) and [lists](/docs/usage/lists)
+- [Configuration APIs](/docs/usage/configuration) (note however that `NextIntlProvider` is called `IntlProvider` in `use-intl`)
+
+This allows you to use the same APIs that you know from `next-intl` in other environments:
+
+1. React Apps ([example](/examples#use-intl))
+2. React Native ([example](/examples#react-native))
+3. Remix ([example](/examples#remix))
+4. Testing environments like Jest ([example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/Navigation.spec.tsx))
+5. Storybook (by using a [global decorator](https://storybook.js.org/docs/writing-stories/decorators#global-decorators))
+
+**Basic usage:**
 
 ```tsx
-import {createTranslator} from 'next-intl';
+import {IntlProvider, useTranslations} from 'use-intl';
+
+// You can get the messages from anywhere you like. You can also
+// fetch them from within a component and then render the provider 
+// along with your app once you have the messages.
+const messages = {
+  "App": {
+    "hello": 'Hello {username}!'
+  }
+};
+
+function Root() {
+  return (
+    <IntlProvider messages={messages} locale="en">
+      <App user={{name: 'Jane'}} />
+    </IntlProvider>
+  );
+}
+
+function App({user}) {
+  const t = useTranslations('App');
+  return <h1>{t('hello', {username: user.name})}</h1>;
+}
+```
+
+## Non-React apps
+
+Besides the React-specific APIs, `use-intl` also exports two low-level functions that can be used in any JavaScript environment:
+
+1. `createTranslator` for translating messages
+2. `createFormatter` for formatting numbers, dates & times and lists
+
+These APIs receive all relevant configuration directly and don't rely on global configuration.
+
+You can use these APIs as follows:
+
+```tsx
+import {createTranslator, createFormatter} from 'use-intl';
 
 const messages = {
   basic: 'Hello {name}!',
@@ -24,12 +87,6 @@ t.markup('rich', {
   name: 'world',
   b: (chunks) => `<b>${chunks}</b>`
 });
-```
-
-For date, time and number formatting, the `format` object can be created outside of React as well:
-
-```js
-import {createFormatter} from 'next-intl';
 
 // Creates the same object that is returned by `useFormatter`.
 const format = createFormatter({locale: 'en'});
