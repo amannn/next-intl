@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.11.0 (2024-04-03)
+
+
+### Features
+
+* Support symbols in localized pathnames that require URL encoding ([#959](https://github.com/amannn/next-intl/issues/959)) ([b6e66f4](https://github.com/amannn/next-intl/commit/b6e66f4afd663ea5dc0851f5b528bcc55388b927)), closes [#607](https://github.com/amannn/next-intl/issues/607) [/github.com/amannn/next-intl/issues/607#issuecomment-1979747515](https://github.com//github.com/amannn/next-intl/issues/607/issues/issuecomment-1979747515)
+
+
+
+
+
 # 3.10.0 (2024-03-25)
 
 
