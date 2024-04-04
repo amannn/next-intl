@@ -116,10 +116,15 @@ export default function createMiddleware<Locales extends AllLocales>(
       }
 
       if (redirectDomain) {
-        urlObj.protocol =
-          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
-        urlObj.port = '';
         urlObj.host = redirectDomain;
+
+        if (request.headers.get('x-forwarded-host')) {
+          urlObj.protocol =
+            request.headers.get('x-forwarded-proto') ??
+            request.nextUrl.protocol;
+
+          urlObj.port = request.headers.get('x-forwarded-port') ?? '';
+        }
       }
 
       if (request.nextUrl.basePath) {
