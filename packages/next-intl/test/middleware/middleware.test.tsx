@@ -2451,15 +2451,13 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('uses the correct port and protocol', () => { 
-      middleware( 
-        createMockRequest('/', 'fr', 'http://ca.example.com:3000') 
-      ); 
-      expect(MockedNextResponse.next).not.toHaveBeenCalled(); 
-      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled(); 
-      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe( 
-        'http://ca.example.com:3000/fr' 
-      ); 
+    it('uses the correct port and protocol', () => {
+      middleware(createMockRequest('/', 'fr', 'http://ca.example.com:3000'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://ca.example.com:3000/fr'
+      );
     });
 
     it('uses the correct port and protocol when behind a proxy', () => {
