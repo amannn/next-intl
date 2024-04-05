@@ -3,6 +3,7 @@
  */
 
 export {default as getRequestConfig} from './getRequestConfig';
+export {default as getFormats} from './getFormats';
 export {default as getFormatter} from './getFormatter';
 export {default as getNow} from './getNow';
 export {default as getTimeZone} from './getTimeZone';

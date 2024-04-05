@@ -1,6 +1,7 @@
 import type {
   getRequestConfig as getRequestConfig_type,
   getFormatter as getFormatter_type,
+  getFormats as getFormats_type,
   getNow as getNow_type,
   getTimeZone as getTimeZone_type,
   getMessages as getMessages_type,
@@ -28,6 +29,7 @@ export function getRequestConfig(
 ): ReturnType<typeof getRequestConfig_type> {
   return notSupported('getRequestConfig');
 }
+export const getFormats = notSupported('getFormats') as typeof getFormats_type;
 export const getFormatter = notSupported(
   'getFormatter'
 ) as typeof getFormatter_type;

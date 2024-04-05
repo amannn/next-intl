@@ -2,6 +2,7 @@ import React from 'react';
 import {describe, expect, vi, it} from 'vitest';
 import {
   createTranslator,
+  useFormats,
   useFormatter,
   useLocale,
   useMessages,
@@ -48,6 +49,7 @@ describe('performance', () => {
 
       const t = useTranslations('Component');
       const format = useFormatter();
+      const formats = useFormats();
       const locale = useLocale();
       const messages = useMessages();
       const now = useNow();
@@ -56,6 +58,7 @@ describe('performance', () => {
         <>
           {now.toISOString()}
           {JSON.stringify(messages)}
+          {JSON.stringify(formats)}
           {locale}
           {format.number(1000)}
           {t('title')}

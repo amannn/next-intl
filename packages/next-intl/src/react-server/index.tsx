@@ -9,6 +9,7 @@
 // Replaced exports from the `react` package
 export {default as useLocale} from './useLocale';
 export {default as useTranslations} from './useTranslations';
+export {default as useFormats} from './useFormats';
 export {default as useFormatter} from './useFormatter';
 export {default as useNow} from './useNow';
 export {default as useTimeZone} from './useTimeZone';
