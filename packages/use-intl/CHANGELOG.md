@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.11.1 (2024-04-05)
+
+
+### Bug Fixes
+
+* Apply correct port when redirecting to another domain and the app doesn't run behind a proxy ([#979](https://github.com/amannn/next-intl/issues/979) by [@awkaiser-tr](https://github.com/awkaiser-tr)) ([485f59e](https://github.com/amannn/next-intl/commit/485f59e2c09224bf260e87ede30a67d0a5c542c0)), closes [#658](https://github.com/amannn/next-intl/issues/658)
+
+
+
+
+
 # 3.11.0 (2024-04-03)
 
 
