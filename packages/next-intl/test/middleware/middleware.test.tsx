@@ -2451,7 +2451,16 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('uses the correct port and protocol when being called from an internal address', () => {
+    it('uses the correct port and protocol', () => {
+      middleware(createMockRequest('/', 'fr', 'http://ca.example.com:3000'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://ca.example.com:3000/fr'
+      );
+    });
+
+    it('uses the correct port and protocol when behind a proxy', () => {
       middleware(
         createMockRequest('/', 'fr', 'http://192.168.0.1:3000', undefined, {
           'x-forwarded-host': 'ca.example.com',
@@ -2462,6 +2471,19 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'https://ca.example.com/fr'
+      );
+
+      middleware(
+        createMockRequest('/', 'fr', 'http://192.168.0.1:3000', undefined, {
+          'x-forwarded-host': 'ca.example.com',
+          'x-forwarded-port': '4200',
+          'x-forwarded-proto': 'https'
+        })
+      );
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'https://ca.example.com:4200/fr'
       );
     });
 
