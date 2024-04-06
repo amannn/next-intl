@@ -153,6 +153,24 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   page.getByRole('heading', {name: 'Verschachtelt'});
 });
 
+it('priotizes static routes over dynamic routes for the default locale', async ({
+  page
+}) => {
+  await page.goto('/news/just-in');
+  await expect(page).toHaveURL('/news/just-in');
+  await expect(page.getByRole('heading', {name: 'Just In'})).toBeVisible();
+});
+
+it('priotizes static routes over dynamic routes for non-default locales', async ({
+  page
+}) => {
+  await page.goto('/de/neuigkeiten/aktuell');
+  await expect(page).toHaveURL('/de/neuigkeiten/aktuell');
+  await expect(
+    page.getByRole('heading', {name: 'Gerade eingetroffen'})
+  ).toBeVisible();
+});
+
 it('sets the `path` for the cookie', async ({page}) => {
   await page.goto('/de/client');
 

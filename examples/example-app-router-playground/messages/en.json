@@ -31,6 +31,9 @@
   "NewsArticle": {
     "title": "News article #{articleId}"
   },
+  "JustIn": {
+    "title": "Just in"
+  },
   "NotFound": {
     "title": "This page was not found (404)"
   },
