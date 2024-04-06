@@ -3,7 +3,8 @@ import {
   formatPathname,
   getInternalTemplate,
   getNormalizedPathname,
-  getRouteParams
+  getRouteParams,
+  getSortedPathnames
 } from '../../src/middleware/utils';
 
 describe('getNormalizedPathname', () => {
@@ -15,6 +16,88 @@ describe('getNormalizedPathname', () => {
     expect(getNormalizedPathname('/about', ['en', 'de'])).toBe('/about');
     expect(getNormalizedPathname('/', ['en', 'de'])).toBe('/');
     expect(getNormalizedPathname('/es', ['en', 'de'])).toBe('/es');
+  });
+});
+
+describe('getSortedPathnames', () => {
+  it('should priotize more specific paths', () => {
+    const pathnames = {
+      '/categories/[slug]': {
+        en: '/categories/[slug]',
+        de: '/kategorien/[slug]',
+        it: '/categorie/[slug]'
+      },
+      '/categories': {
+        en: '/categories',
+        de: '/kategorien',
+        it: '/categorie'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/categories', pathnames['/categories']],
+      ['/categories/[slug]', pathnames['/categories/[slug]']]
+    ]);
+  });
+
+  it('should priotize non-catch-all routes over catch-all routes', () => {
+    const pathnames = {
+      '/categories/[...slug]': {
+        en: '/categories/[...slug]',
+        de: '/kategorien/[...slug]',
+        it: '/categorie/[...slug]'
+      },
+      '/categories/new': {
+        en: '/categories/new',
+        de: '/kategorien/neu',
+        it: '/categorie/nuovo'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/categories/new', pathnames['/categories/new']],
+      ['/categories/[...slug]', pathnames['/categories/[...slug]']]
+    ]);
+  });
+
+  it('should priotize dynamic routes over catch-all routes', () => {
+    const pathnames = {
+      '/categories/[...slug]': {
+        en: '/categories/[...slug]',
+        de: '/kategorien/[...slug]',
+        it: '/categorie/[...slug]'
+      },
+      '/categories/[slug]': {
+        en: '/categories/[slug]',
+        de: '/kategorien/[slug]',
+        it: '/categorie/[slug]'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/categories/[slug]', pathnames['/categories/[slug]']],
+      ['/categories/[...slug]', pathnames['/categories/[...slug]']]
+    ]);
+  });
+
+  it('should priotize more specific routes over dynamic routes', () => {
+    const pathnames = {
+      '/categories/[slug]': {
+        en: '/categories/[slug]',
+        de: '/kategorien/[slug]',
+        it: '/categorie/[slug]'
+      },
+      '/categories/new': {
+        en: '/categories/new',
+        de: '/kategorien/neu',
+        it: '/categorie/nuovo'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/categories/new', pathnames['/categories/new']],
+      ['/categories/[slug]', pathnames['/categories/[slug]']]
+    ]);
   });
 });
 

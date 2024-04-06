@@ -9,6 +9,71 @@ export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
 }
 
+function getExternalPath<Locales extends AllLocales>(
+  path: string | {[Key in Locales[number]]: string}
+): string {
+  const firstLocalePath = Object.values(path)[0];
+  return typeof path === 'string' ? path : firstLocalePath;
+}
+
+function isCatchAllRoute(pathname: string) {
+  return isOptionalCatchAll(pathname) || isCatchAll(pathname);
+}
+
+function isOptionalCatchAll(pathname: string) {
+  return pathname.includes('[[...');
+}
+
+function isCatchAll(pathname: string) {
+  return pathname.includes('[...');
+}
+
+function isDynamicRoute(pathname: string) {
+  return pathname.includes('[');
+}
+
+type PathnamePair<Locales extends AllLocales> = [
+  string,
+  string | {[Key in Locales[number]]: string}
+];
+
+export function comparePathnamePairs<Locales extends AllLocales>(
+  a: PathnamePair<Locales>,
+  b: PathnamePair<Locales>
+): number {
+  const pathA = getExternalPath(a[1]);
+  const pathB = getExternalPath(b[1]);
+
+  const dynamicA = isDynamicRoute(pathA);
+  const dynamicB = isDynamicRoute(pathB);
+  const catchAllA = isCatchAllRoute(pathA);
+  const catchAllB = isCatchAllRoute(pathB);
+
+  // Prioritize static routes over dynamic and catch-all routes
+  if (!dynamicA && dynamicB) return -1;
+  if (dynamicA && !dynamicB) return 1;
+
+  // Both paths are either dynamic or static, prioritize non-catch-all over catch-all
+  if (catchAllA && !catchAllB) return 1;
+  if (!catchAllA && catchAllB) return -1;
+
+  // If both are the same type (static, dynamic non-catch-all, or catch-all), prioritize by depth
+  const depthA = pathA.split('/').length;
+  const depthB = pathB.split('/').length;
+
+  // Deeper (more specific) paths first
+  if (depthA !== depthB) return depthB - depthA;
+
+  return 0;
+}
+
+export function getSortedPathnames<Locales extends AllLocales>(
+  pathnames: NonNullable<MiddlewareConfigWithDefaults<Locales>['pathnames']>
+) {
+  const sortedPathnames = Object.entries(pathnames).sort(comparePathnamePairs);
+  return sortedPathnames;
+}
+
 export function getInternalTemplate<
   Locales extends AllLocales,
   Pathnames extends NonNullable<
@@ -19,10 +84,13 @@ export function getInternalTemplate<
   pathname: string,
   locale: Locales[number]
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
+  // Sort pathnames by specificity
+  const sortedPathnames = getSortedPathnames(pathnames);
   // Try to find a localized pathname that matches
-  for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
-    pathnames
-  )) {
+  for (const [
+    internalPathname,
+    localizedPathnamesOrPathname
+  ] of sortedPathnames) {
     if (typeof localizedPathnamesOrPathname === 'string') {
       const localizedPathname = localizedPathnamesOrPathname;
       if (matchesPathname(localizedPathname, pathname)) {
