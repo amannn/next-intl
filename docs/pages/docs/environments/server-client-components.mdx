@@ -309,12 +309,12 @@ export default function Counter() {
 }
 ```
 
-If you only have a few large messages that you'd like to exclude from the client side, you can also use `lodash/omit` instead of `lodash/pick`.
+In case you prefer to make all messages available to the client side, you can [configure `NextIntlClientProvider` in the root layout](#option-4-providing-all-messages) instead.
 
 <details>
 <summary>How can I know the messages I need to provide to the client side?</summary>
 
-Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components. If this becomes too cumbersome, you can consider [providing all messages to the client side](#option-4-providing-all-messages).
+Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components.
 
 An automatic, compiler-driven approach is being evaluated in [`next-intl#2`](https://github.com/amannn/next-intl/issues/1).
 
