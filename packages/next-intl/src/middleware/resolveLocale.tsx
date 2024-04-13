@@ -30,7 +30,7 @@ function findDomainFromHost<Locales extends AllLocales>(
   return undefined;
 }
 
-function getAcceptLanguageLocale<Locales extends AllLocales>(
+export function getAcceptLanguageLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
   locales: Locales,
   defaultLocale: string
