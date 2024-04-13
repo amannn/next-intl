@@ -391,6 +391,18 @@ describe('prefix-based routing', () => {
             'de-AT': '/neuigkeiten/[articleSlug]-[articleId]',
             ja: '/ニュース/[articleSlug]-[articleId]'
           },
+          '/articles/[category]/[articleSlug]': {
+            en: '/articles/[category]/[articleSlug]',
+            de: '/artikel/[category]/[articleSlug]',
+            'de-AT': '/artikel/[category]/[articleSlug]',
+            ja: '/記事/[category]/[articleSlug]'
+          },
+          '/articles/[category]/just-in': {
+            en: '/articles/[category]/just-in',
+            de: '/artikel/[category]/aktuell',
+            'de-AT': '/artikel/[category]/aktuell',
+            ja: '/記事/[category]/最新'
+          },
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]',
@@ -687,6 +699,24 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/categories/new'
+        );
+      });
+
+      it('priotizes more specific, static routes over dynamic routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/aktuell', 'de')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/neueste-trends', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/neueste-trends'
         );
       });
 
@@ -1054,6 +1084,14 @@ describe('prefix-based routing', () => {
             en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]'
           },
+          '/articles/[category]/[articleSlug]': {
+            en: '/articles/[category]/[articleSlug]',
+            de: '/artikel/[category]/[articleSlug]'
+          },
+          '/articles/[category]/just-in': {
+            en: '/articles/[category]/just-in',
+            de: '/artikel/[category]/aktuell'
+          },
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]'
@@ -1178,6 +1216,24 @@ describe('prefix-based routing', () => {
         );
       });
 
+      it('priotizes more specific, static routes over dynamic routes for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/articles/technology/just-in', 'en')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/en/articles/technology/latest-trends', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/articles/technology/latest-trends'
+        );
+      });
+
       it('priotizes static routes over dynamic and catch-all routes for the non-default locale', () => {
         middlewareWithPathnames(
           createMockRequest('/de/produkte/hinzufuegen', 'de')
@@ -1191,6 +1247,24 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
           'http://localhost:3000/de/categories/new'
+        );
+      });
+
+      it('priotizes more specific, static routes over dynamic routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/aktuell', 'de')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/neueste-trends', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/neueste-trends'
         );
       });
 

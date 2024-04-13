@@ -185,7 +185,7 @@ describe('getSortedPathnames', () => {
     ]);
   });
 
-  it('should priotize non-catch-all routes over optional catch-all routes', () => {
+  it('should priotize static routes over optional catch-all routes', () => {
     const pathnames = {
       '/categories/[[...slug]]': {
         en: '/categories/[[...slug]]',
@@ -242,6 +242,52 @@ describe('getSortedPathnames', () => {
     expect(getSortedPathnames(pathnames)).toEqual([
       ['/categories/[slug]', pathnames['/categories/[slug]']],
       ['/categories/[...slug]', pathnames['/categories/[...slug]']]
+    ]);
+  });
+
+  it('should priotize more specific nested routes over dynamic routes', () => {
+    const pathnames = {
+      '/articles/[category]/[articleSlug]': {
+        en: '/articles/[category]/[articleSlug]',
+        de: '/artikel/[category]/[articleSlug]',
+        it: '/articoli/[category]/[articleSlug]'
+      },
+      '/articles/[category]/new': {
+        en: '/articles/[category]/new',
+        de: '/artikel/[category]/neu',
+        it: '/articoli/[category]/nuovo'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/articles/[category]/new', pathnames['/articles/[category]/new']],
+      [
+        '/articles/[category]/[articleSlug]',
+        pathnames['/articles/[category]/[articleSlug]']
+      ]
+    ]);
+  });
+
+  it('should priotize more specific nested routes over catch-all routes', () => {
+    const pathnames = {
+      '/articles/[category]/[...articleSlug]': {
+        en: '/articles/[category]/[...articleSlug]',
+        de: '/artikel/[category]/[...articleSlug]',
+        it: '/articoli/[category]/[...articleSlug]'
+      },
+      '/articles/[category]/new': {
+        en: '/articles/[category]/new',
+        de: '/artikel/[category]/neu',
+        it: '/articoli/[category]/nuovo'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/articles/[category]/new', pathnames['/articles/[category]/new']],
+      [
+        '/articles/[category]/[...articleSlug]',
+        pathnames['/articles/[category]/[...articleSlug]']
+      ]
     ]);
   });
 });

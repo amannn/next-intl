@@ -16,10 +16,6 @@ function getExternalPath<Locales extends AllLocales>(
   return typeof path === 'string' ? path : firstLocalePath;
 }
 
-function isCatchAllRoute(pathname: string) {
-  return isOptionalCatchAll(pathname) || isCatchAll(pathname);
-}
-
 function isOptionalCatchAll(pathname: string) {
   return pathname.includes('[[...');
 }
@@ -41,30 +37,37 @@ export function comparePathnamePairs<Locales extends AllLocales>(
   a: PathnamePair<Locales>,
   b: PathnamePair<Locales>
 ): number {
-  const pathA = getExternalPath(a[1]);
-  const pathB = getExternalPath(b[1]);
+  const pathA = getExternalPath(a[1]).split('/').filter(Boolean);
+  const pathB = getExternalPath(b[1]).split('/').filter(Boolean);
 
-  const dynamicA = isDynamicRoute(pathA);
-  const dynamicB = isDynamicRoute(pathB);
-  const catchAllA = isCatchAllRoute(pathA);
-  const catchAllB = isCatchAllRoute(pathB);
+  const maxLength = Math.max(pathA.length, pathB.length);
+  for (let i = 0; i < maxLength; i++) {
+    const segmentA = pathA[i];
+    const segmentB = pathB[i];
 
-  // Prioritize static routes over dynamic and catch-all routes
-  if (!dynamicA && dynamicB) return -1;
-  if (dynamicA && !dynamicB) return 1;
+    // If one of the paths ends, prioritize the shorter path
+    if (!segmentA && segmentB) return -1;
+    if (segmentA && !segmentB) return 1;
 
-  // Both paths are either dynamic or static, prioritize non-catch-all over catch-all
-  if (catchAllA && !catchAllB) return 1;
-  if (!catchAllA && catchAllB) return -1;
+    // Prioritize static segments over dynamic segments
+    if (!isDynamicRoute(segmentA) && isDynamicRoute(segmentB)) return -1;
+    if (isDynamicRoute(segmentA) && !isDynamicRoute(segmentB)) return 1;
 
-  // If both are the same type (static, dynamic non-catch-all, or catch-all), prioritize by depth
-  const depthA = pathA.split('/').length;
-  const depthB = pathB.split('/').length;
+    // Prioritize non-catch-all segments over catch-all segments
+    if (!isCatchAll(segmentA) && isCatchAll(segmentB)) return -1;
+    if (isCatchAll(segmentA) && !isCatchAll(segmentB)) return 1;
+
+    // Prioritize non-optional catch-all segments over optional catch-all segments
+    if (!isOptionalCatchAll(segmentA) && isOptionalCatchAll(segmentB)) {
+      return -1;
+    }
+    if (isOptionalCatchAll(segmentA) && !isOptionalCatchAll(segmentB)) return 1;
+
+    if (segmentA === segmentB) continue;
+  }
 
   // Deeper (more specific) paths first
-  if (depthA !== depthB) return depthB - depthA;
-
-  return 0;
+  return pathA.length - pathB.length;
 }
 
 export function getSortedPathnames<Locales extends AllLocales>(
