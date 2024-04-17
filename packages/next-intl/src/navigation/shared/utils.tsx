@@ -180,6 +180,13 @@ export function getRoute<Locales extends AllLocales>({
   return template as keyof Pathnames<Locales>;
 }
 
-export function getBasePath(pathname: string) {
-  return window.location.pathname.replace(pathname, '');
+export function getBasePath(
+  pathname: string,
+  windowPathname = window.location.pathname
+) {
+  if (pathname === '/') {
+    return windowPathname;
+  } else {
+    return windowPathname.replace(pathname, '');
+  }
 }
