@@ -122,11 +122,11 @@
     },
     {
       "path": "dist/production/navigation.react-client.js",
-      "limit": "2.94 KB"
+      "limit": "2.96 KB"
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "3.03 KB"
+      "limit": "3.06 KB"
     },
     {
       "path": "dist/production/server.react-client.js",
