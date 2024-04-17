@@ -3,6 +3,7 @@
   "server-client-components": "Server & Client Components",
   "metadata-route-handlers": "Metadata & Route Handlers",
   "error-files": "Error files (e.g. not-found)",
+  "sitemap": "Sitemap",
   "core-library": "Core library",
   "runtime-requirements": "Runtime requirements"
 }

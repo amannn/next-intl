@@ -97,3 +97,24 @@ it('serves a robots.txt', async ({page}) => {
   const body = await response?.body();
   expect(body?.toString()).toEqual('User-Agent: *\nAllow: *\n');
 });
+
+it('serves a sitemap.xml', async ({page}) => {
+  const response = await page.goto('/sitemap.xml');
+  const body = await response!.body();
+  expect(body.toString()).toBe(
+    `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url>
+<loc>http://localhost:3000/en</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
+</url>
+<url>
+<loc>http://localhost:3000/en/pathnames</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
+</url>
+</urlset>
+`
+  );
+});

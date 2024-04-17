@@ -2,7 +2,7 @@
 
 import {useTranslations} from 'next-intl';
 import {useEffect} from 'react';
-import PageLayout from 'components/PageLayout';
+import PageLayout from '@/components/PageLayout';
 
 type Props = {
   error: Error;

@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
-import Navigation from 'components/Navigation';
-import {locales} from '../../config';
+import Navigation from '@/components/Navigation';
+import {locales} from '@/config';
 
 const inter = Inter({subsets: ['latin']});
 

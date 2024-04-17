@@ -41,7 +41,7 @@ function createMockRequest(
   customHeaders?: HeadersInit
 ) {
   const headers = new Headers({
-    'accept-language': `${acceptLanguageLocale};q=0.9,en;q=0.8`,
+    'accept-language': `${acceptLanguageLocale};q=0.9`,
     host: new URL(host).host,
     ...(localeCookieValue && {
       cookie: `${COOKIE_LOCALE_NAME}=${localeCookieValue}`
@@ -1926,6 +1926,23 @@ describe('domain-based routing', () => {
           '<http://ca.example.com/fr>; rel="alternate"; hreflang="fr"',
           '<http://fr.example.com/>; rel="alternate"; hreflang="fr"'
         ].join(', ')
+      );
+    });
+
+    it('prioritizes the default locale of a domain', () => {
+      const m = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'fr'],
+        domains: [
+          {
+            defaultLocale: 'fr',
+            domain: 'ca.example.com'
+          }
+        ]
+      });
+      m(createMockRequest('/', 'de', 'http://ca.example.com'));
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://ca.example.com/fr'
       );
     });
 

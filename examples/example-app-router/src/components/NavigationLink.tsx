@@ -3,8 +3,8 @@
 import clsx from 'clsx';
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import type {AppPathnames} from '../config';
-import {Link} from '../navigation';
+import type {AppPathnames} from '@/config';
+import {Link} from '@/navigation';
 
 export default function NavigationLink<Pathname extends AppPathnames>({
   href,

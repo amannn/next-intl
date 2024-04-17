@@ -1,7 +1,6 @@
 {
   "extends": "eslint-config-molindo/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "src",
     "target": "es5",
     "lib": [
       "dom",
@@ -22,7 +21,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
