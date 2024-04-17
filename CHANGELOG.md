@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.11.3 (2024-04-17)
+
+
+### Bug Fixes
+
+* When using domain-based routing, use `defaultLocale` of a domain instead of the top-level one in case no other locale matches better on the domain ([#1000](https://github.com/amannn/next-intl/issues/1000)) ([42988b7](https://github.com/amannn/next-intl/commit/42988b773581dad7a09af0b5cd01c958afa60865)), closes [#998](https://github.com/amannn/next-intl/issues/998)
+
+
+
+
+
 ## 3.11.2 (2024-04-17)
 
 
