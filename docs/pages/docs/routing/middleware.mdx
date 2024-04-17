@@ -84,16 +84,14 @@ export default createMiddleware({
     {
       domain: 'us.example.com',
       defaultLocale: 'en',
-      // Optionally restrict the locales managed by this domain. If this
-      // domain receives requests for another locale (e.g. us.example.com/fr),
-      // then the middleware will redirect to a domain that supports it.
+      // Optionally restrict the locales available on this domain
       locales: ['en']
     },
     {
       domain: 'ca.example.com',
       defaultLocale: 'en'
       // If there are no `locales` specified on a domain,
-      // all global locales will be supported here.
+      // all available locales will be supported here
     }
   ]
 });
@@ -110,11 +108,12 @@ To match the request against the available domains, the host is read from the `x
 
 The locale is detected based on these priorities:
 
-1. A locale prefix is present in the pathname and the domain supports it (e.g. `ca.example.com/fr`)
-2. If the host of the request is configured in `domains`, the `defaultLocale` of the domain is used
-3. As a fallback, the [locale detection of prefix-based routing](#locale-detection) applies
+1. A locale prefix is present in the pathname (e.g. `ca.example.com/fr`)
+2. A locale is stored in a cookie and is supported on the domain
+3. A locale that the domain supports is matched based on the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
+4. As a fallback, the `defaultLocale` of the domain is used
 
-Since the middleware is aware of all your domains, the domain will automatically be switched when the user requests to change the locale.
+Since the middleware is aware of all your domains, if a domain receives a request for a locale that is not supported (e.g. `en.example.com/fr`), it will redirect to an alternative domain that does support the locale.
 
 **Example workflow:**
 
