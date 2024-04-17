@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.11.2 (2024-04-17)
+
+
+### Bug Fixes
+
+* Correctly detect base path at the app root `/` when using a locale prefix strategy other than `always`. This ensures the locale cookie is set correctly. ([#999](https://github.com/amannn/next-intl/issues/999)) ([1ce5988](https://github.com/amannn/next-intl/commit/1ce598893281f9789046b639b39a55fe4cca34c7)), closes [#997](https://github.com/amannn/next-intl/issues/997)
+
+
+
+
+
+## 3.11.1 (2024-04-05)
+
+
+### Bug Fixes
+
+* Apply correct port when redirecting to another domain and the app doesn't run behind a proxy ([#979](https://github.com/amannn/next-intl/issues/979) by [@awkaiser-tr](https://github.com/awkaiser-tr)) ([485f59e](https://github.com/amannn/next-intl/commit/485f59e2c09224bf260e87ede30a67d0a5c542c0)), closes [#658](https://github.com/amannn/next-intl/issues/658)
+
+
+
+
+
+# 3.11.0 (2024-04-03)
+
+
+### Features
+
+* Support symbols in localized pathnames that require URL encoding ([#959](https://github.com/amannn/next-intl/issues/959)) ([b6e66f4](https://github.com/amannn/next-intl/commit/b6e66f4afd663ea5dc0851f5b528bcc55388b927)), closes [#607](https://github.com/amannn/next-intl/issues/607) [/github.com/amannn/next-intl/issues/607#issuecomment-1979747515](https://github.com//github.com/amannn/next-intl/issues/607/issues/issuecomment-1979747515)
+
+
+
+
+
 # 3.10.0 (2024-03-25)
 
 

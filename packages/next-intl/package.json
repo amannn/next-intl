@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.10.0",
+  "version": "3.11.2",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -82,7 +82,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^3.10.0"
+    "use-intl": "^3.11.2"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
@@ -122,11 +122,11 @@
     },
     {
       "path": "dist/production/navigation.react-client.js",
-      "limit": "2.94 KB"
+      "limit": "2.96 KB"
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "3.03 KB"
+      "limit": "3.06 KB"
     },
     {
       "path": "dist/production/server.react-client.js",
@@ -138,7 +138,7 @@
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "5.9 KB"
+      "limit": "5.95 KB"
     }
   ]
 }

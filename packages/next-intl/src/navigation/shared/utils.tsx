@@ -161,7 +161,11 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  const unlocalizedPathname = unlocalizePathname(pathname, locale);
+  const unlocalizedPathname = unlocalizePathname(
+    // Potentially handle foreign symbols
+    decodeURI(pathname),
+    locale
+  );
 
   let template = Object.entries(pathnames).find(([, routePath]) => {
     const routePathname =
@@ -176,6 +180,13 @@ export function getRoute<Locales extends AllLocales>({
   return template as keyof Pathnames<Locales>;
 }
 
-export function getBasePath(pathname: string) {
-  return window.location.pathname.replace(pathname, '');
+export function getBasePath(
+  pathname: string,
+  windowPathname = window.location.pathname
+) {
+  if (pathname === '/') {
+    return windowPathname;
+  } else {
+    return windowPathname.replace(pathname, '');
+  }
 }

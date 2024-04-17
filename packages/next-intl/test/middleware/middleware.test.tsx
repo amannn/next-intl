@@ -363,41 +363,47 @@ describe('prefix-based routing', () => {
     describe('localized pathnames', () => {
       const middlewareWithPathnames = createIntlMiddleware({
         defaultLocale: 'en',
-        locales: ['en', 'de', 'de-AT'],
+        locales: ['en', 'de', 'de-AT', 'ja'],
         localePrefix: 'as-needed',
         pathnames: {
           '/': '/',
           '/about': {
             en: '/about',
             de: '/ueber',
-            'de-AT': '/ueber'
+            'de-AT': '/ueber',
+            ja: '/約'
           },
           '/users': {
             en: '/users',
             de: '/benutzer',
-            'de-AT': '/benutzer'
+            'de-AT': '/benutzer',
+            ja: '/ユーザー'
           },
           '/users/[userId]': {
             en: '/users/[userId]',
             de: '/benutzer/[userId]',
-            'de-AT': '/benutzer/[userId]'
+            'de-AT': '/benutzer/[userId]',
+            ja: '/ユーザー/[userId]'
           },
           '/news/[articleSlug]-[articleId]': {
             en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]',
-            'de-AT': '/neuigkeiten/[articleSlug]-[articleId]'
+            'de-AT': '/neuigkeiten/[articleSlug]-[articleId]',
+            ja: '/ニュース/[articleSlug]-[articleId]'
           },
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]',
-            'de-AT': '/produkte/[...slug]'
+            'de-AT': '/produkte/[...slug]',
+            ja: '/製品/[...slug]'
           },
           '/categories/[[...slug]]': {
             en: '/categories/[[...slug]]',
             de: '/kategorien/[[...slug]]',
-            'de-AT': '/kategorien/[[...slug]]'
+            'de-AT': '/kategorien/[[...slug]]',
+            ja: '/カテゴリー/[[...slug]]'
           }
-        } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT'>>
+        } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT' | 'ja'>>
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -490,6 +496,45 @@ describe('prefix-based routing', () => {
         );
         expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
           'http://localhost:3000/de/categories/frauen/t-shirts'
+        );
+      });
+
+      it('serves requests for a non-default locale at nested paths', () => {
+        middlewareWithPathnames(createMockRequest('/ja/約', 'ja'));
+        middlewareWithPathnames(createMockRequest('/ja/ユーザー', 'ja'));
+        middlewareWithPathnames(createMockRequest('/ja/ユーザー/1', 'ja'));
+        middlewareWithPathnames(
+          createMockRequest('/ja/ニュース/happy-newyear-g5b116754', 'ja')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/ja/製品/アパレル/ティーシャツ', 'ja')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/ja/カテゴリー/女性/ティーシャツ', 'ja')
+        );
+
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/ja/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/ja/users'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/ja/users/1'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://localhost:3000/ja/news/happy-newyear-g5b116754'
+        );
+
+        // Dynamic segments are expected to be encoded
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://localhost:3000/ja/products/%E3%82%A2%E3%83%91%E3%83%AC%E3%83%AB/%E3%83%86%E3%82%A3%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%84'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://localhost:3000/ja/categories/%E5%A5%B3%E6%80%A7/%E3%83%86%E3%82%A3%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%84'
         );
       });
 
@@ -608,36 +653,42 @@ describe('prefix-based routing', () => {
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de', 'de'))).toEqual([
           '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/about', 'en'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/ueber>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E7%B4%84>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/ueber', 'de'))).toEqual([
           '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/ueber>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/ueber>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E7%B4%84>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/users/1', 'en'))).toEqual([
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/benutzer/1>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC/1>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/benutzer/1', 'de'))).toEqual([
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/benutzer/1>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/benutzer/1>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC/1>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/users/1>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
@@ -646,6 +697,7 @@ describe('prefix-based routing', () => {
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E8%A3%BD%E5%93%81/apparel/t-shirts>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(
@@ -654,18 +706,21 @@ describe('prefix-based routing', () => {
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/produkte/apparel/t-shirts>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/%E8%A3%BD%E5%93%81/apparel/t-shirts>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/products/apparel/t-shirts>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/unknown', 'en'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/unknown>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/unknown>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
         expect(getLinks(createMockRequest('/de/unknown', 'de'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/de/unknown>; rel="alternate"; hreflang="de"',
           '<http://localhost:3000/de-AT/unknown>; rel="alternate"; hreflang="de-AT"',
+          '<http://localhost:3000/ja/unknown>; rel="alternate"; hreflang="ja"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
         ]);
       });
@@ -2396,7 +2451,16 @@ describe('domain-based routing', () => {
       );
     });
 
-    it('uses the correct port and protocol when being called from an internal address', () => {
+    it('uses the correct port and protocol', () => {
+      middleware(createMockRequest('/', 'fr', 'http://ca.example.com:3000'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://ca.example.com:3000/fr'
+      );
+    });
+
+    it('uses the correct port and protocol when behind a proxy', () => {
       middleware(
         createMockRequest('/', 'fr', 'http://192.168.0.1:3000', undefined, {
           'x-forwarded-host': 'ca.example.com',
@@ -2407,6 +2471,19 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'https://ca.example.com/fr'
+      );
+
+      middleware(
+        createMockRequest('/', 'fr', 'http://192.168.0.1:3000', undefined, {
+          'x-forwarded-host': 'ca.example.com',
+          'x-forwarded-port': '4200',
+          'x-forwarded-proto': 'https'
+        })
+      );
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'https://ca.example.com:4200/fr'
       );
     });
 

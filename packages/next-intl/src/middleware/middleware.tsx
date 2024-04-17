@@ -44,11 +44,14 @@ export default function createMiddleware<Locales extends AllLocales>(
   const configWithDefaults = receiveConfig(config);
 
   return function middleware(request: NextRequest) {
+    // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
+    const nextPathname = decodeURI(request.nextUrl.pathname);
+
     const {domain, locale} = resolveLocale(
       configWithDefaults,
       request.headers,
       request.cookies,
-      request.nextUrl.pathname
+      nextPathname
     );
 
     const hasOutdatedCookie =
@@ -113,10 +116,15 @@ export default function createMiddleware<Locales extends AllLocales>(
       }
 
       if (redirectDomain) {
-        urlObj.protocol =
-          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
-        urlObj.port = '';
         urlObj.host = redirectDomain;
+
+        if (request.headers.get('x-forwarded-host')) {
+          urlObj.protocol =
+            request.headers.get('x-forwarded-proto') ??
+            request.nextUrl.protocol;
+
+          urlObj.port = request.headers.get('x-forwarded-port') ?? '';
+        }
       }
 
       if (request.nextUrl.basePath) {
@@ -130,12 +138,12 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     const normalizedPathname = getNormalizedPathname(
-      request.nextUrl.pathname,
+      nextPathname,
       configWithDefaults.locales
     );
 
     const pathLocale = getPathnameLocale(
-      request.nextUrl.pathname,
+      nextPathname,
       configWithDefaults.locales
     );
     const hasLocalePrefix = pathLocale != null;
@@ -143,7 +151,7 @@ export default function createMiddleware<Locales extends AllLocales>(
     let response;
     let internalTemplateName: string | undefined;
 
-    let pathname = request.nextUrl.pathname;
+    let pathname = nextPathname;
     if (configWithDefaults.pathnames) {
       let resolvedTemplateLocale: Locales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
