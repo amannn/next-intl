@@ -5,9 +5,9 @@ import Callout from 'components/Callout';
 
 If you're using a sitemap to inform search engines about all pages of your site, you can attach [locale-specific alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL in the sitemap to indicate that a particular page is available in multiple languages or regions.
 
-Note that by default, `next-intl` returns [the `link` response header](/docs/routing/middleware#alternate-links) to instruct search engines that a page is available in multiple languages. While this is sufficient, you may choose to provide this information in a sitemap in case you have more specific requirements.
+Note that by default, `next-intl` returns [the `link` response header](/docs/routing/middleware#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
 
-Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Note that also the default locale should be included in the `alternates` object.
+Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
 
 <Tabs items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
@@ -52,7 +52,7 @@ If you're using [localized pathnames](/docs/routing/navigation#localized-pathnam
 ```tsx
 import {MetadataRoute} from 'next';
 import {locales, pathnames, defaultLocale} from '@/config';
-import {getPathname} from 'navigation';
+import {getPathname} from '@/navigation';
 
 // Adapt this as necessary
 const host = 'https://acme.com';
