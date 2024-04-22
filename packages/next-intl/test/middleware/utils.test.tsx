@@ -166,154 +166,58 @@ describe('getInternalTemplate', () => {
 
 describe('getSortedPathnames', () => {
   it('works for static routes that include the root', () => {
-    const pathnames = {
-      '/': {
-        en: '/',
-        de: '/',
-        it: '/'
-      },
-      '/foo': {
-        en: '/foo',
-        de: '/foo',
-        it: '/foo'
-      },
-      '/test': {
-        en: '/test',
-        de: '/test',
-        it: '/test'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/', pathnames['/']],
-      ['/foo', pathnames['/foo']],
-      ['/test', pathnames['/test']]
+    expect(getSortedPathnames(['/', '/foo', '/test'])).toEqual([
+      '/',
+      '/foo',
+      '/test'
     ]);
   });
 
-  it('should priotize non-catch-all routes over catch-all routes', () => {
-    const pathnames = {
-      '/categories/[...slug]': {
-        en: '/categories/[...slug]',
-        de: '/kategorien/[...slug]',
-        it: '/categorie/[...slug]'
-      },
-      '/categories/new': {
-        en: '/categories/new',
-        de: '/kategorien/neu',
-        it: '/categorie/nuovo'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/categories/new', pathnames['/categories/new']],
-      ['/categories/[...slug]', pathnames['/categories/[...slug]']]
-    ]);
+  it('should prioritize non-catch-all routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[...slug]', '/categories/new'])
+    ).toEqual(['/categories/new', '/categories/[...slug]']);
   });
 
-  it('should priotize static routes over optional catch-all routes', () => {
-    const pathnames = {
-      '/categories/[[...slug]]': {
-        en: '/categories/[[...slug]]',
-        de: '/kategorien/[[...slug]]',
-        it: '/categorie/[[...slug]]'
-      },
-      '/categories': {
-        en: '/categories',
-        de: '/kategorien',
-        it: '/categorie'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/categories', pathnames['/categories']],
-      ['/categories/[[...slug]]', pathnames['/categories/[[...slug]]']]
-    ]);
+  it('should prioritize static routes over optional catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[[...slug]]', '/categories'])
+    ).toEqual(['/categories', '/categories/[[...slug]]']);
   });
 
-  it('should priotize more specific routes over dynamic routes', () => {
-    const pathnames = {
-      '/categories/[slug]': {
-        en: '/categories/[slug]',
-        de: '/kategorien/[slug]',
-        it: '/categorie/[slug]'
-      },
-      '/categories/new': {
-        en: '/categories/new',
-        de: '/kategorien/neu',
-        it: '/categorie/nuovo'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/categories/new', pathnames['/categories/new']],
-      ['/categories/[slug]', pathnames['/categories/[slug]']]
-    ]);
+  it('should prioritize more specific routes over dynamic routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[slug]', '/categories/new'])
+    ).toEqual(['/categories/new', '/categories/[slug]']);
   });
 
-  it('should priotize dynamic routes over catch-all routes', () => {
-    const pathnames = {
-      '/categories/[...slug]': {
-        en: '/categories/[...slug]',
-        de: '/kategorien/[...slug]',
-        it: '/categorie/[...slug]'
-      },
-      '/categories/[slug]': {
-        en: '/categories/[slug]',
-        de: '/kategorien/[slug]',
-        it: '/categorie/[slug]'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/categories/[slug]', pathnames['/categories/[slug]']],
-      ['/categories/[...slug]', pathnames['/categories/[...slug]']]
-    ]);
+  it('should prioritize dynamic routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[...slug]', '/categories/[slug]'])
+    ).toEqual(['/categories/[slug]', '/categories/[...slug]']);
   });
 
-  it('should priotize more specific nested routes over dynamic routes', () => {
-    const pathnames = {
-      '/articles/[category]/[articleSlug]': {
-        en: '/articles/[category]/[articleSlug]',
-        de: '/artikel/[category]/[articleSlug]',
-        it: '/articoli/[category]/[articleSlug]'
-      },
-      '/articles/[category]/new': {
-        en: '/articles/[category]/new',
-        de: '/artikel/[category]/neu',
-        it: '/articoli/[category]/nuovo'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/articles/[category]/new', pathnames['/articles/[category]/new']],
-      [
+  it('should prioritize more specific nested routes over dynamic routes', () => {
+    expect(
+      getSortedPathnames([
         '/articles/[category]/[articleSlug]',
-        pathnames['/articles/[category]/[articleSlug]']
-      ]
+        '/articles/[category]/new'
+      ])
+    ).toEqual([
+      '/articles/[category]/new',
+      '/articles/[category]/[articleSlug]'
     ]);
   });
 
-  it('should priotize more specific nested routes over catch-all routes', () => {
-    const pathnames = {
-      '/articles/[category]/[...articleSlug]': {
-        en: '/articles/[category]/[...articleSlug]',
-        de: '/artikel/[category]/[...articleSlug]',
-        it: '/articoli/[category]/[...articleSlug]'
-      },
-      '/articles/[category]/new': {
-        en: '/articles/[category]/new',
-        de: '/artikel/[category]/neu',
-        it: '/articoli/[category]/nuovo'
-      }
-    };
-
-    expect(getSortedPathnames(pathnames)).toEqual([
-      ['/articles/[category]/new', pathnames['/articles/[category]/new']],
-      [
+  it('should prioritize more specific nested routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames([
         '/articles/[category]/[...articleSlug]',
-        pathnames['/articles/[category]/[...articleSlug]']
-      ]
+        '/articles/[category]/new'
+      ])
+    ).toEqual([
+      '/articles/[category]/new',
+      '/articles/[category]/[...articleSlug]'
     ]);
   });
 });

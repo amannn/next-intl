@@ -9,13 +9,6 @@ export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
 }
 
-function getExternalPath<Locales extends AllLocales>(
-  path: string | {[Key in Locales[number]]: string}
-): string {
-  const firstLocalePath = Object.values(path)[0];
-  return typeof path === 'string' ? path : firstLocalePath;
-}
-
 function isOptionalCatchAll(pathname: string) {
   return pathname.includes('[[...');
 }
@@ -28,17 +21,9 @@ function isDynamicRoute(pathname: string) {
   return pathname.includes('[');
 }
 
-type PathnamePair<Locales extends AllLocales> = [
-  string,
-  string | {[Key in Locales[number]]: string}
-];
-
-export function comparePathnamePairs<Locales extends AllLocales>(
-  a: PathnamePair<Locales>,
-  b: PathnamePair<Locales>
-): number {
-  const pathA = getExternalPath(a[1]).split('/').filter(Boolean);
-  const pathB = getExternalPath(b[1]).split('/').filter(Boolean);
+export function comparePathnamePairs(a: string, b: string): number {
+  const pathA = a.split('/');
+  const pathB = b.split('/');
 
   const maxLength = Math.max(pathA.length, pathB.length);
   for (let i = 0; i < maxLength; i++) {
@@ -70,10 +55,8 @@ export function comparePathnamePairs<Locales extends AllLocales>(
   return 0;
 }
 
-export function getSortedPathnames<Locales extends AllLocales>(
-  pathnames: NonNullable<MiddlewareConfigWithDefaults<Locales>['pathnames']>
-) {
-  const sortedPathnames = Object.entries(pathnames).sort(comparePathnamePairs);
+export function getSortedPathnames(pathnames: Array<string>) {
+  const sortedPathnames = pathnames.sort(comparePathnamePairs);
   return sortedPathnames;
 }
 
@@ -87,14 +70,11 @@ export function getInternalTemplate<
   pathname: string,
   locale: Locales[number]
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
-  // Sort pathnames by specificity
-  const sortedPathnames = getSortedPathnames(pathnames);
+  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
 
   // Try to find a localized pathname that matches
-  for (const [
-    internalPathname,
-    localizedPathnamesOrPathname
-  ] of sortedPathnames) {
+  for (const internalPathname of sortedPathnames) {
+    const localizedPathnamesOrPathname = pathnames[internalPathname];
     if (typeof localizedPathnamesOrPathname === 'string') {
       const localizedPathname = localizedPathnamesOrPathname;
       if (matchesPathname(localizedPathname, pathname)) {
