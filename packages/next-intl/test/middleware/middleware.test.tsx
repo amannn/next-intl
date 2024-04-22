@@ -1234,7 +1234,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('priotizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
         middlewareWithPathnames(
           createMockRequest('/de/produkte/hinzufuegen', 'de')
         );
