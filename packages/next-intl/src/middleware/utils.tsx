@@ -67,7 +67,7 @@ export function comparePathnamePairs<Locales extends AllLocales>(
   }
 
   // Both pathnames are completely static
-  return 0
+  return 0;
 }
 
 export function getSortedPathnames<Locales extends AllLocales>(

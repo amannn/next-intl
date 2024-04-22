@@ -686,7 +686,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('priotizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
         middlewareWithPathnames(
           createMockRequest('/de/produkte/hinzufuegen', 'de')
         );
@@ -702,7 +702,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('priotizes more specific, static routes over dynamic routes for the non-default locale', () => {
+      it('prioritizes more specific, static routes over dynamic routes for the non-default locale', () => {
         middlewareWithPathnames(
           createMockRequest('/de/artikel/technology/aktuell', 'de')
         );
@@ -1202,7 +1202,7 @@ describe('prefix-based routing', () => {
         ]);
       });
 
-      it('priotizes static routes over dynamic and catch-all routes for the default locale', () => {
+      it('prioritizes static routes over dynamic and catch-all routes for the default locale', () => {
         middlewareWithPathnames(createMockRequest('/en/products/add', 'en'));
         middlewareWithPathnames(createMockRequest('/en/categories/new', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
