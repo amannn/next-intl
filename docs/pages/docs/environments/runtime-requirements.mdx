@@ -15,7 +15,9 @@ Based on the features you're using, you have to make sure your target browsers s
 - Relative time formatting: `Intl.RelativeTimeFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/RelativeTimeFormat#browser_compatibility))
 - List formatting: `Intl.ListFormat` ([compatibility](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat#browser_compatibility))
 
-If you target a browser that doesn't support all the required APIs, consider using polyfills. [Polyfill.io](https://polyfill.io/v3/) is a valuable solution for this that helps you to load only the polyfills you need for a given locale.
+If you target a browser that doesn't support all the required APIs, consider using polyfills.
+
+Cloudflare provides a [polyfill service](https://cdnjs.cloudflare.com/polyfill/) that you can use to load the necessary polyfills for a given locale.
 
 **Example:**
 
@@ -45,7 +47,7 @@ function IntlPolyfills() {
     <Script
       strategy="beforeInteractive"
       src={
-        'https://polyfill.io/v3/polyfill.min.js?features=' + polyfills.join(',')
+        'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=' + polyfills.join(',')
       }
     />
   );
@@ -53,9 +55,9 @@ function IntlPolyfills() {
 ```
 
 <Callout type="warning">
-  Note that Polyfill.io doesn't support every locale. You can find a list of the
+  Note that the polyfill service doesn't support every locale. You can find a list of the
   available polyfills in the [`polyfill-service` GitHub
-  repository](https://github.com/JakeChampion/polyfill-service/tree/main/polyfill-libraries/3.101.0/polyfills/__dist)
+  repository](https://github.com/cdnjs/polyfill-service/tree/main/polyfill-libraries/3.101.0/polyfills/__dist)
   (e.g. search for `Intl.DateTimeFormat.~locale.de-AT`).
 </Callout>
 
