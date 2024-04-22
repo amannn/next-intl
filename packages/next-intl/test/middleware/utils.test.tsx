@@ -165,6 +165,32 @@ describe('getInternalTemplate', () => {
 });
 
 describe('getSortedPathnames', () => {
+  it('works for static routes that include the root', () => {
+    const pathnames = {
+      '/': {
+        en: '/',
+        de: '/',
+        it: '/'
+      },
+      '/foo': {
+        en: '/foo',
+        de: '/foo',
+        it: '/foo'
+      },
+      '/test': {
+        en: '/test',
+        de: '/test',
+        it: '/test'
+      }
+    };
+
+    expect(getSortedPathnames(pathnames)).toEqual([
+      ['/', pathnames['/']],
+      ['/foo', pathnames['/foo']],
+      ['/test', pathnames['/test']]
+    ]);
+  });
+
   it('should priotize non-catch-all routes over catch-all routes', () => {
     const pathnames = {
       '/categories/[...slug]': {
