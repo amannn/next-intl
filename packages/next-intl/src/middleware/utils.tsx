@@ -66,8 +66,8 @@ export function comparePathnamePairs<Locales extends AllLocales>(
     if (segmentA === segmentB) continue;
   }
 
-  // Deeper (more specific) paths first
-  return pathA.length - pathB.length;
+  // Both pathnames are completely static
+  return 0
 }
 
 export function getSortedPathnames<Locales extends AllLocales>(
