@@ -1216,7 +1216,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('priotizes more specific, static routes over dynamic routes for the default locale', () => {
+      it('prioritizes more specific, static routes over dynamic routes for the default locale', () => {
         middlewareWithPathnames(
           createMockRequest('/en/articles/technology/just-in', 'en')
         );
