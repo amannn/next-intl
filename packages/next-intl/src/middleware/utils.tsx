@@ -89,6 +89,7 @@ export function getInternalTemplate<
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
   // Sort pathnames by specificity
   const sortedPathnames = getSortedPathnames(pathnames);
+
   // Try to find a localized pathname that matches
   for (const [
     internalPathname,
