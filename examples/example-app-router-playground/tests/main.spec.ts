@@ -153,7 +153,7 @@ it('redirects unprefixed paths for non-default locales', async ({browser}) => {
   page.getByRole('heading', {name: 'Verschachtelt'});
 });
 
-it('priotizes static routes over dynamic routes for the default locale', async ({
+it('prioritizes static routes over dynamic routes for the default locale', async ({
   page
 }) => {
   await page.goto('/news/just-in');
@@ -161,7 +161,7 @@ it('priotizes static routes over dynamic routes for the default locale', async (
   await expect(page.getByRole('heading', {name: 'Just In'})).toBeVisible();
 });
 
-it('priotizes static routes over dynamic routes for non-default locales', async ({
+it('prioritizes static routes over dynamic routes for non-default locales', async ({
   page
 }) => {
   await page.goto('/de/neuigkeiten/aktuell');
