@@ -1,9 +1,8 @@
 import {cache} from 'react';
 import {createFormatter} from 'use-intl/core';
 import getConfig from './getConfig';
-import resolveLocaleArg from './resolveLocaleArg';
 
-async function getFormatterCachedImpl(locale: string) {
+async function getFormatterCachedImpl(locale?: string) {
   const config = await getConfig(locale);
   return createFormatter(config);
 }
@@ -18,6 +17,5 @@ const getFormatterCached = cache(getFormatterCachedImpl);
 export default async function getFormatter(opts?: {
   locale?: string;
 }): Promise<ReturnType<typeof createFormatter>> {
-  const locale = await resolveLocaleArg(opts);
-  return getFormatterCached(locale);
+  return getFormatterCached(opts?.locale);
 }

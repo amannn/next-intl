@@ -1,6 +1,5 @@
 import {use} from 'react';
 import getConfig from '../server/react-server/getConfig';
-import useLocale from './useLocale';
 
 function useHook<Value>(hookName: string, promise: Promise<Value>) {
   try {
@@ -23,6 +22,5 @@ function useHook<Value>(hookName: string, promise: Promise<Value>) {
 export default function useConfig(
   hookName: string
 ): Awaited<ReturnType<typeof getConfig>> {
-  const locale = useLocale();
-  return useHook(hookName, getConfig(locale));
+  return useHook(hookName, getConfig());
 }
