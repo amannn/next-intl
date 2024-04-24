@@ -4,8 +4,9 @@ An example that showcases how an app can provide a locale in `i18n.ts` to `next-
 
 **Note that:**
 
- 1. No middleware needs to be configured.
- 2. The navigation APIs from `next-intl` don't need to be used.
+1. No `[locale]` segment needs to be added
+2. No middleware needs to be configured
+3. The navigation APIs from `next-intl` don't need to be used
 
 ## Deploy your own
 
