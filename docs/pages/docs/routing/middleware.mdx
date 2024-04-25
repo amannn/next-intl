@@ -593,10 +593,14 @@ Note that if you use a [`localePrefix`](#locale-prefix) other than `always`, you
 
 ### Example: Integrating with Clerk
 
-[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be integrated with `next-intl` by using the [`beforeAuth` hook](https://clerk.com/docs/references/nextjs/auth-middleware#using-before-auth-to-execute-middleware-before-authentication). By doing this, the middleware from `next-intl` will run first, potentially redirect or rewrite incoming requests, followed by the middleware from `@clerk/next` acting on the response.
+[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be [combined](https://clerk.com/docs/references/nextjs/clerk-middleware#combine-middleware) with other middlewares like the one provided by `next-intl`. By combining them, the middleware from `@clerk/next` will first ensure protected routes are handled appropriately. Subsequently, the middleware from `next-intl` will run, potentially redirecting or rewriting incoming requests.
 
 ```tsx filename="middleware.ts"
-import {authMiddleware} from '@clerk/nextjs';
+import {
+  clerkMiddleware,
+  createRouteMatcher,
+  redirectToSignIn,
+} from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 
 const intlMiddleware = createMiddleware({
@@ -604,18 +608,21 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'en'
 });
 
-export default authMiddleware({
-  beforeAuth(request) {
-    return intlMiddleware(request);
-  },
+const isProtectedRoute = createRouteMatcher([
+  'dashboard/(.*)',
+]);
 
-  // Ensure that locale-specific sign in pages are public
-  publicRoutes: ['/:locale', '/:locale/sign-in']
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect();
+
+  return intlMiddleware(req);
 });
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  /**
+   * Match all paths except of internal /_next/ routes, static files and api paths
+   */
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api)(.*)'],
 };
 ```
 
