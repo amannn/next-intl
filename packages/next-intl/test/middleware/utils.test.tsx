@@ -3,7 +3,8 @@ import {
   formatPathname,
   getInternalTemplate,
   getNormalizedPathname,
-  getRouteParams
+  getRouteParams,
+  getSortedPathnames
 } from '../../src/middleware/utils';
 
 describe('getNormalizedPathname', () => {
@@ -159,6 +160,64 @@ describe('getInternalTemplate', () => {
     expect(getInternalTemplate(pathnames, '/external/2', 'it')).toEqual([
       'it',
       '/internal/[id]'
+    ]);
+  });
+});
+
+describe('getSortedPathnames', () => {
+  it('works for static routes that include the root', () => {
+    expect(getSortedPathnames(['/', '/foo', '/test'])).toEqual([
+      '/',
+      '/foo',
+      '/test'
+    ]);
+  });
+
+  it('should prioritize non-catch-all routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[...slug]', '/categories/new'])
+    ).toEqual(['/categories/new', '/categories/[...slug]']);
+  });
+
+  it('should prioritize static routes over optional catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[[...slug]]', '/categories'])
+    ).toEqual(['/categories', '/categories/[[...slug]]']);
+  });
+
+  it('should prioritize more specific routes over dynamic routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[slug]', '/categories/new'])
+    ).toEqual(['/categories/new', '/categories/[slug]']);
+  });
+
+  it('should prioritize dynamic routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames(['/categories/[...slug]', '/categories/[slug]'])
+    ).toEqual(['/categories/[slug]', '/categories/[...slug]']);
+  });
+
+  it('should prioritize more specific nested routes over dynamic routes', () => {
+    expect(
+      getSortedPathnames([
+        '/articles/[category]/[articleSlug]',
+        '/articles/[category]/new'
+      ])
+    ).toEqual([
+      '/articles/[category]/new',
+      '/articles/[category]/[articleSlug]'
+    ]);
+  });
+
+  it('should prioritize more specific nested routes over catch-all routes', () => {
+    expect(
+      getSortedPathnames([
+        '/articles/[category]/[...articleSlug]',
+        '/articles/[category]/new'
+      ])
+    ).toEqual([
+      '/articles/[category]/new',
+      '/articles/[category]/[...articleSlug]'
     ]);
   });
 });

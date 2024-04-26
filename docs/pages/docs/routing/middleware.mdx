@@ -321,18 +321,17 @@ export default createMiddleware({
       de: '/ueber-uns'
     },
 
-    // Pathnames that overlap with dynamic segments should
-    // be listed first in the object, as the middleware will
-    // pick the first matching entry.
-    '/news/just-in': {
-      en: '/news/just-in',
-      de: '/neuigkeiten/aktuell'
-    },
-
     // Dynamic params are supported via square brackets
     '/news/[articleSlug]-[articleId]': {
       en: '/news/[articleSlug]-[articleId]',
       de: '/neuigkeiten/[articleSlug]-[articleId]'
+    },
+
+    // Static pathnames that overlap with dynamic segments
+    // will be prioritized over the dynamic segment
+    '/news/just-in': {
+      en: '/news/just-in',
+      de: '/neuigkeiten/aktuell'
     },
 
     // Also (optional) catch-all segments are supported

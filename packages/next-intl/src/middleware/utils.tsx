@@ -9,6 +9,65 @@ export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
 }
 
+function isOptionalCatchAllSegment(pathname: string) {
+  return pathname.includes('[[...');
+}
+
+function isCatchAllSegment(pathname: string) {
+  return pathname.includes('[...');
+}
+
+function isDynamicSegment(pathname: string) {
+  return pathname.includes('[');
+}
+
+export function comparePathnamePairs(a: string, b: string): number {
+  const pathA = a.split('/');
+  const pathB = b.split('/');
+
+  const maxLength = Math.max(pathA.length, pathB.length);
+  for (let i = 0; i < maxLength; i++) {
+    const segmentA = pathA[i];
+    const segmentB = pathB[i];
+
+    // If one of the paths ends, prioritize the shorter path
+    if (!segmentA && segmentB) return -1;
+    if (segmentA && !segmentB) return 1;
+
+    // Prioritize static segments over dynamic segments
+    if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;
+    if (isDynamicSegment(segmentA) && !isDynamicSegment(segmentB)) return 1;
+
+    // Prioritize non-catch-all segments over catch-all segments
+    if (!isCatchAllSegment(segmentA) && isCatchAllSegment(segmentB)) return -1;
+    if (isCatchAllSegment(segmentA) && !isCatchAllSegment(segmentB)) return 1;
+
+    // Prioritize non-optional catch-all segments over optional catch-all segments
+    if (
+      !isOptionalCatchAllSegment(segmentA) &&
+      isOptionalCatchAllSegment(segmentB)
+    ) {
+      return -1;
+    }
+    if (
+      isOptionalCatchAllSegment(segmentA) &&
+      !isOptionalCatchAllSegment(segmentB)
+    ) {
+      return 1;
+    }
+
+    if (segmentA === segmentB) continue;
+  }
+
+  // Both pathnames are completely static
+  return 0;
+}
+
+export function getSortedPathnames(pathnames: Array<string>) {
+  const sortedPathnames = pathnames.sort(comparePathnamePairs);
+  return sortedPathnames;
+}
+
 export function getInternalTemplate<
   Locales extends AllLocales,
   Pathnames extends NonNullable<
@@ -19,10 +78,11 @@ export function getInternalTemplate<
   pathname: string,
   locale: Locales[number]
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
+  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
+
   // Try to find a localized pathname that matches
-  for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
-    pathnames
-  )) {
+  for (const internalPathname of sortedPathnames) {
+    const localizedPathnamesOrPathname = pathnames[internalPathname];
     if (typeof localizedPathnamesOrPathname === 'string') {
       const localizedPathname = localizedPathnamesOrPathname;
       if (matchesPathname(localizedPathname, pathname)) {
