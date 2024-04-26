@@ -9,15 +9,15 @@ export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
 }
 
-function isOptionalCatchAll(pathname: string) {
+function isOptionalCatchAllSegment(pathname: string) {
   return pathname.includes('[[...');
 }
 
-function isCatchAll(pathname: string) {
+function isCatchAllSegment(pathname: string) {
   return pathname.includes('[...');
 }
 
-function isDynamicRoute(pathname: string) {
+function isDynamicSegment(pathname: string) {
   return pathname.includes('[');
 }
 
@@ -35,18 +35,26 @@ export function comparePathnamePairs(a: string, b: string): number {
     if (segmentA && !segmentB) return 1;
 
     // Prioritize static segments over dynamic segments
-    if (!isDynamicRoute(segmentA) && isDynamicRoute(segmentB)) return -1;
-    if (isDynamicRoute(segmentA) && !isDynamicRoute(segmentB)) return 1;
+    if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;
+    if (isDynamicSegment(segmentA) && !isDynamicSegment(segmentB)) return 1;
 
     // Prioritize non-catch-all segments over catch-all segments
-    if (!isCatchAll(segmentA) && isCatchAll(segmentB)) return -1;
-    if (isCatchAll(segmentA) && !isCatchAll(segmentB)) return 1;
+    if (!isCatchAllSegment(segmentA) && isCatchAllSegment(segmentB)) return -1;
+    if (isCatchAllSegment(segmentA) && !isCatchAllSegment(segmentB)) return 1;
 
     // Prioritize non-optional catch-all segments over optional catch-all segments
-    if (!isOptionalCatchAll(segmentA) && isOptionalCatchAll(segmentB)) {
+    if (
+      !isOptionalCatchAllSegment(segmentA) &&
+      isOptionalCatchAllSegment(segmentB)
+    ) {
       return -1;
     }
-    if (isOptionalCatchAll(segmentA) && !isOptionalCatchAll(segmentB)) return 1;
+    if (
+      isOptionalCatchAllSegment(segmentA) &&
+      !isOptionalCatchAllSegment(segmentB)
+    ) {
+      return 1;
+    }
 
     if (segmentA === segmentB) continue;
   }
