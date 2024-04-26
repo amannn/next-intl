@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.12.0 (2024-04-26)
+
+
+### Features
+
+* Automatically prefer localized pathnames that are more specific ([#983](https://github.com/amannn/next-intl/issues/983) by [@fkapsahili](https://github.com/fkapsahili)) ([88a9b7a](https://github.com/amannn/next-intl/commit/88a9b7a18e89c4c642c2dd486ad4cb8de24e0086))
+
+
+
+
+
 ## 3.11.3 (2024-04-17)
 
 
