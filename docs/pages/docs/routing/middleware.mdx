@@ -608,7 +608,7 @@ const intlMiddleware = createMiddleware({
 });
 
 const isProtectedRoute = createRouteMatcher([
-  'dashboard/(.*)',
+  '/:locale/dashboard(.*)',
 ]);
 
 export default clerkMiddleware((auth, req) => {
@@ -618,10 +618,8 @@ export default clerkMiddleware((auth, req) => {
 });
 
 export const config = {
-  /**
-   * Match all paths except of internal /_next/ routes, static files and api paths
-   */
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api)(.*)'],
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*'],
 };
 ```
 
