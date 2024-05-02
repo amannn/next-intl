@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.12.1 (2024-05-02)
+
+
+### Bug Fixes
+
+* Correctly parse date skeleton `EEEE` to a long weekday like "Tuesday" (upgrades to `intl-messageformat@10` internally) ([#1039](https://github.com/amannn/next-intl/issues/1039)) ([d6b5fd2](https://github.com/amannn/next-intl/commit/d6b5fd2d882b26a47c596a56d687039ffea1baac))
+
+
+
+
+
 # 3.12.0 (2024-04-26)
 
 

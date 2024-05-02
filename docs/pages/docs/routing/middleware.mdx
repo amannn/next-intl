@@ -229,7 +229,7 @@ Note that by setting this option, the middleware will no longer return a `set-co
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, you can opt-out of this behavior.
+If you prefer to include these links yourself, e.g. because you're using a CMS to manage localized slugs of your pages, you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -240,6 +240,8 @@ export default createMiddleware({
   alternateLinks: false // Defaults to `true`
 });
 ```
+
+If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/sitemap).
 
 <details>
 <summary>Which alternate links are included?</summary>
@@ -592,10 +594,10 @@ Note that if you use a [`localePrefix`](#locale-prefix) other than `always`, you
 
 ### Example: Integrating with Clerk
 
-[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be integrated with `next-intl` by using the [`beforeAuth` hook](https://clerk.com/docs/references/nextjs/auth-middleware#using-before-auth-to-execute-middleware-before-authentication). By doing this, the middleware from `next-intl` will run first, potentially redirect or rewrite incoming requests, followed by the middleware from `@clerk/next` acting on the response.
+[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be [combined](https://clerk.com/docs/references/nextjs/clerk-middleware#combine-middleware) with other middlewares like the one provided by `next-intl`. By combining them, the middleware from `@clerk/next` will first ensure protected routes are handled appropriately. Subsequently, the middleware from `next-intl` will run, potentially redirecting or rewriting incoming requests.
 
 ```tsx filename="middleware.ts"
-import {authMiddleware} from '@clerk/nextjs';
+import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 
 const intlMiddleware = createMiddleware({
@@ -603,13 +605,12 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'en'
 });
 
-export default authMiddleware({
-  beforeAuth(request) {
-    return intlMiddleware(request);
-  },
+const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-  // Ensure that locale-specific sign in pages are public
-  publicRoutes: ['/:locale', '/:locale/sign-in']
+export default clerkMiddleware((auth, req) => {
+  if (isProtectedRoute(req)) auth().protect();
+
+  return intlMiddleware(req);
 });
 
 export const config = {

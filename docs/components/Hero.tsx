@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import HeroAnnouncement from './HeroAnnouncement';
 import HeroCode from './HeroCode';
 import LinkButton from './LinkButton';
 import Wrapper from './Wrapper';
@@ -6,18 +6,19 @@ import Wrapper from './Wrapper';
 type Props = {
   description: string;
   getStarted: string;
-  rscAnnouncement: string;
-  titleRegular: string;
-  titleStrong: string;
+  title: string;
   viewExample: string;
+  announcement?: {
+    href: string;
+    label: string;
+  };
 };
 
 export default function Hero({
+  announcement,
   description,
   getStarted,
-  rscAnnouncement,
-  titleRegular,
-  titleStrong,
+  title,
   viewExample
 }: Props) {
   return (
@@ -27,9 +28,8 @@ export default function Hero({
         <Wrapper>
           <div className="flex flex-col gap-16 xl:flex-row xl:items-center xl:justify-between">
             <div className="max-w-2xl">
-              <h1 className="inline bg-gradient-to-r from-white via-sky-100 to-primary bg-clip-text text-3xl leading-tight tracking-tight text-transparent lg:text-5xl">
-                <strong className="font-semibold">{titleStrong}</strong>{' '}
-                <span className="font-light">{titleRegular}</span>
+              <h1 className="inline bg-gradient-to-r from-white via-sky-100 to-primary bg-clip-text text-3xl font-semibold leading-tight tracking-tight text-transparent lg:text-5xl">
+                {title}
               </h1>
 
               <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:mt-4 lg:text-2xl lg:leading-normal">
@@ -45,15 +45,13 @@ export default function Hero({
                   {viewExample}
                 </LinkButton>
               </div>
-              <Link
-                className="mt-10 inline-flex border border-green-300/50 px-4 py-2 font-semibold text-green-300 transition-colors hover:border-white/50 hover:text-white lg:mt-20"
-                href="/docs/getting-started/app-router"
-              >
-                <span className="mr-3 inline-block">📣</span>{' '}
-                <span>{rscAnnouncement}</span>
-              </Link>
+              {announcement && (
+                <HeroAnnouncement href={announcement.href}>
+                  {announcement.label}
+                </HeroAnnouncement>
+              )}
             </div>
-            <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-16">
+            <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-24">
               <HeroCode />
             </div>
           </div>

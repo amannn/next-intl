@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.12.0",
+  "version": "3.12.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal, but complete solution for managing internationalization in React apps.",
@@ -64,7 +64,7 @@
   ],
   "dependencies": {
     "@formatjs/ecma402-abstract": "^1.11.4",
-    "intl-messageformat": "^9.3.18"
+    "intl-messageformat": "^10.5.11"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
@@ -90,7 +90,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "12.575 kB"
+      "limit": "15.235 kB"
     }
   ]
 }
