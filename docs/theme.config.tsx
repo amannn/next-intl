@@ -163,15 +163,15 @@ export default {
       <meta content="next-intl" name="twitter:title" />
 
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="description"
       />
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="og:description"
       />
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="twitter:description"
       />
 
