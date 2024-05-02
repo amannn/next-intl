@@ -134,6 +134,7 @@ describe('dates in messages', () => {
 
     // ['H', '9'], // ❌ "09"
     ['HH', '09'],
+    ['HH', '00', '2024-07-09T22:00:00.000Z'],
 
     ['K', '0 AM', '2024-07-09T22:00:00.000Z'],
     ['KK', '00 AM', '2024-07-09T22:00:00.000Z'],
@@ -142,6 +143,7 @@ describe('dates in messages', () => {
 
     // ['k', '9'], // ❌ "09"
     ['kk', '09'],
+    ['kk', '24', '2024-07-09T22:00:00.000Z'],
 
     ['m', '6'],
     // ['mm', '06'] // ❌ "6"
@@ -153,7 +155,7 @@ describe('dates in messages', () => {
     ['z', '7/9/2024, GMT+2'], // 🤔 Includes date
     ['zz', '7/9/2024, GMT+2'], // 🤔 Includes date
     ['zzz', '7/9/2024, GMT+2'], // 🤔 Includes date
-    ['zzzz', '7/9/2024, Central European Summer Time'],
+    ['zzzz', '7/9/2024, Central European Summer Time'], // 🤔 Includes date
 
     ['yyyyMMMd', 'Jul 9, 2024'],
     [
