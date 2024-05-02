@@ -1,6 +1,6 @@
 # 🌐 use-intl
 
-> Internationalization for React that gets out of your way.
+> Internationalization for React
 
 ## Features
 

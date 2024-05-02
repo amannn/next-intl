@@ -11,7 +11,7 @@
   <br>
 </h1>
 
-> Internationalization (i18n) for Next.js that gets out of your way.
+> Internationalization (i18n) for Next.js
 
 <hr />
 
