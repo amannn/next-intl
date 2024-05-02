@@ -47,3 +47,47 @@ You can freely define the interface, but if you have your messages available loc
 3. The path of your `import` is correct.
 4. Your type declaration file is included in `tsconfig.json`.
 5. Your editor has loaded the most recent type declarations. When in doubt, you can restart.
+
+## Extract `href` for custom components
+
+This library has its own layer for typed routes, but just like the [documentation for NextJS](https://nextjs.org/docs/app/building-your-application/configuring/typescript#statically-typed-links) shows you might want to wrap your router components for some reasons.
+
+In NextJS typed router you proceed that way:
+
+```tsx
+import type { Route } from 'next'
+import Link from 'next/link'
+
+type Props<T extends string> = { href: Route<T> | URL }
+
+function Card<T extends string>({ href }: Props<T>) {
+  return (
+    <Link href={href}>
+      <div>My Card</div>
+    </Link>
+  )
+}
+```
+Using next-intl you can achieve similar behavior this way:
+
+```tsx
+// For the same of the exemple, this is created here but in a real app, this lives in another file.
+const { Link, redirect, usePathname, useRouter, getPathname } = createLocalizedPathnamesNavigation({ locales, localePrefix, pathnames });
+
+type NavLinkProps = {
+  href: ComponentProps<typeof Link>["href"]; // Here is the magic
+  title: string;
+  icon?: React.ReactNode;
+};
+
+function NavLink<T extends string>({ href, icon, title }: NavLinkProps) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center space-x-3 rounded-[60px] bg-supa-black px-14 py-5 text-white transition hover:bg-black/30"
+    >
+      <span>{icon}</span>
+      <span>{title}</span>
+    </Link>
+  );
+}
