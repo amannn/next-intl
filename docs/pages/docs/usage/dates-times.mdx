@@ -179,6 +179,7 @@ You can customize the formatting by using date skeletons:
 
 ```json filename="en.json"
 {
+  // Renders e.g. "Ordered on Jul 9, 2024"
   "ordered": "Ordered on {orderDate, date, ::yyyyMMMd}"
 }
 ```
@@ -194,8 +195,8 @@ Note the leading `::` that is used to indicate that a skeleton should be used.
 |   M    | Month in year                          | M<br/>MM<br/>MMM<br/>MMMM<br/>MMMMM<br/> | 7<br/>07<br/>Jul<br/>July<br/>J                     |
 |   d    | Day in month                           | d<br/>dd                                 | 9<br/>09                                            |
 |   E    | Day of week                            | E<br/>EEEE<br/>EEEEE                     | Tue<br/>Tuesday<br/>T                               |
-|   h    | Hour (1-12, includes AM/PM)            | h<br/>hh                                 | 9 AM<br/>09 AM                                      |
-|   K    | Hour (0-11, includes AM/PM)            | K<br/>KK                                 | 0 AM (12 AM with `h`)<br/>00 AM                     |
+|   h    | Hour (1-12)                            | h<br/>hh                                 | 9 AM<br/>09 AM                                      |
+|   K    | Hour (0-11)                            | K<br/>KK                                 | 0 AM (12 AM with `h`)<br/>00 AM                     |
 |   H    | Hour (0-23)                            | HH                                       | 09                                                  |
 |   k    | Hour (1-24)                            | kk                                       | 24 (00 with `H`)                                    |
 |   m    | Minute (2 digits if used with seconds) | m<br/>mmss                               | 6<br/>06:03                                         |
