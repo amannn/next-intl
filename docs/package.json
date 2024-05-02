@@ -17,7 +17,7 @@
     "@vercel/speed-insights": "^1.0.2",
     "clsx": "^1.2.1",
     "http-status-codes": "^2.2.0",
-    "next": "^14.2.1",
+    "next": "^14.2.3",
     "nextra": "^2.13.2",
     "nextra-theme-docs": "^2.13.2",
     "react": "^18.3.0",
