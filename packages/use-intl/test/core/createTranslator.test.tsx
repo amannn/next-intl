@@ -103,7 +103,7 @@ describe('dates in messages', () => {
     ['E', 'Tue'],
     ['EE', 'Tue'],
     ['EEE', 'Tue'],
-    // ['EEEE', 'Tuesday'], // ❌ "Tue"
+    ['EEEE', 'Tuesday'],
     ['EEEEE', 'T'],
     // ['e', '7'] // 🤔 Not supported
     // ['ee', '07'] // 🤔 Not supported
