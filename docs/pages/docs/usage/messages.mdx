@@ -102,7 +102,7 @@ For edge cases where the reuse of messages among different components is hard to
 
 ```tsx filename="useLocaleLabel.tsx"
 export default function useLocaleLabel() {
-  const t = useLocaleLabel('useLocaleLabel');
+  const t = useTranslations('useLocaleLabel');
 
   function getLocaleLabel(locale: 'en' | 'de') {
     return t('label', {locale});
