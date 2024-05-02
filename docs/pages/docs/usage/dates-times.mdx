@@ -1,5 +1,6 @@
 import Callout from 'components/Callout';
 import PartnerContentLink from 'components/PartnerContentLink';
+import Details from 'components/Details';
 
 # Date and time formatting
 
@@ -36,7 +37,7 @@ If you have [global formats](/docs/usage/configuration#formats) configured, you 
 format.dateTime(dateTime, 'short');
 ```
 
-<details>
+<Details id="dates-parsing-manipulation">
 <summary>How can I parse dates or manipulate them?</summary>
 
 Since `next-intl` is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
@@ -53,7 +54,7 @@ const date = new Date('2020-11-20T10:36:01.516Z');
 const twoDaysAgo = subDays(date, 2);
 ```
 
-</details>
+</Details>
 
 ## Formatting relative times [#relative-times]
 
