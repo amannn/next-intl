@@ -1,6 +1,6 @@
 import useLocationHash from 'hooks/useLocationHash';
 import {useMDXComponents} from 'nextra-theme-docs';
-import {ComponentProps} from 'react';
+import {ComponentProps, useEffect, useReducer} from 'react';
 
 type Props = ComponentProps<'details'>;
 
@@ -8,10 +8,25 @@ export default function Details({children, id, ...rest}: Props) {
   const locationHash = useLocationHash();
   const hasLoadedHash = locationHash !== undefined;
   const isActive = id === locationHash;
+  const [key, resetKey] = useReducer((x) => x + 1, 0);
 
   const OriginalDetails = useMDXComponents().details as (
     props: Props
   ) => JSX.Element;
+
+  useEffect(() => {
+    // Use cases:
+    // 1. Open when the hash is clicked
+    // 2. Anchor is clicked while open (no change)
+    // 3. Details were open, another hash is clicked (no change to open)
+    //
+    // Therefore, we set a new key when the details
+    // are activated by a hash change.
+
+    if (isActive) {
+      resetKey();
+    }
+  }, [isActive]);
 
   return (
     <div className="relative">
@@ -26,7 +41,7 @@ export default function Details({children, id, ...rest}: Props) {
         </a>
       )}
       <OriginalDetails
-        key={String(isActive)}
+        key={key}
         id={id}
         open={hasLoadedHash ? isActive : undefined}
         {...rest}
