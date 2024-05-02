@@ -262,7 +262,11 @@ function createBaseTranslatorImpl<
           {
             formatters: {
               getNumberFormat(locales, options) {
-                return new Intl.NumberFormat(locales, options);
+                return new Intl.NumberFormat(
+                  locales,
+                  // `useGrouping` was changed from a boolean later to a string enum or boolean, the type definition is outdated (https://tc39.es/proposal-intl-numberformat-v3/#grouping-enum-ecma-402-367)
+                  options as Intl.NumberFormatOptions
+                );
               },
               getDateTimeFormat(locales, options) {
                 // Workaround for https://github.com/formatjs/formatjs/issues/4279
