@@ -51,7 +51,7 @@ export default function Hero({
                 </HeroAnnouncement>
               )}
             </div>
-            <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-16">
+            <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-24">
               <HeroCode />
             </div>
           </div>
