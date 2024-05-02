@@ -229,7 +229,7 @@ Note that by setting this option, the middleware will no longer return a `set-co
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, you can opt-out of this behavior.
+If you prefer to include these links yourself, e.g. because you're using a CMS to manage localized slugs of your pages, you can opt-out of this behavior.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -240,6 +240,8 @@ export default createMiddleware({
   alternateLinks: false // Defaults to `true`
 });
 ```
+
+If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/sitemap).
 
 <details>
 <summary>Which alternate links are included?</summary>
@@ -603,9 +605,7 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'en'
 });
 
-const isProtectedRoute = createRouteMatcher([
-  '/:locale/dashboard(.*)'
-]);
+const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
 export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) auth().protect();
