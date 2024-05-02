@@ -179,7 +179,7 @@ You can customize the formatting by using date skeletons:
 
 ```json filename="en.json"
 {
-  "ordered": "Ordered on {orderDate, date, ::yyyyMd}"
+  "ordered": "Ordered on {orderDate, date, ::yyyyMMMd}"
 }
 ```
 
@@ -187,24 +187,22 @@ Note the leading `::` that is used to indicate that a skeleton should be used.
 
 **These formats from ICU are supported:**
 
-| Symbol | Meaning                       |
-| :----: | :---------------------------- |
-|   G    | Era designator                |
-|   y    | Year                          |
-|   M    | Month in year                 |
-|   L    | Stand-alone month in year     |
-|   d    | Day in month                  |
-|   E    | Day of week                   |
-|   e    | Local day of week             |
-|   c    | Stand-alone local day of week |
-|   a    | AM/PM marker                  |
-|   h    | Hour [1-12]                   |
-|   H    | Hour [0-23]                   |
-|   K    | Hour [0-11]                   |
-|   k    | Hour [1-24]                   |
-|   m    | Minute                        |
-|   s    | Second                        |
-|   z    | Time zone                     |
+| Symbol | Meaning                                          | Pattern                                  | Example                                             |
+| :----: | :----------------------------------------------- | ---------------------------------------- | --------------------------------------------------- |
+|   G    | Era designator (always includes date)            | G<br/>GGGG<br/>GGGGG                     | 7/9/2024 AD<br/>7/9/2024 Anno Domini<br/>7/9/2024 A |
+|   y    | Year                                             | y<br/>yy<br/>yyyy                        | 2024<br/>24<br/>2024                                |
+|   M    | Month in year                                    | M<br/>MM<br/>MMM<br/>MMMM<br/>MMMMM<br/> | 7<br/>07<br/>Jul<br/>July<br/>J                     |
+|   d    | Day in month                                     | d<br/>dd                                 | 9<br/>09                                            |
+|   E    | Day of week                                      | E<br/>EEEEE                              | Tue<br/>T                                           |
+|   h    | Hour (1-12) (includes AM/PM)                     | h<br/>hh                                 | 9 AM<br/>09 AM                                      |
+|   K    | Hour (0-11) (includes AM/PM)                     | K<br/>KK                                 | 0 AM (12 AM with `h`)<br/>00 AM                     |
+|   H    | Hour (0-23)                                      | HH                                       | 09                                                  |
+|   k    | Hour (1-24)                                      | kk                                       | 09                                                  |
+|   m    | Minute (padded to 2 digits if used with seconds) | m<br/>mmss                               | 6<br/>06:03                                         |
+|   s    | Second (padded to 2 digits if used with minutes) | s<br/>mmss                               | 3<br/>06:03                                         |
+|   z    | Time zone                                        | z<br/>zzzz                               | GMT+2<br/>Central European Summer Time              |
+
+Patterns can be combined with each other, therefore e.g. `yyyyMMMd` would return "Jul 9, 2024".
 
 ### Custom date and time formats
 
