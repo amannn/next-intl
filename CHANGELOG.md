@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.12.2 (2024-05-03)
+
+
+### Bug Fixes
+
+* Print a warning in case the middleware didn't run on a request but APIs from `next-intl` are used ([#1045](https://github.com/amannn/next-intl/issues/1045)) ([8149955](https://github.com/amannn/next-intl/commit/814995511a81edf1d8c5ef843873fff003d2782e))
+
+
+
+
+
 ## 3.12.1 (2024-05-02)
 
 
