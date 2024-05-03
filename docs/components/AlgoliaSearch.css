@@ -3,6 +3,7 @@
   --docsearch-key-gradient: #fff;
   --docsearch-primary-color: var(--color-text-primary);
   --docsearch-key-pressed-shadow: none;
+  --docsearch-text-color: inherit;
 }
 
 .DocSearch-Input {
