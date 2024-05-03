@@ -1,4 +1,5 @@
 import Callout from 'components/Callout';
+import Details from 'components/Details';
 
 # Internationalization of Server & Client Components
 
@@ -98,7 +99,7 @@ export default function UserDetails({user}) {
 
 If you import `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` from a shared component, `next-intl` will automatically provide an implementation that works best for the environment this component executes in (server or client).
 
-<details>
+<Details id="rsc-background">
 <summary>How does the Server Components integration work?</summary>
 
 `next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n.ts`](/docs/usage/configuration#i18nts).
@@ -107,9 +108,9 @@ Hooks are currently primarly known for being used in Client Components since the
 
 The one restriction that currently comes with this pattern is that hooks can not be called from `async` components. `next-intl` therefore provides a separate set of [awaitable APIs](#async-components) for this use case.
 
-</details>
+</Details>
 
-<details>
+<Details id="async-or-non-async">
 <summary>Should I use async or non-async functions for my components?</summary>
 
 If you implement components that qualify as shared components, it can be beneficial to implement them as non-async functions. This allows to use these components either in a server or client environment, making them really flexible. Even if you don't intend to to ever run a particular component on the client side, this compatibility can still be helpful, e.g. for simplified testing.
@@ -118,7 +119,7 @@ However, there's no need to dogmatically use non-async functions exclusively for
 
 In regard to performance, async functions and hooks can be used very much interchangeably. The configuration from [`i18n.ts`](/docs/usage/configuration#i18nts) is only loaded once upon first usage and both implementations use request-based caching internally where relevant. The only minor difference is that async functions have the benefit that rendering can be resumed right after an async function has been invoked. In contrast, in case a hook call triggers the initialization in `i18n.ts`, the component will suspend until the config is resolved and will re-render subsequently, possibly re-executing component logic prior to the hook call. However, once config has been resolved as part of a request, hooks will execute synchronously without suspending, resulting in less overhead in comparison to async functions since rendering can be resumed without having to wait for the microtask queue to flush (see [resuming a suspended component by replaying its execution](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md#resuming-a-suspended-component-by-replaying-its-execution) in the corresponding React RFC).
 
-</details>
+</Details>
 
 ## Using internationalization in Client Components
 
@@ -171,7 +172,7 @@ By doing this, we can use interactive features from React like `useState` on tra
 
 Learn more in the Next.js docs: [Passing Server Components to Client Components as Props](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props)
 
-<details>
+<Details id="example-locale-switcher">
 <summary>Example: How can I implement a locale switcher?</summary>
 
 If you implement a locale switcher as an interactive select, you can keep internationalization on the server side by rendering the labels from a Server Component and only marking the `select` element as a Client Component.
@@ -206,9 +207,9 @@ export default function LocaleSwitcher() {
 
 See also: [`useRouter`](/docs/routing/navigation#userouter)
 
-</details>
+</Details>
 
-<details>
+<Details id="example-form">
 <summary>Example: How can I implement a form?</summary>
 
 Forms need client-side state for showing loading indicators and validation errors.
@@ -252,7 +253,7 @@ export default function RegisterPage() {
 }
 ```
 
-</details>
+</Details>
 
 ### Option 2: Moving state to the server side
 
@@ -311,14 +312,14 @@ export default function Counter() {
 
 In case you prefer to make all messages available to the client side, you can [configure `NextIntlClientProvider` in the root layout](#option-4-providing-all-messages) instead.
 
-<details>
+<Details id="messages-client-namespaces">
 <summary>How can I know the messages I need to provide to the client side?</summary>
 
 Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components.
 
 An automatic, compiler-driven approach is being evaluated in [`next-intl#2`](https://github.com/amannn/next-intl/issues/1).
 
-</details>
+</Details>
 
 ### Option 4: Providing all messages
 

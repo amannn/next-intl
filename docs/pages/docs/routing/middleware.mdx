@@ -1,4 +1,5 @@
 import Callout from 'components/Callout';
+import Details from 'components/Details';
 
 # Middleware
 
@@ -59,6 +60,22 @@ To change the locale, users can visit a prefixed route. This will take precedenc
   You can optionally remove the locale prefix in pathnames by changing the
   [`localePrefix`](#locale-prefix) setting.
 </Callout>
+
+<Details id="accept-language-matching">
+<summary>Which algorithm is used to match the accept-language header against the available locales?</summary>
+
+To determine the best-matching locale based on the available options from your app, the middleware uses the "best fit" algorithm of [`@formatjs/intl-localematcher`](https://www.npmjs.com/package/@formatjs/intl-localematcher). This algorithm is expected to provide better results than the more conservative "lookup" algorithm that is specified in [RFC 4647](https://www.rfc-editor.org/rfc/rfc4647.html#section-3.4).
+
+To illustrate this with an example, let's consider your app supports these locales:
+
+1. `en-US`
+2. `de-DE`
+
+The "lookup" algorithm works by progressively removing subtags from the user's `accept-language` header until a match is found. This means that if the user's browser sends the `accept-language` header `en-GB`, the "lookup" algorithm will not find a match, resulting in the default locale being used.
+
+In contrast, the "best fit" algorithm compares the _distance_ between the user's `accept-language` header and the available locales, while taking into consideration regional information. Due to this, the "best fit" algorithm is able to match `en-US` as the best-matching locale in this case.
+
+</Details>
 
 ### Strategy 2: Domain-based routing [#domain-based-routing]
 
@@ -122,7 +139,7 @@ Since the middleware is aware of all your domains, if a domain receives a reques
 3. When the link is clicked, a request to `us.example.com/fr` is initiated.
 4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
 
-<details>
+<Details id="domain-matching">
 <summary>How is the best matching domain for a given locale detected?</summary>
 
 The bestmatching domain is detected based on these priorities:
@@ -130,10 +147,9 @@ The bestmatching domain is detected based on these priorities:
 1. Stay on the current domain if the locale is supported here
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
 3. Use an alternative domain where the available `locales` are restricted and the locale is supported
-4. Stay on the current domain if it supports all locales
-5. Use an alternative domain that supports all locales
+4. Use an alternative domain that supports all locales
 
-</details>
+</Details>
 
 ## Further configuration
 
@@ -157,12 +173,12 @@ export default createMiddleware({
 });
 ```
 
-<details>
+<Details id="redirect-unprefixed-pathnames">
 <summary>How can I redirect unprefixed pathnames?</summary>
 
 If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](#matcher-no-prefix) too.
 
-</details>
+</Details>
 
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
@@ -243,7 +259,7 @@ export default createMiddleware({
 
 If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/sitemap).
 
-<details>
+<Details id="alternate-links-details">
 <summary>Which alternate links are included?</summary>
 
 Using the middleware defaults, the `link` header of a response for `/` will look like this:
@@ -263,9 +279,9 @@ Note that middleware configuration is automatically incorporated with the follow
 
 Other configuration options like `domains`, `pathnames` and `basePath` are automatically considered.
 
-</details>
+</Details>
 
-<details>
+<Details id="alternate-links-customization">
 <summary>Can I customize the alternate links?</summary>
 
 If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
@@ -289,7 +305,7 @@ export default async function middleware(request: NextRequest) {
 }
 ```
 
-</details>
+</Details>
 
 ### Localizing pathnames
 
@@ -351,7 +367,7 @@ export default createMiddleware({
   APIs](/docs/routing/navigation#localized-pathnames) in your components.
 </Callout>
 
-<details>
+<Details id="localized-pathnames-revalidation">
 <summary>How can I revalidate localized pathnames?</summary>
 
 Depending on if a route is generated statically (at build time) or dynamically (at runtime), [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) needs to be called either for the localized or the internal pathname.
@@ -396,9 +412,9 @@ When in doubt, you can revalidate both paths to be on the safe side.
 
 See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825).
 
-</details>
+</Details>
 
-<details>
+<Details id="localized-pathnames-dynamic-segments">
 <summary>How can I localize dynamic segments?</summary>
 
 If you have a route like `/news/[articleSlug]-[articleId]`, you may want to localize the `articleSlug` part in the pathname like this:
@@ -414,7 +430,7 @@ A good practice is to include the ID in the URL, allowing you to retrieve the ar
 
 If you localize the values for dynamic segments, you might want to turn off [alternate links](#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
 
-</details>
+</Details>
 
 ### Matcher config
 
@@ -434,7 +450,7 @@ This enables:
 1. A redirect at `/` to a suitable locale
 2. Internationalization of all pathnames starting with a locale (e.g. `/en/about`)
 
-<details>
+<Details id="matcher-avoid-hardcoding">
 <summary>Can I avoid hardcoding the locales in the `matcher` config?</summary>
 
 A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, in case you're self-hosting Next.js via a Node.js server, you can implement the matcher dynamically instead:
@@ -465,7 +481,7 @@ export default function middleware(request: NextRequest) {
 }
 ```
 
-</details>
+</Details>
 
 #### Pathnames without a locale prefix [#matcher-no-prefix]
 

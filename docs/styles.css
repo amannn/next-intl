@@ -67,7 +67,7 @@ figcaption {
 }
 
 summary {
-  @apply font-bold;
+  @apply font-bold !pr-8;
 }
 summary > code {
   margin: 0 0.3em;

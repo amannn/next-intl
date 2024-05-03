@@ -1,5 +1,6 @@
 import Callout from 'components/Callout';
 import PartnerContentLink from 'components/PartnerContentLink';
+import Details from 'components/Details';
 
 # Rendering i18n messages
 
@@ -41,7 +42,7 @@ const t = useTranslations();
 t('About.title');
 ```
 
-<details>
+<Details id="messages-nested-structure">
 <summary>How can I provide more structure for messages?</summary>
 
 Optionally, you can structure your messages as nested objects.
@@ -84,9 +85,9 @@ function SignUp() {
 }
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="messages-reuse">
 <summary>How can I reuse messages?</summary>
 
 As your app grows, you'll want to reuse messages among your components. If you use component names as namespaces to structure your messages, you'll automatically benefit from reusable messages by reusing your components.
@@ -120,9 +121,9 @@ export default function useLocaleLabel() {
 }
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="messages-outside-components">
 <summary>How can I use translations outside of components?</summary>
 
 `next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components. This may seem like a limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
@@ -131,9 +132,9 @@ If you're interested to dive deeper into this topic, there's a blog post that di
 
 There's one exception however: [Using `next-intl` with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
 
-</details>
+</Details>
 
-<details>
+<Details id="messages-other-styles">
 <summary>Can I use a different style for structuring my messages?</summary>
 
 Namespace keys can not contain the character "." as this is used to express nesting—all other characters are fine to use.
@@ -141,7 +142,7 @@ Namespace keys can not contain the character "." as this is used to express nest
 If you're migrating from a flat structure that uses "." in message keys, you can convert your messages to a nested structure as follows:
 
 ```tsx
-import {set} from "lodash";
+import {set} from 'lodash';
 
 const input = {
   'one.one': '1.1',
@@ -173,7 +174,7 @@ This keeps the hierarchy while removing the redundancy of repeated parent keys. 
 
 If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
 
-</details>
+</Details>
 
 ## Rendering ICU messages
 
@@ -209,11 +210,12 @@ Dynamic values can be inserted into messages by using curly braces:
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
-<details>
+<Details id="interpolation-supported-characters">
 <summary>Which characters are supported for value names?</summary>
 
 Value names are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
-</details>
+
+</Details>
 
 ### Cardinal pluralization
 
@@ -229,7 +231,7 @@ t('message', {count: 3580}); // "You have 3,580 followers."
 
 Note that by using the `#` marker, the value will be [formatted as a number](/docs/usage/numbers).
 
-<details>
+<Details id="cardinal-plural-forms">
 <summary>Which plural forms are supported?</summary>
 
 Languages have different rules for pluralization and your messages should reflect these rules.
@@ -243,13 +245,13 @@ While you can always use the `=value` syntax to match a specific number (e.g. `=
 - `zero`: For languages with zero-item grammar (e.g., Latvian, Welsh).
 - `one`: For languages with singular-item grammar (e.g., English, German).
 - `two`: For languages with dual-item grammar (e.g., Arabic, Welsh).
-- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Polish, Croatian).
-- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Polish, Croatian).
+- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Croatian).
+- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Croatian).
 - `other`: Used when the value doesn't match other plural categories.
 
 `next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct tag that should be used for a given number. The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
 
-</details>
+</Details>
 
 ### Ordinal pluralization
 
@@ -259,7 +261,7 @@ To apply pluralization based on an order of items, the `selectordinal` argument 
 "message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
-<details>
+<Details id="ordinal-plural-forms">
 <summary>Which plural forms are supported?</summary>
 
 Depending on the language, different forms of ordinal pluralization are supported.
@@ -281,7 +283,7 @@ The exact range that `few` and `many` applies to varies depending on the locale 
 
 To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
 
-</details>
+</Details>
 
 ### Selecting enum-based values
 
@@ -297,7 +299,7 @@ t('message', {gender: 'female'}); // "She is online."
 
 **Note**: The `other` case is required and will be used when none of the specific values match.
 
-<details>
+<Details id="select-values-supported-characters">
 <summary>Which characters are supported for select values?</summary>
 
 Values are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
@@ -312,7 +314,8 @@ Therefore, e.g. when you're mapping a locale to a human readable string, you sho
 const locale = 'en-BR';
 t('message', {locale: locale.replaceAll('-', '_')};
 ```
-</details>
+
+</Details>
 
 ### Escaping
 
@@ -345,14 +348,14 @@ t.rich('message', {
 
 Tags can be arbitrarily nested (e.g. `This is <important><very>very</very> important</important>`).
 
-<details>
+<Details id="rich-text-reuse-tags">
 <summary>How can I reuse a tag across my app?</summary>
 
 If you want to use the same tag across your app, you can configure it via [default translation values](/docs/configuration#default-translation-values).
 
-</details>
+</Details>
 
-<details>
+<Details id="rich-text-self-closing">
 <summary>How can I use "self-closing" tags without any chunks?</summary>
 
 Messages can use tags without any chunks as children, but syntax-wise, a closing tag is required by the ICU parser:
@@ -369,9 +372,9 @@ t.rich('message', {
 });
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="rich-text-attributes">
 <summary>How can I pass attributes to tags?</summary>
 
 Attributes can only be set on the call site, not within messages:
@@ -405,7 +408,7 @@ t.rich('message', {
 });
 ```
 
-</details>
+</Details>
 
 ## HTML markup
 
@@ -491,7 +494,7 @@ function CompanyStats() {
 }
 ```
 
-<details>
+<Details id="arrays-varying-amount">
 <summary>What if the amount of items varies depending on the locale?</summary>
 
 To dynamically iterate over all keys of a namespace, you can use the [`useMessages`](/docs/usage/configuration#messages) hook to retrieve all messages of a given namespace and extract the keys from there:
@@ -518,7 +521,7 @@ function CompanyStats() {
 }
 ```
 
-</details>
+</Details>
 
 ## Right-to-left languages
 
