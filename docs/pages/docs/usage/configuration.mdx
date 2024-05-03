@@ -123,7 +123,7 @@ return (
 </Tab>
 </Tabs>
 
-<Details id="remote-messages">
+<Details id="messages-remote-sources">
 <summary>How can I load messages from remote sources?</summary>
 
 While it's recommended to colocate at least the messages for the default locale, you can also load messages from remote sources, e.g. with <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
@@ -535,14 +535,14 @@ import {useLocale} from 'next-intl';
 const locale = useLocale();
 ```
 
-<Details id="change-locale">
+<Details id="locale-change">
 <summary>How can I change the locale?</summary>
 
 Since the locale is represented by the `[locale]` segment in the pathname, changing the locale really means changing the pathname. You can do this by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
 
 </Details>
 
-<Details id="uselocale-return-value">
+<Details id="locale-return-value">
 <summary>Which value is returned from `useLocale`?</summary>
 
 The returned value is resolved based on these priorities:
@@ -553,7 +553,7 @@ The returned value is resolved based on these priorities:
 
 </Details>
 
-<Details id="pages-router-locale">
+<Details id="locale-pages-router">
 <summary>I'm using the Pages Router, how can I provide the locale?</summary>
 
 If you use [internationalized routing with the Pages Router](https://nextjs.org/docs/pages/building-your-application/routing/internationalization), you can receive the locale from the router in order to pass it to `NextIntlClientProvider`:

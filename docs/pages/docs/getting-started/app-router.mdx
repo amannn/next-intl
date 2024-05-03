@@ -273,7 +273,7 @@ That being said, the API is expected to work reliably if you're cautious to appl
 
 </Details>
 
-<Details id="setrequestlocale-details">
+<Details id="setrequestlocale-implementation">
 <summary>How does unstable_setRequestLocale work?</summary>
 
 `next-intl` uses [`cache()`](https://react.dev/reference/react/cache) to create a mutable store that holds the current locale. By calling `unstable_setRequestLocale`, the current locale will be written to the store, making it available to all APIs that require the locale.
@@ -282,7 +282,7 @@ Note that the store is scoped to a request and therefore doesn't affect other re
 
 </Details>
 
-<Details id="setrequestlocale-reason">
+<Details id="setrequestlocale-background">
 <summary>Why is this API necessary?</summary>
 
 Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
