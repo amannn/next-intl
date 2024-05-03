@@ -23,7 +23,7 @@ Moving internationalization to the server side unlocks new levels of performance
 
 **Benefits of server-side internationalization:**
 
-1. Your messages never leave the server and don't need to be serialized for the client side
+1. Your messages never leave the server and don't need to be passed to the client side
 2. Library code for internationalization doesn't need to be loaded on the client side
 3. No need to split your messages, e.g. based on routes or components
 4. No runtime cost on the client side
@@ -123,7 +123,9 @@ In regard to performance, async functions and hooks can be used very much interc
 
 ## Using internationalization in Client Components
 
-Depending on your situation, you may need to handle internationalization in Client Components as well. There are several options for using translations or other functionality from `next-intl` in Client Components, listed here in order of recommendation.
+Depending on your situation, you may need to handle internationalization in Client Components as well. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for emerging apps, you can be more selective about which messages are passed to the client side to reduce the bundle size of your app.
+
+There are several options for using translations from `next-intl` in Client Components, listed here in order of enabling the best performance:
 
 ### Option 1: Passing translations to Client Components
 
@@ -221,15 +223,15 @@ To keep internationalization on the server side, it can be helpful to structure 
 ```tsx filename="app/register/page.tsx"
 import {useTranslations} from 'next-intl';
 
-// A Client Component, so that it can use `useFormState` to
-// potentially display errors received after submission.
+// A Client Component, so that `useFormState` can be used
+// to potentially display errors received after submission.
 import RegisterForm from './RegisterForm';
 
-// A Client Component, so that it can use `useFormStatus`
+// A Client Component, so that `useFormStatus` can be used
 // to disable the input field during submission.
 import FormField from './FormField';
 
-// A Client Component, so that it can use `useFormStatus`
+// A Client Component, so that `useFormStatus` can be used
 // to disable the submit button during submission.
 import FormSubmitButton from './FormSubmitButton';
 
@@ -284,7 +286,7 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) or [formats](/docs/usage/configuration#formats) to Client Components.
+To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) to Client Components.
 
 If you need to incorporate dynamic state into components that can not be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
 
@@ -310,14 +312,12 @@ export default function Counter() {
 }
 ```
 
-In case you prefer to make all messages available to the client side, you can [configure `NextIntlClientProvider` in the root layout](#option-4-providing-all-messages) instead.
-
 <Details id="messages-client-namespaces">
 <summary>How can I know the messages I need to provide to the client side?</summary>
 
 Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components.
 
-An automatic, compiler-driven approach is being evaluated in [`next-intl#2`](https://github.com/amannn/next-intl/issues/1).
+An automatic, compiler-driven approach is being evaluated in [`next-intl#1`](https://github.com/amannn/next-intl/issues/1).
 
 </Details>
 
@@ -346,11 +346,6 @@ export default function LocaleLayout({children, params: {locale}}) {
   );
 }
 ```
-
-<Callout type="warning">
-  Note that this is a tradeoff in regard to performance (see the bullet points
-  at the top of this page).
-</Callout>
 
 ## Troubleshooting
 
@@ -384,6 +379,7 @@ export default function MyCustomNextIntlClientProvider({
   locale,
   timeZone,
   now,
+  formats,
   ...rest
 }) {
   return (
@@ -396,6 +392,7 @@ export default function MyCustomNextIntlClientProvider({
       locale={locale}
       timeZone={timeZone}
       now={now}
+      formats={formats}
       {...props}
     />
   );
@@ -404,4 +401,4 @@ export default function MyCustomNextIntlClientProvider({
 
 By doing this, your custom provider will already be part of the client-side bundle and can therefore define and pass functions as props.
 
-**Important:** Be sure to pass explicit `locale`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since the props aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.
+**Important:** Be sure to pass explicit `locale`, `formats`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since the props aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.

@@ -90,7 +90,7 @@ module.exports = withNextIntl(nextConfig);
 
 ### `i18n.ts` [#i18nts]
 
-`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
+`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user for usage in Server Components.
 
 ```tsx filename="src/i18n.ts"
 import {notFound} from 'next/navigation';
@@ -148,23 +148,44 @@ export const config = {
 
 ### `app/[locale]/layout.tsx` [#layout]
 
-The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
+The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-export default function LocaleLayout({
+import {getMessages} from 'next-intl/server';
+
+export default async function LocaleLayout({
   children,
   params: {locale}
 }: {
   children: React.ReactNode;
   params: {locale: string};
 }) {
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
 ```
+
+Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n.ts`, except for the `messages` (in case you prefer to be picky about which ones to provide).
+
+<Details id="nextintlclientprovider-messages">
+<summary>Do I need to provide all messages to the client side?</summary>
+
+Not at all! While this is the easiest way to get started and a reasonable approach for emerging apps, you can optionally be more selective about which messages are provided to the client side—or provide none at all.
+
+If you consider yourself a performance aficionado, you might want to explore the [Server & Client Components guide](/docs/environments/server-client-components) after finishing the setup.
+
+</Details>
 
 ### `app/[locale]/page.tsx` [#page]
 
