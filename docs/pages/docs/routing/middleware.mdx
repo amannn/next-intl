@@ -61,6 +61,22 @@ To change the locale, users can visit a prefixed route. This will take precedenc
   [`localePrefix`](#locale-prefix) setting.
 </Callout>
 
+<Details id="accept-language-matching">
+<summary>Which algorithm is used to match the accept-language header against the available locales?</summary>
+
+To determine the best-matching locale based on the available options from your app, the middleware uses the "best fit" algorithm of [`@formatjs/intl-localematcher`](https://www.npmjs.com/package/@formatjs/intl-localematcher). This algorithm is expected to provide better results than the more conservative "lookup" algorithm that is specified in [RFC 4647](https://www.rfc-editor.org/rfc/rfc4647.html#section-3.4).
+
+To illustrate this with an example, let's consider your app supports these locales:
+
+1. `en-US`
+2. `de-DE`
+
+The "lookup" algorithm works by progressively removing subtags from the user's `accept-language` header until a match is found. This means that if the user's browser sends the `accept-language` header `en-GB`, the "lookup" algorithm will not find a match, resulting in the default locale being used.
+
+In contrast, the "best fit" algorithm compares the _distance_ between the user's `accept-language` header and the available locales, while taking into consideration regional information. Due to this, the "best fit" algorithm is able to match `en-US` as the best-matching locale in this case.
+
+</Details>
+
 ### Strategy 2: Domain-based routing [#domain-based-routing]
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
