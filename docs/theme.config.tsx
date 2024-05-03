@@ -1,3 +1,4 @@
+import AlgoliaSearch from 'components/AlgoliaSearch';
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
 import {useRouter} from 'next/router';
@@ -115,6 +116,9 @@ export default {
         </div>
       );
     }
+  },
+  search: {
+    component: AlgoliaSearch
   },
   feedback: {
     content: 'Provide feedback on this page',

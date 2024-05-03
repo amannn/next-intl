@@ -5,6 +5,7 @@
 :root {
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
   --shiki-token-comment: rgba(100, 116, 139, 0.8);
+  --color-text-primary: #0073e6;
 }
 
 .dark {
@@ -25,22 +26,11 @@
 }
 
 .navbar-home nav > a {
-  @apply !text-white/80 transition-opacity hover:opacity-70;
-}
-.navbar-home *:not(.nextra-scrollbar) a,
-.navbar-home *:not(.nextra-scrollbar) button {
-  @apply !text-inherit;
+  @apply !text-white transition-opacity hover:opacity-70;
 }
 
 html:not(.dark) .navbar-home .nextra-scrollbar {
   @apply !bg-white;
-}
-
-.navbar-home input::placeholder {
-  @apply !text-white/50;
-}
-.navbar-home input {
-  @apply !bg-slate-900 !text-white;
 }
 
 .navbar-home .nextra-nav-container-blur {

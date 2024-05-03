@@ -35,15 +35,19 @@ export default function Hero({
               <p className="mt-3 max-w-xl text-lg leading-normal tracking-tight text-sky-100/70 lg:mt-4 lg:text-2xl lg:leading-normal">
                 {description}
               </p>
-              <div className="mt-8 flex gap-4 lg:mt-10">
-                <LinkButton href="/docs">{getStarted}</LinkButton>
-                <LinkButton
-                  href="https://next-intl-example-app-router.vercel.app"
-                  target="_blank"
-                  variant="secondary"
-                >
-                  {viewExample}
-                </LinkButton>
+              <div className="mt-8 flex flex-col gap-4 md:flex-row lg:mt-10">
+                <div>
+                  <LinkButton href="/docs">{getStarted}</LinkButton>
+                </div>
+                <div>
+                  <LinkButton
+                    href="https://next-intl-example-app-router.vercel.app"
+                    target="_blank"
+                    variant="secondary"
+                  >
+                    {viewExample}
+                  </LinkButton>
+                </div>
               </div>
               {announcement && (
                 <HeroAnnouncement href={announcement.href}>
