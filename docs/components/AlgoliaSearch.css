@@ -7,12 +7,12 @@
 
 .DocSearch-Input {
   &:focus {
-    box-shadow: none;
+    @apply shadow-none;
   }
 }
 
 .DocSearch-Commands-Key {
-  border: 1px solid var(--docsearch-muted-color);
+  @apply border border-solid border-slate-200;
 }
 
 .DocSearch-Button {
@@ -45,7 +45,7 @@
 
 .navbar-home {
   .DocSearch-Button-Key {
-    opacity: 0.9;
+    @apply opacity-90;
   }
 
   .DocSearch-Button {
