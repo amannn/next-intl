@@ -56,8 +56,6 @@ Now, set up the plugin which creates an alias to provide your i18n configuration
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tab>
 
-If you're using ECMAScript modules for your Next.js config, you can use the plugin as follows:
-
 ```js filename="next.config.mjs"
 import createNextIntlPlugin from 'next-intl/plugin';
 
@@ -71,8 +69,6 @@ export default withNextIntl(nextConfig);
 
 </Tab>
 <Tab>
-
-If you're using CommonJS for your Next.js config, you can use the plugin as follows:
 
 ```js filename="next.config.js"
 const createNextIntlPlugin = require('next-intl/plugin');
@@ -90,7 +86,7 @@ module.exports = withNextIntl(nextConfig);
 
 ### `i18n.ts` [#i18nts]
 
-`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user for usage in Server Components.
+`next-intl` creates a request-scoped configuration object that can be used to provide messages and other options depending on the locale of the user for usage in Server Components.
 
 ```tsx filename="src/i18n.ts"
 import {notFound} from 'next/navigation';
@@ -212,10 +208,6 @@ In case you ran into an issue, have a look at [the App Router example](https://n
 
 <ul className="ml-4 list-disc">
   <li>[Usage guide](/docs/usage): Format messages, dates and times</li>
-  <li>
-    [Environments](/docs/environments): Explore usage in Server & Client
-    Components and the Metadata API
-  </li>
   <li>
     [Routing](/docs/routing): Integrate i18n routing with `<Link />` & friends
   </li>
