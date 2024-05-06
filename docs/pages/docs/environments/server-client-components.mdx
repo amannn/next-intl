@@ -286,7 +286,7 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) to Client Components.
+To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) or [formats](/docs/usage/configuration#formats) to Client Components.
 
 If you need to incorporate dynamic state into components that can not be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
 
@@ -379,7 +379,6 @@ export default function MyCustomNextIntlClientProvider({
   locale,
   timeZone,
   now,
-  formats,
   ...rest
 }) {
   return (
@@ -392,7 +391,6 @@ export default function MyCustomNextIntlClientProvider({
       locale={locale}
       timeZone={timeZone}
       now={now}
-      formats={formats}
       {...props}
     />
   );
