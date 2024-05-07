@@ -235,9 +235,11 @@ describe('relativeTime', () => {
     expect(
       formatter.relativeTime(parseISO('2020-03-20T08:30:00.000Z'), {
         now: parseISO('2020-11-22T10:36:00.000Z'),
-        unit: 'day'
+        unit: 'day',
+        numberingSystem: 'arab',
+        style: 'narrow'
       })
-    ).toBe('247 days ago');
+    ).toBe('٢٤٧d ago');
   });
 
   it('supports the quarter unit', () => {

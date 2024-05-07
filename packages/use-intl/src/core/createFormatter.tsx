@@ -235,16 +235,22 @@ export default function createFormatter({
       const nowDate = extractNowDate(nowOrOptions);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
 
-      const unit =
+      let unit: Intl.RelativeTimeFormatUnit,
+        rest: RelativeTimeFormatOptions = {};
+      if (
         typeof nowOrOptions === 'number' ||
         nowOrOptions instanceof Date ||
         nowOrOptions?.unit === undefined
-          ? resolveRelativeTimeUnit(seconds)
-          : nowOrOptions.unit;
+      ) {
+        unit = resolveRelativeTimeUnit(seconds);
+      } else {
+        unit = nowOrOptions.unit;
+        rest = nowOrOptions;
+      }
 
       const value = calculateRelativeTimeValue(seconds, unit);
-
       return new Intl.RelativeTimeFormat(locale, {
+        ...rest,
         // `numeric: 'auto'` can theoretically produce output like "yesterday",
         // but it only works with integers. E.g. -1 day will produce "yesterday",
         // but -1.1 days will produce "-1.1 days". Rounding before formatting is
