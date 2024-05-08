@@ -227,6 +227,19 @@ describe('relativeTime', () => {
     ).toBe('in 2 years');
   });
 
+  it('formats a relative time with a different style', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.relativeTime(parseISO('2020-03-20T08:30:00.000Z'), {
+        now: parseISO('2020-11-22T10:36:00.000Z'),
+        style: 'narrow'
+      })
+    ).toBe('8mo ago');
+  });
+
   it('formats a relative time with options', () => {
     const formatter = createFormatter({
       locale: 'en',
