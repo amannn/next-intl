@@ -1,7 +1,5 @@
 import {test as it, expect} from '@playwright/test';
 
-it.describe.configure({mode: 'parallel'});
-
 it('clears the router cache when changing the locale', async ({page}) => {
   await page.goto('/');
 
