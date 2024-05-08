@@ -57,7 +57,18 @@ export default async function LocaleLayout({children, params: {locale}}) {
 }
 ```
 
-`NextIntlClientProvider` inherits the props `locale`, `now` and `timeZone` when the component is rendered from a Server Component. In contrast, `messages` can be provided [as necessary](/docs/environments/server-client-components#using-internationalization-in-client-components).
+These props are inherited if you're rendering `NextIntlClientProvider` from a Server Component:
+
+1. `locale`
+2. `now`
+3. `timeZone`
+
+In contrast, these props can be provided as necessary:
+
+1. `messages` (see [Internationalization in Client Components](/docs/environments/server-client-components#using-internationalization-in-client-components))
+2. `formats`
+3. `defaultTranslationValues`
+4. `onError` and `getMessageFallback`
 
 ## Messages
 
