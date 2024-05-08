@@ -144,7 +144,7 @@ There are several options for using translations from `next-intl` in Client Comp
 
 The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx" {10-12}
+```tsx filename="[locale]/faq/page.tsx" {11-13}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable'; // A Client Component
 import FAQContent from './FAQContent';
@@ -339,14 +339,15 @@ An automatic, compiler-driven approach is being evaluated in [`next-intl#1`](htt
 If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
 
 ```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
-import {NextIntlClientProvider, useMessages} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 
-export default function LocaleLayout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params: {locale}}) {
   // ...
 
   // Receive messages provided in `i18n.ts`
-  const messages = useMessages();
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>

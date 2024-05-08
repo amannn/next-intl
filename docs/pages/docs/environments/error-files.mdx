@@ -122,11 +122,12 @@ Since the `error` file must be defined as a Client Component, you have to use [`
 
 ```tsx filename="app/[locale]/layout.tsx"
 import pick from 'lodash/pick';
-import {NextIntlClientProvider, useMessages} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages} from 'next-intl/server';
 
-export default function LocaleLayout({children}) {
+export default async function LocaleLayout({children}) {
   // ...
-  const messages = useMessages();
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>
