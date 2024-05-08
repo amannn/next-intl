@@ -123,7 +123,20 @@ In regard to performance, async functions and hooks can be used very much interc
 
 ## Using internationalization in Client Components
 
-Depending on your situation, you may need to handle internationalization in Client Components as well. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for emerging apps, you can be more selective about which messages are passed to the client side to reduce the bundle size of your app.
+Depending on your situation, you may need to handle internationalization in Client Components as well. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for many apps, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
+
+<Details id="client-messages-performance">
+<summary>How does loading messages on the client side relate to performance?</summary>
+
+Depending on the requirements for your app, you might want to monitor your [Core Web Vitals](https://web.dev/articles/vitals) to ensure your app meets your performance goals.
+
+If you pass messages to `NextIntlClientProvider`, Next.js will emit them during the streaming render to the markup of the page so that they can be used by Client Components. This can contribute to the [total blocking time](https://web.dev/articles/tbt), which in turn can relate to the [interaction to next paint](https://web.dev/articles/inp) metric. If you're seeking to improve these metrics in your app, you can be more selective about which messages are passed to the client side.
+
+However, as the general rule for optimization goes: Always measure before you optimize. If your app already performs well, there's no need for optimization.
+
+Note that an automatic, compiler-driven approach for automatically splitting messages is being evaluated in [`next-intl#1`](https://github.com/amannn/next-intl/issues/1).
+
+</Details>
 
 There are several options for using translations from `next-intl` in Client Components, listed here in order of enabling the best performance:
 
