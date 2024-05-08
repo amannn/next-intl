@@ -36,8 +36,12 @@
   @apply md:scale-75 dark:text-white;
 }
 
-.DocSearch-Form .DocSearch-Search-Icon {
+.DocSearch-Form {
   @apply text-slate-900;
+
+  .DocSearch-Search-Icon {
+    @apply text-slate-900;
+  }
 }
 
 .DocSearch-Button {
