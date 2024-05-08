@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.13.0 (2024-05-08)
+
+
+### Features
+
+* Support `numberingSystem` and `style` for relative time formatting ([#1057](https://github.com/amannn/next-intl/issues/1057)) ([14e3aa4](https://github.com/amannn/next-intl/commit/14e3aa4a4b04736ab8fcdcd50e6a57dd57bd08d7)), closes [#1056](https://github.com/amannn/next-intl/issues/1056)
+
+
+
+
+
+## 3.12.2 (2024-05-03)
+
+
+### Bug Fixes
+
+* Print a warning in case the middleware didn't run on a request but APIs from `next-intl` are used ([#1045](https://github.com/amannn/next-intl/issues/1045)) ([8149955](https://github.com/amannn/next-intl/commit/814995511a81edf1d8c5ef843873fff003d2782e))
+
+
+
+
+
+## 3.12.1 (2024-05-02)
+
+
+### Bug Fixes
+
+* Correctly parse date skeleton `EEEE` to a long weekday like "Tuesday" (upgrades to `intl-messageformat@10` internally) ([#1039](https://github.com/amannn/next-intl/issues/1039)) ([d6b5fd2](https://github.com/amannn/next-intl/commit/d6b5fd2d882b26a47c596a56d687039ffea1baac))
+
+
+
+
+
+# 3.12.0 (2024-04-26)
+
+
+### Features
+
+* Automatically prefer localized pathnames that are more specific ([#983](https://github.com/amannn/next-intl/issues/983) by [@fkapsahili](https://github.com/fkapsahili)) ([88a9b7a](https://github.com/amannn/next-intl/commit/88a9b7a18e89c4c642c2dd486ad4cb8de24e0086))
+
+
+
+
+
 ## 3.11.3 (2024-04-17)
 
 

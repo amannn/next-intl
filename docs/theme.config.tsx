@@ -1,3 +1,4 @@
+import AlgoliaSearch from 'components/AlgoliaSearch';
 import Footer from 'components/Footer';
 import PartnerSidebar from 'components/PartnerSidebar';
 import {useRouter} from 'next/router';
@@ -5,6 +6,9 @@ import {ThemeConfig} from 'nextra';
 import {Navbar, ThemeSwitch, useConfig} from 'nextra-theme-docs';
 import {ComponentProps} from 'react';
 import config from './config';
+
+export const TITLE_TEMPLATE_SUFFIX =
+  ' – Internationalization (i18n) for Next.js';
 
 const logo = (
   <svg
@@ -79,7 +83,7 @@ export default {
   docsRepositoryBase: config.githubUrl + '/blob/main/docs',
   useNextSeoProps() {
     return {
-      titleTemplate: '%s – Internationalization (i18n) for Next.js'
+      titleTemplate: '%s' + TITLE_TEMPLATE_SUFFIX
     };
   },
   primaryHue: {light: 210, dark: 195},
@@ -115,6 +119,9 @@ export default {
         </div>
       );
     }
+  },
+  search: {
+    component: AlgoliaSearch
   },
   feedback: {
     content: 'Provide feedback on this page',
@@ -163,15 +170,15 @@ export default {
       <meta content="next-intl" name="twitter:title" />
 
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="description"
       />
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="og:description"
       />
       <meta
-        content="Internationalization (i18n) for Next.js that gets out of your way."
+        content="Internationalization (i18n) for Next.js"
         name="twitter:description"
       />
 

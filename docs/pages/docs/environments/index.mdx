@@ -1,9 +1,3 @@
-import {
-  RectangleGroupIcon,
-  DocumentTextIcon,
-  BoltIcon,
-  CodeBracketIcon
-} from '@heroicons/react/24/outline';
 import {Card} from 'nextra-theme-docs';
 
 # Environments
@@ -13,25 +7,22 @@ The `next-intl` APIs are available in the following environments:
 <div className="mt-8 flex flex-col gap-4 md:w-2/3">
   <Card
     arrow
-    icon={<RectangleGroupIcon />}
     title="Server & Client Components"
     href="/docs/environments/server-client-components"
   />
   <Card
     arrow
-    icon={<DocumentTextIcon />}
     title="Metadata API & Route Handlers"
     href="/docs/environments/metadata-route-handlers"
   />
   <Card
     arrow
-    icon={<BoltIcon />}
     title="Error files (e.g. not-found)"
     href="/docs/environments/error-files"
   />
+  <Card arrow title="Sitemaps" href="/docs/environments/sitemap" />
   <Card
     arrow
-    icon={<CodeBracketIcon />}
     title="Core library (agnostic)"
     href="/docs/environments/core-library"
   />

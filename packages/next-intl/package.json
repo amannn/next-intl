@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.11.3",
+  "version": "3.13.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -82,7 +82,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^3.11.3"
+    "use-intl": "^3.13.0"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
@@ -95,16 +95,16 @@
     "@testing-library/react": "^13.0.0",
     "@types/negotiator": "^0.6.1",
     "@types/node": "^20.1.2",
-    "@types/react": "18.2.34",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "^14.2.1",
+    "next": "^14.2.3",
     "path-to-regexp": "^6.2.1",
     "publint": "^0.2.7",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
     "rollup": "^3.28.1",
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
@@ -114,11 +114,11 @@
   "size-limit": [
     {
       "path": "dist/production/index.react-client.js",
-      "limit": "13.055 KB"
+      "limit": "15.765 KB"
     },
     {
       "path": "dist/production/index.react-server.js",
-      "limit": "13.8 KB"
+      "limit": "16.5 KB"
     },
     {
       "path": "dist/production/navigation.react-client.js",
@@ -126,7 +126,7 @@
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "14.8 KB"
+      "limit": "17.46 KB"
     },
     {
       "path": "dist/production/server.react-client.js",
@@ -134,11 +134,11 @@
     },
     {
       "path": "dist/production/server.react-server.js",
-      "limit": "13.05 KB"
+      "limit": "15.675 KB"
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "6 KB"
+      "limit": "6.19 KB"
     }
   ]
 }

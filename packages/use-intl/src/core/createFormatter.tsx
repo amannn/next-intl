@@ -212,18 +212,6 @@ export default function createFormatter({
     }
   }
 
-  function extractNowDate(
-    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
-  ) {
-    if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
-      return new Date(nowOrOptions);
-    }
-    if (nowOrOptions?.now !== undefined) {
-      return new Date(nowOrOptions.now);
-    }
-    return getGlobalNow();
-  }
-
   function relativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
@@ -231,30 +219,46 @@ export default function createFormatter({
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
+      let nowDate: Date | undefined,
+        unit: Intl.RelativeTimeFormatUnit | undefined;
+      const opts: Intl.RelativeTimeFormatOptions = {};
+      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+        nowDate = new Date(nowOrOptions);
+      } else if (nowOrOptions) {
+        if (nowOrOptions.now != null) {
+          nowDate = new Date(nowOrOptions.now);
+        } else {
+          nowDate = getGlobalNow();
+        }
+        unit = nowOrOptions.unit;
+        opts.style = nowOrOptions.style;
+        // @ts-expect-error -- Types are slightly outdated
+        opts.numberingSystem = nowOrOptions.numberingSystem;
+      }
+
+      if (!nowDate) {
+        nowDate = getGlobalNow();
+      }
+
       const dateDate = new Date(date);
-      const nowDate = extractNowDate(nowOrOptions);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
 
-      const unit =
-        typeof nowOrOptions === 'number' ||
-        nowOrOptions instanceof Date ||
-        nowOrOptions?.unit === undefined
-          ? resolveRelativeTimeUnit(seconds)
-          : nowOrOptions.unit;
+      if (!unit) {
+        unit = resolveRelativeTimeUnit(seconds);
+      }
+
+      // `numeric: 'auto'` can theoretically produce output like "yesterday",
+      // but it only works with integers. E.g. -1 day will produce "yesterday",
+      // but -1.1 days will produce "-1.1 days". Rounding before formatting is
+      // not desired, as the given dates might cross a threshold were the
+      // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
+      // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
+      // case. By using `always` we can ensure correct output. The only exception
+      // is the formatting of times <1 second as "now".
+      opts.numeric = unit === 'second' ? 'auto' : 'always';
 
       const value = calculateRelativeTimeValue(seconds, unit);
-
-      return new Intl.RelativeTimeFormat(locale, {
-        // `numeric: 'auto'` can theoretically produce output like "yesterday",
-        // but it only works with integers. E.g. -1 day will produce "yesterday",
-        // but -1.1 days will produce "-1.1 days". Rounding before formatting is
-        // not desired, as the given dates might cross a threshold were the
-        // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
-        // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
-        // case. By using `always` we can ensure correct output. The only exception
-        // is the formatting of times <1 second as "now".
-        numeric: unit === 'second' ? 'auto' : 'always'
-      }).format(value, unit);
+      return new Intl.RelativeTimeFormat(locale, opts).format(value, unit);
     } catch (error) {
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)

@@ -31,6 +31,9 @@
   "NewsArticle": {
     "title": "News-Artikel #{articleId}"
   },
+  "JustIn": {
+    "title": "Gerade eingetroffen"
+  },
   "NotFound": {
     "title": "Diese Seite wurde nicht gefunden (404)"
   },

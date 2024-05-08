@@ -1,10 +1,9 @@
 import {Tab, Tabs} from 'nextra-theme-docs';
 import Callout from 'components/Callout';
 import Steps from 'components/Steps';
+import Details from 'components/Details';
 
 # Next.js App Router Internationalization (i18n)
-
-The Next.js App Router introduces support for [React Server Components](https://nextjs.org/docs/app/building-your-application/rendering/server-components) and unlocks [many benefits](/docs/environments/server-client-components) when handling internationalization on the server side.
 
 ## Getting started
 
@@ -55,8 +54,6 @@ Now, set up the plugin which creates an alias to provide your i18n configuration
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tab>
 
-If you're using ECMAScript modules for your Next.js config, you can use the plugin as follows:
-
 ```js filename="next.config.mjs"
 import createNextIntlPlugin from 'next-intl/plugin';
 
@@ -70,8 +67,6 @@ export default withNextIntl(nextConfig);
 
 </Tab>
 <Tab>
-
-If you're using CommonJS for your Next.js config, you can use the plugin as follows:
 
 ```js filename="next.config.js"
 const createNextIntlPlugin = require('next-intl/plugin');
@@ -89,7 +84,7 @@ module.exports = withNextIntl(nextConfig);
 
 ### `i18n.ts` [#i18nts]
 
-`next-intl` creates a configuration once per request. Here you can provide messages and other options depending on the locale of the user.
+`next-intl` creates a request-scoped configuration object that can be used to provide messages and other options depending on the locale of the user for usage in Server Components.
 
 ```tsx filename="src/i18n.ts"
 import {notFound} from 'next/navigation';
@@ -108,8 +103,8 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
-<details>
-  <summary>Can I move this file somewhere else?</summary>
+<Details id="move-i18n-ts">
+<summary>Can I move this file somewhere else?</summary>
 
 This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
@@ -122,7 +117,7 @@ const withNextIntl = createNextIntlPlugin(
 );
 ```
 
-</details>
+</Details>
 
 ### `middleware.ts` [#middleware]
 
@@ -147,23 +142,35 @@ export const config = {
 
 ### `app/[locale]/layout.tsx` [#layout]
 
-The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language.
+The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-export default function LocaleLayout({
+import {getMessages} from 'next-intl/server';
+
+export default async function LocaleLayout({
   children,
   params: {locale}
 }: {
   children: React.ReactNode;
   params: {locale: string};
 }) {
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
 ```
+
+Note that `NextIntlClientProvider` automatically inherits most configuration from `i18n.ts` here.
 
 ### `app/[locale]/page.tsx` [#page]
 
@@ -190,10 +197,6 @@ In case you ran into an issue, have a look at [the App Router example](https://n
 
 <ul className="ml-4 list-disc">
   <li>[Usage guide](/docs/usage): Format messages, dates and times</li>
-  <li>
-    [Environments](/docs/environments): Explore usage in Server & Client
-    Components and the Metadata API
-  </li>
   <li>
     [Routing](/docs/routing): Integrate i18n routing with `<Link />` & friends
   </li>
@@ -263,25 +266,25 @@ export default function IndexPage({params: {locale}}) {
 
 E.g. when you navigate from `/settings/profile` to `/settings/privacy`, the `/settings` segment might not re-render as part of the request. Due to this, it's important that `unstable_setRequestLocale` is called not only in the parent `settings/layout.tsx`, but also in the individual pages `profile/page.tsx` and `privacy/page.tsx`.
 
-<details>
+<Details id="setrequestlocale-unstable">
 <summary>What does "unstable" mean?</summary>
 
 `unstable_setRequestLocale` is meant to be used as a stopgap solution and we aim to remove it in the future [in case Next.js adds an API to access parts of the URL](https://github.com/vercel/next.js/discussions/58862). If that's the case, you'll get a deprecation notice in a minor version and the API will be removed as part of a major version.
 
 That being said, the API is expected to work reliably if you're cautious to apply it in all relevant places.
 
-</details>
+</Details>
 
-<details>
+<Details id="setrequestlocale-implementation">
 <summary>How does unstable_setRequestLocale work?</summary>
 
 `next-intl` uses [`cache()`](https://react.dev/reference/react/cache) to create a mutable store that holds the current locale. By calling `unstable_setRequestLocale`, the current locale will be written to the store, making it available to all APIs that require the locale.
 
 Note that the store is scoped to a request and therefore doesn't affect other requests that might be handled in parallel while a given request resolves asynchronously.
 
-</details>
+</Details>
 
-<details>
+<Details id="setrequestlocale-background">
 <summary>Why is this API necessary?</summary>
 
 Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
@@ -292,7 +295,7 @@ However, the usage of `headers` opts the route into dynamic rendering.
 
 By using `unstable_setRequestLocale`, you can provide the locale that is received in layouts and pages via `params` to `next-intl`. All APIs from `next-intl` can now read from this value instead of the header, enabling static rendering.
 
-</details>
+</Details>
 
 ### Use the `locale` param in metadata
 

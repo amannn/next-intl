@@ -26,6 +26,12 @@ export const pathnames = {
     de: '/neuigkeiten/[articleId]',
     es: '/noticias/[articleId]',
     ja: '/ニュース/[articleId]'
+  },
+  '/news/just-in': {
+    en: '/news/just-in',
+    de: '/neuigkeiten/aktuell',
+    es: '/noticias/justo-en',
+    ja: '/ニュース/現在'
   }
 } satisfies Pathnames<typeof locales>;
 

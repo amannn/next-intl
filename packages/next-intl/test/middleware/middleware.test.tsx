@@ -391,17 +391,47 @@ describe('prefix-based routing', () => {
             'de-AT': '/neuigkeiten/[articleSlug]-[articleId]',
             ja: '/ニュース/[articleSlug]-[articleId]'
           },
+          '/articles/[category]/[articleSlug]': {
+            en: '/articles/[category]/[articleSlug]',
+            de: '/artikel/[category]/[articleSlug]',
+            'de-AT': '/artikel/[category]/[articleSlug]',
+            ja: '/記事/[category]/[articleSlug]'
+          },
+          '/articles/[category]/just-in': {
+            en: '/articles/[category]/just-in',
+            de: '/artikel/[category]/aktuell',
+            'de-AT': '/artikel/[category]/aktuell',
+            ja: '/記事/[category]/最新'
+          },
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]',
             'de-AT': '/produkte/[...slug]',
             ja: '/製品/[...slug]'
           },
+          '/products/[slug]': {
+            en: '/products/[slug]',
+            de: '/produkte/[slug]',
+            'de-AT': '/produkte/[slug]',
+            ja: '/製品/[slug]'
+          },
+          '/products/add': {
+            en: '/products/add',
+            de: '/produkte/hinzufuegen',
+            'de-AT': '/produkte/hinzufuegen',
+            ja: '/製品/追加'
+          },
           '/categories/[[...slug]]': {
             en: '/categories/[[...slug]]',
             de: '/kategorien/[[...slug]]',
             'de-AT': '/kategorien/[[...slug]]',
             ja: '/カテゴリー/[[...slug]]'
+          },
+          '/categories/new': {
+            en: '/categories/new',
+            de: '/kategorien/neu',
+            'de-AT': '/kategorien/neu',
+            ja: '/カテゴリー/新着'
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT' | 'ja'>>
       });
@@ -639,6 +669,54 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de-AT/ueber'
+        );
+      });
+
+      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+        middlewareWithPathnames(createMockRequest('/products/add', 'en'));
+        middlewareWithPathnames(createMockRequest('/categories/new', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/products/add'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/categories/new'
+        );
+      });
+
+      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/produkte/hinzufuegen', 'de')
+        );
+        middlewareWithPathnames(createMockRequest('/de/kategorien/neu', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/products/add'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/categories/new'
+        );
+      });
+
+      it('prioritizes more specific, static routes over dynamic routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/aktuell', 'de')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/neueste-trends', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/neueste-trends'
         );
       });
 
@@ -1006,13 +1084,33 @@ describe('prefix-based routing', () => {
             en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]'
           },
+          '/articles/[category]/[articleSlug]': {
+            en: '/articles/[category]/[articleSlug]',
+            de: '/artikel/[category]/[articleSlug]'
+          },
+          '/articles/[category]/just-in': {
+            en: '/articles/[category]/just-in',
+            de: '/artikel/[category]/aktuell'
+          },
           '/products/[...slug]': {
             en: '/products/[...slug]',
             de: '/produkte/[...slug]'
           },
+          '/products/[slug]': {
+            en: '/products/[slug]',
+            de: '/produkte/[slug]'
+          },
+          '/products/add': {
+            en: '/products/add',
+            de: '/produkte/hinzufuegen'
+          },
           '/categories/[[...slug]]': {
             en: '/categories/[[...slug]]',
             de: '/kategorien/[[...slug]]'
+          },
+          '/categories/new': {
+            en: '/categories/new',
+            de: '/kategorien/neu'
           },
           '/internal': '/external',
           '/internal/foo/bar': {
@@ -1100,8 +1198,74 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/de/users/1',
           'http://localhost:3000/de/news/gutes-neues-jahr-g5b116754',
           'http://localhost:3000/de/categories',
-          'http://localhost:3000/de/categories/neu'
+          'http://localhost:3000/de/categories/new'
         ]);
+      });
+
+      it('prioritizes static routes over dynamic and catch-all routes for the default locale', () => {
+        middlewareWithPathnames(createMockRequest('/en/products/add', 'en'));
+        middlewareWithPathnames(createMockRequest('/en/categories/new', 'en'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/products/add'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/categories/new'
+        );
+      });
+
+      it('prioritizes more specific, static routes over dynamic routes for the default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/en/articles/technology/just-in', 'en')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/en/articles/technology/latest-trends', 'en')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en/articles/technology/latest-trends'
+        );
+      });
+
+      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/produkte/hinzufuegen', 'de')
+        );
+        middlewareWithPathnames(createMockRequest('/de/kategorien/neu', 'de'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/products/add'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/categories/new'
+        );
+      });
+
+      it('prioritizes more specific, static routes over dynamic routes for the non-default locale', () => {
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/aktuell', 'de')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/de/artikel/technology/neueste-trends', 'de')
+        );
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/just-in'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/articles/technology/neueste-trends'
+        );
       });
 
       it('redirects a request for a localized route that is not associated with the requested locale', () => {
