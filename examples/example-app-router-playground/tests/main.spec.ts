@@ -1,7 +1,5 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
 
-it.describe.configure({mode: 'parallel'});
-
 const describe = it.describe;
 
 async function assertLocaleCookieValue(

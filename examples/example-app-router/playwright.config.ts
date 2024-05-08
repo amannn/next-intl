@@ -14,6 +14,7 @@ const config: PlaywrightTestConfig = {
       use: devices['Desktop Chrome']
     }
   ],
+  fullyParallel: true,
   webServer: {
     command: `PORT=${PORT} pnpm start`,
     port: PORT,
