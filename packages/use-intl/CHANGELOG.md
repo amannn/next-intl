@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.13.0 (2024-05-08)
+
+
+### Features
+
+* Support `numberingSystem` and `style` for relative time formatting ([#1057](https://github.com/amannn/next-intl/issues/1057)) ([14e3aa4](https://github.com/amannn/next-intl/commit/14e3aa4a4b04736ab8fcdcd50e6a57dd57bd08d7)), closes [#1056](https://github.com/amannn/next-intl/issues/1056)
+
+
+
+
+
 ## 3.12.2 (2024-05-03)
 
 
