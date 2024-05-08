@@ -145,6 +145,7 @@ export const config = {
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
+import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
 export default async function LocaleLayout({
