@@ -5,11 +5,10 @@ import {ReactNode} from 'react';
 type Props = {
   children?: ReactNode;
   title: string;
-  arrow?: boolean;
   href: string;
 };
 
-export default function Card({arrow, children, href, title, ...props}: Props) {
+export default function Card({children, href, title, ...props}: Props) {
   return (
     <NextLink
       className={cx(
@@ -30,11 +29,9 @@ export default function Card({arrow, children, href, title, ...props}: Props) {
         )}
       >
         {title}
-        {arrow && (
-          <span className="transition-transform duration-75 group-hover:translate-x-[2px]">
-            →
-          </span>
-        )}
+        <span className="transition-transform duration-75 group-hover:translate-x-[2px]">
+          →
+        </span>
       </span>
       {children && <div className="mt-3">{children}</div>}
     </NextLink>
