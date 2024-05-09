@@ -108,9 +108,27 @@ export default {
     }
   },
   navbar: {
-    component: function CustomNavbar(props: ComponentProps<typeof Navbar>) {
+    component: function CustomNavbar({
+      items,
+      ...rest
+    }: ComponentProps<typeof Navbar>) {
       const router = useRouter();
       const isRoot = router.pathname === '/';
+      // https://github.com/shuding/nextra/issues/2836
+      const props = {
+        items: items.map((item) => {
+          if (item.route === '/docs') {
+            return {
+              ...item,
+              firstChildRoute: '/docs'
+            };
+          } else {
+            return item;
+          }
+        }),
+        ...rest
+      };
+
       if (!isRoot) return <Navbar {...props} />;
 
       return (
