@@ -1,5 +1,5 @@
 {
-  "name": "example-app-router-without-routing",
+  "name": "example-app-router-without-i18n-routing",
   "version": "2.10.2",
   "private": true,
   "scripts": {

@@ -335,7 +335,7 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
-  examples/example-app-router-without-routing:
+  examples/example-app-router-without-i18n-routing:
     dependencies:
       next:
         specifier: ^14.2.1
