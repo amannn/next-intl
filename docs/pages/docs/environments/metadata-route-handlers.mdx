@@ -15,7 +15,7 @@ There are a few places in Next.js apps where you might need to apply internation
 
 To internationalize metadata like the page title, you can use functionality from `next-intl` in the [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) function that can be exported from pages and layouts.
 
-```tsx filename="app/[locale]/layout.tsx"
+```tsx filename="layout.tsx"
 import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
@@ -37,7 +37,7 @@ export async function generateMetadata({params: {locale}}) {
 
 If you need to internationalize content within [metadata files](https://nextjs.org/docs/app/api-reference/file-conventions/metadata), such as an Open Graph image, you can call APIs from `next-intl` in the exported function.
 
-```tsx filename="app/[locale]/opengraph-image.tsx"
+```tsx filename="opengraph-image.tsx"
 import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 

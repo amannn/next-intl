@@ -208,7 +208,14 @@ In this case, requests where the locale prefix matches the default locale will b
 
 #### Never use a locale prefix [#locale-prefix-never]
 
-If you're building an app behind an authentication layer, where there is no need for SEO, or you're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain, you can configure the middleware to never show a locale prefix in the URL.
+<Callout>
+  If you'd like to provide a locale to `next-intl`, e.g. based on user settings,
+  you can consider setting up `next-intl` [without i18n
+  routing](/docs/getting-started/app-router/without-i18n-routing). This way, you
+  don't need to use the middleware in the first place.
+</Callout>
+
+In case you're using the middleware, but you don't want your pathnames to be prefixed with a locale, you can configure the middleware to never show a locale prefix in the URL. This can be useful e.g. if you're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';

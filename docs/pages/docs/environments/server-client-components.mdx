@@ -7,7 +7,7 @@ import Details from 'components/Details';
 
 This applies to handling internationalization too.
 
-```tsx filename="app/[locale]/page.tsx"
+```tsx filename="page.tsx"
 import {useTranslations} from 'next-intl';
 
 // Since this component doesn't use any interactive features
@@ -41,7 +41,7 @@ In a typical app, you'll likely find both types of components. `next-intl` provi
 
 These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
 
-```tsx filename="[locale]/profile/page.tsx"
+```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
 
 export default async function ProfilePage() {
@@ -144,7 +144,7 @@ There are several options for using translations from `next-intl` in Client Comp
 
 The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx" {11-13}
+```tsx filename="FAQEntry.tsx" {11-13}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable'; // A Client Component
 import FAQContent from './FAQContent';
@@ -338,21 +338,18 @@ An automatic, compiler-driven approach is being evaluated in [`next-intl#1`](htt
 
 If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
 
-```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+```tsx filename="layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
-import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
-  // ...
-
+export default async function RootLayout(/* ... */) {
   // Receive messages provided in `i18n.ts`
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>
