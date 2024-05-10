@@ -8,9 +8,7 @@ export default function Index() {
   return (
     <PageLayout title={t('title')}>
       <p>{t('description')}</p>
-      <p>
-        <Link href="/about">{t('navigateToAbout')}</Link>
-      </p>
+      <Link href="/about">{t('navigateToAbout')}</Link>
     </PageLayout>
   );
 }

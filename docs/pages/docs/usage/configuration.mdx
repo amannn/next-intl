@@ -9,11 +9,15 @@ Configuration properties that you use across your Next.js app can be set globall
 
 ## Client- and Server Components [#client-server-components]
 
-Depending on if you handle [internationalization in Client- or Server Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
+Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
 
 ### `i18n.ts`
 
-`i18n.ts` can be used to provide configuration for **Server Components**.
+`i18n.ts` can be used to provide configuration for **Server Components** and should be set up based on wether you're using [i18n routing](/docs/getting-started/app-router) or not.
+
+<Tabs items={['With i18n routing', 'Without i18n routing']}>
+
+<Tab>
 
 ```tsx filename="i18n.ts"
 import {notFound} from 'next/navigation';
@@ -31,6 +35,28 @@ export default getRequestConfig(async ({locale}) => {
   };
 });
 ```
+
+</Tab>
+<Tab>
+
+```tsx filename="i18n.ts"
+import {NextIntlClientProvider} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // This can either be defined statically if only a single locale
+  // is supported, or alternatively read from the user settings
+  const locale = 'en';
+
+  return {
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
+```
+
+</Tab>
+</Tabs>
 
 The configuration object is created once for each request by internally using React's [`cache`](https://nextjs.org/docs/app/building-your-application/data-fetching/caching#react-cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 

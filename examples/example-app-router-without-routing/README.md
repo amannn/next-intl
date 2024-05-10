@@ -1,12 +1,17 @@
 # example-app-router-without-routing
 
-An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup. This can be used for single-language setups and apps where the locale is read from the user settings instead of the pathname.
+An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup.
+
+This can be useful in the following cases:
+
+1. You'd like to provide a locale to `next-intl`, e.g. based on user settings
+2. Your app only supports a single language
 
 **Note that:**
 
 1. No `[locale]` segment needs to be added
-2. No middleware needs to be configured
-3. The navigation APIs from `next-intl` don't need to be used
+2. No routing APIs need to be used (middleware and navigation APIs)
+3. Eligibility for static or dynamic rendering is decided by user
 
 ## Deploy your own
 
