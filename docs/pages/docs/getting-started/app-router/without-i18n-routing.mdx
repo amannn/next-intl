@@ -124,6 +124,7 @@ const withNextIntl = createNextIntlPlugin(
 The `locale` that was provided in `i18n.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/layout.tsx"
+import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
 export default async function RootLayout({
