@@ -47,7 +47,8 @@ function IntlPolyfills() {
     <Script
       strategy="beforeInteractive"
       src={
-        'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=' + polyfills.join(',')
+        'https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=' +
+        polyfills.join(',')
       }
     />
   );
@@ -55,12 +56,12 @@ function IntlPolyfills() {
 ```
 
 <Callout type="warning">
-  Note that the polyfill service doesn't support every locale. You can find a list of the
-  available polyfills in the [`polyfill-service` GitHub
+  Note that the polyfill service doesn't support every locale. You can find a
+  list of the available polyfills in the [`polyfill-service`
   repository](https://github.com/cdnjs/polyfill-service/tree/main/polyfill-libraries/3.101.0/polyfills/__dist)
   (e.g. search for `Intl.DateTimeFormat.~locale.de-AT`).
 </Callout>
 
-## Node
+## Node.js
 
 The minimum version to support all relevant `Intl` APIs is **Node.js 13**. Starting from this version, all required APIs are available.

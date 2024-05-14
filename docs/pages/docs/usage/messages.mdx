@@ -154,20 +154,22 @@ const output = Object.entries(input).reduce(
   (acc, [key, value]) => set(acc, key, value),
   {}
 );
+```
 
-// Output:
-//
-// {
-//   "one": {
-//     "one": "1.1",
-//     "two": "1.2"
-//   },
-//   "two": {
-//     "one": {
-//       "one": "2.1.1"
-//     }
-//   }
-// }
+**Output:**
+
+```tsx
+{
+  "one": {
+    "one": "1.1",
+    "two": "1.2"
+  },
+  "two": {
+    "one": {
+      "one": "2.1.1"
+    }
+  }
+}
 ```
 
 This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or as before passing messages to `next-intl`.
