@@ -118,3 +118,13 @@ it('serves a sitemap.xml', async ({page}) => {
 `
   );
 });
+
+it('provides a manifest', async ({page}) => {
+  const response = await page.goto('/manifest.webmanifest');
+  const body = await response!.json();
+  expect(body).toEqual({
+    name: 'next-intl example',
+    start_url: '/',
+    theme_color: '#101E33'
+  });
+});
