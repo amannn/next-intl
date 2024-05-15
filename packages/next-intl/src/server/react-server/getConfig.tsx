@@ -17,8 +17,8 @@ function getDefaultTimeZoneImpl() {
 const getDefaultTimeZone = cache(getDefaultTimeZoneImpl);
 
 async function receiveRuntimeConfigImpl(
-  localeOverride?: string,
-  getConfig?: typeof createRequestConfig
+  getConfig: typeof createRequestConfig,
+  localeOverride?: string
 ) {
   let hasReadLocale = false;
 
@@ -32,12 +32,12 @@ async function receiveRuntimeConfigImpl(
     }
   };
 
-  let result = getConfig?.(params);
+  let result = getConfig(params);
   if (result instanceof Promise) {
     result = await result;
   }
 
-  if (result?.locale && hasReadLocale) {
+  if (result.locale && hasReadLocale) {
     console.error(
       "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
     );
@@ -45,9 +45,9 @@ async function receiveRuntimeConfigImpl(
 
   return {
     ...result,
-    locale: result?.locale || params.locale,
-    now: result?.now || getDefaultNow(),
-    timeZone: result?.timeZone || getDefaultTimeZone()
+    locale: result.locale || params.locale,
+    now: result.now || getDefaultNow(),
+    timeZone: result.timeZone || getDefaultTimeZone()
   };
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
@@ -61,8 +61,8 @@ async function getConfigImpl(localeOverride?: string): Promise<
   }
 > {
   const runtimeConfig = await receiveRuntimeConfig(
-    localeOverride,
-    createRequestConfig
+    createRequestConfig,
+    localeOverride
   );
   return initializeConfig(runtimeConfig);
 }
