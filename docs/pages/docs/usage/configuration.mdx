@@ -9,11 +9,15 @@ Configuration properties that you use across your Next.js app can be set globall
 
 ## Client- and Server Components [#client-server-components]
 
-Depending on if you handle [internationalization in Client- or Server Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
+Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
 
 ### `i18n.ts`
 
-`i18n.ts` can be used to provide configuration for **Server Components**.
+`i18n.ts` can be used to provide configuration for **Server Components** and should be set up based on wether you're using [i18n routing](/docs/getting-started/app-router) or not.
+
+<Tabs items={['With i18n routing', 'Without i18n routing']}>
+
+<Tab>
 
 ```tsx filename="i18n.ts"
 import {notFound} from 'next/navigation';
@@ -32,17 +36,41 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
+</Tab>
+<Tab>
+
+```tsx filename="i18n.ts"
+import {NextIntlClientProvider} from 'next-intl';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // This can either be defined statically if only a single locale
+  // is supported, or alternatively read from the user settings
+  const locale = 'en';
+
+  return {
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default
+  };
+});
+```
+
+</Tab>
+</Tabs>
+
 The configuration object is created once for each request by internally using React's [`cache`](https://nextjs.org/docs/app/building-your-application/data-fetching/caching#react-cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
 ### `NextIntlClientProvider`
 
 `NextIntlClientProvider` can be used to provide configuration for **Client Components**.
 
-```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+```tsx filename="layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default async function RootLayout(/* ... */) {
+  // Providing all messages to the client
+  // side is the easiest way to get started
   const messages = await getMessages();
 
   return (
@@ -82,7 +110,7 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can [use the shape of your local messages for type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
 
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
@@ -564,7 +592,9 @@ const locale = await getLocale();
 <Details id="locale-change">
 <summary>How can I change the locale?</summary>
 
-Since the locale is represented by the `[locale]` segment in the pathname, changing the locale really means changing the pathname. You can do this by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale is either represented by the `[locale]` segment in the pathname or managed by your own app code.
+
+In case you're using i18n routing, changing the locale means changing the pathname. You can do this by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
 
 </Details>
 
@@ -573,7 +603,7 @@ Since the locale is represented by the `[locale]` segment in the pathname, chang
 
 The returned value is resolved based on these priorities:
 
-1. **Server Components**: A locale provided via [`unstable_setRequestLocale`](/docs/getting-started/app-router#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware.
+1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`unstable_setRequestLocale`](/docs/getting-started/app-router#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
 2. **Client Components**: A `locale` received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
    explicitly.
 

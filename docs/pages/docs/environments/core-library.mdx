@@ -7,6 +7,7 @@ While `next-intl` is primarily intended to be used in Next.js apps, the core is 
 `next-intl` is based on a library called [`use-intl`](https://www.npmjs.com/package/use-intl) that is developed in parallel.
 
 This core library contains most features of `next-intl`, but lacks the following Next.js-specific features:
+
 1. [Routing APIs](/docs/routing)
 2. [Awaitable APIs for the Metadata API and Route Handlers](/docs/environments/metadata-route-handlers)
 3. [Server Components integration](/docs/environments/server-client-components) along with `i18n.ts`
@@ -14,8 +15,9 @@ This core library contains most features of `next-intl`, but lacks the following
 In case Server Components establish themselves in React apps outside of Next.js, the support for Server Components might be moved to the core library in the future.
 
 In contrast, `use-intl` contains all APIs that are necessary for handling i18n in regular React apps:
+
 - [`useTranslations`](/docs/usage/messages) for translating messages
-- `useFormatter` for formatting of [numbers](/docs/usage/numbers), [dates & times](/docs/usage/dates-times) and [lists](/docs/usage/lists)
+- `useFormatter` for formatting [numbers](/docs/usage/numbers), [dates & times](/docs/usage/dates-times) and [lists](/docs/usage/lists)
 - [Configuration APIs](/docs/usage/configuration) (note however that `NextIntlProvider` is called `IntlProvider` in `use-intl`)
 
 This allows you to use the same APIs that you know from `next-intl` in other environments:
@@ -32,11 +34,11 @@ This allows you to use the same APIs that you know from `next-intl` in other env
 import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
-// fetch them from within a component and then render the provider 
+// fetch them from within a component and then render the provider
 // along with your app once you have the messages.
 const messages = {
-  "App": {
-    "hello": 'Hello {username}!'
+  App: {
+    hello: 'Hello {username}!'
   }
 };
 

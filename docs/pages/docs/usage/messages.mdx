@@ -154,20 +154,22 @@ const output = Object.entries(input).reduce(
   (acc, [key, value]) => set(acc, key, value),
   {}
 );
+```
 
-// Output:
-//
-// {
-//   "one": {
-//     "one": "1.1",
-//     "two": "1.2"
-//   },
-//   "two": {
-//     "one": {
-//       "one": "2.1.1"
-//     }
-//   }
-// }
+**Output:**
+
+```tsx
+{
+  "one": {
+    "one": "1.1",
+    "two": "1.2"
+  },
+  "two": {
+    "one": {
+      "one": "2.1.1"
+    }
+  }
+}
 ```
 
 This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or as before passing messages to `next-intl`.
@@ -543,26 +545,14 @@ In addition to providing translated messages, proper RTL localization requires:
 2. Layout mirroring, e.g. by using [CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
 3. Element mirroring, e.g. by customizing icons
 
-To handle these cases in your components, you can set up a reusable hook:
+To handle these cases in your components, you can use the [`rtl-detect`](https://www.npmjs.com/package/rtl-detect) package:
 
-```tsx filename="useTextDirection.tsx"
-import {isRtlLang} from 'rtl-detect';
-import {useLocale} from 'next-intl';
+```tsx filename="layout.tsx"
+import {getLangDir} from 'rtl-detect';
 
-export default function useTextDirection(locale) {
-  const defaultLocale = useLocale();
-  if (!locale) locale = defaultLocale;
-  return isRtlLang(locale) ? 'rtl' : 'ltr';
-}
-```
-
-… and use it accordingly:
-
-```tsx filename="app/[locale]/layout.tsx"
-import useTextDirection from './useTextDirection';
-
-export default function Layout({children, params: {locale}}) {
-  const direction = useTextDirection(locale);
+export default async function RootLayout(/* ... */) {
+  const locale = await getLocale();
+  const direction = getLangDir(locale);
 
   return (
     <html lang={locale} dir={direction}>
@@ -574,11 +564,12 @@ export default function Layout({children, params: {locale}}) {
 
 ```tsx filename="components/Breadcrumbs.tsx"
 import {useTranslations} from 'next-intl';
-import useTextDirection from './useTextDirection';
+import {getLangDir} from 'rtl-detect';
 
 export default function Breadcrumbs({children, params}) {
   const t = useTranslations('Breadcrumbs');
-  const direction = useTextDirection();
+  const locale = useLocale();
+  const direction = getLangDir(locale);
 
   return (
     <div style={{display: 'flex'}}>

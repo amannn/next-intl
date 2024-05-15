@@ -1,12 +1,19 @@
-import {Card} from 'nextra-theme-docs';
+import Card from 'components/Card';
+import Cards from 'components/Cards';
+import Callout from 'components/Callout';
 
 # Next.js internationalized routing
 
+<Callout>
+  Routing APIs are only needed when you're using [i18n
+  routing](/docs/getting-started/app-router).
+</Callout>
+
 When you provide content in multiple languages, you want to make your pages available under distinct pathnames (e.g. `/en/about`). `next-intl` provides the building blocks to set up internationalized routing as well as the navigation APIs to enable you to link between pages.
 
-<div className="mt-8 flex flex-col gap-4 md:w-1/2">
-  <Card arrow title="Routing middleware" href="/docs/routing/middleware" />
-  <Card arrow title="Navigation APIs" href="/docs/routing/navigation" />
-</div>
+<Cards className="mt-8 lg:w-1/2">
+  <Card title="Routing middleware" href="/docs/routing/middleware" />
+  <Card title="Navigation APIs" href="/docs/routing/navigation" />
+</Cards>
 
 Note that these features are only relevant if you use the App Router. If you're using [`next-intl` with the Pages Router](/docs/getting-started/pages-router), you can use the [built-in capabilities from Next.js](https://nextjs.org/docs/pages/building-your-application/routing/internationalization).

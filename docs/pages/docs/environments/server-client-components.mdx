@@ -7,7 +7,7 @@ import Details from 'components/Details';
 
 This applies to handling internationalization too.
 
-```tsx filename="app/[locale]/page.tsx"
+```tsx filename="page.tsx"
 import {useTranslations} from 'next-intl';
 
 // Since this component doesn't use any interactive features
@@ -41,7 +41,7 @@ In a typical app, you'll likely find both types of components. `next-intl` provi
 
 These are primarly concerned with fetching data and [can not use hooks](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#capabilities--constraints-of-server-and-client-components). Due to this, `next-intl` provides a set of awaitable versions of the functions that you usually call as hooks from within components.
 
-```tsx filename="[locale]/profile/page.tsx"
+```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
 
 export default async function ProfilePage() {
@@ -144,7 +144,7 @@ There are several options for using translations from `next-intl` in Client Comp
 
 The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
-```tsx filename="[locale]/faq/page.tsx" {11-13}
+```tsx filename="FAQEntry.tsx" {11-13}
 import {useTranslations} from 'next-intl';
 import Expandable from './Expandable'; // A Client Component
 import FAQContent from './FAQContent';
@@ -283,14 +283,14 @@ function Pagination({curPage, totalPages}) {
 
 You can still manage your translations on the server side by using:
 
-1. [Page or search params](https://nextjs.org/docs/app/api-reference/file-conventions/page)
-2. [Cookies](https://nextjs.org/docs/app/api-reference/functions/cookies)
-3. [Database state](https://nextjs.org/docs/app/building-your-application/data-fetching)
+1. Page or search params
+2. Cookies
+3. Database state
 
 In particular, page and search params are often a great option because they offer additional benefits such as preserving the state of the app when the URL is shared, as well as integration with the browser history.
 
 <Callout>
-  There's [an article on Smashing Magazine about using `next-intl` in Server
+  There's an article on Smashing Magazine about [using `next-intl` in Server
   Components](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components)
   which explores the usage of search params through a real-world example
   (specifically [the section about adding
@@ -338,21 +338,18 @@ An automatic, compiler-driven approach is being evaluated in [`next-intl#1`](htt
 
 If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
 
-```tsx filename="app/[locale]/layout.tsx" /NextIntlClientProvider/
+```tsx filename="layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
-import {notFound} from 'next/navigation';
 
-export default async function LocaleLayout({children, params: {locale}}) {
-  // ...
-
+export default async function RootLayout(/* ... */) {
   // Receive messages provided in `i18n.ts`
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>
@@ -369,8 +366,8 @@ You might encounter this error or a similar one referencing `useFormatter` while
 
 This can happen because:
 
-1. The component that calls the hook accidentally ended up in a client-side module graph, but you expected it to render as a Server Component. If this is the case, try to [pass this component via `children`](#option-1-passing-translations-to-client-components) to the Client Component instead.
-2. You're intentionally calling the hook from a Client Component, but `NextIntlClientProvider` is not present as an ancestor in the component tree. If this is the case, you can [wrap your component in `NextIntlClientProvider`](#option-3-providing-individual-messages) to resolve this error.
+1. You're intentionally calling the hook from a Client Component, but `NextIntlClientProvider` is not present as an ancestor in the component tree. If this is the case, you can [wrap your component in `NextIntlClientProvider`](#option-3-providing-individual-messages) to resolve this error.
+2. The component that calls the hook accidentally ended up in a client-side module graph, but you expected it to render as a Server Component. If this is the case, try to [pass this component via `children`](#option-1-passing-translations-to-client-components) to the Client Component instead.
 
 ### "Functions cannot be passed directly to Client Components because they're not serializable." [#non-serializable-props]
 

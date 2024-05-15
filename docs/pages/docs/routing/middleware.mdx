@@ -3,6 +3,11 @@ import Details from 'components/Details';
 
 # Middleware
 
+<Callout>
+  The middleware is only needed when you're using [i18n
+  routing](/docs/getting-started/app-router).
+</Callout>
+
 The middleware handles redirects and rewrites based on the detected user locale.
 
 ```tsx filename="middleware.ts"
@@ -203,7 +208,14 @@ In this case, requests where the locale prefix matches the default locale will b
 
 #### Never use a locale prefix [#locale-prefix-never]
 
-If you're building an app behind an authentication layer, where there is no need for SEO, or you're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain, you can configure the middleware to never show a locale prefix in the URL.
+<Callout>
+  If you'd like to provide a locale to `next-intl`, e.g. based on user settings,
+  you can consider setting up `next-intl` [without i18n
+  routing](/docs/getting-started/app-router/without-i18n-routing). This way, you
+  don't need to use the middleware in the first place.
+</Callout>
+
+In case you're using the middleware, but you don't want your pathnames to be prefixed with a locale, you can configure the middleware to never show a locale prefix in the URL. This can be useful e.g. if you're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -410,7 +422,7 @@ revalidatePath('/fr/infos/some-article');
 
 When in doubt, you can revalidate both paths to be on the safe side.
 
-See also [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825).
+See also: [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825)
 
 </Details>
 
@@ -778,17 +790,21 @@ Note that other [limitations as documented by Next.js](https://nextjs.org/docs/a
 
 This can happen either because:
 
-1. The middleware is not set up.
-2. The middleware is set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder).
-3. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component.
-4. You're attempting to implement static rendering via [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
+1. You're using a setup _with_ [i18n routing](/docs/getting-started/app-router) but the middleware is not set up.
+2. You're using a setup _without_ [i18n routing](/docs/getting-started/app-router) but are reading the `locale` param passed to the function within `getRequestConfig`.
+3. The middleware is set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder).
+4. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component.
+5. You're attempting to implement static rendering via [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
 To recover from this error, please make sure that:
 
-1. You've [set up the middleware](/docs/getting-started/app-router#middlewarets).
-2. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `locale` segment.
-3. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
-4. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that `params.locale` is [validated](/docs/usage/configuration#i18nts) before it's used by any APIs from `next-intl`.
-5. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl` instead of using `force-static`.
+1. You're consistently using a setup with or without [i18n routing](/docs/getting-started/app-router) (i.e. with or without the [routing APIs](/docs/routing)).
+2. If you're not using i18n routing:
+   1. You don't read the `locale` param in `getRequestConfig` but instead return it.
+3. If you're using i18n routing:
+   1. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `[locale]` segment.
+   2. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
+   3. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that the `locale` is [validated](/docs/usage/configuration#i18nts) before it's used by any APIs from `next-intl`.
+   4. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl` instead of using `force-static`.
 
 Note that `next-intl` will invoke the `notFound()` function to abort the render if the locale can't be found. You should consider adding [a `not-found` page](/docs/environments/error-files#not-foundjs) due to this.

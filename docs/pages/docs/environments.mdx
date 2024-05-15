@@ -1,30 +1,27 @@
-import {Card} from 'nextra-theme-docs';
+import Card from 'components/Card';
+import Cards from 'components/Cards';
 
 # Environments
 
 The `next-intl` APIs are available in the following environments:
 
-<div className="mt-8 flex flex-col gap-4 md:w-2/3">
+<Cards className="mt-8 lg:w-1/2">
   <Card
-    arrow
     title="Server & Client Components"
     href="/docs/environments/server-client-components"
   />
   <Card
-    arrow
     title="Metadata API & Route Handlers"
     href="/docs/environments/metadata-route-handlers"
   />
   <Card
-    arrow
     title="Error files (e.g. not-found)"
     href="/docs/environments/error-files"
   />
   <Card
-    arrow
     title="Core library (agnostic)"
     href="/docs/environments/core-library"
   />
-</div>
+</Cards>
 
 While modern browsers and server runtimes typically support all necessary JavaScript APIs that are required for `next-intl`, you can double check [the runtime requirements](/docs/environments/runtime-requirements).

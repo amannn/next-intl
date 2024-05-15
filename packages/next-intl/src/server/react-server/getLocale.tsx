@@ -1,5 +1,10 @@
-import {getRequestLocale} from './RequestLocale';
+import {cache} from 'react';
+import getConfig from './getConfig';
 
-export default function getLocale() {
-  return Promise.resolve(getRequestLocale());
+async function getLocaleCachedImpl() {
+  const config = await getConfig();
+  return Promise.resolve(config.locale);
 }
+const getLocaleCached = cache(getLocaleCachedImpl);
+
+export default getLocaleCached;

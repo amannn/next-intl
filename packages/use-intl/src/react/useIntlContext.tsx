@@ -7,7 +7,7 @@ export default function useIntlContext() {
   if (!context) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? 'No intl context found. Have you configured the provider?'
+        ? 'No intl context found. Have you configured the provider? See https://next-intl-docs.vercel.app/docs/usage/configuration#client-server-components'
         : undefined
     );
   }

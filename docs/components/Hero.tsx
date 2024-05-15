@@ -37,7 +37,9 @@ export default function Hero({
               </p>
               <div className="mt-8 flex flex-col gap-4 md:flex-row lg:mt-10">
                 <div>
-                  <LinkButton href="/docs">{getStarted}</LinkButton>
+                  <LinkButton href="/docs/getting-started">
+                    {getStarted}
+                  </LinkButton>
                 </div>
                 <div>
                   <LinkButton
