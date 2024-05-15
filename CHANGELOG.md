@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.14.0 (2024-05-15)
+
+
+### Features
+
+* Support providing a locale in `i18n.ts` instead of reading it from the pathname ([#1017](https://github.com/amannn/next-intl/issues/1017)) ([5c968b2](https://github.com/amannn/next-intl/commit/5c968b22bc3520cabc31bc3d6648e4f527c3404a))
+
+
+
+
+
 # 3.13.0 (2024-05-08)
 
 
