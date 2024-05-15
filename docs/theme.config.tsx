@@ -55,7 +55,7 @@ export default {
           if (item.route === '/docs') {
             return {
               ...item,
-              firstChildRoute: '/docs'
+              firstChildRoute: '/docs/getting-started'
             };
           } else {
             return item;
