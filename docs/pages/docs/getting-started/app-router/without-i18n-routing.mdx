@@ -125,7 +125,7 @@ The `locale` that was provided in `i18n.ts` is available via `getLocale` and can
 
 ```tsx filename="app/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
+import {getLocale, getMessages} from 'next-intl/server';
 
 export default async function RootLayout({
   children
