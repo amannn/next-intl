@@ -63,6 +63,20 @@ function calculateRelativeTimeValue(
   return Math.round(seconds / UNIT_SECONDS[unit]);
 }
 
+function isDate(candidate: unknown): candidate is Date {
+  return candidate instanceof Date;
+}
+
+type DateInput = Date | number | string;
+
+function isDateInput(candidate: unknown): candidate is DateInput {
+  return (
+    isDate(candidate) ||
+    typeof candidate === 'number' ||
+    typeof candidate === 'string'
+  );
+}
+
 type Props = {
   locale: string;
   timeZone?: TimeZone;
@@ -146,6 +160,32 @@ export default function createFormatter({
     }
   }
 
+  function toDate(value: DateInput): Date {
+    const formattable = new Date(value);
+
+    if (process.env.NODE_ENV !== 'production') {
+      if (
+        isNaN(formattable.getTime()) ||
+        (typeof value === 'string' &&
+          !value.match(
+            // https://stackoverflow.com/a/3143231/343045
+            /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/
+          ))
+      ) {
+        onError(
+          new IntlError(
+            IntlErrorCode.FORMATTING_ERROR,
+            typeof value === 'string'
+              ? `Invalid ISO 8601 date string received: ${value}. Note that all parts of ISO 8601 are required: year, month, date, hour, minute, seconds, milliseconds and the timezone (e.g. '2024-02-21T07:11:36.398Z').`
+              : `Invalid date value received: ${value}.`
+          )
+        );
+      }
+    }
+
+    return formattable;
+  }
+
   function dateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp.
      * If a string is supplied, this is interpreted as an ISO 8601 string. */
@@ -154,54 +194,42 @@ export default function createFormatter({
      * Otherwise the user time zone will be used. */
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
-    let formattableValue: Date | number;
-    if (typeof value === 'string') {
-      const str = value;
-      formattableValue = new Date(value);
-
-      if (isNaN(formattableValue.getTime())) {
-        onError(
-          new IntlError(
-            IntlErrorCode.FORMATTING_ERROR,
-            process.env.NODE_ENV !== 'production'
-              ? `The \`value\` string parameter does not follow a valid ISO 8601 format. For more information check: https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format`
-              : undefined
-          )
-        );
-        return str;
-      }
-    } else {
-      formattableValue = value;
-    }
+    const valueDate = toDate(value);
 
     return getFormattedValue(
       formatOrOptions,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
-        return new Intl.DateTimeFormat(locale, options).format(
-          formattableValue
-        );
+        return new Intl.DateTimeFormat(locale, options).format(valueDate);
       },
       () => String(value)
     );
   }
 
   function dateTimeRange(
-    /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    start: Date | number,
-    /** If a number is supplied, this is interpreted as a UTC timestamp. */
-    end: Date | number,
+    /** If a number is supplied, this is interpreted as a UTC timestamp.
+     * If a string is supplied, this is interpreted as an ISO 8601 string. */
+    start: Date | number | string,
+    /** If a number is supplied, this is interpreted as a UTC timestamp.
+     * If a string is supplied, this is interpreted as an ISO 8601 string. */
+    end: Date | number | string,
     /** If a time zone is supplied, the values are converted to that time zone.
      * Otherwise the user time zone will be used. */
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
+    const startDate = toDate(start);
+    const endDate = toDate(end);
+
     return getFormattedValue(
       formatOrOptions,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
-        return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
+        return new Intl.DateTimeFormat(locale, options).formatRange(
+          startDate,
+          endDate
+        );
       },
       () => [dateTime(start), dateTime(end)].join(' – ')
     );
@@ -236,8 +264,9 @@ export default function createFormatter({
   }
 
   function relativeTime(
-    /** The date time that needs to be formatted. */
-    date: number | Date,
+    /** If a number is supplied, this is interpreted as a UTC timestamp.
+     * If a string is supplied, this is interpreted as an ISO 8601 string. */
+    date: Date | number | string,
     /** The reference point in time to which `date` will be formatted in relation to.  */
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
@@ -245,11 +274,11 @@ export default function createFormatter({
       let nowDate: Date | undefined,
         unit: Intl.RelativeTimeFormatUnit | undefined;
       const opts: Intl.RelativeTimeFormatOptions = {};
-      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
-        nowDate = new Date(nowOrOptions);
+      if (isDateInput(nowOrOptions)) {
+        nowDate = toDate(nowOrOptions);
       } else if (nowOrOptions) {
         if (nowOrOptions.now != null) {
-          nowDate = new Date(nowOrOptions.now);
+          nowDate = toDate(nowOrOptions.now);
         } else {
           nowDate = getGlobalNow();
         }
@@ -263,7 +292,7 @@ export default function createFormatter({
         nowDate = getGlobalNow();
       }
 
-      const dateDate = new Date(date);
+      const dateDate = toDate(date);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
 
       if (!unit) {

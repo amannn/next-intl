@@ -1,6 +1,6 @@
 import {parseISO} from 'date-fns';
-import {it, expect, describe} from 'vitest';
-import {createFormatter} from '../../src';
+import {it, expect, describe, vi} from 'vitest';
+import {IntlError, IntlErrorCode, createFormatter} from '../../src';
 
 describe('dateTime', () => {
   it('formats a date and time', () => {
@@ -39,6 +39,24 @@ describe('dateTime', () => {
         dateStyle: 'medium'
       })
     ).toBe('Nov 20, 2020');
+  });
+
+  it('warns when an incomplete ISO 8601 datetime string is provided', () => {
+    const onError = vi.fn();
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      onError
+    });
+    expect(formatter.dateTime('2020-11-20', {dateStyle: 'medium'})).toBe(
+      'Nov 20, 2020'
+    );
+    expect(onError).toHaveBeenCalledTimes(1);
+    const error: IntlError = onError.mock.calls[0][0];
+    expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+    expect(error.message).toBe(
+      "FORMATTING_ERROR: Invalid ISO 8601 date string received: 2020-11-20. Note that all parts of ISO 8601 are required: year, month, date, hour, minute, seconds, milliseconds and the timezone (e.g. '2024-02-21T07:11:36.398Z')."
+    );
   });
 });
 
@@ -292,6 +310,50 @@ describe('relativeTime', () => {
       })
     ).toBe('in 2 days');
   });
+
+  it('accepts ISO 8601 datetime strings', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.relativeTime(
+        '2020-11-20T10:36:01.516Z',
+        '2020-11-22T11:36:01.516Z'
+      )
+    ).toBe('2 days ago');
+  });
+
+  it('accepts an ISO 8601 datetime string for `opts.now`', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.relativeTime('2020-11-20T10:36:01.516Z', {
+        now: '2020-11-22T11:36:01.516Z'
+      })
+    ).toBe('2 days ago');
+  });
+
+  it('warns when an incomplete ISO 8601 datetime string is provided', () => {
+    const onError = vi.fn();
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      onError
+    });
+    expect(formatter.relativeTime('2020-11-20', '2020-11-22')).toBe(
+      '2 days ago'
+    );
+    expect(onError).toHaveBeenCalledTimes(2);
+    onError.mock.calls.forEach((call) => {
+      expect(call[0].code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(call[0].message).toContain(
+        'FORMATTING_ERROR: Invalid ISO 8601 date string received'
+      );
+    });
+  });
 });
 
 describe('dateTimeRange', () => {
@@ -360,6 +422,38 @@ describe('dateTimeRange', () => {
         }
       )
     ).toBe('Jan 10, 2007, 4:00:00 AM – Jan 10, 2008, 5:00:00 AM');
+  });
+
+  it('formats ISO 8601 datetime strings', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin'
+    });
+    expect(
+      formatter.dateTimeRange(
+        '2020-11-20T10:36:01.516Z',
+        '2020-11-22T11:36:01.516Z'
+      )
+    ).toBe('11/20/2020 – 11/22/2020');
+  });
+
+  it('warns when an incomplete ISO 8601 datetime string is provided', () => {
+    const onError = vi.fn();
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      onError
+    });
+    expect(formatter.dateTimeRange('2020-11-20', '2020-11-22')).toBe(
+      '11/20/2020 – 11/22/2020'
+    );
+    expect(onError).toHaveBeenCalledTimes(2);
+    onError.mock.calls.forEach((call) => {
+      expect(call[0].code).toBe(IntlErrorCode.FORMATTING_ERROR);
+      expect(call[0].message).toContain(
+        'FORMATTING_ERROR: Invalid ISO 8601 date string received'
+      );
+    });
   });
 });
 

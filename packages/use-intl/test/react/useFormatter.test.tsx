@@ -448,8 +448,7 @@ describe('relativeTime', () => {
 
       function Component() {
         const format = useFormatter();
-        // @ts-expect-error Provoke an error
-        const date = 'not a number' as number;
+        const date = {} as number;
         return <>{format.relativeTime(date, -20)}</>;
       }
 
@@ -461,10 +460,10 @@ describe('relativeTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'FORMATTING_ERROR: Value need to be finite number for Intl.RelativeTimeFormat.prototype.format()'
+        'FORMATTING_ERROR: Invalid date value received: [object Object].'
       );
       expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
-      expect(container.textContent).toBe('not a number');
+      expect(container.textContent).toBe('[object Object]');
     });
 
     it('reports an error when no `now` value is available', () => {
