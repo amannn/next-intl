@@ -3,6 +3,314 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.14.0 (2024-05-15)
+
+
+### Features
+
+* Support providing a locale in `i18n.ts` instead of reading it from the pathname ([#1017](https://github.com/amannn/next-intl/issues/1017)) ([5c968b2](https://github.com/amannn/next-intl/commit/5c968b22bc3520cabc31bc3d6648e4f527c3404a))
+
+
+
+
+
+# 3.13.0 (2024-05-08)
+
+
+### Features
+
+* Support `numberingSystem` and `style` for relative time formatting ([#1057](https://github.com/amannn/next-intl/issues/1057)) ([14e3aa4](https://github.com/amannn/next-intl/commit/14e3aa4a4b04736ab8fcdcd50e6a57dd57bd08d7)), closes [#1056](https://github.com/amannn/next-intl/issues/1056)
+
+
+
+
+
+## 3.12.2 (2024-05-03)
+
+
+### Bug Fixes
+
+* Print a warning in case the middleware didn't run on a request but APIs from `next-intl` are used ([#1045](https://github.com/amannn/next-intl/issues/1045)) ([8149955](https://github.com/amannn/next-intl/commit/814995511a81edf1d8c5ef843873fff003d2782e))
+
+
+
+
+
+## 3.12.1 (2024-05-02)
+
+
+### Bug Fixes
+
+* Correctly parse date skeleton `EEEE` to a long weekday like "Tuesday" (upgrades to `intl-messageformat@10` internally) ([#1039](https://github.com/amannn/next-intl/issues/1039)) ([d6b5fd2](https://github.com/amannn/next-intl/commit/d6b5fd2d882b26a47c596a56d687039ffea1baac))
+
+
+
+
+
+# 3.12.0 (2024-04-26)
+
+
+### Features
+
+* Automatically prefer localized pathnames that are more specific ([#983](https://github.com/amannn/next-intl/issues/983) by [@fkapsahili](https://github.com/fkapsahili)) ([88a9b7a](https://github.com/amannn/next-intl/commit/88a9b7a18e89c4c642c2dd486ad4cb8de24e0086))
+
+
+
+
+
+## 3.11.3 (2024-04-17)
+
+
+### Bug Fixes
+
+* When using domain-based routing, use `defaultLocale` of a domain instead of the top-level one in case no other locale matches better on the domain ([#1000](https://github.com/amannn/next-intl/issues/1000)) ([42988b7](https://github.com/amannn/next-intl/commit/42988b773581dad7a09af0b5cd01c958afa60865)), closes [#998](https://github.com/amannn/next-intl/issues/998)
+
+
+
+
+
+## 3.11.2 (2024-04-17)
+
+
+### Bug Fixes
+
+* Correctly detect base path at the app root `/` when using a locale prefix strategy other than `always`. This ensures the locale cookie is set correctly. ([#999](https://github.com/amannn/next-intl/issues/999)) ([1ce5988](https://github.com/amannn/next-intl/commit/1ce598893281f9789046b639b39a55fe4cca34c7)), closes [#997](https://github.com/amannn/next-intl/issues/997)
+
+
+
+
+
+## 3.11.1 (2024-04-05)
+
+
+### Bug Fixes
+
+* Apply correct port when redirecting to another domain and the app doesn't run behind a proxy ([#979](https://github.com/amannn/next-intl/issues/979) by [@awkaiser-tr](https://github.com/awkaiser-tr)) ([485f59e](https://github.com/amannn/next-intl/commit/485f59e2c09224bf260e87ede30a67d0a5c542c0)), closes [#658](https://github.com/amannn/next-intl/issues/658)
+
+
+
+
+
+# 3.11.0 (2024-04-03)
+
+
+### Features
+
+* Support symbols in localized pathnames that require URL encoding ([#959](https://github.com/amannn/next-intl/issues/959)) ([b6e66f4](https://github.com/amannn/next-intl/commit/b6e66f4afd663ea5dc0851f5b528bcc55388b927)), closes [#607](https://github.com/amannn/next-intl/issues/607) [/github.com/amannn/next-intl/issues/607#issuecomment-1979747515](https://github.com//github.com/amannn/next-intl/issues/607/issues/issuecomment-1979747515)
+
+
+
+
+
+# 3.10.0 (2024-03-25)
+
+
+### Features
+
+* When using localized pathnames, allow access to internal pathnames only if they match an entry from a particular locale—otherwise redirect ([#914](https://github.com/amannn/next-intl/issues/914) by [@RomainGueffier](https://github.com/RomainGueffier)) ([0658600](https://github.com/amannn/next-intl/commit/0658600ee323350dfeb2d616c38f6737674e76da))
+
+
+
+
+
+## 3.9.5 (2024-03-15)
+
+
+### Bug Fixes
+
+* Improve support for older browsers by switching from `replaceAll` to `replace` ([#885](https://github.com/amannn/next-intl/issues/885) by @MichalMoravik) ([080333a](https://github.com/amannn/next-intl/commit/080333aa8ec2e4e41dc740e370032ee429b190f0)), closes [#884](https://github.com/amannn/next-intl/issues/884)
+
+
+
+
+
+## 3.9.4 (2024-03-08)
+
+
+### Bug Fixes
+
+* Handle changing href for `<Link />` correctly when using `localePrefix: 'never'` ([#926](https://github.com/amannn/next-intl/issues/926)) ([b609dc0](https://github.com/amannn/next-intl/commit/b609dc05b31832af04ee57b73133568e43b69d1f)), closes [#918](https://github.com/amannn/next-intl/issues/918)
+
+
+
+
+
+## 3.9.3 (2024-03-07)
+
+
+### Bug Fixes
+
+* Handle optional params in catch-all segments correctly when using localized pathnames ([#925](https://github.com/amannn/next-intl/issues/925)) ([8ba8b69](https://github.com/amannn/next-intl/commit/8ba8b699b5343a816f725d329fdb1153fa647b99)), closes [#917](https://github.com/amannn/next-intl/issues/917)
+
+
+
+
+
+## 3.9.2 (2024-03-05)
+
+
+### Bug Fixes
+
+* Incorporate `basePath` correctly in `useRouter` functions ([#906](https://github.com/amannn/next-intl/issues/906) by [@Oberwaditzer](https://github.com/Oberwaditzer)) ([4abcbeb](https://github.com/amannn/next-intl/commit/4abcbebdd603a18d9f1173709c174a8ac4210e37)), closes [#905](https://github.com/amannn/next-intl/issues/905) [#910](https://github.com/amannn/next-intl/issues/910)
+
+
+
+
+
+## 3.9.1 (2024-02-23)
+
+
+### Bug Fixes
+
+* Return `now` from global context if no `updateInterval` has been set on `useNow` ([#881](https://github.com/amannn/next-intl/issues/881)) ([dbbefcf](https://github.com/amannn/next-intl/commit/dbbefcf145dfc8a924fbf685da87e276c8bb4d10))
+
+
+
+
+
+# 3.9.0 (2024-02-20)
+
+
+### Features
+
+* Add redirects for case mismatches in locale prefixes (e.g. `/EN` → `/en`) ([#861](https://github.com/amannn/next-intl/issues/861) by [@fkapsahili](https://github.com/fkapsahili)) ([3b2b446](https://github.com/amannn/next-intl/commit/3b2b446a241ce2cd402181afb0398565ac4a2492))
+
+
+
+
+
+# 3.8.0 (2024-02-19)
+
+
+### Features
+
+* Add `format.dateTimeRange` ([#769](https://github.com/amannn/next-intl/issues/769) by [@martinmunillas](https://github.com/martinmunillas)) ([9f12521](https://github.com/amannn/next-intl/commit/9f12521edecf1aeff40a49ce0c133c19bafa7cf5))
+
+
+
+
+
+# 3.7.0 (2024-02-09)
+
+
+### Features
+
+* Add support for `permanentRedirect`in navigation APIs ([#850](https://github.com/amannn/next-intl/issues/850) by [@polvallverdu](https://github.com/polvallverdu)) ([6508ddc](https://github.com/amannn/next-intl/commit/6508ddc35ecc95f6dce8b95ecde2734a169579b8))
+
+
+
+
+
+# 3.6.0 (2024-02-08)
+
+
+### Features
+
+* Support formatting of React elements via `format.list(…)`. ([#845](https://github.com/amannn/next-intl/issues/845)) ([7bf11d4](https://github.com/amannn/next-intl/commit/7bf11d42b26c66bcecaf69627e6bd1925d8ba49d))
+
+
+
+
+
+## 3.5.4 (2024-02-01)
+
+
+### Bug Fixes
+
+* Keep cookie value in sync when navigating within a locale ([#828](https://github.com/amannn/next-intl/issues/828)) ([1167523](https://github.com/amannn/next-intl/commit/1167523f01ed6363c3fe3bbb7aa925744eedd055)), closes [#826](https://github.com/amannn/next-intl/issues/826)
+
+
+
+
+
+## 3.5.3 (2024-01-29)
+
+
+### Bug Fixes
+
+* Improve RSC render performance by sharing a cache between `getTranslations` and `useTranslations` ([#798](https://github.com/amannn/next-intl/issues/798) by [@fkapsahili](https://github.com/fkapsahili)) ([73e8337](https://github.com/amannn/next-intl/commit/73e8337044a8cb187d6f96f9b5ea77f6252866bb))
+
+
+
+
+
+## 3.5.2 (2024-01-25)
+
+
+### Bug Fixes
+
+* Set cookie to `SameSite: Lax` ([#817](https://github.com/amannn/next-intl/issues/817)) ([0e91e64](https://github.com/amannn/next-intl/commit/0e91e64412f919f70533c9d6189073780a5baae8)), closes [#527](https://github.com/amannn/next-intl/issues/527) [#811](https://github.com/amannn/next-intl/issues/811)
+
+
+
+
+
+## 3.5.1 (2024-01-23)
+
+
+### Bug Fixes
+
+* Remove `x-default` alternate links entry for non-root pathnames when using `localePrefix: 'always'`  ([#805](https://github.com/amannn/next-intl/issues/805)) ([c5bb0f5](https://github.com/amannn/next-intl/commit/c5bb0f50efbb5321181439c6d9e9aee08226b46a))
+
+
+
+
+
+# 3.5.0 (2024-01-22)
+
+
+### Features
+
+* Make options for `createSharedPathnamesNavigation` along with `locales` argument optional (relevant when `locales` aren't known statically) ([#784](https://github.com/amannn/next-intl/issues/784)) ([614053d](https://github.com/amannn/next-intl/commit/614053ddb40f83f7f4a122e5ffeb836d1ecbf63e))
+
+
+
+
+
+## 3.4.5 (2024-01-19)
+
+
+### Bug Fixes
+
+* Make sure cookie value stays up to date when the Next.js Router Cache is used ([#790](https://github.com/amannn/next-intl/issues/790)) ([977b973](https://github.com/amannn/next-intl/commit/977b9732aa7b0a9cb0c26e8cf34ae30cc96f25b6)), closes [#786](https://github.com/amannn/next-intl/issues/786) [#786](https://github.com/amannn/next-intl/issues/786)
+
+
+
+
+
+## 3.4.4 (2024-01-17)
+
+
+### Bug Fixes
+
+* Improve error message for missing messages by including the locale ([#782](https://github.com/amannn/next-intl/issues/782)) ([79eee9d](https://github.com/amannn/next-intl/commit/79eee9d0ca882b95d76007fed669b79c9b217d35))
+
+
+
+
+
+## 3.4.3 (2024-01-16)
+
+
+### Bug Fixes
+
+* Apply global `timeZone` when using date skeletons in messages (e.g. `Ordered on {orderDate, date, ::yyyyMd}`) ([#695](https://github.com/amannn/next-intl/issues/695)) ([8940192](https://github.com/amannn/next-intl/commit/8940192664ffe10f70a0526c1f4d6cbfc942faab)), closes [#693](https://github.com/amannn/next-intl/issues/693)
+
+
+
+
+
+## 3.4.2 (2024-01-09)
+
+
+### Bug Fixes
+
+* Change `numeric` option from `auto` to `always` for `format.relativeTime` ([#765](https://github.com/amannn/next-intl/issues/765)) ([246d373](https://github.com/amannn/next-intl/commit/246d37320669c3525db03dc635b6cfcac8591b4a)), closes [#757](https://github.com/amannn/next-intl/issues/757)
+
+
+
+
+
 ## 3.4.1 (2024-01-03)
 
 

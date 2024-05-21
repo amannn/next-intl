@@ -1,5 +1,10 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {COOKIE_LOCALE_NAME, HEADER_LOCALE_NAME} from '../shared/constants';
+import {
+  COOKIE_LOCALE_NAME,
+  COOKIE_MAX_AGE,
+  COOKIE_SAME_SITE,
+  HEADER_LOCALE_NAME
+} from '../shared/constants';
 import {AllLocales} from '../shared/types';
 import {matchesPathname} from '../shared/utils';
 import MiddlewareConfig, {
@@ -11,7 +16,7 @@ import {
   getInternalTemplate,
   formatTemplatePathname,
   getBestMatchingDomain,
-  getKnownLocaleFromPathname,
+  getPathnameLocale,
   getNormalizedPathname,
   getPathWithSearch,
   isLocaleSupportedOnDomain,
@@ -39,11 +44,14 @@ export default function createMiddleware<Locales extends AllLocales>(
   const configWithDefaults = receiveConfig(config);
 
   return function middleware(request: NextRequest) {
+    // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
+    const nextPathname = decodeURI(request.nextUrl.pathname);
+
     const {domain, locale} = resolveLocale(
       configWithDefaults,
       request.headers,
       request.cookies,
-      request.nextUrl.pathname
+      nextPathname
     );
 
     const hasOutdatedCookie =
@@ -108,10 +116,15 @@ export default function createMiddleware<Locales extends AllLocales>(
       }
 
       if (redirectDomain) {
-        urlObj.protocol =
-          request.headers.get('x-forwarded-proto') ?? request.nextUrl.protocol;
-        urlObj.port = '';
         urlObj.host = redirectDomain;
+
+        if (request.headers.get('x-forwarded-host')) {
+          urlObj.protocol =
+            request.headers.get('x-forwarded-proto') ??
+            request.nextUrl.protocol;
+
+          urlObj.port = request.headers.get('x-forwarded-port') ?? '';
+        }
       }
 
       if (request.nextUrl.basePath) {
@@ -125,12 +138,12 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     const normalizedPathname = getNormalizedPathname(
-      request.nextUrl.pathname,
+      nextPathname,
       configWithDefaults.locales
     );
 
-    const pathLocale = getKnownLocaleFromPathname(
-      request.nextUrl.pathname,
+    const pathLocale = getPathnameLocale(
+      nextPathname,
       configWithDefaults.locales
     );
     const hasLocalePrefix = pathLocale != null;
@@ -138,11 +151,14 @@ export default function createMiddleware<Locales extends AllLocales>(
     let response;
     let internalTemplateName: string | undefined;
 
-    let pathname = request.nextUrl.pathname;
+    let pathname = nextPathname;
     if (configWithDefaults.pathnames) {
-      let resolvedTemplateLocale;
-      [resolvedTemplateLocale = locale, internalTemplateName] =
-        getInternalTemplate(configWithDefaults.pathnames, normalizedPathname);
+      let resolvedTemplateLocale: Locales[number] | undefined;
+      [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
+        configWithDefaults.pathnames,
+        normalizedPathname,
+        locale
+      );
 
       if (internalTemplateName) {
         const pathnameConfig =
@@ -160,19 +176,32 @@ export default function createMiddleware<Locales extends AllLocales>(
             pathLocale
           );
         } else {
-          const isDefaultLocale =
-            configWithDefaults.defaultLocale === locale ||
-            domain?.defaultLocale === locale;
+          let sourceTemplate;
+          if (resolvedTemplateLocale) {
+            // A localized pathname from another locale has matched
+            sourceTemplate =
+              typeof pathnameConfig === 'string'
+                ? pathnameConfig
+                : pathnameConfig[resolvedTemplateLocale];
+          } else {
+            // An internal pathname has matched that
+            // doesn't have a localized pathname
+            sourceTemplate = internalTemplateName;
+          }
+
+          const localePrefix =
+            (hasLocalePrefix || !hasMatchedDefaultLocale) &&
+            configWithDefaults.localePrefix !== 'never'
+              ? locale
+              : undefined;
 
           response = redirect(
             getPathWithSearch(
               formatTemplatePathname(
                 normalizedPathname,
-                typeof pathnameConfig === 'string'
-                  ? pathnameConfig
-                  : pathnameConfig[resolvedTemplateLocale],
+                sourceTemplate,
                 localeTemplate,
-                pathLocale || !isDefaultLocale ? locale : undefined
+                localePrefix
               ),
               request.nextUrl.search
             )
@@ -258,8 +287,8 @@ export default function createMiddleware<Locales extends AllLocales>(
     if (hasOutdatedCookie) {
       response.cookies.set(COOKIE_LOCALE_NAME, locale, {
         path: request.nextUrl.basePath || undefined,
-        sameSite: 'strict',
-        maxAge: 31536000 // 1 year
+        sameSite: COOKIE_SAME_SITE,
+        maxAge: COOKIE_MAX_AGE
       });
     }
 

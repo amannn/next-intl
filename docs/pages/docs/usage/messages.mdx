@@ -1,5 +1,6 @@
 import Callout from 'components/Callout';
 import PartnerContentLink from 'components/PartnerContentLink';
+import Details from 'components/Details';
 
 # Rendering i18n messages
 
@@ -41,7 +42,7 @@ const t = useTranslations();
 t('About.title');
 ```
 
-<details>
+<Details id="messages-nested-structure">
 <summary>How can I provide more structure for messages?</summary>
 
 Optionally, you can structure your messages as nested objects.
@@ -84,9 +85,9 @@ function SignUp() {
 }
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="messages-reuse">
 <summary>How can I reuse messages?</summary>
 
 As your app grows, you'll want to reuse messages among your components. If you use component names as namespaces to structure your messages, you'll automatically benefit from reusable messages by reusing your components.
@@ -102,7 +103,7 @@ For edge cases where the reuse of messages among different components is hard to
 
 ```tsx filename="useLocaleLabel.tsx"
 export default function useLocaleLabel() {
-  const t = useLocaleLabel('useLocaleLabel');
+  const t = useTranslations('useLocaleLabel');
 
   function getLocaleLabel(locale: 'en' | 'de') {
     return t('label', {locale});
@@ -120,9 +121,9 @@ export default function useLocaleLabel() {
 }
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="messages-outside-components">
 <summary>How can I use translations outside of components?</summary>
 
 `next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components. This may seem like a limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
@@ -131,7 +132,51 @@ If you're interested to dive deeper into this topic, there's a blog post that di
 
 There's one exception however: [Using `next-intl` with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
 
-</details>
+</Details>
+
+<Details id="messages-other-styles">
+<summary>Can I use a different style for structuring my messages?</summary>
+
+Namespace keys can not contain the character "." as this is used to express nesting—all other characters are fine to use.
+
+If you're migrating from a flat structure that uses "." in message keys, you can convert your messages to a nested structure as follows:
+
+```tsx
+import {set} from 'lodash';
+
+const input = {
+  'one.one': '1.1',
+  'one.two': '1.2',
+  'two.one.one': '2.1.1'
+};
+
+const output = Object.entries(input).reduce(
+  (acc, [key, value]) => set(acc, key, value),
+  {}
+);
+```
+
+**Output:**
+
+```tsx
+{
+  "one": {
+    "one": "1.1",
+    "two": "1.2"
+  },
+  "two": {
+    "one": {
+      "one": "2.1.1"
+    }
+  }
+}
+```
+
+This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or as before passing messages to `next-intl`.
+
+If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
+
+</Details>
 
 ## Rendering ICU messages
 
@@ -167,6 +212,13 @@ Dynamic values can be inserted into messages by using curly braces:
 t('message', {name: 'Jane'}); // "Hello Jane!"
 ```
 
+<Details id="interpolation-supported-characters">
+<summary>Which characters are supported for value names?</summary>
+
+Value names are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+
+</Details>
+
 ### Cardinal pluralization
 
 To express the pluralization of a given number of items, the `plural` argument can be used:
@@ -181,29 +233,27 @@ t('message', {count: 3580}); // "You have 3,580 followers."
 
 Note that by using the `#` marker, the value will be [formatted as a number](/docs/usage/numbers).
 
-<details>
+<Details id="cardinal-plural-forms">
 <summary>Which plural forms are supported?</summary>
 
-Depending on the language, different forms of cardinal pluralization are supported.
+Languages have different rules for pluralization and your messages should reflect these rules.
 
 For example, English has two forms: One for the singular (e.g. "1 _follower_") and one for everything else (e.g. "0 _followers_" and "2 _followers_"). In contrast, Chinese only has one form, while Arabic has six.
 
-`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
+The other aspect to consider is that from a usability perspective, it can be helpful to consider additional cases on top—most commonly the special case for zero (e.g. "No followers yet" instead of "0 followers").
 
-**These tags are supported:**
+While you can always use the `=value` syntax to match a specific number (e.g. `=0`), you can choose from the following tags depending on what grammar rules apply to a given language:
 
-- `zero`
-- `one`
-- `two`
-- `few`
-- `many`
-- `other`
+- `zero`: For languages with zero-item grammar (e.g., Latvian, Welsh).
+- `one`: For languages with singular-item grammar (e.g., English, German).
+- `two`: For languages with dual-item grammar (e.g., Arabic, Welsh).
+- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Croatian).
+- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Croatian).
+- `other`: Used when the value doesn't match other plural categories.
 
-The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct tag that should be used for a given number. The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
 
-To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
-
-</details>
+</Details>
 
 ### Ordinal pluralization
 
@@ -213,29 +263,29 @@ To apply pluralization based on an order of items, the `selectordinal` argument 
 "message": "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 ```
 
-<details>
+<Details id="ordinal-plural-forms">
 <summary>Which plural forms are supported?</summary>
 
 Depending on the language, different forms of ordinal pluralization are supported.
 
-For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
+For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3rd, 4th … 11th, 12th, 13th … 21st, 22nd, 23rd, 24th, etc.). In contrast, both Chinese and Arabic use only one form for ordinal numbers.
 
 `next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct _tag_ that should be used for a given number.
 
 **These tags are supported:**
 
-- `zero`
-- `one`
-- `two`
-- `few`
-- `many`
-- `other`
+- `zero`: For languages with zero-item grammar (e.g., Latvian, Welsh).
+- `one`: For languages with singular-item grammar (e.g., English, German).
+- `two`: For languages with dual-item grammar (e.g., Arabic, Welsh).
+- `few`: For languages with grammar specific to a small number of items (e.g., Arabic, Polish, Croatian).
+- `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Polish, Croatian).
+- `other`: Used when the value doesn't match other plural categories.
 
 The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
 
 To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
 
-</details>
+</Details>
 
 ### Selecting enum-based values
 
@@ -250,6 +300,24 @@ t('message', {gender: 'female'}); // "She is online."
 ```
 
 **Note**: The `other` case is required and will be used when none of the specific values match.
+
+<Details id="select-values-supported-characters">
+<summary>Which characters are supported for select values?</summary>
+
+Values are required to be alphanumeric and can contain underscores. All other characters, including dashes, are not supported.
+
+Therefore, e.g. when you're mapping a locale to a human readable string, you should map the dash to an underscore first:
+
+```tsx filename="en.json"
+"label": "{locale, select, en_GB {British English} en_US {American English} other {Unknown}"
+```
+
+```tsx
+const locale = 'en-GB';
+t('message', {locale: locale.replaceAll('-', '_')};
+```
+
+</Details>
 
 ### Escaping
 
@@ -282,14 +350,14 @@ t.rich('message', {
 
 Tags can be arbitrarily nested (e.g. `This is <important><very>very</very> important</important>`).
 
-<details>
+<Details id="rich-text-reuse-tags">
 <summary>How can I reuse a tag across my app?</summary>
 
-If you want to use the same tag across your app, you can configure it via [default translation values](/docs/configuration#default-translation-values).
+If you want to use the same tag across your app, you can configure it via [default translation values](/docs/usage/configuration#default-translation-values).
 
-</details>
+</Details>
 
-<details>
+<Details id="rich-text-self-closing">
 <summary>How can I use "self-closing" tags without any chunks?</summary>
 
 Messages can use tags without any chunks as children, but syntax-wise, a closing tag is required by the ICU parser:
@@ -306,9 +374,9 @@ t.rich('message', {
 });
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="rich-text-attributes">
 <summary>How can I pass attributes to tags?</summary>
 
 Attributes can only be set on the call site, not within messages:
@@ -342,7 +410,7 @@ t.rich('message', {
 });
 ```
 
-</details>
+</Details>
 
 ## HTML markup
 
@@ -428,42 +496,34 @@ function CompanyStats() {
 }
 ```
 
-<details>
-<summary>Why can't I just use arrays in my messages?</summary>
+<Details id="arrays-varying-amount">
+<summary>What if the amount of items varies depending on the locale?</summary>
 
-The advantage of this approach over supporting arrays in messages is that this way you can use the formatting capabilities, e.g. to interpolate values into individual messages.
+To dynamically iterate over all keys of a namespace, you can use the [`useMessages`](/docs/usage/configuration#messages) hook to retrieve all messages of a given namespace and extract the keys from there:
 
-```json filename="en.json"
-{
-  "Benefits": {
-    "zero-config": "Works with <b>zero config</b>",
-    "customizable": "Easy to <b>customize</b>",
-    "fast": "Blazingly <b>fast</b>"
-  }
-}
-```
+```tsx filename="CompanyStats.tsx"
+import {useTranslations, useMessages} from 'next-intl';
 
-```tsx filename="Benefits.tsx"
-import {useTranslations} from 'next-intl';
+function CompanyStats() {
+  const t = useTranslations('CompanyStats');
 
-function Benefits() {
-  const t = useTranslations('Benefits');
+  const messages = useMessages();
+  const keys = Object.keys(messages.CompanyStats);
+
   return (
     <ul>
-      {['zero-config', 'customizable', 'fast'].map((key, index, arr) => {
-        const color = `hsl(${(index / (arr.length - 1)) * 360}deg 70% 50%)`;
-        return (
-          <li key={key}>
-            {t(key, {b: (chunks) => <b style={{color}}>{chunks}</b>})}
-          </li>
-        );
-      })}
+      {keys.map((key) => (
+        <li key={key}>
+          <h2>{t(`${key}.title`)}</h2>
+          <p>{t(`${key}.value`)}</p>
+        </li>
+      ))}
     </ul>
   );
 }
 ```
 
-</details>
+</Details>
 
 ## Right-to-left languages
 
@@ -485,26 +545,14 @@ In addition to providing translated messages, proper RTL localization requires:
 2. Layout mirroring, e.g. by using [CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
 3. Element mirroring, e.g. by customizing icons
 
-To handle these cases in your components, you can set up a reusable hook:
+To handle these cases in your components, you can use the [`rtl-detect`](https://www.npmjs.com/package/rtl-detect) package:
 
-```tsx filename="useTextDirection.tsx"
-import {isRtlLang} from 'rtl-detect';
-import {useLocale} from 'next-intl';
+```tsx filename="layout.tsx"
+import {getLangDir} from 'rtl-detect';
 
-export default function useTextDirection(locale) {
-  const defaultLocale = useLocale();
-  if (!locale) locale = defaultLocale;
-  return isRtlLang(locale) ? 'rtl' : 'ltr';
-}
-```
-
-… and use it accordingly:
-
-```tsx filename="app/[locale]/layout.tsx"
-import useTextDirection from './useTextDirection';
-
-export default function Layout({children, params: {locale}}) {
-  const direction = useTextDirection(locale);
+export default async function RootLayout(/* ... */) {
+  const locale = await getLocale();
+  const direction = getLangDir(locale);
 
   return (
     <html lang={locale} dir={direction}>
@@ -516,11 +564,12 @@ export default function Layout({children, params: {locale}}) {
 
 ```tsx filename="components/Breadcrumbs.tsx"
 import {useTranslations} from 'next-intl';
-import useTextDirection from './useTextDirection';
+import {getLangDir} from 'rtl-detect';
 
 export default function Breadcrumbs({children, params}) {
   const t = useTranslations('Breadcrumbs');
-  const direction = useTextDirection();
+  const locale = useLocale();
+  const direction = getLangDir(locale);
 
   return (
     <div style={{display: 'flex'}}>

@@ -5,6 +5,7 @@
 :root {
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
   --shiki-token-comment: rgba(100, 116, 139, 0.8);
+  --color-text-primary: #0073e6;
 }
 
 .dark {
@@ -25,22 +26,11 @@
 }
 
 .navbar-home nav > a {
-  @apply !text-white/80 transition-opacity hover:opacity-70;
-}
-.navbar-home *:not(.nextra-scrollbar) a,
-.navbar-home *:not(.nextra-scrollbar) button {
-  @apply !text-inherit;
+  @apply !text-white transition-opacity hover:opacity-70;
 }
 
 html:not(.dark) .navbar-home .nextra-scrollbar {
   @apply !bg-white;
-}
-
-.navbar-home input::placeholder {
-  @apply !text-white/50;
-}
-.navbar-home input {
-  @apply !bg-slate-900 !text-white;
 }
 
 .navbar-home .nextra-nav-container-blur {
@@ -51,28 +41,46 @@ html:not(.dark) .navbar-home .nextra-scrollbar {
  * Typography
  */
 
-figure {
-  @apply my-8 flex flex-col items-center;
-}
+.nextra-content {
+  figure {
+    @apply my-8 flex flex-col items-center;
+  }
 
-figure .nextra-code-block {
-  @apply w-full;
-}
-figure .nextra-code-block > pre {
-  @apply mb-0;
-}
+  figure .nextra-code-block {
+    @apply w-full;
+  }
+  figure .nextra-code-block > pre {
+    @apply mb-0;
+  }
 
-figcaption {
-  @apply mt-4 text-center text-sm text-slate-500;
-}
+  figcaption {
+    @apply mt-4 text-center text-sm text-slate-500;
+  }
 
-summary {
-  @apply font-bold;
-}
+  summary {
+    @apply font-bold !pr-8;
+  }
+  summary > code {
+    margin: 0 0.3em;
+  }
 
-details > div > div {
-  @apply pt-4 pl-7 pr-3;
-}
-details > div > div:last-child {
-  @apply mb-4;
+  details > div > div {
+    @apply pt-4 pl-7 pr-3;
+  }
+  details > div > div:last-child {
+    @apply mb-4;
+  }
+
+  a[target='_blank'] {
+    @apply whitespace-nowrap;
+  }
+  a[target='_blank']::after {
+    content: '';
+    @apply inline-block w-3 h-3 ml-1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: currentColor;
+    mask: url('/external-link.svg');
+  }
 }

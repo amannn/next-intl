@@ -45,7 +45,7 @@ module.exports = withNextra({
     },
     {
       source: '/docs/next-13',
-      destination: '/docs/getting-started',
+      destination: '/',
       permanent: true
     },
     {
@@ -114,6 +114,11 @@ module.exports = withNextra({
       permanent: true
     },
     {
+      source: '/docs/environments/sitemap',
+      destination: '/docs/environments/metadata-route-handlers',
+      permanent: true
+    },
+    {
       source: '/examples/next-13',
       destination: '/examples',
       permanent: true
@@ -128,14 +133,5 @@ module.exports = withNextra({
       destination: '/examples',
       permanent: true
     }
-  ],
-
-  ...(process.env.UMAMI_URL && {
-    rewrites: () => [
-      {
-        source: '/u/:match*',
-        destination: process.env.UMAMI_URL + '/:match*'
-      }
-    ]
-  })
+  ]
 });

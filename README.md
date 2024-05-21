@@ -1,15 +1,17 @@
 <h1 align="center">
-	<br>
-	<br>
-    <a href="https://next-intl-docs.vercel.app/">
-      <img width="400" src="media/logo.svg" alt="next-intl">
-    </a>
-	<br>
-	<br>
-	<br>
+  <br>
+  <a href="https://next-intl-docs.vercel.app/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="media/logo-dark-mode.svg">
+      <source media="(prefers-color-scheme: light)" srcset="media/logo.svg">
+      <img alt="next-intl" src="media/logo.svg" width="600">
+    </picture>
+  </a>
+  <br>
+  <br>
 </h1>
 
-> Internationalization (i18n) for Next.js that gets out of your way.
+> Internationalization (i18n) for Next.js
 
 <hr />
 
@@ -19,7 +21,7 @@
 
 ## Features
 
-Internationalization is an essential part of the user experience. next-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
+Internationalization (i18n) is an essential part of the user experience, therefore `next-intl` gives you all the parts you need to get language nuances right.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
@@ -29,8 +31,6 @@ Internationalization is an essential part of the user experience. next-intl give
 - ⚔️ **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
 
 ## What does it look like?
-
-This library is based on the premise that messages can be grouped by namespaces (typically a component name).
 
 ```jsx
 // UserProfile.tsx

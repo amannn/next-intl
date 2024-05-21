@@ -9,12 +9,14 @@ The Next.js App Router's file convention provides two files that can be used for
 
 This page provides practical guides for these cases.
 
-<Callout>
-  Have a look at [the App Router example](/examples#app-router) to explore a
-  working app with error handling.
-</Callout>
+**Tip:** You can have a look at [the App Router example](/examples#app-router) to explore a working app with error handling.
 
 ## `not-found.js`
+
+<Callout>
+  This section is only relevant if you're using [i18n
+  routing](/docs/getting-started/app-router).
+</Callout>
 
 Next.js renders the closest `not-found` page when a route segment calls the [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). We can use this mechanism to provide a localized 404 page by adding a `not-found` file within the `[locale]` folder.
 
@@ -103,11 +105,11 @@ When an `error` file is defined, Next.js creates [an error boundary within your 
 <figure>
 <div className="w-full lg:w-[500px]">
 ```tsx
-<LocaleLayout>
+<RootLayout>
   <ErrorBoundary fallback={<Error />}>
     <Page />
   </ErrorBoundary>
-</LocaleLayout>
+</RootLayout>
 ```
 </div>
 
@@ -119,19 +121,20 @@ When an `error` file is defined, Next.js creates [an error boundary within your 
 
 Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) to provide messages in case the `error` file renders.
 
-```tsx filename="app/[locale]/layout.tsx"
+```tsx filename="layout.tsx"
 import pick from 'lodash/pick';
-import {NextIntlClientProvider, useMessages} from "next-intl";
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages} from 'next-intl/server';
 
-export default async function LocaleLayout({children}) {
-  // ...
-  const messages = useMessages();
+export default async function RootLayout(/* ... */) {
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider
           locale={locale}
+          // Make sure to provide at least the messages for `Error`
           messages={pick(messages, 'Error')}
         >
           {children}
@@ -144,7 +147,7 @@ export default async function LocaleLayout({children}) {
 
 Once `NextIntlClientProvider` is in place, you can use functionality from `next-intl` in the `error` file:
 
-```tsx filename="app/[locale]/error.tsx"
+```tsx filename="error.tsx"
 'use client';
 
 import {useTranslations} from 'next-intl';
@@ -161,9 +164,9 @@ export default function Error({error, reset}) {
 }
 ```
 
-Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-senstive and you want to avoid loading translation functionality from `next-intl` as part of the initial bundle, you can export a lazy reference from your `error` file:
+Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-senstive and you want to avoid loading translation functionality from `next-intl` as part of this bundle, you can export a lazy reference from your `error` file:
 
-```tsx filename="app/[locale]/error.tsx"
+```tsx filename="error.tsx"
 'use client';
 
 import {lazy} from 'react';

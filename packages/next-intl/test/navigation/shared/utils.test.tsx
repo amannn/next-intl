@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {
   compileLocalizedPathname,
+  getBasePath,
   serializeSearchParams
 } from '../../../src/navigation/shared/utils';
 
@@ -40,5 +41,23 @@ describe('compileLocalizedPathname', () => {
         'Params: {"one":"1"}'
       ].join('\n')
     );
+  });
+});
+
+describe('getBasePath', () => {
+  it('detects a base path when using a locale prefix and the user is at the root', () => {
+    expect(getBasePath('/en', '/base/en')).toBe('/base');
+  });
+
+  it('detects a base path when using a locale prefix and the user is at a nested path', () => {
+    expect(getBasePath('/en/about', '/base/en/about')).toBe('/base');
+  });
+
+  it('detects a base path when using no locale prefix and the user is at the root', () => {
+    expect(getBasePath('/', '/base')).toBe('/base');
+  });
+
+  it('detects a base path when using no locale prefix and the user is at a nested path', () => {
+    expect(getBasePath('/about', '/base/about')).toBe('/base');
   });
 });

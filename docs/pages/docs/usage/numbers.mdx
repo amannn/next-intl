@@ -26,7 +26,13 @@ function Component() {
 }
 ```
 
-See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to the `number` function or [try the interactive explorer for `Intl.NumberFormat`](https://www.intl-explorer.com/NumberFormat).
+See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to the `number` function or try [the interactive explorer for `Intl.NumberFormat`](https://www.intl-explorer.com/NumberFormat).
+
+If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
+
+```js
+format.number(499.9, 'precise');
+```
 
 ## Numbers within messages
 

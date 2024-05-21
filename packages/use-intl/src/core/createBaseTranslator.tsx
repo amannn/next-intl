@@ -24,6 +24,7 @@ import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
 
 function resolvePath(
+  locale: string,
   messages: AbstractIntlMessages | undefined,
   key: string,
   namespace?: string
@@ -46,8 +47,8 @@ function resolvePath(
     if (part == null || next == null) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `Could not resolve \`${fullKey}\` in messages.`
-          : fullKey
+          ? `Could not resolve \`${fullKey}\` in messages for locale \`${locale}\`.`
+          : fullKey + ` (${locale})`
       );
     }
 
@@ -85,15 +86,12 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
-function getMessagesOrError<Messages extends AbstractIntlMessages>({
-  messages,
-  namespace,
-  onError = defaultOnError
-}: {
-  messages?: Messages;
-  namespace?: string;
-  onError?(error: IntlError): void;
-}) {
+function getMessagesOrError<Messages extends AbstractIntlMessages>(
+  locale: string,
+  messages?: Messages,
+  namespace?: string,
+  onError: (error: IntlError) => void = defaultOnError
+) {
   try {
     if (!messages) {
       throw new Error(
@@ -104,7 +102,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>({
     }
 
     const retrievedMessages = namespace
-      ? resolvePath(messages, namespace)
+      ? resolvePath(locale, messages, namespace)
       : messages;
 
     if (!retrievedMessages) {
@@ -154,11 +152,12 @@ export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(config: Omit<CreateBaseTranslatorProps<Messages>, 'messagesOrError'>) {
-  const messagesOrError = getMessagesOrError({
-    messages: config.messages,
-    namespace: config.namespace,
-    onError: config.onError
-  }) as Messages | IntlError;
+  const messagesOrError = getMessagesOrError(
+    config.locale,
+    config.messages,
+    config.namespace,
+    config.onError
+  ) as Messages | IntlError;
 
   return createBaseTranslatorImpl<Messages, NestedKey>({
     ...config,
@@ -210,7 +209,7 @@ function createBaseTranslatorImpl<
 
     let message;
     try {
-      message = resolvePath(messages, key, namespace);
+      message = resolvePath(locale, messages, key, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,
@@ -259,13 +258,37 @@ function createBaseTranslatorImpl<
           convertFormatsToIntlMessageFormat(
             {...globalFormats, ...formats},
             timeZone
-          )
+          ),
+          {
+            formatters: {
+              getNumberFormat(locales, options) {
+                return new Intl.NumberFormat(
+                  locales,
+                  // `useGrouping` was changed from a boolean later to a string enum or boolean, the type definition is outdated (https://tc39.es/proposal-intl-numberformat-v3/#grouping-enum-ecma-402-367)
+                  options as Intl.NumberFormatOptions
+                );
+              },
+              getDateTimeFormat(locales, options) {
+                // Workaround for https://github.com/formatjs/formatjs/issues/4279
+                return new Intl.DateTimeFormat(locales, {timeZone, ...options});
+              },
+              getPluralRules(locales, options) {
+                return new Intl.PluralRules(locales, options);
+              }
+            }
+          }
         );
       } catch (error) {
+        const thrownError = error as Error;
         return getFallbackFromErrorAndNotify(
           key,
           IntlErrorCode.INVALID_MESSAGE,
-          (error as Error).message
+          process.env.NODE_ENV !== 'production'
+            ? thrownError.message +
+                ('originalMessage' in thrownError
+                  ? ` (${thrownError.originalMessage})`
+                  : '')
+            : thrownError.message
         );
       }
 
@@ -388,7 +411,7 @@ function createBaseTranslatorImpl<
     const messages = messagesOrError;
 
     try {
-      return resolvePath(messages, key, namespace);
+      return resolvePath(locale, messages, key, namespace);
     } catch (error) {
       return getFallbackFromErrorAndNotify(
         key,

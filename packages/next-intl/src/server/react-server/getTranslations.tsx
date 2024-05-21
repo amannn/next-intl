@@ -10,8 +10,8 @@ import {
   RichTranslationValues,
   MarkupTranslationValues
 } from 'use-intl/core';
+import {getMessageFormatCache} from '../../shared/messageFormatCache';
 import getConfig from './getConfig';
-import getLocale from './getLocale';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
@@ -211,10 +211,11 @@ async function getTranslations<
     namespace = namespaceOrOpts.namespace;
   }
 
-  const config = await getConfig(locale || (await getLocale()));
+  const config = await getConfig(locale);
 
   return createTranslator({
     ...config,
+    messageFormatCache: getMessageFormatCache(),
     namespace,
     messages: config.messages
   });

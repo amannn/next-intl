@@ -5,8 +5,67 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 
-export function getLocaleFromPathname(pathname: string) {
+export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
+}
+
+function isOptionalCatchAllSegment(pathname: string) {
+  return pathname.includes('[[...');
+}
+
+function isCatchAllSegment(pathname: string) {
+  return pathname.includes('[...');
+}
+
+function isDynamicSegment(pathname: string) {
+  return pathname.includes('[');
+}
+
+export function comparePathnamePairs(a: string, b: string): number {
+  const pathA = a.split('/');
+  const pathB = b.split('/');
+
+  const maxLength = Math.max(pathA.length, pathB.length);
+  for (let i = 0; i < maxLength; i++) {
+    const segmentA = pathA[i];
+    const segmentB = pathB[i];
+
+    // If one of the paths ends, prioritize the shorter path
+    if (!segmentA && segmentB) return -1;
+    if (segmentA && !segmentB) return 1;
+
+    // Prioritize static segments over dynamic segments
+    if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;
+    if (isDynamicSegment(segmentA) && !isDynamicSegment(segmentB)) return 1;
+
+    // Prioritize non-catch-all segments over catch-all segments
+    if (!isCatchAllSegment(segmentA) && isCatchAllSegment(segmentB)) return -1;
+    if (isCatchAllSegment(segmentA) && !isCatchAllSegment(segmentB)) return 1;
+
+    // Prioritize non-optional catch-all segments over optional catch-all segments
+    if (
+      !isOptionalCatchAllSegment(segmentA) &&
+      isOptionalCatchAllSegment(segmentB)
+    ) {
+      return -1;
+    }
+    if (
+      isOptionalCatchAllSegment(segmentA) &&
+      !isOptionalCatchAllSegment(segmentB)
+    ) {
+      return 1;
+    }
+
+    if (segmentA === segmentB) continue;
+  }
+
+  // Both pathnames are completely static
+  return 0;
+}
+
+export function getSortedPathnames(pathnames: Array<string>) {
+  const sortedPathnames = pathnames.sort(comparePathnamePairs);
+  return sortedPathnames;
 }
 
 export function getInternalTemplate<
@@ -16,27 +75,47 @@ export function getInternalTemplate<
   >
 >(
   pathnames: Pathnames,
-  pathname: string
+  pathname: string,
+  locale: Locales[number]
 ): [Locales[number] | undefined, keyof Pathnames | undefined] {
-  for (const [internalPathname, localizedPathnamesOrPathname] of Object.entries(
-    pathnames
-  )) {
+  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
+
+  // Try to find a localized pathname that matches
+  for (const internalPathname of sortedPathnames) {
+    const localizedPathnamesOrPathname = pathnames[internalPathname];
     if (typeof localizedPathnamesOrPathname === 'string') {
       const localizedPathname = localizedPathnamesOrPathname;
       if (matchesPathname(localizedPathname, pathname)) {
         return [undefined, internalPathname];
       }
     } else {
-      for (const [locale, localizedPathname] of Object.entries(
-        localizedPathnamesOrPathname
-      )) {
-        if (matchesPathname(localizedPathname as string, pathname)) {
-          return [locale, internalPathname];
+      // Prefer the entry with the current locale in case multiple
+      // localized pathnames match the current pathname
+      const sortedEntries = Object.entries(localizedPathnamesOrPathname);
+      const curLocaleIndex = sortedEntries.findIndex(
+        ([entryLocale]) => entryLocale === locale
+      );
+      if (curLocaleIndex > 0) {
+        sortedEntries.unshift(sortedEntries.splice(curLocaleIndex, 1)[0]);
+      }
+
+      for (const [entryLocale, entryPathname] of sortedEntries) {
+        if (matchesPathname(entryPathname as string, pathname)) {
+          return [entryLocale, internalPathname];
         }
       }
     }
   }
 
+  // Try to find an internal pathname that matches (this can be the case
+  // if all localized pathnames are different from the internal pathnames).
+  for (const internalPathname of Object.keys(pathnames)) {
+    if (matchesPathname(internalPathname, pathname)) {
+      return [undefined, internalPathname];
+    }
+  }
+
+  // No match
   return [undefined, undefined];
 }
 
@@ -71,7 +150,9 @@ export function getNormalizedPathname<Locales extends AllLocales>(
     pathname += '/';
   }
 
-  const match = pathname.match(`^/(${locales.join('|')})/(.*)`);
+  const match = pathname.match(
+    new RegExp(`^/(${locales.join('|')})/(.*)`, 'i')
+  );
   let result = match ? '/' + match[2] : pathname;
 
   if (result !== '/') {
@@ -81,12 +162,21 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   return result;
 }
 
-export function getKnownLocaleFromPathname<Locales extends AllLocales>(
+export function findCaseInsensitiveLocale<Locales extends AllLocales>(
+  candidate: string,
+  locales: Locales
+) {
+  return locales.find(
+    (locale) => locale.toLowerCase() === candidate.toLowerCase()
+  );
+}
+
+export function getPathnameLocale<Locales extends AllLocales>(
   pathname: string,
   locales: Locales
 ): Locales[number] | undefined {
-  const pathLocaleCandidate = getLocaleFromPathname(pathname);
-  const pathLocale = locales.includes(pathLocaleCandidate)
+  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
+  const pathLocale = findCaseInsensitiveLocale(pathLocaleCandidate, locales)
     ? pathLocaleCandidate
     : undefined;
   return pathLocale;
@@ -109,7 +199,7 @@ export function formatPathname(template: string, params?: object) {
 
   // Simplify syntax for optional catchall ('[[...slug]]') so
   // we can replace the value with simple interpolation
-  template = template.replaceAll('[[', '[').replaceAll(']]', ']');
+  template = template.replace(/\[\[/g, '[').replace(/\]\]/g, ']');
 
   let result = template;
   Object.entries(params).forEach(([key, value]) => {

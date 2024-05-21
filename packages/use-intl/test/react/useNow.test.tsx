@@ -19,6 +19,26 @@ it('returns the current time', () => {
   );
 });
 
+it('returns an updated value from the provider', () => {
+  function Component() {
+    return <p>{useNow().toISOString()}</p>;
+  }
+
+  const {container, rerender} = render(
+    <IntlProvider locale="en" now={parseISO('2018-10-06T10:36:01.516Z')}>
+      <Component />
+    </IntlProvider>
+  );
+  expect(container.textContent).toBe('2018-10-06T10:36:01.516Z');
+
+  rerender(
+    <IntlProvider locale="en" now={parseISO('2019-10-06T10:36:01.516Z')}>
+      <Component />
+    </IntlProvider>
+  );
+  expect(container.textContent).toBe('2019-10-06T10:36:01.516Z');
+});
+
 it('can use a globally defined `now` value', () => {
   function Component() {
     return <p>{useNow().toISOString()}</p>;

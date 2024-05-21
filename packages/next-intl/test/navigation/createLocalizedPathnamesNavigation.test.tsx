@@ -3,6 +3,7 @@ import {
   usePathname as useNextPathname,
   useParams,
   redirect as nextRedirect,
+  permanentRedirect as nextPermanentRedirect,
   RedirectType
 } from 'next/navigation';
 import React from 'react';
@@ -20,7 +21,8 @@ vi.mock('next/navigation', async () => {
     ...actual,
     usePathname: vi.fn(),
     useParams: vi.fn(),
-    redirect: vi.fn()
+    redirect: vi.fn(),
+    permanentRedirect: vi.fn()
   };
 });
 vi.mock('next-intl/config', () => ({
@@ -49,20 +51,23 @@ beforeEach(() => {
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
-const locales = ['en', 'de'] as const;
+const locales = ['en', 'de', 'ja'] as const;
 const pathnames = {
   '/': '/',
   '/about': {
     en: '/about',
-    de: '/ueber-uns'
+    de: '/ueber-uns',
+    ja: '/約'
   },
   '/news/[articleSlug]-[articleId]': {
     en: '/news/[articleSlug]-[articleId]',
-    de: '/neuigkeiten/[articleSlug]-[articleId]'
+    de: '/neuigkeiten/[articleSlug]-[articleId]',
+    ja: '/ニュース/[articleSlug]-[articleId]'
   },
   '/categories/[...parts]': {
     en: '/categories/[...parts]',
-    de: '/kategorien/[...parts]'
+    de: '/kategorien/[...parts]',
+    ja: '/カテゴリ/[...parts]'
   },
   '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
 } satisfies Pathnames<typeof locales>;
@@ -112,11 +117,12 @@ describe.each([
     });
 
     describe("localePrefix: 'as-needed'", () => {
-      const {Link, getPathname, redirect} = createLocalizedPathnamesNavigation({
-        locales,
-        pathnames,
-        localePrefix: 'as-needed'
-      });
+      const {Link, getPathname, permanentRedirect, redirect} =
+        createLocalizedPathnamesNavigation({
+          locales,
+          pathnames,
+          localePrefix: 'as-needed'
+        });
 
       describe('Link', () => {
         it('renders a prefix for the default locale initially', () => {
@@ -320,6 +326,104 @@ describe.each([
         });
       });
 
+      describe('permanentRedirect', () => {
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof permanentRedirect<Pathname>>[0];
+        }) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en/about');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en/news/launch-party-3'
+          );
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/de');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/de/ueber-uns'
+          );
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/de/neuigkeiten/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(
+            <Component
+              href={{
+                pathname: '/',
+                query: {
+                  foo: 'bar',
+                  bar: [1, 2]
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/en?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('handles unknown routes', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          // @ts-expect-error -- Unknown route
+          render(<Component href="/unknown" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en/unknown');
+        });
+
+        it('can supply a type', () => {
+          function Test() {
+            permanentRedirect('/', RedirectType.push);
+            return null;
+          }
+          render(<Test />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en', 'push');
+        });
+      });
+
       describe('getPathname', () => {
         it('resolves to the correct path', () => {
           expect(
@@ -333,15 +437,28 @@ describe.each([
             })
           ).toBe('/categories/clothing/t-shirts?sort=price');
         });
+
+        it('handles foreign symbols', () => {
+          expect(
+            getPathname({
+              locale: 'ja',
+              href: {
+                pathname: '/about',
+                query: {foo: 'bar'}
+              }
+            })
+          ).toBe('/約?foo=bar');
+        });
       });
     });
 
     describe("localePrefix: 'never'", () => {
-      const {Link, redirect} = createLocalizedPathnamesNavigation({
-        pathnames,
-        locales,
-        localePrefix: 'never'
-      });
+      const {Link, permanentRedirect, redirect} =
+        createLocalizedPathnamesNavigation({
+          pathnames,
+          locales,
+          localePrefix: 'never'
+        });
 
       describe('Link', () => {
         it("doesn't render a prefix for the default locale", () => {
@@ -441,6 +558,93 @@ describe.each([
           // @ts-expect-error -- Unknown route
           render(<Component href="/unknown" />);
           expect(nextRedirect).toHaveBeenLastCalledWith('/unknown');
+        });
+      });
+
+      describe('permanentRedirect', () => {
+        function Component<Pathname extends keyof typeof pathnames>({
+          href
+        }: {
+          href: Parameters<typeof permanentRedirect<Pathname>>[0];
+        }) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/about');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/news/launch-party-3'
+          );
+        });
+
+        it('can permanently redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/ueber-uns');
+
+          rerender(
+            <Component
+              href={{
+                pathname: '/news/[articleSlug]-[articleId]',
+                params: {
+                  articleId: 3,
+                  articleSlug: 'launch-party'
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/neuigkeiten/launch-party-3'
+          );
+        });
+
+        it('supports optional search params', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(
+            <Component
+              href={{
+                pathname: '/',
+                query: {
+                  foo: 'bar',
+                  bar: [1, 2]
+                }
+              }}
+            />
+          );
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith(
+            '/?foo=bar&bar=1&bar=2'
+          );
+        });
+
+        it('handles unknown routes', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          // @ts-expect-error -- Unknown route
+          render(<Component href="/unknown" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/unknown');
         });
       });
     });

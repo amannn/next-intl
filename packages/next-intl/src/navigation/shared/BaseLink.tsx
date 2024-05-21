@@ -2,10 +2,17 @@
 
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
-import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
+import React, {
+  ComponentProps,
+  MouseEvent,
+  forwardRef,
+  useEffect,
+  useState
+} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {LocalePrefix} from '../../shared/types';
 import {isLocalHref, localizeHref, prefixHref} from '../../shared/utils';
+import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
@@ -13,15 +20,15 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
 };
 
 function BaseLink(
-  {href, locale, localePrefix, prefetch, ...rest}: Props,
+  {href, locale, localePrefix, onClick, prefetch, ...rest}: Props,
   ref: Props['ref']
 ) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
-  const defaultLocale = useLocale();
-  const isChangingLocale = locale !== defaultLocale;
+  const curLocale = useLocale();
+  const isChangingLocale = locale !== curLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
     isLocalHref(href) && (localePrefix !== 'never' || isChangingLocale)
@@ -39,13 +46,16 @@ function BaseLink(
       : href
   );
 
-  useEffect(() => {
-    if (!pathname || localePrefix === 'never') return;
+  function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
+    syncLocaleCookie(pathname, curLocale, locale);
+    if (onClick) onClick(event);
+  }
 
-    setLocalizedHref(
-      localizeHref(href, locale, defaultLocale, pathname ?? undefined)
-    );
-  }, [defaultLocale, href, locale, localePrefix, pathname]);
+  useEffect(() => {
+    if (!pathname) return;
+
+    setLocalizedHref(localizeHref(href, locale, curLocale, pathname));
+  }, [curLocale, href, locale, pathname]);
 
   if (isChangingLocale) {
     if (prefetch && process.env.NODE_ENV !== 'production') {
@@ -57,7 +67,14 @@ function BaseLink(
   }
 
   return (
-    <NextLink ref={ref} href={localizedHref} prefetch={prefetch} {...rest} />
+    <NextLink
+      ref={ref}
+      href={localizedHref}
+      hrefLang={isChangingLocale ? locale : undefined}
+      onClick={onLinkClick}
+      prefetch={prefetch}
+      {...rest}
+    />
   );
 }
 

@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
-import React, {ReactNode} from 'react';
+import React, {ComponentProps, ReactNode} from 'react';
 import {it, expect, vi, describe, beforeEach} from 'vitest';
 import {
   Formats,
@@ -44,7 +44,8 @@ vi.mock('intl-messageformat', async (importOriginal) => {
 function renderMessage(
   message: string,
   values?: TranslationValues,
-  formats?: Partial<Formats>
+  formats?: Partial<Formats>,
+  providerProps?: Partial<ComponentProps<typeof IntlProvider>>
 ) {
   function Component() {
     const t = useTranslations();
@@ -57,6 +58,7 @@ function renderMessage(
       locale="en"
       messages={{message}}
       timeZone="Etc/UTC"
+      {...providerProps}
     >
       <Component />
     </IntlProvider>
@@ -147,12 +149,32 @@ it('applies a time zone when using a built-in format', () => {
   expectFormatted('date', 'short', '5/8/23');
 });
 
-it('handles pluralisation', () => {
+it('applies a time zone when using a skeleton', () => {
+  const now = new Date('2024-01-01T00:00:00.000+0530');
+  renderMessage(`{now, date, ::yyyyMdHm}`, {now}, undefined, {
+    timeZone: 'Asia/Kolkata'
+  });
+  screen.getByText('1/1/2024, 00:00');
+});
+
+it('supports pluralisation via specific numbers', () => {
   renderMessage(
     'You have {numMessages, plural, =0 {no messages} =1 {one message} other {# messages}}.',
     {numMessages: 1}
   );
   screen.getByText('You have one message.');
+});
+
+it('supports pluralisation via tags like "zero" and "one" if the locale supports it', () => {
+  renderMessage(
+    'Jums ir {count, plural, zero {vēl nav sekotāju} one {viens sekotājs} other {# sekotāji}}.',
+    {count: 0},
+    undefined,
+    {
+      locale: 'lv'
+    }
+  );
+  screen.getByText('Jums ir vēl nav sekotāju.');
 });
 
 it('handles selects', () => {
@@ -573,7 +595,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'MISSING_MESSAGE: Could not resolve `Component` in messages.'
+      'MISSING_MESSAGE: Could not resolve `Component` in messages for locale `en`.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
     screen.getByText('Component.label');
@@ -595,7 +617,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'MISSING_MESSAGE: Could not resolve `Component.label` in messages.'
+      'MISSING_MESSAGE: Could not resolve `Component.label` in messages for locale `en`.'
     );
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
     screen.getByText('Component.label');
@@ -621,7 +643,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Expected "date", "number", "plural", "select", "selectordinal", or "time" but "c" found.'
+      'INVALID_MESSAGE: INVALID_ARGUMENT_TYPE ({value, currency})'
     );
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     screen.getByText('price');

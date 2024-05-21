@@ -8,7 +8,8 @@ import {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import {
-  getLocaleFromPathname,
+  findCaseInsensitiveLocale,
+  getFirstPathnameSegment,
   getHost,
   isLocaleSupportedOnDomain
 } from './utils';
@@ -29,7 +30,7 @@ function findDomainFromHost<Locales extends AllLocales>(
   return undefined;
 }
 
-function getAcceptLanguageLocale<Locales extends AllLocales>(
+export function getAcceptLanguageLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
   locales: Locales,
   defaultLocale: string
@@ -54,12 +55,35 @@ function getAcceptLanguageLocale<Locales extends AllLocales>(
   return locale;
 }
 
+function getLocaleFromPrefix<Locales extends AllLocales>(
+  pathname: string,
+  locales: Locales
+) {
+  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
+  return findCaseInsensitiveLocale(pathLocaleCandidate, locales);
+}
+
+function getLocaleFromCookie<Locales extends AllLocales>(
+  requestCookies: RequestCookies,
+  locales: Locales
+) {
+  if (requestCookies.has(COOKIE_LOCALE_NAME)) {
+    const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
+    if (value && locales.includes(value)) {
+      return value;
+    }
+  }
+}
+
 function resolveLocaleFromPrefix<Locales extends AllLocales>(
   {
     defaultLocale,
     localeDetection,
     locales
-  }: MiddlewareConfigWithDefaults<Locales>,
+  }: Pick<
+    MiddlewareConfigWithDefaults<Locales>,
+    'defaultLocale' | 'localeDetection' | 'locales'
+  >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -68,20 +92,12 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const pathLocale = getLocaleFromPathname(pathname);
-    if (locales.includes(pathLocale)) {
-      locale = pathLocale;
-    }
+    locale = getLocaleFromPrefix(pathname, locales);
   }
 
   // Prio 2: Use existing cookie
   if (!locale && localeDetection && requestCookies) {
-    if (requestCookies.has(COOKIE_LOCALE_NAME)) {
-      const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
-      if (value && locales.includes(value)) {
-        locale = value;
-      }
-    }
+    locale = getLocaleFromCookie(requestCookies, locales);
   }
 
   // Prio 3: Use the `accept-language` header
@@ -103,37 +119,66 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
   requestCookies: RequestCookies,
   pathname: string
 ) {
-  const {domains} = config;
+  const domains = config.domains!;
+  const domain = findDomainFromHost(requestHeaders, domains);
 
-  const localeFromPrefixStrategy = resolveLocaleFromPrefix(
-    config,
-    requestHeaders,
-    requestCookies,
-    pathname
-  );
+  if (!domain) {
+    return {
+      locale: resolveLocaleFromPrefix(
+        config,
+        requestHeaders,
+        requestCookies,
+        pathname
+      )
+    };
+  }
 
-  // Prio 1: Use a domain
-  if (domains) {
-    const domain = findDomainFromHost(requestHeaders, domains);
-    const hasLocalePrefix =
-      pathname && pathname.startsWith(`/${localeFromPrefixStrategy}`);
+  let locale;
 
-    if (domain) {
-      return {
-        locale:
-          isLocaleSupportedOnDomain<Locales>(
-            localeFromPrefixStrategy,
-            domain
-          ) || hasLocalePrefix
-            ? localeFromPrefixStrategy
-            : domain.defaultLocale,
-        domain
-      };
+  // Prio 1: Use route prefix
+  if (pathname) {
+    const prefixLocale = getLocaleFromPrefix(pathname, config.locales);
+    if (prefixLocale) {
+      if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
+        locale = prefixLocale;
+      } else {
+        // Causes a redirect to a domain that supports the locale
+        return {locale: prefixLocale, domain};
+      }
     }
   }
 
-  // Prio 2: Use prefix strategy
-  return {locale: localeFromPrefixStrategy};
+  // Prio 2: Use existing cookie
+  if (!locale && config.localeDetection && requestCookies) {
+    const cookieLocale = getLocaleFromCookie(requestCookies, config.locales);
+    if (cookieLocale) {
+      if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
+        locale = cookieLocale;
+      } else {
+        // Ignore
+      }
+    }
+  }
+
+  // Prio 3: Use the `accept-language` header
+  if (!locale && config.localeDetection && requestHeaders) {
+    const headerLocale = getAcceptLanguageLocale(
+      requestHeaders,
+      domain.locales || config.locales,
+      domain.defaultLocale
+    );
+
+    if (headerLocale) {
+      locale = headerLocale;
+    }
+  }
+
+  // Prio 4: Use default locale
+  if (!locale) {
+    locale = domain.defaultLocale;
+  }
+
+  return {locale, domain};
 }
 
 export default function resolveLocale<Locales extends AllLocales>(

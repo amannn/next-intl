@@ -1,10 +1,10 @@
 # 🌐 use-intl
 
-> Internationalization for React that gets out of your way.
+> Internationalization for React
 
 ## Features
 
-Internationalization is an essential part of the user experience. use-intl gives you everything you need to get language subtleties right and has always got your back whenever you need to fine-tune a translation.
+Internationalization (i18n) is an essential part of the user experience, therefore `use-intl` gives you all the parts you need to get language nuances right.
 
 - 🌟 **ICU message syntax**: Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text.
 - 📅 **Dates, times & numbers**: Apply appropriate formatting without worrying about server/client differences like time zones.
@@ -14,11 +14,9 @@ Internationalization is an essential part of the user experience. use-intl gives
 
 ## What does it look like?
 
-This library is based on the premise that messages can be grouped by namespaces (typically a component name).
-
 ```jsx
 // UserProfile.tsx
-import {useTranslations} from 'next-intl';
+import {useTranslations} from 'use-intl';
  
 export default function UserProfile({user}) {
   const t = useTranslations('UserProfile');
@@ -52,9 +50,10 @@ export default function UserProfile({user}) {
 
 1. `npm install use-intl`
 2. Add the provider
+3. Use internationalization in components
 
 ```jsx
-import {IntlProvider} from 'use-intl';
+import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
 // fetch them from within a component and then render the provider 
@@ -79,8 +78,6 @@ function App({user}) {
 }
 ```
 
-Have a look at [the minimal setup example](https://codesandbox.io/s/use-intl-cra-example-13w917?file=/src/Root.tsx) to explore a working app.
+Have a look at [the minimal setup example](https://github.com/amannn/next-intl/tree/main/examples/example-use-intl) to explore a working app.
 
-## Usage
-
-Please refer to the [`next-intl` usage docs](https://next-intl-docs.vercel.app/docs/usage) for more advanced usage, but note that you should import from `use-intl` instead of `next-intl`.
+### [→ Read the docs](https://next-intl-docs.vercel.app/docs/environments/core-library)

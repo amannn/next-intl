@@ -1,6 +1,6 @@
 # Contributing to `next-intl`
 
-Thank you so much for contributing to `next-intl`!
+Thank you so much for considering to contribute to `next-intl`!
 
 This project is a team effort and we rely on individuals working together to build a sustainable and reliable project.
 
@@ -8,8 +8,9 @@ There are several ways you can contribute:
 
 1. **Helping others by answering questions**: Developers often seek guidance by posting questions in [issues](https://github.com/amannn/next-intl/issues), [discussions](https://github.com/amannn/next-intl/discussions), and [on Stack Overflow](https://stackoverflow.com/search?q=%22next-intl%22). Your responses, based on your experience, are greatly appreciated and help foster a supportive community.
 2. **Docs**: We focus on documentation as much as we do on the code itself. We strive to create helpful learning resources that efficiently communicate concepts and address common user issues. If you encounter areas that need clarification or have ideas to improve our documentation, we welcome and appreciate your contributions!
-3. **Bug fixes**: Fixing a bug always starts with creating a regression test that reliably reproduces the broken behavior. This alone is a valuable contribution and can be submitted as a pull request. If you're up for the challenge, feel free to provide the bug fix yourself!
+3. **Bug fixes**: Fixing a bug always starts with creating a regression test that reliably reproduces the broken behavior. This alone is a valuable contribution and can be submitted as a pull request. If you're up for the challenge, feel free to provide the bug fix as well!
 4. **New features**: We encourage proposing feature ideas as issues prior to starting development. This practice helps to avoid duplicated efforts and allows us to align on the direction before investing significant development time. Note that features for exotic use cases that can already be achieved with the current feature set are unlikely to get merged, as the maintainence of such features over time takes significant effort.
+5. **Sponsorship**: `next-intl` is provided free of charge, but the project takes significant time to maintain. Luckily, `next-intl` receives regular funding from its primary sponsor [Crowdin](https://crowdin.com). However, features still need to be prioritized and user support is limited. If you'd like to give back in a financial way, you can consider [providing sponsorship](https://github.com/sponsors/amannn) for the lead maintainer [@amannn](https://github.com/amannn).
 
 Open source work should be fun for everyone involved. Let's make sure it stays that way! Our communication style aims to be clear and friendly. We value empathy, respect, and understanding different perspectives.
 
@@ -73,12 +74,26 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 
 ## Repository workflows
 
+- New issues receive the `unconfirmed` label upon creation and should be regularly triaged. If the issue is actionable, the `unconfirmed` label should be removed. If this is not the case, the issue will be closed after 30 days.
 - Add the `reproduction-missing` label to an issue to automatically add a comment and to mark it for being automatically closed in the future in case no reproduction gets added.
+- Add the `needs-isolation` label to issues that require further isolation since they might contain extraneous code or 3rd party libraries that make it hard to understand if an issue is caused by `next-intl`.
 
 ## Releases
 
-Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main`. Due to this, it's important to make sure to clean up commit messages of merged PRs since the commit title will appear in the changelog.
+Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main` that uses one of these prefixes:
 
-The exception to every commit being released are are commits that are prefixed with `docs: `—these will not result in a version bump. Note however that also `docs(examples): ` would trigger a release, since we only match `docs: ` to abort the release workflow.
+1. `fix: `: Patch release
+2. `feat: `: Minor release
+
+Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog and should contain relevant details. We give credits to PR authors by linking them via `@{username}` in the commit title, which in turn creates a link in the changelog entry.
 
 Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
+
+Other prefixes that are allowed and will *not* create a release are the following:
+
+1. `docs`: Documentation-only changes
+2. `test`: Missing tests were added or existing ones corrected
+3. `build`: Changes that affect the build system or external dependencies
+4. `ci`: Changes to CI configuration files and scripts
+5. `chore`: Other changes that don't modify src or test files
+

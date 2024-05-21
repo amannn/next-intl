@@ -1,10 +1,11 @@
+import {ReactElement} from 'react';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
-import IntlError, { IntlErrorCode } from './IntlError';
+import IntlError, {IntlErrorCode} from './IntlError';
 import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
-import { defaultOnError } from './defaults';
+import {defaultOnError} from './defaults';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -31,7 +32,7 @@ const UNIT_SECONDS: Record<Intl.RelativeTimeFormatUnit, number> = {
   quarter: QUARTER,
   quarters: QUARTER,
   year: YEAR,
-  years: YEAR,
+  years: YEAR
 } as const;
 
 function resolveRelativeTimeUnit(seconds: number) {
@@ -75,8 +76,27 @@ export default function createFormatter({
   locale,
   now: globalNow,
   onError = defaultOnError,
-  timeZone: globalTimeZone,
+  timeZone: globalTimeZone
 }: Props) {
+  function applyTimeZone(options?: DateTimeFormatOptions) {
+    if (!options?.timeZone) {
+      if (globalTimeZone) {
+        options = {...options, timeZone: globalTimeZone};
+      } else {
+        onError(
+          new IntlError(
+            IntlErrorCode.ENVIRONMENT_FALLBACK,
+            process.env.NODE_ENV !== 'production'
+              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+              : undefined
+          )
+        );
+      }
+    }
+
+    return options;
+  }
+
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
     formatOrOptions?: string | Options
@@ -103,17 +123,17 @@ export default function createFormatter({
     return options;
   }
 
-  function getFormattedValue<Value, Options>(
-    value: Value,
+  function getFormattedValue<Options, Output>(
     formatOrOptions: string | Options | undefined,
     typeFormats: Record<string, Options> | undefined,
-    formatter: (options?: Options) => string
+    formatter: (options?: Options) => Output,
+    getFallback: () => Output
   ) {
     let options;
     try {
       options = resolveFormatOrOptions(typeFormats, formatOrOptions);
     } catch (error) {
-      return String(value);
+      return getFallback();
     }
 
     try {
@@ -122,7 +142,7 @@ export default function createFormatter({
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
       );
-      return String(value);
+      return getFallback();
     }
   }
 
@@ -133,44 +153,56 @@ export default function createFormatter({
      * Otherwise the user time zone will be used. */
     formatOrOptions?: string | DateTimeFormatOptions
   ) {
+    let formattableValue: Date | number;
+    if (typeof value === 'string') {
+      const str = value;
+      formattableValue = new Date(value);
+
+      if (isNaN(formattableValue.getTime())) {
+        onError(
+          new IntlError(
+            IntlErrorCode.FORMATTING_ERROR,
+            process.env.NODE_ENV !== 'production'
+              ? `The \`value\` string parameter does not follow a valid ISO 8601 format. For more information check: https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format`
+              : undefined
+          )
+        );
+        return str;
+      }
+    } else {
+      formattableValue = value;
+    }
+
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.dateTime,
       (options) => {
-        if (!options?.timeZone) {
-          if (globalTimeZone) {
-            options = { ...options, timeZone: globalTimeZone };
-          } else {
-            onError(
-              new IntlError(
-                IntlErrorCode.ENVIRONMENT_FALLBACK,
-                process.env.NODE_ENV !== 'production'
-                  ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
-                  : undefined
-              )
-            );
-          }
-        }
+        options = applyTimeZone(options);
+        return new Intl.DateTimeFormat(locale, options).format(
+          formattableValue
+        );
+      },
+      () => String(value)
+    );
+  }
 
-        if (typeof value === 'string') {
-          const str = value;
-          value = new Date(value);
-          if (isNaN(value.getTime())) {
-            onError(
-              new IntlError(
-                IntlErrorCode.INVALID_FORMAT,
-                process.env.NODE_ENV !== 'production'
-                  ? `The \`value\` string parameter does not follow a valid ISO 8601 format. For more information check: https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-date-time-string-format`
-                  : undefined
-              )
-            );
-            return str;
-          }
-        }
-
-        return new Intl.DateTimeFormat(locale, options).format(value);
-      }
+  function dateTimeRange(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    start: Date | number,
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    end: Date | number,
+    /** If a time zone is supplied, the values are converted to that time zone.
+     * Otherwise the user time zone will be used. */
+    formatOrOptions?: string | DateTimeFormatOptions
+  ) {
+    return getFormattedValue(
+      formatOrOptions,
+      formats?.dateTime,
+      (options) => {
+        options = applyTimeZone(options);
+        return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
+      },
+      () => [dateTime(start), dateTime(end)].join(' – ')
     );
   }
 
@@ -179,10 +211,10 @@ export default function createFormatter({
     formatOrOptions?: string | NumberFormatOptions
   ) {
     return getFormattedValue(
-      value,
       formatOrOptions,
       formats?.number,
-      (options) => new Intl.NumberFormat(locale, options).format(value)
+      (options) => new Intl.NumberFormat(locale, options).format(value),
+      () => String(value)
     );
   }
 
@@ -202,18 +234,6 @@ export default function createFormatter({
     }
   }
 
-  function extractNowDate(
-    nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
-  ) {
-    if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
-      return new Date(nowOrOptions);
-    }
-    if (nowOrOptions?.now !== undefined) {
-      return new Date(nowOrOptions.now);
-    }
-    return getGlobalNow();
-  }
-
   function relativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
@@ -221,22 +241,46 @@ export default function createFormatter({
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
+      let nowDate: Date | undefined,
+        unit: Intl.RelativeTimeFormatUnit | undefined;
+      const opts: Intl.RelativeTimeFormatOptions = {};
+      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+        nowDate = new Date(nowOrOptions);
+      } else if (nowOrOptions) {
+        if (nowOrOptions.now != null) {
+          nowDate = new Date(nowOrOptions.now);
+        } else {
+          nowDate = getGlobalNow();
+        }
+        unit = nowOrOptions.unit;
+        opts.style = nowOrOptions.style;
+        // @ts-expect-error -- Types are slightly outdated
+        opts.numberingSystem = nowOrOptions.numberingSystem;
+      }
+
+      if (!nowDate) {
+        nowDate = getGlobalNow();
+      }
+
       const dateDate = new Date(date);
-      const nowDate = extractNowDate(nowOrOptions);
       const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
 
-      const unit =
-        typeof nowOrOptions === 'number' ||
-        nowOrOptions instanceof Date ||
-        nowOrOptions?.unit === undefined
-          ? resolveRelativeTimeUnit(seconds)
-          : nowOrOptions.unit;
+      if (!unit) {
+        unit = resolveRelativeTimeUnit(seconds);
+      }
+
+      // `numeric: 'auto'` can theoretically produce output like "yesterday",
+      // but it only works with integers. E.g. -1 day will produce "yesterday",
+      // but -1.1 days will produce "-1.1 days". Rounding before formatting is
+      // not desired, as the given dates might cross a threshold were the
+      // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
+      // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
+      // case. By using `always` we can ensure correct output. The only exception
+      // is the formatting of times <1 second as "now".
+      opts.numeric = unit === 'second' ? 'auto' : 'always';
 
       const value = calculateRelativeTimeValue(seconds, unit);
-
-      return new Intl.RelativeTimeFormat(locale, {
-        numeric: 'auto',
-      }).format(value, unit);
+      return new Intl.RelativeTimeFormat(locale, opts).format(value, unit);
     } catch (error) {
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
@@ -245,14 +289,55 @@ export default function createFormatter({
     }
   }
 
-  function list(
-    value: Iterable<string>,
+  type FormattableListValue = string | ReactElement;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
     formatOrOptions?: string | Intl.ListFormatOptions
-  ) {
-    return getFormattedValue(value, formatOrOptions, formats?.list, (options) =>
-      new Intl.ListFormat(locale, options).format(value)
+  ): Value extends string ? string : Iterable<ReactElement> {
+    const serializedValue: Array<string> = [];
+    const richValues = new Map<string, Value>();
+
+    // `formatToParts` only accepts strings, therefore we have to temporarily
+    // replace React elements with a placeholder ID that can be used to retrieve
+    // the original value afterwards.
+    let index = 0;
+    for (const item of value) {
+      let serializedItem;
+      if (typeof item === 'object') {
+        serializedItem = String(index);
+        richValues.set(serializedItem, item);
+      } else {
+        serializedItem = String(item);
+      }
+      serializedValue.push(serializedItem);
+      index++;
+    }
+
+    return getFormattedValue<
+      Intl.ListFormatOptions,
+      Value extends string ? string : Iterable<ReactElement>
+    >(
+      formatOrOptions,
+      formats?.list,
+      // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
+      (options) => {
+        const result = new Intl.ListFormat(locale, options)
+          .formatToParts(serializedValue)
+          .map((part) =>
+            part.type === 'literal'
+              ? part.value
+              : richValues.get(part.value) || part.value
+          );
+
+        if (richValues.size > 0) {
+          return result;
+        } else {
+          return result.join('');
+        }
+      },
+      () => String(value)
     );
   }
 
-  return { dateTime, number, relativeTime, list };
+  return {dateTime, number, relativeTime, list, dateTimeRange};
 }

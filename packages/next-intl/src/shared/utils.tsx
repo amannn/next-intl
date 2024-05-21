@@ -22,19 +22,19 @@ export function localizeHref(
   href: string,
   locale: string,
   curLocale: string,
-  pathname: string
+  curPathname: string
 ): string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string,
-  pathname: string
+  curPathname: string
 ): UrlObject | string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string = locale,
-  pathname: string
+  curPathname: string
 ) {
   if (!isLocalHref(href) || isRelativeHref(href)) {
     return href;
@@ -42,7 +42,7 @@ export function localizeHref(
 
   const isSwitchingLocale = locale !== curLocale;
   const isPathnamePrefixed =
-    locale == null || hasPathnamePrefixed(locale, pathname);
+    locale == null || hasPathnamePrefixed(locale, curPathname);
   const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
 
   if (shouldPrefix && locale != null) {
@@ -105,13 +105,12 @@ export function matchesPathname(
 
 export function templateToRegex(template: string): RegExp {
   const regexPattern = template
-    .replace(/\[([^\]]+)\]/g, (match) => {
-      if (match.startsWith('[...')) return '(.*)';
-      if (match.startsWith('[[...')) return '(.*)';
-      return '([^/]+)';
-    })
-    // Clean up regex match remainders from optional catchall ('[[...slug]]')
-    .replaceAll('(.*)]', '(.*)');
+    // Replace optional catchall ('[[...slug]]')
+    .replace(/\[\[(\.\.\.[^\]]+)\]\]/g, '?(.*)')
+    // Replace catchall ('[...slug]')
+    .replace(/\[(\.\.\.[^\]]+)\]/g, '(.+)')
+    // Replace regular parameter ('[slug]')
+    .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
   return new RegExp(`^${regexPattern}$`);
 }

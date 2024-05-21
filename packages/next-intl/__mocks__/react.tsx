@@ -18,7 +18,7 @@ export function use(promise: Promise<unknown> & {value?: unknown}) {
   }
 }
 
-const cached = {} as Record<string, unknown>;
+let cached = new WeakMap();
 
 export function cache(fn: (...args: Array<unknown>) => unknown) {
   if (!fn.name) {
@@ -26,15 +26,18 @@ export function cache(fn: (...args: Array<unknown>) => unknown) {
   }
 
   function cachedFn(...args: Array<unknown>) {
-    const key = `${fn.name}(${args
-      .map((arg) => JSON.stringify(arg))
-      .join(', ')})`;
+    let cacheForThisFn = cached.get(fn);
+    if (!cacheForThisFn) {
+      cacheForThisFn = new Map();
+      cached.set(fn, cacheForThisFn);
+    }
 
-    if (cached[key]) {
-      return cached[key];
+    const key = JSON.stringify(args);
+    if (cacheForThisFn.has(key)) {
+      return cacheForThisFn.get(key);
     } else {
       const result = fn(...args);
-      cached[key] = result;
+      cacheForThisFn.set(key, result);
       return result;
     }
   }
@@ -43,7 +46,5 @@ export function cache(fn: (...args: Array<unknown>) => unknown) {
 }
 
 cache.reset = () => {
-  Object.keys(cached).forEach((key) => {
-    delete cached[key];
-  });
+  cached = new WeakMap();
 };

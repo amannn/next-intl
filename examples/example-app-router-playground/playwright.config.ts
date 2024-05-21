@@ -7,6 +7,10 @@ const PORT = process.env.CI ? 3003 : 3000;
 
 const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 1 : 0,
+  testMatch:
+    process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never'
+      ? 'locale-prefix-never.spec.ts'
+      : 'main.spec.ts',
   testDir: './tests',
   projects: [
     {
@@ -14,6 +18,7 @@ const config: PlaywrightTestConfig = {
       use: devices['Desktop Chrome']
     }
   ],
+  fullyParallel: true,
   webServer: {
     command: `PORT=${PORT} pnpm start`,
     port: PORT,

@@ -1,0 +1,69 @@
+:root {
+  --docsearch-key-shadow: none;
+  --docsearch-key-gradient: #fff;
+  --docsearch-primary-color: var(--color-text-primary);
+  --docsearch-key-pressed-shadow: none;
+  --docsearch-text-color: inherit;
+}
+
+.DocSearch-Input {
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.DocSearch-Commands-Key {
+  @apply border border-solid border-slate-200;
+}
+
+.DocSearch-Button {
+  @apply rounded-md md:min-w-[200px];
+}
+
+.DocSearch-Button-Key {
+  @apply mr-1 bg-white;
+
+  &:last-child {
+    @apply text-xs font-semibold;
+  }
+}
+
+.DocSearch-Button-Placeholder {
+  @apply text-sm;
+}
+
+.DocSearch-Search-Icon {
+  @apply md:scale-75 dark:text-white;
+}
+
+.DocSearch-Form {
+  @apply text-slate-900;
+
+  .DocSearch-Search-Icon {
+    @apply text-slate-900;
+  }
+}
+
+.DocSearch-Button {
+  @apply bg-transparent dark:md:bg-slate-800 md:bg-slate-100;
+}
+
+.navbar-home {
+  .DocSearch-Button-Key {
+    @apply opacity-90;
+  }
+
+  .DocSearch-Button {
+    @apply bg-transparent md:bg-slate-900 md:text-slate-400;
+
+    .DocSearch-Search-Icon {
+      @apply text-white md:text-slate-400;
+    }
+  }
+}
+
+.nextra-sidebar-container {
+  .DocSearch-Button {
+    @apply hidden;
+  }
+}

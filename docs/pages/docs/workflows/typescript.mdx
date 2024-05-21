@@ -28,12 +28,17 @@ function About() {
 To enable this validation, add a global type definition file in your project root (e.g. `global.d.ts`):
 
 ```jsx filename="global.d.ts"
-// Use type safe message keys with `next-intl`
-type Messages = typeof import('./messages/en.json');
-declare interface IntlMessages extends Messages {}
+import en from './messages/en.json';
+
+type Messages = typeof en;
+
+declare global {
+  // Use type safe message keys with `next-intl`
+  interface IntlMessages extends Messages {}
+}
 ```
 
-You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on a messages sample by importing it.
+You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on the messages from your default locale by importing it.
 
 **If you're encountering problems, please double check that:**
 

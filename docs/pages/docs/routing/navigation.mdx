@@ -1,7 +1,13 @@
 import Callout from 'components/Callout';
 import {Tab, Tabs} from 'nextra-theme-docs';
+import Details from 'components/Details';
 
-# Next.js App Router internationalized navigation
+# Navigation APIs
+
+<Callout>
+  The navigation APIs are only needed when you're using [i18n
+  routing](/docs/getting-started/app-router).
+</Callout>
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
@@ -56,7 +62,18 @@ export default createMiddleware({
   localePrefix,
   locales
 });
+
+// ...
 ```
+
+<Details id="locales-unknown">
+<summary>What if the locales aren't known at build time?</summary>
+
+In case you're building an app where locales can be added and removed at runtime, you can omit the `locales` argument from `createSharedPathnamesNavigation`. The `locale` that can be passed to APIs like `Link` will now accept any string as a valid value.
+
+Note however that the `locales` argument for the middleware is mandatory. You can however [create the middleware dynamically](/docs/routing/middleware#composing-other-middlewares) on a per-request basis and provide the `locales` argument e.g. after fetching this from a database.
+
+</Details>
 
 ### Strategy 2: Localized pathnames [#localized-pathnames]
 
@@ -117,6 +134,8 @@ export default createMiddleware({
   locales,
   pathnames
 });
+
+// ...
 ```
 
 <Callout>
@@ -128,7 +147,7 @@ export default createMiddleware({
 
 ### `Link`
 
-This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the current locale as necessary. If the default locale is matched, the `href` remains unchanged and no prefix is added.
+This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically prefixes the `href` with the either the current locale or a locale the user is switching to as necessary.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
@@ -146,7 +165,7 @@ import {Link} from '../navigation';
 <Link href="/users/12">Susan</Link>
 ```
 
-<details>
+<Details id="link-active">
 <summary>How can I render a navigation link?</summary>
 
 The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment) from Next.js allows you to detect if a given child segment is active from within the parent layout. Since this returns an internal pathname, it can be matched against an `href` that you can pass to `Link`.
@@ -187,7 +206,7 @@ export default function NavigationLink({
 
 See also the Next.js docs on [creating an active link component](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment#creating-an-active-link-component).
 
-</details>
+</Details>
 
 </Tab>
 <Tab>
@@ -222,7 +241,7 @@ import {Link} from '../navigation';
 <Link href={{pathname: "/users", query: {sortBy: 'name'}}}>Users</Link>
 ```
 
-<details>
+<Details id="link-composition">
 <summary>How can I compose the link with its href prop?</summary>
 
 If you need to create a component that receives an `href` prop that is forwarded to `Link` internally, you can retain the type safety of `href` by making your component generic and accepting a `Pathname`. The type argument can then be forwarded to the internal props of `Link`.
@@ -240,9 +259,9 @@ export default function StyledLink<Pathname extends keyof typeof pathnames>({
 }
 ```
 
-</details>
+</Details>
 
-<details>
+<Details id="navigation-link">
 <summary>How can I render a navigation link?</summary>
 
 The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment) from Next.js allows you to detect if a given child segment is active from within the parent layout. Since this returns an internal pathname, it can be matched against an `href` that you can pass to `Link`.
@@ -284,8 +303,9 @@ export default function NavigationLink<
 
 See also the Next.js docs on [creating an active link component](https://nextjs.org/docs/app/api-reference/functions/use-selected-layout-segment#creating-an-active-link-component).
 
-</details>
-<details>
+</Details>
+
+<Details id="link-unknown-routes">
 <summary>How can I link to unknown routes?</summary>
 
 The [navigation APIs](#apis) are strictly typed and only allow routes specified in the `pathnames` config. If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
@@ -307,16 +327,16 @@ export const {Link, redirect, usePathname, useRouter} =
   });
 ```
 
-</details>
+</Details>
 
 </Tab>
 </Tabs>
 
-<details>
+<Details id="link-prefetching">
 <summary>How does prefetching of localized links work?</summary>
 Just like `next/link`, by default all links are prefetched. The one exception to this is that links to other locales aren't prefetched, because this would result in prematurely overwriting the locale cookie.
 
-</details>
+</Details>
 
 ### `useRouter`
 
@@ -342,7 +362,7 @@ router.push('/users/12', {locale: 'de'});
 
 ````
 
-<details>
+<Details id="userouter-change-locale">
 <summary>How can I change the locale for the current page?</summary>
 
 By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you can change the locale for the current page programmatically.
@@ -358,7 +378,7 @@ const router = useRouter();
 router.replace(pathname, {locale: 'de'});
 ```
 
-</details>
+</Details>
 </Tab>
 <Tab>
 
@@ -390,7 +410,7 @@ router.push({
 });
 ````
 
-<details>
+<Details id="change-locale">
 <summary>How can I change the locale for the current page?</summary>
 
 By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you can change the locale for the current page programmatically.
@@ -400,26 +420,23 @@ Note that if you have dynamic params on some routes, you should pass those as we
 ```tsx
 'use client';
 
-import {useParams} from 'next/navigation';
 import {usePathname, useRouter} from '../navigation';
+import {useParams} from 'next/navigation';
 
 const pathname = usePathname();
 const router = useRouter();
 const params = useParams();
 
 router.replace(
-  {
-    pathname,
-    // TypeScript will validate that only known `params` are used in combination
-    // with a given `pathname`. Since the two will always match for the current
-    // route, we can skip runtime checks.
-    params: params as any
-  },
+  // @ts-expect-error -- TypeScript will validate that only known `params`
+  // are used in combination with a given `pathname`. Since the two will
+  // always match for the current route, we can skip runtime checks.
+  {pathname, params},
   {locale: 'de'}
 );
 ```
 
-</details>
+</Details>
 </Tab>
 </Tabs>
 
@@ -502,6 +519,11 @@ redirect({
 </Tab>
 </Tabs>
 
+<Callout>
+  [`permanentRedirect`](https://nextjs.org/docs/app/api-reference/functions/permanentRedirect)
+  is supported too.
+</Callout>
+
 ### `getPathname`
 
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
@@ -517,16 +539,22 @@ If you need to construct a particular pathname based on a locale, you can call t
 ```tsx filename="page.tsx"
 import {getPathname} from '../navigation';
 
-export async function generateMetadata({params}) {
+export async function generateMetadata({params: {locale}}) {
+  // Example: This page accepts search params like `?sort=asc`.
+  // A canonical link informs search engines that only the
+  // version without search params should be indexed.
+
+  const pathname = getPathname({
+    locale,
+    href: {
+      pathname: '/users/[userId]',
+      params: {userId: '5'}
+    }
+  });
+
   return {
     alternates: {
-      canonical: getPathname({
-        locale: props.params.locale,
-        href: {
-          pathname: '/users/[userId]',
-          params: {userId: '5'}
-        }
-      })
+      canonical: '/' + locale + pathname
     }
   };
 }
