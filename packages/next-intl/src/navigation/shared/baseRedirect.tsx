@@ -15,7 +15,7 @@ export default function baseRedirect(
   ...args: ParametersExceptFirst<typeof nextRedirect>
 ) {
   const localizedPathname =
-    params.localePrefix === 'never' || isLocalHref(params.pathname)
+    params.localePrefix === 'never' || !isLocalHref(params.pathname)
       ? params.pathname
       : prefixPathname(params.locale, params.pathname);
   return nextRedirect(localizedPathname, ...args);
