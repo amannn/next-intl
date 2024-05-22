@@ -1,0 +1,29 @@
+# Linting
+
+To ensure the correct usage of `next-intl`, you can use ESLint to enforce certain rules.
+
+## Consistent usage of navigation APIs
+
+If you are using [i18n routing](/docs/getting-started/app-router), you might want to ensure that developers consistently use the [navigation APIs](/docs/routing/navigation) that you've configured in your project.
+
+In this example, developers will be prompted to import from `@/navigation` when they try to import navigation APIs from Next.js.
+
+```javascript filename="eslint.config.js"
+// ...
+
+  rules: {
+    // Consistently import navigation APIs from `@/navigation`
+    'no-restricted-imports': [
+      'error',
+      {
+        name: 'next/link',
+        message: 'Please import from `@/navigation` instead.'
+      },
+      {
+        name: 'next/navigation',
+        importNames: ['redirect', 'permanentRedirect', 'useRouter', 'usePathname'],
+        message: 'Please import from `@/navigation` instead.'
+      }
+    ]
+  }
+```
