@@ -1,5 +1,6 @@
 {
   "typescript": "TypeScript",
   "localization-management": "Localization management with Crowdin",
-  "vscode-integration": "VSCode integration"
+  "vscode-integration": "VSCode integration",
+  "linting": "Linting"
 }

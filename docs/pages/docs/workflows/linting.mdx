@@ -1,0 +1,81 @@
+import {Tab, Tabs} from 'nextra-theme-docs';
+
+# Linting
+
+To ensure the correct usage of `next-intl`, you can use linting to enforce certain rules.
+
+These example rules apply if you are using [i18n routing](/docs/getting-started/app-router).
+You will need to adjust the rules to direct the user to the correct location where you are exporting the `next-intl` routing helpers, see [Navigation](/docs/routing/navigation) for more information.
+
+<Tabs items={['ESlint legacy config', 'ESlint flat config']}>
+<Tab>
+
+```json filename="eslintrc.json"
+{
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      // Disallow the usage of the native Next.js `Link` component
+      {
+        "name": "next/link",
+        "message": "Please use <location of re-exported functions> instead."
+      },
+      // Disallow the specific functions that `next-intl` re-exports
+      {
+        "name": "next/navigation",
+        "importNames": [
+          "redirect",
+          "permanentRedirect",
+          "useRouter",
+          "usePathname"
+        ],
+        "message": "Please use <location of re-exported functions> instead."
+      },
+      // Disallow usage of the old router APIs
+      {
+        "name": "next/router",
+        "message": "Please use <location of re-exported functions> instead."
+      }
+    ]
+  }
+}
+```
+
+</Tab>
+<Tab>
+
+```javascript filename="eslint.config.js"
+export default [
+  {
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        // Disallow the usage of the native Next.js `Link` component
+        {
+          name: 'next/link',
+          message: 'Please use <location of re-exported functions> instead.'
+        },
+        // Disallow the specific functions that `next-intl` re-exports
+        {
+          name: 'next/navigation',
+          importNames: [
+            'redirect',
+            'permanentRedirect',
+            'useRouter',
+            'usePathname'
+          ],
+          message: 'Please use <location of re-exported functions> instead.'
+        },
+        // Disallow usage of the old router APIs
+        {
+          name: 'next/router',
+          message: 'Please use <location of re-exported functions> instead.'
+        }
+      ]
+    }
+  }
+];
+```
+
+</Tab>
+</Tabs>
