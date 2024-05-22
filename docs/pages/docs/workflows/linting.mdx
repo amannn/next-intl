@@ -1,81 +1,29 @@
-import {Tab, Tabs} from 'nextra-theme-docs';
-
 # Linting
 
-To ensure the correct usage of `next-intl`, you can use linting to enforce certain rules.
+To ensure the correct usage of `next-intl`, you can use ESLint to enforce certain rules.
 
-These example rules apply if you are using [i18n routing](/docs/getting-started/app-router).
-You will need to adjust the rules to direct the user to the correct location where you are exporting the `next-intl` routing helpers, see [Navigation](/docs/routing/navigation) for more information.
+## Consistent usage of navigation APIs
 
-<Tabs items={['ESlint legacy config', 'ESlint flat config']}>
-<Tab>
+If you are using [i18n routing](/docs/getting-started/app-router), you might want to ensure that developers consistently use the [navigation APIs](/docs/routing/navigation) that you've configured in your project.
 
-```json filename="eslintrc.json"
-{
-  "rules": {
-    "no-restricted-imports": [
-      "error",
-      // Disallow the usage of the native Next.js `Link` component
+In this example, developers will be prompted to import from `@/navigation` when they try to import navigation APIs from Next.js.
+
+```javascript filename="eslint.config.js"
+// ...
+
+  rules: {
+    // Consistently import navigation APIs from `@/navigation`
+    'no-restricted-imports': [
+      'error',
       {
-        "name": "next/link",
-        "message": "Please use <location of re-exported functions> instead."
+        name: 'next/link',
+        message: 'Please import from `@/navigation` instead.'
       },
-      // Disallow the specific functions that `next-intl` re-exports
       {
-        "name": "next/navigation",
-        "importNames": [
-          "redirect",
-          "permanentRedirect",
-          "useRouter",
-          "usePathname"
-        ],
-        "message": "Please use <location of re-exported functions> instead."
-      },
-      // Disallow usage of the old router APIs
-      {
-        "name": "next/router",
-        "message": "Please use <location of re-exported functions> instead."
+        name: 'next/navigation',
+        importNames: ['redirect', 'permanentRedirect', 'useRouter', 'usePathname'],
+        message: 'Please import from `@/navigation` instead.'
       }
     ]
   }
-}
 ```
-
-</Tab>
-<Tab>
-
-```javascript filename="eslint.config.js"
-export default [
-  {
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        // Disallow the usage of the native Next.js `Link` component
-        {
-          name: 'next/link',
-          message: 'Please use <location of re-exported functions> instead.'
-        },
-        // Disallow the specific functions that `next-intl` re-exports
-        {
-          name: 'next/navigation',
-          importNames: [
-            'redirect',
-            'permanentRedirect',
-            'useRouter',
-            'usePathname'
-          ],
-          message: 'Please use <location of re-exported functions> instead.'
-        },
-        // Disallow usage of the old router APIs
-        {
-          name: 'next/router',
-          message: 'Please use <location of re-exported functions> instead.'
-        }
-      ]
-    }
-  }
-];
-```
-
-</Tab>
-</Tabs>
