@@ -4,7 +4,7 @@ import {
   LocalePrefix,
   ParametersExceptFirst
 } from '../../shared/types';
-import {prefixPathname} from '../../shared/utils';
+import {isLocalHref, prefixPathname} from '../../shared/utils';
 
 export default function baseRedirect(
   params: {
@@ -15,7 +15,7 @@ export default function baseRedirect(
   ...args: ParametersExceptFirst<typeof nextRedirect>
 ) {
   const localizedPathname =
-    params.localePrefix === 'never' || !params.pathname.startsWith('/')
+    params.localePrefix === 'never' || isLocalHref(params.pathname)
       ? params.pathname
       : prefixPathname(params.locale, params.pathname);
   return nextRedirect(localizedPathname, ...args);
