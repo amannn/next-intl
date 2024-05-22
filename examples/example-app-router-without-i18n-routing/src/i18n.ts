@@ -1,8 +1,8 @@
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
-  // This can either be defined statically if only a single locale
-  // is supported, or alternatively read from the user settings
+  // Provide a static locale, fetch a user setting,
+  // read from `cookies()`, `headers()`, etc.
   const locale = 'en';
 
   return {
