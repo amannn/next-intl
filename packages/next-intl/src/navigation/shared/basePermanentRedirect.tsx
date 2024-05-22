@@ -15,7 +15,7 @@ export default function basePermanentRedirect(
   ...args: ParametersExceptFirst<typeof nextPermanentRedirect>
 ) {
   const localizedPathname =
-    params.localePrefix === 'never'
+    params.localePrefix === 'never' || !params.pathname.startsWith('/')
       ? params.pathname
       : prefixPathname(params.locale, params.pathname);
   return nextPermanentRedirect(localizedPathname, ...args);
