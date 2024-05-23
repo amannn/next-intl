@@ -1,6 +1,6 @@
 import {AllLocales, LocalePrefix, Pathnames} from '../shared/types';
 
-export type RoutingLocales<Locales extends AllLocales> = Array<
+export type RoutingLocales<Locales extends AllLocales> = ReadonlyArray<
   | Locales[number]
   | {
       /** The locale code available internally (e.g. `/en-gb`) */
