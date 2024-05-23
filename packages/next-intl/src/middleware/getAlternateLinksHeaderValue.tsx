@@ -1,11 +1,11 @@
 import {NextRequest} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
+import {getLocale} from '../shared/utils';
 import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
   applyBasePath,
   formatTemplatePathname,
   getHost,
-  getLocale,
   getNormalizedPathname,
   getPrefix,
   isLocaleSupportedOnDomain

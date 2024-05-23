@@ -1,6 +1,6 @@
-import {render} from '@testing-library/react';
+import {getByText, render, screen} from '@testing-library/react';
 import {
-  usePathname,
+  usePathname as useNextPathname,
   useParams,
   useRouter as useNextRouter
 } from 'next/navigation';
@@ -22,7 +22,7 @@ beforeEach(() => {
     refresh: vi.fn()
   };
   vi.mocked(useNextRouter).mockImplementation(() => router);
-  vi.mocked(usePathname).mockImplementation(() => '/');
+  vi.mocked(useNextPathname).mockImplementation(() => '/');
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
@@ -101,7 +101,7 @@ describe("localePrefix: 'as-needed'", () => {
 });
 
 describe("localePrefix: 'as-needed', custom prefix", () => {
-  const {useRouter} = createSharedPathnamesNavigation({
+  const {usePathname, useRouter} = createSharedPathnamesNavigation({
     locales: ['en', {locale: 'en-gb', prefix: '/uk'}],
     localePrefix: 'as-needed'
   });
@@ -119,6 +119,18 @@ describe("localePrefix: 'as-needed', custom prefix", () => {
         expect(push).toHaveBeenCalledTimes(1);
         expect(push).toHaveBeenCalledWith('/uk/about');
       });
+    });
+  });
+
+  describe('usePathname', () => {
+    it('returns the correct pathname for a custom locale prefix', () => {
+      vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+      vi.mocked(useNextPathname).mockImplementation(() => '/en-gb/about');
+      function Component() {
+        return usePathname();
+      }
+      render(<Component />);
+      screen.getByText('/about');
     });
   });
 });

@@ -13,8 +13,7 @@ function mockPathname(pathname: string) {
 }
 
 function Component() {
-  const locales = ['en'];
-  return <>{useBasePathname(locales)}</>;
+  return <>{useBasePathname()}</>;
 }
 
 describe('unprefixed routing', () => {

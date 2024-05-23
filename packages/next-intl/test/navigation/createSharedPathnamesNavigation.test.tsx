@@ -103,7 +103,7 @@ describe.each([
     });
 
     describe("localePrefix: 'always', custom prefixes", () => {
-      const {Link} = createSharedPathnamesNavigation({
+      const {Link, redirect} = createSharedPathnamesNavigation({
         locales: localesWithCustomPrefixes,
         localePrefix: 'always'
       });
@@ -135,6 +135,28 @@ describe.each([
           expect(
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/uk/about?foo=bar');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component({href}: {href: string}) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/en');
+        });
+
+        it('can redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk');
         });
       });
     });

@@ -324,6 +324,36 @@ describe("localePrefix: 'as-needed'", () => {
   }
 });
 
+describe("localePrefix: 'as-needed', custom prefix", () => {
+  const {useRouter} = createLocalizedPathnamesNavigation({
+    locales: ['en', {locale: 'de-at', prefix: '/de'}] as const,
+    pathnames: {
+      '/': '/',
+      '/about': {
+        en: '/about',
+        'de-at': '/ueber-uns'
+      }
+    },
+    localePrefix: 'always'
+  });
+
+  describe('useRouter', () => {
+    describe('push', () => {
+      it('resolves to the correct path when passing a locale with a custom prefix', () => {
+        function Component() {
+          const router = useRouter();
+          router.push('/about', {locale: 'de-at'});
+          return null;
+        }
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/de/ueber-uns');
+      });
+    });
+  });
+});
+
 describe("localePrefix: 'never'", () => {
   const {useRouter} = createLocalizedPathnamesNavigation({
     pathnames,

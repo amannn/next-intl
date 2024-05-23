@@ -4,8 +4,10 @@ import {
   AllLocales,
   LocalePrefix,
   ParametersExceptFirst,
-  Pathnames
+  Pathnames,
+  RoutingLocales
 } from '../../shared/types';
+import {getLocales} from '../../shared/utils';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -22,13 +24,13 @@ export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
 >(opts: {
-  locales: Locales;
+  locales: RoutingLocales<Locales>;
   pathnames: PathnamesConfig;
   localePrefix?: LocalePrefix;
 }) {
   function useTypedLocale(): (typeof opts.locales)[number] {
     const locale = useLocale();
-    const isValid = opts.locales.includes(locale as any);
+    const isValid = getLocales(opts.locales).includes(locale as any);
     if (!isValid) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -66,6 +68,7 @@ export default function createLocalizedPathnamesNavigation<
         })}
         locale={locale}
         localePrefix={opts.localePrefix}
+        locales={opts.locales}
         {...rest}
       />
     );
@@ -86,7 +89,10 @@ export default function createLocalizedPathnamesNavigation<
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
-    return clientRedirect({...opts, pathname: resolvedHref}, ...args);
+    return clientRedirect(
+      {...opts, pathname: resolvedHref, locales: opts.locales},
+      ...args
+    );
   }
 
   function permanentRedirect<Pathname extends keyof PathnamesConfig>(
@@ -96,11 +102,14 @@ export default function createLocalizedPathnamesNavigation<
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
-    return clientPermanentRedirect({...opts, pathname: resolvedHref}, ...args);
+    return clientPermanentRedirect(
+      {...opts, pathname: resolvedHref, locales: opts.locales},
+      ...args
+    );
   }
 
   function useRouter() {
-    const baseRouter = useBaseRouter();
+    const baseRouter = useBaseRouter(opts.locales);
     const defaultLocale = useTypedLocale();
 
     return {
@@ -141,7 +150,7 @@ export default function createLocalizedPathnamesNavigation<
   }
 
   function usePathname(): keyof PathnamesConfig {
-    const pathname = useBasePathname(opts.locales);
+    const pathname = useBasePathname();
     const locale = useTypedLocale();
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return pathname

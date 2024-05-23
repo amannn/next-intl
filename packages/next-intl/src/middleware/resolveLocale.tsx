@@ -3,16 +3,12 @@ import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {AllLocales, RoutingLocales} from '../shared/types';
+import {getLocales} from '../shared/utils';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
-import {
-  getHost,
-  getLocales,
-  getPathnameMatch,
-  isLocaleSupportedOnDomain
-} from './utils';
+import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<Locales extends AllLocales>(
   requestHeaders: Headers,

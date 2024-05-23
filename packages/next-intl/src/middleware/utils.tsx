@@ -1,5 +1,10 @@
 import {AllLocales, RoutingLocales} from '../shared/types';
-import {matchesPathname, templateToRegex} from '../shared/utils';
+import {
+  getLocale,
+  getLocales,
+  matchesPathname,
+  templateToRegex
+} from '../shared/utils';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -149,20 +154,6 @@ export function getPrefixes<Locales extends AllLocales>(
   routingLocales: RoutingLocales<Locales>
 ) {
   return routingLocales.map((routingLocale) => getPrefix(routingLocale));
-}
-
-export function getLocale<Locales extends AllLocales>(
-  routingLocale: RoutingLocales<Locales>[number]
-) {
-  return typeof routingLocale === 'string'
-    ? routingLocale
-    : routingLocale.locale;
-}
-
-export function getLocales<Locales extends AllLocales>(
-  routingLocales: RoutingLocales<Locales>
-) {
-  return routingLocales.map((routingLocale) => getLocale(routingLocale));
 }
 
 /**
