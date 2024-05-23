@@ -52,6 +52,7 @@ beforeEach(() => {
 });
 
 const locales = ['en', 'de', 'ja'] as const;
+
 const pathnames = {
   '/': '/',
   '/about': {
@@ -112,6 +113,61 @@ describe.each([
           expect(
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/about?foo=bar');
+        });
+      });
+    });
+
+    describe("localePrefix: 'always', custom prefixes", () => {
+      const {Link, getPathname} = createLocalizedPathnamesNavigation({
+        locales: ['en', {locale: 'de-at', prefix: '/de'}] as const,
+        pathnames: {
+          '/': '/',
+          '/about': {
+            en: '/about',
+            'de-at': '/ueber-uns'
+          }
+        },
+        localePrefix: 'always'
+      });
+
+      describe('Link', () => {
+        it('handles a locale without a custom prefix', () => {
+          const markup = renderToString(<Link href="/about">About</Link>);
+          expect(markup).toContain('href="/en/about"');
+        });
+
+        it('handles a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="de-at">
+              About
+            </Link>
+          );
+          expect(markup).toContain('href="/de/ueber-uns"');
+        });
+
+        it('handles a locale with a custom prefix on an object href', () => {
+          render(
+            <Link
+              href={{pathname: '/about', query: {foo: 'bar'}}}
+              locale="de-at"
+            >
+              About
+            </Link>
+          );
+          expect(
+            screen.getByRole('link', {name: 'About'}).getAttribute('href')
+          ).toBe('/de/ueber-uns?foo=bar');
+        });
+      });
+
+      describe('getPathname', () => {
+        it('resolves to the correct path', () => {
+          expect(
+            getPathname({
+              locale: 'de-at',
+              href: '/about'
+            })
+          ).toBe('/ueber-uns');
         });
       });
     });

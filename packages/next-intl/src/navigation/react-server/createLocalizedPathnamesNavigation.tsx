@@ -4,7 +4,8 @@ import {
   AllLocales,
   LocalePrefix,
   ParametersExceptFirst,
-  Pathnames
+  Pathnames,
+  RoutingLocales
 } from '../../shared/types';
 import {
   HrefOrHrefWithParams,
@@ -23,7 +24,7 @@ export default function createLocalizedPathnamesNavigation<
   locales,
   pathnames
 }: {
-  locales: Locales;
+  locales: RoutingLocales<Locales>;
   pathnames: Pathnames<Locales>;
   localePrefix?: LocalePrefix;
 }) {
@@ -54,6 +55,7 @@ export default function createLocalizedPathnamesNavigation<
         })}
         locale={locale}
         localePrefix={localePrefix}
+        locales={locales}
         {...rest}
       />
     );
@@ -65,7 +67,7 @@ export default function createLocalizedPathnamesNavigation<
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverRedirect({localePrefix, pathname}, ...args);
+    return serverRedirect({localePrefix, pathname, locales}, ...args);
   }
 
   function permanentRedirect<Pathname extends keyof PathnamesConfig>(
@@ -74,7 +76,7 @@ export default function createLocalizedPathnamesNavigation<
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverPermanentRedirect({localePrefix, pathname}, ...args);
+    return serverPermanentRedirect({localePrefix, pathname, locales}, ...args);
   }
 
   function getPathname({
