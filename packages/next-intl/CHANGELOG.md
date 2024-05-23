@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.14.1 (2024-05-23)
+
+
+### Bug Fixes
+
+* Handle external URLs passed to `redirect` and `permanentRedirect` ([#1084](https://github.com/amannn/next-intl/issues/1084) by [@mhogeveen](https://github.com/mhogeveen)) ([16b55e2](https://github.com/amannn/next-intl/commit/16b55e255cb70e76c07a9399205102ed4e26361d))
+
+
+
+
+
 # 3.14.0 (2024-05-15)
 
 
