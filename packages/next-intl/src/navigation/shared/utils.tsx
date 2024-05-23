@@ -1,6 +1,6 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {AllLocales, Pathnames} from '../../shared/types';
+import {AllLocales, Pathnames, RoutingLocales} from '../../shared/types';
 import {matchesPathname, unlocalizePathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
@@ -189,4 +189,19 @@ export function getBasePath(
   } else {
     return windowPathname.replace(pathname, '');
   }
+}
+
+export function getLocalePrefix(
+  locale: string,
+  locales?: RoutingLocales<AllLocales>
+) {
+  if (locales) {
+    for (const cur of locales) {
+      if (typeof cur !== 'string' && cur.locale === locale) {
+        return cur.prefix;
+      }
+    }
+  }
+
+  return '/' + locale;
 }

@@ -13,8 +13,7 @@ import {
   normalizeNameOrNameWithParams
 } from '../shared/utils';
 import ServerLink from './ServerLink';
-import serverPermanentRedirect from './serverPermanentRedirect';
-import serverRedirect from './serverRedirect';
+import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,

@@ -48,6 +48,11 @@ beforeEach(() => {
 
 const locales = ['en', 'de'] as const;
 
+const localesWithCustomPrefixes = [
+  'en',
+  {locale: 'en-gb', prefix: '/uk'}
+] as const;
+
 describe.each([
   {env: 'react-client', implementation: createSharedPathnamesNavigationClient},
   {env: 'react-server', implementation: createSharedPathnamesNavigationServer}
@@ -93,6 +98,43 @@ describe.each([
           expect(
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/de/news/launch-party-3');
+        });
+      });
+    });
+
+    describe("localePrefix: 'always', custom prefixes", () => {
+      const {Link} = createSharedPathnamesNavigation({
+        locales: localesWithCustomPrefixes,
+        localePrefix: 'always'
+      });
+
+      describe('Link', () => {
+        it('handles a locale without a custom prefix', () => {
+          const markup = renderToString(<Link href="/about">About</Link>);
+          expect(markup).toContain('href="/en/about"');
+        });
+
+        it('handles a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="en-gb">
+              Über uns
+            </Link>
+          );
+          expect(markup).toContain('href="/uk/about"');
+        });
+
+        it('handles a locale with a custom prefix on an object href', () => {
+          render(
+            <Link
+              href={{pathname: '/about', query: {foo: 'bar'}}}
+              locale="en-gb"
+            >
+              About
+            </Link>
+          );
+          expect(
+            screen.getByRole('link', {name: 'About'}).getAttribute('href')
+          ).toBe('/uk/about?foo=bar');
         });
       });
     });
@@ -234,6 +276,63 @@ describe.each([
           }
           render(<Test />);
           expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en', 'push');
+        });
+      });
+    });
+
+    describe("localePrefix: 'as-needed', custom prefixes", () => {
+      const {Link, permanentRedirect, redirect} =
+        createSharedPathnamesNavigation({
+          locales: localesWithCustomPrefixes,
+          localePrefix: 'as-needed'
+        });
+
+      describe('Link', () => {
+        it('renders a prefix for a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="en-gb">
+              About
+            </Link>
+          );
+          expect(markup).toContain('href="/uk/about"');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component({href}: {href: string}) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for a locale with a custom prefix', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk');
+
+          rerender(<Component href="/about" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk/about');
+        });
+      });
+
+      describe('permanentRedirect', () => {
+        function Component({href}: {href: string}) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for a locale with a custom prefix', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/uk');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/uk/about');
         });
       });
     });

@@ -8,32 +8,32 @@ import {
 
 describe('prefixPathname', () => {
   it("doesn't add trailing slashes for the root", () => {
-    expect(prefixPathname('en', '/')).toEqual('/en');
+    expect(prefixPathname('/en', '/')).toEqual('/en');
   });
 
   it("doesn't add trailing slashes for search params", () => {
-    expect(prefixPathname('en', '/?foo=bar')).toEqual('/en?foo=bar');
+    expect(prefixPathname('/en', '/?foo=bar')).toEqual('/en?foo=bar');
   });
 
   it('localizes nested paths', () => {
-    expect(prefixPathname('en', '/nested')).toEqual('/en/nested');
+    expect(prefixPathname('/en', '/nested')).toEqual('/en/nested');
   });
 });
 
 describe('hasPathnamePrefixed', () => {
   it('detects prefixed pathnames', () => {
-    expect(hasPathnamePrefixed('en', '/en')).toEqual(true);
-    expect(hasPathnamePrefixed('en', '/en/')).toEqual(true);
-    expect(hasPathnamePrefixed('en', '/en/client')).toEqual(true);
-    expect(hasPathnamePrefixed('en', '/en/client/')).toEqual(true);
-    expect(hasPathnamePrefixed('en', '/en/client/test')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client/')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client/test')).toEqual(true);
   });
 
   it('detects non-prefixed pathnames', () => {
-    expect(hasPathnamePrefixed('en', '/')).toEqual(false);
-    expect(hasPathnamePrefixed('en', '/client')).toEqual(false);
-    expect(hasPathnamePrefixed('en', '/client/')).toEqual(false);
-    expect(hasPathnamePrefixed('en', '/client/test')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client/')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client/test')).toEqual(false);
   });
 });
 

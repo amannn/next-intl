@@ -7,6 +7,16 @@ export type Pathnames<Locales extends AllLocales> = Record<
   {[Key in Locales[number]]: string} | string
 >;
 
+export type RoutingLocales<Locales extends AllLocales> = ReadonlyArray<
+  | Locales[number]
+  | {
+      /** The locale code available internally (e.g. `/en-gb`) */
+      locale: Locales[number];
+      /** The prefix this locale should be available at (e.g. `/uk`) */
+      prefix: string;
+    }
+>;
+
 export type ParametersExceptFirst<Fn> = Fn extends (
   arg0: any,
   ...rest: infer R

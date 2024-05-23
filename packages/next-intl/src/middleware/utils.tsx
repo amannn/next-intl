@@ -1,9 +1,8 @@
-import {AllLocales} from '../shared/types';
+import {AllLocales, RoutingLocales} from '../shared/types';
 import {matchesPathname, templateToRegex} from '../shared/utils';
 import {
   DomainConfig,
-  MiddlewareConfigWithDefaults,
-  RoutingLocales
+  MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 
 export function getFirstPathnameSegment(pathname: string) {

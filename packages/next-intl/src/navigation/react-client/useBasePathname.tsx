@@ -3,7 +3,9 @@
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
+import {AllLocales, RoutingLocales} from '../../shared/types';
 import {hasPathnamePrefixed, unlocalizePathname} from '../../shared/utils';
+import {getLocalePrefix} from '../shared/utils';
 
 /**
  * Returns the pathname without a potential locale prefix.
@@ -18,7 +20,9 @@ import {hasPathnamePrefixed, unlocalizePathname} from '../../shared/utils';
  * const pathname = usePathname();
  * ```
  */
-export default function useBasePathname(): string | null {
+export default function useBasePathname<Locales extends AllLocales>(
+  locales?: RoutingLocales<Locales>
+): string | null {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = useNextPathname() as ReturnType<
@@ -29,11 +33,12 @@ export default function useBasePathname(): string | null {
 
   return useMemo(() => {
     if (!pathname) return pathname;
-    const isPathnamePrefixed = hasPathnamePrefixed(locale, pathname);
+    const prefix = getLocalePrefix(locale, locales);
+    const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
     const unlocalizedPathname = isPathnamePrefixed
       ? unlocalizePathname(pathname, locale)
       : pathname;
 
     return unlocalizedPathname;
-  }, [locale, pathname]);
+  }, [locale, locales, pathname]);
 }

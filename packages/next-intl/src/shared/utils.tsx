@@ -22,49 +22,51 @@ export function localizeHref(
   href: string,
   locale: string,
   curLocale: string,
-  curPathname: string
+  curPathname: string,
+  prefix: string
 ): string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string,
-  curPathname: string
+  curPathname: string,
+  prefix: string
 ): UrlObject | string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string = locale,
-  curPathname: string
+  curPathname: string,
+  prefix: string
 ) {
   if (!isLocalHref(href) || isRelativeHref(href)) {
     return href;
   }
 
   const isSwitchingLocale = locale !== curLocale;
-  const isPathnamePrefixed =
-    locale == null || hasPathnamePrefixed(locale, curPathname);
+  const isPathnamePrefixed = hasPathnamePrefixed(prefix, curPathname);
   const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
 
-  if (shouldPrefix && locale != null) {
-    return prefixHref(href, locale);
+  if (shouldPrefix && prefix != null) {
+    return prefixHref(href, prefix);
   }
 
   return href;
 }
 
-export function prefixHref(href: string, locale: string): string;
+export function prefixHref(href: string, prefix: string): string;
 export function prefixHref(
   href: UrlObject | string,
-  locale: string
+  prefix: string
 ): UrlObject | string;
-export function prefixHref(href: UrlObject | string, locale: string) {
+export function prefixHref(href: UrlObject | string, prefix: string) {
   let prefixedHref;
   if (typeof href === 'string') {
-    prefixedHref = prefixPathname(locale, href);
+    prefixedHref = prefixPathname(prefix, href);
   } else {
     prefixedHref = {...href};
     if (href.pathname) {
-      prefixedHref.pathname = prefixPathname(locale, href.pathname);
+      prefixedHref.pathname = prefixPathname(prefix, href.pathname);
     }
   }
 
@@ -75,8 +77,8 @@ export function unlocalizePathname(pathname: string, locale: string) {
   return pathname.replace(new RegExp(`^/${locale}`), '') || '/';
 }
 
-export function prefixPathname(locale: string, pathname: string) {
-  let localizedHref = '/' + locale;
+export function prefixPathname(prefix: string, pathname: string) {
+  let localizedHref = prefix;
 
   // Avoid trailing slashes
   if (/^\/(\?.*)?$/.test(pathname)) {
@@ -88,8 +90,7 @@ export function prefixPathname(locale: string, pathname: string) {
   return localizedHref;
 }
 
-export function hasPathnamePrefixed(locale: string, pathname: string) {
-  const prefix = `/${locale}`;
+export function hasPathnamePrefixed(prefix: string, pathname: string) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 

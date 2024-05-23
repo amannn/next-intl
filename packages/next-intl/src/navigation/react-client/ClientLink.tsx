@@ -1,6 +1,6 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales} from '../../shared/types';
+import {AllLocales, RoutingLocales} from '../../shared/types';
 import BaseLink from '../shared/BaseLink';
 
 type Props<Locales extends AllLocales> = Omit<
@@ -8,6 +8,7 @@ type Props<Locales extends AllLocales> = Omit<
   'locale'
 > & {
   locale?: Locales[number];
+  locales?: RoutingLocales<Locales>;
 };
 
 function ClientLink<Locales extends AllLocales>(
@@ -16,7 +17,7 @@ function ClientLink<Locales extends AllLocales>(
 ) {
   const defaultLocale = useLocale();
   const linkLocale = locale || defaultLocale;
-  return <BaseLink ref={ref} locale={linkLocale} {...rest} />;
+  return <BaseLink<Locales> ref={ref} locale={linkLocale} {...rest} />;
 }
 
 /**

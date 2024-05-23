@@ -2,11 +2,10 @@ import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {AllLocales} from '../shared/types';
+import {AllLocales, RoutingLocales} from '../shared/types';
 import {
   DomainConfig,
-  MiddlewareConfigWithDefaults,
-  RoutingLocales
+  MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
 import {
   getHost,

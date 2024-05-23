@@ -2,17 +2,17 @@ import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
   AllLocales,
   LocalePrefix,
-  ParametersExceptFirst
+  ParametersExceptFirst,
+  RoutingLocales
 } from '../../shared/types';
 import ClientLink from './ClientLink';
-import clientPermanentRedirect from './clientPermanentRedirect';
-import clientRedirect from './clientRedirect';
+import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: RoutingLocales<Locales>; localePrefix?: LocalePrefix}) {
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<Locales>>,
     'localePrefix'
@@ -22,6 +22,7 @@ export default function createSharedPathnamesNavigation<
       <ClientLink<Locales>
         ref={ref}
         localePrefix={opts?.localePrefix}
+        locales={opts?.locales}
         {...props}
       />
     );
@@ -35,19 +36,27 @@ export default function createSharedPathnamesNavigation<
     pathname: string,
     ...args: ParametersExceptFirst<typeof clientRedirect>
   ) {
-    return clientRedirect({...opts, pathname}, ...args);
+    return clientRedirect({...opts, pathname, locales: opts?.locales}, ...args);
   }
 
   function permanentRedirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
   ) {
-    return clientPermanentRedirect({...opts, pathname}, ...args);
+    return clientPermanentRedirect(
+      {...opts, pathname, locales: opts?.locales},
+      ...args
+    );
   }
 
   function usePathname(): string {
+    const result = useBasePathname(opts?.locales);
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
-    return useBasePathname();
+    return result;
+  }
+
+  function useRouter() {
+    return useBaseRouter<Locales>(opts?.locales);
   }
 
   return {
@@ -55,6 +64,6 @@ export default function createSharedPathnamesNavigation<
     redirect,
     permanentRedirect,
     usePathname,
-    useRouter: useBaseRouter
+    useRouter
   };
 }
