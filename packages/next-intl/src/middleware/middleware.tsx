@@ -16,11 +16,12 @@ import {
   getInternalTemplate,
   formatTemplatePathname,
   getBestMatchingDomain,
-  getPathnameLocale,
+  getPathnameMatch,
   getNormalizedPathname,
   getPathWithSearch,
   isLocaleSupportedOnDomain,
-  applyBasePath
+  applyBasePath,
+  normalizeTrailingSlash
 } from './utils';
 
 const ROOT_URL = '/';
@@ -88,7 +89,7 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     function redirect(url: string, redirectDomain?: string) {
-      const urlObj = new URL(url, request.url);
+      const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
       if (domainConfigs.length > 0) {
         if (!redirectDomain) {
@@ -142,11 +143,11 @@ export default function createMiddleware<Locales extends AllLocales>(
       configWithDefaults.locales
     );
 
-    const pathLocale = getPathnameLocale(
+    const pathnameMatch = getPathnameMatch(
       nextPathname,
       configWithDefaults.locales
     );
-    const hasLocalePrefix = pathLocale != null;
+    const hasLocalePrefix = pathnameMatch != null;
 
     let response;
     let internalTemplateName: string | undefined;
@@ -173,7 +174,7 @@ export default function createMiddleware<Locales extends AllLocales>(
             normalizedPathname,
             localeTemplate,
             internalTemplateName,
-            pathLocale
+            pathnameMatch?.locale
           );
         } else {
           let sourceTemplate;
@@ -240,7 +241,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
           if (configWithDefaults.localePrefix === 'never') {
             response = redirect(normalizedPathnameWithSearch);
-          } else if (pathLocale === locale) {
+          } else if (pathnameMatch.exact) {
             if (
               hasMatchedDefaultLocale &&
               configWithDefaults.localePrefix === 'as-needed'
@@ -250,7 +251,7 @@ export default function createMiddleware<Locales extends AllLocales>(
               if (configWithDefaults.domains) {
                 const pathDomain = getBestMatchingDomain(
                   domain,
-                  pathLocale,
+                  pathnameMatch.locale,
                   domainConfigs
                 );
 
@@ -267,7 +268,9 @@ export default function createMiddleware<Locales extends AllLocales>(
               }
             }
           } else {
-            response = redirect(`/${locale}${normalizedPathnameWithSearch}`);
+            response = redirect(
+              pathnameMatch.prefix + normalizedPathnameWithSearch
+            );
           }
         } else {
           if (

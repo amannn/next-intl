@@ -1,8 +1,18 @@
 import {AllLocales, LocalePrefix, Pathnames} from '../shared/types';
 
+export type RoutingLocales<Locales extends AllLocales> = Array<
+  | Locales[number]
+  | {
+      /** The locale code available internally (e.g. `/en-gb`) */
+      locale: Locales[number];
+      /** The prefix this locale should be available at (e.g. `/uk`) */
+      prefix: string;
+    }
+>;
+
 type RoutingBaseConfig<Locales extends AllLocales> = {
   /** A list of all locales that are supported. */
-  locales: Locales;
+  locales: RoutingLocales<Locales>;
 
   /* Used by default if none of the defined locales match. */
   defaultLocale: Locales[number];

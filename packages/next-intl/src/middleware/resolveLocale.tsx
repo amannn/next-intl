@@ -5,12 +5,13 @@ import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {AllLocales} from '../shared/types';
 import {
   DomainConfig,
-  MiddlewareConfigWithDefaults
+  MiddlewareConfigWithDefaults,
+  RoutingLocales
 } from './NextIntlMiddlewareConfig';
 import {
-  findCaseInsensitiveLocale,
-  getFirstPathnameSegment,
   getHost,
+  getLocales,
+  getPathnameMatch,
   isLocaleSupportedOnDomain
 } from './utils';
 
@@ -32,7 +33,7 @@ function findDomainFromHost<Locales extends AllLocales>(
 
 export function getAcceptLanguageLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
-  locales: Locales,
+  routingLocales: RoutingLocales<Locales>,
   defaultLocale: string
 ) {
   let locale;
@@ -43,11 +44,8 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
     }
   }).languages();
   try {
-    locale = match(
-      languages,
-      locales as unknown as Array<string>,
-      defaultLocale
-    );
+    const locales = getLocales(routingLocales);
+    locale = match(languages, locales, defaultLocale);
   } catch (e) {
     // Invalid language
   }
@@ -55,20 +53,13 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
   return locale;
 }
 
-function getLocaleFromPrefix<Locales extends AllLocales>(
-  pathname: string,
-  locales: Locales
-) {
-  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
-  return findCaseInsensitiveLocale(pathLocaleCandidate, locales);
-}
-
 function getLocaleFromCookie<Locales extends AllLocales>(
   requestCookies: RequestCookies,
-  locales: Locales
+  routingLocales: RoutingLocales<Locales>
 ) {
   if (requestCookies.has(COOKIE_LOCALE_NAME)) {
     const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
+    const locales = getLocales(routingLocales);
     if (value && locales.includes(value)) {
       return value;
     }
@@ -79,7 +70,7 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
   {
     defaultLocale,
     localeDetection,
-    locales
+    locales: routingLocales
   }: Pick<
     MiddlewareConfigWithDefaults<Locales>,
     'defaultLocale' | 'localeDetection' | 'locales'
@@ -92,17 +83,21 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    locale = getLocaleFromPrefix(pathname, locales);
+    locale = getPathnameMatch(pathname, routingLocales)?.locale;
   }
 
   // Prio 2: Use existing cookie
   if (!locale && localeDetection && requestCookies) {
-    locale = getLocaleFromCookie(requestCookies, locales);
+    locale = getLocaleFromCookie(requestCookies, routingLocales);
   }
 
   // Prio 3: Use the `accept-language` header
   if (!locale && localeDetection && requestHeaders) {
-    locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
+    locale = getAcceptLanguageLocale(
+      requestHeaders,
+      routingLocales,
+      defaultLocale
+    );
   }
 
   // Prio 4: Use default locale
@@ -137,7 +132,7 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const prefixLocale = getLocaleFromPrefix(pathname, config.locales);
+    const prefixLocale = getPathnameMatch(pathname, config.locales)?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
         locale = prefixLocale;

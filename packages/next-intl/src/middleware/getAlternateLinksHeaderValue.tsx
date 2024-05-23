@@ -5,7 +5,9 @@ import {
   applyBasePath,
   formatTemplatePathname,
   getHost,
+  getLocale,
   getNormalizedPathname,
+  getPrefix,
   isLocaleSupportedOnDomain
 } from './utils';
 
@@ -61,12 +63,15 @@ export default function getAlternateLinksHeaderValue<
     }
   }
 
-  const links = config.locales.flatMap((locale) => {
+  const links = config.locales.flatMap((routingLocale) => {
+    const prefix = getPrefix(routingLocale);
+    const locale = getLocale(routingLocale);
+
     function prefixPathname(pathname: string) {
       if (pathname === '/') {
-        return `/${locale}`;
+        return prefix;
       } else {
-        return `/${locale}${pathname}`;
+        return prefix + pathname;
       }
     }
 
@@ -88,7 +93,7 @@ export default function getAlternateLinksHeaderValue<
         url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
         if (
-          locale !== domainConfig.defaultLocale ||
+          routingLocale !== domainConfig.defaultLocale ||
           config.localePrefix === 'always'
         ) {
           url.pathname = prefixPathname(url.pathname);
@@ -104,7 +109,10 @@ export default function getAlternateLinksHeaderValue<
         pathname = normalizedUrl.pathname;
       }
 
-      if (locale !== config.defaultLocale || config.localePrefix === 'always') {
+      if (
+        routingLocale !== config.defaultLocale ||
+        config.localePrefix === 'always'
+      ) {
         pathname = prefixPathname(pathname);
       }
       url = new URL(pathname, normalizedUrl);

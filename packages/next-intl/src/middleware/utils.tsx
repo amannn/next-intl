@@ -2,7 +2,8 @@ import {AllLocales} from '../shared/types';
 import {matchesPathname, templateToRegex} from '../shared/utils';
 import {
   DomainConfig,
-  MiddlewareConfigWithDefaults
+  MiddlewareConfigWithDefaults,
+  RoutingLocales
 } from './NextIntlMiddlewareConfig';
 
 export function getFirstPathnameSegment(pathname: string) {
@@ -123,12 +124,12 @@ export function formatTemplatePathname(
   sourcePathname: string,
   sourceTemplate: string,
   targetTemplate: string,
-  localePrefix?: string
+  prefix?: string
 ) {
   const params = getRouteParams(sourceTemplate, sourcePathname);
   let targetPathname = '';
-  if (localePrefix) {
-    targetPathname = `/${localePrefix}`;
+  if (prefix) {
+    targetPathname = `/${prefix}`;
   }
 
   targetPathname += formatPathname(targetTemplate, params);
@@ -137,12 +138,40 @@ export function formatTemplatePathname(
   return targetPathname;
 }
 
+export function getPrefix<Locales extends AllLocales>(
+  routingLocale: RoutingLocales<Locales>[number]
+) {
+  return typeof routingLocale === 'string'
+    ? '/' + routingLocale
+    : routingLocale.prefix;
+}
+
+export function getPrefixes<Locales extends AllLocales>(
+  routingLocales: RoutingLocales<Locales>
+) {
+  return routingLocales.map((routingLocale) => getPrefix(routingLocale));
+}
+
+export function getLocale<Locales extends AllLocales>(
+  routingLocale: RoutingLocales<Locales>[number]
+) {
+  return typeof routingLocale === 'string'
+    ? routingLocale
+    : routingLocale.locale;
+}
+
+export function getLocales<Locales extends AllLocales>(
+  routingLocales: RoutingLocales<Locales>
+) {
+  return routingLocales.map((routingLocale) => getLocale(routingLocale));
+}
+
 /**
- * Removes potential locales from the pathname.
+ * Removes potential prefixes from the pathname.
  */
 export function getNormalizedPathname<Locales extends AllLocales>(
   pathname: string,
-  locales: Locales
+  locales: RoutingLocales<Locales>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -150,11 +179,16 @@ export function getNormalizedPathname<Locales extends AllLocales>(
     pathname += '/';
   }
 
-  const match = pathname.match(
-    new RegExp(`^/(${locales.join('|')})/(.*)`, 'i')
+  const prefixes = getPrefixes(locales);
+  const regex = new RegExp(
+    `^(${prefixes
+      .map((prefix) => prefix.replaceAll('/', '\\/'))
+      .join('|')})/(.*)`,
+    'i'
   );
-  let result = match ? '/' + match[2] : pathname;
+  const match = pathname.match(regex);
 
+  let result = match ? '/' + match[2] : pathname;
   if (result !== '/') {
     result = normalizeTrailingSlash(result);
   }
@@ -162,24 +196,51 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   return result;
 }
 
-export function findCaseInsensitiveLocale<Locales extends AllLocales>(
+export function findCaseInsensitiveString(
   candidate: string,
-  locales: Locales
+  strings: Array<string>
 ) {
-  return locales.find(
-    (locale) => locale.toLowerCase() === candidate.toLowerCase()
-  );
+  return strings.find((cur) => cur.toLowerCase() === candidate.toLowerCase());
 }
 
-export function getPathnameLocale<Locales extends AllLocales>(
+export function getPathnameMatch<Locales extends AllLocales>(
   pathname: string,
-  locales: Locales
-): Locales[number] | undefined {
-  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
-  const pathLocale = findCaseInsensitiveLocale(pathLocaleCandidate, locales)
-    ? pathLocaleCandidate
-    : undefined;
-  return pathLocale;
+  routingLocales: RoutingLocales<Locales>
+):
+  | {
+      locale: Locales[number];
+      prefix: string;
+      matchedPrefix: string;
+      exact?: boolean;
+    }
+  | undefined {
+  for (const routingLocale of routingLocales) {
+    const prefix = getPrefix(routingLocale);
+
+    let exact, matches;
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) {
+      exact = matches = true;
+    } else {
+      const normalizedPathname = pathname.toLowerCase();
+      const normalizedPrefix = prefix.toLowerCase();
+      if (
+        normalizedPathname === normalizedPrefix ||
+        normalizedPathname.startsWith(normalizedPrefix + '/')
+      ) {
+        exact = false;
+        matches = true;
+      }
+    }
+
+    if (matches) {
+      return {
+        locale: getLocale(routingLocale),
+        prefix,
+        matchedPrefix: pathname.slice(0, prefix.length),
+        exact
+      };
+    }
+  }
 }
 
 export function getRouteParams(template: string, pathname: string) {
@@ -235,7 +296,7 @@ export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
   return (
     domain.defaultLocale === locale ||
     !domain.locales ||
-    domain.locales.includes(locale)
+    getLocales(domain.locales).includes(locale)
   );
 }
 
@@ -280,8 +341,8 @@ export function applyBasePath(pathname: string, basePath: string) {
   return normalizeTrailingSlash(basePath + pathname);
 }
 
-function normalizeTrailingSlash(pathname: string) {
-  if (pathname.endsWith('/')) {
+export function normalizeTrailingSlash(pathname: string) {
+  if (pathname !== '/' && pathname.endsWith('/')) {
     pathname = pathname.slice(0, -1);
   }
   return pathname;
