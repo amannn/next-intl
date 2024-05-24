@@ -8,41 +8,23 @@ import React, {
   ReactElement,
   forwardRef,
   useEffect,
-  useMemo,
   useState
 } from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, LocalePrefix, RoutingLocales} from '../../shared/types';
+import {LocalePrefix} from '../../shared/types';
 import {isLocalHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
-import {getLocalePrefix} from './utils';
 
-type Props<Locales extends AllLocales> = Omit<
-  ComponentProps<typeof NextLink>,
-  'locale'
-> & {
+type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
-  locales?: RoutingLocales<Locales>;
+  prefix: string;
   localePrefix?: LocalePrefix;
 };
 
-function BaseLink<Locales extends AllLocales>(
-  {
-    href,
-    locale,
-    localePrefix,
-    locales,
-    onClick,
-    prefetch,
-    ...rest
-  }: Props<Locales>,
-  ref: Props<Locales>['ref']
+function BaseLink(
+  {href, locale, localePrefix, onClick, prefetch, prefix, ...rest}: Props,
+  ref: Props['ref']
 ) {
-  const prefix = useMemo(
-    () => getLocalePrefix(locale, locales),
-    [locale, locales]
-  );
-
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
@@ -98,8 +80,8 @@ function BaseLink<Locales extends AllLocales>(
   );
 }
 
-const BaseLinkWithRef = forwardRef(BaseLink) as <Locales extends AllLocales>(
-  props: Props<Locales> & {ref?: Props<Locales>['ref']}
+const BaseLinkWithRef = forwardRef(BaseLink) as (
+  props: Props & {ref?: Props['ref']}
 ) => ReactElement;
 (BaseLinkWithRef as any).displayName = 'ClientLink';
 export default BaseLinkWithRef;

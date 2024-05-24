@@ -28,7 +28,7 @@ export default function createLocalizedPathnamesNavigation<
   pathnames: PathnamesConfig;
   localePrefix?: LocalePrefix;
 }) {
-  function useTypedLocale(): (typeof opts.locales)[number] {
+  function useTypedLocale(): Locales[number] {
     const locale = useLocale();
     const isValid = getLocales(opts.locales).includes(locale as any);
     if (!isValid) {

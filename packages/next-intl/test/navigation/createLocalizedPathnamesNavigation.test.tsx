@@ -12,6 +12,7 @@ import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createLocalizedPathnamesNavigationClient from '../../src/navigation/react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
+import {getLocalePrefix} from '../../src/navigation/shared/utils';
 import {Pathnames} from '../../src/navigation.react-client';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
 
@@ -34,8 +35,10 @@ vi.mock('next-intl/config', () => ({
 vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, ...rest}: any) {
-    return <BaseLink locale={locale || 'en'} {...rest} />;
+  default({locale, locales, ...rest}: any) {
+    const finalLocale = locale || 'en';
+    const prefix = getLocalePrefix(finalLocale, locales);
+    return <BaseLink locale={finalLocale} prefix={prefix} {...rest} />;
   }
 }));
 vi.mock('../../src/server/react-server/RequestLocale', () => ({

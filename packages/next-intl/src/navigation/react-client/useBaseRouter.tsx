@@ -37,7 +37,7 @@ export default function useBaseRouter<Locales extends AllLocales>(
   const pathname = usePathname();
 
   return useMemo(() => {
-    function localize(href: string, nextLocale?: string) {
+    function localize(href: string, nextLocale?: Locales[number]) {
       let curPathname = window.location.pathname;
 
       const basePath = getBasePath(pathname);
