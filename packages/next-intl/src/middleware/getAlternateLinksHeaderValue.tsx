@@ -1,13 +1,12 @@
 import {NextRequest} from 'next/server';
 import {AllLocales, Pathnames} from '../shared/types';
-import {getLocale} from '../shared/utils';
 import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
 import {
   applyBasePath,
   formatTemplatePathname,
   getHost,
+  getLocalePrefixes,
   getNormalizedPathname,
-  getPrefix,
   isLocaleSupportedOnDomain
 } from './utils';
 
@@ -39,7 +38,8 @@ export default function getAlternateLinksHeaderValue<
 
   normalizedUrl.pathname = getNormalizedPathname(
     normalizedUrl.pathname,
-    config.locales
+    config.locales,
+    config.localePrefix
   );
 
   function getAlternateEntry(url: URL, locale: string) {
@@ -63,69 +63,68 @@ export default function getAlternateLinksHeaderValue<
     }
   }
 
-  const links = config.locales.flatMap((routingLocale) => {
-    const prefix = getPrefix(routingLocale);
-    const locale = getLocale(routingLocale);
-
-    function prefixPathname(pathname: string) {
-      if (pathname === '/') {
-        return prefix;
-      } else {
-        return prefix + pathname;
+  const links = getLocalePrefixes(config.locales, config.localePrefix).flatMap(
+    ([locale, prefix]) => {
+      function prefixPathname(pathname: string) {
+        if (pathname === '/') {
+          return prefix;
+        } else {
+          return prefix + pathname;
+        }
       }
-    }
 
-    let url: URL;
+      let url: URL;
 
-    if (config.domains) {
-      const domainConfigs =
-        config.domains.filter((cur) =>
-          isLocaleSupportedOnDomain(locale, cur)
-        ) || [];
+      if (config.domains) {
+        const domainConfigs =
+          config.domains.filter((cur) =>
+            isLocaleSupportedOnDomain(locale, cur)
+          ) || [];
 
-      return domainConfigs.map((domainConfig) => {
-        url = new URL(normalizedUrl);
-        url.port = '';
-        url.host = domainConfig.domain;
+        return domainConfigs.map((domainConfig) => {
+          url = new URL(normalizedUrl);
+          url.port = '';
+          url.host = domainConfig.domain;
 
-        // Important: Use `normalizedUrl` here, as `url` potentially uses
-        // a `basePath` that automatically gets applied to the pathname
-        url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+          // Important: Use `normalizedUrl` here, as `url` potentially uses
+          // a `basePath` that automatically gets applied to the pathname
+          url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
-        if (
-          routingLocale !== domainConfig.defaultLocale ||
-          config.localePrefix === 'always'
-        ) {
-          url.pathname = prefixPathname(url.pathname);
+          if (
+            locale !== domainConfig.defaultLocale ||
+            config.localePrefix.mode === 'always'
+          ) {
+            url.pathname = prefixPathname(url.pathname);
+          }
+
+          return getAlternateEntry(url, locale);
+        });
+      } else {
+        let pathname: string;
+        if (localizedPathnames && typeof localizedPathnames === 'object') {
+          pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+        } else {
+          pathname = normalizedUrl.pathname;
         }
 
-        return getAlternateEntry(url, locale);
-      });
-    } else {
-      let pathname: string;
-      if (localizedPathnames && typeof localizedPathnames === 'object') {
-        pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
-      } else {
-        pathname = normalizedUrl.pathname;
+        if (
+          locale !== config.defaultLocale ||
+          config.localePrefix.mode === 'always'
+        ) {
+          pathname = prefixPathname(pathname);
+        }
+        url = new URL(pathname, normalizedUrl);
       }
 
-      if (
-        routingLocale !== config.defaultLocale ||
-        config.localePrefix === 'always'
-      ) {
-        pathname = prefixPathname(pathname);
-      }
-      url = new URL(pathname, normalizedUrl);
+      return getAlternateEntry(url, locale);
     }
-
-    return getAlternateEntry(url, locale);
-  });
+  );
 
   // Add x-default entry
   const shouldAddXDefault =
     // For domain-based routing there is no reasonable x-default
     !config.domains &&
-    (config.localePrefix !== 'always' || normalizedUrl.pathname === '/');
+    (config.localePrefix.mode !== 'always' || normalizedUrl.pathname === '/');
   if (shouldAddXDefault) {
     const url = new URL(
       getLocalizedPathname(normalizedUrl.pathname, config.defaultLocale),

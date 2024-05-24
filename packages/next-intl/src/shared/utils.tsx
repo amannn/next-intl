@@ -1,7 +1,6 @@
 import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
-import {AllLocales, RoutingLocales} from './types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
@@ -119,18 +118,4 @@ export function templateToRegex(template: string): RegExp {
     .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
   return new RegExp(`^${regexPattern}$`);
-}
-
-export function getLocale<Locales extends AllLocales>(
-  routingLocale: RoutingLocales<Locales>[number]
-) {
-  return typeof routingLocale === 'string'
-    ? routingLocale
-    : routingLocale.locale;
-}
-
-export function getLocales<Locales extends AllLocales>(
-  routingLocales: RoutingLocales<Locales>
-) {
-  return routingLocales.map((routingLocale) => getLocale(routingLocale));
 }

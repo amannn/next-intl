@@ -1,20 +1,19 @@
 import {
   AllLocales,
-  LocalePrefix,
-  Pathnames,
-  RoutingLocales
+  LocalePrefixConfig,
+  LocalePrefixConfigWithPrefixes,
+  Pathnames
 } from '../shared/types';
 
 type RoutingBaseConfig<Locales extends AllLocales> = {
   /** A list of all locales that are supported. */
-  locales: RoutingLocales<Locales>;
+  locales: Locales;
 
   /* Used by default if none of the defined locales match. */
   defaultLocale: Locales[number];
 
-  /** The default locale can be used without a prefix (e.g. `/about`). If you prefer to have a prefix for the default locale as well (e.g. `/en/about`), you can switch this option to `always`.
-   */
-  localePrefix?: LocalePrefix;
+  /** @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix */
+  localePrefix?: LocalePrefixConfig<Locales>;
 };
 
 export type DomainConfig<Locales extends AllLocales> = Omit<
@@ -47,11 +46,13 @@ type MiddlewareConfig<Locales extends AllLocales> =
     // b) The middleware can be used in a standalone fashion
   };
 
-export type MiddlewareConfigWithDefaults<Locales extends AllLocales> =
-  MiddlewareConfig<Locales> & {
-    alternateLinks: boolean;
-    localePrefix: LocalePrefix;
-    localeDetection: boolean;
-  };
+export type MiddlewareConfigWithDefaults<Locales extends AllLocales> = Omit<
+  MiddlewareConfig<Locales>,
+  'alternateLinks' | 'localePrefix' | 'localeDetection'
+> & {
+  alternateLinks: boolean;
+  localePrefix: LocalePrefixConfigWithPrefixes<Locales>;
+  localeDetection: boolean;
+};
 
 export default MiddlewareConfig;

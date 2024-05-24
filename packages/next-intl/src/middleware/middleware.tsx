@@ -29,10 +29,15 @@ const ROOT_URL = '/';
 function receiveConfig<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ): MiddlewareConfigWithDefaults<Locales> {
+  const localePrefix =
+    typeof config.localePrefix === 'object'
+      ? config.localePrefix
+      : {mode: config.localePrefix || 'always'};
+
   const result: MiddlewareConfigWithDefaults<Locales> = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
-    localePrefix: config.localePrefix ?? 'always',
+    localePrefix,
     localeDetection: config.localeDetection ?? true
   };
 
@@ -104,12 +109,13 @@ export default function createMiddleware<Locales extends AllLocales>(
 
             if (
               bestMatchingDomain.defaultLocale === locale &&
-              configWithDefaults.localePrefix === 'as-needed' &&
+              configWithDefaults.localePrefix.mode === 'as-needed' &&
               urlObj.pathname.startsWith(`/${locale}`)
             ) {
               urlObj.pathname = getNormalizedPathname(
                 urlObj.pathname,
-                configWithDefaults.locales
+                configWithDefaults.locales,
+                configWithDefaults.localePrefix
               );
             }
           }
@@ -140,12 +146,14 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     const normalizedPathname = getNormalizedPathname(
       nextPathname,
-      configWithDefaults.locales
+      configWithDefaults.locales,
+      configWithDefaults.localePrefix
     );
 
     const pathnameMatch = getPathnameMatch(
       nextPathname,
-      configWithDefaults.locales
+      configWithDefaults.locales,
+      configWithDefaults.localePrefix
     );
     const hasLocalePrefix = pathnameMatch != null;
 
@@ -192,7 +200,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
           const localePrefix =
             (hasLocalePrefix || !hasMatchedDefaultLocale) &&
-            configWithDefaults.localePrefix !== 'never'
+            configWithDefaults.localePrefix.mode !== 'never'
               ? locale
               : undefined;
 
@@ -219,9 +227,9 @@ export default function createMiddleware<Locales extends AllLocales>(
         );
 
         if (
-          configWithDefaults.localePrefix === 'never' ||
+          configWithDefaults.localePrefix.mode === 'never' ||
           (hasMatchedDefaultLocale &&
-            configWithDefaults.localePrefix === 'as-needed')
+            configWithDefaults.localePrefix.mode === 'as-needed')
         ) {
           response = rewrite(pathWithSearch);
         } else {
@@ -239,12 +247,12 @@ export default function createMiddleware<Locales extends AllLocales>(
             request.nextUrl.search
           );
 
-          if (configWithDefaults.localePrefix === 'never') {
+          if (configWithDefaults.localePrefix.mode === 'never') {
             response = redirect(normalizedPathnameWithSearch);
           } else if (pathnameMatch.exact) {
             if (
               hasMatchedDefaultLocale &&
-              configWithDefaults.localePrefix === 'as-needed'
+              configWithDefaults.localePrefix.mode === 'as-needed'
             ) {
               response = redirect(normalizedPathnameWithSearch);
             } else {
@@ -274,9 +282,9 @@ export default function createMiddleware<Locales extends AllLocales>(
           }
         } else {
           if (
-            configWithDefaults.localePrefix === 'never' ||
+            configWithDefaults.localePrefix.mode === 'never' ||
             (hasMatchedDefaultLocale &&
-              (configWithDefaults.localePrefix === 'as-needed' ||
+              (configWithDefaults.localePrefix.mode === 'as-needed' ||
                 configWithDefaults.domains))
           ) {
             response = rewrite(`/${locale}${internalPathWithSearch}`);
@@ -296,7 +304,7 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     if (
-      configWithDefaults.localePrefix !== 'never' &&
+      configWithDefaults.localePrefix.mode !== 'never' &&
       configWithDefaults.alternateLinks &&
       configWithDefaults.locales.length > 1
     ) {

@@ -1,10 +1,5 @@
-import {AllLocales, RoutingLocales} from '../shared/types';
-import {
-  getLocale,
-  getLocales,
-  matchesPathname,
-  templateToRegex
-} from '../shared/utils';
+import {AllLocales, LocalePrefixConfig, LocalePrefixes} from '../shared/types';
+import {matchesPathname, templateToRegex} from '../shared/utils';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -142,26 +137,13 @@ export function formatTemplatePathname(
   return targetPathname;
 }
 
-export function getPrefix<Locales extends AllLocales>(
-  routingLocale: RoutingLocales<Locales>[number]
-) {
-  return typeof routingLocale === 'string'
-    ? '/' + routingLocale
-    : routingLocale.prefix;
-}
-
-export function getPrefixes<Locales extends AllLocales>(
-  routingLocales: RoutingLocales<Locales>
-) {
-  return routingLocales.map((routingLocale) => getPrefix(routingLocale));
-}
-
 /**
  * Removes potential prefixes from the pathname.
  */
 export function getNormalizedPathname<Locales extends AllLocales>(
   pathname: string,
-  locales: RoutingLocales<Locales>
+  locales: Locales,
+  localePrefix: LocalePrefixConfig<Locales>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -169,10 +151,10 @@ export function getNormalizedPathname<Locales extends AllLocales>(
     pathname += '/';
   }
 
-  const prefixes = getPrefixes(locales);
+  const localePrefixes = getLocalePrefixes(locales, localePrefix);
   const regex = new RegExp(
-    `^(${prefixes
-      .map((prefix) => prefix.replaceAll('/', '\\/'))
+    `^(${localePrefixes
+      .map(([, prefix]) => prefix.replaceAll('/', '\\/'))
       .join('|')})/(.*)`,
     'i'
   );
@@ -193,9 +175,26 @@ export function findCaseInsensitiveString(
   return strings.find((cur) => cur.toLowerCase() === candidate.toLowerCase());
 }
 
+export function getLocalePrefixes<Locales extends AllLocales>(
+  locales: Locales,
+  localePrefix: LocalePrefixConfig<Locales>
+): Array<[Locales[number], string]> {
+  const prefixesConfig =
+    (typeof localePrefix === 'object' &&
+      localePrefix.mode !== 'never' &&
+      localePrefix.prefixes) ||
+    ({} as LocalePrefixes<Locales>);
+
+  return locales.map((locale) => [
+    locale as Locales[number],
+    prefixesConfig[locale as Locales[number]] ?? '/' + locale
+  ]);
+}
+
 export function getPathnameMatch<Locales extends AllLocales>(
   pathname: string,
-  routingLocales: RoutingLocales<Locales>
+  locales: Locales,
+  localePrefix: LocalePrefixConfig<Locales>
 ):
   | {
       locale: Locales[number];
@@ -204,9 +203,9 @@ export function getPathnameMatch<Locales extends AllLocales>(
       exact?: boolean;
     }
   | undefined {
-  for (const routingLocale of routingLocales) {
-    const prefix = getPrefix(routingLocale);
+  const localePrefixes = getLocalePrefixes(locales, localePrefix);
 
+  for (const [locale, prefix] of localePrefixes) {
     let exact, matches;
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {
       exact = matches = true;
@@ -224,7 +223,7 @@ export function getPathnameMatch<Locales extends AllLocales>(
 
     if (matches) {
       return {
-        locale: getLocale(routingLocale),
+        locale,
         prefix,
         matchedPrefix: pathname.slice(0, prefix.length),
         exact
@@ -286,7 +285,7 @@ export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
   return (
     domain.defaultLocale === locale ||
     !domain.locales ||
-    getLocales(domain.locales).includes(locale)
+    domain.locales.includes(locale)
   );
 }
 

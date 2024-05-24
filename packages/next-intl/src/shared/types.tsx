@@ -2,19 +2,31 @@ export type AllLocales = ReadonlyArray<string>;
 
 export type LocalePrefix = 'as-needed' | 'always' | 'never';
 
+export type LocalePrefixes<Locales extends AllLocales> = Record<
+  Locales[number],
+  string
+>;
+
+export type LocalePrefixConfigWithPrefixes<Locales extends AllLocales> =
+  | {
+      mode: 'always';
+      prefixes?: LocalePrefixes<Locales>;
+    }
+  | {
+      mode: 'as-needed';
+      prefixes?: LocalePrefixes<Locales>;
+    }
+  | {
+      mode: 'never';
+    };
+
+export type LocalePrefixConfig<Locales extends AllLocales> =
+  | LocalePrefix
+  | LocalePrefixConfigWithPrefixes<Locales>;
+
 export type Pathnames<Locales extends AllLocales> = Record<
   string,
   {[Key in Locales[number]]: string} | string
->;
-
-export type RoutingLocales<Locales extends AllLocales> = ReadonlyArray<
-  | Locales[number]
-  | {
-      /** The locale code available internally (e.g. `/en-gb`) */
-      locale: Locales[number];
-      /** The prefix this locale should be available at (e.g. `/uk`) */
-      prefix: string;
-    }
 >;
 
 export type ParametersExceptFirst<Fn> = Fn extends (

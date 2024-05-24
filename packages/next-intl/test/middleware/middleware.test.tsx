@@ -1394,13 +1394,16 @@ describe('prefix-based routing', () => {
     describe('custom prefixes', () => {
       const middlewareWithPrefixes = createIntlMiddleware({
         defaultLocale: 'en',
-        locales: [
-          'en',
-          {locale: 'en-gb', prefix: '/uk'},
-          {locale: 'de-at', prefix: '/de/at'},
-          {locale: 'pt', prefix: '/br'}
-        ],
-        localePrefix: 'always',
+        locales: ['en', 'en-gb', 'de-at', 'pt'],
+        localePrefix: {
+          mode: 'always',
+          prefixes: {
+            // en (defaults to /en)
+            'en-gb': '/uk',
+            'de-at': '/de/at',
+            pt: '/br'
+          }
+        },
         pathnames: {
           '/': '/',
           '/about': {
@@ -2720,8 +2723,13 @@ describe('domain-based routing', () => {
     describe('custom prefixes', () => {
       const middlewareWithPrefixes = createIntlMiddleware({
         defaultLocale: 'en',
-        locales: ['en', {locale: 'en-gb', prefix: '/uk'}],
-        localePrefix: 'as-needed',
+        locales: ['en', 'en-gb'],
+        localePrefix: {
+          mode: 'as-needed',
+          prefixes: {
+            'en-gb': '/uk'
+          }
+        },
         pathnames: {
           '/': '/',
           '/about': {

@@ -2,8 +2,7 @@ import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {AllLocales, RoutingLocales} from '../shared/types';
-import {getLocales} from '../shared/utils';
+import {AllLocales} from '../shared/types';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -28,7 +27,7 @@ function findDomainFromHost<Locales extends AllLocales>(
 
 export function getAcceptLanguageLocale<Locales extends AllLocales>(
   requestHeaders: Headers,
-  routingLocales: RoutingLocales<Locales>,
+  locales: Locales,
   defaultLocale: string
 ) {
   let locale;
@@ -39,8 +38,11 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
     }
   }).languages();
   try {
-    const locales = getLocales(routingLocales);
-    locale = match(languages, locales, defaultLocale);
+    locale = match(
+      languages,
+      locales as unknown as Array<string>,
+      defaultLocale
+    );
   } catch (e) {
     // Invalid language
   }
@@ -50,11 +52,10 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
 
 function getLocaleFromCookie<Locales extends AllLocales>(
   requestCookies: RequestCookies,
-  routingLocales: RoutingLocales<Locales>
+  locales: Locales
 ) {
   if (requestCookies.has(COOKIE_LOCALE_NAME)) {
     const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
-    const locales = getLocales(routingLocales);
     if (value && locales.includes(value)) {
       return value;
     }
@@ -65,10 +66,11 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
   {
     defaultLocale,
     localeDetection,
-    locales: routingLocales
+    localePrefix,
+    locales
   }: Pick<
     MiddlewareConfigWithDefaults<Locales>,
-    'defaultLocale' | 'localeDetection' | 'locales'
+    'defaultLocale' | 'localeDetection' | 'locales' | 'localePrefix'
   >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
@@ -78,21 +80,17 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    locale = getPathnameMatch(pathname, routingLocales)?.locale;
+    locale = getPathnameMatch(pathname, locales, localePrefix)?.locale;
   }
 
   // Prio 2: Use existing cookie
   if (!locale && localeDetection && requestCookies) {
-    locale = getLocaleFromCookie(requestCookies, routingLocales);
+    locale = getLocaleFromCookie(requestCookies, locales);
   }
 
   // Prio 3: Use the `accept-language` header
   if (!locale && localeDetection && requestHeaders) {
-    locale = getAcceptLanguageLocale(
-      requestHeaders,
-      routingLocales,
-      defaultLocale
-    );
+    locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
   }
 
   // Prio 4: Use default locale
@@ -127,7 +125,11 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const prefixLocale = getPathnameMatch(pathname, config.locales)?.locale;
+    const prefixLocale = getPathnameMatch(
+      pathname,
+      config.locales,
+      config.localePrefix
+    )?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
         locale = prefixLocale;
