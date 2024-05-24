@@ -85,8 +85,8 @@
     "use-intl": "^3.14.1"
   },
   "peerDependencies": {
-    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.13.5",
@@ -100,11 +100,11 @@
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^1.4.1",
-    "next": "^14.2.3",
+    "next": "15.0.0-rc.0",
     "path-to-regexp": "^6.2.1",
     "publint": "^0.2.7",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "19.0.0-rc-f994737d14-20240522",
+    "react-dom": "19.0.0-rc-f994737d14-20240522",
     "rollup": "^3.28.1",
     "rollup-plugin-preserve-directives": "0.2.0",
     "size-limit": "^8.2.6",
