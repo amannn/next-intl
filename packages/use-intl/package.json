@@ -87,6 +87,7 @@
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
   },
+  "prettier": "../../.prettierrc.json",
   "size-limit": [
     {
       "path": "dist/production/index.js",
