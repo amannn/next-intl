@@ -12,7 +12,7 @@ import React, {
 } from 'react';
 import useLocale from '../../react-client/useLocale';
 import {LocalePrefix} from '../../shared/types';
-import {isLocalHref, localizeHref, prefixHref} from '../../shared/utils';
+import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
@@ -33,7 +33,7 @@ function BaseLink(
   const isChangingLocale = locale !== curLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
-    isLocalHref(href) && (localePrefix !== 'never' || isChangingLocale)
+    isLocalizableHref(href) && (localePrefix !== 'never' || isChangingLocale)
       ? // For the `localePrefix: 'as-needed' strategy, the href shouldn't
         // be prefixed if the locale is the default locale. To determine this, we
         // need a) the default locale and b) the information if we use prefixed

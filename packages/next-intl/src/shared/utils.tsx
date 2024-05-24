@@ -19,6 +19,10 @@ export function isLocalHref(href: Href) {
   }
 }
 
+export function isLocalizableHref(href: Href) {
+  return isLocalHref(href) && !isRelativeHref(href);
+}
+
 export function localizeHref(
   href: string,
   locale: string,
@@ -40,7 +44,7 @@ export function localizeHref(
   curPathname: string,
   prefix: string
 ) {
-  if (!isLocalHref(href) || isRelativeHref(href)) {
+  if (!isLocalizableHref(href)) {
     return href;
   }
 

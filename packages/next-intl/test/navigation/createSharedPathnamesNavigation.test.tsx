@@ -102,6 +102,11 @@ describe.each([
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/de/news/launch-party-3');
         });
+
+        it('handles relative links correctly on the initial render', () => {
+          const markup = renderToString(<Link href="test">Test</Link>);
+          expect(markup).toContain('href="test"');
+        });
       });
     });
 

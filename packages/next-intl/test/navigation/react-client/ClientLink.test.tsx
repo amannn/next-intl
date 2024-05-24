@@ -68,6 +68,13 @@ describe('unprefixed routing', () => {
     );
   });
 
+  it('handles relative links', () => {
+    render(<ClientLink href="test">Test</ClientLink>);
+    expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
+      'test'
+    );
+  });
+
   it('works for external urls with an object href', () => {
     render(
       <ClientLink
