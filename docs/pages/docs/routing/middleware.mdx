@@ -215,7 +215,12 @@ In this case, requests where the locale prefix matches the default locale will b
   don't need to use the middleware in the first place.
 </Callout>
 
-In case you're using the middleware, but you don't want your pathnames to be prefixed with a locale, you can configure the middleware to never show a locale prefix in the URL. This can be useful e.g. if you're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain.
+In case you're using the middleware, but you don't want your pathnames to be prefixed with a locale, you can configure the middleware to never show a locale prefix in the URL.
+
+This can be useful in the following cases:
+
+1. You're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain
+2. You're using a cookie to determine the locale but would like to enable static rendering
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
