@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "clsx": "^1.2.1",
-    "next": "15.0.0-rc.0",
+    "next": "^14.2.3",
     "next-intl": "latest",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
