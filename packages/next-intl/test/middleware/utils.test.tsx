@@ -9,13 +9,17 @@ import {
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {
-    expect(getNormalizedPathname('/en/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/en/energy', ['en', 'de'])).toBe('/energy');
-    expect(getNormalizedPathname('/energy', ['en'])).toBe('/energy');
-    expect(getNormalizedPathname('/de/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/', ['en', 'de'])).toBe('/');
-    expect(getNormalizedPathname('/es', ['en', 'de'])).toBe('/es');
+    function getResult(pathname: string) {
+      return getNormalizedPathname(pathname, ['en', 'de'], 'always');
+    }
+
+    expect(getResult('/en/about')).toBe('/about');
+    expect(getResult('/en/energy')).toBe('/energy');
+    expect(getResult('/energy')).toBe('/energy');
+    expect(getResult('/de/about')).toBe('/about');
+    expect(getResult('/about')).toBe('/about');
+    expect(getResult('/')).toBe('/');
+    expect(getResult('/es')).toBe('/es');
   });
 });
 

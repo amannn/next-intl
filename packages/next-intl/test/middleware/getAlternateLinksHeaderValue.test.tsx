@@ -33,7 +33,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true
       };
 
@@ -83,7 +83,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'de'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true
       };
       const pathnames = {
@@ -164,7 +164,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
-        localePrefix: 'always',
+        localePrefix: {mode: 'always'},
         localeDetection: true
       };
 
@@ -199,7 +199,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true,
         domains: [
           {
@@ -269,7 +269,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
         alternateLinks: true,
-        localePrefix: 'always',
+        localePrefix: {mode: 'always'},
         localeDetection: true,
         domains: [
           {
@@ -331,7 +331,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", () => {
       const config: MiddlewareConfigWithDefaults<['en', 'fr']> = {
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true,
         defaultLocale: 'en',
         locales: ['en', 'fr'],
@@ -489,7 +489,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true
       };
 
@@ -517,7 +517,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true
       };
 
@@ -545,7 +545,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es'],
         alternateLinks: true,
-        localePrefix: 'as-needed',
+        localePrefix: {mode: 'as-needed'},
         localeDetection: true
       };
 
