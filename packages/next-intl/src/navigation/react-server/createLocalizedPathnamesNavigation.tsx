@@ -38,7 +38,7 @@ export default function createLocalizedPathnamesNavigation<
     locale,
     ...rest
   }: LinkProps<Pathname>) {
-    const defaultLocale = getRequestLocale() as typeof opts.locales[number];
+    const defaultLocale = getRequestLocale() as (typeof opts.locales)[number];
     const finalLocale = locale || defaultLocale;
 
     return (
