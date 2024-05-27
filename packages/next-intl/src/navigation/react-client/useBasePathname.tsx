@@ -4,11 +4,7 @@ import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {AllLocales, LocalePrefixConfigVerbose} from '../../shared/types';
-import {
-  getLocalePrefix,
-  hasPathnamePrefixed,
-  unprefixPathname
-} from '../../shared/utils';
+import {getLocalePrefix, hasPathnamePrefixed} from '../../shared/utils';
 
 /**
  * Returns the pathname without a potential locale prefix.
@@ -55,4 +51,8 @@ export default function useBasePathname<Locales extends AllLocales>(
 
     return unlocalizedPathname;
   }, [locale, localePrefix, pathname]);
+}
+
+function unprefixPathname(pathname: string, prefix: string) {
+  return pathname.replace(new RegExp(`^${prefix}`), '') || '/';
 }

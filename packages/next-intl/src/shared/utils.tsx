@@ -82,10 +82,6 @@ export function prefixHref(href: UrlObject | string, prefix: string) {
   return prefixedHref;
 }
 
-export function unprefixPathname(pathname: string, prefix: string) {
-  return pathname.replace(new RegExp(`^${prefix}`), '') || '/';
-}
-
 export function prefixPathname(prefix: string, pathname: string) {
   let localizedHref = prefix;
 
