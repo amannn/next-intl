@@ -133,7 +133,7 @@ describe("localePrefix: 'as-needed', custom prefix", () => {
   describe('usePathname', () => {
     it('returns the correct pathname for a custom locale prefix', () => {
       vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
-      vi.mocked(useNextPathname).mockImplementation(() => '/en-gb/about');
+      vi.mocked(useNextPathname).mockImplementation(() => '/uk/about');
       function Component() {
         return usePathname();
       }

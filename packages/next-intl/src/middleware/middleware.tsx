@@ -6,7 +6,11 @@ import {
   HEADER_LOCALE_NAME
 } from '../shared/constants';
 import {AllLocales} from '../shared/types';
-import {matchesPathname, receiveLocalePrefixConfig} from '../shared/utils';
+import {
+  getLocalePrefix,
+  matchesPathname,
+  receiveLocalePrefixConfig
+} from '../shared/utils';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
@@ -105,7 +109,9 @@ export default function createMiddleware<Locales extends AllLocales>(
             if (
               bestMatchingDomain.defaultLocale === locale &&
               configWithDefaults.localePrefix.mode === 'as-needed' &&
-              urlObj.pathname.startsWith(`/${locale}`)
+              urlObj.pathname.startsWith(
+                getLocalePrefix(locale, configWithDefaults.localePrefix)
+              )
             ) {
               urlObj.pathname = getNormalizedPathname(
                 urlObj.pathname,
@@ -217,7 +223,7 @@ export default function createMiddleware<Locales extends AllLocales>(
     if (!response) {
       if (pathname === ROOT_URL) {
         const pathWithSearch = getPathWithSearch(
-          `/${locale}`,
+          getLocalePrefix(locale, configWithDefaults.localePrefix),
           request.nextUrl.search
         );
 
@@ -284,7 +290,10 @@ export default function createMiddleware<Locales extends AllLocales>(
           ) {
             response = rewrite(`/${locale}${internalPathWithSearch}`);
           } else {
-            response = redirect(`/${locale}${internalPathWithSearch}`);
+            response = redirect(
+              getLocalePrefix(locale, configWithDefaults.localePrefix) +
+                internalPathWithSearch
+            );
           }
         }
       }

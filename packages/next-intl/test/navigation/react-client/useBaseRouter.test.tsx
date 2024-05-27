@@ -30,7 +30,7 @@ function callRouter(cb: (router: ReturnType<typeof useBaseRouter>) => void) {
     const router = useBaseRouter({
       // The mode is not used, only the absence of
       // `prefixes` is relevant for this test suite
-      mode: 'always'
+      mode: 'as-needed'
     });
     useEffect(() => {
       cb(router);

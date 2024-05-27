@@ -1,7 +1,7 @@
 import {it, describe, expect} from 'vitest';
 import {
   hasPathnamePrefixed,
-  unlocalizePathname,
+  unprefixPathname,
   matchesPathname,
   prefixPathname
 } from '../../src/shared/utils';
@@ -39,15 +39,19 @@ describe('hasPathnamePrefixed', () => {
 
 describe('unlocalizePathname', () => {
   it('works for the root', () => {
-    expect(unlocalizePathname('/en', 'en')).toEqual('/');
+    expect(unprefixPathname('/en', '/en')).toEqual('/');
   });
 
   it('works for nested pages', () => {
-    expect(unlocalizePathname('/en/nested', 'en')).toEqual('/nested');
+    expect(unprefixPathname('/en/nested', '/en')).toEqual('/nested');
   });
 
   it('works with sub-tags', () => {
-    expect(unlocalizePathname('/en-UK/nested', 'en-UK')).toEqual('/nested');
+    expect(unprefixPathname('/en-GB/nested', '/en-GB')).toEqual('/nested');
+  });
+
+  it('works for custom prefixes', () => {
+    expect(unprefixPathname('/uk/nested', '/uk')).toEqual('/nested');
   });
 });
 

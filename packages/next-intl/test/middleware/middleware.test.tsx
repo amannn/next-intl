@@ -1461,6 +1461,22 @@ describe('prefix-based routing', () => {
         );
       });
 
+      it('redirects requests at the root to a custom prefix', () => {
+        middlewareWithPrefixes(createMockRequest('/', 'de-at'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/at'
+        );
+      });
+
+      it("redirects requests to add a locale prefix if it's missing", () => {
+        middlewareWithPrefixes(createMockRequest('/about', 'en-gb'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/uk/about'
+        );
+      });
+
       it('redirects requests for a case mismatch of a custom prefix', () => {
         middlewareWithPrefixes(createMockRequest('/UK'));
         middlewareWithPrefixes(createMockRequest('/de/AT'));
@@ -2214,6 +2230,15 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://fr.example.com/about'
+        );
+      });
+
+      it("redirects to another domain when the locale isn't supported on the current domain", () => {
+        middleware(
+          createMockRequest('/en/about', 'en', 'http://fr.example.com/en')
+        );
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/en/about'
         );
       });
 

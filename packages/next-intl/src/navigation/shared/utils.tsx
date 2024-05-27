@@ -1,7 +1,7 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {AllLocales, Pathnames} from '../../shared/types';
-import {matchesPathname, unlocalizePathname} from '../../shared/utils';
+import {matchesPathname, unprefixPathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
@@ -161,10 +161,9 @@ export function getRoute<Locales extends AllLocales>({
   pathname: string;
   pathnames: Pathnames<Locales>;
 }) {
-  const unlocalizedPathname = unlocalizePathname(
-    // Potentially handle foreign symbols
-    decodeURI(pathname),
-    locale
+  const unlocalizedPathname = unprefixPathname(
+    decodeURI(pathname), // Potentially handle foreign symbols
+    '/' + locale
   );
 
   let template = Object.entries(pathnames).find(([, routePath]) => {

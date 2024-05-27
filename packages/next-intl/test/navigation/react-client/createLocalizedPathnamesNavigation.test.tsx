@@ -325,7 +325,7 @@ describe("localePrefix: 'as-needed'", () => {
 });
 
 describe("localePrefix: 'as-needed', custom prefix", () => {
-  const {useRouter} = createLocalizedPathnamesNavigation({
+  const {usePathname, useRouter} = createLocalizedPathnamesNavigation({
     locales: ['en', 'de-at'] as const,
     pathnames: {
       '/': '/',
@@ -355,6 +355,23 @@ describe("localePrefix: 'as-needed', custom prefix", () => {
         expect(push).toHaveBeenCalledTimes(1);
         expect(push).toHaveBeenCalledWith('/de/ueber-uns');
       });
+    });
+  });
+
+  describe('usePathname', () => {
+    it('returns the internal pathname for a locale with a custom prefix', () => {
+      vi.mocked(useParams).mockImplementation(() => ({locale: 'de-at'}));
+      function Component() {
+        const pathname = usePathname();
+        return <>{pathname}</>;
+      }
+      vi.mocked(useNextPathname).mockImplementation(() => '/de');
+      const {rerender} = render(<Component />);
+      screen.getByText('/');
+
+      vi.mocked(useNextPathname).mockImplementation(() => '/de/ueber-uns');
+      rerender(<Component />);
+      screen.getByText('/about');
     });
   });
 });
