@@ -1,13 +1,12 @@
 export type AllLocales = ReadonlyArray<string>;
 
-export type LocalePrefix = 'as-needed' | 'always' | 'never';
+export type LocalePrefixMode = 'as-needed' | 'always' | 'never';
 
-export type LocalePrefixes<Locales extends AllLocales> = Record<
-  Locales[number],
-  string
+export type LocalePrefixes<Locales extends AllLocales> = Partial<
+  Record<Locales[number], string>
 >;
 
-export type LocalePrefixConfigWithPrefixes<Locales extends AllLocales> =
+export type LocalePrefixConfigVerbose<Locales extends AllLocales> =
   | {
       mode: 'always';
       prefixes?: LocalePrefixes<Locales>;
@@ -21,8 +20,8 @@ export type LocalePrefixConfigWithPrefixes<Locales extends AllLocales> =
     };
 
 export type LocalePrefixConfig<Locales extends AllLocales> =
-  | LocalePrefix
-  | LocalePrefixConfigWithPrefixes<Locales>;
+  | LocalePrefixMode
+  | LocalePrefixConfigVerbose<Locales>;
 
 export type Pathnames<Locales extends AllLocales> = Record<
   string,

@@ -1,29 +1,34 @@
-import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
+import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, RoutingLocales} from '../../shared/types';
+import {AllLocales, LocalePrefixConfigVerbose} from '../../shared/types';
+import {getLocalePrefix} from '../../shared/utils';
 import BaseLink from '../shared/BaseLink';
-import {getLocalePrefix} from '../shared/utils';
 
 type Props<Locales extends AllLocales> = Omit<
   ComponentProps<typeof BaseLink>,
-  'locale' | 'prefix'
+  'locale' | 'prefix' | 'localePrefixMode'
 > & {
   locale?: Locales[number];
-  locales?: RoutingLocales<Locales>;
+  localePrefix: LocalePrefixConfigVerbose<Locales>;
 };
 
 function ClientLink<Locales extends AllLocales>(
-  {locale, locales, ...rest}: Props<Locales>,
+  {locale, localePrefix, ...rest}: Props<Locales>,
   ref: Props<Locales>['ref']
 ) {
   const defaultLocale = useLocale();
   const finalLocale = locale || defaultLocale;
-  const prefix = useMemo(
-    () => getLocalePrefix(finalLocale, locales),
-    [finalLocale, locales]
-  );
+  const prefix = getLocalePrefix(finalLocale, localePrefix);
 
-  return <BaseLink ref={ref} locale={finalLocale} prefix={prefix} {...rest} />;
+  return (
+    <BaseLink
+      ref={ref}
+      locale={finalLocale}
+      localePrefixMode={localePrefix.mode}
+      prefix={prefix}
+      {...rest}
+    />
+  );
 }
 
 /**

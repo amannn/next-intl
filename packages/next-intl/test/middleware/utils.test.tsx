@@ -10,7 +10,7 @@ import {
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {
     function getResult(pathname: string) {
-      return getNormalizedPathname(pathname, ['en', 'de'], 'always');
+      return getNormalizedPathname(pathname, ['en', 'de'], {mode: 'always'});
     }
 
     expect(getResult('/en/about')).toBe('/about');

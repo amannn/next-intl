@@ -1,10 +1,10 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
   AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst,
-  RoutingLocales
+  LocalePrefixConfig,
+  ParametersExceptFirst
 } from '../../shared/types';
+import {receiveLocalePrefixConfig} from '../../shared/utils';
 import ClientLink from './ClientLink';
 import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
@@ -12,7 +12,9 @@ import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts?: {locales?: RoutingLocales<Locales>; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefixConfig<Locales>}) {
+  const finalLocalePrefix = receiveLocalePrefixConfig(opts?.localePrefix);
+
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<Locales>>,
     'localePrefix'
@@ -21,8 +23,7 @@ export default function createSharedPathnamesNavigation<
     return (
       <ClientLink<Locales>
         ref={ref}
-        localePrefix={opts?.localePrefix}
-        locales={opts?.locales}
+        localePrefix={finalLocalePrefix}
         {...props}
       />
     );
@@ -36,7 +37,7 @@ export default function createSharedPathnamesNavigation<
     pathname: string,
     ...args: ParametersExceptFirst<typeof clientRedirect>
   ) {
-    return clientRedirect({...opts, pathname, locales: opts?.locales}, ...args);
+    return clientRedirect({pathname, localePrefix: finalLocalePrefix}, ...args);
   }
 
   function permanentRedirect(
@@ -44,7 +45,7 @@ export default function createSharedPathnamesNavigation<
     ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
   ) {
     return clientPermanentRedirect(
-      {...opts, pathname, locales: opts?.locales},
+      {pathname, localePrefix: finalLocalePrefix},
       ...args
     );
   }
@@ -56,7 +57,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function useRouter() {
-    return useBaseRouter<Locales>(opts?.locales);
+    return useBaseRouter<Locales>(finalLocalePrefix);
   }
 
   return {

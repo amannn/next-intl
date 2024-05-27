@@ -6,7 +6,7 @@ import {
   HEADER_LOCALE_NAME
 } from '../shared/constants';
 import {AllLocales} from '../shared/types';
-import {matchesPathname} from '../shared/utils';
+import {matchesPathname, receiveLocalePrefixConfig} from '../shared/utils';
 import MiddlewareConfig, {
   MiddlewareConfigWithDefaults
 } from './NextIntlMiddlewareConfig';
@@ -29,15 +29,10 @@ const ROOT_URL = '/';
 function receiveConfig<Locales extends AllLocales>(
   config: MiddlewareConfig<Locales>
 ): MiddlewareConfigWithDefaults<Locales> {
-  const localePrefix =
-    typeof config.localePrefix === 'object'
-      ? config.localePrefix
-      : {mode: config.localePrefix || 'always'};
-
   const result: MiddlewareConfigWithDefaults<Locales> = {
     ...config,
     alternateLinks: config.alternateLinks ?? true,
-    localePrefix,
+    localePrefix: receiveLocalePrefixConfig(config.localePrefix),
     localeDetection: config.localeDetection ?? true
   };
 

@@ -1,16 +1,18 @@
 import React, {ComponentProps} from 'react';
 import {
   AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst,
-  RoutingLocales
+  LocalePrefixConfig,
+  ParametersExceptFirst
 } from '../../shared/types';
+import {receiveLocalePrefixConfig} from '../../shared/utils';
 import ServerLink from './ServerLink';
 import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
   Locales extends AllLocales
->(opts?: {locales?: RoutingLocales<Locales>; localePrefix?: LocalePrefix}) {
+>(opts?: {locales?: Locales; localePrefix?: LocalePrefixConfig<Locales>}) {
+  const finalLocalePrefix = receiveLocalePrefixConfig(opts?.localePrefix);
+
   function notSupported(hookName: string) {
     return () => {
       throw new Error(
@@ -19,21 +21,23 @@ export default function createSharedPathnamesNavigation<
     };
   }
 
-  function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
-    return (
-      <ServerLink<Locales>
-        localePrefix={opts?.localePrefix}
-        locales={opts?.locales}
-        {...props}
-      />
-    );
+  function Link(
+    props: Omit<
+      ComponentProps<typeof ServerLink<Locales>>,
+      'localePrefix' | 'locales'
+    >
+  ) {
+    return <ServerLink<Locales> localePrefix={finalLocalePrefix} {...props} />;
   }
 
   function redirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof serverRedirect>
   ) {
-    return serverRedirect({...opts, pathname, locales: opts?.locales}, ...args);
+    return serverRedirect(
+      {...opts, pathname, localePrefix: finalLocalePrefix},
+      ...args
+    );
   }
 
   function permanentRedirect(
@@ -41,7 +45,7 @@ export default function createSharedPathnamesNavigation<
     ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
   ) {
     return serverPermanentRedirect(
-      {...opts, pathname, locales: opts?.locales},
+      {...opts, pathname, localePrefix: finalLocalePrefix},
       ...args
     );
   }

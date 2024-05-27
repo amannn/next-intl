@@ -2,12 +2,11 @@ import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
   AllLocales,
-  LocalePrefix,
+  LocalePrefixConfig,
   ParametersExceptFirst,
-  Pathnames,
-  RoutingLocales
+  Pathnames
 } from '../../shared/types';
-import {getLocales} from '../../shared/utils';
+import {receiveLocalePrefixConfig} from '../../shared/utils';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -24,13 +23,15 @@ export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
 >(opts: {
-  locales: RoutingLocales<Locales>;
+  locales: Locales;
   pathnames: PathnamesConfig;
-  localePrefix?: LocalePrefix;
+  localePrefix?: LocalePrefixConfig<Locales>;
 }) {
+  const finalLocalePrefix = receiveLocalePrefixConfig(opts?.localePrefix);
+
   function useTypedLocale(): Locales[number] {
     const locale = useLocale();
-    const isValid = getLocales(opts.locales).includes(locale as any);
+    const isValid = opts.locales.includes(locale as any);
     if (!isValid) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -43,7 +44,7 @@ export default function createLocalizedPathnamesNavigation<
 
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
     ComponentProps<typeof ClientLink>,
-    'href' | 'name'
+    'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: Locales[number];
@@ -67,8 +68,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames: opts.pathnames
         })}
         locale={locale}
-        localePrefix={opts.localePrefix}
-        locales={opts.locales}
+        localePrefix={finalLocalePrefix}
         {...rest}
       />
     );
@@ -90,7 +90,7 @@ export default function createLocalizedPathnamesNavigation<
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
     return clientRedirect(
-      {...opts, pathname: resolvedHref, locales: opts.locales},
+      {pathname: resolvedHref, localePrefix: finalLocalePrefix},
       ...args
     );
   }
@@ -103,13 +103,13 @@ export default function createLocalizedPathnamesNavigation<
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
     return clientPermanentRedirect(
-      {...opts, pathname: resolvedHref, locales: opts.locales},
+      {pathname: resolvedHref, localePrefix: finalLocalePrefix},
       ...args
     );
   }
 
   function useRouter() {
-    const baseRouter = useBaseRouter(opts.locales);
+    const baseRouter = useBaseRouter(finalLocalePrefix);
     const defaultLocale = useTypedLocale();
 
     return {

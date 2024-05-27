@@ -1,7 +1,7 @@
 import {
   AllLocales,
   LocalePrefixConfig,
-  LocalePrefixConfigWithPrefixes,
+  LocalePrefixConfigVerbose,
   Pathnames
 } from '../shared/types';
 
@@ -51,7 +51,7 @@ export type MiddlewareConfigWithDefaults<Locales extends AllLocales> = Omit<
   'alternateLinks' | 'localePrefix' | 'localeDetection'
 > & {
   alternateLinks: boolean;
-  localePrefix: LocalePrefixConfigWithPrefixes<Locales>;
+  localePrefix: LocalePrefixConfigVerbose<Locales>;
   localeDetection: boolean;
 };
 

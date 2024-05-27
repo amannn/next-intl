@@ -1,5 +1,9 @@
-import {AllLocales, LocalePrefixConfig, LocalePrefixes} from '../shared/types';
-import {matchesPathname, templateToRegex} from '../shared/utils';
+import {AllLocales, LocalePrefixConfigVerbose} from '../shared/types';
+import {
+  getLocalePrefix,
+  matchesPathname,
+  templateToRegex
+} from '../shared/utils';
 import {
   DomainConfig,
   MiddlewareConfigWithDefaults
@@ -143,7 +147,7 @@ export function formatTemplatePathname(
 export function getNormalizedPathname<Locales extends AllLocales>(
   pathname: string,
   locales: Locales,
-  localePrefix: LocalePrefixConfig<Locales>
+  localePrefix: LocalePrefixConfigVerbose<Locales>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -177,24 +181,18 @@ export function findCaseInsensitiveString(
 
 export function getLocalePrefixes<Locales extends AllLocales>(
   locales: Locales,
-  localePrefix: LocalePrefixConfig<Locales>
+  localePrefix: LocalePrefixConfigVerbose<Locales>
 ): Array<[Locales[number], string]> {
-  const prefixesConfig =
-    (typeof localePrefix === 'object' &&
-      localePrefix.mode !== 'never' &&
-      localePrefix.prefixes) ||
-    ({} as LocalePrefixes<Locales>);
-
   return locales.map((locale) => [
     locale as Locales[number],
-    prefixesConfig[locale as Locales[number]] ?? '/' + locale
+    getLocalePrefix(locale, localePrefix)
   ]);
 }
 
 export function getPathnameMatch<Locales extends AllLocales>(
   pathname: string,
   locales: Locales,
-  localePrefix: LocalePrefixConfig<Locales>
+  localePrefix: LocalePrefixConfigVerbose<Locales>
 ):
   | {
       locale: Locales[number];

@@ -1,4 +1,4 @@
-import {getByText, render, screen} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
   useParams,
@@ -84,6 +84,9 @@ describe("localePrefix: 'as-needed'", () => {
     router.push('/about', {locale: 'de'});
     router.push('/unknown'); // No error since routes are unknown
 
+    // @ts-expect-error -- Unknown locale
+    router.push('/about', {locale: 'unknown'});
+
     // @ts-expect-error -- No params supported
     <Link href="/users/[userId]" params={{userId: 2}}>
       User
@@ -102,8 +105,13 @@ describe("localePrefix: 'as-needed'", () => {
 
 describe("localePrefix: 'as-needed', custom prefix", () => {
   const {usePathname, useRouter} = createSharedPathnamesNavigation({
-    locales: ['en', {locale: 'en-gb', prefix: '/uk'}],
-    localePrefix: 'as-needed'
+    locales: ['en', 'en-gb'],
+    localePrefix: {
+      mode: 'as-needed',
+      prefixes: {
+        'en-gb': '/uk'
+      }
+    }
   });
 
   describe('useRouter', () => {
@@ -142,7 +150,7 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('useRouter', () => {
-    function Component({locale}: {locale?: string}) {
+    function Component({locale}: {locale?: (typeof locales)[number]}) {
       const router = useRouter();
       router.push('/about', {locale});
       return null;

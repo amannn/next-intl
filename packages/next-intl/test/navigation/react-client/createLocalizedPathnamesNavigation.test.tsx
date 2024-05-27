@@ -326,7 +326,7 @@ describe("localePrefix: 'as-needed'", () => {
 
 describe("localePrefix: 'as-needed', custom prefix", () => {
   const {useRouter} = createLocalizedPathnamesNavigation({
-    locales: ['en', {locale: 'de-at', prefix: '/de'}] as const,
+    locales: ['en', 'de-at'] as const,
     pathnames: {
       '/': '/',
       '/about': {
@@ -334,7 +334,12 @@ describe("localePrefix: 'as-needed', custom prefix", () => {
         'de-at': '/ueber-uns'
       }
     },
-    localePrefix: 'always'
+    localePrefix: {
+      mode: 'always',
+      prefixes: {
+        'de-at': '/de'
+      }
+    }
   });
 
   describe('useRouter', () => {
@@ -362,7 +367,7 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('useRouter', () => {
-    function Component({locale}: {locale?: string}) {
+    function Component({locale}: {locale?: (typeof locales)[number]}) {
       const router = useRouter();
       router.push('/about', {locale});
       return null;

@@ -12,8 +12,8 @@ import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createSharedPathnamesNavigationClient from '../../src/navigation/react-client/createSharedPathnamesNavigation';
 import createSharedPathnamesNavigationServer from '../../src/navigation/react-server/createSharedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
-import {getLocalePrefix} from '../../src/navigation/shared/utils';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
+import {getLocalePrefix} from '../../src/shared/utils';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -34,10 +34,17 @@ vi.mock('next-intl/config', () => ({
 vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, locales, ...rest}: any) {
+  default({locale, localePrefix, ...rest}: any) {
     const finalLocale = locale || 'en';
-    const prefix = getLocalePrefix(finalLocale, locales);
-    return <BaseLink locale={finalLocale} prefix={prefix} {...rest} />;
+    const prefix = getLocalePrefix(finalLocale, localePrefix);
+    return (
+      <BaseLink
+        locale={finalLocale}
+        localePrefixMode={localePrefix.mode}
+        prefix={prefix}
+        {...rest}
+      />
+    );
   }
 }));
 vi.mock('../../src/server/react-server/RequestLocale', () => ({
@@ -50,11 +57,10 @@ beforeEach(() => {
 });
 
 const locales = ['en', 'de'] as const;
-
-const localesWithCustomPrefixes = [
-  'en',
-  {locale: 'en-gb', prefix: '/uk'}
-] as const;
+const localesWithCustomPrefixes = ['en', 'en-gb'] as const;
+const customizedPrefixes = {
+  'en-gb': '/uk'
+};
 
 describe.each([
   {env: 'react-client', implementation: createSharedPathnamesNavigationClient},
@@ -113,7 +119,10 @@ describe.each([
     describe("localePrefix: 'always', custom prefixes", () => {
       const {Link, redirect} = createSharedPathnamesNavigation({
         locales: localesWithCustomPrefixes,
-        localePrefix: 'always'
+        localePrefix: {
+          mode: 'always',
+          prefixes: customizedPrefixes
+        }
       });
 
       describe('Link', () => {
@@ -314,7 +323,7 @@ describe.each([
       const {Link, permanentRedirect, redirect} =
         createSharedPathnamesNavigation({
           locales: localesWithCustomPrefixes,
-          localePrefix: 'as-needed'
+          localePrefix: {mode: 'as-needed', prefixes: customizedPrefixes}
         });
 
       describe('Link', () => {

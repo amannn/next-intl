@@ -1,9 +1,10 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
-import React from 'react';
+import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../../src/index.react-client';
 import ClientLink from '../../../src/navigation/react-client/ClientLink';
+import {LocalePrefixConfigVerbose} from '../../../src/shared/types';
 
 vi.mock('next/navigation');
 
@@ -15,6 +16,24 @@ function mockLocation(pathname: string, basePath = '') {
   (global.window as any).location = {pathname: basePath + pathname};
 }
 
+const MockClientLink = forwardRef(
+  (
+    {
+      localePrefix = {mode: 'always'},
+      ...rest
+    }: Omit<ComponentProps<typeof ClientLink>, 'localePrefix'> & {
+      localePrefix?: LocalePrefixConfigVerbose<any>;
+    },
+    ref
+  ) => (
+    <ClientLink
+      ref={ref as LegacyRef<HTMLAnchorElement>}
+      localePrefix={localePrefix}
+      {...rest}
+    />
+  )
+);
+
 describe('unprefixed routing', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockImplementation(() => '/');
@@ -22,7 +41,7 @@ describe('unprefixed routing', () => {
   });
 
   it('renders an href without a locale if the locale matches', () => {
-    render(<ClientLink href="/test">Test</ClientLink>);
+    render(<MockClientLink href="/test">Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/test'
     );
@@ -30,9 +49,9 @@ describe('unprefixed routing', () => {
 
   it('renders an href without a locale if the locale matches for an object href', () => {
     render(
-      <ClientLink href={{pathname: '/test', query: {foo: 'bar'}}}>
+      <MockClientLink href={{pathname: '/test', query: {foo: 'bar'}}}>
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/test?foo=bar'
@@ -41,9 +60,9 @@ describe('unprefixed routing', () => {
 
   it('renders an href with a locale if the locale changes', () => {
     render(
-      <ClientLink href="/test" locale="de">
+      <MockClientLink href="/test" locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -52,9 +71,9 @@ describe('unprefixed routing', () => {
 
   it('renders an href with a locale if the locale changes for an object href', () => {
     render(
-      <ClientLink href={{pathname: '/test'}} locale="de">
+      <MockClientLink href={{pathname: '/test'}} locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -62,14 +81,14 @@ describe('unprefixed routing', () => {
   });
 
   it('works for external urls', () => {
-    render(<ClientLink href="https://example.com">Test</ClientLink>);
+    render(<MockClientLink href="https://example.com">Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com'
     );
   });
 
   it('handles relative links', () => {
-    render(<ClientLink href="test">Test</ClientLink>);
+    render(<MockClientLink href="test">Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'test'
     );
@@ -77,7 +96,7 @@ describe('unprefixed routing', () => {
 
   it('works for external urls with an object href', () => {
     render(
-      <ClientLink
+      <MockClientLink
         href={{
           pathname: '/test',
           protocol: 'https:',
@@ -85,7 +104,7 @@ describe('unprefixed routing', () => {
         }}
       >
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com/test'
@@ -96,14 +115,14 @@ describe('unprefixed routing', () => {
     let ref;
 
     render(
-      <ClientLink
+      <MockClientLink
         ref={(node) => {
           ref = node;
         }}
         href="/test"
       >
         Test
-      </ClientLink>
+      </MockClientLink>
     );
 
     expect(ref).toBeDefined();
@@ -111,9 +130,9 @@ describe('unprefixed routing', () => {
 
   it('sets an hreflang when changing the locale', () => {
     render(
-      <ClientLink href="/test" locale="de">
+      <MockClientLink href="/test" locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(
       screen.getByRole('link', {name: 'Test'}).getAttribute('hreflang')
@@ -122,20 +141,20 @@ describe('unprefixed routing', () => {
 
   it('updates the href when the query changes for localePrefix=never', () => {
     const {rerender} = render(
-      <ClientLink href={{pathname: '/'}} localePrefix="never">
+      <MockClientLink href={{pathname: '/'}} localePrefix={{mode: 'never'}}>
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/'
     );
     rerender(
-      <ClientLink
+      <MockClientLink
         href={{pathname: '/', query: {foo: 'bar'}}}
-        localePrefix="never"
+        localePrefix={{mode: 'never'}}
       >
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/?foo=bar'
@@ -148,7 +167,7 @@ describe('unprefixed routing', () => {
     });
 
     it('renders an unprefixed href when staying on the same locale', () => {
-      render(<ClientLink href="/test">Test</ClientLink>);
+      render(<MockClientLink href="/test">Test</MockClientLink>);
       expect(
         screen.getByRole('link', {name: 'Test'}).getAttribute('href')
       ).toBe('/test');
@@ -156,9 +175,9 @@ describe('unprefixed routing', () => {
 
     it('renders a prefixed href when switching the locale', () => {
       render(
-        <ClientLink href="/test" locale="de">
+        <MockClientLink href="/test" locale="de">
           Test
-        </ClientLink>
+        </MockClientLink>
       );
       expect(
         screen.getByRole('link', {name: 'Test'}).getAttribute('href')
@@ -174,14 +193,14 @@ describe('prefixed routing', () => {
   });
 
   it('renders an href with a locale if the locale matches', () => {
-    render(<ClientLink href="/test">Test</ClientLink>);
+    render(<MockClientLink href="/test">Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/en/test'
     );
   });
 
   it('renders an href without a locale if the locale matches for an object href', () => {
-    render(<ClientLink href={{pathname: '/test'}}>Test</ClientLink>);
+    render(<MockClientLink href={{pathname: '/test'}}>Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/en/test'
     );
@@ -189,9 +208,9 @@ describe('prefixed routing', () => {
 
   it('renders an href with a locale if the locale changes', () => {
     render(
-      <ClientLink href="/test" locale="de">
+      <MockClientLink href="/test" locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -200,9 +219,9 @@ describe('prefixed routing', () => {
 
   it('renders an href with a locale if the locale changes for an object href', () => {
     render(
-      <ClientLink href={{pathname: '/test'}} locale="de">
+      <MockClientLink href={{pathname: '/test'}} locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       '/de/test'
@@ -210,7 +229,7 @@ describe('prefixed routing', () => {
   });
 
   it('works for external urls', () => {
-    render(<ClientLink href="https://example.com">Test</ClientLink>);
+    render(<MockClientLink href="https://example.com">Test</MockClientLink>);
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com'
     );
@@ -218,7 +237,7 @@ describe('prefixed routing', () => {
 
   it('works for external urls with an object href', () => {
     render(
-      <ClientLink
+      <MockClientLink
         href={{
           pathname: '/test',
           protocol: 'https:',
@@ -226,7 +245,7 @@ describe('prefixed routing', () => {
         }}
       >
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
       'https://example.com/test'
@@ -239,7 +258,7 @@ describe('prefixed routing', () => {
     });
 
     it('renders an unprefixed href when staying on the same locale', () => {
-      render(<ClientLink href="/test">Test</ClientLink>);
+      render(<MockClientLink href="/test">Test</MockClientLink>);
       expect(
         screen.getByRole('link', {name: 'Test'}).getAttribute('href')
       ).toBe('/en/test');
@@ -247,9 +266,9 @@ describe('prefixed routing', () => {
 
     it('renders a prefixed href when switching the locale', () => {
       render(
-        <ClientLink href="/test" locale="de">
+        <MockClientLink href="/test" locale="de">
           Test
-        </ClientLink>
+        </MockClientLink>
       );
       expect(
         screen.getByRole('link', {name: 'Test'}).getAttribute('href')
@@ -266,7 +285,7 @@ describe('usage outside of Next.js', () => {
   it('works with a provider', () => {
     render(
       <NextIntlClientProvider locale="en">
-        <ClientLink href="/test">Test</ClientLink>
+        <MockClientLink href="/test">Test</MockClientLink>
       </NextIntlClientProvider>
     );
     expect(screen.getByRole('link', {name: 'Test'}).getAttribute('href')).toBe(
@@ -275,9 +294,9 @@ describe('usage outside of Next.js', () => {
   });
 
   it('throws without a provider', () => {
-    expect(() => render(<ClientLink href="/test">Test</ClientLink>)).toThrow(
-      'No intl context found. Have you configured the provider?'
-    );
+    expect(() =>
+      render(<MockClientLink href="/test">Test</MockClientLink>)
+    ).toThrow('No intl context found. Have you configured the provider?');
   });
 });
 
@@ -293,9 +312,9 @@ describe('cookie sync', () => {
 
   it('keeps the cookie value in sync', () => {
     render(
-      <ClientLink href="/" locale="de">
+      <MockClientLink href="/" locale="de">
         Test
-      </ClientLink>
+      </MockClientLink>
     );
     expect(document.cookie).toContain('NEXT_LOCALE=en');
     fireEvent.click(screen.getByRole('link', {name: 'Test'}));

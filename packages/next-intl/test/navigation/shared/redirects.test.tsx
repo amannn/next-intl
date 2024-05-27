@@ -23,7 +23,7 @@ describe.each([
       redirectFn({
         pathname: '/test/path',
         locale: 'en',
-        localePrefix: 'always'
+        localePrefix: {mode: 'always'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('/en/test/path');
@@ -33,7 +33,7 @@ describe.each([
       redirectFn({
         pathname: 'https://example.com',
         locale: 'en',
-        localePrefix: 'always'
+        localePrefix: {mode: 'always'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('https://example.com');
@@ -45,7 +45,7 @@ describe.each([
       redirectFn({
         pathname: '/test/path',
         locale: 'en',
-        localePrefix: 'as-needed'
+        localePrefix: {mode: 'as-needed'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('/en/test/path');
@@ -55,7 +55,7 @@ describe.each([
       redirectFn({
         pathname: 'https://example.com',
         locale: 'en',
-        localePrefix: 'as-needed'
+        localePrefix: {mode: 'as-needed'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('https://example.com');
@@ -67,7 +67,7 @@ describe.each([
       redirectFn({
         pathname: '/test/path',
         locale: 'en',
-        localePrefix: 'never'
+        localePrefix: {mode: 'never'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('/test/path');
@@ -77,7 +77,7 @@ describe.each([
       redirectFn({
         pathname: 'https://example.com',
         locale: 'en',
-        localePrefix: 'never'
+        localePrefix: {mode: 'never'}
       });
       expect(nextFn).toHaveBeenCalledTimes(1);
       expect(nextFn).toHaveBeenCalledWith('https://example.com');

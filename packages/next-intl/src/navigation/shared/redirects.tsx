@@ -4,26 +4,23 @@ import {
 } from 'next/navigation';
 import {
   AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst,
-  RoutingLocales
+  LocalePrefixConfigVerbose,
+  ParametersExceptFirst
 } from '../../shared/types';
-import {isLocalHref, prefixPathname} from '../../shared/utils';
-import {getLocalePrefix} from './utils';
+import {getLocalePrefix, isLocalHref, prefixPathname} from '../../shared/utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
   return function baseRedirect<Locales extends AllLocales>(
     params: {
       pathname: string;
       locale: AllLocales[number];
-      localePrefix?: LocalePrefix;
-      locales?: RoutingLocales<Locales>;
+      localePrefix: LocalePrefixConfigVerbose<Locales>;
     },
     ...args: ParametersExceptFirst<typeof redirectFn>
   ) {
-    const prefix = getLocalePrefix(params.locale, params.locales);
+    const prefix = getLocalePrefix(params.locale, params.localePrefix);
     const localizedPathname =
-      params.localePrefix === 'never' || !isLocalHref(params.pathname)
+      params.localePrefix.mode === 'never' || !isLocalHref(params.pathname)
         ? params.pathname
         : prefixPathname(prefix, params.pathname);
     return redirectFn(localizedPathname, ...args);

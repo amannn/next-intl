@@ -1,6 +1,11 @@
 import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
+import {
+  AllLocales,
+  LocalePrefixConfig,
+  LocalePrefixConfigVerbose
+} from './types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
@@ -106,6 +111,26 @@ export function matchesPathname(
 ) {
   const regex = templateToRegex(template);
   return regex.test(pathname);
+}
+
+export function getLocalePrefix<Locales extends AllLocales>(
+  locale: Locales[number],
+  localePrefix: LocalePrefixConfigVerbose<Locales>
+) {
+  return (
+    (localePrefix.mode !== 'never' && localePrefix.prefixes?.[locale]) ||
+    // We return a prefix even if `mode: 'never'`. It's up to the consumer
+    // to decide to use it or not.
+    '/' + locale
+  );
+}
+
+export function receiveLocalePrefixConfig<Locales extends AllLocales>(
+  localePrefix?: LocalePrefixConfig<Locales>
+): LocalePrefixConfigVerbose<Locales> {
+  return typeof localePrefix === 'object'
+    ? localePrefix
+    : {mode: localePrefix || 'always'};
 }
 
 export function templateToRegex(template: string): RegExp {

@@ -12,9 +12,9 @@ import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createLocalizedPathnamesNavigationClient from '../../src/navigation/react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
-import {getLocalePrefix} from '../../src/navigation/shared/utils';
 import {Pathnames} from '../../src/navigation.react-client';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
+import {getLocalePrefix} from '../../src/shared/utils';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -35,10 +35,17 @@ vi.mock('next-intl/config', () => ({
 vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, locales, ...rest}: any) {
+  default({locale, localePrefix, ...rest}: any) {
     const finalLocale = locale || 'en';
-    const prefix = getLocalePrefix(finalLocale, locales);
-    return <BaseLink locale={finalLocale} prefix={prefix} {...rest} />;
+    const prefix = getLocalePrefix(finalLocale, localePrefix);
+    return (
+      <BaseLink
+        locale={finalLocale}
+        localePrefixMode={localePrefix.mode}
+        prefix={prefix}
+        {...rest}
+      />
+    );
   }
 }));
 vi.mock('../../src/server/react-server/RequestLocale', () => ({
@@ -129,9 +136,14 @@ describe.each([
         }
       } as const;
       const {Link, getPathname, redirect} = createLocalizedPathnamesNavigation({
-        locales: ['en', {locale: 'de-at', prefix: '/de'}] as const,
+        locales: ['en', 'de-at'] as const,
         pathnames: pathnamesCustomPrefixes,
-        localePrefix: 'always'
+        localePrefix: {
+          mode: 'always',
+          prefixes: {
+            'de-at': '/de'
+          }
+        } as const
       });
 
       describe('Link', () => {

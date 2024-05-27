@@ -2,11 +2,11 @@ import React, {ComponentProps} from 'react';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {
   AllLocales,
-  LocalePrefix,
+  LocalePrefixConfig,
   ParametersExceptFirst,
-  Pathnames,
-  RoutingLocales
+  Pathnames
 } from '../../shared/types';
+import {receiveLocalePrefixConfig} from '../../shared/utils';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -19,18 +19,16 @@ import {serverPermanentRedirect, serverRedirect} from './redirects';
 export default function createLocalizedPathnamesNavigation<
   Locales extends AllLocales,
   PathnamesConfig extends Pathnames<Locales>
->({
-  localePrefix,
-  locales,
-  pathnames
-}: {
-  locales: RoutingLocales<Locales>;
+>(opts: {
+  locales: Locales;
   pathnames: Pathnames<Locales>;
-  localePrefix?: LocalePrefix;
+  localePrefix?: LocalePrefixConfig<Locales>;
 }) {
+  const finalLocalePrefix = receiveLocalePrefixConfig(opts?.localePrefix);
+
   type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
     ComponentProps<typeof ServerLink>,
-    'href' | 'name'
+    'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: Locales[number];
@@ -40,7 +38,7 @@ export default function createLocalizedPathnamesNavigation<
     locale,
     ...rest
   }: LinkProps<Pathname>) {
-    const defaultLocale = getRequestLocale() as (typeof locales)[number];
+    const defaultLocale = getRequestLocale() as typeof opts.locales[number];
     const finalLocale = locale || defaultLocale;
 
     return (
@@ -51,11 +49,10 @@ export default function createLocalizedPathnamesNavigation<
           pathname: href,
           // @ts-expect-error -- This is ok
           params: typeof href === 'object' ? href.params : undefined,
-          pathnames
+          pathnames: opts.pathnames
         })}
         locale={locale}
-        localePrefix={localePrefix}
-        locales={locales}
+        localePrefix={finalLocalePrefix}
         {...rest}
       />
     );
@@ -67,7 +64,7 @@ export default function createLocalizedPathnamesNavigation<
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverRedirect({localePrefix, pathname, locales}, ...args);
+    return serverRedirect({localePrefix: finalLocalePrefix, pathname}, ...args);
   }
 
   function permanentRedirect<Pathname extends keyof PathnamesConfig>(
@@ -76,7 +73,10 @@ export default function createLocalizedPathnamesNavigation<
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverPermanentRedirect({localePrefix, pathname, locales}, ...args);
+    return serverPermanentRedirect(
+      {localePrefix: finalLocalePrefix, pathname},
+      ...args
+    );
   }
 
   function getPathname({
@@ -89,7 +89,7 @@ export default function createLocalizedPathnamesNavigation<
     return compileLocalizedPathname({
       ...normalizeNameOrNameWithParams(href),
       locale,
-      pathnames
+      pathnames: opts.pathnames
     });
   }
 

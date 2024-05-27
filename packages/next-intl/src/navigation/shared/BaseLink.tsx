@@ -11,18 +11,18 @@ import React, {
   useState
 } from 'react';
 import useLocale from '../../react-client/useLocale';
-import {LocalePrefix} from '../../shared/types';
+import {LocalePrefixMode} from '../../shared/types';
 import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
   prefix: string;
-  localePrefix?: LocalePrefix;
+  localePrefixMode: LocalePrefixMode;
 };
 
 function BaseLink(
-  {href, locale, localePrefix, onClick, prefetch, prefix, ...rest}: Props,
+  {href, locale, localePrefixMode, onClick, prefetch, prefix, ...rest}: Props,
   ref: Props['ref']
 ) {
   // The types aren't entirely correct here. Outside of Next.js
@@ -33,7 +33,8 @@ function BaseLink(
   const isChangingLocale = locale !== curLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
-    isLocalizableHref(href) && (localePrefix !== 'never' || isChangingLocale)
+    isLocalizableHref(href) &&
+    (localePrefixMode !== 'never' || isChangingLocale)
       ? // For the `localePrefix: 'as-needed' strategy, the href shouldn't
         // be prefixed if the locale is the default locale. To determine this, we
         // need a) the default locale and b) the information if we use prefixed
