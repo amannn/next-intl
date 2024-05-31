@@ -97,7 +97,7 @@ If you want to stay on the `as-needed` strategy, you can [configure this option]
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router#static-rendering) API so that you can keep your pages fully static.
+If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) API so that you can keep your pages fully static.
 
 Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 
