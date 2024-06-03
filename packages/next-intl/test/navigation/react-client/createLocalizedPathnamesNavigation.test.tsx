@@ -6,10 +6,8 @@ import {
 } from 'next/navigation';
 import React, {ComponentProps} from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
-import {
-  Pathnames,
-  createLocalizedPathnamesNavigation
-} from '../../../src/navigation/react-client';
+import {createLocalizedPathnamesNavigation} from '../../../src/navigation/react-client';
+import {Pathnames} from '../../../src/routing';
 
 vi.mock('next/navigation');
 

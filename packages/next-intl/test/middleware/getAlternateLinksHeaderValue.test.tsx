@@ -4,7 +4,7 @@ import {NextRequest} from 'next/server';
 import {it, expect, describe} from 'vitest';
 import {receiveConfig} from '../../src/middleware/config';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
-import {Pathnames} from '../../src/navigation/react-client';
+import {Pathnames} from '../../src/routing';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',
