@@ -21,6 +21,9 @@ export type DomainConfig<Locales extends AllLocales> = Omit<
 
   /** The locales availabe on this particular domain. */
   locales?: RoutingBaseConfig<Array<Locales[number]>>['locales'];
+
+  /** The locale prefix setting for this particular domain. */
+  localePrefix?: LocalePrefix;
 };
 
 type MiddlewareConfig<Locales extends AllLocales> =
