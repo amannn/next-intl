@@ -775,7 +775,7 @@ If you're using the [static export feature from Next.js](https://nextjs.org/docs
 1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](#locale-prefix-always))
 2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#locale-detection))
 3. You can't use [pathname localization](#localizing-pathnames)
-4. This requires [static rendering](/docs/getting-started/app-router#static-rendering)
+4. This requires [static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
 5. You need to add a redirect for the root of the app
 
 ```tsx filename="app/page.tsx"
@@ -810,6 +810,6 @@ To recover from this error, please make sure that:
    1. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `[locale]` segment.
    2. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
    3. If you're using [`localePrefix: 'as-needed'`](#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that the `locale` is [validated](/docs/usage/configuration#i18nts) before it's used by any APIs from `next-intl`.
-   4. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router#static-rendering) to `next-intl` instead of using `force-static`.
+   4. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router/with-i18n-routing#static-rendering) to `next-intl` instead of using `force-static`.
 
 Note that `next-intl` will invoke the `notFound()` function to abort the render if the locale can't be found. You should consider adding [a `not-found` page](/docs/environments/error-files#not-foundjs) due to this.
