@@ -1,11 +1,7 @@
 import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
-import {
-  AllLocales,
-  LocalePrefixConfig,
-  LocalePrefixConfigVerbose
-} from './types';
+import {AllLocales, LocalePrefixConfigVerbose} from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
@@ -123,14 +119,6 @@ export function getLocalePrefix<Locales extends AllLocales>(
     // to decide to use it or not.
     '/' + locale
   );
-}
-
-export function receiveLocalePrefixConfig<Locales extends AllLocales>(
-  localePrefix?: LocalePrefixConfig<Locales>
-): LocalePrefixConfigVerbose<Locales> {
-  return typeof localePrefix === 'object'
-    ? localePrefix
-    : {mode: localePrefix || 'always'};
 }
 
 export function templateToRegex(template: string): RegExp {

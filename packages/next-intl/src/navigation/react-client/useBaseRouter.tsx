@@ -1,7 +1,7 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, LocalePrefixConfigVerbose} from '../../shared/types';
+import {AllLocales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {getLocalePrefix, localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getBasePath} from '../shared/utils';

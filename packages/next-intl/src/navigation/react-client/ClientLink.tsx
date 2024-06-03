@@ -1,6 +1,6 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, LocalePrefixConfigVerbose} from '../../shared/types';
+import {AllLocales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {getLocalePrefix} from '../../shared/utils';
 import BaseLink from '../shared/BaseLink';
 

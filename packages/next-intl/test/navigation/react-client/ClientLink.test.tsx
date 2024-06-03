@@ -4,7 +4,7 @@ import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
 import {NextIntlClientProvider} from '../../../src/index.react-client';
 import ClientLink from '../../../src/navigation/react-client/ClientLink';
-import {LocalePrefixConfigVerbose} from '../../../src/shared/types';
+import {LocalePrefixConfigVerbose} from '../../../src/routing/types';
 
 vi.mock('next/navigation');
 

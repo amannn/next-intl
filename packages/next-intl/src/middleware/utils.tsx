@@ -1,13 +1,14 @@
-import {AllLocales, LocalePrefixConfigVerbose} from '../shared/types';
+import {
+  AllLocales,
+  LocalePrefixConfigVerbose,
+  DomainConfig,
+  Pathnames
+} from '../routing/types';
 import {
   getLocalePrefix,
   matchesPathname,
   templateToRegex
 } from '../shared/utils';
-import {
-  DomainConfig,
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
 
 export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
@@ -74,14 +75,12 @@ export function getSortedPathnames(pathnames: Array<string>) {
 
 export function getInternalTemplate<
   Locales extends AllLocales,
-  Pathnames extends NonNullable<
-    MiddlewareConfigWithDefaults<Locales>['pathnames']
-  >
+  AppPathnames extends Pathnames<Locales>
 >(
-  pathnames: Pathnames,
+  pathnames: AppPathnames,
   pathname: string,
   locale: Locales[number]
-): [Locales[number] | undefined, keyof Pathnames | undefined] {
+): [Locales[number] | undefined, keyof AppPathnames | undefined] {
   const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
 
   // Try to find a localized pathname that matches

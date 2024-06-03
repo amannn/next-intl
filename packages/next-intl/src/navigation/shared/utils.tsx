@@ -1,6 +1,6 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {AllLocales, Pathnames} from '../../shared/types';
+import {AllLocales, Pathnames} from '../../routing/types';
 import {matchesPathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 

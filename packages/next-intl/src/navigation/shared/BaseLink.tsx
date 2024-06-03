@@ -11,7 +11,7 @@ import React, {
   useState
 } from 'react';
 import useLocale from '../../react-client/useLocale';
-import {LocalePrefixMode} from '../../shared/types';
+import {LocalePrefixMode} from '../../routing/types';
 import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
 

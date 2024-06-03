@@ -1,6 +1,6 @@
 import {NextRequest} from 'next/server';
-import {AllLocales, Pathnames} from '../shared/types';
-import {MiddlewareConfigWithDefaults} from './NextIntlMiddlewareConfig';
+import {AllLocales, Pathnames} from '../routing/types';
+import {MiddlewareRoutingConfig} from './config';
 import {
   applyBasePath,
   formatTemplatePathname,
@@ -14,14 +14,15 @@ import {
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
 export default function getAlternateLinksHeaderValue<
-  Locales extends AllLocales
+  Locales extends AllLocales,
+  AppPathnames extends Pathnames<Locales>
 >({
   config,
   localizedPathnames,
   request,
   resolvedLocale
 }: {
-  config: MiddlewareConfigWithDefaults<Locales>;
+  config: MiddlewareRoutingConfig<Locales, AppPathnames>;
   request: NextRequest;
   resolvedLocale: Locales[number];
   localizedPathnames?: Pathnames<Locales>[string];

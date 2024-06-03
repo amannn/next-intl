@@ -1,19 +1,13 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {AllLocales, Pathnames} from '../routing/types';
 import {
   COOKIE_LOCALE_NAME,
   COOKIE_MAX_AGE,
   COOKIE_SAME_SITE,
   HEADER_LOCALE_NAME
 } from '../shared/constants';
-import {AllLocales} from '../shared/types';
-import {
-  getLocalePrefix,
-  matchesPathname,
-  receiveLocalePrefixConfig
-} from '../shared/utils';
-import MiddlewareConfig, {
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
+import {getLocalePrefix, matchesPathname} from '../shared/utils';
+import {MiddlewareRoutingConfigInput, receiveConfig} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import {
@@ -28,50 +22,36 @@ import {
   normalizeTrailingSlash
 } from './utils';
 
-const ROOT_URL = '/';
-
-function receiveConfig<Locales extends AllLocales>(
-  config: MiddlewareConfig<Locales>
-): MiddlewareConfigWithDefaults<Locales> {
-  const result: MiddlewareConfigWithDefaults<Locales> = {
-    ...config,
-    alternateLinks: config.alternateLinks ?? true,
-    localePrefix: receiveLocalePrefixConfig(config.localePrefix),
-    localeDetection: config.localeDetection ?? true
-  };
-
-  return result;
-}
-
-export default function createMiddleware<Locales extends AllLocales>(
-  config: MiddlewareConfig<Locales>
-) {
-  const configWithDefaults = receiveConfig(config);
+export default function createMiddleware<
+  Locales extends AllLocales,
+  AppPathnames extends Pathnames<Locales>
+>(input: MiddlewareRoutingConfigInput<Locales, AppPathnames>) {
+  const config = receiveConfig(input);
 
   return function middleware(request: NextRequest) {
     // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
     const nextPathname = decodeURI(request.nextUrl.pathname);
 
     const {domain, locale} = resolveLocale(
-      configWithDefaults,
+      config,
       request.headers,
       request.cookies,
       nextPathname
     );
 
     const hasOutdatedCookie =
-      configWithDefaults.localeDetection &&
+      config.localeDetection &&
       request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
 
     const hasMatchedDefaultLocale = domain
       ? domain.defaultLocale === locale
-      : locale === configWithDefaults.defaultLocale;
+      : locale === config.defaultLocale;
 
     const domainConfigs =
-      configWithDefaults.domains?.filter((curDomain) =>
+      config.domains?.filter((curDomain) =>
         isLocaleSupportedOnDomain(locale, curDomain)
       ) || [];
-    const hasUnknownHost = configWithDefaults.domains != null && !domain;
+    const hasUnknownHost = config.domains != null && !domain;
 
     function getResponseInit() {
       const headers = new Headers(request.headers);
@@ -108,15 +88,15 @@ export default function createMiddleware<Locales extends AllLocales>(
 
             if (
               bestMatchingDomain.defaultLocale === locale &&
-              configWithDefaults.localePrefix.mode === 'as-needed' &&
+              config.localePrefix.mode === 'as-needed' &&
               urlObj.pathname.startsWith(
-                getLocalePrefix(locale, configWithDefaults.localePrefix)
+                getLocalePrefix(locale, config.localePrefix)
               )
             ) {
               urlObj.pathname = getNormalizedPathname(
                 urlObj.pathname,
-                configWithDefaults.locales,
-                configWithDefaults.localePrefix
+                config.locales,
+                config.localePrefix
               );
             }
           }
@@ -147,42 +127,42 @@ export default function createMiddleware<Locales extends AllLocales>(
 
     const normalizedPathname = getNormalizedPathname(
       nextPathname,
-      configWithDefaults.locales,
-      configWithDefaults.localePrefix
+      config.locales,
+      config.localePrefix
     );
 
     const pathnameMatch = getPathnameMatch(
       nextPathname,
-      configWithDefaults.locales,
-      configWithDefaults.localePrefix
+      config.locales,
+      config.localePrefix
     );
     const hasLocalePrefix = pathnameMatch != null;
 
     let response;
-    let internalTemplateName: string | undefined;
+    let internalTemplateName: keyof AppPathnames | undefined;
 
     let pathname = nextPathname;
-    if (configWithDefaults.pathnames) {
+    if (config.pathnames) {
       let resolvedTemplateLocale: Locales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
-        configWithDefaults.pathnames,
+        config.pathnames,
         normalizedPathname,
         locale
       );
 
       if (internalTemplateName) {
-        const pathnameConfig =
-          configWithDefaults.pathnames[internalTemplateName];
+        const pathnameConfig = config.pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
-            : pathnameConfig[locale];
+            : // @ts-expect-error This is ok
+              pathnameConfig[locale];
 
         if (matchesPathname(localeTemplate, normalizedPathname)) {
           pathname = formatTemplatePathname(
             normalizedPathname,
             localeTemplate,
-            internalTemplateName,
+            internalTemplateName as string,
             pathnameMatch?.locale
           );
         } else {
@@ -192,7 +172,8 @@ export default function createMiddleware<Locales extends AllLocales>(
             sourceTemplate =
               typeof pathnameConfig === 'string'
                 ? pathnameConfig
-                : pathnameConfig[resolvedTemplateLocale];
+                : // @ts-expect-error This is ok
+                  pathnameConfig[resolvedTemplateLocale];
           } else {
             // An internal pathname has matched that
             // doesn't have a localized pathname
@@ -201,7 +182,7 @@ export default function createMiddleware<Locales extends AllLocales>(
 
           const localePrefix =
             (hasLocalePrefix || !hasMatchedDefaultLocale) &&
-            configWithDefaults.localePrefix.mode !== 'never'
+            config.localePrefix.mode !== 'never'
               ? locale
               : undefined;
 
@@ -221,16 +202,15 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     if (!response) {
-      if (pathname === ROOT_URL) {
+      if (pathname === '/') {
         const pathWithSearch = getPathWithSearch(
-          getLocalePrefix(locale, configWithDefaults.localePrefix),
+          getLocalePrefix(locale, config.localePrefix),
           request.nextUrl.search
         );
 
         if (
-          configWithDefaults.localePrefix.mode === 'never' ||
-          (hasMatchedDefaultLocale &&
-            configWithDefaults.localePrefix.mode === 'as-needed')
+          config.localePrefix.mode === 'never' ||
+          (hasMatchedDefaultLocale && config.localePrefix.mode === 'as-needed')
         ) {
           response = rewrite(pathWithSearch);
         } else {
@@ -248,16 +228,16 @@ export default function createMiddleware<Locales extends AllLocales>(
             request.nextUrl.search
           );
 
-          if (configWithDefaults.localePrefix.mode === 'never') {
+          if (config.localePrefix.mode === 'never') {
             response = redirect(normalizedPathnameWithSearch);
           } else if (pathnameMatch.exact) {
             if (
               hasMatchedDefaultLocale &&
-              configWithDefaults.localePrefix.mode === 'as-needed'
+              config.localePrefix.mode === 'as-needed'
             ) {
               response = redirect(normalizedPathnameWithSearch);
             } else {
-              if (configWithDefaults.domains) {
+              if (config.domains) {
                 const pathDomain = getBestMatchingDomain(
                   domain,
                   pathnameMatch.locale,
@@ -283,15 +263,14 @@ export default function createMiddleware<Locales extends AllLocales>(
           }
         } else {
           if (
-            configWithDefaults.localePrefix.mode === 'never' ||
+            config.localePrefix.mode === 'never' ||
             (hasMatchedDefaultLocale &&
-              (configWithDefaults.localePrefix.mode === 'as-needed' ||
-                configWithDefaults.domains))
+              (config.localePrefix.mode === 'as-needed' || config.domains))
           ) {
             response = rewrite(`/${locale}${internalPathWithSearch}`);
           } else {
             response = redirect(
-              getLocalePrefix(locale, configWithDefaults.localePrefix) +
+              getLocalePrefix(locale, config.localePrefix) +
                 internalPathWithSearch
             );
           }
@@ -308,17 +287,17 @@ export default function createMiddleware<Locales extends AllLocales>(
     }
 
     if (
-      configWithDefaults.localePrefix.mode !== 'never' &&
-      configWithDefaults.alternateLinks &&
-      configWithDefaults.locales.length > 1
+      config.localePrefix.mode !== 'never' &&
+      config.alternateLinks &&
+      config.locales.length > 1
     ) {
       response.headers.set(
         'Link',
         getAlternateLinksHeaderValue({
-          config: configWithDefaults,
+          config,
           localizedPathnames:
             internalTemplateName != null
-              ? configWithDefaults.pathnames?.[internalTemplateName]
+              ? config.pathnames?.[internalTemplateName]
               : undefined,
           request,
           resolvedLocale: locale

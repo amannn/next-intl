@@ -2,7 +2,7 @@
 
 import {NextRequest} from 'next/server';
 import {it, expect, describe} from 'vitest';
-import {MiddlewareConfigWithDefaults} from '../../src/middleware/NextIntlMiddlewareConfig';
+import {receiveConfig} from '../../src/middleware/config';
 import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
 import {Pathnames} from '../../src/navigation/react-client';
 
@@ -29,13 +29,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     }
 
     it('works for prefixed routing (as-needed)', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
-        alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
-        localeDetection: true
-      };
+        localePrefix: 'as-needed'
+      });
 
       expect(
         getAlternateLinksHeaderValue({
@@ -79,13 +77,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('works for prefixed routing (as-needed) with `pathnames`', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'de']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'de'],
-        alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
-        localeDetection: true
-      };
+        localePrefix: 'as-needed'
+      });
       const pathnames = {
         '/': '/',
         '/about': {
@@ -160,13 +156,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('works for prefixed routing (always)', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
-        alternateLinks: true,
-        localePrefix: {mode: 'always'},
-        localeDetection: true
-      };
+        localePrefix: 'always'
+      });
 
       expect(
         getAlternateLinksHeaderValue({
@@ -195,7 +189,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'as-needed'`", () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es', 'fr']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
         alternateLinks: true,
@@ -218,7 +212,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
             locales: ['en', 'fr']
           }
         ]
-      };
+      });
 
       [
         getAlternateLinksHeaderValue({
@@ -265,12 +259,9 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'always'`", () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es', 'fr']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
-        alternateLinks: true,
-        localePrefix: {mode: 'always'},
-        localeDetection: true,
         domains: [
           {
             domain: 'example.com',
@@ -288,7 +279,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
             locales: ['en', 'fr']
           }
         ]
-      };
+      });
 
       [
         getAlternateLinksHeaderValue({
@@ -329,10 +320,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'fr']> = {
-        alternateLinks: true,
+      const config = receiveConfig({
         localePrefix: {mode: 'as-needed'},
-        localeDetection: true,
         defaultLocale: 'en',
         locales: ['en', 'fr'],
         domains: [
@@ -371,7 +360,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
             fr: '/categories/[[...slug]]'
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
-      };
+      });
 
       [
         getAlternateLinksHeaderValue({
@@ -485,13 +474,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('uses the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
-        alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
-        localeDetection: true
-      };
+        localePrefix: 'as-needed'
+      });
 
       expect(
         getAlternateLinksHeaderValue({
@@ -513,13 +500,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('keeps the port of an external host if provided', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
-        alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
-        localeDetection: true
-      };
+        localePrefix: 'as-needed'
+      });
 
       expect(
         getAlternateLinksHeaderValue({
@@ -541,13 +526,11 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('uses the external host name and the port from headers instead of the url with port of the incoming request (relevant when running the app behind a proxy)', () => {
-      const config: MiddlewareConfigWithDefaults<['en', 'es']> = {
+      const config = receiveConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
-        alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
-        localeDetection: true
-      };
+        localePrefix: 'as-needed'
+      });
 
       expect(
         getAlternateLinksHeaderValue({

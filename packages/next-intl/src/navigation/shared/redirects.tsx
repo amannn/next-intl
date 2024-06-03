@@ -2,11 +2,8 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation';
-import {
-  AllLocales,
-  LocalePrefixConfigVerbose,
-  ParametersExceptFirst
-} from '../../shared/types';
+import {AllLocales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import {getLocalePrefix, isLocalHref, prefixPathname} from '../../shared/utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {

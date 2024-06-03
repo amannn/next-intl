@@ -1,12 +1,9 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
+import {AllLocales, DomainConfig, Pathnames} from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {AllLocales} from '../shared/types';
-import {
-  DomainConfig,
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
+import {MiddlewareRoutingConfig} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<Locales extends AllLocales>(
@@ -62,14 +59,17 @@ function getLocaleFromCookie<Locales extends AllLocales>(
   }
 }
 
-function resolveLocaleFromPrefix<Locales extends AllLocales>(
+function resolveLocaleFromPrefix<
+  Locales extends AllLocales,
+  AppPathnames extends Pathnames<Locales>
+>(
   {
     defaultLocale,
     localeDetection,
     localePrefix,
     locales
   }: Pick<
-    MiddlewareConfigWithDefaults<Locales>,
+    MiddlewareRoutingConfig<Locales, AppPathnames>,
     'defaultLocale' | 'localeDetection' | 'locales' | 'localePrefix'
   >,
   requestHeaders: Headers,
@@ -101,8 +101,11 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
   return locale;
 }
 
-function resolveLocaleFromDomain<Locales extends AllLocales>(
-  config: MiddlewareConfigWithDefaults<Locales>,
+function resolveLocaleFromDomain<
+  Locales extends AllLocales,
+  AppPathnames extends Pathnames<Locales>
+>(
+  config: MiddlewareRoutingConfig<Locales, AppPathnames>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -173,8 +176,11 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
   return {locale, domain};
 }
 
-export default function resolveLocale<Locales extends AllLocales>(
-  config: MiddlewareConfigWithDefaults<Locales>,
+export default function resolveLocale<
+  Locales extends AllLocales,
+  AppPathnames extends Pathnames<Locales>
+>(
+  config: MiddlewareRoutingConfig<Locales, AppPathnames>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
