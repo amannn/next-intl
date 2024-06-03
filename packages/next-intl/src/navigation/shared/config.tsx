@@ -3,7 +3,7 @@ import {
   receiveLocalePrefixConfig
 } from '../../routing/config';
 import {
-  AllLocales,
+  Locales,
   LocalePrefixConfigVerbose,
   Pathnames
 } from '../../routing/types';
@@ -12,21 +12,21 @@ import {
  * Shared pathnames
  */
 
-export type SharedNavigationRoutingConfigInput<Locales extends AllLocales> =
-  RoutingBaseConfigInput<Locales> & {
-    locales?: Locales;
+export type SharedNavigationRoutingConfigInput<AppLocales extends Locales> =
+  RoutingBaseConfigInput<AppLocales> & {
+    locales?: AppLocales;
   };
 
-export type SharedNavigationRoutingConfig<Locales extends AllLocales> =
-  SharedNavigationRoutingConfigInput<Locales> & {
-    localePrefix: LocalePrefixConfigVerbose<Locales>;
+export type SharedNavigationRoutingConfig<AppLocales extends Locales> =
+  SharedNavigationRoutingConfigInput<AppLocales> & {
+    localePrefix: LocalePrefixConfigVerbose<AppLocales>;
   };
 
 export function receiveSharedNavigationRoutingConfig<
-  Locales extends AllLocales
+  AppLocales extends Locales
 >(
-  input?: SharedNavigationRoutingConfigInput<Locales>
-): SharedNavigationRoutingConfig<Locales> {
+  input?: SharedNavigationRoutingConfigInput<AppLocales>
+): SharedNavigationRoutingConfig<AppLocales> {
   return {
     ...input,
     localePrefix: receiveLocalePrefixConfig(input?.localePrefix)
@@ -38,28 +38,28 @@ export function receiveSharedNavigationRoutingConfig<
  */
 
 export type LocalizedNavigationRoutingConfigInput<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
-> = RoutingBaseConfigInput<Locales> & {
-  locales: Locales;
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = RoutingBaseConfigInput<AppLocales> & {
+  locales: AppLocales;
 
   /** Maps internal pathnames to external ones which can be localized per locale. */
   pathnames: AppPathnames;
 };
 
 export type LocalizedNavigationRoutingConfig<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
-> = LocalizedNavigationRoutingConfigInput<Locales, AppPathnames> & {
-  localePrefix: LocalePrefixConfigVerbose<Locales>;
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames> & {
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
 };
 
 export function receiveLocalizedNavigationRoutingConfig<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 >(
-  input: LocalizedNavigationRoutingConfigInput<Locales, AppPathnames>
-): LocalizedNavigationRoutingConfig<Locales, AppPathnames> {
+  input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>
+): LocalizedNavigationRoutingConfig<AppLocales, AppPathnames> {
   return {
     ...input,
     localePrefix: receiveLocalePrefixConfig(input?.localePrefix)

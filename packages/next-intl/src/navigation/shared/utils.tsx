@@ -1,6 +1,6 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {AllLocales, Pathnames} from '../../routing/types';
+import {Locales, Pathnames} from '../../routing/types';
 import {matchesPathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
@@ -63,36 +63,36 @@ type StrictUrlObject<Pathname> = Omit<UrlObject, 'pathname'> & {
 };
 
 export function compileLocalizedPathname<
-  Locales extends AllLocales,
+  AppLocales extends Locales,
   Pathname
 >(opts: {
-  locale: Locales[number];
+  locale: AppLocales[number];
   pathname: Pathname;
   params?: StrictParams<Pathname>;
-  pathnames: Pathnames<Locales>;
+  pathnames: Pathnames<AppLocales>;
   query?: Record<string, SearchParamValue>;
 }): string;
 export function compileLocalizedPathname<
-  Locales extends AllLocales,
+  AppLocales extends Locales,
   Pathname
 >(opts: {
-  locale: Locales[number];
+  locale: AppLocales[number];
   pathname: StrictUrlObject<Pathname>;
   params?: StrictParams<Pathname>;
-  pathnames: Pathnames<Locales>;
+  pathnames: Pathnames<AppLocales>;
   query?: Record<string, SearchParamValue>;
 }): UrlObject;
-export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
+export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   pathname,
   locale,
   params,
   pathnames,
   query
 }: {
-  locale: Locales[number];
+  locale: AppLocales[number];
   pathname: keyof typeof pathnames | StrictUrlObject<keyof typeof pathnames>;
   params?: StrictParams<Pathname>;
-  pathnames: Pathnames<Locales>;
+  pathnames: Pathnames<AppLocales>;
   query?: Record<string, SearchParamValue>;
 }) {
   function getNamedPath(value: keyof typeof pathnames) {
@@ -104,7 +104,7 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   }
 
   function compilePath(
-    namedPath: Pathnames<Locales>[keyof Pathnames<Locales>]
+    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>]
   ) {
     const template =
       typeof namedPath === 'string' ? namedPath : namedPath[locale];
@@ -152,14 +152,14 @@ export function compileLocalizedPathname<Locales extends AllLocales, Pathname>({
   }
 }
 
-export function getRoute<Locales extends AllLocales>({
+export function getRoute<AppLocales extends Locales>({
   locale,
   pathname,
   pathnames
 }: {
-  locale: Locales[number];
+  locale: AppLocales[number];
   pathname: string;
-  pathnames: Pathnames<Locales>;
+  pathnames: Pathnames<AppLocales>;
 }) {
   const decoded = decodeURI(pathname);
 
@@ -173,7 +173,7 @@ export function getRoute<Locales extends AllLocales>({
     template = pathname;
   }
 
-  return template as keyof Pathnames<Locales>;
+  return template as keyof Pathnames<AppLocales>;
 }
 
 export function getBasePath(

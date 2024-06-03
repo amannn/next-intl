@@ -2,18 +2,14 @@ import {
   RoutingBaseConfigInput,
   receiveLocalePrefixConfig
 } from '../routing/config';
-import {
-  AllLocales,
-  LocalePrefixConfigVerbose,
-  Pathnames
-} from '../routing/types';
+import {Locales, LocalePrefixConfigVerbose, Pathnames} from '../routing/types';
 
 export type MiddlewareRoutingConfigInput<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
-> = RoutingBaseConfigInput<Locales> & {
-  locales: Locales;
-  defaultLocale: Locales[number];
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = RoutingBaseConfigInput<AppLocales> & {
+  locales: AppLocales;
+  defaultLocale: AppLocales[number];
 
   /** Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http */
   alternateLinks?: boolean;
@@ -26,23 +22,23 @@ export type MiddlewareRoutingConfigInput<
 };
 
 export type MiddlewareRoutingConfig<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 > = Omit<
-  MiddlewareRoutingConfigInput<Locales, AppPathnames>,
+  MiddlewareRoutingConfigInput<AppLocales, AppPathnames>,
   'alternateLinks' | 'localeDetection' | 'localePrefix'
 > & {
   alternateLinks: boolean;
   localeDetection: boolean;
-  localePrefix: LocalePrefixConfigVerbose<Locales>;
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
 };
 
 export function receiveConfig<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 >(
-  input: MiddlewareRoutingConfigInput<Locales, AppPathnames>
-): MiddlewareRoutingConfig<Locales, AppPathnames> {
+  input: MiddlewareRoutingConfigInput<AppLocales, AppPathnames>
+): MiddlewareRoutingConfig<AppLocales, AppPathnames> {
   return {
     ...input,
     alternateLinks: input?.alternateLinks ?? true,

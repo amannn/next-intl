@@ -3,7 +3,7 @@
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {
   getLocalePrefix,
   hasPathnamePrefixed,
@@ -23,8 +23,8 @@ import {
  * const pathname = usePathname();
  * ```
  */
-export default function useBasePathname<Locales extends AllLocales>(
-  localePrefix: LocalePrefixConfigVerbose<Locales>
+export default function useBasePathname<AppLocales extends Locales>(
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.

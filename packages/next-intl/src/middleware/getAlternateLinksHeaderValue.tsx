@@ -1,5 +1,5 @@
 import {NextRequest} from 'next/server';
-import {AllLocales, Pathnames} from '../routing/types';
+import {Locales, Pathnames} from '../routing/types';
 import {MiddlewareRoutingConfig} from './config';
 import {
   applyBasePath,
@@ -14,18 +14,18 @@ import {
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
  */
 export default function getAlternateLinksHeaderValue<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 >({
   config,
   localizedPathnames,
   request,
   resolvedLocale
 }: {
-  config: MiddlewareRoutingConfig<Locales, AppPathnames>;
+  config: MiddlewareRoutingConfig<AppLocales, AppPathnames>;
   request: NextRequest;
-  resolvedLocale: Locales[number];
-  localizedPathnames?: Pathnames<Locales>[string];
+  resolvedLocale: AppLocales[number];
+  localizedPathnames?: Pathnames<AppLocales>[string];
 }) {
   const normalizedUrl = request.nextUrl.clone();
 
@@ -52,7 +52,7 @@ export default function getAlternateLinksHeaderValue<
     return `<${url.toString()}>; rel="alternate"; hreflang="${locale}"`;
   }
 
-  function getLocalizedPathname(pathname: string, locale: Locales[number]) {
+  function getLocalizedPathname(pathname: string, locale: AppLocales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
       return formatTemplatePathname(
         pathname,

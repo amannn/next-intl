@@ -1,5 +1,5 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import {AllLocales} from '../../routing/types';
+import {Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   SharedNavigationRoutingConfigInput,
@@ -11,17 +11,17 @@ import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
-  const Locales extends AllLocales
->(input?: SharedNavigationRoutingConfigInput<Locales>) {
+  const AppLocales extends Locales
+>(input?: SharedNavigationRoutingConfigInput<AppLocales>) {
   const config = receiveSharedNavigationRoutingConfig(input);
 
   type LinkProps = Omit<
-    ComponentProps<typeof ClientLink<Locales>>,
+    ComponentProps<typeof ClientLink<AppLocales>>,
     'localePrefix'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
-      <ClientLink<Locales>
+      <ClientLink<AppLocales>
         ref={ref}
         localePrefix={config.localePrefix}
         {...props}
@@ -60,7 +60,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function useRouter() {
-    return useBaseRouter<Locales>(config.localePrefix);
+    return useBaseRouter<AppLocales>(config.localePrefix);
   }
 
   return {

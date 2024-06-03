@@ -1,7 +1,7 @@
 import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
-import {AllLocales, LocalePrefixConfigVerbose} from '../routing/types';
+import {Locales, LocalePrefixConfigVerbose} from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
@@ -109,9 +109,9 @@ export function matchesPathname(
   return regex.test(pathname);
 }
 
-export function getLocalePrefix<Locales extends AllLocales>(
-  locale: Locales[number],
-  localePrefix: LocalePrefixConfigVerbose<Locales>
+export function getLocalePrefix<AppLocales extends Locales>(
+  locale: AppLocales[number],
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ) {
   return (
     (localePrefix.mode !== 'never' && localePrefix.prefixes?.[locale]) ||

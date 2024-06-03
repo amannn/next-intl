@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import {AllLocales, Pathnames} from '../../routing/types';
+import {Locales, Pathnames} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
@@ -16,9 +16,9 @@ import ServerLink from './ServerLink';
 import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
->(input: LocalizedNavigationRoutingConfigInput<Locales, AppPathnames>) {
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
   const config = receiveLocalizedNavigationRoutingConfig(input);
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
@@ -26,7 +26,7 @@ export default function createLocalizedPathnamesNavigation<
     'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locales[number];
+    locale?: AppLocales[number];
   };
   function Link<Pathname extends keyof AppPathnames>({
     href,
@@ -38,7 +38,7 @@ export default function createLocalizedPathnamesNavigation<
 
     return (
       <ServerLink
-        href={compileLocalizedPathname<Locales, Pathname>({
+        href={compileLocalizedPathname<AppLocales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- This is ok
           pathname: href,
@@ -81,7 +81,7 @@ export default function createLocalizedPathnamesNavigation<
     href,
     locale
   }: {
-    locale: Locales[number];
+    locale: AppLocales[number];
     href: HrefOrHrefWithParams<keyof AppPathnames>;
   }) {
     return compileLocalizedPathname({

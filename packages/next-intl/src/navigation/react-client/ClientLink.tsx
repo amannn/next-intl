@@ -1,20 +1,20 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {getLocalePrefix} from '../../shared/utils';
 import BaseLink from '../shared/BaseLink';
 
-type Props<Locales extends AllLocales> = Omit<
+type Props<AppLocales extends Locales> = Omit<
   ComponentProps<typeof BaseLink>,
   'locale' | 'prefix' | 'localePrefixMode'
 > & {
-  locale?: Locales[number];
-  localePrefix: LocalePrefixConfigVerbose<Locales>;
+  locale?: AppLocales[number];
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
 };
 
-function ClientLink<Locales extends AllLocales>(
-  {locale, localePrefix, ...rest}: Props<Locales>,
-  ref: Props<Locales>['ref']
+function ClientLink<AppLocales extends Locales>(
+  {locale, localePrefix, ...rest}: Props<AppLocales>,
+  ref: Props<AppLocales>['ref']
 ) {
   const defaultLocale = useLocale();
   const finalLocale = locale || defaultLocale;
@@ -52,9 +52,9 @@ function ClientLink<Locales extends AllLocales>(
  * page to be overwritten before the user even decides to change the locale.
  */
 const ClientLinkWithRef = forwardRef(ClientLink) as <
-  Locales extends AllLocales
+  AppLocales extends Locales
 >(
-  props: Props<Locales> & {ref?: Props<Locales>['ref']}
+  props: Props<AppLocales> & {ref?: Props<AppLocales>['ref']}
 ) => ReactElement;
 (ClientLinkWithRef as any).displayName = 'ClientLink';
 export default ClientLinkWithRef;

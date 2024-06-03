@@ -1,40 +1,40 @@
-export type AllLocales = ReadonlyArray<string>;
+export type Locales = ReadonlyArray<string>;
 
 export type LocalePrefixMode = 'always' | 'as-needed' | 'never';
 
-export type LocalePrefixes<Locales extends AllLocales> = Partial<
-  Record<Locales[number], string>
+export type LocalePrefixes<AppLocales extends Locales> = Partial<
+  Record<AppLocales[number], string>
 >;
 
-export type LocalePrefixConfigVerbose<Locales extends AllLocales> =
+export type LocalePrefixConfigVerbose<AppLocales extends Locales> =
   | {
       mode: 'always';
-      prefixes?: LocalePrefixes<Locales>;
+      prefixes?: LocalePrefixes<AppLocales>;
     }
   | {
       mode: 'as-needed';
-      prefixes?: LocalePrefixes<Locales>;
+      prefixes?: LocalePrefixes<AppLocales>;
     }
   | {
       mode: 'never';
     };
 
-export type LocalePrefixConfig<Locales extends AllLocales> =
+export type LocalePrefixConfig<AppLocales extends Locales> =
   | LocalePrefixMode
-  | LocalePrefixConfigVerbose<Locales>;
+  | LocalePrefixConfigVerbose<AppLocales>;
 
-export type Pathnames<Locales extends AllLocales> = Record<
+export type Pathnames<AppLocales extends Locales> = Record<
   string,
-  Record<Locales[number], string> | string
+  Record<AppLocales[number], string> | string
 >;
 
-export type DomainConfig<Locales extends AllLocales> = {
+export type DomainConfig<AppLocales extends Locales> = {
   /* Used by default if none of the defined locales match. */
-  defaultLocale: Locales[number];
+  defaultLocale: AppLocales[number];
 
   /** The domain name (e.g. "example.com", "www.example.com" or "fr.example.com"). Note that the `x-forwarded-host` or alternatively the `host` header will be used to determine the requested domain. */
   domain: string;
 
   /** Optionally restrict which locales are available on this domain. */
-  locales?: Locales;
+  locales?: AppLocales;
 };

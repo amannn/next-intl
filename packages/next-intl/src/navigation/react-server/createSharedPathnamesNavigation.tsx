@@ -1,5 +1,5 @@
 import React, {ComponentProps} from 'react';
-import {AllLocales} from '../../routing/types';
+import {Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   SharedNavigationRoutingConfigInput,
@@ -9,8 +9,8 @@ import ServerLink from './ServerLink';
 import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
-  Locales extends AllLocales
->(input?: SharedNavigationRoutingConfigInput<Locales>) {
+  AppLocales extends Locales
+>(input?: SharedNavigationRoutingConfigInput<AppLocales>) {
   const config = receiveSharedNavigationRoutingConfig(input);
 
   function notSupported(hookName: string) {
@@ -23,12 +23,12 @@ export default function createSharedPathnamesNavigation<
 
   function Link(
     props: Omit<
-      ComponentProps<typeof ServerLink<Locales>>,
+      ComponentProps<typeof ServerLink<AppLocales>>,
       'localePrefix' | 'locales'
     >
   ) {
     return (
-      <ServerLink<Locales> localePrefix={config.localePrefix} {...props} />
+      <ServerLink<AppLocales> localePrefix={config.localePrefix} {...props} />
     );
   }
 

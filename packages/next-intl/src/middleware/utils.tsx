@@ -1,5 +1,5 @@
 import {
-  AllLocales,
+  Locales,
   LocalePrefixConfigVerbose,
   DomainConfig,
   Pathnames
@@ -74,13 +74,13 @@ export function getSortedPathnames(pathnames: Array<string>) {
 }
 
 export function getInternalTemplate<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 >(
   pathnames: AppPathnames,
   pathname: string,
-  locale: Locales[number]
-): [Locales[number] | undefined, keyof AppPathnames | undefined] {
+  locale: AppLocales[number]
+): [AppLocales[number] | undefined, keyof AppPathnames | undefined] {
   const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
 
   // Try to find a localized pathname that matches
@@ -143,10 +143,10 @@ export function formatTemplatePathname(
 /**
  * Removes potential prefixes from the pathname.
  */
-export function getNormalizedPathname<Locales extends AllLocales>(
+export function getNormalizedPathname<AppLocales extends Locales>(
   pathname: string,
-  locales: Locales,
-  localePrefix: LocalePrefixConfigVerbose<Locales>
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -178,23 +178,23 @@ export function findCaseInsensitiveString(
   return strings.find((cur) => cur.toLowerCase() === candidate.toLowerCase());
 }
 
-export function getLocalePrefixes<Locales extends AllLocales>(
-  locales: Locales,
-  localePrefix: LocalePrefixConfigVerbose<Locales>
-): Array<[Locales[number], string]> {
+export function getLocalePrefixes<AppLocales extends Locales>(
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+): Array<[AppLocales[number], string]> {
   return locales.map((locale) => [
-    locale as Locales[number],
+    locale as AppLocales[number],
     getLocalePrefix(locale, localePrefix)
   ]);
 }
 
-export function getPathnameMatch<Locales extends AllLocales>(
+export function getPathnameMatch<AppLocales extends Locales>(
   pathname: string,
-  locales: Locales,
-  localePrefix: LocalePrefixConfigVerbose<Locales>
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ):
   | {
-      locale: Locales[number];
+      locale: AppLocales[number];
       prefix: string;
       matchedPrefix: string;
       exact?: boolean;
@@ -275,9 +275,9 @@ export function getHost(requestHeaders: Headers) {
   );
 }
 
-export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
+export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
   locale: string,
-  domain: DomainConfig<Locales>
+  domain: DomainConfig<AppLocales>
 ) {
   return (
     domain.defaultLocale === locale ||
@@ -286,10 +286,10 @@ export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
   );
 }
 
-export function getBestMatchingDomain<Locales extends AllLocales>(
-  curHostDomain: DomainConfig<Locales> | undefined,
+export function getBestMatchingDomain<AppLocales extends Locales>(
+  curHostDomain: DomainConfig<AppLocales> | undefined,
   locale: string,
-  domainConfigs: Array<DomainConfig<Locales>>
+  domainConfigs: Array<DomainConfig<AppLocales>>
 ) {
   let domainConfig;
 

@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {AllLocales, Pathnames} from '../routing/types';
+import {Locales, Pathnames} from '../routing/types';
 import {
   COOKIE_LOCALE_NAME,
   COOKIE_MAX_AGE,
@@ -23,9 +23,9 @@ import {
 } from './utils';
 
 export default function createMiddleware<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
->(input: MiddlewareRoutingConfigInput<Locales, AppPathnames>) {
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(input: MiddlewareRoutingConfigInput<AppLocales, AppPathnames>) {
   const config = receiveConfig(input);
 
   return function middleware(request: NextRequest) {
@@ -143,7 +143,7 @@ export default function createMiddleware<
 
     let pathname = nextPathname;
     if (config.pathnames) {
-      let resolvedTemplateLocale: Locales[number] | undefined;
+      let resolvedTemplateLocale: AppLocales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
         config.pathnames,
         normalizedPathname,

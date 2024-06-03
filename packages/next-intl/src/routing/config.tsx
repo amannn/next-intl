@@ -1,5 +1,5 @@
 import {
-  AllLocales,
+  Locales,
   DomainConfig,
   LocalePrefixConfig,
   LocalePrefixConfigVerbose
@@ -11,16 +11,16 @@ import {
  * different. This type declares the shared base config that is accepted by all
  * of them. Properties that are different are declared in consuming types.
  */
-export type RoutingBaseConfigInput<Locales extends AllLocales> = {
+export type RoutingBaseConfigInput<AppLocales extends Locales> = {
   /** @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix */
-  localePrefix?: LocalePrefixConfig<Locales>;
+  localePrefix?: LocalePrefixConfig<AppLocales>;
   /** Can be used to change the locale handling per domain. */
-  domains?: Array<DomainConfig<Locales>>;
+  domains?: Array<DomainConfig<AppLocales>>;
 };
 
-export function receiveLocalePrefixConfig<Locales extends AllLocales>(
-  localePrefix?: LocalePrefixConfig<Locales>
-): LocalePrefixConfigVerbose<Locales> {
+export function receiveLocalePrefixConfig<AppLocales extends Locales>(
+  localePrefix?: LocalePrefixConfig<AppLocales>
+): LocalePrefixConfigVerbose<AppLocales> {
   return typeof localePrefix === 'object'
     ? localePrefix
     : {mode: localePrefix || 'always'};

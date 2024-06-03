@@ -1,6 +1,6 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales, Pathnames} from '../../routing/types';
+import {Locales, Pathnames} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   LocalizedNavigationRoutingConfigInput,
@@ -19,12 +19,12 @@ import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales,
-  AppPathnames extends Pathnames<Locales>
->(input: LocalizedNavigationRoutingConfigInput<Locales, AppPathnames>) {
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
   const config = receiveLocalizedNavigationRoutingConfig(input);
 
-  function useTypedLocale(): Locales[number] {
+  function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
     const isValid = config.locales.includes(locale as any);
     if (!isValid) {
@@ -42,7 +42,7 @@ export default function createLocalizedPathnamesNavigation<
     'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locales[number];
+    locale?: AppLocales[number];
   };
   function Link<Pathname extends keyof AppPathnames>(
     {href, locale, ...rest}: LinkProps<Pathname>,
@@ -54,7 +54,7 @@ export default function createLocalizedPathnamesNavigation<
     return (
       <ClientLink
         ref={ref}
-        href={compileLocalizedPathname<Locales, Pathname>({
+        href={compileLocalizedPathname<AppLocales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- This is ok
           pathname: href,
@@ -158,7 +158,7 @@ export default function createLocalizedPathnamesNavigation<
     href,
     locale
   }: {
-    locale: Locales[number];
+    locale: AppLocales[number];
     href: HrefOrHrefWithParams<keyof AppPathnames>;
   }) {
     return compileLocalizedPathname({
