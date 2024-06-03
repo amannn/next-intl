@@ -2,8 +2,10 @@ export type Locales = ReadonlyArray<string>;
 
 export type LocalePrefixMode = 'always' | 'as-needed' | 'never';
 
+type Pathname = `/${string}`;
+
 export type LocalePrefixes<AppLocales extends Locales> = Partial<
-  Record<AppLocales[number], string>
+  Record<AppLocales[number], Pathname>
 >;
 
 export type LocalePrefixConfigVerbose<AppLocales extends Locales> =
@@ -24,8 +26,8 @@ export type LocalePrefixConfig<AppLocales extends Locales> =
   | LocalePrefixConfigVerbose<AppLocales>;
 
 export type Pathnames<AppLocales extends Locales> = Record<
-  string,
-  Record<AppLocales[number], string> | string
+  Pathname,
+  Record<AppLocales[number], Pathname> | Pathname
 >;
 
 export type DomainConfig<AppLocales extends Locales> = {

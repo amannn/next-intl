@@ -14,6 +14,7 @@ const config = {
     'server.react-server': 'src/server.react-server.tsx',
 
     middleware: 'src/middleware.tsx',
+    routing: 'src/routing.tsx',
     plugin: 'src/plugin.tsx',
     config: 'src/config.tsx'
   },
