@@ -12,10 +12,11 @@ The middleware handles redirects and rewrites based on the detected user locale.
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
+import {locales} from './config';
 
 export default createMiddleware({
   // A list of all locales that are supported
-  locales: ['en', 'de'],
+  locales: locales,
 
   // Used when no locale matches
   defaultLocale: 'en'
@@ -29,22 +30,15 @@ export const config = {
 
 In addition to handling i18n routing, the middleware sets the `link` header to inform search engines that your content is available in different languages (see [alternate links](#alternate-links)).
 
-## Strategies
+## Locale detection
 
-There are two strategies for detecting the locale:
+The locale is detected based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
 
-1.  [Prefix-based routing (default)](#prefix-based-routing)
-2.  [Domain-based routing](#domain-based-routing)
+### Prefix-based routing (default) [#prefix-based-routing]
 
-Once a locale is detected, it will be saved in the `NEXT_LOCALE` cookie.
+By default, [prefix-based routing](/docs/routing#locale-prefix) is used to determine the locale of a request.
 
-### Strategy 1: Prefix-based routing (default) [#prefix-based-routing]
-
-Since your pages are nested within a `[locale]` folder, all routes are by default prefixed with one of your supported locales (e.g. `/en/about`).
-
-#### Locale detection [#prefix-locale-detection]
-
-The locale is detected based on these priorities:
+In this case, the locale is detected based on these priorities:
 
 1. A locale prefix is present in the pathname (e.g. `/en/about`)
 2. A cookie is present that contains a previously detected locale
@@ -63,7 +57,7 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 
 <Callout>
   You can optionally remove the locale prefix in pathnames by changing the
-  [`localePrefix`](#locale-prefix) setting.
+  [`localePrefix`](/docs/routing#locale-prefix) setting.
 </Callout>
 
 <Details id="accept-language-matching">
@@ -82,51 +76,9 @@ In contrast, the "best fit" algorithm compares the _distance_ between the user's
 
 </Details>
 
-### Strategy 2: Domain-based routing [#domain-based-routing]
+### Domain-based routing [#domain-based-routing]
 
-If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales to the middleware.
-
-**Examples:**
-
-- `us.example.com/en`
-- `ca.example.com/en`
-- `ca.example.com/fr`
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // All locales across all domains
-  locales: ['en', 'fr'],
-
-  // Used when no domain matches (e.g. on localhost)
-  defaultLocale: 'en',
-
-  domains: [
-    {
-      domain: 'us.example.com',
-      defaultLocale: 'en',
-      // Optionally restrict the locales available on this domain
-      locales: ['en']
-    },
-    {
-      domain: 'ca.example.com',
-      defaultLocale: 'en'
-      // If there are no `locales` specified on a domain,
-      // all available locales will be supported here
-    }
-  ]
-});
-```
-
-<Callout>
-  You can optionally remove the locale prefix in pathnames by changing the
-  [`localePrefix`](#locale-prefix) setting.
-</Callout>
-
-#### Locale detection [#domain-locale-detection]
-
-To match the request against the available domains, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
+If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
 
 The locale is detected based on these priorities:
 
@@ -156,91 +108,9 @@ The bestmatching domain is detected based on these priorities:
 
 </Details>
 
-## Further configuration
+## Configuration
 
-### Locale prefix
-
-By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `src/app/[locale]/about/page.tsx` → `/en/about`). You can however customize the routing to optionally remove the prefix.
-
-Note that if you're using [the navigation APIs from `next-intl`](/docs/routing/navigation), you want to make sure your `localePrefix` setting matches your middleware configuration.
-
-#### Always use a locale prefix (default) [#locale-prefix-always]
-
-By default, pathnames always start with the locale (e.g. `/en/about`).
-
-```tsx filename="middleware.ts" {6}
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // ... other config
-
-  localePrefix: 'always' // This is the default
-});
-```
-
-<Details id="redirect-unprefixed-pathnames">
-<summary>How can I redirect unprefixed pathnames?</summary>
-
-If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](#matcher-no-prefix) too.
-
-</Details>
-
-#### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
-
-If you don't want to include a locale prefix for the default locale, but only for non-default locales, you can configure the middleware accordingly:
-
-```tsx filename="middleware.ts" {6}
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // ... other config
-
-  localePrefix: 'as-needed'
-});
-```
-
-In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
-
-**Note that:**
-
-1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
-2. If you use [the `Link` component](/docs/routing/navigation#link), the initial render will point to the prefixed version but will be patched immediately on the client once the component detects that the default locale has rendered. The prefixed version is still valid, but SEO tools might report a hint that the link points to a redirect.
-
-#### Never use a locale prefix [#locale-prefix-never]
-
-<Callout>
-  If you'd like to provide a locale to `next-intl`, e.g. based on user settings,
-  you can consider setting up `next-intl` [without i18n
-  routing](/docs/getting-started/app-router/without-i18n-routing). This way, you
-  don't need to use the middleware in the first place.
-</Callout>
-
-In case you're using the middleware, but you don't want your pathnames to be prefixed with a locale, you can configure the middleware to never show a locale prefix in the URL.
-
-This can be useful in the following cases:
-
-1. You're using [domain-based routing](#domain-based-routing) and you support only a single locale per domain
-2. You're using a cookie to determine the locale but would like to enable static rendering
-
-```tsx filename="middleware.ts" {6}
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // ... other config
-
-  localePrefix: 'never'
-});
-```
-
-In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
-
-**Note that:**
-
-1. If you use this strategy, you should make sure that [your matcher detects unprefixed pathnames](#matcher-no-prefix).
-2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale in the middleware. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. [Alternate links](#alternate-links) are disabled in this mode since there might not be distinct URLs per locale.
-
-### Locale detection [#locale-detection]
+### Turning off locale detection [#locale-detection]
 
 If you want to rely entirely on the URL to resolve the locale, you can disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
@@ -324,131 +194,6 @@ export default async function middleware(request: NextRequest) {
 
 </Details>
 
-### Localizing pathnames
-
-Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
-
-- `/en/about`
-- `/de/ueber-uns`
-
-Since you want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  defaultLocale: 'en',
-  locales: ['en', 'de'],
-
-  // The `pathnames` object holds pairs of internal and
-  // external paths. Based on the locale, the external
-  // paths are rewritten to the shared, internal ones.
-  pathnames: {
-    // If all locales use the same pathname, a single
-    // external path can be used for all locales.
-    '/': '/',
-    '/blog': '/blog',
-
-    // If locales use different paths, you can
-    // specify each external path per locale.
-    '/about': {
-      en: '/about',
-      de: '/ueber-uns'
-    },
-
-    // Dynamic params are supported via square brackets
-    '/news/[articleSlug]-[articleId]': {
-      en: '/news/[articleSlug]-[articleId]',
-      de: '/neuigkeiten/[articleSlug]-[articleId]'
-    },
-
-    // Static pathnames that overlap with dynamic segments
-    // will be prioritized over the dynamic segment
-    '/news/just-in': {
-      en: '/news/just-in',
-      de: '/neuigkeiten/aktuell'
-    },
-
-    // Also (optional) catch-all segments are supported
-    '/categories/[...slug]': {
-      en: '/categories/[...slug]',
-      de: '/kategorien/[...slug]'
-    }
-  }
-});
-```
-
-<Callout>
-  If you have pathname localization set up in the middleware, you likely want to
-  use the [localized navigation
-  APIs](/docs/routing/navigation#localized-pathnames) in your components.
-</Callout>
-
-<Details id="localized-pathnames-revalidation">
-<summary>How can I revalidate localized pathnames?</summary>
-
-Depending on if a route is generated statically (at build time) or dynamically (at runtime), [`revalidatePath`](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) needs to be called either for the localized or the internal pathname.
-
-Consider this example:
-
-```
-app
-└── [locale]
-    └── news
-        └── [slug]
-```
-
-… with this middleware configuration:
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  defaultLocale: 'en',
-  locales: ['en', 'fr'],
-  pathnames: {
-    '/news/[slug]': {
-      en: '/news/[slug]',
-      fr: '/infos/[slug]'
-    }
-  }
-});
-```
-
-Depending on whether `some-article` was included in [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or not, you can revalidate the route like this:
-
-```tsx
-// Statically generated at build time
-revalidatePath('/fr/news/some-article');
-
-// Dynamically generated at runtime:
-revalidatePath('/fr/infos/some-article');
-```
-
-When in doubt, you can revalidate both paths to be on the safe side.
-
-See also: [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/59825)
-
-</Details>
-
-<Details id="localized-pathnames-dynamic-segments">
-<summary>How can I localize dynamic segments?</summary>
-
-If you have a route like `/news/[articleSlug]-[articleId]`, you may want to localize the `articleSlug` part in the pathname like this:
-
-```
-/en/news/launch-of-new-product-94812
-/de/neuigkeiten/produktneuheit-94812
-```
-
-In this case, the localized slug can either be provided by the backend or generated in the frontend by slugifying the localized article title.
-
-A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` doesn't match.
-
-If you localize the values for dynamic segments, you might want to turn off [alternate links](#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
-
-</Details>
-
 ### Matcher config
 
 The middleware is intended to only run on pages, not on arbitrary files that you serve independently of the user locale (e.g. `/favicon.ico`).
@@ -470,17 +215,13 @@ This enables:
 <Details id="matcher-avoid-hardcoding">
 <summary>Can I avoid hardcoding the locales in the `matcher` config?</summary>
 
-A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, in case you're self-hosting Next.js via a Node.js server, you can implement the matcher dynamically instead:
+A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, you can implement the matcher dynamically instead:
 
 ```tsx filename="middleware.ts"
 import {NextRequest} from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 
-// Can be imported from a shared module
-const locales = ['en', 'de'];
-
 const intlMiddleware = createIntlMiddleware({
-  locales
   // ...
 });
 
@@ -528,7 +269,7 @@ export const config = {
 
 {/* Keep this in sync with `packages/next-intl/test/middleware/middleware.test.tsx` */}
 
-Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't accidentally rewritten.
+Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't rewritten by accident.
 
 ### Base path
 
@@ -712,12 +453,12 @@ For pathnames specified in [the `pages` object](https://next-auth.js.org/configu
 import {withAuth} from 'next-auth/middleware';
 import createIntlMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
+import {locales} from './config';
 
-const locales = ['en', 'de'];
 const publicPages = ['/', '/login'];
 
 const intlMiddleware = createIntlMiddleware({
-  locales,
+  locales: locales,
   localePrefix: 'as-needed',
   defaultLocale: 'en'
 });

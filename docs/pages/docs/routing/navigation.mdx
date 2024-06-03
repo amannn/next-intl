@@ -11,59 +11,24 @@ import Details from 'components/Details';
 
 `next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
 
-## Strategies
+Depending on if you're using localized pathnames (i.e. the [`pathnames`](/docs/routing#pathnames) setting), you can pick from one of these functions to create the corresponding navigation APIs:
 
-There are two strategies that you can use based on your needs.
+- `createSharedPathnamesNavigation`: Pathnames are shared across all locales (default)
+- `createLocalizedPathnamesNavigation`: Pathnames are provided per locale
 
-**Shared pathnames:** The simplest case is when your app uses the same pathnames, regardless of the locale.
+These functions are typically called in a central module like `src/navigation.ts` in order to provide easy access to navigation APIs in your components.
 
-For example:
+**Tip:** To ensure consistent usage in your app, you can consider [linting for usage of these APIs](/docs/workflows/linting#consistent-usage-of-navigation-apis).
 
-- `/en/about`
-- `/de/about`
-
-**Localized pathnames:** Many apps choose to localize pathnames, especially when search engine optimization is relevant. In this case, you'll provide distinct pathnames based on the user locale.
-
-For example:
-
-- `/en/about`
-- `/de/ueber-uns`
-
-**Note:** The terms "shared" and "localized" pathnames are used to refer to pathnames that are created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.
-
----
-
-Each strategy will provide you with corresponding [navigation APIs](#apis) that you'll typically provide in a central module to easily access them in components (e.g. `src/navigation.ts`). To ensure consistent usage in your app, you can consider [linting for usage of these APIs](/docs/workflows/linting#consistent-usage-of-navigation-apis).
-
-### Strategy 1: Shared pathnames [#shared-pathnames]
-
-With this strategy, the pathnames of your app are identical for all locales. This is the simplest case, because the routes you define in Next.js will map directly to the pathnames that a user can request.
-
-To create [navigation APIs](#apis) for this strategy, use the `createSharedPathnamesNavigation` function:
+<Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
+<Tab>
 
 ```tsx filename="navigation.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
-
-export const locales = ['en', 'de'] as const;
-export const localePrefix = 'always'; // Default
+import {locales, /* ... */} from './config';
 
 export const {Link, redirect, usePathname, useRouter} =
-  createSharedPathnamesNavigation({locales, localePrefix});
-```
-
-The `locales` as well as the `localePrefix` argument is identical to the configuration that you pass to the middleware. You might want to share these values via a central configuration to keep them in sync.
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-import {locales, localePrefix} from './navigation';
-
-export default createMiddleware({
-  defaultLocale: 'en',
-  localePrefix,
-  locales
-});
-
-// ...
+  createSharedPathnamesNavigation({locales, /* ... */});
 ```
 
 <Details id="locales-unknown">
@@ -75,73 +40,24 @@ Note however that the `locales` argument for the middleware is mandatory. You ca
 
 </Details>
 
-### Strategy 2: Localized pathnames [#localized-pathnames]
-
-When using this strategy, you have to provide distinct pathnames for every locale that your app supports. However, the localized variants will be handled by a single route internally, therefore a mapping needs to be provided that is also [consumed by the middleware](/docs/routing/middleware#localizing-pathnames).
-
-You can use the `createLocalizedPathnamesNavigation` function to create corresponding [navigation APIs](#apis):
+</Tab>
+<Tab>
 
 ```tsx filename="navigation.ts"
-import {
-  createLocalizedPathnamesNavigation,
-  Pathnames
-} from 'next-intl/navigation';
-
-export const locales = ['en', 'de'] as const;
-export const localePrefix = 'always'; // Default
-
-// The `pathnames` object holds pairs of internal
-// and external paths, separated by locale.
-export const pathnames = {
-  // If all locales use the same pathname, a
-  // single external path can be provided.
-  '/': '/',
-  '/blog': '/blog',
-
-  // If locales use different paths, you can
-  // specify each external path per locale.
-  '/about': {
-    en: '/about',
-    de: '/ueber-uns'
-  },
-
-  // Dynamic params are supported via square brackets
-  '/news/[articleSlug]-[articleId]': {
-    en: '/news/[articleSlug]-[articleId]',
-    de: '/neuigkeiten/[articleSlug]-[articleId]'
-  },
-
-  // Also (optional) catch-all segments are supported
-  '/categories/[...slug]': {
-    en: '/categories/[...slug]',
-    de: '/kategorien/[...slug]'
-  }
-} satisfies Pathnames<typeof locales>;
+import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
+import {locales, pathnames, /* ... */} from './config';
 
 export const {Link, redirect, usePathname, useRouter, getPathname} =
-  createLocalizedPathnamesNavigation({locales, localePrefix, pathnames});
+  createLocalizedPathnamesNavigation({locales, pathnames, /* ... */});
 ```
 
-The arguments `locales`, `localePrefix` as well as `pathnames` are identical to the configuration that you pass to the middleware. You might want to share these values via a central configuration to make sure they stay in sync.
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-import {locales, localePrefix, pathnames} from './navigation';
-
-export default createMiddleware({
-  defaultLocale: 'en',
-  localePrefix,
-  locales,
-  pathnames
-});
-
-// ...
-```
+</Tab>
 
 <Callout>
   Have a look at the [App Router example](/examples#app-router) to explore a
   working implementation of localized pathnames.
 </Callout>
+</Tabs>
 
 ## APIs
 
