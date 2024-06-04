@@ -556,7 +556,7 @@ it('sets alternate links', async ({request}) => {
     expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
       '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
     ]);
@@ -566,7 +566,7 @@ it('sets alternate links', async ({request}) => {
     expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/es/anidada>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
       '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
     ]);
@@ -677,6 +677,16 @@ it('can use async APIs in async components', async ({page}) => {
   page
     .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
     .getByText('AsyncComponent');
+});
+
+it('supports custom prefixes', async ({page}) => {
+  await page.goto('/spain');
+  await expect(page).toHaveURL('/spain');
+  page.getByRole('heading', {name: 'Inicio'});
+
+  await page.goto('/spain/anidada');
+  await expect(page).toHaveURL('/spain/anidada');
+  page.getByRole('heading', {name: 'Anidada'});
 });
 
 describe('handling of foreign characters', () => {
