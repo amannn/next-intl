@@ -12,7 +12,7 @@ import {
  * of them. Properties that are different are declared in consuming types.
  */
 export type RoutingBaseConfigInput<AppLocales extends Locales> = {
-  /** @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-prefix */
+  /** @see https://next-intl-docs.vercel.app/docs/routing#locale-prefix */
   localePrefix?: LocalePrefixConfig<AppLocales>;
   /** Can be used to change the locale handling per domain. */
   domains?: Array<DomainConfig<AppLocales>>;

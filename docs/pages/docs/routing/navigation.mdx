@@ -9,16 +9,14 @@ import Details from 'components/Details';
   routing](/docs/getting-started/app-router).
 </Callout>
 
-`next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale behind the scenes.
+`next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale and pathnames behind the scenes.
 
 Depending on if you're using localized pathnames (i.e. the [`pathnames`](/docs/routing#pathnames) setting), you can pick from one of these functions to create the corresponding navigation APIs:
 
 - `createSharedPathnamesNavigation`: Pathnames are shared across all locales (default)
-- `createLocalizedPathnamesNavigation`: Pathnames are provided per locale
+- `createLocalizedPathnamesNavigation`: Pathnames are provided per locale (use with `pathnames`)
 
-These functions are typically called in a central module like `src/navigation.ts` in order to provide easy access to navigation APIs in your components.
-
-**Tip:** To ensure consistent usage in your app, you can consider [linting for usage of these APIs](/docs/workflows/linting#consistent-usage-of-navigation-apis).
+These functions are typically called in a central module like `src/navigation.ts` in order to provide easy access to navigation APIs in your components and should receive configuration options that are [shared](/docs/routing#shared-configuration) with the middleware.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
@@ -51,13 +49,20 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
   createLocalizedPathnamesNavigation({locales, pathnames, /* ... */});
 ```
 
-</Tab>
-
 <Callout>
   Have a look at the [App Router example](/examples#app-router) to explore a
   working implementation of localized pathnames.
 </Callout>
+
+</Tab>
 </Tabs>
+
+<Details id="lint-consistent-usage">
+<summary>How can I ensure consistent usage of navigation APIs?</summary>
+
+To ensure consistent usage in your app, you can consider [linting for usage of these APIs](/docs/workflows/linting#consistent-usage-of-navigation-apis).
+
+</Details>
 
 ## APIs
 
@@ -126,7 +131,7 @@ See also the Next.js docs on [creating an active link component](https://nextjs.
 
 </Tab>
 <Tab>
-When using [localized pathnames](#localized-pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](/docs/routing#pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 import {Link} from '../navigation';
@@ -224,7 +229,7 @@ See also the Next.js docs on [creating an active link component](https://nextjs.
 <Details id="link-unknown-routes">
 <summary>How can I link to unknown routes?</summary>
 
-The [navigation APIs](#apis) are strictly typed and only allow routes specified in the `pathnames` config. If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
+The navigation APIs are strictly typed and only allow routes specified in the `pathnames` config. If you need to link to unknown routes in certain places, you can either disable the type checking on a case-by-case basis …
 
 ```tsx
 // @ts-expect-error
@@ -250,7 +255,7 @@ export const {Link, redirect, usePathname, useRouter} =
 
 <Details id="link-prefetching">
 <summary>How does prefetching of localized links work?</summary>
-Just like `next/link`, by default all links are prefetched. The one exception to this is that links to other locales aren't prefetched, because this would result in prematurely overwriting the locale cookie.
+Just like `next/link`, by default all links are prefetched. The one exception to this is that links to other locales aren't prefetched, because this may result in prematurely overwriting the locale cookie.
 
 </Details>
 
@@ -298,7 +303,7 @@ router.replace(pathname, {locale: 'de'});
 </Tab>
 <Tab>
 
-When using [localized pathnames](#localized-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](/docs/routing#pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 'use client';
@@ -375,7 +380,7 @@ const pathname = usePathname();
 </Tab>
 <Tab>
 
-When using [localized pathnames](#localized-pathnames), the returned pathname will correspond to an internal pathname.
+When using [localized pathnames](/docs/routing#pathnames), the returned pathname will correspond to an internal pathname.
 
 ```tsx
 'use client';
@@ -411,7 +416,7 @@ router.push('/users/12');
 </Tab>
 <Tab>
 
-When using [localized pathnames](#localized-pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
+When using [localized pathnames](/docs/routing#pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
 import {redirect} from '../navigation';

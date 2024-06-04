@@ -22,7 +22,7 @@ export type LocalePrefixConfigVerbose<AppLocales extends Locales> =
       mode: 'never';
     };
 
-export type LocalePrefixConfig<AppLocales extends Locales> =
+export type LocalePrefixConfig<AppLocales extends Locales = never> =
   | LocalePrefixMode
   | LocalePrefixConfigVerbose<AppLocales>;
 
