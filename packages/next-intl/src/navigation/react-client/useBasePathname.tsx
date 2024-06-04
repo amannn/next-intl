@@ -44,10 +44,7 @@ export default function useBasePathname<AppLocales extends Locales>(
   return useMemo(() => {
     if (!pathname) return pathname;
 
-    // Note that `usePathname` returns the internal path, not
-    // taking into account potential rewrites from the middleware
     const prefix = getLocalePrefix(locale, localePrefix);
-
     const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
     const unlocalizedPathname = isPathnamePrefixed
       ? unprefixPathname(pathname, prefix)

@@ -193,7 +193,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
         alternateLinks: true,
-        localePrefix: {mode: 'as-needed'},
+        localePrefix: 'as-needed',
         localeDetection: true,
         domains: [
           {
@@ -321,7 +321,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
     it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", () => {
       const config = receiveConfig({
-        localePrefix: {mode: 'as-needed'},
+        localePrefix: 'as-needed',
         defaultLocale: 'en',
         locales: ['en', 'fr'],
         domains: [

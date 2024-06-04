@@ -5,7 +5,6 @@ import {usePathname} from 'next/navigation';
 import React, {
   ComponentProps,
   MouseEvent,
-  ReactElement,
   forwardRef,
   useEffect,
   useState
@@ -81,8 +80,6 @@ function BaseLink(
   );
 }
 
-const BaseLinkWithRef = forwardRef(BaseLink) as (
-  props: Props & {ref?: Props['ref']}
-) => ReactElement;
+const BaseLinkWithRef = forwardRef(BaseLink);
 (BaseLinkWithRef as any).displayName = 'ClientLink';
 export default BaseLinkWithRef;
