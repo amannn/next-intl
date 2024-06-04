@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {it} from 'vitest';
-import {LocalePrefixConfig} from '../../src/routing/types';
+import {LocalePrefix} from '../../src/routing/types';
 
 it('does not require a type param for simple values', () => {
-  const config: LocalePrefixConfig = 'always';
+  const config: LocalePrefix = 'always';
 });
 
 it('provides strict typing for locales', () => {
   const locales = ['en', 'de'] as const;
-  const config: LocalePrefixConfig<typeof locales> = {
+  const config: LocalePrefix<typeof locales> = {
     mode: 'always',
     prefixes: {
       en: '/en',
@@ -20,7 +20,7 @@ it('provides strict typing for locales', () => {
 
 it('allows partial config', () => {
   const locales = ['en', 'de'] as const;
-  const config: LocalePrefixConfig<typeof locales> = {
+  const config: LocalePrefix<typeof locales> = {
     mode: 'always',
     prefixes: {
       en: '/en'
@@ -29,7 +29,7 @@ it('allows partial config', () => {
 });
 
 it('provides optional typing for locales in prefixes', () => {
-  const config: LocalePrefixConfig = {
+  const config: LocalePrefix = {
     mode: 'always',
     prefixes: {
       de: '/de',

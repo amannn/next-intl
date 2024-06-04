@@ -83,9 +83,9 @@ By default, the pathnames of your app will be available under a prefix that matc
 By default, pathnames always start with the locale (e.g. `/en/about`).
 
 ```tsx filename="config.ts"
-import {LocalePrefixConfig} from 'next-intl/routing';
+import {LocalePrefix} from 'next-intl/routing';
 
-export const localePrefix = 'always' satisfies LocalePrefixConfig;
+export const localePrefix = 'always' satisfies LocalePrefix;
 ```
 
 <Details id="redirect-unprefixed-pathnames">
@@ -100,9 +100,9 @@ If you want to redirect unprefixed pathnames like `/about` to a prefixed alterna
 If you only want to include a locale prefix for non-default locales, you can configure your routing accordingly:
 
 ```tsx filename="config.ts"
-import {LocalePrefixConfig} from 'next-intl/routing';
+import {LocalePrefix} from 'next-intl/routing';
 
-export const localePrefix = 'as-needed' satisfies LocalePrefixConfig;
+export const localePrefix = 'as-needed' satisfies LocalePrefix;
 ```
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
@@ -122,9 +122,9 @@ However, you can also configure the middleware to never show a locale prefix in 
 2. You're using a cookie to determine the locale but would like to enable static rendering
 
 ```tsx filename="config.ts"
-import {LocalePrefixConfig} from 'next-intl/routing';
+import {LocalePrefix} from 'next-intl/routing';
 
-export const localePrefix = 'never' satisfies LocalePrefixConfig;
+export const localePrefix = 'never' satisfies LocalePrefix;
 ```
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
@@ -140,7 +140,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 If you'd like to customize the user-facing prefix, you can provide a locale-based mapping:
 
 ```tsx filename="config.ts"
-import {LocalePrefixConfig} from 'next-intl/routing';
+import {LocalePrefix} from 'next-intl/routing';
 
 export const locales = ['en-US', 'en-GB', 'de-DE', 'zh'] as const;
 
@@ -152,7 +152,7 @@ export const localePrefix = {
     'de-DE': '/eu/de'
     // (/zh will be used as-is)
   }
-} satisfies LocalePrefixConfig<typeof locales>;
+} satisfies LocalePrefix<typeof locales>;
 ```
 
 **Note that:**
