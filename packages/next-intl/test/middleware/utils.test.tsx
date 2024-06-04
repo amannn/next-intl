@@ -93,7 +93,9 @@ describe('formatPathname', () => {
         userName: 'jane'
       })
     ).toBe('/users/23-jane');
-    expect(formatPathnameTemplate('/users/[userId]', {userId: '23'})).toBe('/users/23');
+    expect(formatPathnameTemplate('/users/[userId]', {userId: '23'})).toBe(
+      '/users/23'
+    );
     expect(
       formatPathnameTemplate('/users/[userId]/posts/[postId]', {
         userId: '23',
@@ -123,9 +125,9 @@ describe('formatPathname', () => {
   });
 
   it('does not encode special characters in parameter values', () => {
-    expect(formatPathnameTemplate('/users/[userId]', {userId: '23%20jane'})).toBe(
-      '/users/23%20jane'
-    );
+    expect(
+      formatPathnameTemplate('/users/[userId]', {userId: '23%20jane'})
+    ).toBe('/users/23%20jane');
     expect(formatPathnameTemplate('/users/[userId]', {userId: '23/42'})).toBe(
       '/users/23/42'
     );
