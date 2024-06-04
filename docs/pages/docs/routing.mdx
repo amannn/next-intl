@@ -142,14 +142,13 @@ If you'd like to customize the user-facing prefix, you can provide a locale-base
 ```tsx filename="config.ts"
 import {LocalePrefix} from 'next-intl/routing';
 
-export const locales = ['en-US', 'en-GB', 'de-DE', 'zh'] as const;
+export const locales = ['en-US', 'de-AT', 'zh'] as const;
 
 export const localePrefix = {
   mode: 'always',
   prefixes: {
     'en-US': '/us',
-    'en-GB': '/uk',
-    'de-DE': '/eu/de'
+    'de-AT': '/eu/at'
     // (/zh will be used as-is)
   }
 } satisfies LocalePrefix<typeof locales>;
