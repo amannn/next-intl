@@ -7,6 +7,7 @@ import {
 import {
   getLocalePrefix,
   matchesPathname,
+  prefixPathname,
   templateToRegex
 } from '../shared/utils';
 
@@ -134,7 +135,7 @@ export function formatTemplatePathname(
     targetPathname = `/${prefix}`;
   }
 
-  targetPathname += formatPathname(targetTemplate, params);
+  targetPathname += formatPathnameTemplate(targetTemplate, params);
   targetPathname = normalizeTrailingSlash(targetPathname);
 
   return targetPathname;
@@ -241,7 +242,7 @@ export function getRouteParams(template: string, pathname: string) {
   return params;
 }
 
-export function formatPathname(template: string, params?: object) {
+export function formatPathnameTemplate(template: string, params?: object) {
   if (!params) return template;
 
   // Simplify syntax for optional catchall ('[[...slug]]') so
@@ -256,15 +257,21 @@ export function formatPathname(template: string, params?: object) {
   return result;
 }
 
-export function getPathWithSearch(
+export function formatPathname(
   pathname: string,
+  prefix: string | undefined,
   search: string | undefined
 ) {
-  let pathWithSearch = pathname;
-  if (search) {
-    pathWithSearch += search;
+  let result = pathname;
+
+  if (prefix) {
+    result = prefixPathname(prefix, result);
   }
-  return pathWithSearch;
+
+  if (search) {
+    result += search;
+  }
+  return result;
 }
 
 export function getHost(requestHeaders: Headers) {
@@ -332,4 +339,10 @@ export function normalizeTrailingSlash(pathname: string) {
     pathname = pathname.slice(0, -1);
   }
   return pathname;
+}
+
+export function getLocaleAsPrefix<AppLocales extends Locales>(
+  locale: AppLocales[number]
+) {
+  return `/${locale}`;
 }
