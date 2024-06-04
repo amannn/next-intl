@@ -85,7 +85,7 @@ By default, pathnames always start with the locale (e.g. `/en/about`).
 ```tsx filename="config.ts"
 import {LocalePrefixConfig} from 'next-intl/routing';
 
-export const localePrefix: LocalePrefixConfig = 'always';
+export const localePrefix = 'always' satisfies LocalePrefixConfig;
 ```
 
 <Details id="redirect-unprefixed-pathnames">
@@ -102,7 +102,7 @@ If you only want to include a locale prefix for non-default locales, you can con
 ```tsx filename="config.ts"
 import {LocalePrefixConfig} from 'next-intl/routing';
 
-export const localePrefix: LocalePrefixConfig = 'as-needed';
+export const localePrefix = 'as-needed' satisfies LocalePrefixConfig;
 ```
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
@@ -124,7 +124,7 @@ However, you can also configure the middleware to never show a locale prefix in 
 ```tsx filename="config.ts"
 import {LocalePrefixConfig} from 'next-intl/routing';
 
-export const localePrefix: LocalePrefixConfig = 'never';
+export const localePrefix = 'never' satisfies LocalePrefixConfig;
 ```
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
@@ -144,7 +144,7 @@ import {LocalePrefixConfig} from 'next-intl/routing';
 
 export const locales = ['en-US', 'en-GB', 'de-DE', 'zh'] as const;
 
-export const localePrefix: LocalePrefixConfig<typeof locales> = {
+export const localePrefix = {
   mode: 'always',
   prefixes: {
     'en-US': '/us',
@@ -152,7 +152,7 @@ export const localePrefix: LocalePrefixConfig<typeof locales> = {
     'de-DE': '/eu/de'
     // (/zh will be used as-is)
   }
-};
+} satisfies LocalePrefixConfig<typeof locales>;
 ```
 
 **Note that:**
@@ -175,7 +175,7 @@ export const locales = ['en', 'de'] as const;
 // The `pathnames` object holds pairs of internal and
 // external paths. Based on the locale, the external
 // paths are rewritten to the shared, internal ones.
-export const pathnames: Pathnames<typeof locales> = {
+export const pathnames = {
   // If all locales use the same pathname, a single
   // external path can be used for all locales
   '/': '/',
@@ -206,7 +206,7 @@ export const pathnames: Pathnames<typeof locales> = {
     en: '/categories/[...slug]',
     de: '/kategorien/[...slug]'
   }
-};
+} satisfies Pathnames<typeof locales>;
 ```
 
 **Note:** Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.

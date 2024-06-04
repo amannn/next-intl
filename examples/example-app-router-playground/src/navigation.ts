@@ -3,15 +3,15 @@ import {LocalePrefixConfig, Pathnames} from 'next-intl/routing';
 
 export const locales = ['en', 'de', 'es', 'ja'] as const;
 
-export const localePrefix: LocalePrefixConfig<typeof locales> = {
+export const localePrefix = {
   mode:
     process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed',
   prefixes: {
     es: '/spain'
   }
-};
+} satisfies LocalePrefixConfig<typeof locales>;
 
-export const pathnames: Pathnames<typeof locales> = {
+export const pathnames = {
   '/': '/',
   '/client': '/client',
   '/client/redirect': '/client/redirect',
@@ -34,7 +34,7 @@ export const pathnames: Pathnames<typeof locales> = {
     es: '/noticias/justo-en',
     ja: '/ニュース/現在'
   }
-};
+} satisfies Pathnames<typeof locales>;
 
 export const {Link, redirect, usePathname, useRouter} =
   createLocalizedPathnamesNavigation({
