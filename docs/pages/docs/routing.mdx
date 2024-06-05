@@ -159,19 +159,19 @@ export const localePrefix = {
 1. The custom prefixes are only visible to the user and rewritten internally to the corresponding locale. Therefore the `[locale]` segment will correspond to the locale, not the prefix.
 2. You might have to adapt your [middleware matcher](/docs/routing/middleware#matcher-config) to match the custom prefixes.
 
-<Details id="locale-prefix-custom">
+<Details id="locale-prefix-custom-read-prefix">
 <summary>Can I read the matched prefix in my app?</summary>
 
-Since the custom prefix is rewritten to the locale internally, you can't access the prefix directly. However, you can extract details like the region from the locale itself:
+Since the custom prefix is rewritten to the locale internally, you can't access the prefix directly. However, you can extract details like the region from the locale:
 
 ```tsx
 import {useLocale} from 'next-intl';
 
 function Component() {
-  // Assuming the locale is `en-US`
+  // Assuming the locale is 'en-US'
   const locale = useLocale();
 
-  // Returns "US"
+  // Returns 'US'
   new Intl.Locale(locale).region;
 }
 ```
