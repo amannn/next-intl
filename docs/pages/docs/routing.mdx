@@ -159,6 +159,31 @@ export const localePrefix = {
 1. The custom prefixes are only visible to the user and rewritten internally to the corresponding locale. Therefore the `[locale]` segment will correspond to the locale, not the prefix.
 2. You might have to adapt your [middleware matcher](/docs/routing/middleware#matcher-config) to match the custom prefixes.
 
+<Details id="locale-prefix-custom">
+<summary>Can I read the matched prefix in my app?</summary>
+
+Since the custom prefix is rewritten to the locale internally, you can't access the prefix directly. However, you can extract details like the region from the locale itself:
+
+```tsx
+import {useLocale} from 'next-intl';
+
+function Component() {
+  // Assuming the locale is `en-US`
+  const locale = useLocale();
+
+  // Returns "US"
+  new Intl.Locale(locale).region;
+}
+```
+
+The region must be either a valid [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) or a [UN M49 region code](https://en.wikipedia.org/wiki/UN_M49#Code_lists). When passed to `Intl.Locale`, the region is treated as case-insensitive and normalized to uppercase. Furthermore, you can combine languages with regions where a language is not natively spoken (e.g. `en-AT` describes English as used in Austria).
+
+Apart from the region, a locale can [encode further properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale#description), like the numbering system.
+
+If you'd like to encode custom information in the locale, you can use arbitrary [private extensions](https://tc39.es/proposal-intl-locale/#sec-insert-unicode-extension-and-canonicalize), denoted by the `-x-` prefix (e.g. `en-US-x-currency-usd`). The `Intl.Locale` constructor ignores private extensions, but you can extract them from the locale string manually.
+
+</Details>
+
 ### Localized pathnames [#pathnames]
 
 Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
