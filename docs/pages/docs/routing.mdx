@@ -13,7 +13,7 @@ import Callout from 'components/Callout';
 
 `next-intl` integrates with the routing system of Next.js in two places:
 
-1. [**Middleware**](/docs/routing/middleware): Negotiates the locale and internal pathname
+1. [**Middleware**](/docs/routing/middleware): Negotiates the locale and handles redirects & rewrites
 2. [**Navigation APIs**](/docs/routing/navigation): Provides APIs to navigate between pages
 
 This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/ueber-uns`).
@@ -86,6 +86,8 @@ By default, pathnames always start with the locale (e.g. `/en/about`).
 import {LocalePrefix} from 'next-intl/routing';
 
 export const localePrefix = 'always' satisfies LocalePrefix;
+
+// ...
 ```
 
 <Details id="redirect-unprefixed-pathnames">
@@ -103,6 +105,8 @@ If you only want to include a locale prefix for non-default locales, you can con
 import {LocalePrefix} from 'next-intl/routing';
 
 export const localePrefix = 'as-needed' satisfies LocalePrefix;
+
+// ...
 ```
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
@@ -114,7 +118,7 @@ In this case, requests where the locale prefix matches the default locale will b
 
 #### Never use a locale prefix [#locale-prefix-never]
 
-If you'd like to provide a locale to `next-intl`, e.g. based on user settings, you can consider setting up `next-intl` [without i18n routing](/docs/getting-started/app-router/without-i18n-routing). This way, you don't need to use the middleware in the first place.
+If you'd like to provide a locale to `next-intl`, e.g. based on user settings, you can consider setting up `next-intl` [without i18n routing](/docs/getting-started/app-router/without-i18n-routing). This way, you don't need to use the routing integration in the first place.
 
 However, you can also configure the middleware to never show a locale prefix in the URL, which can be helpful in the following cases:
 
@@ -125,6 +129,8 @@ However, you can also configure the middleware to never show a locale prefix in 
 import {LocalePrefix} from 'next-intl/routing';
 
 export const localePrefix = 'never' satisfies LocalePrefix;
+
+// ...
 ```
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
@@ -156,7 +162,7 @@ export const localePrefix = {
 
 **Note that:**
 
-1. The custom prefixes are only visible to the user and rewritten internally to the corresponding locale. Therefore the `[locale]` segment will correspond to the locale, not the prefix.
+1. Custom prefixes are only visible to the user and rewritten internally to the corresponding locale. Therefore the `[locale]` segment will correspond to the locale, not the prefix.
 2. You might have to adapt your [middleware matcher](/docs/routing/middleware#matcher-config) to match the custom prefixes.
 
 <Details id="locale-prefix-custom-read-prefix">
@@ -176,7 +182,7 @@ function Component() {
 }
 ```
 
-The region must be either a valid [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) or a [UN M49 region code](https://en.wikipedia.org/wiki/UN_M49#Code_lists). When passed to `Intl.Locale`, the region is treated as case-insensitive and normalized to uppercase. Furthermore, you can combine languages with regions where a language is not natively spoken (e.g. `en-AT` describes English as used in Austria).
+The region must be a valid [ISO 3166-1 alpha-2 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements) or a [UN M49 region code](https://en.wikipedia.org/wiki/UN_M49#Code_lists). When passed to `Intl.Locale`, the region code is treated as case-insensitive and normalized to uppercase. You can also combine languages with regions where the language is not natively spoken (e.g. `en-AT` describes English as used in Austria).
 
 Apart from the region, a locale can [encode further properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale#description), like the numbering system.
 

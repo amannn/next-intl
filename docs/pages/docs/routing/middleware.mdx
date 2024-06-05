@@ -32,7 +32,7 @@ In addition to handling i18n routing, the middleware sets the `link` header to i
 
 ## Locale detection
 
-The locale is detected based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
+The locale is negotiated based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
 
 ### Prefix-based routing (default) [#location-detection-prefix]
 
