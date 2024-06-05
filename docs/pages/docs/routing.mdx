@@ -180,7 +180,7 @@ The region must be either a valid [ISO 3166-1 alpha-2 country code](https://en.w
 
 Apart from the region, a locale can [encode further properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale#description), like the numbering system.
 
-If you'd like to encode custom information in the locale, you can use arbitrary [private extensions](https://tc39.es/proposal-intl-locale/#sec-insert-unicode-extension-and-canonicalize), denoted by the `-x-` prefix (e.g. `en-US-x-currency-usd`). The `Intl.Locale` constructor ignores private extensions, but you can extract them from the locale string manually.
+If you'd like to encode custom information in the locale, you can use arbitrary [private extensions](https://tc39.es/proposal-intl-locale/#sec-insert-unicode-extension-and-canonicalize), denoted by the `-x-` prefix (e.g. `en-US-x-usd`). The `Intl.Locale` constructor ignores private extensions, but you can extract them from the locale string manually.
 
 </Details>
 
