@@ -1389,6 +1389,38 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/de/external-de/22/foo/bar'
         );
       });
+
+      it('allows to map a nested path to the root', () => {
+        // https://github.com/amannn/next-intl/issues/940
+        const middlewareWithMapping = createIntlMiddleware({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          pathnames: {
+            // internal: external
+            '/about': '/'
+          }
+        });
+
+        middlewareWithMapping(createMockRequest('/'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/about'));
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/en/about'));
+        expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/en'));
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
     });
 
     describe('custom prefixes', () => {
