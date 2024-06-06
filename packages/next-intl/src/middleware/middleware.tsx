@@ -1,15 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {Locales, Pathnames} from '../routing/types';
-import {
-  COOKIE_LOCALE_NAME,
-  COOKIE_MAX_AGE,
-  COOKIE_SAME_SITE,
-  HEADER_LOCALE_NAME
-} from '../shared/constants';
+import {HEADER_LOCALE_NAME} from '../shared/constants';
 import {getLocalePrefix, matchesPathname} from '../shared/utils';
 import {MiddlewareRoutingConfigInput, receiveConfig} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
+import syncCookie from './syncCookie';
 import {
   getInternalTemplate,
   formatTemplatePathname,
@@ -39,10 +35,6 @@ export default function createMiddleware<
       request.cookies,
       externalPathname
     );
-
-    const hasOutdatedCookie =
-      config.localeDetection &&
-      request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
 
     const hasMatchedDefaultLocale = domain
       ? domain.defaultLocale === locale
@@ -287,12 +279,8 @@ export default function createMiddleware<
       }
     }
 
-    if (hasOutdatedCookie) {
-      response.cookies.set(COOKIE_LOCALE_NAME, locale, {
-        path: request.nextUrl.basePath || undefined,
-        sameSite: COOKIE_SAME_SITE,
-        maxAge: COOKIE_MAX_AGE
-      });
+    if (config.localeDetection) {
+      syncCookie(request, response, locale);
     }
 
     if (
