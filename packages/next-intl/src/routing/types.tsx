@@ -2,7 +2,6 @@ export type Locales = ReadonlyArray<string>;
 
 export type LocalePrefixMode = 'always' | 'as-needed' | 'never';
 
-// Change to `/${string}` in next major
 type Pathname = string;
 
 export type LocalePrefixes<AppLocales extends Locales> = Partial<
