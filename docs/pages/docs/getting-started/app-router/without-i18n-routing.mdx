@@ -88,7 +88,6 @@ module.exports = withNextIntl(nextConfig);
 `next-intl` creates a request-scoped configuration object that can be used to provide messages and other options based on the user's locale for usage in Server Components.
 
 ```tsx filename="src/i18n.ts"
-import {NextIntlClientProvider} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
