@@ -46,12 +46,6 @@ export default function createMiddleware<
       ) || [];
     const hasUnknownHost = config.domains != null && !domain;
 
-    function getResponseInit() {
-      const headers = new Headers(request.headers);
-      headers.set(HEADER_LOCALE_NAME, locale);
-      return {request: {headers}};
-    }
-
     function rewrite(url: string) {
       const urlObj = new URL(url, request.url);
 
@@ -62,36 +56,31 @@ export default function createMiddleware<
         );
       }
 
-      return NextResponse.rewrite(urlObj, getResponseInit());
+      const headers = new Headers(request.headers);
+      headers.set(HEADER_LOCALE_NAME, locale);
+      return NextResponse.rewrite(urlObj, {request: {headers}});
     }
 
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
-      if (domainConfigs.length > 0) {
-        if (!redirectDomain) {
-          const bestMatchingDomain = getBestMatchingDomain(
-            domain,
-            locale,
-            domainConfigs
-          );
-
-          if (bestMatchingDomain) {
-            redirectDomain = bestMatchingDomain.domain;
-
-            if (
-              bestMatchingDomain.defaultLocale === locale &&
-              config.localePrefix.mode === 'as-needed' &&
-              urlObj.pathname.startsWith(
-                getLocalePrefix(locale, config.localePrefix)
-              )
-            ) {
-              urlObj.pathname = getNormalizedPathname(
-                urlObj.pathname,
-                config.locales,
-                config.localePrefix
-              );
-            }
+      if (domainConfigs.length > 0 && !redirectDomain) {
+        const bestMatchingDomain = getBestMatchingDomain(
+          domain,
+          locale,
+          domainConfigs
+        );
+        if (bestMatchingDomain) {
+          redirectDomain = bestMatchingDomain.domain;
+          if (
+            bestMatchingDomain.defaultLocale === locale &&
+            config.localePrefix.mode === 'as-needed'
+          ) {
+            urlObj.pathname = getNormalizedPathname(
+              urlObj.pathname,
+              config.locales,
+              config.localePrefix
+            );
           }
         }
       }
