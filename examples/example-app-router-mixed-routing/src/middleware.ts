@@ -1,6 +1,6 @@
+import {NextRequest, NextResponse} from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import {locales} from './config';
-import {NextRequest, NextResponse} from 'next/server';
 
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

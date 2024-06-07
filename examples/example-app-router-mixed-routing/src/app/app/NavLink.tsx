@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import {ComponentProps} from 'react';
 import {usePathname} from 'next/navigation';
+import {ComponentProps} from 'react';
 
 export default function NavLink({href, ...rest}: ComponentProps<typeof Link>) {
   const pathname = usePathname();
@@ -11,8 +11,8 @@ export default function NavLink({href, ...rest}: ComponentProps<typeof Link>) {
   return (
     <Link
       aria-current={isActive ? 'page' : undefined}
-      href={href}
       className={isActive ? 'font-semibold' : undefined}
+      href={href}
       {...rest}
     />
   );

@@ -1,7 +1,7 @@
 'use client';
 
-import Document from '@/components/Document';
 import Error from 'next/error';
+import Document from '@/components/Document';
 
 export default function NotFound() {
   return (

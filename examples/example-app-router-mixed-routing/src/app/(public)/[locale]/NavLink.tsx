@@ -1,8 +1,8 @@
 'use client';
 
-import {Link} from '@/navigation.public';
-import {ComponentProps} from 'react';
 import {useSelectedLayoutSegment} from 'next/navigation';
+import {ComponentProps} from 'react';
+import {Link} from '@/navigation.public';
 
 export default function NavLink({href, ...rest}: ComponentProps<typeof Link>) {
   const selectedLayoutSegment = useSelectedLayoutSegment();
@@ -12,8 +12,8 @@ export default function NavLink({href, ...rest}: ComponentProps<typeof Link>) {
   return (
     <Link
       aria-current={isActive ? 'page' : undefined}
-      href={href}
       className={isActive ? 'font-semibold' : undefined}
+      href={href}
       {...rest}
     />
   );

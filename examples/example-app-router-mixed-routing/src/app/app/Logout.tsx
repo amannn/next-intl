@@ -1,5 +1,5 @@
-import {useLocale, useTranslations} from 'next-intl';
 import Link from 'next/link';
+import {useLocale, useTranslations} from 'next-intl';
 
 export default function Logout() {
   const t = useTranslations('Logout');

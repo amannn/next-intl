@@ -1,7 +1,7 @@
+import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {locales} from './config';
-import {headers} from 'next/headers';
 import {getUserLocale} from './db';
 
 async function getConfig(locale: string) {

@@ -1,10 +1,10 @@
+import {Metadata} from 'next';
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
-import Document from '@/components/Document';
-import AppNavigation from './AppNavigation';
 import {ReactNode} from 'react';
-import {Metadata} from 'next';
+import AppNavigation from './AppNavigation';
 import AppNavigationLocaleSwitcher from './AppNavigationLocaleSwitcher';
+import Document from '@/components/Document';
 
 type Props = {
   children: ReactNode;
@@ -25,7 +25,7 @@ export default async function LocaleLayout({children}: Props) {
     <Document locale={locale}>
       <NextIntlClientProvider messages={messages}>
         <AppNavigation />
-        <div className="min-h-[200px] bg-slate-100 p-4 -mx-4">{children}</div>
+        <div className="-mx-4 min-h-[200px] bg-slate-100 p-4">{children}</div>
         <AppNavigationLocaleSwitcher />
       </NextIntlClientProvider>
     </Document>
