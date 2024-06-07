@@ -4,6 +4,7 @@ import {getLocale, getMessages} from 'next-intl/server';
 import {ReactNode} from 'react';
 import AppNavigation from './AppNavigation';
 import AppNavigationLocaleSwitcher from './AppNavigationLocaleSwitcher';
+import Logout from './Logout';
 import Document from '@/components/Document';
 
 type Props = {
@@ -24,9 +25,16 @@ export default async function LocaleLayout({children}: Props) {
   return (
     <Document locale={locale}>
       <NextIntlClientProvider messages={messages}>
-        <AppNavigation />
-        <div className="-mx-4 min-h-[200px] bg-slate-100 p-4">{children}</div>
-        <AppNavigationLocaleSwitcher />
+        <div className="flex">
+          <div className="flex min-h-[100vh] w-[300px] flex-col justify-between bg-slate-100 p-8">
+            <AppNavigation />
+            <div className="flex items-center justify-between">
+              <AppNavigationLocaleSwitcher />
+              <Logout />
+            </div>
+          </div>
+          <div className="p-8">{children}</div>
+        </div>
       </NextIntlClientProvider>
     </Document>
   );

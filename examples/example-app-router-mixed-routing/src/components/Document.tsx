@@ -15,7 +15,7 @@ type Props = {
 export default function Document({children, locale}: Props) {
   return (
     <html className={inter.className} lang={locale}>
-      <body className="m-auto max-w-[40rem] p-4">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

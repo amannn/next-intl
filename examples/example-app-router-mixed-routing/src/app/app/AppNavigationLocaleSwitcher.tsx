@@ -14,7 +14,7 @@ export default function AppNavigationLocaleSwitcher() {
   }
 
   return (
-    <form action={action} className="flex gap-3 py-5">
+    <form action={action} className="flex gap-3">
       <LocaleButton locale="en" />
       <LocaleButton locale="de" />
     </form>
@@ -28,7 +28,7 @@ function LocaleButton({locale}: {locale: Locale}) {
     <button
       className={curLocale === locale ? 'underline' : undefined}
       name="locale"
-      type="button"
+      type="submit"
       value={locale}
     >
       {locale.toUpperCase()}
