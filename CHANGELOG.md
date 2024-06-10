@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 3.15.0 (2024-06-10)
+
+
+### Features
+
+* Add support for custom prefixes for i18n routing ([#1086](https://github.com/amannn/next-intl/issues/1086)) ([4ba921a](https://github.com/amannn/next-intl/commit/4ba921ac5c513d65c81343db3805c8e48da7c3f4))
+
+
+
+
+
 ## 3.14.1 (2024-05-23)
 
 
