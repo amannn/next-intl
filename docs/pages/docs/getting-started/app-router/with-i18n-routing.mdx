@@ -291,7 +291,7 @@ Note that the store is scoped to a request and therefore doesn't affect other re
 <Details id="setrequestlocale-background">
 <summary>Why is this API necessary?</summary>
 
-Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergnomic.
+Next.js currently doesn't provide an API to read route params like `locale` at arbitrary places in Server Components (see [`vercel/next.js`#58862](https://github.com/vercel/next.js/discussions/58862)). The `locale` is fundamental to all APIs provided by `next-intl`, therefore passing this as a prop throughout the tree doesn't stand out as particularly ergonomic.
 
 Due to this, `next-intl` uses its middleware to attach an `x-next-intl-locale` header to the incoming request, holding the negotiated locale as a value. This technique allows the locale to be read at arbitrary places via `headers().get('x-next-intl-locale')`.
 

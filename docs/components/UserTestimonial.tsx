@@ -7,7 +7,6 @@ type Props = {
   className?: string;
   featured?: boolean;
   href: string;
-  linkSubtitle: string;
   linkTitle: string;
   portraitUrl: string;
   position: string;
@@ -23,7 +22,6 @@ export default function UserTestimonial({
   className,
   featured,
   href,
-  linkSubtitle,
   linkTitle,
   portraitUrl,
   position,
@@ -101,9 +99,6 @@ export default function UserTestimonial({
                   {'→'}
                 </span>
               </span>
-              <p className="text-slate-600 dark:text-slate-400">
-                {linkSubtitle}
-              </p>
             </a>
           </div>
         )}
