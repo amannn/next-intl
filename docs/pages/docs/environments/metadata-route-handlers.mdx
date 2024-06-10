@@ -86,7 +86,7 @@ Next.js supports providing alternate URLs per language via the [`alternates` ent
 <Tabs items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
-If you're using [shared pathnames](/docs/routing/navigation#shared-pathnames), you can iterate over an array of pathnames that your app supports and generate a sitemap entry for each pathname.
+If you're use the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can iterate over an array of pathnames that your app supports and generate a sitemap entry for each pathname.
 
 **Example:**
 
@@ -121,7 +121,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 </Tab>
 <Tab>
 
-If you're using [localized pathnames](/docs/routing/navigation#localized-pathnames), you can use the keys of your already declared `pathnames` and generate an entry for each locale via the [`getPathname`](/docs/routing/navigation#getpathname) function.
+If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can use the keys of your already declared `pathnames` and generate an entry for each locale via the [`getPathname`](/docs/routing/navigation#getpathname) function.
 
 ```tsx
 import {MetadataRoute} from 'next';
@@ -159,8 +159,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 <Callout>
   Note that your implementation may vary depending on your routing configuration
   (e.g. if you're using a
-  [`localePrefix`](/docs/routing/middleware#locale-prefix) other than `always`
-  or [locale-specific domains](/docs/routing/middleware#domain-based-routing)).
+  [`localePrefix`](/docs/routing#locale-prefix) other than `always`
+  or [locale-specific domains](/docs/routing#domains)).
 </Callout>
 
 ### Route Handlers
