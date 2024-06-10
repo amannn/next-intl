@@ -10,17 +10,18 @@ import React, {
   useState
 } from 'react';
 import useLocale from '../../react-client/useLocale';
-import {LocalePrefix} from '../../shared/types';
-import {isLocalHref, localizeHref, prefixHref} from '../../shared/utils';
+import {LocalePrefixMode} from '../../routing/types';
+import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
-  localePrefix?: LocalePrefix;
+  prefix: string;
+  localePrefixMode: LocalePrefixMode;
 };
 
 function BaseLink(
-  {href, locale, localePrefix, onClick, prefetch, ...rest}: Props,
+  {href, locale, localePrefixMode, onClick, prefetch, prefix, ...rest}: Props,
   ref: Props['ref']
 ) {
   // The types aren't entirely correct here. Outside of Next.js
@@ -31,7 +32,8 @@ function BaseLink(
   const isChangingLocale = locale !== curLocale;
 
   const [localizedHref, setLocalizedHref] = useState<typeof href>(() =>
-    isLocalHref(href) && (localePrefix !== 'never' || isChangingLocale)
+    isLocalizableHref(href) &&
+    (localePrefixMode !== 'never' || isChangingLocale)
       ? // For the `localePrefix: 'as-needed' strategy, the href shouldn't
         // be prefixed if the locale is the default locale. To determine this, we
         // need a) the default locale and b) the information if we use prefixed
@@ -42,7 +44,7 @@ function BaseLink(
         // is better than pointing to a non-localized href during the server
         // render, which would potentially be wrong. The final href is
         // determined in the effect below.
-        prefixHref(href, locale)
+        prefixHref(href, prefix)
       : href
   );
 
@@ -54,8 +56,8 @@ function BaseLink(
   useEffect(() => {
     if (!pathname) return;
 
-    setLocalizedHref(localizeHref(href, locale, curLocale, pathname));
-  }, [curLocale, href, locale, pathname]);
+    setLocalizedHref(localizeHref(href, locale, curLocale, pathname, prefix));
+  }, [curLocale, href, locale, pathname, prefix]);
 
   if (isChangingLocale) {
     if (prefetch && process.env.NODE_ENV !== 'production') {

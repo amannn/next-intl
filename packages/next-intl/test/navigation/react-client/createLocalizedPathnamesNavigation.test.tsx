@@ -6,10 +6,8 @@ import {
 } from 'next/navigation';
 import React, {ComponentProps} from 'react';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
-import {
-  Pathnames,
-  createLocalizedPathnamesNavigation
-} from '../../../src/navigation/react-client';
+import {createLocalizedPathnamesNavigation} from '../../../src/navigation/react-client';
+import {Pathnames} from '../../../src/routing';
 
 vi.mock('next/navigation');
 
@@ -324,6 +322,58 @@ describe("localePrefix: 'as-needed'", () => {
   }
 });
 
+describe("localePrefix: 'as-needed', custom prefix", () => {
+  const {usePathname, useRouter} = createLocalizedPathnamesNavigation({
+    locales: ['en', 'de-at'] as const,
+    pathnames: {
+      '/': '/',
+      '/about': {
+        en: '/about',
+        'de-at': '/ueber-uns'
+      }
+    },
+    localePrefix: {
+      mode: 'always',
+      prefixes: {
+        'de-at': '/de'
+      }
+    }
+  });
+
+  describe('useRouter', () => {
+    describe('push', () => {
+      it('resolves to the correct path when passing a locale with a custom prefix', () => {
+        function Component() {
+          const router = useRouter();
+          router.push('/about', {locale: 'de-at'});
+          return null;
+        }
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/de/ueber-uns');
+      });
+    });
+  });
+
+  describe('usePathname', () => {
+    it('returns the internal pathname for a locale with a custom prefix', () => {
+      vi.mocked(useParams).mockImplementation(() => ({locale: 'de-at'}));
+      function Component() {
+        const pathname = usePathname();
+        return <>{pathname}</>;
+      }
+      vi.mocked(useNextPathname).mockImplementation(() => '/de');
+      const {rerender} = render(<Component />);
+      screen.getByText('/');
+
+      vi.mocked(useNextPathname).mockImplementation(() => '/de/ueber-uns');
+      rerender(<Component />);
+      screen.getByText('/about');
+    });
+  });
+});
+
 describe("localePrefix: 'never'", () => {
   const {useRouter} = createLocalizedPathnamesNavigation({
     pathnames,
@@ -332,7 +382,7 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('useRouter', () => {
-    function Component({locale}: {locale?: string}) {
+    function Component({locale}: {locale?: (typeof locales)[number]}) {
       const router = useRouter();
       router.push('/about', {locale});
       return null;

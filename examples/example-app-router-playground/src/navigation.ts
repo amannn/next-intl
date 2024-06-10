@@ -1,14 +1,18 @@
-import {
-  createLocalizedPathnamesNavigation,
-  Pathnames
-} from 'next-intl/navigation';
-
-export const defaultLocale = 'en';
+import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
+import {LocalePrefix, Pathnames} from 'next-intl/routing';
 
 export const locales = ['en', 'de', 'es', 'ja'] as const;
 
-export const localePrefix =
-  process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never' ? 'never' : 'as-needed';
+export const localePrefix = (
+  process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never'
+    ? 'never'
+    : {
+        mode: 'as-needed',
+        prefixes: {
+          es: '/spain'
+        }
+      }
+) satisfies LocalePrefix<typeof locales>;
 
 export const pathnames = {
   '/': '/',

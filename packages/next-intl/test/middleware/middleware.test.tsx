@@ -5,7 +5,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
 import createIntlMiddleware from '../../src/middleware';
-import {Pathnames} from '../../src/navigation/react-client';
+import {Pathnames} from '../../src/routing';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
 vi.mock('next/server', async (importActual) => {
@@ -239,7 +239,7 @@ describe('prefix-based routing', () => {
       expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-        'http://localhost:3000/de/'
+        'http://localhost:3000/de'
       );
     });
 
@@ -618,7 +618,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/'
+          'http://localhost:3000/en'
         );
       });
 
@@ -638,7 +638,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de-AT/'
+          'http://localhost:3000/de-AT'
         );
       });
 
@@ -658,7 +658,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/de-AT/'
+          'http://localhost:3000/de-AT'
         );
       });
 
@@ -911,7 +911,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/external-en/foo/bar?hello'
+          'http://localhost:3000/external-en/foo/bar?hello'
         );
       });
 
@@ -923,7 +923,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/external-en/22?hello'
+          'http://localhost:3000/external-en/22?hello'
         );
       });
 
@@ -935,7 +935,7 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect).toHaveBeenCalledTimes(1);
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://localhost:3000/en/external-en/22/foo/bar?hello'
+          'http://localhost:3000/external-en/22/foo/bar?hello'
         );
       });
 
@@ -1388,6 +1388,291 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/de/external-de/22/foo/bar'
         );
+      });
+
+      it('allows to map a nested path to the root', () => {
+        // https://github.com/amannn/next-intl/issues/940
+        const middlewareWithMapping = createIntlMiddleware({
+          defaultLocale: 'en',
+          locales: ['en', 'de'],
+          pathnames: {
+            // internal: external
+            '/about': '/'
+          }
+        });
+
+        middlewareWithMapping(createMockRequest('/'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/about'));
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/en/about'));
+        expect(MockedNextResponse.redirect.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+
+        middlewareWithMapping(createMockRequest('/en'));
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+    });
+
+    describe('custom prefixes', () => {
+      const middlewareWithPrefixes = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'en-gb', 'de-at', 'pt'],
+        localePrefix: {
+          mode: 'always',
+          prefixes: {
+            // en (defaults to /en)
+            'en-gb': '/uk',
+            'de-at': '/de/at',
+            pt: '/br'
+          }
+        }
+      });
+
+      it('serves requests for the default locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/en'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+      });
+
+      it('serves requests for a prefixed locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/uk?test'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb?test'
+        );
+      });
+
+      it('serves requests for the default locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/en/about'));
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+
+      it('serves requests for a prefixed locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/uk/about'));
+        middlewareWithPrefixes(createMockRequest('/de/at/about'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de-at/about'
+        );
+      });
+
+      it('redirects requests at the root to a custom prefix', () => {
+        middlewareWithPrefixes(createMockRequest('/', 'de-at'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/at'
+        );
+      });
+
+      it("redirects requests to add a locale prefix if it's missing", () => {
+        middlewareWithPrefixes(createMockRequest('/about', 'en-gb'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/uk/about'
+        );
+      });
+
+      it('redirects requests for a case mismatch of a custom prefix', () => {
+        middlewareWithPrefixes(createMockRequest('/UK'));
+        middlewareWithPrefixes(createMockRequest('/de/AT'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/uk'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/at'
+        );
+      });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPrefixes(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        ['/en', '/uk', '/de/at'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/de/at>; rel="alternate"; hreflang="de-at"',
+            '<http://localhost:3000/br>; rel="alternate"; hreflang="pt"',
+            '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+          ]);
+        });
+
+        ['/en/about', '/uk/about', '/de/at/about'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk/about>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/de/at/about>; rel="alternate"; hreflang="de-at"',
+            '<http://localhost:3000/br/about>; rel="alternate"; hreflang="pt"'
+          ]);
+        });
+
+        expect(getLinks(createMockRequest('/en/unknown'))).toEqual([
+          '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/uk/unknown>; rel="alternate"; hreflang="en-gb"',
+          '<http://localhost:3000/de/at/unknown>; rel="alternate"; hreflang="de-at"',
+          '<http://localhost:3000/br/unknown>; rel="alternate"; hreflang="pt"'
+        ]);
+      });
+    });
+
+    describe('custom prefixes with pathnames', () => {
+      const middlewareWithPrefixes = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'en-gb', 'de-at', 'pt'],
+        localePrefix: {
+          mode: 'always',
+          prefixes: {
+            // en (defaults to /en)
+            'en-gb': '/uk',
+            'de-at': '/de/at',
+            pt: '/br'
+          }
+        },
+        pathnames: {
+          '/': '/',
+          '/about': {
+            en: '/about',
+            'de-at': '/ueber',
+            'en-gb': '/about',
+            pt: '/sobre'
+          }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'en-gb' | 'de-at' | 'pt'>>
+      });
+
+      it('serves requests for the default locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/en', 'en'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+      });
+
+      it('serves requests for a prefixed locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/uk?test'));
+        middlewareWithPrefixes(createMockRequest('/de/at?test'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb?test'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de-at?test'
+        );
+      });
+
+      it('serves requests for the default locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/en/about'));
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+
+      it('serves requests for a prefixed locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/uk/about'));
+        middlewareWithPrefixes(createMockRequest('/de/at/ueber'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de-at/about'
+        );
+      });
+
+      it('redirects requests at the root to a custom prefix', () => {
+        middlewareWithPrefixes(createMockRequest('/', 'de-at'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/de/at'
+        );
+      });
+
+      it("redirects requests to add a locale prefix if it's missing", () => {
+        middlewareWithPrefixes(createMockRequest('/about', 'en-gb'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/uk/about'
+        );
+      });
+
+      it('redirects requests for a case mismatch of a custom prefix', () => {
+        middlewareWithPrefixes(createMockRequest('/UK'));
+        middlewareWithPrefixes(createMockRequest('/de/AT'));
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/uk'
+        );
+        expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/de/at'
+        );
+      });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPrefixes(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        ['/en', '/uk', '/de/at'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/en>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/de/at>; rel="alternate"; hreflang="de-at"',
+            '<http://localhost:3000/br>; rel="alternate"; hreflang="pt"',
+            '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+          ]);
+        });
+
+        ['/en/about', '/uk/about', '/de/at/ueber'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/en/about>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk/about>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/de/at/ueber>; rel="alternate"; hreflang="de-at"',
+            '<http://localhost:3000/br/sobre>; rel="alternate"; hreflang="pt"'
+          ]);
+        });
+
+        expect(getLinks(createMockRequest('/en/unknown'))).toEqual([
+          '<http://localhost:3000/en/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/uk/unknown>; rel="alternate"; hreflang="en-gb"',
+          '<http://localhost:3000/de/at/unknown>; rel="alternate"; hreflang="de-at"',
+          '<http://localhost:3000/br/unknown>; rel="alternate"; hreflang="pt"'
+        ]);
       });
     });
   });
@@ -2085,7 +2370,7 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/about'
+          'http://fr.example.com/fr/about'
         );
       });
 
@@ -2096,7 +2381,16 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
-          'http://fr.example.com/about'
+          'http://fr.example.com/fr/about'
+        );
+      });
+
+      it("redirects to another domain when the locale isn't supported on the current domain", () => {
+        middleware(
+          createMockRequest('/en/about', 'en', 'http://fr.example.com')
+        );
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/en/about'
         );
       });
 
@@ -2600,6 +2894,94 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
           'http://ca.example.com/fr/external-fr/22/foo/bar'
         );
+      });
+    });
+
+    describe('custom prefixes with pathnames', () => {
+      const middlewareWithPrefixes = createIntlMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'en-gb'],
+        localePrefix: {
+          mode: 'as-needed',
+          prefixes: {
+            'en-gb': '/uk'
+          }
+        },
+        pathnames: {
+          '/': '/',
+          '/about': {
+            en: '/about',
+            'en-gb': '/about'
+          }
+        } satisfies Pathnames<ReadonlyArray<'en' | 'en-gb'>>
+      });
+
+      it('serves requests for the default locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/', 'en'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en'
+        );
+      });
+
+      it('serves requests for a prefixed locale at the root', () => {
+        middlewareWithPrefixes(createMockRequest('/uk'));
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb'
+        );
+      });
+
+      it('serves requests for the default locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/about', 'en'));
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/about'
+        );
+      });
+
+      it('serves requests for a prefixed locale at nested paths', () => {
+        middlewareWithPrefixes(createMockRequest('/uk/about'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en-gb/about'
+        );
+      });
+
+      it('sets alternate links', () => {
+        function getLinks(request: NextRequest) {
+          return middlewareWithPrefixes(request)
+            .headers.get('link')
+            ?.split(', ');
+        }
+
+        ['/en', '/uk'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+          ]);
+        });
+
+        ['/en/about', '/uk/about'].forEach((pathname) => {
+          expect(getLinks(createMockRequest(pathname))).toEqual([
+            '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
+            '<http://localhost:3000/uk/about>; rel="alternate"; hreflang="en-gb"',
+            '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+          ]);
+        });
+
+        expect(getLinks(createMockRequest('/en/unknown'))).toEqual([
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
+          '<http://localhost:3000/uk/unknown>; rel="alternate"; hreflang="en-gb"',
+          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+        ]);
       });
     });
   });

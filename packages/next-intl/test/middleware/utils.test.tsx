@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {
-  formatPathname,
+  formatPathnameTemplate,
   getInternalTemplate,
   getNormalizedPathname,
   getRouteParams,
@@ -9,13 +9,17 @@ import {
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {
-    expect(getNormalizedPathname('/en/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/en/energy', ['en', 'de'])).toBe('/energy');
-    expect(getNormalizedPathname('/energy', ['en'])).toBe('/energy');
-    expect(getNormalizedPathname('/de/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/about', ['en', 'de'])).toBe('/about');
-    expect(getNormalizedPathname('/', ['en', 'de'])).toBe('/');
-    expect(getNormalizedPathname('/es', ['en', 'de'])).toBe('/es');
+    function getResult(pathname: string) {
+      return getNormalizedPathname(pathname, ['en', 'de'], {mode: 'always'});
+    }
+
+    expect(getResult('/en/about')).toBe('/about');
+    expect(getResult('/en/energy')).toBe('/energy');
+    expect(getResult('/energy')).toBe('/energy');
+    expect(getResult('/de/about')).toBe('/about');
+    expect(getResult('/about')).toBe('/about');
+    expect(getResult('/')).toBe('/');
+    expect(getResult('/es')).toBe('/es');
   });
 });
 
@@ -73,25 +77,27 @@ describe('getRouteParams', () => {
 
 describe('formatPathname', () => {
   it('returns the template if no params are provided', () => {
-    expect(formatPathname('/users')).toBe('/users');
-    expect(formatPathname('/users/[userId]-[userName]')).toBe(
+    expect(formatPathnameTemplate('/users')).toBe('/users');
+    expect(formatPathnameTemplate('/users/[userId]-[userName]')).toBe(
       '/users/[userId]-[userName]'
     );
-    expect(formatPathname('/users/[userId]/posts/[postId]')).toBe(
+    expect(formatPathnameTemplate('/users/[userId]/posts/[postId]')).toBe(
       '/users/[userId]/posts/[postId]'
     );
   });
 
   it('replaces parameter placeholders with values', () => {
     expect(
-      formatPathname('/users/[userId]-[userName]', {
+      formatPathnameTemplate('/users/[userId]-[userName]', {
         userId: '23',
         userName: 'jane'
       })
     ).toBe('/users/23-jane');
-    expect(formatPathname('/users/[userId]', {userId: '23'})).toBe('/users/23');
+    expect(formatPathnameTemplate('/users/[userId]', {userId: '23'})).toBe(
+      '/users/23'
+    );
     expect(
-      formatPathname('/users/[userId]/posts/[postId]', {
+      formatPathnameTemplate('/users/[userId]/posts/[postId]', {
         userId: '23',
         postId: '42'
       })
@@ -100,17 +106,17 @@ describe('formatPathname', () => {
 
   it('ignores extra parameters', () => {
     expect(
-      formatPathname('/users/[userId]-[userName]', {
+      formatPathnameTemplate('/users/[userId]-[userName]', {
         userId: '23',
         userName: 'jane',
         extra: 'param'
       })
     ).toBe('/users/23-jane');
     expect(
-      formatPathname('/users/[userId]', {userId: '23', extra: 'param'})
+      formatPathnameTemplate('/users/[userId]', {userId: '23', extra: 'param'})
     ).toBe('/users/23');
     expect(
-      formatPathname('/users/[userId]/posts/[postId]', {
+      formatPathnameTemplate('/users/[userId]/posts/[postId]', {
         userId: '23',
         postId: '42',
         extra: 'param'
@@ -119,10 +125,10 @@ describe('formatPathname', () => {
   });
 
   it('does not encode special characters in parameter values', () => {
-    expect(formatPathname('/users/[userId]', {userId: '23%20jane'})).toBe(
-      '/users/23%20jane'
-    );
-    expect(formatPathname('/users/[userId]', {userId: '23/42'})).toBe(
+    expect(
+      formatPathnameTemplate('/users/[userId]', {userId: '23%20jane'})
+    ).toBe('/users/23%20jane');
+    expect(formatPathnameTemplate('/users/[userId]', {userId: '23/42'})).toBe(
       '/users/23/42'
     );
   });

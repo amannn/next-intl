@@ -1,13 +1,13 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {AllLocales} from '../../shared/types';
-import {localizeHref} from '../../shared/utils';
+import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {getLocalePrefix, localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getBasePath} from '../shared/utils';
 
-type IntlNavigateOptions<Locales extends AllLocales> = {
-  locale?: Locales[number];
+type IntlNavigateOptions<AppLocales extends Locales> = {
+  locale?: AppLocales[number];
 };
 
 /**
@@ -29,19 +29,27 @@ type IntlNavigateOptions<Locales extends AllLocales> = {
  * router.push('/about', {locale: 'de'});
  * ```
  */
-export default function useBaseRouter<Locales extends AllLocales>() {
+export default function useBaseRouter<AppLocales extends Locales>(
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+) {
   const router = useNextRouter();
   const locale = useLocale();
   const pathname = usePathname();
 
   return useMemo(() => {
-    function localize(href: string, nextLocale?: string) {
+    function localize(href: string, nextLocale?: AppLocales[number]) {
       let curPathname = window.location.pathname;
 
       const basePath = getBasePath(pathname);
       if (basePath) curPathname = curPathname.replace(basePath, '');
 
-      return localizeHref(href, nextLocale || locale, locale, curPathname);
+      const targetLocale = nextLocale || locale;
+
+      // We generate a prefix in any case, but decide
+      // in `localizeHref` if we apply it or not
+      const prefix = getLocalePrefix(targetLocale, localePrefix);
+
+      return localizeHref(href, targetLocale, locale, curPathname, prefix);
     }
 
     function createHandler<
@@ -50,7 +58,7 @@ export default function useBaseRouter<Locales extends AllLocales>() {
     >(fn: Fn) {
       return function handler(
         href: string,
-        options?: Options & IntlNavigateOptions<Locales>
+        options?: Options & IntlNavigateOptions<AppLocales>
       ): void {
         const {locale: nextLocale, ...rest} = options || {};
 
@@ -84,5 +92,5 @@ export default function useBaseRouter<Locales extends AllLocales>() {
         typeof router.prefetch
       >(router.prefetch)
     };
-  }, [locale, pathname, router]);
+  }, [locale, localePrefix, pathname, router]);
 }

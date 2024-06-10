@@ -12,8 +12,9 @@ import {it, describe, vi, expect, beforeEach} from 'vitest';
 import createLocalizedPathnamesNavigationClient from '../../src/navigation/react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
-import {Pathnames} from '../../src/navigation.react-client';
+import {Pathnames} from '../../src/routing';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
+import {getLocalePrefix} from '../../src/shared/utils';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -34,8 +35,17 @@ vi.mock('next-intl/config', () => ({
 vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, ...rest}: any) {
-    return <BaseLink locale={locale || 'en'} {...rest} />;
+  default({locale, localePrefix, ...rest}: any) {
+    const finalLocale = locale || 'en';
+    const prefix = getLocalePrefix(finalLocale, localePrefix);
+    return (
+      <BaseLink
+        locale={finalLocale}
+        localePrefixMode={localePrefix.mode}
+        prefix={prefix}
+        {...rest}
+      />
+    );
   }
 }));
 vi.mock('../../src/server/react-server/RequestLocale', () => ({
@@ -52,6 +62,7 @@ beforeEach(() => {
 });
 
 const locales = ['en', 'de', 'ja'] as const;
+
 const pathnames = {
   '/': '/',
   '/about': {
@@ -112,6 +123,91 @@ describe.each([
           expect(
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/about?foo=bar');
+        });
+      });
+    });
+
+    describe("localePrefix: 'always', custom prefixes", () => {
+      const pathnamesCustomPrefixes = {
+        '/': '/',
+        '/about': {
+          en: '/about',
+          'de-at': '/ueber-uns'
+        }
+      } as const;
+      const {Link, getPathname, redirect} = createLocalizedPathnamesNavigation({
+        locales: ['en', 'de-at'] as const,
+        pathnames: pathnamesCustomPrefixes,
+        localePrefix: {
+          mode: 'always',
+          prefixes: {
+            'de-at': '/de'
+          }
+        } as const
+      });
+
+      describe('Link', () => {
+        it('handles a locale without a custom prefix', () => {
+          const markup = renderToString(<Link href="/about">About</Link>);
+          expect(markup).toContain('href="/en/about"');
+        });
+
+        it('handles a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="de-at">
+              About
+            </Link>
+          );
+          expect(markup).toContain('href="/de/ueber-uns"');
+        });
+
+        it('handles a locale with a custom prefix on an object href', () => {
+          render(
+            <Link
+              href={{pathname: '/about', query: {foo: 'bar'}}}
+              locale="de-at"
+            >
+              About
+            </Link>
+          );
+          expect(
+            screen.getByRole('link', {name: 'About'}).getAttribute('href')
+          ).toBe('/de/ueber-uns?foo=bar');
+        });
+      });
+
+      describe('getPathname', () => {
+        it('resolves to the correct path', () => {
+          expect(
+            getPathname({
+              locale: 'de-at',
+              href: '/about'
+            })
+          ).toBe('/ueber-uns');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component<
+          Pathname extends keyof typeof pathnamesCustomPrefixes
+        >({href}: {href: Parameters<typeof redirect<Pathname>>[0]}) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/en');
+        });
+
+        it('can redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de-at'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'de-at');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/de');
         });
       });
     });

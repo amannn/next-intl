@@ -13,7 +13,12 @@ function mockPathname(pathname: string) {
 }
 
 function Component() {
-  return <>{useBasePathname()}</>;
+  const pathname = useBasePathname({
+    // The mode is not used, only the absence of
+    // `prefixes` is relevant for this test suite
+    mode: 'as-needed'
+  });
+  return <>{pathname}</>;
 }
 
 describe('unprefixed routing', () => {

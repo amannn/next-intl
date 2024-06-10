@@ -53,6 +53,10 @@
       "react-server": "./dist/esm/navigation.react-server.js",
       "default": "./dist/navigation.react-client.js"
     },
+    "./routing": {
+      "types": "./routing.d.ts",
+      "default": "./dist/routing.js"
+    },
     "./plugin": {
       "types": "./plugin.d.ts",
       "default": "./dist/plugin.js"
@@ -64,6 +68,7 @@
     "navigation.d.ts",
     "middleware.d.ts",
     "plugin.d.ts",
+    "routing.d.ts",
     "config.d.ts"
   ],
   "keywords": [
@@ -123,11 +128,11 @@
     },
     {
       "path": "dist/production/navigation.react-client.js",
-      "limit": "2.965 KB"
+      "limit": "3.235 KB"
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "17.64 KB"
+      "limit": "17.815 KB"
     },
     {
       "path": "dist/production/server.react-client.js",
@@ -139,7 +144,11 @@
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "6.19 KB"
+      "limit": "6.42 KB"
+    },
+    {
+      "path": "dist/production/routing.js",
+      "limit": "0 KB"
     }
   ]
 }

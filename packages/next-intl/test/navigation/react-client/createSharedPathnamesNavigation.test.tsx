@@ -1,6 +1,6 @@
-import {render} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import {
-  usePathname,
+  usePathname as useNextPathname,
   useParams,
   useRouter as useNextRouter
 } from 'next/navigation';
@@ -22,7 +22,7 @@ beforeEach(() => {
     refresh: vi.fn()
   };
   vi.mocked(useNextRouter).mockImplementation(() => router);
-  vi.mocked(usePathname).mockImplementation(() => '/');
+  vi.mocked(useNextPathname).mockImplementation(() => '/');
   vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
 });
 
@@ -84,6 +84,9 @@ describe("localePrefix: 'as-needed'", () => {
     router.push('/about', {locale: 'de'});
     router.push('/unknown'); // No error since routes are unknown
 
+    // @ts-expect-error -- Unknown locale
+    router.push('/about', {locale: 'unknown'});
+
     // @ts-expect-error -- No params supported
     <Link href="/users/[userId]" params={{userId: 2}}>
       User
@@ -100,6 +103,46 @@ describe("localePrefix: 'as-needed'", () => {
   }
 });
 
+describe("localePrefix: 'as-needed', custom prefix", () => {
+  const {usePathname, useRouter} = createSharedPathnamesNavigation({
+    locales: ['en', 'en-gb'],
+    localePrefix: {
+      mode: 'as-needed',
+      prefixes: {
+        'en-gb': '/uk'
+      }
+    }
+  });
+
+  describe('useRouter', () => {
+    describe('push', () => {
+      it('resolves to the correct path when passing a locale with a custom prefix', () => {
+        function Component() {
+          const router = useRouter();
+          router.push('/about', {locale: 'en-gb'});
+          return null;
+        }
+        render(<Component />);
+        const push = useNextRouter().push as Mock;
+        expect(push).toHaveBeenCalledTimes(1);
+        expect(push).toHaveBeenCalledWith('/uk/about');
+      });
+    });
+  });
+
+  describe('usePathname', () => {
+    it('returns the correct pathname for a custom locale prefix', () => {
+      vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+      vi.mocked(useNextPathname).mockImplementation(() => '/uk/about');
+      function Component() {
+        return usePathname();
+      }
+      render(<Component />);
+      screen.getByText('/about');
+    });
+  });
+});
+
 describe("localePrefix: 'never'", () => {
   const {useRouter} = createSharedPathnamesNavigation({
     locales,
@@ -107,7 +150,7 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('useRouter', () => {
-    function Component({locale}: {locale?: string}) {
+    function Component({locale}: {locale?: (typeof locales)[number]}) {
       const router = useRouter();
       router.push('/about', {locale});
       return null;

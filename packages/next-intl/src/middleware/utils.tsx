@@ -1,9 +1,15 @@
-import {AllLocales} from '../shared/types';
-import {matchesPathname, templateToRegex} from '../shared/utils';
 import {
+  Locales,
+  LocalePrefixConfigVerbose,
   DomainConfig,
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
+  Pathnames
+} from '../routing/types';
+import {
+  getLocalePrefix,
+  matchesPathname,
+  prefixPathname,
+  templateToRegex
+} from '../shared/utils';
 
 export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
@@ -69,15 +75,13 @@ export function getSortedPathnames(pathnames: Array<string>) {
 }
 
 export function getInternalTemplate<
-  Locales extends AllLocales,
-  Pathnames extends NonNullable<
-    MiddlewareConfigWithDefaults<Locales>['pathnames']
-  >
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
 >(
-  pathnames: Pathnames,
+  pathnames: AppPathnames,
   pathname: string,
-  locale: Locales[number]
-): [Locales[number] | undefined, keyof Pathnames | undefined] {
+  locale: AppLocales[number]
+): [AppLocales[number] | undefined, keyof AppPathnames | undefined] {
   const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
 
   // Try to find a localized pathname that matches
@@ -123,26 +127,27 @@ export function formatTemplatePathname(
   sourcePathname: string,
   sourceTemplate: string,
   targetTemplate: string,
-  localePrefix?: string
+  prefix?: string
 ) {
   const params = getRouteParams(sourceTemplate, sourcePathname);
   let targetPathname = '';
-  if (localePrefix) {
-    targetPathname = `/${localePrefix}`;
+  if (prefix) {
+    targetPathname = `/${prefix}`;
   }
 
-  targetPathname += formatPathname(targetTemplate, params);
+  targetPathname += formatPathnameTemplate(targetTemplate, params);
   targetPathname = normalizeTrailingSlash(targetPathname);
 
   return targetPathname;
 }
 
 /**
- * Removes potential locales from the pathname.
+ * Removes potential prefixes from the pathname.
  */
-export function getNormalizedPathname<Locales extends AllLocales>(
+export function getNormalizedPathname<AppLocales extends Locales>(
   pathname: string,
-  locales: Locales
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -150,11 +155,16 @@ export function getNormalizedPathname<Locales extends AllLocales>(
     pathname += '/';
   }
 
-  const match = pathname.match(
-    new RegExp(`^/(${locales.join('|')})/(.*)`, 'i')
+  const localePrefixes = getLocalePrefixes(locales, localePrefix);
+  const regex = new RegExp(
+    `^(${localePrefixes
+      .map(([, prefix]) => prefix.replaceAll('/', '\\/'))
+      .join('|')})/(.*)`,
+    'i'
   );
-  let result = match ? '/' + match[2] : pathname;
+  const match = pathname.match(regex);
 
+  let result = match ? '/' + match[2] : pathname;
   if (result !== '/') {
     result = normalizeTrailingSlash(result);
   }
@@ -162,24 +172,62 @@ export function getNormalizedPathname<Locales extends AllLocales>(
   return result;
 }
 
-export function findCaseInsensitiveLocale<Locales extends AllLocales>(
+export function findCaseInsensitiveString(
   candidate: string,
-  locales: Locales
+  strings: Array<string>
 ) {
-  return locales.find(
-    (locale) => locale.toLowerCase() === candidate.toLowerCase()
-  );
+  return strings.find((cur) => cur.toLowerCase() === candidate.toLowerCase());
 }
 
-export function getPathnameLocale<Locales extends AllLocales>(
+export function getLocalePrefixes<AppLocales extends Locales>(
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+): Array<[AppLocales[number], string]> {
+  return locales.map((locale) => [
+    locale as AppLocales[number],
+    getLocalePrefix(locale, localePrefix)
+  ]);
+}
+
+export function getPathnameMatch<AppLocales extends Locales>(
   pathname: string,
-  locales: Locales
-): Locales[number] | undefined {
-  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
-  const pathLocale = findCaseInsensitiveLocale(pathLocaleCandidate, locales)
-    ? pathLocaleCandidate
-    : undefined;
-  return pathLocale;
+  locales: AppLocales,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+):
+  | {
+      locale: AppLocales[number];
+      prefix: string;
+      matchedPrefix: string;
+      exact?: boolean;
+    }
+  | undefined {
+  const localePrefixes = getLocalePrefixes(locales, localePrefix);
+
+  for (const [locale, prefix] of localePrefixes) {
+    let exact, matches;
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) {
+      exact = matches = true;
+    } else {
+      const normalizedPathname = pathname.toLowerCase();
+      const normalizedPrefix = prefix.toLowerCase();
+      if (
+        normalizedPathname === normalizedPrefix ||
+        normalizedPathname.startsWith(normalizedPrefix + '/')
+      ) {
+        exact = false;
+        matches = true;
+      }
+    }
+
+    if (matches) {
+      return {
+        locale,
+        prefix,
+        matchedPrefix: pathname.slice(0, prefix.length),
+        exact
+      };
+    }
+  }
 }
 
 export function getRouteParams(template: string, pathname: string) {
@@ -194,7 +242,7 @@ export function getRouteParams(template: string, pathname: string) {
   return params;
 }
 
-export function formatPathname(template: string, params?: object) {
+export function formatPathnameTemplate(template: string, params?: object) {
   if (!params) return template;
 
   // Simplify syntax for optional catchall ('[[...slug]]') so
@@ -209,15 +257,21 @@ export function formatPathname(template: string, params?: object) {
   return result;
 }
 
-export function getPathWithSearch(
+export function formatPathname(
   pathname: string,
+  prefix: string | undefined,
   search: string | undefined
 ) {
-  let pathWithSearch = pathname;
-  if (search) {
-    pathWithSearch += search;
+  let result = pathname;
+
+  if (prefix) {
+    result = prefixPathname(prefix, result);
   }
-  return pathWithSearch;
+
+  if (search) {
+    result += search;
+  }
+  return result;
 }
 
 export function getHost(requestHeaders: Headers) {
@@ -228,9 +282,9 @@ export function getHost(requestHeaders: Headers) {
   );
 }
 
-export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
+export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
   locale: string,
-  domain: DomainConfig<Locales>
+  domain: DomainConfig<AppLocales>
 ) {
   return (
     domain.defaultLocale === locale ||
@@ -239,10 +293,10 @@ export function isLocaleSupportedOnDomain<Locales extends AllLocales>(
   );
 }
 
-export function getBestMatchingDomain<Locales extends AllLocales>(
-  curHostDomain: DomainConfig<Locales> | undefined,
+export function getBestMatchingDomain<AppLocales extends Locales>(
+  curHostDomain: DomainConfig<AppLocales> | undefined,
   locale: string,
-  domainConfigs: Array<DomainConfig<Locales>>
+  domainConfigs: Array<DomainConfig<AppLocales>>
 ) {
   let domainConfig;
 
@@ -280,9 +334,15 @@ export function applyBasePath(pathname: string, basePath: string) {
   return normalizeTrailingSlash(basePath + pathname);
 }
 
-function normalizeTrailingSlash(pathname: string) {
-  if (pathname.endsWith('/')) {
+export function normalizeTrailingSlash(pathname: string) {
+  if (pathname !== '/' && pathname.endsWith('/')) {
     pathname = pathname.slice(0, -1);
   }
   return pathname;
+}
+
+export function getLocaleAsPrefix<AppLocales extends Locales>(
+  locale: AppLocales[number]
+) {
+  return `/${locale}`;
 }

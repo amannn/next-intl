@@ -27,7 +27,11 @@ vi.mock('next/navigation', () => {
 
 function callRouter(cb: (router: ReturnType<typeof useBaseRouter>) => void) {
   function Component() {
-    const router = useBaseRouter();
+    const router = useBaseRouter({
+      // The mode is not used, only the absence of
+      // `prefixes` is relevant for this test suite
+      mode: 'as-needed'
+    });
     useEffect(() => {
       cb(router);
     }, [router]);

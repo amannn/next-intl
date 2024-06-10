@@ -1,11 +1,11 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
+import {Locales, Pathnames} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import {
-  AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst,
-  Pathnames
-} from '../../shared/types';
+  LocalizedNavigationRoutingConfigInput,
+  receiveLocalizedNavigationRoutingConfig
+} from '../shared/config';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -14,22 +14,19 @@ import {
   HrefOrUrlObjectWithParams
 } from '../shared/utils';
 import ClientLink from './ClientLink';
-import clientPermanentRedirect from './clientPermanentRedirect';
-import clientRedirect from './clientRedirect';
+import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales,
-  PathnamesConfig extends Pathnames<Locales>
->(opts: {
-  locales: Locales;
-  pathnames: PathnamesConfig;
-  localePrefix?: LocalePrefix;
-}) {
-  function useTypedLocale(): (typeof opts.locales)[number] {
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
+  const config = receiveLocalizedNavigationRoutingConfig(input);
+
+  function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
-    const isValid = opts.locales.includes(locale as any);
+    const isValid = config.locales.includes(locale as any);
     if (!isValid) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -40,14 +37,14 @@ export default function createLocalizedPathnamesNavigation<
     return locale;
   }
 
-  type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
+  type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ClientLink>,
-    'href' | 'name'
+    'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locales[number];
+    locale?: AppLocales[number];
   };
-  function Link<Pathname extends keyof PathnamesConfig>(
+  function Link<Pathname extends keyof AppPathnames>(
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref?: ComponentProps<typeof ClientLink>['ref']
   ) {
@@ -57,22 +54,22 @@ export default function createLocalizedPathnamesNavigation<
     return (
       <ClientLink
         ref={ref}
-        href={compileLocalizedPathname<Locales, Pathname>({
+        href={compileLocalizedPathname<AppLocales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- This is ok
           pathname: href,
           // @ts-expect-error -- This is ok
           params: typeof href === 'object' ? href.params : undefined,
-          pathnames: opts.pathnames
+          pathnames: config.pathnames
         })}
         locale={locale}
-        localePrefix={opts.localePrefix}
+        localePrefix={config.localePrefix}
         {...rest}
       />
     );
   }
   const LinkWithRef = forwardRef(Link) as unknown as <
-    Pathname extends keyof PathnamesConfig
+    Pathname extends keyof AppPathnames
   >(
     props: LinkProps<Pathname> & {
       ref?: ComponentProps<typeof ClientLink>['ref'];
@@ -80,33 +77,39 @@ export default function createLocalizedPathnamesNavigation<
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 
-  function redirect<Pathname extends keyof PathnamesConfig>(
+  function redirect<Pathname extends keyof AppPathnames>(
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof clientRedirect>
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
-    return clientRedirect({...opts, pathname: resolvedHref}, ...args);
+    return clientRedirect(
+      {pathname: resolvedHref, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
-  function permanentRedirect<Pathname extends keyof PathnamesConfig>(
+  function permanentRedirect<Pathname extends keyof AppPathnames>(
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
   ) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` should be called during render
     const locale = useTypedLocale();
     const resolvedHref = getPathname({href, locale});
-    return clientPermanentRedirect({...opts, pathname: resolvedHref}, ...args);
+    return clientPermanentRedirect(
+      {pathname: resolvedHref, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
   function useRouter() {
-    const baseRouter = useBaseRouter();
+    const baseRouter = useBaseRouter(config.localePrefix);
     const defaultLocale = useTypedLocale();
 
     return {
       ...baseRouter,
-      push<Pathname extends keyof PathnamesConfig>(
+      push<Pathname extends keyof AppPathnames>(
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.push>
       ) {
@@ -117,7 +120,7 @@ export default function createLocalizedPathnamesNavigation<
         return baseRouter.push(resolvedHref, ...args);
       },
 
-      replace<Pathname extends keyof PathnamesConfig>(
+      replace<Pathname extends keyof AppPathnames>(
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.replace>
       ) {
@@ -128,7 +131,7 @@ export default function createLocalizedPathnamesNavigation<
         return baseRouter.replace(resolvedHref, ...args);
       },
 
-      prefetch<Pathname extends keyof PathnamesConfig>(
+      prefetch<Pathname extends keyof AppPathnames>(
         href: HrefOrHrefWithParams<Pathname>,
         ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
       ) {
@@ -141,12 +144,13 @@ export default function createLocalizedPathnamesNavigation<
     };
   }
 
-  function usePathname(): keyof PathnamesConfig {
-    const pathname = useBasePathname();
+  function usePathname(): keyof AppPathnames {
+    const pathname = useBasePathname(config.localePrefix);
     const locale = useTypedLocale();
+
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return pathname
-      ? getRoute({pathname, locale, pathnames: opts.pathnames})
+      ? getRoute({pathname, locale, pathnames: config.pathnames})
       : pathname;
   }
 
@@ -154,13 +158,13 @@ export default function createLocalizedPathnamesNavigation<
     href,
     locale
   }: {
-    locale: Locales[number];
-    href: HrefOrHrefWithParams<keyof PathnamesConfig>;
+    locale: AppLocales[number];
+    href: HrefOrHrefWithParams<keyof AppPathnames>;
   }) {
     return compileLocalizedPathname({
       ...normalizeNameOrNameWithParams(href),
       locale,
-      pathnames: opts.pathnames
+      pathnames: config.pathnames
     });
   }
 

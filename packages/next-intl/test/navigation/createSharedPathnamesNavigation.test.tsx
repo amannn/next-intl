@@ -13,6 +13,7 @@ import createSharedPathnamesNavigationClient from '../../src/navigation/react-cl
 import createSharedPathnamesNavigationServer from '../../src/navigation/react-server/createSharedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
 import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
+import {getLocalePrefix} from '../../src/shared/utils';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -33,8 +34,17 @@ vi.mock('next-intl/config', () => ({
 vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, ...rest}: any) {
-    return <BaseLink locale={locale || 'en'} {...rest} />;
+  default({locale, localePrefix, ...rest}: any) {
+    const finalLocale = locale || 'en';
+    const prefix = getLocalePrefix(finalLocale, localePrefix);
+    return (
+      <BaseLink
+        locale={finalLocale}
+        localePrefixMode={localePrefix.mode}
+        prefix={prefix}
+        {...rest}
+      />
+    );
   }
 }));
 vi.mock('../../src/server/react-server/RequestLocale', () => ({
@@ -47,6 +57,10 @@ beforeEach(() => {
 });
 
 const locales = ['en', 'de'] as const;
+const localesWithCustomPrefixes = ['en', 'en-gb'] as const;
+const customizedPrefixes = {
+  'en-gb': '/uk'
+};
 
 describe.each([
   {env: 'react-client', implementation: createSharedPathnamesNavigationClient},
@@ -93,6 +107,73 @@ describe.each([
           expect(
             screen.getByRole('link', {name: 'About'}).getAttribute('href')
           ).toBe('/de/news/launch-party-3');
+        });
+
+        it('handles relative links correctly on the initial render', () => {
+          const markup = renderToString(<Link href="test">Test</Link>);
+          expect(markup).toContain('href="test"');
+        });
+      });
+    });
+
+    describe("localePrefix: 'always', custom prefixes", () => {
+      const {Link, redirect} = createSharedPathnamesNavigation({
+        locales: localesWithCustomPrefixes,
+        localePrefix: {
+          mode: 'always',
+          prefixes: customizedPrefixes
+        }
+      });
+
+      describe('Link', () => {
+        it('handles a locale without a custom prefix', () => {
+          const markup = renderToString(<Link href="/about">About</Link>);
+          expect(markup).toContain('href="/en/about"');
+        });
+
+        it('handles a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="en-gb">
+              Über uns
+            </Link>
+          );
+          expect(markup).toContain('href="/uk/about"');
+        });
+
+        it('handles a locale with a custom prefix on an object href', () => {
+          render(
+            <Link
+              href={{pathname: '/about', query: {foo: 'bar'}}}
+              locale="en-gb"
+            >
+              About
+            </Link>
+          );
+          expect(
+            screen.getByRole('link', {name: 'About'}).getAttribute('href')
+          ).toBe('/uk/about?foo=bar');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component({href}: {href: string}) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for the default locale', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/en');
+        });
+
+        it('can redirect for a non-default locale', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+
+          render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk');
         });
       });
     });
@@ -234,6 +315,63 @@ describe.each([
           }
           render(<Test />);
           expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/en', 'push');
+        });
+      });
+    });
+
+    describe("localePrefix: 'as-needed', custom prefixes", () => {
+      const {Link, permanentRedirect, redirect} =
+        createSharedPathnamesNavigation({
+          locales: localesWithCustomPrefixes,
+          localePrefix: {mode: 'as-needed', prefixes: customizedPrefixes}
+        });
+
+      describe('Link', () => {
+        it('renders a prefix for a locale with a custom prefix', () => {
+          const markup = renderToString(
+            <Link href="/about" locale="en-gb">
+              About
+            </Link>
+          );
+          expect(markup).toContain('href="/uk/about"');
+        });
+      });
+
+      describe('redirect', () => {
+        function Component({href}: {href: string}) {
+          redirect(href);
+          return null;
+        }
+
+        it('can redirect for a locale with a custom prefix', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk');
+
+          rerender(<Component href="/about" />);
+          expect(nextRedirect).toHaveBeenLastCalledWith('/uk/about');
+        });
+      });
+
+      describe('permanentRedirect', () => {
+        function Component({href}: {href: string}) {
+          permanentRedirect(href);
+          return null;
+        }
+
+        it('can permanently redirect for a locale with a custom prefix', () => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
+
+          vi.mocked(useNextPathname).mockImplementation(() => '/');
+          const {rerender} = render(<Component href="/" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/uk');
+
+          rerender(<Component href="/about" />);
+          expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/uk/about');
         });
       });
     });
