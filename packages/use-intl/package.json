@@ -11,7 +11,7 @@
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "bunchee",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
@@ -20,36 +20,60 @@
     "size": "size-limit"
   },
   "main": "./dist/index.js",
-  "module": "dist/esm/index.js",
-  "typings": "./dist/types/src/index.d.ts",
+  "module": "dist/index.mjs",
+  "type": "commonjs",
+  "typings": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.d.ts",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "production": "./dist/index.production.mjs",
+        "development": "./dist/index.development.mjs",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "production": "./dist/index.production.js",
+        "development": "./dist/index.development.js",
+        "default": "./dist/index.js"
+      },
       "default": "./dist/index.js"
     },
     "./core": {
-      "types": "./core.d.ts",
+      "import": {
+        "types": "./dist/core.d.mts",
+        "production": "./dist/core.production.mjs",
+        "development": "./dist/core.development.mjs",
+        "default": "./dist/core.mjs"
+      },
+      "require": {
+        "types": "./dist/core.d.ts",
+        "production": "./dist/core.production.js",
+        "development": "./dist/core.development.js",
+        "default": "./dist/core.js"
+      },
       "default": "./dist/core.js"
     },
     "./react": {
-      "types": "./react.d.ts",
+      "import": {
+        "types": "./dist/react.d.mts",
+        "production": "./dist/react.production.mjs",
+        "development": "./dist/react.development.mjs",
+        "default": "./dist/react.mjs"
+      },
+      "require": {
+        "types": "./dist/react.d.ts",
+        "production": "./dist/react.production.js",
+        "development": "./dist/react.development.js",
+        "default": "./dist/react.js"
+      },
       "default": "./dist/react.js"
-    },
-    "./_useLocale": {
-      "types": "./_useLocale.d.ts",
-      "default": "./dist/_useLocale.js"
-    },
-    "./_IntlProvider": {
-      "types": "./_IntlProvider.d.ts",
-      "default": "./dist/_IntlProvider.js"
     }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts",
-    "_useLocale.d.ts",
-    "_IntlProvider.d.ts"
+    "react.d.ts"
   ],
   "keywords": [
     "react",
@@ -71,27 +95,21 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.13.5",
-    "@size-limit/preset-big-lib": "^8.2.6",
+    "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^13.0.0",
     "@types/node": "^20.1.2",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "bunchee": "^5.1.6",
     "date-fns": "^2.16.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "publint": "^0.2.7",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "rollup": "^3.28.1",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.4",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
   },
-  "prettier": "../../.prettierrc.json",
-  "size-limit": [
-    {
-      "path": "dist/production/index.js",
-      "limit": "15.26 kB"
-    }
-  ]
+  "prettier": "../../.prettierrc.json"
 }
