@@ -1,8 +1,7 @@
 'use client';
 
 import React, {ComponentProps} from 'react';
-// Workaround for some bundle splitting until we have ESM
-import {IntlProvider} from 'use-intl/_IntlProvider';
+import {IntlProvider} from 'use-intl';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {
   /** This is automatically received when being rendered from a Server Component. In all other cases, e.g. when rendered from a Client Component, a unit test or with the Pages Router, you can pass this prop explicitly. */

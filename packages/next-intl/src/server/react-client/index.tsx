@@ -43,6 +43,7 @@ export const getLocale = notSupported('getLocale') as typeof getLocale_type;
 // The type of `getTranslations` is not assigned here because it
 // causes a type error. The types use the `react-server` entry
 // anyway, therefore this is irrelevant.
+// TODO: Validate if this is still the case
 export const getTranslations = notSupported('getTranslations');
 
 export const unstable_setRequestLocale = notSupported(
