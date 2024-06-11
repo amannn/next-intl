@@ -13,12 +13,6 @@
 
 > Internationalization (i18n) for Next.js
 
-<hr />
-
-📣 [Support for the App Router and Server Components has arrived →](https://next-intl-docs.vercel.app/docs/getting-started/app-router)
-
-<hr />
-
 ## Features
 
 Internationalization (i18n) is an essential part of the user experience, therefore `next-intl` gives you all the parts you need to get language nuances right.

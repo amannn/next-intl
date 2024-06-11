@@ -9,7 +9,7 @@
       "url": "https://github.com/sponsors/amannn"
     }
   ],
-  "description": "A minimal, but complete solution for internationalization in Next.js apps.",
+  "description": "Internationalization (i18n) for Next.js",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app",
   "repository": {

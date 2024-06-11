@@ -1,6 +1,6 @@
 # 🌐 use-intl
 
-> Internationalization for React
+> Internationalization (i18n) for React
 
 ## Features
 

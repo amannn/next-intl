@@ -3,7 +3,7 @@
   "version": "3.15.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
-  "description": "Minimal, but complete solution for managing internationalization in React apps.",
+  "description": "Internationalization (i18n) for React",
   "license": "MIT",
   "homepage": "https://next-intl-docs.vercel.app/",
   "repository": {
