@@ -34,10 +34,14 @@
       "react-server": "./dist/index.react-server.mjs",
       "import": {
         "types": "./dist/index.d.mts",
+        "production": "./dist/index.production.mjs",
+        "development": "./dist/index.development.mjs",
         "default": "./dist/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
+        "production": "./dist/index.production.js",
+        "development": "./dist/index.development.js",
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
@@ -46,10 +50,14 @@
       "react-server": "./dist/server.react-server.mjs",
       "import": {
         "types": "./dist/server.d.mts",
+        "production": "./dist/server.production.mjs",
+        "development": "./dist/server.development.mjs",
         "default": "./dist/server.mjs"
       },
       "require": {
         "types": "./dist/server.d.ts",
+        "production": "./dist/server.production.js",
+        "development": "./dist/server.development.js",
         "default": "./dist/server.js"
       },
       "default": "./dist/server.js"
@@ -57,10 +65,14 @@
     "./config": {
       "import": {
         "types": "./dist/config.d.mts",
+        "production": "./dist/config.production.mjs",
+        "development": "./dist/config.development.mjs",
         "default": "./dist/config.mjs"
       },
       "require": {
         "types": "./dist/config.d.ts",
+        "production": "./dist/config.production.js",
+        "development": "./dist/config.development.js",
         "default": "./dist/config.js"
       },
       "default": "./dist/config.js"
@@ -68,10 +80,14 @@
     "./middleware": {
       "import": {
         "types": "./dist/middleware.d.mts",
+        "production": "./dist/middleware.production.mjs",
+        "development": "./dist/middleware.development.mjs",
         "default": "./dist/middleware.mjs"
       },
       "require": {
         "types": "./dist/middleware.d.ts",
+        "production": "./dist/middleware.production.js",
+        "development": "./dist/middleware.development.js",
         "default": "./dist/middleware.js"
       },
       "default": "./dist/middleware.js"
@@ -80,10 +96,14 @@
       "react-server": "./dist/navigation.react-server.mjs",
       "import": {
         "types": "./dist/navigation.d.mts",
+        "production": "./dist/navigation.production.mjs",
+        "development": "./dist/navigation.development.mjs",
         "default": "./dist/navigation.mjs"
       },
       "require": {
         "types": "./dist/navigation.d.ts",
+        "production": "./dist/navigation.production.js",
+        "development": "./dist/navigation.development.js",
         "default": "./dist/navigation.js"
       },
       "default": "./dist/navigation.js"
@@ -91,10 +111,14 @@
     "./routing": {
       "import": {
         "types": "./dist/routing.d.mts",
+        "production": "./dist/routing.production.mjs",
+        "development": "./dist/routing.development.mjs",
         "default": "./dist/routing.mjs"
       },
       "require": {
         "types": "./dist/routing.d.ts",
+        "production": "./dist/routing.production.js",
+        "development": "./dist/routing.development.js",
         "default": "./dist/routing.js"
       },
       "default": "./dist/routing.js"
@@ -102,10 +126,14 @@
     "./plugin": {
       "import": {
         "types": "./dist/plugin.d.mts",
+        "production": "./dist/plugin.production.mjs",
+        "development": "./dist/plugin.development.mjs",
         "default": "./dist/plugin.mjs"
       },
       "require": {
         "types": "./dist/plugin.d.ts",
+        "production": "./dist/plugin.production.js",
+        "development": "./dist/plugin.development.js",
         "default": "./dist/plugin.js"
       },
       "default": "./dist/plugin.js"
