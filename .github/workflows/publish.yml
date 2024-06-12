@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           registry-url: 'https://registry.npmjs.org'
-          node-version: 18.x
+          node-version: 20.x
           cache: 'pnpm'
       - run: pnpm install
       # Seems like after squash & merge the author is unknown to lerna
