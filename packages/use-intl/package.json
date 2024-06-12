@@ -82,7 +82,7 @@
     "publint": "^0.2.7",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "rollup": "^3.28.1",
+    "rollup": "^4.18.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"

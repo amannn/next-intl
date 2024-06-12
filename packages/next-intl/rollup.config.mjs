@@ -1,6 +1,6 @@
 /* eslint-env node */
-const preserveDirectives = require('rollup-plugin-preserve-directives').default;
-const getBuildConfig = require('../../scripts/getBuildConfig');
+import preserveDirectives from 'rollup-plugin-preserve-directives';
+import getBuildConfig from '../../scripts/getBuildConfig.mjs';
 
 const config = {
   input: {
@@ -29,7 +29,7 @@ const config = {
   plugins: [preserveDirectives()]
 };
 
-module.exports = [
+export default [
   getBuildConfig({
     ...config,
     env: 'development'
