@@ -42,7 +42,3 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run test
       - run: pnpm run size
-
-      # Publish canary version
-      - if: github.ref == 'refs/heads/canary'
-        run: pnpm run publish --canary
