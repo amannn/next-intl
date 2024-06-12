@@ -7,7 +7,7 @@
     "lint": "turbo run lint --env-mode=loose",
     "prepare": "turbo run build --filter './packages/**' --env-mode=loose",
     "size": "turbo run size --env-mode=loose",
-    "publish": "lerna publish --dry-run"
+    "publish": "lerna publish"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
