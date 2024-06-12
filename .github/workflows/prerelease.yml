@@ -6,7 +6,7 @@ on:
       - canary
 
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
     permissions:
       contents: write

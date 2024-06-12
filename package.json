@@ -16,7 +16,6 @@
     "@babel/preset-typescript": "^7.24.7",
     "@lerna-lite/cli": "^3.5.1",
     "@lerna-lite/publish": "^3.5.1",
-    "@lerna-lite/version": "^3.5.1",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.1",
