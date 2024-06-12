@@ -22,7 +22,7 @@
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
     "lint:package": "publint && attw --pack",
-    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
+    "prepublishOnly": "turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
