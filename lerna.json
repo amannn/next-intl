@@ -6,7 +6,6 @@
   "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
     "publish": {
-      "dryRun": true,
       "removePackageFields": ["devDependencies", "prettier"],
       "yes": true
     },
