@@ -1,9 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["UMAMI_URL", "NEXTAUTH_SECRET"],
+      "env": ["NEXTAUTH_SECRET"],
       "outputs": [
         "dist/**/*.ts",
         "dist/**/*.tsx",
