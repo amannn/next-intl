@@ -2,11 +2,11 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "turbo run build --env-mode=loose --cache-dir=.turbo",
-    "test": "turbo run test --concurrency 1 --env-mode=loose --cache-dir=.turbo",
-    "lint": "turbo run lint --env-mode=loose --cache-dir=.turbo",
-    "prepare": "turbo run build --filter './packages/**' --env-mode=loose --cache-dir=.turbo",
-    "size": "turbo run size --env-mode=loose --cache-dir=.turbo",
+    "build": "turbo run build --env-mode=loose --remote-only",
+    "test": "turbo run test --concurrency 1 --env-mode=loose --remote-only",
+    "lint": "turbo run lint --env-mode=loose --remote-only",
+    "prepare": "turbo run build --filter './packages/**' --env-mode=loose --remote-only",
+    "size": "turbo run size --env-mode=loose --remote-only",
     "publish": "lerna publish --yes --no-private"
   },
   "devDependencies": {
