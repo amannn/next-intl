@@ -3,8 +3,10 @@
   "version": "3.15.0",
   "packages": ["packages/*"],
   "npmClient": "pnpm",
+  "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
     "publish": {
+      "dryRun": true,
       "removePackageFields": ["devDependencies", "prettier"],
       "yes": true
     },
