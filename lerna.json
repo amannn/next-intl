@@ -10,7 +10,8 @@
     },
     "version": {
       "changelogIncludeCommitsClientLogin": " – by [@%l](https://github.com/%l)",
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "createRelease": "github"
     }
   }
 }
