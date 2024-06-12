@@ -25,8 +25,8 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
     return providedPath;
   } else {
     for (const candidate of [
-      './i18n.ts',
       './i18n.tsx',
+      './i18n.ts',
       './i18n.js',
       './i18n.jsx',
       './src/i18n.tsx',

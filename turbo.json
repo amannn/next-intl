@@ -3,7 +3,6 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["NEXTAUTH_SECRET"],
       "outputs": [
         "dist/**/*.ts",
         "dist/**/*.tsx",

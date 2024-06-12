@@ -5,8 +5,8 @@ const input = {
   index: 'src/index.tsx',
   core: 'src/core.tsx',
   react: 'src/react.tsx',
-  _IntlProvider: 'src/_IntlProvider.tsx',
-  _useLocale: 'src/_useLocale.tsx'
+  _useLocale: 'src/_useLocale.tsx',
+  _IntlProvider: 'src/_IntlProvider.tsx'
 };
 
 export default [
