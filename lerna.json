@@ -5,7 +5,8 @@
   "npmClient": "pnpm",
   "command": {
     "publish": {
-      "removePackageFields": ["scripts", "devDependencies", "prettier"]
+      "removePackageFields": ["scripts", "devDependencies", "prettier"],
+      "yes": true
     },
     "version": {
       "changelogIncludeCommitsClientLogin": " – by [@%l](https://github.com/%l)",
