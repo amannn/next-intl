@@ -639,7 +639,7 @@ importers:
         specifier: ^0.6.3
         version: 0.6.3
       use-intl:
-        specifier: ^3.15.0
+        specifier: workspace:^
         version: link:../use-intl
     devDependencies:
       '@arethetypeswrong/cli':
