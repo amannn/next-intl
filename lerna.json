@@ -5,7 +5,12 @@
   "npmClient": "pnpm",
   "command": {
     "publish": {
-      "conventionalCommits": true
+      "removePackageFields": ["scripts", "devDependencies", "prettier"]
+    },
+    "version": {
+      "changelogIncludeCommitsClientLogin": " – by [@%l](https://github.com/%l)",
+      "conventionalCommits": true,
+      "createRelease": "github"
     }
   }
 }
