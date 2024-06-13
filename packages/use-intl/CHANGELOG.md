@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.16.0-canary.4 (2024-06-13)
+
+### Bug Fixes
+
+* Don't use generated release notes ([46d7b5b](https://github.com/amannn/next-intl/commit/46d7b5bbc873339569d8f3c523b99ef557f7dcba)) – by [@amannn](https://github.com/amannn)
+
 ## 3.16.0-canary.3 (2024-06-13)
 
 ### Bug Fixes
