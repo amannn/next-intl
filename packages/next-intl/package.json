@@ -26,6 +26,7 @@
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
+  "type": "commonjs",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "typings": "./dist/index.d.ts",

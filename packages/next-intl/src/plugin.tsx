@@ -112,9 +112,3 @@ export default function createNextIntlPlugin(i18nPath?: string) {
     return initPlugin(i18nPath, nextConfig);
   };
 }
-
-// Compat with CJS default export
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = createNextIntlPlugin;
-}
-// todo: necessary?
