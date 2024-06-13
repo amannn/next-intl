@@ -2,7 +2,9 @@ import {describe, expect, it} from 'vitest';
 import {
   compileLocalizedPathname,
   getBasePath,
-  serializeSearchParams
+  serializeSearchParams,
+  hasPathnamePrefixed,
+  unprefixPathname
 } from '../../../src/navigation/shared/utils';
 
 describe('serializeSearchParams', () => {
@@ -59,5 +61,40 @@ describe('getBasePath', () => {
 
   it('detects a base path when using no locale prefix and the user is at a nested path', () => {
     expect(getBasePath('/about', '/base/about')).toBe('/base');
+  });
+});
+
+describe('hasPathnamePrefixed', () => {
+  it('detects prefixed pathnames', () => {
+    expect(hasPathnamePrefixed('/en', '/en')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client/')).toEqual(true);
+    expect(hasPathnamePrefixed('/en', '/en/client/test')).toEqual(true);
+  });
+
+  it('detects non-prefixed pathnames', () => {
+    expect(hasPathnamePrefixed('/en', '/')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client/')).toEqual(false);
+    expect(hasPathnamePrefixed('/en', '/client/test')).toEqual(false);
+  });
+});
+
+describe('unlocalizePathname', () => {
+  it('works for the root', () => {
+    expect(unprefixPathname('/en', '/en')).toEqual('/');
+  });
+
+  it('works for nested pages', () => {
+    expect(unprefixPathname('/en/nested', '/en')).toEqual('/nested');
+  });
+
+  it('works with sub-tags', () => {
+    expect(unprefixPathname('/en-GB/nested', '/en-GB')).toEqual('/nested');
+  });
+
+  it('works for custom prefixes', () => {
+    expect(unprefixPathname('/uk/nested', '/uk')).toEqual('/nested');
   });
 });

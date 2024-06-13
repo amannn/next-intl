@@ -4,7 +4,8 @@ import {
 } from 'next/navigation';
 import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
-import {getLocalePrefix, isLocalHref, prefixPathname} from '../../shared/utils';
+import {getLocalePrefix, prefixPathname} from '../../shared/utils';
+import {isLocalHref} from './utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
   return function baseRedirect<AppLocales extends Locales>(
