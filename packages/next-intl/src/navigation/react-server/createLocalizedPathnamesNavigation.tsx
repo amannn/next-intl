@@ -1,6 +1,6 @@
 import React, {ComponentProps} from 'react';
 import {Locales, Pathnames} from '../../routing/types';
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
+import {getRequestLocale} from '../../runtimes/react-server.shared-runtime';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   LocalizedNavigationRoutingConfigInput,
