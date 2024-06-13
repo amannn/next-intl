@@ -20,7 +20,7 @@ jobs:
           node-version: 20.x
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm run publish --conventional-prerelease --preminor --preid canary --dist-tag canary
+      - run: pnpm run publish --conventional-prerelease --preid canary --dist-tag canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
