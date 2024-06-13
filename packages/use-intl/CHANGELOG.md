@@ -3,38 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 3.16.0-canary.4 (2024-06-13)
-
-### Bug Fixes
-
-* Don't use generated release notes ([46d7b5b](https://github.com/amannn/next-intl/commit/46d7b5bbc873339569d8f3c523b99ef557f7dcba)) – by [@amannn](https://github.com/amannn)
-
-## 3.16.0-canary.3 (2024-06-13)
-
-### Bug Fixes
-
-* Generate release notes ([5400146](https://github.com/amannn/next-intl/commit/54001465d0d88e05507c123ad18795e809be1939)) – by [@amannn](https://github.com/amannn)
-
-## 3.16.0-canary.2 (2024-06-13)
-
-**Note:** Version bump only for package use-intl
-
-## 3.16.0-canary.1 (2024-06-13)
-
-### Bug Fixes
-
-* test a fix release following feat ([82df1be](https://github.com/amannn/next-intl/commit/82df1beed525378c389bc35674f96ef7857021a3)) – by [@amannn](https://github.com/amannn)
-
-## 3.16.0-canary.0 (2024-06-13)
-
-### Features
-
-* test feat release ([405f450](https://github.com/amannn/next-intl/commit/405f4504994285c890c69811e17e10f996ee371e)) – by [@amannn](https://github.com/amannn)
-
-## 3.15.1-canary.0 (2024-06-13)
-
-**Note:** Version bump only for package use-intl
-
 # 3.15.0 (2024-06-10)
 
 ### Features
