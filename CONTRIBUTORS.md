@@ -103,4 +103,4 @@ Other prefixes that are allowed and will *not* create a release are the followin
 
 ### Prereleases
 
-Canary versions are automatically published for every commit on the `canary` branch.
+Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).
