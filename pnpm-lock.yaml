@@ -58,10 +58,10 @@ importers:
     dependencies:
       '@docsearch/react':
         specifier: ^3.6.0
-        version: 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.0)(react-dom@18.3.0)(react@18.3.0)(search-insights@2.14.0)
+        version: 3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)(search-insights@2.14.0)
       '@heroicons/react':
         specifier: ^2.0.17
-        version: 2.0.17(react@18.3.0)
+        version: 2.0.17(react@18.3.1)
       '@tailwindcss/typography':
         specifier: ^0.5.9
         version: 0.5.9(tailwindcss@3.3.2)
@@ -79,19 +79,19 @@ importers:
         version: 2.2.0
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       nextra:
         specifier: ^2.13.2
-        version: 2.13.2(next@14.2.3)(react-dom@18.3.0)(react@18.3.0)
+        version: 2.13.2(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)
       nextra-theme-docs:
         specifier: ^2.13.2
-        version: 2.13.2(next@14.2.3)(nextra@2.13.2)(react-dom@18.3.0)(react@18.3.0)
+        version: 2.13.2(next@14.2.3)(nextra@2.13.2)(react-dom@18.3.1)(react@18.3.1)
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       tailwindcss:
         specifier: ^3.3.2
         version: 3.3.2
@@ -100,8 +100,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.0(postcss@8.4.38)
@@ -128,16 +128,16 @@ importers:
         version: 1.2.1
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       tailwindcss:
         specifier: ^3.3.2
         version: 3.3.3
@@ -150,7 +150,7 @@ importers:
         version: 1.43.1
       '@testing-library/react':
         specifier: ^13.0.0
-        version: 13.0.0(react-dom@18.3.0)(react@18.3.0)
+        version: 13.0.0(react-dom@18.3.1)(react@18.3.1)
       '@types/jest':
         specifier: ^29.5.0
         version: 29.5.1
@@ -161,8 +161,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.0(postcss@8.4.31)
@@ -195,16 +195,16 @@ importers:
     dependencies:
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/lodash':
         specifier: ^4.14.176
@@ -213,8 +213,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       eslint:
         specifier: ^8.54.0
         version: 8.54.0
@@ -232,16 +232,16 @@ importers:
     dependencies:
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       tailwindcss:
         specifier: ^3.3.2
         version: 3.3.7
@@ -250,8 +250,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       autoprefixer:
         specifier: ^10.4.0
         version: 10.4.0(postcss@8.4.35)
@@ -278,19 +278,19 @@ importers:
     dependencies:
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-auth:
         specifier: ^4.24.4
-        version: 4.24.4(next@14.2.3)(react-dom@18.3.0)(react@18.3.0)
+        version: 4.24.4(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@playwright/test':
         specifier: ^1.41.2
@@ -302,8 +302,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       eslint:
         specifier: ^8.54.0
         version: 8.54.0
@@ -327,16 +327,16 @@ importers:
         version: 2.1.3
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@jest/globals':
         specifier: ^29.5.0
@@ -346,7 +346,7 @@ importers:
         version: 1.43.1
       '@testing-library/react':
         specifier: ^13.0.0
-        version: 13.0.0(react-dom@18.3.0)(react@18.3.0)
+        version: 13.0.0(react-dom@18.3.1)(react@18.3.1)
       '@types/jest':
         specifier: ^29.5.0
         version: 29.5.1
@@ -357,8 +357,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       chokidar-cli:
         specifier: 3.0.0
         version: 3.0.0
@@ -431,16 +431,16 @@ importers:
         version: 2.16.1
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/lodash':
         specifier: ^4.14.176
@@ -449,8 +449,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       eslint:
         specifier: ^8.54.0
         version: 8.54.0
@@ -474,20 +474,20 @@ importers:
         version: 4.17.21
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       next-intl:
         specifier: latest
         version: link:../../packages/next-intl
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@testing-library/react':
         specifier: ^13.0.0
-        version: 13.0.0(react-dom@18.3.0)(react@18.3.0)
+        version: 13.0.0(react-dom@18.3.1)(react@18.3.1)
       '@types/accept-language-parser':
         specifier: ^1.5.3
         version: 1.5.3
@@ -501,8 +501,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       eslint:
         specifier: ^8.54.0
         version: 8.54.0
@@ -560,7 +560,7 @@ importers:
         version: 1.15.0
       '@remix-run/react':
         specifier: ^1.15.0
-        version: 1.15.0(react-dom@18.3.0)(react@18.3.0)
+        version: 1.15.0(react-dom@18.3.1)(react@18.3.1)
       '@remix-run/serve':
         specifier: ^1.15.0
         version: 1.15.0
@@ -568,14 +568,14 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       use-intl:
         specifier: ^2.14.3
-        version: 2.14.3(react@18.3.0)
+        version: 2.14.3(react@18.3.1)
     devDependencies:
       '@remix-run/dev':
         specifier: ^1.15.0
@@ -584,8 +584,8 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
@@ -602,18 +602,18 @@ importers:
   examples/example-use-intl:
     dependencies:
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       use-intl:
         specifier: latest
         version: link:../../packages/use-intl
     devDependencies:
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
@@ -656,7 +656,7 @@ importers:
         version: 8.2.6(size-limit@8.2.6)
       '@testing-library/react':
         specifier: ^16.0.0
-        version: 16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.0)(react@18.3.0)
+        version: 16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
       '@types/negotiator':
         specifier: ^0.6.1
         version: 0.6.1
@@ -664,8 +664,8 @@ importers:
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
@@ -680,7 +680,7 @@ importers:
         version: 1.4.1(eslint@8.54.0)(typescript@5.2.2)
       next:
         specifier: ^14.2.3
-        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+        version: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       path-to-regexp:
         specifier: ^6.2.1
         version: 6.2.1
@@ -688,11 +688,11 @@ importers:
         specifier: ^0.2.8
         version: 0.2.8
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       rollup:
         specifier: ^4.18.0
         version: 4.18.0
@@ -726,13 +726,13 @@ importers:
         version: 8.2.6(size-limit@8.2.6)
       '@testing-library/react':
         specifier: ^16.0.0
-        version: 16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.0)(react@18.3.0)
+        version: 16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
       '@types/node':
         specifier: ^20.1.2
         version: 20.1.2
       '@types/react':
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.3
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
@@ -749,11 +749,11 @@ importers:
         specifier: ^0.2.8
         version: 0.2.8
       react:
-        specifier: ^18.3.0
-        version: 18.3.0
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
-        specifier: ^18.3.0
-        version: 18.3.0(react@18.3.0)
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       rollup:
         specifier: ^4.18.0
         version: 4.18.0
@@ -4408,7 +4408,7 @@ packages:
     resolution: {integrity: sha512-+sbxb71sWre+PwDK7X2T8+bhS6clcVMLwBPznX45Qu6opJcgRjAp7gYSDzVFp187J+feSj5dNBN1mJoi6ckkUQ==}
     dev: false
 
-  /@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.0)(react-dom@18.3.0)(react@18.3.0)(search-insights@2.14.0):
+  /@docsearch/react@3.6.0(@algolia/client-search@4.23.3)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)(search-insights@2.14.0):
     resolution: {integrity: sha512-HUFut4ztcVNmqy9gp/wxNbC7pTOHhgVVkHVGCACTuLhUKUhKAF9KYHJtMiLUJxEqiFLQiuri1fWF8zqwM/cu1w==}
     peerDependencies:
       '@types/react': '>= 16.8.0 < 19.0.0'
@@ -4428,10 +4428,10 @@ packages:
       '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)(search-insights@2.14.0)
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.23.3)
       '@docsearch/css': 3.6.0
-      '@types/react': 18.3.0
+      '@types/react': 18.3.3
       algoliasearch: 4.23.3
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       search-insights: 2.14.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5976,7 +5976,7 @@ packages:
       '@hapi/hoek': 9.3.0
     dev: false
 
-  /@headlessui/react@1.7.14(react-dom@18.3.0)(react@18.3.0):
+  /@headlessui/react@1.7.14(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-znzdq9PG8rkwcu9oQ2FwIy0ZFtP9Z7ycS+BAqJ3R5EIqC/0bJGvhT7193rFf+45i9nnPsYvCQVW4V/bB9Xc+gA==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -5984,16 +5984,16 @@ packages:
       react-dom: ^16 || ^17 || ^18
     dependencies:
       client-only: 0.0.1
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
-  /@heroicons/react@2.0.17(react@18.3.0):
+  /@heroicons/react@2.0.17(react@18.3.1):
     resolution: {integrity: sha512-90GMZktkA53YbNzHp6asVEDevUQCMtxWH+2UK2S8OpnLEu7qckTJPhNxNQG52xIR1WFTwFqtH6bt7a60ZNcLLA==}
     peerDependencies:
       react: '>= 16'
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
     dev: false
 
   /@humanwhocodes/config-array@0.11.13:
@@ -6584,14 +6584,14 @@ packages:
       - supports-color
     dev: false
 
-  /@mdx-js/react@2.3.0(react@18.3.0):
+  /@mdx-js/react@2.3.0(react@18.3.1):
     resolution: {integrity: sha512-zQH//gdOmuu7nt2oJR29vFhDv88oGPmVw6BggmrHeMI+xgEkp1B2dX9/bMBSYtK0dyLX/aOmesKS09g222K1/g==}
     peerDependencies:
       react: '>=16'
     dependencies:
       '@types/mdx': 2.0.5
-      '@types/react': 18.3.0
-      react: 18.3.0
+      '@types/react': 18.3.3
+      react: 18.3.1
     dev: false
 
   /@napi-rs/simple-git-android-arm-eabi@0.1.9:
@@ -7395,7 +7395,7 @@ packages:
       source-map-support: 0.5.21
       stream-slice: 0.1.2
 
-  /@remix-run/react@1.15.0(react-dom@18.3.0)(react@18.3.0):
+  /@remix-run/react@1.15.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-S0RuIeHvQTqryCZ3KVl8EsIWCqL6/ky1/kmDpN2n5Pdjew2BLC6DX7OdrY1ZQjbzOMHAROsZlyaSSVXCItunag==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -7403,10 +7403,10 @@ packages:
       react-dom: '>=16.8'
     dependencies:
       '@remix-run/router': 1.5.0
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      react-router-dom: 6.10.0(react-dom@18.3.0)(react@18.3.0)
-      use-sync-external-store: 1.2.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-router-dom: 6.10.0(react-dom@18.3.1)(react@18.3.1)
+      use-sync-external-store: 1.2.0(react@18.3.1)
     dev: false
 
   /@remix-run/router@1.5.0:
@@ -7431,7 +7431,7 @@ packages:
     dependencies:
       '@remix-run/router': 1.5.0
       '@types/cookie': 0.4.1
-      '@types/react': 18.3.0
+      '@types/react': 18.3.3
       '@web3-storage/multipart-parser': 1.0.0
       cookie: 0.4.2
       set-cookie-parser: 2.6.0
@@ -7960,7 +7960,7 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/react@13.0.0(react-dom@18.3.0)(react@18.3.0):
+  /@testing-library/react@13.0.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-p0lYA1M7uoEmk2LnCbZLGmHJHyH59sAaZVXChTXlyhV/PRW9LoIh4mdf7tiXsO8BoNG+vN8UnFJff1hbZeXv+w==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -7970,11 +7970,11 @@ packages:
       '@babel/runtime': 7.21.5
       '@testing-library/dom': 8.20.0
       '@types/react-dom': 18.2.17
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: true
 
-  /@testing-library/react@16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.0)(react@18.3.0):
+  /@testing-library/react@16.0.0(@testing-library/dom@10.1.0)(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-guuxUKRWQ+FgNX0h0NS0FIq3Q3uLtWVpBzcLOggmfMoUpgBnzBzvLLd4fbm6yS8ydJd94cIfY4yP9qUQjM2KwQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -7991,19 +7991,19 @@ packages:
     dependencies:
       '@babel/runtime': 7.24.7
       '@testing-library/dom': 10.1.0
-      '@types/react': 18.3.0
+      '@types/react': 18.3.3
       '@types/react-dom': 18.3.0
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: true
 
-  /@theguild/remark-mermaid@0.0.5(react@18.3.0):
+  /@theguild/remark-mermaid@0.0.5(react@18.3.1):
     resolution: {integrity: sha512-e+ZIyJkEv9jabI4m7q29wZtZv+2iwPGsXJ2d46Zi7e+QcFudiyuqhLhHG/3gX3ZEB+hxTch+fpItyMS8jwbIcw==}
     peerDependencies:
       react: ^18.2.0
     dependencies:
       mermaid: 10.2.3
-      react: 18.3.0
+      react: 18.3.1
       unist-util-visit: 5.0.0
     transitivePeerDependencies:
       - supports-color
@@ -8282,17 +8282,24 @@ packages:
   /@types/react-dom@18.2.17:
     resolution: {integrity: sha512-rvrT/M7Df5eykWFxn6MYt5Pem/Dbyc1N8Y0S9Mrkw2WFCRiqUgw9P7ul2NpwsXCSM1DVdENzdG9J5SreqfAIWg==}
     dependencies:
-      '@types/react': 18.3.0
+      '@types/react': 18.3.3
     dev: true
 
   /@types/react-dom@18.3.0:
     resolution: {integrity: sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==}
     dependencies:
-      '@types/react': 18.3.0
+      '@types/react': 18.3.3
     dev: true
 
   /@types/react@18.3.0:
     resolution: {integrity: sha512-DiUcKjzE6soLyln8NNZmyhcQjVv+WsUIFSqetMN0p8927OztKT4VTfFTqsbAi5oAGIcgOmOajlfBqyptDDjZRw==}
+    dependencies:
+      '@types/prop-types': 15.7.5
+      csstype: 3.1.2
+    dev: true
+
+  /@types/react@18.3.3:
+    resolution: {integrity: sha512-hti/R0pS0q1/xx+TsI73XIqk26eBsISZ2R0wUijXIngRK9R/e7Xw/cXVxQK7R5JjW+SV4zGcn5hXjudkN/pLIw==}
     dependencies:
       '@types/prop-types': 15.7.5
       csstype: 3.1.2
@@ -19761,7 +19768,7 @@ packages:
       type-fest: 2.19.0
     dev: true
 
-  /next-auth@4.24.4(next@14.2.3)(react-dom@18.3.0)(react@18.3.0):
+  /next-auth@4.24.4(next@14.2.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-5DGffi+OpkbU62vPQIJ1z+hFnmow+ec5Qrn9m6eoglIO51m0DlrmLxBduZEwKAYDEg9k2joi1yelgmq1vqK3aQ==}
     peerDependencies:
       next: ^12.2.5 || ^13 || ^14
@@ -19776,17 +19783,17 @@ packages:
       '@panva/hkdf': 1.1.1
       cookie: 0.5.0
       jose: 4.14.4
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
       oauth: 0.9.15
       openid-client: 5.4.2
       preact: 10.13.2
       preact-render-to-string: 5.2.6(preact@10.13.2)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       uuid: 8.3.2
     dev: false
 
-  /next-mdx-remote@4.4.1(react-dom@18.3.0)(react@18.3.0):
+  /next-mdx-remote@4.4.1(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-1BvyXaIou6xy3XoNF4yaMZUCb6vD2GTAa5ciOa6WoO+gAUTYsb1K4rI/HSC2ogAWLrb/7VSV52skz07vOzmqIQ==}
     engines: {node: '>=14', npm: '>=7'}
     peerDependencies:
@@ -19794,25 +19801,25 @@ packages:
       react-dom: '>=16.x <=18.x'
     dependencies:
       '@mdx-js/mdx': 2.3.0
-      '@mdx-js/react': 2.3.0(react@18.3.0)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      '@mdx-js/react': 2.3.0(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       vfile: 5.3.7
       vfile-matter: 3.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /next-seo@6.0.0(next@14.2.3)(react-dom@18.3.0)(react@18.3.0):
+  /next-seo@6.0.0(next@14.2.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-jKKt1p1z4otMA28AyeoAONixVjdYmgFCWwpEFtu+DwRHQDllVX3RjtyXbuCQiUZEfQ9rFPBpAI90vDeLZlMBdg==}
     peerDependencies:
       next: ^8.1.1-canary.54 || >=9.0.0
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
     dependencies:
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /next-sitemap@4.0.7(@next/env@14.2.4)(next@14.2.3):
@@ -19826,19 +19833,19 @@ packages:
       '@corex/deepmerge': 4.0.43
       '@next/env': 14.2.4
       minimist: 1.2.8
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
     dev: true
 
-  /next-themes@0.2.1(next@14.2.3)(react-dom@18.3.0)(react@18.3.0):
+  /next-themes@0.2.1(next@14.2.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
     peerDependencies:
       next: '*'
       react: '*'
       react-dom: '*'
     dependencies:
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /next@14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0):
@@ -19882,8 +19889,51 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
 
-  /nextra-theme-docs@2.13.2(next@14.2.3)(nextra@2.13.2)(react-dom@18.3.0)(react@18.3.0):
+  /next@14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-dowFkFTR8v79NPJO4QsBUtxv0g9BrS/phluVpMAt2ku7H+cbcBJlopXjkWlwxrk/xGqMemr7JkGPGemPrLLX7A==}
+    engines: {node: '>=18.17.0'}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': ^1.1.0
+      '@playwright/test': ^1.41.2
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      sass: ^1.3.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@playwright/test':
+        optional: true
+      sass:
+        optional: true
+    dependencies:
+      '@next/env': 14.2.3
+      '@playwright/test': 1.43.1
+      '@swc/helpers': 0.5.5
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001579
+      graceful-fs: 4.2.11
+      postcss: 8.4.31
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      styled-jsx: 5.1.1(@babel/core@7.24.7)(react@18.3.1)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 14.2.3
+      '@next/swc-darwin-x64': 14.2.3
+      '@next/swc-linux-arm64-gnu': 14.2.3
+      '@next/swc-linux-arm64-musl': 14.2.3
+      '@next/swc-linux-x64-gnu': 14.2.3
+      '@next/swc-linux-x64-musl': 14.2.3
+      '@next/swc-win32-arm64-msvc': 14.2.3
+      '@next/swc-win32-ia32-msvc': 14.2.3
+      '@next/swc-win32-x64-msvc': 14.2.3
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
+  /nextra-theme-docs@2.13.2(next@14.2.3)(nextra@2.13.2)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-yE4umXaImp1/kf/sFciPj2+EFrNSwd9Db26hi98sIIiujzGf3+9eUgAz45vF9CwBw50FSXxm1QGRcY+slQ4xQQ==}
     peerDependencies:
       next: '>=9.5.3'
@@ -19891,7 +19941,7 @@ packages:
       react: '>=16.13.1'
       react-dom: '>=16.13.1'
     dependencies:
-      '@headlessui/react': 1.7.14(react-dom@18.3.0)(react@18.3.0)
+      '@headlessui/react': 1.7.14(react-dom@18.3.1)(react@18.3.1)
       '@popperjs/core': 2.11.7
       clsx: 2.0.0
       escape-string-regexp: 5.0.0
@@ -19900,17 +19950,17 @@ packages:
       git-url-parse: 13.1.0
       intersection-observer: 0.12.2
       match-sorter: 6.3.1
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
-      next-seo: 6.0.0(next@14.2.3)(react-dom@18.3.0)(react@18.3.0)
-      next-themes: 0.2.1(next@14.2.3)(react-dom@18.3.0)(react@18.3.0)
-      nextra: 2.13.2(next@14.2.3)(react-dom@18.3.0)(react@18.3.0)
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
+      next-seo: 6.0.0(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)
+      next-themes: 0.2.1(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)
+      nextra: 2.13.2(next@14.2.3)(react-dom@18.3.1)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.0.10
       zod: 3.22.4
     dev: false
 
-  /nextra@2.13.2(next@14.2.3)(react-dom@18.3.0)(react@18.3.0):
+  /nextra@2.13.2(next@14.2.3)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-pIgOSXNUqTz1laxV4ChFZOU7lzJAoDHHaBPj8L09PuxrLKqU1BU/iZtXAG6bQeKCx8EPdBsoXxEuENnL9QGnGA==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -19918,11 +19968,11 @@ packages:
       react: '>=16.13.1'
       react-dom: '>=16.13.1'
     dependencies:
-      '@headlessui/react': 1.7.14(react-dom@18.3.0)(react@18.3.0)
+      '@headlessui/react': 1.7.14(react-dom@18.3.1)(react@18.3.1)
       '@mdx-js/mdx': 2.3.0
-      '@mdx-js/react': 2.3.0(react@18.3.0)
+      '@mdx-js/react': 2.3.0(react@18.3.1)
       '@napi-rs/simple-git': 0.1.9
-      '@theguild/remark-mermaid': 0.0.5(react@18.3.0)
+      '@theguild/remark-mermaid': 0.0.5(react@18.3.1)
       '@theguild/remark-npm2yarn': 0.2.1
       clsx: 2.0.0
       github-slugger: 2.0.0
@@ -19930,11 +19980,11 @@ packages:
       gray-matter: 4.0.3
       katex: 0.16.9
       lodash.get: 4.4.2
-      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.0)(react@18.3.0)
-      next-mdx-remote: 4.4.1(react-dom@18.3.0)(react@18.3.0)
+      next: 14.2.3(@babel/core@7.24.7)(@playwright/test@1.43.1)(react-dom@18.3.1)(react@18.3.1)
+      next-mdx-remote: 4.4.1(react-dom@18.3.1)(react@18.3.1)
       p-limit: 3.1.0
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       rehype-katex: 7.0.0
       rehype-pretty-code: 0.9.11(shiki@0.14.5)
       rehype-raw: 7.0.0
@@ -22398,6 +22448,16 @@ packages:
       loose-envify: 1.4.0
       react: 18.3.0
       scheduler: 0.23.1
+    dev: false
+
+  /react-dom@18.3.1(react@18.3.1):
+    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
+    peerDependencies:
+      react: ^18.3.1
+    dependencies:
+      loose-envify: 1.4.0
+      react: 18.3.1
+      scheduler: 0.23.2
 
   /react-error-overlay@6.0.11:
     resolution: {integrity: sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==}
@@ -22507,7 +22567,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /react-router-dom@6.10.0(react-dom@18.3.0)(react@18.3.0):
+  /react-router-dom@6.10.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-E5dfxRPuXKJqzwSe/qGcqdwa18QiWC6f3H3cWXM24qj4N0/beCIf/CWTipop2xm7mR0RCS99NnaqPNjHtrAzCg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -22515,19 +22575,19 @@ packages:
       react-dom: '>=16.8'
     dependencies:
       '@remix-run/router': 1.5.0
-      react: 18.3.0
-      react-dom: 18.3.0(react@18.3.0)
-      react-router: 6.10.0(react@18.3.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-router: 6.10.0(react@18.3.1)
     dev: false
 
-  /react-router@6.10.0(react@18.3.0):
+  /react-router@6.10.0(react@18.3.1):
     resolution: {integrity: sha512-Nrg0BWpQqrC3ZFFkyewrflCud9dio9ME3ojHCF/WLsprJVzkq3q3UeEhMCAW1dobjeGbWgjNn/PVF6m46ANxXQ==}
     engines: {node: '>=14'}
     peerDependencies:
       react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.5.0
-      react: 18.3.0
+      react: 18.3.1
     dev: false
 
   /react-shallow-renderer@16.15.0(react@18.1.0):
@@ -22557,6 +22617,13 @@ packages:
 
   /react@18.3.0:
     resolution: {integrity: sha512-RPutkJftSAldDibyrjuku7q11d3oy6wKOyPe5K1HA/HwwrXcEqBdHsLypkC2FFYjP7bPUa6gbzSBhw4sY2JcDg==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+    dev: false
+
+  /react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
@@ -23314,6 +23381,12 @@ packages:
 
   /scheduler@0.23.1:
     resolution: {integrity: sha512-5GKS5JGfiah1O38Vfa9srZE4s3wdHbwjlCrvIookrg2FO9aIwKLOJXuJQFlEfNcVSOXuaL2hzDeY20uVXcUtrw==}
+    dependencies:
+      loose-envify: 1.4.0
+    dev: false
+
+  /scheduler@0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
     dependencies:
       loose-envify: 1.4.0
 
@@ -24320,6 +24393,24 @@ packages:
       '@babel/core': 7.24.7
       client-only: 0.0.1
       react: 18.3.0
+    dev: false
+
+  /styled-jsx@5.1.1(@babel/core@7.24.7)(react@18.3.1):
+    resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      '@babel/core': 7.24.7
+      client-only: 0.0.1
+      react: 18.3.1
 
   /stylehacks@4.0.3:
     resolution: {integrity: sha512-7GlLk9JwlElY4Y6a/rmbH2MhVlTyVmiJd1PfTCqFaIBEGMYNsrO/v3SeGTdhBThLg4Z+NbOk/qFMwCa+J+3p/g==}
@@ -25629,7 +25720,7 @@ packages:
     dependencies:
       browserslist: 4.21.9
       escalade: 3.1.1
-      picocolors: 1.0.1
+      picocolors: 1.0.0
 
   /update-browserslist-db@1.0.13(browserslist@4.22.2):
     resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
@@ -25713,7 +25804,7 @@ packages:
       react: 18.1.0
     dev: false
 
-  /use-intl@2.14.3(react@18.3.0):
+  /use-intl@2.14.3(react@18.3.1):
     resolution: {integrity: sha512-sOjd1IrlyyGioVqTauQ0/pYtVlVbSnOU91VGKVI8d4YpGw9JXmGK23nIa9SY5LOYz6ZXKpDKAhrAlEPf14j90g==}
     engines: {node: '>=10'}
     peerDependencies:
@@ -25721,7 +25812,7 @@ packages:
     dependencies:
       '@formatjs/ecma402-abstract': 1.11.4
       intl-messageformat: 9.3.18
-      react: 18.3.0
+      react: 18.3.1
     dev: false
 
   /use-sync-external-store@1.2.0(react@18.1.0):
@@ -25732,12 +25823,12 @@ packages:
       react: 18.1.0
     dev: false
 
-  /use-sync-external-store@1.2.0(react@18.3.0):
+  /use-sync-external-store@1.2.0(react@18.3.1):
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      react: 18.3.0
+      react: 18.3.1
     dev: false
 
   /use@3.1.1:
