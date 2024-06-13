@@ -163,7 +163,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
-    "bunchee": "^5.1.6",
+    "bunchee": "^5.2.0",
     "negotiator": "^0.6.3",
     "use-intl": "workspace:^"
   },
