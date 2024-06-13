@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.16.0-canary.0 (2024-06-13)
+
+### Features
+
+* test feat release ([405f450](https://github.com/amannn/next-intl/commit/405f4504994285c890c69811e17e10f996ee371e)) – by [@amannn](https://github.com/amannn)
+
 ## 3.15.1-canary.0 (2024-06-13)
 
 **Note:** Version bump only for package use-intl
