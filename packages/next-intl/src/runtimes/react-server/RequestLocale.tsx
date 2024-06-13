@@ -35,7 +35,7 @@ function getLocaleFromHeaderImpl() {
 }
 const getLocaleFromHeader = cache(getLocaleFromHeaderImpl);
 
-// Workaround until `createServerContext` is available
+// https://github.com/vercel/next.js/discussions/58862
 function getCacheImpl() {
   const value: {locale?: string} = {locale: undefined};
   return value;
