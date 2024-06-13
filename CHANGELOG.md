@@ -1,7 +1,6 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+All notable changes to this project are documented in this file.
 
 ## 3.16.0-canary.0 (2024-06-13)
 
