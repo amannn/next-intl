@@ -47,7 +47,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/runtimes/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
