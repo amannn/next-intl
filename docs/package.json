@@ -21,19 +21,19 @@
     "next": "^14.2.3",
     "nextra": "^2.13.2",
     "nextra-theme-docs": "^2.13.2",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
-    "@types/node": "^20.1.2",
-    "@types/react": "^18.3.0",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.1",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.0.3",
     "next-sitemap": "^4.0.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   },
   "funding": "https://github.com/amannn/next-intl?sponsor=1",
   "prettier": "../.prettierrc.json"

@@ -15,8 +15,8 @@
     "clsx": "^1.2.1",
     "next": "^14.2.3",
     "next-intl": "latest",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
@@ -25,8 +25,8 @@
     "@testing-library/react": "^13.0.0",
     "@types/jest": "^29.5.0",
     "@types/lodash": "^4.14.176",
-    "@types/node": "^20.1.2",
-    "@types/react": "^18.3.0",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.1",
     "autoprefixer": "^10.4.0",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
@@ -35,6 +35,6 @@
     "jest-environment-jsdom": "^29.5.0",
     "postcss": "^8.4.23",
     "prettier-plugin-tailwindcss": "^0.2.3",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }
