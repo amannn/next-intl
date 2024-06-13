@@ -80,7 +80,11 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 
 ## Releases
 
-Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used and will trigger a release for every commit on `main` that uses one of these prefixes:
+Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used.
+
+### Stable releases
+
+Every commit on `main` with the following prefixes will trigger a release:
 
 1. `fix: `: Patch release
 2. `feat: `: Minor release
@@ -93,7 +97,10 @@ Other prefixes that are allowed and will *not* create a release are the followin
 
 1. `docs`: Documentation-only changes
 2. `test`: Missing tests were added or existing ones corrected
-3. `build`: Changes that affect the build system or external dependencies
-4. `ci`: Changes to CI configuration files and scripts
+3. `ci`: Changes to CI configuration files and scripts
+4. `build`: Changes that affect the build system or external dependencies
 5. `chore`: Other changes that don't modify src or test files
 
+### Prereleases
+
+Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).

@@ -1,13 +1,15 @@
 /* eslint-env node */
-const fs = require('fs');
-const {babel} = require('@rollup/plugin-babel');
-const commonjs = require('@rollup/plugin-commonjs');
-const resolve = require('@rollup/plugin-node-resolve');
-const replace = require('@rollup/plugin-replace');
-const terser = require('@rollup/plugin-terser');
-const execa = require('execa');
+import fs from 'fs';
+import {babel} from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve, {
+  DEFAULTS as resolveDefaults
+} from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import terser from '@rollup/plugin-terser';
+import {execa} from 'execa';
 
-const extensions = [...resolve.DEFAULTS.extensions, '.tsx'];
+const extensions = [...resolveDefaults.extensions, '.tsx'];
 
 const outDir = 'dist/';
 
@@ -36,7 +38,7 @@ async function buildTypes() {
   console.log('\ncreated types');
 }
 
-module.exports = function getConfig({
+export default function getConfig({
   env,
   external = [],
   input,
@@ -107,4 +109,4 @@ module.exports = function getConfig({
   };
 
   return config;
-};
+}

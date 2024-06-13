@@ -1,30 +1,29 @@
-name: publish
+name: prerelease
 
 on:
   push:
     branches:
-      - main
+      - canary
 
 jobs:
-  build:
+  main:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.6.0
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
           registry-url: 'https://registry.npmjs.org'
-          node-version: 18.x
+          node-version: 20.x
           cache: 'pnpm'
       - run: pnpm install
-      # Seems like after squash & merge the author is unknown to lerna
-      - run: git config --global user.email "jan@amann.work" && git config --global user.name "Jan Amann"
-      - run: pnpm run publish
+      - run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      - run: pnpm run publish --conventional-prerelease --preid canary --dist-tag canary
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

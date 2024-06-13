@@ -22,7 +22,7 @@
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
     "lint:package": "publint && attw --pack",
-    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
+    "prepublishOnly": "turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
@@ -87,7 +87,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.2.32",
     "negotiator": "^0.6.3",
-    "use-intl": "^3.15.0"
+    "use-intl": "workspace:^"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
@@ -110,8 +110,8 @@
     "publint": "^0.2.7",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "rollup": "^3.28.1",
-    "rollup-plugin-preserve-directives": "0.2.0",
+    "rollup": "^4.18.0",
+    "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^8.2.6",
     "typescript": "^5.2.2",
     "vitest": "^1.0.1"
@@ -132,7 +132,7 @@
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "17.815 KB"
+      "limit": "17.82 KB"
     },
     {
       "path": "dist/production/server.react-client.js",

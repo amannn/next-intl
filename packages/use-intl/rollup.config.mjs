@@ -1,5 +1,5 @@
 /* eslint-env node */
-const getBuildConfig = require('../../scripts/getBuildConfig');
+import getBuildConfig from '../../scripts/getBuildConfig.mjs';
 
 const input = {
   index: 'src/index.tsx',
@@ -9,7 +9,7 @@ const input = {
   _IntlProvider: 'src/_IntlProvider.tsx'
 };
 
-module.exports = [
+export default [
   getBuildConfig({input, env: 'development'}),
   getBuildConfig({
     input,
