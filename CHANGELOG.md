@@ -3,8 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 3.16.0-canary.1 (2024-06-13)
+## 3.16.0-canary.2 (2024-06-13)
 
+**Note:** Version bump only for package root
+
+## 3.16.0-canary.1 (2024-06-13)
 
 ### Bug Fixes
 
