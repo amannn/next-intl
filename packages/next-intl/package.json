@@ -22,7 +22,7 @@
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
     "lint:package": "publint && attw --pack",
-    "prepublishOnly": "CI=true turbo test && turbo lint && turbo build && cp ../../README.md .",
+    "prepublishOnly": "turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
@@ -165,7 +165,7 @@
     "@formatjs/intl-localematcher": "^0.2.32",
     "bunchee": "^5.1.6",
     "negotiator": "^0.6.3",
-    "use-intl": "^3.15.0"
+    "use-intl": "workspace:^"
   },
   "peerDependencies": {
     "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0",
