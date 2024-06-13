@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "3.16.0-canary.2",
+  "version": "3.16.0-canary.3",
   "packages": [
     "packages/*"
   ],

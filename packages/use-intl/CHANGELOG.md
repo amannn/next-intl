@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.16.0-canary.3 (2024-06-13)
+
+### Bug Fixes
+
+* Generate release notes ([5400146](https://github.com/amannn/next-intl/commit/54001465d0d88e05507c123ad18795e809be1939)) – by [@amannn](https://github.com/amannn)
+
 ## 3.16.0-canary.2 (2024-06-13)
 
 **Note:** Version bump only for package use-intl
