@@ -22,7 +22,7 @@
     "@types/accept-language-parser": "^1.5.3",
     "@types/jest": "^29.5.1",
     "@types/lodash": "^4.14.176",
-    "@types/node": "^20.1.2",
+    "@types/node": "^20.14.2",
     "@types/react": "^18.3.1",
     "eslint": "^8.54.0",
     "eslint-config-molindo": "^7.0.0",
