@@ -35,14 +35,14 @@
       "react-server": "./dist/index.react-server.mjs",
       "import": {
         "types": "./dist/index.d.mts",
-        "production": "./dist/index.production.mjs",
         "development": "./dist/index.development.mjs",
+        "production": "./dist/index.production.mjs",
         "default": "./dist/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "production": "./dist/index.production.js",
         "development": "./dist/index.development.js",
+        "production": "./dist/index.production.js",
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
@@ -51,14 +51,14 @@
       "react-server": "./dist/server.react-server.mjs",
       "import": {
         "types": "./dist/server.d.mts",
-        "production": "./dist/server.production.mjs",
         "development": "./dist/server.development.mjs",
+        "production": "./dist/server.production.mjs",
         "default": "./dist/server.mjs"
       },
       "require": {
         "types": "./dist/server.d.ts",
-        "production": "./dist/server.production.js",
         "development": "./dist/server.development.js",
+        "production": "./dist/server.production.js",
         "default": "./dist/server.js"
       },
       "default": "./dist/server.js"
@@ -66,14 +66,14 @@
     "./config": {
       "import": {
         "types": "./dist/config.d.mts",
-        "production": "./dist/config.production.mjs",
         "development": "./dist/config.development.mjs",
+        "production": "./dist/config.production.mjs",
         "default": "./dist/config.mjs"
       },
       "require": {
         "types": "./dist/config.d.ts",
-        "production": "./dist/config.production.js",
         "development": "./dist/config.development.js",
+        "production": "./dist/config.production.js",
         "default": "./dist/config.js"
       },
       "default": "./dist/config.js"
@@ -81,14 +81,14 @@
     "./middleware": {
       "import": {
         "types": "./dist/middleware.d.mts",
-        "production": "./dist/middleware.production.mjs",
         "development": "./dist/middleware.development.mjs",
+        "production": "./dist/middleware.production.mjs",
         "default": "./dist/middleware.mjs"
       },
       "require": {
         "types": "./dist/middleware.d.ts",
-        "production": "./dist/middleware.production.js",
         "development": "./dist/middleware.development.js",
+        "production": "./dist/middleware.production.js",
         "default": "./dist/middleware.js"
       },
       "default": "./dist/middleware.js"
@@ -97,14 +97,14 @@
       "react-server": "./dist/navigation.react-server.mjs",
       "import": {
         "types": "./dist/navigation.d.mts",
-        "production": "./dist/navigation.production.mjs",
         "development": "./dist/navigation.development.mjs",
+        "production": "./dist/navigation.production.mjs",
         "default": "./dist/navigation.mjs"
       },
       "require": {
         "types": "./dist/navigation.d.ts",
-        "production": "./dist/navigation.production.js",
         "development": "./dist/navigation.development.js",
+        "production": "./dist/navigation.production.js",
         "default": "./dist/navigation.js"
       },
       "default": "./dist/navigation.js"
@@ -112,14 +112,14 @@
     "./routing": {
       "import": {
         "types": "./dist/routing.d.mts",
-        "production": "./dist/routing.production.mjs",
         "development": "./dist/routing.development.mjs",
+        "production": "./dist/routing.production.mjs",
         "default": "./dist/routing.mjs"
       },
       "require": {
         "types": "./dist/routing.d.ts",
-        "production": "./dist/routing.production.js",
         "development": "./dist/routing.development.js",
+        "production": "./dist/routing.production.js",
         "default": "./dist/routing.js"
       },
       "default": "./dist/routing.js"
@@ -127,14 +127,14 @@
     "./plugin": {
       "import": {
         "types": "./dist/plugin.d.mts",
-        "production": "./dist/plugin.production.mjs",
         "development": "./dist/plugin.development.mjs",
+        "production": "./dist/plugin.production.mjs",
         "default": "./dist/plugin.mjs"
       },
       "require": {
         "types": "./dist/plugin.d.ts",
-        "production": "./dist/plugin.production.js",
         "development": "./dist/plugin.development.js",
+        "production": "./dist/plugin.production.js",
         "default": "./dist/plugin.js"
       },
       "default": "./dist/plugin.js"

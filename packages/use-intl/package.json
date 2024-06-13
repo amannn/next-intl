@@ -27,14 +27,14 @@
     ".": {
       "import": {
         "types": "./dist/index.d.mts",
-        "production": "./dist/index.production.mjs",
         "development": "./dist/index.development.mjs",
+        "production": "./dist/index.production.mjs",
         "default": "./dist/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "production": "./dist/index.production.js",
         "development": "./dist/index.development.js",
+        "production": "./dist/index.production.js",
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
@@ -42,14 +42,14 @@
     "./core": {
       "import": {
         "types": "./dist/core.d.mts",
-        "production": "./dist/core.production.mjs",
         "development": "./dist/core.development.mjs",
+        "production": "./dist/core.production.mjs",
         "default": "./dist/core.mjs"
       },
       "require": {
         "types": "./dist/core.d.ts",
-        "production": "./dist/core.production.js",
         "development": "./dist/core.development.js",
+        "production": "./dist/core.production.js",
         "default": "./dist/core.js"
       },
       "default": "./dist/core.js"
@@ -57,14 +57,14 @@
     "./react": {
       "import": {
         "types": "./dist/react.d.mts",
-        "production": "./dist/react.production.mjs",
         "development": "./dist/react.development.mjs",
+        "production": "./dist/react.production.mjs",
         "default": "./dist/react.mjs"
       },
       "require": {
         "types": "./dist/react.d.ts",
-        "production": "./dist/react.production.js",
         "development": "./dist/react.development.js",
+        "production": "./dist/react.production.js",
         "default": "./dist/react.js"
       },
       "default": "./dist/react.js"
