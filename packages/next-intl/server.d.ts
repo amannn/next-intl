@@ -1,1 +1,1 @@
-export * from './dist/types/src/server/react-server';
+export * from './dist/server';
