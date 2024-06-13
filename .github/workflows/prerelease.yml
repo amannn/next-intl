@@ -20,6 +20,9 @@ jobs:
           node-version: 20.x
           cache: 'pnpm'
       - run: pnpm install
+      - run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
       - run: pnpm run publish --conventional-prerelease --preid canary --dist-tag canary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
