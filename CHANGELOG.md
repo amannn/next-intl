@@ -5,6 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 3.16.0-canary.1 (2024-06-13)
 
+
 ### Bug Fixes
 
 * test a fix release following feat ([82df1be](https://github.com/amannn/next-intl/commit/82df1beed525378c389bc35674f96ef7857021a3)) – by [@amannn](https://github.com/amannn)
