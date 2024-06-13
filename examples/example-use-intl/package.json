@@ -20,7 +20,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "eslint-config-molindo": "^7.0.0",
     "eslint": "^8.56.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.4.5",
     "vite": "^5.1.0"
   }
 }
