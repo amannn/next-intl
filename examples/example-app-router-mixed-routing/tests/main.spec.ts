@@ -6,7 +6,7 @@ it('syncs the locale across the public and private pages', async ({page}) => {
   await page.waitForSelector('html[lang="en"]');
   await page.getByRole('link', {name: /^DE$/}).click();
   await page.waitForSelector('html[lang="de"]');
-  await page.getByRole('link', {name: 'Anmelden'}).click();
+  await page.getByRole('button', {name: 'Anmelden'}).click();
 
   await expect(page).toHaveURL('/app');
   await page.waitForSelector('html[lang="de"]');
@@ -19,7 +19,7 @@ it('syncs the locale across the public and private pages', async ({page}) => {
   await page.waitForSelector('html[lang="en"]');
   await page.getByRole('link', {name: /^DE$/}).click();
   await page.waitForSelector('html[lang="de"]');
-  await page.getByRole('link', {name: 'Anmelden'}).click();
+  await page.getByRole('button', {name: 'Anmelden'}).click();
 
   await expect(page).toHaveURL('/app');
   await page.waitForSelector('html[lang="de"]');
