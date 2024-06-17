@@ -1,19 +1,17 @@
-import fs from 'fs/promises';
+import {cookies} from 'next/headers';
+import {defaultLocale} from './config';
 
-const path = process.cwd() + '/db.json';
-
-async function getState() {
-  const content = await fs.readFile(path, 'utf8');
-  return JSON.parse(content);
-}
+// This cookie name is used by `next-intl` on the public pages too. By
+// reading/writing to this locale, we can ensure that the user's locale
+// is consistent across public and private pages. In case you save the
+// locale of registered users in a database, you can of course also use
+// that instead when the user is logged in.
+const COOKIE_NAME = 'NEXT_LOCALE';
 
 export async function getUserLocale() {
-  const state = await getState();
-  return state.locale;
+  return cookies().get(COOKIE_NAME)?.value || defaultLocale;
 }
 
 export async function setUserLocale(locale: string) {
-  const state = await getState();
-  state.locale = locale;
-  await fs.writeFile(path, JSON.stringify(state, null, 2));
+  cookies().set(COOKIE_NAME, locale);
 }

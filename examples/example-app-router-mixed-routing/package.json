@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "echo 'No tests yet'",
+    "test": "playwright test",
     "build": "next build",
     "start": "next start"
   },
@@ -17,6 +17,7 @@
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.41.2",
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.1",
     "autoprefixer": "^10.4.0",
