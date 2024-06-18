@@ -1,60 +1,64 @@
 {
-  "Index": {
-    "title": "Inicio",
-    "description": "Esta es la página de inicio.",
-    "rich": "Este es un texto <important>importante</important>.",
-    "globalDefaults": "<highlight>{globalString}</highlight>"
+  "ApiRoute": {
+    "hello": "¡Hola {name}!"
   },
   "AsyncComponent": {
     "basic": "AsyncComponent",
-    "rich": "This is a <important>rich</important> text.",
-    "markup": "Markup with <b>{globalString}</b>"
-  },
-  "LocaleLayout": {
-    "title": "Ejemplo next-intl",
-    "description": "Este es un ejemplo de cómo usar next-intl en el directorio app."
+    "markup": "Markup with <b>{globalString}</b>",
+    "rich": "This is a <important>rich</important> text."
   },
   "Client": {
-    "title": "Cliente",
-    "description": "Esta página se hidrata en el lado del cliente."
-  },
-  "Nested": {
-    "title": "Anidada",
-    "description": "Esta es una página anidada."
-  },
-  "Navigation": {
-    "home": "Inicio",
-    "client": "Página del cliente",
-    "nested": "Página anidada",
-    "newsArticle": "Noticias #{articleId}"
-  },
-  "NewsArticle": {
-    "title": "Noticias #{articleId}"
-  },
-  "JustIn": {
-    "title": "Recién llegado"
-  },
-  "NotFound": {
-    "title": "Esta página no se encontró (404)"
-  },
-  "LocaleSwitcher": {
-    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
-  },
-  "Counter": {
-    "count": "Conteo actual:",
-    "increment": "Incrementar"
+    "description": "Esta página se hidrata en el lado del cliente.",
+    "title": "Cliente"
   },
   "ClientCounter": {
     "count": "Conteo actual: {count}",
     "increment": "Incrementar"
   },
-  "ApiRoute": {
-    "hello": "¡Hola {name}!"
+  "Counter": {
+    "count": "Conteo actual:",
+    "increment": "Incrementar"
+  },
+  "Index": {
+    "description": "Esta es la página de inicio.",
+    "globalDefaults": "<highlight>{globalString}</highlight>",
+    "rich": "Este es un texto <important>importante</important>.",
+    "title": "Inicio"
+  },
+  "JustIn": {
+    "title": "Recién llegado"
+  },
+  "LocaleLayout": {
+    "description": "Este es un ejemplo de cómo usar next-intl en el directorio app.",
+    "title": "Ejemplo next-intl"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Cambiar a {locale, select, de {Alemán} en {Inglés} other {Desconocido}}"
+  },
+  "Navigation": {
+    "client": "Página del cliente",
+    "home": "Inicio",
+    "nested": "Página anidada",
+    "newsArticle": "Noticias #{articleId}"
+  },
+  "Nested": {
+    "description": "Esta es una página anidada.",
+    "title": "Anidada"
+  },
+  "NewsArticle": {
+    "title": "Noticias #{articleId}"
+  },
+  "NotFound": {
+    "title": "Esta página no se encontró (404)"
   },
   "OpenGraph": {
     "title": "Ejemplo next-intl"
   },
   "ServerActions": {
     "item": "Artículo #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Introduce una tarea",
+    "taskEmpty": "Por favor ingrese una tarea."
   }
 }

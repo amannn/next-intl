@@ -4,10 +4,12 @@ import List from './List';
 import ListItem from './ListItem';
 import ListItemAsync from './ListItemAsync';
 import ListItemClient from './ListItemClient';
+import ZodFormExample from './ZodFormExample';
 
 export default function ServerActions() {
   return (
     <>
+      <ZodFormExample />
       <List
         getNextItem={async (curLength: number) => {
           'use server';
