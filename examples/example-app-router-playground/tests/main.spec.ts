@@ -689,6 +689,18 @@ it('supports custom prefixes', async ({page}) => {
   page.getByRole('heading', {name: 'Anidada'});
 });
 
+describe('server actions', () => {
+  it('can use `getTranslations` in server actions', async ({page}) => {
+    await page.goto('/actions');
+    page.getByPlaceholder('Enter a task').press('Enter');
+    await page.getByText('Please enter a task.').waitFor();
+
+    await page.goto('/de/actions');
+    page.getByPlaceholder('Geben Sie eine Aufgabe ein').press('Enter');
+    await page.getByText('Bitte geben sie eine Aufgabe ein.').waitFor();
+  });
+});
+
 describe('handling of foreign characters', () => {
   it('handles encoded search params', async ({page}) => {
     await page.goto('/ja?param=テスト');
