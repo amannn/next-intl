@@ -63,8 +63,7 @@
     "formatting"
   ],
   "dependencies": {
-    "@formatjs/ecma402-abstract": "^1.11.4",
-    "intl-messageformat": "^10.5.11"
+    "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
