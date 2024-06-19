@@ -60,9 +60,7 @@ export default function ZodFormExample() {
     <section>
       <h2>Zod form</h2>
       <ZodForm action={submitAction}>
-        <label>
-          <input name="task" placeholder={t('task')} type="text" />
-        </label>
+        <input name="task" placeholder={t('task')} type="text" />
       </ZodForm>
     </section>
   );
