@@ -2,3 +2,4 @@
 /.next/
 .DS_Store
 tsconfig.tsbuildinfo
+test-results

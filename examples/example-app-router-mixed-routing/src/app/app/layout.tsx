@@ -26,7 +26,7 @@ export default async function LocaleLayout({children}: Props) {
     <Document locale={locale}>
       <NextIntlClientProvider messages={messages}>
         <div className="flex">
-          <div className="flex min-h-[100vh] w-[300px] flex-col justify-between bg-slate-100 p-8">
+          <div className="flex min-h-[100vh] w-[270px] shrink-0 flex-col justify-between bg-slate-100 p-8">
             <AppNavigation />
             <div className="flex items-center justify-between">
               <AppNavigationLocaleSwitcher />

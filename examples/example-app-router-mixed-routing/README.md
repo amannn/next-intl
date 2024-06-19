@@ -11,9 +11,7 @@ An example of how to achieve locale prefixes on public routes while reading the 
 2. `src/i18n.ts`: Uses the locale from the pathname segment for public routes or returns a locale from the user profile for internal app routes.
 3. `src/navigation.public.ts`: Navigation APIs that automatically consider the `[locale]` segment for public routes. For internal app routes, the navigation APIs from Next.js should be used directly (see `PublicNavigation.tsx` vs `AppNavigation.tsx`).
 
-**Notes:**
-1. The locale on public pages is currently treated entirely separate from the language preference of logged-in users. This could of course be synced, if desired (see note in `middleware.ts`).
-2. Static rendering is currently not supported on public routes since we need to read a header. If this is a requirement, you could alternatively consider a monorepo setup and build the public and internal app separately. This could be a good alternative anyway, if you'd like to separate the code for the public and the internal app.
+**Note:** Static rendering is currently not supported on public routes since we need to read a header. If this is a requirement, you could alternatively consider a monorepo setup and build the public and internal app separately. This could be a good alternative anyway, if you'd like to separate the code for the public and the internal app.
 
 ## Deploy your own
 
