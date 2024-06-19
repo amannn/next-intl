@@ -20,7 +20,7 @@
     "@types/node": "^20.14.2",
     "@types/react": "^18.2.29",
     "@playwright/test": "^1.41.2",
-    "eslint": "^8.54.0",
+    "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.0.3",
     "typescript": "^5.4.5"
