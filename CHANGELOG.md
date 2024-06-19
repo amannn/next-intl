@@ -3,16 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 3.15.1-canary.1 (2024-06-19)
-
-**Note:** Version bump only for package root
-
-## 3.15.1-canary.0 (2024-06-19)
-
-### Bug Fixes
-
-* Remove `@formatjs/ecma402-abstract` dependency in favor of the automatically bundled one from `intl-messageformat` ([#1141](https://github.com/amannn/next-intl/issues/1141)) ([8b2a656](https://github.com/amannn/next-intl/commit/8b2a656320a0712aa44676cdf967e53a1000c6f8)) – by [@amannn](https://github.com/amannn)
-
 # 3.15.0 (2024-06-10)
 
 ### Features
