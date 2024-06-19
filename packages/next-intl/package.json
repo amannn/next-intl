@@ -104,7 +104,7 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
-    "eslint-plugin-deprecation": "^1.4.1",
+    "eslint-plugin-deprecation": "^3.0.0",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "publint": "^0.2.8",
