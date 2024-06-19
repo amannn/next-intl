@@ -20,9 +20,15 @@ export async function loader({request}: {request: Request}) {
   };
 }
 
+export function meta() {
+  return [{title: 'Remix use-intl example'}];
+}
+
 export function Layout({children}: {children: ReactNode}) {
+  const {locale} = useLoaderData<typeof loader>();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
         <meta content="width=device-width, initial-scale=1" name="viewport" />
