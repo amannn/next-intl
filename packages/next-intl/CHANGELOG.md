@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.1 (2024-06-19)
+
+### Bug Fixes
+
+* Remove `@formatjs/ecma402-abstract` dependency in favor of the automatically bundled one from `intl-messageformat` ([300ceee](https://github.com/amannn/next-intl/commit/300ceeef3800b9ece12e9dca928130cafee5c64a)) – by [@amannn](https://github.com/amannn)
+
 # 3.15.0 (2024-06-10)
 
 ### Features
