@@ -120,7 +120,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.react-client.js",
-      "limit": "15.765 KB"
+      "limit": "15.785 KB"
     },
     {
       "path": "dist/production/index.react-server.js",
@@ -132,7 +132,7 @@
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "17.82 KB"
+      "limit": "17.84 KB"
     },
     {
       "path": "dist/production/server.react-client.js",

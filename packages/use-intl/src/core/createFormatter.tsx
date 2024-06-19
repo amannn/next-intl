@@ -191,7 +191,12 @@ export default function createFormatter({
     return getFormattedValue(
       formatOrOptions,
       formats?.number,
-      (options) => new Intl.NumberFormat(locale, options).format(value),
+      (options) =>
+        new Intl.NumberFormat(
+          locale,
+          // @ts-expect-error -- TS is currently lacking support for ECMA-402 10.0 (`useGrouping: 'auto'`, see https://github.com/microsoft/TypeScript/issues/56269)
+          options
+        ).format(value),
       () => String(value)
     );
   }
