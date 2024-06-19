@@ -1,47 +1,55 @@
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react';
+import {ReactNode} from 'react';
 import {IntlProvider} from 'use-intl';
 import {getMessages, resolveLocale} from './utils';
-
-export function meta() {
-  return {title: 'example-remix'};
-}
 
 export async function loader({request}: {request: Request}) {
   const locale = resolveLocale(request);
 
   return {
     locale,
-    messages: await getMessages(locale)
+    messages: await getMessages(locale),
+    timeZone: 'Europe/Vienna'
   };
 }
 
-export default function App() {
-  const {locale, messages} = useLoaderData();
+export function meta() {
+  return [{title: 'Remix use-intl example'}];
+}
+
+export function Layout({children}: {children: ReactNode}) {
+  const {locale} = useLoaderData<typeof loader>();
 
   return (
     <html lang={locale}>
       <head>
         <meta charSet="utf-8" />
-        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
         <Meta />
         <Links />
       </head>
       <body>
-        <IntlProvider locale={locale} messages={messages}>
-          <Outlet />
-        </IntlProvider>
+        {children}
         <ScrollRestoration />
         <Scripts />
-        {process.env.NODE_ENV === 'development' && <LiveReload />}
       </body>
     </html>
+  );
+}
+
+export default function App() {
+  const {locale, messages, timeZone} = useLoaderData<typeof loader>();
+
+  return (
+    <IntlProvider locale={locale} messages={messages} timeZone={timeZone}>
+      <Outlet />
+    </IntlProvider>
   );
 }
