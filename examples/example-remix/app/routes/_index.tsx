@@ -1,5 +1,12 @@
 import {useTranslations} from 'use-intl';
 
+export function meta() {
+  return [
+    {title: 'Remix use-intl example'},
+    {name: 'description', content: 'Remix use-intl example'}
+  ];
+}
+
 export default function Index() {
   const t = useTranslations('Index');
 
