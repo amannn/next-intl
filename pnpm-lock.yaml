@@ -724,7 +724,7 @@ importers:
         specifier: ^1.11.4
         version: 1.11.4
       intl-messageformat:
-        specifier: ^10.5.14
+        specifier: ^10.5.11
         version: 10.5.14
     devDependencies:
       '@arethetypeswrong/cli':
@@ -4168,7 +4168,7 @@ packages:
   /@formatjs/ecma402-abstract@1.4.0:
     resolution: {integrity: sha512-Mv027hcLFjE45K8UJ8PjRpdDGfR0aManEFj1KzoN8zXNveHGEygpZGfFf/FTTMl+QEVSrPAUlyxaCApvmv47AQ==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.6.3
     dev: false
 
   /@formatjs/ecma402-abstract@2.0.0:
@@ -4202,7 +4202,7 @@ packages:
   /@formatjs/intl-localematcher@0.2.25:
     resolution: {integrity: sha512-YmLcX70BxoSopLFdLr1Ds99NdlTI2oWoLbaUW2M406lxOIPzE1KQhRz2fPUkq34xVZQaihCoU29h0KK7An3bhA==}
     dependencies:
-      tslib: 2.3.1
+      tslib: 2.6.3
     dev: false
 
   /@formatjs/intl-localematcher@0.5.4:
@@ -5517,7 +5517,7 @@ packages:
       is-glob: 4.0.3
       open: 9.1.0
       picocolors: 1.0.1
-      tslib: 2.5.0
+      tslib: 2.6.3
     dev: true
 
   /@playwright/test@1.44.1:
@@ -14099,7 +14099,7 @@ packages:
     deprecated: We've written a new parser that's 6x faster and is backwards compatible. Please use @formatjs/icu-messageformat-parser
     dependencies:
       '@formatjs/ecma402-abstract': 1.4.0
-      tslib: 2.5.0
+      tslib: 2.6.3
     dev: false
 
   /intl-messageformat@10.5.14:
@@ -14116,7 +14116,7 @@ packages:
     dependencies:
       fast-memoize: 2.5.2
       intl-messageformat-parser: 6.0.16
-      tslib: 2.5.0
+      tslib: 2.6.3
     dev: false
 
   /invariant@2.2.4:
@@ -21707,7 +21707,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': 2.4.0
-      tslib: 2.5.0
+      tslib: 2.6.3
     dev: true
 
   /tailwindcss@3.4.4:
@@ -22179,9 +22179,6 @@ packages:
   /tslib@2.3.1:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: false
-
-  /tslib@2.5.0:
-    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
 
   /tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
