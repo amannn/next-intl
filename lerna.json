@@ -15,7 +15,7 @@
       "yes": true
     },
     "version": {
-      "changelogIncludeCommitsClientLogin": " – by [@%l](https://github.com/%l)",
+      "changelogIncludeCommitsClientLogin": " – by @%l",
       "conventionalCommits": true,
       "createRelease": "github",
       "syncWorkspaceLock": true
