@@ -3,12 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 3.15.3-canary.0 (2024-06-20)
-
-### Bug Fixes
-
-* Try out updated credits ([4fd9b20](https://github.com/amannn/next-intl/commit/4fd9b20bff0b6f79506e3c0053a8672644a387cf)) – by @amannn
-
 ## 3.15.2 (2024-06-19)
 
 **Note:** Version bump only for package root
