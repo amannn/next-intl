@@ -23,7 +23,7 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      - run: pnpm run publish --conventional-prerelease --preid canary --dist-tag canary --no-push
+      - run: pnpm run publish --conventional-prerelease --preid canary --dist-tag canary
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
