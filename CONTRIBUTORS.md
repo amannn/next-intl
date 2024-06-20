@@ -105,4 +105,4 @@ Other prefixes that are allowed and will *not* create a release are the followin
 
 Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).
 
-When merging from `canary` to `main`, a release will be triggered if new commits are added that use one of the release prefixes mentioned above.
+When merging from `canary` to `main`, a release will be triggered if new commits are added that use one of the release prefixes mentioned above. Note that the `canary` branch should also be merged to `main` via a pull request for documentation and review purposes.
