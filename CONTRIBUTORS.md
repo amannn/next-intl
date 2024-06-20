@@ -80,7 +80,7 @@ This repository uses [action-semantic-pull-request](https://github.com/amannn/ac
 
 ## Releases
 
-Releases are automated via Lerna. To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used.
+Releases are automated via [`lerna-light`](https://github.com/lerna-lite/lerna-lite). To determine the next version, [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) is used.
 
 ### Stable releases
 
@@ -89,7 +89,7 @@ Every commit on `main` with the following prefixes will trigger a release:
 1. `fix: `: Patch release
 2. `feat: `: Minor release
 
-Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog and should contain relevant details. We give credits to PR authors by linking them via `@{username}` in the commit title, which in turn creates a link in the changelog entry.
+Due to this, it's important to clean up commit messages of merged PRs since the commit title will appear in the changelog. Note that the PR title and description should be cleaned up by the person who initiates the merge since the PR is linked to from the changelog & release and should contain relevant details.
 
 Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
 
@@ -104,3 +104,5 @@ Other prefixes that are allowed and will *not* create a release are the followin
 ### Prereleases
 
 Canary versions are automatically published on the `canary` branch. The prerelease version is determined based on the commit prefix (`fix`/`feat`).
+
+When merging from `canary` to `main`, a release will be triggered if new commits are added that use one of the release prefixes mentioned above.
