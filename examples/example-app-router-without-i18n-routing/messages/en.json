@@ -1,11 +1,19 @@
 {
-  "Index": {
-    "title": "Home",
-    "description": "This is the home page.",
-    "navigateToAbout": "Navigate to about"
+  "LocaleSwitcher": {
+    "de": "Deutsch",
+    "en": "English",
+    "label": "Language"
   },
-  "About": {
-    "title": "About",
-    "description": "This is the about page."
+  "LoginPage": {
+    "description": "Please enter your details.",
+    "invalidCredentials": "Please check your credentials.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidPassword": "Please enter a password",
+    "login": "Sign in",
+    "register": {
+      "action": "Sign up",
+      "description": "No account yet?"
+    },
+    "title": "Welcome back"
   }
 }

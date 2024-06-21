@@ -1,11 +1,19 @@
 {
-  "Index": {
-    "title": "Start",
-    "description": "Das ist die Startseite.",
-    "navigateToAbout": "Zu Über uns navigieren"
+  "LocaleSwitcher": {
+    "de": "Deutsch",
+    "en": "English",
+    "label": "Sprache"
   },
-  "About": {
-    "title": "Über",
-    "description": "Das ist die Über-uns-Seite."
+  "LoginPage": {
+    "description": "Bitte geben Sie Ihre Daten ein.",
+    "invalidCredentials": "Bitte überprüfen Sie Ihre Anmeldedaten.",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "invalidPassword": "Bitte geben Sie ein Passwort ein.",
+    "login": "Anmelden",
+    "register": {
+      "action": "Registrieren",
+      "description": "Noch kein Konto?"
+    },
+    "title": "Willkommen zurück"
   }
 }

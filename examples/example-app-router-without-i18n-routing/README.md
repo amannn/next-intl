@@ -2,11 +2,6 @@
 
 An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup.
 
-This can be useful in the following cases:
-
-1. You'd like to provide a locale to `next-intl`, e.g. based on user settings
-2. Your app only supports a single language
-
 **Note that:**
 
 1. No `[locale]` segment needs to be added
