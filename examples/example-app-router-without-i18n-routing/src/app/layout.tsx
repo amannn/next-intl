@@ -23,7 +23,12 @@ export default async function LocaleLayout({children}: Props) {
       <head>
         <title>next-intl</title>
       </head>
-      <body className={clsx('bg-slate-100', inter.className)}>
+      <body
+        className={clsx(
+          'flex min-h-[100vh] flex-col bg-slate-100',
+          inter.className
+        )}
+      >
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

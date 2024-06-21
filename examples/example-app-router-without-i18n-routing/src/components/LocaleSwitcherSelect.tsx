@@ -1,11 +1,11 @@
 'use client';
 
-import {ComponentProps} from 'react';
+import {ChangeEvent, ComponentProps} from 'react';
 import {Locale} from '@/config';
 import {setUserLocale} from '@/services/locale';
 
 export default function LocaleSwitcherSelect(props: ComponentProps<'select'>) {
-  function onChange(event: React.ChangeEvent<HTMLSelectElement>) {
+  function onChange(event: ChangeEvent<HTMLSelectElement>) {
     const locale = event.target.value as Locale;
     setUserLocale(locale);
   }
