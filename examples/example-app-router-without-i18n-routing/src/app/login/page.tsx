@@ -18,16 +18,21 @@ const loginFormSchema = z.object({
 
 type LoginFormInput = z.infer<typeof loginFormSchema>;
 
-export type FormResult =
+export type LoginFormErrors = z.typeToFlattenedError<LoginFormInput>;
+
+export type LoginFormResult =
   | {
       success: true;
     }
   | {
       success: false;
-      errors: z.typeToFlattenedError<LoginFormInput>;
+      errors: LoginFormErrors;
     };
 
-async function loginAction(prev: unknown, data: FormData): Promise<FormResult> {
+async function loginAction(
+  prev: unknown,
+  data: FormData
+): Promise<LoginFormResult> {
   'use server';
   const t = await getTranslations('LoginPage');
   const values = Object.fromEntries(data);

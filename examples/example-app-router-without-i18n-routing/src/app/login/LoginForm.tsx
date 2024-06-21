@@ -1,9 +1,9 @@
 'use client';
 
-import {ExclamationTriangleIcon} from '@heroicons/react/24/outline';
 import {ReactNode} from 'react';
 import {useFormState} from 'react-dom';
-import {FormResult} from './page';
+import LoginFormErrors from './LoginFormErrors';
+import {LoginFormResult} from './page';
 
 export default function LoginForm({
   action,
@@ -11,7 +11,7 @@ export default function LoginForm({
   header,
   submit
 }: {
-  action(prev: unknown, data: FormData): Promise<FormResult>;
+  action(prev: unknown, data: FormData): Promise<LoginFormResult>;
   fields: ReactNode;
   header: ReactNode;
   submit: ReactNode;
@@ -23,14 +23,9 @@ export default function LoginForm({
       {header}
       <div className="my-10">
         {fields}
-        {!state?.success && (
+        {state?.success === false && (
           <div className="mt-4">
-            {state?.errors.formErrors.map((error, i) => (
-              <p key={i} className="font-semibold">
-                <ExclamationTriangleIcon className="inline-block h-5 w-5" />{' '}
-                {error}
-              </p>
-            ))}
+            <LoginFormErrors errors={state.errors} />
           </div>
         )}
       </div>
