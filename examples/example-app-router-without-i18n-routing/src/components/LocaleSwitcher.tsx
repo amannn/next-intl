@@ -11,7 +11,7 @@ export default function LocaleSwitcher({className}: {className?: string}) {
     <label
       className={clsx(
         className,
-        'group inline-block rounded-sm p-2 transition-colors hover:bg-slate-200'
+        'group relative inline-block rounded-sm p-2 transition-colors hover:bg-slate-200'
       )}
     >
       <p className="sr-only">{t('label')}</p>

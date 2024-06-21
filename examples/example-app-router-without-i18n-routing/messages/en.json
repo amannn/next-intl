@@ -1,4 +1,11 @@
 {
+  "AppLayout": {
+    "home": "Home",
+    "profile": "Profile"
+  },
+  "HomePage": {
+    "title": "Home"
+  },
   "LocaleSwitcher": {
     "de": "Deutsch",
     "en": "English",
@@ -15,5 +22,8 @@
       "description": "No account yet?"
     },
     "title": "Welcome back"
+  },
+  "ProfilePage": {
+    "title": "Profile"
   }
 }

@@ -19,7 +19,10 @@ export default function LoginForm({
   const [state, formAction] = useFormState(action, null);
 
   return (
-    <form action={formAction} className="mx-auto my-20 max-w-[24rem] px-4">
+    <form
+      action={formAction}
+      className="mx-auto my-20 w-full max-w-[24rem] px-4"
+    >
       {header}
       <div className="my-10">
         {fields}

@@ -74,7 +74,9 @@ export default function LoginPage() {
 
   return (
     <>
-      <LocaleSwitcher className="absolute right-8 top-8" />
+      <div className="absolute right-8 top-8">
+        <LocaleSwitcher />
+      </div>
       <LoginForm
         key={locale}
         action={loginAction}
