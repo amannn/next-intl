@@ -2,25 +2,37 @@ import Example from 'components/Example';
 
 # Examples
 
-<div className="mt-8 flex flex-col gap-4">
+These examples can provide inspiration for your project, showcasing different setup scenarios.
+
+<div className="mt-16 flex flex-col gap-16">
 
 <Example
-  featured
-  name="App Router"
+  image="/example-app-router.png"
+  name="App Router with i18n routing"
   hash="app-router"
-  description="An example that showcases basic usage of next-intl with the App Router, including internationalized routing."
+  description="An example that showcases basic usage of next-intl with the App Router, including internationalized routing. This can be a good starting point for public sites."
   demoLink="https://next-intl-example-app-router.vercel.app"
   sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router"
 />
 
 <Example
-  name="App Router (without i18n routing)"
+  image="/example-app-router-without-i18n-routing.png"
+  name="App Router without i18n routing"
   hash="app-router-without-i18n-routing"
-  description="An example that showcases basic usage of next-intl with the App Router, a statically provided locale and no i18n routing setup."
+  description="An example that showcases usage of next-intl without i18n routing, a typical setup for apps behind an auth layer. The app manages the locale via a cookie that can be updated via a Server Action."
   sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router-without-i18n-routing"
 />
 
 <Example
+  image="/example-app-router-mixed-routing.png"
+  name="App Router mixed routing"
+  hash="app-router-mixed-routing"
+  description="An example that showcases how locale prefixes can be used on public routes while reading the locale from user settings on pages for logged in users."
+  sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router-mixed-routing"
+/>
+
+<Example
+  image="/example-street-photography.png"
   name="Street photography viewer"
   hash="street-photography-viewer"
   description="An App Router example that handles i18n exclusively in Server Components, while adding interactivity with Client Components."
@@ -40,13 +52,6 @@ import Example from 'components/Example';
   hash="app-router-next-auth"
   description="An example that showcases the usage of next-intl together with NextAuth.js and the App Router."
   sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router-next-auth"
-/>
-
-<Example
-  name="App Router mixed routing"
-  hash="app-router-mixed-routing"
-  description="An example that showcases how locale prefixes can be used on public routes while reading the locale from user settings on pages for logged in users."
-  sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router-mixed-routing"
 />
 
 <Example
