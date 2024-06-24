@@ -14,10 +14,12 @@
   "LoginPage": {
     "credentials": "Anmeldedaten: jane@doe.com / password",
     "description": "Bitte geben Sie Ihre Daten ein.",
+    "email": "Email",
     "invalidCredentials": "Bitte überprüfen Sie Ihre Anmeldedaten.",
     "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
     "invalidPassword": "Bitte geben Sie ein Passwort ein.",
     "login": "Anmelden",
+    "password": "Passwort",
     "register": {
       "action": "Registrieren",
       "description": "Noch kein Konto?"

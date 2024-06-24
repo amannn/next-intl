@@ -80,14 +80,14 @@ export default function LoginPage() {
         fields={
           <div className="flex flex-col gap-5">
             <FormField
-              label="Email"
+              label={t('email')}
               name="email"
               placeholder="jane@doe.com"
               required
               type="email"
             />
             <FormField
-              label="Password"
+              label={t('password')}
               name="password"
               placeholder="••••••••"
               required

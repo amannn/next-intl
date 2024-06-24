@@ -14,10 +14,12 @@
   "LoginPage": {
     "credentials": "Credentials: jane@doe.com / password",
     "description": "Please enter your details.",
+    "email": "Email",
     "invalidCredentials": "Please check your credentials.",
     "invalidEmail": "Please enter a valid email address.",
     "invalidPassword": "Please enter a password.",
     "login": "Sign in",
+    "password": "Password",
     "register": {
       "action": "Sign up",
       "description": "No account yet?"
