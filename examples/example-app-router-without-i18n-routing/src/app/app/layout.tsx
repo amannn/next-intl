@@ -9,7 +9,7 @@ export default function AppLayout({children}: {children: ReactNode}) {
 
   return (
     <div className="flex grow flex-col">
-      <div className="bg-white">
+      <div className="bg-white shadow-sm">
         <div className="mx-auto flex max-w-2xl items-end justify-between">
           <nav className="flex gap-6 pt-6">
             <NavLink href="/app">{t('home')}</NavLink>
