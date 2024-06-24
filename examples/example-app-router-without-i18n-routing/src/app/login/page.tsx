@@ -51,10 +51,7 @@ async function loginAction(
           message = t('invalidPassword');
         }
 
-        if (!message) {
-          message = ctx.defaultError;
-        }
-        return {message};
+        return {message: message || ctx.defaultError};
       }
     });
 

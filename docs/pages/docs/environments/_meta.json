@@ -1,6 +1,6 @@
 {
   "server-client-components": "Server & Client Components",
-  "metadata-route-handlers": "Metadata & Route Handlers",
+  "actions-metadata-route-handlers": "Server Actions, Metadata & Route Handlers",
   "error-files": "Error files (e.g. not-found)",
   "core-library": "Core library",
   "runtime-requirements": "Runtime requirements"

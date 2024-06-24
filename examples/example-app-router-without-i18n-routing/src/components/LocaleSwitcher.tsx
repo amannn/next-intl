@@ -17,7 +17,7 @@ export default function LocaleSwitcher({className}: {className?: string}) {
       <p className="sr-only">{t('label')}</p>
       <LanguageIcon className="h-6 w-6 text-slate-600 transition-colors group-hover:text-slate-900" />
       <LocaleSwitcherSelect
-        className="absolute inset-0 cursor-pointer opacity-0"
+        className="absolute inset-0 cursor-pointer appearance-none bg-transparent text-transparent"
         defaultValue={locale}
       >
         <option value="en">{t('en')}</option>
