@@ -6,7 +6,10 @@ export async function loginUser(credentials: {
   // database and potentially a session token set in a cookie
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(credentials.password !== 'invalid');
+      resolve(
+        credentials.email === 'jane@doe.com' &&
+          credentials.password === 'password'
+      );
     }, 1000);
   });
 }

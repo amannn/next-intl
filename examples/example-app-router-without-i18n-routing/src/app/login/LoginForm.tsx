@@ -24,7 +24,7 @@ export default function LoginForm({
       className="mx-auto my-20 w-full max-w-[24rem] px-4"
     >
       {header}
-      <div className="my-10">
+      <div className="mb-10 mt-14">
         {fields}
         {state?.success === false && (
           <div className="mt-4">

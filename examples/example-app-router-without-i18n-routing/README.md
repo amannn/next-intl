@@ -1,12 +1,11 @@
 # example-app-router-without-i18n-routing
 
-An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup.
+An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup ([without i18n routing setup](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing)).
 
-**Note that:**
+This app uses Server Actions in two places:
 
-1. No `[locale]` segment needs to be added
-2. No routing APIs need to be used (middleware and navigation APIs)
-3. Eligibility for static or dynamic rendering is decided by user
+1. The locale is managed in a cookie that can be updated via `setUserLocale` in [`src/services/locale.ts`](./src/services/locale.ts).
+2. The login is handled via an action that uses [`zod`](https://zod.dev/) to provide validation and returns localized error messages right from the server.
 
 ## Deploy your own
 

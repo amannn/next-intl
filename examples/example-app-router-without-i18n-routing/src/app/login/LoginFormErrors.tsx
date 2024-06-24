@@ -6,7 +6,18 @@ import type {LoginFormErrors} from './page';
 export default function LoginFormErrors({errors}: {errors: LoginFormErrors}) {
   const {pending} = useFormStatus();
 
-  return errors.formErrors.map((error, i) => (
+  const messages = [];
+  if (errors.fieldErrors.email) {
+    messages.push(...errors.fieldErrors.email);
+  }
+  if (errors.fieldErrors.password) {
+    messages.push(...errors.fieldErrors.password);
+  }
+  if (errors.formErrors) {
+    messages.push(...errors.formErrors);
+  }
+
+  return messages.map((error, i) => (
     <p
       key={i}
       className={clsx(

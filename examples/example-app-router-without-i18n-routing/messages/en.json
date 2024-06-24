@@ -12,10 +12,11 @@
     "label": "Language"
   },
   "LoginPage": {
+    "credentials": "Credentials: jane@doe.com / password",
     "description": "Please enter your details.",
     "invalidCredentials": "Please check your credentials.",
     "invalidEmail": "Please enter a valid email address.",
-    "invalidPassword": "Please enter a password",
+    "invalidPassword": "Please enter a password.",
     "login": "Sign in",
     "register": {
       "action": "Sign up",

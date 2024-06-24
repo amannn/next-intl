@@ -12,6 +12,7 @@
     "label": "Sprache"
   },
   "LoginPage": {
+    "credentials": "Anmeldedaten: jane@doe.com / password",
     "description": "Bitte geben Sie Ihre Daten ein.",
     "invalidCredentials": "Bitte überprüfen Sie Ihre Anmeldedaten.",
     "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",

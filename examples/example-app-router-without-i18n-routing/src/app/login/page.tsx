@@ -119,6 +119,9 @@ export default function LoginPage() {
                 {t('register.action')}
               </Link>
             </p>
+            <p className="mt-4 text-center text-sm text-slate-700">
+              {t('credentials')}
+            </p>
           </div>
         }
       />
