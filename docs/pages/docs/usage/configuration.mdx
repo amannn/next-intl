@@ -59,6 +59,8 @@ export default getRequestConfig(async () => {
 
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
+Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
+
 ### `NextIntlClientProvider`
 
 `NextIntlClientProvider` can be used to provide configuration for **Client Components**.

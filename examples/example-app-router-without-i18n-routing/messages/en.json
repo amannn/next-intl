@@ -21,10 +21,6 @@
     "invalidPassword": "Please enter a password.",
     "login": "Sign in",
     "password": "Password",
-    "register": {
-      "action": "Sign up",
-      "description": "No account yet?"
-    },
     "title": "Welcome back"
   },
   "ProfilePage": {

@@ -21,10 +21,6 @@
     "invalidPassword": "Bitte geben Sie ein Passwort ein.",
     "login": "Anmelden",
     "password": "Passwort",
-    "register": {
-      "action": "Registrieren",
-      "description": "Noch kein Konto?"
-    },
     "title": "Willkommen zurück"
   },
   "ProfilePage": {

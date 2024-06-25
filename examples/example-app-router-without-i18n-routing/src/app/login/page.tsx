@@ -1,6 +1,5 @@
 import {UsersIcon} from '@heroicons/react/24/outline';
 import {isEqual} from 'lodash';
-import Link from 'next/link';
 import {redirect} from 'next/navigation';
 import {useLocale, useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
@@ -107,15 +106,6 @@ export default function LoginPage() {
         submit={
           <div>
             <Button type="submit">{t('login')}</Button>
-            <p className="mt-4 text-center text-sm text-slate-700">
-              {t('register.description')}{' '}
-              <Link
-                className="font-semibold underline transition-colors hover:text-slate-900"
-                href="#"
-              >
-                {t('register.action')}
-              </Link>
-            </p>
             <p className="mt-4 text-center text-sm text-slate-700">
               {t('credentials')}
             </p>
