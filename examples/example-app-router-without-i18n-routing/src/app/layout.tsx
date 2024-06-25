@@ -21,7 +21,7 @@ export default async function LocaleLayout({children}: Props) {
   return (
     <html lang={locale}>
       <head>
-        <title>next-intl</title>
+        <title>next-intl example</title>
       </head>
       <body
         className={clsx(

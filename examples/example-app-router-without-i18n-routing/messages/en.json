@@ -13,7 +13,7 @@
     "label": "Language"
   },
   "LoginPage": {
-    "credentials": "Credentials: jane@doe.com / password",
+    "credentials": "Credentials: jane@doe.com / next-intl",
     "description": "Please enter your details.",
     "email": "Email",
     "invalidCredentials": "Please check your credentials.",
