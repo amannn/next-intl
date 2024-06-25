@@ -8,7 +8,7 @@ export async function loginUser(credentials: {
     setTimeout(() => {
       resolve(
         credentials.email === 'jane@doe.com' &&
-          credentials.password === 'password'
+          credentials.password === 'next-intl'
       );
     }, 1000);
   });

@@ -18,7 +18,7 @@ it('shows localized server errors in the login form', async ({page}) => {
 it('can login and switch the language', async ({page}) => {
   await page.goto('/login');
   await page.getByRole('textbox', {name: 'Email'}).fill('jane@doe.com');
-  await page.getByRole('textbox', {name: 'Password'}).fill('password');
+  await page.getByRole('textbox', {name: 'Password'}).fill('next-intl');
   await page.getByRole('textbox', {name: 'Password'}).press('Enter');
   await page.getByRole('heading', {name: 'Start'}).isVisible();
   await page.getByRole('combobox', {name: 'Language'}).click();
