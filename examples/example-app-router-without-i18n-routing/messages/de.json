@@ -1,6 +1,7 @@
 {
   "AppLayout": {
     "home": "Start",
+    "logout": "Abmelden",
     "profile": "Profil"
   },
   "HomePage": {

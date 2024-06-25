@@ -26,7 +26,7 @@ export default function AppLayout({children}: {children: ReactNode}) {
           className="mt-auto font-semibold text-slate-600 transition-colors hover:text-slate-900"
           href="/"
         >
-          Logout →
+          {t('logout')} →
         </Link>
       </div>
     </div>
