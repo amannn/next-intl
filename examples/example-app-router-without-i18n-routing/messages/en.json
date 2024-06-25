@@ -1,11 +1,33 @@
 {
-  "Index": {
-    "title": "Home",
-    "description": "This is the home page.",
-    "navigateToAbout": "Navigate to about"
+  "AppLayout": {
+    "home": "Home",
+    "logout": "Logout",
+    "profile": "Profile"
   },
-  "About": {
-    "title": "About",
-    "description": "This is the about page."
+  "HomePage": {
+    "title": "Home"
+  },
+  "LocaleSwitcher": {
+    "de": "Deutsch",
+    "en": "English",
+    "label": "Language"
+  },
+  "LoginPage": {
+    "credentials": "Credentials: jane@doe.com / password",
+    "description": "Please enter your details.",
+    "email": "Email",
+    "invalidCredentials": "Please check your credentials.",
+    "invalidEmail": "Please enter a valid email address.",
+    "invalidPassword": "Please enter a password.",
+    "login": "Sign in",
+    "password": "Password",
+    "register": {
+      "action": "Sign up",
+      "description": "No account yet?"
+    },
+    "title": "Welcome back"
+  },
+  "ProfilePage": {
+    "title": "Profile"
   }
 }

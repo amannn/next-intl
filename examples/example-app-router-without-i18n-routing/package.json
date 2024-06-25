@@ -1,6 +1,5 @@
 {
   "name": "example-app-router-without-i18n-routing",
-  "version": "2.10.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,19 +9,29 @@
     "start": "next start"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.4",
+    "@radix-ui/react-select": "^2.1.1",
+    "clsx": "^2.1.1",
+    "lodash": "^4.17.21",
     "next": "^14.2.4",
     "next-intl": "latest",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.2.4",
+    "postcss": "^8.4.38",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5"
   }
 }

@@ -34,6 +34,5 @@
     "next-sitemap": "^4.2.3",
     "typescript": "^5.4.5"
   },
-  "funding": "https://github.com/amannn/next-intl?sponsor=1",
   "prettier": "../.prettierrc.json"
 }

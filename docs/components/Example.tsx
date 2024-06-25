@@ -1,20 +1,20 @@
 import useLocationHash from 'hooks/useLocationHash';
-import Chip from './Chip';
+import Image from 'next/image';
 
 type Props = {
   demoLink?: string;
-  sourceLink: string;
-  hash: string;
-  name: string;
   description: string;
-  featured?: boolean;
+  hash: string;
+  image?: string;
+  name: string;
+  sourceLink: string;
 };
 
 export default function Example({
   demoLink,
   description,
-  featured,
   hash,
+  image,
   name,
   sourceLink
 }: Props) {
@@ -22,16 +22,24 @@ export default function Example({
   const isActive = locationHash === hash;
 
   return (
-    <div className="relative py-2">
+    <div className="relative max-w-lg scroll-m-4" id={hash}>
       {isActive && (
         <div className="absolute -left-6 top-0 h-full w-1 bg-sky-200 dark:bg-sky-900" />
       )}
-      <h2
-        className="flex scroll-mt-8 items-center text-xl font-semibold"
-        id={hash}
-      >
+      {image && (
+        <div className="relative mb-3 aspect-[512/350] max-w-lg shadow-sm">
+          <Image
+            alt="Screenshot"
+            className="absolute inset-0 h-full w-full rounded-sm object-cover "
+            height={350}
+            src={image}
+            width={512}
+          />
+          <div className="absolute inset-0 shadow-[inset_0_0_50px_0_rgba(0,0,0,0.04)]" />
+        </div>
+      )}
+      <h2 className="flex scroll-mt-8 items-center text-xl font-semibold">
         {name}
-        {featured && <Chip className="ml-3">Featured</Chip>}
       </h2>
       <div className="mt-2">
         <p className="mt-2 max-w-lg text-base text-slate-600 dark:text-slate-400">

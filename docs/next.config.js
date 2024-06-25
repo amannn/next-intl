@@ -115,7 +115,12 @@ module.exports = withNextra({
     },
     {
       source: '/docs/environments/sitemap',
-      destination: '/docs/environments/metadata-route-handlers',
+      destination: '/docs/environments/actions-metadata-route-handlers',
+      permanent: true
+    },
+    {
+      source: '/docs/environments/metadata-route-handlers',
+      destination: '/docs/environments/actions-metadata-route-handlers',
       permanent: true
     },
     {
