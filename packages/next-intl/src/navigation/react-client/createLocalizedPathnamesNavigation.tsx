@@ -149,9 +149,7 @@ export default function createLocalizedPathnamesNavigation<
     const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
-    return pathname
-      ? getRoute({pathname, locale, pathnames: config.pathnames})
-      : pathname;
+    return pathname ? getRoute(locale, pathname, config.pathnames) : pathname;
   }
 
   function getPathname({

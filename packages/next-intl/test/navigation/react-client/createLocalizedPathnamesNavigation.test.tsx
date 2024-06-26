@@ -11,20 +11,28 @@ import {Pathnames} from '../../../src/routing';
 
 vi.mock('next/navigation');
 
-const locales = ['en', 'de'] as const;
+const locales = ['en', 'de', 'ja'] as const;
 const pathnames = {
   '/': '/',
   '/about': {
     en: '/about',
-    de: '/ueber-uns'
+    de: '/ueber-uns',
+    ja: '/約'
   },
   '/news/[articleSlug]-[articleId]': {
     en: '/news/[articleSlug]-[articleId]',
-    de: '/neuigkeiten/[articleSlug]-[articleId]'
+    de: '/neuigkeiten/[articleSlug]-[articleId]',
+    ja: '/ニュース/[articleSlug]-[articleId]'
   },
   '/categories/[...parts]': {
     en: '/categories/[...parts]',
-    de: '/kategorien/[...parts]'
+    de: '/kategorien/[...parts]',
+    ja: '/カテゴリ/[...parts]'
+  },
+  '/categories/new': {
+    en: '/categories/new',
+    de: '/kategorien/neu',
+    ja: '/カテゴリ/新規'
   },
   '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
 } satisfies Pathnames<typeof locales>;
@@ -81,6 +89,28 @@ describe("localePrefix: 'as-needed'", () => {
       );
       rerender(<Component />);
       screen.getByText('/news/[articleSlug]-[articleId]');
+    });
+
+    it('returns the internal pathname for a more specific pathname that overlaps with another pathname', () => {
+      function Component() {
+        const pathname = usePathname();
+        return <>{pathname}</>;
+      }
+
+      vi.mocked(useNextPathname).mockImplementation(() => '/en/categories/new');
+      render(<Component />);
+      screen.getByText('/categories/new');
+    });
+
+    it('returns an encoded pathname correctly', () => {
+      function Component() {
+        const pathname = usePathname();
+        return <>{pathname}</>;
+      }
+      vi.mocked(useParams).mockImplementation(() => ({locale: 'ja'}));
+      vi.mocked(useNextPathname).mockImplementation(() => '/ja/%E7%B4%84');
+      render(<Component />);
+      screen.getByText('/about');
     });
 
     it('returns the internal pathname a non-default locale', () => {

@@ -1,7 +1,7 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {Locales, Pathnames} from '../../routing/types';
-import {matchesPathname} from '../../shared/utils';
+import {matchesPathname, getSortedPathnames} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
@@ -152,28 +152,29 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 }
 
-export function getRoute<AppLocales extends Locales>({
-  locale,
-  pathname,
-  pathnames
-}: {
-  locale: AppLocales[number];
-  pathname: string;
-  pathnames: Pathnames<AppLocales>;
-}) {
+export function getRoute<AppLocales extends Locales>(
+  locale: AppLocales[number],
+  pathname: string,
+  pathnames: Pathnames<AppLocales>
+): keyof Pathnames<AppLocales> {
+  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
   const decoded = decodeURI(pathname);
 
-  let template = Object.entries(pathnames).find(([, routePath]) => {
-    const routePathname =
-      typeof routePath !== 'string' ? routePath[locale] : routePath;
-    return matchesPathname(routePathname, decoded);
-  })?.[0];
-
-  if (!template) {
-    template = pathname;
+  for (const internalPathname of sortedPathnames) {
+    const localizedPathnamesOrPathname = pathnames[internalPathname];
+    if (typeof localizedPathnamesOrPathname === 'string') {
+      const localizedPathname = localizedPathnamesOrPathname;
+      if (matchesPathname(localizedPathname, decoded)) {
+        return internalPathname;
+      }
+    } else {
+      if (matchesPathname(localizedPathnamesOrPathname[locale], decoded)) {
+        return internalPathname;
+      }
+    }
   }
 
-  return template as keyof Pathnames<AppLocales>;
+  return pathname as keyof Pathnames<AppLocales>;
 }
 
 export function getBasePath(
