@@ -180,6 +180,7 @@
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
+    "glob": "^10.4.2",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "publint": "^0.2.8",
