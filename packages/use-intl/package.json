@@ -19,55 +19,55 @@
     "prepublishOnly": "turbo build",
     "size": "size-limit"
   },
-  "main": "./dist/index.js",
-  "module": "dist/index.mjs",
   "type": "commonjs",
-  "typings": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "dist/esm/index.mjs",
+  "typings": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "development": "./dist/index.development.mjs",
-        "production": "./dist/index.production.mjs",
-        "default": "./dist/index.mjs"
+        "types": "./dist/esm/index.d.mts",
+        "development": "./dist/esm/index.development.mjs",
+        "production": "./dist/esm/index.production.mjs",
+        "default": "./dist/esm/index.mjs"
       },
       "require": {
-        "types": "./dist/index.d.ts",
-        "development": "./dist/index.development.js",
-        "production": "./dist/index.production.js",
-        "default": "./dist/index.js"
+        "types": "./dist/cjs/index.d.ts",
+        "development": "./dist/cjs/index.development.js",
+        "production": "./dist/cjs/index.production.js",
+        "default": "./dist/cjs/index.js"
       },
-      "default": "./dist/index.js"
+      "default": "./dist/cjs/index.js"
     },
     "./core": {
       "import": {
-        "types": "./dist/core.d.mts",
-        "development": "./dist/core.development.mjs",
-        "production": "./dist/core.production.mjs",
-        "default": "./dist/core.mjs"
+        "types": "./dist/esm/core.d.mts",
+        "development": "./dist/esm/core.development.mjs",
+        "production": "./dist/esm/core.production.mjs",
+        "default": "./dist/esm/core.mjs"
       },
       "require": {
-        "types": "./dist/core.d.ts",
-        "development": "./dist/core.development.js",
-        "production": "./dist/core.production.js",
-        "default": "./dist/core.js"
+        "types": "./dist/cjs/core.d.ts",
+        "development": "./dist/cjs/core.development.js",
+        "production": "./dist/cjs/core.production.js",
+        "default": "./dist/cjs/core.js"
       },
-      "default": "./dist/core.js"
+      "default": "./dist/cjs/core.js"
     },
     "./react": {
       "import": {
-        "types": "./dist/react.d.mts",
-        "development": "./dist/react.development.mjs",
-        "production": "./dist/react.production.mjs",
-        "default": "./dist/react.mjs"
+        "types": "./dist/esm/react.d.mts",
+        "development": "./dist/esm/react.development.mjs",
+        "production": "./dist/esm/react.production.mjs",
+        "default": "./dist/esm/react.mjs"
       },
       "require": {
-        "types": "./dist/react.d.ts",
-        "development": "./dist/react.development.js",
-        "production": "./dist/react.production.js",
-        "default": "./dist/react.js"
+        "types": "./dist/cjs/react.d.ts",
+        "development": "./dist/cjs/react.development.js",
+        "production": "./dist/cjs/react.production.js",
+        "default": "./dist/cjs/react.js"
       },
-      "default": "./dist/react.js"
+      "default": "./dist/cjs/react.js"
     }
   },
   "files": [
@@ -99,7 +99,7 @@
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "bunchee": "^5.2.0",
+    "bunchee": "^5.2.2",
     "date-fns": "^3.6.0",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",

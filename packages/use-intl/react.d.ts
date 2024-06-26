@@ -1,1 +1,1 @@
-export * from './dist/react.d.ts';
+export * from './dist/cjs/react.d.ts';

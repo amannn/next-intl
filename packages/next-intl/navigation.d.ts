@@ -1,1 +1,1 @@
-export * from './dist/navigation';
+export * from './dist/cjs/navigation';

@@ -2,21 +2,21 @@ import type {SizeLimitConfig} from 'size-limit';
 
 const config: SizeLimitConfig = [
   {
-    name: 'All (ESM)',
-    path: 'dist/index.mjs',
-    limit: '13.16 kB'
+    name: './ (ESM)',
+    path: 'dist/esm/index.mjs',
+    limit: '15.25 kB'
   },
   {
-    name: 'All but useTranslations (ESM)',
-    path: 'dist/index.mjs',
+    name: './ (no useTranslations, ESM)',
+    path: 'dist/esm/index.mjs',
     import:
       '{useLocale, IntlProvider, useNow, useTimeZone, useMessages, useFormatter}',
-    limit: '1.58 kB'
+    limit: '1.825 kB'
   },
   {
-    name: 'All (CJS)',
-    path: 'dist/index.js',
-    limit: '16.81 kB'
+    name: './ (CJS)',
+    path: 'dist/cjs/index.js',
+    limit: '19.775 kB'
   }
 ];
 

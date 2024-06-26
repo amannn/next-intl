@@ -27,117 +27,117 @@
     "size": "size-limit"
   },
   "type": "commonjs",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "typings": "./dist/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "typings": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
-      "react-server": "./dist/index.react-server.mjs",
+      "react-server": "./dist/esm/index.react-server.mjs",
       "import": {
-        "types": "./dist/index.d.mts",
-        "development": "./dist/index.development.mjs",
-        "production": "./dist/index.production.mjs",
-        "default": "./dist/index.mjs"
+        "types": "./dist/esm/index.d.mts",
+        "development": "./dist/esm/index.development.mjs",
+        "production": "./dist/esm/index.production.mjs",
+        "default": "./dist/esm/index.mjs"
       },
       "require": {
-        "types": "./dist/index.d.ts",
-        "development": "./dist/index.development.js",
-        "production": "./dist/index.production.js",
-        "default": "./dist/index.js"
+        "types": "./dist/cjs/index.d.ts",
+        "development": "./dist/cjs/index.development.js",
+        "production": "./dist/cjs/index.production.js",
+        "default": "./dist/cjs/index.js"
       },
-      "default": "./dist/index.js"
+      "default": "./dist/cjs/index.js"
     },
     "./server": {
-      "react-server": "./dist/server.react-server.mjs",
+      "react-server": "./dist/esm/server.react-server.mjs",
       "import": {
-        "types": "./dist/server.d.mts",
-        "development": "./dist/server.development.mjs",
-        "production": "./dist/server.production.mjs",
-        "default": "./dist/server.mjs"
+        "types": "./dist/esm/server.d.mts",
+        "development": "./dist/esm/server.development.mjs",
+        "production": "./dist/esm/server.production.mjs",
+        "default": "./dist/esm/server.mjs"
       },
       "require": {
-        "types": "./dist/server.d.ts",
-        "development": "./dist/server.development.js",
-        "production": "./dist/server.production.js",
-        "default": "./dist/server.js"
+        "types": "./dist/cjs/server.d.ts",
+        "development": "./dist/cjs/server.development.js",
+        "production": "./dist/cjs/server.production.js",
+        "default": "./dist/cjs/server.js"
       },
-      "default": "./dist/server.js"
+      "default": "./dist/cjs/server.js"
     },
     "./config": {
       "import": {
-        "types": "./dist/config.d.mts",
-        "development": "./dist/config.development.mjs",
-        "production": "./dist/config.production.mjs",
-        "default": "./dist/config.mjs"
+        "types": "./dist/esm/config.d.mts",
+        "development": "./dist/esm/config.development.mjs",
+        "production": "./dist/esm/config.production.mjs",
+        "default": "./dist/esm/config.mjs"
       },
       "require": {
-        "types": "./dist/config.d.ts",
-        "development": "./dist/config.development.js",
-        "production": "./dist/config.production.js",
-        "default": "./dist/config.js"
+        "types": "./dist/cjs/config.d.ts",
+        "development": "./dist/cjs/config.development.js",
+        "production": "./dist/cjs/config.production.js",
+        "default": "./dist/cjs/config.js"
       },
-      "default": "./dist/config.js"
+      "default": "./dist/cjs/config.js"
     },
     "./middleware": {
       "import": {
-        "types": "./dist/middleware.d.mts",
-        "development": "./dist/middleware.development.mjs",
-        "production": "./dist/middleware.production.mjs",
-        "default": "./dist/middleware.mjs"
+        "types": "./dist/esm/middleware.d.mts",
+        "development": "./dist/esm/middleware.development.mjs",
+        "production": "./dist/esm/middleware.production.mjs",
+        "default": "./dist/esm/middleware.mjs"
       },
       "require": {
-        "types": "./dist/middleware.d.ts",
-        "development": "./dist/middleware.development.js",
-        "production": "./dist/middleware.production.js",
-        "default": "./dist/middleware.js"
+        "types": "./dist/cjs/middleware.d.ts",
+        "development": "./dist/cjs/middleware.development.js",
+        "production": "./dist/cjs/middleware.production.js",
+        "default": "./dist/cjs/middleware.js"
       },
-      "default": "./dist/middleware.js"
+      "default": "./dist/cjs/middleware.js"
     },
     "./navigation": {
-      "react-server": "./dist/navigation.react-server.mjs",
+      "react-server": "./dist/esm/navigation.react-server.mjs",
       "import": {
-        "types": "./dist/navigation.d.mts",
-        "development": "./dist/navigation.development.mjs",
-        "production": "./dist/navigation.production.mjs",
-        "default": "./dist/navigation.mjs"
+        "types": "./dist/esm/navigation.d.mts",
+        "development": "./dist/esm/navigation.development.mjs",
+        "production": "./dist/esm/navigation.production.mjs",
+        "default": "./dist/esm/navigation.mjs"
       },
       "require": {
-        "types": "./dist/navigation.d.ts",
-        "development": "./dist/navigation.development.js",
-        "production": "./dist/navigation.production.js",
-        "default": "./dist/navigation.js"
+        "types": "./dist/cjs/navigation.d.ts",
+        "development": "./dist/cjs/navigation.development.js",
+        "production": "./dist/cjs/navigation.production.js",
+        "default": "./dist/cjs/navigation.js"
       },
-      "default": "./dist/navigation.js"
+      "default": "./dist/cjs/navigation.js"
     },
     "./routing": {
       "import": {
-        "types": "./dist/routing.d.mts",
-        "development": "./dist/routing.development.mjs",
-        "production": "./dist/routing.production.mjs",
-        "default": "./dist/routing.mjs"
+        "types": "./dist/esm/routing.d.mts",
+        "development": "./dist/esm/routing.development.mjs",
+        "production": "./dist/esm/routing.production.mjs",
+        "default": "./dist/esm/routing.mjs"
       },
       "require": {
-        "types": "./dist/routing.d.ts",
-        "development": "./dist/routing.development.js",
-        "production": "./dist/routing.production.js",
-        "default": "./dist/routing.js"
+        "types": "./dist/cjs/routing.d.ts",
+        "development": "./dist/cjs/routing.development.js",
+        "production": "./dist/cjs/routing.production.js",
+        "default": "./dist/cjs/routing.js"
       },
-      "default": "./dist/routing.js"
+      "default": "./dist/cjs/routing.js"
     },
     "./plugin": {
       "import": {
-        "types": "./dist/plugin.d.mts",
-        "development": "./dist/plugin.development.mjs",
-        "production": "./dist/plugin.production.mjs",
-        "default": "./dist/plugin.mjs"
+        "types": "./dist/esm/plugin.d.mts",
+        "development": "./dist/esm/plugin.development.mjs",
+        "production": "./dist/esm/plugin.production.mjs",
+        "default": "./dist/esm/plugin.mjs"
       },
       "require": {
-        "types": "./dist/plugin.d.ts",
-        "development": "./dist/plugin.development.js",
-        "production": "./dist/plugin.production.js",
-        "default": "./dist/plugin.js"
+        "types": "./dist/cjs/plugin.d.ts",
+        "development": "./dist/cjs/plugin.development.js",
+        "production": "./dist/cjs/plugin.production.js",
+        "default": "./dist/cjs/plugin.js"
       },
-      "default": "./dist/plugin.js"
+      "default": "./dist/cjs/plugin.js"
     }
   },
   "files": [
@@ -174,13 +174,13 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@edge-runtime/vm": "^3.2.0",
-    "@size-limit/preset-small-lib": "^8.2.6",
+    "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "bunchee": "^5.2.0",
+    "bunchee": "^5.2.2",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
@@ -189,7 +189,7 @@
     "publint": "^0.2.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.4",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },

@@ -1,1 +1,1 @@
-export * from './dist/routing';
+export * from './dist/cjs/routing';
