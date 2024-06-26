@@ -1,15 +1,10 @@
 import {NextRequest, NextResponse} from 'next/server';
 import createMiddleware from 'next-intl/middleware';
-import {locales} from './config';
+import {defaultLocale, locales} from './config';
 
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAppRoute = pathname === '/app' || pathname.startsWith('/app/');
-
-  // Could be read from the user profile too if we want
-  // to change the default for the user on public pages
-  // that is being redirect to at `/`.
-  const defaultLocale = 'en';
 
   const intlMiddleware = createMiddleware({
     locales,

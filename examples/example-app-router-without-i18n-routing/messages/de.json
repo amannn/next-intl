@@ -1,11 +1,29 @@
 {
-  "Index": {
-    "title": "Start",
-    "description": "Das ist die Startseite.",
-    "navigateToAbout": "Zu Über uns navigieren"
+  "AppLayout": {
+    "home": "Start",
+    "logout": "Abmelden",
+    "profile": "Profil"
   },
-  "About": {
-    "title": "Über",
-    "description": "Das ist die Über-uns-Seite."
+  "HomePage": {
+    "title": "Start"
+  },
+  "LocaleSwitcher": {
+    "de": "Deutsch",
+    "en": "English",
+    "label": "Sprache"
+  },
+  "LoginPage": {
+    "credentials": "Anmeldedaten: jane@doe.com / next-intl",
+    "description": "Bitte geben Sie Ihre Daten ein.",
+    "email": "Email",
+    "invalidCredentials": "Bitte überprüfen Sie Ihre Anmeldedaten.",
+    "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "invalidPassword": "Bitte geben Sie ein Passwort ein.",
+    "login": "Anmelden",
+    "password": "Passwort",
+    "title": "Willkommen zurück"
+  },
+  "ProfilePage": {
+    "title": "Profil"
   }
 }

@@ -10,6 +10,9 @@ export default function AppNavigationLocaleSwitcher() {
 
   async function action(data: FormData) {
     await updateLocale(data);
+
+    // Refetch the page to receive markup that
+    // uses the latest value from the cookie
     router.refresh();
   }
 

@@ -1,17 +1,89 @@
 import Callout from 'components/Callout';
+import Details from 'components/Details';
 import {Tabs, Tab} from 'nextra-theme-docs';
 
-# Internationalization of Metadata & Route Handlers with the Next.js App Router
+# Server Actions, Metadata & Route Handlers
 
 There are a few places in Next.js apps where you can apply internationalization outside of React components:
 
-1. [Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
-2. [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)
-3. [Manifest](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest)
-4. [Sitemap](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap)
-5. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers)
+1. [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
+2. [Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
+3. [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)
+4. [Manifest](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest)
+5. [Sitemap](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap)
+6. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers)
 
 `next-intl/server` provides a set of [awaitable functions](/docs/environments/server-client-components#async-components) that can be used in these cases.
+
+### Server Actions
+
+[Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) provide a mechanism to execute server-side code that is invoked by the client. In case you're returning user-facing messages, you can use `next-intl` to localize them based on the user's locale.
+
+```tsx
+import {getTranslations} from 'next-intl/server';
+
+async function loginAction(data: FormData) {
+  'use server';
+
+  const t = await getTranslations('LoginForm');
+  const areCredentialsValid = /* ... */;
+  if (!areCredentialsValid) {
+    return {error: t('invalidCredentials')};
+  }
+}
+```
+
+Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently. If you're using [a `[locale]` segment](/docs/getting-started/app-router) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
+
+<Details id="server-actions-zod">
+<summary>When using Zod for validation, how can I localize error messages?</summary>
+
+[Zod](https://zod.dev/) allows you to provide [contextual error maps](https://zod.dev/ERROR_HANDLING?id=contextual-error-map) that can be used to customize error messages per parse invocation. Since the locale is specific to a particular request, this mechanism comes in handy to turn structured errors from `zod` into localized messages:
+
+```tsx
+import {getTranslations} from 'next-intl/server';
+import {loginUser} from '@/services/session';
+import {isEqual} from 'lodash';
+import {z} from 'zod';
+
+const loginFormSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1)
+});
+
+// ...
+
+async function loginAction(data: FormData) {
+  'use server';
+
+  const t = await getTranslations('LoginForm');
+  const values = Object.fromEntries(data);
+
+  const result = await loginFormSchema
+    .refine(async (credentials) => loginUser(credentials), {
+      message: t('invalidCredentials')
+    })
+    .safeParseAsync(values, {
+      errorMap(issue, ctx) {
+        let message;
+
+        if (isEqual(issue.path, ['email'])) {
+          message = t('invalidEmail');
+        } else if (isEqual(issue.path, ['password'])) {
+          message = t('invalidPassword');
+        }
+
+        return {message: message || ctx.defaultError};
+      }
+    });
+
+  // ...
+}
+```
+
+See the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) for a working implementation.
+
+</Details>
 
 ### Metadata API
 
@@ -32,8 +104,8 @@ export async function generateMetadata({params: {locale}}) {
 <Callout>
   By passing an explicit `locale` to the awaitable functions from `next-intl`,
   you can make the metadata handler eligible for [static
-  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering) if you're using
-  [i18n routing](/docs/getting-started/app-router).
+  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
+  if you're using [i18n routing](/docs/getting-started/app-router).
 </Callout>
 
 ### Open Graph images
@@ -134,7 +206,10 @@ const host = 'https://acme.com';
 export default function sitemap(): MetadataRoute.Sitemap {
   const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
 
-  function getUrl(key: keyof typeof pathnames, locale: typeof locales[number]) {
+  function getUrl(
+    key: keyof typeof pathnames,
+    locale: (typeof locales)[number]
+  ) {
     const pathname = getPathname({locale, href: key});
     return `${HOST}/${locale}${pathname === '/' ? '' : pathname}`;
   }
@@ -158,9 +233,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 <Callout>
   Note that your implementation may vary depending on your routing configuration
-  (e.g. if you're using a
-  [`localePrefix`](/docs/routing#locale-prefix) other than `always`
-  or [locale-specific domains](/docs/routing#domains)).
+  (e.g. if you're using a [`localePrefix`](/docs/routing#locale-prefix) other
+  than `always` or [locale-specific domains](/docs/routing#domains)).
 </Callout>
 
 ### Route Handlers

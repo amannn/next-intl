@@ -3,7 +3,7 @@ import type {PlaywrightTestConfig} from '@playwright/test';
 import {devices} from '@playwright/test';
 
 // Use a distinct port on CI to avoid conflicts during concurrent tests
-const PORT = process.env.CI ? 3003 : 3000;
+const PORT = process.env.CI ? 3004 : 3000;
 
 const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 1 : 0,

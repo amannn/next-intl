@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.2 (2024-06-19)
+
+**Note:** Version bump only for package next-intl
+
+## 3.15.1 (2024-06-19)
+
+### Bug Fixes
+
+* Remove `@formatjs/ecma402-abstract` dependency in favor of the automatically bundled one from `intl-messageformat` ([#1141](https://github.com/amannn/next-intl/pull/1141)) – by [@amannn](https://github.com/amannn)
+
 # 3.15.0 (2024-06-10)
 
 ### Features
