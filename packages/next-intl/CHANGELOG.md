@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.3 (2024-06-26)
+
+### Bug Fixes
+
+* Prefer more specific routes in `usePathname` when detecting the currently active pathname for localized pathnames ([#1152](https://github.com/amannn/next-intl/issues/1152)) ([936839e](https://github.com/amannn/next-intl/commit/936839e9508e447f3e60cc1f606258fd00e5227e)), closes [#1151](https://github.com/amannn/next-intl/issues/1151) – by @amannn
+
 ## 3.15.2 (2024-06-19)
 
 **Note:** Version bump only for package next-intl
