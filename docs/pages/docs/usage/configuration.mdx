@@ -11,9 +11,9 @@ Configuration properties that you use across your Next.js app can be set globall
 
 Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
 
-### `i18n.ts`
+### `i18n.ts` & `getRequestConfig`
 
-`i18n.ts` can be used to provide configuration for **Server Components** and should be set up based on wether you're using [i18n routing](/docs/getting-started/app-router) or not.
+`i18n.ts` can be used to provide configuration for **Server Components** via the `getRequestConfig` function and should be set up based on wether you're using [i18n routing](/docs/getting-started/app-router) or not.
 
 <Tabs items={['With i18n routing', 'Without i18n routing']}>
 
@@ -58,6 +58,8 @@ export default getRequestConfig(async () => {
 </Tabs>
 
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
+
+Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
 
 ### `NextIntlClientProvider`
 
@@ -130,7 +132,7 @@ export default getRequestConfig(async ({locale}) => {
 
 After messages are configured, they can be used via `useTranslations`.
 
-In case you require access to messages in a component, you can use a convenience API to read them from your configuration:
+In case you require access to messages in a component, you can read them via `useMessages()` or `getMessages()` from your configuration:
 
 ```tsx
 // Regular components
@@ -252,7 +254,7 @@ const timeZone = 'Europe/Vienna';
 
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-The configured time zone can be read from components:
+The configured time zone can be read via `useTimeZone` or `getTimeZone` in components:
 
 ```tsx
 // Regular components
@@ -306,7 +308,7 @@ const now = new Date('2020-11-20T10:36:01.516Z');
 </Tab>
 </Tabs>
 
-The configured `now` value can be read from components:
+The configured `now` value can be read in components via `useNow` or `getNow`:
 
 ```tsx
 // Regular components
@@ -576,7 +578,7 @@ function getMessageFallback({namespace, key, error}) {
 
 The current locale of your app is automatically incorporated into hooks like `useTranslations` & `useFormatter` and will affect the rendered output.
 
-In case you need to use this value in other places of your app, you can read it in components:
+In case you need to use this value in other places of your app, e.g. to implement a locale switcher or to pass it to API calls, you can read it via `useLocale` or `getLocale`:
 
 ```tsx
 // Regular components
@@ -591,9 +593,10 @@ const locale = await getLocale();
 <Details id="locale-change">
 <summary>How can I change the locale?</summary>
 
-Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale is either represented by the `[locale]` segment in the pathname or managed by your own app code.
+Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale can be changed as follows:
 
-In case you're using i18n routing, changing the locale means changing the pathname. You can do this by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+1. **With i18n routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+2. **Without i18n routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
 
 </Details>
 
@@ -603,7 +606,7 @@ In case you're using i18n routing, changing the locale means changing the pathna
 The returned value is resolved based on these priorities:
 
 1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`unstable_setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
-2. **Client Components**: A `locale` received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
+2. **Client Components**: In this case, the locale is received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
    explicitly.
 
 </Details>

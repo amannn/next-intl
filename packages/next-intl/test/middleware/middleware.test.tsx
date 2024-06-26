@@ -4,7 +4,7 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
-import createIntlMiddleware from '../../src/middleware';
+import createMiddleware from '../../src/middleware';
 import {Pathnames} from '../../src/routing';
 import {COOKIE_LOCALE_NAME} from '../../src/shared/constants';
 
@@ -136,7 +136,7 @@ it('has docs that suggest a reasonable matcher', () => {
 
 describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'as-needed'
@@ -361,7 +361,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('localized pathnames', () => {
-      const middlewareWithPathnames = createIntlMiddleware({
+      const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de', 'de-AT', 'ja'],
         localePrefix: 'as-needed',
@@ -804,7 +804,7 @@ describe('prefix-based routing', () => {
       });
 
       it('rewrites requests when the pathname is mapped for the default locale as well', () => {
-        const callMiddleware = createIntlMiddleware({
+        const callMiddleware = createMiddleware({
           defaultLocale: 'en',
           locales: ['en', 'de'],
           localePrefix: 'as-needed',
@@ -842,7 +842,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('localized pathnames with different internal and external pathnames', () => {
-      const middlewareWithPathnames = createIntlMiddleware({
+      const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
         localePrefix: 'as-needed',
@@ -954,7 +954,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: as-needed, localeDetection: false', () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'as-needed',
@@ -989,7 +989,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: always', () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de'],
       localePrefix: 'always'
@@ -1062,7 +1062,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('localized pathnames', () => {
-      const middlewareWithPathnames = createIntlMiddleware({
+      const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
         localePrefix: 'always',
@@ -1392,7 +1392,7 @@ describe('prefix-based routing', () => {
 
       it('allows to map a nested path to the root', () => {
         // https://github.com/amannn/next-intl/issues/940
-        const middlewareWithMapping = createIntlMiddleware({
+        const middlewareWithMapping = createMiddleware({
           defaultLocale: 'en',
           locales: ['en', 'de'],
           pathnames: {
@@ -1424,7 +1424,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('custom prefixes', () => {
-      const middlewareWithPrefixes = createIntlMiddleware({
+      const middlewareWithPrefixes = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'en-gb', 'de-at', 'pt'],
         localePrefix: {
@@ -1544,7 +1544,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('custom prefixes with pathnames', () => {
-      const middlewareWithPrefixes = createIntlMiddleware({
+      const middlewareWithPrefixes = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'en-gb', 'de-at', 'pt'],
         localePrefix: {
@@ -1678,7 +1678,7 @@ describe('prefix-based routing', () => {
   });
 
   describe('localePrefix: never', () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'de', 'de-AT'],
       localePrefix: 'never'
@@ -1913,7 +1913,7 @@ describe('prefix-based routing', () => {
     });
 
     describe('localized pathnames', () => {
-      const middlewareWithPathnames = createIntlMiddleware({
+      const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'de'],
         localePrefix: 'never',
@@ -2130,7 +2130,7 @@ describe('prefix-based routing', () => {
 
 describe('domain-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       localePrefix: 'as-needed',
@@ -2215,7 +2215,7 @@ describe('domain-based routing', () => {
     });
 
     it('prioritizes the default locale of a domain', () => {
-      const m = createIntlMiddleware({
+      const m = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'fr'],
         domains: [
@@ -2421,7 +2421,7 @@ describe('domain-based routing', () => {
     });
 
     describe('localized pathnames', () => {
-      const middlewareWithPathnames = createIntlMiddleware({
+      const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'fr'],
         localePrefix: 'as-needed',
@@ -2898,7 +2898,7 @@ describe('domain-based routing', () => {
     });
 
     describe('custom prefixes with pathnames', () => {
-      const middlewareWithPrefixes = createIntlMiddleware({
+      const middlewareWithPrefixes = createMiddleware({
         defaultLocale: 'en',
         locales: ['en', 'en-gb'],
         localePrefix: {
@@ -2987,7 +2987,7 @@ describe('domain-based routing', () => {
   });
 
   describe("localePrefix: 'always'", () => {
-    const middleware = createIntlMiddleware({
+    const middleware = createMiddleware({
       defaultLocale: 'en',
       locales: ['en', 'fr'],
       localePrefix: 'always',

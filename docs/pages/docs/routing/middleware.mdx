@@ -155,7 +155,7 @@ export default createMiddleware({
 });
 ```
 
-If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/metadata-route-handlers#sitemap).
+If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap).
 
 <Details id="alternate-links-details">
 <summary>Which alternate links are included?</summary>
@@ -185,11 +185,11 @@ Other configuration options like `domains`, `pathnames` and `basePath` are autom
 If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import LinkHeader from 'http-link-header';
 import {NextRequest} from 'next/server';
 
-const handleI18nRouting = createIntlMiddleware(/* ... */);
+const handleI18nRouting = createMiddleware(/* ... */);
 
 export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
@@ -230,9 +230,9 @@ A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/rout
 
 ```tsx filename="middleware.ts"
 import {NextRequest} from 'next/server';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 
-const intlMiddleware = createIntlMiddleware({
+const intlMiddleware = createMiddleware({
   // ...
 });
 
@@ -312,7 +312,7 @@ middleware(request: NextRequest): NextResponse
 If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, or modify the response that is returned.
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
@@ -321,7 +321,7 @@ export default async function middleware(request: NextRequest) {
   const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
 
   // Step 2: Create and call the next-intl middleware (example)
-  const handleI18nRouting = createIntlMiddleware({
+  const handleI18nRouting = createMiddleware({
     locales,
     defaultLocale
   });
@@ -346,7 +346,7 @@ If you need to handle rewrites apart from the ones provided by `next-intl`, you 
 This example rewrites requests for `/[locale]/profile` to `/[locale]/profile/new` if a special cookie is set.
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
@@ -362,7 +362,7 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  const handleI18nRouting = createIntlMiddleware({
+  const handleI18nRouting = createMiddleware({
     locales,
     defaultLocale: 'en'
   });
@@ -414,10 +414,10 @@ You can do so by following the [setup guide from Supabase](https://supabase.com/
 ```tsx filename="middleware.ts"
 import {type NextRequest} from 'next/server';
 import {createServerClient, type CookieOptions} from '@supabase/ssr';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {locales} from './config';
 
-const handleI18nRouting = createIntlMiddleware({
+const handleI18nRouting = createMiddleware({
   locales,
   defaultLocale: 'en'
 });
@@ -464,13 +464,13 @@ For pathnames specified in [the `pages` object](https://next-auth.js.org/configu
 
 ```tsx filename="middleware.ts"
 import {withAuth} from 'next-auth/middleware';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
 const publicPages = ['/', '/login'];
 
-const intlMiddleware = createIntlMiddleware({
+const intlMiddleware = createMiddleware({
   locales,
   defaultLocale: 'en'
 });
