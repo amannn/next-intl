@@ -18,4 +18,4 @@ patchFile(
   'export = createNextIntlPlugin;'
 );
 
-console.log('CJS entry for ./plugin patched');
+console.log('\n✔ Patched files in ./dist');
