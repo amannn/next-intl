@@ -1,3 +1,3 @@
-import config from './dist/types/src/config';
+import config from './dist/cjs/config';
 
 export = config;

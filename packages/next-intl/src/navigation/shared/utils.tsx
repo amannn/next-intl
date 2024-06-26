@@ -1,7 +1,9 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
+import NextLink from 'next/link';
+import {ComponentProps} from 'react';
 import {Locales, Pathnames} from '../../routing/types';
-import {matchesPathname} from '../../shared/utils';
+import {matchesPathname, prefixPathname} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
@@ -185,4 +187,87 @@ export function getBasePath(
   } else {
     return windowPathname.replace(pathname, '');
   }
+}
+
+type Href = ComponentProps<typeof NextLink>['href'];
+
+function isRelativeHref(href: Href) {
+  const pathname = typeof href === 'object' ? href.pathname : href;
+  return pathname != null && !pathname.startsWith('/');
+}
+
+export function isLocalHref(href: Href) {
+  if (typeof href === 'object') {
+    return href.host == null && href.hostname == null;
+  } else {
+    const hasProtocol = /^[a-z]+:/i.test(href);
+    return !hasProtocol;
+  }
+}
+
+export function isLocalizableHref(href: Href) {
+  return isLocalHref(href) && !isRelativeHref(href);
+}
+
+export function localizeHref(
+  href: string,
+  locale: string,
+  curLocale: string,
+  curPathname: string,
+  prefix: string
+): string;
+export function localizeHref(
+  href: UrlObject | string,
+  locale: string,
+  curLocale: string,
+  curPathname: string,
+  prefix: string
+): UrlObject | string;
+export function localizeHref(
+  href: UrlObject | string,
+  locale: string,
+  curLocale: string = locale,
+  curPathname: string,
+  prefix: string
+) {
+  if (!isLocalizableHref(href)) {
+    return href;
+  }
+
+  const isSwitchingLocale = locale !== curLocale;
+  const isPathnamePrefixed = hasPathnamePrefixed(prefix, curPathname);
+  const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
+
+  if (shouldPrefix && prefix != null) {
+    return prefixHref(href, prefix);
+  }
+
+  return href;
+}
+
+export function prefixHref(href: string, prefix: string): string;
+export function prefixHref(
+  href: UrlObject | string,
+  prefix: string
+): UrlObject | string;
+export function prefixHref(href: UrlObject | string, prefix: string) {
+  let prefixedHref;
+  if (typeof href === 'string') {
+    prefixedHref = prefixPathname(prefix, href);
+  } else {
+    prefixedHref = {...href};
+    if (href.pathname) {
+      prefixedHref.pathname = prefixPathname(prefix, href.pathname);
+    }
+  }
+
+  return prefixedHref;
+}
+
+export function unprefixPathname(pathname: string, prefix: string) {
+  return pathname.replace(new RegExp(`^${prefix}`), '') || '/';
+}
+
+export function hasPathnamePrefixed(prefix: string, pathname: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }

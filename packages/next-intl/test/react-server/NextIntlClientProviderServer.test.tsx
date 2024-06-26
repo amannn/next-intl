@@ -3,7 +3,7 @@ import NextIntlClientProviderServer from '../../src/react-server/NextIntlClientP
 import {getLocale, getNow, getTimeZone} from '../../src/server.react-server';
 import NextIntlClientProvider from '../../src/shared/NextIntlClientProvider';
 
-vi.mock('../../src/server/react-server', async () => ({
+vi.mock('../../src/runtimes/react-server.shared-runtime', async () => ({
   getLocale: vi.fn(async () => 'en-US'),
   getNow: vi.fn(async () => new Date('2020-01-01T00:00:00.000Z')),
   getTimeZone: vi.fn(async () => 'America/New_York')

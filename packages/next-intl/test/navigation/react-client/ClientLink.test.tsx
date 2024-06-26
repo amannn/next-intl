@@ -2,7 +2,7 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
 import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
-import {NextIntlClientProvider} from '../../../src/index.react-client';
+import {NextIntlClientProvider} from '../../../src';
 import ClientLink from '../../../src/navigation/react-client/ClientLink';
 import {LocalePrefixConfigVerbose} from '../../../src/routing/types';
 

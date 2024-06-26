@@ -13,7 +13,7 @@ import createLocalizedPathnamesNavigationClient from '../../src/navigation/react
 import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
 import BaseLink from '../../src/navigation/shared/BaseLink';
 import {Pathnames} from '../../src/routing';
-import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
+import {getRequestLocale} from '../../src/runtimes/react-server.shared-runtime';
 import {getLocalePrefix} from '../../src/shared/utils';
 
 vi.mock('next/navigation', async () => {
@@ -48,7 +48,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/runtimes/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 

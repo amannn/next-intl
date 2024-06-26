@@ -17,7 +17,7 @@
     "url": "https://github.com/amannn/next-intl"
   },
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "bunchee && node scripts/patch-dist.mjs",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
@@ -26,40 +26,114 @@
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.react-client.js",
-  "module": "./dist/esm/index.react-client.js",
-  "typings": "./dist/types/src/index.react-client.d.ts",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "typings": "./dist/cjs/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.react-client.d.ts",
-      "react-server": "./dist/esm/index.react-server.js",
-      "default": "./dist/index.react-client.js"
+      "react-server": "./dist/esm/index.react-server.mjs",
+      "import": {
+        "types": "./dist/esm/index.d.mts",
+        "development": "./dist/esm/index.development.mjs",
+        "production": "./dist/esm/index.production.mjs",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "development": "./dist/cjs/index.development.js",
+        "production": "./dist/cjs/index.production.js",
+        "default": "./dist/cjs/index.js"
+      },
+      "default": "./dist/cjs/index.js"
     },
     "./server": {
-      "types": "./server.d.ts",
-      "react-server": "./dist/esm/server.react-server.js",
-      "default": "./dist/server.react-client.js"
+      "react-server": "./dist/esm/server.react-server.mjs",
+      "import": {
+        "types": "./dist/esm/server.d.mts",
+        "development": "./dist/esm/server.development.mjs",
+        "production": "./dist/esm/server.production.mjs",
+        "default": "./dist/esm/server.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/server.d.ts",
+        "development": "./dist/cjs/server.development.js",
+        "production": "./dist/cjs/server.production.js",
+        "default": "./dist/cjs/server.js"
+      },
+      "default": "./dist/cjs/server.js"
     },
     "./config": {
-      "types": "./config.d.ts",
-      "default": "./dist/config.js"
+      "import": {
+        "types": "./dist/esm/config.d.mts",
+        "development": "./dist/esm/config.development.mjs",
+        "production": "./dist/esm/config.production.mjs",
+        "default": "./dist/esm/config.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/config.d.ts",
+        "development": "./dist/cjs/config.development.js",
+        "production": "./dist/cjs/config.production.js",
+        "default": "./dist/cjs/config.js"
+      },
+      "default": "./dist/cjs/config.js"
     },
     "./middleware": {
-      "types": "./middleware.d.ts",
-      "default": "./dist/middleware.js"
+      "import": {
+        "types": "./dist/esm/middleware.d.mts",
+        "development": "./dist/esm/middleware.development.mjs",
+        "production": "./dist/esm/middleware.production.mjs",
+        "default": "./dist/esm/middleware.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/middleware.d.ts",
+        "development": "./dist/cjs/middleware.development.js",
+        "production": "./dist/cjs/middleware.production.js",
+        "default": "./dist/cjs/middleware.js"
+      },
+      "default": "./dist/cjs/middleware.js"
     },
     "./navigation": {
-      "types": "./navigation.d.ts",
-      "react-server": "./dist/esm/navigation.react-server.js",
-      "default": "./dist/navigation.react-client.js"
+      "react-server": "./dist/esm/navigation.react-server.mjs",
+      "import": {
+        "types": "./dist/esm/navigation.d.mts",
+        "development": "./dist/esm/navigation.development.mjs",
+        "production": "./dist/esm/navigation.production.mjs",
+        "default": "./dist/esm/navigation.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/navigation.d.ts",
+        "development": "./dist/cjs/navigation.development.js",
+        "production": "./dist/cjs/navigation.production.js",
+        "default": "./dist/cjs/navigation.js"
+      },
+      "default": "./dist/cjs/navigation.js"
     },
     "./routing": {
-      "types": "./routing.d.ts",
-      "default": "./dist/routing.js"
+      "import": {
+        "types": "./dist/esm/routing.d.mts",
+        "development": "./dist/esm/routing.development.mjs",
+        "production": "./dist/esm/routing.production.mjs",
+        "default": "./dist/esm/routing.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/routing.d.ts",
+        "development": "./dist/cjs/routing.development.js",
+        "production": "./dist/cjs/routing.production.js",
+        "default": "./dist/cjs/routing.js"
+      },
+      "default": "./dist/cjs/routing.js"
     },
     "./plugin": {
-      "types": "./plugin.d.ts",
-      "default": "./dist/plugin.js"
+      "import": {
+        "types": "./dist/esm/plugin.d.mts",
+        "default": "./dist/esm/plugin.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/plugin.d.ts",
+        "default": "./dist/cjs/plugin.js"
+      },
+      "default": "./dist/cjs/plugin.js"
     }
   },
   "files": [
@@ -96,59 +170,25 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@edge-runtime/vm": "^3.2.0",
-    "@size-limit/preset-big-lib": "^8.2.6",
+    "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "bunchee": "^5.2.2",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
+    "glob": "^10.4.2",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "publint": "^0.2.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "rollup": "^4.18.0",
-    "rollup-plugin-preserve-directives": "0.4.0",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.4",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
-  "prettier": "../../.prettierrc.json",
-  "size-limit": [
-    {
-      "path": "dist/production/index.react-client.js",
-      "limit": "15.785 KB"
-    },
-    {
-      "path": "dist/production/index.react-server.js",
-      "limit": "16.66 KB"
-    },
-    {
-      "path": "dist/production/navigation.react-client.js",
-      "limit": "3.235 KB"
-    },
-    {
-      "path": "dist/production/navigation.react-server.js",
-      "limit": "17.84 KB"
-    },
-    {
-      "path": "dist/production/server.react-client.js",
-      "limit": "1 KB"
-    },
-    {
-      "path": "dist/production/server.react-server.js",
-      "limit": "15.84 KB"
-    },
-    {
-      "path": "dist/production/middleware.js",
-      "limit": "6.42 KB"
-    },
-    {
-      "path": "dist/production/routing.js",
-      "limit": "0 KB"
-    }
-  ]
+  "prettier": "../../.prettierrc.json"
 }

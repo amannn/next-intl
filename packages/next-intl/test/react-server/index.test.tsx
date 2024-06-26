@@ -13,7 +13,7 @@ import {renderToStream} from './utils';
 
 vi.mock('react');
 
-vi.mock('../../src/server/react-server/createRequestConfig', () => ({
+vi.mock('../../src/runtimes/react-server/createRequestConfig', () => ({
   default: async () => ({
     messages: {
       Component: {
@@ -26,7 +26,7 @@ vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   })
 }));
 
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/runtimes/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
