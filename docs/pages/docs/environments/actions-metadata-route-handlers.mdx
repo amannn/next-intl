@@ -33,6 +33,8 @@ async function loginAction(data: FormData) {
 }
 ```
 
+Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently. If you're using [a `[locale]` segment](/docs/getting-started/app-router) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
+
 <Details id="server-actions-zod">
 <summary>When using Zod for validation, how can I localize error messages?</summary>
 
