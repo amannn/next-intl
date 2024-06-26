@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "bunchee",
+    "postbuild": "node scripts/patch-plugin.mjs",
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit",
@@ -127,14 +128,10 @@
     "./plugin": {
       "import": {
         "types": "./dist/esm/plugin.d.mts",
-        "development": "./dist/esm/plugin.development.mjs",
-        "production": "./dist/esm/plugin.production.mjs",
         "default": "./dist/esm/plugin.mjs"
       },
       "require": {
         "types": "./dist/cjs/plugin.d.ts",
-        "development": "./dist/cjs/plugin.development.js",
-        "production": "./dist/cjs/plugin.production.js",
         "default": "./dist/cjs/plugin.js"
       },
       "default": "./dist/cjs/plugin.js"
