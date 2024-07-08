@@ -2,7 +2,8 @@ import {
   Locales,
   LocalePrefixConfigVerbose,
   DomainConfig,
-  Pathnames
+  Pathnames,
+  DomainsConfig
 } from '../routing/types';
 import {
   getLocalePrefix,
@@ -238,7 +239,7 @@ export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
 export function getBestMatchingDomain<AppLocales extends Locales>(
   curHostDomain: DomainConfig<AppLocales> | undefined,
   locale: string,
-  domainConfigs: Array<DomainConfig<AppLocales>>
+  domainsConfig: DomainsConfig<AppLocales>
 ) {
   let domainConfig;
 
@@ -249,12 +250,12 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
 
   // Prio 2: Use alternative domain with matching default locale
   if (!domainConfig) {
-    domainConfig = domainConfigs.find((cur) => cur.defaultLocale === locale);
+    domainConfig = domainsConfig.find((cur) => cur.defaultLocale === locale);
   }
 
   // Prio 3: Use alternative domain with restricted matching locale
   if (!domainConfig) {
-    domainConfig = domainConfigs.find(
+    domainConfig = domainsConfig.find(
       (cur) => cur.locales != null && cur.locales.includes(locale)
     );
   }
@@ -266,7 +267,7 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
 
   // Prio 5: Use alternative domain that supports all locales
   if (!domainConfig) {
-    domainConfig = domainConfigs.find((cur) => !cur.locales);
+    domainConfig = domainsConfig.find((cur) => !cur.locales);
   }
 
   return domainConfig;

@@ -1,14 +1,19 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
-import {Locales, DomainConfig, Pathnames} from '../routing/types';
+import {
+  Locales,
+  Pathnames,
+  DomainsConfig,
+  DomainConfig
+} from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {MiddlewareRoutingConfig} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
-  domains: Array<DomainConfig<AppLocales>>
+  domains: DomainsConfig<AppLocales>
 ) {
   let host = getHost(requestHeaders);
 
