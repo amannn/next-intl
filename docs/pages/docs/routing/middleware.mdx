@@ -73,7 +73,7 @@ In contrast, the "best fit" algorithm compares the _distance_ between the user's
 
 ### Domain-based routing [#location-detection-domain]
 
-If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
+If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (most hosting platforms provide these headers out-of-the-box).
 
 The locale is detected based on these priorities:
 
@@ -100,6 +100,19 @@ The bestmatching domain is detected based on these priorities:
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
 3. Use an alternative domain where the available `locales` are restricted and the locale is supported
 4. Use an alternative domain that supports all locales
+
+</Details>
+
+<Details id="domain-local-testing">
+<summary>How can I locally test if my setup is working?</summary>
+
+Since the negotiated locale depends on the host of the request, you can test your setup by attaching a corresponding `x-forwarded-host` header. To achieve this in the browser, you use a browser extension like [ModHeader in Chrome](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj) and add a setting like:
+
+```
+X-Forwarded-Host: example.com
+```
+
+After this, your domain config for this particular domain will be used.
 
 </Details>
 

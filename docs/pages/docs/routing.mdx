@@ -316,7 +316,7 @@ If you want to serve your localized content based on different domains, you can 
 
 **Examples:**
 
-- `us.example.com/en`
+- `us.example.com`
 - `ca.example.com/en`
 - `ca.example.com/fr`
 
@@ -343,5 +343,12 @@ export const domains: DomainsConfig<typeof locales> = [
 
 **Note that:**
 
-1. You can optionally remove the locale prefix in pathnames by changing the [`localePrefix`](#locale-prefix) setting.
+1. By default, a locale prefix will be present in the pathname. You can optionally adapt this by changing the [`localePrefix`](#locale-prefix) setting. E.g. [`localePrefix: 'never'`](/docs/routing#locale-prefix-never) can be helpful in case you have unique domains per locale.
 2. If no domain matches, the middleware will fall back to the [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
+
+<Details id="domains-testing">
+<summary>How can I locally test if my setup is working?</summary>
+
+Learn more about this in the [locale detection for domain-based routing](/docs/routing/middleware#location-detection-domain) docs.
+
+</Details>
