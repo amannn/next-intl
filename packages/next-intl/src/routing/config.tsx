@@ -1,8 +1,8 @@
 import {
   Locales,
-  DomainConfig,
   LocalePrefix,
-  LocalePrefixConfigVerbose
+  LocalePrefixConfigVerbose,
+  DomainsConfig
 } from './types';
 
 /**
@@ -15,7 +15,7 @@ export type RoutingBaseConfigInput<AppLocales extends Locales> = {
   /** @see https://next-intl-docs.vercel.app/docs/routing#locale-prefix */
   localePrefix?: LocalePrefix<AppLocales>;
   /** Can be used to change the locale handling per domain. */
-  domains?: Array<DomainConfig<AppLocales>>;
+  domains?: DomainsConfig<AppLocales>;
 };
 
 export function receiveLocalePrefixConfig<AppLocales extends Locales>(

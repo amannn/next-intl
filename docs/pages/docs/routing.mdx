@@ -321,6 +321,8 @@ If you want to serve your localized content based on different domains, you can 
 - `ca.example.com/fr`
 
 ```tsx filename="config.ts"
+import {DomainsConfig} from 'next-intl/routing';
+
 export const locales = ['en', 'fr'] as const;
 
 export const domains: DomainsConfig<typeof locales> = [

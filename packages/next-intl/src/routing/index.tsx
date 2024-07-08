@@ -1,2 +1,1 @@
-export type {LocalePrefix} from './types';
-export type {Pathnames} from './types';
+export type {Pathnames, LocalePrefix, DomainsConfig} from './types';
