@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.4 (2024-07-08)
+
+### Bug Fixes
+
+* Export `DomainsConfig` ([#1175](https://github.com/amannn/next-intl/issues/1175)) ([c4d1bb0](https://github.com/amannn/next-intl/commit/c4d1bb08e23cc8a726c3a52e6cee7b1c63cb4c8a)) – by @amannn
+
 ## 3.15.3 (2024-06-26)
 
 ### Bug Fixes
