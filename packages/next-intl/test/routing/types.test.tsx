@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {it} from 'vitest';
+import {describe, it} from 'vitest';
 import {LocalePrefix, DomainConfig} from '../../src/routing/types';
 
 describe('LocalePrefix', () => {
