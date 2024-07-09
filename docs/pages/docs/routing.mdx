@@ -29,8 +29,7 @@ src
 └── navigation.ts
 ```
 
-<Tabs items={['config.ts', 'middleware.ts', 'navigation.ts']}>
-<Tab>
+This shared module can be set up like this:
 
 ```tsx filename="config.ts"
 // A list of all locales that are supported
@@ -39,8 +38,7 @@ export const locales = ['en', 'de'] as const;
 // ...
 ```
 
-</Tab>
-<Tab>
+… and imported into both `middleware.ts` and `navigation.ts`:
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
@@ -60,9 +58,6 @@ export const config = {
 };
 ```
 
-</Tab>
-<Tab>
-
 ```tsx filename="src/navigation.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
 import {locales, /* ... */} from './config';
@@ -70,9 +65,6 @@ import {locales, /* ... */} from './config';
 export const {Link, redirect, usePathname, useRouter} =
   createSharedPathnamesNavigation({locales, /* ... */});
 ```
-
-</Tab>
-</Tabs>
 
 ### Locale prefix
 
@@ -316,7 +308,7 @@ If you want to serve your localized content based on different domains, you can 
 
 **Examples:**
 
-- `us.example.com`
+- `us.example.com/en`
 - `ca.example.com/en`
 - `ca.example.com/fr`
 
@@ -343,7 +335,7 @@ export const domains: DomainsConfig<typeof locales> = [
 
 **Note that:**
 
-1. By default, a locale prefix will be present in the pathname. You can optionally adapt this by changing the [`localePrefix`](#locale-prefix) setting. E.g. [`localePrefix: 'never'`](/docs/routing#locale-prefix-never) can be helpful in case you have unique domains per locale.
+1. You can optionally remove the locale prefix in pathnames by changing the [`localePrefix`](#locale-prefix) setting. E.g. [`localePrefix: 'never'`](/docs/routing#locale-prefix-never) can be helpful in case you have unique domains per locale.
 2. If no domain matches, the middleware will fall back to the [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
 
 <Details id="domains-testing">
