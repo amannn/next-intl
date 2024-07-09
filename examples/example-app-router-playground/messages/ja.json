@@ -37,10 +37,10 @@
   },
   "Navigation": {
     "about": "(MDX) について",
-    "client": "",
-    "home": "",
-    "nested": "",
-    "newsArticle": ""
+    "client": "クライアントページ",
+    "home": "家",
+    "nested": "ネストされたページ",
+    "newsArticle": "ニュース記事"
   },
   "Nested": {
     "description": "これはネストされたページです。",
@@ -50,7 +50,7 @@
     "title": ""
   },
   "NotFound": {
-    "title": ""
+    "title": "このページは見つかりませんでした (404)"
   },
   "OpenGraph": {
     "title": ""
