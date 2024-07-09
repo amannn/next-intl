@@ -36,6 +36,7 @@
     "switchLocale": ""
   },
   "Navigation": {
+    "about": "(MDX) について",
     "client": "",
     "home": "",
     "nested": "",
