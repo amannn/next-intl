@@ -167,6 +167,12 @@ describe.each([
           expect(nextRedirect).toHaveBeenLastCalledWith('/en');
         });
 
+        it('can redirect to a relative pathname', () => {
+          vi.mocked(useNextPathname).mockImplementation(() => '/en/about');
+          render(<Component href="test" />);
+          expect(nextRedirect).toHaveBeenCalledWith('test');
+        });
+
         it('can redirect for a non-default locale', () => {
           vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');

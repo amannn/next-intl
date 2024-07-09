@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.5 (2024-07-09)
+
+### Bug Fixes
+
+* Support relative pathnames in `redirect` ([#1178](https://github.com/amannn/next-intl/issues/1178)) ([3b698d7](https://github.com/amannn/next-intl/commit/3b698d7abdb8859a43448381ba2361dee4b5e669)), closes [#1177](https://github.com/amannn/next-intl/issues/1177) – by @amannn
+
 ## 3.15.4 (2024-07-08)
 
 ### Bug Fixes
