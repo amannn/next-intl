@@ -131,7 +131,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 1. If you use this strategy, you should make sure that your matcher detects [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
 2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale in the middleware. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. [Alternate links](/docs/routing/middleware#alternate-links) are disabled in this mode since URLs might not be unique per locale.
+3. [Alternate links](/docs/routing/middleware#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
 
 #### Custom prefixes [#locale-prefix-custom]
 
@@ -234,7 +234,10 @@ export const pathnames = {
 **Note:** Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.
 
 <Callout>
-  If you're using localized pathnames, you should use `createLocalizedPathnamesNavigation` instead of `createSharedPathnamesNavigation` for your [navigation APIs](/docs/routing/navigation).
+  If you're using localized pathnames, you should use
+  `createLocalizedPathnamesNavigation` instead of
+  `createSharedPathnamesNavigation` for your [navigation
+  APIs](/docs/routing/navigation).
 </Callout>
 
 <Details id="localized-pathnames-revalidation">
