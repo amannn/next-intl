@@ -4,7 +4,11 @@ import {
 } from 'next/navigation';
 import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
-import {getLocalePrefix, isLocalHref, prefixPathname} from '../../shared/utils';
+import {
+  getLocalePrefix,
+  isLocalizableHref,
+  prefixPathname
+} from '../../shared/utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
   return function baseRedirect<AppLocales extends Locales>(
@@ -17,7 +21,8 @@ function createRedirectFn(redirectFn: typeof nextRedirect) {
   ) {
     const prefix = getLocalePrefix(params.locale, params.localePrefix);
     const localizedPathname =
-      params.localePrefix.mode === 'never' || !isLocalHref(params.pathname)
+      params.localePrefix.mode === 'never' ||
+      !isLocalizableHref(params.pathname)
         ? params.pathname
         : prefixPathname(prefix, params.pathname);
     return redirectFn(localizedPathname, ...args);
