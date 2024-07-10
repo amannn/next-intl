@@ -1,6 +1,6 @@
 import {parseISO} from 'date-fns';
 import {it, expect, describe} from 'vitest';
-import {createFormatter} from '../../src';
+import createFormatter from './createFormatter';
 
 describe('dateTime', () => {
   it('formats a date and time', () => {

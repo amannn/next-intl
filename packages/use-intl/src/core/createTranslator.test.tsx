@@ -1,7 +1,8 @@
 import React, {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, expect, describe, vi} from 'vitest';
-import {createTranslator, IntlError, IntlErrorCode} from '../../src';
+import IntlError, {IntlErrorCode} from './IntlError';
+import createTranslator from './createTranslator';
 
 const messages = {
   Home: {

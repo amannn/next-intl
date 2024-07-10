@@ -1,7 +1,8 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import React, {memo, useState} from 'react';
 import {expect, it} from 'vitest';
-import {IntlProvider, useTranslations} from '../../src';
+import IntlProvider from './IntlProvider';
+import useTranslations from './useTranslations';
 
 it("doesn't re-render context consumers unnecessarily", () => {
   const messages = {StaticText: {hello: 'Hello!'}};

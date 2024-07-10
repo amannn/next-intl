@@ -8,11 +8,11 @@ import {
   Formats,
   IntlError,
   IntlErrorCode,
-  IntlProvider,
   RichTranslationValues,
-  TranslationValues,
-  useTranslations
-} from '../../src';
+  TranslationValues
+} from '../core';
+import IntlProvider from './IntlProvider';
+import useTranslations from './useTranslations';
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.

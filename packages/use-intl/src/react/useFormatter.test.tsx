@@ -4,12 +4,12 @@ import React, {ComponentProps, ReactNode, ReactElement} from 'react';
 import {it, expect, describe, vi} from 'vitest';
 import {
   DateTimeFormatOptions,
-  NumberFormatOptions,
   IntlError,
   IntlErrorCode,
-  IntlProvider,
-  useFormatter
-} from '../../src';
+  NumberFormatOptions
+} from '../core';
+import IntlProvider from './IntlProvider';
+import useFormatter from './useFormatter';
 
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
