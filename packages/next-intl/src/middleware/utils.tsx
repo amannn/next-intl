@@ -9,6 +9,7 @@ import {
   getLocalePrefix,
   getSortedPathnames,
   matchesPathname,
+  normalizeTrailingSlash,
   prefixPathname,
   templateToRegex
 } from '../shared/utils';
@@ -275,13 +276,6 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
 
 export function applyBasePath(pathname: string, basePath: string) {
   return normalizeTrailingSlash(basePath + pathname);
-}
-
-export function normalizeTrailingSlash(pathname: string) {
-  if (pathname !== '/' && pathname.endsWith('/')) {
-    pathname = pathname.slice(0, -1);
-  }
-  return pathname;
 }
 
 export function getLocaleAsPrefix<AppLocales extends Locales>(

@@ -1,7 +1,7 @@
 // @vitest-environment edge-runtime
 
 import {NextRequest} from 'next/server';
-import {it, expect, describe} from 'vitest';
+import {it, expect, describe, beforeEach, afterEach} from 'vitest';
 import {Pathnames} from '../routing';
 import {receiveConfig} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
@@ -552,3 +552,81 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
   }
 );
+
+describe('trailing slash', () => {
+  beforeEach(() => {
+    process.env._next_intl_trailing_slash = 'true';
+  });
+  afterEach(() => {
+    delete process.env._next_intl_trailing_slash;
+  });
+
+  it('adds a trailing slash to pathnames', () => {
+    const config = receiveConfig({
+      defaultLocale: 'en',
+      locales: ['en', 'es'],
+      localePrefix: 'as-needed'
+    });
+
+    expect(
+      getAlternateLinksHeaderValue({
+        config,
+        request: new NextRequest(new URL('https://example.com/about')),
+        resolvedLocale: 'en'
+      }).split(', ')
+    ).toEqual([
+      `<https://example.com/about/>; rel="alternate"; hreflang="en"`,
+      `<https://example.com/es/about/>; rel="alternate"; hreflang="es"`,
+      `<https://example.com/about/>; rel="alternate"; hreflang="x-default"`
+    ]);
+  });
+
+  describe('localized pathnames', () => {
+    const config = receiveConfig({
+      defaultLocale: 'en',
+      locales: ['en', 'es'],
+      localePrefix: 'as-needed'
+    });
+    const pathnames = {
+      '/': '/',
+      '/about': {
+        en: '/about',
+        es: '/acerca'
+      }
+    };
+
+    it('adds a trailing slash to nested pathnames when localized pathnames are used', () => {
+      ['/about', '/about/'].forEach((pathname) => {
+        expect(
+          getAlternateLinksHeaderValue({
+            config,
+            request: new NextRequest(new URL('https://example.com' + pathname)),
+            resolvedLocale: 'en',
+            localizedPathnames: pathnames['/about']
+          }).split(', ')
+        ).toEqual([
+          `<https://example.com/about/>; rel="alternate"; hreflang="en"`,
+          `<https://example.com/es/acerca/>; rel="alternate"; hreflang="es"`,
+          `<https://example.com/about/>; rel="alternate"; hreflang="x-default"`
+        ]);
+      });
+    });
+
+    it('adds a trailing slash to the root pathname when localized pathnames are used', () => {
+      ['', '/'].forEach((pathname) => {
+        expect(
+          getAlternateLinksHeaderValue({
+            config,
+            request: new NextRequest(new URL('https://example.com' + pathname)),
+            resolvedLocale: 'en',
+            localizedPathnames: pathnames['/']
+          }).split(', ')
+        ).toEqual([
+          `<https://example.com/>; rel="alternate"; hreflang="en"`,
+          `<https://example.com/es/>; rel="alternate"; hreflang="es"`,
+          `<https://example.com/>; rel="alternate"; hreflang="x-default"`
+        ]);
+      });
+    });
+  });
+});

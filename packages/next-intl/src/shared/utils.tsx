@@ -99,14 +99,40 @@ export function hasPathnamePrefixed(prefix: string, pathname: string) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
+function hasTrailingSlash() {
+  try {
+    return process.env._next_intl_trailing_slash === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+export function normalizeTrailingSlash(pathname: string) {
+  const trailingSlash = hasTrailingSlash();
+
+  if (pathname !== '/') {
+    const pathnameEndsWithSlash = pathname.endsWith('/');
+    if (trailingSlash && !pathnameEndsWithSlash) {
+      pathname += '/';
+    } else if (!trailingSlash && pathnameEndsWithSlash) {
+      pathname = pathname.slice(0, -1);
+    }
+  }
+
+  return pathname;
+}
+
 export function matchesPathname(
   /** E.g. `/users/[userId]-[userName]` */
   template: string,
   /** E.g. `/users/23-jane` */
   pathname: string
 ) {
-  const regex = templateToRegex(template);
-  return regex.test(pathname);
+  const normalizedTemplate = normalizeTrailingSlash(template);
+  const normalizedPathname = normalizeTrailingSlash(pathname);
+
+  const regex = templateToRegex(normalizedTemplate);
+  return regex.test(normalizedPathname);
 }
 
 export function getLocalePrefix<AppLocales extends Locales>(

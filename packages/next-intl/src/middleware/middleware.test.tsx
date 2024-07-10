@@ -3,7 +3,7 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
-import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
+import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
 import createMiddleware from '../middleware';
 import {Pathnames} from '../routing';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
@@ -1061,6 +1061,22 @@ describe('prefix-based routing', () => {
       });
     });
 
+    describe('trailing slash', () => {
+      beforeEach(() => {
+        process.env._next_intl_trailing_slash = 'true';
+      });
+      afterEach(() => {
+        delete process.env._next_intl_trailing_slash;
+      });
+
+      it('applies a trailing slash when redirecting to a locale', () => {
+        middleware(createMockRequest('/'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/'
+        );
+      });
+    });
+
     describe('localized pathnames', () => {
       const middlewareWithPathnames = createMiddleware({
         defaultLocale: 'en',
@@ -1420,6 +1436,36 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/en/about'
         );
+      });
+
+      describe('trailing slash', () => {
+        beforeEach(() => {
+          process.env._next_intl_trailing_slash = 'true';
+        });
+        afterEach(() => {
+          delete process.env._next_intl_trailing_slash;
+        });
+
+        it('renders localized pathnames with a trailing slash', () => {
+          middlewareWithPathnames(createMockRequest('/de/ueber/'));
+          expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+          expect(MockedNextResponse.next).not.toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+            'http://localhost:3000/de/about/'
+          );
+        });
+
+        it('renders localized pathnames without a trailing slash', () => {
+          // Can be the case with `skipTrailingSlashRedirect: true`
+          middlewareWithPathnames(createMockRequest('/de/ueber'));
+          expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+          expect(MockedNextResponse.next).not.toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+            'http://localhost:3000/de/about/'
+          );
+        });
       });
     });
 
