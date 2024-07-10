@@ -33,7 +33,6 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.38",
-    "prettier-plugin-tailwindcss": "^0.6.5",
     "typescript": "^5.4.5"
   }
 }

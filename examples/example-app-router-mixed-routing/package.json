@@ -24,7 +24,6 @@
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.2.4",
     "postcss": "^8.4.38",
-    "prettier-plugin-tailwindcss": "^0.6.5",
     "typescript": "^5.4.5"
   }
 }
