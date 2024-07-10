@@ -1,6 +1,5 @@
 {
   "name": "example-app-router-playground",
-  "version": "2.9.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
