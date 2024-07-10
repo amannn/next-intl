@@ -14,7 +14,9 @@ export default function middleware(request: NextRequest) {
   if (isAppRoute) {
     // Add a hint that we can read in `i18n.ts`
     request.headers.set('x-app-route', 'true');
-    return NextResponse.next({headers: request.headers});
+    return NextResponse.next({request: {
+      headers: request.headers
+    });
   } else {
     return intlMiddleware(request);
   }
