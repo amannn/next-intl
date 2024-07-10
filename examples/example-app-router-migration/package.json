@@ -1,6 +1,5 @@
 {
   "name": "example-app-router-migration",
-  "version": "2.10.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
