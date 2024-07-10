@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {it, expect, vi} from 'vitest';
-import {useTranslations, NextIntlClientProvider} from '../index.react-client';
+import {useTranslations, NextIntlClientProvider} from '.';
 
 function Component() {
   const t = useTranslations('Component');
