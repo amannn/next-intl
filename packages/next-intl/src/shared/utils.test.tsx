@@ -5,7 +5,7 @@ import {
   matchesPathname,
   prefixPathname,
   getSortedPathnames
-} from '../../src/shared/utils';
+} from './utils';
 
 describe('prefixPathname', () => {
   it("doesn't add trailing slashes for the root", () => {

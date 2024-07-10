@@ -1,5 +1,7 @@
 import React from 'react';
 import {describe, expect, vi, it} from 'vitest';
+import {getTranslations} from '../server.react-server';
+import {renderToStream} from './utils';
 import {
   createTranslator,
   useFormatter,
@@ -7,9 +9,7 @@ import {
   useMessages,
   useNow,
   useTranslations
-} from '../../src/react-server';
-import {getTranslations} from '../../src/server.react-server';
-import {renderToStream} from './utils';
+} from '.';
 
 vi.mock('react');
 

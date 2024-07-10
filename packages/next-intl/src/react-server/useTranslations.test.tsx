@@ -1,7 +1,7 @@
 import React, {cache} from 'react';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
-import {createTranslator, useTranslations} from '../../src/react-server';
 import {renderToStream} from './utils';
+import {createTranslator, useTranslations} from '.';
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {describe, it} from 'vitest';
-import {LocalePrefix, DomainConfig} from '../../src/routing/types';
+import {LocalePrefix, DomainConfig} from './types';
 
 describe('LocalePrefix', () => {
   it('does not require a type param for simple values', () => {

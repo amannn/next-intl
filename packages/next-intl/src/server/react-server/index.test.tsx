@@ -1,14 +1,14 @@
 // @vitest-environment edge-runtime
 
 import {it, vi, expect, describe} from 'vitest';
+import {HEADER_LOCALE_NAME} from '../../shared/constants';
 import {
   getTranslations,
   getMessages,
   getFormatter,
   getNow,
   getTimeZone
-} from '../../../src/server/react-server';
-import {HEADER_LOCALE_NAME} from '../../../src/shared/constants';
+} from '.';
 
 vi.mock('next-intl/config', () => ({
   default: async () =>

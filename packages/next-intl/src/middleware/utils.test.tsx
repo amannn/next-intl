@@ -4,7 +4,7 @@ import {
   getInternalTemplate,
   getNormalizedPathname,
   getRouteParams
-} from '../../src/middleware/utils';
+} from './utils';
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {

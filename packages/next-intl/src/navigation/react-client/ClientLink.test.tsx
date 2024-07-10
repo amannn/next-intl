@@ -2,9 +2,9 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import {usePathname, useParams} from 'next/navigation';
 import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {it, describe, vi, beforeEach, expect} from 'vitest';
-import {NextIntlClientProvider} from '../../../src/index.react-client';
-import ClientLink from '../../../src/navigation/react-client/ClientLink';
-import {LocalePrefixConfigVerbose} from '../../../src/routing/types';
+import {NextIntlClientProvider} from '../../index.react-client';
+import {LocalePrefixConfigVerbose} from '../../routing/types';
+import ClientLink from './ClientLink';
 
 vi.mock('next/navigation');
 

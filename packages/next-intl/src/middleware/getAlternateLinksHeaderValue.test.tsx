@@ -2,9 +2,9 @@
 
 import {NextRequest} from 'next/server';
 import {it, expect, describe} from 'vitest';
-import {receiveConfig} from '../../src/middleware/config';
-import getAlternateLinksHeaderValue from '../../src/middleware/getAlternateLinksHeaderValue';
-import {Pathnames} from '../../src/routing';
+import {Pathnames} from '../routing';
+import {receiveConfig} from './config';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',

@@ -3,7 +3,7 @@ import {
   compileLocalizedPathname,
   getBasePath,
   serializeSearchParams
-} from '../../../src/navigation/shared/utils';
+} from './utils';
 
 describe('serializeSearchParams', () => {
   it('handles strings', () => {

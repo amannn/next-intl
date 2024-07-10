@@ -9,12 +9,12 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
-import createLocalizedPathnamesNavigationClient from '../../src/navigation/react-client/createLocalizedPathnamesNavigation';
-import createLocalizedPathnamesNavigationServer from '../../src/navigation/react-server/createLocalizedPathnamesNavigation';
-import BaseLink from '../../src/navigation/shared/BaseLink';
-import {Pathnames} from '../../src/routing';
-import {getRequestLocale} from '../../src/server/react-server/RequestLocale';
-import {getLocalePrefix} from '../../src/shared/utils';
+import {Pathnames} from '../routing';
+import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {getLocalePrefix} from '../shared/utils';
+import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';
+import createLocalizedPathnamesNavigationServer from './react-server/createLocalizedPathnamesNavigation';
+import BaseLink from './shared/BaseLink';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');

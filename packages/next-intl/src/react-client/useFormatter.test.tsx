@@ -1,10 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
 import {it, expect} from 'vitest';
-import {
-  useFormatter,
-  NextIntlClientProvider
-} from '../../src/index.react-client';
+import {useFormatter, NextIntlClientProvider} from '../index.react-client';
 
 function Component() {
   const format = useFormatter();
