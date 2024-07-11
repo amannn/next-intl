@@ -71,3 +71,11 @@ it('returns alternate links correctly', async ({request}) => {
     ]);
   }
 });
+
+it('can handle dynamic params', async ({page}) => {
+  await page.goto('/news/3');
+  await page.getByRole('heading', {name: 'News article #3'}).waitFor();
+
+  await page.goto('/de/neuigkeiten/3');
+  await page.getByRole('heading', {name: 'News-Artikel #3'}).waitFor();
+});

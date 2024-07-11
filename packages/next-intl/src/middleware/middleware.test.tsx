@@ -1511,6 +1511,33 @@ describe('prefix-based routing', () => {
             ).toBe('http://localhost:3000/de/ueber/');
           }
         );
+
+        it.each([
+          [
+            '/en/products/t-shirts',
+            'http://localhost:3000/en/products/t-shirts/'
+          ],
+          [
+            '/en/products/t-shirts/',
+            'http://localhost:3000/en/products/t-shirts/'
+          ],
+          [
+            '/de/produkte/t-shirts',
+            'http://localhost:3000/de/products/t-shirts/'
+          ],
+          [
+            '/de/produkte/t-shirts/',
+            'http://localhost:3000/de/products/t-shirts/'
+          ]
+        ])('renders pages with dynamic params', (pathname, rewrite) => {
+          middlewareWithPathnames(createMockRequest(pathname));
+          expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+          expect(MockedNextResponse.next).not.toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+            rewrite
+          );
+        });
       });
     });
 
