@@ -63,7 +63,8 @@
     "formatting"
   ],
   "dependencies": {
-    "intl-messageformat": "^10.5.14"
+    "intl-messageformat": "^10.5.14",
+    "@formatjs/fast-memoize": "^2.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

@@ -1,5 +1,6 @@
 import React, {ReactNode, useMemo, useState} from 'react';
 import IntlConfig from '../core/IntlConfig';
+import {createFormatters} from '../core/formatters';
 import initializeConfig from '../core/initializeConfig';
 import IntlContext from './IntlContext';
 
@@ -18,7 +19,7 @@ export default function IntlProvider({
   onError,
   timeZone
 }: Props) {
-  const [messageFormatCache] = useState(() => new Map());
+  const [formatters] = useState(createFormatters);
 
   // Memoizing this value helps to avoid triggering a re-render of all
   // context consumers in case the configuration didn't change. However,
@@ -40,14 +41,14 @@ export default function IntlProvider({
         onError,
         timeZone
       }),
-      messageFormatCache
+      formatters
     }),
     [
       defaultTranslationValues,
       formats,
+      formatters,
       getMessageFallback,
       locale,
-      messageFormatCache,
       messages,
       now,
       onError,

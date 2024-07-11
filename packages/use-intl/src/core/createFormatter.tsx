@@ -6,6 +6,7 @@ import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
+import {createFormatters, Formatters} from './formatters';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -69,10 +70,13 @@ type Props = {
   onError?(error: IntlError): void;
   formats?: Partial<Formats>;
   now?: Date;
+  /** @private */
+  formatters?: Formatters;
 };
 
 export default function createFormatter({
   formats,
+  formatters = createFormatters(),
   locale,
   now: globalNow,
   onError = defaultOnError,
@@ -158,7 +162,7 @@ export default function createFormatter({
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
-        return new Intl.DateTimeFormat(locale, options).format(value);
+        return formatters.getDateTimeFormat(locale, options).format(value);
       },
       () => String(value)
     );
@@ -178,7 +182,9 @@ export default function createFormatter({
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
-        return new Intl.DateTimeFormat(locale, options).formatRange(start, end);
+        return formatters
+          .getDateTimeFormat(locale, options)
+          .formatRange(start, end);
       },
       () => [dateTime(start), dateTime(end)].join(' – ')
     );
@@ -191,12 +197,8 @@ export default function createFormatter({
     return getFormattedValue(
       formatOrOptions,
       formats?.number,
-      (options) =>
-        new Intl.NumberFormat(
-          locale,
-          // @ts-expect-error -- TS is currently lacking support for ECMA-402 10.0 (`useGrouping: 'auto'`, see https://github.com/microsoft/TypeScript/issues/56269)
-          options
-        ).format(value),
+      // @ts-expect-error -- TS is currently lacking support for ECMA-402 10.0 (`useGrouping: 'auto'`, see https://github.com/microsoft/TypeScript/issues/56269)
+      (options) => formatters.getNumberFormat(locale, options).format(value),
       () => String(value)
     );
   }
@@ -263,7 +265,7 @@ export default function createFormatter({
       opts.numeric = unit === 'second' ? 'auto' : 'always';
 
       const value = calculateRelativeTimeValue(seconds, unit);
-      return new Intl.RelativeTimeFormat(locale, opts).format(value, unit);
+      return formatters.getRelativeTimeFormat(locale, opts).format(value, unit);
     } catch (error) {
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
@@ -304,7 +306,8 @@ export default function createFormatter({
       formats?.list,
       // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
       (options) => {
-        const result = new Intl.ListFormat(locale, options)
+        const result = formatters
+          .getListFormat(locale, options)
           .formatToParts(serializedValue)
           .map((part) =>
             part.type === 'literal'

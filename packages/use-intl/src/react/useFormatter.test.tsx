@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode, ReactElement} from 'react';
-import {it, expect, describe, vi} from 'vitest';
+import {it, expect, describe, vi, beforeEach} from 'vitest';
 import {
   DateTimeFormatOptions,
   IntlError,
@@ -149,6 +149,41 @@ describe('dateTime', () => {
     });
   });
 
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'DateTimeFormat');
+    });
+
+    it('caches `Intl.DateTimeFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.dateTime(parseISO('2020-11-20T10:36:01.516Z')),
+          format.dateTime(parseISO('2020-11-21T10:36:01.516Z')),
+          format.dateTime(parseISO('2020-11-20T10:36:01.516Z'), {
+            day: 'numeric',
+            month: 'long'
+          }),
+          format.dateTime(parseISO('2020-11-21T10:36:01.516Z'), {
+            day: 'numeric',
+            month: 'long'
+          })
+        ].join(';');
+      }
+
+      const {container} = render(
+        <MockProvider timeZone="Europe/Berlin">
+          <Component />
+        </MockProvider>
+      );
+
+      expect(container.innerHTML).toMatchInlineSnapshot(
+        `"11/20/2020;11/21/2020;November 20;November 21"`
+      );
+      expect(Intl.DateTimeFormat).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('error handling', () => {
     it('handles missing formats', () => {
       const onError = vi.fn();
@@ -289,6 +324,41 @@ describe('number', () => {
     );
 
     screen.getByText('10000');
+  });
+
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'NumberFormat');
+    });
+
+    it('caches `Intl.NumberFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.number(10000),
+          format.number(10001),
+          format.number(10000, {
+            currency: 'EUR',
+            style: 'currency'
+          }),
+          format.number(10001, {
+            currency: 'EUR',
+            style: 'currency'
+          })
+        ].join(';');
+      }
+
+      const {container} = render(
+        <MockProvider timeZone="Europe/Berlin">
+          <Component />
+        </MockProvider>
+      );
+
+      expect(container.innerHTML).toMatchInlineSnapshot(
+        `"10,000;10,001;€10,000.00;€10,001.00"`
+      );
+      expect(Intl.NumberFormat).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('error handling', () => {

@@ -781,6 +781,9 @@ importers:
 
   packages/use-intl:
     dependencies:
+      '@formatjs/fast-memoize':
+        specifier: ^2.2.0
+        version: 2.2.0
       intl-messageformat:
         specifier: ^10.5.14
         version: 10.5.14

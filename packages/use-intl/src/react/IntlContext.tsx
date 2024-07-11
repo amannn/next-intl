@@ -1,12 +1,11 @@
 import {createContext} from 'react';
 import {InitializedIntlConfig} from '../core/IntlConfig';
-import MessageFormatCache from '../core/MessageFormatCache';
+import {Formatters} from '../core/formatters';
 
-const IntlContext = createContext<
-  | (InitializedIntlConfig & {
-      messageFormatCache?: MessageFormatCache;
-    })
-  | undefined
->(undefined);
+export type IntlContextValue = InitializedIntlConfig & {
+  formatters: Formatters;
+};
+
+const IntlContext = createContext<IntlContextValue | undefined>(undefined);
 
 export default IntlContext;
