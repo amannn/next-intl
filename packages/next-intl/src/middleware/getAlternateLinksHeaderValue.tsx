@@ -1,5 +1,6 @@
 import {NextRequest} from 'next/server';
 import {Locales, Pathnames} from '../routing/types';
+import {normalizeTrailingSlash} from '../shared/utils';
 import {MiddlewareRoutingConfig} from './config';
 import {
   applyBasePath,
@@ -44,6 +45,8 @@ export default function getAlternateLinksHeaderValue<
   );
 
   function getAlternateEntry(url: URL, locale: string) {
+    url.pathname = normalizeTrailingSlash(url.pathname);
+
     if (request.nextUrl.basePath) {
       url = new URL(url);
       url.pathname = applyBasePath(url.pathname, request.nextUrl.basePath);

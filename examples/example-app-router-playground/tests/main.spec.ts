@@ -1,4 +1,5 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
+import getAlternateLinks from './getAlternateLinks';
 
 const describe = it.describe;
 
@@ -541,15 +542,7 @@ it('keeps search params for redirects', async ({browser}) => {
 
 it('sets alternate links', async ({request}) => {
   async function getLinks(pathname: string) {
-    return (
-      (await request.get(pathname))
-        .headers()
-        .link.split(', ')
-        // On CI, Playwright uses a different host somehow
-        .map((cur) => cur.replace(/0\.0\.0\.0/g, 'localhost'))
-        // Normalize ports
-        .map((cur) => cur.replace(/localhost:\d{4}/g, 'localhost:3000'))
-    );
+    return getAlternateLinks(await request.get(pathname));
   }
 
   for (const pathname of ['/', '/en', '/de']) {
