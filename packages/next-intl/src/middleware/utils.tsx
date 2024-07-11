@@ -9,6 +9,7 @@ import {
   getLocalePrefix,
   getSortedPathnames,
   matchesPathname,
+  normalizeTrailingSlash,
   prefixPathname,
   templateToRegex
 } from '../shared/utils';
@@ -79,6 +80,10 @@ export function formatTemplatePathname(
   }
 
   targetPathname += formatPathnameTemplate(targetTemplate, params);
+
+  // A pathname with an optional catchall like `/categories/[[...slug]]`
+  // should be normalized to `/categories` if the catchall is not present
+  // and no trailing slash is configured
   targetPathname = normalizeTrailingSlash(targetPathname);
 
   return targetPathname;
@@ -174,12 +179,17 @@ export function getPathnameMatch<AppLocales extends Locales>(
 }
 
 export function getRouteParams(template: string, pathname: string) {
-  const regex = templateToRegex(template);
-  const match = regex.exec(pathname);
+  const normalizedPathname = normalizeTrailingSlash(pathname);
+  const normalizedTemplate = normalizeTrailingSlash(template);
+
+  const regex = templateToRegex(normalizedTemplate);
+  const match = regex.exec(normalizedPathname);
   if (!match) return undefined;
   const params: Record<string, string> = {};
   for (let i = 1; i < match.length; i++) {
-    const key = template.match(/\[([^\]]+)\]/g)?.[i - 1].replace(/[[\]]/g, '');
+    const key = normalizedTemplate
+      .match(/\[([^\]]+)\]/g)
+      ?.[i - 1].replace(/[[\]]/g, '');
     if (key) params[key] = match[i];
   }
   return params;
@@ -275,13 +285,6 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
 
 export function applyBasePath(pathname: string, basePath: string) {
   return normalizeTrailingSlash(basePath + pathname);
-}
-
-export function normalizeTrailingSlash(pathname: string) {
-  if (pathname !== '/' && pathname.endsWith('/')) {
-    pathname = pathname.slice(0, -1);
-  }
-  return pathname;
 }
 
 export function getLocaleAsPrefix<AppLocales extends Locales>(

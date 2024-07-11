@@ -301,6 +301,12 @@ export const config = {
 };
 ```
 
+### Trailing slash
+
+If you have [`trailingSlash`](https://nextjs.org/docs/app/api-reference/next-config-js/trailingSlash) set to `true` in your Next.js config, this setting will be taken into account when the middleware generates pathnames, e.g. for redirects.
+
+Note that if you're using [localized pathnames](/docs/routing#pathnames), your internal and external pathnames can be defined either with or without a trailing slash as they will be normalized internally.
+
 ## Composing other middlewares
 
 By calling `createMiddleware`, you'll receive a function of the following type:

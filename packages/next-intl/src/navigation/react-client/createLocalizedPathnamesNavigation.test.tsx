@@ -5,7 +5,7 @@ import {
   useRouter as useNextRouter
 } from 'next/navigation';
 import React, {ComponentProps} from 'react';
-import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
+import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
 import {Pathnames} from '../../routing';
 import createLocalizedPathnamesNavigation from './createLocalizedPathnamesNavigation';
 
@@ -147,6 +147,84 @@ describe("localePrefix: 'as-needed'", () => {
       vi.mocked(useNextPathname).mockImplementation(() => '/de/unknown');
       rerender(<Component />);
       screen.getByText('/de/unknown');
+    });
+
+    describe('trailingSlash: true', () => {
+      beforeEach(() => {
+        process.env._next_intl_trailing_slash = 'true';
+      });
+      afterEach(() => {
+        delete process.env._next_intl_trailing_slash;
+      });
+
+      function Component() {
+        const pathname = createLocalizedPathnamesNavigation({
+          locales,
+          pathnames: {
+            '/': '/',
+            // (w)
+            '/about/': {
+              en: '/about/', // (w)
+              de: '/ueber-uns', // (wo)
+              ja: '/約/' // (w)
+            },
+            // (wo)
+            '/news': {
+              en: '/news', // (wo)
+              de: '/neuigkeiten/', // (w)
+              ja: '/ニュース' // (wo)
+            }
+          }
+        }).usePathname();
+        return <>{pathname}</>;
+      }
+
+      it('returns the root', () => {
+        vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+        vi.mocked(useNextPathname).mockImplementation(() => '/');
+        render(<Component />);
+        screen.getByText('/');
+      });
+
+      it.each(['/news', '/news/'])(
+        'can return an internal pathname without a trailing slash for the default locale (%s)',
+        (pathname) => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+          vi.mocked(useNextPathname).mockImplementation(() => pathname);
+          render(<Component />);
+          screen.getByText('/news');
+        }
+      );
+
+      it.each(['/de/neuigkeiten/', '/de/neuigkeiten'])(
+        'can return an internal pathname without a trailing slash for a secondary locale (%s)',
+        (pathname) => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useNextPathname).mockImplementation(() => pathname);
+          render(<Component />);
+          screen.getByText('/news');
+        }
+      );
+
+      it.each(['/about', '/about/'])(
+        'can return an internal pathname with a trailing slash for the default locale (%s)',
+        (pathname) => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+          vi.mocked(useNextPathname).mockImplementation(() => pathname);
+          render(<Component />);
+          screen.getByText('/about/');
+        }
+      );
+
+      it.each(['/de/ueber-uns/', '/de/ueber-uns'])(
+        'can return an internal pathname with a trailing slash for a secondary locale (%s)',
+        (pathname) => {
+          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useNextPathname).mockImplementation(() => pathname);
+          render(<Component />);
+          screen.getByText('/about/');
+        }
+      );
     });
   });
 
