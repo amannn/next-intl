@@ -1446,26 +1446,71 @@ describe('prefix-based routing', () => {
           delete process.env._next_intl_trailing_slash;
         });
 
-        it('renders localized pathnames with a trailing slash', () => {
-          middlewareWithPathnames(createMockRequest('/de/ueber/'));
-          expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/de/about/'
-          );
-        });
+        it.each(['/de/ueber/', '/de/ueber'])(
+          'renders a localized pathname where the internal pathname was defined without a trailing slash',
+          (pathname) => {
+            middlewareWithPathnames(createMockRequest(pathname));
+            expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+            expect(MockedNextResponse.next).not.toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+              'http://localhost:3000/de/about/'
+            );
+          }
+        );
 
-        it('renders localized pathnames without a trailing slash', () => {
-          // Can be the case with `skipTrailingSlashRedirect: true`
-          middlewareWithPathnames(createMockRequest('/de/ueber'));
-          expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
-          expect(MockedNextResponse.next).not.toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
-          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
-            'http://localhost:3000/de/about/'
-          );
-        });
+        it.each(['/de/about/', '/de/about'])(
+          'redirects a localized pathname where the internal pathname was defined without a trailing slash',
+          (pathname) => {
+            middlewareWithPathnames(createMockRequest(pathname));
+            expect(MockedNextResponse.redirect).toHaveBeenCalled();
+            expect(MockedNextResponse.next).not.toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+            expect(
+              MockedNextResponse.redirect.mock.calls[0][0].toString()
+            ).toBe('http://localhost:3000/de/ueber/');
+          }
+        );
+
+        it.each(['/de/ueber/', '/de/ueber'])(
+          'renders a localized pathname where the internal pathname was defined with a trailing slash',
+          (pathname) => {
+            createMiddleware({
+              defaultLocale: 'en',
+              locales: ['de'],
+              localePrefix: 'always',
+              pathnames: {
+                '/about/': {de: '/ueber/'}
+              }
+            })(createMockRequest(pathname));
+            expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+            expect(MockedNextResponse.next).not.toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+              'http://localhost:3000/de/about/'
+            );
+          }
+        );
+
+        it.each(['/de/about/', '/de/about'])(
+          'redirects a localized pathname where the internal pathname was defined with a trailing slash',
+          (pathname) => {
+            createMiddleware({
+              defaultLocale: 'en',
+              locales: ['de'],
+              localePrefix: 'always',
+              pathnames: {
+                '/about/': {de: '/ueber/'}
+              }
+            })(createMockRequest(pathname));
+            expect(MockedNextResponse.redirect).toHaveBeenCalled();
+            expect(MockedNextResponse.next).not.toHaveBeenCalled();
+            expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+            expect(
+              MockedNextResponse.redirect.mock.calls[0][0].toString()
+            ).toBe('http://localhost:3000/de/ueber/');
+          }
+        );
       });
     });
 
