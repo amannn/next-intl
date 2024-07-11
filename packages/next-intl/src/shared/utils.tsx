@@ -101,6 +101,7 @@ export function hasPathnamePrefixed(prefix: string, pathname: string) {
 
 function hasTrailingSlash() {
   try {
+    // Provided via `env` setting in `next.config.js` via the plugin
     return process.env._next_intl_trailing_slash === 'true';
   } catch (e) {
     return false;
