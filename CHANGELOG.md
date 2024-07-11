@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.16.0 (2024-07-11)
+
+### Features
+
+* Support `trailingSlash: true` in Next.js config ([#1190](https://github.com/amannn/next-intl/issues/1190)) ([cfbdee9](https://github.com/amannn/next-intl/commit/cfbdee990b367a968eca6258d5c2fcfe8ef2ff2d)) – by @amannn
+
 ## 3.15.5 (2024-07-09)
 
 ### Bug Fixes
