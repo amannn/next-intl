@@ -184,6 +184,8 @@ function comparePathnamePairs(a: string, b: string): number {
     if (!segmentA && segmentB) return -1;
     if (segmentA && !segmentB) return 1;
 
+    if (!segmentA && !segmentB) continue;
+
     // Prioritize static segments over dynamic segments
     if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;
     if (isDynamicSegment(segmentA) && !isDynamicSegment(segmentB)) return 1;

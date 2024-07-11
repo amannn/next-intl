@@ -553,7 +553,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
   }
 );
 
-describe('trailing slash', () => {
+describe('trailingSlash: true', () => {
   beforeEach(() => {
     process.env._next_intl_trailing_slash = 'true';
   });
