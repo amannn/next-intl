@@ -1,6 +1,5 @@
 {
   "name": "example-pages-router-advanced",
-  "version": "2.14.3",
   "private": true,
   "scripts": {
     "dev": "next dev",

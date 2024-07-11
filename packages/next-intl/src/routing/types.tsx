@@ -38,5 +38,9 @@ export type DomainConfig<AppLocales extends Locales> = {
   domain: string;
 
   /** Optionally restrict which locales are available on this domain. */
-  locales?: AppLocales;
+  locales?: Array<AppLocales[number]>;
 };
+
+export type DomainsConfig<AppLocales extends Locales> = Array<
+  DomainConfig<AppLocales>
+>;

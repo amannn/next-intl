@@ -40,7 +40,7 @@ export default function createMiddleware<
       ? domain.defaultLocale === locale
       : locale === config.defaultLocale;
 
-    const domainConfigs =
+    const domainsConfig =
       config.domains?.filter((curDomain) =>
         isLocaleSupportedOnDomain(locale, curDomain)
       ) || [];
@@ -64,11 +64,11 @@ export default function createMiddleware<
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
-      if (domainConfigs.length > 0 && !redirectDomain) {
+      if (domainsConfig.length > 0 && !redirectDomain) {
         const bestMatchingDomain = getBestMatchingDomain(
           domain,
           locale,
-          domainConfigs
+          domainsConfig
         );
         if (bestMatchingDomain) {
           redirectDomain = bestMatchingDomain.domain;
@@ -237,7 +237,7 @@ export default function createMiddleware<
                 const pathDomain = getBestMatchingDomain(
                   domain,
                   pathnameMatch.locale,
-                  domainConfigs
+                  domainsConfig
                 );
 
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {

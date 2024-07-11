@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.15.5 (2024-07-09)
+
+### Bug Fixes
+
+* Support relative pathnames in `redirect` ([#1178](https://github.com/amannn/next-intl/issues/1178)) ([3b698d7](https://github.com/amannn/next-intl/commit/3b698d7abdb8859a43448381ba2361dee4b5e669)), closes [#1177](https://github.com/amannn/next-intl/issues/1177) – by @amannn
+
+## 3.15.4 (2024-07-08)
+
+### Bug Fixes
+
+* Export `DomainsConfig` ([#1175](https://github.com/amannn/next-intl/issues/1175)) ([c4d1bb0](https://github.com/amannn/next-intl/commit/c4d1bb08e23cc8a726c3a52e6cee7b1c63cb4c8a)) – by @amannn
+
+## 3.15.3 (2024-06-26)
+
+### Bug Fixes
+
+* Prefer more specific routes in `usePathname` when detecting the currently active pathname for localized pathnames ([#1152](https://github.com/amannn/next-intl/issues/1152)) ([936839e](https://github.com/amannn/next-intl/commit/936839e9508e447f3e60cc1f606258fd00e5227e)), closes [#1151](https://github.com/amannn/next-intl/issues/1151) – by @amannn
+
 ## 3.15.2 (2024-06-19)
 
 **Note:** Version bump only for package next-intl
