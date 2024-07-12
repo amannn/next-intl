@@ -95,7 +95,6 @@ export function createFormatters(): {
     (...args: ConstructorParameters<typeof IntlMessageFormat>) =>
       new IntlMessageFormat(args[0], args[1], args[2], {
         formatters: {
-          // @ts-expect-error -- TS is currently lacking support for ECMA-402 10.0 (`useGrouping: 'auto'`, see https://github.com/microsoft/TypeScript/issues/56269)
           getNumberFormat,
           getDateTimeFormat,
           getPluralRules

@@ -256,7 +256,6 @@ function createBaseTranslatorImpl<
           timeZone
         ),
         {
-          // @ts-expect-error -- TS is currently lacking support for ECMA-402 10.0 (`useGrouping: 'auto'`, see https://github.com/microsoft/TypeScript/issues/56269)
           formatters: {
             ...formatters,
             getDateTimeFormat(locales, options) {

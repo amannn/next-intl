@@ -53,9 +53,9 @@ function createMockRequest(
 }
 
 const MockedNextResponse = NextResponse as unknown as {
-  next: Mock<Parameters<(typeof NextResponse)['next']>>;
-  rewrite: Mock<Parameters<(typeof NextResponse)['rewrite']>>;
-  redirect: Mock<Parameters<(typeof NextResponse)['redirect']>>;
+  next: Mock<(typeof NextResponse)['next']>;
+  rewrite: Mock<(typeof NextResponse)['rewrite']>;
+  redirect: Mock<(typeof NextResponse)['redirect']>;
 };
 
 function withBasePath(request: NextRequest, basePath = '/base') {

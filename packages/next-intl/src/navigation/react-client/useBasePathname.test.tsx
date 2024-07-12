@@ -9,7 +9,7 @@ vi.mock('next/navigation');
 
 function mockPathname(pathname: string) {
   vi.mocked(useNextPathname).mockImplementation(() => pathname);
-  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+  vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
 }
 
 function Component() {
@@ -52,7 +52,7 @@ describe('prefixed routing', () => {
 describe('usage outside of Next.js', () => {
   beforeEach(() => {
     vi.mocked(useNextPathname).mockImplementation((() => null) as any);
-    vi.mocked(useParams).mockImplementation((() => null) as any);
+    vi.mocked(useParams<any>).mockImplementation((() => null) as any);
   });
 
   it('returns `null` when used within a provider', () => {
