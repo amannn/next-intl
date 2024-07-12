@@ -3,7 +3,14 @@ import createFormatter from '../core/createFormatter';
 import useIntlContext from './useIntlContext';
 
 export default function useFormatter(): ReturnType<typeof createFormatter> {
-  const {formats, locale, now: globalNow, onError, timeZone} = useIntlContext();
+  const {
+    formats,
+    formatters,
+    locale,
+    now: globalNow,
+    onError,
+    timeZone
+  } = useIntlContext();
 
   return useMemo(
     () =>
@@ -12,8 +19,9 @@ export default function useFormatter(): ReturnType<typeof createFormatter> {
         locale,
         now: globalNow,
         onError,
-        timeZone
+        timeZone,
+        _formatters: formatters
       }),
-    [formats, globalNow, locale, onError, timeZone]
+    [formats, formatters, globalNow, locale, onError, timeZone]
   );
 }
