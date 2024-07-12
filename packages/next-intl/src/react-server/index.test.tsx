@@ -84,7 +84,6 @@ describe('performance', () => {
       } else {
         throw promiseOrError;
       }
-      // Nothing to do
     }
 
     // Second invocation with a different namespace
