@@ -37,7 +37,7 @@ const MockClientLink = forwardRef(
 describe('unprefixed routing', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockImplementation(() => '/');
-    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+    vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href without a locale if the locale matches', () => {
@@ -189,7 +189,7 @@ describe('unprefixed routing', () => {
 describe('prefixed routing', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockImplementation(() => '/en');
-    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+    vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
   });
 
   it('renders an href with a locale if the locale matches', () => {
@@ -279,7 +279,7 @@ describe('prefixed routing', () => {
 
 describe('usage outside of Next.js', () => {
   beforeEach(() => {
-    vi.mocked(useParams).mockImplementation((() => null) as any);
+    vi.mocked(useParams<any>).mockImplementation((() => null) as any);
   });
 
   it('works with a provider', () => {
@@ -303,7 +303,7 @@ describe('usage outside of Next.js', () => {
 describe('cookie sync', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockImplementation(() => '/en');
-    vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+    vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
 
     mockLocation('/');
 

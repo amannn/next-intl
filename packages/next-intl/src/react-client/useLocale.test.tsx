@@ -27,7 +27,7 @@ it('prioritizes the locale from the provider', () => {
 });
 
 it('throws if neither a locale from the provider or useParams is available', () => {
-  vi.mocked(useParams).mockImplementation(() => ({}));
+  vi.mocked(useParams<any>).mockImplementation(() => ({}));
   expect(() => render(<Component />)).toThrow(
     'No intl context found. Have you configured the provider?'
   );

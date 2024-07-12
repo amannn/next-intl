@@ -10,7 +10,6 @@ import {
   RichTranslationValues,
   MarkupTranslationValues
 } from 'use-intl/core';
-import {getMessageFormatCache} from '../../shared/messageFormatCache';
 import getConfig from './getConfig';
 
 // Maintainer note: `getTranslations` has two different call signatures.
@@ -215,7 +214,6 @@ async function getTranslations<
 
   return createTranslator({
     ...config,
-    messageFormatCache: getMessageFormatCache(),
     namespace,
     messages: config.messages
   });

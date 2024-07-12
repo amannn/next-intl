@@ -1,7 +1,7 @@
 import {useContext} from 'react';
-import IntlContext from './IntlContext';
+import IntlContext, {IntlContextValue} from './IntlContext';
 
-export default function useIntlContext() {
+export default function useIntlContext(): IntlContextValue {
   const context = useContext(IntlContext);
 
   if (!context) {

@@ -1,7 +1,8 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode, ReactElement} from 'react';
-import {it, expect, describe, vi} from 'vitest';
+import {spyOn, SpyImpl} from 'tinyspy';
+import {it, expect, describe, vi, beforeEach} from 'vitest';
 import {
   DateTimeFormatOptions,
   IntlError,
@@ -149,6 +150,41 @@ describe('dateTime', () => {
     });
   });
 
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'DateTimeFormat');
+    });
+
+    it('caches `Intl.DateTimeFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.dateTime(parseISO('2020-11-20T10:36:01.516Z')),
+          format.dateTime(parseISO('2020-11-21T10:36:01.516Z')),
+          format.dateTime(parseISO('2020-11-20T10:36:01.516Z'), {
+            day: 'numeric',
+            month: 'long'
+          }),
+          format.dateTime(parseISO('2020-11-21T10:36:01.516Z'), {
+            day: 'numeric',
+            month: 'long'
+          })
+        ].join(';');
+      }
+
+      const {container} = render(
+        <MockProvider timeZone="Europe/Berlin">
+          <Component />
+        </MockProvider>
+      );
+
+      expect(container.innerHTML).toMatchInlineSnapshot(
+        `"11/20/2020;11/21/2020;November 20;November 21"`
+      );
+      expect(Intl.DateTimeFormat).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('error handling', () => {
     it('handles missing formats', () => {
       const onError = vi.fn();
@@ -289,6 +325,41 @@ describe('number', () => {
     );
 
     screen.getByText('10000');
+  });
+
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'NumberFormat');
+    });
+
+    it('caches `Intl.NumberFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.number(10000),
+          format.number(10001),
+          format.number(10000, {
+            currency: 'EUR',
+            style: 'currency'
+          }),
+          format.number(10001, {
+            currency: 'EUR',
+            style: 'currency'
+          })
+        ].join(';');
+      }
+
+      const {container} = render(
+        <MockProvider timeZone="Europe/Berlin">
+          <Component />
+        </MockProvider>
+      );
+
+      expect(container.innerHTML).toMatchInlineSnapshot(
+        `"10,000;10,001;€10,000.00;€10,001.00"`
+      );
+      expect(Intl.NumberFormat).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('error handling', () => {
@@ -442,6 +513,41 @@ describe('relativeTime', () => {
     screen.getByText('34 years ago');
   });
 
+  describe('performance', () => {
+    let RelativeTimeFormat: SpyImpl;
+    beforeEach(() => {
+      RelativeTimeFormat = spyOn(globalThis.Intl, 'RelativeTimeFormat');
+    });
+
+    it('caches `Intl.RelativeTimeFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+
+        return [
+          format.relativeTime(parseISO('2020-11-20T10:36:00.000Z')),
+          format.relativeTime(parseISO('2020-11-21T10:36:00.000Z')),
+          format.relativeTime(parseISO('2020-11-20T10:36:00.000Z'), {
+            style: 'short'
+          }),
+          format.relativeTime(parseISO('2020-11-21T10:36:00.000Z'), {
+            style: 'short'
+          })
+        ].join(';');
+      }
+
+      render(
+        <MockProvider
+          now={parseISO('2020-11-01T10:36:00.000Z')}
+          timeZone="Europe/Berlin"
+        >
+          <Component />
+        </MockProvider>
+      );
+
+      expect(RelativeTimeFormat.callCount).toBe(2);
+    });
+  });
+
   describe('error handling', () => {
     it('handles formatting errors', () => {
       const onError = vi.fn();
@@ -591,5 +697,32 @@ describe('list', () => {
     );
 
     screen.getByText('apple, banana, & orange');
+  });
+
+  describe('performance', () => {
+    let ListFormat: SpyImpl;
+    beforeEach(() => {
+      ListFormat = spyOn(globalThis.Intl, 'ListFormat');
+    });
+
+    it('caches `Intl.ListFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.list(['apple', 'banana']),
+          format.list(['apple', 'banana', 'orange']),
+          format.list(['apple', 'banana'], {type: 'disjunction'}),
+          format.list(['apple', 'banana', 'orange'], {type: 'disjunction'})
+        ].join(';');
+      }
+
+      render(
+        <MockProvider>
+          <Component />
+        </MockProvider>
+      );
+
+      expect(ListFormat.callCount).toBe(2);
+    });
   });
 });
