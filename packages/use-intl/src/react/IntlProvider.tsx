@@ -8,7 +8,7 @@ type Props = IntlConfig & {
   children: ReactNode;
 };
 
-export default function IntlProvider({
+function IntlProviderInner({
   children,
   defaultTranslationValues,
   formats,
@@ -57,4 +57,11 @@ export default function IntlProvider({
   );
 
   return <IntlContext.Provider value={value}>{children}</IntlContext.Provider>;
+}
+
+export default function IntlProvider({locale, ...rest}: Props) {
+  // The formatter cache is released when the locale changes. For
+  // long-running apps with a persistent `IntlProvider` at the root,
+  // this can reduce the memory footprint (e.g. in React Native).
+  return <IntlProviderInner key={locale} locale={locale} {...rest} />;
 }
