@@ -1,6 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode, ReactElement} from 'react';
+import {spyOn, SpyImpl} from 'tinyspy';
 import {it, expect, describe, vi, beforeEach} from 'vitest';
 import {
   DateTimeFormatOptions,
@@ -513,12 +514,12 @@ describe('relativeTime', () => {
   });
 
   describe('performance', () => {
+    let RelativeTimeFormat: SpyImpl;
     beforeEach(() => {
-      vi.spyOn(globalThis.Intl, 'RelativeTimeFormat');
+      RelativeTimeFormat = spyOn(globalThis.Intl, 'RelativeTimeFormat');
     });
 
-    // https://github.com/vitest-dev/vitest/issues/6104
-    it.skip('caches `Intl.RelativeTimeFormat` instances', () => {
+    it('caches `Intl.RelativeTimeFormat` instances', () => {
       function Component() {
         const format = useFormatter();
 
@@ -543,7 +544,7 @@ describe('relativeTime', () => {
         </MockProvider>
       );
 
-      expect(Intl.RelativeTimeFormat).toHaveBeenCalledTimes(2);
+      expect(RelativeTimeFormat.callCount).toBe(2);
     });
   });
 
@@ -699,12 +700,12 @@ describe('list', () => {
   });
 
   describe('performance', () => {
+    let ListFormat: SpyImpl;
     beforeEach(() => {
-      vi.spyOn(Intl, 'ListFormat');
+      ListFormat = spyOn(globalThis.Intl, 'ListFormat');
     });
 
-    // https://github.com/vitest-dev/vitest/issues/6104
-    it.skip('caches `Intl.ListFormat` instances', () => {
+    it('caches `Intl.ListFormat` instances', () => {
       function Component() {
         const format = useFormatter();
         return [
@@ -721,7 +722,7 @@ describe('list', () => {
         </MockProvider>
       );
 
-      expect(Intl.ListFormat).toHaveBeenCalledTimes(1);
+      expect(ListFormat.callCount).toBe(2);
     });
   });
 });
