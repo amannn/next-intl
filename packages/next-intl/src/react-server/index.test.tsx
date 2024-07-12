@@ -72,19 +72,28 @@ describe('performance', () => {
     expect(renderCount).toBe(3);
   });
 
-  it('shares message format cache between useTranslations and getTranslations', async () => {
+  it('shares a formatter cache between `useTranslations` and `getTranslations`', async () => {
     // First invocation
-    useTranslations('Component');
-    const firstCallCache =
-      vi.mocked(createTranslator).mock.calls[0][0].messageFormatCache;
+    // (simulate React rendering)
+    try {
+      useTranslations('Component');
+    } catch (promiseOrError) {
+      if (promiseOrError instanceof Promise) {
+        await promiseOrError;
+        useTranslations('Component');
+      } else {
+        throw promiseOrError;
+      }
+      // Nothing to do
+    }
 
     // Second invocation with a different namespace
     await getTranslations('Component2');
-    const secondCallCache =
-      vi.mocked(createTranslator).mock.calls[1][0].messageFormatCache;
 
-    // Verify that the same cache instance is used in both invocations
-    expect(firstCallCache).toBe(secondCallCache);
+    // Verify the cached formatters are shared
+    expect(vi.mocked(createTranslator).mock.calls[0][0]._formatters).toBe(
+      vi.mocked(createTranslator).mock.calls[1][0]._formatters
+    );
     expect(vi.mocked(createTranslator).mock.calls.length).toBe(2);
 
     vi.mocked(createTranslator).mockReset();

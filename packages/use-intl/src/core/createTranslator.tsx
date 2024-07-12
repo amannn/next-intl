@@ -27,7 +27,7 @@ export default function createTranslator<
     NestedKeyOf<IntlMessages>
   > = never
 >({
-  formatters = createFormatters(),
+  _formatters = createFormatters(),
   getMessageFallback = defaultGetMessageFallback,
   messages,
   namespace,
@@ -37,7 +37,7 @@ export default function createTranslator<
   messages?: IntlConfig<IntlMessages>['messages'];
   namespace?: NestedKey;
   /** @private */
-  formatters?: Formatters;
+  _formatters?: Formatters;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 {
   // Default invocation
@@ -128,7 +128,7 @@ export default function createTranslator<
     {
       ...rest,
       onError,
-      formatters,
+      formatters: _formatters,
       getMessageFallback,
       // @ts-expect-error `messages` is allowed to be `undefined` here and will be handled internally
       messages: {'!': messages},
