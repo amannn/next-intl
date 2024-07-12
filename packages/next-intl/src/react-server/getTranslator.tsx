@@ -10,7 +10,6 @@ import {
   createTranslator,
   MarkupTranslationValues
 } from 'use-intl/core';
-import getFormatters from '../shared/getFormatters';
 
 function getTranslatorImpl<
   NestedKey extends NamespaceKeys<
@@ -102,8 +101,7 @@ function getTranslatorImpl<
 } {
   return createTranslator({
     ...config,
-    namespace,
-    _formatters: getFormatters()
+    namespace
   });
 }
 

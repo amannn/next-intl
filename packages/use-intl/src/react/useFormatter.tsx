@@ -20,7 +20,7 @@ export default function useFormatter(): ReturnType<typeof createFormatter> {
         now: globalNow,
         onError,
         timeZone,
-        formatters
+        _formatters: formatters
       }),
     [formats, formatters, globalNow, locale, onError, timeZone]
   );

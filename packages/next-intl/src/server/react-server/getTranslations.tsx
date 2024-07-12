@@ -10,7 +10,6 @@ import {
   RichTranslationValues,
   MarkupTranslationValues
 } from 'use-intl/core';
-import getFormatters from '../../shared/getFormatters';
 import getConfig from './getConfig';
 
 // Maintainer note: `getTranslations` has two different call signatures.
@@ -216,8 +215,7 @@ async function getTranslations<
   return createTranslator({
     ...config,
     namespace,
-    messages: config.messages,
-    _formatters: getFormatters()
+    messages: config.messages
   });
 }
 

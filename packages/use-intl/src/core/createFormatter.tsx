@@ -71,12 +71,12 @@ type Props = {
   formats?: Partial<Formats>;
   now?: Date;
   /** @private */
-  formatters?: Formatters;
+  _formatters?: Formatters;
 };
 
 export default function createFormatter({
+  _formatters: formatters = createFormatters(),
   formats,
-  formatters = createFormatters(),
   locale,
   now: globalNow,
   onError = defaultOnError,

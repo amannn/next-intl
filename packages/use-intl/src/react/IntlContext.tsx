@@ -1,6 +1,6 @@
 import {createContext} from 'react';
-import {InitializedIntlConfig} from '../core/IntlConfig';
-import {Formatters} from '../core/formatters';
+import type {InitializedIntlConfig} from '../core/IntlConfig';
+import type {Formatters} from '../core/formatters';
 
 export type IntlContextValue = InitializedIntlConfig & {
   formatters: Formatters;
