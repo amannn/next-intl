@@ -92,7 +92,7 @@
   "size-limit": [
     {
       "path": "dist/production/index.js",
-      "limit": "15.675 kB"
+      "limit": "15.545 kB"
     }
   ]
 }
