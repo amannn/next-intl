@@ -23,7 +23,7 @@ beforeEach(() => {
   };
   vi.mocked(useNextRouter).mockImplementation(() => router);
   vi.mocked(useNextPathname).mockImplementation(() => '/');
-  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+  vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
 });
 
 describe("localePrefix: 'as-needed'", () => {
@@ -132,7 +132,7 @@ describe("localePrefix: 'as-needed', custom prefix", () => {
 
   describe('usePathname', () => {
     it('returns the correct pathname for a custom locale prefix', () => {
-      vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+      vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en-gb'}));
       vi.mocked(useNextPathname).mockImplementation(() => '/uk/about');
       function Component() {
         return usePathname();
@@ -165,7 +165,7 @@ describe("localePrefix: 'never'", () => {
       });
 
       it('can push a pathname for a secondary locale', () => {
-        vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+        vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'de'}));
         render(<Component locale="de" />);
         const push = useNextRouter().push as Mock;
         expect(push).toHaveBeenCalledTimes(1);

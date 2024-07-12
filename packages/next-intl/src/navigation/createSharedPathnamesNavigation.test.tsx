@@ -53,7 +53,7 @@ vi.mock('../../src/server/react-server/RequestLocale', () => ({
 
 beforeEach(() => {
   vi.mocked(getRequestLocale).mockImplementation(() => 'en');
-  vi.mocked(useParams).mockImplementation(() => ({locale: 'en'}));
+  vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
 });
 
 const locales = ['en', 'de'] as const;
@@ -174,7 +174,9 @@ describe.each([
         });
 
         it('can redirect for a non-default locale', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({
+            locale: 'en-gb'
+          }));
           vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
           vi.mocked(useNextPathname).mockImplementation(() => '/');
 
@@ -235,7 +237,7 @@ describe.each([
         });
 
         it('can redirect for a non-default locale', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'de'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'de');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
@@ -290,7 +292,7 @@ describe.each([
         });
 
         it('can permanently redirect for a non-default locale', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'de'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'de');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
@@ -350,7 +352,9 @@ describe.each([
         }
 
         it('can redirect for a locale with a custom prefix', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({
+            locale: 'en-gb'
+          }));
           vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
@@ -369,7 +373,9 @@ describe.each([
         }
 
         it('can permanently redirect for a locale with a custom prefix', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'en-gb'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({
+            locale: 'en-gb'
+          }));
           vi.mocked(getRequestLocale).mockImplementation(() => 'en-gb');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
@@ -424,7 +430,7 @@ describe.each([
         });
 
         it('can redirect for a non-default locale', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'de'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'de');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
@@ -460,7 +466,7 @@ describe.each([
         });
 
         it('can permanently redirect for a non-default locale', () => {
-          vi.mocked(useParams).mockImplementation(() => ({locale: 'de'}));
+          vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'de'}));
           vi.mocked(getRequestLocale).mockImplementation(() => 'de');
 
           vi.mocked(useNextPathname).mockImplementation(() => '/');
