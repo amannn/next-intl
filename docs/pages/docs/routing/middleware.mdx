@@ -143,7 +143,12 @@ Note that by setting this option, the middleware will no longer return a `set-co
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, e.g. because you're using a CMS to manage localized slugs of your pages, you can opt-out of this behavior by setting `alternateLinks` to `false`.
+However, there are cases where you may want to provide these links yourself:
+
+1. You have pages that are only available for certain locales
+2. You're using an external system like a CMS to manage localized slugs of your pages
+
+In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
