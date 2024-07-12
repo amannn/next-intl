@@ -512,6 +512,41 @@ describe('relativeTime', () => {
     screen.getByText('34 years ago');
   });
 
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(globalThis.Intl, 'RelativeTimeFormat');
+    });
+
+    // https://github.com/vitest-dev/vitest/issues/6104
+    it.skip('caches `Intl.RelativeTimeFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+
+        return [
+          format.relativeTime(parseISO('2020-11-20T10:36:00.000Z')),
+          format.relativeTime(parseISO('2020-11-21T10:36:00.000Z')),
+          format.relativeTime(parseISO('2020-11-20T10:36:00.000Z'), {
+            style: 'short'
+          }),
+          format.relativeTime(parseISO('2020-11-21T10:36:00.000Z'), {
+            style: 'short'
+          })
+        ].join(';');
+      }
+
+      render(
+        <MockProvider
+          now={parseISO('2020-11-01T10:36:00.000Z')}
+          timeZone="Europe/Berlin"
+        >
+          <Component />
+        </MockProvider>
+      );
+
+      expect(Intl.RelativeTimeFormat).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('error handling', () => {
     it('handles formatting errors', () => {
       const onError = vi.fn();
@@ -661,5 +696,32 @@ describe('list', () => {
     );
 
     screen.getByText('apple, banana, & orange');
+  });
+
+  describe('performance', () => {
+    beforeEach(() => {
+      vi.spyOn(Intl, 'ListFormat');
+    });
+
+    // https://github.com/vitest-dev/vitest/issues/6104
+    it.skip('caches `Intl.ListFormat` instances', () => {
+      function Component() {
+        const format = useFormatter();
+        return [
+          format.list(['apple', 'banana']),
+          format.list(['apple', 'banana', 'orange']),
+          format.list(['apple', 'banana'], {type: 'disjunction'}),
+          format.list(['apple', 'banana', 'orange'], {type: 'disjunction'})
+        ].join(';');
+      }
+
+      render(
+        <MockProvider>
+          <Component />
+        </MockProvider>
+      );
+
+      expect(Intl.ListFormat).toHaveBeenCalledTimes(1);
+    });
   });
 });
