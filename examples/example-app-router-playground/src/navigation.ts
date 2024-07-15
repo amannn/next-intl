@@ -17,6 +17,7 @@ export const localePrefix = (
 export const pathnames = {
   '/': '/',
   '/client': '/client',
+  '/about': '/about',
   '/client/redirect': '/client/redirect',
   '/nested': {
     en: '/nested',
