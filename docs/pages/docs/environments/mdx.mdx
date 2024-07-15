@@ -12,26 +12,24 @@ After following the [setup instructions for `@next/mdx`](https://nextjs.org/docs
 ```
 src
 └── app
-    ├── page.tsx
-    ├── en.mdx
-    └── de.mdx
+    └── [locale]
+        ├── page.tsx
+        ├── en.mdx
+        └── de.mdx
 ```
 
 Now, in `page.tsx`, you can import the MDX content based on the user's locale:
 
-```tsx filename="src/app/page.tsx"
-import {getLocale} from 'next-intl/server';
-
-export default async function HomePage() {
-  const locale = await getLocale();
-  const Content = (await import(`./${locale}.mdx`)).default;
+```tsx filename="src/app/[locale]/page.tsx"
+export default async function HomePage({params}) {
+  const Content = (await import(`./${params.locale}.mdx`)).default;
   return <Content />;
 }
 ```
 
 In this example, an MDX file might look like this:
 
-```mdx filename="src/app/en.mdx"
+```mdx filename="src/app/[locale]/en.mdx"
 import Portrait from '@/components/Portrait';
 
 # Home
