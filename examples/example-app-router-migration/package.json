@@ -1,6 +1,5 @@
 {
   "name": "example-app-router-migration",
-  "version": "2.10.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,6 +21,6 @@
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.2.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   }
 }

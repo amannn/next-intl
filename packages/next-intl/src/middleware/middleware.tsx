@@ -1,7 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {Locales, Pathnames} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
-import {getLocalePrefix, matchesPathname} from '../shared/utils';
+import {
+  getLocalePrefix,
+  matchesPathname,
+  normalizeTrailingSlash
+} from '../shared/utils';
 import {MiddlewareRoutingConfigInput, receiveConfig} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
@@ -14,7 +18,6 @@ import {
   getNormalizedPathname,
   isLocaleSupportedOnDomain,
   applyBasePath,
-  normalizeTrailingSlash,
   formatPathname,
   getLocaleAsPrefix
 } from './utils';

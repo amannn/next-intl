@@ -14,9 +14,13 @@ In either case, `next-intl` integrates with the App Router by using a top-level 
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router.
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router and run:
 
-Next, run `npm install next-intl` and create the following file structure:
+```sh
+npm install next-intl
+```
+
+Now, we're going to create the following file structure:
 
 ```
 ├── messages (1)
@@ -32,7 +36,7 @@ Next, run `npm install next-intl` and create the following file structure:
             └── page.tsx (6)
 ```
 
-**Now, set up the files as follows:**
+**Let's set up the files:**
 
 <Steps>
 
@@ -44,7 +48,7 @@ The simplest option is to add JSON files in your project based on locales—e.g.
 
 ```json filename="messages/en.json"
 {
-  "Index": {
+  "HomePage": {
     "title": "Hello world!"
   }
 }
@@ -111,7 +115,7 @@ export default getRequestConfig(async ({locale}) => {
 
 This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
-If you prefer to move this file somewhere else, you can provide an optional path to the plugin:
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
 ```js filename="next.config.mjs"
 const withNextIntl = createNextIntlPlugin(
@@ -183,8 +187,8 @@ Use translations in your page components or anywhere else!
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
 
-export default function Index() {
-  const t = useTranslations('Index');
+export default function HomePage() {
+  const t = useTranslations('HomePage');
   return <h1>{t('title')}</h1>;
 }
 ```
@@ -219,7 +223,7 @@ When using the setup with i18n routing, `next-intl`will currently opt into dynam
 
 ### Add `generateStaticParams` to `app/[locale]/layout.tsx`
 
-Since we use a dynamic route segment for the `[locale]` param, we need to provide all possible values via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) to Next.js, so the routes can be rendered at build time.
+Since we are using a dynamic route segment for the `[locale]` param, we need to pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
 
 ```tsx filename="app/[locale]/layout.tsx"
 // Can be imported from a shared config

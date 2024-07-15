@@ -1,13 +1,13 @@
 {
   "name": "example-app-router-playground",
-  "version": "2.9.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "pnpm run test:playwright && pnpm run test:playwright:locale-prefix-never && pnpm run test:jest",
-    "test:playwright": "playwright test",
-    "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && NEXT_PUBLIC_LOCALE_PREFIX=never playwright test",
+    "test": "pnpm run test:playwright:main && pnpm run test:playwright:locale-prefix-never && pnpm run test:playwright:trailing-slash && pnpm run test:jest",
+    "test:playwright:main": "TEST_MATCH=main.spec.ts playwright test",
+    "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && TEST_MATCH=locale-prefix-never.spec.ts playwright test",
+    "test:playwright:trailing-slash": "TRAILING_SLASH=true pnpm build && TEST_MATCH=trailing-slash.spec.ts playwright test",
     "test:jest": "jest",
     "build": "next build",
     "start": "next start"
@@ -38,6 +38,6 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "sharp": "^0.33.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   }
 }

@@ -1,6 +1,5 @@
 {
   "name": "example-app-router-next-auth",
-  "version": "2.14.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,6 +23,6 @@
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-config-next": "^14.2.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   }
 }

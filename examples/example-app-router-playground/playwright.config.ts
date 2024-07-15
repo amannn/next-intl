@@ -7,10 +7,7 @@ const PORT = process.env.CI ? 3004 : 3000;
 
 const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 1 : 0,
-  testMatch:
-    process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never'
-      ? 'locale-prefix-never.spec.ts'
-      : 'main.spec.ts',
+  testMatch: process.env.TEST_MATCH || 'main.spec.ts',
   testDir: './tests',
   projects: [
     {

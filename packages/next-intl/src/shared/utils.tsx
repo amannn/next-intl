@@ -99,14 +99,41 @@ export function hasPathnamePrefixed(prefix: string, pathname: string) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
+function hasTrailingSlash() {
+  try {
+    // Provided via `env` setting in `next.config.js` via the plugin
+    return process.env._next_intl_trailing_slash === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+export function normalizeTrailingSlash(pathname: string) {
+  const trailingSlash = hasTrailingSlash();
+
+  if (pathname !== '/') {
+    const pathnameEndsWithSlash = pathname.endsWith('/');
+    if (trailingSlash && !pathnameEndsWithSlash) {
+      pathname += '/';
+    } else if (!trailingSlash && pathnameEndsWithSlash) {
+      pathname = pathname.slice(0, -1);
+    }
+  }
+
+  return pathname;
+}
+
 export function matchesPathname(
   /** E.g. `/users/[userId]-[userName]` */
   template: string,
   /** E.g. `/users/23-jane` */
   pathname: string
 ) {
-  const regex = templateToRegex(template);
-  return regex.test(pathname);
+  const normalizedTemplate = normalizeTrailingSlash(template);
+  const normalizedPathname = normalizeTrailingSlash(pathname);
+
+  const regex = templateToRegex(normalizedTemplate);
+  return regex.test(normalizedPathname);
 }
 
 export function getLocalePrefix<AppLocales extends Locales>(
@@ -157,6 +184,8 @@ function comparePathnamePairs(a: string, b: string): number {
     // If one of the paths ends, prioritize the shorter path
     if (!segmentA && segmentB) return -1;
     if (segmentA && !segmentB) return 1;
+
+    if (!segmentA && !segmentB) continue;
 
     // Prioritize static segments over dynamic segments
     if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;

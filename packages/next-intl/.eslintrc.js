@@ -6,6 +6,9 @@ module.exports = {
     'molindo/cypress'
   ],
   plugins: ['deprecation'],
+  rules: {
+    'import/no-useless-path-segments': 'error'
+  },
   overrides: [
     {
       files: ['test/**/*.tsx'],
