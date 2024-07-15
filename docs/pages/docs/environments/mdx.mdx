@@ -1,24 +1,39 @@
-import Callout from 'components/Callout';
 import Details from 'components/Details';
 import PartnerContentLink from 'components/PartnerContentLink';
 
 # Markdown (MDX)
 
-Especially for sites where the content varies significantly by locale and may require a different structure, it can be helpful to use Markdown or [MDX](https://mdxjs.com) to provide your localized content.
+Especially for sites where the content varies significantly by locale and may require a different structure, it can be helpful to use Markdown or [MDX](https://mdxjs.com) to provide your localized content. To consume this content in a Next.js app, you can use the [`@next/mdx`](https://nextjs.org/docs/app/building-your-application/configuring/mdx) package, which allows you to import and render MDX content.
 
-While you can provide Markdown or MDX content from any remote source, the simplest way to get started is to provide the files locally in your project directory:
+While you can create entire pages using `page.mdx` files, in an app that uses [the `[locale]` segment](/docs/getting-started/app-router), it can be beneficial to import localized MDX content based on the user's locale into a single `page.tsx` file.
+
+After following the [setup instructions for `@next/mdx`](https://nextjs.org/docs/app/building-your-application/configuring/mdx), you can consider placing your localized MDX files next to a page that will render them:
 
 ```
-content
-├── en
-│   └── home.mdx
-└── de
-    └── home.mdx
+src
+└── app
+    ├── page.tsx
+    ├── en.mdx
+    └── de.mdx
 ```
 
-Individual files might look like this:
+Now, in `page.tsx`, you can import the MDX content based on the user's locale:
 
-```mdx filename="content/en/home.mdx"
+```tsx filename="src/app/page.tsx"
+import {getLocale} from 'next-intl/server';
+
+export default async function HomePage() {
+  const locale = await getLocale();
+  const Content = (await import(`./${locale}.mdx`)).default;
+  return <Content />;
+}
+```
+
+In this example, an MDX file might look like this:
+
+```mdx filename="src/app/en.mdx"
+import Portrait from '@/components/Portrait';
+
 # Home
 
 Welcome to my site!
@@ -26,43 +41,7 @@ Welcome to my site!
 <Portrait />
 ```
 
-By using [`@mdx-js/mdx`](https://www.npmjs.com/package/@mdx-js/mdx), you can parse and render the content in a Server Component:
-
-```tsx filename="app/[locale]/about/page.tsx"
-import fs from 'fs/promises';
-import {EvaluateOptions, evaluate} from '@mdx-js/mdx';
-import {getLocale} from 'next-intl/server';
-import * as runtime from 'react/jsx-runtime';
-import Portrait from './Portrait';
-
-async function MDXContent({filename}: {filename: string}) {
-  // Custom components that can be
-  // referenced in the content
-  const components = {Portrait};
-
-  try {
-    const locale = await getLocale();
-    const file = await fs.readFile(`./content/${locale}/${filename}`, 'utf-8');
-    const {default: Content} = await evaluate(file, runtime as EvaluateOptions);
-    return <Content components={components} />;
-  } catch (error) {
-    notFound();
-  }
-}
-
-export default async function HomePage() {
-  return <MDXContent filename="home.mdx" />;
-}
-```
-
 Components that invoke hooks from `next-intl` like `useTranslations` can naturally be used in MDX content and will respect the user's locale.
-
-<Callout>
-  Note that MDX compiles to JavaScript and is dynamically evaluated. You should
-  be sure to only load MDX content from a trusted source, otherwise this can
-  lead to [arbitrary code
-  execution](https://en.wikipedia.org/wiki/Arbitrary_code_execution).
-</Callout>
 
 <Details id="rich-text">
 <summary>Is MDX required to format rich text?</summary>
@@ -71,32 +50,13 @@ Not at all! Messages support [rich text syntax](/docs/usage/messages#rich-text),
 
 </Details>
 
-<Details id="why-not-next-mdx">
-<summary>Can I also use `@next/mdx`?</summary>
+<Details id="remote-files">
+<summary>Can I load MDX content from a remote source?</summary>
 
-[`@next/mdx`](https://nextjs.org/docs/app/building-your-application/configuring/mdx) requires to set up individual MDX files as pages in the `app` directory.
+Especially if you'd like to allow translators to collaborate on MDX files, you can consider uploading them to a translation management system like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
 
-For a multi-lingual app, this might look like this:
+In this case, you can fetch the MDX content dynamically from within a page and parse it using a package like [`next-mdx-remote`](https://nextjs.org/docs/app/building-your-application/configuring/mdx#remote-mdx).
 
-```
-src
-└── app
-    ├── en
-    │   └── page.mdx
-    └── de
-        └── page.mdx
-```
-
-While this approach can also work for you, it comes with the following gotchas:
-
-1. If your app has some pages in a `[locale]` folder and some statically defined MDX pages, your pages will be distributed across different folders. Due to this, e.g. a shared layout from `app/[locale]/layout.tsx` won't be applied for `app/en/page.tsx`. Therefore this approach might be more relevant for sites where you define all pages in MDX exclusively.
-2. Since there's no dynamic `[locale]` segment, `next-intl` can't read from this in Client Components to retrieve the [locale](/docs/usage/configuration#locale-return-value). Instead, you can add [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) in a layout within the respective locale folder (e.g. `app/en/layout.tsx`).
-
-</Details>
-
-<Details>
-<summary>Do I need to put my MDX files in my project folder?</summary>
-
-[`@mdx-js/mdx`](https://www.npmjs.com/package/@mdx-js/mdx) allows processing MDX content that was fetched from an arbitrary data source. If you'd like to allow translators to work on MDX files, you can for example consider uploading them to a translation management system like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
+Note that MDX compiles to JavaScript and is dynamically evaluated. You should be sure to only load MDX content from a trusted source, otherwise this can lead to [arbitrary code execution](https://en.wikipedia.org/wiki/Arbitrary_code_execution).
 
 </Details>
