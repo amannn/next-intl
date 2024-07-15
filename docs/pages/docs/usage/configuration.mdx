@@ -91,13 +91,13 @@ These props are inherited if you're rendering `NextIntlClientProvider` from a Se
 1. `locale`
 2. `now`
 3. `timeZone`
+4. `formats`
 
 In contrast, these props can be provided as necessary:
 
 1. `messages` (see [Internationalization in Client Components](/docs/environments/server-client-components#using-internationalization-in-client-components))
-2. `formats`
-3. `defaultTranslationValues`
-4. `onError` and `getMessageFallback`
+2. `defaultTranslationValues`
+3. `onError` and `getMessageFallback`
 
 ## Messages
 
@@ -429,6 +429,8 @@ function Component() {
   t('latitude', {latitude: 47.414329182});
 }
 ```
+
+Formats are automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
 
 ## Default translation values
 
