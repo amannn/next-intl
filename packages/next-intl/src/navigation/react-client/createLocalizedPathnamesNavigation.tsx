@@ -1,4 +1,4 @@
-import React, {ComponentProps, ReactElement, forwardRef} from 'react';
+import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {Locales, Pathnames} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
@@ -107,41 +107,44 @@ export default function createLocalizedPathnamesNavigation<
     const baseRouter = useBaseRouter(config.localePrefix);
     const defaultLocale = useTypedLocale();
 
-    return {
-      ...baseRouter,
-      push<Pathname extends keyof AppPathnames>(
-        href: HrefOrHrefWithParams<Pathname>,
-        ...args: ParametersExceptFirst<typeof baseRouter.push>
-      ) {
-        const resolvedHref = getPathname({
-          href,
-          locale: args[0]?.locale || defaultLocale
-        });
-        return baseRouter.push(resolvedHref, ...args);
-      },
+    return useMemo(
+      () => ({
+        ...baseRouter,
+        push<Pathname extends keyof AppPathnames>(
+          href: HrefOrHrefWithParams<Pathname>,
+          ...args: ParametersExceptFirst<typeof baseRouter.push>
+        ) {
+          const resolvedHref = getPathname({
+            href,
+            locale: args[0]?.locale || defaultLocale
+          });
+          return baseRouter.push(resolvedHref, ...args);
+        },
 
-      replace<Pathname extends keyof AppPathnames>(
-        href: HrefOrHrefWithParams<Pathname>,
-        ...args: ParametersExceptFirst<typeof baseRouter.replace>
-      ) {
-        const resolvedHref = getPathname({
-          href,
-          locale: args[0]?.locale || defaultLocale
-        });
-        return baseRouter.replace(resolvedHref, ...args);
-      },
+        replace<Pathname extends keyof AppPathnames>(
+          href: HrefOrHrefWithParams<Pathname>,
+          ...args: ParametersExceptFirst<typeof baseRouter.replace>
+        ) {
+          const resolvedHref = getPathname({
+            href,
+            locale: args[0]?.locale || defaultLocale
+          });
+          return baseRouter.replace(resolvedHref, ...args);
+        },
 
-      prefetch<Pathname extends keyof AppPathnames>(
-        href: HrefOrHrefWithParams<Pathname>,
-        ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
-      ) {
-        const resolvedHref = getPathname({
-          href,
-          locale: args[0]?.locale || defaultLocale
-        });
-        return baseRouter.prefetch(resolvedHref, ...args);
-      }
-    };
+        prefetch<Pathname extends keyof AppPathnames>(
+          href: HrefOrHrefWithParams<Pathname>,
+          ...args: ParametersExceptFirst<typeof baseRouter.prefetch>
+        ) {
+          const resolvedHref = getPathname({
+            href,
+            locale: args[0]?.locale || defaultLocale
+          });
+          return baseRouter.prefetch(resolvedHref, ...args);
+        }
+      }),
+      [baseRouter, defaultLocale]
+    );
   }
 
   function usePathname(): keyof AppPathnames {
@@ -149,7 +152,11 @@ export default function createLocalizedPathnamesNavigation<
     const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
-    return pathname ? getRoute(locale, pathname, config.pathnames) : pathname;
+    return useMemo(
+      () =>
+        pathname ? getRoute(locale, pathname, config.pathnames) : pathname,
+      [locale, pathname]
+    );
   }
 
   function getPathname({

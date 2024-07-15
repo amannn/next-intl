@@ -8,6 +8,7 @@ export default function Navigation() {
     <nav style={{display: 'flex', gap: 10}}>
       <NavigationLink href="/">{t('home')}</NavigationLink>
       <NavigationLink href="/client">{t('client')}</NavigationLink>
+      <NavigationLink href="/about">{t('about')}</NavigationLink>
       <NavigationLink href="/nested">{t('nested')}</NavigationLink>
       <NavigationLink
         href={{pathname: '/news/[articleId]', params: {articleId: 3}}}
