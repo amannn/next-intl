@@ -4,7 +4,7 @@ import {
   useParams,
   useRouter as useNextRouter
 } from 'next/navigation';
-import React, {ComponentProps} from 'react';
+import React, {ComponentProps, useRef} from 'react';
 import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
 import {Pathnames} from '../../routing';
 import createLocalizedPathnamesNavigation from './createLocalizedPathnamesNavigation';
@@ -229,6 +229,19 @@ describe("localePrefix: 'as-needed'", () => {
   });
 
   describe('useRouter', () => {
+    it('keeps a stable identity when possible', () => {
+      function Component() {
+        const router = useRouter();
+        const initialRouter = useRef(router);
+        return String(router === initialRouter.current);
+      }
+      const {rerender} = render(<Component />);
+      screen.getByText('true');
+
+      rerender(<Component />);
+      screen.getByText('true');
+    });
+
     describe('push', () => {
       it('resolves to the correct path when passing another locale', () => {
         function Component() {
