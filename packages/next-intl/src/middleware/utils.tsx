@@ -292,3 +292,10 @@ export function getLocaleAsPrefix<AppLocales extends Locales>(
 ) {
   return `/${locale}`;
 }
+
+export function sanitizePathname(pathname: string) {
+  // Sanitize malicious URIs, e.g.:
+  // '/en/\\example.org → /en/%5C%5Cexample.org'
+  // '/en////example.org → /en/example.org'
+  return pathname.replace(/\\/g, '%5C').replace(/\/+/g, '/');
+}

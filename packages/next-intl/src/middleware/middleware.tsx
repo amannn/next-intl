@@ -19,7 +19,8 @@ import {
   isLocaleSupportedOnDomain,
   applyBasePath,
   formatPathname,
-  getLocaleAsPrefix
+  getLocaleAsPrefix,
+  sanitizePathname
 } from './utils';
 
 export default function createMiddleware<
@@ -30,7 +31,11 @@ export default function createMiddleware<
 
   return function middleware(request: NextRequest) {
     // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
-    const externalPathname = decodeURI(request.nextUrl.pathname);
+    const unsafeExternalPathname = decodeURI(request.nextUrl.pathname);
+
+    // Sanitize malicious URIs to prevent open redirect attacks due to
+    // decodeURI doesn't escape encoded backslashes ('%5C' & '%5c')
+    const externalPathname = sanitizePathname(unsafeExternalPathname);
 
     const {domain, locale} = resolveLocale(
       config,
