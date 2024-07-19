@@ -21,9 +21,15 @@ src
 Now, in `page.tsx`, you can import the MDX content based on the user's locale:
 
 ```tsx filename="src/app/[locale]/page.tsx"
+import {notFound} from 'next/navigation';
+
 export default async function HomePage({params}) {
-  const Content = (await import(`./${params.locale}.mdx`)).default;
-  return <Content />;
+  try {
+    const Content = (await import(`./${params.locale}.mdx`)).default;
+    return <Content />;
+  } catch (error) {
+    notFound();
+  }
 }
 ```
 
@@ -44,7 +50,9 @@ Components that invoke hooks from `next-intl` like `useTranslations` can natural
 <Details id="rich-text">
 <summary>Is MDX required to format rich text?</summary>
 
-Not at all! Messages support [rich text syntax](/docs/usage/messages#rich-text), which can be used to provide formatting, structure and embedding of components.
+Not at all! The built in message formatting of `next-intl` supports [rich text syntax](/docs/usage/messages#rich-text), which can be used to provide formatting, and to embed React components within messages.
+
+MDX is best suited for cases where content varies significantly by locale. If all you're looking for is rich text formatting, the built-in message formatting may be an easier choice.
 
 </Details>
 
