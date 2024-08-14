@@ -23,7 +23,7 @@
       }
     ],
     "paths": {
-      "@/components/*": ["./src/components/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
