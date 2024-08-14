@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.17.3 (2024-08-14)
+
+### Bug Fixes
+
+* Handle optional catch-all segments in navigation APIs if no value is provided and handle the case if a dynamic value appears multiple times in a pathname ([#1259](https://github.com/amannn/next-intl/issues/1259)) ([58ef482](https://github.com/amannn/next-intl/commit/58ef482eda383fc03a552a4f34b00c7b3136a4af)), closes [#1236](https://github.com/amannn/next-intl/issues/1236) – by @amannn
+
 ## 3.17.2 (2024-07-19)
 
 ### Bug Fixes
