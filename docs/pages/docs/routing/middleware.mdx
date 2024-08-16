@@ -73,7 +73,7 @@ In contrast, the "best fit" algorithm compares the _distance_ between the user's
 
 ### Domain-based routing [#location-detection-domain]
 
-If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
+If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
 
 The locale is detected based on these priorities:
 
@@ -100,6 +100,19 @@ The bestmatching domain is detected based on these priorities:
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
 3. Use an alternative domain where the available `locales` are restricted and the locale is supported
 4. Use an alternative domain that supports all locales
+
+</Details>
+
+<Details id="domain-local-testing">
+<summary>How can I locally test if my setup is working?</summary>
+
+Since the negotiated locale depends on the host of the request, you can test your setup by attaching a corresponding `x-forwarded-host` header. To achieve this in the browser, you can use a browser extension like [ModHeader in Chrome](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj) and add a setting like:
+
+```
+X-Forwarded-Host: example.com
+```
+
+With this, your domain config for this particular domain will be used.
 
 </Details>
 
@@ -143,7 +156,12 @@ Note that by setting this option, the middleware will no longer return a `set-co
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, e.g. because you're using a CMS to manage localized slugs of your pages, you can opt-out of this behavior by setting `alternateLinks` to `false`.
+However, there are cases where you may want to provide these links yourself:
+
+1. You have pages that are only available for certain locales
+2. You're using an external system like a CMS to manage localized slugs of your pages
+
+In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -155,7 +173,7 @@ export default createMiddleware({
 });
 ```
 
-If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/metadata-route-handlers#sitemap).
+If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap).
 
 <Details id="alternate-links-details">
 <summary>Which alternate links are included?</summary>
@@ -185,11 +203,11 @@ Other configuration options like `domains`, `pathnames` and `basePath` are autom
 If you need to customize the alternate links, you can either turn them off and provide your own implementation, or if you only need to make minor adaptions, you can [compose the middleware](#composing-other-middlewares) and add your custom logic after the middleware has run:
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import LinkHeader from 'http-link-header';
 import {NextRequest} from 'next/server';
 
-const handleI18nRouting = createIntlMiddleware(/* ... */);
+const handleI18nRouting = createMiddleware(/* ... */);
 
 export default async function middleware(request: NextRequest) {
   const response = handleI18nRouting(request);
@@ -230,9 +248,9 @@ A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/rout
 
 ```tsx filename="middleware.ts"
 import {NextRequest} from 'next/server';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 
-const intlMiddleware = createIntlMiddleware({
+const intlMiddleware = createMiddleware({
   // ...
 });
 
@@ -301,6 +319,12 @@ export const config = {
 };
 ```
 
+### Trailing slash
+
+If you have [`trailingSlash`](https://nextjs.org/docs/app/api-reference/next-config-js/trailingSlash) set to `true` in your Next.js config, this setting will be taken into account when the middleware generates pathnames, e.g. for redirects.
+
+Note that if you're using [localized pathnames](/docs/routing#pathnames), your internal and external pathnames can be defined either with or without a trailing slash as they will be normalized internally.
+
 ## Composing other middlewares
 
 By calling `createMiddleware`, you'll receive a function of the following type:
@@ -312,7 +336,7 @@ middleware(request: NextRequest): NextResponse
 If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, or modify the response that is returned.
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
@@ -321,7 +345,7 @@ export default async function middleware(request: NextRequest) {
   const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
 
   // Step 2: Create and call the next-intl middleware (example)
-  const handleI18nRouting = createIntlMiddleware({
+  const handleI18nRouting = createMiddleware({
     locales,
     defaultLocale
   });
@@ -346,7 +370,7 @@ If you need to handle rewrites apart from the ones provided by `next-intl`, you 
 This example rewrites requests for `/[locale]/profile` to `/[locale]/profile/new` if a special cookie is set.
 
 ```tsx filename="middleware.ts"
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
@@ -362,7 +386,7 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  const handleI18nRouting = createIntlMiddleware({
+  const handleI18nRouting = createMiddleware({
     locales,
     defaultLocale: 'en'
   });
@@ -414,10 +438,10 @@ You can do so by following the [setup guide from Supabase](https://supabase.com/
 ```tsx filename="middleware.ts"
 import {type NextRequest} from 'next/server';
 import {createServerClient, type CookieOptions} from '@supabase/ssr';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {locales} from './config';
 
-const handleI18nRouting = createIntlMiddleware({
+const handleI18nRouting = createMiddleware({
   locales,
   defaultLocale: 'en'
 });
@@ -464,13 +488,13 @@ For pathnames specified in [the `pages` object](https://next-auth.js.org/configu
 
 ```tsx filename="middleware.ts"
 import {withAuth} from 'next-auth/middleware';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 import {locales} from './config';
 
 const publicPages = ['/', '/login'];
 
-const intlMiddleware = createIntlMiddleware({
+const intlMiddleware = createMiddleware({
   locales,
   defaultLocale: 'en'
 });
@@ -515,7 +539,7 @@ export const config = {
 
 <Callout>
 
-There's a working [example that combines `next-intl` with Auth.js](/examples#app-router-next-auth) on GitHub.
+Have a look at the [`next-intl` with NextAuth.js example](/examples#app-router-next-auth) to explore a working setup.
 
 </Callout>
 

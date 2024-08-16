@@ -54,13 +54,15 @@ module.exports = withNextIntl({
 function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   if (nextConfig?.i18n != null) {
     console.warn(
-      "\nnext-intl has found an `i18n` config in your next.config.js. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the `pages` folder, you can refer to this example: https://github.com/amannn/next-intl/tree/main/examples/example-app-router-migration\n"
+      "\nnext-intl has found an `i18n` config in your next.config.js. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the `pages` folder, you can refer to this example: https://next-intl-docs.vercel.app/examples#app-router-migration\n"
     );
   }
 
   const useTurbo = process.env.TURBOPACK != null;
 
-  let nextIntlConfig;
+  const nextIntlConfig: Partial<NextConfig> = {};
+
+  // Assign alias for `next-intl/config`
   if (useTurbo) {
     if (i18nPath && i18nPath.startsWith('/')) {
       throw new Error(
@@ -69,40 +71,39 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
           '\n'
       );
     }
-
-    nextIntlConfig = {
-      experimental: {
-        ...nextConfig?.experimental,
-        turbo: {
-          ...nextConfig?.experimental?.turbo,
-          resolveAlias: {
-            ...nextConfig?.experimental?.turbo?.resolveAlias,
-            // Turbo aliases don't work with absolute
-            // paths (see error handling above)
-            'next-intl/config': resolveI18nPath(i18nPath)
-          }
+    nextIntlConfig.experimental = {
+      ...nextConfig?.experimental,
+      turbo: {
+        ...nextConfig?.experimental?.turbo,
+        resolveAlias: {
+          ...nextConfig?.experimental?.turbo?.resolveAlias,
+          // Turbo aliases don't work with absolute
+          // paths (see error handling above)
+          'next-intl/config': resolveI18nPath(i18nPath)
         }
       }
     };
   } else {
-    nextIntlConfig = {
-      webpack(
-        ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
-      ) {
-        // Webpack requires absolute paths
-        config.resolve.alias['next-intl/config'] = path.resolve(
-          config.context,
-          resolveI18nPath(i18nPath, config.context)
-        );
-
-        if (typeof nextConfig?.webpack === 'function') {
-          return nextConfig.webpack(config, options);
-        }
-
-        return config;
+    nextIntlConfig.webpack = function webpack(
+      ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
+    ) {
+      // Webpack requires absolute paths
+      config.resolve.alias['next-intl/config'] = path.resolve(
+        config.context,
+        resolveI18nPath(i18nPath, config.context)
+      );
+      if (typeof nextConfig?.webpack === 'function') {
+        return nextConfig.webpack(config, options);
       }
+      return config;
     };
   }
+
+  // Forward config
+  nextIntlConfig.env = {
+    ...nextConfig?.env,
+    _next_intl_trailing_slash: nextConfig?.trailingSlash ? 'true' : undefined
+  };
 
   return Object.assign({}, nextConfig, nextIntlConfig);
 }

@@ -11,13 +11,13 @@ import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
 import IntlError, {IntlErrorCode} from './IntlError';
-import MessageFormatCache from './MessageFormatCache';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
+import {Formatters} from './formatters';
 import joinPath from './joinPath';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
@@ -125,7 +125,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
 }
 
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
-  messageFormatCache?: MessageFormatCache;
+  formatters: Formatters;
   defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
   messagesOrError: Messages | IntlError;
@@ -171,9 +171,9 @@ function createBaseTranslatorImpl<
 >({
   defaultTranslationValues,
   formats: globalFormats,
+  formatters,
   getMessageFallback = defaultGetMessageFallback,
   locale,
-  messageFormatCache,
   messagesOrError,
   namespace,
   onError,
@@ -218,81 +218,68 @@ function createBaseTranslatorImpl<
       );
     }
 
-    const cacheKey = joinPath(locale, namespace, key, String(message));
+    if (typeof message === 'object') {
+      let code, errorMessage;
+      if (Array.isArray(message)) {
+        code = IntlErrorCode.INVALID_MESSAGE;
+        if (process.env.NODE_ENV !== 'production') {
+          errorMessage = `Message at \`${joinPath(
+            namespace,
+            key
+          )}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
+        }
+      } else {
+        code = IntlErrorCode.INSUFFICIENT_PATH;
+        if (process.env.NODE_ENV !== 'production') {
+          errorMessage = `Message at \`${joinPath(
+            namespace,
+            key
+          )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
+        }
+      }
+
+      return getFallbackFromErrorAndNotify(key, code, errorMessage);
+    }
 
     let messageFormat: IntlMessageFormat;
-    if (messageFormatCache?.has(cacheKey)) {
-      messageFormat = messageFormatCache.get(cacheKey)!;
-    } else {
-      if (typeof message === 'object') {
-        let code, errorMessage;
-        if (Array.isArray(message)) {
-          code = IntlErrorCode.INVALID_MESSAGE;
-          if (process.env.NODE_ENV !== 'production') {
-            errorMessage = `Message at \`${joinPath(
-              namespace,
-              key
-            )}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
-          }
-        } else {
-          code = IntlErrorCode.INSUFFICIENT_PATH;
-          if (process.env.NODE_ENV !== 'production') {
-            errorMessage = `Message at \`${joinPath(
-              namespace,
-              key
-            )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
-          }
-        }
 
-        return getFallbackFromErrorAndNotify(key, code, errorMessage);
-      }
+    // Hot path that avoids creating an `IntlMessageFormat` instance
+    const plainMessage = getPlainMessage(message as string, values);
+    if (plainMessage) return plainMessage;
 
-      // Hot path that avoids creating an `IntlMessageFormat` instance
-      const plainMessage = getPlainMessage(message as string, values);
-      if (plainMessage) return plainMessage;
-
-      try {
-        messageFormat = new IntlMessageFormat(
-          message,
-          locale,
-          convertFormatsToIntlMessageFormat(
-            {...globalFormats, ...formats},
-            timeZone
-          ),
-          {
-            formatters: {
-              getNumberFormat(locales, options) {
-                return new Intl.NumberFormat(
-                  locales,
-                  // `useGrouping` was changed from a boolean later to a string enum or boolean, the type definition is outdated (https://tc39.es/proposal-intl-numberformat-v3/#grouping-enum-ecma-402-367)
-                  options as Intl.NumberFormatOptions
-                );
-              },
-              getDateTimeFormat(locales, options) {
-                // Workaround for https://github.com/formatjs/formatjs/issues/4279
-                return new Intl.DateTimeFormat(locales, {timeZone, ...options});
-              },
-              getPluralRules(locales, options) {
-                return new Intl.PluralRules(locales, options);
-              }
+    try {
+      messageFormat = formatters.getMessageFormat(
+        message,
+        locale,
+        convertFormatsToIntlMessageFormat(
+          {...globalFormats, ...formats},
+          timeZone
+        ),
+        {
+          formatters: {
+            ...formatters,
+            getDateTimeFormat(locales, options) {
+              // Workaround for https://github.com/formatjs/formatjs/issues/4279
+              return formatters.getDateTimeFormat(locales, {
+                timeZone,
+                ...options
+              });
             }
           }
-        );
-      } catch (error) {
-        const thrownError = error as Error;
-        return getFallbackFromErrorAndNotify(
-          key,
-          IntlErrorCode.INVALID_MESSAGE,
-          process.env.NODE_ENV !== 'production'
-            ? thrownError.message +
-                ('originalMessage' in thrownError
-                  ? ` (${thrownError.originalMessage})`
-                  : '')
-            : thrownError.message
-        );
-      }
-
-      messageFormatCache?.set(cacheKey, messageFormat);
+        }
+      );
+    } catch (error) {
+      const thrownError = error as Error;
+      return getFallbackFromErrorAndNotify(
+        key,
+        IntlErrorCode.INVALID_MESSAGE,
+        process.env.NODE_ENV !== 'production'
+          ? thrownError.message +
+              ('originalMessage' in thrownError
+                ? ` (${thrownError.originalMessage})`
+                : '')
+          : thrownError.message
+      );
     }
 
     try {

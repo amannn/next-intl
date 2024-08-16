@@ -16,9 +16,9 @@ export default function useTranslationsImpl<
   const {
     defaultTranslationValues,
     formats: globalFormats,
+    formatters,
     getMessageFallback,
     locale,
-    messageFormatCache,
     onError,
     timeZone
   } = useIntlContext();
@@ -43,7 +43,7 @@ export default function useTranslationsImpl<
   const translate = useMemo(
     () =>
       createBaseTranslator({
-        messageFormatCache,
+        formatters,
         getMessageFallback,
         messages: allMessages,
         defaultTranslationValues,
@@ -54,12 +54,12 @@ export default function useTranslationsImpl<
         timeZone
       }),
     [
-      messageFormatCache,
+      formatters,
       getMessageFallback,
       allMessages,
+      defaultTranslationValues,
       namespace,
       onError,
-      defaultTranslationValues,
       globalFormats,
       locale,
       timeZone

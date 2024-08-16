@@ -1,6 +1,5 @@
 {
   "name": "example-pages-router-advanced",
-  "version": "2.14.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -29,6 +28,6 @@
     "eslint-config-next": "^14.2.4",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.3"
   }
 }

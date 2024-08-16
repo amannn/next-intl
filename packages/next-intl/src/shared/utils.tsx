@@ -5,12 +5,12 @@ import {Locales, LocalePrefixConfigVerbose} from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
-export function isRelativeHref(href: Href) {
+function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;
   return pathname != null && !pathname.startsWith('/');
 }
 
-export function isLocalHref(href: Href) {
+function isLocalHref(href: Href) {
   if (typeof href === 'object') {
     return href.host == null && href.hostname == null;
   } else {
@@ -99,14 +99,41 @@ export function hasPathnamePrefixed(prefix: string, pathname: string) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
+function hasTrailingSlash() {
+  try {
+    // Provided via `env` setting in `next.config.js` via the plugin
+    return process.env._next_intl_trailing_slash === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+export function normalizeTrailingSlash(pathname: string) {
+  const trailingSlash = hasTrailingSlash();
+
+  if (pathname !== '/') {
+    const pathnameEndsWithSlash = pathname.endsWith('/');
+    if (trailingSlash && !pathnameEndsWithSlash) {
+      pathname += '/';
+    } else if (!trailingSlash && pathnameEndsWithSlash) {
+      pathname = pathname.slice(0, -1);
+    }
+  }
+
+  return pathname;
+}
+
 export function matchesPathname(
   /** E.g. `/users/[userId]-[userName]` */
   template: string,
   /** E.g. `/users/23-jane` */
   pathname: string
 ) {
-  const regex = templateToRegex(template);
-  return regex.test(pathname);
+  const normalizedTemplate = normalizeTrailingSlash(template);
+  const normalizedPathname = normalizeTrailingSlash(pathname);
+
+  const regex = templateToRegex(normalizedTemplate);
+  return regex.test(normalizedPathname);
 }
 
 export function getLocalePrefix<AppLocales extends Locales>(
@@ -131,4 +158,64 @@ export function templateToRegex(template: string): RegExp {
     .replace(/\[([^\]]+)\]/g, '([^/]+)');
 
   return new RegExp(`^${regexPattern}$`);
+}
+
+function isOptionalCatchAllSegment(pathname: string) {
+  return pathname.includes('[[...');
+}
+
+function isCatchAllSegment(pathname: string) {
+  return pathname.includes('[...');
+}
+
+function isDynamicSegment(pathname: string) {
+  return pathname.includes('[');
+}
+
+function comparePathnamePairs(a: string, b: string): number {
+  const pathA = a.split('/');
+  const pathB = b.split('/');
+
+  const maxLength = Math.max(pathA.length, pathB.length);
+  for (let i = 0; i < maxLength; i++) {
+    const segmentA = pathA[i];
+    const segmentB = pathB[i];
+
+    // If one of the paths ends, prioritize the shorter path
+    if (!segmentA && segmentB) return -1;
+    if (segmentA && !segmentB) return 1;
+
+    if (!segmentA && !segmentB) continue;
+
+    // Prioritize static segments over dynamic segments
+    if (!isDynamicSegment(segmentA) && isDynamicSegment(segmentB)) return -1;
+    if (isDynamicSegment(segmentA) && !isDynamicSegment(segmentB)) return 1;
+
+    // Prioritize non-catch-all segments over catch-all segments
+    if (!isCatchAllSegment(segmentA) && isCatchAllSegment(segmentB)) return -1;
+    if (isCatchAllSegment(segmentA) && !isCatchAllSegment(segmentB)) return 1;
+
+    // Prioritize non-optional catch-all segments over optional catch-all segments
+    if (
+      !isOptionalCatchAllSegment(segmentA) &&
+      isOptionalCatchAllSegment(segmentB)
+    ) {
+      return -1;
+    }
+    if (
+      isOptionalCatchAllSegment(segmentA) &&
+      !isOptionalCatchAllSegment(segmentB)
+    ) {
+      return 1;
+    }
+
+    if (segmentA === segmentB) continue;
+  }
+
+  // Both pathnames are completely static
+  return 0;
+}
+
+export function getSortedPathnames(pathnames: Array<string>) {
+  return pathnames.sort(comparePathnamePairs);
 }

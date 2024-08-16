@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.15.0",
+  "version": "3.17.3",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -113,26 +113,26 @@
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^8.2.6",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.2"
   },
   "prettier": "../../.prettierrc.json",
   "size-limit": [
     {
       "path": "dist/production/index.react-client.js",
-      "limit": "15.765 KB"
+      "limit": "16.055 KB"
     },
     {
       "path": "dist/production/index.react-server.js",
-      "limit": "16.66 KB"
+      "limit": "16.875 KB"
     },
     {
       "path": "dist/production/navigation.react-client.js",
-      "limit": "3.235 KB"
+      "limit": "3.55 KB"
     },
     {
       "path": "dist/production/navigation.react-server.js",
-      "limit": "17.82 KB"
+      "limit": "18.355 KB"
     },
     {
       "path": "dist/production/server.react-client.js",
@@ -140,11 +140,11 @@
     },
     {
       "path": "dist/production/server.react-server.js",
-      "limit": "15.84 KB"
+      "limit": "16.025 KB"
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "6.42 KB"
+      "limit": "6.525 KB"
     },
     {
       "path": "dist/production/routing.js",

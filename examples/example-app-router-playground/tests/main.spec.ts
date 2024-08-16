@@ -1,4 +1,5 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
+import getAlternateLinks from './getAlternateLinks';
 
 const describe = it.describe;
 
@@ -541,15 +542,7 @@ it('keeps search params for redirects', async ({browser}) => {
 
 it('sets alternate links', async ({request}) => {
   async function getLinks(pathname: string) {
-    return (
-      (await request.get(pathname))
-        .headers()
-        .link.split(', ')
-        // On CI, Playwright uses a different host somehow
-        .map((cur) => cur.replace(/0\.0\.0\.0/g, 'localhost'))
-        // Normalize ports
-        .map((cur) => cur.replace(/localhost:\d{4}/g, 'localhost:3000'))
-    );
+    return getAlternateLinks(await request.get(pathname));
   }
 
   for (const pathname of ['/', '/en', '/de']) {
@@ -687,6 +680,21 @@ it('supports custom prefixes', async ({page}) => {
   await page.goto('/spain/anidada');
   await expect(page).toHaveURL('/spain/anidada');
   page.getByRole('heading', {name: 'Anidada'});
+});
+
+it('can use `getPahname` to define a canonical link', async ({page}) => {
+  async function getCanonicalPathname() {
+    const href = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    return new URL(href!).pathname;
+  }
+
+  await page.goto('/news/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/news/3');
+
+  await page.goto('/de/neuigkeiten/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
 describe('server actions', () => {
