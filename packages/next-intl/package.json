@@ -176,7 +176,7 @@
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "bunchee": "^5.2.2",
+    "bunchee": "^5.3.2",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
