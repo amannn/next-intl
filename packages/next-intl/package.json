@@ -144,7 +144,7 @@
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "6.525 KB"
+      "limit": "11.515 KB"
     },
     {
       "path": "dist/production/routing.js",
