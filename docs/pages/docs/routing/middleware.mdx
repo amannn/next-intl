@@ -429,48 +429,68 @@ export const config = {
 };
 ```
 
+(based on `@clerk/nextjs@^5.0.0`)
+
 ### Example: Integrating with Supabase Authentication
 
 In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
 
-You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware as follows:
+You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware utils to accept a response object that's been created by the `next-intl` middleware instead of creating a new one:
 
-```tsx filename="middleware.ts"
-import {type NextRequest} from 'next/server';
-import {createServerClient, type CookieOptions} from '@supabase/ssr';
-import createMiddleware from 'next-intl/middleware';
-import {locales} from './config';
+```tsx filename="utils/supabase/middleware.ts"
+import {createServerClient} from '@supabase/ssr';
+import {NextResponse, type NextRequest} from 'next/server';
 
-const handleI18nRouting = createMiddleware({
-  locales,
-  defaultLocale: 'en'
-});
-
-export async function middleware(request: NextRequest) {
-  const response = handleI18nRouting(request);
-
+export async function updateSession(
+  request: NextRequest,
+  response: NextResponse
+) {
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({name, value, ...options});
-          response.cookies.set({name, value, ...options});
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({name, value: '', ...options});
-          response.cookies.set({name, value: '', ...options});
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({name, value}) =>
+            request.cookies.set(name, value)
+          );
+          cookiesToSet.forEach(({name, value, options}) =>
+            response.cookies.set(name, value, options)
+          );
         }
       }
     }
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: {user}
+  } = await supabase.auth.getUser();
+
   return response;
+}
+```
+
+Now, we can integrate the Supabase middleware with the one from `next-intl`:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {type NextRequest} from 'next/server';
+import {locales, defaultLocale} from '@/app/_config/config';
+import {updateSession} from '@/utils/supabase/middleware';
+
+const i18nMiddleware = createMiddleware({
+  locales,
+  defaultLocale
+});
+
+export async function middleware(request: NextRequest) {
+  const response = i18nMiddleware(request);
+
+  // A `response` can now be passed here
+  return await updateSession(request, response);
 }
 
 export const config = {
@@ -478,7 +498,7 @@ export const config = {
 };
 ```
 
-Note that cookies need to be set simultaneously for the request and the response.
+(based on `@supabase/ssr@^0.5.0`)
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
@@ -536,6 +556,8 @@ export const config = {
   matcher: ['/((?!api|_next|.*\\..*).*)']
 };
 ```
+
+(based on `next-auth@^4.0.0`)
 
 <Callout>
 
