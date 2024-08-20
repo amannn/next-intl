@@ -429,11 +429,13 @@ export const config = {
 };
 ```
 
+(based on `@clerk/nextjs@^5.0.0`)
+
 ### Example: Integrating with Supabase Authentication
 
 In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
 
-You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app). Make sure you have everything running, as you need to modify two of the files from Supabase's guide. Adapt the `utils/supabase/middleware.ts` as follows:
+You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware utils to accept a response object that's been created by the `next-intl` middleware instead of creating a new one:
 
 ```tsx filename="utils/supabase/middleware.ts"
 import {createServerClient} from '@supabase/ssr';
@@ -452,82 +454,51 @@ export async function updateSession(
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
+          cookiesToSet.forEach(({name, value}) =>
             request.cookies.set(name, value)
           );
-          response = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({name, value, options}) =>
             response.cookies.set(name, value, options)
           );
-        },
-      },
+        }
+      }
     }
   );
 
   const {
-    data: { user },
+    data: {user}
   } = await supabase.auth.getUser();
-
-  /*
-  *  Write your own auth logic here, based on the user object.
-  *  When you need the locale in here, do something like this:
-  *
-  *  const locale = response.headers.get(
-  *    "x-middleware-request-x-next-intl-locale"
-  *  );
-  */
 
   return response;
 }
 ```
 
-Above you see a modified version of the `updateSession` function which now takes in a response object. This object was created by the `next-intl/middleware` and is passed to the function, as you'll see in the next step. Adapt the `middleware.ts` as follows:
+Now, we can integrate the Supabase middleware with the one from `next-intl`:
 
 ```tsx filename="middleware.ts"
-import createMiddleware from "next-intl/middleware";
-import {type NextRequest} from "next/server";
-import {locales, defaultLocale} from "@/app/_config/config";
-import {updateSession} from "@/utils/supabase/middleware";
+import createMiddleware from 'next-intl/middleware';
+import {type NextRequest} from 'next/server';
+import {locales, defaultLocale} from '@/app/_config/config';
+import {updateSession} from '@/utils/supabase/middleware';
 
-// Create a middleware that will handle the i18n routing
 const i18nMiddleware = createMiddleware({
   locales,
-  defaultLocale,
+  defaultLocale
 });
 
-// Export the middleware for Next.js
 export async function middleware(request: NextRequest) {
-  // Call the i18nMiddleware function with the request to create a response
   const response = i18nMiddleware(request);
 
-  // Call the modified updateSession function from the Supabase middleware
+  // A `response` can now be passed here
   return await updateSession(request, response);
 }
 
-// This config can be anything you want, this is just an example
 export const config = {
-  /*
-   * Match all request paths, except for these ones:
-   * - api (API routes)
-   * - _next/static (static files)
-   * - _next/image (image optimization files)
-   * - _vercel (Vercel files)
-   * - favicon.ico (favicon file)
-   * - sitemap.xml (sitemap file)
-   * - robots.txt (robots file)
-   * - manifest.webmanifest (web app manifest file)
-   * - files with the following extensions: svg, png, jpg, jpeg, gif, webp
-   */
-  matcher: [
-    "/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ['/', '/(de|en)/:path*']
 };
-
 ```
 
-Note that cookies need to be set simultaneously for the request and the response.
+(based on `@supabase/ssr@^0.5.0`)
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
@@ -585,6 +556,8 @@ export const config = {
   matcher: ['/((?!api|_next|.*\\..*).*)']
 };
 ```
+
+(based on `next-auth@^4.0.0`)
 
 <Callout>
 
