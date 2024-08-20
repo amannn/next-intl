@@ -231,7 +231,7 @@ export const pathnames = {
 } satisfies Pathnames<typeof locales>;
 ```
 
-**Note:** Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. If you're using an external system like a CMS to localize pathnames, you'll typically implement this with a catch-all route like `[locale]/[[...slug]]`.
+Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/ueber-uns` will be handled by the page at `/[locale]/about/page.tsx`.
 
 <Callout>
   If you're using localized pathnames, you should use
@@ -239,6 +239,41 @@ export const pathnames = {
   `createSharedPathnamesNavigation` for your [navigation
   APIs](/docs/routing/navigation).
 </Callout>
+
+<Details id="localized-pathnames-cms">
+<summary>How do I integrate with an external system like a CMS to localize pathnames?</summary>
+
+In case you're using a system like a CMS to configure localized pathnames, you'll typically implement this with a dynamic segment that catches all localized pathnames _instead_ of using the `pathnames` configuration from `next-intl`.
+
+**Examples:**
+
+1. All pathnames are handled by your CMS: `[locale]/[[...slug]]/page.tsx`
+2. Some pathnames are handled by your CMS: `[locale]/blog/[...slug]/page.tsx`
+
+```tsx filename="page.tsx"
+import {notFound} from 'next';
+import {fetchContent} from './cms';
+
+type Props = {
+  params: {
+    locale: string;
+    slug: Array<string>;
+  };
+};
+
+export default async function CatchAllPage({params}: Props) {
+  const content = await fetchContent(params.locale, params.slug);
+  if (!content) notFound();
+
+  // ...
+}
+```
+
+In this case, you'll likely want to disable [alternate links](/docs/routing/middleware#alternate-links) and provide your own implementation instead.
+
+Furthermore, in case you provide a locale switcher, it might require special care to be able to switch between localized pathnames of the same page. A simplified implementation might always redirect to the home page instead.
+
+</Details>
 
 <Details id="localized-pathnames-revalidation">
 <summary>How can I revalidate localized pathnames?</summary>
@@ -301,7 +336,7 @@ In this case, the localized slug can either be provided by the backend or genera
 
 A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` doesn't match.
 
-If you localize the values for dynamic segments, you might want to turn off [alternate links](#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
+If you localize the values for dynamic segments, you might want to turn off [alternate links](/docs/routing/middleware#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
 
 </Details>
 
