@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.17.4 (2024-08-20)
+
+### Bug Fixes
+
+* Update `@formatjs/intl-localematcher` to latest version ([#1140](https://github.com/amannn/next-intl/issues/1140)) ([c217582](https://github.com/amannn/next-intl/commit/c217582cf47a3d0d65315e70eb9fd945efca7163)) – by @amannn
+
 ## 3.17.3 (2024-08-14)
 
 ### Bug Fixes
