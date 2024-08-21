@@ -3,13 +3,17 @@ import {Pathnames, LocalePrefix} from 'next-intl/routing';
 export const defaultLocale = 'en' as const;
 export const locales = ['en', 'de'] as const;
 
-export const pathnames: Pathnames<typeof locales> = {
+export const pathnames = {
   '/': '/',
   '/pathnames': {
     en: '/pathnames',
     de: '/pfadnamen'
+  },
+  '/users/[id]': {
+    en: '/users/[id]',
+    de: '/benutzer/[id]'
   }
-};
+} satisfies Pathnames<typeof locales>;
 
 export const localePrefix: LocalePrefix<typeof locales> = 'always';
 
