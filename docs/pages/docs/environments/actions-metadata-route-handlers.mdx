@@ -158,9 +158,7 @@ Next.js supports providing alternate URLs per language via the [`alternates` ent
 <Tabs items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
 
-If you're use the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can iterate over an array of pathnames that your app supports and generate a sitemap entry for each pathname.
-
-**Example:**
+If you're use the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can assemble the sitemap based on the pathnames that your app supports.
 
 ```tsx
 import {MetadataRoute} from 'next';
@@ -170,15 +168,20 @@ const defaultLocale = 'en' as const;
 const locales = ['en', 'de'] as const;
 
 // Adapt this as necessary
-const pathnames = ['/', '/about'];
 const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  function getUrl(pathname: string, locale: string) {
-    return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
-  }
+  // Adapt this as necessary
+  return [
+    getEntry('/'),
+    getEntry('/users'),
+    getEntry('/users/1'),
+    getEntry('/users/2')
+  ];
+}
 
-  return pathnames.map((pathname) => ({
+function getEntry(pathname: string) {
+  return {
     url: getUrl(pathname, defaultLocale),
     lastModified: new Date(),
     alternates: {
@@ -186,43 +189,59 @@ export default function sitemap(): MetadataRoute.Sitemap {
         locales.map((locale) => [locale, getUrl(pathname, locale)])
       )
     }
-  }));
+  };
+}
+
+function getUrl(pathname: string, locale: string) {
+  return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
 }
 ```
 
 </Tab>
 <Tab>
 
-If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can use the keys of your already declared `pathnames` and generate an entry for each locale via the [`getPathname`](/docs/routing/navigation#getpathname) function.
+If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can generate sitemap entries for each locale by using the [`getPathname`](/docs/routing/navigation#getpathname) function.
 
 ```tsx
 import {MetadataRoute} from 'next';
-import {locales, pathnames, defaultLocale} from '@/config';
+import {locales, defaultLocale} from '@/config';
 import {getPathname} from '@/navigation';
 
 // Adapt this as necessary
 const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
+  // Adapt this as necessary
+  return [
+    getEntry('/'),
+    getEntry('/users'),
+    getEntry({
+      pathname: '/users/[id]',
+      params: {id: '1'}
+    }),
+    getEntry({
+      pathname: '/users/[id]',
+      params: {id: '2'}
+    })
+  ];
+}
 
-  function getUrl(
-    key: keyof typeof pathnames,
-    locale: (typeof locales)[number]
-  ) {
-    const pathname = getPathname({locale, href: key});
-    return `${HOST}/${locale}${pathname === '/' ? '' : pathname}`;
-  }
+type Href = Parameters<typeof getPathname>[0]['href'];
 
-  return keys.map((key) => ({
-    url: getUrl(key, defaultLocale),
-    lastModified: new Date(),
+function getEntry(href: Href) {
+  return {
+    url: getUrl(href, defaultLocale),
     alternates: {
       languages: Object.fromEntries(
-        locales.map((locale) => [locale, getUrl(key, locale)])
+        locales.map((locale) => [locale, getUrl(href, locale)])
       )
     }
-  }));
+  };
+}
+
+function getUrl(href: Href, locale: (typeof locales)[number]) {
+  const pathname = getPathname({locale, href});
+  return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
 }
 ```
 

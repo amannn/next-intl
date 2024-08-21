@@ -36,6 +36,7 @@
     "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
   },
   "Navigation": {
+    "about": "About (MDX)",
     "client": "Client page",
     "home": "Home",
     "nested": "Nested page",

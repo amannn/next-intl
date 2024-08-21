@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.17.4 (2024-08-20)
+
+### Bug Fixes
+
+* Update `@formatjs/intl-localematcher` to latest version ([#1140](https://github.com/amannn/next-intl/issues/1140)) ([c217582](https://github.com/amannn/next-intl/commit/c217582cf47a3d0d65315e70eb9fd945efca7163)) – by @amannn
+
+## 3.17.3 (2024-08-14)
+
+### Bug Fixes
+
+* Handle optional catch-all segments in navigation APIs if no value is provided and handle the case if a dynamic value appears multiple times in a pathname ([#1259](https://github.com/amannn/next-intl/issues/1259)) ([58ef482](https://github.com/amannn/next-intl/commit/58ef482eda383fc03a552a4f34b00c7b3136a4af)), closes [#1236](https://github.com/amannn/next-intl/issues/1236) – by @amannn
+
+## 3.17.2 (2024-07-19)
+
+### Bug Fixes
+
+* Fix open redirect vulnerability for `localePrefix: 'as-necessary'` by sanitizing pathname in the middleware ([#1208](https://github.com/amannn/next-intl/issues/1208)) ([f42ac01](https://github.com/amannn/next-intl/commit/f42ac014c8a01124ab4eba46652a5224c5d7698e)), closes [#1207](https://github.com/amannn/next-intl/issues/1207) – by @hblee12294
+
+## 3.17.1 (2024-07-15)
+
+### Bug Fixes
+
+* Apply `useMemo` for `useRouter` returned from `createLocalizedPathnamesNavigation` to keep a stable reference when possible ([#1201](https://github.com/amannn/next-intl/issues/1201)) ([a1b9a36](https://github.com/amannn/next-intl/commit/a1b9a3680b2a0d7f5b77f8571787ea8d66043852)), closes [#1198](https://github.com/amannn/next-intl/issues/1198) – by @amannn
+
+## 3.17.0 (2024-07-12)
+
+### Features
+
+* Cache `Intl.*` constructors ([#1193](https://github.com/amannn/next-intl/issues/1193)) ([52c4f2c](https://github.com/amannn/next-intl/commit/52c4f2cede844c0ff3d2f73890dcfd75210bc1f2)), closes [#215](https://github.com/amannn/next-intl/issues/215) – by @amannn
+
+## 3.16.0 (2024-07-11)
+
+### Features
+
+* Support `trailingSlash: true` in Next.js config ([#1190](https://github.com/amannn/next-intl/issues/1190)) ([cfbdee9](https://github.com/amannn/next-intl/commit/cfbdee990b367a968eca6258d5c2fcfe8ef2ff2d)) – by @amannn
+
+## 3.15.5 (2024-07-09)
+
+### Bug Fixes
+
+* Support relative pathnames in `redirect` ([#1178](https://github.com/amannn/next-intl/issues/1178)) ([3b698d7](https://github.com/amannn/next-intl/commit/3b698d7abdb8859a43448381ba2361dee4b5e669)), closes [#1177](https://github.com/amannn/next-intl/issues/1177) – by @amannn
+
+## 3.15.4 (2024-07-08)
+
+### Bug Fixes
+
+* Export `DomainsConfig` ([#1175](https://github.com/amannn/next-intl/issues/1175)) ([c4d1bb0](https://github.com/amannn/next-intl/commit/c4d1bb08e23cc8a726c3a52e6cee7b1c63cb4c8a)) – by @amannn
+
+## 3.15.3 (2024-06-26)
+
+### Bug Fixes
+
+* Prefer more specific routes in `usePathname` when detecting the currently active pathname for localized pathnames ([#1152](https://github.com/amannn/next-intl/issues/1152)) ([936839e](https://github.com/amannn/next-intl/commit/936839e9508e447f3e60cc1f606258fd00e5227e)), closes [#1151](https://github.com/amannn/next-intl/issues/1151) – by @amannn
+
 ## 3.15.2 (2024-06-19)
 
 **Note:** Version bump only for package use-intl

@@ -3,7 +3,12 @@ import type {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
 import {Locales, Pathnames} from '../../routing/types';
-import {matchesPathname, prefixPathname} from '../../shared/utils';
+import {
+  getSortedPathnames,
+  matchesPathname,
+  normalizeTrailingSlash,
+  prefixPathname
+} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
@@ -114,16 +119,23 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
+        let regexp: string, replacer: string;
+
         if (Array.isArray(value)) {
-          compiled = compiled.replace(
-            new RegExp(`(\\[)?\\[...${key}\\](\\])?`, 'g'),
-            value.map((v) => String(v)).join('/')
-          );
+          regexp = `(\\[)?\\[...${key}\\](\\])?`;
+          replacer = value.map((v) => String(v)).join('/');
         } else {
-          compiled = compiled.replace(`[${key}]`, String(value));
+          regexp = `\\[${key}\\]`;
+          replacer = String(value);
         }
+
+        compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
       });
     }
+
+    // Clean up optional catch-all segments that were not replaced
+    compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
+    compiled = normalizeTrailingSlash(compiled);
 
     if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
       // Next.js throws anyway, therefore better provide a more helpful error message
@@ -154,28 +166,29 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 }
 
-export function getRoute<AppLocales extends Locales>({
-  locale,
-  pathname,
-  pathnames
-}: {
-  locale: AppLocales[number];
-  pathname: string;
-  pathnames: Pathnames<AppLocales>;
-}) {
+export function getRoute<AppLocales extends Locales>(
+  locale: AppLocales[number],
+  pathname: string,
+  pathnames: Pathnames<AppLocales>
+): keyof Pathnames<AppLocales> {
+  const sortedPathnames = getSortedPathnames(Object.keys(pathnames));
   const decoded = decodeURI(pathname);
 
-  let template = Object.entries(pathnames).find(([, routePath]) => {
-    const routePathname =
-      typeof routePath !== 'string' ? routePath[locale] : routePath;
-    return matchesPathname(routePathname, decoded);
-  })?.[0];
-
-  if (!template) {
-    template = pathname;
+  for (const internalPathname of sortedPathnames) {
+    const localizedPathnamesOrPathname = pathnames[internalPathname];
+    if (typeof localizedPathnamesOrPathname === 'string') {
+      const localizedPathname = localizedPathnamesOrPathname;
+      if (matchesPathname(localizedPathname, decoded)) {
+        return internalPathname;
+      }
+    } else {
+      if (matchesPathname(localizedPathnamesOrPathname[locale], decoded)) {
+        return internalPathname;
+      }
+    }
   }
 
-  return template as keyof Pathnames<AppLocales>;
+  return pathname as keyof Pathnames<AppLocales>;
 }
 
 export function getBasePath(
@@ -196,7 +209,7 @@ function isRelativeHref(href: Href) {
   return pathname != null && !pathname.startsWith('/');
 }
 
-export function isLocalHref(href: Href) {
+function isLocalHref(href: Href) {
   if (typeof href === 'object') {
     return href.host == null && href.hostname == null;
   } else {

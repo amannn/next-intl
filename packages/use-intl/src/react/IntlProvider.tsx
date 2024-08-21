@@ -1,5 +1,6 @@
-import React, {ReactNode, useMemo, useState} from 'react';
+import React, {ReactNode, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig';
+import {createFormatters} from '../core/formatters';
 import initializeConfig from '../core/initializeConfig';
 import IntlContext from './IntlContext';
 
@@ -18,7 +19,11 @@ export default function IntlProvider({
   onError,
   timeZone
 }: Props) {
-  const [messageFormatCache] = useState(() => new Map());
+  // The formatter cache is released when the locale changes. For
+  // long-running apps with a persistent `IntlProvider` at the root,
+  // this can reduce the memory footprint (e.g. in React Native).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const formatters = useMemo(() => createFormatters(), [locale]);
 
   // Memoizing this value helps to avoid triggering a re-render of all
   // context consumers in case the configuration didn't change. However,
@@ -40,14 +45,14 @@ export default function IntlProvider({
         onError,
         timeZone
       }),
-      messageFormatCache
+      formatters
     }),
     [
       defaultTranslationValues,
       formats,
+      formatters,
       getMessageFallback,
       locale,
-      messageFormatCache,
       messages,
       now,
       onError,

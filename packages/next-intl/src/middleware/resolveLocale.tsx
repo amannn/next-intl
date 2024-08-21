@@ -1,14 +1,19 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
-import {Locales, DomainConfig, Pathnames} from '../routing/types';
+import {
+  Locales,
+  Pathnames,
+  DomainsConfig,
+  DomainConfig
+} from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {MiddlewareRoutingConfig} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
-  domains: Array<DomainConfig<AppLocales>>
+  domains: DomainsConfig<AppLocales>
 ) {
   let host = getHost(requestHeaders);
 
@@ -20,6 +25,11 @@ function findDomainFromHost<AppLocales extends Locales>(
   }
 
   return undefined;
+}
+
+function orderLocales<AppLocales extends Locales>(locales: AppLocales) {
+  // Workaround for https://github.com/formatjs/formatjs/issues/4469
+  return locales.slice().sort((a, b) => b.length - a.length);
 }
 
 export function getAcceptLanguageLocale<AppLocales extends Locales>(
@@ -35,9 +45,11 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
     }
   }).languages();
   try {
+    const orderedLocales = orderLocales(locales);
+
     locale = match(
       languages,
-      locales as unknown as Array<string>,
+      orderedLocales as unknown as Array<string>,
       defaultLocale
     );
   } catch (e) {

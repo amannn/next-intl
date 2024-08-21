@@ -1,7 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {Locales, Pathnames} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
-import {getLocalePrefix, matchesPathname} from '../shared/utils';
+import {
+  getLocalePrefix,
+  matchesPathname,
+  normalizeTrailingSlash
+} from '../shared/utils';
 import {MiddlewareRoutingConfigInput, receiveConfig} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
@@ -14,9 +18,9 @@ import {
   getNormalizedPathname,
   isLocaleSupportedOnDomain,
   applyBasePath,
-  normalizeTrailingSlash,
   formatPathname,
-  getLocaleAsPrefix
+  getLocaleAsPrefix,
+  sanitizePathname
 } from './utils';
 
 export default function createMiddleware<
@@ -27,7 +31,11 @@ export default function createMiddleware<
 
   return function middleware(request: NextRequest) {
     // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
-    const externalPathname = decodeURI(request.nextUrl.pathname);
+    const unsafeExternalPathname = decodeURI(request.nextUrl.pathname);
+
+    // Sanitize malicious URIs to prevent open redirect attacks due to
+    // decodeURI doesn't escape encoded backslashes ('%5C' & '%5c')
+    const externalPathname = sanitizePathname(unsafeExternalPathname);
 
     const {domain, locale} = resolveLocale(
       config,
@@ -40,7 +48,7 @@ export default function createMiddleware<
       ? domain.defaultLocale === locale
       : locale === config.defaultLocale;
 
-    const domainConfigs =
+    const domainsConfig =
       config.domains?.filter((curDomain) =>
         isLocaleSupportedOnDomain(locale, curDomain)
       ) || [];
@@ -64,11 +72,11 @@ export default function createMiddleware<
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
-      if (domainConfigs.length > 0 && !redirectDomain) {
+      if (domainsConfig.length > 0 && !redirectDomain) {
         const bestMatchingDomain = getBestMatchingDomain(
           domain,
           locale,
-          domainConfigs
+          domainsConfig
         );
         if (bestMatchingDomain) {
           redirectDomain = bestMatchingDomain.domain;
@@ -237,7 +245,7 @@ export default function createMiddleware<
                 const pathDomain = getBestMatchingDomain(
                   domain,
                   pathnameMatch.locale,
-                  domainConfigs
+                  domainsConfig
                 );
 
                 if (domain?.domain !== pathDomain?.domain && !hasUnknownHost) {
