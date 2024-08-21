@@ -8,10 +8,6 @@ export const pathnames = {
   '/pathnames': {
     en: '/pathnames',
     de: '/pfadnamen'
-  },
-  '/users/[id]': {
-    en: '/users/[id]',
-    de: '/benutzer/[id]'
   }
 } satisfies Pathnames<typeof locales>;
 
