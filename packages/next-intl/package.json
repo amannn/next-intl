@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.17.3",
+  "version": "3.17.4",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -85,7 +85,7 @@
     "next.js"
   ],
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.2.32",
+    "@formatjs/intl-localematcher": "^0.5.4",
     "negotiator": "^0.6.3",
     "use-intl": "workspace:^"
   },
@@ -144,7 +144,7 @@
     },
     {
       "path": "dist/production/middleware.js",
-      "limit": "6.525 KB"
+      "limit": "11.515 KB"
     },
     {
       "path": "dist/production/routing.js",

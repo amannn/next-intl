@@ -27,6 +27,11 @@ function findDomainFromHost<AppLocales extends Locales>(
   return undefined;
 }
 
+function orderLocales<AppLocales extends Locales>(locales: AppLocales) {
+  // Workaround for https://github.com/formatjs/formatjs/issues/4469
+  return locales.slice().sort((a, b) => b.length - a.length);
+}
+
 export function getAcceptLanguageLocale<AppLocales extends Locales>(
   requestHeaders: Headers,
   locales: AppLocales,
@@ -40,9 +45,11 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
     }
   }).languages();
   try {
+    const orderedLocales = orderLocales(locales);
+
     locale = match(
       languages,
-      locales as unknown as Array<string>,
+      orderedLocales as unknown as Array<string>,
       defaultLocale
     );
   } catch (e) {
