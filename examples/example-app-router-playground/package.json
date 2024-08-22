@@ -47,7 +47,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "sharp": "^0.33.4",
     "storybook": "^8.2.9",
-    "storybook-next-intl": "^1.1.2",
+    "storybook-next-intl": "^1.1.4",
     "typescript": "^5.5.3"
   }
 }
