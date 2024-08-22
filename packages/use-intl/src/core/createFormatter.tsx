@@ -6,7 +6,12 @@ import NumberFormatOptions from './NumberFormatOptions';
 import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
-import {createFormatters, Formatters} from './formatters';
+import {
+  createCache,
+  createIntlFormatters,
+  Formatters,
+  IntlCache
+} from './formatters';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -72,10 +77,13 @@ type Props = {
   now?: Date;
   /** @private */
   _formatters?: Formatters;
+  /** @private */
+  _cache?: IntlCache;
 };
 
 export default function createFormatter({
-  _formatters: formatters = createFormatters(),
+  _cache: cache = createCache(),
+  _formatters: formatters = createIntlFormatters(cache),
   formats,
   locale,
   now: globalNow,

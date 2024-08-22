@@ -7,7 +7,12 @@ import TranslationValues, {
 } from './TranslationValues';
 import createTranslatorImpl from './createTranslatorImpl';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
-import {createFormatters, Formatters} from './formatters';
+import {
+  createCache,
+  createIntlFormatters,
+  Formatters,
+  IntlCache
+} from './formatters';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
@@ -27,7 +32,8 @@ export default function createTranslator<
     NestedKeyOf<IntlMessages>
   > = never
 >({
-  _formatters = createFormatters(),
+  _cache = createCache(),
+  _formatters = createIntlFormatters(_cache),
   getMessageFallback = defaultGetMessageFallback,
   messages,
   namespace,
@@ -38,6 +44,8 @@ export default function createTranslator<
   namespace?: NestedKey;
   /** @private */
   _formatters?: Formatters;
+  /** @private */
+  _cache?: IntlCache;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 {
   // Default invocation
@@ -128,6 +136,7 @@ export default function createTranslator<
     {
       ...rest,
       onError,
+      cache: _cache,
       formatters: _formatters,
       getMessageFallback,
       // @ts-expect-error `messages` is allowed to be `undefined` here and will be handled internally

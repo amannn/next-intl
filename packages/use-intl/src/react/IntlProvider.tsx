@@ -1,6 +1,10 @@
 import React, {ReactNode, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig';
-import {createFormatters} from '../core/formatters';
+import {
+  createCache,
+  createIntlFormatters,
+  Formatters
+} from '../core/formatters';
 import initializeConfig from '../core/initializeConfig';
 import IntlContext from './IntlContext';
 
@@ -23,7 +27,11 @@ export default function IntlProvider({
   // long-running apps with a persistent `IntlProvider` at the root,
   // this can reduce the memory footprint (e.g. in React Native).
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const formatters = useMemo(() => createFormatters(), [locale]);
+  const cache = useMemo(() => createCache(), [locale]);
+  const formatters: Formatters = useMemo(
+    () => createIntlFormatters(cache),
+    [cache]
+  );
 
   // Memoizing this value helps to avoid triggering a re-render of all
   // context consumers in case the configuration didn't change. However,
@@ -45,9 +53,11 @@ export default function IntlProvider({
         onError,
         timeZone
       }),
-      formatters
+      formatters,
+      cache
     }),
     [
+      cache,
       defaultTranslationValues,
       formats,
       formatters,

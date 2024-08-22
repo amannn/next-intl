@@ -1,5 +1,10 @@
 import {cache} from 'react';
-import {initializeConfig, IntlConfig, _createFormatters} from 'use-intl/core';
+import {
+  initializeConfig,
+  IntlConfig,
+  _createIntlFormatters,
+  _createCache
+} from 'use-intl/core';
 import {getRequestLocale} from './RequestLocale';
 import createRequestConfig from './createRequestConfig';
 
@@ -52,7 +57,8 @@ async function receiveRuntimeConfigImpl(
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 
-const getFormatters = cache(_createFormatters);
+const getFormatters = cache(_createIntlFormatters);
+const getCache = cache(_createCache);
 
 async function getConfigImpl(localeOverride?: string): Promise<
   IntlConfig & {
@@ -60,14 +66,17 @@ async function getConfigImpl(localeOverride?: string): Promise<
     now: NonNullable<IntlConfig['now']>;
     onError: NonNullable<IntlConfig['onError']>;
     timeZone: NonNullable<IntlConfig['timeZone']>;
-    _formatters: ReturnType<typeof _createFormatters>;
+    _formatters: ReturnType<typeof _createIntlFormatters>;
   }
 > {
   const runtimeConfig = await receiveRuntimeConfig(
     createRequestConfig,
     localeOverride
   );
-  return {...initializeConfig(runtimeConfig), _formatters: getFormatters()};
+  return {
+    ...initializeConfig(runtimeConfig),
+    _formatters: getFormatters(getCache())
+  };
 }
 const getConfig = cache(getConfigImpl);
 export default getConfig;

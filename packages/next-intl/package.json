@@ -96,7 +96,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@edge-runtime/vm": "^3.2.0",
-    "@size-limit/preset-big-lib": "^8.2.6",
+    "@size-limit/preset-big-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
@@ -112,43 +112,9 @@
     "react-dom": "^18.3.1",
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.4",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },
-  "prettier": "../../.prettierrc.json",
-  "size-limit": [
-    {
-      "path": "dist/production/index.react-client.js",
-      "limit": "16.055 KB"
-    },
-    {
-      "path": "dist/production/index.react-server.js",
-      "limit": "16.875 KB"
-    },
-    {
-      "path": "dist/production/navigation.react-client.js",
-      "limit": "3.55 KB"
-    },
-    {
-      "path": "dist/production/navigation.react-server.js",
-      "limit": "18.355 KB"
-    },
-    {
-      "path": "dist/production/server.react-client.js",
-      "limit": "1 KB"
-    },
-    {
-      "path": "dist/production/server.react-server.js",
-      "limit": "16.025 KB"
-    },
-    {
-      "path": "dist/production/middleware.js",
-      "limit": "11.515 KB"
-    },
-    {
-      "path": "dist/production/routing.js",
-      "limit": "0 KB"
-    }
-  ]
+  "prettier": "../../.prettierrc.json"
 }

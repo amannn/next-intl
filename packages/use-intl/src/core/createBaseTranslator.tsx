@@ -17,11 +17,35 @@ import TranslationValues, {
 } from './TranslationValues';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
-import {Formatters} from './formatters';
+import {
+  Formatters,
+  IntlCache,
+  IntlFormatters,
+  memoFn,
+  MessageFormatter
+} from './formatters';
 import joinPath from './joinPath';
 import MessageKeys from './utils/MessageKeys';
 import NestedKeyOf from './utils/NestedKeyOf';
 import NestedValueOf from './utils/NestedValueOf';
+
+// Placed here for improved tree shaking. Somehow when this is placed in
+// `formatters.tsx`, then it can't be shaken off from `next-intl`.
+function createMessageFormatter(
+  cache: IntlCache,
+  intlFormatters: IntlFormatters
+): MessageFormatter {
+  const getMessageFormat = memoFn(
+    (...args: ConstructorParameters<typeof IntlMessageFormat>) =>
+      new IntlMessageFormat(args[0], args[1], args[2], {
+        formatters: intlFormatters,
+        ...args[3]
+      }),
+    cache.message
+  );
+
+  return getMessageFormat;
+}
 
 function resolvePath(
   locale: string,
@@ -125,6 +149,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
 }
 
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
+  cache: IntlCache;
   formatters: Formatters;
   defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
@@ -169,6 +194,7 @@ function createBaseTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >({
+  cache,
   defaultTranslationValues,
   formats: globalFormats,
   formatters,
@@ -246,6 +272,12 @@ function createBaseTranslatorImpl<
     // Hot path that avoids creating an `IntlMessageFormat` instance
     const plainMessage = getPlainMessage(message as string, values);
     if (plainMessage) return plainMessage;
+
+    // Lazy init the message formatter for better tree
+    // shaking in case message formatting is not used.
+    if (!formatters.getMessageFormat) {
+      formatters.getMessageFormat = createMessageFormatter(cache, formatters);
+    }
 
     try {
       messageFormat = formatters.getMessageFormat(
