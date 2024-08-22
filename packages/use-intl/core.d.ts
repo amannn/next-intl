@@ -1,1 +1,1 @@
-export * from './dist/types/src/core';
+export * from './dist/cjs/core.d.ts';

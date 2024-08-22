@@ -1,6 +1,5 @@
 import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
-  createTranslator,
   Formats,
   TranslationValues,
   MessageKeys,
@@ -11,6 +10,7 @@ import {
   MarkupTranslationValues
 } from 'use-intl/core';
 import getConfig from './getConfig';
+import getTranslator from './getTranslator';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
@@ -211,12 +211,7 @@ async function getTranslations<
   }
 
   const config = await getConfig(locale);
-
-  return createTranslator({
-    ...config,
-    namespace,
-    messages: config.messages
-  });
+  return getTranslator(config, namespace);
 }
 
 export default cache(getTranslations);

@@ -11,8 +11,8 @@ import React, {
 } from 'react';
 import useLocale from '../../react-client/useLocale';
 import {LocalePrefixMode} from '../../routing/types';
-import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import syncLocaleCookie from './syncLocaleCookie';
+import {isLocalizableHref, localizeHref, prefixHref} from './utils';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;

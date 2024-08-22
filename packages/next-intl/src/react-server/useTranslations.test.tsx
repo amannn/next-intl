@@ -3,7 +3,7 @@ import {describe, expect, it, vi, beforeEach} from 'vitest';
 import {renderToStream} from './utils';
 import {createTranslator, useTranslations} from '.';
 
-vi.mock('../../src/server/react-server/createRequestConfig', () => ({
+vi.mock('../../src/runtimes/react-server/createRequestConfig', () => ({
   default: async () => ({
     messages: {
       A: {
@@ -19,7 +19,7 @@ vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   })
 }));
 
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/runtimes/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 

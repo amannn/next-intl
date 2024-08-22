@@ -9,9 +9,7 @@ function Component() {
 }
 
 it('provides a helpful error message when no provider is found', () => {
-  expect(() => render(<Component />)).toThrow(
-    /Failed to call `useFormatter` because the context from `NextIntlClientProvider` was not found\./
-  );
+  expect(() => render(<Component />)).toThrow(/No intl context found\./);
 });
 
 it('works with a provider', () => {

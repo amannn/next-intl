@@ -1,3 +1,3 @@
-import createMiddleware from './dist/types/src/middleware';
+import createMiddleware from './dist/cjs/middleware';
 
 export = createMiddleware;
