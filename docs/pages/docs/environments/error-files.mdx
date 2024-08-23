@@ -96,7 +96,7 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
-Note that `next-intl` will also call the `notFound` function internally when it tries to resolve a locale for component usage, but can not find one attached to the request (either from the middleware, or manually via [`unstable_setRequestLocale`](https://next-intl-docs.vercel.app/docs/getting-started/app-router#static-rendering)).
+Note that `next-intl` will also call the `notFound` function internally when it tries to resolve a locale for component usage, but can not find one attached to the request (either from the middleware, or manually via [`unstable_setRequestLocale`](https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering)).
 
 ## `error.js`
 

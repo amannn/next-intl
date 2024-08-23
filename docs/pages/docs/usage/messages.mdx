@@ -42,6 +42,12 @@ const t = useTranslations();
 t('About.title');
 ```
 
+<Callout>
+
+Translators can collaborate on messages by using a localization management solution like <PartnerContentLink name="messages-collaborate" href="https://crowdin.com/teams/engineering">Crowdin</PartnerContentLink>.
+
+</Callout>
+
 <Details id="messages-nested-structure">
 <summary>How can I provide more structure for messages?</summary>
 
@@ -130,7 +136,7 @@ export default function useLocaleLabel() {
 
 If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
 
-There's one exception however: [Using `next-intl` with the Next.js Metadata API and Route Handlers](/docs/environments/metadata-route-handlers).
+There's one exception however: [Using `next-intl` with Server Actions, Metadata and Route Handlers](/docs/environments/actions-metadata-route-handlers).
 
 </Details>
 
@@ -172,21 +178,15 @@ const output = Object.entries(input).reduce(
 }
 ```
 
-This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or as before passing messages to `next-intl`.
+This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or before passing your messages to `next-intl`.
 
 If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
 
 </Details>
 
-## Rendering ICU messages
+## Rendering messages with `useTranslations`
 
 `next-intl` uses [ICU message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) that allows you to express language nuances and separates state handling within messages from your app code.
-
-<Callout>
-
-To work with ICU messages, it can be helpful to use an editor that supports this syntax. E.g. the <PartnerContentLink name="messages-rendering" href="https://support.crowdin.com/icu-message-syntax/">Crowdin Editor</PartnerContentLink> can be used by translators to work on translations without having to change app code.
-
-</Callout>
 
 ### Static messages
 
@@ -289,7 +289,7 @@ To match a specific number, `next-intl` additionally supports the special `=valu
 
 ### Selecting enum-based values
 
-To map identifiers to human readable labels, you can use the `select` argument:
+To map identifiers to human readable labels, you can use the `select` argument that works similar to the `switch` statement in JavaScript:
 
 ```tsx filename="en.json"
 "message": "{gender, select, female {She} male {He} other {They}} is online."
@@ -393,7 +393,7 @@ t.rich('message', {
 });
 ```
 
-For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation#localized-pathnames).
+For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation).
 
 In case you have attribute values that are required to be configured as part of your messages, you can retrieve them from a separate message and pass them to another one as an attribute:
 

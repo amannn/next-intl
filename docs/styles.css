@@ -46,6 +46,10 @@ html:not(.dark) .navbar-home .nextra-scrollbar {
     @apply my-8 flex flex-col items-center;
   }
 
+  code {
+    white-space: pre;
+  }
+
   figure .nextra-code-block {
     @apply w-full;
   }

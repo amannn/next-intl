@@ -17,7 +17,7 @@ If you're still happy with the Pages Router, rest assured that `next-intl` is de
 ## New features
 
 1. **Support for React Server Components**: The APIs `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useTimeZone` can now be used in Server Components ([docs](/docs/environments/server-client-components)).
-2. **New async APIs**: To handle i18n in async components, the Metadata API and Route Handlers, the APIs `getTranslations`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([docs](/docs/environments/metadata-route-handlers)).
+2. **New async APIs**: To handle i18n in async components, the Metadata API and Route Handlers, the APIs `getTranslations`, `getFormatter`, `getNow`, and `getTimeZone` have been added ([docs](/docs/environments/actions-metadata-route-handlers)).
 3. **Middleware for internationalized routing**: While Next.js has built-in support for this with the Pages Router, the App Router doesn't include a built-in solution anymore. `next-intl` now provides a drop-in solution that has you covered ([docs](/docs/routing/middleware)).
 4. **Internationalized navigation APIs**: Similar to the middleware, this provides a drop-in solution that adds internationalization support for Next.js' navigation APIs: `Link`, `useRouter`, `usePathname` and `redirect`. These APIs allow you to handle locale prefixes behind the scenes and also provide support for localizing pathnames (e.g. `/en/about` vs. `/de/ueber-uns`, see the [docs](/docs/routing/navigation)).
 
@@ -25,7 +25,7 @@ The latter two have already been added in minor versions, but 3.0 cleans up the 
 
 ## Breaking changes
 
-**Users of pre-releases:** If you've already tried out pre-release versions, first of all, thank you so much! Second: Some APIs saw iterations over the pre-release period, please carefully review the breaking changes below, even if you're already using some of the new APIs. Also note the change [from `getTranslator` to `getTranslations`](https://github.com/amannn/next-intl/pull/600) to provide better ergnomics for working with async Server Components.
+**Users of pre-releases:** If you've already tried out pre-release versions, first of all, thank you so much! Second: Some APIs saw iterations over the pre-release period, please carefully review the breaking changes below, even if you're already using some of the new APIs. Also note the change [from `getTranslator` to `getTranslations`](https://github.com/amannn/next-intl/pull/600) to provide better ergonomics for working with async Server Components.
 
 ### Updated setup
 
@@ -51,9 +51,9 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 + const {Link, useRouter, usePathname, redirect} = createSharedPathnamesNavigation({locales});
 ```
 
-Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the navigation docs](/docs/routing/navigation#shared-pathnames)).
+Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the navigation docs](/docs/routing/navigation)).
 
-These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](/docs/routing/navigation#localized-pathnames) that allows you to localize pathnames:
+These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](/docs/routing/navigation) that allows you to localize pathnames:
 
 ```tsx filename="navigation.ts"
 import {createLocalizedPathnamesNavigation, Pathnames} from 'next-intl/navigation';
@@ -84,20 +84,20 @@ By using a similar API, you can upgrade from shared pathnames to localized pathn
 
 ### Switching the middleware default of `localePrefix` to `always`
 
-Previously, the [`localePrefix` of the middleware](/docs/routing/middleware#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
+Previously, the [`localePrefix` of the middleware](/docs/routing#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
 
 This default has now been changed to `always` since this has two advantages:
 
 1. We can recommend [a safer default `matcher`](/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
-2. It avoids an [edge case of `Link`](/docs/routing/middleware#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
+2. It avoids an [edge case of `Link`](/docs/routing#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
 
-If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing/middleware#locale-prefix-as-needed) in the middleware.
+If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing#locale-prefix-as-needed) in the middleware.
 
 ### Static rendering of Server Components
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router#static-rendering) API so that you can keep your pages fully static.
+If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) API so that you can keep your pages fully static.
 
 Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 

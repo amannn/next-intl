@@ -1,27 +1,29 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
+import {Locales} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import {
-  AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst
-} from '../../shared/types';
+  SharedNavigationRoutingConfigInput,
+  receiveSharedNavigationRoutingConfig
+} from '../shared/config';
 import ClientLink from './ClientLink';
-import clientPermanentRedirect from './clientPermanentRedirect';
-import clientRedirect from './clientRedirect';
+import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
-  Locales extends AllLocales
->(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
+  const AppLocales extends Locales
+>(input?: SharedNavigationRoutingConfigInput<AppLocales>) {
+  const config = receiveSharedNavigationRoutingConfig(input);
+
   type LinkProps = Omit<
-    ComponentProps<typeof ClientLink<Locales>>,
+    ComponentProps<typeof ClientLink<AppLocales>>,
     'localePrefix'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
-      <ClientLink<Locales>
+      <ClientLink<AppLocales>
         ref={ref}
-        localePrefix={opts?.localePrefix}
+        localePrefix={config.localePrefix}
         {...props}
       />
     );
@@ -35,19 +37,30 @@ export default function createSharedPathnamesNavigation<
     pathname: string,
     ...args: ParametersExceptFirst<typeof clientRedirect>
   ) {
-    return clientRedirect({...opts, pathname}, ...args);
+    return clientRedirect(
+      {pathname, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
   function permanentRedirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof clientPermanentRedirect>
   ) {
-    return clientPermanentRedirect({...opts, pathname}, ...args);
+    return clientPermanentRedirect(
+      {pathname, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
   function usePathname(): string {
+    const result = useBasePathname(config.localePrefix);
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
-    return useBasePathname();
+    return result;
+  }
+
+  function useRouter() {
+    return useBaseRouter<AppLocales>(config.localePrefix);
   }
 
   return {
@@ -55,6 +68,6 @@ export default function createSharedPathnamesNavigation<
     redirect,
     permanentRedirect,
     usePathname,
-    useRouter: useBaseRouter
+    useRouter
   };
 }

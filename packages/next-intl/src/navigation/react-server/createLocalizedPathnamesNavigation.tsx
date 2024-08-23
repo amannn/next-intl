@@ -1,11 +1,11 @@
 import React, {ComponentProps} from 'react';
+import {Locales, Pathnames} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
+import {ParametersExceptFirst} from '../../shared/types';
 import {
-  AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst,
-  Pathnames
-} from '../../shared/types';
+  LocalizedNavigationRoutingConfigInput,
+  receiveLocalizedNavigationRoutingConfig
+} from '../shared/config';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -13,82 +13,81 @@ import {
   normalizeNameOrNameWithParams
 } from '../shared/utils';
 import ServerLink from './ServerLink';
-import serverPermanentRedirect from './serverPermanentRedirect';
-import serverRedirect from './serverRedirect';
+import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createLocalizedPathnamesNavigation<
-  Locales extends AllLocales,
-  PathnamesConfig extends Pathnames<Locales>
->({
-  localePrefix,
-  locales,
-  pathnames
-}: {
-  locales: Locales;
-  pathnames: Pathnames<Locales>;
-  localePrefix?: LocalePrefix;
-}) {
-  type LinkProps<Pathname extends keyof PathnamesConfig> = Omit<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
+  const config = receiveLocalizedNavigationRoutingConfig(input);
+
+  type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ServerLink>,
-    'href' | 'name'
+    'href' | 'name' | 'localePrefix'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locales[number];
+    locale?: AppLocales[number];
   };
-  function Link<Pathname extends keyof PathnamesConfig>({
+  function Link<Pathname extends keyof AppPathnames>({
     href,
     locale,
     ...rest
   }: LinkProps<Pathname>) {
-    const defaultLocale = getRequestLocale() as (typeof locales)[number];
+    const defaultLocale = getRequestLocale() as (typeof config.locales)[number];
     const finalLocale = locale || defaultLocale;
 
     return (
       <ServerLink
-        href={compileLocalizedPathname<Locales, Pathname>({
+        href={compileLocalizedPathname<AppLocales, Pathname>({
           locale: finalLocale,
           // @ts-expect-error -- This is ok
           pathname: href,
           // @ts-expect-error -- This is ok
           params: typeof href === 'object' ? href.params : undefined,
-          pathnames
+          pathnames: config.pathnames
         })}
         locale={locale}
-        localePrefix={localePrefix}
+        localePrefix={config.localePrefix}
         {...rest}
       />
     );
   }
 
-  function redirect<Pathname extends keyof PathnamesConfig>(
+  function redirect<Pathname extends keyof AppPathnames>(
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof serverRedirect>
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverRedirect({localePrefix, pathname}, ...args);
+    return serverRedirect(
+      {localePrefix: config.localePrefix, pathname},
+      ...args
+    );
   }
 
-  function permanentRedirect<Pathname extends keyof PathnamesConfig>(
+  function permanentRedirect<Pathname extends keyof AppPathnames>(
     href: HrefOrHrefWithParams<Pathname>,
     ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
   ) {
     const locale = getRequestLocale();
     const pathname = getPathname({href, locale});
-    return serverPermanentRedirect({localePrefix, pathname}, ...args);
+    return serverPermanentRedirect(
+      {localePrefix: config.localePrefix, pathname},
+      ...args
+    );
   }
 
   function getPathname({
     href,
     locale
   }: {
-    locale: Locales[number];
-    href: HrefOrHrefWithParams<keyof PathnamesConfig>;
+    locale: AppLocales[number];
+    href: HrefOrHrefWithParams<keyof AppPathnames>;
   }) {
     return compileLocalizedPathname({
       ...normalizeNameOrNameWithParams(href),
       locale,
-      pathnames
+      pathnames: config.pathnames
     });
   }
 

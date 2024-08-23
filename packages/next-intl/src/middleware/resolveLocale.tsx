@@ -1,22 +1,19 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
+import {
+  Locales,
+  Pathnames,
+  DomainsConfig,
+  DomainConfig
+} from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {AllLocales} from '../shared/types';
-import {
-  DomainConfig,
-  MiddlewareConfigWithDefaults
-} from './NextIntlMiddlewareConfig';
-import {
-  findCaseInsensitiveLocale,
-  getFirstPathnameSegment,
-  getHost,
-  isLocaleSupportedOnDomain
-} from './utils';
+import {MiddlewareRoutingConfig} from './config';
+import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
-function findDomainFromHost<Locales extends AllLocales>(
+function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
-  domains: Array<DomainConfig<Locales>>
+  domains: DomainsConfig<AppLocales>
 ) {
   let host = getHost(requestHeaders);
 
@@ -30,9 +27,14 @@ function findDomainFromHost<Locales extends AllLocales>(
   return undefined;
 }
 
-export function getAcceptLanguageLocale<Locales extends AllLocales>(
+function orderLocales<AppLocales extends Locales>(locales: AppLocales) {
+  // Workaround for https://github.com/formatjs/formatjs/issues/4469
+  return locales.slice().sort((a, b) => b.length - a.length);
+}
+
+export function getAcceptLanguageLocale<AppLocales extends Locales>(
   requestHeaders: Headers,
-  locales: Locales,
+  locales: AppLocales,
   defaultLocale: string
 ) {
   let locale;
@@ -43,9 +45,11 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
     }
   }).languages();
   try {
+    const orderedLocales = orderLocales(locales);
+
     locale = match(
       languages,
-      locales as unknown as Array<string>,
+      orderedLocales as unknown as Array<string>,
       defaultLocale
     );
   } catch (e) {
@@ -55,17 +59,9 @@ export function getAcceptLanguageLocale<Locales extends AllLocales>(
   return locale;
 }
 
-function getLocaleFromPrefix<Locales extends AllLocales>(
-  pathname: string,
-  locales: Locales
-) {
-  const pathLocaleCandidate = getFirstPathnameSegment(pathname);
-  return findCaseInsensitiveLocale(pathLocaleCandidate, locales);
-}
-
-function getLocaleFromCookie<Locales extends AllLocales>(
+function getLocaleFromCookie<AppLocales extends Locales>(
   requestCookies: RequestCookies,
-  locales: Locales
+  locales: AppLocales
 ) {
   if (requestCookies.has(COOKIE_LOCALE_NAME)) {
     const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
@@ -75,14 +71,18 @@ function getLocaleFromCookie<Locales extends AllLocales>(
   }
 }
 
-function resolveLocaleFromPrefix<Locales extends AllLocales>(
+function resolveLocaleFromPrefix<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(
   {
     defaultLocale,
     localeDetection,
+    localePrefix,
     locales
   }: Pick<
-    MiddlewareConfigWithDefaults<Locales>,
-    'defaultLocale' | 'localeDetection' | 'locales'
+    MiddlewareRoutingConfig<AppLocales, AppPathnames>,
+    'defaultLocale' | 'localeDetection' | 'locales' | 'localePrefix'
   >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
@@ -92,7 +92,7 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    locale = getLocaleFromPrefix(pathname, locales);
+    locale = getPathnameMatch(pathname, locales, localePrefix)?.locale;
   }
 
   // Prio 2: Use existing cookie
@@ -113,8 +113,11 @@ function resolveLocaleFromPrefix<Locales extends AllLocales>(
   return locale;
 }
 
-function resolveLocaleFromDomain<Locales extends AllLocales>(
-  config: MiddlewareConfigWithDefaults<Locales>,
+function resolveLocaleFromDomain<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(
+  config: MiddlewareRoutingConfig<AppLocales, AppPathnames>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -137,7 +140,11 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
 
   // Prio 1: Use route prefix
   if (pathname) {
-    const prefixLocale = getLocaleFromPrefix(pathname, config.locales);
+    const prefixLocale = getPathnameMatch(
+      pathname,
+      config.locales,
+      config.localePrefix
+    )?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
         locale = prefixLocale;
@@ -181,12 +188,15 @@ function resolveLocaleFromDomain<Locales extends AllLocales>(
   return {locale, domain};
 }
 
-export default function resolveLocale<Locales extends AllLocales>(
-  config: MiddlewareConfigWithDefaults<Locales>,
+export default function resolveLocale<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(
+  config: MiddlewareRoutingConfig<AppLocales, AppPathnames>,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
-): {locale: Locales[number]; domain?: DomainConfig<Locales>} {
+): {locale: AppLocales[number]; domain?: DomainConfig<AppLocales>} {
   if (config.domains) {
     return resolveLocaleFromDomain(
       config,

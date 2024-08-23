@@ -1,0 +1,28 @@
+{
+  "About": {
+    "title": "Über uns"
+  },
+  "App": {
+    "title": "Startseite"
+  },
+  "AppNavigation": {
+    "home": "Start",
+    "profile": "Profil"
+  },
+  "Index": {
+    "title": "Start"
+  },
+  "Login": {
+    "label": "Anmelden →"
+  },
+  "Logout": {
+    "label": "Abmelden →"
+  },
+  "PublicNavigation": {
+    "about": "Über uns",
+    "home": "Start"
+  },
+  "Profile": {
+    "title": "Profil"
+  }
+}

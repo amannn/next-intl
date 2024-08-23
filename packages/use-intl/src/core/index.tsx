@@ -16,3 +16,5 @@ export type {default as MessageKeys} from './utils/MessageKeys';
 export type {default as NamespaceKeys} from './utils/NamespaceKeys';
 export type {default as NestedKeyOf} from './utils/NestedKeyOf';
 export type {default as NestedValueOf} from './utils/NestedValueOf';
+export {createIntlFormatters as _createIntlFormatters} from './formatters';
+export {createCache as _createCache} from './formatters';

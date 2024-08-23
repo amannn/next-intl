@@ -14,9 +14,13 @@ This is the easiest way to get started with `next-intl` and requires no changes 
 
 ## Getting started
 
-If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router.
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router and run:
 
-Next, run `npm install next-intl` and create the following file structure:
+```sh
+npm install next-intl
+```
+
+Now, we're going to create the following file structure:
 
 ```
 ├── messages (1)
@@ -30,7 +34,7 @@ Next, run `npm install next-intl` and create the following file structure:
         └── page.tsx (5)
 ```
 
-**Now, set up the files as follows:**
+**Let's set up the files:**
 
 <Steps>
 
@@ -42,7 +46,7 @@ The simplest option is to add JSON files in your project based on locales—e.g.
 
 ```json filename="messages/en.json"
 {
-  "Index": {
+  "HomePage": {
     "title": "Hello world!"
   }
 }
@@ -88,7 +92,6 @@ module.exports = withNextIntl(nextConfig);
 `next-intl` creates a request-scoped configuration object that can be used to provide messages and other options based on the user's locale for usage in Server Components.
 
 ```tsx filename="src/i18n.ts"
-import {NextIntlClientProvider} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
@@ -108,7 +111,7 @@ export default getRequestConfig(async () => {
 
 This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
-If you prefer to move this file somewhere else, you can provide an optional path to the plugin:
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
 ```js filename="next.config.mjs"
 const withNextIntl = createNextIntlPlugin(
@@ -159,8 +162,8 @@ Use translations in your page components or anywhere else!
 ```tsx filename="app/page.tsx"
 import {useTranslations} from 'next-intl';
 
-export default function Index() {
-  const t = useTranslations('Index');
+export default function HomePage() {
+  const t = useTranslations('HomePage');
   return <h1>{t('title')}</h1>;
 }
 ```
@@ -169,9 +172,12 @@ export default function Index() {
 
 That's all it takes!
 
-In case you ran into an issue, have a look at this working example: [App Router (without i18n routing)](/examples#app-router-without-i18n-routing).
+In case you ran into an issue, have a look at a working example:
 
-<Callout>
+- [App Router without i18n routing](/examples#app-router-without-i18n-routing)
+- [App Router with single locale](/examples#example-app-router-single-locale)
+
+<Callout className="mt-8">
 
 **Next steps:**
 

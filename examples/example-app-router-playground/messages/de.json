@@ -1,60 +1,65 @@
 {
-  "Index": {
-    "title": "Start",
-    "description": "Das ist die Startseite.",
-    "rich": "Das ist <important>formatierter</important> Test.",
-    "globalDefaults": "<highlight>{globalString}</highlight>"
+  "ApiRoute": {
+    "hello": "Hallo {name}!"
   },
   "AsyncComponent": {
     "basic": "AsyncComponent",
-    "rich": "This is a <important>rich</important> text.",
-    "markup": "Markup with <b>{globalString}</b>"
-  },
-  "LocaleLayout": {
-    "title": "next-intl Beispiel",
-    "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann."
+    "markup": "Markup with <b>{globalString}</b>",
+    "rich": "This is a <important>rich</important> text."
   },
   "Client": {
-    "title": "Client",
-    "description": "Dise Seite wird auf der Client-Seite initialisiert."
-  },
-  "Nested": {
-    "title": "Verschachtelt",
-    "description": "Das ist eine verschachtelte Seite."
-  },
-  "Navigation": {
-    "home": "Start",
-    "client": "Client-Seite",
-    "nested": "Verschachtelte Seite",
-    "newsArticle": "News-Artikel #{articleId}"
-  },
-  "NewsArticle": {
-    "title": "News-Artikel #{articleId}"
-  },
-  "JustIn": {
-    "title": "Gerade eingetroffen"
-  },
-  "NotFound": {
-    "title": "Diese Seite wurde nicht gefunden (404)"
-  },
-  "LocaleSwitcher": {
-    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
-  },
-  "Counter": {
-    "count": "Aktuell:",
-    "increment": "Erhöhen"
+    "description": "Dise Seite wird auf der Client-Seite initialisiert.",
+    "title": "Client"
   },
   "ClientCounter": {
     "count": "Aktuell: {count}",
     "increment": "Erhöhen"
   },
-  "ApiRoute": {
-    "hello": "Hallo {name}!"
+  "Counter": {
+    "count": "Aktuell:",
+    "increment": "Erhöhen"
+  },
+  "Index": {
+    "description": "Das ist die Startseite.",
+    "globalDefaults": "<highlight>{globalString}</highlight>",
+    "rich": "Das ist <important>formatierter</important> Test.",
+    "title": "Start"
+  },
+  "JustIn": {
+    "title": "Gerade eingetroffen"
+  },
+  "LocaleLayout": {
+    "description": "Das ist ein Beispiel, wie next-intl im `app`-Verzeichnis verwendet werden kann.",
+    "title": "next-intl Beispiel"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Zu {locale, select, de {Deutsch} en {Englisch} other {Unbekannt}} wechseln"
+  },
+  "Navigation": {
+    "about": "Über (MDX)",
+    "client": "Client-Seite",
+    "home": "Start",
+    "nested": "Verschachtelte Seite",
+    "newsArticle": "News-Artikel #{articleId}"
+  },
+  "Nested": {
+    "description": "Das ist eine verschachtelte Seite.",
+    "title": "Verschachtelt"
+  },
+  "NewsArticle": {
+    "title": "News-Artikel #{articleId}"
+  },
+  "NotFound": {
+    "title": "Diese Seite wurde nicht gefunden (404)"
   },
   "OpenGraph": {
     "title": "next-intl Beispiel"
   },
   "ServerActions": {
     "item": "Element #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Geben Sie eine Aufgabe ein",
+    "taskEmpty": "Bitte geben sie eine Aufgabe ein."
   }
 }

@@ -14,11 +14,12 @@ export default function useTranslationsImpl<
   NestedKey extends NestedKeyOf<Messages>
 >(allMessages: Messages, namespace: NestedKey, namespacePrefix: string) {
   const {
+    cache,
     defaultTranslationValues,
     formats: globalFormats,
+    formatters,
     getMessageFallback,
     locale,
-    messageFormatCache,
     onError,
     timeZone
   } = useIntlContext();
@@ -43,7 +44,8 @@ export default function useTranslationsImpl<
   const translate = useMemo(
     () =>
       createBaseTranslator({
-        messageFormatCache,
+        cache,
+        formatters,
         getMessageFallback,
         messages: allMessages,
         defaultTranslationValues,
@@ -54,12 +56,13 @@ export default function useTranslationsImpl<
         timeZone
       }),
     [
-      messageFormatCache,
+      cache,
+      formatters,
       getMessageFallback,
       allMessages,
+      defaultTranslationValues,
       namespace,
       onError,
-      defaultTranslationValues,
       globalFormats,
       locale,
       timeZone

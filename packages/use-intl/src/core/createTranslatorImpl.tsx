@@ -1,7 +1,7 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
 import {InitializedIntlConfig} from './IntlConfig';
-import MessageFormatCache from './MessageFormatCache';
 import createBaseTranslator from './createBaseTranslator';
+import {Formatters, IntlCache} from './formatters';
 import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
 
@@ -11,20 +11,15 @@ export type CreateTranslatorImplProps<Messages> = Omit<
 > & {
   namespace: string;
   messages: Messages;
-  messageFormatCache?: MessageFormatCache;
+  formatters: Formatters;
+  cache: IntlCache;
 };
 
 export default function createTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
 >(
-  {
-    getMessageFallback,
-    messages,
-    namespace,
-    onError,
-    ...rest
-  }: CreateTranslatorImplProps<Messages>,
+  {messages, namespace, ...rest}: CreateTranslatorImplProps<Messages>,
   namespacePrefix: string
 ) {
   // The `namespacePrefix` is part of the type system.
@@ -34,8 +29,6 @@ export default function createTranslatorImpl<
 
   return createBaseTranslator<Messages, NestedKey>({
     ...rest,
-    onError,
-    getMessageFallback,
     messages,
     namespace
   });

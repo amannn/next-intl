@@ -13,8 +13,8 @@ import {useTranslations} from 'next-intl';
 // Since this component doesn't use any interactive features
 // from React, it can be run as a Server Component.
 
-export default function Index() {
-  const t = useTranslations('Index');
+export default function HomePage() {
+  const t = useTranslations('HomePage');
   return <h1>{t('title')}</h1>;
 }
 ```
@@ -58,23 +58,12 @@ export default async function ProfilePage() {
 
 These functions are available:
 
-```tsx
-import {
-  getTranslations,
-  getFormatter,
-  getNow,
-  getTimeZone,
-  getMessages,
-  getLocale
-} from 'next-intl/server';
-
-const t = await getTranslations('ProfilePage');
-const format = await getFormatter();
-const now = await getNow();
-const timeZone = await getTimeZone();
-const messages = await getMessages();
-const locale = await getLocale();
-```
+- `getTranslations`
+- `getFormatter`
+- `getNow`
+- `getTimeZone`
+- `getMessages`
+- `getLocale`
 
 ### Non-async components [#shared-components]
 
@@ -236,7 +225,7 @@ To keep internationalization on the server side, it can be helpful to structure 
 ```tsx filename="app/register/page.tsx"
 import {useTranslations} from 'next-intl';
 
-// A Client Component, so that `useFormState` can be used
+// A Client Component, so that `useActionState` can be used
 // to potentially display errors received after submission.
 import RegisterForm from './RegisterForm';
 
@@ -379,35 +368,6 @@ The component accepts the following props that are not serializable:
 2. [`getMessageFallback`](/docs/usage/configuration#error-handling)
 3. Rich text elements for [`defaultTranslationValues`](/docs/usage/configuration#default-translation-values)
 
-To configure these, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props:
+To configure these, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props.
 
-```tsx filename="MyCustomNextIntlClientProvider.tsx"
-'use client';
-
-import {NextIntlClientProvider} from 'next-intl';
-
-export default function MyCustomNextIntlClientProvider({
-  locale,
-  timeZone,
-  now,
-  ...rest
-}) {
-  return (
-    <NextIntlClientProvider
-      // Define non-serializable props here
-      defaultTranslationValues={{
-        i: (text) => <i>{text}</i>
-      }}
-      // Make sure to forward these props to avoid markup mismatches
-      locale={locale}
-      timeZone={timeZone}
-      now={now}
-      {...props}
-    />
-  );
-}
-```
-
-By doing this, your custom provider will already be part of the client-side bundle and can therefore define and pass functions as props.
-
-**Important:** Be sure to pass explicit `locale`, `formats`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since the props aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.
+See: [How can I provide non-serializable props like `onError` to `NextIntlClientProvider`?](/docs/usage/configuration#nextintlclientprovider-non-serializable-props)

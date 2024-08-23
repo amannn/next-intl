@@ -1,4 +1,5 @@
 import {test as it, expect, Page, BrowserContext} from '@playwright/test';
+import getAlternateLinks from './getAlternateLinks';
 
 const describe = it.describe;
 
@@ -541,22 +542,14 @@ it('keeps search params for redirects', async ({browser}) => {
 
 it('sets alternate links', async ({request}) => {
   async function getLinks(pathname: string) {
-    return (
-      (await request.get(pathname))
-        .headers()
-        .link.split(', ')
-        // On CI, Playwright uses a different host somehow
-        .map((cur) => cur.replace(/0\.0\.0\.0/g, 'localhost'))
-        // Normalize ports
-        .map((cur) => cur.replace(/localhost:\d{4}/g, 'localhost:3000'))
-    );
+    return getAlternateLinks(await request.get(pathname));
   }
 
   for (const pathname of ['/', '/en', '/de']) {
     expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/es>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
       '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
     ]);
@@ -566,7 +559,7 @@ it('sets alternate links', async ({request}) => {
     expect(await getLinks(pathname)).toEqual([
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
       '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/es/anidada>; rel="alternate"; hreflang="es"',
+      '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
       '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
       '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
     ]);
@@ -677,6 +670,43 @@ it('can use async APIs in async components', async ({page}) => {
   page
     .getByTestId('AsyncComponentWithoutNamespaceAndLocale')
     .getByText('AsyncComponent');
+});
+
+it('supports custom prefixes', async ({page}) => {
+  await page.goto('/spain');
+  await expect(page).toHaveURL('/spain');
+  page.getByRole('heading', {name: 'Inicio'});
+
+  await page.goto('/spain/anidada');
+  await expect(page).toHaveURL('/spain/anidada');
+  page.getByRole('heading', {name: 'Anidada'});
+});
+
+it('can use `getPahname` to define a canonical link', async ({page}) => {
+  async function getCanonicalPathname() {
+    const href = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    return new URL(href!).pathname;
+  }
+
+  await page.goto('/news/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/news/3');
+
+  await page.goto('/de/neuigkeiten/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
+});
+
+describe('server actions', () => {
+  it('can use `getTranslations` in server actions', async ({page}) => {
+    await page.goto('/actions');
+    page.getByPlaceholder('Enter a task').press('Enter');
+    await page.getByText('Please enter a task.').waitFor();
+
+    await page.goto('/de/actions');
+    page.getByPlaceholder('Geben Sie eine Aufgabe ein').press('Enter');
+    await page.getByText('Bitte geben sie eine Aufgabe ein.').waitFor();
+  });
 });
 
 describe('handling of foreign characters', () => {

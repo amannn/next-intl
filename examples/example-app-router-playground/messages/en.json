@@ -1,60 +1,65 @@
 {
-  "Index": {
-    "title": "Home",
-    "description": "This is the home page.",
-    "rich": "This is a <important>rich</important> text.",
-    "globalDefaults": "<highlight>{globalString}</highlight>"
+  "ApiRoute": {
+    "hello": "Hello {name}!"
   },
   "AsyncComponent": {
     "basic": "AsyncComponent",
-    "rich": "This is a <important>rich</important> text.",
-    "markup": "Markup with <b>{globalString}</b>"
-  },
-  "LocaleLayout": {
-    "title": "next-intl example",
-    "description": "This is an example of using next-intl in the `app` directory."
+    "markup": "Markup with <b>{globalString}</b>",
+    "rich": "This is a <important>rich</important> text."
   },
   "Client": {
-    "title": "Client",
-    "description": "This page hydrates on the client side."
-  },
-  "Nested": {
-    "title": "Nested",
-    "description": "This is a nested page."
-  },
-  "Navigation": {
-    "home": "Home",
-    "client": "Client page",
-    "nested": "Nested page",
-    "newsArticle": "News article #{articleId}"
-  },
-  "NewsArticle": {
-    "title": "News article #{articleId}"
-  },
-  "JustIn": {
-    "title": "Just in"
-  },
-  "NotFound": {
-    "title": "This page was not found (404)"
-  },
-  "LocaleSwitcher": {
-    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
-  },
-  "Counter": {
-    "count": "Current count:",
-    "increment": "Increment"
+    "description": "This page hydrates on the client side.",
+    "title": "Client"
   },
   "ClientCounter": {
     "count": "Current count: {count}",
     "increment": "Increment"
   },
-  "ApiRoute": {
-    "hello": "Hello {name}!"
+  "Counter": {
+    "count": "Current count:",
+    "increment": "Increment"
+  },
+  "Index": {
+    "description": "This is the home page.",
+    "globalDefaults": "<highlight>{globalString}</highlight>",
+    "rich": "This is a <important>rich</important> text.",
+    "title": "Home"
+  },
+  "JustIn": {
+    "title": "Just in"
+  },
+  "LocaleLayout": {
+    "description": "This is an example of using next-intl in the `app` directory.",
+    "title": "next-intl example"
+  },
+  "LocaleSwitcher": {
+    "switchLocale": "Switch to {locale, select, de {German} en {English} other {Unknown}}"
+  },
+  "Navigation": {
+    "about": "About (MDX)",
+    "client": "Client page",
+    "home": "Home",
+    "nested": "Nested page",
+    "newsArticle": "News article #{articleId}"
+  },
+  "Nested": {
+    "description": "This is a nested page.",
+    "title": "Nested"
+  },
+  "NewsArticle": {
+    "title": "News article #{articleId}"
+  },
+  "NotFound": {
+    "title": "This page was not found (404)"
   },
   "OpenGraph": {
     "title": "next-intl example"
   },
   "ServerActions": {
     "item": "Item #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Enter a task",
+    "taskEmpty": "Please enter a task."
   }
 }

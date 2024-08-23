@@ -1,16 +1,18 @@
 import React, {ComponentProps} from 'react';
+import {Locales} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import {
-  AllLocales,
-  LocalePrefix,
-  ParametersExceptFirst
-} from '../../shared/types';
+  SharedNavigationRoutingConfigInput,
+  receiveSharedNavigationRoutingConfig
+} from '../shared/config';
 import ServerLink from './ServerLink';
-import serverPermanentRedirect from './serverPermanentRedirect';
-import serverRedirect from './serverRedirect';
+import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
-  Locales extends AllLocales
->(opts?: {locales?: Locales; localePrefix?: LocalePrefix}) {
+  AppLocales extends Locales
+>(input?: SharedNavigationRoutingConfigInput<AppLocales>) {
+  const config = receiveSharedNavigationRoutingConfig(input);
+
   function notSupported(hookName: string) {
     return () => {
       throw new Error(
@@ -19,22 +21,35 @@ export default function createSharedPathnamesNavigation<
     };
   }
 
-  function Link(props: ComponentProps<typeof ServerLink<Locales>>) {
-    return <ServerLink<Locales> localePrefix={opts?.localePrefix} {...props} />;
+  function Link(
+    props: Omit<
+      ComponentProps<typeof ServerLink<AppLocales>>,
+      'localePrefix' | 'locales'
+    >
+  ) {
+    return (
+      <ServerLink<AppLocales> localePrefix={config.localePrefix} {...props} />
+    );
   }
 
   function redirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof serverRedirect>
   ) {
-    return serverRedirect({...opts, pathname}, ...args);
+    return serverRedirect(
+      {pathname, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
   function permanentRedirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
   ) {
-    return serverPermanentRedirect({...opts, pathname}, ...args);
+    return serverPermanentRedirect(
+      {pathname, localePrefix: config.localePrefix},
+      ...args
+    );
   }
 
   return {

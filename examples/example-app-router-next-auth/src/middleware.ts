@@ -1,6 +1,6 @@
 import {NextRequest} from 'next/server';
 import {withAuth} from 'next-auth/middleware';
-import createIntlMiddleware from 'next-intl/middleware';
+import createMiddleware from 'next-intl/middleware';
 import {locales} from './navigation';
 
 const publicPages = [
@@ -9,7 +9,7 @@ const publicPages = [
   // (/secret requires auth)
 ];
 
-const intlMiddleware = createIntlMiddleware({
+const intlMiddleware = createMiddleware({
   locales,
   localePrefix: 'as-needed',
   defaultLocale: 'en'

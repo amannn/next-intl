@@ -9,7 +9,7 @@ While `next-intl` is primarily intended to be used in Next.js apps, the core is 
 This core library contains most features of `next-intl`, but lacks the following Next.js-specific features:
 
 1. [Routing APIs](/docs/routing)
-2. [Awaitable APIs for the Metadata API and Route Handlers](/docs/environments/metadata-route-handlers)
+2. [Awaitable APIs for Server Actions, Metadata and Route Handlers](/docs/environments/actions-metadata-route-handlers)
 3. [Server Components integration](/docs/environments/server-client-components) along with `i18n.ts`
 
 In case Server Components establish themselves in React apps outside of Next.js, the support for Server Components might be moved to the core library in the future.
@@ -26,7 +26,7 @@ This allows you to use the same APIs that you know from `next-intl` in other env
 2. React Native ([example](/examples#react-native))
 3. Remix ([example](/examples#remix))
 4. Testing environments like Jest ([example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/Navigation.spec.tsx))
-5. Storybook (by using a [global decorator](https://storybook.js.org/docs/writing-stories/decorators#global-decorators))
+5. [Storybook](/docs/workflows/storybook)
 
 **Basic usage:**
 
@@ -68,7 +68,7 @@ These APIs receive all relevant configuration directly and don't rely on global 
 You can use these APIs as follows:
 
 ```tsx
-import {createTranslator, createFormatter} from 'use-intl';
+import {createTranslator, createFormatter} from 'use-intl/core';
 
 const messages = {
   basic: 'Hello {name}!',
