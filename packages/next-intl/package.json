@@ -86,6 +86,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "negotiator": "^0.6.3",
     "use-intl": "workspace:^"
   },

@@ -64,6 +64,7 @@
   ],
   "dependencies": {
     "@formatjs/fast-memoize": "^2.2.0",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {

@@ -12,7 +12,10 @@ export type IntlCache = {
   displayNames: Record<string, Intl.DisplayNames>;
 };
 
-export function createCache(): IntlCache {
+/* eslint-disable @typescript-eslint/no-unused-vars -- See cache busting comment in `IntlProvider.tsx` */
+// @ts-expect-error
+export function createCache(locale?: string): IntlCache {
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   return {
     dateTime: {},
     number: {},

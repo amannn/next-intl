@@ -26,8 +26,7 @@ export default function IntlProvider({
   // The formatter cache is released when the locale changes. For
   // long-running apps with a persistent `IntlProvider` at the root,
   // this can reduce the memory footprint (e.g. in React Native).
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const cache = useMemo(() => createCache(), [locale]);
+  const cache = useMemo(() => createCache(locale), [locale]);
   const formatters: Formatters = useMemo(
     () => createIntlFormatters(cache),
     [cache]
