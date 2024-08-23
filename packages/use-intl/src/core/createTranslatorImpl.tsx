@@ -1,7 +1,7 @@
 import AbstractIntlMessages from './AbstractIntlMessages';
 import {InitializedIntlConfig} from './IntlConfig';
 import createBaseTranslator from './createBaseTranslator';
-import {Formatters} from './formatters';
+import {Formatters, IntlCache} from './formatters';
 import resolveNamespace from './resolveNamespace';
 import NestedKeyOf from './utils/NestedKeyOf';
 
@@ -12,6 +12,7 @@ export type CreateTranslatorImplProps<Messages> = Omit<
   namespace: string;
   messages: Messages;
   formatters: Formatters;
+  cache: IntlCache;
 };
 
 export default function createTranslatorImpl<

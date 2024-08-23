@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
-    "@size-limit/preset-big-lib": "^8.2.6",
+    "@size-limit/preset-big-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
@@ -83,16 +83,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rollup": "^4.18.0",
-    "size-limit": "^8.2.6",
+    "size-limit": "^11.1.4",
     "tinyspy": "^3.0.0",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },
-  "prettier": "../../.prettierrc.json",
-  "size-limit": [
-    {
-      "path": "dist/production/index.js",
-      "limit": "15.545 kB"
-    }
-  ]
+  "prettier": "../../.prettierrc.json"
 }
