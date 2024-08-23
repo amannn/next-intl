@@ -12,8 +12,13 @@ const isServer = typeof window === 'undefined';
 export default function useTranslationsImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
->(allMessages: Messages, namespace: NestedKey, namespacePrefix: string) {
+>(
+  allMessagesPrefixed: Messages,
+  namespacePrefixed: NestedKey,
+  namespacePrefix: string
+) {
   const {
+    cache,
     defaultTranslationValues,
     formats: globalFormats,
     formatters,
@@ -25,10 +30,14 @@ export default function useTranslationsImpl<
 
   // The `namespacePrefix` is part of the type system.
   // See the comment in the hook invocation.
-  allMessages = allMessages[namespacePrefix] as Messages;
-  namespace = resolveNamespace(namespace, namespacePrefix) as NestedKey;
+  const allMessages = allMessagesPrefixed[namespacePrefix] as Messages;
+  const namespace = resolveNamespace(
+    namespacePrefixed,
+    namespacePrefix
+  ) as NestedKey;
 
   if (!timeZone && !hasWarnedForMissingTimezone && isServer) {
+    // eslint-disable-next-line react-compiler/react-compiler
     hasWarnedForMissingTimezone = true;
     onError(
       new IntlError(
@@ -43,6 +52,7 @@ export default function useTranslationsImpl<
   const translate = useMemo(
     () =>
       createBaseTranslator({
+        cache,
         formatters,
         getMessageFallback,
         messages: allMessages,
@@ -54,6 +64,7 @@ export default function useTranslationsImpl<
         timeZone
       }),
     [
+      cache,
       formatters,
       getMessageFallback,
       allMessages,

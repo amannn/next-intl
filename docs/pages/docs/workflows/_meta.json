@@ -2,5 +2,6 @@
   "typescript": "TypeScript",
   "localization-management": "Localization management with Crowdin",
   "vscode-integration": "VSCode integration",
-  "linting": "Linting"
+  "linting": "ESLint",
+  "storybook": "Storybook"
 }

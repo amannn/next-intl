@@ -682,6 +682,21 @@ it('supports custom prefixes', async ({page}) => {
   page.getByRole('heading', {name: 'Anidada'});
 });
 
+it('can use `getPahname` to define a canonical link', async ({page}) => {
+  async function getCanonicalPathname() {
+    const href = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    return new URL(href!).pathname;
+  }
+
+  await page.goto('/news/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/news/3');
+
+  await page.goto('/de/neuigkeiten/3');
+  await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
+});
+
 describe('server actions', () => {
   it('can use `getTranslations` in server actions', async ({page}) => {
     await page.goto('/actions');

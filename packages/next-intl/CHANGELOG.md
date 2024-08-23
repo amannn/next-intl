@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.17.6 (2024-08-23)
+
+### Bug Fixes
+
+* Enable React Compiler ESLint plugin and fix relevant case ([#1281](https://github.com/amannn/next-intl/issues/1281)) ([606f4cc](https://github.com/amannn/next-intl/commit/606f4cc7bb821d685e3559dc674859fe13bb521a)), closes [/github.com/amannn/next-intl/pull/1281/files#diff-cc1535638f476a3c6bc0963bee2d96d868d36b3bfe54532f883bd68c8b6c7032](https://github.com/amannn//github.com/amannn/next-intl/pull/1281/files/issues/diff-cc1535638f476a3c6bc0963bee2d96d868d36b3bfe54532f883bd68c8b6c7032) [/github.com/amannn/next-intl/pull/1281/files#diff-77b8d7665f71fbfd5b235e11a40577295255c916dc2fa688c1538d3fa7aa85](https://github.com/amannn//github.com/amannn/next-intl/pull/1281/files/issues/diff-77b8d7665f71fbfd5b235e11a40577295255c916dc2fa688c1538d3fa7aa85) – by @amannn
+
+## 3.17.5 (2024-08-23)
+
+### Bug Fixes
+
+* Lazy init message formatter for improved tree shaking in case `useTranslations` is only used in Server Components ([#1279](https://github.com/amannn/next-intl/issues/1279)) ([9f1725c](https://github.com/amannn/next-intl/commit/9f1725c20b8c542e46f197c2afa2b066e1293a7a)) – by @amannn
+
+## 3.17.4 (2024-08-20)
+
+### Bug Fixes
+
+* Update `@formatjs/intl-localematcher` to latest version ([#1140](https://github.com/amannn/next-intl/issues/1140)) ([c217582](https://github.com/amannn/next-intl/commit/c217582cf47a3d0d65315e70eb9fd945efca7163)) – by @amannn
+
+## 3.17.3 (2024-08-14)
+
+### Bug Fixes
+
+* Handle optional catch-all segments in navigation APIs if no value is provided and handle the case if a dynamic value appears multiple times in a pathname ([#1259](https://github.com/amannn/next-intl/issues/1259)) ([58ef482](https://github.com/amannn/next-intl/commit/58ef482eda383fc03a552a4f34b00c7b3136a4af)), closes [#1236](https://github.com/amannn/next-intl/issues/1236) – by @amannn
+
+## 3.17.2 (2024-07-19)
+
+### Bug Fixes
+
+* Fix open redirect vulnerability for `localePrefix: 'as-necessary'` by sanitizing pathname in the middleware ([#1208](https://github.com/amannn/next-intl/issues/1208)) ([f42ac01](https://github.com/amannn/next-intl/commit/f42ac014c8a01124ab4eba46652a5224c5d7698e)), closes [#1207](https://github.com/amannn/next-intl/issues/1207) – by @hblee12294
+
 ## 3.17.1 (2024-07-15)
 
 ### Bug Fixes

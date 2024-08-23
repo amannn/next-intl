@@ -1,16 +1,26 @@
 import {memoize, Cache, strategies} from '@formatjs/fast-memoize';
 // eslint-disable-next-line import/no-named-as-default -- False positive
-import IntlMessageFormat from 'intl-messageformat';
+import type IntlMessageFormat from 'intl-messageformat';
 
-export function createIntlCache() {
+export type IntlCache = {
+  dateTime: Record<string, Intl.DateTimeFormat>;
+  number: Record<string, Intl.NumberFormat>;
+  message: Record<string, IntlMessageFormat>;
+  relativeTime: Record<string, Intl.RelativeTimeFormat>;
+  pluralRules: Record<string, Intl.PluralRules>;
+  list: Record<string, Intl.ListFormat>;
+  displayNames: Record<string, Intl.DisplayNames>;
+};
+
+export function createCache(): IntlCache {
   return {
-    dateTime: {} as Record<string, Intl.DateTimeFormat>,
-    number: {} as Record<string, Intl.NumberFormat>,
-    message: {} as Record<string, IntlMessageFormat>,
-    relativeTime: {} as Record<string, Intl.RelativeTimeFormat>,
-    pluralRules: {} as Record<string, Intl.PluralRules>,
-    list: {} as Record<string, Intl.ListFormat>,
-    displayNames: {} as Record<string, Intl.DisplayNames>
+    dateTime: {},
+    number: {},
+    message: {},
+    relativeTime: {},
+    pluralRules: {},
+    list: {},
+    displayNames: {}
   };
 }
 
@@ -31,7 +41,7 @@ function createMemoCache<Value>(
   };
 }
 
-function memoFn<Fn extends (...args: Array<any>) => any>(
+export function memoFn<Fn extends (...args: Array<any>) => any>(
   fn: Fn,
   cache: Record<string, ReturnType<Fn> | undefined>
 ) {
@@ -51,7 +61,7 @@ function memoConstructor<Fn extends new (...args: Array<any>) => unknown>(
   ) as (...args: ConstructorParameters<Fn>) => InstanceType<Fn>;
 }
 
-export function createFormatters(): {
+export type IntlFormatters = {
   getDateTimeFormat(
     ...args: ConstructorParameters<typeof Intl.DateTimeFormat>
   ): Intl.DateTimeFormat;
@@ -61,9 +71,6 @@ export function createFormatters(): {
   getPluralRules(
     ...args: ConstructorParameters<typeof Intl.PluralRules>
   ): Intl.PluralRules;
-  getMessageFormat(
-    ...args: ConstructorParameters<typeof IntlMessageFormat>
-  ): IntlMessageFormat;
   getRelativeTimeFormat(
     ...args: ConstructorParameters<typeof Intl.RelativeTimeFormat>
   ): Intl.RelativeTimeFormat;
@@ -73,9 +80,9 @@ export function createFormatters(): {
   getDisplayNames(
     ...args: ConstructorParameters<typeof Intl.DisplayNames>
   ): Intl.DisplayNames;
-} {
-  const cache = createIntlCache();
+};
 
+export function createIntlFormatters(cache: IntlCache): IntlFormatters {
   const getDateTimeFormat = memoConstructor(
     Intl.DateTimeFormat,
     cache.dateTime
@@ -91,28 +98,21 @@ export function createFormatters(): {
     Intl.DisplayNames,
     cache.displayNames
   );
-  const getMessageFormat = memoFn(
-    (...args: ConstructorParameters<typeof IntlMessageFormat>) =>
-      new IntlMessageFormat(args[0], args[1], args[2], {
-        formatters: {
-          getNumberFormat,
-          getDateTimeFormat,
-          getPluralRules
-        },
-        ...args[3]
-      }),
-    cache.message
-  );
 
   return {
     getDateTimeFormat,
     getNumberFormat,
     getPluralRules,
-    getMessageFormat,
     getRelativeTimeFormat,
     getListFormat,
     getDisplayNames
   };
 }
 
-export type Formatters = ReturnType<typeof createFormatters>;
+export type MessageFormatter = (
+  ...args: ConstructorParameters<typeof IntlMessageFormat>
+) => IntlMessageFormat;
+
+export type Formatters = IntlFormatters & {
+  getMessageFormat?: MessageFormatter;
+};

@@ -1,7 +1,11 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {Locales, Pathnames} from '../../routing/types';
-import {matchesPathname, getSortedPathnames} from '../../shared/utils';
+import {
+  matchesPathname,
+  getSortedPathnames,
+  normalizeTrailingSlash
+} from '../../shared/utils';
 import StrictParams from './StrictParams';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
@@ -112,16 +116,23 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
+        let regexp: string, replacer: string;
+
         if (Array.isArray(value)) {
-          compiled = compiled.replace(
-            new RegExp(`(\\[)?\\[...${key}\\](\\])?`, 'g'),
-            value.map((v) => String(v)).join('/')
-          );
+          regexp = `(\\[)?\\[...${key}\\](\\])?`;
+          replacer = value.map((v) => String(v)).join('/');
         } else {
-          compiled = compiled.replace(`[${key}]`, String(value));
+          regexp = `\\[${key}\\]`;
+          replacer = String(value);
         }
+
+        compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
       });
     }
+
+    // Clean up optional catch-all segments that were not replaced
+    compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
+    compiled = normalizeTrailingSlash(compiled);
 
     if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
       // Next.js throws anyway, therefore better provide a more helpful error message

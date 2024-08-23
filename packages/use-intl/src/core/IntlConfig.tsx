@@ -1,7 +1,7 @@
 import type AbstractIntlMessages from './AbstractIntlMessages';
-import Formats from './Formats';
-import IntlError from './IntlError';
-import TimeZone from './TimeZone';
+import type Formats from './Formats';
+import type IntlError from './IntlError';
+import type TimeZone from './TimeZone';
 import type {RichTranslationValues} from './TranslationValues';
 
 /**

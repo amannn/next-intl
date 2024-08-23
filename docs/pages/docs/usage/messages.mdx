@@ -178,7 +178,7 @@ const output = Object.entries(input).reduce(
 }
 ```
 
-This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or as before passing messages to `next-intl`.
+This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or before passing your messages to `next-intl`.
 
 If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
 

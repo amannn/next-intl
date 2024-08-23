@@ -13,7 +13,7 @@ describe('getAcceptLanguageLocale', () => {
     ).toBe('en');
   });
 
-  it('resolves a more generic locale to a specific one', () => {
+  it('resolves a locale with a different region to one that matches at least the language', () => {
     const requestHeaders = new Headers({
       'accept-language': 'en-GB;q=0.9'
     });
@@ -24,7 +24,8 @@ describe('getAcceptLanguageLocale', () => {
     ).toBe('en-US');
   });
 
-  it('resolves the most specific locale', () => {
+  it('resolves the most specific locale, even if it is defined after a more generic one', () => {
+    // Related to https://github.com/formatjs/formatjs/issues/4469
     const requestHeaders = new Headers({
       'accept-language': 'de-DE,de;q=0.9,en-US;q=0.8'
     });

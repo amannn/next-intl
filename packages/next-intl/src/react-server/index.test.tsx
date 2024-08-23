@@ -1,14 +1,14 @@
 import React from 'react';
 import {describe, expect, vi, it} from 'vitest';
 import {getTranslations} from '../server.react-server';
-import {renderToStream} from './utils';
+import {renderToStream} from './testUtils';
 import {
-  createTranslator,
   useFormatter,
   useLocale,
   useMessages,
   useNow,
-  useTranslations
+  useTranslations,
+  _createCache
 } from '.';
 
 vi.mock('react');
@@ -32,10 +32,9 @@ vi.mock('../../src/server/react-server/RequestLocale', () => ({
 
 vi.mock('use-intl/core', async (importActual) => {
   const actual: any = await importActual();
-  const {createTranslator: actualCreateTranslator} = actual;
   return {
     ...actual,
-    createTranslator: vi.fn(actualCreateTranslator)
+    _createCache: vi.fn(actual._createCache)
   };
 });
 
@@ -73,8 +72,7 @@ describe('performance', () => {
   });
 
   it('shares a formatter cache between `useTranslations` and `getTranslations`', async () => {
-    // First invocation
-    // (simulate React rendering)
+    // First invocation (simulate React rendering)
     try {
       useTranslations('Component');
     } catch (promiseOrError) {
@@ -89,12 +87,7 @@ describe('performance', () => {
     // Second invocation with a different namespace
     await getTranslations('Component2');
 
-    // Verify the cached formatters are shared
-    expect(vi.mocked(createTranslator).mock.calls[0][0]._formatters).toBe(
-      vi.mocked(createTranslator).mock.calls[1][0]._formatters
-    );
-    expect(vi.mocked(createTranslator).mock.calls.length).toBe(2);
-
-    vi.mocked(createTranslator).mockReset();
+    expect(vi.mocked(_createCache).mock.calls.length).toBe(1);
+    vi.mocked(_createCache).mockReset();
   });
 });
