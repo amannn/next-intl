@@ -11,7 +11,8 @@ export default function useLocale(): string {
   let locale;
 
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- False positive
+    // eslint-disable-next-line react-compiler/react-compiler
+    // eslint-disable-next-line react-hooks/rules-of-hooks, react-compiler/react-compiler -- False positive
     locale = useBaseLocale();
   } catch (error) {
     if (typeof params?.[LOCALE_SEGMENT_NAME] === 'string') {

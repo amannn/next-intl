@@ -187,6 +187,28 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('redirects requests for the default locale when prefixed at the root with encoded backslashes', () => {
+      middleware(createMockRequest('/en/%5Cexample.org'));
+      middleware(createMockRequest('/en/%5cexample.org'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/%5Cexample.org'
+      );
+      expect(MockedNextResponse.redirect.mock.calls[1][0].toString()).toBe(
+        'http://localhost:3000/%5Cexample.org'
+      );
+    });
+
+    it('redirects requests for the default locale when prefixed at the root with excess slashes', () => {
+      middleware(createMockRequest('/en///example.org'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/example.org'
+      );
+    });
+
     it('redirects requests for the default locale when prefixed at sub paths', () => {
       middleware(createMockRequest('/en/about'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();

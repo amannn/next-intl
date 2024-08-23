@@ -294,6 +294,7 @@ it('has a stable reference', () => {
     if (existingT) {
       expect(t).toBe(existingT);
     } else {
+      // eslint-disable-next-line react-compiler/react-compiler
       existingT = t;
     }
 
@@ -467,6 +468,7 @@ describe('t.markup', () => {
 
     function Component() {
       const t = useTranslations();
+      // eslint-disable-next-line react-compiler/react-compiler
       result = t.markup('message', {
         important: (children) => `<b>${children}</b>`
       });

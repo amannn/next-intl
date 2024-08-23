@@ -26,7 +26,7 @@ This allows you to use the same APIs that you know from `next-intl` in other env
 2. React Native ([example](/examples#react-native))
 3. Remix ([example](/examples#remix))
 4. Testing environments like Jest ([example](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/components/Navigation.spec.tsx))
-5. Storybook (by using a [global decorator](https://storybook.js.org/docs/writing-stories/decorators#global-decorators))
+5. [Storybook](/docs/workflows/storybook)
 
 **Basic usage:**
 
@@ -68,7 +68,7 @@ These APIs receive all relevant configuration directly and don't rely on global 
 You can use these APIs as follows:
 
 ```tsx
-import {createTranslator, createFormatter} from 'use-intl';
+import {createTranslator, createFormatter} from 'use-intl/core';
 
 const messages = {
   basic: 'Hello {name}!',

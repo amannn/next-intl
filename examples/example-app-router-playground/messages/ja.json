@@ -36,10 +36,11 @@
     "switchLocale": ""
   },
   "Navigation": {
-    "client": "",
-    "home": "",
-    "nested": "",
-    "newsArticle": ""
+    "about": "(MDX) について",
+    "client": "クライアントページ",
+    "home": "家",
+    "nested": "ネストされたページ",
+    "newsArticle": "ニュース記事"
   },
   "Nested": {
     "description": "これはネストされたページです。",
@@ -49,7 +50,7 @@
     "title": ""
   },
   "NotFound": {
-    "title": ""
+    "title": "このページは見つかりませんでした (404)"
   },
   "OpenGraph": {
     "title": ""

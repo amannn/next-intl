@@ -73,7 +73,7 @@ In contrast, the "best fit" algorithm compares the _distance_ between the user's
 
 ### Domain-based routing [#location-detection-domain]
 
-If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host`.
+If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
 
 The locale is detected based on these priorities:
 
@@ -100,6 +100,19 @@ The bestmatching domain is detected based on these priorities:
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
 3. Use an alternative domain where the available `locales` are restricted and the locale is supported
 4. Use an alternative domain that supports all locales
+
+</Details>
+
+<Details id="domain-local-testing">
+<summary>How can I locally test if my setup is working?</summary>
+
+Since the negotiated locale depends on the host of the request, you can test your setup by attaching a corresponding `x-forwarded-host` header. To achieve this in the browser, you can use a browser extension like [ModHeader in Chrome](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj) and add a setting like:
+
+```
+X-Forwarded-Host: example.com
+```
+
+With this, your domain config for this particular domain will be used.
 
 </Details>
 
@@ -143,7 +156,12 @@ Note that by setting this option, the middleware will no longer return a `set-co
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
-If you prefer to include these links yourself, e.g. because you're using a CMS to manage localized slugs of your pages, you can opt-out of this behavior by setting `alternateLinks` to `false`.
+However, there are cases where you may want to provide these links yourself:
+
+1. You have pages that are only available for certain locales
+2. You're using an external system like a CMS to manage localized slugs of your pages
+
+In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`.
 
 ```tsx filename="middleware.ts" {6}
 import createMiddleware from 'next-intl/middleware';
@@ -411,48 +429,68 @@ export const config = {
 };
 ```
 
+(based on `@clerk/nextjs@^5.0.0`)
+
 ### Example: Integrating with Supabase Authentication
 
 In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
 
-You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware as follows:
+You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware utils to accept a response object that's been created by the `next-intl` middleware instead of creating a new one:
 
-```tsx filename="middleware.ts"
-import {type NextRequest} from 'next/server';
-import {createServerClient, type CookieOptions} from '@supabase/ssr';
-import createMiddleware from 'next-intl/middleware';
-import {locales} from './config';
+```tsx filename="utils/supabase/middleware.ts"
+import {createServerClient} from '@supabase/ssr';
+import {NextResponse, type NextRequest} from 'next/server';
 
-const handleI18nRouting = createMiddleware({
-  locales,
-  defaultLocale: 'en'
-});
-
-export async function middleware(request: NextRequest) {
-  const response = handleI18nRouting(request);
-
+export async function updateSession(
+  request: NextRequest,
+  response: NextResponse
+) {
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({name, value, ...options});
-          response.cookies.set({name, value, ...options});
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({name, value: '', ...options});
-          response.cookies.set({name, value: '', ...options});
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({name, value}) =>
+            request.cookies.set(name, value)
+          );
+          cookiesToSet.forEach(({name, value, options}) =>
+            response.cookies.set(name, value, options)
+          );
         }
       }
     }
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: {user}
+  } = await supabase.auth.getUser();
+
   return response;
+}
+```
+
+Now, we can integrate the Supabase middleware with the one from `next-intl`:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {type NextRequest} from 'next/server';
+import {locales, defaultLocale} from '@/app/_config/config';
+import {updateSession} from '@/utils/supabase/middleware';
+
+const i18nMiddleware = createMiddleware({
+  locales,
+  defaultLocale
+});
+
+export async function middleware(request: NextRequest) {
+  const response = i18nMiddleware(request);
+
+  // A `response` can now be passed here
+  return await updateSession(request, response);
 }
 
 export const config = {
@@ -460,7 +498,7 @@ export const config = {
 };
 ```
 
-Note that cookies need to be set simultaneously for the request and the response.
+(based on `@supabase/ssr@^0.5.0`)
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
@@ -519,9 +557,11 @@ export const config = {
 };
 ```
 
+(based on `next-auth@^4.0.0`)
+
 <Callout>
 
-There's a working [example that combines `next-intl` with Auth.js](/examples#app-router-next-auth) on GitHub.
+Have a look at the [`next-intl` with NextAuth.js example](/examples#app-router-next-auth) to explore a working setup.
 
 </Callout>
 
