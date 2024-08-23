@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.17.5 (2024-08-23)
+
+### Bug Fixes
+
+* Lazy init message formatter for improved tree shaking in case `useTranslations` is only used in Server Components ([#1279](https://github.com/amannn/next-intl/issues/1279)) ([9f1725c](https://github.com/amannn/next-intl/commit/9f1725c20b8c542e46f197c2afa2b066e1293a7a)) – by @amannn
+
 ## 3.17.4 (2024-08-20)
 
 ### Bug Fixes
