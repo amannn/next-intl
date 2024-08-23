@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Enable React Compiler ESLint plugin and fix relevant case ([#1281](https://github.com/amannn/next-intl/issues/1281)) ([606f4cc](https://github.com/amannn/next-intl/commit/606f4cc7bb821d685e3559dc674859fe13bb521a)), closes [/github.com/amannn/next-intl/pull/1281/files#diff-cc1535638f476a3c6bc0963bee2d96d868d36b3bfe54532f883bd68c8b6c7032](https://github.com/amannn//github.com/amannn/next-intl/pull/1281/files/issues/diff-cc1535638f476a3c6bc0963bee2d96d868d36b3bfe54532f883bd68c8b6c7032) [/github.com/amannn/next-intl/pull/1281/files#diff-77b8d7665f71fbfd5b235e11a40577295255c916dc2fa688c1538d3fa7aa85](https://github.com/amannn//github.com/amannn/next-intl/pull/1281/files/issues/diff-77b8d7665f71fbfd5b235e11a40577295255c916dc2fa688c1538d3fa7aa85) – by @amannn
+* Enable React Compiler ESLint plugin and fix relevant case ([#1281](https://github.com/amannn/next-intl/issues/1281)) ([606f4cc](https://github.com/amannn/next-intl/commit/606f4cc7bb821d685e3559dc674859fe13bb521a)) – by @amannn
 
 ## 3.17.5 (2024-08-23)
 
