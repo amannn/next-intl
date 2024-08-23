@@ -3,7 +3,7 @@ import type {SizeLimitConfig} from 'size-limit';
 const config: SizeLimitConfig = [
   {
     path: 'dist/production/index.react-client.js',
-    limit: '14.084 KB'
+    limit: '14.095 KB'
   },
   {
     path: 'dist/production/index.react-server.js',

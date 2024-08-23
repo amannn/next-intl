@@ -79,6 +79,7 @@
     "date-fns": "^3.6.0",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "publint": "^0.2.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -5,7 +5,7 @@ const config: SizeLimitConfig = [
     name: './ (ESM)',
     import: '*',
     path: 'dist/esm/index.js',
-    limit: '14.065 kB'
+    limit: '14.085 kB'
   },
   {
     name: './ (no useTranslations, ESM)',
