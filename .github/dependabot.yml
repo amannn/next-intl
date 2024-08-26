@@ -6,6 +6,9 @@ updates:
     schedule:
       interval: 'monthly'
     commit-message:
-      prefix: chore(deps)
-      prefix-development: chore(deps)
+      prefix: chore
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
     open-pull-requests-limit: 1
