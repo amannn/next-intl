@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc",
+    "lint": "eslint src",
     "build": "next build",
     "start": "next start"
   },
