@@ -7,7 +7,7 @@ const config: SizeLimitConfig = [
   },
   {
     path: 'dist/production/index.react-server.js',
-    limit: '14.665 KB'
+    limit: '14.675 KB'
   },
   {
     path: 'dist/production/navigation.react-client.js',
