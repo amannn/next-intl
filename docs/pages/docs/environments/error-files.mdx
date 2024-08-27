@@ -164,7 +164,7 @@ export default function Error({error, reset}) {
 }
 ```
 
-Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-senstive and you want to avoid loading translation functionality from `next-intl` as part of this bundle, you can export a lazy reference from your `error` file:
+Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-sensitive and you want to avoid loading translation functionality from `next-intl` as part of this bundle, you can export a lazy reference from your `error` file:
 
 ```tsx filename="error.tsx"
 'use client';
