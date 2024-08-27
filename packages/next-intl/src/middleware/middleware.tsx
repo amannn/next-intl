@@ -26,7 +26,7 @@ import {
 
 export default function createMiddleware<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppPathnames extends Pathnames<AppLocales> | undefined
 >(
   routing: RoutingConfig<AppLocales, AppPathnames> & {
     /** @deprecated Should be passed as part of the second argument `options` now (see https://next-intl-docs.vercel.app/docs/routing/middleware#configuration) */
@@ -149,11 +149,12 @@ export default function createMiddleware<
         resolvedRouting.localePrefix.mode === 'as-needed');
 
     let response;
-    let internalTemplateName: keyof AppPathnames | undefined;
+    let internalTemplateName: keyof NonNullable<AppPathnames>;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
-    if (resolvedRouting.pathnames) {
+    if ('pathnames' in resolvedRouting && resolvedRouting.pathnames) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
+      // @ts-expect-error -- We've validated that `pathnames` is defined
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
         resolvedRouting.pathnames,
         unprefixedExternalPathname,
@@ -161,12 +162,12 @@ export default function createMiddleware<
       );
 
       if (internalTemplateName) {
+        // @ts-expect-error -- This is fine
         const pathnameConfig = resolvedRouting.pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
-            : // @ts-expect-error This is ok
-              pathnameConfig[locale];
+            : pathnameConfig[locale];
 
         if (matchesPathname(localeTemplate, unprefixedExternalPathname)) {
           unprefixedInternalPathname = formatTemplatePathname(
@@ -181,8 +182,7 @@ export default function createMiddleware<
             sourceTemplate =
               typeof pathnameConfig === 'string'
                 ? pathnameConfig
-                : // @ts-expect-error This is ok
-                  pathnameConfig[resolvedTemplateLocale];
+                : pathnameConfig[resolvedTemplateLocale];
           } else {
             // An internal pathname has matched that
             // doesn't have a localized pathname
@@ -306,8 +306,9 @@ export default function createMiddleware<
         getAlternateLinksHeaderValue({
           routing: resolvedRouting,
           localizedPathnames:
-            internalTemplateName != null
-              ? resolvedRouting.pathnames?.[internalTemplateName]
+            internalTemplateName! != null && 'pathnames' in resolvedRouting
+              ? // @ts-expect-error -- This is fine
+                resolvedRouting.pathnames?.[internalTemplateName]
               : undefined,
           request,
           resolvedLocale: locale

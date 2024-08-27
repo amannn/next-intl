@@ -16,7 +16,7 @@ import {
  */
 export default function getAlternateLinksHeaderValue<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppPathnames extends Pathnames<AppLocales> | undefined
 >({
   localizedPathnames,
   request,
@@ -114,6 +114,7 @@ export default function getAlternateLinksHeaderValue<
       }
 
       if (
+        // @ts-expect-error -- This is fine
         locale !== routing.defaultLocale ||
         routing.localePrefix.mode === 'always'
       ) {

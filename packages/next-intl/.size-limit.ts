@@ -27,11 +27,11 @@ const config: SizeLimitConfig = [
   },
   {
     path: 'dist/production/middleware.js',
-    limit: '9.535 KB'
+    limit: '9.595 KB'
   },
   {
     path: 'dist/production/routing.js',
-    limit: '0 KB'
+    limit: '1 KB'
   },
   {
     path: 'dist/esm/index.react-client.js',

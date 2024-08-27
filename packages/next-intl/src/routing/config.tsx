@@ -8,7 +8,7 @@ import {
 
 export type RoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppPathnames extends Pathnames<AppLocales> | undefined
 > = {
   /**
    * All available locales.
@@ -33,18 +33,24 @@ export type RoutingConfig<
    * @see https://next-intl-docs.vercel.app/docs/routing#domains
    **/
   domains?: DomainsConfig<AppLocales>;
-
-  /**
-   * A map of localized pathnames per locale.
-   * @see https://next-intl-docs.vercel.app/docs/routing#pathnames
-   **/
-  pathnames?: AppPathnames;
-};
+} & (undefined extends AppPathnames
+  ? // eslint-disable-next-line @typescript-eslint/ban-types -- The wizard himself, Matt Pocock, suggested this, so keep it a bit down ESLint
+    {}
+  : {
+      /**
+       * A map of localized pathnames per locale.
+       * @see https://next-intl-docs.vercel.app/docs/routing#pathnames
+       **/
+      pathnames: AppPathnames;
+    });
 
 export type RoutingConfigSharedNavigation<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
-> = Omit<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'> &
+> = Omit<
+  RoutingConfig<AppLocales, AppPathnames>,
+  'defaultLocale' | 'locales' | 'pathnames'
+> &
   Partial<
     Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'>
   >;
@@ -56,12 +62,13 @@ export type RoutingConfigLocalizedNavigation<
   RoutingConfig<AppLocales, AppPathnames>,
   'defaultLocale' | 'pathnames'
 > &
-  Partial<Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale'>> &
-  Required<Pick<RoutingConfig<AppLocales, AppPathnames>, 'pathnames'>>;
+  Partial<Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale'>> & {
+    pathnames: AppPathnames;
+  };
 
 export type ResolvedRoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppPathnames extends Pathnames<AppLocales> | undefined
 > = Omit<RoutingConfig<AppLocales, AppPathnames>, 'localePrefix'> & {
   localePrefix: LocalePrefixConfigVerbose<AppLocales>;
 };

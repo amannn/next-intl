@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {Pathnames} from '../routing';
+import {defineRouting, Pathnames} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocale';
 import {getLocalePrefix} from '../shared/utils';
 import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';
@@ -96,11 +96,13 @@ describe.each([
   'createLocalizedPathnamesNavigation ($env)',
   ({implementation: createLocalizedPathnamesNavigation}) => {
     describe("localePrefix: 'always'", () => {
-      const {Link} = createLocalizedPathnamesNavigation({
-        pathnames,
+      const routing = defineRouting({
         locales,
+        defaultLocale: 'en',
+        pathnames,
         localePrefix: 'always'
       });
+      const {Link} = createLocalizedPathnamesNavigation(routing);
       describe('Link', () => {
         it('renders a prefix for the default locale', () => {
           const markup = renderToString(<Link href="/about">About</Link>);

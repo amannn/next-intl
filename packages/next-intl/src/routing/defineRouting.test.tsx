@@ -18,7 +18,7 @@ describe('defaultLocale', () => {
 
 describe('pathnames', () => {
   it('accepts a `pathnames` config', () => {
-    defineRouting({
+    const routing = defineRouting({
       locales: ['en', 'de'],
       defaultLocale: 'en',
       pathnames: {
@@ -29,6 +29,9 @@ describe('pathnames', () => {
         }
       }
     });
+
+    // eslint-disable-next-line no-unused-expressions
+    routing.pathnames['/about'].en;
   });
 
   it('ensures all locales have a value', () => {

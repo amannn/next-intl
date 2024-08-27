@@ -8,7 +8,7 @@ import {
 } from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from '@/components/Navigation';
-import {locales} from '@/config';
+import {routing} from '@/i18n/routing';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({locale}));
+  return routing.locales.map((locale) => ({locale}));
 }
 
 export async function generateMetadata({
