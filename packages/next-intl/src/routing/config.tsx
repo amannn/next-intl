@@ -6,12 +6,6 @@ import {
   Pathnames
 } from './types';
 
-/**
- * Maintainer note: The config that is accepted by the middleware, the shared
- * and the localized pathnames navigation factory function is slightly
- * different. This type declares the shared base config that is accepted by all
- * of them. Properties that are different are declared in consuming types.
- */
 export type RoutingConfig<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
@@ -34,12 +28,36 @@ export type RoutingConfig<
    **/
   localePrefix?: LocalePrefix<AppLocales>;
 
-  /** Can be used to change the locale handling per domain. */
+  /**
+   * Can be used to change the locale handling per domain.
+   * @see https://next-intl-docs.vercel.app/docs/routing#domains
+   **/
   domains?: DomainsConfig<AppLocales>;
 
-  /** A map of localized pathnames per locale. */
+  /**
+   * A map of localized pathnames per locale.
+   * @see https://next-intl-docs.vercel.app/docs/routing#pathnames
+   **/
   pathnames?: AppPathnames;
 };
+
+export type RoutingConfigSharedNavigation<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = Omit<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'> &
+  Partial<
+    Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'>
+  >;
+
+export type RoutingConfigLocalizedNavigation<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = Omit<
+  RoutingConfig<AppLocales, AppPathnames>,
+  'defaultLocale' | 'pathnames'
+> &
+  Partial<Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale'>> &
+  Required<Pick<RoutingConfig<AppLocales, AppPathnames>, 'pathnames'>>;
 
 export type ResolvedRoutingConfig<
   AppLocales extends Locales,
@@ -50,10 +68,9 @@ export type ResolvedRoutingConfig<
 
 export function receiveRoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
->(
-  input: RoutingConfig<AppLocales, AppPathnames>
-): ResolvedRoutingConfig<AppLocales, AppPathnames> {
+  AppPathnames extends Pathnames<AppLocales>,
+  Config extends Partial<RoutingConfig<AppLocales, AppPathnames>>
+>(input: Config) {
   return {
     ...input,
     localePrefix: receiveLocalePrefixConfig(input.localePrefix)

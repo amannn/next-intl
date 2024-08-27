@@ -1,11 +1,11 @@
 import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
+import {
+  receiveRoutingConfig,
+  RoutingConfigLocalizedNavigation
+} from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
-import {
-  LocalizedNavigationRoutingConfigInput,
-  receiveLocalizedNavigationRoutingConfig
-} from '../shared/config';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -21,8 +21,8 @@ import useBaseRouter from './useBaseRouter';
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
->(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
-  const config = receiveLocalizedNavigationRoutingConfig(input);
+>(routing: RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>) {
+  const config = receiveRoutingConfig(routing);
 
   function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
