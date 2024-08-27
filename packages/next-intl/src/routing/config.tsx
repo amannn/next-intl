@@ -2,7 +2,8 @@ import {
   Locales,
   LocalePrefix,
   LocalePrefixConfigVerbose,
-  DomainsConfig
+  DomainsConfig,
+  Pathnames
 } from './types';
 
 /**
@@ -11,12 +12,53 @@ import {
  * different. This type declares the shared base config that is accepted by all
  * of them. Properties that are different are declared in consuming types.
  */
-export type RoutingBaseConfigInput<AppLocales extends Locales> = {
-  /** @see https://next-intl-docs.vercel.app/docs/routing#locale-prefix */
+export type RoutingConfig<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = {
+  /**
+   * All available locales.
+   * @see https://next-intl-docs.vercel.app/docs/routing
+   */
+  locales: AppLocales;
+
+  /**
+   * Used when no locale matches.
+   * @see https://next-intl-docs.vercel.app/docs/routing
+   */
+  defaultLocale: AppLocales[number];
+
+  /**
+   * Configures whether and which prefix is shown for a given locale.
+   * @see https://next-intl-docs.vercel.app/docs/routing#locale-prefix
+   **/
   localePrefix?: LocalePrefix<AppLocales>;
+
   /** Can be used to change the locale handling per domain. */
   domains?: DomainsConfig<AppLocales>;
+
+  /** A map of localized pathnames per locale. */
+  pathnames?: AppPathnames;
 };
+
+export type ResolvedRoutingConfig<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+> = Omit<RoutingConfig<AppLocales, AppPathnames>, 'localePrefix'> & {
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
+};
+
+export function receiveRoutingConfig<
+  AppLocales extends Locales,
+  AppPathnames extends Pathnames<AppLocales>
+>(
+  input: RoutingConfig<AppLocales, AppPathnames>
+): ResolvedRoutingConfig<AppLocales, AppPathnames> {
+  return {
+    ...input,
+    localePrefix: receiveLocalePrefixConfig(input.localePrefix)
+  };
+}
 
 export function receiveLocalePrefixConfig<AppLocales extends Locales>(
   localePrefix?: LocalePrefix<AppLocales>

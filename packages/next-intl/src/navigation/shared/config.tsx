@@ -1,7 +1,4 @@
-import {
-  RoutingBaseConfigInput,
-  receiveLocalePrefixConfig
-} from '../../routing/config';
+import {RoutingConfig, receiveLocalePrefixConfig} from '../../routing/config';
 import {
   Locales,
   LocalePrefixConfigVerbose,
@@ -13,7 +10,7 @@ import {
  */
 
 export type SharedNavigationRoutingConfigInput<AppLocales extends Locales> =
-  RoutingBaseConfigInput<AppLocales> & {
+  RoutingConfig<AppLocales> & {
     locales?: AppLocales;
   };
 
@@ -40,7 +37,7 @@ export function receiveSharedNavigationRoutingConfig<
 export type LocalizedNavigationRoutingConfigInput<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
-> = RoutingBaseConfigInput<AppLocales> & {
+> = RoutingConfig<AppLocales> & {
   locales: AppLocales;
 
   /** Maps internal pathnames to external ones which can be localized per locale. */

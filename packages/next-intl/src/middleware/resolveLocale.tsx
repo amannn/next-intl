@@ -1,6 +1,7 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
+import {ResolvedRoutingConfig} from '../routing/config';
 import {
   Locales,
   Pathnames,
@@ -8,7 +9,7 @@ import {
   DomainConfig
 } from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {MiddlewareRoutingConfig} from './config';
+import {ResolvedMiddlewareOptions} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<AppLocales extends Locales>(
@@ -77,13 +78,10 @@ function resolveLocaleFromPrefix<
 >(
   {
     defaultLocale,
-    localeDetection,
     localePrefix,
     locales
-  }: Pick<
-    MiddlewareRoutingConfig<AppLocales, AppPathnames>,
-    'defaultLocale' | 'localeDetection' | 'locales' | 'localePrefix'
-  >,
+  }: ResolvedRoutingConfig<AppLocales, AppPathnames>,
+  {localeDetection}: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -117,18 +115,21 @@ function resolveLocaleFromDomain<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
 >(
-  config: MiddlewareRoutingConfig<AppLocales, AppPathnames>,
+  routing: Omit<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'> &
+    Required<Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>>,
+  options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ) {
-  const domains = config.domains!;
+  const domains = routing.domains;
   const domain = findDomainFromHost(requestHeaders, domains);
 
   if (!domain) {
     return {
       locale: resolveLocaleFromPrefix(
-        config,
+        routing,
+        options,
         requestHeaders,
         requestCookies,
         pathname
@@ -142,8 +143,8 @@ function resolveLocaleFromDomain<
   if (pathname) {
     const prefixLocale = getPathnameMatch(
       pathname,
-      config.locales,
-      config.localePrefix
+      routing.locales,
+      routing.localePrefix
     )?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
@@ -156,8 +157,8 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && config.localeDetection && requestCookies) {
-    const cookieLocale = getLocaleFromCookie(requestCookies, config.locales);
+  if (!locale && options.localeDetection && requestCookies) {
+    const cookieLocale = getLocaleFromCookie(requestCookies, routing.locales);
     if (cookieLocale) {
       if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
         locale = cookieLocale;
@@ -168,10 +169,10 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && config.localeDetection && requestHeaders) {
+  if (!locale && options.localeDetection && requestHeaders) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
-      domain.locales || config.locales,
+      domain.locales || routing.locales,
       domain.defaultLocale
     );
 
@@ -192,14 +193,23 @@ export default function resolveLocale<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
 >(
-  config: MiddlewareRoutingConfig<AppLocales, AppPathnames>,
+  routing: ResolvedRoutingConfig<AppLocales, AppPathnames>,
+  options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ): {locale: AppLocales[number]; domain?: DomainConfig<AppLocales>} {
-  if (config.domains) {
+  if (routing.domains) {
+    const routingWithDomains = routing as Omit<
+      ResolvedRoutingConfig<AppLocales, AppPathnames>,
+      'domains'
+    > &
+      Required<
+        Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>
+      >;
     return resolveLocaleFromDomain(
-      config,
+      routingWithDomains,
+      options,
       requestHeaders,
       requestCookies,
       pathname
@@ -207,7 +217,8 @@ export default function resolveLocale<
   } else {
     return {
       locale: resolveLocaleFromPrefix(
-        config,
+        routing,
+        options,
         requestHeaders,
         requestCookies,
         pathname
