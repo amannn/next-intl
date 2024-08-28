@@ -309,12 +309,12 @@ Values are required to be alphanumeric and can contain underscores. All other ch
 Therefore, e.g. when you're mapping a locale to a human readable string, you should map the dash to an underscore first:
 
 ```tsx filename="en.json"
-"label": "{locale, select, en_GB {British English} en_US {American English} other {Unknown}"
+"label": "{locale, select, en_GB {British English} en_US {American English} other {Unknown}}"
 ```
 
 ```tsx
 const locale = 'en-GB';
-t('message', {locale: locale.replaceAll('-', '_')};
+t('message', {locale: locale.replaceAll('-', '_')});
 ```
 
 </Details>
@@ -437,7 +437,7 @@ Messages are always parsed and therefore e.g. for rich text formatting you need 
 
 ```json filename="en.json"
 {
-  "content": "<h1>Headline<h1><p>This is raw HTML</p>"
+  "content": "<h1>Headline</h1><p>This is raw HTML</p>"
 }
 ```
 
