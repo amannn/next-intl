@@ -23,8 +23,8 @@ npm install next-intl
 Now, we're going to create the following file structure:
 
 ```
-├── messages (1)
-│   ├── en.json
+├── messages
+│   ├── en.json (1)
 │   └── ...
 ├── next.config.mjs (2)
 └── src
@@ -37,6 +37,8 @@ Now, we're going to create the following file structure:
             ├── layout.tsx (6)
             └── page.tsx (7)
 ```
+
+In case you're migrating an existing app to `next-intl`, you'll typically move your existing pages into the `[locale]` folder as part of the setup.
 
 **Let's set up the files:**
 
@@ -114,7 +116,7 @@ export const routing = defineRouting({
   defaultLocale: 'en'
 });
 
-// Drop-in replacements for Next.js' navigation APIs
+// Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
 export const {Link, redirect, usePathname, useRouter} =
   createNavigation(routing);
