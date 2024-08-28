@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.18.0 (2024-08-28)
+
+### Features
+
+* Add `defineRouting` for easier i18n routing setup ([#1299](https://github.com/amannn/next-intl/issues/1299)) ([5ff6120](https://github.com/amannn/next-intl/commit/5ff6120d5601e69dbeebd225e7a1416f3701ddc2)) – by @amannn
+
 ## 3.17.6 (2024-08-23)
 
 ### Bug Fixes
