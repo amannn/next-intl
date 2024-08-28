@@ -1,15 +1,12 @@
 import {NextRequest, NextResponse} from 'next/server';
 import createMiddleware from 'next-intl/middleware';
-import {defaultLocale, locales} from './config';
+import {routing} from './navigation.public';
 
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAppRoute = pathname === '/app' || pathname.startsWith('/app/');
 
-  const intlMiddleware = createMiddleware({
-    locales,
-    defaultLocale
-  });
+  const intlMiddleware = createMiddleware(routing);
 
   if (isAppRoute) {
     // Add a hint that we can read in `i18n.ts`
