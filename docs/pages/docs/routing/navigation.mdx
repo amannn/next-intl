@@ -9,14 +9,14 @@ import Details from 'components/Details';
   routing](/docs/getting-started/app-router).
 </Callout>
 
-`next-intl` provides drop-in replacements for common Next.js navigation APIs that automatically handle the user locale and pathnames behind the scenes.
+`next-intl` provides lightweight wrappers around Next.js' navigation APIs like [`<Link />`](https://nextjs.org/docs/app/api-reference/components/link) and [`useRouter`](https://nextjs.org/docs/app/api-reference/functions/use-router) that automatically handle the user locale and pathnames behind the scenes.
 
-Depending on if you're using localized pathnames (i.e. the [`pathnames`](/docs/routing#pathnames) setting), you can pick from one of these functions to create the corresponding navigation APIs:
+Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, you can pick from one of these functions to create the corresponding navigation APIs:
 
 - `createSharedPathnamesNavigation`: Pathnames are shared across all locales (default)
 - `createLocalizedPathnamesNavigation`: Pathnames are provided per locale (use with `pathnames`)
 
-These functions are typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components and should receive a [`routing` configuration](/docs/routing) that is shared with the middleware.
+These functions are typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components and should receive a [`routing`](/docs/routing) configuration that is shared with the middleware.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
@@ -46,20 +46,22 @@ export const {Link, redirect, usePathname, useRouter} =
   });
 ```
 
-Note however that the `locales` argument for the middleware is mandatory. However, you can define the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
+Note however that the `locales` argument for the middleware is mandatory. However, you can provide the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
 
 </Details>
 
 </Tab>
 <Tab>
 
-```tsx filename="navigation.ts"
+```tsx filename="routing.ts"
 import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
 import {defineRouting} from 'next-intl/routing';
 
 const routing = defineRouting({
   // ...
-  pathnames: /* ... */
+  pathnames: {
+    // ...
+  }
 });
 
 export const {Link, redirect, usePathname, useRouter, getPathname} =
@@ -136,7 +138,7 @@ export default function NavigationLink({
 }
 ```
 
-```tsx filename="Navigation.tsx"
+```tsx
 <nav>
   <NavigationLink href="/">{t('home')}</NavigationLink>
   <NavigationLink href="/about">{t('about')}</NavigationLink>
@@ -233,7 +235,7 @@ export default function NavigationLink<
 }
 ```
 
-```tsx filename="Navigation.tsx"
+```tsx
 <nav>
   <NavigationLink href="/">{t('home')}</NavigationLink>
   <NavigationLink href="/about">{t('about')}</NavigationLink>
@@ -257,7 +259,7 @@ The navigation APIs are strictly typed and only allow routes specified in the `p
 
 … or globally configure `createLocalizedPathnamesNavigation` to accept arbitrary strings too:
 
-```tsx filename="navigation.ts"
+```tsx filename="routing.ts"
 // ...
 
 export const {Link, redirect, usePathname, useRouter} =

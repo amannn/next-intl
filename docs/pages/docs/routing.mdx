@@ -39,7 +39,7 @@ Depending on your routing needs, you may wish to configure further settings.
 <Details id="locales-unknown">
 <summary>What if the locales aren't known at build time?</summary>
 
-In case you're building an app where locales can be added and removed at runtime, you can define the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
+In case you're building an app where locales can be added and removed at runtime, you can provide the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
 
 To create the corresponding navigation APIs, you can [omit the `locales` argument](/docs/routing/navigation#locales-unknown) from `createSharedPathnamesNavigation` in this case.
 

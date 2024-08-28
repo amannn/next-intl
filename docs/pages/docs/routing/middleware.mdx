@@ -8,7 +8,11 @@ import Details from 'components/Details';
   routing](/docs/getting-started/app-router).
 </Callout>
 
-The middleware handles redirects and rewrites based on the detected user locale.
+The middleware receives a [`routing`](/docs/routing#define-routing) configuration and takes care of:
+
+1. Locale negotiation
+2. Applying relevant redirects & rewrites
+3. Providing [alternate links](#alternate-links) for search engines
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
@@ -21,8 +25,6 @@ export const config = {
   matcher: ['/', '/(de|en)/:path*']
 };
 ```
-
-In addition to handling i18n routing, the middleware sets the `link` header to inform search engines that your content is available in different languages (see [alternate links](#alternate-links)).
 
 ## Locale detection
 
@@ -112,7 +114,7 @@ With this, your domain config for this particular domain will be used.
 
 ## Configuration
 
-Apart from the [`routing` configuration](/docs/routing#shared-configuration) that is shared with the [navigation APIs](/docs/routing/navigation), the middleware accepts a few additional options that can be used for customization.
+Apart from the [`routing`](/docs/routing#shared-configuration) configuration that is shared with the [navigation APIs](/docs/routing/navigation), the middleware accepts a few additional options that can be used for customization.
 
 ### Turning off locale detection [#locale-detection]
 
@@ -538,10 +540,10 @@ If you're using the [static export](https://nextjs.org/docs/app/building-your-ap
 
 **Static export limitations:**
 
-1. There's no default locale that can be used without a prefix (same as [`localePrefix: 'always'`](/docs/routing#locale-prefix-always))
+1. Using a locale prefix is required (same as [`localePrefix: 'always'`](/docs/routing#locale-prefix-always))
 2. The locale can't be negotiated at runtime (same as [`localeDetection: false`](#locale-detection))
 3. You can't use [pathname localization](/docs/routing#pathnames)
-4. This requires [static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
+4. [Static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering) is required
 5. You need to add a redirect for the root of the app
 
 ```tsx filename="app/page.tsx"
