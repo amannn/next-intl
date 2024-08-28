@@ -122,7 +122,7 @@ export const {Link, redirect, usePathname, useRouter} =
   createSharedPathnamesNavigation(routing);
 ```
 
-Depending on your requirements, you may wish to customize your routing configuration after completing the setup.
+Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
 
 ### `src/middleware.ts` [#middleware]
 
@@ -212,7 +212,7 @@ Note that `NextIntlClientProvider` automatically inherits configuration from `i1
 
 And that's it!
 
-Now you can use translations in your components and use navigation APIs to link to other pages.
+Now you can use translations and other functionality from `next-intl` in your components:
 
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
