@@ -20,7 +20,7 @@ export type RoutingConfig<
    * Used when no locale matches.
    * @see https://next-intl-docs.vercel.app/docs/routing
    */
-  defaultLocale: NoInfer<AppLocales[number]>;
+  defaultLocale: AppLocales[number];
 
   /**
    * Configures whether and which prefix is shown for a given locale.

@@ -146,12 +146,11 @@ export default function createMiddleware<
         resolvedRouting.localePrefix.mode === 'as-needed');
 
     let response;
-    let internalTemplateName: keyof NonNullable<AppPathnames>;
+    let internalTemplateName: keyof AppPathnames | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
-    if ('pathnames' in resolvedRouting && resolvedRouting.pathnames) {
+    if ('pathnames' in resolvedRouting) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
-      // @ts-expect-error -- We've validated that `pathnames` is defined
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
         resolvedRouting.pathnames,
         unprefixedExternalPathname,

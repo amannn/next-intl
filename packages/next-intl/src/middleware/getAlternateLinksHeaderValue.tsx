@@ -68,7 +68,7 @@ export default function getAlternateLinksHeaderValue<
   }
 
   const links = getLocalePrefixes(
-    routing.locales,
+    routing.locales as AppLocales,
     routing.localePrefix
   ).flatMap(([locale, prefix]) => {
     function prefixPathname(pathname: string) {
@@ -114,7 +114,6 @@ export default function getAlternateLinksHeaderValue<
       }
 
       if (
-        // @ts-expect-error -- This is fine
         locale !== routing.defaultLocale ||
         routing.localePrefix.mode === 'always'
       ) {
