@@ -36,7 +36,13 @@ export type RoutingConfig<
 } & ([AppPathnames] extends [never]
   ? // https://discord.com/channels/997886693233393714/1278008400533520434
     // eslint-disable-next-line @typescript-eslint/ban-types
-    {}
+    {
+      /**
+       * A map of localized pathnames per locale.
+       * @see https://next-intl-docs.vercel.app/docs/routing#pathnames
+       **/
+      pathnames?: undefined;
+    }
   : {
       /**
        * A map of localized pathnames per locale.
