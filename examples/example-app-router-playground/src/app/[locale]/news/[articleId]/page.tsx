@@ -1,7 +1,6 @@
 import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
-import {defaultLocale, getPathname} from '@/navigation';
-import {Locale} from '@/types';
+import {getPathname, routing, Locale} from '@/navigation';
 
 type Props = {
   params: {
@@ -19,7 +18,7 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
     locale: params.locale
   });
 
-  if (params.locale !== defaultLocale) {
+  if (params.locale !== routing.defaultLocale) {
     canonical = '/' + params.locale + canonical;
   }
 
