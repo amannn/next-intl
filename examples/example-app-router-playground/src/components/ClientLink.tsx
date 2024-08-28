@@ -1,9 +1,9 @@
 'use client';
 
 import {ComponentProps} from 'react';
-import {Link, pathnames} from '@/navigation';
+import {Link, Pathnames} from '@/routing';
 
-export default function NavigationLink<Pathname extends keyof typeof pathnames>(
+export default function NavigationLink<Pathname extends Pathnames>(
   props: ComponentProps<typeof Link<Pathname>>
 ) {
   return <Link {...props} />;

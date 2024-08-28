@@ -5,7 +5,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
 import createMiddleware from '../middleware';
-import {Pathnames} from '../routing';
+import {defineRouting, Pathnames} from '../routing';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 
 vi.mock('next/server', async (importActual) => {
@@ -136,11 +136,12 @@ it('has docs that suggest a reasonable matcher', () => {
 
 describe('prefix-based routing', () => {
   describe('localePrefix: as-needed', () => {
-    const middleware = createMiddleware({
-      defaultLocale: 'en',
+    const routing = defineRouting({
       locales: ['en', 'de'],
+      defaultLocale: 'en',
       localePrefix: 'as-needed'
     });
+    const middleware = createMiddleware(routing);
 
     it('rewrites requests for the default locale', () => {
       middleware(createMockRequest('/'));

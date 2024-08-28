@@ -1,7 +1,7 @@
 import {NextRequest} from 'next/server';
 import {withAuth} from 'next-auth/middleware';
 import createMiddleware from 'next-intl/middleware';
-import {locales} from './navigation';
+import {routing} from './routing';
 
 const publicPages = [
   '/',
@@ -9,11 +9,7 @@ const publicPages = [
   // (/secret requires auth)
 ];
 
-const intlMiddleware = createMiddleware({
-  locales,
-  localePrefix: 'as-needed',
-  defaultLocale: 'en'
-});
+const intlMiddleware = createMiddleware(routing);
 
 const authMiddleware = withAuth(
   // Note that this callback is only invoked if
@@ -32,7 +28,7 @@ const authMiddleware = withAuth(
 
 export default function middleware(req: NextRequest) {
   const publicPathnameRegex = RegExp(
-    `^(/(${locales.join('|')}))?(${publicPages
+    `^(/(${routing.locales.join('|')}))?(${publicPages
       .flatMap((p) => (p === '/' ? ['', '/'] : p))
       .join('|')})/?$`,
     'i'

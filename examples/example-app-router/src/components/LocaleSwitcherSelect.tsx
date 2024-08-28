@@ -3,8 +3,7 @@
 import clsx from 'clsx';
 import {useParams} from 'next/navigation';
 import {ChangeEvent, ReactNode, useTransition} from 'react';
-import {useRouter, usePathname} from '@/navigation';
-import {Locale} from '@/types';
+import {Locale, usePathname, useRouter} from '@/routing';
 
 type Props = {
   children: ReactNode;

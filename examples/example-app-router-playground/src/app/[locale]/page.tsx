@@ -11,7 +11,7 @@ import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
-import {Link} from '@/navigation';
+import {Link} from '@/routing';
 
 type Props = {
   searchParams: Record<string, string>;

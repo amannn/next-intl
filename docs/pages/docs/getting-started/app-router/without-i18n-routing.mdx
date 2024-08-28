@@ -23,8 +23,8 @@ npm install next-intl
 Now, we're going to create the following file structure:
 
 ```
-├── messages (1)
-│   ├── en.json
+├── messages
+│   ├── en.json (1)
 │   └── ...
 ├── next.config.mjs (2)
 └── src
@@ -40,9 +40,9 @@ Now, we're going to create the following file structure:
 
 ### `messages/en.json` [#messages]
 
-Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+Messages represent the translations that are available per language and can be provided either locally or loaded from a remote data source.
 
-The simplest option is to add JSON files in your project based on locales—e.g. `en.json`.
+The simplest option is to add JSON files in your local project folder:
 
 ```json filename="messages/en.json"
 {
@@ -54,7 +54,7 @@ The simplest option is to add JSON files in your project based on locales—e.g.
 
 ### `next.config.mjs` [#next-config]
 
-Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
 
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tab>
@@ -87,9 +87,9 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
-### `i18n.ts` [#i18nts]
+### `i18n.ts` [#i18n-request]
 
-`next-intl` creates a request-scoped configuration object that can be used to provide messages and other options based on the user's locale for usage in Server Components.
+`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
 
 ```tsx filename="src/i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -106,17 +106,17 @@ export default getRequestConfig(async () => {
 });
 ```
 
-<Details id="move-i18n-ts">
+<Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
-This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+This file is supported out-of-the-box as `./i18n.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
 ```js filename="next.config.mjs"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
-  './somewhere/else/i18n.ts'
+  './somewhere/else/request.ts'
 );
 ```
 
@@ -153,7 +153,7 @@ export default async function RootLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here.
+Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here, but `messages` need to be passed explicitly.
 
 ### `app/page.tsx` [#page]
 
@@ -182,9 +182,12 @@ In case you ran into an issue, have a look at a working example:
 **Next steps:**
 
 <ul className="ml-4 list-disc">
-  <li>[Usage guide](/docs/usage): Format messages, dates and times</li>
   <li>
-    [Workflows](/docs/workflows): Make use of the TypeScript integration & more
+    [Usage guide](/docs/usage): Learn how to format messages, dates and times
+  </li>
+  <li>
+    [Workflows](/docs/workflows): Integrate deeply with TypeScript and other
+    tools
   </li>
 </ul>
 

@@ -2,7 +2,7 @@
 
 import {useLocale} from 'next-intl';
 import {Locale} from '@/config';
-import {Link, usePathname} from '@/navigation.public';
+import {Link, usePathname} from '@/routing.public';
 
 export default function PublicNavigationLocaleSwitcher() {
   return (

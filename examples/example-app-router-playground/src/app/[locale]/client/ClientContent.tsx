@@ -1,7 +1,7 @@
 'use client';
 
 import {useNow, useTimeZone, useLocale} from 'next-intl';
-import {Link, usePathname} from '@/navigation';
+import {Link, usePathname} from '@/routing';
 
 export default function ClientContent() {
   const now = useNow();

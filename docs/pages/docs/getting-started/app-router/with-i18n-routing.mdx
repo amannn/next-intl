@@ -23,18 +23,21 @@ npm install next-intl
 Now, we're going to create the following file structure:
 
 ```
-├── messages (1)
-│   ├── en.json
+├── messages
+│   ├── en.json (1)
 │   └── ...
 ├── next.config.mjs (2)
 └── src
-    ├── i18n.ts (3)
+    ├── routing.ts (3)
     ├── middleware.ts (4)
+    ├── i18n.ts (5)
     └── app
         └── [locale]
-            ├── layout.tsx (5)
-            └── page.tsx (6)
+            ├── layout.tsx (6)
+            └── page.tsx (7)
 ```
+
+In case you're migrating an existing app to `next-intl`, you'll typically move your existing pages into the `[locale]` folder as part of the setup.
 
 **Let's set up the files:**
 
@@ -42,21 +45,22 @@ Now, we're going to create the following file structure:
 
 ### `messages/en.json` [#messages]
 
-Messages can be provided locally or loaded from a remote data source (e.g. a translation management system). Use whatever suits your workflow best.
+Messages represent the translations that are available per language and can be provided either locally or loaded from a remote data source.
 
-The simplest option is to add JSON files in your project based on locales—e.g. `en.json`.
+The simplest option is to add JSON files in your local project folder:
 
 ```json filename="messages/en.json"
 {
   "HomePage": {
-    "title": "Hello world!"
+    "title": "Hello world!",
+    "about": "Go to the about page"
   }
 }
 ```
 
 ### `next.config.mjs` [#next-config]
 
-Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components—more on this in the following steps.
 
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tab>
@@ -89,20 +93,65 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
-### `i18n.ts` [#i18nts]
+### `src/routing.ts` [#i18n-routing]
 
-`next-intl` creates a request-scoped configuration object that can be used to provide messages and other options based on the user's locale for usage in Server Components.
+We'll integrate with Next.js' routing in two places:
+
+1. **Middleware**: Negotiates the locale and handles redirects & rewrites (e.g. `/` → `/en`)
+2. **Navigation APIs**: Lightweight wrappers around Next.js' navigation APIs like `<Link />`
+
+This enables you to work with pathnames like `/about`, while i18n aspects like language prefixes are handled behind the scenes.
+
+To share the configuration between these two places, we'll set up `routing.ts`:
+
+```ts filename="src/routing.ts"
+import {defineRouting} from 'next-intl/routing';
+import {createSharedPathnamesNavigation} from 'next-intl/navigation';
+
+export const routing = defineRouting({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
+
+  // Used when no locale matches
+  defaultLocale: 'en'
+});
+
+// Lightweight wrappers around Next.js' navigation APIs
+// that will consider the routing configuration
+export const {Link, redirect, usePathname, useRouter} =
+  createSharedPathnamesNavigation(routing);
+```
+
+Depending on your requirements, you may wish to customize your routing configuration after completing the setup.
+
+### `src/middleware.ts` [#middleware]
+
+Once we have our routing configuration in place, we can use it to set up the middleware.
+
+```tsx filename="src/middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './routing';
+
+export default createMiddleware(routing);
+
+export const config = {
+  // Match only internationalized pathnames
+  matcher: ['/', '/(de|en)/:path*']
+};
+```
+
+### `src/i18n.ts` [#i18n-request]
+
+`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
 
 ```tsx filename="src/i18n.ts"
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
-
-// Can be imported from a shared config
-const locales = ['en', 'de'];
+import {routing} from './routing';
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!routing.locales.includes(locale as any)) notFound();
 
   return {
     messages: (await import(`../messages/${locale}.json`)).default
@@ -110,10 +159,10 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
-<Details id="move-i18n-ts">
+<Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
-This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+This file is supported out-of-the-box as `./i18n.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
@@ -126,28 +175,7 @@ const withNextIntl = createNextIntlPlugin(
 
 </Details>
 
-### `middleware.ts` [#middleware]
-
-The middleware matches a locale for the request and handles redirects and rewrites accordingly.
-
-```tsx filename="src/middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales: ['en', 'de'],
-
-  // Used when no locale matches
-  defaultLocale: 'en'
-});
-
-export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
-};
-```
-
-### `app/[locale]/layout.tsx` [#layout]
+### `src/app/[locale]/layout.tsx` [#layout]
 
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
@@ -178,24 +206,30 @@ export default async function LocaleLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here.
+Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here, but `messages` need to be passed explicitly.
 
-### `app/[locale]/page.tsx` [#page]
+### `src/app/[locale]/page.tsx` [#page]
 
-Use translations in your page components or anywhere else!
+And that's it!
+
+Now you can use translations in your components and use navigation APIs to link to other pages.
 
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
+import {Link} from '@/routing';
 
 export default function HomePage() {
   const t = useTranslations('HomePage');
-  return <h1>{t('title')}</h1>;
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <Link href="/about">{t('about')}</Link>
+    </div>
+  );
 }
 ```
 
 </Steps>
-
-That's all it takes!
 
 In case you ran into an issue, have a look at [the App Router example](/examples#app-router) to explore a working app.
 
@@ -204,12 +238,16 @@ In case you ran into an issue, have a look at [the App Router example](/examples
 **Next steps:**
 
 <ul className="ml-4 list-disc">
-  <li>[Usage guide](/docs/usage): Format messages, dates and times</li>
   <li>
-    [Routing](/docs/routing): Integrate i18n routing with `<Link />` & friends
+    [Usage guide](/docs/usage): Learn how to format messages, dates and times
   </li>
   <li>
-    [Workflows](/docs/workflows): Make use of the TypeScript integration & more
+    [Routing](/docs/routing): Set up localized pathnames, domain-based routing &
+    more
+  </li>
+  <li>
+    [Workflows](/docs/workflows): Integrate deeply with TypeScript and other
+    tools
   </li>
 </ul>
 
