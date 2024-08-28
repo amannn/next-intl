@@ -157,7 +157,7 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
-<Details id="move-i18n-ts">
+<Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
 This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
@@ -204,7 +204,7 @@ export default async function LocaleLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n.ts` here—except for the messages.
+Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n/request.ts` here—except for the messages.
 
 ### `src/app/[locale]/page.tsx` [#page]
 

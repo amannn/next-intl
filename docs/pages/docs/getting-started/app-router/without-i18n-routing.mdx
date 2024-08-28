@@ -28,7 +28,8 @@ Now, we're going to create the following file structure:
 │   └── ...
 ├── next.config.mjs (2)
 └── src
-    ├── i18n.ts (3)
+    ├── i18n
+    │   └── request.tsx (3)
     └── app
         ├── layout.tsx (4)
         └── page.tsx (5)
@@ -54,7 +55,7 @@ The simplest option is to add JSON files in your local project folder:
 
 ### `next.config.mjs` [#next-config]
 
-Now, set up the plugin which creates an alias to provide your i18n configuration (specified in the next step) to Server Components.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
 
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tab>
@@ -87,11 +88,11 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
-### `i18n.ts` [#i18nts]
+### `i18n/request.ts` [#i18n-request]
 
-`next-intl` creates a request-scoped configuration object that can be used to provide messages and other options based on the user's locale for usage in Server Components.
+`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
 
-```tsx filename="src/i18n.ts"
+```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
@@ -106,17 +107,17 @@ export default getRequestConfig(async () => {
 });
 ```
 
-<Details id="move-i18n-ts">
+<Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
-This file is supported out-of-the-box both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
 ```js filename="next.config.mjs"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
-  './somewhere/else/i18n.ts'
+  './somewhere/else/request.ts'
 );
 ```
 
@@ -124,7 +125,7 @@ const withNextIntl = createNextIntlPlugin(
 
 ### `app/layout.tsx` [#layout]
 
-The `locale` that was provided in `i18n.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
+The `locale` that was provided in `i18n/request.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
@@ -153,7 +154,7 @@ export default async function RootLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here.
+Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n/request.ts` here—except for the messages.
 
 ### `app/page.tsx` [#page]
 
