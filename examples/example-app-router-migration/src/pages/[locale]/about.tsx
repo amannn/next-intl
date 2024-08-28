@@ -1,6 +1,6 @@
 import {GetStaticPropsContext} from 'next';
 import {useTranslations} from 'next-intl';
-import PageLayout from '../../components/PageLayout';
+import PageLayout from '@/components/PageLayout';
 
 export default function About() {
   const t = useTranslations('About');
