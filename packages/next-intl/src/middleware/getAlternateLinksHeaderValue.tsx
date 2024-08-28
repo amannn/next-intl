@@ -16,7 +16,7 @@ import {
  */
 export default function getAlternateLinksHeaderValue<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales> = never
 >({
   localizedPathnames,
   request,

@@ -8,7 +8,7 @@ import {
 
 export type RoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales>
 > = {
   /**
    * All available locales.
@@ -20,7 +20,7 @@ export type RoutingConfig<
    * Used when no locale matches.
    * @see https://next-intl-docs.vercel.app/docs/routing
    */
-  defaultLocale: AppLocales[number];
+  defaultLocale: NoInfer<AppLocales[number]>;
 
   /**
    * Configures whether and which prefix is shown for a given locale.
@@ -33,8 +33,9 @@ export type RoutingConfig<
    * @see https://next-intl-docs.vercel.app/docs/routing#domains
    **/
   domains?: DomainsConfig<AppLocales>;
-} & (undefined extends AppPathnames
-  ? // eslint-disable-next-line @typescript-eslint/ban-types -- The wizard himself, Matt Pocock, suggested this, so keep it a bit down ESLint
+} & ([AppPathnames] extends [never]
+  ? // https://discord.com/channels/997886693233393714/1278008400533520434
+    // eslint-disable-next-line @typescript-eslint/ban-types
     {}
   : {
       /**
@@ -68,7 +69,7 @@ export type RoutingConfigLocalizedNavigation<
 
 export type ResolvedRoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales> = never
 > = Omit<RoutingConfig<AppLocales, AppPathnames>, 'localePrefix'> & {
   localePrefix: LocalePrefixConfigVerbose<AppLocales>;
 };

@@ -74,7 +74,7 @@ function getLocaleFromCookie<AppLocales extends Locales>(
 
 function resolveLocaleFromPrefix<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales> = never
 >(
   {
     defaultLocale,
@@ -113,7 +113,7 @@ function resolveLocaleFromPrefix<
 
 function resolveLocaleFromDomain<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales> = never
 >(
   routing: Omit<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'> &
     Required<Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>>,
@@ -191,7 +191,7 @@ function resolveLocaleFromDomain<
 
 export default function resolveLocale<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> | undefined
+  AppPathnames extends Pathnames<AppLocales> = never
 >(
   routing: ResolvedRoutingConfig<AppLocales, AppPathnames>,
   options: ResolvedMiddlewareOptions,
