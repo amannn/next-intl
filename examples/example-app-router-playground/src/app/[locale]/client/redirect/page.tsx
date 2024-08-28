@@ -1,6 +1,6 @@
 'use client';
 
-import {redirect} from '@/navigation';
+import {redirect} from '@/routing';
 
 export default function ClientRedirectPage() {
   redirect('/client');

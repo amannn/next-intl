@@ -1,7 +1,7 @@
 import {NextRequest} from 'next/server';
 import {withAuth} from 'next-auth/middleware';
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './navigation';
+import {routing} from './routing';
 
 const publicPages = [
   '/',

@@ -2,7 +2,7 @@ import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../messages/en.json';
-import {routing} from './navigation';
+import {routing} from './routing';
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid

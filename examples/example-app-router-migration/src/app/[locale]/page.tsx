@@ -1,7 +1,7 @@
 import {useLocale, useTranslations} from 'next-intl';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 import PageLayout from '@/components/PageLayout';
-import {Link} from '@/navigation';
+import {Link} from '@/routing';
 
 export default function Index() {
   const t = useTranslations('Index');
