@@ -34,7 +34,7 @@ export const routing = defineRouting({
 });
 ```
 
-Depending on your routing needs, you may wish to configure further settings.
+Depending on your routing needs, you may wish to consider further settings.
 
 <Details id="locales-unknown">
 <summary>What if the locales aren't known at build time?</summary>
@@ -119,7 +119,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 If you'd like to customize the user-facing prefix, you can provide a locale-based mapping:
 
-```tsx filename="routing.ts" {6-13}
+```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
