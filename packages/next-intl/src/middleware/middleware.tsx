@@ -28,12 +28,9 @@ export default function createMiddleware<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales> = never
 >(
-  routing: RoutingConfig<AppLocales, AppPathnames> & {
-    /** @deprecated Should be passed as part of the second argument `options` now (see https://next-intl-docs.vercel.app/docs/routing/middleware#configuration) */
-    alternateLinks?: MiddlewareOptions['alternateLinks'];
-    /** @deprecated Should be passed as part of the second argument `options` now (see https://next-intl-docs.vercel.app/docs/routing/middleware#configuration) */
-    localeDetection?: MiddlewareOptions['localeDetection'];
-  },
+  routing: RoutingConfig<AppLocales, AppPathnames> &
+    // Convenience if `routing` is generated dynamically (i.e. without `defineRouting`)
+    MiddlewareOptions,
   options?: MiddlewareOptions
 ) {
   const resolvedRouting = receiveRoutingConfig(routing);
