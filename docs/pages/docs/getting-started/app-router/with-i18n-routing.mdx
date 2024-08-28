@@ -28,10 +28,9 @@ Now, we're going to create the following file structure:
 │   └── ...
 ├── next.config.mjs (2)
 └── src
-    ├── i18n
-    │   ├── routing.ts (3)
-    │   └── request.ts (5)
+    ├── routing.ts (3)
     ├── middleware.ts (4)
+    ├── i18n.ts (5)
     └── app
         └── [locale]
             ├── layout.tsx (6)
@@ -94,7 +93,7 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
-### `src/i18n/routing.ts` [#i18n-routing]
+### `src/routing.ts` [#i18n-routing]
 
 We'll integrate with Next.js' routing in two places:
 
@@ -105,8 +104,9 @@ This enables you to work with pathnames like `/about`, while i18n aspects like l
 
 To share the configuration between these two places, we'll set up `routing.ts`:
 
-```ts filename="src/i18n/routing.ts"
-import {defineRouting, createNavigation} from 'next-intl/routing';
+```ts filename="src/routing.ts"
+import {defineRouting} from 'next-intl/routing';
+import {createSharedPathnamesNavigation} from 'next-intl/navigation';
 
 export const routing = defineRouting({
   // A list of all locales that are supported
@@ -119,7 +119,7 @@ export const routing = defineRouting({
 // Lightweight wrappers around Next.js' navigation APIs
 // that will consider the routing configuration
 export const {Link, redirect, usePathname, useRouter} =
-  createNavigation(routing);
+  createSharedPathnamesNavigation(routing);
 ```
 
 Depending on your use case, you may wish to customize your routing configuration—more on this later.
@@ -130,7 +130,7 @@ Once we have our routing configuration in place, we can use it to set up the mid
 
 ```tsx filename="src/middleware.ts"
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
+import {routing} from './routing';
 
 export default createMiddleware(routing);
 
@@ -140,11 +140,11 @@ export const config = {
 };
 ```
 
-### `src/i18n/request.ts` [#i18n-request]
+### `src/i18n.ts` [#i18n-request]
 
 `next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
 
-```tsx filename="src/i18n/request.ts"
+```tsx filename="src/i18n.ts"
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from './routing';
@@ -162,14 +162,14 @@ export default getRequestConfig(async ({locale}) => {
 <Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
-This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+This file is supported out-of-the-box as `./i18n.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
 ```js filename="next.config.mjs"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
-  './somewhere/else/request.ts'
+  './somewhere/else/i18n.ts'
 );
 ```
 
@@ -177,7 +177,7 @@ const withNextIntl = createNextIntlPlugin(
 
 ### `src/app/[locale]/layout.tsx` [#layout]
 
-The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
+The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
@@ -206,7 +206,7 @@ export default async function LocaleLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n/request.ts` here—except for the messages.
+Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here, but `messages` need to be passed explicitly.
 
 ### `src/app/[locale]/page.tsx` [#page]
 
@@ -216,7 +216,7 @@ Now you can use translations in your components and use navigation APIs to link 
 
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/routing';
 
 export default function HomePage() {
   const t = useTranslations('HomePage');

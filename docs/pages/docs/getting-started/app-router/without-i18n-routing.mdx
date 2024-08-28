@@ -28,8 +28,7 @@ Now, we're going to create the following file structure:
 │   └── ...
 ├── next.config.mjs (2)
 └── src
-    ├── i18n
-    │   └── request.tsx (3)
+    ├── i18n.ts (3)
     └── app
         ├── layout.tsx (4)
         └── page.tsx (5)
@@ -88,11 +87,11 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
-### `i18n/request.ts` [#i18n-request]
+### `i18n.ts` [#i18n-request]
 
 `next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
 
-```tsx filename="src/i18n/request.ts"
+```tsx filename="src/i18n.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
@@ -110,7 +109,7 @@ export default getRequestConfig(async () => {
 <Details id="move-i18n-request">
 <summary>Can I move this file somewhere else?</summary>
 
-This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+This file is supported out-of-the-box as `./i18n.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
@@ -125,7 +124,7 @@ const withNextIntl = createNextIntlPlugin(
 
 ### `app/layout.tsx` [#layout]
 
-The `locale` that was provided in `i18n/request.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
+The `locale` that was provided in `i18n.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
@@ -154,7 +153,7 @@ export default async function RootLayout({
 }
 ```
 
-Note that `NextIntlClientProvider` automatically inherits all configuration from `i18n/request.ts` here—except for the messages.
+Note that `NextIntlClientProvider` automatically inherits configuration from `i18n.ts` here, but `messages` need to be passed explicitly.
 
 ### `app/page.tsx` [#page]
 
