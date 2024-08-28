@@ -13,73 +13,53 @@ import Callout from 'components/Callout';
 
 `next-intl` integrates with the routing system of Next.js in two places:
 
-1. [**Middleware**](/docs/routing/middleware): Negotiates the locale and handles redirects & rewrites
-2. [**Navigation APIs**](/docs/routing/navigation): Provides APIs to navigate between pages
+1. [**Middleware**](/docs/routing/middleware): Negotiates the locale and handles redirects & rewrites (e.g. `/` → `/en`)
+2. [**Navigation APIs**](/docs/routing/navigation): Lightweight wrappers around Next.js' navigation APIs like `<Link />`
 
 This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/ueber-uns`).
 
-## Shared configuration
+## Define routing
 
-While the middleware provides a few more options than the navigation APIs, the majority of the configuration is shared between the two and should be used in coordination. Typically, this can be achieved by moving the shared configuration into a separate file like `src/config.ts`:
+The routing configuration that is shared between the [middleware](/docs/routing/middleware) and [the navigation APIs](/docs/routing/navigation) can be defined with the `defineRouting` function.
 
-```
-src
-├── config.ts
-├── middleware.ts
-└── navigation.ts
-```
+```tsx filename="src/routing.ts"
+import {defineRouting} from 'next-intl/routing';
 
-This shared module can be set up like this:
-
-```tsx filename="config.ts"
-// A list of all locales that are supported
-export const locales = ['en', 'de'] as const;
-
-// ...
-```
-
-… and imported into both `middleware.ts` and `navigation.ts`:
-
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
-import {locales, /* ... */} from './config';
-
-export default createMiddleware({
-  locales,
-  // ...
+export const routing = defineRouting({
+  // A list of all locales that are supported
+  locales: ['en', 'de'],
 
   // Used when no locale matches
   defaultLocale: 'en'
 });
-
-export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
-};
 ```
 
-```tsx filename="src/navigation.ts"
-import {createSharedPathnamesNavigation} from 'next-intl/navigation';
-import {locales, /* ... */} from './config';
+Depending on your routing needs, you may wish to consider further settings.
 
-export const {Link, redirect, usePathname, useRouter} =
-  createSharedPathnamesNavigation({locales, /* ... */});
-```
+<Details id="locales-unknown">
+<summary>What if the locales aren't known at build time?</summary>
+
+In case you're building an app where locales can be added and removed at runtime, you can provide the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
+
+To create the corresponding navigation APIs, you can [omit the `locales` argument](/docs/routing/navigation#locales-unknown) from `createSharedPathnamesNavigation` in this case.
+
+</Details>
 
 ### Locale prefix
 
-By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `app/[locale]/about/page.tsx` → `/en/about`). You can however adapt the routing to optionally remove the prefix or customize it per locale by configuring the `localePrefix` setting.
+By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `/en/about` → `app/[locale]/about/page.tsx`). You can however adapt the routing to optionally remove the prefix or customize it per locale by configuring the `localePrefix` setting.
 
 #### Always use a locale prefix (default) [#locale-prefix-always]
 
 By default, pathnames always start with the locale (e.g. `/en/about`).
 
-```tsx filename="config.ts"
-import {LocalePrefix} from 'next-intl/routing';
+```tsx filename="routing.ts" {5}
+import {defineRouting} from 'next-intl/routing';
 
-export const localePrefix = 'always' satisfies LocalePrefix;
-
-// ...
+export const routing = defineRouting({
+  // ...
+  localePrefix: 'always'
+});
 ```
 
 <Details id="redirect-unprefixed-pathnames">
@@ -93,12 +73,13 @@ If you want to redirect unprefixed pathnames like `/about` to a prefixed alterna
 
 If you only want to include a locale prefix for non-default locales, you can configure your routing accordingly:
 
-```tsx filename="config.ts"
-import {LocalePrefix} from 'next-intl/routing';
+```tsx filename="routing.ts" {5}
+import {defineRouting} from 'next-intl/routing';
 
-export const localePrefix = 'as-needed' satisfies LocalePrefix;
-
-// ...
+export const routing = defineRouting({
+  // ...
+  localePrefix: 'as-needed'
+});
 ```
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
@@ -117,12 +98,13 @@ However, you can also configure the middleware to never show a locale prefix in 
 1. You're using [domain-based routing](#domains) and you support only a single locale per domain
 2. You're using a cookie to determine the locale but would like to enable static rendering
 
-```tsx filename="config.ts"
-import {LocalePrefix} from 'next-intl/routing';
+```tsx filename="routing.ts" {5}
+import {defineRouting} from 'next-intl/routing';
 
-export const localePrefix = 'never' satisfies LocalePrefix;
-
-// ...
+export const routing = defineRouting({
+  // ...
+  localePrefix: 'never'
+});
 ```
 
 In this case, requests for all locales will be rewritten to have the locale only prefixed internally. You still need to place all your pages inside a `[locale]` folder for the routes to be able to receive the `locale` param.
@@ -137,19 +119,21 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 If you'd like to customize the user-facing prefix, you can provide a locale-based mapping:
 
-```tsx filename="config.ts"
-import {LocalePrefix} from 'next-intl/routing';
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
 
-export const locales = ['en-US', 'de-AT', 'zh'] as const;
-
-export const localePrefix = {
-  mode: 'always',
-  prefixes: {
-    'en-US': '/us',
-    'de-AT': '/eu/at'
-    // (/zh will be used as-is)
+export const routing = defineRouting({
+  locales: ['en-US', 'de-AT', 'zh'],
+  defaultLocale: 'en-US',
+  localePrefix: {
+    mode: 'always',
+    prefixes: {
+      'en-US': '/us',
+      'de-AT': '/eu/at'
+      // (/zh will be used as-is)
+    }
   }
-} satisfies LocalePrefix<typeof locales>;
+});
 ```
 
 **Note that:**
@@ -189,46 +173,51 @@ Many apps choose to localize pathnames, especially when search engine optimizati
 - `/en/about`
 - `/de/ueber-uns`
 
-Since you want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
+Since you typically want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
 
-```tsx filename="config.ts"
-export const locales = ['en', 'de'] as const;
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
 
-// The `pathnames` object holds pairs of internal and
-// external paths. Based on the locale, the external
-// paths are rewritten to the shared, internal ones.
-export const pathnames = {
-  // If all locales use the same pathname, a single
-  // external path can be used for all locales
-  '/': '/',
-  '/blog': '/blog',
+export const routing = defineRouting({
+  locales: ['en', 'de'],
+  defaultLocale: 'en',
 
-  // If locales use different paths, you can
-  // specify each external path per locale
-  '/about': {
-    en: '/about',
-    de: '/ueber-uns'
-  },
+  // The `pathnames` object holds pairs of internal and
+  // external paths. Based on the locale, the external
+  // paths are rewritten to the shared, internal ones.
+  pathnames: {
+    // If all locales use the same pathname, a single
+    // external path can be used for all locales
+    '/': '/',
+    '/blog': '/blog',
 
-  // Dynamic params are supported via square brackets
-  '/news/[articleSlug]-[articleId]': {
-    en: '/news/[articleSlug]-[articleId]',
-    de: '/neuigkeiten/[articleSlug]-[articleId]'
-  },
+    // If locales use different paths, you can
+    // specify each external path per locale
+    '/about': {
+      en: '/about',
+      de: '/ueber-uns'
+    },
 
-  // Static pathnames that overlap with dynamic segments
-  // will be prioritized over the dynamic segment
-  '/news/just-in': {
-    en: '/news/just-in',
-    de: '/neuigkeiten/aktuell'
-  },
+    // Dynamic params are supported via square brackets
+    '/news/[articleSlug]-[articleId]': {
+      en: '/news/[articleSlug]-[articleId]',
+      de: '/neuigkeiten/[articleSlug]-[articleId]'
+    },
 
-  // Also (optional) catch-all segments are supported
-  '/categories/[...slug]': {
-    en: '/categories/[...slug]',
-    de: '/kategorien/[...slug]'
+    // Static pathnames that overlap with dynamic segments
+    // will be prioritized over the dynamic segment
+    '/news/just-in': {
+      en: '/news/just-in',
+      de: '/neuigkeiten/aktuell'
+    },
+
+    // Also (optional) catch-all segments are supported
+    '/categories/[...slug]': {
+      en: '/categories/[...slug]',
+      de: '/kategorien/[...slug]'
+    }
   }
-} satisfies Pathnames<typeof locales>;
+});
 ```
 
 Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/ueber-uns` will be handled by the page at `/[locale]/about/page.tsx`.
@@ -254,14 +243,14 @@ app
         └── [slug]
 ```
 
-… with this middleware configuration:
+… with this routing configuration:
 
-```tsx filename="middleware.ts"
-import createMiddleware from 'next-intl/middleware';
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
 
-export default createMiddleware({
-  defaultLocale: 'en',
+export const routing = defineRouting({
   locales: ['en', 'de'],
+  defaultLocale: 'en',
   pathnames: {
     '/news/[slug]': {
       en: '/news/[slug]',
@@ -350,25 +339,27 @@ If you want to serve your localized content based on different domains, you can 
 - `ca.example.com/en`
 - `ca.example.com/fr`
 
-```tsx filename="config.ts"
-import {DomainsConfig} from 'next-intl/routing';
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
 
-export const locales = ['en', 'fr'] as const;
-
-export const domains: DomainsConfig<typeof locales> = [
-  {
-    domain: 'us.example.com',
-    defaultLocale: 'en',
-    // Optionally restrict the locales available on this domain
-    locales: ['en']
-  },
-  {
-    domain: 'ca.example.com',
-    defaultLocale: 'en'
-    // If there are no `locales` specified on a domain,
-    // all available locales will be supported here
-  }
-];
+export const routing = defineRouting({
+  locales: ['en', 'fr'],
+  defaultLocale: 'en',
+  domains: [
+    {
+      domain: 'us.example.com',
+      defaultLocale: 'en',
+      // Optionally restrict the locales available on this domain
+      locales: ['en']
+    },
+    {
+      domain: 'ca.example.com',
+      defaultLocale: 'en'
+      // If there are no `locales` specified on a domain,
+      // all available locales will be supported here
+    }
+  ]
+});
 ```
 
 **Note that:**

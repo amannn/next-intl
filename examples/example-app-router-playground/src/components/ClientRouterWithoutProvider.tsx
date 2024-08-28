@@ -1,6 +1,6 @@
 'use client';
 
-import {useRouter} from '@/navigation';
+import {useRouter} from '@/routing';
 
 export default function ClientRouterWithoutProvider() {
   const router = useRouter();
