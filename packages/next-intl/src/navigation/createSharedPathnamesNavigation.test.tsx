@@ -515,5 +515,18 @@ describe.each([
         });
       });
     });
+
+    describe('type tests', () => {
+      it("doesn't accept `pathnames`", () => {
+        createSharedPathnamesNavigation({
+          locales: ['en'],
+          defaultLocale: 'en',
+          // @ts-expect-error
+          pathnames: {
+            '/': '/'
+          }
+        });
+      });
+    });
   }
 );

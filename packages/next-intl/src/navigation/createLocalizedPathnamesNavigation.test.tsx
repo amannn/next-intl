@@ -748,5 +748,12 @@ describe.each([
         });
       });
     });
+
+    describe('type tests', () => {
+      it('requires `pathnames`', () => {
+        // @ts-expect-error -- Missing pathnames
+        createLocalizedPathnamesNavigation({locales});
+      });
+    });
   }
 );

@@ -36,6 +36,8 @@ export const {Link, redirect, usePathname, useRouter} =
 
 In case you're building an app where locales can be added and removed at runtime, `createSharedPathnamesNavigation` can be called without the `locales` argument, therefore allowing any string that is encountered at runtime to be a valid locale.
 
+In this case, you'd not use the `defineRouting` function.
+
 ```tsx filename="routing.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
 
