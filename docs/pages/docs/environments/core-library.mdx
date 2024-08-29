@@ -4,12 +4,10 @@ While `next-intl` is primarily intended to be used in Next.js apps, the core is 
 
 ## React apps
 
-`next-intl` is based on a library called [`use-intl`](https://www.npmjs.com/package/use-intl) that is developed in parallel.
-
-This core library contains most features of `next-intl`, but lacks the following Next.js-specific features:
+`next-intl` internally uses a library called [`use-intl`](https://www.npmjs.com/package/use-intl). This core library contains most features you're familiar with from `next-intl`, but lacks the following Next.js-specific features:
 
 1. [Routing APIs](/docs/routing)
-2. [Awaitable APIs for Server Actions, Metadata and Route Handlers](/docs/environments/actions-metadata-route-handlers)
+2. [Awaitable APIs](/docs/environments/actions-metadata-route-handlers) for Server Actions, Metadata and Route Handlers
 3. [Server Components integration](/docs/environments/server-client-components) along with `i18n.ts`
 
 In case Server Components establish themselves in React apps outside of Next.js, the support for Server Components might be moved to the core library in the future.
@@ -55,6 +53,8 @@ function App({user}) {
   return <h1>{t('hello', {username: user.name})}</h1>;
 }
 ```
+
+Since `next-intl` uses `use-intl` internally, you can even build shared components based on `use-intl` that can be used in both Next.js and non-Next.js apps.
 
 ## Non-React apps
 
