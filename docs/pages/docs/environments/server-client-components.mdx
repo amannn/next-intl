@@ -91,7 +91,7 @@ If you import `useTranslations`, `useFormatter`, `useLocale`, `useNow` and `useT
 <Details id="rsc-background">
 <summary>How does the Server Components integration work?</summary>
 
-`next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n.ts`](/docs/usage/configuration#i18nts).
+`next-intl` uses [`react-server` conditional exports](https://github.com/reactjs/rfcs/blob/main/text/0227-server-module-conventions.md#react-server-conditional-exports) to load code that is optimized for the usage in Server or Client Components. While configuration for hooks like `useTranslations` is read via `useContext` on the client side, on the server side it is loaded via [`i18n/request.ts`](/docs/usage/configuration#i18n-request).
 
 Hooks are currently primarly known for being used in Client Components since they are typically stateful or don't apply to a server environment. However, hooks like [`useId`](https://react.dev/reference/react/useId) can be used in Server Components too. Similarly, `next-intl` provides a hooks-based API that looks identical, regardless of if it's used in a Server or Client Component.
 
@@ -106,13 +106,13 @@ If you implement components that qualify as shared components, it can be benefic
 
 However, there's no need to dogmatically use non-async functions exclusively for handling internationalization—use what fits your app best.
 
-In regard to performance, async functions and hooks can be used very much interchangeably. The configuration from [`i18n.ts`](/docs/usage/configuration#i18nts) is only loaded once upon first usage and both implementations use request-based caching internally where relevant. The only minor difference is that async functions have the benefit that rendering can be resumed right after an async function has been invoked. In contrast, in case a hook call triggers the initialization in `i18n.ts`, the component will suspend until the config is resolved and will re-render subsequently, possibly re-executing component logic prior to the hook call. However, once config has been resolved as part of a request, hooks will execute synchronously without suspending, resulting in less overhead in comparison to async functions since rendering can be resumed without having to wait for the microtask queue to flush (see [resuming a suspended component by replaying its execution](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md#resuming-a-suspended-component-by-replaying-its-execution) in the corresponding React RFC).
+Regarding performance, async functions and hooks can be used interchangeably. The configuration from [`i18n/request.ts`](/docs/usage/configuration#i18n-request) is only loaded once upon first usage and both implementations use request-based caching internally where relevant. The only minor difference is that async functions have the benefit that rendering can be resumed right after an async function has been invoked. In contrast, in case a hook call triggers the initialization in `i18n/request.ts`, the component will suspend until the config is resolved and will re-render subsequently, possibly re-executing component logic prior to the hook call. However, once config has been resolved as part of a request, hooks will execute synchronously without suspending, resulting in less overhead in comparison to async functions since rendering can be resumed without having to wait for the microtask queue to flush (see [resuming a suspended component by replaying its execution](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md#resuming-a-suspended-component-by-replaying-its-execution) in the corresponding React RFC).
 
 </Details>
 
 ## Using internationalization in Client Components
 
-Depending on your situation, you may need to handle internationalization in Client Components as well. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for many apps, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
+Depending on your situation, you may need to handle internationalization in Client Components. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for many apps, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
 
 <Details id="client-messages-performance">
 <summary>How does loading messages on the client side relate to performance?</summary>
@@ -298,7 +298,7 @@ import {NextIntlClientProvider, useMessages} from 'next-intl';
 import ClientCounter from './ClientCounter';
 
 export default function Counter() {
-  // Receive messages provided in `i18n.ts` …
+  // Receive messages provided in `i18n/request.ts` …
   const messages = useMessages();
 
   return (
@@ -332,7 +332,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
 export default async function RootLayout(/* ... */) {
-  // Receive messages provided in `i18n.ts`
+  // Receive messages provided in `i18n/request.ts`
   const messages = await getMessages();
 
   return (
