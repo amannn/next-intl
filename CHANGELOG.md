@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.18.1 (2024-08-29)
+
+### Bug Fixes
+
+* Print warning for inconsistent i18n setup where no `locale` is read in `getRequestConfig` and also none is returned ([#1305](https://github.com/amannn/next-intl/issues/1305)) ([2f0f781](https://github.com/amannn/next-intl/commit/2f0f78142d32c2ffa32493c52f270eb4ed3f1a49)) – by @amannn
+
 ## 3.18.0 (2024-08-28)
 
 ### Features
