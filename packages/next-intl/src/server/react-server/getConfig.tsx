@@ -42,10 +42,18 @@ async function receiveRuntimeConfigImpl(
     result = await result;
   }
 
-  if (result.locale && hasReadLocale) {
-    console.error(
-      "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
-    );
+  if (hasReadLocale) {
+    if (result.locale) {
+      console.error(
+        "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
+      );
+    }
+  } else {
+    if (!result.locale) {
+      console.error(
+        "\nYou haven't read the `locale` param that was passed to `getRequestConfig` and also haven't returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
+      );
+    }
   }
 
   return {
