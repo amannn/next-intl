@@ -566,7 +566,7 @@ This can happen either because:
 1. You're using a setup _with_ [i18n routing](/docs/getting-started/app-router) but the middleware is not set up.
 2. You're using a setup _without_ [i18n routing](/docs/getting-started/app-router) but are reading the `locale` param passed to the function within `getRequestConfig`.
 3. The middleware is set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder).
-4. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in a component.
+4. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in server code (e.g. a Server Component, a Server Action, etc.).
 5. You're attempting to implement static rendering via [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
 To recover from this error, please make sure that:
