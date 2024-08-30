@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.19.0 (2024-08-30)
+
+### Features
+
+* Support `./i18n/request.ts` in addition to `./i18n.ts` ([#1308](https://github.com/amannn/next-intl/issues/1308)) ([258e95e](https://github.com/amannn/next-intl/commit/258e95ebef10033c3d6de524e6cd6c7459a18916)) – by @amannn
+
 ## 3.18.1 (2024-08-29)
 
 ### Bug Fixes
