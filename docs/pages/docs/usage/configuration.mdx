@@ -59,6 +59,22 @@ The configuration object is created once for each request by internally using Re
 
 Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
 
+<Details id="i18n-request-path">
+<summary>Can I move this file somewhere else?</summary>
+
+This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
+
+```js filename="next.config.mjs"
+const withNextIntl = createNextIntlPlugin(
+  // Specify a custom path here
+  './somewhere/else/request.ts'
+);
+```
+
+</Details>
+
 ### `NextIntlClientProvider`
 
 `NextIntlClientProvider` can be used to provide configuration for **Client Components**.
