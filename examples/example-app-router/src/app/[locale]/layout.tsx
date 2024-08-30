@@ -8,7 +8,7 @@ import {
 } from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from '@/components/Navigation';
-import {routing} from '@/routing';
+import {routing} from '@/i18n/routing';
 
 const inter = Inter({subsets: ['latin']});
 

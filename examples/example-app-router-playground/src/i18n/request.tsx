@@ -1,7 +1,7 @@
 import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
-import defaultMessages from '../messages/en.json';
+import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
 
 export default getRequestConfig(async ({locale}) => {
@@ -10,7 +10,8 @@ export default getRequestConfig(async ({locale}) => {
 
   const now = headers().get('x-now');
   const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
-  const localeMessages = (await import(`../messages/${locale}.json`)).default;
+  const localeMessages = (await import(`../../messages/${locale}.json`))
+    .default;
   const messages = {...defaultMessages, ...localeMessages};
 
   return {

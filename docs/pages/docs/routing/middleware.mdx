@@ -16,7 +16,7 @@ The middleware receives a [`routing`](/docs/routing#define-routing) configuratio
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 export default createMiddleware(routing);
 
@@ -122,7 +122,7 @@ If you want to rely entirely on the URL to resolve the locale, you can set the `
 
 ```tsx filename="middleware.ts" {5}
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 export default createMiddleware(routing, {
   localeDetection: false
@@ -146,7 +146,7 @@ In this case, you can opt-out of this behavior by setting `alternateLinks` to `f
 
 ```tsx filename="middleware.ts" {5}
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 export default createMiddleware(routing, {
   alternateLinks: false // Defaults to `true`
@@ -186,7 +186,7 @@ If you need to customize the alternate links, you can either turn them off and p
 import createMiddleware from 'next-intl/middleware';
 import LinkHeader from 'http-link-header';
 import {NextRequest} from 'next/server';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -230,7 +230,7 @@ A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/rout
 ```tsx filename="middleware.ts"
 import {NextRequest} from 'next/server';
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -386,7 +386,7 @@ Note that if you use a [`localePrefix`](/docs/routing#locale-prefix) other than 
 ```tsx filename="middleware.ts"
 import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -453,7 +453,7 @@ Now, we can integrate the Supabase middleware with the one from `next-intl`:
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 import {type NextRequest} from 'next/server';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 import {updateSession} from './utils/supabase/middleware';
 
 const handleI18nRouting = createMiddleware(routing);
@@ -482,7 +482,7 @@ For pathnames specified in [the `pages` object](https://next-auth.js.org/configu
 import {withAuth} from 'next-auth/middleware';
 import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
-import {routing} from './routing';
+import {routing} from './i18n/routing';
 
 const publicPages = ['/', '/login'];
 
@@ -575,7 +575,7 @@ To recover from this error, please make sure that:
 2. If you're using a setup _with_ i18n routing:
    1. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `[locale]` segment.
    2. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
-   3. If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that the `locale` is [validated](/docs/usage/configuration#i18nts) before it's used by any APIs from `next-intl`.
+   3. If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that the `locale` is [validated](/docs/usage/configuration#i18n-request) before it's used by any APIs from `next-intl`.
    4. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router/with-i18n-routing#static-rendering) to `next-intl` instead of using `force-static`.
 3. If you're using using a setup _without_ i18n routing:
    1. You don't read the `locale` param in `getRequestConfig` but instead return it.

@@ -16,7 +16,7 @@ Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting,
 - `createSharedPathnamesNavigation`: Pathnames are shared across all locales (default)
 - `createLocalizedPathnamesNavigation`: Pathnames are provided per locale (use with `pathnames`)
 
-These functions are typically called in a central module like [`src/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components and should receive a [`routing`](/docs/routing) configuration that is shared with the middleware.
+These functions are typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components and should receive a [`routing`](/docs/routing) configuration that is shared with the middleware.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
 <Tab>
@@ -95,7 +95,7 @@ This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/com
 <Tab>
 
 ```tsx
-import {Link} from '@/routing';
+import {Link} from '@/i18n/routing';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>
@@ -119,7 +119,7 @@ The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {Link} from '@/routing';
+import {Link} from '@/i18n/routing';
 
 export default function NavigationLink({
   href,
@@ -157,7 +157,7 @@ See also the Next.js docs on [creating an active link component](https://nextjs.
 When using [localized pathnames](/docs/routing#pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
-import {Link} from '@/routing';
+import {Link} from '@/i18n/routing';
 
 // When the user is on `/de`, the link will point to `/de/ueber-uns`
 <Link href="/about">About</Link>
@@ -192,7 +192,7 @@ If you need to create a component that receives an `href` prop that is forwarded
 
 ```tsx filename="StyledLink.tsx"
 import {ComponentProps} from 'react';
-import {Link, pathnames} from '@/routing';
+import {Link, pathnames} from '@/i18n/routing';
 
 export default function StyledLink<Pathname extends keyof typeof pathnames>({
   color,
@@ -217,7 +217,7 @@ To ensure that only valid pathnames can be passed to the component, we can accep
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {Link, pathnames} from '@/routing';
+import {Link, pathnames} from '@/i18n/routing';
 
 export default function NavigationLink<
   Pathname extends keyof typeof pathnames
@@ -291,7 +291,7 @@ If you need to navigate programmatically, e.g. in an event handler, `next-intl` 
 ```tsx
 'use client';
 
-import {useRouter} from '@/routing';
+import {useRouter} from '@/i18n/routing';
 
 const router = useRouter();
 
@@ -314,7 +314,7 @@ By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you c
 ```tsx
 'use client';
 
-import {usePathname, useRouter} from '@/routing';
+import {usePathname, useRouter} from '@/i18n/routing';
 
 const pathname = usePathname();
 const router = useRouter();
@@ -331,7 +331,7 @@ When using [localized pathnames](/docs/routing#pathnames), the provided `href` c
 ```tsx
 'use client';
 
-import {useRouter} from '@/routing';
+import {useRouter} from '@/i18n/routing';
 
 const router = useRouter();
 
@@ -364,7 +364,7 @@ Note that if you have dynamic params on some routes, you should pass those as we
 ```tsx
 'use client';
 
-import {usePathname, useRouter} from '@/routing';
+import {usePathname, useRouter} from '@/i18n/routing';
 import {useParams} from 'next/navigation';
 
 const pathname = usePathname();
@@ -394,7 +394,7 @@ To retrieve the pathname without a potential locale prefix, you can call `usePat
 ```tsx
 'use client';
 
-import {usePathname} from '@/routing';
+import {usePathname} from '@/i18n/routing';
 
 // When the user is on `/en`, this will be `/`
 const pathname = usePathname();
@@ -408,7 +408,7 @@ When using [localized pathnames](/docs/routing#pathnames), the returned pathname
 ```tsx
 'use client';
 
-import {usePathname} from '@/routing';
+import {usePathname} from '@/i18n/routing';
 
 // When the user is on `/de/ueber-uns`, this will be `/about`
 const pathname = usePathname();
@@ -427,7 +427,7 @@ If you want to interrupt the render and redirect to another page, you can invoke
 <Tab>
 
 ```tsx
-import {redirect} from '@/routing';
+import {redirect} from '@/i18n/routing';
 
 // When the user is on `/en`, this will be `/en/login`
 redirect('/login');
@@ -442,7 +442,7 @@ router.push('/users/12');
 When using [localized pathnames](/docs/routing#pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
-import {redirect} from '@/routing';
+import {redirect} from '@/i18n/routing';
 
 // When the user is on `/en`, this will be `/en/login`
 redirect('/login');
@@ -481,7 +481,7 @@ If you need to construct a particular pathname based on a locale, you can call t
 <Tab>
 
 ```tsx filename="page.tsx"
-import {getPathname} from '@/routing';
+import {getPathname} from '@/i18n/routing';
 
 export async function generateMetadata({params: {locale}}) {
   // Example: This page accepts search params like `?sort=asc`.
