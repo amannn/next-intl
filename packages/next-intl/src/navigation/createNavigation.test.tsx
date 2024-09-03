@@ -515,11 +515,11 @@ describe("localePrefix: 'as-needed'", () => {
   // });
 
   describe('getPathname', () => {
-    it('can be called with an arbitrary pathname', () => {
+    it('does not add a prefix when the current locale is the default locale', () => {
       expect(getPathname('/unknown')).toBe('/unknown');
     });
 
-    it('can switch the locale while providing an `href`', () => {
+    it('adds a prefix for a secondary locale', () => {
       expect(
         getPathname({
           href: '/about',
@@ -534,13 +534,17 @@ describe("localePrefix: 'as-needed'", () => {
         // Still works
         .toBe('/about');
     });
+
+    it('does not add a prefix for the default locale', () => {
+      expect(getPathname({href: '/about', locale: 'en'})).toBe('/about');
+    });
   });
 
   describe.each([
     ['redirect', redirect, nextRedirect],
     ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
   ])('%s', (_, redirectFn, nextRedirectFn) => {
-    it('can redirect for the default locale', () => {
+    it('does not add a prefix when redirecting within the default locale', () => {
       runInRender(() => redirectFn('/'));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
     });
@@ -550,16 +554,22 @@ describe("localePrefix: 'as-needed'", () => {
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
     });
 
-    it('can redirect for a different locale', () => {
+    it('adds a prefix when redirecting to a secondary locale', () => {
       runInRender(() => redirectFn({href: '/about', locale: 'de'}));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
+    });
+
+    it('adds a prefix when redirecting from a different locale to the default locale', () => {
+      vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+      runInRender(() => redirectFn({href: '/about', locale: 'en'}));
+      expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/about');
     });
   });
 });
 
 // describe("localePrefix: 'always', with `prefixes`", () => {})
-// describe("localePrefix: 'as-necessary', no `locales`", () => {})
-// describe("localePrefix: 'as-necessary', with `domains`", () => {})
+// describe("localePrefix: 'as-needed', no `locales`", () => {})
+// describe("localePrefix: 'as-needed', with `domains`", () => {})
 // describe("localePrefix: 'never', with `domains`", () => {})
 // describe("localePrefix: 'always', with `domains`", () => {})
 
@@ -587,17 +597,12 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('getPathname', () => {
-    it('can be called with an arbitrary pathname', () => {
+    it('does not add a prefix when staying on the current locale', () => {
       expect(getPathname('/unknown')).toBe('/unknown');
     });
 
-    it('can switch the locale while providing an `href`', () => {
-      expect(
-        getPathname({
-          href: '/about',
-          locale: 'de'
-        })
-      ).toBe('/de/about');
+    it('does not add a prefix when specifying a secondary locale', () => {
+      expect(getPathname({href: '/about', locale: 'de'})).toBe('/about');
     });
 
     it('requires a locale when using an object href', () => {

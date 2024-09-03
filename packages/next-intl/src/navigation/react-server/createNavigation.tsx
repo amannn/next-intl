@@ -100,7 +100,9 @@ export default function createNavigation<
           | {
               locale: Locale;
               href: HrefOrHrefWithParams<keyof AppPathnames>;
-            }
+            },
+    /** @private */
+    forcePrefix?: boolean
   ) {
     let hrefArg: [AppPathnames] extends [never]
       ? string
@@ -114,7 +116,6 @@ export default function createNavigation<
       hrefArg = href as typeof hrefArg;
     }
 
-    const hasProvidedLocale = locale != null;
     if (!locale) locale = getCurrentLocale();
 
     let pathname: string;
@@ -141,22 +142,31 @@ export default function createNavigation<
       locale,
       curLocale: getCurrentLocale(),
       routing: config,
-      force: hasProvidedLocale
+      force: forcePrefix
     });
+  }
+
+  function baseRedirect(
+    fn: typeof nextRedirect | typeof nextPermanentRedirect,
+    href: Parameters<typeof getPathname>[0],
+    ...args: ParametersExceptFirst<typeof nextRedirect>
+  ) {
+    const isChangingLocale = typeof href === 'object' && 'locale' in href;
+    return fn(getPathname(href, isChangingLocale), ...args);
   }
 
   function redirect(
     href: Parameters<typeof getPathname>[0],
     ...args: ParametersExceptFirst<typeof nextRedirect>
   ) {
-    return nextRedirect(getPathname(href), ...args);
+    return baseRedirect(nextRedirect, href, ...args);
   }
 
   function permanentRedirect(
     href: Parameters<typeof getPathname>[0],
     ...args: ParametersExceptFirst<typeof nextPermanentRedirect>
   ) {
-    return nextPermanentRedirect(getPathname(href), ...args);
+    return baseRedirect(nextPermanentRedirect, href, ...args);
   }
 
   function notSupported(hookName: string) {
