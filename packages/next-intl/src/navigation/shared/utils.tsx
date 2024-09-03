@@ -1,10 +1,14 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
+import {ResolvedRoutingConfig} from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import {
   matchesPathname,
   getSortedPathnames,
-  normalizeTrailingSlash
+  normalizeTrailingSlash,
+  isLocalizableHref,
+  prefixPathname,
+  getLocalePrefix
 } from '../../shared/utils';
 import StrictParams from './StrictParams';
 
@@ -38,8 +42,11 @@ export function normalizeNameOrNameWithParams<Pathname>(
   pathname: Pathname;
   params?: StrictParams<Pathname>;
 } {
-  // @ts-expect-error -- `extends string` in the generic unfortunately weakens the type
-  return typeof href === 'string' ? {pathname: href as Pathname} : href;
+  return typeof href === 'string'
+    ? {pathname: href as Pathname}
+    : 'locale' in href
+      ? normalizeNameOrNameWithParams(href.href)
+      : href;
 }
 
 export function serializeSearchParams(
@@ -197,4 +204,28 @@ export function getBasePath(
   } else {
     return windowPathname.replace(pathname, '');
   }
+}
+
+export function applyPathnamePrefix<AppLocales extends Locales>(params: {
+  pathname: string;
+  locale: Locales[number];
+  curLocale: Locales[number];
+  routing: Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix' | 'domains'>;
+  force?: boolean;
+}): string {
+  const {mode} = params.routing.localePrefix;
+  const shouldPrefix =
+    isLocalizableHref(params.pathname) &&
+    (params.force ||
+      mode === 'always' ||
+      (mode === 'as-needed' &&
+        params.locale !== params.curLocale &&
+        !params.routing.domains));
+
+  return shouldPrefix
+    ? prefixPathname(
+        getLocalePrefix(params.locale, params.routing.localePrefix),
+        params.pathname
+      )
+    : params.pathname;
 }

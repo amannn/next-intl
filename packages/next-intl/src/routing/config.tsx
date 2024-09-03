@@ -45,16 +45,11 @@ export type RoutingConfig<
       pathnames: AppPathnames;
     });
 
-export type RoutingConfigSharedNavigation<
-  AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
-> = Omit<
-  RoutingConfig<AppLocales, AppPathnames>,
+export type RoutingConfigSharedNavigation<AppLocales extends Locales> = Omit<
+  RoutingConfig<AppLocales, never>,
   'defaultLocale' | 'locales' | 'pathnames'
 > &
-  Partial<
-    Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'>
-  >;
+  Partial<Pick<RoutingConfig<AppLocales, never>, 'defaultLocale' | 'locales'>>;
 
 export type RoutingConfigLocalizedNavigation<
   AppLocales extends Locales,
@@ -78,10 +73,10 @@ export function receiveRoutingConfig<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>,
   Config extends Partial<RoutingConfig<AppLocales, AppPathnames>>
->(input: Config) {
+>(input?: Config) {
   return {
     ...input,
-    localePrefix: receiveLocalePrefixConfig(input.localePrefix)
+    localePrefix: receiveLocalePrefixConfig(input?.localePrefix)
   };
 }
 

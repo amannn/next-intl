@@ -10,7 +10,7 @@ import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
   AppLocales extends Locales
->(routing?: RoutingConfigSharedNavigation<AppLocales, never>) {
+>(routing?: RoutingConfigSharedNavigation<AppLocales>) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
 
   function notSupported(hookName: string) {
@@ -22,10 +22,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function Link(
-    props: Omit<
-      ComponentProps<typeof ServerLink<AppLocales>>,
-      'localePrefix' | 'locales'
-    >
+    props: Omit<ComponentProps<typeof ServerLink<AppLocales>>, 'localePrefix'>
   ) {
     return <ServerLink<AppLocales> localePrefix={localePrefix} {...props} />;
   }

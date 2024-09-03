@@ -12,7 +12,7 @@ import useBaseRouter from './useBaseRouter';
 
 export default function createSharedPathnamesNavigation<
   const AppLocales extends Locales
->(routing?: RoutingConfigSharedNavigation<AppLocales, never>) {
+>(routing?: RoutingConfigSharedNavigation<AppLocales>) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
 
   type LinkProps = Omit<
