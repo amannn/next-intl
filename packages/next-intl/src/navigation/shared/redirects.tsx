@@ -4,7 +4,11 @@ import {
 } from 'next/navigation';
 import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
-import {applyPathnamePrefix} from './utils';
+import {
+  getLocalePrefix,
+  isLocalizableHref,
+  prefixPathname
+} from '../../shared/utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
   return function baseRedirect<AppLocales extends Locales>(
@@ -15,15 +19,17 @@ function createRedirectFn(redirectFn: typeof nextRedirect) {
     },
     ...args: ParametersExceptFirst<typeof redirectFn>
   ) {
-    return redirectFn(
-      applyPathnamePrefix({
-        ...params,
-        curLocale: params.locale,
-        // TODO: Refactor fn signature to reduce bundle size?
-        routing: {localePrefix: params.localePrefix}
-      }),
-      ...args
-    );
+    const prefix = getLocalePrefix(params.locale, params.localePrefix);
+
+    // This logic is considered legacy and is replaced by `applyPathnamePrefix`.
+    // We keep it this way for now for backwards compatibility.
+    const localizedPathname =
+      params.localePrefix.mode === 'never' ||
+      !isLocalizableHref(params.pathname)
+        ? params.pathname
+        : prefixPathname(prefix, params.pathname);
+
+    return redirectFn(localizedPathname, ...args);
   };
 }
 
