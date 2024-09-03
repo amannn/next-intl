@@ -73,7 +73,7 @@ export function receiveRoutingConfig<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>,
   Config extends Partial<RoutingConfig<AppLocales, AppPathnames>>
->(input?: Config) {
+>(input: Config) {
   return {
     ...input,
     localePrefix: receiveLocalePrefixConfig(input?.localePrefix)

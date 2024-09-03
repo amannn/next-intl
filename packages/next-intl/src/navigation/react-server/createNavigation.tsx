@@ -5,6 +5,7 @@ import {
 import React, {ComponentProps} from 'react';
 import {
   receiveRoutingConfig,
+  ResolvedRoutingConfig,
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
@@ -33,15 +34,20 @@ export default function createNavigation<
   // Slightly different than e.g. `redirect` which only allows to pass `query`
   // type LinkHref
 
-  const config = receiveRoutingConfig(routing);
+  const config = receiveRoutingConfig(
+    routing || {}
+  ) as typeof routing extends undefined
+    ? Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix'>
+    : [AppPathnames] extends [never]
+      ? ResolvedRoutingConfig<AppLocales>
+      : ResolvedRoutingConfig<AppLocales, AppPathnames>;
+
   const pathnames = (config as any).pathnames as [AppPathnames] extends [never]
     ? undefined
     : AppPathnames;
 
   function getCurrentLocale() {
-    return getRequestLocale() as typeof config.locales extends undefined
-      ? string
-      : Locale;
+    return getRequestLocale() as Locale;
   }
 
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
@@ -96,9 +102,18 @@ export default function createNavigation<
               href: HrefOrHrefWithParams<keyof AppPathnames>;
             }
   ) {
+    let hrefArg: [AppPathnames] extends [never]
+      ? string
+      : HrefOrHrefWithParams<keyof AppPathnames>;
     let locale;
-    // @ts-expect-error -- This is ok
-    if (typeof href === 'object') locale = href.locale;
+    if (typeof href === 'object' && 'locale' in href) {
+      locale = href.locale;
+      // @ts-expect-error -- This is implied
+      hrefArg = href.href;
+    } else {
+      hrefArg = href as typeof hrefArg;
+    }
+
     const hasProvidedLocale = locale != null;
     if (!locale) locale = getCurrentLocale();
 
@@ -108,9 +123,9 @@ export default function createNavigation<
       pathname = typeof href === 'string' ? href : href.href;
     } else {
       pathname = compileLocalizedPathname({
-        // @ts-expect-error -- This is ok
-        ...normalizeNameOrNameWithParams(href),
         locale,
+        // @ts-expect-error -- This is ok
+        ...normalizeNameOrNameWithParams(hrefArg),
         // @ts-expect-error -- This is ok
         pathnames: config.pathnames
       });

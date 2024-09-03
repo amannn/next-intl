@@ -119,11 +119,15 @@ describe("localePrefix: 'always'", () => {
 
     it('renders an object href', () => {
       render(
-        <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>
+        <Link
+          href={{pathname: '/about', query: {foo: 'bar'}, host: 'www.test.de'}}
+        >
+          About
+        </Link>
       );
       expect(
         screen.getByRole('link', {name: 'About'}).getAttribute('href')
-      ).toBe('/about?foo=bar');
+      ).toBe('//www.test.de/about?foo=bar');
     });
 
     it('handles params', () => {

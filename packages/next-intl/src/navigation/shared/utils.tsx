@@ -37,16 +37,22 @@ export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
 >;
 
 export function normalizeNameOrNameWithParams<Pathname>(
-  href: HrefOrHrefWithParams<Pathname>
+  href:
+    | HrefOrHrefWithParams<Pathname>
+    | {
+        locale: string;
+        href: HrefOrHrefWithParams<Pathname>;
+      }
 ): {
   pathname: Pathname;
   params?: StrictParams<Pathname>;
 } {
   return typeof href === 'string'
     ? {pathname: href as Pathname}
-    : 'locale' in href
-      ? normalizeNameOrNameWithParams(href.href)
-      : href;
+    : (href as {
+        pathname: Pathname;
+        params?: StrictParams<Pathname>;
+      });
 }
 
 export function serializeSearchParams(
