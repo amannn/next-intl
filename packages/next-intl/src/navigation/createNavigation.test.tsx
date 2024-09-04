@@ -2,7 +2,8 @@ import {render, screen} from '@testing-library/react';
 import {
   RedirectType,
   redirect as nextRedirect,
-  permanentRedirect as nextPermanentRedirect
+  permanentRedirect as nextPermanentRedirect,
+  useParams as nextUseParams
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
@@ -36,7 +37,7 @@ vi.mock('react');
 // Avoids handling an async component (not supported by renderToString)
 vi.mock('../../src/navigation/react-server/ServerLink', () => ({
   default({locale, localePrefix, ...rest}: any) {
-    const finalLocale = locale || 'en';
+    const finalLocale = locale || nextUseParams().locale;
     const prefix = getLocalePrefix(finalLocale, localePrefix);
     return (
       <BaseLink
@@ -53,8 +54,15 @@ vi.mock('../../src/server/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
+function mockCurrentLocale(locale: string) {
+  vi.mocked(getRequestLocale).mockImplementation(() => locale);
+  vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
+    locale
+  }));
+}
+
 beforeEach(() => {
-  vi.mocked(getRequestLocale).mockImplementation(() => 'en');
+  mockCurrentLocale('en');
 });
 
 const locales = ['en', 'de', 'ja'] as const;
@@ -96,9 +104,15 @@ describe("localePrefix: 'always'", () => {
   });
 
   describe('Link', () => {
-    it('renders a prefix for the default locale', () => {
+    it('renders a prefix when currently on the default locale', () => {
       const markup = renderToString(<Link href="/about">About</Link>);
       expect(markup).toContain('href="/en/about"');
+    });
+
+    it('renders a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(<Link href="/about">About</Link>);
+      expect(markup).toContain('href="/de/about"');
     });
 
     it('accepts query params', () => {
@@ -161,6 +175,11 @@ describe("localePrefix: 'always'", () => {
   describe('getPathname', () => {
     it('can be called with an arbitrary pathname', () => {
       expect(getPathname('/unknown')).toBe('/en/unknown');
+    });
+
+    it('adds a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      expect(getPathname('/about')).toBe('/de/about');
     });
 
     it('can switch the locale while providing an `href`', () => {
@@ -304,9 +323,15 @@ describe("localePrefix: 'always', with `pathnames`", () => {
   });
 
   describe('Link', () => {
-    it('renders a prefix for the default locale', () => {
+    it('renders a prefix when currently on the default locale', () => {
       const markup = renderToString(<Link href="/about">About</Link>);
       expect(markup).toContain('href="/en/about"');
+    });
+
+    it('renders a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(<Link href="/about">About</Link>);
+      expect(markup).toContain('href="/de/ueber-uns"');
     });
 
     it('renders a prefix for a different locale', () => {
@@ -519,7 +544,12 @@ describe("localePrefix: 'as-needed'", () => {
       expect(getPathname('/unknown')).toBe('/unknown');
     });
 
-    it('adds a prefix for a secondary locale', () => {
+    it('adds a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      expect(getPathname('/about')).toBe('/de/about');
+    });
+
+    it('adds a prefix when navigating to a secondary locale', () => {
       expect(
         getPathname({
           href: '/about',
@@ -549,6 +579,12 @@ describe("localePrefix: 'as-needed'", () => {
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
     });
 
+    it('adds a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      runInRender(() => redirectFn('/'));
+      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
+    });
+
     it('forwards a redirect type', () => {
       runInRender(() => redirectFn('/', RedirectType.push));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
@@ -560,7 +596,7 @@ describe("localePrefix: 'as-needed'", () => {
     });
 
     it('adds a prefix when redirecting from a different locale to the default locale', () => {
-      vi.mocked(getRequestLocale).mockImplementation(() => 'de');
+      mockCurrentLocale('en');
       runInRender(() => redirectFn({href: '/about', locale: 'en'}));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/about');
     });
@@ -581,12 +617,18 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('Link', () => {
-    it('renders no prefix for the default locale', () => {
+    it('renders no prefix when currently on the default locale', () => {
       const markup = renderToString(<Link href="/about">About</Link>);
       expect(markup).toContain('href="/about"');
     });
 
-    it('renders a prefix for a different locale', () => {
+    it('renders no prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(<Link href="/about">About</Link>);
+      expect(markup).toContain('href="/about"');
+    });
+
+    it('renders a prefix when linking to a secondary locale', () => {
       const markup = renderToString(
         <Link href="/about" locale="de">
           Über uns
@@ -594,11 +636,26 @@ describe("localePrefix: 'never'", () => {
       );
       expect(markup).toContain('href="/de/about"');
     });
+
+    it('renders a prefix when currently on a secondary locale and linking to the default locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(
+        <Link href="/about" locale="en">
+          About
+        </Link>
+      );
+      expect(markup).toContain('href="/en/about"');
+    });
   });
 
   describe('getPathname', () => {
     it('does not add a prefix when staying on the current locale', () => {
       expect(getPathname('/unknown')).toBe('/unknown');
+    });
+
+    it('does not add a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      expect(getPathname('/about')).toBe('/about');
     });
 
     it('does not add a prefix when specifying a secondary locale', () => {

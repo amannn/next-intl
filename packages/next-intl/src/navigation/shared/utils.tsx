@@ -215,8 +215,8 @@ export function getBasePath(
 export function applyPathnamePrefix<AppLocales extends Locales>(params: {
   pathname: string;
   locale: Locales[number];
-  curLocale: Locales[number];
-  routing: Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix' | 'domains'>;
+  routing: Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix' | 'domains'> &
+    Partial<Pick<ResolvedRoutingConfig<AppLocales>, 'defaultLocale'>>;
   force?: boolean;
 }): string {
   const {mode} = params.routing.localePrefix;
@@ -225,7 +225,7 @@ export function applyPathnamePrefix<AppLocales extends Locales>(params: {
     (params.force ||
       mode === 'always' ||
       (mode === 'as-needed' &&
-        params.locale !== params.curLocale &&
+        params.routing.defaultLocale !== params.locale &&
         !params.routing.domains));
 
   return shouldPrefix

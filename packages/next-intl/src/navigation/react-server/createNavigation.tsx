@@ -140,7 +140,6 @@ export default function createNavigation<
     return applyPathnamePrefix({
       pathname,
       locale,
-      curLocale: getCurrentLocale(),
       routing: config,
       force: forcePrefix
     });
