@@ -5,9 +5,13 @@ import {Locales, LocalePrefixConfigVerbose} from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
+function isRelativePathname(pathname?: string | null) {
+  return pathname != null && !pathname.startsWith('/');
+}
+
 function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;
-  return pathname != null && !pathname.startsWith('/');
+  return isRelativePathname(pathname);
 }
 
 function isLocalHref(href: Href) {

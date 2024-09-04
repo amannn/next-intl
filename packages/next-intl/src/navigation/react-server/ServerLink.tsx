@@ -2,10 +2,10 @@ import React, {ComponentProps} from 'react';
 import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
 import {getLocale} from '../../server.react-server';
 import {getLocalePrefix} from '../../shared/utils';
-import BaseLink from '../shared/BaseLink';
+import LegacyBaseLink from '../shared/LegacyBaseLink';
 
 type Props<AppLocales extends Locales> = Omit<
-  ComponentProps<typeof BaseLink>,
+  ComponentProps<typeof LegacyBaseLink>,
   'locale' | 'prefix' | 'localePrefixMode'
 > & {
   locale?: AppLocales[number];
@@ -21,7 +21,7 @@ export default async function ServerLink<AppLocales extends Locales>({
   const prefix = getLocalePrefix(finalLocale, localePrefix);
 
   return (
-    <BaseLink
+    <LegacyBaseLink
       locale={finalLocale}
       localePrefixMode={localePrefix.mode}
       prefix={prefix}

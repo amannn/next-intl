@@ -12,12 +12,15 @@ import {
 import {Locales, Pathnames} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {ParametersExceptFirst} from '../../shared/types';
+import {isLocalizableHref} from '../../shared/utils';
+import BaseLink from '../shared/BaseLink';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
   applyPathnamePrefix,
   compileLocalizedPathname,
-  normalizeNameOrNameWithParams
+  normalizeNameOrNameWithParams,
+  validateReceivedConfig
 } from '../shared/utils';
 import ServerLink from './ServerLink';
 
@@ -31,9 +34,6 @@ export default function createNavigation<
 ) {
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
-  // Slightly different than e.g. `redirect` which only allows to pass `query`
-  // type LinkHref
-
   const config = receiveRoutingConfig(
     routing || {}
   ) as typeof routing extends undefined
@@ -41,6 +41,9 @@ export default function createNavigation<
     : [AppPathnames] extends [never]
       ? ResolvedRoutingConfig<AppLocales>
       : ResolvedRoutingConfig<AppLocales, AppPathnames>;
+  if (process.env.NODE_ENV !== 'production') {
+    validateReceivedConfig(config);
+  }
 
   const pathnames = (config as any).pathnames as [AppPathnames] extends [never]
     ? undefined
@@ -64,25 +67,35 @@ export default function createNavigation<
     locale,
     ...rest
   }: LinkProps<Pathname>) {
-    const curLocale = getCurrentLocale();
-    const finalLocale = locale || curLocale;
+    let pathname, params;
+    if (typeof href === 'object') {
+      pathname = href.pathname;
+      // @ts-expect-error -- This is ok
+      params = href.params;
+    } else {
+      pathname = href;
+    }
+
+    // @ts-expect-error -- This is ok
+    const finalPathname = isLocalizableHref(href)
+      ? getPathname(
+          // @ts-expect-error -- This is ok
+          {
+            locale,
+            href: pathnames == null ? pathname : {pathname, params}
+          },
+          locale != null
+        )
+      : pathname;
 
     return (
-      <ServerLink
-        href={
-          pathnames != null
-            ? compileLocalizedPathname<AppLocales, Pathname>({
-                locale: finalLocale,
-                // @ts-expect-error -- This is ok
-                pathname: href,
-                // @ts-expect-error -- This is ok
-                params: typeof href === 'object' ? href.params : undefined,
-                pathnames
-              })
-            : (href as string)
-        }
+      <BaseLink
+        href={{
+          ...(typeof href === 'object' && href),
+          // @ts-expect-error -- This is ok
+          pathname: finalPathname
+        }}
         locale={locale}
-        localePrefix={config.localePrefix}
         {...rest}
       />
     );

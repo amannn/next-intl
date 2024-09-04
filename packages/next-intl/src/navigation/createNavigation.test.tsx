@@ -10,10 +10,9 @@ import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
 import {defineRouting, Pathnames} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocale';
-import {getLocalePrefix} from '../shared/utils';
 import createNavigation from './react-server/createNavigation';
-import BaseLink from './shared/BaseLink';
 
+vi.mock('react');
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
   return {
@@ -24,32 +23,12 @@ vi.mock('next/navigation', async () => {
     permanentRedirect: vi.fn()
   };
 });
-
 vi.mock('next-intl/config', () => ({
   default: async () =>
     ((await vi.importActual('../../src/server')) as any).getRequestConfig({
       locale: 'en'
     })
 }));
-
-vi.mock('react');
-
-// Avoids handling an async component (not supported by renderToString)
-vi.mock('../../src/navigation/react-server/ServerLink', () => ({
-  default({locale, localePrefix, ...rest}: any) {
-    const finalLocale = locale || nextUseParams().locale;
-    const prefix = getLocalePrefix(finalLocale, localePrefix);
-    return (
-      <BaseLink
-        locale={finalLocale}
-        localePrefixMode={localePrefix.mode}
-        prefix={prefix}
-        {...rest}
-      />
-    );
-  }
-}));
-
 vi.mock('../../src/server/react-server/RequestLocale', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
@@ -197,6 +176,10 @@ describe("localePrefix: 'always'", () => {
         // Still works
         .toBe('/en/about');
     });
+
+    it('handles relative pathnames', () => {
+      expect(getPathname('about')).toBe('about');
+    });
   });
 
   describe.each([
@@ -216,6 +199,11 @@ describe("localePrefix: 'always'", () => {
     it('can redirect for a different locale', () => {
       runInRender(() => redirectFn({href: '/about', locale: 'de'}));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
+    });
+
+    it('handles relative pathnames', () => {
+      runInRender(() => redirectFn('about'));
+      expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
     });
   });
 });
@@ -249,11 +237,6 @@ describe("localePrefix: 'always', no `locales`", () => {
         </Link>
       );
       expect(markup).toContain('href="/zh/about"');
-    });
-
-    it('handles relative links correctly on the initial render', () => {
-      const markup = renderToString(<Link href="test">Test</Link>);
-      expect(markup).toContain('href="test"');
     });
   });
 
@@ -349,7 +332,7 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       );
       expect(
         screen.getByRole('link', {name: 'About'}).getAttribute('href')
-      ).toBe('/about?foo=bar');
+      ).toBe('/en/about?foo=bar');
     });
 
     it('handles params', () => {
@@ -379,6 +362,12 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       <Link href="/unknown" />;
       // @ts-expect-error -- Missing params
       <Link href={{pathname: '/news/[articleSlug]-[articleId]'}} />;
+    });
+
+    it('handles relative links', () => {
+      // @ts-expect-error -- Validation is still on
+      const markup = renderToString(<Link href="test">Test</Link>);
+      expect(markup).toContain('href="test"');
     });
   });
 
@@ -422,6 +411,11 @@ describe("localePrefix: 'always', with `pathnames`", () => {
     it('can not be called with an arbitrary pathname', () => {
       // @ts-expect-error -- Unknown pathname
       expect(getPathname('/unknown')).toBe('/en/unknown');
+    });
+
+    it('handles relative pathnames', () => {
+      // @ts-expect-error -- Validation is still on
+      expect(getPathname('about')).toBe('about');
     });
   });
 
@@ -484,60 +478,89 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       runInRender(() => redirectFn('/', RedirectType.push));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en', RedirectType.push);
     });
+
+    it('can handle relative pathnames', () => {
+      // @ts-expect-error -- Validation is still on
+      runInRender(() => redirectFn('about'));
+      expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
+    });
   });
 });
 
 describe("localePrefix: 'as-needed'", () => {
-  const {getPathname, permanentRedirect, redirect} = createNavigation({
+  const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'as-needed'
   });
 
-  // describe.todo('Link', () => {
-  //   // nooope. but only if we are already on that locale? for cookie switching
-  //   // maybe:
-  //   // - initial render without locale (correct link)
-  //   // - add locale on client side to switch cookie?
-  //   it.only('renders a prefix for the default locale', () => {
-  //     const markup = renderToString(<Link href="/about">About</Link>);
-  //     expect(markup).toContain('href="/en/about"');
-  //   });
+  describe('createNavigation', () => {
+    it('errors when no `defaultLocale` is set', () => {
+      expect(
+        () => void createNavigation({localePrefix: 'as-needed'})
+      ).toThrowError("`localePrefix: 'as-needed' requires a `defaultLocale`.");
+    });
+  });
 
-  //   it('renders a prefix for a different locale', () => {
-  //     const markup = renderToString(
-  //       <Link href="/about" locale="de">
-  //         Über uns
-  //       </Link>
-  //     );
-  //     expect(markup).toContain('href="/de/about"');
-  //   });
+  describe('Link', () => {
+    it('does not render a prefix when currently on the default locale', () => {
+      const markup = renderToString(<Link href="/about">About</Link>);
+      expect(markup).toContain('href="/about"');
+    });
 
-  //   it('renders an object href', () => {
-  //     render(
-  //       <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>
-  //     );
-  //     expect(
-  //       screen.getByRole('link', {name: 'About'}).getAttribute('href')
-  //     ).toBe('/about?foo=bar');
-  //   });
+    it('renders a prefix when currently on a secondary locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(<Link href="/about">About</Link>);
+      expect(markup).toContain('href="/de/about"');
+    });
 
-  //   it('handles params', () => {
-  //     render(
-  //       <Link href="/news/launch-party-3" locale="de">
-  //         About
-  //       </Link>
-  //     );
-  //     expect(
-  //       screen.getByRole('link', {name: 'About'}).getAttribute('href')
-  //     ).toBe('/de/news/launch-party-3');
-  //   });
+    it('renders a prefix for a different locale', () => {
+      const markup = renderToString(
+        <Link href="/about" locale="de">
+          Über uns
+        </Link>
+      );
+      expect(markup).toContain('href="/de/about"');
+    });
 
-  //   it('handles relative links correctly on the initial render', () => {
-  //     const markup = renderToString(<Link href="test">Test</Link>);
-  //     expect(markup).toContain('href="test"');
-  //   });
-  // });
+    it('renders an object href', () => {
+      render(
+        <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>
+      );
+      expect(
+        screen.getByRole('link', {name: 'About'}).getAttribute('href')
+      ).toBe('/about?foo=bar');
+    });
+
+    it('handles params', () => {
+      render(
+        <Link href="/news/launch-party-3" locale="de">
+          About
+        </Link>
+      );
+      expect(
+        screen.getByRole('link', {name: 'About'}).getAttribute('href')
+      ).toBe('/de/news/launch-party-3');
+    });
+
+    it('handles relative links correctly on the initial render', () => {
+      const markup = renderToString(<Link href="test">Test</Link>);
+      expect(markup).toContain('href="test"');
+    });
+
+    it('does not accept `params`', () => {
+      <Link
+        href={{
+          pathname: '/news/[articleSlug]-[articleId]',
+          // @ts-expect-error -- Not allowed
+          params: {
+            articleId: 3,
+            articleSlug: 'launch-party'
+          }
+        }}
+      />;
+    });
+  });
 
   describe('getPathname', () => {
     it('does not add a prefix when the current locale is the default locale', () => {

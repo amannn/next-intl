@@ -235,3 +235,19 @@ export function applyPathnamePrefix<AppLocales extends Locales>(params: {
       )
     : params.pathname;
 }
+
+export function validateReceivedConfig(
+  config: Partial<
+    Pick<
+      ResolvedRoutingConfig<Locales, Pathnames<Locales>>,
+      'defaultLocale' | 'localePrefix'
+    >
+  >
+) {
+  if (
+    config.localePrefix?.mode === 'as-needed' &&
+    !('defaultLocale' in config)
+  ) {
+    throw new Error("`localePrefix: 'as-needed' requires a `defaultLocale`.");
+  }
+}
