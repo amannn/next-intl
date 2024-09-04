@@ -4,6 +4,8 @@ import {getLocale} from '../../server.react-server';
 import {getLocalePrefix} from '../../shared/utils';
 import LegacyBaseLink from '../shared/LegacyBaseLink';
 
+// Only used by legacy navigation APIs, can be removed when they are removed
+
 type Props<AppLocales extends Locales> = Omit<
   ComponentProps<typeof LegacyBaseLink>,
   'locale' | 'prefix' | 'localePrefixMode'

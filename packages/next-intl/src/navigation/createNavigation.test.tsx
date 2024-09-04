@@ -108,6 +108,7 @@ describe("localePrefix: 'always'", () => {
         </Link>
       );
       expect(markup).toContain('href="/de/about"');
+      expect(markup).toContain('hrefLang="de"');
     });
 
     it('renders an object href', () => {
@@ -134,9 +135,16 @@ describe("localePrefix: 'always'", () => {
       ).toBe('/de/news/launch-party-3');
     });
 
-    it('handles relative links correctly on the initial render', () => {
+    it('handles relative links correctly', () => {
       const markup = renderToString(<Link href="test">Test</Link>);
       expect(markup).toContain('href="test"');
+    });
+
+    it('handles external links correctly', () => {
+      const markup = renderToString(
+        <Link href="https://example.com/test">Test</Link>
+      );
+      expect(markup).toContain('href="https://example.com/test"');
     });
 
     it('does not allow to use unknown locales', () => {
@@ -355,6 +363,20 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       ).toBe('/de/neuigkeiten/launch-party-3');
     });
 
+    it('handles relative links', () => {
+      // @ts-expect-error -- Validation is still on
+      const markup = renderToString(<Link href="test">Test</Link>);
+      expect(markup).toContain('href="test"');
+    });
+
+    it('handles external links correctly', () => {
+      const markup = renderToString(
+        // @ts-expect-error -- Validation is still on
+        <Link href="https://example.com/test">Test</Link>
+      );
+      expect(markup).toContain('href="https://example.com/test"');
+    });
+
     it('restricts invalid usage', () => {
       // @ts-expect-error -- Unknown locale
       <Link href="/about" locale="zh" />;
@@ -362,12 +384,6 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       <Link href="/unknown" />;
       // @ts-expect-error -- Missing params
       <Link href={{pathname: '/news/[articleSlug]-[articleId]'}} />;
-    });
-
-    it('handles relative links', () => {
-      // @ts-expect-error -- Validation is still on
-      const markup = renderToString(<Link href="test">Test</Link>);
-      expect(markup).toContain('href="test"');
     });
   });
 
@@ -658,6 +674,7 @@ describe("localePrefix: 'never'", () => {
         </Link>
       );
       expect(markup).toContain('href="/de/about"');
+      expect(markup).toContain('hrefLang="de"');
     });
 
     it('renders a prefix when currently on a secondary locale and linking to the default locale', () => {

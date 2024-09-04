@@ -115,6 +115,7 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   function getNamedPath(value: keyof typeof pathnames) {
     let namedPath = pathnames[value];
     if (!namedPath) {
+      // Unknown pathnames
       namedPath = value;
     }
     return namedPath;
@@ -226,6 +227,7 @@ export function applyPathnamePrefix<AppLocales extends Locales>(params: {
       mode === 'always' ||
       (mode === 'as-needed' &&
         params.routing.defaultLocale !== params.locale &&
+        // TODO: Rework
         !params.routing.domains));
 
   return shouldPrefix

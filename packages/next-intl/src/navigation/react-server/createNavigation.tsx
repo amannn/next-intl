@@ -22,7 +22,6 @@ import {
   normalizeNameOrNameWithParams,
   validateReceivedConfig
 } from '../shared/utils';
-import ServerLink from './ServerLink';
 
 export default function createNavigation<
   const AppLocales extends Locales,
@@ -54,11 +53,11 @@ export default function createNavigation<
   }
 
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
-    ComponentProps<typeof ServerLink>,
+    ComponentProps<typeof BaseLink>,
     'href' | 'localePrefix'
   > & {
     href: [AppPathnames] extends [never]
-      ? ComponentProps<typeof ServerLink>['href']
+      ? ComponentProps<typeof BaseLink>['href']
       : HrefOrUrlObjectWithParams<Pathname>;
     locale?: Locale;
   };
@@ -101,7 +100,6 @@ export default function createNavigation<
     );
   }
 
-  // TODO: Should this be called in Link? Maybe not, we can hydrate for one case there. Or: Call it with localePrefix: 'always' and again on the client side?
   // New: Locale is now optional (do we want this?)
   // New: accepts plain href argument
   // New: getPathname is available for shared pathnames
@@ -115,7 +113,8 @@ export default function createNavigation<
               href: HrefOrHrefWithParams<keyof AppPathnames>;
             },
     /** @private */
-    forcePrefix?: boolean
+    _forcePrefix?: boolean
+    // TODO: Should we somehow ensure this doesn't get emitted to the types?
   ) {
     let hrefArg: [AppPathnames] extends [never]
       ? string
@@ -145,8 +144,7 @@ export default function createNavigation<
       });
     }
 
-    // TODO: There might be only one shot here, for as-necessary
-    // and domains, should we apply the prefix here? Alternative
+    // TODO: There might be only one shot here, for as-needed
     // would be reading `host`, but that breaks SSG. If you want
     // to get the first shot right, pass a `domain` here (then
     // the user opts into dynamic rendering)
@@ -154,7 +152,7 @@ export default function createNavigation<
       pathname,
       locale,
       routing: config,
-      force: forcePrefix
+      force: _forcePrefix
     });
   }
 

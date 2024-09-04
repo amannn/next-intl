@@ -6,6 +6,9 @@ import {NextIntlClientProvider} from '../../index.react-client';
 import {LocalePrefixConfigVerbose} from '../../routing/types';
 import ClientLink from './ClientLink';
 
+// Note: Once we remove the legacy navigation APIs, this test suite can be
+// removed too. All relevant tests have been moved to the new navigation API.
+
 vi.mock('next/navigation');
 
 function mockLocation(pathname: string, basePath = '') {
