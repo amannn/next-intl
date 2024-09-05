@@ -1,10 +1,8 @@
 import {render, screen} from '@testing-library/react';
-import {
-  useParams as useNextParams,
-  usePathname as useNextPathname
-} from 'next/navigation';
+import {useParams, usePathname as useNextPathname} from 'next/navigation';
 import React from 'react';
-import {beforeEach, describe, it, vi} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {NextIntlClientProvider} from '../../react-client';
 import {Pathnames} from '../../routing';
 import createNavigation from './createNavigation';
 
@@ -18,7 +16,7 @@ vi.mock('next/navigation', async () => {
 });
 
 function mockCurrentLocale(locale: string) {
-  vi.mocked(useNextParams<{locale: string}>).mockImplementation(() => ({
+  vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
     locale
   }));
 }
@@ -65,12 +63,54 @@ function getRenderPathname<Return extends string>(usePathname: () => Return) {
 }
 
 describe("localePrefix: 'always'", () => {
-  const {usePathname} = createNavigation({
+  const {Link, usePathname} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'always'
   });
   const renderPathname = getRenderPathname(usePathname);
+
+  describe('Link', () => {
+    describe('usage outside of Next.js', () => {
+      beforeEach(() => {
+        vi.mocked(useParams<any>).mockImplementation((() => null) as any);
+      });
+
+      it('works with a provider', () => {
+        render(
+          <NextIntlClientProvider locale="en">
+            <Link href="/test">Test</Link>
+          </NextIntlClientProvider>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+        ).toBe('/en/test');
+      });
+
+      it('throws without a provider', () => {
+        expect(() => render(<Link href="/test">Test</Link>)).toThrow(
+          'No intl context found. Have you configured the provider?'
+        );
+      });
+    });
+
+    it('can receive a ref', () => {
+      let ref;
+
+      render(
+        <Link
+          ref={(node) => {
+            ref = node;
+          }}
+          href="/test"
+        >
+          Test
+        </Link>
+      );
+
+      expect(ref).toBeDefined();
+    });
+  });
 
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {

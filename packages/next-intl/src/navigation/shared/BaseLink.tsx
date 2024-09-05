@@ -2,18 +2,16 @@
 
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
-import React, {ComponentProps, MouseEvent, forwardRef} from 'react';
+import React, {ComponentProps, MouseEvent} from 'react';
 import useLocale from '../../react-client/useLocale';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
+  nodeRef?: ComponentProps<typeof NextLink>['ref'];
 };
 
-function BaseLink(
-  {href, locale, onClick, prefetch, ...rest}: Props,
-  ref: Props['ref']
-) {
+function BaseLink({href, locale, nodeRef, onClick, prefetch, ...rest}: Props) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
@@ -37,7 +35,7 @@ function BaseLink(
 
   return (
     <NextLink
-      ref={ref}
+      ref={nodeRef}
       href={href}
       hrefLang={isChangingLocale ? locale : undefined}
       onClick={onLinkClick}
@@ -47,6 +45,4 @@ function BaseLink(
   );
 }
 
-const BaseLinkWithRef = forwardRef(BaseLink);
-(BaseLinkWithRef as any).displayName = 'ClientLink';
-export default BaseLinkWithRef;
+export default BaseLink;

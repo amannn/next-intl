@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import React, {ComponentProps, forwardRef, ReactElement, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
   RoutingConfigLocalizedNavigation,
@@ -20,22 +20,15 @@ export default function createNavigation<
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
   function getLocale() {
-    let locale;
-    try {
-      // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since `redirect` must be called during render
-      locale = useLocale();
-    } catch (e) {
-      if (process.env.NODE_ENV !== 'production') {
-        throw new Error(
-          '`redirect()` and `permanentRedirect()` can only be called during render. To redirect in an event handler or similar, you can use `useRouter()` instead.'
-        );
-      }
-      throw e;
-    }
-    return locale as Locale;
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since this must always be called during render (redirect, useRouter)
+    return useLocale() as Locale;
   }
 
-  const {config, ...fns} = createSharedNavigationFns(getLocale, routing);
+  const {
+    Link: BaseLink,
+    config,
+    ...fns
+  } = createSharedNavigationFns(getLocale, routing);
 
   /**
    * Returns the pathname without a potential locale prefix.
@@ -65,8 +58,17 @@ export default function createNavigation<
     );
   }
 
+  type LinkProps = Omit<ComponentProps<typeof BaseLink>, 'nodeRef'>;
+  function Link(props: LinkProps, ref: LinkProps['ref']) {
+    return <BaseLink nodeRef={ref} {...props} />;
+  }
+  const LinkWithRef = forwardRef(Link) as (
+    props: LinkProps & {ref?: LinkProps['ref']}
+  ) => ReactElement;
+  (LinkWithRef as any).displayName = 'Link';
+
   // TODO
   function useRouter() {}
 
-  return {...fns, usePathname, useRouter};
+  return {...fns, Link: LinkWithRef, usePathname, useRouter};
 }
