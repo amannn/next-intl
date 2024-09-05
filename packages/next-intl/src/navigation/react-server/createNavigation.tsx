@@ -17,9 +17,11 @@ import BaseLink from '../shared/BaseLink';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
+  QueryParams,
   applyPathnamePrefix,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams,
+  serializeSearchParams,
   validateReceivedConfig
 } from '../shared/utils';
 
@@ -75,12 +77,14 @@ export default function createNavigation<
       pathname = href;
     }
 
+    const curLocale = getCurrentLocale();
+
     // @ts-expect-error -- This is ok
     const finalPathname = isLocalizableHref(href)
       ? getPathname(
-          // @ts-expect-error -- This is ok
           {
-            locale,
+            locale: locale || curLocale,
+            // @ts-expect-error -- This is ok
             href: pathnames == null ? pathname : {pathname, params}
           },
           locale != null
@@ -100,45 +104,36 @@ export default function createNavigation<
     );
   }
 
-  // New: Locale is now optional (do we want this?)
-  // New: accepts plain href argument
   // New: getPathname is available for shared pathnames
   function getPathname(
-    href: [AppPathnames] extends [never]
-      ? string | {locale: Locale; href: string}
-      :
-          | HrefOrHrefWithParams<keyof AppPathnames>
-          | {
-              locale: Locale;
-              href: HrefOrHrefWithParams<keyof AppPathnames>;
-            },
+    {
+      href,
+      locale
+    }: {
+      locale: Locale;
+      href: [AppPathnames] extends [never]
+        ? string | {pathname: string; query?: QueryParams}
+        : HrefOrHrefWithParams<keyof AppPathnames>;
+    },
     /** @private */
     _forcePrefix?: boolean
     // TODO: Should we somehow ensure this doesn't get emitted to the types?
   ) {
-    let hrefArg: [AppPathnames] extends [never]
-      ? string
-      : HrefOrHrefWithParams<keyof AppPathnames>;
-    let locale;
-    if (typeof href === 'object' && 'locale' in href) {
-      locale = href.locale;
-      // @ts-expect-error -- This is implied
-      hrefArg = href.href;
-    } else {
-      hrefArg = href as typeof hrefArg;
-    }
-
-    if (!locale) locale = getCurrentLocale();
-
     let pathname: string;
     if (pathnames == null) {
-      // @ts-expect-error -- This is ok
-      pathname = typeof href === 'string' ? href : href.href;
+      if (typeof href === 'object') {
+        pathname = href.pathname as string;
+        if (href.query) {
+          pathname += serializeSearchParams(href.query);
+        }
+      } else {
+        pathname = href as string;
+      }
     } else {
       pathname = compileLocalizedPathname({
         locale,
         // @ts-expect-error -- This is ok
-        ...normalizeNameOrNameWithParams(hrefArg),
+        ...normalizeNameOrNameWithParams(href),
         // @ts-expect-error -- This is ok
         pathnames: config.pathnames
       });
@@ -158,22 +153,23 @@ export default function createNavigation<
 
   function baseRedirect(
     fn: typeof nextRedirect | typeof nextPermanentRedirect,
-    href: Parameters<typeof getPathname>[0],
+    href: Parameters<typeof getPathname>[0]['href'],
     ...args: ParametersExceptFirst<typeof nextRedirect>
   ) {
+    const locale = getCurrentLocale();
     const isChangingLocale = typeof href === 'object' && 'locale' in href;
-    return fn(getPathname(href, isChangingLocale), ...args);
+    return fn(getPathname({href, locale}, isChangingLocale), ...args);
   }
 
   function redirect(
-    href: Parameters<typeof getPathname>[0],
+    href: Parameters<typeof getPathname>[0]['href'],
     ...args: ParametersExceptFirst<typeof nextRedirect>
   ) {
     return baseRedirect(nextRedirect, href, ...args);
   }
 
   function permanentRedirect(
-    href: Parameters<typeof getPathname>[0],
+    href: Parameters<typeof getPathname>[0]['href'],
     ...args: ParametersExceptFirst<typeof nextPermanentRedirect>
   ) {
     return baseRedirect(nextPermanentRedirect, href, ...args);
@@ -182,7 +178,7 @@ export default function createNavigation<
   function notSupported(hookName: string) {
     return () => {
       throw new Error(
-        `\`${hookName}\` is not supported in Server Components. You can use this hook if you convert the component to a Client Component.`
+        `\`${hookName}\` is not supported in Server Components. You can use this hook if you convert the calling component to a Client Component.`
       );
     };
   }

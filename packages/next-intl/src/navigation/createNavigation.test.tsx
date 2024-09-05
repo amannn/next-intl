@@ -160,33 +160,62 @@ describe("localePrefix: 'always'", () => {
   });
 
   describe('getPathname', () => {
-    it('can be called with an arbitrary pathname', () => {
-      expect(getPathname('/unknown')).toBe('/en/unknown');
+    it('can be called for the default locale', () => {
+      expect(getPathname({href: '/unknown', locale: 'en'})).toBe('/en/unknown');
     });
 
-    it('adds a prefix when currently on a secondary locale', () => {
-      mockCurrentLocale('de');
-      expect(getPathname('/about')).toBe('/de/about');
+    it('can be called for a secondary locale', () => {
+      expect(getPathname({locale: 'de', href: '/about'})).toBe('/de/about');
     });
 
-    it('can switch the locale while providing an `href`', () => {
+    it('can incorporate query params', () => {
       expect(
         getPathname({
-          href: '/about',
-          locale: 'de'
+          href: {
+            pathname: '/about',
+            query: {foo: 'bar'}
+          },
+          locale: 'en'
         })
-      ).toBe('/de/about');
+      ).toBe('/en/about?foo=bar');
     });
 
-    it('requires a locale when using an object href', () => {
+    it('does not accept `query` on the root', () => {
+      // eslint-disable-next-line no-unused-expressions
+      () =>
+        getPathname({
+          href: '/about',
+          locale: 'en',
+          // @ts-expect-error -- Not allowed
+          query: {foo: 'bar'}
+        });
+    });
+
+    it('does not accept `params` on href', () => {
+      // eslint-disable-next-line no-unused-expressions
+      () =>
+        getPathname({
+          href: {
+            pathname: '/users/[userId]',
+            // @ts-expect-error -- Not allowed
+            params: {userId: 3}
+          },
+          locale: 'en'
+        });
+    });
+
+    it('requires a locale', () => {
+      // Some background: This function can be used either in the `react-server`
+      // or the `react-client` environment. Since the function signature doesn't
+      // impose a limit on where it can be called (e.g. during rendering), we
+      // can't determine the current locale in the `react-client` environment.
+      // While we could theoretically retrieve the current locale in the
+      // `react-server` environment we need a shared function signature that
+      // works in either environment.
+
       // @ts-expect-error -- Missing locale
-      expect(getPathname({href: '/about'}))
-        // Still works
-        .toBe('/en/about');
-    });
-
-    it('handles relative pathnames', () => {
-      expect(getPathname('about')).toBe('about');
+      // eslint-disable-next-line no-unused-expressions
+      () => getPathname({href: '/about'});
     });
   });
 
@@ -204,14 +233,24 @@ describe("localePrefix: 'always'", () => {
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en', RedirectType.push);
     });
 
-    it('can redirect for a different locale', () => {
-      runInRender(() => redirectFn({href: '/about', locale: 'de'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
+    // There's nothing strictly against this, but there was no need for this so
+    // far. The API design is a bit tricky since Next.js uses the second argument
+    // for a plain `type` string. Should we support an object here? Also consider
+    // API symmetry with `router.push`.
+    it('can not redirect for a different locale', () => {
+      // @ts-expect-error
+      // eslint-disable-next-line no-unused-expressions
+      () => redirectFn('/about', {locale: 'de'});
     });
 
     it('handles relative pathnames', () => {
       runInRender(() => redirectFn('about'));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
+    });
+
+    it('handles query params', () => {
+      runInRender(() => redirectFn({pathname: '/about', query: {foo: 'bar'}}));
+      expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/about?foo=bar');
     });
   });
 });
@@ -249,11 +288,11 @@ describe("localePrefix: 'always', no `locales`", () => {
   });
 
   describe('getPathname', () => {
-    it('adds a prefix for the current locale', () => {
-      expect(getPathname('/about')).toBe('/en/about');
+    it('adds a prefix for the default locale', () => {
+      expect(getPathname({href: '/about', locale: 'en'})).toBe('/en/about');
     });
 
-    it('adds a prefix for a different locale', () => {
+    it('adds a prefix for a secondary locale', () => {
       expect(getPathname({href: '/about', locale: 'zh'})).toBe('/zh/about');
     });
   });
@@ -265,11 +304,6 @@ describe("localePrefix: 'always', no `locales`", () => {
     it('can redirect for the current locale', () => {
       runInRender(() => redirectFn('/'));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
-    });
-
-    it('can redirect for a different locale', () => {
-      runInRender(() => redirectFn({href: '/about', locale: 'de'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
     });
   });
 });
@@ -389,28 +423,19 @@ describe("localePrefix: 'always', with `pathnames`", () => {
 
   describe('getPathname', () => {
     it('can be called with a known pathname', () => {
-      expect(getPathname('/about')).toBe('/en/about');
-      expect(getPathname({pathname: '/about', query: {foo: 'bar'}})).toBe(
-        '/en/about?foo=bar'
-      );
-    });
-
-    it('can resolve a pathname with params for the current locale via a short-hand', () => {
+      expect(getPathname({href: '/about', locale: 'en'})).toBe('/en/about');
       expect(
         getPathname({
-          pathname: '/news/[articleSlug]-[articleId]',
-          params: {
-            articleId: 3,
-            articleSlug: 'launch-party'
-          },
-          query: {foo: 'bar'}
+          href: {pathname: '/about', query: {foo: 'bar'}},
+          locale: 'en'
         })
-      ).toBe('/en/news/launch-party-3?foo=bar');
+      ).toBe('/en/about?foo=bar');
     });
 
-    it('can switch the locale while providing an `href`', () => {
+    it('can resolve a pathname with params', () => {
       expect(
         getPathname({
+          locale: 'en',
           href: {
             pathname: '/news/[articleSlug]-[articleId]',
             params: {
@@ -418,20 +443,21 @@ describe("localePrefix: 'always', with `pathnames`", () => {
               articleSlug: 'launch-party'
             },
             query: {foo: 'bar'}
-          },
-          locale: 'de'
+          }
         })
-      ).toBe('/de/neuigkeiten/launch-party-3?foo=bar');
+      ).toBe('/en/news/launch-party-3?foo=bar');
     });
 
     it('can not be called with an arbitrary pathname', () => {
       // @ts-expect-error -- Unknown pathname
-      expect(getPathname('/unknown')).toBe('/en/unknown');
+      expect(getPathname({locale: 'en', href: '/unknown'}))
+        // Works regardless
+        .toBe('/en/unknown');
     });
 
     it('handles relative pathnames', () => {
       // @ts-expect-error -- Validation is still on
-      expect(getPathname('about')).toBe('about');
+      expect(getPathname({locale: 'en', href: 'about'})).toBe('about');
     });
   });
 
@@ -444,7 +470,7 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
     });
 
-    it('can redirect with params', () => {
+    it('can redirect with params and query params', () => {
       runInRender(() =>
         redirectFn({
           pathname: '/news/[articleSlug]-[articleId]',
@@ -460,33 +486,10 @@ describe("localePrefix: 'always', with `pathnames`", () => {
       );
     });
 
-    it('can redirect for a different locale', () => {
-      runInRender(() => redirectFn({href: '/about', locale: 'de'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/ueber-uns');
-    });
-
-    it('can redirect for a different locale with params', () => {
-      runInRender(() =>
-        redirectFn({
-          href: {
-            pathname: '/news/[articleSlug]-[articleId]',
-            params: {
-              articleId: 3,
-              articleSlug: 'launch-party'
-            },
-            query: {foo: 'bar'}
-          },
-          locale: 'de'
-        })
-      );
-      expect(nextRedirectFn).toHaveBeenLastCalledWith(
-        '/de/neuigkeiten/launch-party-3?foo=bar'
-      );
-    });
-
     it('can not be called with an arbitrary pathname', () => {
       // @ts-expect-error -- Unknown pathname
       runInRender(() => redirectFn('/unknown'));
+      // Works regardless
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/unknown');
     });
 
@@ -589,33 +592,18 @@ describe("localePrefix: 'as-needed'", () => {
   });
 
   describe('getPathname', () => {
-    it('does not add a prefix when the current locale is the default locale', () => {
-      expect(getPathname('/unknown')).toBe('/unknown');
-    });
-
-    it('adds a prefix when currently on a secondary locale', () => {
-      mockCurrentLocale('de');
-      expect(getPathname('/about')).toBe('/de/about');
-    });
-
-    it('adds a prefix when navigating to a secondary locale', () => {
-      expect(
-        getPathname({
-          href: '/about',
-          locale: 'de'
-        })
-      ).toBe('/de/about');
-    });
-
-    it('requires a locale when using an object href', () => {
-      // @ts-expect-error -- Missing locale
-      expect(getPathname({href: '/about'}))
-        // Still works
-        .toBe('/about');
-    });
-
     it('does not add a prefix for the default locale', () => {
-      expect(getPathname({href: '/about', locale: 'en'})).toBe('/about');
+      expect(getPathname({locale: 'en', href: '/about'})).toBe('/about');
+    });
+
+    it('adds a prefix for a secondary locale', () => {
+      expect(getPathname({locale: 'de', href: '/about'})).toBe('/de/about');
+    });
+
+    it('requires a locale', () => {
+      // @ts-expect-error -- Missing locale
+      // eslint-disable-next-line no-unused-expressions
+      () => getPathname({href: '/about'});
     });
   });
 
@@ -637,17 +625,6 @@ describe("localePrefix: 'as-needed'", () => {
     it('forwards a redirect type', () => {
       runInRender(() => redirectFn('/', RedirectType.push));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
-    });
-
-    it('adds a prefix when redirecting to a secondary locale', () => {
-      runInRender(() => redirectFn({href: '/about', locale: 'de'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
-    });
-
-    it('adds a prefix when redirecting from a different locale to the default locale', () => {
-      mockCurrentLocale('en');
-      runInRender(() => redirectFn({href: '/about', locale: 'en'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/about');
     });
   });
 });
@@ -699,24 +676,18 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('getPathname', () => {
-    it('does not add a prefix when staying on the current locale', () => {
-      expect(getPathname('/unknown')).toBe('/unknown');
+    it('does not add a prefix for the default locale', () => {
+      expect(getPathname({locale: 'en', href: '/unknown'})).toBe('/unknown');
     });
 
-    it('does not add a prefix when currently on a secondary locale', () => {
-      mockCurrentLocale('de');
-      expect(getPathname('/about')).toBe('/about');
+    it('does not add a prefix for a secondary locale', () => {
+      expect(getPathname({locale: 'de', href: '/about'})).toBe('/about');
     });
 
-    it('does not add a prefix when specifying a secondary locale', () => {
-      expect(getPathname({href: '/about', locale: 'de'})).toBe('/about');
-    });
-
-    it('requires a locale when using an object href', () => {
+    it('requires a locale', () => {
       // @ts-expect-error -- Missing locale
-      expect(getPathname({href: '/about'}))
-        // Still works
-        .toBe('/about');
+      // eslint-disable-next-line no-unused-expressions
+      () => getPathname({href: '/about'});
     });
   });
 
@@ -732,11 +703,6 @@ describe("localePrefix: 'never'", () => {
     it('forwards a redirect type', () => {
       runInRender(() => redirectFn('/', RedirectType.push));
       expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
-    });
-
-    it('can redirect for a different locale', () => {
-      runInRender(() => redirectFn({href: '/about', locale: 'de'}));
-      expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
     });
   });
 });

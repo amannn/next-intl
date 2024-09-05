@@ -31,9 +31,10 @@ export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Omit<UrlObject, 'pathname'>
 >;
 
+export type QueryParams = Record<string, SearchParamValue>;
 export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
-  {query?: Record<string, SearchParamValue>}
+  {query?: QueryParams}
 >;
 
 export function normalizeNameOrNameWithParams<Pathname>(
