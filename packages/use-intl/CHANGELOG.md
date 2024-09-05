@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.19.1 (2024-09-05)
+
+### Bug Fixes
+
+* Add error handling in case an invalid i18n request config file has been specified ([#1327](https://github.com/amannn/next-intl/issues/1327)) ([18b9fd6](https://github.com/amannn/next-intl/commit/18b9fd64af235c144cc0e5f4f166ba4df20fece4)) – by @amannn
+
 ## 3.19.0 (2024-08-30)
 
 ### Features
