@@ -24,6 +24,9 @@ import {
   validateReceivedConfig
 } from './utils';
 
+/**
+ * Shared implementations for `react-server` and `react-client`
+ */
 export default function createSharedNavigationFns<
   const AppLocales extends Locales,
   const AppPathnames extends Pathnames<AppLocales> = never
@@ -175,6 +178,7 @@ export default function createSharedNavigationFns<
     Link,
     redirect,
     permanentRedirect,
-    getPathname
+    getPathname,
+    config
   };
 }

@@ -19,7 +19,6 @@ vi.mock('next/navigation', async () => {
   return {
     ...actual,
     useParams: vi.fn(() => ({locale: 'en'})),
-    usePathname: vi.fn(() => '/'),
     redirect: vi.fn(),
     permanentRedirect: vi.fn()
   };

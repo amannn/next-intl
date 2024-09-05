@@ -1,5 +1,3 @@
-'use client';
-
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
@@ -10,19 +8,6 @@ import {
   unprefixPathname
 } from '../../shared/utils';
 
-/**
- * Returns the pathname without a potential locale prefix.
- *
- * @example
- * ```tsx
- * 'use client';
- *
- * import {usePathname} from 'next-intl/client';
- *
- * // When the user is on `/en`, this will be `/`
- * const pathname = usePathname();
- * ```
- */
 export default function useBasePathname<AppLocales extends Locales>(
   localePrefix: LocalePrefixConfigVerbose<AppLocales>
 ) {

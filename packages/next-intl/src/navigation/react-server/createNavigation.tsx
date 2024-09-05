@@ -20,7 +20,8 @@ export default function createNavigation<
     return getRequestLocale() as Locale;
   }
 
-  const fns = createSharedNavigationFns(getLocale, routing);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {config, ...fns} = createSharedNavigationFns(getLocale, routing);
 
   function notSupported(hookName: string) {
     return () => {
