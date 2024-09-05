@@ -42,7 +42,9 @@ export default function createNavigation<
    *
    * @see https://next-intl-docs.vercel.app/docs/routing/navigation#usepathname
    */
-  function usePathname(): string {
+  function usePathname(): [AppPathnames] extends [never]
+    ? string
+    : keyof AppPathnames {
     const pathname = useBasePathname(config.localePrefix);
     const locale = getLocale();
 

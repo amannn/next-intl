@@ -5,6 +5,7 @@ import {
 } from 'next/navigation';
 import React from 'react';
 import {beforeEach, describe, it, vi} from 'vitest';
+import {Pathnames} from '../../routing';
 import createNavigation from './createNavigation';
 
 vi.mock('next/navigation', async () => {
@@ -34,7 +35,27 @@ beforeEach(() => {
 const locales = ['en', 'de', 'ja'] as const;
 const defaultLocale = 'en' as const;
 
-function getRenderPathname(usePathname: () => string) {
+const pathnames = {
+  '/': '/',
+  '/about': {
+    en: '/about',
+    de: '/ueber-uns',
+    ja: '/約'
+  },
+  '/news/[articleSlug]-[articleId]': {
+    en: '/news/[articleSlug]-[articleId]',
+    de: '/neuigkeiten/[articleSlug]-[articleId]',
+    ja: '/ニュース/[articleSlug]-[articleId]'
+  },
+  '/categories/[...parts]': {
+    en: '/categories/[...parts]',
+    de: '/kategorien/[...parts]',
+    ja: '/カテゴリ/[...parts]'
+  },
+  '/catch-all/[[...parts]]': '/catch-all/[[...parts]]'
+} satisfies Pathnames<typeof locales>;
+
+function getRenderPathname<Return extends string>(usePathname: () => Return) {
   return () => {
     function Component() {
       return usePathname();
@@ -49,7 +70,6 @@ describe("localePrefix: 'always'", () => {
     defaultLocale,
     localePrefix: 'always'
   });
-
   const renderPathname = getRenderPathname(usePathname);
 
   describe('usePathname', () => {
@@ -67,6 +87,27 @@ describe("localePrefix: 'always'", () => {
 
       renderPathname();
       screen.getByText('/about');
+    });
+  });
+});
+
+describe("localePrefix: 'always', with `pathnames`", () => {
+  const {usePathname} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always',
+    pathnames
+  });
+
+  describe('usePathname', () => {
+    it('returns a typed pathname', () => {
+      type Return = ReturnType<typeof usePathname>;
+
+      '/about' satisfies Return;
+      '/categories/[...parts]' satisfies Return;
+
+      // @ts-expect-error
+      '/unknown' satisfies Return;
     });
   });
 });
