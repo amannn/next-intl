@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {useParams, usePathname as useNextPathname} from 'next/navigation';
 import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
@@ -208,7 +208,7 @@ describe("localePrefix: 'as-needed'", () => {
 });
 
 describe("localePrefix: 'never'", () => {
-  const {usePathname} = createNavigation({
+  const {Link, usePathname} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'never'
@@ -220,6 +220,31 @@ describe("localePrefix: 'never'", () => {
     }
     render(<Component />);
   }
+
+  describe('Link', () => {
+    it('keeps the cookie value in sync', () => {
+      global.document.cookie = 'NEXT_LOCALE=en';
+      render(
+        <Link href="/" locale="de">
+          Test
+        </Link>
+      );
+      expect(document.cookie).toContain('NEXT_LOCALE=en');
+      fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+      expect(document.cookie).toContain('NEXT_LOCALE=de');
+    });
+
+    it('updates the href when the query changes', () => {
+      const {rerender} = render(<Link href={{pathname: '/'}}>Test</Link>);
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/');
+      rerender(<Link href={{pathname: '/', query: {foo: 'bar'}}}>Test</Link>);
+      expect(
+        screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+      ).toBe('/?foo=bar');
+    });
+  });
 
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
