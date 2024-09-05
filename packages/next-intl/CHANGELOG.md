@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.19.1 (2024-09-05)
+
+### Bug Fixes
+
+* Add error handling in case an invalid i18n request config file has been specified ([#1327](https://github.com/amannn/next-intl/issues/1327)) ([18b9fd6](https://github.com/amannn/next-intl/commit/18b9fd64af235c144cc0e5f4f166ba4df20fece4)) – by @amannn
+
+## 3.19.0 (2024-08-30)
+
+### Features
+
+* Support `./i18n/request.ts` in addition to `./i18n.ts` ([#1308](https://github.com/amannn/next-intl/issues/1308)) ([258e95e](https://github.com/amannn/next-intl/commit/258e95ebef10033c3d6de524e6cd6c7459a18916)) – by @amannn
+
 ## 3.18.1 (2024-08-29)
 
 ### Bug Fixes

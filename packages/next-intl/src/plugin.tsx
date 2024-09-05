@@ -4,6 +4,15 @@ import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
 
+function withExtensions(localPath: string) {
+  return [
+    `${localPath}.ts`,
+    `${localPath}.tsx`,
+    `${localPath}.js`,
+    `${localPath}.jsx`
+  ];
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -25,29 +34,27 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
     return providedPath;
   } else {
     for (const candidate of [
-      './i18n.tsx',
-      './i18n.ts',
-      './i18n.js',
-      './i18n.jsx',
-      './src/i18n.tsx',
-      './src/i18n.ts',
-      './src/i18n.js',
-      './src/i18n.jsx'
+      ...withExtensions('./i18n'),
+      ...withExtensions('./src/i18n'),
+      ...withExtensions('./i18n/request'),
+      ...withExtensions('./src/i18n/request')
     ]) {
       if (pathExists(candidate)) {
         return candidate;
       }
     }
 
-    throw new Error(`\n\nCould not locate i18n config. Create one at \`./(src/)i18n.{js,jsx,ts,tsx}\` or specify a custom location:
+    throw new Error(`\n\nCould not locate i18n request config for next-intl.
 
-const withNextIntl = require('next-intl/plugin')(
-  './path/to/i18n.tsx'
-);
+These paths are supported by default:
+- ./(src/)i18n/request.{js,jsx,ts,tsx}
+- ./(src/)i18n.{js,jsx,ts,tsx}
 
-module.exports = withNextIntl({
-  // Other Next.js configuration ...
-});\n`);
+Alternatively, you can specify a custom location in your Next.js config:
+
+const withNextIntl = createNextIntlPlugin(
+  './path/to/i18n/request.tsx'
+);\n`);
   }
 }
 

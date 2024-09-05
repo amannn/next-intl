@@ -3,7 +3,7 @@
 import mdxPlugin from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin('./src/i18n.tsx');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.tsx');
 const withMdx = mdxPlugin();
 
 export default withMdx(
