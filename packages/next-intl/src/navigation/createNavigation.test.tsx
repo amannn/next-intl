@@ -539,6 +539,16 @@ describe("localePrefix: 'as-needed'", () => {
       expect(markup).toContain('href="/de/about"');
     });
 
+    it('renders a prefix when currently on a secondary locale and linking to the default locale', () => {
+      mockCurrentLocale('de');
+      const markup = renderToString(
+        <Link href="/about" locale="en">
+          About
+        </Link>
+      );
+      expect(markup).toContain('href="/en/about"');
+    });
+
     it('renders an object href', () => {
       render(
         <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>
