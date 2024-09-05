@@ -34,6 +34,15 @@ beforeEach(() => {
 const locales = ['en', 'de', 'ja'] as const;
 const defaultLocale = 'en' as const;
 
+function getRenderPathname(usePathname: () => string) {
+  return () => {
+    function Component() {
+      return usePathname();
+    }
+    render(<Component />);
+  };
+}
+
 describe("localePrefix: 'always'", () => {
   const {usePathname} = createNavigation({
     locales,
@@ -41,12 +50,7 @@ describe("localePrefix: 'always'", () => {
     localePrefix: 'always'
   });
 
-  function renderPathname() {
-    function Component() {
-      return usePathname();
-    }
-    render(<Component />);
-  }
+  const renderPathname = getRenderPathname(usePathname);
 
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
@@ -61,6 +65,28 @@ describe("localePrefix: 'always'", () => {
       mockCurrentLocale('de');
       mockCurrentPathname('/de/about');
 
+      renderPathname();
+      screen.getByText('/about');
+    });
+  });
+});
+
+describe("localePrefix: 'always', custom `prefixes`", () => {
+  const {usePathname} = createNavigation({
+    locales,
+    localePrefix: {
+      mode: 'always',
+      prefixes: {
+        en: '/uk'
+      }
+    }
+  });
+  const renderPathname = getRenderPathname(usePathname);
+
+  describe('usePathname', () => {
+    it('returns the correct pathname for a custom locale prefix', () => {
+      mockCurrentLocale('en');
+      mockCurrentPathname('/uk/about');
       renderPathname();
       screen.getByText('/about');
     });
