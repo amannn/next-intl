@@ -25,6 +25,22 @@ async function receiveRuntimeConfigImpl(
   getConfig: typeof createRequestConfig,
   localeOverride?: string
 ) {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    typeof getConfig !== 'function'
+  ) {
+    throw new Error(
+      `Invalid i18n request configuration detected.
+
+Please verify that:
+1. In case you've specified a custom location in your Next.js config, make sure that the path is correct.
+2. You have a default export in your i18n request configuration file.
+
+See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+`
+    );
+  }
+
   let hasReadLocale = false;
 
   // In case the consumer doesn't read `params.locale` and instead provides the
