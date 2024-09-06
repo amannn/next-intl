@@ -1,19 +1,16 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {useParams, usePathname as useNextPathname} from 'next/navigation';
+import {
+  useParams,
+  usePathname as useNextPathname,
+  useRouter as useNextRouter
+} from 'next/navigation';
 import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {NextIntlClientProvider} from '../../react-client';
 import {Pathnames} from '../../routing';
 import createNavigation from './createNavigation';
 
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation');
-  return {
-    ...actual,
-    useParams: vi.fn(() => ({locale: 'en'})),
-    usePathname: vi.fn(() => '/')
-  };
-});
+vi.mock('next/navigation');
 
 function mockCurrentLocale(locale: string) {
   vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
@@ -27,7 +24,17 @@ function mockCurrentPathname(string: string) {
 
 beforeEach(() => {
   mockCurrentLocale('en');
-  mockCurrentLocale('/en');
+  mockCurrentPathname('/en');
+
+  const router = {
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn()
+  };
+  vi.mocked(useNextRouter).mockImplementation(() => router);
 });
 
 const locales = ['en', 'de', 'ja'] as const;
@@ -62,8 +69,19 @@ function getRenderPathname<Return extends string>(usePathname: () => Return) {
   };
 }
 
+function getInvokeRouter<Router>(useRouter: () => Router) {
+  return function invokeRouter(cb: (router: Router) => void) {
+    function Component() {
+      const router = useRouter();
+      cb(router);
+      return null;
+    }
+    render(<Component />);
+  };
+}
+
 describe("localePrefix: 'always'", () => {
-  const {Link, usePathname} = createNavigation({
+  const {Link, usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'always'
@@ -109,6 +127,48 @@ describe("localePrefix: 'always'", () => {
       );
 
       expect(ref).toBeDefined();
+    });
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('leaves unrelated router functionality in place', () => {
+      (['back', 'forward', 'refresh'] as const).forEach((method) => {
+        invokeRouter((router) => router[method]());
+        expect(useNextRouter()[method]).toHaveBeenCalled();
+      });
+    });
+
+    describe.each(['push', 'replace'] as const)('`%s`', (method) => {
+      it('prefixes with the default locale', () => {
+        invokeRouter((router) => router[method]('/about'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
+      });
+
+      it('prefixes with a secondary locale', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+
+      it('passes through unknown options to the Next.js router', () => {
+        invokeRouter((router) => router[method]('/about', {scroll: true}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about', {
+          scroll: true
+        });
+      });
+    });
+
+    describe('prefetch', () => {
+      it('prefixes with the default locale', () => {
+        invokeRouter((router) => router.prefetch('/about'));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/en/about');
+      });
+
+      it('prefixes with a secondary locale', () => {
+        invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about');
+      });
     });
   });
 
@@ -175,7 +235,7 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
 });
 
 describe("localePrefix: 'as-needed'", () => {
-  const {usePathname} = createNavigation({
+  const {usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'as-needed'
@@ -187,6 +247,41 @@ describe("localePrefix: 'as-needed'", () => {
     }
     render(<Component />);
   }
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('leaves unrelated router functionality in place', () => {
+      (['back', 'forward', 'refresh'] as const).forEach((method) => {
+        invokeRouter((router) => router[method]());
+        expect(useNextRouter()[method]).toHaveBeenCalled();
+      });
+    });
+
+    describe.each(['push', 'replace'] as const)('`%s`', (method) => {
+      it('does not prefix the default locale', () => {
+        invokeRouter((router) => router[method]('/about'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
+
+      it('prefixes a secondary locale', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+    });
+
+    describe('prefetch', () => {
+      it('prefixes with the default locale', () => {
+        invokeRouter((router) => router.prefetch('/about'));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
+      });
+
+      it('prefixes with a secondary locale', () => {
+        invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about');
+      });
+    });
+  });
 
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
@@ -208,7 +303,7 @@ describe("localePrefix: 'as-needed'", () => {
 });
 
 describe("localePrefix: 'never'", () => {
-  const {Link, usePathname} = createNavigation({
+  const {Link, usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'never'
@@ -243,6 +338,41 @@ describe("localePrefix: 'never'", () => {
       expect(
         screen.getByRole('link', {name: 'Test'}).getAttribute('href')
       ).toBe('/?foo=bar');
+    });
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('leaves unrelated router functionality in place', () => {
+      (['back', 'forward', 'refresh'] as const).forEach((method) => {
+        invokeRouter((router) => router[method]());
+        expect(useNextRouter()[method]).toHaveBeenCalled();
+      });
+    });
+
+    describe.each(['push', 'replace'] as const)('`%s`', (method) => {
+      it('does not prefix the default locale', () => {
+        invokeRouter((router) => router[method]('/about'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
+
+      it('does not prefix a secondary locale', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
+    });
+
+    describe('prefetch', () => {
+      it('does not prefix the default locale', () => {
+        invokeRouter((router) => router.prefetch('/about'));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
+      });
+
+      it('does not prefix a secondary locale', () => {
+        invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
+      });
     });
   });
 

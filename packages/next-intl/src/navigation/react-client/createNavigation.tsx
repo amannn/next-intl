@@ -1,3 +1,4 @@
+import {useRouter as useNextRouter} from 'next/navigation';
 import React, {ComponentProps, forwardRef, ReactElement, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
@@ -19,7 +20,8 @@ export default function createNavigation<
 ) {
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
-  function getLocale() {
+  function useTypedLocale() {
+    // eslint-disable-next-line react-compiler/react-compiler
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since this must always be called during render (redirect, useRouter)
     return useLocale() as Locale;
   }
@@ -27,8 +29,9 @@ export default function createNavigation<
   const {
     Link: BaseLink,
     config,
-    ...fns
-  } = createSharedNavigationFns(getLocale, routing);
+    getPathname,
+    ...redirects
+  } = createSharedNavigationFns(useTypedLocale, routing);
 
   /**
    * Returns the pathname without a potential locale prefix.
@@ -39,7 +42,7 @@ export default function createNavigation<
     ? string
     : keyof AppPathnames {
     const pathname = useBasePathname(config.localePrefix);
-    const locale = getLocale();
+    const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return useMemo(
@@ -67,8 +70,54 @@ export default function createNavigation<
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 
-  // TODO
-  function useRouter() {}
+  function useRouter() {
+    const router = useNextRouter();
+    const curLocale = useTypedLocale();
 
-  return {...fns, Link: LinkWithRef, usePathname, useRouter};
+    return useMemo(() => {
+      function createHandler<
+        Options,
+        Fn extends (href: string, options?: Options) => void
+      >(fn: Fn) {
+        return function handler(
+          href: string,
+          options?: Partial<Options> & {locale?: Locale}
+        ): void {
+          const {locale: nextLocale, ...rest} = options || {};
+
+          const pathname = getPathname({
+            // @ts-expect-error -- This is fine
+            href,
+            locale: nextLocale || curLocale
+          });
+
+          const args: [href: string, options?: Options] = [pathname];
+          if (Object.keys(rest).length > 0) {
+            // @ts-expect-error -- This is fine
+            args.push(rest);
+          }
+
+          return fn(...args);
+        };
+      }
+
+      return {
+        ...router,
+        push: createHandler<
+          Parameters<typeof router.push>[1],
+          typeof router.push
+        >(router.push),
+        replace: createHandler<
+          Parameters<typeof router.replace>[1],
+          typeof router.replace
+        >(router.replace),
+        prefetch: createHandler<
+          Parameters<typeof router.prefetch>[1],
+          typeof router.prefetch
+        >(router.prefetch)
+      };
+    }, [curLocale, router]);
+  }
+
+  return {...redirects, Link: LinkWithRef, usePathname, useRouter, getPathname};
 }
