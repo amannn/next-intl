@@ -26,12 +26,15 @@ type HrefOrHrefWithParamsImpl<Pathname, Other> =
       : // No params
         Pathname | ({pathname: Pathname} & Other);
 
+// For `Link`
 export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
   Omit<UrlObject, 'pathname'>
 >;
 
 export type QueryParams = Record<string, SearchParamValue>;
+
+// For `getPathname` (hence also its consumers: `redirect`, `useRouter`, …)
 export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
   {query?: QueryParams}
