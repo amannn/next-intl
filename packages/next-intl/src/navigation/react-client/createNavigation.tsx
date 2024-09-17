@@ -37,11 +37,6 @@ export default function createNavigation<
     ...redirects
   } = createSharedNavigationFns(useTypedLocale, routing);
 
-  /**
-   * Returns the pathname without a potential locale prefix.
-   *
-   * @see https://next-intl-docs.vercel.app/docs/routing/navigation#usepathname
-   */
   function usePathname(): [AppPathnames] extends [never]
     ? string
     : keyof AppPathnames {
