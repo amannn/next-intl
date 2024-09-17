@@ -1589,6 +1589,23 @@ describe('prefix-based routing', () => {
         );
       });
 
+      it('handles overlapping custom prefixes correctly', () => {
+        createMiddleware({
+          locales: ['en-US', 'es-US'],
+          defaultLocale: 'en-US',
+          localePrefix: {
+            mode: 'always',
+            prefixes: {
+              'es-US': '/us/es',
+              'en-US': '/us'
+            }
+          }
+        })(createMockRequest('/us/es'));
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/es-US'
+        );
+      });
+
       it('serves requests for a prefixed locale at the root', () => {
         middlewareWithPrefixes(createMockRequest('/uk?test'));
         expect(MockedNextResponse.redirect).not.toHaveBeenCalled();

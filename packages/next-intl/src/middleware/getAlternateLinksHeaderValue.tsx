@@ -69,7 +69,8 @@ export default function getAlternateLinksHeaderValue<
 
   const links = getLocalePrefixes(
     routing.locales as AppLocales,
-    routing.localePrefix
+    routing.localePrefix,
+    false
   ).flatMap(([locale, prefix]) => {
     function prefixPathname(pathname: string) {
       if (pathname === '/') {
