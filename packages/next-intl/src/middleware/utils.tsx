@@ -129,12 +129,20 @@ export function findCaseInsensitiveString(
 
 export function getLocalePrefixes<AppLocales extends Locales>(
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+  localePrefix: LocalePrefixConfigVerbose<AppLocales>,
+  sort = true
 ): Array<[AppLocales[number], string]> {
-  return locales.map((locale) => [
+  const prefixes = locales.map((locale) => [
     locale as AppLocales[number],
     getLocalePrefix(locale, localePrefix)
   ]);
+
+  if (sort) {
+    // More specific ones first
+    prefixes.sort((a, b) => b[1].length - a[1].length);
+  }
+
+  return prefixes as Array<[AppLocales[number], string]>;
 }
 
 export function getPathnameMatch<AppLocales extends Locales>(
@@ -150,9 +158,6 @@ export function getPathnameMatch<AppLocales extends Locales>(
     }
   | undefined {
   const localePrefixes = getLocalePrefixes(locales, localePrefix);
-
-  // More specific ones first
-  localePrefixes.sort((a, b) => b[1].length - a[1].length);
 
   for (const [locale, prefix] of localePrefixes) {
     let exact, matches;
