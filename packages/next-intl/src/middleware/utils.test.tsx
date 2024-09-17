@@ -171,20 +171,34 @@ describe('getInternalTemplate', () => {
 });
 
 describe('getPathnameMatch', () => {
-  it('prioritizes more specific prefixes for overlapping locales', () => {
-    expect(
-      getPathnameMatch('/de/at/test', ['de', 'de-at'], {
-        mode: 'always',
-        prefixes: {
-          'de-at': '/de/at',
-          de: '/de'
-        }
-      })
-    ).toEqual({
+  it('prioritizes more specific custom prefixes for overlapping ones', () => {
+    const locales = ['de', 'de-at', 'de-at-x-test'] as const;
+    const localePrefix = {
+      mode: 'always',
+      prefixes: {
+        de: '/de',
+        'de-at': '/de/at',
+        // Longer locale, shorter prefix
+        'de-at-x-test': '/de/a'
+      }
+    } as const;
+
+    expect(getPathnameMatch('/de/at/test', locales, localePrefix)).toEqual({
       locale: 'de-at',
       prefix: '/de/at',
       exact: true,
       matchedPrefix: '/de/at'
+    });
+  });
+
+  it('does not confuse unrelated parts of the pathname with a locale', () => {
+    expect(
+      getPathnameMatch('/de/ats', ['de', 'de-at'], {mode: 'always'})
+    ).toEqual({
+      locale: 'de',
+      prefix: '/de',
+      exact: true,
+      matchedPrefix: '/de'
     });
   });
 });
