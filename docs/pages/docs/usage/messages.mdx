@@ -393,8 +393,6 @@ t.rich('message', {
 });
 ```
 
-For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation).
-
 In case you have attribute values that are required to be configured as part of your messages, you can retrieve them from a separate message and pass them to another one as an attribute:
 
 ```json filename="en.json"
@@ -409,6 +407,8 @@ t.rich('message', {
   partner: (chunks) => <a href={t('partnerHref')}>{chunks}</a>
 });
 ```
+
+For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation).
 
 </Details>
 

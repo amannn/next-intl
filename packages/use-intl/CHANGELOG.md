@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.19.3 (2024-09-17)
+
+### Bug Fixes
+
+* Handle overlapping locale prefixes correctly pt. 2 ([#1344](https://github.com/amannn/next-intl/issues/1344)) ([7958659](https://github.com/amannn/next-intl/commit/7958659f858bb5df19203ec3c1a8701e029ed2c4)) – by @amannn
+
+## 3.19.2 (2024-09-17)
+
+### Bug Fixes
+
+* Handle overlapping custom locale prefixes correctly ([#1343](https://github.com/amannn/next-intl/issues/1343)) ([72c1731](https://github.com/amannn/next-intl/commit/72c1731892db6e7d0470cefcea2b1f22a5f37ce2)), closes [#1329](https://github.com/amannn/next-intl/issues/1329) – by @amannn
+
 ## 3.19.1 (2024-09-05)
 
 ### Bug Fixes
