@@ -329,32 +329,29 @@ function buildOutput() {
         <span style={{color: 'var(--shiki-color-text)'}}>┌ ● /</span>
         <span style={{color: 'var(--shiki-color-text)'}}> </span>
         <span style={{color: 'var(--shiki-color-text)'}}>
-          {'           '}1.4
+          {'           '}2.1 kB
         </span>
-        <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          89.7 kB
+          97.1 kB
         </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>├ ● /about</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'       '}</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>205</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> B</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'      '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>2.5 kB</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          89.3 kB
+          97.6 kB
         </span>
       </span>
       <span className="line">
         <span style={{color: 'var(--shiki-color-text)'}}>└ λ /[username]</span>
         <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>3.24</span>
-        <span style={{color: 'var(--shiki-color-text)'}}> kB</span>
-        <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>3.2 kB</span>
+        <span style={{color: 'var(--shiki-color-text)'}}>{'     '}</span>
         <span style={{color: 'var(--shiki-token-string-expression)'}}>
-          91.1 kB
+          98.3 kB
         </span>
       </span>
       <span className="line"> </span>
