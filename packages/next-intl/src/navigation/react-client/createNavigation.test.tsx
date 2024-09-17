@@ -1,4 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
+import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
   useParams,
   usePathname as useNextPathname,
@@ -18,13 +19,17 @@ function mockCurrentLocale(locale: string) {
   }));
 }
 
-function mockCurrentPathname(string: string) {
-  vi.mocked(useNextPathname).mockImplementation(() => string);
+function mockLocation(pathname: string, basePath = '') {
+  vi.mocked(useNextPathname).mockReturnValue(pathname);
+
+  delete (global.window as any).location;
+  global.window ??= Object.create(window);
+  (global.window as any).location = {pathname: basePath + pathname};
 }
 
 beforeEach(() => {
   mockCurrentLocale('en');
-  mockCurrentPathname('/en');
+  mockLocation('/en');
 
   const router = {
     push: vi.fn(),
@@ -157,6 +162,18 @@ describe("localePrefix: 'always'", () => {
           scroll: true
         });
       });
+
+      it('passes through absolute urls', () => {
+        invokeRouter((router) => router[method]('https://example.com'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          'https://example.com'
+        );
+      });
+
+      it('passes through relative urls', () => {
+        invokeRouter((router) => router[method]('about'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('about');
+      });
     });
 
     describe('prefetch', () => {
@@ -166,8 +183,12 @@ describe("localePrefix: 'always'", () => {
       });
 
       it('prefixes with a secondary locale', () => {
-        invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
-        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about');
+        invokeRouter((router) =>
+          router.prefetch('/about', {locale: 'de', kind: PrefetchKind.FULL})
+        );
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about', {
+          kind: 'full'
+        });
       });
     });
   });
@@ -175,7 +196,7 @@ describe("localePrefix: 'always'", () => {
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
       mockCurrentLocale('en');
-      mockCurrentPathname('/en/about');
+      mockLocation('/en/about');
 
       renderPathname();
       screen.getByText('/about');
@@ -183,10 +204,41 @@ describe("localePrefix: 'always'", () => {
 
     it('returns the correct pathname for a secondary locale', () => {
       mockCurrentLocale('de');
-      mockCurrentPathname('/de/about');
+      mockLocation('/de/about');
 
       renderPathname();
       screen.getByText('/about');
+    });
+  });
+});
+
+describe("localePrefix: 'always', with `basePath`", () => {
+  const {useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always'
+  });
+
+  beforeEach(() => {
+    mockLocation('/en', '/base/path');
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('can push', () => {
+      invokeRouter((router) => router.push('/test'));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
+    });
+
+    it('can replace', () => {
+      invokeRouter((router) => router.replace('/test'));
+      expect(useNextRouter().replace).toHaveBeenCalledWith('/en/test');
+    });
+
+    it('can prefetch', () => {
+      invokeRouter((router) => router.prefetch('/test'));
+      expect(useNextRouter().prefetch).toHaveBeenCalledWith('/en/test');
     });
   });
 });
@@ -227,7 +279,7 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
   describe('usePathname', () => {
     it('returns the correct pathname for a custom locale prefix', () => {
       mockCurrentLocale('en');
-      mockCurrentPathname('/uk/about');
+      mockLocation('/uk/about');
       renderPathname();
       screen.getByText('/about');
     });
@@ -286,7 +338,7 @@ describe("localePrefix: 'as-needed'", () => {
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
       mockCurrentLocale('en');
-      mockCurrentPathname('/about');
+      mockLocation('/about');
 
       renderPathname();
       screen.getByText('/about');
@@ -294,7 +346,7 @@ describe("localePrefix: 'as-needed'", () => {
 
     it('returns the correct pathname for a secondary locale', () => {
       mockCurrentLocale('de');
-      mockCurrentPathname('/de/about');
+      mockLocation('/de/about');
 
       renderPathname();
       screen.getByText('/about');
@@ -363,6 +415,24 @@ describe("localePrefix: 'never'", () => {
       });
     });
 
+    it('keeps the cookie value in sync', () => {
+      document.cookie = 'NEXT_LOCALE=en';
+
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+      expect(document.cookie).toContain('NEXT_LOCALE=de');
+
+      invokeRouter((router) => router.push('/test'));
+      expect(document.cookie).toContain('NEXT_LOCALE=de');
+
+      invokeRouter((router) => router.replace('/about', {locale: 'de'}));
+      expect(document.cookie).toContain('NEXT_LOCALE=de');
+
+      invokeRouter((router) =>
+        router.prefetch('/about', {locale: 'ja', kind: PrefetchKind.AUTO})
+      );
+      expect(document.cookie).toContain('NEXT_LOCALE=ja');
+    });
+
     describe('prefetch', () => {
       it('does not prefix the default locale', () => {
         invokeRouter((router) => router.prefetch('/about'));
@@ -379,7 +449,7 @@ describe("localePrefix: 'never'", () => {
   describe('usePathname', () => {
     it('returns the correct pathname for the default locale', () => {
       mockCurrentLocale('en');
-      mockCurrentPathname('/about');
+      mockLocation('/about');
 
       renderPathname();
       screen.getByText('/about');
@@ -387,10 +457,41 @@ describe("localePrefix: 'never'", () => {
 
     it('returns the correct pathname for a secondary locale', () => {
       mockCurrentLocale('de');
-      mockCurrentPathname('/about');
+      mockLocation('/about');
 
       renderPathname();
       screen.getByText('/about');
+    });
+  });
+});
+
+describe("localePrefix: 'never', with `basePath`", () => {
+  const {useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'never'
+  });
+
+  beforeEach(() => {
+    mockLocation('/en', '/base/path');
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('can push', () => {
+      invokeRouter((router) => router.push('/test'));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+    });
+
+    it('can replace', () => {
+      invokeRouter((router) => router.replace('/test'));
+      expect(useNextRouter().replace).toHaveBeenCalledWith('/test');
+    });
+
+    it('can prefetch', () => {
+      invokeRouter((router) => router.prefetch('/test'));
+      expect(useNextRouter().prefetch).toHaveBeenCalledWith('/test');
     });
   });
 });

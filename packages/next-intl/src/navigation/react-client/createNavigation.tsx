@@ -1,4 +1,7 @@
-import {useRouter as useNextRouter} from 'next/navigation';
+import {
+  useRouter as useNextRouter,
+  usePathname as useNextPathname
+} from 'next/navigation';
 import React, {ComponentProps, forwardRef, ReactElement, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
@@ -7,6 +10,7 @@ import {
 } from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
+import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getRoute} from '../shared/utils';
 import useBasePathname from './useBasePathname';
 
@@ -73,6 +77,7 @@ export default function createNavigation<
   function useRouter() {
     const router = useNextRouter();
     const curLocale = useTypedLocale();
+    const nextPathname = useNextPathname();
 
     return useMemo(() => {
       function createHandler<
@@ -97,7 +102,9 @@ export default function createNavigation<
             args.push(rest);
           }
 
-          return fn(...args);
+          fn(...args);
+
+          syncLocaleCookie(nextPathname, curLocale, nextLocale);
         };
       }
 
@@ -116,7 +123,7 @@ export default function createNavigation<
           typeof router.prefetch
         >(router.prefetch)
       };
-    }, [curLocale, router]);
+    }, [curLocale, nextPathname, router]);
   }
 
   return {...redirects, Link: LinkWithRef, usePathname, useRouter, getPathname};
