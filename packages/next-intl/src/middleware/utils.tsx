@@ -151,6 +151,9 @@ export function getPathnameMatch<AppLocales extends Locales>(
   | undefined {
   const localePrefixes = getLocalePrefixes(locales, localePrefix);
 
+  // More specific ones first
+  localePrefixes.sort((a, b) => b[1].length - a[1].length);
+
   for (const [locale, prefix] of localePrefixes) {
     let exact, matches;
     if (pathname === prefix || pathname.startsWith(prefix + '/')) {
