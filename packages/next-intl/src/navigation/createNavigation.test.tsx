@@ -233,6 +233,18 @@ describe.each([
         // eslint-disable-next-line no-unused-expressions
         () => getPathname({href: '/about'});
       });
+
+      it('handles relative pathnames', () => {
+        // Not really useful, but we silently support this
+        expect(getPathname({locale: 'en', href: 'about'})).toBe('about');
+      });
+
+      it('handles external pathnames', () => {
+        // Not really useful, but we silently support this
+        expect(
+          getPathname({locale: 'en', href: 'https://example.com/about'})
+        ).toBe('https://example.com/about');
+      });
     });
 
     describe.each([

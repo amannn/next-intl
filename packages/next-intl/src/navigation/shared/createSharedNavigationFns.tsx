@@ -150,29 +150,20 @@ export default function createSharedNavigationFns<
     });
   }
 
-  function baseRedirect(
-    fn: typeof nextRedirect | typeof nextPermanentRedirect,
-    href: Parameters<typeof getPathname>[0]['href'],
-    ...args: ParametersExceptFirst<typeof nextRedirect>
+  function getRedirectFn(
+    fn: typeof nextRedirect | typeof nextPermanentRedirect
   ) {
-    const locale = getLocale();
-    const isChangingLocale = typeof href === 'object' && 'locale' in href;
-    return fn(getPathname({href, locale}, isChangingLocale), ...args);
+    return function redirectFn(
+      href: Parameters<typeof getPathname>[0]['href'],
+      ...args: ParametersExceptFirst<typeof nextRedirect>
+    ) {
+      const locale = getLocale();
+      return fn(getPathname({href, locale}), ...args);
+    };
   }
 
-  function redirect(
-    href: Parameters<typeof getPathname>[0]['href'],
-    ...args: ParametersExceptFirst<typeof nextRedirect>
-  ) {
-    return baseRedirect(nextRedirect, href, ...args);
-  }
-
-  function permanentRedirect(
-    href: Parameters<typeof getPathname>[0]['href'],
-    ...args: ParametersExceptFirst<typeof nextPermanentRedirect>
-  ) {
-    return baseRedirect(nextPermanentRedirect, href, ...args);
-  }
+  const redirect = getRedirectFn(nextRedirect);
+  const permanentRedirect = getRedirectFn(nextPermanentRedirect);
 
   return {
     Link,
