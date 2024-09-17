@@ -3,6 +3,7 @@ import {
   formatPathnameTemplate,
   getInternalTemplate,
   getNormalizedPathname,
+  getPathnameMatch,
   getRouteParams
 } from './utils';
 
@@ -166,5 +167,24 @@ describe('getInternalTemplate', () => {
       'it',
       '/internal/[id]'
     ]);
+  });
+});
+
+describe('getPathnameMatch', () => {
+  it('prioritizes more specific prefixes for overlapping locales', () => {
+    expect(
+      getPathnameMatch('/de/at/test', ['de', 'de-at'], {
+        mode: 'always',
+        prefixes: {
+          'de-at': '/de/at',
+          de: '/de'
+        }
+      })
+    ).toEqual({
+      locale: 'de-at',
+      prefix: '/de/at',
+      exact: true,
+      matchedPrefix: '/de/at'
+    });
   });
 });
