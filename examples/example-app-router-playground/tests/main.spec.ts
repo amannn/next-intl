@@ -1,22 +1,7 @@
-import {test as it, expect, Page, BrowserContext} from '@playwright/test';
-import getAlternateLinks from './getAlternateLinks';
+import {test as it, expect, BrowserContext} from '@playwright/test';
+import {getAlternateLinks, assertLocaleCookieValue} from './utils';
 
 const describe = it.describe;
-
-async function assertLocaleCookieValue(
-  page: Page,
-  value: string,
-  otherProps?: Record<string, unknown>
-) {
-  const cookie = (await page.context().cookies()).find(
-    (cur) => cur.name === 'NEXT_LOCALE'
-  );
-  expect(cookie).toMatchObject({
-    name: 'NEXT_LOCALE',
-    value,
-    ...otherProps
-  });
-}
 
 function getPageLoadTracker(context: BrowserContext) {
   const state = {numPageLoads: 0};
