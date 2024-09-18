@@ -165,7 +165,7 @@ export default function createFormatter({
      * Otherwise the user time zone will be used. */
     formatOrOptions?:
       | (keyof IntlFormats['dateTime'] extends string
-          ? IntlFormats['dateTime']
+          ? keyof IntlFormats['dateTime']
           : string)
       | DateTimeFormatOptions
   ) {
@@ -189,7 +189,7 @@ export default function createFormatter({
      * Otherwise the user time zone will be used. */
     formatOrOptions?:
       | (keyof IntlFormats['dateTime'] extends string
-          ? IntlFormats['dateTime']
+          ? keyof IntlFormats['dateTime']
           : string)
       | DateTimeFormatOptions
   ) {
@@ -210,7 +210,7 @@ export default function createFormatter({
     value: number | bigint,
     formatOrOptions?:
       | (keyof IntlFormats['number'] extends string
-          ? IntlFormats['number']
+          ? keyof IntlFormats['number']
           : string)
       | NumberFormatOptions
   ) {
@@ -298,7 +298,7 @@ export default function createFormatter({
     value: Iterable<Value>,
     formatOrOptions?:
       | (keyof IntlFormats['list'] extends string
-          ? IntlFormats['list']
+          ? keyof IntlFormats['list']
           : string)
       | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
