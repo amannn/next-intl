@@ -1,8 +1,19 @@
 import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
+import {Formats} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
+
+export const formats = {
+  dateTime: {
+    medium: {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      hour12: false
+    }
+  }
+} as const satisfies Partial<Formats>;
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
@@ -22,15 +33,7 @@ export default getRequestConfig(async ({locale}) => {
       globalString: 'Global string',
       highlight: (chunks) => <strong>{chunks}</strong>
     },
-    formats: {
-      dateTime: {
-        medium: {
-          dateStyle: 'medium',
-          timeStyle: 'short',
-          hour12: false
-        }
-      }
-    },
+    formats,
     onError(error) {
       if (
         error.message ===
