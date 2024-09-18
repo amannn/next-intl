@@ -163,7 +163,7 @@ export default function createFormatter({
     value: Date | number,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?: string | DateTimeFormatOptions
+    formatOrOptions?: keyof IntlFormats['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -183,7 +183,7 @@ export default function createFormatter({
     end: Date | number,
     /** If a time zone is supplied, the values are converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?: string | DateTimeFormatOptions
+    formatOrOptions?: keyof IntlFormats['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -200,7 +200,7 @@ export default function createFormatter({
 
   function number(
     value: number | bigint,
-    formatOrOptions?: string | NumberFormatOptions
+    formatOrOptions?: keyof IntlFormats['number'] | NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -284,7 +284,7 @@ export default function createFormatter({
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?: string | Intl.ListFormatOptions
+    formatOrOptions?: IntlFormats['list'] | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();
