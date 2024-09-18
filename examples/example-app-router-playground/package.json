@@ -4,11 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "pnpm run test:playwright:main && pnpm run test:playwright:locale-prefix-never && pnpm run test:playwright:trailing-slash && pnpm run test:jest && pnpm run test:playwright:base-path",
-    "test:playwright:main": "TEST_MATCH=main.spec.ts playwright test",
-    "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && TEST_MATCH=locale-prefix-never.spec.ts playwright test",
-    "test:playwright:trailing-slash": "TRAILING_SLASH=true pnpm build && TEST_MATCH=trailing-slash.spec.ts playwright test",
-    "test:playwright:base-path": "BASE_PATH=true pnpm build && BASE_PATH=true TEST_MATCH=base-path.spec.ts playwright test",
+    "test": "pnpm test:jest && node test.mjs",
+    "test:playwright": "node runPlaywright.mjs",
     "test:jest": "jest",
     "build": "next build",
     "start": "next start",

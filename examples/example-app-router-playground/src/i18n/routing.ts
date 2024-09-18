@@ -5,7 +5,7 @@ export const routing = defineRouting({
   locales: ['en', 'de', 'es', 'ja'],
   defaultLocale: 'en',
   localePrefix:
-    process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never'
+    process.env.USE_CASE === 'locale-prefix-never'
       ? 'never'
       : {
           mode: 'as-needed',
