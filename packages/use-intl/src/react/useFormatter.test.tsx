@@ -67,7 +67,6 @@ describe('dateTime', () => {
   it('can use a global date format', () => {
     function Component() {
       const format = useFormatter();
-      // @ts-expect-error
       return <>{format.dateTime(mockDate, 'onlyYear')}</>;
     }
 
@@ -83,7 +82,6 @@ describe('dateTime', () => {
   it('can use a global time format', () => {
     function Component() {
       const format = useFormatter();
-      // @ts-expect-error
       return <>{format.dateTime(mockDate, 'onlyHours')}</>;
     }
 
@@ -193,7 +191,6 @@ describe('dateTime', () => {
 
       function Component() {
         const format = useFormatter();
-        // @ts-expect-error
         return <>{format.dateTime(mockDate, 'onlyYear')}</>;
       }
 
@@ -221,7 +218,6 @@ describe('dateTime', () => {
 
       function Component() {
         const format = useFormatter();
-        // @ts-expect-error
         return <>{format.dateTime(mockDate, 'medium')}</>;
       }
 
@@ -319,7 +315,6 @@ describe('number', () => {
   it('can use a global format', () => {
     function Component() {
       const format = useFormatter();
-      // @ts-expect-error
       return <>{format.number(10000, 'noGrouping')}</>;
     }
 
@@ -375,7 +370,6 @@ describe('number', () => {
 
       function Component() {
         const format = useFormatter();
-        // @ts-expect-error
         return <>{format.number(mockNumber, 'missing')}</>;
       }
 

@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
+import {Formats} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from './routing';
-import { Formats } from 'next-intl';
 
 export const formats = {
   dateTime: {
@@ -22,8 +22,7 @@ export const formats = {
       type: 'conjunction'
     }
   }
-} as const satisfies Partial<Formats>
-
+} as const satisfies Partial<Formats>;
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
@@ -37,5 +36,5 @@ export default getRequestConfig(async ({locale}) => {
         : import(`../../messages/${locale}.json`))
     ).default,
     formats
-  }
+  };
 });
