@@ -230,9 +230,9 @@ So far, we've assumed that our app will be used by American English users, with 
 Sep 19, 2024
 ```
 
-Our situation gets interesting again, once we consider that the date format is not universal. In the Great Britain, for instance, the same date might be formatted as "19 Sept 2024".
+Our situation gets interesting again, once we consider that the date format is not universal. In Great Britain, for instance, the same date might be formatted as "19 Sept 2024".
 
-In case we want to localize our app to another language, or even support multiple languages at the same time, we now need to consider the _locale_ of the user. Simply put, a locale represents the language of the user, optionally combined with additional information like the region (e.g. `en-GB` represents English as spoken in Great Britain).
+In case we want to localize our app to another language, or even support multiple languages, we now need to consider the _locale_ of the user. Simply put, a locale represents the language of the user, optionally combined with additional information like the region (e.g. `en-GB` represents English as spoken in Great Britain).
 
 To address this new requirement, you might already have a hunch where this is going.
 
@@ -279,7 +279,7 @@ export default getRequestConfig(async () => ({
 
 Note that as the name of `getRequestConfig` implies, the configuration object can be created per request, allowing for dynamic configuration based on the user's preferences.
 
-This configuration can now be used to format dates in components—at any point of the server-client spectrum.
+This can now be used to format dates in components—at any point of the server-client spectrum:
 
 ```tsx
 import {useFormatter} from 'next-intl';
