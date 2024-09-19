@@ -218,9 +218,9 @@ export default function BlogPostPublishedDate({published, timeZone}: Props) {
 }
 ```
 
-It's worth mentioning that sticking to a single time zone for your app is the easiest solution here. In case you'd like to format dates in the user's time zone, you'll typically want choose an approach where the time zone is available on the server side so that it can be used in server-only code.
+It's worth mentioning that sticking to a single time zone for your app is the easiest solution here. In case you'd like to format dates in the user's time zone, a reasonable approach might require having the time zone available on the server side so that it can be used in server-only code.
 
-As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, this is only an approximation, so letting the user choose their time zone explicitly might still be the best option.
+As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, this is only an approximation, so letting the user choose their time zone explicitly might still be sensible.
 
 ## Localized date formatting
 
