@@ -218,17 +218,25 @@ export default function BlogPostPublishedDate({published, timeZone}: Props) {
 }
 ```
 
+It's worth mentioning that sticking to a single time zone for your app is the easiest solution here. In case you'd like to format dates in the user's time zone, you'll typically want choose an approach where the time zone is available on the server side so that it can be used in server-only code.
+
+As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, this is only an approximation, so letting the user choose their time zone explicitly might still be the best option.
+
 ## Localized date formatting
 
-So far we've assumed that our app is used by English-speaking users, with a date being formatted as "Sep 19, 2024".
+So far, we've assumed that our app will be used by American English users, with dates being formatted like:
 
-Our situation gets interesting again, once we consider that the date format is not universal. In Austria, for instance, the same date would be formatted as "19. Sep 2024".
+```
+Sep 19, 2024
+```
 
-In case we want to localize our app to another language, or even support multiple languages at the same time, we now need to consider the _locale_ of the user. Simply put, a locale represents the langauge of the user, optionally combined with additional information like the region (e.g. `de-AT` for German as spoken in Austria.
+Our situation gets interesting again, once we consider that the date format is not universal. In the Great Britain, for instance, the same date might be formatted as "19 Sept 2024".
 
-To solve this arising requirement, you might already have a hunch where this is going.
+In case we want to localize our app to another language, or even support multiple languages at the same time, we now need to consider the _locale_ of the user. Simply put, a locale represents the language of the user, optionally combined with additional information like the region (e.g. `en-GB` represents English as spoken in Great Britain).
 
-To ensure consistent date formatting across the server and client, we'll now create a `locale` variable in a Server Component and pass it down to relevant components. This can in turn be used by a library like `date-fns-tz` to format the date accordingly.
+To address this new requirement, you might already have a hunch where this is going.
+
+Ensuring consistent date formatting across the server and client requires that we'll create a `locale` variable in a Server Component and pass it down to relevant components. This can in turn be used by a library like `date-fns-tz` to format the date accordingly.
 
 ```tsx
 import {format} from 'date-fns-tz';
@@ -258,7 +266,7 @@ The challenge we've discussed in this post is rather about the centralization an
 
 `next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) file that allows to specify request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
 
-```tsx filename="i18n/request.ts"
+```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => ({
@@ -286,7 +294,7 @@ export default function BlogPostPublishedDate({published}: Props) {
 }
 ```
 
-Behind the scenes, the `i18n/request.ts` file is read by all server-only code, typically Server Components, but also Server Actions or Route Handlers for example. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout) that is typically placed in the root layout of your app, will inherit the configuration and make it available to all client-side code,
+Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers for example. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout) that is commonly placed in the root layout of your app, will inherit the configuration and make it available to all client-side code.
 
 Formatting functions like `format.dateTime(…)` can now access the necessary configuration in any environment and pass it to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to apply the correct formatting.
 
