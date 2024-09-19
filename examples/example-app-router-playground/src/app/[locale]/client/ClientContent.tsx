@@ -1,12 +1,14 @@
 'use client';
 
-import {useNow, useTimeZone, useLocale} from 'next-intl';
+import {useNow, useTimeZone, useLocale, useFormatter} from 'next-intl';
 import {Link, usePathname} from '@/i18n/routing';
 
 export default function ClientContent() {
   const now = useNow();
   const timeZone = useTimeZone();
   const locale = useLocale();
+
+  useLocaleTest();
 
   return (
     <>
@@ -17,4 +19,24 @@ export default function ClientContent() {
       <p data-testid="Locale">{locale}</p>
     </>
   );
+}
+
+const useLocaleTest = () => {
+  const format = useFormatter();
+
+  format.dateTime(new Date(), 'medium');
+  // @ts-expect-error
+  format.dateTime(new Date(), 'unknown');
+
+  format.dateTimeRange(new Date(), new Date(), 'medium');
+  // @ts-expect-error
+  format.dateTimeRange(new Date(), new Date(), 'unknown');
+
+  format.number(420, 'precise');
+  // @ts-expect-error
+  format.number(420, 'unknown');
+
+  format.list(['this', 'is', 'a', 'list'], 'enumeration');
+  // @ts-expect-error
+  format.list(['this', 'is', 'a', 'list'], 'unknown');
 }
