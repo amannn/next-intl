@@ -8,7 +8,7 @@ export default function ClientContent() {
   const timeZone = useTimeZone();
   const locale = useLocale();
 
-  useLocaleTest();
+  useUseFormatterTest();
 
   return (
     <>
@@ -21,7 +21,7 @@ export default function ClientContent() {
   );
 }
 
-const useLocaleTest = () => {
+const useUseFormatterTest = () => {
   const format = useFormatter();
 
   format.dateTime(new Date(), 'medium');
