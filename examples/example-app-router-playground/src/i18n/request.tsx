@@ -12,6 +12,17 @@ export const formats = {
       timeStyle: 'short',
       hour12: false
     }
+  },
+  number: {
+    precise: {
+      maximumFractionDigits: 5
+    }
+  },
+  list: {
+    enumeration: {
+      style: 'long',
+      type: 'conjunction'
+    }
   }
 } as const satisfies Partial<Formats>;
 
