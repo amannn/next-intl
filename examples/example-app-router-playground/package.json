@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc",
-    "test": "pnpm test:jest && node test.mjs",
+    "test": "pnpm test:jest && node runPlaywright.mjs",
     "test:playwright": "node runPlaywright.mjs",
     "test:jest": "jest",
     "build": "next build",
