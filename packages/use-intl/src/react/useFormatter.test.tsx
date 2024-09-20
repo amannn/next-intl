@@ -3,12 +3,7 @@ import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactNode, ReactElement} from 'react';
 import {spyOn, SpyImpl} from 'tinyspy';
 import {it, expect, describe, vi, beforeEach} from 'vitest';
-import {
-  DateTimeFormatOptions,
-  IntlError,
-  IntlErrorCode,
-  NumberFormatOptions
-} from '../core';
+import {IntlError, IntlErrorCode} from '../core';
 import IntlProvider from './IntlProvider';
 import useFormatter from './useFormatter';
 
@@ -30,7 +25,7 @@ describe('dateTime', () => {
 
   function renderDateTime(
     value: Date | number,
-    options?: DateTimeFormatOptions
+    options?: Parameters<ReturnType<typeof useFormatter>['dateTime']>['1']
   ) {
     function Component() {
       const format = useFormatter();
@@ -92,6 +87,16 @@ describe('dateTime', () => {
     );
 
     screen.getByText('11 AM');
+  });
+
+  it('accepts type-safe custom options', () => {
+    // eslint-disable-next-line no-unused-expressions
+    () =>
+      renderDateTime(mockDate, {
+        dateStyle: 'full',
+        // @ts-expect-error
+        timeStyle: 'unknown'
+      });
   });
 
   describe('time zones', () => {
@@ -284,7 +289,10 @@ describe('dateTime', () => {
 });
 
 describe('number', () => {
-  function renderNumber(value: number | bigint, options?: NumberFormatOptions) {
+  function renderNumber(
+    value: number | bigint,
+    options?: Parameters<ReturnType<typeof useFormatter>['number']>['1']
+  ) {
     function Component() {
       const format = useFormatter();
       return <>{format.number(value, options)}</>;
@@ -325,6 +333,16 @@ describe('number', () => {
     );
 
     screen.getByText('10000');
+  });
+
+  it('accepts type-safe custom options', () => {
+    // eslint-disable-next-line no-unused-expressions
+    () =>
+      renderNumber(2, {
+        currency: 'USD',
+        // @ts-expect-error
+        currencySign: 'unknown'
+      });
   });
 
   describe('performance', () => {
@@ -412,10 +430,15 @@ describe('number', () => {
 });
 
 describe('relativeTime', () => {
-  function renderNumber(date: Date | number, now: Date | number) {
+  function renderRelativeTime(
+    date: Date | number,
+    nowOrOptions: Parameters<
+      ReturnType<typeof useFormatter>['relativeTime']
+    >['1']
+  ) {
     function Component() {
       const format = useFormatter();
-      return <>{format.relativeTime(date, now)}</>;
+      return <>{format.relativeTime(date, nowOrOptions)}</>;
     }
 
     render(
@@ -426,7 +449,7 @@ describe('relativeTime', () => {
   }
 
   it('can format now', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-20T10:36:00.000Z'),
       parseISO('2020-11-20T10:36:00.100Z')
     );
@@ -434,7 +457,7 @@ describe('relativeTime', () => {
   });
 
   it('can format seconds', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-20T10:35:31.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -442,7 +465,7 @@ describe('relativeTime', () => {
   });
 
   it('can format minutes', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-20T10:12:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -450,7 +473,7 @@ describe('relativeTime', () => {
   });
 
   it('uses the lowest unit possible', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-20T09:37:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -458,7 +481,7 @@ describe('relativeTime', () => {
   });
 
   it('can format hours', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-20T08:30:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -466,7 +489,7 @@ describe('relativeTime', () => {
   });
 
   it('can format days', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-17T10:36:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -474,7 +497,7 @@ describe('relativeTime', () => {
   });
 
   it('can format weeks', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-11-02T10:36:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -482,7 +505,7 @@ describe('relativeTime', () => {
   });
 
   it('can format months', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('2020-03-02T10:36:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -490,7 +513,7 @@ describe('relativeTime', () => {
   });
 
   it('can format years', () => {
-    renderNumber(
+    renderRelativeTime(
       parseISO('1984-11-20T10:36:00.000Z'),
       parseISO('2020-11-20T10:36:00.000Z')
     );
@@ -511,6 +534,16 @@ describe('relativeTime', () => {
     );
 
     screen.getByText('34 years ago');
+  });
+
+  it('accepts type-safe custom options', () => {
+    // eslint-disable-next-line no-unused-expressions
+    () =>
+      renderRelativeTime(parseISO('2020-11-20T10:36:00.000Z'), {
+        unit: 'day',
+        // @ts-expect-error
+        style: 'unknown'
+      });
   });
 
   describe('performance', () => {
@@ -600,7 +633,7 @@ describe('relativeTime', () => {
 describe('list', () => {
   function renderList(
     value: Iterable<string>,
-    options?: Intl.ListFormatOptions
+    options?: Parameters<ReturnType<typeof useFormatter>['list']>['1']
   ) {
     function Component() {
       const format = useFormatter();
@@ -697,6 +730,16 @@ describe('list', () => {
     );
 
     screen.getByText('apple, banana, & orange');
+  });
+
+  it('accepts type-safe custom options', () => {
+    // eslint-disable-next-line no-unused-expressions
+    () =>
+      renderList([], {
+        type: 'conjunction',
+        // @ts-expect-error
+        localeMatcher: 'unknown'
+      });
   });
 
   describe('performance', () => {

@@ -8,8 +8,6 @@ export default function ClientContent() {
   const timeZone = useTimeZone();
   const locale = useLocale();
 
-  useUseFormatterTest();
-
   return (
     <>
       <p data-testid="NowFromClient">{now.toISOString()}</p>
@@ -21,7 +19,7 @@ export default function ClientContent() {
   );
 }
 
-const useUseFormatterTest = () => {
+export function TypeTest() {
   const format = useFormatter();
 
   format.dateTime(new Date(), 'medium');

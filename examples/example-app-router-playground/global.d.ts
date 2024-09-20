@@ -7,5 +7,7 @@ type Formats = typeof formats;
 declare global {
   // Use type safe message keys with `next-intl`
   interface IntlMessages extends Messages {}
+
+  // Use type safe formats with `next-intl`
   interface IntlFormats extends Formats {}
 }
