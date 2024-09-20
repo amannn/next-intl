@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {defineRouting, Pathnames} from '../routing';
+import {defineRouting, DomainsConfig, Pathnames} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocale';
 import createNavigationClient from './react-client/createNavigation';
 import createNavigationServer from './react-server/createNavigation';
@@ -46,6 +46,18 @@ beforeEach(() => {
 
 const locales = ['en', 'de', 'ja'] as const;
 const defaultLocale = 'en' as const;
+
+const domains: DomainsConfig<typeof locales> = [
+  {
+    defaultLocale: 'en',
+    domain: 'example.com'
+  },
+  {
+    defaultLocale: 'de',
+    domain: 'example.de',
+    locales: ['de', 'en']
+  }
+];
 
 const pathnames = {
   '/': '/',
@@ -672,6 +684,80 @@ describe.each([
   // describe("localePrefix: 'as-needed', with `domains`", () => {})
   // describe("localePrefix: 'never', with `domains`", () => {})
   // describe("localePrefix: 'always', with `domains`", () => {})
+  describe("localePrefix: 'as-needed', with `domains`", () => {
+    const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: 'as-needed'
+    });
+
+    describe('Link', () => {
+      it('renders a prefix during SSR even for the default locale', () => {
+        // (see comment in source for reasoning)
+        const markup = renderToString(<Link href="/about">About</Link>);
+        expect(markup).toContain('href="/en/about"');
+      });
+
+    });
+
+    describe('getPathname', () => {
+      it('does not add a prefix for the default locale', () => {
+        expect(
+          getPathname({locale: 'en', href: '/about', domain: 'example.com'})
+        ).toBe('/about');
+        expect(
+          getPathname({locale: 'de', href: '/about', domain: 'example.de'})
+        ).toBe('/about');
+      });
+
+      it('adds a prefix for a secondary locale', () => {
+        expect(
+          getPathname({locale: 'de', href: '/about', domain: 'example.com'})
+        ).toBe('/de/about');
+        expect(
+          getPathname({locale: 'en', href: '/about', domain: 'example.de'})
+        ).toBe('/en/about');
+      });
+
+      it('prints a warning when no domain is provided', () => {
+        const originalConsoleError = globalThis.console.error;
+        globalThis.console.error = vi.fn();
+        getPathname({locale: 'de', href: '/about'});
+        expect(globalThis.console.error).toHaveBeenCalledWith(
+          "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter."
+        );
+        globalThis.console.error = originalConsoleError;
+      });
+
+      it('prints a warning when an unknown domain is provided', () => {
+        const originalConsoleError = globalThis.console.error;
+        globalThis.console.error = vi.fn();
+        getPathname({locale: 'de', href: '/about', domain: 'example.org'});
+        expect(globalThis.console.error).toHaveBeenCalledWith(
+          'Domain "example.org" not found in the routing configuration. Available domains: example.com, example.de'
+        );
+        globalThis.console.error = originalConsoleError;
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('adds a prefix even for the default locale', () => {
+        // (see comment in source for reasoning)
+        runInRender(() => redirectFn('/'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
+      });
+
+      it('adds a prefix when currently on a secondary locale', () => {
+        mockCurrentLocale('de');
+        runInRender(() => redirectFn('/'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
+      });
+    });
+  });
 
   describe("localePrefix: 'never'", () => {
     const {Link, getPathname, permanentRedirect, redirect} = createNavigation({

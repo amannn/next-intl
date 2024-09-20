@@ -53,6 +53,15 @@ export default function createSharedNavigationFns<
     ? undefined
     : AppPathnames;
 
+  // This combination requires that the current host is known in order to
+  // compute a correct pathname. Since that can only be achieved by reading from
+  // headers, this would break static rendering. Therefore, as a workaround we
+  // always add a prefix in this case to be on the safe side. The downside is
+  // that the user might get redirected again if the middleware detects that the
+  // prefix is not needed.
+  const forcePrefixSsr =
+    config.localePrefix.mode === 'as-needed' && 'domains' in config;
+
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
     ComponentProps<typeof BaseLink>,
     'href' | 'localePrefix'
@@ -86,7 +95,7 @@ export default function createSharedNavigationFns<
             // @ts-expect-error -- This is ok
             href: pathnames == null ? pathname : {pathname, params}
           },
-          locale != null
+          locale != null || forcePrefixSsr
         )
       : pathname;
 
@@ -106,6 +115,7 @@ export default function createSharedNavigationFns<
   // New: getPathname is available for shared pathnames
   function getPathname(
     {
+      domain,
       href,
       locale
     }: {
@@ -113,6 +123,8 @@ export default function createSharedNavigationFns<
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
+      /** In case you're using `localePrefix: 'as-necessary'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
+      domain?: string;
     },
     /** @private */
     _forcePrefix?: boolean
@@ -142,12 +154,7 @@ export default function createSharedNavigationFns<
     // would be reading `host`, but that breaks SSG. If you want
     // to get the first shot right, pass a `domain` here (then
     // the user opts into dynamic rendering)
-    return applyPathnamePrefix({
-      pathname,
-      locale,
-      routing: config,
-      force: _forcePrefix
-    });
+    return applyPathnamePrefix(pathname, locale, config, domain, _forcePrefix);
   }
 
   function getRedirectFn(
@@ -158,7 +165,8 @@ export default function createSharedNavigationFns<
       ...args: ParametersExceptFirst<typeof nextRedirect>
     ) {
       const locale = getLocale();
-      return fn(getPathname({href, locale}), ...args);
+
+      return fn(getPathname({href, locale}, forcePrefixSsr), ...args);
     };
   }
 

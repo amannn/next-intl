@@ -21,10 +21,10 @@ type HrefOrHrefWithParamsImpl<Pathname, Other> =
     ? // Optional catch-all
       Pathname | ({pathname: Pathname; params?: StrictParams<Pathname>} & Other)
     : Pathname extends `${string}[${string}`
-      ? // Required catch-all & regular params
-        {pathname: Pathname; params: StrictParams<Pathname>} & Other
-      : // No params
-        Pathname | ({pathname: Pathname} & Other);
+    ? // Required catch-all & regular params
+      {pathname: Pathname; params: StrictParams<Pathname>} & Other
+    : // No params
+      Pathname | ({pathname: Pathname} & Other);
 
 // For `Link`
 export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
@@ -217,29 +217,53 @@ export function getBasePath(
   }
 }
 
-export function applyPathnamePrefix<AppLocales extends Locales>(params: {
-  pathname: string;
-  locale: Locales[number];
+export function applyPathnamePrefix<AppLocales extends Locales>(
+  pathname: string,
+  locale: Locales[number],
   routing: Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix' | 'domains'> &
-    Partial<Pick<ResolvedRoutingConfig<AppLocales>, 'defaultLocale'>>;
-  force?: boolean;
-}): string {
-  const {mode} = params.routing.localePrefix;
-  const shouldPrefix =
-    isLocalizableHref(params.pathname) &&
-    (params.force ||
-      mode === 'always' ||
-      (mode === 'as-needed' &&
-        params.routing.defaultLocale !== params.locale &&
-        // TODO: Rework
-        !params.routing.domains));
+    Partial<Pick<ResolvedRoutingConfig<AppLocales>, 'defaultLocale'>>,
+  domain?: string,
+  force?: boolean
+): string {
+  const {mode} = routing.localePrefix;
+
+  let shouldPrefix;
+  if (isLocalizableHref(pathname)) {
+    if (force || mode === 'always') {
+      shouldPrefix = true;
+    } else if (mode === 'as-needed') {
+      let {defaultLocale} = routing;
+
+      if (routing.domains) {
+        const domainConfig = routing.domains.find(
+          (cur) => cur.domain === domain
+        );
+        if (domainConfig) {
+          defaultLocale = domainConfig.defaultLocale;
+        } else if (process.env.NODE_ENV !== 'production') {
+          if (!domain) {
+            console.error(
+              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter."
+              // TODO: Link to docs. q: which apis are affected?
+              // solution for user: provide domain manually, read from host header
+            );
+          } else {
+            console.error(
+              `Domain "${domain}" not found in the routing configuration. Available domains: ${routing.domains
+                .map((cur) => cur.domain)
+                .join(', ')}`
+            );
+          }
+        }
+      }
+
+      shouldPrefix = defaultLocale !== locale;
+    }
+  }
 
   return shouldPrefix
-    ? prefixPathname(
-        getLocalePrefix(params.locale, params.routing.localePrefix),
-        params.pathname
-      )
-    : params.pathname;
+    ? prefixPathname(getLocalePrefix(locale, routing.localePrefix), pathname)
+    : pathname;
 }
 
 export function validateReceivedConfig(
