@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.19.4 (2024-09-19)
+
+### Bug Fixes
+
+* Handle malformed pathnames in middleware ([#1353](https://github.com/amannn/next-intl/issues/1353)) ([dcda9d9](https://github.com/amannn/next-intl/commit/dcda9d9c851046bd3032f6841b10831b50937ebb)), closes [#1351](https://github.com/amannn/next-intl/issues/1351) – by @amannn
+
 ## 3.19.3 (2024-09-17)
 
 ### Bug Fixes
