@@ -9,7 +9,7 @@ import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {DomainConfig, Locales, Pathnames} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {isLocalizableHref} from '../../shared/utils';
 import BaseLink from './BaseLink';
@@ -60,7 +60,8 @@ export default function createSharedNavigationFns<
   // that the user might get redirected again if the middleware detects that the
   // prefix is not needed.
   const forcePrefixSsr =
-    config.localePrefix.mode === 'as-needed' && 'domains' in config;
+    (config.localePrefix.mode === 'as-needed' && 'domains' in config) ||
+    undefined;
 
   type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
     ComponentProps<typeof BaseLink>,
@@ -85,17 +86,18 @@ export default function createSharedNavigationFns<
       pathname = href;
     }
 
-    const curLocale = getLocale();
-
     // @ts-expect-error -- This is ok
-    const finalPathname = isLocalizableHref(href)
+    const isLocalizable = isLocalizableHref(href);
+
+    const curLocale = getLocale();
+    const finalPathname = isLocalizable
       ? getPathname(
           {
             locale: locale || curLocale,
             // @ts-expect-error -- This is ok
             href: pathnames == null ? pathname : {pathname, params}
           },
-          locale != null || forcePrefixSsr
+          locale != null || forcePrefixSsr || undefined
         )
       : pathname;
 
@@ -107,6 +109,33 @@ export default function createSharedNavigationFns<
           pathname: finalPathname
         }}
         locale={locale}
+        // Provide the minimal relevant information to the client side in order
+        // to potentially remove the prefix in case of the `forcePrefixSsr` case
+        unprefixConfig={
+          forcePrefixSsr && isLocalizable
+            ? {
+                domains: (config as any).domains.reduce(
+                  (
+                    acc: Record<Locale, string>,
+                    domain: DomainConfig<AppLocales>
+                  ) => {
+                    // @ts-expect-error -- This is ok
+                    acc[domain.defaultLocale] = domain.domain;
+                    return acc;
+                  },
+                  {}
+                ),
+                pathname: getPathname(
+                  {
+                    locale: curLocale,
+                    // @ts-expect-error -- This is ok
+                    href: pathnames == null ? pathname : {pathname, params}
+                  },
+                  false
+                )
+              }
+            : undefined
+        }
         {...rest}
       />
     );

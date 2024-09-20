@@ -228,8 +228,10 @@ export function applyPathnamePrefix<AppLocales extends Locales>(
   const {mode} = routing.localePrefix;
 
   let shouldPrefix;
-  if (isLocalizableHref(pathname)) {
-    if (force || mode === 'always') {
+  if (force !== undefined) {
+    shouldPrefix = force;
+  } else if (isLocalizableHref(pathname)) {
+    if (mode === 'always') {
       shouldPrefix = true;
     } else if (mode === 'as-needed') {
       let {defaultLocale} = routing;

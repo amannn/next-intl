@@ -40,8 +40,15 @@ function mockCurrentLocale(locale: string) {
   }));
 }
 
+function mockLocation(location: Partial<typeof window.location>) {
+  delete (global.window as any).location;
+  global.window ??= Object.create(window);
+  (global.window as any).location = location;
+}
+
 beforeEach(() => {
   mockCurrentLocale('en');
+  mockLocation({host: 'localhost:3000'});
 });
 
 const locales = ['en', 'de', 'ja'] as const;
@@ -133,7 +140,7 @@ describe.each([
         expect(markup).toContain('hrefLang="de"');
       });
 
-      it('renders an object href', () => {
+      it('renders an object href with an external host', () => {
         render(
           <Link
             href={{
@@ -699,6 +706,33 @@ describe.each([
         expect(markup).toContain('href="/en/about"');
       });
 
+      it('does not render a prefix eventually on the client side for the default locale of the given domain', () => {
+        mockLocation({host: 'example.com'});
+        render(<Link href="/about">About</Link>);
+        expect(
+          screen.getByRole('link', {name: 'About'}).getAttribute('href')
+        ).toBe('/about');
+      });
+
+      it('renders a prefix when currently on a secondary locale', () => {
+        mockLocation({host: 'example.de'});
+        mockCurrentLocale('en');
+        render(<Link href="/about">About</Link>);
+        expect(
+          screen.getByRole('link', {name: 'About'}).getAttribute('href')
+        ).toBe('/en/about');
+      });
+
+      it('renders a prefix when currently on a secondary locale and linking to the default locale', () => {
+        mockLocation({host: 'example.de'});
+        mockCurrentLocale('en');
+        const markup = renderToString(
+          <Link href="/about" locale="de">
+            About
+          </Link>
+        );
+        expect(markup).toContain('href="/de/about"');
+      });
     });
 
     describe('getPathname', () => {
