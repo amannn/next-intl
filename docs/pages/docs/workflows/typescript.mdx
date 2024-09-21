@@ -2,6 +2,8 @@ import Callout from 'components/Callout';
 
 # TypeScript integration
 
+## Strict typing of messages
+
 `next-intl` integrates with TypeScript out-of-the box without additional setup. You can however provide the shape of your messages to get autocompletion and type safety for your namespaces and message keys.
 
 ```json filename="messages.json"
@@ -27,7 +29,7 @@ function About() {
 
 To enable this validation, add a global type definition file in your project root (e.g. `global.d.ts`):
 
-```jsx filename="global.d.ts"
+```ts filename="global.d.ts"
 import en from './messages/en.json';
 
 type Messages = typeof en;
@@ -47,3 +49,76 @@ You can freely define the interface, but if you have your messages available loc
 3. The path of your `import` is correct.
 4. Your type declaration file is included in `tsconfig.json`.
 5. Your editor has loaded the most recent type declarations. When in doubt, you can restart.
+
+## Strict typing of global formats
+
+`next-intl` provides a way to define [global formats](/docs/usage/configuration#formats) for your application. You can provide the type of your formats similarly to how you [define the type of messages](#strict-typing-of-messages).
+
+First, define your formats and export them from a file:
+
+```ts filename="i18n/request.ts"
+import {getRequestConfig} from 'next-intl/server';
+import type {Formats} from 'next-intl';
+
+export const formats = {
+  dateTime: {
+    short: {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    }
+  },
+  number: {
+    precise: {
+      maximumFractionDigits: 5
+    }
+  },
+  list: {
+    enumeration: {
+      style: 'long',
+      type: 'conjunction'
+    }
+  }
+} satisfies Partial<Formats>;
+ 
+export default getRequestConfig(async ({locale}) => {
+  // ...
+ 
+  return {
+    formats,
+  }
+});
+```
+
+Then in your `global.d.ts` at the root of your project, define the `IntlFormats` type:
+
+```ts filename="global.d.ts"
+import {formats} from './src/i18n/request'; 
+
+type Formats = typeof formats;
+
+declare global {
+  // Use type safe formats with `next-intl`
+  interface IntlFormats extends Formats {}
+}
+```
+
+Now you will have full autocompletion and type safety for your formats:
+
+```tsx filename="CurrentDate.tsx"
+function CurrentDate() {
+  const format = useFormatter();
+
+  // ✅ Valid format
+  format.number(2, "precise");
+
+  // ✅ Valid format
+  format.list(["some", "things"], "enumeration");
+
+  // ✖️ Unknown format string
+  format.dateTime(new Date(), "unknown")
+
+  // ✅ Valid format
+  return <p>{format.dateTime(new Date(), "short")}</p>;
+}
+```

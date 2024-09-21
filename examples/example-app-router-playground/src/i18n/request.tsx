@@ -1,6 +1,6 @@
 import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
-import {Formats} from 'next-intl';
+import type {Formats} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
@@ -24,7 +24,7 @@ export const formats = {
       type: 'conjunction'
     }
   }
-} as const satisfies Partial<Formats>;
+} satisfies Partial<Formats>;
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid

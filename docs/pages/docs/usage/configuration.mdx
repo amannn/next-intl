@@ -199,7 +199,7 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript#strict-typing-of-messages). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
 
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
@@ -485,6 +485,8 @@ Note that `formats` are not automatically inherited by Client Components. If you
 
 </Tab>
 </Tabs>
+
+To further improve your experience and ensure formatting consistency, you can [configure the typescript integration for global formats](/docs/workflows/typescript#strict-typing-of-global-formats).
 
 Once you have `formats` set up, you can use them in your components via `useFormatter`:
 

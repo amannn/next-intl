@@ -54,7 +54,7 @@ For text formatting, `next-intl` is based on [International Components for Unico
 
 By being based on standards, `next-intl` ensures that your internationalization code is future-proof and feels familiar to developers who have existing experience with internationalization. Additionally, relying on standards ensures that `next-intl` integrates well with translation management systems like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
 
-`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
+`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript#strict-typing-of-messages). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
 
 As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
 
@@ -70,7 +70,7 @@ Typical apps require some of the following integrations:
 
 These are typically used to manage translations and to [collaborate with translators](/docs/workflows/localization-management). Services like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink> provide a wide range of features, allowing translators to work in a web-based interface on translations, while providing different mechanisms to sync translations with your app.
 
-`next-intl` integrates well with these services as it uses ICU message syntax for defining text labels, which is a widely supported standard. The recommended way to store messages is in JSON files that are structured by locale since this is a popular format that can be imported into a TMS. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
+`next-intl` integrates well with these services as it uses ICU message syntax for defining text labels, which is a widely supported standard. The recommended way to store messages is in JSON files that are structured by locale since this is a popular format that can be imported into a TMS. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript#strict-typing-of-messages)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
 
 **Content Management Systems (CMS)**
 
