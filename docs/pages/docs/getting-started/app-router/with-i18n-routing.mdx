@@ -94,6 +94,16 @@ module.exports = withNextIntl(nextConfig);
 </Tab>
 </Tabs>
 
+<Callout type="warning">
+  **Important**: be careful when import anything directly from `next.config.{js,mjs}` inside your project when using `next-intl`
+  
+  If you need to import something from `next.config.js`, you have two options:
+  - Configure flexibly parameter passed to `createNextIntlPlugin()` function (location of request config file, `request.{ts,tsx,js,jsx}`) 
+  - Move logic you need to a separate file that you will use in both `next.config.js` and any other place you need (better option)
+  
+  This limitation is due to fact that `createNextIntlPlugin()` function by default (without parameters) search for `request` file using current working directory (cwd), and if you import something from `next.config.js` somewhere deep in your project, then `request` file will be searched relative to the place where you imported `next.config.js`, this may cause errors like: `Could not locate i18n request config for next-intl...`
+</Callout>
+
 ### `src/i18n/routing.ts` [#i18n-routing]
 
 We'll integrate with Next.js' routing in two places:
