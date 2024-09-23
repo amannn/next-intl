@@ -256,15 +256,22 @@ In case you ran into an issue, have a look at [the App Router example](/examples
 
 ## Static rendering
 
-When using the setup with i18n routing, `next-intl`will currently opt into dynamic rendering when APIs like `useTranslations` are used in Server Components. This is a limitation that we aim to remove in the future, but as a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering:
+When using the setup with i18n routing, `next-intl`will currently opt into dynamic rendering when APIs like `useTranslations` are used in Server Components. This is a limitation that we aim to remove in the future, but as a stopgap solution, `next-intl` provides a temporary API that can be used to enable static rendering.
 
 <Steps>
 
-### Add `generateStaticParams` to `app/[locale]/layout.tsx`
+### Add `generateStaticParams`
 
 Since we are using a dynamic route segment for the `[locale]` param, we need to pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
 
-```tsx filename="app/[locale]/layout.tsx"
+Depending on your needs, you can add `generateStaticParams` either to a layout or pages:
+
+1. **Layout**: Enables static rendering for all pages within this layout (e.g. `app/[locale]/layout.tsx`)
+2. **Individual pages**: Enables static rendering for a specific page (e.g. `app/[locale]/page.tsx`)
+
+**Example:**
+
+```tsx
 import {routing} from '@/i18n/routing';
 
 export function generateStaticParams() {
