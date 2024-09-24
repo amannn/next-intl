@@ -73,7 +73,7 @@ type Props = {
   locale: string;
   timeZone?: TimeZone;
   onError?(error: IntlError): void;
-  formats?: Partial<Formats>;
+  formats?: Formats;
   now?: Date;
   /** @private */
   _formatters?: Formatters;
