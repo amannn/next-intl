@@ -74,7 +74,7 @@ We'll likely get better error reporting for this type of error in [Next.js 15](h
 
 <Tweet id="1785691330988986587" />
 
-This is however not the case currently, and there's a bit more to it—so let's move on for now.
+This is however not the case currently, and there's a also bit more to it—so let's move on for now.
 
 ## Purity
 
@@ -86,12 +86,12 @@ const now = new Date();
 
 If you've been using React for a while, you may be familiar with the necessity of components being _pure_.
 
-Quoting from the React docs, we can [keep components pure](https://react.dev/learn/keeping-components-pure) by considering these two aspects:
+Quoting from the React docs, we can [keep a component pure](https://react.dev/learn/keeping-components-pure) by considering these two aspects:
 
 > **It minds its own business:** It does not change any objects or variables that existed before it was called.
 > **Same inputs, same output:** Given the same inputs, a pure function should always return the same result.
 
-Since the component is reading from the constantly changing `new Date()` constructor during rendering, it violates the principle of "same inputs, same output. React components require functional purity to ensure consistent output when being re-rendered (which can happen at any time and often without the user explicitly asking the UI to update).
+Since the component is reading from the constantly changing `new Date()` constructor during rendering, it violates the principle of "same inputs, same output". React components require functional purity to ensure consistent output when being re-rendered (which can happen at any time and often without the user explicitly asking the UI to update).
 
 But is this true for all components? In fact, with the introduction of Server Components, there's a new type of component in town that doesn't have the restriction of "same inputs, same output". Server Components can for instance fetch data, making their output reliant on the state of an external system. This is fine, because Server Components only generate an output once—_on the server_.
 
@@ -104,7 +104,7 @@ Right, you may have guessed it: We can move the creation of the `now` variable t
 ```tsx filename="page.tsx"
 import BlogPostPublishedDate from './BlogPostPublishedDate';
 
-export default function BlogPost() {
+export default function BlogPostPage() {
   // ✅ Is only called on the server
   const now = new Date();
 
@@ -124,7 +124,7 @@ Are we done yet?
 
 ## What time is it?
 
-What if we have more components that rely on the current time? We could instantiate the `now` variable in each component that needs it, but if you consider that even during a single render pass there can be timing differences, this might result in inconsistencies. This might be significant in case you have asynchronous operations like data fetching that delay the rendering of certain components.
+What if we have more components that rely on the current time? We could instantiate the `now` variable in each component that needs it, but if you consider that even during a single render pass there can be timing differences, this might result in inconsistencies if you're working with dates that require precision.
 
 An option to ensure that a single `now` value is used across all components that render as part of a single request is to use the [`cache()`](https://react.dev/reference/react/cache) function from React:
 
@@ -143,7 +143,7 @@ export default getNow;
 ```tsx filename="page.tsx"
 import getNow from './getNow';
 
-export default function BlogPost() {
+export default function BlogPostPage() {
   // ✅ Will be consistent for the current request,
   // regardless of the timing of different calls
   const now = getNow();
@@ -190,10 +190,10 @@ In our case, this can lead to different dates being displayed. Even more intrica
 
 A bug like this can involve quite some detective work. I've learned this first hand, having written more than one lengthy pull request description, containing fixes for such issues in apps I've worked on.
 
-To fix our new bug, the solution is similar to the one we've used for the `now` variable: We can create a `timeZone` variable in a Server Component that we use as the source of truth.
+To fix our new bug, the solution is similar to the one we've used for the `now` variable: We can create a `timeZone` variable in a Server Component and use that as the source of truth.
 
 ```tsx filename="page.tsx"
-export default function BlogPost() {
+export default function BlogPostPage() {
   // ...
 
   // Use the time zone of the server
@@ -218,9 +218,9 @@ export default function BlogPostPublishedDate({published, timeZone}: Props) {
 }
 ```
 
-It's worth mentioning that sticking to a single time zone for your app is the easiest solution here. In case you'd like to format dates in the user's time zone, a reasonable approach might require having the time zone available on the server side so that it can be used in server-only code.
+Sticking to a single time zone for your app is definitely the easiest solution here. However, in case you'd like to format dates in the user's time zone, a reasonable approach might require having the time zone available on the server side so that it can be used in server-only code.
 
-As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, this is only an approximation, so letting the user choose their time zone explicitly might still be sensible.
+As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, it's important to note that this is only an approximation, so letting the user choose their time zone explicitly might still be sensible.
 
 ## Localized date formatting
 
@@ -230,7 +230,7 @@ So far, we've assumed that our app will be used by American English users, with 
 Sep 19, 2024
 ```
 
-Our situation gets interesting again, once we consider that the date format is not universal. In Great Britain, for instance, the same date might be formatted as "19 Sept 2024".
+Our situation gets interesting again, once we consider that the date format is not universal. In Great Britain, for instance, the same date might be formatted as "19 Sept 2024", with the day and month being swapped.
 
 In case we want to localize our app to another language, or even support multiple languages, we now need to consider the _locale_ of the user. Simply put, a locale represents the language of the user, optionally combined with additional information like the region (e.g. `en-GB` represents English as spoken in Great Britain).
 
@@ -260,11 +260,11 @@ It's important to pass the `locale` to all formatting calls now, as this can dif
 
 ## Can `next-intl` help?
 
-Since you're reading this post on the `next-intl` blog, you've probably already guessed that we have an opinion on this subject. Note that this is not at all a critizism of libraries like `date-fns` & friends. On the contrary, I can only recommend these packages—especially for manipulating dates.
+Since you're reading this post on the `next-intl` blog, you've probably already guessed that we have an opinion on this subject. Note that this is not at all a critizism of libraries like `date-fns` & friends. On the contrary, I can only recommend these packages.
 
 The challenge we've discussed in this post is rather about the centralization and distribution of environment configuration across a Next.js app, involving interleaved rendering across the server and client that is required for formatting dates consistently. Even when only supporting a single language within your app, this already requires careful consideration.
 
-`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) file that allows to specify request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
+`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) file that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -277,7 +277,7 @@ export default getRequestConfig(async () => ({
 }));
 ```
 
-Note that as the name of `getRequestConfig` implies, the configuration object can be created per request, allowing for dynamic configuration based on the user's preferences.
+Note that—as the name of `getRequestConfig` implies—the configuration object can be created per request, allowing for dynamic configuration based on a given user's preferences.
 
 This can now be used to format dates in components—at any point of the server-client spectrum:
 
@@ -289,14 +289,20 @@ type Props = {
 };
 
 export default function BlogPostPublishedDate({published}: Props) {
+  // ✅ Works in any environment
   const format = useFormatter();
-  return <p>{format.dateTime(published)}</p>;
+
+  // "Sep 19, 2024"
+  format.dateTime(published);
+
+  // "8 days ago"
+  format.relativeTime(published);
 }
 ```
 
 Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers for example. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout) that is commonly placed in the root layout of your app, will inherit the configuration and make it available to all client-side code.
 
-Formatting functions like `format.dateTime(…)` can now access the necessary configuration in any environment and pass it to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to apply the correct formatting.
+As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This can in turn be passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
 
 ---
 
