@@ -221,7 +221,7 @@ function createBaseTranslatorImpl<
     /** Key value pairs for values to interpolate into the message. */
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray {
     if (messagesOrError instanceof IntlError) {
       // We have already warned about this during render
@@ -360,7 +360,7 @@ function createBaseTranslatorImpl<
     /** Key value pairs for values to interpolate into the message. */
     values?: TranslationValues,
     /** Provide custom formats for numbers, dates and times. */
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string {
     const result = translateBaseFn(key, values, formats);
 

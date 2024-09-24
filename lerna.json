@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "3.19.4",
+  "version": "3.19.5",
   "packages": [
     "packages/*"
   ],
