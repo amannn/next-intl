@@ -24,7 +24,7 @@ export const formats = {
       type: 'conjunction'
     }
   }
-} satisfies Partial<Formats>;
+} satisfies Formats;
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
