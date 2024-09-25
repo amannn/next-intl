@@ -6,7 +6,7 @@ import {Tweet} from 'react-tweet';
 
 # Reliable date formatting in Next.js
 
-<small>Sep 19, 2024 · by Jan Amann</small>
+<small>Sep 25, 2024 · by Jan Amann</small>
 
 Let's take a look at the following component:
 
@@ -159,7 +159,7 @@ Well, are we done now?
 
 ## Where are we?
 
-We've carefully ensured that our app is free of hydration mismatches and have established consistent time handling across all components. But what happens if we decide one day that we don't want to render a relative time like "2 days ago", but a specific date like "Sep 19, 2024"?
+We've carefully ensured that our app is free of hydration mismatches and have established consistent time handling across all components. But what happens if we decide one day that we don't want to render a relative time like "2 days ago", but a specific date like "Sep 25, 2024"?
 
 ```tsx
 import {format} from 'date-fns';
@@ -229,7 +229,7 @@ As browsers don't include the time zone of the user in an HTTP request, one way 
 So far, we've assumed that our app will be used by American English users, with dates being formatted like:
 
 ```
-Sep 19, 2024
+Sep 25, 2024
 ```
 
 Our situation gets interesting again, once we consider that the date format is not universal. In Great Britain, for instance, the same date might be formatted as "19 Sept 2024", with the day and month being swapped.
@@ -306,7 +306,7 @@ export default function BlogPostPublishedDate({published}: Props) {
   // ✅ Works in any environment
   const format = useFormatter();
 
-  // "Sep 19, 2024"
+  // "Sep 25, 2024"
   format.dateTime(published);
 
   // "8 days ago"
