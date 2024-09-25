@@ -772,11 +772,10 @@ describe.each([
 
     describe('getPathname', () => {
       it('adds a prefix for the default locale without printing a warning', () => {
-        const originalConsoleError = globalThis.console.error;
-        globalThis.console.error = vi.fn();
+        const consoleSpy = vi.spyOn(console, 'error');
         expect(getPathname({locale: 'en', href: '/about'})).toBe('/en/about');
-        expect(globalThis.console.error).not.toHaveBeenCalled();
-        globalThis.console.error = originalConsoleError;
+        expect(consoleSpy).not.toHaveBeenCalled();
+        consoleSpy.mockRestore();
       });
     });
 
@@ -855,23 +854,10 @@ describe.each([
       });
 
       it('prints a warning when no domain is provided', () => {
-        const originalConsoleError = globalThis.console.error;
-        globalThis.console.error = vi.fn();
+        const consoleSpy = vi.spyOn(console, 'error');
         getPathname({locale: 'de', href: '/about'});
-        expect(globalThis.console.error).toHaveBeenCalledWith(
-          "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter."
-        );
-        globalThis.console.error = originalConsoleError;
-      });
-
-      it('prints a warning when an unknown domain is provided', () => {
-        const originalConsoleError = globalThis.console.error;
-        globalThis.console.error = vi.fn();
-        getPathname({locale: 'de', href: '/about', domain: 'example.org'});
-        expect(globalThis.console.error).toHaveBeenCalledWith(
-          'Domain "example.org" not found in the routing configuration. Available domains: example.com, example.de'
-        );
-        globalThis.console.error = originalConsoleError;
+        expect(consoleSpy).toHaveBeenCalled();
+        consoleSpy.mockRestore();
       });
     });
 

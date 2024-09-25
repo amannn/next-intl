@@ -245,16 +245,16 @@ export function applyPathnamePrefix<AppLocales extends Locales>(
         } else if (process.env.NODE_ENV !== 'production') {
           if (!domain) {
             console.error(
-              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter."
-              // TODO: Link to docs. q: which apis are affected?
+              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter (e.g. based on the `x-forwarded-host` header). If this is not possible (e.g. when relying on static rendering), you can alternatively redirect on the client side via `useRouter`."
+
+              // TODO: Link to docs. q: which apis are affected? consider in error message
               // solution for user: provide domain manually, read from host header
             );
           } else {
-            console.error(
-              `Domain "${domain}" not found in the routing configuration. Available domains: ${routing.domains
-                .map((cur) => cur.domain)
-                .join(', ')}`
-            );
+            // If a domain was provided, but it wasn't found in the routing
+            // configuration, this can be an indicator that the user is on
+            // localhost. In this case, we can simply use the domain-agnostic
+            // default locale.
           }
         }
       }
