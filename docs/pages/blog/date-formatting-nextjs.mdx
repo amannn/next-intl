@@ -33,11 +33,11 @@ A quick local test of this component renders the expected result:
 
 So, should we push this to production?
 
-Hold on—something feels a bit off here. Let's take a closer look together.
+Hmm, wait—something feels a bit off here. Let's take a closer look together.
 
 ## Environment differences
 
-Since this component doesn't use any interactive features of React like `useState`, it can be considered a [shared component](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#sharing-code-between-server-and-client). In practice, this means that depending on where the component is being imported from, it may render as either a Server Component or a Client Component.
+Since this component neither uses any interactive features of React like `useState`, nor does it read from server-side data sources, it can be considered a [shared component](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#sharing-code-between-server-and-client). This means that depending on where the component is being imported from, it may render as either a Server Component or a Client Component.
 
 Let's consider where the component renders in either case:
 
@@ -159,7 +159,7 @@ Well, are we done now?
 
 ## Where are we?
 
-We've carefully ensured that our app is free of hydration mismatches and have established a consistent time handling across all components. But what happens if we decide one day that we don't want to render a relative time like "2 days ago", but a specific date like "Sep 19, 2024"?
+We've carefully ensured that our app is free of hydration mismatches and have established consistent time handling across all components. But what happens if we decide one day that we don't want to render a relative time like "2 days ago", but a specific date like "Sep 19, 2024"?
 
 ```tsx
 import {format} from 'date-fns';
