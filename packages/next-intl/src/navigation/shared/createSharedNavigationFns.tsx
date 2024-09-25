@@ -141,7 +141,6 @@ export default function createSharedNavigationFns<
     );
   }
 
-  // New: getPathname is available for shared pathnames
   function getPathname(
     {
       domain,
@@ -157,7 +156,6 @@ export default function createSharedNavigationFns<
     },
     /** @private */
     _forcePrefix?: boolean
-    // TODO: Should we somehow ensure this doesn't get emitted to the types?
   ) {
     let pathname: string;
     if (pathnames == null) {

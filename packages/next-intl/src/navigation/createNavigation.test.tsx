@@ -190,6 +190,19 @@ describe.each([
         // Still works
         expect(markup).toContain('href="/zh/about"');
       });
+
+      it('does not allow to receive params', () => {
+        <Link
+          href={{
+            pathname: '/news/[articleSlug]-[articleId]',
+            // @ts-expect-error -- This error is important when switching from localized pathnames to shared pathnames
+            params: {
+              articleSlug: 'launch-party',
+              articleId: 3
+            }
+          }}
+        />;
+      });
     });
 
     describe('getPathname', () => {
@@ -468,7 +481,7 @@ describe.each([
         <Link href="/about" locale="zh" />;
         // @ts-expect-error -- Unknown pathname
         <Link href="/unknown" />;
-        // @ts-expect-error -- Missing params
+        // @ts-expect-error -- Missing params (this error is important when switching from shared pathnames to localized pathnames)
         <Link href={{pathname: '/news/[articleSlug]-[articleId]'}} />;
       });
     });
