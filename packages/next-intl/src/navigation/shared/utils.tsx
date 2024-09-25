@@ -247,7 +247,7 @@ export function applyPathnamePrefix<AppLocales extends Locales>(
             console.error(
               "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter (e.g. based on the `x-forwarded-host` header). If this is not possible (e.g. when relying on static rendering), you can alternatively redirect on the client side via `useRouter`."
 
-              // TODO: Link to docs. q: which apis are affected? consider in error message
+              // TODO: Link to docs. q: which apis are affected? consider in error message. currently we assume only redirect, but getPathname is affected too (with no alternative). a proper docs page would go a long way probably.
               // solution for user: provide domain manually, read from host header
             );
           } else {

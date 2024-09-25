@@ -152,7 +152,7 @@ export default function createSharedNavigationFns<
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
-      /** In case you're using `localePrefix: 'as-necessary'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
+      /** In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
       domain?: string;
     },
     /** @private */
