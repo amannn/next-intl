@@ -32,7 +32,7 @@ function setTimeZoneInFormats(
  * to convert the format before `intl-messageformat` can be used.
  */
 export default function convertFormatsToIntlMessageFormat(
-  formats: Partial<Formats>,
+  formats: Formats,
   timeZone?: TimeZone
 ): Partial<IntlFormats> {
   const formatsWithTimeZone = timeZone
