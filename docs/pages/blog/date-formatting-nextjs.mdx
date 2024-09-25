@@ -278,7 +278,7 @@ The challenge we've discussed in this post is rather about the centralization an
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => ({
-  // (default)
+  // (defaults to the current time)
   now: new Date(),
 
   // (defaults to the server's time zone)
