@@ -105,7 +105,6 @@ describe("localePrefix: 'always'", () => {
     defaultLocale,
     localePrefix: 'always'
   });
-  const renderPathname = getRenderPathname(usePathname);
 
   describe('Link', () => {
     describe('usage outside of Next.js', () => {
@@ -412,6 +411,38 @@ describe("localePrefix: 'as-needed', with `domains`", () => {
         invokeRouter((router) => router[method]('/about', {locale: 'en'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
       });
+    });
+  });
+
+  const renderPathname = getRenderPathname(usePathname);
+
+  describe('usePathname', () => {
+    it('returns the correct pathname for the default locale', () => {
+      mockCurrentLocale('en');
+      mockLocation({pathname: '/about', host: 'example.com'});
+      renderPathname();
+      screen.getByText('/about');
+    });
+
+    it('returns the correct pathname for a secondary locale', () => {
+      mockCurrentLocale('de');
+      mockLocation({pathname: '/de/about', host: 'example.com'});
+      renderPathname();
+      screen.getByText('/about');
+    });
+
+    it('returns the correct pathname for the default locale on a domain with a different defaultLocale', () => {
+      mockCurrentLocale('de');
+      mockLocation({pathname: '/about', host: 'example.de'});
+      renderPathname();
+      screen.getByText('/about');
+    });
+
+    it('returns the correct pathname for a secondary locale on a domain with a different defaultLocale', () => {
+      mockCurrentLocale('en');
+      mockLocation({pathname: '/en/about', host: 'example.de'});
+      renderPathname();
+      screen.getByText('/about');
     });
   });
 });
