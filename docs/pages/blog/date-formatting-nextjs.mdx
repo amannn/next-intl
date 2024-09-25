@@ -8,7 +8,7 @@ import {Tweet} from 'react-tweet';
 
 <small>Sep 19, 2024 · by Jan Amann</small>
 
-Let's consider the following component:
+Let's take a look at the following component:
 
 ```tsx
 import {formatDistance} from 'date-fns';
@@ -25,15 +25,15 @@ export default function BlogPostPublishedDate({published}: Props) {
 }
 ```
 
-A first local test of this component renders the expected result:
+A quick local test of this component renders the expected result:
 
 ```
 1 hour ago
 ```
 
-So let's push this to production?
+So, should we push this to production?
 
-Hmm, wait—something feels a bit fishy about this. Let's have a closer look together.
+Hold on—something feels a bit off here. Let's take a closer look together.
 
 ## Environment differences
 
@@ -54,7 +54,7 @@ There's some interesting nuance here as well: Since our component qualifies as a
 
 ## Hydration mismatches
 
-Let's take a closer look at the case when `BlogPostPublishedDate` renders as a Client Component.
+Let's take a closer look at what happens when `BlogPostPublishedDate` renders as a Client Component.
 
 In this case, the value for `now` will always differ between the server and client, due to the latency between these two environments. Depending on factors like caching, the difference may be even significant.
 
