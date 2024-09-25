@@ -1075,6 +1075,13 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('handles malformed urls', () => {
+      middleware(createMockRequest('/a%'));
+      middleware(createMockRequest('/en/a%'));
+      middleware(createMockRequest('/en/about/a%'));
+      expect(MockedNextResponse.next).toHaveBeenCalledTimes(3);
+    });
+
     describe('base path', () => {
       it('redirects non-prefixed requests for the default locale', () => {
         middleware(withBasePath(createMockRequest('/')));
