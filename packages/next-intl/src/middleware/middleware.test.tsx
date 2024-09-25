@@ -1075,6 +1075,13 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('handles malformed urls', () => {
+      middleware(createMockRequest('/a%'));
+      middleware(createMockRequest('/en/a%'));
+      middleware(createMockRequest('/en/about/a%'));
+      expect(MockedNextResponse.next).toHaveBeenCalledTimes(3);
+    });
+
     describe('base path', () => {
       it('redirects non-prefixed requests for the default locale', () => {
         middleware(withBasePath(createMockRequest('/')));
@@ -1586,6 +1593,23 @@ describe('prefix-based routing', () => {
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
           'http://localhost:3000/en'
+        );
+      });
+
+      it('handles overlapping custom prefixes correctly', () => {
+        createMiddleware({
+          locales: ['en-US', 'es-US'],
+          defaultLocale: 'en-US',
+          localePrefix: {
+            mode: 'always',
+            prefixes: {
+              'es-US': '/us/es',
+              'en-US': '/us'
+            }
+          }
+        })(createMockRequest('/us/es'));
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/es-US'
         );
       });
 

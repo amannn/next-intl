@@ -9,5 +9,9 @@
   "translations-outside-of-react-components": {
     "title": "How (not) to use translations outside of React components",
     "display": "hidden"
+  },
+  "date-formatting-nextjs": {
+    "title": "Reliable date formatting in Next.js",
+    "display": "hidden"
   }
 }

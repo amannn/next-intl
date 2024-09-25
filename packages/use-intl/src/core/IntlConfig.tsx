@@ -13,7 +13,7 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
   locale: string;
   /** Global formats can be provided to achieve consistent
    * formatting across components. */
-  formats?: Partial<Formats>;
+  formats?: Formats;
   /** A time zone as defined in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) which will be applied when formatting dates and times. If this is absent, the user time zone will be used. You can override this by supplying an explicit time zone to `formatDateTime`. */
   timeZone?: TimeZone;
   /** This callback will be invoked when an error is encountered during

@@ -73,7 +73,7 @@ type Props = {
   locale: string;
   timeZone?: TimeZone;
   onError?(error: IntlError): void;
-  formats?: Partial<Formats>;
+  formats?: Formats;
   now?: Date;
   /** @private */
   _formatters?: Formatters;
@@ -163,7 +163,9 @@ export default function createFormatter({
     value: Date | number,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?: string | DateTimeFormatOptions
+    formatOrOptions?:
+      | Extract<keyof IntlFormats['dateTime'], string>
+      | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -183,7 +185,9 @@ export default function createFormatter({
     end: Date | number,
     /** If a time zone is supplied, the values are converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?: string | DateTimeFormatOptions
+    formatOrOptions?:
+      | Extract<keyof IntlFormats['dateTime'], string>
+      | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -200,7 +204,9 @@ export default function createFormatter({
 
   function number(
     value: number | bigint,
-    formatOrOptions?: string | NumberFormatOptions
+    formatOrOptions?:
+      | Extract<keyof IntlFormats['number'], string>
+      | NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -284,7 +290,9 @@ export default function createFormatter({
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?: string | Intl.ListFormatOptions
+    formatOrOptions?:
+      | Extract<keyof IntlFormats['list'], string>
+      | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();

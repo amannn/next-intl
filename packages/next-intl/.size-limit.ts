@@ -27,7 +27,7 @@ const config: SizeLimitConfig = [
   },
   {
     path: 'dist/production/middleware.js',
-    limit: '9.595 KB'
+    limit: '9.625 KB'
   },
   {
     path: 'dist/production/routing.js',

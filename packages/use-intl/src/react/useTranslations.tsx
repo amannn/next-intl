@@ -45,7 +45,7 @@ export default function useTranslations<
   >(
     key: TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -65,7 +65,7 @@ export default function useTranslations<
   >(
     key: TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -85,7 +85,7 @@ export default function useTranslations<
   >(
     key: TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`

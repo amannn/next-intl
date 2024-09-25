@@ -65,7 +65,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -85,7 +85,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -105,7 +105,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`
