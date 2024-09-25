@@ -120,6 +120,8 @@ The `now` prop that we're passing to `BlogPostPublishedDate` is an instance of `
 
 It's worth mentioning that the published date will now update based on the caching rules of the page, therefore if your page renders statically, you might want to consider introducing a [`revalidate`](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration) interval.
 
+There's an argument that you might even _want_ to render an updated date on the client side—however, this approach comes with trade-offs. Since the final render now depends on your app's hydration, this can lead to a noticable "flicker" or layout shift as the content updates, affecting core web vitals like [Largest Contentful Paint (LCP)](https://web.dev/articles/lcp) and [Cumulative Layout Shift (CLS)](https://web.dev/articles/cls). Due to this, getting the initial render on the server side right might still be preferable.
+
 Are we done yet?
 
 ## What time is it?
@@ -270,14 +272,14 @@ The challenge we've discussed in this post is rather about the centralization an
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => ({
-  now: new Date(), // (default)
   timeZone: 'Europe/Berlin', // (defaults to the server time zone)
+  now: new Date(), // (default)
   locale: 'en'
   // ...
 }));
 ```
 
-Note that—as the name of `getRequestConfig` implies—the configuration object can be created per request, allowing for dynamic configuration based on a given user's preferences.
+Note that, as the name of `getRequestConfig` implies, the configuration object can be created per request, allowing for dynamic configuration based on a given user's preferences.
 
 This can now be used to format dates in components—at any point of the server-client spectrum:
 
@@ -300,9 +302,9 @@ export default function BlogPostPublishedDate({published}: Props) {
 }
 ```
 
-Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers for example. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout) that is commonly placed in the root layout of your app, will inherit the configuration and make it available to all client-side code.
+Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout), commonly placed in the root layout of your app, inherits this configuration and makes it available to all client-side code.
 
-As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This can in turn be passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
+As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This configuration is then passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
 
 ---
 
