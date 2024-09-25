@@ -9,6 +9,7 @@ const withNextra = require('nextra')({
 });
 
 module.exports = withNextra({
+  transpilePackages: ['react-tweet'],
   redirects: () => [
     // Index pages
     {
