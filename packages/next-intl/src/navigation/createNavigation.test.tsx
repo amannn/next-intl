@@ -686,6 +686,67 @@ describe.each([
     });
   });
 
+  describe('localePrefix: "always", with `prefixes`', () => {
+    const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: {
+        mode: 'always',
+        prefixes: {
+          en: '/us/en',
+          de: '/eu/de'
+          // (use /ja as-is)
+        }
+      }
+    });
+
+    describe('Link', () => {
+      it('renders a prefix during SSR', () => {
+        const markup = renderToString(<Link href="/about">About</Link>);
+        expect(markup).toContain('href="/us/en/about"');
+      });
+
+      it('renders a prefix when currently on a secondary locale', () => {
+        mockCurrentLocale('de');
+        render(<Link href="/about">About</Link>);
+        expect(
+          screen.getByRole('link', {name: 'About'}).getAttribute('href')
+        ).toBe('/eu/de/about');
+      });
+    });
+
+    describe('getPathname', () => {
+      it('adds a prefix for the default locale', () => {
+        expect(getPathname({locale: 'en', href: '/about'})).toBe(
+          '/us/en/about'
+        );
+      });
+
+      it('adds a prefix for a secondary locale', () => {
+        expect(getPathname({locale: 'de', href: '/about'})).toBe(
+          '/eu/de/about'
+        );
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('adds a prefix for the default locale', () => {
+        runInRender(() => redirectFn('/'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/us/en');
+      });
+
+      it('adds a prefix for a secondary locale', () => {
+        mockCurrentLocale('de');
+        runInRender(() => redirectFn('/about'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/eu/de/about');
+      });
+    });
+  });
+
   describe("localePrefix: 'always', with `domains`", () => {
     const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
       locales,
