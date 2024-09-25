@@ -686,11 +686,50 @@ describe.each([
     });
   });
 
-  // describe("localePrefix: 'always', with `prefixes`", () => {})
-  // describe("localePrefix: 'as-needed', no `locales`", () => {})
-  // describe("localePrefix: 'as-needed', with `domains`", () => {})
-  // describe("localePrefix: 'never', with `domains`", () => {})
-  // describe("localePrefix: 'always', with `domains`", () => {})
+  describe("localePrefix: 'always', with `domains`", () => {
+    const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: 'always'
+    });
+
+    describe('Link', () => {
+      it('renders a prefix during SSR', () => {
+        const markup = renderToString(<Link href="/about">About</Link>);
+        expect(markup).toContain('href="/en/about"');
+      });
+
+      it('renders a prefix eventually on the client side', () => {
+        mockLocation({host: 'example.com'});
+        render(<Link href="/about">About</Link>);
+        expect(
+          screen.getByRole('link', {name: 'About'}).getAttribute('href')
+        ).toBe('/en/about');
+      });
+    });
+
+    describe('getPathname', () => {
+      it('adds a prefix for the default locale without printing a warning', () => {
+        const originalConsoleError = globalThis.console.error;
+        globalThis.console.error = vi.fn();
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/en/about');
+        expect(globalThis.console.error).not.toHaveBeenCalled();
+        globalThis.console.error = originalConsoleError;
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('adds a prefix for the default locale', () => {
+        runInRender(() => redirectFn('/'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
+      });
+    });
+  });
+
   describe("localePrefix: 'as-needed', with `domains`", () => {
     const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
       locales,
@@ -861,6 +900,62 @@ describe.each([
       it('forwards a redirect type', () => {
         runInRender(() => redirectFn('/', RedirectType.push));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
+      });
+    });
+  });
+
+  describe("localePrefix: 'never', with `domains`", () => {
+    const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: 'never'
+    });
+
+    describe('Link', () => {
+      it('renders no prefix during SSR', () => {
+        const markup = renderToString(<Link href="/about">About</Link>);
+        expect(markup).toContain('href="/about"');
+      });
+
+      it('renders a prefix when linking to a secondary locale', () => {
+        const markup = renderToString(
+          <Link href="/about" locale="de">
+            Über uns
+          </Link>
+        );
+        expect(markup).toContain('href="/de/about"');
+        expect(markup).toContain('hrefLang="de"');
+      });
+
+      it('can link to a pathname on another domain', () => {
+        const markup = renderToString(
+          <Link href={{pathname: '/about', host: 'example.de'}} locale="de">
+            Über uns
+          </Link>
+        );
+        expect(markup).toContain('href="//example.de/about"');
+        expect(markup).toContain('hrefLang="de"');
+      });
+    });
+
+    describe('getPathname', () => {
+      it('does not add a prefix for the default locale', () => {
+        const originalConsoleError = console.error;
+        console.error = vi.fn();
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/about');
+        expect(console.error).not.toHaveBeenCalled();
+        console.error = originalConsoleError;
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('adds no prefix for the default locale', () => {
+        runInRender(() => redirectFn('/'));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
       });
     });
   });
