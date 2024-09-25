@@ -272,15 +272,21 @@ Since you're reading this post on the `next-intl` blog, you've probably already 
 
 The challenge we've discussed in this post is rather about the centralization and distribution of environment configuration across a Next.js app, involving interleaved rendering across the server and client that is required for formatting dates consistently. Even when only supporting a single language within your app, this already requires careful consideration.
 
-`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) file that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
+`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) module that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => ({
-  timeZone: 'Europe/Berlin', // (defaults to the server time zone)
-  now: new Date(), // (default)
+  // (default)
+  now: new Date(),
+
+  // (defaults to the server's time zone)
+  timeZone: 'Europe/Berlin',
+
+  // (requires an explicit preference)
   locale: 'en'
+
   // ...
 }));
 ```
