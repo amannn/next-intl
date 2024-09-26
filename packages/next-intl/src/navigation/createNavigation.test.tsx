@@ -282,6 +282,14 @@ describe.each([
         // @ts-expect-error -- Domain is not supported
         getPathname({locale: 'en', href: '/', domain: 'example.com'});
       });
+
+      it('does not accept the _forcePrefix flag', () => {
+        getPathname(
+          {locale: 'en', href: '/'},
+          // @ts-expect-error -- Not supported
+          true
+        );
+      });
     });
 
     describe.each([

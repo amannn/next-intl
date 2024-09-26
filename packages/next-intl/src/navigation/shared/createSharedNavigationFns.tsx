@@ -169,7 +169,7 @@ export default function createSharedNavigationFns<
               domain: AppDomains[number]['domain'];
             }
         : {}),
-    /** @private */
+    /** @private Removed in types returned below */
     _forcePrefix?: boolean
   ) {
     const {href, locale} = args;
@@ -228,10 +228,14 @@ export default function createSharedNavigationFns<
   const permanentRedirect = getRedirectFn(nextPermanentRedirect);
 
   return {
+    config,
     Link,
     redirect,
     permanentRedirect,
-    getPathname,
-    config
+
+    // Remove `_forcePrefix` from public API
+    getPathname: getPathname as (
+      args: Parameters<typeof getPathname>[0]
+    ) => string
   };
 }
