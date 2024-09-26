@@ -5,11 +5,16 @@ import {
 import React, {ComponentProps} from 'react';
 import {
   receiveRoutingConfig,
-  ResolvedRoutingConfig,
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {DomainConfig, Locales, Pathnames} from '../../routing/types';
+import {
+  DomainConfig,
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {isLocalizableHref} from '../../shared/utils';
 import BaseLink from './BaseLink';
@@ -29,22 +34,29 @@ import {
  */
 export default function createSharedNavigationFns<
   const AppLocales extends Locales,
-  const AppPathnames extends Pathnames<AppLocales> = never
+  const AppPathnames extends Pathnames<AppLocales> = never,
+  const AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  const AppDomains extends DomainsConfig<AppLocales> = never
 >(
   getLocale: () => AppLocales extends never ? string : AppLocales[number],
   routing?: [AppPathnames] extends [never]
-    ? RoutingConfigSharedNavigation<AppLocales> | undefined
-    : RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>
+    ?
+        | RoutingConfigSharedNavigation<
+            AppLocales,
+            AppLocalePrefixMode,
+            AppDomains
+          >
+        | undefined
+    : RoutingConfigLocalizedNavigation<
+        AppLocales,
+        AppLocalePrefixMode,
+        AppPathnames,
+        AppDomains
+      >
 ) {
   type Locale = ReturnType<typeof getLocale>;
 
-  const config = receiveRoutingConfig(
-    routing || {}
-  ) as typeof routing extends undefined
-    ? Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix'>
-    : [AppPathnames] extends [never]
-      ? ResolvedRoutingConfig<AppLocales>
-      : ResolvedRoutingConfig<AppLocales, AppPathnames>;
+  const config = receiveRoutingConfig(routing || {});
   if (process.env.NODE_ENV !== 'production') {
     validateReceivedConfig(config);
   }
@@ -92,9 +104,9 @@ export default function createSharedNavigationFns<
     const curLocale = getLocale();
     const finalPathname = isLocalizable
       ? getPathname(
+          // @ts-expect-error -- This is ok
           {
             locale: locale || curLocale,
-            // @ts-expect-error -- This is ok
             href: pathnames == null ? pathname : {pathname, params}
           },
           locale != null || forcePrefixSsr || undefined
@@ -126,9 +138,9 @@ export default function createSharedNavigationFns<
                   {}
                 ),
                 pathname: getPathname(
+                  // @ts-expect-error -- This is ok
                   {
                     locale: curLocale,
-                    // @ts-expect-error -- This is ok
                     href: pathnames == null ? pathname : {pathname, params}
                   },
                   false
@@ -142,21 +154,26 @@ export default function createSharedNavigationFns<
   }
 
   function getPathname(
-    {
-      domain,
-      href,
-      locale
-    }: {
-      locale: Locale;
+    args: {
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
-      /** In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
-      domain?: string;
-    },
+      locale: Locale;
+    } & (typeof routing extends undefined
+      ? {}
+      : AppLocalePrefixMode extends 'as-needed'
+        ? [AppDomains] extends [never]
+          ? {}
+          : {
+              /** In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
+              domain: AppDomains[number]['domain'];
+            }
+        : {}),
     /** @private */
     _forcePrefix?: boolean
   ) {
+    const {href, locale} = args;
+
     let pathname: string;
     if (pathnames == null) {
       if (typeof href === 'object') {
@@ -177,11 +194,14 @@ export default function createSharedNavigationFns<
       });
     }
 
-    // TODO: There might be only one shot here, for as-needed
-    // would be reading `host`, but that breaks SSG. If you want
-    // to get the first shot right, pass a `domain` here (then
-    // the user opts into dynamic rendering)
-    return applyPathnamePrefix(pathname, locale, config, domain, _forcePrefix);
+    return applyPathnamePrefix(
+      pathname,
+      locale,
+      config,
+      // @ts-expect-error -- This is ok
+      args.domain,
+      _forcePrefix
+    );
   }
 
   function getRedirectFn(
@@ -193,7 +213,14 @@ export default function createSharedNavigationFns<
     ) {
       const locale = getLocale();
 
-      return fn(getPathname({href, locale}, forcePrefixSsr), ...args);
+      return fn(
+        getPathname(
+          // @ts-expect-error -- This is ok
+          {href, locale},
+          forcePrefixSsr
+        ),
+        ...args
+      );
     };
   }
 

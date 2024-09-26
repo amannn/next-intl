@@ -2,17 +2,35 @@ import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
 
 export default function createNavigation<
   const AppLocales extends Locales,
-  const AppPathnames extends Pathnames<AppLocales> = never
+  const AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  const AppPathnames extends Pathnames<AppLocales> = never,
+  const AppDomains extends DomainsConfig<AppLocales> = never
 >(
   routing?: [AppPathnames] extends [never]
-    ? RoutingConfigSharedNavigation<AppLocales> | undefined
-    : RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>
+    ?
+        | RoutingConfigSharedNavigation<
+            AppLocales,
+            AppLocalePrefixMode,
+            AppDomains
+          >
+        | undefined
+    : RoutingConfigLocalizedNavigation<
+        AppLocales,
+        AppLocalePrefixMode,
+        AppPathnames,
+        AppDomains
+      >
 ) {
   type Locale = AppLocales extends never ? string : AppLocales[number];
 

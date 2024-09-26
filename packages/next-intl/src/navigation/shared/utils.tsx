@@ -1,7 +1,12 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {ResolvedRoutingConfig} from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {
   matchesPathname,
   getSortedPathnames,
@@ -217,11 +222,34 @@ export function getBasePath(
   }
 }
 
-export function applyPathnamePrefix<AppLocales extends Locales>(
+export function applyPathnamePrefix<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+>(
   pathname: string,
   locale: Locales[number],
-  routing: Pick<ResolvedRoutingConfig<AppLocales>, 'localePrefix' | 'domains'> &
-    Partial<Pick<ResolvedRoutingConfig<AppLocales>, 'defaultLocale'>>,
+  routing: Pick<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'localePrefix' | 'domains'
+  > &
+    Partial<
+      Pick<
+        ResolvedRoutingConfig<
+          AppLocales,
+          AppLocalePrefixMode,
+          AppPathnames,
+          AppDomains
+        >,
+        'defaultLocale'
+      >
+    >,
   domain?: string,
   force?: boolean
 ): string {
@@ -234,7 +262,7 @@ export function applyPathnamePrefix<AppLocales extends Locales>(
     if (mode === 'always') {
       shouldPrefix = true;
     } else if (mode === 'as-needed') {
-      let {defaultLocale} = routing;
+      let defaultLocale: AppLocales[number] | undefined = routing.defaultLocale;
 
       if (routing.domains) {
         const domainConfig = routing.domains.find(
@@ -268,10 +296,20 @@ export function applyPathnamePrefix<AppLocales extends Locales>(
     : pathname;
 }
 
-export function validateReceivedConfig(
+export function validateReceivedConfig<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+>(
   config: Partial<
     Pick<
-      ResolvedRoutingConfig<Locales, Pathnames<Locales>>,
+      ResolvedRoutingConfig<
+        AppLocales,
+        AppLocalePrefixMode,
+        AppPathnames,
+        AppDomains
+      >,
       'defaultLocale' | 'localePrefix'
     >
   >

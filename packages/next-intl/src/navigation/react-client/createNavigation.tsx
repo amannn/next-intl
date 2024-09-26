@@ -8,7 +8,12 @@ import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getRoute} from '../shared/utils';
@@ -16,11 +21,24 @@ import useBasePathname from './useBasePathname';
 
 export default function createNavigation<
   const AppLocales extends Locales,
-  const AppPathnames extends Pathnames<AppLocales> = never
+  const AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  const AppPathnames extends Pathnames<AppLocales> = never,
+  const AppDomains extends DomainsConfig<AppLocales> = never
 >(
   routing?: [AppPathnames] extends [never]
-    ? RoutingConfigSharedNavigation<AppLocales> | undefined
-    : RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>
+    ?
+        | RoutingConfigSharedNavigation<
+            AppLocales,
+            AppLocalePrefixMode,
+            AppDomains
+          >
+        | undefined
+    : RoutingConfigLocalizedNavigation<
+        AppLocales,
+        AppLocalePrefixMode,
+        AppPathnames,
+        AppDomains
+      >
 ) {
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
@@ -85,8 +103,8 @@ export default function createNavigation<
         ): void {
           const {locale: nextLocale, ...rest} = options || {};
 
+          // @ts-expect-error -- We're passing a domain here just in case
           const pathname = getPathname({
-            // @ts-expect-error -- This is fine
             href,
             locale: nextLocale || curLocale,
             domain: window.location.host

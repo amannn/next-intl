@@ -1,7 +1,11 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {
+  Locales,
+  LocalePrefixConfigVerbose,
+  LocalePrefixMode
+} from '../../routing/types';
 import {getLocalePrefix, localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getBasePath} from '../shared/utils';
@@ -29,9 +33,10 @@ type IntlNavigateOptions<AppLocales extends Locales> = {
  * router.push('/about', {locale: 'de'});
  * ```
  */
-export default function useBaseRouter<AppLocales extends Locales>(
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>
-) {
+export default function useBaseRouter<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>) {
   const router = useNextRouter();
   const locale = useLocale();
   const pathname = usePathname();

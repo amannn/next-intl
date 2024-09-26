@@ -2,7 +2,11 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation';
-import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {
+  Locales,
+  LocalePrefixConfigVerbose,
+  LocalePrefixMode
+} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   getLocalePrefix,
@@ -11,11 +15,14 @@ import {
 } from '../../shared/utils';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
-  return function baseRedirect<AppLocales extends Locales>(
+  return function baseRedirect<
+    AppLocales extends Locales,
+    AppLocalePrefixMode extends LocalePrefixMode
+  >(
     params: {
       pathname: string;
       locale: Locales[number];
-      localePrefix: LocalePrefixConfigVerbose<AppLocales>;
+      localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
     },
     ...args: ParametersExceptFirst<typeof redirectFn>
   ) {

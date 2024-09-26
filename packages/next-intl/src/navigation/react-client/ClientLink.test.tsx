@@ -25,7 +25,7 @@ const MockClientLink = forwardRef(
       localePrefix = {mode: 'always'},
       ...rest
     }: Omit<ComponentProps<typeof ClientLink>, 'localePrefix'> & {
-      localePrefix?: LocalePrefixConfigVerbose<any>;
+      localePrefix?: LocalePrefixConfigVerbose<any, any>;
     },
     ref
   ) => (

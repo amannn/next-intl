@@ -54,7 +54,7 @@ beforeEach(() => {
 const locales = ['en', 'de', 'ja'] as const;
 const defaultLocale = 'en' as const;
 
-const domains: DomainsConfig<typeof locales> = [
+const domains = [
   {
     defaultLocale: 'en',
     domain: 'example.com'
@@ -64,7 +64,7 @@ const domains: DomainsConfig<typeof locales> = [
     domain: 'example.de',
     locales: ['de', 'en']
   }
-];
+] satisfies DomainsConfig<typeof locales>;
 
 const pathnames = {
   '/': '/',
@@ -276,6 +276,11 @@ describe.each([
         expect(
           getPathname({locale: 'en', href: 'https://example.com/about'})
         ).toBe('https://example.com/about');
+      });
+
+      it('does not allow to pass a domain', () => {
+        // @ts-expect-error -- Domain is not supported
+        getPathname({locale: 'en', href: '/', domain: 'example.com'});
       });
     });
 
@@ -868,6 +873,7 @@ describe.each([
 
       it('prints a warning when no domain is provided', () => {
         const consoleSpy = vi.spyOn(console, 'error');
+        // @ts-expect-error -- Domain is not provided
         getPathname({locale: 'de', href: '/about'});
         expect(consoleSpy).toHaveBeenCalled();
         consoleSpy.mockRestore();

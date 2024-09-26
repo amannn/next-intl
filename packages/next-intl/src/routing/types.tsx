@@ -8,22 +8,29 @@ export type LocalePrefixes<AppLocales extends Locales> = Partial<
   Record<AppLocales[number], Pathname>
 >;
 
-export type LocalePrefixConfigVerbose<AppLocales extends Locales> =
-  | {
+export type LocalePrefixConfigVerbose<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+> = AppLocalePrefixMode extends 'always'
+  ? {
       mode: 'always';
       prefixes?: LocalePrefixes<AppLocales>;
     }
-  | {
-      mode: 'as-needed';
-      prefixes?: LocalePrefixes<AppLocales>;
-    }
-  | {
-      mode: 'never';
-    };
+  : AppLocalePrefixMode extends 'as-needed'
+    ? {
+        mode: 'as-needed';
+        prefixes?: LocalePrefixes<AppLocales>;
+      }
+    : {
+        mode: 'never';
+      };
 
-export type LocalePrefix<AppLocales extends Locales = never> =
-  | LocalePrefixMode
-  | LocalePrefixConfigVerbose<AppLocales>;
+export type LocalePrefix<
+  AppLocales extends Locales = [],
+  AppLocalePrefixMode extends LocalePrefixMode = 'always'
+> =
+  | AppLocalePrefixMode
+  | LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
 
 export type Pathnames<AppLocales extends Locales> = Record<
   Pathname,
