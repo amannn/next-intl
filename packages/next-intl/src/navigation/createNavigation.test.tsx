@@ -475,10 +475,16 @@ describe.each([
         ).toBe('/de/neuigkeiten/launch-party-3');
       });
 
-      it('handles relative links', () => {
+      it('handles relative pathnames', () => {
         // @ts-expect-error -- Validation is still on
         const markup = renderToString(<Link href="test">Test</Link>);
         expect(markup).toContain('href="test"');
+      });
+
+      it('handles unknown pathnames', () => {
+        // @ts-expect-error -- Validation is still on
+        const markup = renderToString(<Link href="/test">Test</Link>);
+        expect(markup).toContain('href="/en/test"');
       });
 
       it('handles external links correctly', () => {

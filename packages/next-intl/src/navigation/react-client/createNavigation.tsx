@@ -98,7 +98,7 @@ export default function createNavigation<
         Fn extends (href: string, options?: Options) => void
       >(fn: Fn) {
         return function handler(
-          href: string,
+          href: Parameters<typeof getPathname>[0]['href'],
           options?: Partial<Options> & {locale?: Locale}
         ): void {
           const {locale: nextLocale, ...rest} = options || {};

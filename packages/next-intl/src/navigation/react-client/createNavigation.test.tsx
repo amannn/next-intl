@@ -176,6 +176,13 @@ describe("localePrefix: 'always'", () => {
         });
       });
 
+      it('handles search params', () => {
+        invokeRouter((router) => router[method]('/test?foo=bar'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+      });
+
       it('passes through absolute urls', () => {
         invokeRouter((router) => router[method]('https://example.com'));
         expect(useNextRouter()[method]).toHaveBeenCalledWith(
@@ -259,11 +266,64 @@ describe("localePrefix: 'always', with `basePath`", () => {
 });
 
 describe("localePrefix: 'always', with `pathnames`", () => {
-  const {usePathname} = createNavigation({
+  const {usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'always',
     pathnames
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    describe.each(['push', 'replace'] as const)('`%s`', (method) => {
+      it('localizes a pathname for the default locale', () => {
+        invokeRouter((router) => router[method]('/about'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
+      });
+
+      it('localizes a pathname for a secondary locale', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/ueber-uns');
+      });
+
+      it('handles pathname params', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/news/[articleSlug]-[articleId]',
+            params: {
+              articleSlug: 'launch-party',
+              articleId: '3'
+            }
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/news/launch-party-3'
+        );
+      });
+
+      it('handles search params', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/about',
+            query: {
+              foo: 'bar'
+            }
+          })
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/about?foo=bar'
+        );
+      });
+
+      it('disallows unknown pathnames', () => {
+        // @ts-expect-error -- Unknown pathname
+        invokeRouter((router) => router[method]('/unknown'));
+
+        // Still works
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/unknown');
+      });
+    });
   });
 
   describe('usePathname', () => {
