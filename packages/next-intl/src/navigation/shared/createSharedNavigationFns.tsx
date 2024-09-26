@@ -15,7 +15,7 @@ import {
   Locales,
   Pathnames
 } from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
+import {ParametersExceptFirst, Prettify} from '../../shared/types';
 import {isLocalizableHref} from '../../shared/utils';
 import BaseLink from './BaseLink';
 import {
@@ -75,15 +75,17 @@ export default function createSharedNavigationFns<
     (config.localePrefix.mode === 'as-needed' && 'domains' in config) ||
     undefined;
 
-  type LinkProps<Pathname extends keyof AppPathnames = never> = Omit<
-    ComponentProps<typeof BaseLink>,
-    'href' | 'localePrefix'
-  > & {
-    href: [AppPathnames] extends [never]
-      ? ComponentProps<typeof BaseLink>['href']
-      : HrefOrUrlObjectWithParams<Pathname>;
-    locale?: Locale;
-  };
+  type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
+    Omit<
+      ComponentProps<typeof BaseLink>,
+      'href' | 'localePrefix' | 'unprefixConfig'
+    > & {
+      href: [AppPathnames] extends [never]
+        ? ComponentProps<typeof BaseLink>['href']
+        : HrefOrUrlObjectWithParams<Pathname>;
+      locale?: Locale;
+    }
+  >;
   function Link<Pathname extends keyof AppPathnames = never>({
     href,
     locale,

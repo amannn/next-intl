@@ -14,6 +14,7 @@ import {
   Locales,
   Pathnames
 } from '../../routing/types';
+import {Prettify} from '../../shared/types';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getRoute} from '../shared/utils';
@@ -83,7 +84,7 @@ export default function createNavigation<
     return <BaseLink nodeRef={ref} {...props} />;
   }
   const LinkWithRef = forwardRef(Link) as (
-    props: LinkProps & {ref?: LinkProps['ref']}
+    props: Prettify<LinkProps & {ref?: LinkProps['ref']}>
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
 

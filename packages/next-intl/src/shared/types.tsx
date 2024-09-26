@@ -12,3 +12,8 @@ export type ParametersExceptFirstTwo<Fn> = Fn extends (
 ) => any
   ? R
   : never;
+
+// https://www.totaltypescript.com/concepts/the-prettify-helper
+export type Prettify<Type> = {
+  [Key in keyof Type]: Type[Key];
+} & {};
