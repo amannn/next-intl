@@ -364,6 +364,39 @@ Learn more about this in the [locale detection for domain-based routing](/docs/r
 
 </Details>
 
+<Details id="domains-localeprefix-individual">
+<summary>Can I use a different `localePrefix` setting per domain?</summary>
+
+Since such a configuration would require reading the domain at runtime, this would prevent the ability to render pages statically. Due to this, `next-intl` doesn't support this configuration out of the box.
+
+However, you can still achieve this by building the app for each domain separately, while injecting diverging routing configuration via an environment variable.
+
+**Example:**
+
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
+
+export const routing = defineRouting({
+  locales: ['en', 'fr'],
+  defaultLocale: 'en',
+  localePrefix:
+    process.env.VERCEL_URL === 'us.example.com' ? 'never' : 'always',
+  domains: [
+    {
+      domain: 'us.example.com',
+      defaultLocale: 'en',
+      locales: ['en']
+    },
+    {
+      domain: 'ca.example.com',
+      defaultLocale: 'en'
+    }
+  ]
+});
+```
+
+</Details>
+
 <Details id="domains-localeprefix-asneeded">
 <summary>Special case: Using `domains` with `localePrefix: 'as-needed'`</summary>
 
