@@ -123,7 +123,7 @@ describe.each([
         expect(markup).toContain('href="/de/about"');
       });
 
-      it('accepts query params', () => {
+      it('accepts search params', () => {
         const markup = renderToString(
           <Link href={{pathname: '/about', query: {foo: 'bar'}}}>About</Link>
         );
@@ -216,7 +216,7 @@ describe.each([
         expect(getPathname({locale: 'de', href: '/about'})).toBe('/de/about');
       });
 
-      it('can incorporate query params', () => {
+      it('can incorporate search params', () => {
         expect(
           getPathname({
             href: {
@@ -324,7 +324,7 @@ describe.each([
         expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
       });
 
-      it('handles query params', () => {
+      it('handles search params', () => {
         runInRender(() =>
           redirectFn({pathname: '/about', query: {foo: 'bar'}})
         );
@@ -554,7 +554,7 @@ describe.each([
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
 
-      it('can redirect with params and query params', () => {
+      it('can redirect with params and search params', () => {
         runInRender(() =>
           redirectFn({
             pathname: '/news/[articleSlug]-[articleId]',

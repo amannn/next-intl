@@ -176,8 +176,20 @@ describe("localePrefix: 'always'", () => {
         });
       });
 
-      it('handles search params', () => {
+      it('handles search params via a final string', () => {
         invokeRouter((router) => router[method]('/test?foo=bar'));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/en/test?foo=bar'
+        );
+      });
+
+      it('handles search params via an object', () => {
+        invokeRouter((router) =>
+          router[method]({
+            pathname: '/test',
+            query: {foo: 'bar'}
+          })
+        );
         expect(useNextRouter()[method]).toHaveBeenCalledWith(
           '/en/test?foo=bar'
         );
