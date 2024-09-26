@@ -44,8 +44,6 @@ export default function createNavigation<
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
   function useTypedLocale() {
-    // eslint-disable-next-line react-compiler/react-compiler
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- Reading from context here is fine, since this must always be called during render (redirect, useRouter)
     return useLocale() as Locale;
   }
 
@@ -56,6 +54,7 @@ export default function createNavigation<
     ...redirects
   } = createSharedNavigationFns(useTypedLocale, routing);
 
+  /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#usepathname */
   function usePathname(): [AppPathnames] extends [never]
     ? string
     : keyof AppPathnames {
@@ -125,14 +124,17 @@ export default function createNavigation<
 
       return {
         ...router,
+        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
         push: createHandler<
           Parameters<typeof router.push>[1],
           typeof router.push
         >(router.push),
+        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
         replace: createHandler<
           Parameters<typeof router.replace>[1],
           typeof router.replace
         >(router.replace),
+        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
         prefetch: createHandler<
           Parameters<typeof router.prefetch>[1],
           typeof router.prefetch
@@ -141,5 +143,11 @@ export default function createNavigation<
     }, [curLocale, nextPathname, router]);
   }
 
-  return {...redirects, Link: LinkWithRef, usePathname, useRouter, getPathname};
+  return {
+    ...redirects,
+    Link: LinkWithRef,
+    usePathname,
+    useRouter,
+    getPathname
+  };
 }

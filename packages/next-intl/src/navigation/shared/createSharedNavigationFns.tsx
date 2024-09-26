@@ -80,9 +80,11 @@ export default function createSharedNavigationFns<
       ComponentProps<typeof BaseLink>,
       'href' | 'localePrefix' | 'unprefixConfig'
     > & {
+      /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
       href: [AppPathnames] extends [never]
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
+      /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
       locale?: Locale;
     }
   >;
@@ -157,6 +159,7 @@ export default function createSharedNavigationFns<
 
   function getPathname(
     args: {
+      /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#getpathname */
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
@@ -167,7 +170,10 @@ export default function createSharedNavigationFns<
         ? [AppDomains] extends [never]
           ? {}
           : {
-              /** In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned. */
+              /**
+               * In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned.
+               * @see https://next-intl-docs.vercel.app/docs/routing/navigation#getpathname
+               */
               domain: AppDomains[number]['domain'];
             }
         : {}),
@@ -209,6 +215,7 @@ export default function createSharedNavigationFns<
   function getRedirectFn(
     fn: typeof nextRedirect | typeof nextPermanentRedirect
   ) {
+    /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#redirect */
     return function redirectFn(
       href: Parameters<typeof getPathname>[0]['href'],
       ...args: ParametersExceptFirst<typeof nextRedirect>

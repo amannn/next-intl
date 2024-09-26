@@ -9,13 +9,9 @@ import {
 
 type Href = ComponentProps<typeof NextLink>['href'];
 
-function isRelativePathname(pathname?: string | null) {
-  return pathname != null && !pathname.startsWith('/');
-}
-
 function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;
-  return isRelativePathname(pathname);
+  return pathname != null && !pathname.startsWith('/');
 }
 
 function isLocalHref(href: Href) {
