@@ -369,6 +369,52 @@ describe("localePrefix: 'as-needed'", () => {
   });
 });
 
+describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
+  const {useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    domains,
+    localePrefix: 'as-needed'
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    describe('example.com, defaultLocale: "en"', () => {
+      beforeEach(() => {
+        mockLocation({pathname: '/base/path/about', host: 'example.com'});
+      });
+
+      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
+        invokeRouter((router) => router.push('/test'));
+        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+      });
+
+      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
+        invokeRouter((router) => router.push('/test', {locale: 'de'}));
+        expect(useNextRouter().push).toHaveBeenCalledWith('/de/test');
+      });
+    });
+
+    describe('example.de, defaultLocale: "de"', () => {
+      beforeEach(() => {
+        mockCurrentLocale('de');
+        mockLocation({pathname: '/base/path/about', host: 'example.de'});
+      });
+
+      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
+        invokeRouter((router) => router.push('/test'));
+        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+      });
+
+      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
+        invokeRouter((router) => router.push('/test', {locale: 'en'}));
+        expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
+      });
+    });
+  });
+});
+
 describe("localePrefix: 'as-needed', with `domains`", () => {
   const {usePathname, useRouter} = createNavigation({
     locales,
