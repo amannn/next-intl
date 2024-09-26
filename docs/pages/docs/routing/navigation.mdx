@@ -25,13 +25,6 @@ export const {Link, redirect, usePathname, useRouter} =
 
 This function is typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components.
 
-<Details id="lint-consistent-usage">
-<summary>How can I ensure consistent usage of navigation APIs?</summary>
-
-To avoid importing APIs like `<Link />` directly from Next.js by accident, you can consider [linting](/docs/workflows/linting#consistent-usage-of-navigation-apis) for the consistent usage of internationalized navigation APIs.
-
-</Details>
-
 <Details id="locales-unknown">
 <summary>What if the locales aren't known at build time?</summary>
 
@@ -54,7 +47,14 @@ Note however that the `locales` argument for the middleware is still mandatory. 
 
 The created navigation APIs are thin wrappers around the equivalents from Next.js and mostly adhere to the same function signatures. Your routing configuration and the user's locale are automatically incorporated.
 
-If you're using the [`pathnames`](/docs/routing#pathnames) setting in your routing configuration, the internal pathnames that are accepted for `href` arguments will be strictly typed and localized to the given locale. Additionally, dynamic params will need to be passed separately from the template (see below).
+If you're using the [`pathnames`](/docs/routing#pathnames) setting in your routing configuration, the internal pathnames that are accepted for `href` arguments will be strictly typed and localized to the given locale.
+
+<Details id="lint-consistent-usage">
+<summary>How can I ensure consistent usage of navigation APIs?</summary>
+
+To avoid importing APIs like `<Link />` directly from Next.js by accident, you can consider [linting](/docs/workflows/linting#consistent-usage-of-navigation-apis) for the consistent usage of internationalized navigation APIs.
+
+</Details>
 
 ### `Link`
 
@@ -257,7 +257,7 @@ import {usePathname} from '@/i18n/routing';
 const pathname = usePathname();
 ```
 
-Note that if you're using the [`pathnames`](/docs/routing#pathnames) setting, the returned pathname will correspond to an internal pathname, potentially also without dynamic params being resolved.
+Note that if you're using the [`pathnames`](/docs/routing#pathnames) setting, the returned pathname will correspond to an internal pathname template (dynamic params will not be replaced by their values).
 
 ```tsx
 // When the user is on `/de/ueber-uns`, this will be `/about`
