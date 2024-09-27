@@ -272,26 +272,31 @@ const pathname = usePathname();
 
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and localizes the pathname as necessary.
 
+Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#locale).
+
 ```tsx
 import {redirect} from '@/i18n/routing';
 
-// When the user is on `/en`, this will be `/en/login`
-redirect('/login');
+// Redirects to `/en/login`
+redirect({href: '/login', locale: 'en'});
 
 // Search params can be added via an object
-redirect({pathname: '/users', query: {sortBy: 'name'}});
+redirect({href: '/users', query: {sortBy: 'name'}, locale: 'en'});
 ```
 
 Depending on if you're using the pathnames setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
-redirect('/users/12');
+redirect({href: '/users/12', locale: 'en'});
 
 // 2. An object (when using `pathnames`)
 redirect({
-  pathname: '/users/[userId]',
-  params: {userId: '5'}
+  href: {
+    pathname: '/users/[userId]',
+    params: {userId: '5'}
+  },
+  locale: 'en'
 });
 ```
 

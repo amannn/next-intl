@@ -23,18 +23,17 @@ vi.mock('next/navigation', async () => {
     permanentRedirect: vi.fn()
   };
 });
-vi.mock('next-intl/config', () => ({
-  default: async () =>
-    ((await vi.importActual('../../src/server')) as any).getRequestConfig({
-      locale: 'en'
-    })
-}));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
-  getRequestLocale: vi.fn(() => 'en')
-}));
+vi.mock('../../src/server/react-server/RequestLocale');
 
 function mockCurrentLocale(locale: string) {
-  vi.mocked(getRequestLocale).mockImplementation(() => locale);
+  // Enable synchronous rendering without having to suspend
+  const localePromise = Promise.resolve(locale);
+  (localePromise as any).status = 'fulfilled';
+  (localePromise as any).value = locale;
+
+  // @ts-expect-error -- Async values are allowed
+  vi.mocked(getRequestLocale).mockImplementation(() => localePromise);
+
   vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
     locale
   }));
@@ -297,38 +296,45 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('can redirect for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
 
       it('forwards a redirect type', () => {
-        runInRender(() => redirectFn('/', RedirectType.push));
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en'}, RedirectType.push)
+        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith(
           '/en',
           RedirectType.push
         );
       });
 
-      // There's nothing strictly against this, but there was no need for this so
-      // far. The API design is a bit tricky since Next.js uses the second argument
-      // for a plain `type` string. Should we support an object here? Also consider
-      // API symmetry with `router.push`.
-      it('can not redirect for a different locale', () => {
-        // @ts-expect-error
-        // eslint-disable-next-line no-unused-expressions
-        () => redirectFn('/about', {locale: 'de'});
+      it('can redirect to a different locale', () => {
+        runInRender(() => redirectFn({href: '/about', locale: 'de'}));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/de/about');
       });
 
       it('handles relative pathnames', () => {
-        runInRender(() => redirectFn('about'));
+        runInRender(() => redirectFn({href: 'about', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
       });
 
       it('handles search params', () => {
         runInRender(() =>
-          redirectFn({pathname: '/about', query: {foo: 'bar'}})
+          redirectFn({
+            href: {pathname: '/about', query: {foo: 'bar'}},
+            locale: 'en'
+          })
         );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/about?foo=bar');
+      });
+
+      it('requires a locale', () => {
+        // @ts-expect-error -- Object expected
+        redirectFn('/');
+        // @ts-expect-error -- Missing locale
+        redirectFn({pathname: '/about'});
       });
     });
   });
@@ -379,8 +385,8 @@ describe.each([
       ['redirect', redirect, nextRedirect],
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
-      it('can redirect for the current locale', () => {
-        runInRender(() => redirectFn('/'));
+      it('can redirect for the default locale', () => {
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
     });
@@ -550,19 +556,22 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('can redirect for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
 
       it('can redirect with params and search params', () => {
         runInRender(() =>
           redirectFn({
-            pathname: '/news/[articleSlug]-[articleId]',
-            params: {
-              articleId: 3,
-              articleSlug: 'launch-party'
+            href: {
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: 'launch-party'
+              },
+              query: {foo: 'bar'}
             },
-            query: {foo: 'bar'}
+            locale: 'en'
           })
         );
         expect(nextRedirectFn).toHaveBeenLastCalledWith(
@@ -572,13 +581,15 @@ describe.each([
 
       it('can not be called with an arbitrary pathname', () => {
         // @ts-expect-error -- Unknown pathname
-        runInRender(() => redirectFn('/unknown'));
+        runInRender(() => redirectFn({href: '/unknown', locale: 'en'}));
         // Works regardless
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en/unknown');
       });
 
       it('forwards a redirect type', () => {
-        runInRender(() => redirectFn('/', RedirectType.push));
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en'}, RedirectType.push)
+        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith(
           '/en',
           RedirectType.push
@@ -587,7 +598,7 @@ describe.each([
 
       it('can handle relative pathnames', () => {
         // @ts-expect-error -- Validation is still on
-        runInRender(() => redirectFn('about'));
+        runInRender(() => redirectFn({href: 'about', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
       });
     });
@@ -701,18 +712,19 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('does not add a prefix when redirecting within the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
       });
 
-      it('adds a prefix when currently on a secondary locale', () => {
-        mockCurrentLocale('de');
-        runInRender(() => redirectFn('/'));
+      it('adds a prefix for a secondary locale', () => {
+        runInRender(() => redirectFn({href: '/', locale: 'de'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
       });
 
       it('forwards a redirect type', () => {
-        runInRender(() => redirectFn('/', RedirectType.push));
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en'}, RedirectType.push)
+        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
       });
     });
@@ -767,13 +779,12 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('adds a prefix for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/us/en');
       });
 
       it('adds a prefix for a secondary locale', () => {
-        mockCurrentLocale('de');
-        runInRender(() => redirectFn('/about'));
+        runInRender(() => redirectFn({href: '/about', locale: 'de'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/eu/de/about');
       });
     });
@@ -816,7 +827,19 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('adds a prefix for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
+      });
+
+      it('does not allow passing a domain', () => {
+        runInRender(() =>
+          redirectFn({
+            href: '/',
+            locale: 'en',
+            // @ts-expect-error -- Domain is not allowed
+            domain: 'example.com'
+          })
+        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
     });
@@ -900,13 +923,19 @@ describe.each([
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('adds a prefix even for the default locale', () => {
         // (see comment in source for reasoning)
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
 
-      it('adds a prefix when currently on a secondary locale', () => {
-        mockCurrentLocale('de');
-        runInRender(() => redirectFn('/'));
+      it('does not add a prefix when domain is provided for the default locale', () => {
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en', domain: 'example.com'})
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
+      });
+
+      it('adds a prefix for a secondary locale', () => {
+        runInRender(() => redirectFn({href: '/', locale: 'de'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
       });
     });
@@ -973,12 +1002,14 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('can redirect for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
       });
 
       it('forwards a redirect type', () => {
-        runInRender(() => redirectFn('/', RedirectType.push));
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en'}, RedirectType.push)
+        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
       });
     });
@@ -1034,7 +1065,7 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('adds no prefix for the default locale', () => {
-        runInRender(() => redirectFn('/'));
+        runInRender(() => redirectFn({href: '/', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
       });
     });

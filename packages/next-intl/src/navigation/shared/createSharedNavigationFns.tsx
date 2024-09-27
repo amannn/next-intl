@@ -2,7 +2,7 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation';
-import React, {ComponentProps} from 'react';
+import React, {ComponentProps, use} from 'react';
 import {
   receiveRoutingConfig,
   RoutingConfigLocalizedNavigation,
@@ -29,6 +29,10 @@ import {
   validateReceivedConfig
 } from './utils';
 
+type PromiseOrValue<Type> = Type | Promise<Type>;
+type UnwrapPromiseOrValue<Type> =
+  Type extends Promise<infer Value> ? Value : Type;
+
 /**
  * Shared implementations for `react-server` and `react-client`
  */
@@ -38,7 +42,9 @@ export default function createSharedNavigationFns<
   const AppLocalePrefixMode extends LocalePrefixMode = 'always',
   const AppDomains extends DomainsConfig<AppLocales> = never
 >(
-  getLocale: () => AppLocales extends never ? string : AppLocales[number],
+  getLocale: () => PromiseOrValue<
+    AppLocales extends never ? string : AppLocales[number]
+  >,
   routing?: [AppPathnames] extends [never]
     ?
         | RoutingConfigSharedNavigation<
@@ -54,7 +60,7 @@ export default function createSharedNavigationFns<
         AppDomains
       >
 ) {
-  type Locale = ReturnType<typeof getLocale>;
+  type Locale = UnwrapPromiseOrValue<ReturnType<typeof getLocale>>;
 
   const config = receiveRoutingConfig(routing || {});
   if (process.env.NODE_ENV !== 'production') {
@@ -105,7 +111,12 @@ export default function createSharedNavigationFns<
     // @ts-expect-error -- This is ok
     const isLocalizable = isLocalizableHref(href);
 
-    const curLocale = getLocale();
+    const localePromiseOrValue = getLocale();
+    const curLocale =
+      localePromiseOrValue instanceof Promise
+        ? use(localePromiseOrValue)
+        : localePromiseOrValue;
+
     const finalPathname = isLocalizable
       ? getPathname(
           // @ts-expect-error -- This is ok
@@ -157,6 +168,20 @@ export default function createSharedNavigationFns<
     );
   }
 
+  type DomainConfigForAsNeeded = typeof routing extends undefined
+    ? {}
+    : AppLocalePrefixMode extends 'as-needed'
+      ? [AppDomains] extends [never]
+        ? {}
+        : {
+            /**
+             * In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned.
+             * @see https://next-intl-docs.vercel.app/docs/routing/navigation#getpathname
+             */
+            domain: AppDomains[number]['domain'];
+          }
+      : {};
+
   function getPathname(
     args: {
       /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#getpathname */
@@ -164,19 +189,7 @@ export default function createSharedNavigationFns<
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
       locale: Locale;
-    } & (typeof routing extends undefined
-      ? {}
-      : AppLocalePrefixMode extends 'as-needed'
-        ? [AppDomains] extends [never]
-          ? {}
-          : {
-              /**
-               * In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned.
-               * @see https://next-intl-docs.vercel.app/docs/routing/navigation#getpathname
-               */
-              domain: AppDomains[number]['domain'];
-            }
-        : {}),
+    } & DomainConfigForAsNeeded,
     /** @private Removed in types returned below */
     _forcePrefix?: boolean
   ) {
@@ -217,18 +230,14 @@ export default function createSharedNavigationFns<
   ) {
     /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#redirect */
     return function redirectFn(
-      href: Parameters<typeof getPathname>[0]['href'],
-      ...args: ParametersExceptFirst<typeof nextRedirect>
+      args: Omit<Parameters<typeof getPathname>[0], 'domain'> &
+        Partial<DomainConfigForAsNeeded>,
+      ...rest: ParametersExceptFirst<typeof nextRedirect>
     ) {
-      const locale = getLocale();
-
       return fn(
-        getPathname(
-          // @ts-expect-error -- This is ok
-          {href, locale},
-          forcePrefixSsr
-        ),
-        ...args
+        // @ts-expect-error -- We're forcing the prefix when no domain is provided
+        getPathname(args, args.domain ? undefined : forcePrefixSsr),
+        ...rest
       );
     };
   }
