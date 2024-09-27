@@ -380,7 +380,9 @@ export const routing = defineRouting({
   locales: ['en', 'fr'],
   defaultLocale: 'en',
   localePrefix:
-    process.env.VERCEL_URL === 'us.example.com' ? 'never' : 'always',
+    process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com'
+      ? 'never'
+      : 'always',
   domains: [
     {
       domain: 'us.example.com',
@@ -425,8 +427,8 @@ const pathname = getPathname({
 });
 ```
 
-The tradeoff with `redirect` can be mitigated by implementing the redirect either in the middleware or via [`useRouter`](/docs/routing/navigation#usrouter) on the client side. The other ones are however necessary in order to retain the ability to render pages statically.
+A `domain` can optionally also be passed to `redirect` in the same manner to ensure that a prefix is only added when necessary. Alternatively, you can also consider redirecting in the middleware or via [`useRouter`](/docs/routing/navigation#usrouter) on the client side.
 
-If you need to avoid these tradeoffs, you can consider building the same app for each domain separately, while injecting diverging routing configuration via an environment variable.
+If you need to avoid these tradeoffs, you can consider building the same app for each domain separately, while injecting diverging routing configuration via an [environment variable](#domains-localeprefix-individual).
 
 </Details>
