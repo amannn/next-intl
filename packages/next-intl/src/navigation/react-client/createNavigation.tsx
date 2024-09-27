@@ -99,7 +99,7 @@ export default function createNavigation<
       >(fn: Fn) {
         return function handler(
           href: Parameters<typeof getPathname>[0]['href'],
-          options?: Partial<Options> & {locale?: Locale}
+          options?: Partial<Options> & {locale?: string}
         ): void {
           const {locale: nextLocale, ...rest} = options || {};
 

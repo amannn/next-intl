@@ -1,9 +1,9 @@
 'use client';
 
 import {useLocale} from 'next-intl';
-import {Locale, redirect} from '@/i18n/routing';
+import {redirect} from '@/i18n/routing';
 
 export default function ClientRedirectPage() {
-  const locale = useLocale() as Locale;
+  const locale = useLocale();
   redirect({href: '/client', locale});
 }

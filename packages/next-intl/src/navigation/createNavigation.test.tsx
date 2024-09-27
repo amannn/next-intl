@@ -130,8 +130,14 @@ describe.each([
       });
 
       it('renders a prefix for a different locale', () => {
+        // Being able to accept a string and not only a strictly typed locale is
+        // important in order to be able to use a result from `useLocale()`.
+        // This is less relevant for `Link`, but this should be in sync across
+        // al navigation APIs (see https://github.com/amannn/next-intl/issues/1377)
+        const locale = 'de' as string;
+
         const markup = renderToString(
-          <Link href="/about" locale="de">
+          <Link href="/about" locale={locale}>
             Über uns
           </Link>
         );
@@ -179,17 +185,6 @@ describe.each([
         expect(markup).toContain('href="https://example.com/test"');
       });
 
-      it('does not allow to use unknown locales', () => {
-        const markup = renderToString(
-          // @ts-expect-error -- Unknown locale
-          <Link href="/about" locale="zh">
-            Unknown
-          </Link>
-        );
-        // Still works
-        expect(markup).toContain('href="/zh/about"');
-      });
-
       it('does not allow to receive params', () => {
         <Link
           href={{
@@ -206,9 +201,13 @@ describe.each([
 
     describe('getPathname', () => {
       it('can be called for the default locale', () => {
-        expect(getPathname({href: '/unknown', locale: 'en'})).toBe(
-          '/en/unknown'
-        );
+        // Being able to accept a string and not only a strictly typed locale is
+        // important in order to be able to use a result from `useLocale()`.
+        // This is less relevant for `Link`, but this should be in sync across
+        // al navigation APIs (see https://github.com/amannn/next-intl/issues/1377)
+        const locale = 'en' as string;
+
+        expect(getPathname({href: '/unknown', locale})).toBe('/en/unknown');
       });
 
       it('can be called for a secondary locale', () => {
@@ -296,7 +295,8 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('can redirect for the default locale', () => {
-        runInRender(() => redirectFn({href: '/', locale: 'en'}));
+        const locale = 'en' as string;
+        runInRender(() => redirectFn({href: '/', locale}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
 
@@ -502,8 +502,6 @@ describe.each([
       });
 
       it('restricts invalid usage', () => {
-        // @ts-expect-error -- Unknown locale
-        <Link href="/about" locale="zh" />;
         // @ts-expect-error -- Unknown pathname
         <Link href="/unknown" />;
         // @ts-expect-error -- Missing params (this error is important when switching from shared pathnames to localized pathnames)

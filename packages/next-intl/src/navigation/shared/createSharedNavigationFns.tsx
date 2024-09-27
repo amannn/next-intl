@@ -91,7 +91,7 @@ export default function createSharedNavigationFns<
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
-      locale?: Locale;
+      locale?: string;
     }
   >;
   function Link<Pathname extends keyof AppPathnames = never>({
@@ -188,7 +188,7 @@ export default function createSharedNavigationFns<
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
-      locale: Locale;
+      locale: string;
     } & DomainConfigForAsNeeded,
     /** @private Removed in types returned below */
     _forcePrefix?: boolean
