@@ -2,7 +2,7 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation';
-import React, {ComponentProps, use} from 'react';
+import React, {ComponentProps, forwardRef, use} from 'react';
 import {
   receiveRoutingConfig,
   RoutingConfigLocalizedNavigation,
@@ -94,11 +94,10 @@ export default function createSharedNavigationFns<
       locale?: string;
     }
   >;
-  function Link<Pathname extends keyof AppPathnames = never>({
-    href,
-    locale,
-    ...rest
-  }: LinkProps<Pathname>) {
+  function Link<Pathname extends keyof AppPathnames = never>(
+    {href, locale, ...rest}: LinkProps<Pathname>,
+    ref: ComponentProps<typeof BaseLink>['ref']
+  ) {
     let pathname, params;
     if (typeof href === 'object') {
       pathname = href.pathname;
@@ -130,6 +129,7 @@ export default function createSharedNavigationFns<
 
     return (
       <BaseLink
+        ref={ref}
         href={{
           ...(typeof href === 'object' && href),
           // @ts-expect-error -- This is ok
@@ -167,6 +167,7 @@ export default function createSharedNavigationFns<
       />
     );
   }
+  const LinkWithRef = forwardRef(Link);
 
   type DomainConfigForAsNeeded = typeof routing extends undefined
     ? {}
@@ -247,7 +248,7 @@ export default function createSharedNavigationFns<
 
   return {
     config,
-    Link,
+    Link: LinkWithRef,
     redirect,
     permanentRedirect,
 

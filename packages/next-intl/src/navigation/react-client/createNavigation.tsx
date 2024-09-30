@@ -78,9 +78,9 @@ export default function createNavigation<
     );
   }
 
-  type LinkProps = Omit<ComponentProps<typeof BaseLink>, 'nodeRef'>;
+  type LinkProps = ComponentProps<typeof BaseLink>;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
-    return <BaseLink nodeRef={ref} {...props} />;
+    return <BaseLink ref={ref} {...props} />;
   }
   const LinkWithRef = forwardRef(Link) as (
     props: Prettify<LinkProps & {ref?: LinkProps['ref']}>
