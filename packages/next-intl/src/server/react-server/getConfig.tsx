@@ -64,7 +64,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     result = await result;
   }
 
-  const locale = result.locale || (await getRequestLocale());
+  const locale = result.locale || (await params.requestLocale);
 
   if (!locale) {
     if (process.env.NODE_ENV !== 'production') {

@@ -1,6 +1,7 @@
 import {headers} from 'next/headers';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
+import {getCachedRequestLocale} from './RequestLocaleCache';
 
 async function getHeadersImpl(): Promise<Headers> {
   const promiseOrValue = headers();
@@ -35,18 +36,6 @@ async function getLocaleFromHeaderImpl(): Promise<string | undefined> {
 }
 const getLocaleFromHeader = cache(getLocaleFromHeaderImpl);
 
-// Workaround until `createServerContext` is available
-function getCacheImpl() {
-  const value: {locale?: string} = {locale: undefined};
-  return value;
+export async function getRequestLocale() {
+  return getCachedRequestLocale() || (await getLocaleFromHeader());
 }
-const getCache = cache(getCacheImpl);
-
-export function setRequestLocale(locale: string) {
-  getCache().locale = locale;
-}
-
-async function getRequestLocaleImpl() {
-  return getCache().locale || (await getLocaleFromHeader());
-}
-export const getRequestLocale = cache(getRequestLocaleImpl);

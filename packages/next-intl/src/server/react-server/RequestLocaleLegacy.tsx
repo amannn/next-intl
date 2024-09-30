@@ -2,6 +2,7 @@ import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
+import {getCachedRequestLocale} from './RequestLocaleCache';
 
 // This was originally built for Next.js <14, where `headers()` was not async.
 // With https://github.com/vercel/next.js/pull/68812, the API became async.
@@ -42,17 +43,6 @@ function getLocaleFromHeaderImpl() {
 }
 const getLocaleFromHeader = cache(getLocaleFromHeaderImpl);
 
-// Workaround until `createServerContext` is available
-function getCacheImpl() {
-  const value: {locale?: string} = {locale: undefined};
-  return value;
-}
-const getCache = cache(getCacheImpl);
-
-export function setRequestLocale(locale: string) {
-  getCache().locale = locale;
-}
-
 export function getRequestLocale(): string {
-  return getCache().locale || getLocaleFromHeader();
+  return getCachedRequestLocale() || getLocaleFromHeader();
 }
