@@ -189,7 +189,7 @@ const router = useRouter();
 // When the user is on `/en`, the router will navigate to `/en/about`
 router.push('/about');
 
-// Search params can be added via an object
+// Search params can be added via `query`
 router.push({
   pathname: '/users',
   query: {sortBy: 'name'}
@@ -280,7 +280,7 @@ import {redirect} from '@/i18n/routing';
 // Redirects to `/en/login`
 redirect({href: '/login', locale: 'en'});
 
-// Search params can be added via an object
+// Search params can be added via `query`
 redirect({href: '/users', query: {sortBy: 'name'}, locale: 'en'});
 ```
 
@@ -318,7 +318,7 @@ const pathname = getPathname({
   href: '/about'
 });
 
-// Search params can be added via an object
+// Search params can be added via `query`
 const pathname = getPathname({
   locale: 'en',
   href: {
