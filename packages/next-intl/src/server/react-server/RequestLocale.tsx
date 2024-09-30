@@ -23,10 +23,12 @@ async function getLocaleFromHeaderImpl(): Promise<string | undefined> {
       error instanceof Error &&
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
-      throw new Error(
+      const wrappedError = new Error(
         'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `unstable_setRequestLocale` API to enable static rendering, see https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering',
         {cause: error}
       );
+      (wrappedError as any).digest = (error as any).digest;
+      throw wrappedError;
     } else {
       throw error;
     }
