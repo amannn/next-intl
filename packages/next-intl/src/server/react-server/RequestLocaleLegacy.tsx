@@ -1,22 +1,20 @@
 import {headers} from 'next/headers';
+import {notFound} from 'next/navigation';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
 
-async function getHeadersImpl(): Promise<Headers> {
-  const promiseOrValue = headers();
-
-  // Compatibility with Next.js <15
-  return promiseOrValue instanceof Promise
-    ? await promiseOrValue
-    : promiseOrValue;
+// This was originally built for Next.js <14, where `headers()` was not async.
+// With https://github.com/vercel/next.js/pull/68812, the API became async.
+// This file can be removed once we remove the legacy navigation APIs.
+function getHeaders() {
+  return headers();
 }
-const getHeaders = cache(getHeadersImpl);
 
-async function getLocaleFromHeaderImpl(): Promise<string | undefined> {
+function getLocaleFromHeaderImpl() {
   let locale;
 
   try {
-    locale = (await getHeaders()).get(HEADER_LOCALE_NAME) || undefined;
+    locale = getHeaders().get(HEADER_LOCALE_NAME);
   } catch (error) {
     if (
       error instanceof Error &&
@@ -29,6 +27,15 @@ async function getLocaleFromHeaderImpl(): Promise<string | undefined> {
     } else {
       throw error;
     }
+  }
+
+  if (!locale) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(
+        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+      );
+    }
+    notFound();
   }
 
   return locale;
@@ -46,7 +53,6 @@ export function setRequestLocale(locale: string) {
   getCache().locale = locale;
 }
 
-async function getRequestLocaleImpl() {
-  return getCache().locale || (await getLocaleFromHeader());
+export function getRequestLocale(): string {
+  return getCache().locale || getLocaleFromHeader();
 }
-export const getRequestLocale = cache(getRequestLocaleImpl);

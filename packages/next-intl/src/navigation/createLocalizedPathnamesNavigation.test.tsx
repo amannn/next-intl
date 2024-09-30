@@ -10,7 +10,7 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
 import {defineRouting, Pathnames} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
 import {getLocalePrefix} from '../shared/utils';
 import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from './react-server/createLocalizedPathnamesNavigation';
@@ -48,7 +48,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocaleLegacy', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 

@@ -35,7 +35,7 @@ export default function createNavigation<
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
   function getLocale() {
-    return getRequestLocale() as Locale;
+    return getRequestLocale() as Promise<Locale>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

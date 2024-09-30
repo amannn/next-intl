@@ -9,7 +9,7 @@ import {
   Locales,
   Pathnames
 } from '../../routing/types';
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
+import {getRequestLocale} from '../../server/react-server/RequestLocaleLegacy';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   HrefOrHrefWithParams,

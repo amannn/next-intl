@@ -14,8 +14,8 @@ describe('getRequestConfig', () => {
     const getConfig = getRequestConfig(({locale}) => ({
       messages: {hello: 'Hello ' + locale}
     }));
-    expect(() => getConfig({locale: 'en'})).toThrow(
-      '`getRequestConfig` is not supported in Client Components.'
-    );
+    expect(() =>
+      getConfig({locale: 'en', requestLocale: Promise.resolve('en')})
+    ).toThrow('`getRequestConfig` is not supported in Client Components.');
   });
 });
