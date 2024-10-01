@@ -41,7 +41,7 @@ Depending on your routing needs, you may wish to consider further settings.
 
 In case you're building an app where locales can be added and removed at runtime, you can provide the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
 
-To create the corresponding navigation APIs, you can [omit the `locales` argument](/docs/routing/navigation#locales-unknown) from `createSharedPathnamesNavigation` in this case.
+To create the corresponding navigation APIs, you can [omit the `locales` argument](/docs/routing/navigation#locales-unknown) from `createNavigation` in this case.
 
 </Details>
 
@@ -84,10 +84,7 @@ export const routing = defineRouting({
 
 In this case, requests where the locale prefix matches the default locale will be redirected (e.g. `/en/about` to `/about`). This will affect both prefix-based as well as domain-based routing.
 
-**Note that:**
-
-1. If you use this strategy, you should make sure that your middleware matcher detects [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
-2. If you use [the `Link` component](/docs/routing/navigation#link), the initial render will point to the prefixed version but will be patched immediately on the client once the component detects that the default locale has rendered. The prefixed version is still valid, but SEO tools might report a hint that the link points to a redirect.
+**Note that:** If you use this strategy, you should make sure that your middleware matcher detects [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix) for the routing to work as expected.
 
 #### Never use a locale prefix [#locale-prefix-never]
 
@@ -95,8 +92,8 @@ If you'd like to provide a locale to `next-intl`, e.g. based on user settings, y
 
 However, you can also configure the middleware to never show a locale prefix in the URL, which can be helpful in the following cases:
 
-1. You're using [domain-based routing](#domains) and you support only a single locale per domain
-2. You're using a cookie to determine the locale but would like to enable static rendering
+1. You want to use [domain-based routing](#domains) and have only one locale per domain
+2. You want to use a cookie to determine the locale while enabling static rendering
 
 ```tsx filename="routing.ts" {5}
 import {defineRouting} from 'next-intl/routing';
@@ -153,8 +150,8 @@ function Component() {
   // Assuming the locale is 'en-US'
   const locale = useLocale();
 
-  // Returns 'US'
-  new Intl.Locale(locale).region;
+  // Extracts the "US" region
+  const {region} = new Intl.Locale(locale);
 }
 ```
 
@@ -221,13 +218,6 @@ export const routing = defineRouting({
 ```
 
 Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/ueber-uns` will be handled by the page at `/[locale]/about/page.tsx`.
-
-<Callout>
-  If you're using localized pathnames, you should use
-  `createLocalizedPathnamesNavigation` instead of
-  `createSharedPathnamesNavigation` for your [navigation
-  APIs](/docs/routing/navigation).
-</Callout>
 
 <Details id="localized-pathnames-revalidation">
 <summary>How can I revalidate localized pathnames?</summary>
@@ -401,5 +391,74 @@ PORT=3000 npm run dev
 # Like `ca.example.com`
 PORT=3001 npm run dev
 ```
+
+</Details>
+
+<Details id="domains-localeprefix-individual">
+<summary>Can I use a different `localePrefix` setting per domain?</summary>
+
+Since such a configuration would require reading the domain at runtime, this would prevent the ability to render pages statically. Due to this, `next-intl` doesn't support this configuration out of the box.
+
+However, you can still achieve this by building the app for each domain separately, while injecting diverging routing configuration via an environment variable.
+
+**Example:**
+
+```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
+
+export const routing = defineRouting({
+  locales: ['en', 'fr'],
+  defaultLocale: 'en',
+  localePrefix:
+    process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com'
+      ? 'never'
+      : 'always',
+  domains: [
+    {
+      domain: 'us.example.com',
+      defaultLocale: 'en',
+      locales: ['en']
+    },
+    {
+      domain: 'ca.example.com',
+      defaultLocale: 'en'
+    }
+  ]
+});
+```
+
+</Details>
+
+<Details id="domains-localeprefix-asneeded">
+<summary>Special case: Using `domains` with `localePrefix: 'as-needed'`</summary>
+
+Since domains can have different default locales, this combination requires some tradeoffs that apply to the [navigation APIs](/docs/routing/navigation) in order for `next-intl` to avoid reading the current host on the server side (which would prevent the usage of static rendering).
+
+1. [`<Link />`](/docs/routing/navigation#link): This component will always render a locale prefix on the server side, even for the default locale of a given domain. However, during hydration on the client side, the prefix is potentially removed, if the default locale of the current domain is used. Note that the temporarily prefixed pathname will always be valid, however the middleware will potentially clean up a superfluous prefix via a redirect if the user clicks on a link before hydration.
+2. [`redirect`](/docs/routing/navigation#redirect): When calling this function, a locale prefix is always added, regardless of the provided locale. However, similar to the handling with `<Link />`, the middleware will potentially clean up a superfluous prefix.
+3. [`getPathname`](/docs/routing/navigation#getpathname): This function requires that a `domain` is passed as part of the arguments in order to avoid ambiguity. This can either be provided statically (e.g. when used in a sitemap), or read from a header like [`x-forwarded-host`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host).
+
+```tsx
+import {getPathname} from '@/i18n/routing';
+import {headers} from 'next/headers';
+
+// Case 1: Statically known domain
+const domain = 'ca.example.com';
+
+// Case 2: Read at runtime (dynamic rendering)
+const domain = headers().get('x-forwarded-host');
+
+// Assuming the current domain is `ca.example.com`,
+// the returned pathname will be `/about`
+const pathname = getPathname({
+  href: '/about',
+  locale: 'en',
+  domain
+});
+```
+
+A `domain` can optionally also be passed to `redirect` in the same manner to ensure that a prefix is only added when necessary. Alternatively, you can also consider redirecting in the middleware or via [`useRouter`](/docs/routing/navigation#usrouter) on the client side.
+
+If you need to avoid these tradeoffs, you can consider building the same app for each domain separately, while injecting diverging routing configuration via an [environment variable](#domains-localeprefix-individual).
 
 </Details>

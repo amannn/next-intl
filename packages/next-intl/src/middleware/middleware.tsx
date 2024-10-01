@@ -1,6 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {receiveRoutingConfig, RoutingConfig} from '../routing/config';
-import {Locales, Pathnames} from '../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
 import {
   getLocalePrefix,
@@ -26,9 +31,16 @@ import {
 
 export default function createMiddleware<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
 >(
-  routing: RoutingConfig<AppLocales, AppPathnames> &
+  routing: RoutingConfig<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  > &
     // Convenience if `routing` is generated dynamically (i.e. without `defineRouting`)
     MiddlewareOptions,
   options?: MiddlewareOptions
@@ -156,16 +168,19 @@ export default function createMiddleware<
     let internalTemplateName: keyof AppPathnames | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
-    if ('pathnames' in resolvedRouting) {
+    const pathnames = (resolvedRouting as any).pathnames as
+      | AppPathnames
+      | undefined;
+    if (pathnames) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
-        resolvedRouting.pathnames,
+        pathnames,
         unprefixedExternalPathname,
         locale
       );
 
       if (internalTemplateName) {
-        const pathnameConfig = resolvedRouting.pathnames[internalTemplateName];
+        const pathnameConfig = pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
@@ -310,8 +325,8 @@ export default function createMiddleware<
         getAlternateLinksHeaderValue({
           routing: resolvedRouting,
           localizedPathnames:
-            internalTemplateName! != null && 'pathnames' in resolvedRouting
-              ? resolvedRouting.pathnames?.[internalTemplateName]
+            internalTemplateName! != null && pathnames
+              ? pathnames?.[internalTemplateName]
               : undefined,
           request,
           resolvedLocale: locale

@@ -6,7 +6,8 @@ import {
   Locales,
   Pathnames,
   DomainsConfig,
-  DomainConfig
+  DomainConfig,
+  LocalePrefixMode
 } from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {ResolvedMiddlewareOptions} from './config';
@@ -71,13 +72,23 @@ function getLocaleFromCookie<AppLocales extends Locales>(
 
 function resolveLocaleFromPrefix<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
   {
     defaultLocale,
     localePrefix,
     locales
-  }: ResolvedRoutingConfig<AppLocales, AppPathnames>,
+  }: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   {localeDetection}: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
@@ -110,10 +121,19 @@ function resolveLocaleFromPrefix<
 
 function resolveLocaleFromDomain<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
-  routing: Omit<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'> &
-    Required<Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>>,
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
@@ -188,24 +208,27 @@ function resolveLocaleFromDomain<
 
 export default function resolveLocale<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
-  routing: ResolvedRoutingConfig<AppLocales, AppPathnames>,
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ): {locale: AppLocales[number]; domain?: DomainConfig<AppLocales>} {
   if (routing.domains) {
-    const routingWithDomains = routing as Omit<
-      ResolvedRoutingConfig<AppLocales, AppPathnames>,
-      'domains'
-    > &
-      Required<
-        Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>
-      >;
     return resolveLocaleFromDomain(
-      routingWithDomains,
+      routing,
       options,
       requestHeaders,
       requestCookies,

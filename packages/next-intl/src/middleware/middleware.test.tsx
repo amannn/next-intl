@@ -1506,7 +1506,7 @@ describe('prefix-based routing', () => {
           'renders a localized pathname where the internal pathname was defined with a trailing slash',
           (pathname) => {
             createMiddleware({
-              defaultLocale: 'en',
+              defaultLocale: 'de',
               locales: ['de'],
               localePrefix: 'always',
               pathnames: {
@@ -1526,7 +1526,7 @@ describe('prefix-based routing', () => {
           'redirects a localized pathname where the internal pathname was defined with a trailing slash',
           (pathname) => {
             createMiddleware({
-              defaultLocale: 'en',
+              defaultLocale: 'de',
               locales: ['de'],
               localePrefix: 'always',
               pathnames: {

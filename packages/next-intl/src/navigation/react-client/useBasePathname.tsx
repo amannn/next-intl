@@ -1,31 +1,21 @@
-'use client';
-
 import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {
+  Locales,
+  LocalePrefixConfigVerbose,
+  LocalePrefixMode
+} from '../../routing/types';
 import {
   getLocalePrefix,
   hasPathnamePrefixed,
   unprefixPathname
 } from '../../shared/utils';
 
-/**
- * Returns the pathname without a potential locale prefix.
- *
- * @example
- * ```tsx
- * 'use client';
- *
- * import {usePathname} from 'next-intl/client';
- *
- * // When the user is on `/en`, this will be `/`
- * const pathname = usePathname();
- * ```
- */
-export default function useBasePathname<AppLocales extends Locales>(
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>
-) {
+export default function useBasePathname<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
 
