@@ -370,6 +370,36 @@ export const routing = defineRouting({
 <Details id="domains-testing">
 <summary>How can I locally test if my setup is working?</summary>
 
-Learn more about this in the [locale detection for domain-based routing](/docs/routing/middleware#location-detection-domain) docs.
+To test your domain setup locally, you can conditionally adapt the domains to refer to hosts that are available locally:
+
+```tsx filename="routing.ts"
+export const routing = defineConfig({
+  // ...
+  domains: [
+    {
+      domain: process.env.NODE_ENV === 'development'
+        ? 'localhost:3000'
+        : 'us.example.com'
+      // ...
+    },
+    {
+      domain: process.env.NODE_ENV === 'development'
+        ? 'localhost:3001'
+        : 'ca.example.com'
+      // ...
+    }
+  ]
+});
+```
+
+Now, you can run your development server on one of the configured ports and test the routing for different use cases:
+
+```sh
+# Like `us.example.com`
+PORT=3000 npm run dev
+
+# Like `ca.example.com`
+PORT=3001 npm run dev
+```
 
 </Details>

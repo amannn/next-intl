@@ -99,19 +99,6 @@ The bestmatching domain is detected based on these priorities:
 
 </Details>
 
-<Details id="domain-local-testing">
-<summary>How can I locally test if my setup is working?</summary>
-
-Since the negotiated locale depends on the host of the request, you can test your setup by attaching a corresponding `x-forwarded-host` header. To achieve this in the browser, you can use a browser extension like [ModHeader in Chrome](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj) and add a setting like:
-
-```
-X-Forwarded-Host: example.com
-```
-
-With this, your domain config for this particular domain will be used.
-
-</Details>
-
 ## Configuration
 
 Apart from the [`routing`](/docs/routing#shared-configuration) configuration that is shared with the [navigation APIs](/docs/routing/navigation), the middleware accepts a few additional options that can be used for customization.
