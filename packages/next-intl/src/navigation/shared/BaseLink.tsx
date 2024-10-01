@@ -37,10 +37,10 @@ function BaseLink(
     // If there is an `unprefixed` prop, the
     // `defaultLocale` might differ by domain
     unprefixed &&
-    // Unprefix the pathname if a domain
+    // Unprefix the pathname if a domain matches
     (unprefixed.domains[host] === linkLocale ||
-      // For unknown domains, remove the prefix for the global
-      // `defaultLocale` (e.g. on localhost)
+      // … and handle unknown domains by applying the
+      // global `defaultLocale` (e.g. on localhost)
       (!Object.keys(unprefixed.domains).includes(host) &&
         curLocale === defaultLocale &&
         !locale))

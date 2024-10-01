@@ -16,7 +16,7 @@ it('can use config based on the default locale on an unknown domain', async ({
 
 it('can use a secondary locale unprefixed if the domain has specified it as the default locale', async () => {
   const browser = await chromium.launch({
-    args: ['--host-resolver-rules=MAP example.de 127.0.0.1:3000']
+    args: ['--host-resolver-rules=MAP example.de 127.0.0.1:' + process.env.PORT]
   });
 
   const page = await browser.newPage();
@@ -24,7 +24,7 @@ it('can use a secondary locale unprefixed if the domain has specified it as the 
     route.continue({
       headers: {
         'accept-language': 'de',
-        'x-forwarded-port': '80'
+        'x-forwarded-port': '80' // (playwright default)
       }
     })
   );
