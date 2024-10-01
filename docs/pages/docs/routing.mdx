@@ -363,19 +363,19 @@ export const routing = defineRouting({
 To test your domain setup locally, you can conditionally adapt the domains to refer to hosts that are available locally:
 
 ```tsx filename="routing.ts"
+import {defineRouting} from 'next-intl/routing';
+
+const isDev = process.env.NODE_ENV === 'development';
+
 export const routing = defineConfig({
   // ...
   domains: [
     {
-      domain: process.env.NODE_ENV === 'development'
-        ? 'localhost:3000'
-        : 'us.example.com'
+      domain: isDev ? 'localhost:3000' : 'us.example.com'
       // ...
     },
     {
-      domain: process.env.NODE_ENV === 'development'
-        ? 'localhost:3001'
-        : 'ca.example.com'
+      domain: isDev ? 'localhost:3001' : 'ca.example.com'
       // ...
     }
   ]
@@ -406,24 +406,13 @@ However, you can still achieve this by building the app for each domain separate
 ```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
 
+const isUsDomain =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com';
+
 export const routing = defineRouting({
-  locales: ['en', 'fr'],
+  locales: isUsDomain ? ['en'] : ['en', 'fr'],
   defaultLocale: 'en',
-  localePrefix:
-    process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com'
-      ? 'never'
-      : 'always',
-  domains: [
-    {
-      domain: 'us.example.com',
-      defaultLocale: 'en',
-      locales: ['en']
-    },
-    {
-      domain: 'ca.example.com',
-      defaultLocale: 'en'
-    }
-  ]
+  localePrefix: isUsDomain ? 'never' : 'always'
 });
 ```
 
