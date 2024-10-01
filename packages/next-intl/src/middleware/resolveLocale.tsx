@@ -17,10 +17,7 @@ function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
   domains: DomainsConfig<AppLocales>
 ) {
-  let host = getHost(requestHeaders);
-
-  // Remove port (easier for local development)
-  host = host?.replace(/:\d+$/, '');
+  const host = getHost(requestHeaders);
 
   if (host && domains) {
     return domains.find((cur) => cur.domain === host);
