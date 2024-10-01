@@ -5,7 +5,7 @@ export const routing = defineRouting({
   locales: ['en', 'de', 'es', 'ja'],
   defaultLocale: 'en',
   localePrefix:
-    process.env.USE_CASE === 'locale-prefix-never'
+    process.env.NEXT_PUBLIC_USE_CASE === 'locale-prefix-never'
       ? 'never'
       : {
           mode: 'as-needed',
@@ -13,6 +13,19 @@ export const routing = defineRouting({
             es: '/spain'
           }
         },
+  domains:
+    process.env.NEXT_PUBLIC_USE_CASE === 'domains'
+      ? [
+          {
+            domain: 'example.com',
+            defaultLocale: 'en'
+          },
+          {
+            domain: 'example.de',
+            defaultLocale: 'de'
+          }
+        ]
+      : undefined,
   pathnames: {
     '/': '/',
     '/client': '/client',

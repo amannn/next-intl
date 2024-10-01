@@ -866,6 +866,18 @@ describe.each([
         ).toBe('/about');
       });
 
+      it('renders a prefix when when linking to a secondary locale on an unknown domain', () => {
+        mockLocation({host: 'localhost:3000'});
+        render(
+          <Link href="/about" locale="de">
+            Über uns
+          </Link>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Über uns'}).getAttribute('href')
+        ).toBe('/de/about');
+      });
+
       it('renders a prefix when currently on a secondary locale', () => {
         mockLocation({host: 'example.de'});
         mockCurrentLocale('en');
@@ -873,6 +885,15 @@ describe.each([
         expect(
           screen.getByRole('link', {name: 'About'}).getAttribute('href')
         ).toBe('/en/about');
+      });
+
+      it('does not render a prefix when currently on a domain with a different default locale', () => {
+        mockLocation({host: 'example.de'});
+        mockCurrentLocale('de');
+        render(<Link href="/about">About</Link>);
+        expect(
+          screen.getByRole('link', {name: 'About'}).getAttribute('href')
+        ).toBe('/about');
       });
 
       it('renders a prefix when currently on a secondary locale and linking to the default locale', () => {

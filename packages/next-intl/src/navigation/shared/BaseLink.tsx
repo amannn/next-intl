@@ -14,24 +14,37 @@ import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
-  unprefixConfig?: {
-    domains: {[defaultLocale: string]: string};
+  defaultLocale?: string;
+  /** Special case for `localePrefix: 'as-needed'` and `domains`. */
+  unprefixed?: {
+    domains: {[domain: string]: string};
     pathname: string;
   };
 };
 
 function BaseLink(
-  {href, locale, onClick, prefetch, unprefixConfig, ...rest}: Props,
+  {defaultLocale, href, locale, onClick, prefetch, unprefixed, ...rest}: Props,
   ref: ComponentProps<typeof NextLink>['ref']
 ) {
   const curLocale = useLocale();
   const isChangingLocale = locale !== curLocale;
   const linkLocale = locale || curLocale;
-
   const host = useHost();
+
   const finalHref =
-    unprefixConfig && unprefixConfig.domains[linkLocale] === host
-      ? unprefixConfig.pathname
+    // Only after hydration (to avoid mismatches)
+    host &&
+    // If there is an `unprefixed` prop, the
+    // `defaultLocale` might differ by domain
+    unprefixed &&
+    // Unprefix the pathname if a domain
+    (unprefixed.domains[host] === linkLocale ||
+      // For unknown domains, remove the prefix for the global
+      // `defaultLocale` (e.g. on localhost)
+      (!Object.keys(unprefixed.domains).includes(host) &&
+        curLocale === defaultLocale &&
+        !locale))
+      ? unprefixed.pathname
       : href;
 
   // The types aren't entirely correct here. Outside of Next.js
