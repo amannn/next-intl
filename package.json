@@ -5,7 +5,7 @@
     "build": "turbo run build --env-mode=loose",
     "test": "turbo run test --concurrency 1 --env-mode=loose",
     "lint": "turbo run lint --env-mode=loose",
-    "prepare": "turbo run build --filter './packages/**' --env-mode=loose",
+    "postinstall": "turbo run build --filter './packages/**' --env-mode=loose",
     "size": "turbo run size --env-mode=loose",
     "publish": "lerna publish"
   },
