@@ -20,7 +20,6 @@ Depending on if you handle [internationalization in Server- or Client Components
 <Tab>
 
 ```tsx filename="i18n/request.ts"
-import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 
@@ -28,7 +27,7 @@ export default getRequestConfig(async ({requestLocale}) => {
   // This typically corresponds to the `[locale]` segment.
   let locale = await requestLocale;
 
-  // Ensure that the incoming locale is valid
+  // Ensure that a valid locale is used
   if (!locale || !routing.locales.includes(locale as any)) {
     locale = routing.defaultLocale;
   }
