@@ -1,0 +1,28 @@
+{
+  "RootLayout": {
+    "title": "Beispiel für next-intl mit Auth.js ohne i18n-Routing"
+  },
+  "AppLayout": {
+    "home": "Startseite",
+    "logout": "Abmelden",
+    "profile": "Profil"
+  },
+  "HomePage": {
+    "welcome": "Willkommen, {name}!"
+  },
+  "LocaleSwitcher": {
+    "de": "Deutsch",
+    "en": "Englisch",
+    "label": "Sprache"
+  },
+  "LoginPage": {
+    "credentials": "Benutzername: admin / Passwort: admin",
+    "login": "Anmelden",
+    "password": "Passwort",
+    "title": "Willkommen zurück",
+    "username": "Benutzername"
+  },
+  "ProfilePage": {
+    "title": "Profil"
+  }
+}

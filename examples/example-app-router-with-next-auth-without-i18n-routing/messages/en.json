@@ -1,0 +1,28 @@
+{
+  "RootLayout": {
+    "title": "Example of next-intl with Auth.js without i18n routing"
+  },
+  "AppLayout": {
+    "home": "Home",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "HomePage": {
+    "welcome": "Welcome, {name}!"
+  },
+  "LocaleSwitcher": {
+    "de": "German",
+    "en": "English",
+    "label": "Language"
+  },
+  "LoginPage": {
+    "credentials": "Username: admin / Password: admin",
+    "login": "Log In",
+    "password": "Password",
+    "title": "Welcome back",
+    "username": "Username"
+  },
+  "ProfilePage": {
+    "title": "Profile"
+  }
+}
