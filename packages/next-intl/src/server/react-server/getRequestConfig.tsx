@@ -16,10 +16,13 @@ export type RequestConfig = Omit<IntlConfig, 'locale'> & {
 
 export type GetRequestConfigParams = {
   /**
-   * The locale that was matched by the `[locale]` path segment.
+   * Deprecated in favor of `requestLocale` (see https://github.com/amannn/next-intl/pull/1383).
    *
-   * Note however that this can be overridden in async APIs when the `locale`
-   * is explicitly passed (e.g. `getTranslations({locale: 'en'})`).
+   * The locale that was matched by the `[locale]` path segment. Note however
+   * that this can be overridden in async APIs when the `locale` is explicitly
+   * passed (e.g. `getTranslations({locale: 'en'})`).
+   *
+   * @deprecated
    */
   locale: string;
 
