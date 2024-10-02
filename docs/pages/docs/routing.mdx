@@ -93,7 +93,7 @@ If you'd like to provide a locale to `next-intl`, e.g. based on user settings, y
 However, you can also configure the middleware to never show a locale prefix in the URL, which can be helpful in the following cases:
 
 1. You want to use [domain-based routing](#domains) and have only one locale per domain
-2. You want to use a cookie to determine locale while enabling static rendering
+2. You want to use a cookie to determine the locale while enabling static rendering
 
 ```tsx filename="routing.ts" {5}
 import {defineRouting} from 'next-intl/routing';
@@ -360,7 +360,37 @@ export const routing = defineRouting({
 <Details id="domains-testing">
 <summary>How can I locally test if my setup is working?</summary>
 
-Learn more about this in the [locale detection for domain-based routing](/docs/routing/middleware#location-detection-domain) docs.
+To test your domain setup locally, you can conditionally adapt the domains to refer to hosts that are available locally:
+
+```tsx filename="routing.ts"
+export const routing = defineConfig({
+  // ...
+  domains: [
+    {
+      domain: process.env.NODE_ENV === 'development'
+        ? 'localhost:3000'
+        : 'us.example.com'
+      // ...
+    },
+    {
+      domain: process.env.NODE_ENV === 'development'
+        ? 'localhost:3001'
+        : 'ca.example.com'
+      // ...
+    }
+  ]
+});
+```
+
+Now, you can run your development server on one of the configured ports and test the routing for different use cases:
+
+```sh
+# Like `us.example.com`
+PORT=3000 npm run dev
+
+# Like `ca.example.com`
+PORT=3001 npm run dev
+```
 
 </Details>
 
@@ -405,7 +435,7 @@ export const routing = defineRouting({
 Since domains can have different default locales, this combination requires some tradeoffs that apply to the [navigation APIs](/docs/routing/navigation) in order for `next-intl` to avoid reading the current host on the server side (which would prevent the usage of static rendering).
 
 1. [`<Link />`](/docs/routing/navigation#link): This component will always render a locale prefix on the server side, even for the default locale of a given domain. However, during hydration on the client side, the prefix is potentially removed, if the default locale of the current domain is used. Note that the temporarily prefixed pathname will always be valid, however the middleware will potentially clean up a superfluous prefix via a redirect if the user clicks on a link before hydration.
-2. [`redirect`](/docs/routing/navigation#redirect): When calling this function, a locale prefix is always added, regardless of the current locale and domain. However, similar to the handling with `<Link />`, the middleware will potentially clean up a superfluous prefix.
+2. [`redirect`](/docs/routing/navigation#redirect): When calling this function, a locale prefix is always added, regardless of the provided locale. However, similar to the handling with `<Link />`, the middleware will potentially clean up a superfluous prefix.
 3. [`getPathname`](/docs/routing/navigation#getpathname): This function requires that a `domain` is passed as part of the arguments in order to avoid ambiguity. This can either be provided statically (e.g. when used in a sitemap), or read from a header like [`x-forwarded-host`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host).
 
 ```tsx

@@ -70,10 +70,9 @@ import {Link} from '@/i18n/routing';
 <Link href={{pathname: "/users", query: {sortBy: 'name'}}}>Users</Link>
 
 // You can override the `locale` to switch to another language
+// (this will set the `hreflang` attribute on the anchor tag)
 <Link href="/" locale="de">Switch to German</Link>
 ```
-
-If you're providing the `locale` prop, the `hreflang` attribute will be set accordingly on the anchor tag.
 
 Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
 

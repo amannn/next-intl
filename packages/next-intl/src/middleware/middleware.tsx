@@ -103,7 +103,7 @@ export default function createMiddleware<
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
-      if (domainsConfig.length > 0 && !redirectDomain) {
+      if (domainsConfig.length > 0 && !redirectDomain && domain) {
         const bestMatchingDomain = getBestMatchingDomain(
           domain,
           locale,

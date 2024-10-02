@@ -2,36 +2,49 @@
 
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
-import React, {ComponentProps, MouseEvent, useEffect, useState} from 'react';
+import React, {
+  ComponentProps,
+  forwardRef,
+  MouseEvent,
+  useEffect,
+  useState
+} from 'react';
 import useLocale from '../../react-client/useLocale';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
-  nodeRef?: ComponentProps<typeof NextLink>['ref'];
-  unprefixConfig?: {
-    domains: {[defaultLocale: string]: string};
+  defaultLocale?: string;
+  /** Special case for `localePrefix: 'as-needed'` and `domains`. */
+  unprefixed?: {
+    domains: {[domain: string]: string};
     pathname: string;
   };
 };
 
-export default function BaseLink({
-  href,
-  locale,
-  nodeRef,
-  onClick,
-  prefetch,
-  unprefixConfig,
-  ...rest
-}: Props) {
+function BaseLink(
+  {defaultLocale, href, locale, onClick, prefetch, unprefixed, ...rest}: Props,
+  ref: ComponentProps<typeof NextLink>['ref']
+) {
   const curLocale = useLocale();
   const isChangingLocale = locale !== curLocale;
   const linkLocale = locale || curLocale;
-
   const host = useHost();
+
   const finalHref =
-    unprefixConfig && unprefixConfig.domains[linkLocale] === host
-      ? unprefixConfig.pathname
+    // Only after hydration (to avoid mismatches)
+    host &&
+    // If there is an `unprefixed` prop, the
+    // `defaultLocale` might differ by domain
+    unprefixed &&
+    // Unprefix the pathname if a domain matches
+    (unprefixed.domains[host] === linkLocale ||
+      // … and handle unknown domains by applying the
+      // global `defaultLocale` (e.g. on localhost)
+      (!Object.keys(unprefixed.domains).includes(host) &&
+        curLocale === defaultLocale &&
+        !locale))
+      ? unprefixed.pathname
       : href;
 
   // The types aren't entirely correct here. Outside of Next.js
@@ -54,7 +67,7 @@ export default function BaseLink({
 
   return (
     <NextLink
-      ref={nodeRef}
+      ref={ref}
       href={finalHref}
       hrefLang={isChangingLocale ? locale : undefined}
       onClick={onLinkClick}
@@ -73,3 +86,5 @@ function useHost() {
 
   return host;
 }
+
+export default forwardRef(BaseLink);

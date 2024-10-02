@@ -48,9 +48,7 @@ function LegacyBaseLink(
     setLocalizedHref(localizeHref(href, locale, curLocale, pathname, prefix));
   }, [curLocale, href, locale, pathname, prefix]);
 
-  return (
-    <BaseLink href={localizedHref} locale={locale} nodeRef={ref} {...rest} />
-  );
+  return <BaseLink ref={ref} href={localizedHref} locale={locale} {...rest} />;
 }
 
 const LegacyBaseLinkWithRef = forwardRef(LegacyBaseLink);

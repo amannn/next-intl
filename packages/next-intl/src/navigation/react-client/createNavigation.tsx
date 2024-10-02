@@ -2,7 +2,7 @@ import {
   useRouter as useNextRouter,
   usePathname as useNextPathname
 } from 'next/navigation';
-import React, {ComponentProps, forwardRef, ReactElement, useMemo} from 'react';
+import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
   RoutingConfigLocalizedNavigation,
@@ -14,7 +14,6 @@ import {
   Locales,
   Pathnames
 } from '../../routing/types';
-import {Prettify} from '../../shared/types';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
 import {getRoute} from '../shared/utils';
@@ -47,12 +46,10 @@ export default function createNavigation<
     return useLocale() as Locale;
   }
 
-  const {
-    Link: BaseLink,
-    config,
-    getPathname,
-    ...redirects
-  } = createSharedNavigationFns(useTypedLocale, routing);
+  const {Link, config, getPathname, ...redirects} = createSharedNavigationFns(
+    useTypedLocale,
+    routing
+  );
 
   /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#usepathname */
   function usePathname(): [AppPathnames] extends [never]
@@ -77,15 +74,6 @@ export default function createNavigation<
       [locale, pathname]
     );
   }
-
-  type LinkProps = Omit<ComponentProps<typeof BaseLink>, 'nodeRef'>;
-  function Link(props: LinkProps, ref: LinkProps['ref']) {
-    return <BaseLink nodeRef={ref} {...props} />;
-  }
-  const LinkWithRef = forwardRef(Link) as (
-    props: Prettify<LinkProps & {ref?: LinkProps['ref']}>
-  ) => ReactElement;
-  (LinkWithRef as any).displayName = 'Link';
 
   function useRouter() {
     const router = useNextRouter();
@@ -145,7 +133,7 @@ export default function createNavigation<
 
   return {
     ...redirects,
-    Link: LinkWithRef,
+    Link,
     usePathname,
     useRouter,
     getPathname
