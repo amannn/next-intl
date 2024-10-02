@@ -23,6 +23,9 @@ import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
+/**
+ * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ **/
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
   AppLocalePrefixMode extends LocalePrefixMode = 'always',
