@@ -24,13 +24,19 @@ export type GetRequestConfigParams = {
   locale: string;
 
   /**
-   * The locale that was matched by the `[locale]` path segment.
+   * Typically corresponds to the `[locale]` segment that was matched by the middleware.
    *
-   * Note however that this can be overridden in async APIs when the `locale`
-   * is explicitly passed (e.g. `getTranslations({locale: 'en'})`).
+   * However, there are three special cases to consider:
+   * 1. **Overrides**: When an explicit `locale` is passed to awaitable functions
+   *    like `getTranslations({locale: 'en'})`, then this value will be used
+   *    instead of the segment.
+   * 2. **`undefined`**: The value can be `undefined` when a page outside of the
+   *    `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+   * 3. **Invalid values**: Since the `[locale]` segment effectively acts like a
+   *    catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should
+   *    be replaced with a valid locale.
    *
-   * This value will be `undefined` in case the middleware didn't run (e.g. in
-   * case of a non-matching path segment).
+   * @see https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
    */
   requestLocale: Promise<string | undefined>;
 };
