@@ -31,7 +31,6 @@ function mockCurrentLocale(locale: string) {
   (localePromise as any).status = 'fulfilled';
   (localePromise as any).value = locale;
 
-  // @ts-expect-error -- Async values are allowed
   vi.mocked(getRequestLocale).mockImplementation(() => localePromise);
 
   vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({

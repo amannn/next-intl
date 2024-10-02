@@ -143,18 +143,23 @@ export const config = {
 
 ### `src/i18n/request.ts` [#i18n-request]
 
-`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
+When using features from `next-intl` in Server Components, the relevant configuration is read from a central module that is located at `i18n/request.ts` by convention. This configuration is scoped to the current request and can be used to provide messages and other options based on the user's locale.
 
 ```tsx filename="src/i18n/request.ts"
-import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from './routing';
 
-export default getRequestConfig(async ({locale}) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!routing.locales.includes(locale as any)) notFound();
+export default getRequestConfig(async ({requestLocale}) => {
+  // This typically corresponds to the `[locale]` segment
+  let locale = await requestLocale;
+
+  // Ensure that a valid locale is used
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
+    locale,
     messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
@@ -183,6 +188,8 @@ The `locale` that was matched by the middleware is available via the `locale` pa
 ```tsx filename="app/[locale]/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
+import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({
   children,
@@ -191,6 +198,11 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: {locale: string};
 }) {
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();

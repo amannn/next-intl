@@ -682,7 +682,10 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
-it('provides a `Link` that works with Radix Primitives', async ({page}) => {
+// https://github.com/radix-ui/primitives/issues/3165
+it.skip('provides a `Link` that works with Radix Primitives', async ({
+  page
+}) => {
   await page.goto('/');
   await page.getByRole('button', {name: 'Toggle dropdown'}).click();
   await page.keyboard.press('ArrowDown');
