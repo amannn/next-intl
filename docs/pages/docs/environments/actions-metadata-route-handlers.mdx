@@ -155,56 +155,9 @@ Note that by default, `next-intl` returns [the `link` response header](/docs/rou
 
 Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
-
-If you're using the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can assemble the sitemap based on the pathnames that your app supports.
-
-```tsx
+```tsx filename="app/sitemap.ts" {5-6,9-10}
 import {MetadataRoute} from 'next';
-
-// Can be imported from shared config
-const defaultLocale = 'en' as const;
-const locales = ['en', 'de'] as const;
-
-// Adapt this as necessary
-const host = 'https://acme.com';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Adapt this as necessary
-  return [
-    getEntry('/'),
-    getEntry('/users'),
-    getEntry('/users/1'),
-    getEntry('/users/2')
-  ];
-}
-
-function getEntry(pathname: string) {
-  return {
-    url: getUrl(pathname, defaultLocale),
-    lastModified: new Date(),
-    alternates: {
-      languages: Object.fromEntries(
-        locales.map((locale) => [locale, getUrl(pathname, locale)])
-      )
-    }
-  };
-}
-
-function getUrl(pathname: string, locale: string) {
-  return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
-}
-```
-
-</Tab>
-<Tab>
-
-If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can generate sitemap entries for each locale by using the [`getPathname`](/docs/routing/navigation#getpathname) function.
-
-```tsx
-import {MetadataRoute} from 'next';
-import {locales, defaultLocale} from '@/config';
+import {routing} from '@/i18n/routing';
 import {getPathname} from '@/i18n/routing';
 
 // Adapt this as necessary
@@ -212,49 +165,42 @@ const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Adapt this as necessary
-  return [
-    getEntry('/'),
-    getEntry('/users'),
-    getEntry({
-      pathname: '/users/[id]',
-      params: {id: '1'}
-    }),
-    getEntry({
-      pathname: '/users/[id]',
-      params: {id: '2'}
-    })
-  ];
+  return [getEntry('/'), getEntry('/users')];
 }
 
 type Href = Parameters<typeof getPathname>[0]['href'];
 
 function getEntry(href: Href) {
   return {
-    url: getUrl(href, defaultLocale),
+    url: getUrl(href, routing.defaultLocale),
     alternates: {
       languages: Object.fromEntries(
-        locales.map((locale) => [locale, getUrl(href, locale)])
+        routing.locales.map((locale) => [locale, getUrl(href, locale)])
       )
     }
   };
 }
 
-function getUrl(href: Href, locale: (typeof locales)[number]) {
+function getUrl(href: Href, locale: typeof routing.locales[number]) {
   const pathname = getPathname({locale, href});
   return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
 }
 ```
 
+Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+
+```tsx
+// 1. A final string (when not using `pathnames`)
+getEntry('/users/1');
+
+// 2. An object (when using `pathnames`)
+getEntry({
+  pathname: '/users/[id]',
+  params: {id: '1'}
+});
+```
+
 ([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
-
-</Tab>
-</Tabs>
-
-<Callout>
-  Note that your implementation may vary depending on your routing configuration
-  (e.g. if you're using a [`localePrefix`](/docs/routing#locale-prefix) other
-  than `always` or [locale-specific domains](/docs/routing#domains)).
-</Callout>
 
 ### Route Handlers
 
