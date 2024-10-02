@@ -7,7 +7,7 @@ import Details from 'components/Details';
 
 Configuration properties that you use across your Next.js app can be set globally.
 
-## Client- and Server Components [#client-server-components]
+## Server & Client Components [#server-client-components]
 
 Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n/request.ts` or `NextIntlClientProvider` will be applied respectively.
 
@@ -24,11 +24,17 @@ import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 
-export default getRequestConfig(async ({locale}) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!routing.locales.includes(locale as any)) notFound();
+export default getRequestConfig(async ({requestLocale}) => {
+  // This typically corresponds to the `[locale]` segment.
+  let locale = await requestLocale;
+
+  // Ensure that the incoming locale is valid
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
+    locale,
     messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
@@ -72,6 +78,17 @@ const withNextIntl = createNextIntlPlugin(
   './somewhere/else/request.ts'
 );
 ```
+
+</Details>
+
+<Details id="server-request-locale">
+<summary>Which values can the `requestLocale` parameter hold?</summary>
+
+While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
+
+1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
+1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
 
 </Details>
 

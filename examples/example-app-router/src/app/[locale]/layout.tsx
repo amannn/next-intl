@@ -27,7 +27,7 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // Abort render if an unknown value is received as the `[locale]` param
+  // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }

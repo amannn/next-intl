@@ -150,9 +150,14 @@ import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from './routing';
 
-export default getRequestConfig(async ({locale}) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!routing.locales.includes(locale as any)) notFound();
+export default getRequestConfig(async ({requestLocale}) => {
+  // This typically corresponds to the `[locale]` segment
+  let locale = await requestLocale;
+
+  // Ensure that the incoming locale is valid
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
     messages: (await import(`../../messages/${locale}.json`)).default
@@ -183,6 +188,7 @@ The `locale` that was matched by the middleware is available via the `locale` pa
 ```tsx filename="app/[locale]/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
+import {notFound} from 'next/navigation';
 
 export default async function LocaleLayout({
   children,
@@ -191,6 +197,11 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: {locale: string};
 }) {
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
