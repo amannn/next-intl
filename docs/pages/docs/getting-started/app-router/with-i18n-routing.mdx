@@ -143,7 +143,7 @@ export const config = {
 
 ### `src/i18n/request.ts` [#i18n-request]
 
-`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
+When using features from `next-intl` in Server Components, the relevant configuration is read from a central module that is located at `i18n/request.ts` by convention. This configuration is scoped to the current request and can be used to provide messages and other options based on the user's locale.
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
