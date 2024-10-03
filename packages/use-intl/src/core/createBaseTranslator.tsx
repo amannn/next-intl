@@ -440,5 +440,20 @@ function createBaseTranslatorImpl<
     }
   };
 
+  translateFn.has = (key: string): boolean => {
+    if (messagesOrError instanceof IntlError) {
+      return false;
+    }
+
+    const messages = messagesOrError;
+
+    try {
+      resolvePath(locale, messages, key, namespace);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return translateFn;
 }

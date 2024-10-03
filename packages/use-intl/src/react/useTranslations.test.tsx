@@ -1,8 +1,8 @@
-import {render, screen} from '@testing-library/react';
+import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
-import React, {ComponentProps, ReactNode} from 'react';
+import React, {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {it, expect, vi, describe, beforeEach} from 'vitest';
 import {
   Formats,
@@ -554,6 +554,31 @@ describe('t.raw', () => {
 
     expect(onError).toHaveBeenCalled();
     screen.getByText('foo');
+  });
+});
+
+describe('t.has', () => {
+  function wrapper({children}: PropsWithChildren) {
+    return (
+      <IntlProvider locale="en" messages={{foo: 'foo'}}>
+        {children}
+      </IntlProvider>
+    );
+  }
+
+  it('does not throw an error when the message exists', () => {
+    const {result: t} = renderHook(() => useTranslations(), {wrapper});
+    expect(() => t.current.has('foo')).not.toThrow();
+  });
+
+  it('returns true for existing messages', () => {
+    const {result: t} = renderHook(() => useTranslations(), {wrapper});
+    expect(t.current.has('foo')).toBe(true);
+  });
+
+  it('returns false for missing messages', () => {
+    const {result: t} = renderHook(() => useTranslations(), {wrapper});
+    expect(t.current.has('bar')).toBe(false);
   });
 });
 
