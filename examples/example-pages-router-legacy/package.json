@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && prettier . --check",
+    "lint": "eslint src && prettier src --check",
     "build": "next build",
     "start": "next start"
   },

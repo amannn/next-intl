@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint src && tsc && prettier . --check",
+    "lint": "eslint src && tsc && prettier src --check",
     "preview": "vite preview"
   },
   "dependencies": {

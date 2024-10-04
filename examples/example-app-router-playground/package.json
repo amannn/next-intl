@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc && prettier . --check",
+    "lint": "eslint src && tsc && prettier src --check",
     "test": "pnpm run test:playwright:main && pnpm run test:playwright:locale-prefix-never && pnpm run test:playwright:trailing-slash && pnpm run test:jest",
     "test:playwright:main": "TEST_MATCH=main.spec.ts playwright test",
     "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && TEST_MATCH=locale-prefix-never.spec.ts playwright test",
