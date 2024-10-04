@@ -104,7 +104,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "8.0.0-alpha.5",
+    "eslint-config-molindo": "8.0.0-alpha.6",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",

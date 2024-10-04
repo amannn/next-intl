@@ -21,7 +21,7 @@
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "8.0.0-alpha.5",
+    "eslint-config-molindo": "8.0.0-alpha.6",
     "typescript": "^5.5.3"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"

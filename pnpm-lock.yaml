@@ -112,8 +112,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       next-sitemap:
         specifier: ^4.2.3
         version: 4.2.3(next@14.2.4(@babel/core@7.24.7)(@playwright/test@1.44.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -170,8 +170,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.14.5)
@@ -213,8 +213,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -253,8 +253,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
@@ -296,8 +296,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -378,8 +378,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.14.5)
@@ -430,8 +430,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -488,8 +488,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
@@ -531,8 +531,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -580,8 +580,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.14.5)
@@ -611,8 +611,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
 
   examples/example-react-native:
     dependencies:
@@ -688,8 +688,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -719,8 +719,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
@@ -768,8 +768,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       eslint-plugin-react-compiler:
         specifier: 0.0.0-experimental-8e3b87c-20240822
         version: 0.0.0-experimental-8e3b87c-20240822(eslint@9.11.1(jiti@1.21.6))
@@ -838,8 +838,8 @@ importers:
         specifier: ^9.11.1
         version: 9.11.1(jiti@1.21.6)
       eslint-config-molindo:
-        specifier: 8.0.0-alpha.5
-        version: 8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
+        specifier: 8.0.0-alpha.6
+        version: 8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6))
       eslint-plugin-react-compiler:
         specifier: 0.0.0-experimental-8e3b87c-20240822
         version: 0.0.0-experimental-8e3b87c-20240822(eslint@9.11.1(jiti@1.21.6))
@@ -7131,8 +7131,8 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  eslint-config-molindo@8.0.0-alpha.5:
-    resolution: {integrity: sha512-2G/waXUDUWD+txhp7Qlyj1Isglv/zvakY9SnkhARSHc6bEOfaXIlSZBQhKNZPGk5fiWLhjPzJ27f2rt6OIptZg==}
+  eslint-config-molindo@8.0.0-alpha.6:
+    resolution: {integrity: sha512-OgpEjU41XKfcAJhgZwwa5e1CrxEcAjq5odTSYMkv3+OnvyMqoZlLVtJBCfGf4Z/xcmNmwBn5m2GDz39cMyMjtA==}
     peerDependencies:
       eslint: ^9.0.0
 
@@ -23191,7 +23191,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-config-molindo@8.0.0-alpha.5(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6)):
+  eslint-config-molindo@8.0.0-alpha.6(@typescript-eslint/eslint-plugin@8.8.0(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/parser@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(@typescript-eslint/utils@8.8.0(eslint@9.11.1(jiti@1.21.6))(typescript@5.5.3))(eslint@9.11.1(jiti@1.21.6))(jest@29.7.0(@types/node@20.14.5))(tailwindcss@3.4.4)(typescript@5.5.3)(vitest@2.0.2(@edge-runtime/vm@3.2.0)(@types/node@20.14.5)(jsdom@20.0.3)(terser@5.31.6)):
     dependencies:
       '@eslint/compat': 1.2.0(eslint@9.11.1(jiti@1.21.6))
       '@eslint/js': 9.11.1
