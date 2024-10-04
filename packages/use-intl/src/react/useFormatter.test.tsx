@@ -90,7 +90,7 @@ describe('dateTime', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderDateTime(mockDate, {
         dateStyle: 'full',
@@ -336,7 +336,7 @@ describe('number', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderNumber(2, {
         currency: 'USD',
@@ -537,7 +537,7 @@ describe('relativeTime', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderRelativeTime(parseISO('2020-11-20T10:36:00.000Z'), {
         unit: 'day',
@@ -733,7 +733,7 @@ describe('list', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderList([], {
         type: 'conjunction',

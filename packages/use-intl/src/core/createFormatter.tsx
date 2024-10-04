@@ -144,7 +144,7 @@ export default function createFormatter({
     let options;
     try {
       options = resolveFormatOrOptions(typeFormats, formatOrOptions);
-    } catch (error) {
+    } catch {
       return getFallback();
     }
 
