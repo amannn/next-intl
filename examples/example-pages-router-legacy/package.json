@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src",
+    "lint": "eslint src && prettier . --check",
     "build": "next build",
     "start": "next start"
   },
@@ -14,8 +14,8 @@
     "react-dom": "^17.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-molindo": "^7.0.0",
-    "eslint-config-next": "^14.2.4"
-  }
+    "eslint": "^9.11.1",
+    "eslint-config-molindo": "8.0.0-alpha.4"
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
 }

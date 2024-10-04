@@ -13,9 +13,10 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
-    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint": "pnpm run lint:source && pnpm run lint:package && pnpm run lint:prettier",
     "lint:source": "eslint src test && tsc --noEmit",
     "lint:package": "publint && attw --pack",
+    "lint:prettier": "prettier . --check",
     "prepublishOnly": "turbo build",
     "size": "size-limit"
   },
@@ -77,8 +78,8 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "date-fns": "^3.6.0",
-    "eslint": "^8.56.0",
-    "eslint-config-molindo": "^7.0.0",
+    "eslint": "^9.11.1",
+    "eslint-config-molindo": "8.0.0-alpha.4",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "publint": "^0.2.8",
     "react": "^18.3.1",
@@ -89,5 +90,5 @@
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },
-  "prettier": "../../.prettierrc.json"
+  "prettier": "eslint-config-molindo/.prettierrc.json"
 }
