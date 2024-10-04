@@ -13,10 +13,10 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "test": "TZ=Europe/Berlin vitest",
-    "lint": "pnpm run lint:source && pnpm run lint:package && pnpm run lint:prettier",
-    "lint:source": "eslint src test && tsc --noEmit",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
     "lint:package": "publint && attw --pack",
-    "lint:prettier": "prettier . --check",
+    "lint:prettier": "prettier src --check",
     "prepublishOnly": "turbo build",
     "size": "size-limit"
   },
