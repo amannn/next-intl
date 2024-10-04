@@ -21,7 +21,7 @@ function findDomainFromHost<AppLocales extends Locales>(
   // Remove port (easier for local development)
   host = host?.replace(/:\d+$/, '');
 
-  if (host && domains) {
+  if (host) {
     return domains.find((cur) => cur.domain === host);
   }
 
@@ -53,7 +53,7 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
       orderedLocales as unknown as Array<string>,
       defaultLocale
     );
-  } catch (e) {
+  } catch {
     // Invalid language
   }
 
@@ -94,12 +94,12 @@ function resolveLocaleFromPrefix<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && localeDetection && requestCookies) {
+  if (!locale && localeDetection) {
     locale = getLocaleFromCookie(requestCookies, locales);
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && localeDetection && requestHeaders) {
+  if (!locale && localeDetection) {
     locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
   }
 
@@ -157,7 +157,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && options.localeDetection && requestCookies) {
+  if (!locale && options.localeDetection) {
     const cookieLocale = getLocaleFromCookie(requestCookies, routing.locales);
     if (cookieLocale) {
       if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
@@ -169,7 +169,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && options.localeDetection && requestHeaders) {
+  if (!locale && options.localeDetection) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
       domain.locales || routing.locales,

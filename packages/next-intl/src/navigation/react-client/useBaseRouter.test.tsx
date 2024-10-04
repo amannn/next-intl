@@ -45,6 +45,7 @@ function mockLocation(pathname: string, basePath = '') {
   vi.mocked(useNextPathname).mockReturnValue(pathname);
 
   delete (global.window as any).location;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   global.window ??= Object.create(window);
   (global.window as any).location = {pathname: basePath + pathname};
 }
