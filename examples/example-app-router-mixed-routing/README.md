@@ -3,10 +3,12 @@
 An example of how to achieve locale prefixes on public routes while reading the locale from user settings on pages for logged-in users.
 
 **Relevant docs:**
+
 1. [Setting up `next-intl` with i18n routing](https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing)
 2. [Setting up `next-intl` without i18n routing](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing)
 
 **Relevant parts in app code:**
+
 1. `src/middleware.ts`: Add a hint if it's a non-public route that we can read in `i18n.ts`.
 2. `src/i18n.ts`: Uses the locale from the pathname segment for public routes or returns a locale from the user profile for internal app routes.
 3. `src/navigation.public.ts`: Navigation APIs that automatically consider the `[locale]` segment for public routes. For internal app routes, the navigation APIs from Next.js should be used directly (see `PublicNavigation.tsx` vs `AppNavigation.tsx`).
