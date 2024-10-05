@@ -26,6 +26,7 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^9.11.1",
     "eslint-config-molindo": "8.0.0-alpha.6",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json",

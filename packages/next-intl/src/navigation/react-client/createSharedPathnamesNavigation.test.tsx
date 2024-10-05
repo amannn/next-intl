@@ -150,7 +150,7 @@ describe("localePrefix: 'never'", () => {
   });
 
   describe('useRouter', () => {
-    function Component({locale}: {locale?: typeof locales[number]}) {
+    function Component({locale}: {locale?: (typeof locales)[number]}) {
       const router = useRouter();
       router.push('/about', {locale});
       return null;
