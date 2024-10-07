@@ -1,8 +1,7 @@
-import * as molindo from 'eslint-config-molindo';
+import {getPresets} from 'eslint-config-molindo';
 
 export default [
-  ...molindo.javascript,
-  ...molindo.react,
+  ...(await getPresets('javascript', 'react')),
   {
     rules: {
       'react/prop-types': 'off'

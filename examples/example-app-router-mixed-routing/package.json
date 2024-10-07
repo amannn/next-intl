@@ -21,7 +21,7 @@
     "@types/react": "^18.3.3",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "8.0.0-alpha.6",
+    "eslint-config-molindo": "8.0.0-alpha.8",
     "postcss": "^8.4.38",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"

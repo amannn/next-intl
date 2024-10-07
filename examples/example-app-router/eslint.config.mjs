@@ -1,8 +1,5 @@
-import * as molindo from 'eslint-config-molindo';
+import {getPresets} from 'eslint-config-molindo';
 
 export default [
-  ...molindo.typescript,
-  ...molindo.react,
-  ...molindo.tailwind,
-  ...molindo.jest
+  ...(await getPresets('typescript', 'react', 'tailwind', 'jest'))
 ];

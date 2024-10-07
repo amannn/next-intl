@@ -1,3 +1,3 @@
-import * as molindo from 'eslint-config-molindo';
+import {getPresets} from 'eslint-config-molindo';
 
-export default [...molindo.typescript, ...molindo.react];
+export default [...(await getPresets('typescript', 'react'))];

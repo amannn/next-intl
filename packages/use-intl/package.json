@@ -79,7 +79,7 @@
     "@types/react-dom": "^18.3.0",
     "date-fns": "^3.6.0",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "8.0.0-alpha.6",
+    "eslint-config-molindo": "8.0.0-alpha.8",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",

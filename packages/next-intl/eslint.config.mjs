@@ -1,10 +1,8 @@
-import * as molindo from 'eslint-config-molindo';
+import {getPresets} from 'eslint-config-molindo';
 import reactCompilerPlugin from 'eslint-plugin-react-compiler';
 
 export default [
-  ...molindo.typescript,
-  ...molindo.react,
-  ...molindo.vitest,
+  ...(await getPresets('typescript', 'react', 'vitest')),
   {
     plugins: {
       'react-compiler': reactCompilerPlugin
