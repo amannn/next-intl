@@ -571,6 +571,19 @@ describe('t.has', () => {
     expect(t.current.has('foo')).toBe(true);
   });
 
+  it('returns true for an empty message', () => {
+    const {result: t} = renderHook(() => useTranslations(), {
+      wrapper({children}: PropsWithChildren) {
+        return (
+          <IntlProvider locale="en" messages={{foo: ''}}>
+            {children}
+          </IntlProvider>
+        );
+      }
+    });
+    expect(t.current.has('foo')).toBe(true);
+  });
+
   it('returns false for missing messages', () => {
     const {result: t} = renderHook(() => useTranslations(), {wrapper});
     expect(t.current.has('bar')).toBe(false);

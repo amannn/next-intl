@@ -453,6 +453,17 @@ Messages are always parsed and therefore e.g. for rich text formatting you need 
 
 The value of a raw message can be any valid JSON value: strings, booleans, objects and arrays.
 
+## Availability of messages [#t-has]
+
+If you have messages that are only available for certain locales, you can use the `t.has` function to check whether a message is available for the current locale:
+
+```js
+const t = useTranslations('About');
+
+t.has('title'); // true
+t.has('unknown'); // false
+```
+
 ## Arrays of messages
 
 If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages:
