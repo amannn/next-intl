@@ -43,7 +43,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -63,7 +63,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -83,7 +83,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`
@@ -150,7 +150,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -170,7 +170,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -190,7 +190,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`

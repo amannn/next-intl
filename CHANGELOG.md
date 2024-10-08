@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.20.0 (2024-09-24)
+
+### Features
+
+* Type-safe global `formats` ([#1346](https://github.com/amannn/next-intl/issues/1346)) ([b7aa14e](https://github.com/amannn/next-intl/commit/b7aa14e741e016aaaf40f67e9d2cd9ea194a029e)) – by @dBianchii
+
+## 3.19.5 (2024-09-24)
+
+### Bug Fixes
+
+* Make all keys of `Formats` type optional for easier usage ([#1367](https://github.com/amannn/next-intl/issues/1367)) ([a7cbd9b](https://github.com/amannn/next-intl/commit/a7cbd9bb1d42aacb17e7a5500b7054c8bc76799b)) – by @amannn
+
 ## 3.19.4 (2024-09-19)
 
 ### Bug Fixes

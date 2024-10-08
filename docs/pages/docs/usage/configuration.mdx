@@ -199,7 +199,7 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript#messages). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
 
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
@@ -499,6 +499,12 @@ function Component() {
   format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
 }
 ```
+
+<Callout>
+  You can optionally [specify a global type for
+  `formats`](/docs/workflows/typescript#formats) to get autocompletion and type
+  safety.
+</Callout>
 
 Global formats for numbers, dates and times can be referenced in messages too:
 
