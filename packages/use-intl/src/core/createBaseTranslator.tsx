@@ -205,6 +205,8 @@ function createBaseTranslatorImpl<
   onError,
   timeZone
 }: CreateBaseTranslatorProps<Messages>) {
+  const hasMessagesError = messagesOrError instanceof IntlError;
+
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,
@@ -223,7 +225,7 @@ function createBaseTranslatorImpl<
     /** Provide custom formats for numbers, dates and times. */
     formats?: Partial<Formats>
   ): string | ReactElement | ReactNodeArray {
-    if (messagesOrError instanceof IntlError) {
+    if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
         error: messagesOrError,
@@ -419,7 +421,7 @@ function createBaseTranslatorImpl<
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
     key: string
   ): any => {
-    if (messagesOrError instanceof IntlError) {
+    if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
         error: messagesOrError,
@@ -440,17 +442,15 @@ function createBaseTranslatorImpl<
     }
   };
 
-  translateFn.has = (key: string): boolean => {
-    if (messagesOrError instanceof IntlError) {
+  translateFn.has = (key: Parameters<typeof translateBaseFn>[0]): boolean => {
+    if (hasMessagesError) {
       return false;
     }
 
-    const messages = messagesOrError;
-
     try {
-      resolvePath(locale, messages, key, namespace);
+      resolvePath(locale, messagesOrError, key, namespace);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   };

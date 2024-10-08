@@ -8,6 +8,7 @@ export default async function AsyncComponent() {
       <p>{t('basic')}</p>
       <p>{t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}</p>
       <p>{t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})}</p>
+      <p>{String(t.has('basic'))}</p>
     </div>
   );
 }
@@ -20,4 +21,13 @@ export async function TypeTest() {
 
   // @ts-expect-error
   t('unknown');
+
+  // @ts-expect-error
+  t.rich('unknown');
+
+  // @ts-expect-error
+  t.markup('unknown');
+
+  // @ts-expect-error
+  t.has('unknown');
 }
