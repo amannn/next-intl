@@ -99,41 +99,28 @@ In contrast, these props can be provided as necessary:
 2. `defaultTranslationValues`
 3. `onError` and `getMessageFallback`
 
+Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
+
 <Details id="nextintlclientprovider-non-serializable-props">
 <summary>How can I provide non-serializable props like `onError` to `NextIntlClientProvider`?</summary>
 
 React limits the types of props that can be passed to Client Components to the ones that are [serializable](https://react.dev/reference/rsc/use-client#serializable-types). Since `onError`, `getMessageFallback` and `defaultTranslationValues` can receive functions, these configuration options can't be automatically inherited by the client side.
 
-In order to define these values, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props:
+In order to define these values on the client side, you can add a provider that defines these props:
 
-```tsx filename="IntlProvider.tsx"
+```tsx filename="IntlErrorHandlingProvider.tsx"
 'use client';
 
 import {NextIntlClientProvider} from 'next-intl';
 
-export default function IntlProvider({
-  locale,
-  now,
-  timeZone,
-  messages,
-  formats
-}) {
+export default function IntlErrorHandlingProvider({children}) {
   return (
     <NextIntlClientProvider
-      // Define non-serializable props here
-      defaultTranslationValues={{
-        i: (text) => <i>{text}</i>
-      }}
       onError={(error) => console.error(error)}
       getMessageFallback={({namespace, key}) => `${namespace}.${key}`}
-      // Make sure to forward these props to avoid markup mismatches
-      locale={locale}
-      now={now}
-      timeZone={timeZone}
-      formats={formats}
-      // Provide as necessary
-      messages={messages}
-    />
+    >
+      {children}
+    </NextIntlClientProvider>
   );
 }
 ```
@@ -141,27 +128,19 @@ export default function IntlProvider({
 Once you have defined your client-side provider component, you can use it in a Server Component:
 
 ```tsx filename="layout.tsx"
-import IntlProvider from './IntlProvider';
-import {getLocale, getNow, getTimeZone, getMessages} from 'next-intl/server';
-import formats from './formats';
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale, getMessages} from 'next-intl/server';
+import IntlErrorHandlingProvider from './IntlErrorHandlingProvider';
 
 export default async function RootLayout({children}) {
   const locale = await getLocale();
-  const now = await getNow();
-  const timeZone = await getTimeZone();
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider
-          locale={locale}
-          now={now}
-          timeZone={timeZone}
-          messages={messages}
-          formats={formats}
-        >
-          {children}
+        <NextIntlClientProvider messages={messages}>
+          <IntlErrorHandlingProvider>{children}</IntlErrorHandlingProvider>
         </NextIntlClientProvider>
       </body>
     </html>
@@ -171,7 +150,7 @@ export default async function RootLayout({children}) {
 
 By doing this, your provider component will already be part of the client-side bundle and can therefore define and pass functions as props.
 
-**Important:** Be sure to pass explicit `locale`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since these aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.
+Note that the inner `NextIntlClientProvider` inherits the configuration from the outer one, only the `onError` and `getMessageFallback` functions are added.
 
 </Details>
 
@@ -592,7 +571,7 @@ export default getRequestConfig(async ({locale}) => {
 });
 ```
 
-Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
+Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components too, you can however create a [client-side provider](#nextintlclientprovider-non-serializable-props) that defines these props.
 
 </Tab>
 <Tab>

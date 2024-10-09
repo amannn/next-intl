@@ -1,4 +1,4 @@
-import React, {ReactNode, useMemo} from 'react';
+import React, {ReactNode, useContext, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig';
 import {
   createCache,
@@ -23,17 +23,19 @@ export default function IntlProvider({
   onError,
   timeZone
 }: Props) {
+  const prevContext = useContext(IntlContext);
+
   // The formatter cache is released when the locale changes. For
   // long-running apps with a persistent `IntlProvider` at the root,
   // this can reduce the memory footprint (e.g. in React Native).
   const cache = useMemo(() => {
     // eslint-disable-next-line no-unused-expressions
     locale;
-    return createCache();
-  }, [locale]);
+    return prevContext?.cache || createCache();
+  }, [locale, prevContext?.cache]);
   const formatters: Formatters = useMemo(
-    () => createIntlFormatters(cache),
-    [cache]
+    () => prevContext?.formatters || createIntlFormatters(cache),
+    [cache, prevContext?.formatters]
   );
 
   // Memoizing this value helps to avoid triggering a re-render of all
@@ -47,14 +49,16 @@ export default function IntlProvider({
   const value = useMemo(
     () => ({
       ...initializeConfig({
-        locale,
-        defaultTranslationValues,
-        formats,
-        getMessageFallback,
-        messages,
-        now,
-        onError,
-        timeZone
+        locale, // (required by provider)
+        defaultTranslationValues:
+          defaultTranslationValues || prevContext?.defaultTranslationValues,
+        formats: formats || prevContext?.formats,
+        getMessageFallback:
+          getMessageFallback || prevContext?.getMessageFallback,
+        messages: messages || prevContext?.messages,
+        now: now || prevContext?.now,
+        onError: onError || prevContext?.onError,
+        timeZone: timeZone || prevContext?.timeZone
       }),
       formatters,
       cache
@@ -69,6 +73,7 @@ export default function IntlProvider({
       messages,
       now,
       onError,
+      prevContext,
       timeZone
     ]
   );
