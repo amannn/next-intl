@@ -230,7 +230,9 @@ it('can use next-intl on the client side', async ({page}) => {
 it('can use rich text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RichText');
-  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
+  expect(await element.innerHTML()).toBe(
+    'This is a <b style="font-weight:bold">rich</b> text.'
+  );
 });
 
 it('can use raw text', async ({page}) => {
