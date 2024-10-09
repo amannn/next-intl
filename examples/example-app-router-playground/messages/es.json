@@ -4,7 +4,7 @@
   },
   "AsyncComponent": {
     "basic": "AsyncComponent",
-    "markup": "Markup with <b>{globalString}</b>",
+    "markup": "Markup with <b>bold content</b>",
     "rich": "This is a <important>rich</important> text."
   },
   "Client": {
@@ -21,8 +21,7 @@
   },
   "Index": {
     "description": "Esta es la página de inicio.",
-    "globalDefaults": "<highlight>{globalString}</highlight>",
-    "rich": "Este es un texto <important>importante</important>.",
+    "rich": "Este es un texto <b>importante</b>.",
     "title": "Inicio"
   },
   "JustIn": {
