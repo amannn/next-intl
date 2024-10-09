@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.21.1 (2024-10-09)
+
+### Bug Fixes
+
+* Repair package publishing workflow (this release doesn't include any library changes) ([ceba9ae](https://github.com/amannn/next-intl/commit/ceba9ae92e863d7185c40054e8218e76a483f6a8)) – by @amannn
+
 ## 3.21.0 (2024-10-09)
 
 ### Features
