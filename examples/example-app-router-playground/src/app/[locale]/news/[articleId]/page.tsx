@@ -1,7 +1,6 @@
 import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
-import {defaultLocale, getPathname} from '@/navigation';
-import {Locale} from '@/types';
+import {getPathname, Locale} from '@/i18n/routing';
 
 type Props = {
   params: {
@@ -11,19 +10,17 @@ type Props = {
 };
 
 export async function generateMetadata({params}: Props): Promise<Metadata> {
-  let canonical = getPathname({
-    href: {
-      pathname: '/news/[articleId]',
-      params: {articleId: params.articleId}
-    },
-    locale: params.locale
-  });
-
-  if (params.locale !== defaultLocale) {
-    canonical = '/' + params.locale + canonical;
-  }
-
-  return {alternates: {canonical}};
+  return {
+    alternates: {
+      canonical: getPathname({
+        href: {
+          pathname: '/news/[articleId]',
+          params: {articleId: params.articleId}
+        },
+        locale: params.locale
+      })
+    }
+  };
 }
 
 export default function NewsArticle({params}: Props) {

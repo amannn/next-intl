@@ -1,17 +1,25 @@
 import React, {ComponentProps} from 'react';
-import {Locales} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
 import {
-  SharedNavigationRoutingConfigInput,
-  receiveSharedNavigationRoutingConfig
-} from '../shared/config';
+  receiveLocalePrefixConfig,
+  RoutingConfigSharedNavigation
+} from '../../routing/config';
+import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import ServerLink from './ServerLink';
 import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
-  AppLocales extends Locales
->(input?: SharedNavigationRoutingConfigInput<AppLocales>) {
-  const config = receiveSharedNavigationRoutingConfig(input);
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing?: RoutingConfigSharedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppDomains
+  >
+) {
+  const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
 
   function notSupported(hookName: string) {
     return () => {
@@ -23,12 +31,15 @@ export default function createSharedPathnamesNavigation<
 
   function Link(
     props: Omit<
-      ComponentProps<typeof ServerLink<AppLocales>>,
-      'localePrefix' | 'locales'
+      ComponentProps<typeof ServerLink<AppLocales, AppLocalePrefixMode>>,
+      'localePrefix'
     >
   ) {
     return (
-      <ServerLink<AppLocales> localePrefix={config.localePrefix} {...props} />
+      <ServerLink<AppLocales, AppLocalePrefixMode>
+        localePrefix={localePrefix}
+        {...props}
+      />
     );
   }
 
@@ -36,20 +47,14 @@ export default function createSharedPathnamesNavigation<
     pathname: string,
     ...args: ParametersExceptFirst<typeof serverRedirect>
   ) {
-    return serverRedirect(
-      {pathname, localePrefix: config.localePrefix},
-      ...args
-    );
+    return serverRedirect({pathname, localePrefix}, ...args);
   }
 
   function permanentRedirect(
     pathname: string,
     ...args: ParametersExceptFirst<typeof serverPermanentRedirect>
   ) {
-    return serverPermanentRedirect(
-      {pathname, localePrefix: config.localePrefix},
-      ...args
-    );
+    return serverPermanentRedirect({pathname, localePrefix}, ...args);
   }
 
   return {

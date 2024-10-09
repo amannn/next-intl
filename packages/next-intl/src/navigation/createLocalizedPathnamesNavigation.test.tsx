@@ -9,12 +9,12 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {Pathnames} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {defineRouting, Pathnames} from '../routing';
+import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
 import {getLocalePrefix} from '../shared/utils';
 import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from './react-server/createLocalizedPathnamesNavigation';
-import BaseLink from './shared/BaseLink';
+import LegacyBaseLink from './shared/LegacyBaseLink';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -39,7 +39,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     const finalLocale = locale || 'en';
     const prefix = getLocalePrefix(finalLocale, localePrefix);
     return (
-      <BaseLink
+      <LegacyBaseLink
         locale={finalLocale}
         localePrefixMode={localePrefix.mode}
         prefix={prefix}
@@ -48,7 +48,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocaleLegacy', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
@@ -96,11 +96,13 @@ describe.each([
   'createLocalizedPathnamesNavigation ($env)',
   ({implementation: createLocalizedPathnamesNavigation}) => {
     describe("localePrefix: 'always'", () => {
-      const {Link} = createLocalizedPathnamesNavigation({
-        pathnames,
+      const routing = defineRouting({
         locales,
+        defaultLocale: 'en',
+        pathnames,
         localePrefix: 'always'
       });
+      const {Link} = createLocalizedPathnamesNavigation(routing);
       describe('Link', () => {
         it('renders a prefix for the default locale', () => {
           const markup = renderToString(<Link href="/about">About</Link>);
@@ -744,6 +746,13 @@ describe.each([
           render(<Component href="/unknown" />);
           expect(nextPermanentRedirect).toHaveBeenLastCalledWith('/unknown');
         });
+      });
+    });
+
+    describe('type tests', () => {
+      it('requires `pathnames`', () => {
+        // @ts-expect-error -- Missing pathnames
+        createLocalizedPathnamesNavigation({locales});
       });
     });
   }

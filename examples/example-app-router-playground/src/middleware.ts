@@ -1,14 +1,14 @@
 import createMiddleware from 'next-intl/middleware';
-import {locales, pathnames, localePrefix, defaultLocale} from './navigation';
+import {routing} from './i18n/routing';
 
-export default createMiddleware({
-  defaultLocale,
-  localePrefix,
-  pathnames,
-  locales
-});
+export default createMiddleware(routing);
 
 export const config = {
-  // Skip all paths that should not be internationalized
-  matcher: ['/((?!_next|.*\\..*).*)']
+  matcher: [
+    // Skip all paths that should not be internationalized
+    '/((?!_next|.*\\..*).*)',
+
+    // Necessary for base path to work
+    '/'
+  ]
 };

@@ -1,10 +1,19 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {Locales, Pathnames} from '../../routing/types';
+import {ResolvedRoutingConfig} from '../../routing/config';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {
   matchesPathname,
   getSortedPathnames,
-  normalizeTrailingSlash
+  normalizeTrailingSlash,
+  isLocalizableHref,
+  prefixPathname,
+  getLocalePrefix
 } from '../../shared/utils';
 import StrictParams from './StrictParams';
 
@@ -22,24 +31,37 @@ type HrefOrHrefWithParamsImpl<Pathname, Other> =
       : // No params
         Pathname | ({pathname: Pathname} & Other);
 
+// For `Link`
 export type HrefOrUrlObjectWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
   Omit<UrlObject, 'pathname'>
 >;
 
+export type QueryParams = Record<string, SearchParamValue>;
+
+// For `getPathname` (hence also its consumers: `redirect`, `useRouter`, …)
 export type HrefOrHrefWithParams<Pathname> = HrefOrHrefWithParamsImpl<
   Pathname,
-  {query?: Record<string, SearchParamValue>}
+  {query?: QueryParams}
 >;
 
 export function normalizeNameOrNameWithParams<Pathname>(
-  href: HrefOrHrefWithParams<Pathname>
+  href:
+    | HrefOrHrefWithParams<Pathname>
+    | {
+        locale: string;
+        href: HrefOrHrefWithParams<Pathname>;
+      }
 ): {
   pathname: Pathname;
   params?: StrictParams<Pathname>;
 } {
-  // @ts-expect-error -- `extends string` in the generic unfortunately weakens the type
-  return typeof href === 'string' ? {pathname: href as Pathname} : href;
+  return typeof href === 'string'
+    ? {pathname: href as Pathname}
+    : (href as {
+        pathname: Pathname;
+        params?: StrictParams<Pathname>;
+      });
 }
 
 export function serializeSearchParams(
@@ -102,6 +124,7 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   function getNamedPath(value: keyof typeof pathnames) {
     let namedPath = pathnames[value];
     if (!namedPath) {
+      // Unknown pathnames
       namedPath = value;
     }
     return namedPath;
@@ -196,5 +219,102 @@ export function getBasePath(
     return windowPathname;
   } else {
     return windowPathname.replace(pathname, '');
+  }
+}
+
+export function applyPathnamePrefix<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+>(
+  pathname: string,
+  locale: Locales[number],
+  routing: Pick<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'localePrefix' | 'domains'
+  > &
+    Partial<
+      Pick<
+        ResolvedRoutingConfig<
+          AppLocales,
+          AppLocalePrefixMode,
+          AppPathnames,
+          AppDomains
+        >,
+        'defaultLocale'
+      >
+    >,
+  domain?: string,
+  force?: boolean
+): string {
+  const {mode} = routing.localePrefix;
+
+  let shouldPrefix;
+  if (force !== undefined) {
+    shouldPrefix = force;
+  } else if (isLocalizableHref(pathname)) {
+    if (mode === 'always') {
+      shouldPrefix = true;
+    } else if (mode === 'as-needed') {
+      let defaultLocale: AppLocales[number] | undefined = routing.defaultLocale;
+
+      if (routing.domains) {
+        const domainConfig = routing.domains.find(
+          (cur) => cur.domain === domain
+        );
+        if (domainConfig) {
+          defaultLocale = domainConfig.defaultLocale;
+        } else if (process.env.NODE_ENV !== 'production') {
+          if (!domain) {
+            console.error(
+              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter.\n\nSee: https://next-intl-docs.vercel.app/docs/routing#domains-localeprefix-asneeded"
+            );
+          } else {
+            // If a domain was provided, but it wasn't found in the routing
+            // configuration, this can be an indicator that the user is on
+            // localhost. In this case, we can simply use the domain-agnostic
+            // default locale.
+          }
+        }
+      }
+
+      shouldPrefix = defaultLocale !== locale;
+    }
+  }
+
+  return shouldPrefix
+    ? prefixPathname(getLocalePrefix(locale, routing.localePrefix), pathname)
+    : pathname;
+}
+
+export function validateReceivedConfig<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+>(
+  config: Partial<
+    Pick<
+      ResolvedRoutingConfig<
+        AppLocales,
+        AppLocalePrefixMode,
+        AppPathnames,
+        AppDomains
+      >,
+      'defaultLocale' | 'localePrefix'
+    >
+  >
+) {
+  if (
+    config.localePrefix?.mode === 'as-needed' &&
+    !('defaultLocale' in config)
+  ) {
+    throw new Error("`localePrefix: 'as-needed' requires a `defaultLocale`.");
   }
 }

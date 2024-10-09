@@ -1,5 +1,7 @@
-import {redirect} from '@/navigation';
+import {useLocale} from 'next-intl';
+import {redirect} from '@/i18n/routing';
 
 export default function Redirect() {
-  redirect('/client');
+  const locale = useLocale();
+  redirect({href: '/client', locale});
 }

@@ -18,7 +18,7 @@ export default function CommunityLink({
 }: Props) {
   return (
     <div>
-      <Link className="inline-block py-2" {...rest}>
+      <Link className="inline-block py-2 after:!hidden" {...rest}>
         <p className="text-xl font-semibold">{title}</p>
         <div className="mt-2">
           {type && (

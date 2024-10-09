@@ -4,7 +4,7 @@ import {CheckIcon, LanguageIcon} from '@heroicons/react/24/solid';
 import * as Select from '@radix-ui/react-select';
 import clsx from 'clsx';
 import {useTransition} from 'react';
-import {Locale} from '@/config';
+import {Locale} from '@/i18n/config';
 import {setUserLocale} from '@/services/locale';
 
 type Props = {

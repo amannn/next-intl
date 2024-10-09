@@ -9,11 +9,12 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {defineRouting} from '../routing';
+import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
 import {getLocalePrefix} from '../shared/utils';
 import createSharedPathnamesNavigationClient from './react-client/createSharedPathnamesNavigation';
 import createSharedPathnamesNavigationServer from './react-server/createSharedPathnamesNavigation';
-import BaseLink from './shared/BaseLink';
+import LegacyBaseLink from './shared/LegacyBaseLink';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -38,7 +39,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     const finalLocale = locale || 'en';
     const prefix = getLocalePrefix(finalLocale, localePrefix);
     return (
-      <BaseLink
+      <LegacyBaseLink
         locale={finalLocale}
         localePrefixMode={localePrefix.mode}
         prefix={prefix}
@@ -47,7 +48,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocaleLegacy', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 
@@ -69,10 +70,12 @@ describe.each([
   'createSharedPathnamesNavigation ($env)',
   ({implementation: createSharedPathnamesNavigation}) => {
     describe("localePrefix: 'always'", () => {
-      const {Link} = createSharedPathnamesNavigation({
+      const routing = defineRouting({
         locales,
+        defaultLocale: 'en',
         localePrefix: 'always'
       });
+      const {Link} = createSharedPathnamesNavigation(routing);
 
       describe('Link', () => {
         it('renders a prefix for the default locale', () => {
@@ -509,6 +512,19 @@ describe.each([
               </Link>
             )
           ).toContain('href="/en/about"');
+        });
+      });
+    });
+
+    describe('type tests', () => {
+      it("doesn't accept `pathnames`", () => {
+        createSharedPathnamesNavigation({
+          locales: ['en'],
+          defaultLocale: 'en',
+          // @ts-expect-error
+          pathnames: {
+            '/': '/'
+          }
         });
       });
     });

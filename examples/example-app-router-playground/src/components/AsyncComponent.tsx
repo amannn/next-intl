@@ -1,4 +1,4 @@
-import {getTranslations} from 'next-intl/server';
+import {getTranslations, getFormatter} from 'next-intl/server';
 
 export default async function AsyncComponent() {
   const t = await getTranslations('AsyncComponent');
@@ -15,9 +15,27 @@ export default async function AsyncComponent() {
 export async function TypeTest() {
   const t = await getTranslations('AsyncComponent');
 
+  const format = await getFormatter();
+
   // @ts-expect-error
   await getTranslations('Unknown');
 
   // @ts-expect-error
   t('unknown');
+
+  format.dateTime(new Date(), 'medium');
+  // @ts-expect-error
+  format.dateTime(new Date(), 'unknown');
+
+  format.dateTimeRange(new Date(), new Date(), 'medium');
+  // @ts-expect-error
+  format.dateTimeRange(new Date(), new Date(), 'unknown');
+
+  format.number(420, 'precise');
+  // @ts-expect-error
+  format.number(420, 'unknown');
+
+  format.list(['this', 'is', 'a', 'list'], 'enumeration');
+  // @ts-expect-error
+  format.list(['this', 'is', 'a', 'list'], 'unknown');
 }

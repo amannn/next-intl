@@ -47,7 +47,7 @@ After this change, all requests that are matched within the `[locale]` segment w
 
 ### Catching non-localized requests
 
-When the user requests a route that is not matched by [the `next-intl` middleware](/docs/routing/middleware), there's no locale associated with the request (depending on your [`matcher` config](/docs/routing/middleware#matcher-config), e.g. `/unknown.txt` might not be matched).
+When the user requests a route that is not matched by the `next-intl` [middleware](/docs/routing/middleware), there's no locale associated with the request (depending on your [`matcher` config](/docs/routing/middleware#matcher-config), e.g. `/unknown.txt` might not be matched).
 
 You can add a root `not-found` page to handle these cases too.
 
@@ -77,26 +77,20 @@ export default function RootLayout({children}) {
 }
 ```
 
-For the 404 page to render, we need to call the `notFound` function in [`i18n.ts`](/docs/usage/configuration#i18nts) when we detect an incoming `locale` param that isn't a valid locale.
+For the 404 page to render, we need to call the `notFound` function in the root layout when we detect an incoming `locale` param that isn't a valid locale.
 
-```tsx filename="i18n.ts"
+```tsx filename="app/[locale]/layout.tsx"
 import {notFound} from 'next/navigation';
-import {getRequestConfig} from 'next-intl/server';
 
-// Can be imported from a shared config
-const locales = ['en', 'de'];
+export default function LocaleLayout({children, params: {locale}}) {
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
 
-export default getRequestConfig(async ({locale}) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
-
-  return {
-    // ...
-  };
-});
+  // ...
+}
 ```
-
-Note that `next-intl` will also call the `notFound` function internally when it tries to resolve a locale for component usage, but can not find one attached to the request (either from the middleware, or manually via [`unstable_setRequestLocale`](https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering)).
 
 ## `error.js`
 
@@ -164,7 +158,7 @@ export default function Error({error, reset}) {
 }
 ```
 
-Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-senstive and you want to avoid loading translation functionality from `next-intl` as part of this bundle, you can export a lazy reference from your `error` file:
+Note that `error.tsx` is loaded right after your app has initialized. If your app is performance-sensitive and you want to avoid loading translation functionality from `next-intl` as part of this bundle, you can export a lazy reference from your `error` file:
 
 ```tsx filename="error.tsx"
 'use client';

@@ -44,7 +44,7 @@ vi.mock('intl-messageformat', async (importOriginal) => {
 function renderMessage(
   message: string,
   values?: TranslationValues,
-  formats?: Partial<Formats>,
+  formats?: Formats,
   providerProps?: Partial<ComponentProps<typeof IntlProvider>>
 ) {
   function Component() {
@@ -404,7 +404,7 @@ describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -884,8 +884,8 @@ describe('error handling', () => {
 describe('global formats', () => {
   function renderDate(
     message: string,
-    globalFormats?: Partial<Formats>,
-    overrideFormats?: Partial<Formats>
+    globalFormats?: Formats,
+    overrideFormats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -952,7 +952,7 @@ describe('default translation values', () => {
   function renderRichTextMessageWithDefault(
     message: string,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -977,7 +977,7 @@ describe('default translation values', () => {
   function renderMessageWithDefault(
     message: string,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();

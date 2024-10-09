@@ -1,11 +1,16 @@
 import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {Locales, Pathnames} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
 import {
-  LocalizedNavigationRoutingConfigInput,
-  receiveLocalizedNavigationRoutingConfig
-} from '../shared/config';
+  receiveRoutingConfig,
+  RoutingConfigLocalizedNavigation
+} from '../../routing/config';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
+import {ParametersExceptFirst} from '../../shared/types';
 import {
   compileLocalizedPathname,
   getRoute,
@@ -18,11 +23,23 @@ import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
+/**
+ * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ **/
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
->(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
-  const config = receiveLocalizedNavigationRoutingConfig(input);
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing: RoutingConfigLocalizedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  >
+) {
+  const config = receiveRoutingConfig(routing);
 
   function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
