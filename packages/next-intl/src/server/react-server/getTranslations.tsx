@@ -103,6 +103,24 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: [TargetKey] extends [never] ? string : TargetKey
+  ): boolean;
 }>;
 // CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
