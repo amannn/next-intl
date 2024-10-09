@@ -3,7 +3,7 @@ import getConfig from './getConfig';
 
 async function getLocaleCachedImpl() {
   const config = await getConfig();
-  return Promise.resolve(config.locale);
+  return config.locale;
 }
 const getLocaleCached = cache(getLocaleCachedImpl);
 
