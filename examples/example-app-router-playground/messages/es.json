@@ -4,7 +4,7 @@
   },
   "AsyncComponent": {
     "basic": "AsyncComponent",
-    "markup": "Markup with <b>bold content</b>",
+    "markup": "Markup with <important>bold content</important>",
     "rich": "This is a <important>rich</important> text."
   },
   "Client": {

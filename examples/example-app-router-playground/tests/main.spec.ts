@@ -236,9 +236,7 @@ it('can use rich text', async ({page}) => {
 it('can use raw text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RawText');
-  expect(await element.innerHTML()).toBe(
-    'This is a <important>rich</important> text.'
-  );
+  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
 });
 
 it('can use `getMessageFallback`', async ({page}) => {
