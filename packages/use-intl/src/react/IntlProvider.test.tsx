@@ -124,3 +124,26 @@ it('passes on configuration in nested providers', () => {
   screen.getByText('Now: Jan 1, 2021, 1:00 AM');
   expect(onError.mock.calls.length).toBe(1);
 });
+
+it('does not merge messages in nested providers', () => {
+  // This is important because the locale can change
+  // and the messages from a previous locale should
+  // not leak into the new locale.
+
+  const onError = vi.fn();
+
+  function Component() {
+    const t = useTranslations();
+    return t('hello');
+  }
+
+  render(
+    <IntlProvider locale="en" messages={{hello: 'Hello!'}} onError={onError}>
+      <IntlProvider locale="de" messages={{bye: 'Tschüss!'}}>
+        <Component />
+      </IntlProvider>
+    </IntlProvider>
+  );
+
+  expect(onError.mock.calls.length).toBe(1);
+});
