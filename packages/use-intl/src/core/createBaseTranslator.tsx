@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
 import {
   cloneElement,
@@ -68,6 +67,7 @@ function resolvePath(
   key.split('.').forEach((part) => {
     const next = (message as any)[part];
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (part == null || next == null) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -129,6 +129,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
       ? resolvePath(locale, messages, namespace)
       : messages;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!retrievedMessages) {
       throw new Error(
         process.env.NODE_ENV !== 'production'

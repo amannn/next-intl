@@ -41,7 +41,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     );
   }
 
-  let hasReadLocale = false;
+  let hasReadLocale = false as boolean;
 
   // In case the consumer doesn't read `params.locale` and instead provides the
   // `locale` (either in a single-language workflow or because the locale is

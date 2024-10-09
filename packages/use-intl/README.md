@@ -17,10 +17,10 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 ```jsx
 // UserProfile.tsx
 import {useTranslations} from 'use-intl';
- 
+
 export default function UserProfile({user}) {
   const t = useTranslations('UserProfile');
- 
+
   return (
     <section>
       <h1>{t('title', {firstName: user.firstName})}</h1>
@@ -56,11 +56,11 @@ export default function UserProfile({user}) {
 import {IntlProvider, useTranslations} from 'use-intl';
 
 // You can get the messages from anywhere you like. You can also
-// fetch them from within a component and then render the provider 
+// fetch them from within a component and then render the provider
 // along with your app once you have the messages.
 const messages = {
-  "App": {
-    "hello": 'Hello {username}!'
+  App: {
+    hello: 'Hello {username}!'
   }
 };
 

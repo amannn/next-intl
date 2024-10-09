@@ -33,6 +33,7 @@ it("doesn't re-render context consumers unnecessarily", () => {
     numStaticTextRenders++;
     return t('hello');
   });
+  StaticText.displayName = 'StaticText';
 
   render(<Counter />);
   screen.getByText('Count: 0');

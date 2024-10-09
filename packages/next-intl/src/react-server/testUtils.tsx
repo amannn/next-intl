@@ -9,7 +9,7 @@ const renderToReadableStream: typeof import('react-dom/server').renderToReadable
 async function readStream(stream: ReactDOMServerReadableStream) {
   const reader = stream.getReader();
   let result = '';
-  // eslint-disable-next-line no-constant-condition
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   while (true) {
     const {done, value} = await reader.read();
     if (done) break;

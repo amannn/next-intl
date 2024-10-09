@@ -14,6 +14,7 @@ function validateMessagesSegment(
       invalidKeyLabels.push(keyLabel);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (messageOrMessages != null && typeof messageOrMessages === 'object') {
       validateMessagesSegment(
         messageOrMessages,

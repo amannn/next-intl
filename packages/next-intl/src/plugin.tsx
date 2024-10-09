@@ -71,7 +71,7 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
 
   // Assign alias for `next-intl/config`
   if (useTurbo) {
-    if (i18nPath && i18nPath.startsWith('/')) {
+    if (i18nPath?.startsWith('/')) {
       throw new Error(
         "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
           i18nPath +

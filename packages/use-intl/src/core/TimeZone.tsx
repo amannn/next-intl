@@ -420,7 +420,6 @@ type TimeZone =
   | 'W-SU'
   | 'WET'
   | 'Zulu'
-  // eslint-disable-next-line @typescript-eslint/ban-types
   | (string & {});
 
 export default TimeZone;

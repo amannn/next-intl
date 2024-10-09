@@ -13,9 +13,7 @@ export default function LoginFormErrors({errors}: {errors: LoginFormErrors}) {
   if (errors.fieldErrors.password) {
     messages.push(...errors.fieldErrors.password);
   }
-  if (errors.formErrors) {
-    messages.push(...errors.formErrors);
-  }
+  messages.push(...errors.formErrors);
 
   return messages.map((error, i) => (
     <p

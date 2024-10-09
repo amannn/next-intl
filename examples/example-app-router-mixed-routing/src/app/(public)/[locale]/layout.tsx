@@ -2,9 +2,9 @@ import {Metadata} from 'next';
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 import {ReactNode} from 'react';
+import Document from '@/components/Document';
 import PublicNavigation from './PublicNavigation';
 import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
-import Document from '@/components/Document';
 
 type Props = {
   children: ReactNode;
