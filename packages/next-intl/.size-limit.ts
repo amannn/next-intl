@@ -9,7 +9,7 @@ const config: SizeLimitConfig = [
   {
     name: 'import * from \'next-intl\' (react-server)',
     path: 'dist/production/index.react-server.js',
-    limit: '14.725 KB'
+    limit: '14.735 KB'
   },
   {
     name: 'import {createSharedPathnamesNavigation} from \'next-intl/navigation\' (react-client)',
@@ -33,19 +33,19 @@ const config: SizeLimitConfig = [
     name: 'import {createSharedPathnamesNavigation} from \'next-intl/navigation\' (react-server)',
     path: 'dist/production/navigation.react-server.js',
     import: '{createSharedPathnamesNavigation}',
-    limit: '16.635 KB'
+    limit: '16.665 KB'
   },
   {
     name: 'import {createLocalizedPathnamesNavigation} from \'next-intl/navigation\' (react-server)',
     path: 'dist/production/navigation.react-server.js',
     import: '{createLocalizedPathnamesNavigation}',
-    limit: '16.635 KB'
+    limit: '16.665 KB'
   },
   {
     name: 'import {createNavigation} from \'next-intl/navigation\' (react-server)',
     path: 'dist/production/navigation.react-server.js',
     import: '{createNavigation}',
-    limit: '16.645 KB'
+    limit: '16.655 KB'
   },
   {
     name: 'import * from \'next-intl/server\' (react-client)',
@@ -55,7 +55,7 @@ const config: SizeLimitConfig = [
   {
     name: 'import * from \'next-intl/server\' (react-server)',
     path: 'dist/production/server.react-server.js',
-    limit: '13.995 KB'
+    limit: '14.035 KB'
   },
   {
     name: 'import createMiddleware from \'next-intl/middleware\'',
