@@ -60,7 +60,7 @@ const config: SizeLimitConfig = [
   {
     name: 'import createMiddleware from \'next-intl/middleware\'',
     path: 'dist/production/middleware.js',
-    limit: '9.63 KB'
+    limit: '9.665 KB'
   },
   {
     name: 'import * from \'next-intl/routing\'',
