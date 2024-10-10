@@ -23,8 +23,6 @@ export type MiddlewareOptions = {
    **/
   alternateLinks?: boolean;
 
-  // http://localhost:3000/docs/routing/middleware#locale-cookie
-
   /**
    * Can be used to disable the locale cookie or to customize it.
    * @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-cookie
