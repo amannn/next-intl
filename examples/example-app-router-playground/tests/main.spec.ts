@@ -687,6 +687,11 @@ it('can define custom cookie options', async ({request}) => {
   expect(response.headers()['set-cookie']).toContain('Max-Age=17280000');
 });
 
+it('can use `t.has` in a Server Component', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByTestId('HasTitle')).toHaveText('true');
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page

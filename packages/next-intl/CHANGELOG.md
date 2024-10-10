@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.21.1 (2024-10-09)
+
+### Bug Fixes
+
+* Repair package publishing workflow (this release doesn't include any library changes) ([ceba9ae](https://github.com/amannn/next-intl/commit/ceba9ae92e863d7185c40054e8218e76a483f6a8)) – by @amannn
+
+## 3.21.0 (2024-10-09)
+
+### Features
+
+* Add `t.has` to check whether a given message exists ([#1399](https://github.com/amannn/next-intl/issues/1399)) ([ee1a2a9](https://github.com/amannn/next-intl/commit/ee1a2a94b62474a5d8a1d39c8ff39bec072c02a0)) – by @tholander
+
 ## 3.20.0 (2024-09-24)
 
 ### Features
