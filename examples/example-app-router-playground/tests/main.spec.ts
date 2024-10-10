@@ -682,6 +682,11 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can use `t.has` in a Server Component', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByTestId('HasTitle')).toHaveText('true');
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
