@@ -49,7 +49,8 @@ export default function createMiddleware<
   const resolvedOptions = {
     alternateLinks: options?.alternateLinks ?? routing.alternateLinks ?? true,
     localeDetection:
-      options?.localeDetection ?? routing?.localeDetection ?? true
+      options?.localeDetection ?? routing?.localeDetection ?? true,
+    localeCookie: options?.localeCookie ?? routing?.localeCookie ?? true
   };
 
   return function middleware(request: NextRequest) {
@@ -311,8 +312,8 @@ export default function createMiddleware<
       }
     }
 
-    if (resolvedOptions.localeDetection) {
-      syncCookie(request, response, locale);
+    if (resolvedOptions.localeDetection && resolvedOptions.localeCookie) {
+      syncCookie(request, response, locale, resolvedOptions.localeCookie);
     }
 
     if (

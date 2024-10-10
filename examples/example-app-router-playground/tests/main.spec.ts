@@ -682,6 +682,11 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can define custom cookie options', async ({request}) => {
+  const response = await request.get('/');
+  expect(response.headers()['set-cookie']).toContain('Max-Age=17280000');
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
