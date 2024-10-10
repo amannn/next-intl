@@ -60,7 +60,7 @@ const config: SizeLimitConfig = [
   {
     name: 'import createMiddleware from \'next-intl/middleware\'',
     path: 'dist/production/middleware.js',
-    limit: '9.63 KB'
+    limit: '9.675 KB'
   },
   {
     name: 'import * from \'next-intl/routing\'',
@@ -71,7 +71,7 @@ const config: SizeLimitConfig = [
     name: 'import * from \'next-intl\' (react-client, ESM)',
     path: 'dist/esm/index.react-client.js',
     import: '*',
-    limit: '14.265 kB'
+    limit: '14.245 kB'
   },
   {
     name: 'import {NextIntlProvider} from \'next-intl\' (react-client, ESM)',

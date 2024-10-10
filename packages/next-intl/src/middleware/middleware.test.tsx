@@ -294,6 +294,24 @@ describe('prefix-based routing', () => {
       });
     });
 
+    it('can turn off the cookie', () => {
+      const response = createMiddleware(routing, {localeCookie: false})(
+        createMockRequest('/')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it('restricts which options of the cookie can be customized', () => {
+      createMiddleware(routing, {
+        localeCookie: {
+          // @ts-expect-error
+          httpOnly: true,
+          name: 'custom',
+          value: 'custom'
+        }
+      });
+    });
+
     it('retains request headers for the default locale', () => {
       middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', undefined, {

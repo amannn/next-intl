@@ -682,6 +682,11 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can define custom cookie options', async ({request}) => {
+  const response = await request.get('/');
+  expect(response.headers()['set-cookie']).toContain('Max-Age=17280000');
+});
+
 it('can use `t.has` in a Server Component', async ({page}) => {
   await page.goto('/');
   await expect(page.getByTestId('HasTitle')).toHaveText('true');

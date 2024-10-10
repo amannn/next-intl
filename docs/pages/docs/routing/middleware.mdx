@@ -28,7 +28,7 @@ export const config = {
 };
 ```
 
-## Locale detection
+## Locale detection [#locale-detection-overview]
 
 The locale is negotiated based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
 
@@ -121,6 +121,44 @@ export default createMiddleware(routing, {
 In this case, only the locale prefix and a potentially [matching domain](#domain-based-routing) are used to determine the locale.
 
 Note that by setting this option, the middleware will no longer return a `set-cookie` response header, which can be beneficial for CDN caching (see e.g. [the Cloudflare Cache rules for `set-cookie`](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache)).
+
+### Locale cookie [#locale-cookie]
+
+By default, the middleware will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to remember the user's locale preference for future requests (see [locale detection](#locale-detection-overview)).
+
+By default, the cookie will be configured with the following attributes:
+
+1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 1 year so that the preference of the user is kept as long as possible.
+2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
+3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
+
+If you have more specific requirements, you can adjust these settings accordingly:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './i18n/routing';
+
+export default createMiddleware(routing, {
+  // These options will be merged with the defaults
+  localeCookie: {
+    // Expire in one day
+    maxAge: 60 * 60 * 24
+  }
+});
+```
+
+… or turn the cookie off entirely:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './i18n/routing';
+
+export default createMiddleware(routing, {
+  localeCookie: false
+});
+```
+
+Note that the cookie is only set once per detected locale and is not updated on every request.
 
 ### Alternate links [#alternate-links]
 
