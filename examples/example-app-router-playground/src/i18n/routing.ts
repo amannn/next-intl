@@ -1,11 +1,11 @@
-import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
+import {createNavigation} from 'next-intl/navigation';
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
   locales: ['en', 'de', 'es', 'ja'],
   defaultLocale: 'en',
   localePrefix:
-    process.env.NEXT_PUBLIC_LOCALE_PREFIX === 'never'
+    process.env.NEXT_PUBLIC_USE_CASE === 'locale-prefix-never'
       ? 'never'
       : {
           mode: 'as-needed',
@@ -13,6 +13,19 @@ export const routing = defineRouting({
             es: '/spain'
           }
         },
+  domains:
+    process.env.NEXT_PUBLIC_USE_CASE === 'domains'
+      ? [
+          {
+            domain: 'example.com',
+            defaultLocale: 'en'
+          },
+          {
+            domain: 'example.de',
+            defaultLocale: 'de'
+          }
+        ]
+      : undefined,
   pathnames: {
     '/': '/',
     '/client': '/client',
@@ -44,4 +57,4 @@ export type Pathnames = keyof typeof routing.pathnames;
 export type Locale = (typeof routing.locales)[number];
 
 export const {Link, getPathname, redirect, usePathname, useRouter} =
-  createLocalizedPathnamesNavigation(routing);
+  createNavigation(routing);

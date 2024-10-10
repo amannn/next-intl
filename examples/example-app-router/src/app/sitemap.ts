@@ -21,5 +21,5 @@ function getEntry(href: Href) {
 
 function getUrl(href: Href, locale: Locale) {
   const pathname = getPathname({locale, href});
-  return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
+  return host + pathname;
 }

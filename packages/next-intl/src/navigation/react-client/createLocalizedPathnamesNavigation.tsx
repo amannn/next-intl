@@ -4,7 +4,12 @@ import {
   receiveRoutingConfig,
   RoutingConfigLocalizedNavigation
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   compileLocalizedPathname,
@@ -18,10 +23,22 @@ import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
+/**
+ * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ **/
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
->(routing: RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>) {
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing: RoutingConfigLocalizedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  >
+) {
   const config = receiveRoutingConfig(routing);
 
   function useTypedLocale(): AppLocales[number] {

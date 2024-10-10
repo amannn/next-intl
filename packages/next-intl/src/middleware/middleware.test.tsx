@@ -294,6 +294,24 @@ describe('prefix-based routing', () => {
       });
     });
 
+    it('can turn off the cookie', () => {
+      const response = createMiddleware(routing, {localeCookie: false})(
+        createMockRequest('/')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it('restricts which options of the cookie can be customized', () => {
+      createMiddleware(routing, {
+        localeCookie: {
+          // @ts-expect-error
+          httpOnly: true,
+          name: 'custom',
+          value: 'custom'
+        }
+      });
+    });
+
     it('retains request headers for the default locale', () => {
       middleware(
         createMockRequest('/', 'en', 'http://localhost:3000', undefined, {
@@ -1506,7 +1524,7 @@ describe('prefix-based routing', () => {
           'renders a localized pathname where the internal pathname was defined with a trailing slash',
           (pathname) => {
             createMiddleware({
-              defaultLocale: 'en',
+              defaultLocale: 'de',
               locales: ['de'],
               localePrefix: 'always',
               pathnames: {
@@ -1526,7 +1544,7 @@ describe('prefix-based routing', () => {
           'redirects a localized pathname where the internal pathname was defined with a trailing slash',
           (pathname) => {
             createMiddleware({
-              defaultLocale: 'en',
+              defaultLocale: 'de',
               locales: ['de'],
               localePrefix: 'always',
               pathnames: {
@@ -2319,6 +2337,15 @@ describe('domain-based routing', () => {
       );
     });
 
+    it('serves requests for unknown domains based on the global `defaultLocale`', () => {
+      middleware(createMockRequest('/', 'en', 'http://localhost:3000'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
+      );
+    });
+
     it('serves requests for the default locale at sub paths', () => {
       middleware(createMockRequest('/about', 'en', 'http://en.example.com'));
       expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -2364,6 +2391,16 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();
       expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
         'http://ca.example.com/fr/about'
+      );
+    });
+
+    it('removes a superfluous locale prefix of a secondary locale that is the default locale of the domain', () => {
+      middleware(createMockRequest('/fr', 'fr', 'http://fr.example.com'));
+      expect(MockedNextResponse.next).not.toHaveBeenCalled();
+      expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://fr.example.com/'
       );
     });
 
@@ -2432,6 +2469,16 @@ describe('domain-based routing', () => {
         expect(MockedNextResponse.rewrite).toHaveBeenCalled();
         expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
           'http://localhost/fr/about'
+        );
+      });
+
+      it('keeps the host of an unknown domain for easier local development', () => {
+        middleware(createMockRequest('/en', 'en', 'http://localhost:3000'));
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/'
         );
       });
     });

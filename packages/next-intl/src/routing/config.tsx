@@ -3,12 +3,15 @@ import {
   LocalePrefix,
   LocalePrefixConfigVerbose,
   DomainsConfig,
-  Pathnames
+  Pathnames,
+  LocalePrefixMode
 } from './types';
 
 export type RoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 > = {
   /**
    * All available locales.
@@ -26,16 +29,15 @@ export type RoutingConfig<
    * Configures whether and which prefix is shown for a given locale.
    * @see https://next-intl-docs.vercel.app/docs/routing#locale-prefix
    **/
-  localePrefix?: LocalePrefix<AppLocales>;
+  localePrefix?: LocalePrefix<AppLocales, AppLocalePrefixMode>;
 
   /**
    * Can be used to change the locale handling per domain.
    * @see https://next-intl-docs.vercel.app/docs/routing#domains
    **/
-  domains?: DomainsConfig<AppLocales>;
+  domains?: AppDomains;
 } & ([AppPathnames] extends [never]
   ? // https://discord.com/channels/997886693233393714/1278008400533520434
-    // eslint-disable-next-line @typescript-eslint/ban-types
     {}
   : {
       /**
@@ -47,48 +49,71 @@ export type RoutingConfig<
 
 export type RoutingConfigSharedNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppDomains extends DomainsConfig<AppLocales> = never
 > = Omit<
-  RoutingConfig<AppLocales, AppPathnames>,
+  RoutingConfig<AppLocales, AppLocalePrefixMode, never, AppDomains>,
   'defaultLocale' | 'locales' | 'pathnames'
 > &
   Partial<
-    Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale' | 'locales'>
+    Pick<
+      RoutingConfig<AppLocales, never, never, AppDomains>,
+      'defaultLocale' | 'locales'
+    >
   >;
 
 export type RoutingConfigLocalizedNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales>,
+  AppDomains extends DomainsConfig<AppLocales> = never
 > = Omit<
-  RoutingConfig<AppLocales, AppPathnames>,
+  RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>,
   'defaultLocale' | 'pathnames'
 > &
-  Partial<Pick<RoutingConfig<AppLocales, AppPathnames>, 'defaultLocale'>> & {
+  Partial<
+    Pick<
+      RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>,
+      'defaultLocale'
+    >
+  > & {
     pathnames: AppPathnames;
   };
 
 export type ResolvedRoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
-> = Omit<RoutingConfig<AppLocales, AppPathnames>, 'localePrefix'> & {
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+> = Omit<
+  RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>,
+  'localePrefix'
+> & {
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
 };
 
 export function receiveRoutingConfig<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>,
-  Config extends Partial<RoutingConfig<AppLocales, AppPathnames>>
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined,
+  Config extends Partial<
+    RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>
+  >
 >(input: Config) {
   return {
-    ...input,
-    localePrefix: receiveLocalePrefixConfig(input.localePrefix)
+    ...(input as Omit<Config, 'localePrefix'>),
+    localePrefix: receiveLocalePrefixConfig(input?.localePrefix)
   };
 }
 
-export function receiveLocalePrefixConfig<AppLocales extends Locales>(
-  localePrefix?: LocalePrefix<AppLocales>
-): LocalePrefixConfigVerbose<AppLocales> {
-  return typeof localePrefix === 'object'
-    ? localePrefix
-    : {mode: localePrefix || 'always'};
+export function receiveLocalePrefixConfig<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(localePrefix?: LocalePrefix<AppLocales, AppLocalePrefixMode>) {
+  return (
+    typeof localePrefix === 'object'
+      ? localePrefix
+      : {mode: localePrefix || 'always'}
+  ) as LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
 }

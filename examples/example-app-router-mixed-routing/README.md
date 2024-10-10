@@ -7,11 +7,11 @@ An example of how to achieve locale prefixes on public routes while reading the 
 2. [Setting up `next-intl` without i18n routing](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing)
 
 **Relevant parts in app code:**
-1. `src/middleware.ts`: Add a hint if it's a non-public route that we can read in `i18n.ts`.
-2. `src/i18n.ts`: Uses the locale from the pathname segment for public routes or returns a locale from the user profile for internal app routes.
-3. `src/navigation.public.ts`: Navigation APIs that automatically consider the `[locale]` segment for public routes. For internal app routes, the navigation APIs from Next.js should be used directly (see `PublicNavigation.tsx` vs `AppNavigation.tsx`).
+1. `src/middleware.ts`: Only run middleware on public pages that need to be localized.
+2. `src/i18n/request.ts`: Use the locale from the pathname segment for public routes or return a locale from the user profile for internal app routes.
+3. `src/navigation.public.ts`: These are the navigation APIs that automatically consider the `[locale]` segment for public routes. For internal app routes, the navigation APIs from Next.js should be used directly (see `PublicNavigation.tsx` vs `AppNavigation.tsx`).
 
-**Note:** Static rendering is currently not supported on public routes since we need to read a header. If this is a requirement, you could alternatively consider a monorepo setup and build the public and internal app separately. This could be a good alternative anyway, if you'd like to separate the code for the public and the internal app.
+Note that while this approach works fine, you can alternatively also consider a monorepo setup and build the public and internal app separately if you'd like to separate the code for the two apps.
 
 ## Deploy your own
 

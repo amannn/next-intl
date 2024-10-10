@@ -3,14 +3,22 @@ import {
   receiveLocalePrefixConfig,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {Locales} from '../../routing/types';
+import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import ServerLink from './ServerLink';
 import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createSharedPathnamesNavigation<
-  AppLocales extends Locales
->(routing?: RoutingConfigSharedNavigation<AppLocales, never>) {
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing?: RoutingConfigSharedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppDomains
+  >
+) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
 
   function notSupported(hookName: string) {
@@ -23,11 +31,16 @@ export default function createSharedPathnamesNavigation<
 
   function Link(
     props: Omit<
-      ComponentProps<typeof ServerLink<AppLocales>>,
-      'localePrefix' | 'locales'
+      ComponentProps<typeof ServerLink<AppLocales, AppLocalePrefixMode>>,
+      'localePrefix'
     >
   ) {
-    return <ServerLink<AppLocales> localePrefix={localePrefix} {...props} />;
+    return (
+      <ServerLink<AppLocales, AppLocalePrefixMode>
+        localePrefix={localePrefix}
+        {...props}
+      />
+    );
   }
 
   function redirect(

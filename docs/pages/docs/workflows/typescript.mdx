@@ -71,7 +71,6 @@ function Component() {
 To enable this validation, export the formats that you're using in your request configuration:
 
 ```ts filename="i18n/request.ts"
-import {getRequestConfig} from 'next-intl/server';
 import {Formats} from 'next-intl';
 
 export const formats = {
@@ -95,13 +94,7 @@ export const formats = {
   }
 } satisfies Formats;
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
-  return {
-    formats
-  }
-});
+// ...
 ```
 
 Now, a global type definition file in the root of your project can pick up the shape of your formats and use them for declaring the `IntlFormats` interface:

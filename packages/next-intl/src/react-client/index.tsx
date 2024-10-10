@@ -15,7 +15,6 @@ import {
 
 export * from 'use-intl';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function callHook(name: string, hook: Function) {
   return (...args: Array<unknown>) => {
     try {
