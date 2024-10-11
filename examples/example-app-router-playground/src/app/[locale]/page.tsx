@@ -11,6 +11,7 @@ import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
+import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
 import {Link} from '@/i18n/routing';
 
@@ -61,6 +62,7 @@ export default function Index({searchParams}: Props) {
       <AsyncComponentWithNamespaceAndLocale />
       <AsyncComponentWithoutNamespace />
       <AsyncComponentWithoutNamespaceAndLocale />
+      <DropdownMenu />
     </PageLayout>
   );
 }

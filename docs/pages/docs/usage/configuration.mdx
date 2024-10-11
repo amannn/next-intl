@@ -7,7 +7,7 @@ import Details from 'components/Details';
 
 Configuration properties that you use across your Next.js app can be set globally.
 
-## Client- and Server Components [#client-server-components]
+## Server & Client Components [#server-client-components]
 
 Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n/request.ts` or `NextIntlClientProvider` will be applied respectively.
 
@@ -20,15 +20,20 @@ Depending on if you handle [internationalization in Server- or Client Components
 <Tab>
 
 ```tsx filename="i18n/request.ts"
-import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 
-export default getRequestConfig(async ({locale}) => {
-  // Validate that the incoming `locale` parameter is valid
-  if (!routing.locales.includes(locale as any)) notFound();
+export default getRequestConfig(async ({requestLocale}) => {
+  // This typically corresponds to the `[locale]` segment.
+  let locale = await requestLocale;
+
+  // Ensure that a valid locale is used
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
+    locale,
     messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
@@ -72,6 +77,17 @@ const withNextIntl = createNextIntlPlugin(
   './somewhere/else/request.ts'
 );
 ```
+
+</Details>
+
+<Details id="server-request-locale">
+<summary>Which values can the `requestLocale` parameter hold?</summary>
+
+While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
+
+1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
+1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
 
 </Details>
 
@@ -209,11 +225,10 @@ That being said, `next-intl` is agnostic to how you store messages and allows yo
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     messages: (await import(`../../messages/${locale}.json`)).default
+    // ...
   };
 });
 ```
@@ -313,14 +328,14 @@ Specifying a time zone affects the rendering of dates and times. By default, the
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     // The time zone can either be statically defined, read from the
     // user profile if you store such a setting, or based on dynamic
     // request information like the locale or a cookie.
     timeZone: 'Europe/Vienna'
+
+    // ...
   };
 });
 ```
@@ -371,15 +386,15 @@ If you prefer to override the default, you can provide an explicit value for `no
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     // This is the default, a single date instance will be
     // used by all Server Components to ensure consistency.
     // Tip: This value can be mocked to a constant value
     // for consistent results in end-to-end-tests.
     now: new Date()
+
+    // ...
   };
 });
 ```
@@ -423,9 +438,7 @@ To achieve consistent date, time, number and list formatting, you can define a s
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     formats: {
       dateTime: {
@@ -447,6 +460,8 @@ export default getRequestConfig(async ({locale}) => {
         }
       }
     }
+
+    // ...
   };
 });
 ```
@@ -541,14 +556,14 @@ To achieve consistent usage of translation values and reduce redundancy, you can
 ```tsx filename="i18n/request.tsx"
 import {getRequestConfig} from 'next-intl/server';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     defaultTranslationValues: {
       important: (chunks) => <b>{chunks}</b>,
       value: 123
     }
+
+    // ...
   };
 });
 ```
@@ -587,9 +602,7 @@ This behavior can be customized with the `onError` and `getMessageFallback` conf
 import {getRequestConfig} from 'next-intl/server';
 import {IntlErrorCode} from 'next-intl';
 
-export default getRequestConfig(async ({locale}) => {
-  // ...
-
+export default getRequestConfig(async () => {
   return {
     onError(error) {
       if (error.code === IntlErrorCode.MISSING_MESSAGE) {
@@ -600,6 +613,7 @@ export default getRequestConfig(async ({locale}) => {
         reportToErrorTracking(error);
       }
     },
+
     getMessageFallback({namespace, key, error}) {
       const path = [namespace, key].filter((part) => part != null).join('.');
 
@@ -609,6 +623,8 @@ export default getRequestConfig(async ({locale}) => {
         return 'Dear developer, please fix this message: ' + path;
       }
     }
+
+    // ...
   };
 });
 ```

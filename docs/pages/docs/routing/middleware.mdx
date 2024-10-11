@@ -14,6 +14,8 @@ The middleware receives a [`routing`](/docs/routing#define-routing) configuratio
 2. Applying relevant redirects & rewrites
 3. Providing [alternate links](#alternate-links) for search engines
 
+**Example:**
+
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
 import {routing} from './i18n/routing';
@@ -26,7 +28,7 @@ export const config = {
 };
 ```
 
-## Locale detection
+## Locale detection [#locale-detection-overview]
 
 The locale is negotiated based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
 
@@ -99,19 +101,6 @@ The bestmatching domain is detected based on these priorities:
 
 </Details>
 
-<Details id="domain-local-testing">
-<summary>How can I locally test if my setup is working?</summary>
-
-Since the negotiated locale depends on the host of the request, you can test your setup by attaching a corresponding `x-forwarded-host` header. To achieve this in the browser, you can use a browser extension like [ModHeader in Chrome](https://chromewebstore.google.com/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj) and add a setting like:
-
-```
-X-Forwarded-Host: example.com
-```
-
-With this, your domain config for this particular domain will be used.
-
-</Details>
-
 ## Configuration
 
 Apart from the [`routing`](/docs/routing#shared-configuration) configuration that is shared with the [navigation APIs](/docs/routing/navigation), the middleware accepts a few additional options that can be used for customization.
@@ -132,6 +121,44 @@ export default createMiddleware(routing, {
 In this case, only the locale prefix and a potentially [matching domain](#domain-based-routing) are used to determine the locale.
 
 Note that by setting this option, the middleware will no longer return a `set-cookie` response header, which can be beneficial for CDN caching (see e.g. [the Cloudflare Cache rules for `set-cookie`](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache)).
+
+### Locale cookie [#locale-cookie]
+
+By default, the middleware will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to remember the user's locale preference for future requests (see [locale detection](#locale-detection-overview)).
+
+By default, the cookie will be configured with the following attributes:
+
+1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 1 year so that the preference of the user is kept as long as possible.
+2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
+3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
+
+If you have more specific requirements, you can adjust these settings accordingly:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './i18n/routing';
+
+export default createMiddleware(routing, {
+  // These options will be merged with the defaults
+  localeCookie: {
+    // Expire in one day
+    maxAge: 60 * 60 * 24
+  }
+});
+```
+
+… or turn the cookie off entirely:
+
+```tsx filename="middleware.ts"
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './i18n/routing';
+
+export default createMiddleware(routing, {
+  localeCookie: false
+});
+```
+
+Note that the cookie is only set once per detected locale and is not updated on every request.
 
 ### Alternate links [#alternate-links]
 
@@ -559,25 +586,14 @@ Note that other [limitations as documented by Next.js](https://nextjs.org/docs/a
 
 ## Troubleshooting
 
-### "Unable to find `next-intl` locale because the middleware didn't run on this request." [#unable-to-find-locale]
+### "Unable to find `next-intl` locale because the middleware didn't run on this request and no `locale` was returned in `getRequestConfig`." [#unable-to-find-locale]
 
-This can happen either because:
+If the middleware is not expected to run on this request (e.g. because you're using a setup [without i18n routing](/docs/getting-started/app-router/without-i18n-routing)), you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
 
-1. You're using a setup _with_ [i18n routing](/docs/getting-started/app-router) but the middleware is not set up.
-2. You're using a setup _without_ [i18n routing](/docs/getting-started/app-router) but are reading the `locale` param passed to the function within `getRequestConfig` or you're not returning a `locale`.
-3. The middleware is set up in the wrong file (e.g. you're using the `src` folder, but `middleware.ts` was added in the root folder).
-4. The middleware matcher didn't match a request, but you're using APIs from `next-intl` in server code (e.g. a Server Component, a Server Action, etc.).
-5. You're attempting to implement static rendering via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) or [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic) but have not followed [the static rendering guide](/docs/getting-started/app-router/with-i18n-routing#static-rendering).
+If the error occurs for pathnames where the middleware is expected to run, please make sure that:
 
-To recover from this error, please make sure that:
+1. The middleware is set up in the correct file (e.g. `src/middleware.ts`).
+2. Your middleware [matcher](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
+3. In case you require static rendering, make sure to follow the [static rendering guide](/docs/getting-started/app-router/with-i18n-routing#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
-1. You're consistently using a setup with or without [i18n routing](/docs/getting-started/app-router) (i.e. with or without the [routing APIs](/docs/routing)).
-2. If you're using a setup _with_ i18n routing:
-   1. You're using APIs from `next-intl` (including [the navigation APIs](/docs/routing/navigation)) exclusively within the `[locale]` segment.
-   2. Your [middleware matcher](#matcher-config) matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
-   3. If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), the `locale` segment effectively acts like a catch-all for all unknown routes. You should make sure that the `locale` is [validated](/docs/usage/configuration#i18n-request) before it's used by any APIs from `next-intl`.
-   4. To implement static rendering, make sure to [provide a static locale](/docs/getting-started/app-router/with-i18n-routing#static-rendering) to `next-intl` instead of using `force-static`.
-3. If you're using using a setup _without_ i18n routing:
-   1. You don't read the `locale` param in `getRequestConfig` but instead return it.
-
-Note that `next-intl` will invoke the `notFound()` function to abort the render if the locale can't be found. You should consider adding [a `not-found` page](/docs/environments/error-files#not-foundjs) due to this.
+Note that `next-intl` will invoke the `notFound()` function to abort the render if no locale is available after `getRequestConfig` has run. You should consider adding a [`not-found` page](/docs/environments/error-files#not-foundjs) due to this.

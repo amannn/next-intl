@@ -4,19 +4,23 @@ import {
   COOKIE_MAX_AGE,
   COOKIE_SAME_SITE
 } from '../shared/constants';
+import {MiddlewareOptions} from './config';
 
 export default function syncCookie(
   request: NextRequest,
   response: NextResponse,
-  locale: string
+  locale: string,
+  localeCookie: MiddlewareOptions['localeCookie']
 ) {
   const hasOutdatedCookie =
     request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
+
   if (hasOutdatedCookie) {
     response.cookies.set(COOKIE_LOCALE_NAME, locale, {
       path: request.nextUrl.basePath || undefined,
       sameSite: COOKIE_SAME_SITE,
-      maxAge: COOKIE_MAX_AGE
+      maxAge: COOKIE_MAX_AGE,
+      ...(typeof localeCookie === 'object' && localeCookie)
     });
   }
 }

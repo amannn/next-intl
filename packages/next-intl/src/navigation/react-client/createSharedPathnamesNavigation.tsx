@@ -3,25 +3,36 @@ import {
   receiveLocalePrefixConfig,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
-import {Locales} from '../../routing/types';
+import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import ClientLink from './ClientLink';
 import {clientRedirect, clientPermanentRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
+/**
+ * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ **/
 export default function createSharedPathnamesNavigation<
-  const AppLocales extends Locales
->(routing?: RoutingConfigSharedNavigation<AppLocales, never>) {
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing?: RoutingConfigSharedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppDomains
+  >
+) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
 
   type LinkProps = Omit<
-    ComponentProps<typeof ClientLink<AppLocales>>,
+    ComponentProps<typeof ClientLink<AppLocales, AppLocalePrefixMode>>,
     'localePrefix'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
-      <ClientLink<AppLocales>
+      <ClientLink<AppLocales, AppLocalePrefixMode>
         ref={ref}
         localePrefix={localePrefix}
         {...props}
@@ -54,7 +65,7 @@ export default function createSharedPathnamesNavigation<
   }
 
   function useRouter() {
-    return useBaseRouter<AppLocales>(localePrefix);
+    return useBaseRouter<AppLocales, AppLocalePrefixMode>(localePrefix);
   }
 
   return {

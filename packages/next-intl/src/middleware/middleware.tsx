@@ -1,6 +1,11 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {receiveRoutingConfig, RoutingConfig} from '../routing/config';
-import {Locales, Pathnames} from '../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
 import {
   getLocalePrefix,
@@ -26,9 +31,16 @@ import {
 
 export default function createMiddleware<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
 >(
-  routing: RoutingConfig<AppLocales, AppPathnames> &
+  routing: RoutingConfig<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  > &
     // Convenience if `routing` is generated dynamically (i.e. without `defineRouting`)
     MiddlewareOptions,
   options?: MiddlewareOptions
@@ -37,7 +49,8 @@ export default function createMiddleware<
   const resolvedOptions = {
     alternateLinks: options?.alternateLinks ?? routing.alternateLinks ?? true,
     localeDetection:
-      options?.localeDetection ?? routing?.localeDetection ?? true
+      options?.localeDetection ?? routing?.localeDetection ?? true,
+    localeCookie: options?.localeCookie ?? routing?.localeCookie ?? true
   };
 
   return function middleware(request: NextRequest) {
@@ -91,7 +104,7 @@ export default function createMiddleware<
     function redirect(url: string, redirectDomain?: string) {
       const urlObj = new URL(normalizeTrailingSlash(url), request.url);
 
-      if (domainsConfig.length > 0 && !redirectDomain) {
+      if (domainsConfig.length > 0 && !redirectDomain && domain) {
         const bestMatchingDomain = getBestMatchingDomain(
           domain,
           locale,
@@ -156,16 +169,19 @@ export default function createMiddleware<
     let internalTemplateName: keyof AppPathnames | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
-    if ('pathnames' in resolvedRouting) {
+    const pathnames = (resolvedRouting as any).pathnames as
+      | AppPathnames
+      | undefined;
+    if (pathnames) {
       let resolvedTemplateLocale: AppLocales[number] | undefined;
       [resolvedTemplateLocale, internalTemplateName] = getInternalTemplate(
-        resolvedRouting.pathnames,
+        pathnames,
         unprefixedExternalPathname,
         locale
       );
 
       if (internalTemplateName) {
-        const pathnameConfig = resolvedRouting.pathnames[internalTemplateName];
+        const pathnameConfig = pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
@@ -296,8 +312,8 @@ export default function createMiddleware<
       }
     }
 
-    if (resolvedOptions.localeDetection) {
-      syncCookie(request, response, locale);
+    if (resolvedOptions.localeDetection && resolvedOptions.localeCookie) {
+      syncCookie(request, response, locale, resolvedOptions.localeCookie);
     }
 
     if (
@@ -310,8 +326,8 @@ export default function createMiddleware<
         getAlternateLinksHeaderValue({
           routing: resolvedRouting,
           localizedPathnames:
-            internalTemplateName! != null && 'pathnames' in resolvedRouting
-              ? resolvedRouting.pathnames?.[internalTemplateName]
+            internalTemplateName! != null && pathnames
+              ? pathnames?.[internalTemplateName]
               : undefined,
           request,
           resolvedLocale: locale
