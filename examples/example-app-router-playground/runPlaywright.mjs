@@ -5,7 +5,8 @@ const useCases = [
   'locale-prefix-never',
   'trailing-slash',
   'base-path',
-  'domains'
+  'domains',
+  'locale-cookie-false'
 ];
 
 for (const useCase of useCases) {
