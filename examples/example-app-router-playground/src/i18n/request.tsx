@@ -45,10 +45,6 @@ export default getRequestConfig(async ({requestLocale}) => {
     now: now ? new Date(now) : undefined,
     timeZone,
     messages,
-    defaultTranslationValues: {
-      globalString: 'Global string',
-      highlight: (chunks) => <strong>{chunks}</strong>
-    },
     formats,
     onError(error) {
       if (

@@ -215,21 +215,15 @@ it('can use next-intl on the client side', async ({page}) => {
 it('can use rich text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RichText');
-  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
+  expect(await element.innerHTML()).toBe(
+    'This is a <b style="font-weight:bold">rich</b> text.'
+  );
 });
 
 it('can use raw text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RawText');
-  expect(await element.innerHTML()).toBe(
-    'This is a <important>rich</important> text.'
-  );
-});
-
-it('can use global defaults', async ({page}) => {
-  await page.goto('/en');
-  const element = page.getByTestId('GlobalDefaults');
-  expect(await element.innerHTML()).toBe('<strong>Global string</strong>');
+  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
 });
 
 it('can use `getMessageFallback`', async ({page}) => {
@@ -642,7 +636,7 @@ it('can use async APIs in async components', async ({page}) => {
   const element1 = page.getByTestId('AsyncComponent');
   element1.getByText('AsyncComponent');
   expect(await element1.innerHTML()).toContain('This is a <b>rich</b> text.');
-  element1.getByText('Markup with <b>Global string</b>');
+  element1.getByText('Markup with <b>bold content</b>');
 
   page
     .getByTestId('AsyncComponentWithoutNamespace')
