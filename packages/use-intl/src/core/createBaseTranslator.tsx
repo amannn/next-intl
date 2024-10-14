@@ -190,6 +190,29 @@ export default function createBaseTranslator<
   });
 }
 
+const localeFormattedMap: Record<string,string> = {}
+function arrayInsert<T>(tArr: T[], index: number, arr: T[]): T[] {
+  const _tArr = [...tArr];
+  const left = _tArr.splice(0, index),
+      right = _tArr;
+    return [...left, ...arr, ...right];
+}
+
+function formatLocale(locale: string) {
+  if (localeFormattedMap[locale]) return localeFormattedMap[locale];
+  let hasUnderline = locale.indexOf('_') !== -1;
+  // If locale is like 'en_US', transform to 'en-US'
+  locale = locale.replaceAll('_', '-');
+  const localeArr = [...locale];
+  const camelCaseSplitPos = localeArr.findIndex(v=>v.toUpperCase() === v);
+  if (!hasUnderline && camelCaseSplitPos !== -1) {
+    // If locale is like 'enUS', transform to 'en-US'
+    locale = arrayInsert(localeArr, camelCaseSplitPos, ['-']).join('');
+    localeFormattedMap[locale] = locale;
+  }
+  return locale;
+}
+
 function createBaseTranslatorImpl<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -284,7 +307,7 @@ function createBaseTranslatorImpl<
     try {
       messageFormat = formatters.getMessageFormat(
         message,
-        locale,
+        formatLocale(locale),
         convertFormatsToIntlMessageFormat(
           {...globalFormats, ...formats},
           timeZone

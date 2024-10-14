@@ -2,13 +2,15 @@ import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'de'],
+  locales: ['en', 'de', 'enAU', 'en_US'],
   defaultLocale: 'en',
   pathnames: {
     '/': '/',
     '/pathnames': {
       en: '/pathnames',
-      de: '/pfadnamen'
+      de: '/pfadnamen',
+      enAU: '/pathnames',
+      en_US: '/pathnames'
     }
   }
 });
