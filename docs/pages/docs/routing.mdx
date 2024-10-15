@@ -84,7 +84,7 @@ export const routing = defineRouting({
 });
 ```
 
-Additionally, you should you need to adapt your middleware matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix) for this routing strategy to work as expected.
+Additionally, you should adapt your middleware matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix) for this routing strategy to work as expected.
 
 Note that if a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first.
 

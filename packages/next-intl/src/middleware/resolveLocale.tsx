@@ -73,8 +73,8 @@ function getLocaleFromCookie<
   >,
   requestCookies: RequestCookies
 ) {
-  if (routing.localeCookie && requestCookies.has(routing.localeCookie.name!)) {
-    const value = requestCookies.get(routing.localeCookie.name!)?.value;
+  if (routing.localeCookie && requestCookies.has(routing.localeCookie.name)) {
+    const value = requestCookies.get(routing.localeCookie.name)?.value;
     if (value && routing.locales.includes(value)) {
       return value;
     }

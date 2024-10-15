@@ -34,7 +34,9 @@ function callRouter(cb: (router: ReturnType<typeof useBaseRouter>) => void) {
         mode: 'as-needed'
       },
       {
-        name: 'NEXT_LOCALE'
+        name: 'NEXT_LOCALE',
+        maxAge: 31536000,
+        sameSite: 'lax'
       }
     );
     useEffect(() => {

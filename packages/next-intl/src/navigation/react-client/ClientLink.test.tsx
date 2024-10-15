@@ -35,7 +35,9 @@ const MockClientLink = forwardRef(
     <ClientLink
       ref={ref as LegacyRef<HTMLAnchorElement>}
       localeCookie={{
-        name: 'NEXT_LOCALE'
+        name: 'NEXT_LOCALE',
+        maxAge: 31536000,
+        sameSite: 'lax'
       }}
       localePrefix={localePrefix}
       {...rest}

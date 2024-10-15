@@ -156,8 +156,6 @@ export function receiveLocaleCookie(
 ): InitializedLocaleCookieConfig {
   return localeCookie ?? true
     ? {
-        // Reuse the legacy cookie name
-        // https://nextjs.org/docs/advanced-features/i18n-routing#leveraging-the-next_locale-cookie
         name: 'NEXT_LOCALE',
         maxAge: 31536000, // 1 year
         sameSite: 'lax',
@@ -171,7 +169,11 @@ export function receiveLocaleCookie(
 
 export type InitializedLocaleCookieConfig = false | LocaleCookieConfig;
 
-export type LocaleCookieConfig = CookieAttributes;
+export type LocaleCookieConfig = Omit<
+  CookieAttributes,
+  'name' | 'maxAge' | 'sameSite'
+> &
+  Required<Pick<CookieAttributes, 'name' | 'maxAge' | 'sameSite'>>;
 
 export function receiveLocalePrefixConfig<
   AppLocales extends Locales,
