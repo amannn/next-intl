@@ -10,11 +10,13 @@ import React, {
   useState
 } from 'react';
 import useLocale from '../../react-client/useLocale';
+import {InitializedLocaleCookieConfig} from '../../routing/config';
 import syncLocaleCookie from './syncLocaleCookie';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;
   defaultLocale?: string;
+  localeCookie: InitializedLocaleCookieConfig;
   /** Special case for `localePrefix: 'as-needed'` and `domains`. */
   unprefixed?: {
     domains: {[domain: string]: string};
@@ -23,7 +25,16 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
 };
 
 function BaseLink(
-  {defaultLocale, href, locale, onClick, prefetch, unprefixed, ...rest}: Props,
+  {
+    defaultLocale,
+    href,
+    locale,
+    localeCookie,
+    onClick,
+    prefetch,
+    unprefixed,
+    ...rest
+  }: Props,
   ref: ComponentProps<typeof NextLink>['ref']
 ) {
   const curLocale = useLocale();
@@ -52,7 +63,7 @@ function BaseLink(
   const pathname = usePathname() as ReturnType<typeof usePathname> | null;
 
   function onLinkClick(event: MouseEvent<HTMLAnchorElement>) {
-    syncLocaleCookie(pathname, curLocale, locale);
+    syncLocaleCookie(localeCookie, pathname, curLocale, locale);
     if (onClick) onClick(event);
   }
 

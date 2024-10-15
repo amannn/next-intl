@@ -1,7 +1,7 @@
 import {test as it, expect} from '@playwright/test';
 import {assertLocaleCookieValue} from './utils';
 
-it('can use the router', async ({page}) => {
+it('updates the cookie correctly', async ({page}) => {
   await page.goto('/base/path');
   await assertLocaleCookieValue(page, 'en', {path: '/base/path'});
 

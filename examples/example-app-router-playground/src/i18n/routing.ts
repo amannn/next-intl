@@ -50,7 +50,14 @@ export const routing = defineRouting({
       es: '/noticias/justo-en',
       ja: '/ニュース/現在'
     }
-  }
+  },
+  localeCookie:
+    process.env.NEXT_PUBLIC_USE_CASE === 'locale-cookie-false'
+      ? false
+      : {
+          // 200 days
+          maxAge: 200 * 24 * 60 * 60
+        }
 });
 
 export type Pathnames = keyof typeof routing.pathnames;

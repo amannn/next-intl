@@ -168,3 +168,43 @@ describe('localePrefix', () => {
     });
   });
 });
+
+describe('localeCookie', () => {
+  it('can set it to `false`', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: false
+    });
+  });
+
+  it('accepts a custom config', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        domain: 'example.com',
+        expires: new Date(),
+        maxAge: 60 * 60 * 24 * 365,
+        partitioned: true,
+        path: '/',
+        priority: 'high',
+        sameSite: 'strict',
+        secure: true
+      }
+    });
+  });
+
+  it('restricts the available attributes', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
+        httpOnly: true,
+        name: 'custom',
+        value: 'custom'
+      }
+    });
+  });
+});

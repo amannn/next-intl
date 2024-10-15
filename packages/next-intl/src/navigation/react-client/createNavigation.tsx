@@ -106,7 +106,12 @@ export default function createNavigation<
 
           fn(...args);
 
-          syncLocaleCookie(nextPathname, curLocale, nextLocale);
+          syncLocaleCookie(
+            config.localeCookie,
+            nextPathname,
+            curLocale,
+            nextLocale
+          );
         };
       }
 

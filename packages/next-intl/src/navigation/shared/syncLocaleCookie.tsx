@@ -1,8 +1,4 @@
-import {
-  COOKIE_LOCALE_NAME,
-  COOKIE_MAX_AGE,
-  COOKIE_SAME_SITE
-} from '../../shared/constants';
+import {InitializedLocaleCookieConfig} from '../../routing/config';
 import {getBasePath} from './utils';
 
 /**
@@ -11,6 +7,7 @@ import {getBasePath} from './utils';
  * See https://github.com/amannn/next-intl/issues/786.
  */
 export default function syncLocaleCookie(
+  localeCookie: InitializedLocaleCookieConfig,
   pathname: string | null,
   locale: string,
   nextLocale?: string
@@ -18,6 +15,7 @@ export default function syncLocaleCookie(
   const isSwitchingLocale = nextLocale !== locale && nextLocale != null;
 
   if (
+    !localeCookie ||
     !isSwitchingLocale ||
     // Theoretical case, we always have a pathname in a real app,
     // only not when running e.g. in a simulated test environment
@@ -28,9 +26,34 @@ export default function syncLocaleCookie(
 
   const basePath = getBasePath(pathname);
   const hasBasePath = basePath !== '';
-  const path = hasBasePath ? basePath : '/';
+  const defaultPath = hasBasePath ? basePath : '/';
+
+  const {name, ...rest} = localeCookie;
+
+  if (!rest.path) {
+    rest.path = defaultPath;
+  }
+
+  let localeCookieString = `${name}=${nextLocale};`;
+  for (const [key, value] of Object.entries(rest)) {
+    // Map object properties to cookie properties.
+    // Interestingly, `maxAge` corresponds to `max-age`,
+    // while `sameSite` corresponds to `SameSite`.
+    // Also, keys are case-insensitive.
+    const targetKey = key === 'maxAge' ? 'max-age' : key;
+
+    localeCookieString += `${targetKey}`;
+
+    if (typeof value !== 'boolean') {
+      localeCookieString +=
+        '=' + (value instanceof Date ? value.toUTCString() : value);
+    }
+
+    // A trailing ";" is allowed by browsers
+    localeCookieString += ';';
+  }
 
   // Note that writing to `document.cookie` doesn't overwrite all
   // cookies, but only the ones referenced via the name here.
-  document.cookie = `${COOKIE_LOCALE_NAME}=${nextLocale}; path=${path}; max-age=${COOKIE_MAX_AGE}; sameSite=${COOKIE_SAME_SITE}`;
+  document.cookie = localeCookieString;
 }

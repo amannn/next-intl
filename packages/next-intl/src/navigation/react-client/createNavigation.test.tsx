@@ -19,13 +19,19 @@ function mockCurrentLocale(locale: string) {
   }));
 }
 
-function mockLocation(location: Partial<typeof window.location>) {
+function mockLocation(
+  location: Partial<typeof window.location>,
+  basePath?: string
+) {
   delete (global.window as any).location;
   global.window ??= Object.create(window);
   (global.window as any).location = location;
 
   if (location.pathname) {
-    vi.mocked(useNextPathname).mockReturnValue(location.pathname);
+    const pathname = basePath
+      ? location.pathname.replace(basePath, '')
+      : location.pathname;
+    vi.mocked(useNextPathname).mockReturnValue(pathname);
   }
 }
 
@@ -252,6 +258,78 @@ describe("localePrefix: 'always'", () => {
   });
 });
 
+describe("localePrefix: 'always', with `localeCookie`", () => {
+  const {Link, useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always',
+    localeCookie: {
+      maxAge: 60,
+      domain: 'example.com',
+      sameSite: 'strict',
+      expires: new Date('2025-01-01T00:00:00Z'),
+      partitioned: true,
+      path: '/nested',
+      priority: 'high',
+      secure: true
+    }
+  });
+
+  describe('Link', () => {
+    it('uses the provided cookie options', () => {
+      global.document.cookie = 'NEXT_LOCALE=en';
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+      render(
+        <Link href="/" locale="de">
+          Test
+        </Link>
+      );
+      fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=60',
+          'sameSite=strict',
+          'domain=example.com',
+          'expires=Wed, 01 Jan 2025 00:00:00 GMT',
+          'partitioned',
+          'path=/nested',
+          'priority=high',
+          'secure'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
+    });
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('uses the provided cookie options', () => {
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=60',
+          'sameSite=strict',
+          'domain=example.com',
+          'expires=Wed, 01 Jan 2025 00:00:00 GMT',
+          'partitioned',
+          'path=/nested',
+          'priority=high',
+          'secure'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
+    });
+  });
+});
+
 describe("localePrefix: 'always', with `basePath`", () => {
   const {useRouter} = createNavigation({
     locales,
@@ -260,7 +338,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
   });
 
   beforeEach(() => {
-    mockLocation({pathname: '/base/path/en'});
+    mockLocation({pathname: '/base/path/en'}, '/base/path');
   });
 
   describe('useRouter', () => {
@@ -279,6 +357,21 @@ describe("localePrefix: 'always', with `basePath`", () => {
     it('can prefetch', () => {
       invokeRouter((router) => router.prefetch('/test'));
       expect(useNextRouter().prefetch).toHaveBeenCalledWith('/en/test');
+    });
+
+    it('sets the right cookie', () => {
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=31536000',
+          'sameSite=lax',
+          'path=/base/path'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
     });
   });
 });
@@ -460,7 +553,10 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
 
     describe('example.com, defaultLocale: "en"', () => {
       beforeEach(() => {
-        mockLocation({pathname: '/base/path/about', host: 'example.com'});
+        mockLocation(
+          {pathname: '/base/path/about', host: 'example.com'},
+          '/base/path'
+        );
       });
 
       it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
@@ -477,7 +573,10 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
     describe('example.de, defaultLocale: "de"', () => {
       beforeEach(() => {
         mockCurrentLocale('de');
-        mockLocation({pathname: '/base/path/about', host: 'example.de'});
+        mockLocation(
+          {pathname: '/base/path/about', host: 'example.de'},
+          '/base/path'
+        );
       });
 
       it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
@@ -690,7 +789,7 @@ describe("localePrefix: 'never', with `basePath`", () => {
   });
 
   beforeEach(() => {
-    mockLocation({pathname: '/base/path/en'});
+    mockLocation({pathname: '/base/path/en'}, '/base/path');
   });
 
   describe('useRouter', () => {

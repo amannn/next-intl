@@ -1,6 +1,7 @@
 import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
+  receiveLocaleCookie,
   receiveRoutingConfig,
   RoutingConfigLocalizedNavigation
 } from '../../routing/config';
@@ -40,6 +41,7 @@ export default function createLocalizedPathnamesNavigation<
   >
 ) {
   const config = receiveRoutingConfig(routing);
+  const localeCookie = receiveLocaleCookie(routing?.localeCookie);
 
   function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
@@ -56,7 +58,7 @@ export default function createLocalizedPathnamesNavigation<
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ClientLink>,
-    'href' | 'name' | 'localePrefix'
+    'href' | 'name' | 'localePrefix' | 'localeCookie'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: AppLocales[number];
@@ -80,6 +82,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames: config.pathnames
         })}
         locale={locale}
+        localeCookie={localeCookie}
         localePrefix={config.localePrefix}
         {...rest}
       />
@@ -121,7 +124,7 @@ export default function createLocalizedPathnamesNavigation<
   }
 
   function useRouter() {
-    const baseRouter = useBaseRouter(config.localePrefix);
+    const baseRouter = useBaseRouter(config.localePrefix, localeCookie);
     const defaultLocale = useTypedLocale();
 
     return useMemo(

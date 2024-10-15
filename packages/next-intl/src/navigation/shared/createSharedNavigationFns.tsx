@@ -84,7 +84,7 @@ export default function createSharedNavigationFns<
   type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
     Omit<
       ComponentProps<typeof BaseLink>,
-      'href' | 'localePrefix' | 'unprefixed' | 'defaultLocale'
+      'href' | 'localePrefix' | 'unprefixed' | 'defaultLocale' | 'localeCookie'
     > & {
       /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
       href: [AppPathnames] extends [never]
@@ -138,6 +138,7 @@ export default function createSharedNavigationFns<
           pathname: finalPathname
         }}
         locale={locale}
+        localeCookie={config.localeCookie}
         // Provide the minimal relevant information to the client side in order
         // to potentially remove the prefix in case of the `forcePrefixSsr` case
         unprefixed={

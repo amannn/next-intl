@@ -1,3 +1,4 @@
+import type {NextResponse} from 'next/server';
 import {
   Locales,
   LocalePrefix,
@@ -6,6 +7,22 @@ import {
   Pathnames,
   LocalePrefixMode
 } from './types';
+
+type CookieAttributes = Pick<
+  NonNullable<Parameters<typeof NextResponse.prototype.cookies.set>['2']>,
+  | 'maxAge'
+  | 'domain'
+  | 'expires'
+  | 'partitioned'
+  | 'path'
+  | 'priority'
+  | 'sameSite'
+  | 'secure'
+  // Not:
+  // - 'httpOnly' (the client side needs to read the cookie)
+  // - 'name' (the client side needs to know this as well)
+  // - 'value' (only the middleware knows this)
+>;
 
 export type RoutingConfig<
   AppLocales extends Locales,
@@ -36,6 +53,12 @@ export type RoutingConfig<
    * @see https://next-intl-docs.vercel.app/docs/routing#domains
    **/
   domains?: AppDomains;
+
+  /**
+   * Can be used to disable the locale cookie or to customize it.
+   * @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-cookie
+   */
+  localeCookie?: boolean | CookieAttributes;
 } & ([AppPathnames] extends [never]
   ? // https://discord.com/channels/997886693233393714/1278008400533520434
     {}
@@ -87,9 +110,10 @@ export type ResolvedRoutingConfig<
   AppDomains extends DomainsConfig<AppLocales> | undefined
 > = Omit<
   RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>,
-  'localePrefix'
+  'localePrefix' | 'localeCookie'
 > & {
   localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
+  localeCookie: InitializedLocaleCookieConfig;
 };
 
 export function receiveRoutingConfig<
@@ -102,10 +126,33 @@ export function receiveRoutingConfig<
   >
 >(input: Config) {
   return {
-    ...(input as Omit<Config, 'localePrefix'>),
-    localePrefix: receiveLocalePrefixConfig(input?.localePrefix)
+    ...(input as Omit<Config, 'localePrefix' | 'localeCookie'>),
+    localePrefix: receiveLocalePrefixConfig(input?.localePrefix),
+    localeCookie: receiveLocaleCookie(input.localeCookie)
   };
 }
+
+export function receiveLocaleCookie(
+  localeCookie?: boolean | CookieAttributes
+): InitializedLocaleCookieConfig {
+  return localeCookie ?? true
+    ? {
+        // Reuse the legacy cookie name
+        // https://nextjs.org/docs/advanced-features/i18n-routing#leveraging-the-next_locale-cookie
+        name: 'NEXT_LOCALE',
+        maxAge: 31536000, // 1 year
+        sameSite: 'lax',
+        ...(typeof localeCookie === 'object' && localeCookie)
+
+        // `path` needs to be provided based on a detected base path
+        // that depends on the environment when setting a cookie
+      }
+    : false;
+}
+
+export type InitializedLocaleCookieConfig = false | LocaleCookieConfig;
+
+export type LocaleCookieConfig = CookieAttributes & {name: string};
 
 export function receiveLocalePrefixConfig<
   AppLocales extends Locales,
