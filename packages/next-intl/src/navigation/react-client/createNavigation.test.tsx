@@ -503,10 +503,15 @@ describe("localePrefix: 'as-needed'", () => {
         invokeRouter((router) => router[method]('/about', {locale: 'de'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
+
+      it('does not prefix the default locale when being switched to', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
     });
 
     describe('prefetch', () => {
-      it('prefixes with the default locale', () => {
+      it('does not prefix with the default locale', () => {
         invokeRouter((router) => router.prefetch('/about'));
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
       });
