@@ -12,7 +12,6 @@ import {
   matchesPathname,
   normalizeTrailingSlash
 } from '../shared/utils';
-import {MiddlewareOptions} from './config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import syncCookie from './syncCookie';
@@ -40,17 +39,38 @@ export default function createMiddleware<
     AppLocalePrefixMode,
     AppPathnames,
     AppDomains
-  > &
-    // Convenience if `routing` is generated dynamically (i.e. without `defineRouting`)
-    MiddlewareOptions,
-  options?: MiddlewareOptions
+  >,
+  /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
+  options?: {
+    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
+    localeCookie?: RoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >['localeCookie'];
+    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
+    localeDetection?: RoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >['localeDetection'];
+    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
+    alternateLinks?: RoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >['alternateLinks'];
+  }
 ) {
-  const resolvedRouting = receiveRoutingConfig(routing);
-  const resolvedOptions = {
-    alternateLinks: options?.alternateLinks ?? routing.alternateLinks ?? true,
-    localeDetection:
-      options?.localeDetection ?? routing?.localeDetection ?? true
-  };
+  const resolvedRouting = receiveRoutingConfig({
+    ...routing,
+    alternateLinks: options?.alternateLinks ?? routing.alternateLinks,
+    localeDetection: options?.localeDetection ?? routing.localeDetection,
+    localeCookie: options?.localeCookie ?? routing.localeCookie
+  });
 
   return function middleware(request: NextRequest) {
     let unsafeExternalPathname: string;
@@ -69,7 +89,6 @@ export default function createMiddleware<
 
     const {domain, locale} = resolveLocale(
       resolvedRouting,
-      resolvedOptions,
       request.headers,
       request.cookies,
       externalPathname
@@ -311,13 +330,13 @@ export default function createMiddleware<
       }
     }
 
-    if (resolvedOptions.localeDetection && resolvedRouting.localeCookie) {
+    if (resolvedRouting.localeDetection && resolvedRouting.localeCookie) {
       syncCookie(request, response, locale, resolvedRouting.localeCookie);
     }
 
     if (
       resolvedRouting.localePrefix.mode !== 'never' &&
-      resolvedOptions.alternateLinks &&
+      resolvedRouting.alternateLinks &&
       resolvedRouting.locales.length > 1
     ) {
       response.headers.set(

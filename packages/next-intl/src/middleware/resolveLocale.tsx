@@ -9,7 +9,6 @@ import {
   DomainConfig,
   LocalePrefixMode
 } from '../routing/types';
-import {ResolvedMiddlewareOptions} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<AppLocales extends Locales>(
@@ -74,8 +73,8 @@ function getLocaleFromCookie<
   >,
   requestCookies: RequestCookies
 ) {
-  if (routing.localeCookie && requestCookies.has(routing.localeCookie.name)) {
-    const value = requestCookies.get(routing.localeCookie.name)?.value;
+  if (routing.localeCookie && requestCookies.has(routing.localeCookie.name!)) {
+    const value = requestCookies.get(routing.localeCookie.name!)?.value;
     if (value && routing.locales.includes(value)) {
       return value;
     }
@@ -97,7 +96,6 @@ function resolveLocaleFromPrefix<
     >,
     'pathnames'
   >,
-  {localeDetection}: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -114,12 +112,12 @@ function resolveLocaleFromPrefix<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && localeDetection && requestCookies) {
+  if (!locale && routing.localeDetection && requestCookies) {
     locale = getLocaleFromCookie(routing, requestCookies);
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && localeDetection && requestHeaders) {
+  if (!locale && routing.localeDetection && requestHeaders) {
     locale = getAcceptLanguageLocale(
       requestHeaders,
       routing.locales,
@@ -150,7 +148,6 @@ function resolveLocaleFromDomain<
     >,
     'pathnames'
   >,
-  options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -162,7 +159,6 @@ function resolveLocaleFromDomain<
     return {
       locale: resolveLocaleFromPrefix(
         routing,
-        options,
         requestHeaders,
         requestCookies,
         pathname
@@ -190,7 +186,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && options.localeDetection && requestCookies) {
+  if (!locale && routing.localeDetection && requestCookies) {
     const cookieLocale = getLocaleFromCookie(routing, requestCookies);
     if (cookieLocale) {
       if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
@@ -202,7 +198,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && options.localeDetection && requestHeaders) {
+  if (!locale && routing.localeDetection && requestHeaders) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
       domain.locales || routing.locales,
@@ -237,7 +233,6 @@ export default function resolveLocale<
     >,
     'pathnames'
   >,
-  options: ResolvedMiddlewareOptions,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -245,7 +240,6 @@ export default function resolveLocale<
   if (routing.domains) {
     return resolveLocaleFromDomain(
       routing,
-      options,
       requestHeaders,
       requestCookies,
       pathname
@@ -254,7 +248,6 @@ export default function resolveLocale<
     return {
       locale: resolveLocaleFromPrefix(
         routing,
-        options,
         requestHeaders,
         requestCookies,
         pathname

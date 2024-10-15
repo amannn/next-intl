@@ -8,10 +8,10 @@ export default function syncCookie(
   localeCookie: LocaleCookieConfig
 ) {
   const {name, ...rest} = localeCookie;
-  const hasOutdatedCookie = request.cookies.get(name)?.value !== locale;
+  const hasOutdatedCookie = request.cookies.get(name!)?.value !== locale;
 
   if (hasOutdatedCookie) {
-    response.cookies.set(name, locale, {
+    response.cookies.set(name!, locale, {
       path: request.nextUrl.basePath || undefined,
       ...rest
     });

@@ -12,16 +12,16 @@ type CookieAttributes = Pick<
   NonNullable<Parameters<typeof NextResponse.prototype.cookies.set>['2']>,
   | 'maxAge'
   | 'domain'
-  | 'expires'
   | 'partitioned'
   | 'path'
   | 'priority'
   | 'sameSite'
   | 'secure'
+  | 'name'
   // Not:
   // - 'httpOnly' (the client side needs to read the cookie)
-  // - 'name' (the client side needs to know this as well)
   // - 'value' (only the middleware knows this)
+  // - 'expires' (use `maxAge` instead)
 >;
 
 export type RoutingConfig<
@@ -59,6 +59,18 @@ export type RoutingConfig<
    * @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-cookie
    */
   localeCookie?: boolean | CookieAttributes;
+
+  /**
+   * Sets the `Link` response header to notify search engines about content in other languages (defaults to `true`). See https://developers.google.com/search/docs/specialty/international/localized-versions#http
+   * @see https://next-intl-docs.vercel.app/docs/routing/middleware#alternate-links
+   **/
+  alternateLinks?: boolean;
+
+  /**
+   * By setting this to `false`, the cookie as well as the `accept-language` header will no longer be used for locale detection.
+   * @see https://next-intl-docs.vercel.app/docs/routing/middleware#locale-detection
+   **/
+  localeDetection?: boolean;
 } & ([AppPathnames] extends [never]
   ? // https://discord.com/channels/997886693233393714/1278008400533520434
     {}
@@ -110,10 +122,12 @@ export type ResolvedRoutingConfig<
   AppDomains extends DomainsConfig<AppLocales> | undefined
 > = Omit<
   RoutingConfig<AppLocales, AppLocalePrefixMode, AppPathnames, AppDomains>,
-  'localePrefix' | 'localeCookie'
+  'localePrefix' | 'localeCookie' | 'alternateLinks' | 'localeDetection'
 > & {
   localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
   localeCookie: InitializedLocaleCookieConfig;
+  alternateLinks: boolean;
+  localeDetection: boolean;
 };
 
 export function receiveRoutingConfig<
@@ -126,9 +140,14 @@ export function receiveRoutingConfig<
   >
 >(input: Config) {
   return {
-    ...(input as Omit<Config, 'localePrefix' | 'localeCookie'>),
+    ...(input as Omit<
+      Config,
+      'localePrefix' | 'localeCookie' | 'localeDetection' | 'alternateLinks'
+    >),
     localePrefix: receiveLocalePrefixConfig(input?.localePrefix),
-    localeCookie: receiveLocaleCookie(input.localeCookie)
+    localeCookie: receiveLocaleCookie(input.localeCookie),
+    localeDetection: input.localeDetection ?? true,
+    alternateLinks: input.alternateLinks ?? true
   };
 }
 
@@ -152,7 +171,7 @@ export function receiveLocaleCookie(
 
 export type InitializedLocaleCookieConfig = false | LocaleCookieConfig;
 
-export type LocaleCookieConfig = CookieAttributes & {name: string};
+export type LocaleCookieConfig = CookieAttributes;
 
 export function receiveLocalePrefixConfig<
   AppLocales extends Locales,

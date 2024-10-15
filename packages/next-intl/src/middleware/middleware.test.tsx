@@ -3315,3 +3315,16 @@ describe('domain-based routing', () => {
     });
   });
 });
+
+describe('deprecated middleware options', () => {
+  it('still accepts them', () => {
+    createMiddleware(
+      {locales: ['en'], defaultLocale: 'en'},
+      {
+        localeDetection: false,
+        alternateLinks: false,
+        localeCookie: false
+      }
+    );
+  });
+});

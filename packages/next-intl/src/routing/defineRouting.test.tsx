@@ -183,8 +183,8 @@ describe('localeCookie', () => {
       locales: ['en'],
       defaultLocale: 'en',
       localeCookie: {
+        name: 'custom',
         domain: 'example.com',
-        expires: new Date(),
         maxAge: 60 * 60 * 24 * 365,
         partitioned: true,
         path: '/',
@@ -201,9 +201,25 @@ describe('localeCookie', () => {
       defaultLocale: 'en',
       localeCookie: {
         // @ts-expect-error
-        httpOnly: true,
-        name: 'custom',
+        httpOnly: true
+      }
+    });
+
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
         value: 'custom'
+      }
+    });
+
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
+        expires: 123
       }
     });
   });

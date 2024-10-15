@@ -45,8 +45,7 @@ export default function syncLocaleCookie(
     localeCookieString += `${targetKey}`;
 
     if (typeof value !== 'boolean') {
-      localeCookieString +=
-        '=' + (value instanceof Date ? value.toUTCString() : value);
+      localeCookieString += '=' + value;
     }
 
     // A trailing ";" is allowed by browsers
