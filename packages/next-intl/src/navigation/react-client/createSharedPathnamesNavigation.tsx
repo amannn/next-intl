@@ -1,5 +1,6 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
+  receiveLocaleCookie,
   receiveLocalePrefixConfig,
   RoutingConfigSharedNavigation
 } from '../../routing/config';
@@ -25,15 +26,17 @@ export default function createSharedPathnamesNavigation<
   >
 ) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
+  const localeCookie = receiveLocaleCookie(routing?.localeCookie);
 
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<AppLocales, AppLocalePrefixMode>>,
-    'localePrefix'
+    'localePrefix' | 'localeCookie'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
       <ClientLink<AppLocales, AppLocalePrefixMode>
         ref={ref}
+        localeCookie={localeCookie}
         localePrefix={localePrefix}
         {...props}
       />
@@ -65,7 +68,10 @@ export default function createSharedPathnamesNavigation<
   }
 
   function useRouter() {
-    return useBaseRouter<AppLocales, AppLocalePrefixMode>(localePrefix);
+    return useBaseRouter<AppLocales, AppLocalePrefixMode>(
+      localePrefix,
+      localeCookie
+    );
   }
 
   return {

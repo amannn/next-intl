@@ -1,26 +1,19 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {
-  COOKIE_LOCALE_NAME,
-  COOKIE_MAX_AGE,
-  COOKIE_SAME_SITE
-} from '../shared/constants';
-import {MiddlewareOptions} from './config';
+import {LocaleCookieConfig} from '../routing/config';
 
 export default function syncCookie(
   request: NextRequest,
   response: NextResponse,
   locale: string,
-  localeCookie: MiddlewareOptions['localeCookie']
+  localeCookie: LocaleCookieConfig
 ) {
-  const hasOutdatedCookie =
-    request.cookies.get(COOKIE_LOCALE_NAME)?.value !== locale;
+  const {name, ...rest} = localeCookie;
+  const hasOutdatedCookie = request.cookies.get(name)?.value !== locale;
 
   if (hasOutdatedCookie) {
-    response.cookies.set(COOKIE_LOCALE_NAME, locale, {
+    response.cookies.set(name, locale, {
       path: request.nextUrl.basePath || undefined,
-      sameSite: COOKIE_SAME_SITE,
-      maxAge: COOKIE_MAX_AGE,
-      ...(typeof localeCookie === 'object' && localeCookie)
+      ...rest
     });
   }
 }

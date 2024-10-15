@@ -24,13 +24,21 @@ const MockClientLink = forwardRef(
     {
       localePrefix = {mode: 'always'},
       ...rest
-    }: Omit<ComponentProps<typeof ClientLink>, 'localePrefix'> & {
+    }: Omit<
+      ComponentProps<typeof ClientLink>,
+      'localePrefix' | 'localeCookie'
+    > & {
       localePrefix?: LocalePrefixConfigVerbose<any, any>;
     },
     ref
   ) => (
     <ClientLink
       ref={ref as LegacyRef<HTMLAnchorElement>}
+      localeCookie={{
+        name: 'NEXT_LOCALE',
+        maxAge: 31536000,
+        sameSite: 'lax'
+      }}
       localePrefix={localePrefix}
       {...rest}
     />

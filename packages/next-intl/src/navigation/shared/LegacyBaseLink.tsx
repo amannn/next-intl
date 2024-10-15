@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import useLocale from '../../react-client/useLocale';
+import {InitializedLocaleCookieConfig} from '../../routing/config';
 import {LocalePrefixMode} from '../../routing/types';
 import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
 import BaseLink from './BaseLink';
@@ -12,10 +13,11 @@ type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;
   prefix: string;
   localePrefixMode: LocalePrefixMode;
+  localeCookie: InitializedLocaleCookieConfig;
 };
 
 function LegacyBaseLink(
-  {href, locale, localePrefixMode, prefix, ...rest}: Props,
+  {href, locale, localeCookie, localePrefixMode, prefix, ...rest}: Props,
   ref: Props['ref']
 ) {
   // The types aren't entirely correct here. Outside of Next.js
@@ -48,7 +50,15 @@ function LegacyBaseLink(
     setLocalizedHref(localizeHref(href, locale, curLocale, pathname, prefix));
   }, [curLocale, href, locale, pathname, prefix]);
 
-  return <BaseLink ref={ref} href={localizedHref} locale={locale} {...rest} />;
+  return (
+    <BaseLink
+      ref={ref}
+      href={localizedHref}
+      locale={locale}
+      localeCookie={localeCookie}
+      {...rest}
+    />
+  );
 }
 
 const LegacyBaseLinkWithRef = forwardRef(LegacyBaseLink);

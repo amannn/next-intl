@@ -37,7 +37,7 @@ export default function createLocalizedPathnamesNavigation<
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ServerLink>,
-    'href' | 'name' | 'localePrefix'
+    'href' | 'name' | 'localePrefix' | 'localeCookie'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: AppLocales[number];
@@ -61,6 +61,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames: config.pathnames
         })}
         locale={locale}
+        localeCookie={config.localeCookie}
         localePrefix={config.localePrefix}
         {...rest}
       />

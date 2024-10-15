@@ -6,7 +6,8 @@ import {pathToRegexp} from 'path-to-regexp';
 import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
 import createMiddleware from '../middleware';
 import {defineRouting, Pathnames} from '../routing';
-import {COOKIE_LOCALE_NAME} from '../shared/constants';
+
+const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 
 vi.mock('next/server', async (importActual) => {
   const ActualNextServer = (await importActual()) as any;
@@ -295,14 +296,15 @@ describe('prefix-based routing', () => {
     });
 
     it('can turn off the cookie', () => {
-      const response = createMiddleware(routing, {localeCookie: false})(
+      const response = createMiddleware({...routing, localeCookie: false})(
         createMockRequest('/')
       );
       expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
     });
 
     it('restricts which options of the cookie can be customized', () => {
-      createMiddleware(routing, {
+      createMiddleware({
+        ...routing,
         localeCookie: {
           // @ts-expect-error
           httpOnly: true,
@@ -3311,5 +3313,18 @@ describe('domain-based routing', () => {
         );
       });
     });
+  });
+});
+
+describe('deprecated middleware options', () => {
+  it('still accepts them', () => {
+    createMiddleware(
+      {locales: ['en'], defaultLocale: 'en'},
+      {
+        localeDetection: false,
+        alternateLinks: false,
+        localeCookie: false
+      }
+    );
   });
 });
