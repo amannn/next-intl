@@ -130,12 +130,12 @@ module.exports = withNextra({
       permanent: true
     },
     {
-      source: '/examples/minimal',
+      source: '/examples/advanced',
       destination: '/examples',
       permanent: true
     },
     {
-      source: '/examples/advanced',
+      source: '/examples/minimal',
       destination: '/examples',
       permanent: true
     }
