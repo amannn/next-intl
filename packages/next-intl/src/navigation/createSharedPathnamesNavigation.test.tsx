@@ -9,6 +9,7 @@ import {
 import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {it, describe, vi, expect, beforeEach} from 'vitest';
+import {defineRouting} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocale';
 import {getLocalePrefix} from '../shared/utils';
 import createSharedPathnamesNavigationClient from './react-client/createSharedPathnamesNavigation';
@@ -69,10 +70,12 @@ describe.each([
   'createSharedPathnamesNavigation ($env)',
   ({implementation: createSharedPathnamesNavigation}) => {
     describe("localePrefix: 'always'", () => {
-      const {Link} = createSharedPathnamesNavigation({
+      const routing = defineRouting({
         locales,
+        defaultLocale: 'en',
         localePrefix: 'always'
       });
+      const {Link} = createSharedPathnamesNavigation(routing);
 
       describe('Link', () => {
         it('renders a prefix for the default locale', () => {
@@ -509,6 +512,19 @@ describe.each([
               </Link>
             )
           ).toContain('href="/en/about"');
+        });
+      });
+    });
+
+    describe('type tests', () => {
+      it("doesn't accept `pathnames`", () => {
+        createSharedPathnamesNavigation({
+          locales: ['en'],
+          defaultLocale: 'en',
+          // @ts-expect-error
+          pathnames: {
+            '/': '/'
+          }
         });
       });
     });

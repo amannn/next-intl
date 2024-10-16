@@ -2,12 +2,12 @@
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {pathnames} from '@/config';
-import {Link} from '@/navigation';
+import {Link, Pathnames} from '@/i18n/routing';
 
-export default function NavigationLink<
-  Pathname extends keyof typeof pathnames
->({href, ...rest}: ComponentProps<typeof Link<Pathname>>) {
+export default function NavigationLink<Pathname extends Pathnames>({
+  href,
+  ...rest
+}: ComponentProps<typeof Link<Pathname>>) {
   const selectedLayoutSegment = useSelectedLayoutSegment();
   const pathname = selectedLayoutSegment ? `/${selectedLayoutSegment}` : '/';
   const isActive = pathname === href;

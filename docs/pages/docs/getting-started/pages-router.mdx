@@ -30,7 +30,7 @@ export default function App({Component, pageProps}) {
 }
 ```
 
-4. Provide messages on a page-level.
+4. Provide messages on a page-level
 
 ```js filename="pages/index.tsx"
 export async function getStaticProps(context) {
@@ -53,7 +53,7 @@ Even if you only support a single language, `next-intl` can still be helpful to 
 
 1. `npm install next-intl`
 
-2. Add the provider in `_app.tsx`.
+2. Add the provider in `_app.tsx`
 
 ```jsx filename="_app.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
@@ -71,7 +71,7 @@ export default function App({Component, pageProps}) {
 }
 ```
 
-3. Provide messages on a page-level.
+3. Provide messages on a page-level
 
 ```js filename="pages/index.tsx"
 export async function getStaticProps() {
@@ -87,7 +87,7 @@ export async function getStaticProps() {
 }
 ```
 
-5. Use translations in your components!
+4. Use translations in your components!
 
 </Tab>
 </Tabs>
@@ -109,3 +109,9 @@ export async function getStaticProps() {
 </ul>
 
 </Callout>
+
+## Support for legacy Next.js versions
+
+Next.js version 10, 11 and 12 are still supported. Note however that instead of installing `next-intl`, you'll have to import functionality like `useTranslations` from [`use-intl`](/docs/environments/core-library#react-apps).
+
+See the [legacy example](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router-legacy).

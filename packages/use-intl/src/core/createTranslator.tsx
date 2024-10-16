@@ -65,7 +65,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -85,7 +85,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -105,7 +105,7 @@ export default function createTranslator<
   >(
     key: TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`
@@ -125,6 +125,24 @@ export default function createTranslator<
   >(
     key: TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): boolean;
 } {
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045

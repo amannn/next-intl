@@ -1,0 +1,329 @@
+---
+title: Reliable date formatting in Next.js
+---
+
+import {Tweet} from 'react-tweet';
+
+# Reliable date formatting in Next.js
+
+<small>Sep 25, 2024 · by Jan Amann</small>
+
+Let's take a look at the following component:
+
+```tsx
+import {formatDistance} from 'date-fns';
+
+type Props = {
+  published: Date;
+};
+
+export default function BlogPostPublishedDate({published}: Props) {
+  const now = new Date();
+
+  // ... is this ok? 🤔
+  return <p>{formatDistance(published, now, {addSuffix: true})}</p>;
+}
+```
+
+A quick local test of this component renders the expected result:
+
+```
+1 hour ago
+```
+
+So, should we push this to production?
+
+Hmm, wait—something feels a bit off here. Let's take a closer look together.
+
+## Environment differences
+
+Since this component neither uses any interactive features of React like `useState`, nor does it read from server-side data sources, it can be considered a [shared component](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#sharing-code-between-server-and-client). This means that depending on where the component is being imported from, it may render as either a Server Component or a Client Component.
+
+Let's consider where the component renders in either case:
+
+| Type             | Server | Client |
+| ---------------- | ------ | ------ |
+| Server Component | ✅     |        |
+| Client Component | ✅     | ✅     |
+
+Now the good news is that if we render this component as a Server Component, there's only one environment to consider: _the server_. The final markup is generated there, and this is what the user will see.
+
+When it comes to Client Components, the situation is a bit more complex. Since the server and the client likely have a different local time when the component is rendered, we can already anticipate that this component may render inconsistently depending on the environment.
+
+There's some interesting nuance here as well: Since our component qualifies as a shared component, it can run in either environment. Even if the developer originally intended the component to run as a Server Component, it may silently switch to a Client Component if it gets imported into a Client Component in the future—leading to the additional rendering environment to consider.
+
+## Hydration mismatches
+
+Let's take a closer look at what happens when `BlogPostPublishedDate` renders as a Client Component.
+
+In this case, the value for `now` will always differ between the server and client, due to the latency between these two environments. Depending on factors like caching, the difference may be even significant.
+
+```tsx
+// Server: "1 hour ago"
+formatDistance(published, now, {addSuffix: true})}
+
+// Client: "8 days ago"
+formatDistance(published, now, {addSuffix: true})}
+```
+
+React is not particularly happy when it encounters such a situation:
+
+> Text content does not match server-rendered HTML
+
+We'll likely get better error reporting for this type of error in [Next.js 15](https://nextjs.org/blog/next-15-rc#hydration-error-improvements) (yay!), but the error still won't vanish by itself—or at least not yet. Interestingly, there's a discussion about React patching the `Date` object in the future, which could potentially help to mitigate this issue.
+
+<Tweet id="1785691330988986587" />
+
+This is however not the case currently, and there's a also bit more to it—so let's move on for now.
+
+## Purity
+
+The crucial part of the component is here:
+
+```tsx
+const now = new Date();
+```
+
+If you've been using React for a while, you may be familiar with the necessity of components being _pure_.
+
+Quoting from the React docs, we can [keep a component pure](https://react.dev/learn/keeping-components-pure) by considering these two aspects:
+
+> **It minds its own business:** It does not change any objects or variables that existed before it was called.
+> **Same inputs, same output:** Given the same inputs, a pure function should always return the same result.
+
+Since the component is reading from the constantly changing `new Date()` constructor during rendering, it violates the principle of "same inputs, same output". React components require functional purity to ensure consistent output when being re-rendered (which can happen at any time and often without the user explicitly asking the UI to update).
+
+But is this true for all components? In fact, with the introduction of Server Components, there's a new type of component in town that doesn't have the restriction of "same inputs, same output". Server Components can for instance fetch data, making their output reliant on the state of an external system. This is fine, because Server Components only generate an output once—_on the server_.
+
+So what does this mean for our component?
+
+## Leveraging Server Components
+
+Right, you may have guessed it: We can move the creation of the `now` variable to a Server Component and pass it down as a prop.
+
+```tsx filename="page.tsx"
+import BlogPostPublishedDate from './BlogPostPublishedDate';
+
+export default function BlogPostPage() {
+  // ✅ Is only called on the server
+  const now = new Date();
+
+  const published = ...;
+
+  return <BlogPostPublishedDate now={now} published={published} />;
+}
+```
+
+Pages in Next.js render as Server Components by default, so if we don't see a `'use client'` directive in this file, we can be sure that the `now` variable is only created on the server side.
+
+The `now` prop that we're passing to `BlogPostPublishedDate` is an instance of `Date` that can naturally be [serialized](https://react.dev/reference/rsc/use-client#serializable-types) by React. This means that we can pick it up in our component—both when executing on the server, as well as on the client.
+
+It's worth mentioning that the published date will now update based on the caching rules of the page, therefore if your page renders statically, you might want to consider introducing a [`revalidate`](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration) interval.
+
+There's an argument that you might even _want_ to render an updated date on the client side—however, this approach comes with trade-offs. Since the final render now depends on your app's hydration, this can lead to a noticable "flicker" or layout shift as the content updates, affecting core web vitals like [Largest Contentful Paint (LCP)](https://web.dev/articles/lcp) and [Cumulative Layout Shift (CLS)](https://web.dev/articles/cls). Due to this, getting the initial render on the server side right might still be preferable.
+
+Are we done yet?
+
+## What time is it?
+
+What if we have more components that rely on the current time? We could instantiate the `now` variable in each component that needs it, but if you consider that even during a single render pass there can be timing differences, this might result in inconsistencies if you're working with dates that require precision.
+
+An option to ensure that a single `now` value is used across all components that render as part of a single request is to use the [`cache()`](https://react.dev/reference/react/cache) function from React:
+
+```tsx filename="getNow.ts"
+import {cache} from 'react';
+
+// The first component that calls `getNow()` will
+// trigger the creation of the `Date` instance.
+const getNow = cache(() => new Date());
+
+export default getNow;
+```
+
+… and use it in our page component:
+
+```tsx filename="page.tsx"
+import getNow from './getNow';
+
+export default function BlogPostPage() {
+  // ✅ Will be consistent for the current request,
+  // regardless of the timing of different calls
+  const now = getNow();
+  // ...
+}
+```
+
+Now, the first component to call `getNow()` will trigger the creation of the `Date` instance. The instance is now bound to the request and will be reused across all subsequent calls to `getNow()`.
+
+Well, are we done now?
+
+## Where are we?
+
+We've carefully ensured that our app is free of hydration mismatches and have established consistent time handling across all components. But what happens if we decide one day that we don't want to render a relative time like "2 days ago", but a specific date like "Sep 25, 2024"?
+
+```tsx
+import {format} from 'date-fns';
+
+type Props = {
+  published: Date;
+};
+
+export default function BlogPostPublishedDate({published}: Props) {
+  // `now` is no longer needed? 🤔
+  return <p>{format(published, 'MMM d, yyyy')}</p>;
+}
+```
+
+A quick local test shows that everything seems fine, so let's push this to production.
+
+> Text content does not match server-rendered HTML
+
+Back to square one.
+
+What's happening here? While our local test worked fine, we're suddenly getting an error in production.
+
+The reason for this is: **Time zones**.
+
+## Handling time zones
+
+While we, as performance-oriented developers, try to serve our app from a location that's close to the user, we can't expect that the server and the client share the same time zone. This means that the call to `format` can lead to different results on the server and the client.
+
+In our case, this can lead to different dates being displayed. Even more intricate: Only at certain times of the day, where the time zone difference is significant enough between the two environments.
+
+A bug like this can involve quite some detective work. I've learned this first hand, having written more than one lengthy pull request description, containing fixes for such issues in apps I've worked on.
+
+To fix our new bug, the solution is similar to the one we've used for the `now` variable: We can create a `timeZone` variable in a Server Component and use that as the source of truth.
+
+```tsx filename="page.tsx"
+export default function BlogPostPage() {
+  // ...
+
+  // Use the time zone of the server
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return <BlogPostPublishedDate timeZone={timeZone} published={published} />;
+}
+```
+
+To incorporate this into our date formatting, we can use the `date-fns-tz` package, which wraps `date-fns` and adds support for formatting dates in a given time zone.
+
+```tsx
+import {format} from 'date-fns-tz';
+
+type Props = {
+  published: Date;
+  timeZone: string;
+};
+
+export default function BlogPostPublishedDate({published, timeZone}: Props) {
+  return <p>{format(published, timeZone, 'MMM d, yyyy')}</p>;
+}
+```
+
+Sticking to a single time zone for your app is definitely the easiest solution here. However, in case you'd like to format dates in the user's time zone, a reasonable approach might require having the time zone available on the server side so that it can be used in server-only code.
+
+As browsers don't include the time zone of the user in an HTTP request, one way to get an approximation of the user's time zone is to use geographical information from the user's IP address. In case you're running your app on Vercel, the [`x-vercel-ip-timezone`](https://vercel.com/docs/edge-network/headers#x-vercel-ip-timezone) request header can be used as a convenient way to retrieve this value. However, it's important to note that this is only an approximation, so letting the user choose their time zone explicitly might still be sensible.
+
+## Localized date formatting
+
+So far, we've assumed that our app will be used by American English users, with dates being formatted like:
+
+```
+Sep 25, 2024
+```
+
+Our situation gets interesting again, once we consider that the date format is not universal. In Great Britain, for instance, the same date might be formatted as "19 Sept 2024", with the day and month being swapped.
+
+In case we want to localize our app to another language, or even support multiple languages, we now need to consider the _locale_ of the user. Simply put, a locale represents the language of the user, optionally combined with additional information like the region (e.g. `en-GB` represents English as spoken in Great Britain).
+
+To address this new requirement, you might already have a hunch where this is going.
+
+Ensuring consistent date formatting across the server and client requires that we'll create a `locale` variable in a Server Component and pass it down to relevant components. This can in turn be used by a library like `date-fns-tz` to format the date accordingly.
+
+```tsx
+import {format} from 'date-fns-tz';
+
+type Props = {
+  published: Date;
+  timeZone: string;
+  locale: string;
+};
+
+export default function BlogPostPublishedDate({
+  published,
+  timeZone,
+  locale
+}: Props) {
+  return <p>{format(published, timeZone, 'MMM d, yyyy', {locale})}</p>;
+}
+```
+
+It's important to pass the `locale` to all formatting calls now, as this can differ by environment—just like the `timeZone` and our value for `now` from earlier.
+
+## Can `next-intl` help?
+
+The main problem we've addressed in this post revolves around hydration mismatches that occur when formatting dates across the server and client in Next.js applications. To avoid these errors, we need to ensure that three key environment properties are shared across the entire app:
+
+1. `now`: A single, shared timestamp representing the current time
+2. `timeZone`: Geographical location of the user, affecting date offsets
+3. `locale`: Language and regional settings for localization
+
+Since you're reading this post on the `next-intl` blog, you've probably already guessed that we have an opinion on this subject. Note that this is not at all a critizism of libraries like `date-fns` & friends. On the contrary, I can only recommend these packages.
+
+The challenge we've discussed in this post is rather about the centralization and distribution of environment configuration across a Next.js app, involving interleaved rendering across the server and client that is required for formatting dates consistently. Even when only supporting a single language within your app, this already requires careful consideration.
+
+`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) module that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
+
+```tsx filename="src/i18n/request.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => ({
+  // (defaults to the current time)
+  now: new Date(),
+
+  // (defaults to the server's time zone)
+  timeZone: 'Europe/Berlin',
+
+  // (requires an explicit preference)
+  locale: 'en'
+
+  // ...
+}));
+```
+
+Note that, as the name of `getRequestConfig` implies, the configuration object can be created per request, allowing for dynamic configuration based on a given user's preferences.
+
+This can now be used to format dates in components—at any point of the server-client spectrum:
+
+```tsx
+import {useFormatter} from 'next-intl';
+
+type Props = {
+  published: Date;
+};
+
+export default function BlogPostPublishedDate({published}: Props) {
+  // ✅ Works in any environment
+  const format = useFormatter();
+
+  // "Sep 25, 2024"
+  format.dateTime(published);
+
+  // "8 days ago"
+  format.relativeTime(published);
+}
+```
+
+Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout), commonly placed in the root layout of your app, inherits this configuration and makes it available to all client-side code.
+
+As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This configuration is then passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
+
+---
+
+**Related resources**
+
+While the main focus of this post was on date formatting, there are a few related resources that I can recommend if you're interested in digging deeper into the topic:
+
+1. [API and JavaScript Date Gotcha's](https://www.solberg.is/api-dates) by [Jökull Solberg](https://x.com/jokull)
+2. [The Problem with Time & Timezones](https://www.youtube.com/watch?v=-5wpm-gesOY) by [Computerphile](https://www.youtube.com/@Computerphile)
+3. [`date-fns`](https://date-fns.org/) by [Sasha Koss](https://x.com/kossnocorp)

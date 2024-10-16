@@ -158,6 +158,7 @@ describe("localePrefix: 'as-needed'", () => {
       });
 
       function Component() {
+        // eslint-disable-next-line react-compiler/react-compiler
         const pathname = createLocalizedPathnamesNavigation({
           locales,
           pathnames: {
@@ -233,6 +234,7 @@ describe("localePrefix: 'as-needed'", () => {
       function Component() {
         const router = useRouter();
         const initialRouter = useRef(router);
+        // eslint-disable-next-line react-compiler/react-compiler
         return String(router === initialRouter.current);
       }
       const {rerender} = render(<Component />);

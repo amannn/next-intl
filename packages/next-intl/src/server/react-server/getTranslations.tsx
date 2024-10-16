@@ -43,7 +43,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -63,7 +63,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -83,7 +83,7 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`
@@ -103,6 +103,24 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: [TargetKey] extends [never] ? string : TargetKey
+  ): boolean;
 }>;
 // CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
@@ -132,7 +150,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `rich`
@@ -152,7 +170,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string | ReactElement | ReactNodeArray;
 
   // `markup`
@@ -172,7 +190,7 @@ Promise<{
   >(
     key: TargetKey,
     values?: MarkupTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ): string;
 
   // `raw`

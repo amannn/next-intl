@@ -697,6 +697,11 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can use `t.has` in a Server Component', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByTestId('HasTitle')).toHaveText('true');
+});
+
 describe('server actions', () => {
   it('can use `getTranslations` in server actions', async ({page}) => {
     await page.goto('/actions');

@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.17.5",
+  "version": "3.21.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -105,6 +105,7 @@
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
     "eslint-plugin-deprecation": "^3.0.0",
+    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "publint": "^0.2.8",

@@ -24,11 +24,12 @@ On top of this come typical app problems like:
 
 1. **Rich text formatting**: Many apps need to support some way of rich text, e.g. to embed links into text labels ("Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
 2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
-3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also to make sure the rendered result is in sync across the server and client. Potentially, you also need a mechanism to update the displayed time regularly.
+3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also requires a consistent reference value for the current time. Potentially, you also need a mechanism to update the displayed time regularly.
 4. **Localized URLs**: URLs should be localized to match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish). Implementation-wise this requires mapping incoming requests to the right pages and providing streamlined APIs for developers to link between pages in a locale-agnostic way.
 5. **Language negotiation**: The user's language preference should be detected based on browser settings, but should also be manually configurable—even if a user hasn't signed in.
 6. **SEO**: Search engines need to be informed about [localized versions of your pages](https://developers.google.com/search/docs/specialty/international/localized-versions) in order to present the best-matching content to your users.
-7. **Country-specifics**: If you provide services or products in different countries, you might need to consider country-specifics like different currencies.
+7. **Country-specifics**: If you provide services or products in different countries, you might need to consider aspects like different currencies and units of measurement.
+8. **Environment differences**: Your components might execute on the server, the client, or both. To achieve [consistent rendering](/blog/date-formatting-nextjs) across different environments, you need to ensure your whole app has unified access to properties like the user locale, time zone and a reference value for the current time.
 
 Considering this list, it might be apparent how large the problem space is and how interconnected different pieces of internationalization are.
 
@@ -54,7 +55,7 @@ For text formatting, `next-intl` is based on [International Components for Unico
 
 By being based on standards, `next-intl` ensures that your internationalization code is future-proof and feels familiar to developers who have existing experience with internationalization. Additionally, relying on standards ensures that `next-intl` integrates well with translation management systems like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
 
-`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
+`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript#messages). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
 
 As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
 
@@ -70,7 +71,7 @@ Typical apps require some of the following integrations:
 
 These are typically used to manage translations and to [collaborate with translators](/docs/workflows/localization-management). Services like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink> provide a wide range of features, allowing translators to work in a web-based interface on translations, while providing different mechanisms to sync translations with your app.
 
-`next-intl` integrates well with these services as it uses ICU message syntax for defining text labels, which is a widely supported standard. The recommended way to store messages is in JSON files that are structured by locale since this is a popular format that can be imported into a TMS. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
+`next-intl` integrates well with these services as it uses ICU message syntax for defining text labels, which is a widely supported standard. The recommended way to store messages is in JSON files that are structured by locale since this is a popular format that can be imported into a TMS. While it's recommended to have at least the messages for the default locale available locally (e.g. for [type-safe messages](/docs/workflows/typescript#messages)), you can also load messages dynamically, e.g. from a CDN that your TMS provides.
 
 **Content Management Systems (CMS)**
 
@@ -84,7 +85,7 @@ Similar to a CMS, you might have data in a backend service or database that need
 
 **Other libraries**
 
-Next.js has a rich ecosystem of libraries that can be used alongside `next-intl`, e.g. to handle authentication. By providing [documentation and examples for common integrations](/docs/routing/middleware#composing-other-middlewares), `next-intl` ensures that you'll have a frictionless experience when integrating with other libraries.
+Next.js has a rich ecosystem of libraries that can be used alongside `next-intl`, e.g. to handle authentication. By providing documentation and examples for [common integrations](/docs/routing/middleware#composing-other-middlewares), `next-intl` ensures that you'll have a frictionless experience when integrating with other libraries.
 
 → [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20integrations)
 
@@ -97,7 +98,7 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 1. **RSC-first**: By integrating deeply with React Server Components, we can offload work to a build step or a capable server, therefore reducing the runtime footprint of your app on the client side.
 2. **Splitting of messages**: By splitting messages by locale, and optionally also by server, client and component, we can reduce the amount of messages that are sent to the client. This is especially important for apps that support many languages and have a large amount of messages.
 3. **Caching**: Parsing of messages, as well as the instantiation of [`Intl`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) constructors is cached across your app, therefore reducing the amount of necessary computation.
-4. **Shortcuts**: By detecting plain messages, these messages can be returned immediately without having to parse them first.
+4. **Shortcuts**: Better than caching the result of repetitive work is not doing it in the first place (e.g. by detecting plain messages that don't require parsing).
 
 → [Planned enhancements](https://github.com/amannn/next-intl/labels/area%3A%20performance)
 
@@ -105,7 +106,7 @@ To achieve this, `next-intl` primarly relies on these techniques currently:
 
 Next.js comes with a lot of bells and whistles, but at the same time there are a number of aspects that need to be handled carefully to enable a reliable internationalization integration. `next-intl`, as the name implies, is primarly designed to work well with Next.js. Rather than trying to be a one-size-fits-all solution, `next-intl` integrates with Next.js as deeply as necessary and makes it a priority to stay on top of the latest developments in the Next.js ecosystem.
 
-That being said, `next-intl` has a Next.js-agnostic core that can be used in any React app, or even in plain JavaScript: [`use-intl`](/docs/environments/core-library). This core library contains most features of `next-intl`, but lacks Next.js-specific integrations like routing APIs. The goal of this library is to make it possibly to use familiar APIs in other parts of your stack (e.g. React Native) and, in case you ever feel like Next.js is not the right fit for your project anymore, to provide a straightforward [migration path](#migration-friendly).
+That being said, `next-intl` has a Next.js-agnostic core that can be used in any React app, or even in plain JavaScript: [`use-intl`](/docs/environments/core-library). This core library contains most features of `next-intl`, but lacks Next.js-specific integrations like routing APIs. The goal of this library is to make it possible to use familiar APIs in other parts of your stack (e.g. React Native) and, in case you ever feel like Next.js is not the right fit for your project anymore, to provide a straightforward [migration path](#migration-friendly).
 
 ## Migration-friendly
 
@@ -116,7 +117,7 @@ If you ever feel like Next.js or `next-intl` is not the right fit for your proje
 1. **Moving away from Next.js**: If you decide to migrate away from Next.js, you can continue to use the core library [`use-intl`](/docs/environments/core-library) in any React app, e.g. allowing you to reuse existing components in [a Remix app](/examples#remix).
 2. **Moving away from `next-intl`**: If you find that `next-intl` doesn't fit your needs anymore, you'll have to adapt app code that references the library, but you can still reuse your [standards-based](#standards-based) ICU messages and replace formatting APIs e.g. with direct calls to the [ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
 
-We wont hold you back, but if you like, we can stay friends.
+We won't hold you back, but if you like, we can stay friends.
 
 That being said, we're doing our best to make `next-intl` a great fit for your project. If you ever feel like something is not working as expected or if you have ideas for improvements, please let us know on the [issue tracker](https://github.com/amannn/next-intl/issues) and we'll do our best to help you out.
 

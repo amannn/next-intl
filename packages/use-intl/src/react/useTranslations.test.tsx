@@ -1,8 +1,8 @@
-import {render, screen} from '@testing-library/react';
+import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 // eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
-import React, {ComponentProps, ReactNode} from 'react';
+import React, {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {it, expect, vi, describe, beforeEach} from 'vitest';
 import {
   Formats,
@@ -44,7 +44,7 @@ vi.mock('intl-messageformat', async (importOriginal) => {
 function renderMessage(
   message: string,
   values?: TranslationValues,
-  formats?: Partial<Formats>,
+  formats?: Formats,
   providerProps?: Partial<ComponentProps<typeof IntlProvider>>
 ) {
   function Component() {
@@ -294,6 +294,7 @@ it('has a stable reference', () => {
     if (existingT) {
       expect(t).toBe(existingT);
     } else {
+      // eslint-disable-next-line react-compiler/react-compiler
       existingT = t;
     }
 
@@ -403,7 +404,7 @@ describe('t.rich', () => {
   function renderRichTextMessage(
     message: string,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -467,6 +468,7 @@ describe('t.markup', () => {
 
     function Component() {
       const t = useTranslations();
+      // eslint-disable-next-line react-compiler/react-compiler
       result = t.markup('message', {
         important: (children) => `<b>${children}</b>`
       });
@@ -552,6 +554,48 @@ describe('t.raw', () => {
 
     expect(onError).toHaveBeenCalled();
     screen.getByText('foo');
+  });
+});
+
+describe('t.has', () => {
+  function wrapper({children}: PropsWithChildren) {
+    return (
+      <IntlProvider locale="en" messages={{foo: 'foo'}}>
+        {children}
+      </IntlProvider>
+    );
+  }
+
+  it('returns true for existing messages', () => {
+    const {result: t} = renderHook(() => useTranslations(), {wrapper});
+    expect(t.current.has('foo')).toBe(true);
+  });
+
+  it('returns true for an empty message', () => {
+    const {result: t} = renderHook(() => useTranslations(), {
+      wrapper({children}: PropsWithChildren) {
+        return (
+          <IntlProvider locale="en" messages={{foo: ''}}>
+            {children}
+          </IntlProvider>
+        );
+      }
+    });
+    expect(t.current.has('foo')).toBe(true);
+  });
+
+  it('returns false for missing messages', () => {
+    const {result: t} = renderHook(() => useTranslations(), {wrapper});
+    expect(t.current.has('bar')).toBe(false);
+  });
+
+  it('returns false when no messages are provided', () => {
+    const {result: t} = renderHook(() => useTranslations(), {
+      wrapper({children}: PropsWithChildren) {
+        return <IntlProvider locale="en">{children}</IntlProvider>;
+      }
+    });
+    expect(t.current.has('foo')).toBe(false);
   });
 });
 
@@ -882,8 +926,8 @@ describe('error handling', () => {
 describe('global formats', () => {
   function renderDate(
     message: string,
-    globalFormats?: Partial<Formats>,
-    overrideFormats?: Partial<Formats>
+    globalFormats?: Formats,
+    overrideFormats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -950,7 +994,7 @@ describe('default translation values', () => {
   function renderRichTextMessageWithDefault(
     message: string,
     values?: RichTranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();
@@ -975,7 +1019,7 @@ describe('default translation values', () => {
   function renderMessageWithDefault(
     message: string,
     values?: TranslationValues,
-    formats?: Partial<Formats>
+    formats?: Formats
   ) {
     function Component() {
       const t = useTranslations();

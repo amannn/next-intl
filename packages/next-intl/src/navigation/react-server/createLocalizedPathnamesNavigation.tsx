@@ -1,11 +1,11 @@
 import React, {ComponentProps} from 'react';
+import {
+  receiveRoutingConfig,
+  RoutingConfigLocalizedNavigation
+} from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import {ParametersExceptFirst} from '../../shared/types';
-import {
-  LocalizedNavigationRoutingConfigInput,
-  receiveLocalizedNavigationRoutingConfig
-} from '../shared/config';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -18,8 +18,8 @@ import {serverPermanentRedirect, serverRedirect} from './redirects';
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
   AppPathnames extends Pathnames<AppLocales>
->(input: LocalizedNavigationRoutingConfigInput<AppLocales, AppPathnames>) {
-  const config = receiveLocalizedNavigationRoutingConfig(input);
+>(routing: RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>) {
+  const config = receiveRoutingConfig(routing);
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ServerLink>,

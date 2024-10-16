@@ -5,9 +5,10 @@ module.exports = {
     'molindo/jest',
     'molindo/cypress'
   ],
-  plugins: ['deprecation'],
+  plugins: ['deprecation', 'eslint-plugin-react-compiler'],
   rules: {
-    'import/no-useless-path-segments': 'error'
+    'import/no-useless-path-segments': 'error',
+    'react-compiler/react-compiler': 'error'
   },
   overrides: [
     {

@@ -25,6 +25,22 @@ async function receiveRuntimeConfigImpl(
   getConfig: typeof createRequestConfig,
   localeOverride?: string
 ) {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    typeof getConfig !== 'function'
+  ) {
+    throw new Error(
+      `Invalid i18n request configuration detected.
+
+Please verify that:
+1. In case you've specified a custom location in your Next.js config, make sure that the path is correct.
+2. You have a default export in your i18n request configuration file.
+
+See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+`
+    );
+  }
+
   let hasReadLocale = false;
 
   // In case the consumer doesn't read `params.locale` and instead provides the
@@ -42,10 +58,20 @@ async function receiveRuntimeConfigImpl(
     result = await result;
   }
 
-  if (result.locale && hasReadLocale) {
-    console.error(
-      "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
-    );
+  if (process.env.NODE_ENV !== 'production') {
+    if (hasReadLocale) {
+      if (result.locale) {
+        console.error(
+          "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
+        );
+      }
+    } else {
+      if (!result.locale) {
+        console.error(
+          "\nYou haven't read the `locale` param that was passed to `getRequestConfig` and also haven't returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
+        );
+      }
+    }
   }
 
   return {

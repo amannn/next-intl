@@ -9,29 +9,27 @@ Configuration properties that you use across your Next.js app can be set globall
 
 ## Client- and Server Components [#client-server-components]
 
-Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n.ts` or `NextIntlClientProvider` will be applied respectively.
+Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n/request.ts` or `NextIntlClientProvider` will be applied respectively.
 
-### `i18n.ts` & `getRequestConfig`
+### `i18n/request.ts` & `getRequestConfig` [#i18n-request]
 
-`i18n.ts` can be used to provide configuration for **Server Components** via the `getRequestConfig` function and should be set up based on wether you're using [i18n routing](/docs/getting-started/app-router) or not.
+`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and needs to be set up based on whether you're using [i18n routing](/docs/getting-started/app-router) or not.
 
 <Tabs items={['With i18n routing', 'Without i18n routing']}>
 
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
-
-// Can be imported from a shared config
-const locales = ['en', 'de'];
+import {routing} from '@/i18n/routing';
 
 export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!routing.locales.includes(locale as any)) notFound();
 
   return {
-    messages: (await import(`../messages/${locale}.json`)).default
+    messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
 ```
@@ -39,7 +37,7 @@ export default getRequestConfig(async ({locale}) => {
 </Tab>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
@@ -49,7 +47,7 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default
+    messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
 ```
@@ -60,6 +58,22 @@ export default getRequestConfig(async () => {
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
 Since this function is executed during the Server Components render pass, you can call functions like [`cookies()`](https://nextjs.org/docs/app/api-reference/functions/cookies) and [`headers()`](https://nextjs.org/docs/app/api-reference/functions/headers) to return configuration that is request-specific.
+
+<Details id="i18n-request-path">
+<summary>Can I move this file somewhere else?</summary>
+
+This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
+
+```js filename="next.config.mjs"
+const withNextIntl = createNextIntlPlugin(
+  // Specify a custom path here
+  './somewhere/else/request.ts'
+);
+```
+
+</Details>
 
 ### `NextIntlClientProvider`
 
@@ -185,21 +199,21 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript#messages). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
 
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
   // ...
 
   return {
-    messages: (await import(`../messages/${locale}.json`)).default
+    messages: (await import(`../../messages/${locale}.json`)).default
   };
 });
 ```
@@ -226,7 +240,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
 async function Component({children}) {
-  // Read messages configured via `i18n.ts`
+  // Read messages configured via `i18n/request.ts`
   const messages = await getMessages();
 
   return (
@@ -293,10 +307,10 @@ Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integr
 
 Specifying a time zone affects the rendering of dates and times. By default, the time zone of the server runtime will be used, but can be customized as necessary.
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
@@ -351,10 +365,10 @@ When formatting [relative dates and times](/docs/usage/dates-times#formatting-re
 
 If you prefer to override the default, you can provide an explicit value for `now`:
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
@@ -403,10 +417,10 @@ Component.
 
 To achieve consistent date, time, number and list formatting, you can define a set of global formats.
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
@@ -486,6 +500,12 @@ function Component() {
 }
 ```
 
+<Callout>
+  You can optionally [specify a global type for
+  `formats`](/docs/workflows/typescript#formats) to get autocompletion and type
+  safety.
+</Callout>
+
 Global formats for numbers, dates and times can be referenced in messages too:
 
 ```json filename="en.json"
@@ -510,10 +530,10 @@ function Component() {
 
 To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.tsx"
+```tsx filename="i18n/request.tsx"
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async ({locale}) => {
@@ -555,10 +575,10 @@ By default, when a message fails to resolve or when the formatting failed, an er
 
 This behavior can be customized with the `onError` and `getMessageFallback` configuration option.
 
-<Tabs items={['i18n.ts', 'Provider']}>
+<Tabs items={['i18n/request.ts', 'Provider']}>
 <Tab>
 
-```tsx filename="i18n.ts"
+```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 import {IntlErrorCode} from 'next-intl';
 

@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.21.1 (2024-10-09)
+
+### Bug Fixes
+
+* Repair package publishing workflow (this release doesn't include any library changes) ([ceba9ae](https://github.com/amannn/next-intl/commit/ceba9ae92e863d7185c40054e8218e76a483f6a8)) – by @amannn
+
+## 3.21.0 (2024-10-09)
+
+### Features
+
+* Add `t.has` to check whether a given message exists ([#1399](https://github.com/amannn/next-intl/issues/1399)) ([ee1a2a9](https://github.com/amannn/next-intl/commit/ee1a2a94b62474a5d8a1d39c8ff39bec072c02a0)) – by @tholander
+
+## 3.20.0 (2024-09-24)
+
+### Features
+
+* Type-safe global `formats` ([#1346](https://github.com/amannn/next-intl/issues/1346)) ([b7aa14e](https://github.com/amannn/next-intl/commit/b7aa14e741e016aaaf40f67e9d2cd9ea194a029e)) – by @dBianchii
+
+## 3.19.5 (2024-09-24)
+
+### Bug Fixes
+
+* Make all keys of `Formats` type optional for easier usage ([#1367](https://github.com/amannn/next-intl/issues/1367)) ([a7cbd9b](https://github.com/amannn/next-intl/commit/a7cbd9bb1d42aacb17e7a5500b7054c8bc76799b)) – by @amannn
+
+## 3.19.4 (2024-09-19)
+
+### Bug Fixes
+
+* Handle malformed pathnames in middleware ([#1353](https://github.com/amannn/next-intl/issues/1353)) ([dcda9d9](https://github.com/amannn/next-intl/commit/dcda9d9c851046bd3032f6841b10831b50937ebb)), closes [#1351](https://github.com/amannn/next-intl/issues/1351) – by @amannn
+
+## 3.19.3 (2024-09-17)
+
+### Bug Fixes
+
+* Handle overlapping locale prefixes correctly pt. 2 ([#1344](https://github.com/amannn/next-intl/issues/1344)) ([7958659](https://github.com/amannn/next-intl/commit/7958659f858bb5df19203ec3c1a8701e029ed2c4)) – by @amannn
+
+## 3.19.2 (2024-09-17)
+
+### Bug Fixes
+
+* Handle overlapping custom locale prefixes correctly ([#1343](https://github.com/amannn/next-intl/issues/1343)) ([72c1731](https://github.com/amannn/next-intl/commit/72c1731892db6e7d0470cefcea2b1f22a5f37ce2)), closes [#1329](https://github.com/amannn/next-intl/issues/1329) – by @amannn
+
+## 3.19.1 (2024-09-05)
+
+### Bug Fixes
+
+* Add error handling in case an invalid i18n request config file has been specified ([#1327](https://github.com/amannn/next-intl/issues/1327)) ([18b9fd6](https://github.com/amannn/next-intl/commit/18b9fd64af235c144cc0e5f4f166ba4df20fece4)) – by @amannn
+
+## 3.19.0 (2024-08-30)
+
+### Features
+
+* Support `./i18n/request.ts` in addition to `./i18n.ts` ([#1308](https://github.com/amannn/next-intl/issues/1308)) ([258e95e](https://github.com/amannn/next-intl/commit/258e95ebef10033c3d6de524e6cd6c7459a18916)) – by @amannn
+
+## 3.18.1 (2024-08-29)
+
+### Bug Fixes
+
+* Print warning for inconsistent i18n setup where no `locale` is read in `getRequestConfig` and also none is returned ([#1305](https://github.com/amannn/next-intl/issues/1305)) ([2f0f781](https://github.com/amannn/next-intl/commit/2f0f78142d32c2ffa32493c52f270eb4ed3f1a49)) – by @amannn
+
+## 3.18.0 (2024-08-28)
+
+### Features
+
+* Add `defineRouting` for easier i18n routing setup ([#1299](https://github.com/amannn/next-intl/issues/1299)) ([5ff6120](https://github.com/amannn/next-intl/commit/5ff6120d5601e69dbeebd225e7a1416f3701ddc2)) – by @amannn
+
+## 3.17.6 (2024-08-23)
+
+### Bug Fixes
+
+* Enable React Compiler ESLint plugin and fix relevant case ([#1281](https://github.com/amannn/next-intl/issues/1281)) ([606f4cc](https://github.com/amannn/next-intl/commit/606f4cc7bb821d685e3559dc674859fe13bb521a)) – by @amannn
+
 ## 3.17.5 (2024-08-23)
 
 ### Bug Fixes

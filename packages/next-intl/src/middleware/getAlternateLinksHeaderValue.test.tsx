@@ -3,7 +3,7 @@
 import {NextRequest} from 'next/server';
 import {it, expect, describe, beforeEach, afterEach} from 'vitest';
 import {Pathnames} from '../routing';
-import {receiveConfig} from './config';
+import {receiveRoutingConfig} from '../routing/config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
@@ -29,7 +29,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     }
 
     it('works for prefixed routing (as-needed)', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
         localePrefix: 'as-needed'
@@ -37,7 +37,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -53,7 +53,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -65,7 +65,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/energy/es'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -77,7 +77,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('works for prefixed routing (as-needed) with `pathnames`', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'de'],
         localePrefix: 'as-needed'
@@ -100,7 +100,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/']
@@ -117,7 +117,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/about']
@@ -130,7 +130,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/de/ueber'),
           resolvedLocale: 'de',
           localizedPathnames: pathnames['/about']
@@ -143,7 +143,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/users/2'),
           resolvedLocale: 'en',
           localizedPathnames: pathnames['/users/[userId]']
@@ -156,7 +156,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('works for prefixed routing (always)', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
         localePrefix: 'always'
@@ -164,7 +164,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -178,7 +178,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -189,12 +189,10 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'as-needed'`", () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
-        alternateLinks: true,
         localePrefix: 'as-needed',
-        localeDetection: true,
         domains: [
           {
             domain: 'example.com',
@@ -216,12 +214,12 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       [
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', '),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.es'),
           resolvedLocale: 'es'
         }).split(', ')
@@ -244,7 +242,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -259,7 +257,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'always'`", () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es', 'fr'],
         domains: [
@@ -283,12 +281,12 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       [
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en'
         }).split(', '),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.es'),
           resolvedLocale: 'es'
         }).split(', ')
@@ -305,7 +303,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en'
         }).split(', ')
@@ -320,7 +318,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it("works for type domain with `localePrefix: 'as-needed' with `pathnames``", () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         localePrefix: 'as-needed',
         defaultLocale: 'en',
         locales: ['en', 'fr'],
@@ -364,22 +362,22 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       [
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://en.example.com/'),
           resolvedLocale: 'en'
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com'),
           resolvedLocale: 'en'
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com/fr'),
           resolvedLocale: 'fr'
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://fr.example.com'),
           resolvedLocale: 'fr'
         })
@@ -402,28 +400,28 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       [
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://en.example.com/about'),
           resolvedLocale: 'en',
-          localizedPathnames: config.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com/about'),
           resolvedLocale: 'en',
-          localizedPathnames: config.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com/fr/a-propos'),
           resolvedLocale: 'fr',
-          localizedPathnames: config.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://fr.example.com/a-propos'),
           resolvedLocale: 'fr',
-          localizedPathnames: config.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about']
         })
       ]
         .map((links) => links.split(', '))
@@ -438,28 +436,28 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       [
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://en.example.com/users/42'),
           resolvedLocale: 'en',
-          localizedPathnames: config.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com/users/42'),
           resolvedLocale: 'en',
-          localizedPathnames: config.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://ca.example.com/fr/utilisateurs/42'),
           resolvedLocale: 'fr',
-          localizedPathnames: config.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]']
         }),
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('https://fr.example.com/utilisateurs/42'),
           resolvedLocale: 'fr',
-          localizedPathnames: config.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]']
         })
       ]
         .map((links) => links.split(', '))
@@ -474,7 +472,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('uses the external host name from headers instead of the url of the incoming request (relevant when running the app behind a proxy)', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
         localePrefix: 'as-needed'
@@ -482,7 +480,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('http://127.0.0.1/about', {
             headers: {
               host: 'example.com',
@@ -500,7 +498,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('keeps the port of an external host if provided', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
         localePrefix: 'as-needed'
@@ -508,7 +506,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('http://127.0.0.1/about', {
             headers: {
               host: 'example.com:3000',
@@ -526,7 +524,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
     });
 
     it('uses the external host name and the port from headers instead of the url with port of the incoming request (relevant when running the app behind a proxy)', () => {
-      const config = receiveConfig({
+      const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'es'],
         localePrefix: 'as-needed'
@@ -534,7 +532,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
 
       expect(
         getAlternateLinksHeaderValue({
-          config,
+          routing,
           request: getMockRequest('http://127.0.0.1:3000/about', {
             headers: {
               host: 'example.com',
@@ -562,7 +560,7 @@ describe('trailingSlash: true', () => {
   });
 
   it('adds a trailing slash to pathnames', () => {
-    const config = receiveConfig({
+    const routing = receiveRoutingConfig({
       defaultLocale: 'en',
       locales: ['en', 'es'],
       localePrefix: 'as-needed'
@@ -570,7 +568,7 @@ describe('trailingSlash: true', () => {
 
     expect(
       getAlternateLinksHeaderValue({
-        config,
+        routing,
         request: new NextRequest(new URL('https://example.com/about')),
         resolvedLocale: 'en'
       }).split(', ')
@@ -582,7 +580,7 @@ describe('trailingSlash: true', () => {
   });
 
   describe('localized pathnames', () => {
-    const config = receiveConfig({
+    const routing = receiveRoutingConfig({
       defaultLocale: 'en',
       locales: ['en', 'es'],
       localePrefix: 'as-needed'
@@ -599,7 +597,7 @@ describe('trailingSlash: true', () => {
       ['/about', '/about/'].forEach((pathname) => {
         expect(
           getAlternateLinksHeaderValue({
-            config,
+            routing,
             request: new NextRequest(new URL('https://example.com' + pathname)),
             resolvedLocale: 'en',
             localizedPathnames: pathnames['/about']
@@ -616,7 +614,7 @@ describe('trailingSlash: true', () => {
       ['', '/'].forEach((pathname) => {
         expect(
           getAlternateLinksHeaderValue({
-            config,
+            routing,
             request: new NextRequest(new URL('https://example.com' + pathname)),
             resolvedLocale: 'en',
             localizedPathnames: pathnames['/']
