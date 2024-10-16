@@ -17,5 +17,5 @@
 }
 :global(.dark) .root h3:before {
   @apply bg-slate-800 text-white/75;
-  border-color: rgba(17, 17, 17, var(--tw-bg-opacity)); /* nx-bg-dark */
+  border-color: rgba(17, 17, 17, var(--tw-bg-opacity)); /* bg-dark */
 }

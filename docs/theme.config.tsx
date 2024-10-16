@@ -20,8 +20,9 @@ export default {
     return {
       titleTemplate: '%s' + TITLE_TEMPLATE_SUFFIX
     };
+  color: {
+    hue: {light: 210, dark: 195}
   },
-  primaryHue: {light: 210, dark: 195},
   footer: {
     component: Footer
   },

@@ -1,14 +1,13 @@
-const withNextra = require('nextra')({
+import nextra from 'nextra';
+
+const withNextra = nextra({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.tsx',
   staticImage: true,
-  defaultShowCopyCode: true,
-  flexsearch: {
-    codeblocks: false
-  }
+  defaultShowCopyCode: true
 });
 
-module.exports = withNextra({
+export default withNextra({
   transpilePackages: ['react-tweet'],
   redirects: () => [
     // Index pages
