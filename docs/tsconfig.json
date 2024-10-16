@@ -23,7 +23,8 @@
         "name": "next"
       }
     ],
-    "strict": true
+    "strict": true,
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",

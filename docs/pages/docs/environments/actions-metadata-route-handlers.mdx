@@ -22,7 +22,8 @@ To internationalize metadata like the page title, you can use functionality from
 ```tsx filename="layout.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
@@ -116,7 +117,8 @@ If you're programmatically generating [Open Graph images](https://nextjs.org/doc
 import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 
-export default async function OpenGraphImage({params: {locale}}) {
+export default async function OpenGraphImage({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
