@@ -3,7 +3,7 @@ name: prerelease
 on:
   push:
     branches:
-      - fix/canary-releases
+      - canary
 
 jobs:
   main:
