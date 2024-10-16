@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import {use} from 'react';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
@@ -14,10 +15,11 @@ import MessagesOnClientCounter from '../../components/client/02-MessagesOnClient
 import {Link} from '@/i18n/routing';
 
 type Props = {
-  searchParams: Record<string, string>;
+  searchParams: Promise<Record<string, string>>;
 };
 
-export default function Index({searchParams}: Props) {
+export default function Index(props: Props) {
+  const searchParams = use(props.searchParams);
   const t = useTranslations('Index');
   const format = useFormatter();
   const now = useNow();

@@ -30,8 +30,8 @@ export default getRequestConfig(async ({locale}) => {
   // Validate that the incoming `locale` parameter is valid
   if (!routing.locales.includes(locale as any)) notFound();
 
-  const now = headers().get('x-now');
-  const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
+  const now = (await headers()).get('x-now');
+  const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';
   const localeMessages = (await import(`../../messages/${locale}.json`))
     .default;
   const messages = {...defaultMessages, ...localeMessages};
