@@ -1,4 +1,5 @@
 import {Metadata} from 'next';
+import {Inter} from 'next/font/google';
 import {
   getFormatter,
   getNow,
@@ -12,6 +13,8 @@ type Props = {
   children: ReactNode;
   params: Promise<{locale: string}>;
 };
+
+const inter = Inter({subsets: ['latin']});
 
 export async function generateMetadata(
   props: Omit<Props, 'children'>
@@ -41,7 +44,7 @@ export default async function LocaleLayout(props: Props) {
   const {children} = props;
 
   return (
-    <html lang={locale}>
+    <html className={inter.className} lang={locale}>
       <body>
         <div
           style={{
