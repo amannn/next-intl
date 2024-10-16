@@ -23,12 +23,12 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      - run: pnpm lerna version 0.0.0-canary${{ github.sha }} --no-push --yes
+      - run: pnpm lerna version 0.0.0-canary-${{ github.sha }} --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: pnpm lerna publish --dist-tag canary --no-push --yes
+      - run: pnpm lerna publish from-package --dist-tag canary --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
