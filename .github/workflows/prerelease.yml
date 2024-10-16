@@ -23,7 +23,9 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      - run: pnpm run publish --canary minor --dist-tag canary --no-push
+      - run: |
+          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && git commit -am "use fixed version"
+      - run: pnpm lerna publish 0.0.0-canary-${GITHUB_SHA::7} --no-git-reset --dist-tag canary --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
