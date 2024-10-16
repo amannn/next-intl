@@ -23,6 +23,9 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # Use a fixed version without the ^-range
+      - run: |
+          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json
       - run: pnpm lerna publish 0.0.0-canary-${{ github.sha }} --dist-tag prerelease --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
