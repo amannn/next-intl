@@ -12,7 +12,7 @@
     "next": "15.0.0-rc.1",
     "next-intl": "^3.0.0",
     "react": "19.0.0-rc-cd22717c-20241013",
-    "react-dom": "^18.3.1"
+    "react-dom": "19.0.0-rc-cd22717c-20241013"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",
