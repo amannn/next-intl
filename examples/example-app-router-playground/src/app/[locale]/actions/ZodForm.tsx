@@ -1,8 +1,7 @@
 'use client';
 
 import {ReactNode} from 'react';
-// @ts-expect-error -- Not exported in latest types
-import {useActionState} from 'react-dom';
+import {useFormState} from 'react-dom';
 import {FormResult} from './ZodFormExample';
 
 type Props = {
@@ -11,7 +10,7 @@ type Props = {
 };
 
 export default function ZodForm({action, children}: Props) {
-  const [state, formAction] = useActionState(action, null);
+  const [state, formAction] = useFormState(action, null);
   const hasErrors = state && !state.success;
 
   return (

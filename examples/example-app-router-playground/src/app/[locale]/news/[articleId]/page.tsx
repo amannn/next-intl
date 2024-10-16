@@ -1,5 +1,6 @@
 import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
+import {use} from 'react';
 import {getPathname, routing, Locale} from '@/i18n/routing';
 
 type Props = {
@@ -26,8 +27,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   return {alternates: {canonical}};
 }
 
-export default async function NewsArticle(props: Props) {
-  const params = await props.params;
+export default function NewsArticle(props: Props) {
+  const params = use(props.params);
   const t = useTranslations('NewsArticle');
   return <h1>{t('title', {articleId: params.articleId})}</h1>;
 }
