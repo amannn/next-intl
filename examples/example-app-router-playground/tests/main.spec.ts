@@ -686,6 +686,14 @@ it('can use `t.has` in a Server Component', async ({page}) => {
   await expect(page.getByTestId('HasTitle')).toHaveText('true');
 });
 
+it('can render mdx content', async ({page}) => {
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'Über uns'}).waitFor();
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
