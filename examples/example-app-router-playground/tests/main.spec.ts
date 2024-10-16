@@ -702,6 +702,14 @@ it('can use `t.has` in a Server Component', async ({page}) => {
   await expect(page.getByTestId('HasTitle')).toHaveText('true');
 });
 
+it('can render mdx content', async ({page}) => {
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'Über uns'}).waitFor();
+});
+
 describe('server actions', () => {
   it('can use `getTranslations` in server actions', async ({page}) => {
     await page.goto('/actions');
