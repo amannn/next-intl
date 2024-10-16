@@ -1,5 +1,6 @@
 import {Metadata} from 'next';
 import {Inter} from 'next/font/google';
+import {notFound} from 'next/navigation';
 import {
   getFormatter,
   getNow,
@@ -8,6 +9,7 @@ import {
 } from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from '../../components/Navigation';
+import {routing} from '@/i18n/routing';
 
 type Props = {
   children: ReactNode;
@@ -42,6 +44,11 @@ export default async function LocaleLayout(props: Props) {
   const params = await props.params;
   const {locale} = params;
   const {children} = props;
+
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
 
   return (
     <html className={inter.className} lang={locale}>

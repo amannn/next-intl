@@ -6,14 +6,37 @@ import {Tabs, Tab} from 'nextra-theme-docs';
 
 There are a few places in Next.js apps where you can apply internationalization outside of React components:
 
-1. [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
-2. [Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
+1. [Metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
+2. [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
 3. [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)
 4. [Manifest](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest)
 5. [Sitemap](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap)
 6. [Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/router-handlers)
 
 `next-intl/server` provides a set of [awaitable functions](/docs/environments/server-client-components#async-components) that can be used in these cases.
+
+### Metadata API
+
+To internationalize metadata like the page title, you can use functionality from `next-intl` in the [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) function that can be exported from pages and layouts.
+
+```tsx filename="layout.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export async function generateMetadata({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'Metadata'});
+
+  return {
+    title: t('title')
+  };
+}
+```
+
+<Callout>
+  By passing an explicit `locale` to the awaitable functions from `next-intl`,
+  you can make the metadata handler eligible for [static
+  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
+  if you're using [i18n routing](/docs/getting-started/app-router).
+</Callout>
 
 ### Server Actions
 
@@ -85,29 +108,6 @@ See the [App Router without i18n routing example](/examples#app-router-without-i
 
 </Details>
 
-### Metadata API
-
-To internationalize metadata like the page title, you can use functionality from `next-intl` in the [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function) function that can be exported from pages and layouts.
-
-```tsx filename="layout.tsx"
-import {getTranslations} from 'next-intl/server';
-
-export async function generateMetadata({params: {locale}}) {
-  const t = await getTranslations({locale, namespace: 'Metadata'});
-
-  return {
-    title: t('title')
-  };
-}
-```
-
-<Callout>
-  By passing an explicit `locale` to the awaitable functions from `next-intl`,
-  you can make the metadata handler eligible for [static
-  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
-  if you're using [i18n routing](/docs/getting-started/app-router).
-</Callout>
-
 ### Open Graph images
 
 If you're programmatically generating [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image), you can apply internationalization by calling functions from `next-intl` in the exported function:
@@ -151,60 +151,13 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
 
 If you're using a sitemap to inform search engines about all pages of your site, you can attach [locale-specific alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL in the sitemap to indicate that a particular page is available in multiple languages or regions.
 
-Note that by default, `next-intl` returns [the `link` response header](/docs/routing/middleware#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
+Note that by default, `next-intl` returns [the `link` response header](/docs/routing#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
 
 Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
 
-<Tabs items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
-
-If you're using the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can assemble the sitemap based on the pathnames that your app supports.
-
-```tsx
+```tsx filename="app/sitemap.ts" {5-6,9-10}
 import {MetadataRoute} from 'next';
-
-// Can be imported from shared config
-const defaultLocale = 'en' as const;
-const locales = ['en', 'de'] as const;
-
-// Adapt this as necessary
-const host = 'https://acme.com';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Adapt this as necessary
-  return [
-    getEntry('/'),
-    getEntry('/users'),
-    getEntry('/users/1'),
-    getEntry('/users/2')
-  ];
-}
-
-function getEntry(pathname: string) {
-  return {
-    url: getUrl(pathname, defaultLocale),
-    lastModified: new Date(),
-    alternates: {
-      languages: Object.fromEntries(
-        locales.map((locale) => [locale, getUrl(pathname, locale)])
-      )
-    }
-  };
-}
-
-function getUrl(pathname: string, locale: string) {
-  return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
-}
-```
-
-</Tab>
-<Tab>
-
-If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can generate sitemap entries for each locale by using the [`getPathname`](/docs/routing/navigation#getpathname) function.
-
-```tsx
-import {MetadataRoute} from 'next';
-import {locales, defaultLocale} from '@/config';
+import {routing} from '@/i18n/routing';
 import {getPathname} from '@/i18n/routing';
 
 // Adapt this as necessary
@@ -212,49 +165,42 @@ const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Adapt this as necessary
-  return [
-    getEntry('/'),
-    getEntry('/users'),
-    getEntry({
-      pathname: '/users/[id]',
-      params: {id: '1'}
-    }),
-    getEntry({
-      pathname: '/users/[id]',
-      params: {id: '2'}
-    })
-  ];
+  return [getEntry('/'), getEntry('/users')];
 }
 
 type Href = Parameters<typeof getPathname>[0]['href'];
 
 function getEntry(href: Href) {
   return {
-    url: getUrl(href, defaultLocale),
+    url: getUrl(href, routing.defaultLocale),
     alternates: {
       languages: Object.fromEntries(
-        locales.map((locale) => [locale, getUrl(href, locale)])
+        routing.locales.map((locale) => [locale, getUrl(href, locale)])
       )
     }
   };
 }
 
-function getUrl(href: Href, locale: (typeof locales)[number]) {
+function getUrl(href: Href, locale: typeof routing.locales[number]) {
   const pathname = getPathname({locale, href});
   return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
 }
 ```
 
+Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+
+```tsx
+// 1. A final string (when not using `pathnames`)
+getEntry('/users/1');
+
+// 2. An object (when using `pathnames`)
+getEntry({
+  pathname: '/users/[id]',
+  params: {id: '1'}
+});
+```
+
 ([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
-
-</Tab>
-</Tabs>
-
-<Callout>
-  Note that your implementation may vary depending on your routing configuration
-  (e.g. if you're using a [`localePrefix`](/docs/routing#locale-prefix) other
-  than `always` or [locale-specific domains](/docs/routing#domains)).
-</Callout>
 
 ### Route Handlers
 

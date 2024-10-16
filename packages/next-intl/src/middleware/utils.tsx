@@ -3,7 +3,8 @@ import {
   LocalePrefixConfigVerbose,
   DomainConfig,
   Pathnames,
-  DomainsConfig
+  DomainsConfig,
+  LocalePrefixMode
 } from '../routing/types';
 import {
   getLocalePrefix,
@@ -92,10 +93,13 @@ export function formatTemplatePathname(
 /**
  * Removes potential prefixes from the pathname.
  */
-export function getNormalizedPathname<AppLocales extends Locales>(
+export function getNormalizedPathname<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(
   pathname: string,
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>
 ) {
   // Add trailing slash for consistent handling
   // both for the root as well as nested paths
@@ -127,9 +131,12 @@ export function findCaseInsensitiveString(
   return strings.find((cur) => cur.toLowerCase() === candidate.toLowerCase());
 }
 
-export function getLocalePrefixes<AppLocales extends Locales>(
+export function getLocalePrefixes<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>,
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>,
   sort = true
 ): Array<[AppLocales[number], string]> {
   const prefixes = locales.map((locale) => [
@@ -145,10 +152,13 @@ export function getLocalePrefixes<AppLocales extends Locales>(
   return prefixes as Array<[AppLocales[number], string]>;
 }
 
-export function getPathnameMatch<AppLocales extends Locales>(
+export function getPathnameMatch<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(
   pathname: string,
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>
 ):
   | {
       locale: AppLocales[number];
