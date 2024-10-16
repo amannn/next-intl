@@ -9,9 +9,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^14.2.4",
+    "next": "15.0.0-rc.1",
     "next-intl": "^3.0.0",
-    "react": "^18.3.1",
+    "react": "19.0.0-rc-cd22717c-20241013",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
@@ -21,7 +21,7 @@
     "@types/react": "^18.3.3",
     "eslint": "^8.56.0",
     "eslint-config-molindo": "^7.0.0",
-    "eslint-config-next": "^14.2.4",
+    "eslint-config-next": "15.0.0-rc.1",
     "typescript": "^5.5.3"
   }
 }
