@@ -26,7 +26,7 @@ jobs:
       # Use a fixed version without the ^-range
       - run: |
           sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json
-      - run: pnpm lerna publish 0.0.0-canary-${{ github.sha }} --dist-tag prerelease --no-push --yes
+      - run: pnpm lerna publish 0.0.0-canary-${{ github.sha }} --dist-tag prerelease --no-push --yes --no-git-reset
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
