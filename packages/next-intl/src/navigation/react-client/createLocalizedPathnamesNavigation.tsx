@@ -1,20 +1,20 @@
 import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
-  receiveRoutingConfig,
-  RoutingConfigLocalizedNavigation
+  RoutingConfigLocalizedNavigation,
+  receiveRoutingConfig
 } from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
+  HrefOrHrefWithParams,
+  HrefOrUrlObjectWithParams,
   compileLocalizedPathname,
   getRoute,
-  normalizeNameOrNameWithParams,
-  HrefOrHrefWithParams,
-  HrefOrUrlObjectWithParams
+  normalizeNameOrNameWithParams
 } from '../shared/utils';
 import ClientLink from './ClientLink';
-import {clientRedirect, clientPermanentRedirect} from './redirects';
+import {clientPermanentRedirect, clientRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 

@@ -1,7 +1,7 @@
 import React, {ComponentProps} from 'react';
 import {
-  receiveLocalePrefixConfig,
-  RoutingConfigSharedNavigation
+  RoutingConfigSharedNavigation,
+  receiveLocalePrefixConfig
 } from '../../routing/config';
 import {Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';

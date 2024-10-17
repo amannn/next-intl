@@ -2,7 +2,7 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation';
-import {Locales, LocalePrefixConfigVerbose} from '../../routing/types';
+import {LocalePrefixConfigVerbose, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   getLocalePrefix,

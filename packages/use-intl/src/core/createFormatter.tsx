@@ -7,10 +7,10 @@ import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
 import {
-  createCache,
-  createIntlFormatters,
   Formatters,
-  IntlCache
+  IntlCache,
+  createCache,
+  createIntlFormatters
 } from './formatters';
 
 const SECOND = 1;
@@ -144,7 +144,7 @@ export default function createFormatter({
     let options;
     try {
       options = resolveFormatOrOptions(typeFormats, formatOrOptions);
-    } catch (error) {
+    } catch {
       return getFallback();
     }
 

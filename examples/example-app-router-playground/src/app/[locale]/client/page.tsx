@@ -1,4 +1,4 @@
-import {useTranslations, useNow, NextIntlClientProvider} from 'next-intl';
+import {NextIntlClientProvider, useNow, useTranslations} from 'next-intl';
 import PageLayout from '../../../components/PageLayout';
 import ClientContent from './ClientContent';
 import DelayedServerContent from './DelayedServerContent';

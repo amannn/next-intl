@@ -9,18 +9,18 @@
  */
 
 import {
-  useTranslations as base_useTranslations,
-  useFormatter as base_useFormatter
+  useFormatter as base_useFormatter,
+  useTranslations as base_useTranslations
 } from 'use-intl';
 
 export * from 'use-intl';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function callHook(name: string, hook: Function) {
   return (...args: Array<unknown>) => {
     try {
       return hook(...args);
-    } catch (e) {
+    } catch {
       throw new Error(
         process.env.NODE_ENV !== 'production'
           ? `Failed to call \`${name}\` because the context from \`NextIntlClientProvider\` was not found.

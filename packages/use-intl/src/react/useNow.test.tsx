@@ -1,7 +1,7 @@
 import {render, waitFor} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import React from 'react';
-import {it, expect} from 'vitest';
+import {expect, it} from 'vitest';
 import IntlProvider from './IntlProvider';
 import useNow from './useNow';
 

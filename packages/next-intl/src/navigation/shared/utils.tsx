@@ -2,8 +2,8 @@ import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import {Locales, Pathnames} from '../../routing/types';
 import {
-  matchesPathname,
   getSortedPathnames,
+  matchesPathname,
   normalizeTrailingSlash
 } from '../../shared/utils';
 import StrictParams from './StrictParams';

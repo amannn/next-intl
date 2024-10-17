@@ -1,7 +1,7 @@
 import React, {ComponentProps} from 'react';
 import {
-  receiveRoutingConfig,
-  RoutingConfigLocalizedNavigation
+  RoutingConfigLocalizedNavigation,
+  receiveRoutingConfig
 } from '../../routing/config';
 import {Locales, Pathnames} from '../../routing/types';
 import {getRequestLocale} from '../../server/react-server/RequestLocale';

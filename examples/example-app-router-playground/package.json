@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc",
+    "lint": "eslint src && tsc && prettier src --check",
     "test": "pnpm run test:playwright:main && pnpm run test:playwright:locale-prefix-never && pnpm run test:playwright:trailing-slash && pnpm run test:jest",
     "test:playwright:main": "TEST_MATCH=main.spec.ts playwright test",
     "test:playwright:locale-prefix-never": "NEXT_PUBLIC_LOCALE_PREFIX=never pnpm build && TEST_MATCH=locale-prefix-never.spec.ts playwright test",
@@ -39,15 +39,15 @@
     "@types/react-dom": "^18.3.0",
     "chokidar-cli": "3.0.0",
     "css-loader": "^6.8.1",
-    "eslint": "^8.56.0",
-    "eslint-config-molindo": "^7.0.0",
-    "eslint-config-next": "^14.2.4",
-    "eslint-plugin-storybook": "^0.8.0",
+    "eslint": "^9.11.1",
+    "eslint-config-molindo": "^8.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.3.3",
     "sharp": "^0.33.4",
     "storybook": "^8.2.9",
     "storybook-next-intl": "^1.1.4",
     "typescript": "^5.5.3"
-  }
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
 }

@@ -1,8 +1,8 @@
 import {
-  Locales,
+  DomainsConfig,
   LocalePrefix,
   LocalePrefixConfigVerbose,
-  DomainsConfig,
+  Locales,
   Pathnames
 } from './types';
 
@@ -35,7 +35,6 @@ export type RoutingConfig<
   domains?: DomainsConfig<AppLocales>;
 } & ([AppPathnames] extends [never]
   ? // https://discord.com/channels/997886693233393714/1278008400533520434
-    // eslint-disable-next-line @typescript-eslint/ban-types
     {}
   : {
       /**

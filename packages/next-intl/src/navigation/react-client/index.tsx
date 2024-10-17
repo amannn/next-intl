@@ -2,8 +2,8 @@ export {default as createSharedPathnamesNavigation} from './createSharedPathname
 export {default as createLocalizedPathnamesNavigation} from './createLocalizedPathnamesNavigation';
 
 import type {
-  Pathnames as PathnamesDeprecatedExport,
-  Locales
+  Locales,
+  Pathnames as PathnamesDeprecatedExport
 } from '../../routing/types';
 
 /** @deprecated Please import from `next-intl/routing` instead. */

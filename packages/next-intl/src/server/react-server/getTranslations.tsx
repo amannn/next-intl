@@ -1,14 +1,14 @@
 import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
-  createTranslator,
   Formats,
-  TranslationValues,
+  MarkupTranslationValues,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
   RichTranslationValues,
-  MarkupTranslationValues
+  TranslationValues,
+  createTranslator
 } from 'use-intl/core';
 import getConfig from './getConfig';
 

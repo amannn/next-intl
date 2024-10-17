@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import {Link} from '@/i18n/routing';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
@@ -11,7 +12,6 @@ import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
-import {Link} from '@/i18n/routing';
 
 type Props = {
   searchParams: Record<string, string>;

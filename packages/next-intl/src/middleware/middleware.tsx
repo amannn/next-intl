@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {receiveRoutingConfig, RoutingConfig} from '../routing/config';
+import {RoutingConfig, receiveRoutingConfig} from '../routing/config';
 import {Locales, Pathnames} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
 import {
@@ -12,15 +12,15 @@ import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import syncCookie from './syncCookie';
 import {
-  getInternalTemplate,
-  formatTemplatePathname,
-  getBestMatchingDomain,
-  getPathnameMatch,
-  getNormalizedPathname,
-  isLocaleSupportedOnDomain,
   applyBasePath,
   formatPathname,
+  formatTemplatePathname,
+  getBestMatchingDomain,
+  getInternalTemplate,
   getLocaleAsPrefix,
+  getNormalizedPathname,
+  getPathnameMatch,
+  isLocaleSupportedOnDomain,
   sanitizePathname
 } from './utils';
 
@@ -36,8 +36,7 @@ export default function createMiddleware<
   const resolvedRouting = receiveRoutingConfig(routing);
   const resolvedOptions = {
     alternateLinks: options?.alternateLinks ?? routing.alternateLinks ?? true,
-    localeDetection:
-      options?.localeDetection ?? routing?.localeDetection ?? true
+    localeDetection: options?.localeDetection ?? routing.localeDetection ?? true
   };
 
   return function middleware(request: NextRequest) {
@@ -45,7 +44,7 @@ export default function createMiddleware<
     try {
       // Resolve potential foreign symbols (e.g. /ja/%E7%B4%84 → /ja/約))
       unsafeExternalPathname = decodeURI(request.nextUrl.pathname);
-    } catch (e) {
+    } catch {
       // In case an invalid pathname is encountered, forward
       // it to Next.js which in turn responds with a 400
       return NextResponse.next();
@@ -153,7 +152,7 @@ export default function createMiddleware<
         resolvedRouting.localePrefix.mode === 'as-needed');
 
     let response;
-    let internalTemplateName: keyof AppPathnames | undefined;
+    let internalTemplateName: string | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
     if ('pathnames' in resolvedRouting) {
@@ -162,15 +161,14 @@ export default function createMiddleware<
         resolvedRouting.pathnames,
         unprefixedExternalPathname,
         locale
-      );
+      ) as [AppLocales[number] | undefined, string | undefined];
 
       if (internalTemplateName) {
         const pathnameConfig = resolvedRouting.pathnames[internalTemplateName];
         const localeTemplate: string =
           typeof pathnameConfig === 'string'
             ? pathnameConfig
-            : // @ts-expect-error -- This is fine
-              pathnameConfig[locale];
+            : pathnameConfig[locale];
 
         if (matchesPathname(localeTemplate, unprefixedExternalPathname)) {
           unprefixedInternalPathname = formatTemplatePathname(
@@ -179,14 +177,13 @@ export default function createMiddleware<
             internalTemplateName as string
           );
         } else {
-          let sourceTemplate;
+          let sourceTemplate: string;
           if (resolvedTemplateLocale) {
             // A localized pathname from another locale has matched
             sourceTemplate =
               typeof pathnameConfig === 'string'
                 ? pathnameConfig
-                : // @ts-expect-error -- This is fine
-                  pathnameConfig[resolvedTemplateLocale];
+                : pathnameConfig[resolvedTemplateLocale];
           } else {
             // An internal pathname has matched that
             // doesn't have a localized pathname
@@ -310,8 +307,8 @@ export default function createMiddleware<
         getAlternateLinksHeaderValue({
           routing: resolvedRouting,
           localizedPathnames:
-            internalTemplateName! != null && 'pathnames' in resolvedRouting
-              ? resolvedRouting.pathnames?.[internalTemplateName]
+            internalTemplateName != null && 'pathnames' in resolvedRouting
+              ? resolvedRouting.pathnames[internalTemplateName]
               : undefined,
           request,
           resolvedLocale: locale

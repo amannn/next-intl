@@ -9,7 +9,7 @@ type Props = AppProps & {
 function App({Component, pageProps, router}: Props) {
   return (
     <NextIntlClientProvider
-      locale={(router.query?.locale as string) ?? 'en'}
+      locale={(router.query.locale as string) || 'en'}
       messages={pageProps.messages}
       timeZone="Europe/Vienna"
     >
