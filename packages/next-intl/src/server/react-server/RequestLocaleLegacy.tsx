@@ -8,7 +8,7 @@ import {getCachedRequestLocale} from './RequestLocaleCache';
 // With https://github.com/vercel/next.js/pull/68812, the API became async.
 // This file can be removed once we remove the legacy navigation APIs.
 function getHeaders() {
-  return headers();
+  return headers() as unknown as Awaited<ReturnType<typeof headers>>;
 }
 
 function getLocaleFromHeaderImpl() {
