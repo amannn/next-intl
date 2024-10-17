@@ -16,7 +16,8 @@ export default function syncCookie(
     response.cookies.set(COOKIE_LOCALE_NAME, locale, {
       path: request.nextUrl.basePath || undefined,
       sameSite: COOKIE_SAME_SITE,
-      maxAge: COOKIE_MAX_AGE
+      maxAge: COOKIE_MAX_AGE,
+      secure: true
     });
   }
 }
