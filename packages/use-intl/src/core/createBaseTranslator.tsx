@@ -1,10 +1,10 @@
 import IntlMessageFormat from 'intl-messageformat';
 import {
-  cloneElement,
-  isValidElement,
   ReactElement,
   ReactNode,
-  ReactNodeArray
+  ReactNodeArray,
+  cloneElement,
+  isValidElement
 } from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
@@ -20,8 +20,8 @@ import {
   Formatters,
   IntlCache,
   IntlFormatters,
-  memoFn,
-  MessageFormatter
+  MessageFormatter,
+  memoFn
 } from './formatters';
 import joinPath from './joinPath';
 import MessageKeys from './utils/MessageKeys';

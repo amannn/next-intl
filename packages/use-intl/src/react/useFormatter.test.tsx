@@ -1,8 +1,8 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactNode, ReactElement} from 'react';
-import {spyOn, SpyImpl} from 'tinyspy';
-import {it, expect, describe, vi, beforeEach} from 'vitest';
+import React, {ComponentProps, ReactElement, ReactNode} from 'react';
+import {SpyImpl, spyOn} from 'tinyspy';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {IntlError, IntlErrorCode} from '../core';
 import IntlProvider from './IntlProvider';
 import useFormatter from './useFormatter';

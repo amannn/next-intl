@@ -1,9 +1,9 @@
 import React, {ReactNode, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig';
 import {
+  Formatters,
   createCache,
-  createIntlFormatters,
-  Formatters
+  createIntlFormatters
 } from '../core/formatters';
 import initializeConfig from '../core/initializeConfig';
 import IntlContext from './IntlContext';

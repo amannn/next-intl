@@ -8,10 +8,10 @@ import TranslationValues, {
 import createTranslatorImpl from './createTranslatorImpl';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import {
-  createCache,
-  createIntlFormatters,
   Formatters,
-  IntlCache
+  IntlCache,
+  createCache,
+  createIntlFormatters
 } from './formatters';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';

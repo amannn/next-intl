@@ -1,4 +1,4 @@
-import {memoize, Cache, strategies} from '@formatjs/fast-memoize';
+import {Cache, memoize, strategies} from '@formatjs/fast-memoize';
 import type IntlMessageFormat from 'intl-messageformat';
 
 export type IntlCache = {

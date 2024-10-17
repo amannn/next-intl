@@ -7,10 +7,10 @@ import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
 import TimeZone from './TimeZone';
 import {defaultOnError} from './defaults';
 import {
-  createCache,
-  createIntlFormatters,
   Formatters,
-  IntlCache
+  IntlCache,
+  createCache,
+  createIntlFormatters
 } from './formatters';
 
 const SECOND = 1;
