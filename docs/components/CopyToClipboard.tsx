@@ -25,9 +25,6 @@ export default function CopyToClipboard({
 
   const handleClick = useCallback(async () => {
     setCopied(true);
-    if (!navigator?.clipboard) {
-      console.error('Access to clipboard rejected!');
-    }
     try {
       await navigator.clipboard.writeText(getValue());
     } catch {
