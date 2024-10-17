@@ -1,7 +1,6 @@
 module.exports = {
   title: 'next-intl',
   description: 'Internationalization (i18n) for Next.js',
-  descriptionPretty: 'Internationalization for Next.js',
   baseUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL
     : 'http://localhost:3000',

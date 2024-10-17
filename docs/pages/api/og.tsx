@@ -39,7 +39,7 @@ export default async function OG(req: Request) {
           data-name="Layer 1"
           id="Layer_1"
           viewBox="0 0 1663.8 399"
-          width={400}
+          width={300}
           xmlns="http://www.w3.org/2000/svg"
         >
           <g id="logo-copy-5">
@@ -116,26 +116,12 @@ export default async function OG(req: Request) {
         <h1
           style={{
             fontSize: 82,
-            margin: '0 0 40px -2px',
             lineHeight: 1.1,
             letterSpacing: -4
           }}
         >
           {title}
         </h1>
-        <p
-          style={{
-            position: 'absolute',
-            bottom: 70,
-            left: 80,
-            margin: 0,
-            fontSize: 32,
-            letterSpacing: -1,
-            opacity: 0.7
-          }}
-        >
-          {siteConfig.descriptionPretty}
-        </p>
       </div>
     ),
     {
