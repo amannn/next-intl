@@ -51,7 +51,7 @@ export default function Callout({
       >
         {emoji}
       </div>
-      <div className="nx-w-full nx-min-w-0 nx-leading-7">
+      <div className="w-full min-w-0 leading-7">
         {title && (
           <p className="mb-1">
             <strong>{title}</strong>

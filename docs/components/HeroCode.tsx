@@ -342,7 +342,7 @@ export default function HeroCode() {
               </CodeTab>
             ))}
           </div>
-          <div className="mt-6 flex items-start lg:min-h-[260px] lg:w-[684px]">
+          <div className="mt-6 flex items-start lg:min-h-[275px] lg:w-[684px]">
             <pre className="ml-[-16px] flex overflow-x-auto px-0" data-theme>
               {files[fileIndex].code}
             </pre>

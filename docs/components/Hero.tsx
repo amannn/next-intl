@@ -28,7 +28,7 @@ export default function Hero({
         <Wrapper>
           <div className="flex flex-col gap-16 xl:flex-row xl:items-center xl:justify-between">
             <div className="max-w-2xl">
-              <h1 className="inline bg-gradient-to-r from-white via-sky-100 to-primary bg-clip-text text-3xl font-semibold leading-tight tracking-tight text-transparent lg:text-5xl">
+              <h1 className="inline bg-gradient-to-r from-white via-sky-100 to-primary-400 bg-clip-text text-3xl font-semibold leading-tight tracking-tight text-transparent lg:text-5xl">
                 {title}
               </h1>
 
