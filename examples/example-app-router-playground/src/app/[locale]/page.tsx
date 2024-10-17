@@ -55,6 +55,7 @@ export default function Index({searchParams}: Props) {
       </div>
       <ClientLink href="/">Link on client without provider</ClientLink>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
+      <p data-testid="HasTitle">{JSON.stringify(t.has('title'))}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       <AsyncComponent />
       <AsyncComponentWithNamespaceAndLocale />

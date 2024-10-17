@@ -1,6 +1,6 @@
 import Callout from 'components/Callout';
 import Details from 'components/Details';
-import {Tabs, Tab} from 'nextra-theme-docs';
+import {Tabs} from 'nextra/components';
 
 # Server Actions, Metadata & Route Handlers
 
@@ -156,7 +156,7 @@ Note that by default, `next-intl` returns [the `link` response header](/docs/rou
 Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
 
 <Tabs items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 If you're using the same pathnames for all locales (i.e. you're not using the [`pathnames`](/docs/routing#pathnames) setting), you can assemble the sitemap based on the pathnames that your app supports.
 
@@ -197,8 +197,8 @@ function getUrl(pathname: string, locale: string) {
 }
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 If you're using the [`pathnames`](/docs/routing#pathnames) setting, you can generate sitemap entries for each locale by using the [`getPathname`](/docs/routing/navigation#getpathname) function.
 
@@ -247,7 +247,7 @@ function getUrl(href: Href, locale: (typeof locales)[number]) {
 
 ([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 <Callout>

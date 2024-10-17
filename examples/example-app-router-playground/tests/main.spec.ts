@@ -697,6 +697,19 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can use `t.has` in a Server Component', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByTestId('HasTitle')).toHaveText('true');
+});
+
+it('can render mdx content', async ({page}) => {
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'Über uns'}).waitFor();
+});
+
 describe('server actions', () => {
   it('can use `getTranslations` in server actions', async ({page}) => {
     await page.goto('/actions');

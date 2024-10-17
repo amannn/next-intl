@@ -2,35 +2,43 @@ import AlgoliaSearch from 'components/AlgoliaSearch';
 import Footer from 'components/Footer';
 import Logo from 'components/Logo';
 import PartnerSidebar from 'components/PartnerSidebar';
+import Pre from 'components/Pre';
 import {useRouter} from 'next/router';
-import {ThemeConfig} from 'nextra';
-import {Navbar, ThemeSwitch, useConfig} from 'nextra-theme-docs';
+import {
+  DocsThemeConfig,
+  Navbar,
+  ThemeSwitch,
+  useConfig
+} from 'nextra-theme-docs';
 import {ComponentProps} from 'react';
 import config from './config';
 
-export const TITLE_TEMPLATE_SUFFIX =
-  ' – Internationalization (i18n) for Next.js';
+export const TITLE_TEMPLATE_SUFFIX = ' – ' + config.description;
 
 export default {
   project: {
     link: config.githubUrl
   },
   docsRepositoryBase: config.githubUrl + '/blob/main/docs',
-  useNextSeoProps() {
-    return {
-      titleTemplate: '%s' + TITLE_TEMPLATE_SUFFIX
-    };
+  color: {
+    hue: {light: 210, dark: 195}
   },
-  primaryHue: {light: 210, dark: 195},
+  components: {
+    pre: Pre
+  },
   footer: {
     component: Footer
+  },
+  toc: {
+    backToTop: null
   },
   navigation: true,
   darkMode: true,
   logo: Logo,
   sidebar: {
     autoCollapse: true,
-    defaultMenuCollapseLevel: 1
+    defaultMenuCollapseLevel: 1,
+    toggleButton: false
   },
   themeSwitch: {
     component(props: ComponentProps<typeof ThemeSwitch>) {
@@ -91,58 +99,60 @@ export default {
       return url.href;
     }
   },
-  head: () => (
-    <>
-      <link
-        href="/favicon/apple-touch-icon.png"
-        rel="apple-touch-icon"
-        sizes="180x180"
-      />
-      <link
-        href="/favicon/favicon-32x32.png"
-        rel="icon"
-        sizes="32x32"
-        type="image/png"
-      />
-      <link
-        href="/favicon/favicon-16x16.png"
-        rel="icon"
-        sizes="16x16"
-        type="image/png"
-      />
-      <link href="/favicon/site.webmanifest" rel="manifest" />
-      <link
-        color="#5bbad5"
-        href="/favicon/safari-pinned-tab.svg"
-        rel="mask-icon"
-      />
-      <meta content="#da532c" name="msapplication-TileColor" />
-      <meta content="#ffffff" name="theme-color" />
+  head: function Head() {
+    const pageConfig = useConfig();
+    const {route} = useRouter();
+    const isDefault = route === '/' || !pageConfig.title;
+    const image = `/api/og?title=${encodeURIComponent(
+      isDefault ? config.description : pageConfig.title
+    )}`;
 
-      <meta content="next-intl" name="og:title" />
-      <meta content="next-intl" name="twitter:title" />
+    const description =
+      pageConfig.frontMatter.description ||
+      'Internationalization (i18n) for Next.js';
+    const title = pageConfig.title + TITLE_TEMPLATE_SUFFIX;
 
-      <meta
-        content="Internationalization (i18n) for Next.js"
-        name="description"
-      />
-      <meta
-        content="Internationalization (i18n) for Next.js"
-        name="og:description"
-      />
-      <meta
-        content="Internationalization (i18n) for Next.js"
-        name="twitter:description"
-      />
+    return (
+      <>
+        <title>{title}</title>
+        <meta content={title} name="og:title" />
+        <meta content={title} name="twitter:title" />
 
-      <meta content="jamannnnnn" name="twitter:site" />
-      <meta content="summary_large_image" name="twitter:card" />
+        <meta content={description} name="description" />
+        <meta content={description} name="og:description" />
+        <meta content={description} name="twitter:description" />
 
-      <meta
-        content={config.baseUrl + '/twitter-image.png'}
-        name="twitter:image"
-      />
-      <meta content={config.baseUrl + '/og-image.png'} name="og:image" />
-    </>
-  )
-} satisfies ThemeConfig;
+        <meta content={config.baseUrl + image} name="og:image" />
+
+        <link
+          href="/favicon/apple-touch-icon.png"
+          rel="apple-touch-icon"
+          sizes="180x180"
+        />
+        <link
+          href="/favicon/favicon-32x32.png"
+          rel="icon"
+          sizes="32x32"
+          type="image/png"
+        />
+        <link
+          href="/favicon/favicon-16x16.png"
+          rel="icon"
+          sizes="16x16"
+          type="image/png"
+        />
+        <link href="/favicon/site.webmanifest" rel="manifest" />
+        <link
+          color="#5bbad5"
+          href="/favicon/safari-pinned-tab.svg"
+          rel="mask-icon"
+        />
+        <meta content="#da532c" name="msapplication-TileColor" />
+        <meta content="#ffffff" name="theme-color" />
+
+        <meta content="jamannnnnn" name="twitter:site" />
+        <meta content="summary_large_image" name="twitter:card" />
+      </>
+    );
+  }
+} satisfies DocsThemeConfig;

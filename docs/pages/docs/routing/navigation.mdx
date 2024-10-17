@@ -1,5 +1,5 @@
 import Callout from 'components/Callout';
-import {Tab, Tabs} from 'nextra-theme-docs';
+import {Tabs} from 'nextra/components';
 import Details from 'components/Details';
 
 # Navigation APIs
@@ -19,7 +19,7 @@ Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting,
 These functions are typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components and should receive a [`routing`](/docs/routing) configuration that is shared with the middleware.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="routing.ts"
 import {createSharedPathnamesNavigation} from 'next-intl/navigation';
@@ -52,8 +52,8 @@ Note however that the `locales` argument for the middleware is mandatory. Howeve
 
 </Details>
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx filename="routing.ts"
 import {createLocalizedPathnamesNavigation} from 'next-intl/navigation';
@@ -75,7 +75,7 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
   working implementation of localized pathnames.
 </Callout>
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 <Details id="lint-consistent-usage">
@@ -92,7 +92,7 @@ To ensure consistent usage in your app, you can consider [linting for usage of t
 This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and automatically incorporates your routing strategy.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx
 import {Link} from '@/i18n/routing';
@@ -152,8 +152,8 @@ See also the Next.js docs on [creating an active link component](https://nextjs.
 
 </Details>
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 When using [localized pathnames](/docs/routing#pathnames), the `href` prop corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
 ```tsx
@@ -273,7 +273,7 @@ export const {Link, redirect, usePathname, useRouter} =
 
 </Details>
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 <Details id="link-prefetching">
@@ -287,7 +287,7 @@ Just like `next/link`, by default all links are prefetched. The one exception to
 If you need to navigate programmatically, e.g. in an event handler, `next-intl` provides a convience API that wraps [`useRouter` from Next.js](https://nextjs.org/docs/app/api-reference/functions/use-router) and automatically applies the locale of the user.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 ```tsx
 'use client';
 
@@ -323,8 +323,8 @@ router.replace(pathname, {locale: 'de'});
 ```
 
 </Details>
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 When using [localized pathnames](/docs/routing#pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
@@ -381,7 +381,7 @@ router.replace(
 ```
 
 </Details>
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 ### `usePathname`
@@ -389,7 +389,7 @@ router.replace(
 To retrieve the pathname without a potential locale prefix, you can call `usePathname`.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx
 'use client';
@@ -400,8 +400,8 @@ import {usePathname} from '@/i18n/routing';
 const pathname = usePathname();
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 When using [localized pathnames](/docs/routing#pathnames), the returned pathname will correspond to an internal pathname.
 
@@ -416,7 +416,7 @@ const pathname = usePathname();
 
 Note that internal pathnames are returned without params being resolved (e.g. `/users/[userId]`).
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 ### `redirect`
@@ -424,7 +424,7 @@ Note that internal pathnames are returned without params being resolved (e.g. `/
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and automatically applies the current locale.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx
 import {redirect} from '@/i18n/routing';
@@ -436,8 +436,8 @@ redirect('/login');
 redirect('/users/12');
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 When using [localized pathnames](/docs/routing#pathnames), the provided `href` corresponds to an internal pathname, but will be mapped to a locale-specific pathname.
 
@@ -460,7 +460,7 @@ redirect({
 });
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 <Callout>
@@ -473,12 +473,12 @@ redirect({
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
 
 <Tabs storageKey="pathnames" items={['Shared pathnames', 'Localized pathnames']}>
-<Tab>
+<Tabs.Tab>
 
 (This API is only available for localized pathnames, since it is not necessary for shared pathnames.)
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx filename="page.tsx"
 import {getPathname} from '@/i18n/routing';
@@ -504,5 +504,5 @@ export async function generateMetadata({params: {locale}}) {
 }
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>

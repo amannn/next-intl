@@ -1,3 +1,4 @@
+import {clsx} from 'clsx';
 import Image from 'next/image';
 import useLocationHash from 'hooks/useLocationHash';
 
@@ -41,7 +42,10 @@ export default function Example({
       <div className="relative">
         <a
           aria-label="Permalink for this example"
-          className="subheading-anchor absolute right-0 top-0 scroll-m-[24rem]"
+          className={clsx(
+            'subheading-anchor absolute right-0 top-0',
+            image ? 'scroll-m-[28rem]' : 'scroll-m-[5rem]'
+          )}
           href={`#${id}`}
           id={id}
         >
@@ -56,7 +60,7 @@ export default function Example({
           </p>
           <div className="mt-2">
             <a
-              className="nx-text-primary-600 inline-block text-base underline"
+              className="inline-block text-base text-primary-600 underline"
               href={sourceLink}
               rel="noreferrer"
               target="_blank"
@@ -69,7 +73,7 @@ export default function Example({
                   {' ・ '}
                 </span>
                 <a
-                  className="nx-text-primary-600 inline-block text-base underline"
+                  className="inline-block text-base text-primary-600 underline"
                   href={demoLink}
                   rel="noreferrer"
                   target="_blank"
