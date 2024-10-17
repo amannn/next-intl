@@ -1,4 +1,4 @@
-import {Tab, Tabs} from 'nextra-theme-docs';
+import {Tabs} from 'nextra/components';
 import Callout from 'components/Callout';
 import Steps from 'components/Steps';
 import Details from 'components/Details';
@@ -58,7 +58,7 @@ The simplest option is to add JSON files in your local project folder:
 Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
 
 <Tabs items={['next.config.mjs', 'next.config.js']}>
-<Tab>
+<Tabs.Tab>
 
 ```js filename="next.config.mjs"
 import createNextIntlPlugin from 'next-intl/plugin';
@@ -71,8 +71,8 @@ const nextConfig = {};
 export default withNextIntl(nextConfig);
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```js filename="next.config.js"
 const createNextIntlPlugin = require('next-intl/plugin');
@@ -85,7 +85,7 @@ const nextConfig = {};
 module.exports = withNextIntl(nextConfig);
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 ### `i18n/request.ts` [#i18n-request]

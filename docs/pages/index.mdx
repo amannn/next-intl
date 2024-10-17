@@ -11,6 +11,7 @@ import LinkButton from 'components/LinkButton';
 import PartnerBanner from 'components/PartnerBanner';
 import Section from 'components/Section';
 import UserTestimonial from 'components/UserTestimonial';
+import GetStartedBackground from 'components/GetStartedBackground';
 
 <div className="bg-slate-50 dark:bg-gray-900">
 
@@ -147,12 +148,11 @@ import UserTestimonial from 'components/UserTestimonial';
     Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
   </div>
 </Section>
-<div className="pb-20 lg:pb-40 text-center">
-  <div className="py-20 lg:py-40">
-    <LinkButton href="/docs/getting-started">Get started with next-intl</LinkButton>
-    <div className="flex gap-6 mt-8 justify-center">
-      <Link href="/docs/usage">Usage guide</Link>
-      <Link href="/examples">Examples</Link>
+<div className="text-center pb-10 -mt-10">
+  <div className="py-60 relative">
+    <GetStartedBackground />
+    <div className='relative'>
+      <LinkButton href="/docs/getting-started">Get started with next-intl</LinkButton>
     </div>
   </div>
 </div>

@@ -42,7 +42,7 @@ export default function createSharedPathnamesNavigation<
       />
     );
   }
-  const LinkWithRef = forwardRef(Link) as (
+  const LinkWithRef = forwardRef(Link) as unknown as (
     props: LinkProps & {ref?: LinkProps['ref']}
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
