@@ -1,5 +1,5 @@
 import useLocationHash from 'hooks/useLocationHash';
-import {useMDXComponents} from 'nextra-theme-docs';
+import {useMDXComponents} from 'nextra/mdx';
 import {ComponentProps, useEffect, useReducer} from 'react';
 
 type Props = ComponentProps<'details'>;
@@ -33,7 +33,7 @@ export default function Details({children, id, ...rest}: Props) {
       {id && (
         <a
           aria-label="Permalink for this section"
-          className="subheading-anchor absolute right-3 top-3"
+          className="subheading-anchor absolute right-3 top-3 scroll-m-[5rem]"
           href={`#${id}`}
           id={id}
         >

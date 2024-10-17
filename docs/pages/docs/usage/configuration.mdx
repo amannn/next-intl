@@ -1,6 +1,6 @@
 import PartnerContentLink from 'components/PartnerContentLink';
 import Callout from 'components/Callout';
-import {Tab, Tabs} from 'nextra-theme-docs';
+import {Tabs} from 'nextra/components';
 import Details from 'components/Details';
 
 # Global configuration
@@ -17,7 +17,7 @@ Depending on if you handle [internationalization in Server- or Client Components
 
 <Tabs items={['With i18n routing', 'Without i18n routing']}>
 
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -39,8 +39,8 @@ export default getRequestConfig(async ({requestLocale}) => {
 });
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -57,7 +57,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
@@ -220,7 +220,7 @@ Colocating your messages with app code is beneficial because it allows developer
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -247,8 +247,8 @@ import {getMessages} from 'next-intl/server';
 const messages = await getMessages();
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 import {NextIntlClientProvider} from 'next-intl';
@@ -266,7 +266,7 @@ async function Component({children}) {
 }
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 <Details id="messages-remote-sources">
@@ -323,7 +323,7 @@ Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integr
 Specifying a time zone affects the rendering of dates and times. By default, the time zone of the server runtime will be used, but can be customized as necessary.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -340,8 +340,8 @@ export default getRequestConfig(async () => {
 });
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 // The time zone can either be statically defined, read from the
@@ -352,7 +352,7 @@ const timeZone = 'Europe/Vienna';
 <NextIntlClientProvider timeZone={timeZone}>...<NextIntlClientProvider>
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
@@ -381,7 +381,7 @@ When formatting [relative dates and times](/docs/usage/dates-times#formatting-re
 If you prefer to override the default, you can provide an explicit value for `now`:
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -399,8 +399,8 @@ export default getRequestConfig(async () => {
 });
 ```
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 const now = new Date('2020-11-20T10:36:01.516Z');
@@ -408,7 +408,7 @@ const now = new Date('2020-11-20T10:36:01.516Z');
 <NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 The configured `now` value can be read in components via `useNow` or `getNow`:
@@ -433,7 +433,7 @@ Component.
 To achieve consistent date, time, number and list formatting, you can define a set of global formats.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -468,8 +468,8 @@ export default getRequestConfig(async () => {
 
 Note that `formats` are not automatically inherited by Client Components. If you want to make this available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 <NextIntlClientProvider
@@ -498,7 +498,7 @@ Note that `formats` are not automatically inherited by Client Components. If you
 </NextIntlClientProvider>
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 Once you have `formats` set up, you can use them in your components via `useFormatter`:
@@ -551,7 +551,7 @@ function Component() {
 To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.tsx"
 import {getRequestConfig} from 'next-intl/server';
@@ -570,8 +570,8 @@ export default getRequestConfig(async () => {
 
 Note that `defaultTranslationValues` are not automatically inherited by Client Components. If you want to make this available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 <NextIntlClientProvider
@@ -586,7 +586,7 @@ Note that `defaultTranslationValues` are not automatically inherited by Client C
 
 Note that `NextIntlClientProvider` is a Client Component, therefore if you render it from a Server Component, the props need to be serializable across the server/client boundary (see: [How can I provide non-serializable props to `NextIntlClientProvider`](#nextintlclientprovider-non-serializable-props)).
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 ## Error handling (`onError` & `getMessageFallback`) [#error-handling]
@@ -596,7 +596,7 @@ By default, when a message fails to resolve or when the formatting failed, an er
 This behavior can be customized with the `onError` and `getMessageFallback` configuration option.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
-<Tab>
+<Tabs.Tab>
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -631,8 +631,8 @@ export default getRequestConfig(async () => {
 
 Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
 
-</Tab>
-<Tab>
+</Tabs.Tab>
+<Tabs.Tab>
 
 ```tsx
 import {NextIntlClientProvider, IntlErrorCode} from 'next-intl';
@@ -665,7 +665,7 @@ function getMessageFallback({namespace, key, error}) {
 </NextIntlClientProvider>;
 ```
 
-</Tab>
+</Tabs.Tab>
 </Tabs>
 
 ## Locale

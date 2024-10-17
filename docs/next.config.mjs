@@ -1,14 +1,34 @@
-const withNextra = require('nextra')({
+import nextra from 'nextra';
+import minLight from 'shiki/themes/min-light.mjs';
+
+const lightTheme = {
+  ...minLight,
+  tokenColors: minLight.tokenColors.map((color) => {
+    // Increase the contrast of comments
+    if (color.scope?.includes('comment')) {
+      return {...color, settings: {foreground: '#808ea3'}};
+    } else {
+      return color;
+    }
+  })
+};
+
+const withNextra = nextra({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.tsx',
   staticImage: true,
   defaultShowCopyCode: true,
-  flexsearch: {
-    codeblocks: false
+  mdxOptions: {
+    rehypePrettyCodeOptions: {
+      theme: {
+        light: lightTheme,
+        dark: 'night-owl'
+      }
+    }
   }
 });
 
-module.exports = withNextra({
+export default withNextra({
   transpilePackages: ['react-tweet'],
   redirects: () => [
     // Index pages

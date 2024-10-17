@@ -3,14 +3,32 @@
 @tailwind utilities;
 
 :root {
+  --color-text-primary: #0073e6;
+  --nextra-bg: white;
+  --docsearch-text-color: black;
+
+  /* Only for styling on home page */
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
   --shiki-token-comment: rgba(100, 116, 139, 0.8);
-  --color-text-primary: #0073e6;
+  --shiki-color-text: lab(27.5348% 0 0);
+  --shiki-token-constant: lab(48.3994% 0.649333 -55.5719);
+  --shiki-token-string: lab(49.1367% -42.0409 31.8582);
+  --shiki-token-keyword: lab(47.8876% 63.025 42.31);
+  --shiki-token-parameter: lab(72.7377% 33.9074 77.3632);
+  --shiki-token-function: lab(39.0339% 41.1896 -60.5821);
+  --shiki-token-string-expression: var(--shiki-token-string);
 }
 
 .dark {
+  /* Only for styling on home page */
   --shiki-token-string-expression: hsl(160, 75%, 45%);
   --shiki-token-punctuation: rgba(255, 255, 255, 0.5);
+  --shiki-color-text: lab(83.8412% -0.0000298023 0);
+  --shiki-token-constant: lab(72.6797% -5.9377 -41.8341);
+  --shiki-token-string: lab(77.5312% 27.4176 43.2358);
+  --shiki-token-comment: lab(47.984% -1.63257 -6.06269);
+  --shiki-token-keyword: lab(65.9075% 52.4906 18.1315);
+  --shiki-token-function: lab(66.4473% 27.2323 -43.2583);
 }
 
 /**
@@ -18,6 +36,10 @@
  */
 .navbar-home {
   @apply bg-slate-850 text-white dark:bg-slate-850;
+}
+
+.navbar-home .nextra-scrollbar > a {
+  @apply !text-white;
 }
 
 /* Hamburger menu */
@@ -29,12 +51,22 @@
   @apply !text-white transition-opacity hover:opacity-70;
 }
 
-html:not(.dark) .navbar-home .nextra-scrollbar {
-  @apply !bg-white;
-}
-
 .navbar-home .nextra-nav-container-blur {
   display: none;
+}
+
+.nextra-sidebar-container {
+  @apply bg-white dark:bg-black md:bg-transparent md:dark:bg-transparent;
+}
+
+/**
+ * TOC
+ */
+
+.nextra-toc {
+  .nextra-code {
+    white-space: nowrap;
+  }
 }
 
 /**
@@ -86,5 +118,17 @@ html:not(.dark) .navbar-home .nextra-scrollbar {
     background-position: center;
     background-color: currentColor;
     mask: url('/external-link.svg');
+  }
+
+  *:hover > .subheading-anchor {
+    @apply opacity-100;
+  }
+
+  /* Fix underline of tabs */
+  [role='tab'] {
+    @apply !mb-0;
+  }
+  [role='tablist'] {
+    @apply !pb-0;
   }
 }

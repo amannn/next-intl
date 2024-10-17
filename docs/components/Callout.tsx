@@ -1,4 +1,4 @@
-import cn from 'clsx';
+import clsx from 'clsx';
 import {ReactNode} from 'react';
 
 type Props = {
@@ -16,13 +16,13 @@ const TypeToEmoji = {
 };
 
 const classes = {
-  default: cn(
+  default: clsx(
     'border-green-700/20 bg-green-50 text-green-800 dark:border-green-400/40 dark:bg-green-700/30 dark:text-white/90'
   ),
-  warning: cn(
+  warning: clsx(
     'border-yellow-700/20 bg-yellow-50 text-yellow-900 dark:border-yellow-400/40 dark:bg-yellow-700/30 dark:text-white/90'
   ),
-  question: cn(
+  question: clsx(
     'border-sky-700/20 bg-sky-50 text-sky-800 dark:border-sky-400/40 dark:bg-sky-700/30 dark:text-white/90'
   )
 };
@@ -36,7 +36,7 @@ export default function Callout({
 }: Props) {
   return (
     <div
-      className={cn(
+      className={clsx(
         className,
         'nextra-callout mt-6 flex overflow-x-auto rounded-lg border py-3 ltr:pr-4 rtl:pl-4',
         'contrast-more:border-current contrast-more:dark:border-current',
@@ -51,7 +51,7 @@ export default function Callout({
       >
         {emoji}
       </div>
-      <div className="nx-w-full nx-min-w-0 nx-leading-7">
+      <div className="w-full min-w-0 leading-7">
         {title && (
           <p className="mb-1">
             <strong>{title}</strong>

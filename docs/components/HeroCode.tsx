@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import {ReactNode, useState} from 'react';
 
-function Tab({
+function CodeTab({
   active,
   children,
   onClick
@@ -333,16 +333,16 @@ export default function HeroCode() {
           </svg>
           <div className="mt-4 flex space-x-2 overflow-x-auto">
             {files.map((file) => (
-              <Tab
+              <CodeTab
                 key={file.name}
                 active={fileIndex === files.indexOf(file)}
                 onClick={() => setFileIndex(files.indexOf(file))}
               >
                 {file.name}
-              </Tab>
+              </CodeTab>
             ))}
           </div>
-          <div className="mt-6 flex items-start lg:min-h-[260px] lg:w-[684px]">
+          <div className="mt-6 flex items-start lg:min-h-[275px] lg:w-[684px]">
             <pre className="ml-[-16px] flex overflow-x-auto px-0" data-theme>
               {files[fileIndex].code}
             </pre>
