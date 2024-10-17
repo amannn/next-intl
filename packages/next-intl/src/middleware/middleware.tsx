@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {receiveRoutingConfig, RoutingConfig} from '../routing/config';
+import {RoutingConfig, receiveRoutingConfig} from '../routing/config';
 import {Locales, Pathnames} from '../routing/types';
 import {HEADER_LOCALE_NAME} from '../shared/constants';
 import {
@@ -12,15 +12,15 @@ import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
 import resolveLocale from './resolveLocale';
 import syncCookie from './syncCookie';
 import {
-  getInternalTemplate,
-  formatTemplatePathname,
-  getBestMatchingDomain,
-  getPathnameMatch,
-  getNormalizedPathname,
-  isLocaleSupportedOnDomain,
   applyBasePath,
   formatPathname,
+  formatTemplatePathname,
+  getBestMatchingDomain,
+  getInternalTemplate,
   getLocaleAsPrefix,
+  getNormalizedPathname,
+  getPathnameMatch,
+  isLocaleSupportedOnDomain,
   sanitizePathname
 } from './utils';
 

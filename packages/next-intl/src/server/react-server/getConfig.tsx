@@ -1,9 +1,9 @@
 import {cache} from 'react';
 import {
-  initializeConfig,
   IntlConfig,
+  _createCache,
   _createIntlFormatters,
-  _createCache
+  initializeConfig
 } from 'use-intl/core';
 import {getRequestLocale} from './RequestLocale';
 import createRequestConfig from './createRequestConfig';

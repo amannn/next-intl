@@ -9,8 +9,8 @@
  */
 
 import {
-  useTranslations as base_useTranslations,
-  useFormatter as base_useFormatter
+  useFormatter as base_useFormatter,
+  useTranslations as base_useTranslations
 } from 'use-intl';
 
 export * from 'use-intl';

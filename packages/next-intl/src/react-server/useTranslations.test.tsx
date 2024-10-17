@@ -1,5 +1,5 @@
 import React, {cache} from 'react';
-import {describe, expect, it, vi, beforeEach} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {renderToStream} from './testUtils';
 import {createTranslator, useTranslations} from '.';
 

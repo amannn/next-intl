@@ -1,10 +1,10 @@
-import {it, describe, expect} from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {
+  getSortedPathnames,
   hasPathnamePrefixed,
-  unprefixPathname,
   matchesPathname,
   prefixPathname,
-  getSortedPathnames
+  unprefixPathname
 } from './utils';
 
 describe('prefixPathname', () => {

@@ -1,8 +1,8 @@
 import {
-  Locales,
+  DomainsConfig,
   LocalePrefix,
   LocalePrefixConfigVerbose,
-  DomainsConfig,
+  Locales,
   Pathnames
 } from './types';
 

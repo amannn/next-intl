@@ -1,9 +1,9 @@
 import {
-  Locales,
-  LocalePrefixConfigVerbose,
   DomainConfig,
-  Pathnames,
-  DomainsConfig
+  DomainsConfig,
+  LocalePrefixConfigVerbose,
+  Locales,
+  Pathnames
 } from '../routing/types';
 import {
   getLocalePrefix,

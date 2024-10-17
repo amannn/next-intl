@@ -1,7 +1,7 @@
 import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
-import {Locales, LocalePrefixConfigVerbose} from '../routing/types';
+import {LocalePrefixConfigVerbose, Locales} from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 

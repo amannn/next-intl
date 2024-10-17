@@ -1,10 +1,10 @@
 import type {
-  getRequestConfig as getRequestConfig_type,
   getFormatter as getFormatter_type,
-  getNow as getNow_type,
-  getTimeZone as getTimeZone_type,
-  getMessages as getMessages_type,
   getLocale as getLocale_type,
+  getMessages as getMessages_type,
+  getNow as getNow_type,
+  getRequestConfig as getRequestConfig_type,
+  getTimeZone as getTimeZone_type,
   unstable_setRequestLocale as unstable_setRequestLocale_type
 } from '../react-server';
 

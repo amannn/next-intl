@@ -3,10 +3,10 @@ import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {ResolvedRoutingConfig} from '../routing/config';
 import {
-  Locales,
-  Pathnames,
+  DomainConfig,
   DomainsConfig,
-  DomainConfig
+  Locales,
+  Pathnames
 } from '../routing/types';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 import {ResolvedMiddlewareOptions} from './config';

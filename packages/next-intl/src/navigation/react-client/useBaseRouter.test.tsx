@@ -2,11 +2,11 @@ import {render} from '@testing-library/react';
 import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import {
-  useRouter as useNextRouter,
-  usePathname as useNextPathname
+  usePathname as useNextPathname,
+  useRouter as useNextRouter
 } from 'next/navigation';
 import React, {useEffect} from 'react';
-import {it, describe, vi, beforeEach, expect} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import useBaseRouter from './useBaseRouter';
 
 vi.mock('next/navigation', () => {

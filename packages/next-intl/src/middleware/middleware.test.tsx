@@ -3,9 +3,9 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
-import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
+import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import createMiddleware from '../middleware';
-import {defineRouting, Pathnames} from '../routing';
+import {Pathnames, defineRouting} from '../routing';
 import {COOKIE_LOCALE_NAME} from '../shared/constants';
 
 vi.mock('next/server', async (importActual) => {
