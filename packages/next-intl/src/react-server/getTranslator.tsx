@@ -1,14 +1,14 @@
 import {ReactElement, ReactNodeArray, cache} from 'react';
 import {
   Formats,
-  TranslationValues,
-  RichTranslationValues,
+  MarkupTranslationValues,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
-  createTranslator,
-  MarkupTranslationValues
+  RichTranslationValues,
+  TranslationValues,
+  createTranslator
 } from 'use-intl/core';
 
 function getTranslatorImpl<

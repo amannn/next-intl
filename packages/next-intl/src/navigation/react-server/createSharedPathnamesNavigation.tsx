@@ -1,8 +1,8 @@
 import React, {ComponentProps} from 'react';
 import {
+  RoutingConfigSharedNavigation,
   receiveLocaleCookie,
-  receiveLocalePrefixConfig,
-  RoutingConfigSharedNavigation
+  receiveLocalePrefixConfig
 } from '../../routing/config';
 import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';

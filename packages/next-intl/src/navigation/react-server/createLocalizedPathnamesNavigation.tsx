@@ -1,7 +1,7 @@
 import React, {ComponentProps} from 'react';
 import {
-  receiveRoutingConfig,
-  RoutingConfigLocalizedNavigation
+  RoutingConfigLocalizedNavigation,
+  receiveRoutingConfig
 } from '../../routing/config';
 import {
   DomainsConfig,

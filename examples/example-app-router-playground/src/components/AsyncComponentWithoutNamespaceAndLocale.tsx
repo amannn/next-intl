@@ -1,4 +1,4 @@
-import {getTranslations, getLocale} from 'next-intl/server';
+import {getLocale, getTranslations} from 'next-intl/server';
 
 export default async function AsyncComponentWithoutNamespaceAndLocale() {
   const locale = await getLocale();

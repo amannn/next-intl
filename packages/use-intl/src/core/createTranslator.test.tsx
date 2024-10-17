@@ -1,6 +1,6 @@
 import React, {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
-import {it, expect, describe, vi} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import IntlError, {IntlErrorCode} from './IntlError';
 import createTranslator from './createTranslator';
 

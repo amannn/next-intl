@@ -1,13 +1,13 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
+  RoutingConfigSharedNavigation,
   receiveLocaleCookie,
-  receiveLocalePrefixConfig,
-  RoutingConfigSharedNavigation
+  receiveLocalePrefixConfig
 } from '../../routing/config';
 import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import ClientLink from './ClientLink';
-import {clientRedirect, clientPermanentRedirect} from './redirects';
+import {clientPermanentRedirect, clientRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 

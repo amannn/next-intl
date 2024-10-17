@@ -117,7 +117,8 @@ export default async function OG(req: Request) {
           style={{
             fontSize: 82,
             lineHeight: 1.1,
-            letterSpacing: -4
+            letterSpacing: -4,
+            marginRight: 12
           }}
         >
           {title}

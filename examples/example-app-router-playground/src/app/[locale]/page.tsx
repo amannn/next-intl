@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import {Link} from '@/i18n/routing';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
@@ -13,7 +14,6 @@ import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCo
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
 import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
-import {Link} from '@/i18n/routing';
 
 type Props = {
   searchParams: Record<string, string>;

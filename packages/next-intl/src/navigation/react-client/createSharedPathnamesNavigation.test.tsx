@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
-  useParams,
-  useRouter as useNextRouter
+  useRouter as useNextRouter,
+  useParams
 } from 'next/navigation';
 import React from 'react';
-import {it, describe, vi, beforeEach, expect, Mock} from 'vitest';
+import {Mock, beforeEach, describe, expect, it, vi} from 'vitest';
 import createSharedPathnamesNavigation from './createSharedPathnamesNavigation';
 
 vi.mock('next/navigation');

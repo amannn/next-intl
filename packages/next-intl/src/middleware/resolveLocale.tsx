@@ -3,11 +3,11 @@ import Negotiator from 'negotiator';
 import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
 import {ResolvedRoutingConfig} from '../routing/config';
 import {
-  Locales,
-  Pathnames,
-  DomainsConfig,
   DomainConfig,
-  LocalePrefixMode
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
 } from '../routing/types';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
@@ -17,7 +17,7 @@ function findDomainFromHost<AppLocales extends Locales>(
 ) {
   const host = getHost(requestHeaders);
 
-  if (host && domains) {
+  if (host) {
     return domains.find((cur) => cur.domain === host);
   }
 
@@ -49,7 +49,7 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
       orderedLocales as unknown as Array<string>,
       defaultLocale
     );
-  } catch (e) {
+  } catch {
     // Invalid language
   }
 
@@ -112,12 +112,12 @@ function resolveLocaleFromPrefix<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && routing.localeDetection && requestCookies) {
+  if (!locale && routing.localeDetection) {
     locale = getLocaleFromCookie(routing, requestCookies);
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && routing.localeDetection && requestHeaders) {
+  if (!locale && routing.localeDetection) {
     locale = getAcceptLanguageLocale(
       requestHeaders,
       routing.locales,
@@ -186,7 +186,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && routing.localeDetection && requestCookies) {
+  if (!locale && routing.localeDetection) {
     const cookieLocale = getLocaleFromCookie(routing, requestCookies);
     if (cookieLocale) {
       if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
@@ -198,7 +198,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && routing.localeDetection && requestHeaders) {
+  if (!locale && routing.localeDetection) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
       domain.locales || routing.locales,

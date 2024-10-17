@@ -56,7 +56,10 @@ Typically, you'll want to call this factory function in a central place in your 
 These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](/docs/routing/navigation) that allows you to localize pathnames:
 
 ```tsx filename="navigation.ts"
-import {createLocalizedPathnamesNavigation, Pathnames} from 'next-intl/navigation';
+import {
+  createLocalizedPathnamesNavigation,
+  Pathnames
+} from 'next-intl/navigation';
 
 export const locales = ['en', 'de'] as const;
 

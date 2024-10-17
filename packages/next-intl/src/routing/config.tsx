@@ -1,11 +1,11 @@
 import type {NextResponse} from 'next/server';
 import {
-  Locales,
+  DomainsConfig,
   LocalePrefix,
   LocalePrefixConfigVerbose,
-  DomainsConfig,
-  Pathnames,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales,
+  Pathnames
 } from './types';
 
 type CookieAttributes = Pick<
@@ -144,7 +144,7 @@ export function receiveRoutingConfig<
       Config,
       'localePrefix' | 'localeCookie' | 'localeDetection' | 'alternateLinks'
     >),
-    localePrefix: receiveLocalePrefixConfig(input?.localePrefix),
+    localePrefix: receiveLocalePrefixConfig(input.localePrefix),
     localeCookie: receiveLocaleCookie(input.localeCookie),
     localeDetection: input.localeDetection ?? true,
     alternateLinks: input.alternateLinks ?? true
@@ -154,7 +154,7 @@ export function receiveRoutingConfig<
 export function receiveLocaleCookie(
   localeCookie?: boolean | CookieAttributes
 ): InitializedLocaleCookieConfig {
-  return localeCookie ?? true
+  return (localeCookie ?? true)
     ? {
         name: 'NEXT_LOCALE',
         maxAge: 31536000, // 1 year

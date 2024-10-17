@@ -1,8 +1,8 @@
 import React, {ComponentProps} from 'react';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {getLocale} from '../../server.react-server';
 import {getLocalePrefix} from '../../shared/utils';

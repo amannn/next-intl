@@ -3,9 +3,9 @@ import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {InitializedLocaleCookieConfig} from '../../routing/config';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {getLocalePrefix, localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';

@@ -24,7 +24,7 @@ describe('serializeSearchParams', () => {
 });
 
 describe('compileLocalizedPathname', () => {
-  const locales: ReadonlyArray<string> = ['en', 'de'];
+  type Locales = ['en', 'de'];
   const pathnames = {
     '/about/[param]': {
       en: '/about/[param]',
@@ -38,7 +38,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname that differs by locale', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/about/[param]'>({
+      compileLocalizedPathname<Locales, '/about/[param]'>({
         locale: 'en',
         pathname: '/about/[param]',
         params: {param: 'value'},
@@ -46,7 +46,7 @@ describe('compileLocalizedPathname', () => {
       })
     ).toBe('/about/value');
     expect(
-      compileLocalizedPathname<typeof locales, '/about/[param]'>({
+      compileLocalizedPathname<Locales, '/about/[param]'>({
         locale: 'de',
         pathname: '/about/[param]',
         params: {param: 'wert'},
@@ -57,7 +57,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname that is equal for all locales', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/test/[one]/[two]'>({
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
         locale: 'en',
         pathname: '/test/[one]/[two]',
         params: {one: '1', two: '2'},
@@ -68,7 +68,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname where a param appears twice', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/test/[one]/[one]'>({
+      compileLocalizedPathname<Locales, '/test/[one]/[one]'>({
         locale: 'en',
         pathname: '/test/[one]/[one]',
         params: {one: '1'},
@@ -79,7 +79,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname with a catch-all segment', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/test/[...params]'>({
+      compileLocalizedPathname<Locales, '/test/[...params]'>({
         locale: 'en',
         pathname: '/test/[...params]',
         params: {params: ['a', 'b']},
@@ -90,7 +90,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname with an optional catch-all segment if the segment is provided', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/test/[[...params]]'>({
+      compileLocalizedPathname<Locales, '/test/[[...params]]'>({
         locale: 'en',
         pathname: '/test/[[...params]]',
         params: {params: ['a', 'b']},
@@ -101,7 +101,7 @@ describe('compileLocalizedPathname', () => {
 
   it('compiles a pathname with an optional catch-all segment if the segment is absent', () => {
     expect(
-      compileLocalizedPathname<typeof locales, '/test/[[...params]]'>({
+      compileLocalizedPathname<Locales, '/test/[[...params]]'>({
         locale: 'en',
         pathname: '/test/[[...params]]',
         pathnames
@@ -111,7 +111,7 @@ describe('compileLocalizedPathname', () => {
 
   it('throws when params were not resolved', () => {
     expect(() =>
-      compileLocalizedPathname<typeof locales, '/test/[one]/[two]'>({
+      compileLocalizedPathname<Locales, '/test/[one]/[two]'>({
         locale: 'en',
         pathname: '/test/[one]/[two]',
         pathnames,
