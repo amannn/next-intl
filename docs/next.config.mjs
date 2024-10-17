@@ -4,6 +4,7 @@ import minLight from 'shiki/themes/min-light.mjs';
 const lightTheme = {
   ...minLight,
   tokenColors: minLight.tokenColors.map((color) => {
+    // Increase the contrast of comments
     if (color.scope?.includes('comment')) {
       return {...color, settings: {foreground: '#808ea3'}};
     } else {

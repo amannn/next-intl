@@ -1,6 +1,6 @@
 import {Button as HeadlessButton} from '@headlessui/react';
 import type {ButtonProps} from '@headlessui/react';
-import cn from 'clsx';
+import clsx from 'clsx';
 import type {ReactElement} from 'react';
 
 export default function Button({
@@ -13,7 +13,7 @@ export default function Button({
   return (
     <HeadlessButton
       className={(args) =>
-        cn(
+        clsx(
           'transition',
           args.focus && 'nextra-focusable',
           variant === 'outline' && [

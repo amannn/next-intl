@@ -1,4 +1,4 @@
-import cn from 'clsx';
+import clsx from 'clsx';
 import type {ComponentProps, FC, ReactElement} from 'react';
 import {useRef} from 'react';
 import CopyToClipboard from './CopyToClipboard';
@@ -29,9 +29,9 @@ export default function Pre({
       )}
       <pre
         ref={preRef}
-        className={cn(
+        className={clsx(
           'nextra-focus',
-          'overflow-x-auto subpixel-antialiased [&>code]:!text-[.81em] py-4',
+          'overflow-x-auto py-4 subpixel-antialiased [&>code]:!text-[.81em]',
           className
         )}
         {...rest}
@@ -39,9 +39,9 @@ export default function Pre({
         {children}
       </pre>
       <div
-        className={cn(
-          'opacity-0 transition [div:hover>&]:opacity-100 focus-within:opacity-100',
-          'flex gap-1 absolute right-[0.7rem]',
+        className={clsx(
+          'opacity-0 transition focus-within:opacity-100 [div:hover>&]:opacity-100',
+          'absolute right-[0.7rem] flex gap-1',
           filename ? 'top-[3.2rem]' : 'top-[0.7rem]'
         )}
       >

@@ -5,6 +5,7 @@
 :root {
   --color-text-primary: #0073e6;
   --nextra-bg: white;
+  --docsearch-text-color: black;
 
   /* Only for styling on home page */
   --shiki-token-punctuation: rgba(0, 0, 0, 0.5);
