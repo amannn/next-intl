@@ -5,6 +5,7 @@ import {createTranslator, useTranslations} from '.';
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({
+    locale: 'en',
     messages: {
       A: {
         title: 'A'
@@ -17,10 +18,6 @@ vi.mock('../../src/server/react-server/createRequestConfig', () => ({
       }
     }
   })
-}));
-
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
-  getRequestLocale: vi.fn(() => 'en')
 }));
 
 vi.mock('react');

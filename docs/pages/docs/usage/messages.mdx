@@ -333,7 +333,7 @@ t('message'); // "Escape curly braces with single quotes (e.g. {name})"
 
 ## Rich text
 
-You can format rich text with custom tags and map them to React components:
+You can format rich text with custom tags and map them to React components via `t.rich`:
 
 ```json filename="en.json"
 {
@@ -351,9 +351,46 @@ t.rich('message', {
 Tags can be arbitrarily nested (e.g. `This is <important><very>very</very> important</important>`).
 
 <Details id="rich-text-reuse-tags">
-<summary>How can I reuse a tag across my app?</summary>
+<summary>How can I reuse tags across my app?</summary>
 
-If you want to use the same tag across your app, you can configure it via [default translation values](/docs/usage/configuration#default-translation-values).
+Common tags for rich text that you want to share across your app can be defined in a shared module and imported where relevant for usage with `t.rich`.
+
+A convenient pattern is to use a component that provides common tags via a render prop:
+
+```js
+import {useTranslations} from 'next-intl';
+import RichText from '@/components/RichText';
+
+function AboutPage() {
+  const t = useTranslations('AboutPage');
+  return <RichText>{(tags) => t.rich('description', tags)}</RichText>;
+}
+```
+
+In this case, the `RichText` component can provide styled tags and also a general layout for the text:
+
+```js filename="components/RichText.tsx"
+import {ReactNode} from 'react';
+
+// These tags are available
+type Tag = 'p' | 'b' | 'i';
+
+type Props = {
+  children(tags: Record<Tag, (chunks: ReactNode) => ReactNode>): ReactNode
+};
+
+export default function RichText({children}: Props) {
+  return (
+    <div className="prose">
+      {children({
+        p: (chunks: ReactNode) => <p>{chunks}</p>,
+        b: (chunks: ReactNode) => <b className="font-semibold">{chunks}</b>,
+        i: (chunks: ReactNode) => <i className="italic">{chunks}</i>
+      })}
+    </div>
+  );
+}
+```
 
 </Details>
 
@@ -408,7 +445,7 @@ t.rich('message', {
 });
 ```
 
-For the use case of localizing pathnames, consider using [`createLocalizedPathnamesNavigation`](/docs/routing/navigation).
+For the use case of localizing pathnames, consider using [`pathnames`](/docs/routing#pathnames).
 
 </Details>
 

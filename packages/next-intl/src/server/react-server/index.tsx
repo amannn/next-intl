@@ -10,4 +10,4 @@ export {default as getTranslations} from './getTranslations';
 export {default as getMessages} from './getMessages';
 export {default as getLocale} from './getLocale';
 
-export {setRequestLocale as unstable_setRequestLocale} from './RequestLocale';
+export {setCachedRequestLocale as unstable_setRequestLocale} from './RequestLocaleCache';

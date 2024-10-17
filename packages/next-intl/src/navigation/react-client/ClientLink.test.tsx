@@ -6,6 +6,9 @@ import {NextIntlClientProvider} from '../../index.react-client';
 import {LocalePrefixConfigVerbose} from '../../routing/types';
 import ClientLink from './ClientLink';
 
+// Note: Once we remove the legacy navigation APIs, this test suite can be
+// removed too. All relevant tests have been moved to the new navigation API.
+
 vi.mock('next/navigation');
 
 function mockLocation(pathname: string, basePath = '') {
@@ -21,13 +24,21 @@ const MockClientLink = forwardRef(
     {
       localePrefix = {mode: 'always'},
       ...rest
-    }: Omit<ComponentProps<typeof ClientLink>, 'localePrefix'> & {
-      localePrefix?: LocalePrefixConfigVerbose<any>;
+    }: Omit<
+      ComponentProps<typeof ClientLink>,
+      'localePrefix' | 'localeCookie'
+    > & {
+      localePrefix?: LocalePrefixConfigVerbose<any, any>;
     },
     ref
   ) => (
     <ClientLink
       ref={ref as LegacyRef<HTMLAnchorElement>}
+      localeCookie={{
+        name: 'NEXT_LOCALE',
+        maxAge: 31536000,
+        sameSite: 'lax'
+      }}
       localePrefix={localePrefix}
       {...rest}
     />

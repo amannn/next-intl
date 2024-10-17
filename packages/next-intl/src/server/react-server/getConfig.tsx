@@ -1,3 +1,4 @@
+import {notFound} from 'next/navigation';
 import {cache} from 'react';
 import {
   initializeConfig,
@@ -6,7 +7,9 @@ import {
   _createCache
 } from 'use-intl/core';
 import {getRequestLocale} from './RequestLocale';
+import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy';
 import createRequestConfig from './createRequestConfig';
+import {GetRequestConfigParams} from './getRequestConfig';
 
 // Make sure `now` is consistent across the request in case none was configured
 function getDefaultNowImpl() {
@@ -41,15 +44,18 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     );
   }
 
-  let hasReadLocale = false;
-
-  // In case the consumer doesn't read `params.locale` and instead provides the
-  // `locale` (either in a single-language workflow or because the locale is
-  // read from the user settings), don't attempt to read the request locale.
-  const params = {
+  const params: GetRequestConfigParams = {
+    // In case the consumer doesn't read `params.locale` and instead provides the
+    // `locale` (either in a single-language workflow or because the locale is
+    // read from the user settings), don't attempt to read the request locale.
     get locale() {
-      hasReadLocale = true;
-      return localeOverride || getRequestLocale();
+      return localeOverride || getRequestLocaleLegacy();
+    },
+
+    get requestLocale() {
+      return localeOverride
+        ? Promise.resolve(localeOverride)
+        : getRequestLocale();
     }
   };
 
@@ -58,25 +64,20 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     result = await result;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    if (hasReadLocale) {
-      if (result.locale) {
-        console.error(
-          "\nYou've read the `locale` param that was passed to `getRequestConfig` but have also returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
-        );
-      }
-    } else {
-      if (!result.locale) {
-        console.error(
-          "\nYou haven't read the `locale` param that was passed to `getRequestConfig` and also haven't returned one from the function. This is likely an error, please ensure that you're consistently using a setup with or without i18n routing: https://next-intl-docs.vercel.app/docs/getting-started/app-router\n"
-        );
-      }
+  const locale = result.locale || (await params.requestLocale);
+
+  if (!locale) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(
+        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+      );
     }
+    notFound();
   }
 
   return {
     ...result,
-    locale: result.locale || params.locale,
+    locale,
     now: result.now || getDefaultNow(),
     timeZone: result.timeZone || getDefaultTimeZone()
   };

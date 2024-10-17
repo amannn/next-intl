@@ -4,6 +4,11 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Skip all paths that should not be internationalized
-  matcher: ['/((?!_next|.*\\..*).*)']
+  matcher: [
+    // Skip all paths that should not be internationalized
+    '/((?!_next|.*\\..*).*)',
+
+    // Necessary for base path to work
+    '/'
+  ]
 };

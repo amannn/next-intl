@@ -8,7 +8,8 @@ module.exports = {
   plugins: ['deprecation', 'eslint-plugin-react-compiler'],
   rules: {
     'import/no-useless-path-segments': 'error',
-    'react-compiler/react-compiler': 'error'
+    'react-compiler/react-compiler': 'error',
+    '@typescript-eslint/ban-types': 'off'
   },
   overrides: [
     {

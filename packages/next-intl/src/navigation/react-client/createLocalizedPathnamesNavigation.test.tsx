@@ -433,7 +433,6 @@ describe("localePrefix: 'as-needed'", () => {
       useRouter: useRouterWithUnknown
     } = createLocalizedPathnamesNavigation({
       locales,
-      // eslint-disable-next-line @typescript-eslint/ban-types
       pathnames: pathnames as typeof pathnames & Record<string & {}, string>
     });
     <LinkWithUnknown href="/unknown">Unknown</LinkWithUnknown>;
