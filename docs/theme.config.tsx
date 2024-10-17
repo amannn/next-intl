@@ -103,10 +103,9 @@ export default {
     const pageConfig = useConfig();
     const {route} = useRouter();
     const isDefault = route === '/' || !pageConfig.title;
-
-    const image = isDefault
-      ? '/og-image.png'
-      : `/api/og?title=${pageConfig.title}`;
+    const image = `/api/og?title=${
+      isDefault ? config.description : pageConfig.title
+    }`;
 
     const description =
       pageConfig.frontMatter.description ||
