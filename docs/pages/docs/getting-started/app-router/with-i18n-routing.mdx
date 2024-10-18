@@ -193,12 +193,13 @@ import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({
   children,
-  params: {locale}
+  params
 }: {
   children: React.ReactNode;
-  params: {locale: string};
+  params: Promise<{locale: string}>;
 }) {
   // Ensure that the incoming `locale` is valid
+  const {locale} = await params;
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
@@ -298,7 +299,8 @@ export function generateStaticParams() {
 ```tsx filename="app/[locale]/layout.tsx"
 import {unstable_setRequestLocale} from 'next-intl/server';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params}) {
+  const {locale} = await params;
   unstable_setRequestLocale(locale);
 
   return (
@@ -308,10 +310,11 @@ export default async function LocaleLayout({children, params: {locale}}) {
 ```
 
 ```tsx filename="app/[locale]/page.tsx"
+import {use} from 'react';
 import {unstable_setRequestLocale} from 'next-intl/server';
 
-export default function IndexPage({params: {locale}}) {
-  unstable_setRequestLocale(locale);
+export default function IndexPage({params}) {
+  unstable_setRequestLocale(use(params).locale);
 
   // Once the request locale is set, you
   // can call hooks from `next-intl`
@@ -371,7 +374,8 @@ To achieve this, you can forward the `locale` that you receive from Next.js via 
 ```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
