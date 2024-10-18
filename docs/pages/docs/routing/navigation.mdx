@@ -303,6 +303,35 @@ redirect({
   is supported too.
 </Callout>
 
+<Details id="redirect-typescript-narrowing">
+<summary>Why does TypeScript not narrow types correctly after calling `redirect`?</summary>
+
+TypeScript currently has a [limitation](https://github.com/amannn/next-intl/issues/823#issuecomment-2421891151) with control flow analysis, which results in not being able to narrow types correctly after calling `redirect` as well as detecting unreachable code:
+
+```tsx
+import {routing} from '@/i18n/routing';
+
+function UserProfile({userId}: {userId?: string}) {
+  if (!userId) {
+    redirect({href: '/login', locale: 'en'});
+  }
+
+  // `userId` should be narrowed to `string` here,
+  // but TypeScript doesn't analyze this correctly
+}
+```
+
+To work around this limitation, you can add an explicit type annotation to the `redirect` function:
+
+```tsx filename="routing.ts"
+const {redirect: _redirect} = createNavigation(routing);
+
+// Enable type narrowing after calling `redirect`
+export const redirect: typeof _redirect = _redirect;
+```
+
+</Details>
+
 ### `getPathname`
 
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
