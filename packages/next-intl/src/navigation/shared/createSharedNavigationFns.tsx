@@ -4,9 +4,9 @@ import {
 } from 'next/navigation';
 import React, {ComponentProps, forwardRef, use} from 'react';
 import {
-  receiveRoutingConfig,
   RoutingConfigLocalizedNavigation,
-  RoutingConfigSharedNavigation
+  RoutingConfigSharedNavigation,
+  receiveRoutingConfig
 } from '../../routing/config';
 import {
   DomainConfig,

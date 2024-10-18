@@ -4,8 +4,8 @@ import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {
   ComponentProps,
-  forwardRef,
   MouseEvent,
+  forwardRef,
   useEffect,
   useState
 } from 'react';

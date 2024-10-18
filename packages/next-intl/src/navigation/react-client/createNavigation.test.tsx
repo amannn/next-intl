@@ -1,9 +1,9 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
-  useParams,
   usePathname as useNextPathname,
-  useRouter as useNextRouter
+  useRouter as useNextRouter,
+  useParams
 } from 'next/navigation';
 import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
@@ -24,7 +24,7 @@ function mockLocation(
   basePath?: string
 ) {
   delete (global.window as any).location;
-  global.window ??= Object.create(window);
+  global.window = Object.create(window);
   (global.window as any).location = location;
 
   if (location.pathname) {
@@ -374,6 +374,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
 });
 
 describe("localePrefix: 'always', with `pathnames`", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,

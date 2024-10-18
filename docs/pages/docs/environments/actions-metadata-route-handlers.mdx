@@ -180,7 +180,7 @@ function getEntry(href: Href) {
   };
 }
 
-function getUrl(href: Href, locale: typeof routing.locales[number]) {
+function getUrl(href: Href, locale: (typeof routing.locales)[number]) {
   const pathname = getPathname({locale, href});
   return `${host}/${locale}${pathname === '/' ? '' : pathname}`;
 }

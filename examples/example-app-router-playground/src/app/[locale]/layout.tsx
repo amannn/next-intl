@@ -7,8 +7,8 @@ import {
   getTranslations
 } from 'next-intl/server';
 import {ReactNode} from 'react';
-import Navigation from '../../components/Navigation';
 import {routing} from '@/i18n/routing';
+import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
