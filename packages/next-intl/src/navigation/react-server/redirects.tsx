@@ -1,4 +1,4 @@
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
+import {getRequestLocale} from '../../server/react-server/RequestLocaleLegacy';
 import {ParametersExceptFirst} from '../../shared/types';
 import {basePermanentRedirect, baseRedirect} from '../shared/redirects';
 

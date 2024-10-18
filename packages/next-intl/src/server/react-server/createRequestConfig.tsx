@@ -1,7 +1,6 @@
-import type {IntlConfig} from 'use-intl/core';
 import getRuntimeConfig from 'next-intl/config';
-import type {GetRequestConfigParams} from './getRequestConfig';
+import type {GetRequestConfigParams, RequestConfig} from './getRequestConfig';
 
 export default getRuntimeConfig as unknown as (
   params: GetRequestConfigParams
-) => IntlConfig | Promise<IntlConfig>;
+) => RequestConfig | Promise<RequestConfig>;

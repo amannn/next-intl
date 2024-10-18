@@ -15,6 +15,7 @@ vi.mock('react');
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({
+    locale: 'en',
     messages: {
       Component: {
         title: 'Title'
@@ -24,10 +25,6 @@ vi.mock('../../src/server/react-server/createRequestConfig', () => ({
       }
     }
   })
-}));
-
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
-  getRequestLocale: vi.fn(() => 'en')
 }));
 
 vi.mock('use-intl/core', async (importActual) => {

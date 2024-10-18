@@ -5,21 +5,17 @@ import {ResolvedRoutingConfig} from '../routing/config';
 import {
   DomainConfig,
   DomainsConfig,
+  LocalePrefixMode,
   Locales,
   Pathnames
 } from '../routing/types';
-import {COOKIE_LOCALE_NAME} from '../shared/constants';
-import {ResolvedMiddlewareOptions} from './config';
 import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
   domains: DomainsConfig<AppLocales>
 ) {
-  let host = getHost(requestHeaders);
-
-  // Remove port (easier for local development)
-  host = host?.replace(/:\d+$/, '');
+  const host = getHost(requestHeaders);
 
   if (host) {
     return domains.find((cur) => cur.domain === host);
@@ -60,13 +56,26 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
   return locale;
 }
 
-function getLocaleFromCookie<AppLocales extends Locales>(
-  requestCookies: RequestCookies,
-  locales: AppLocales
+function getLocaleFromCookie<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
+>(
+  routing: Pick<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'localeCookie' | 'locales'
+  >,
+  requestCookies: RequestCookies
 ) {
-  if (requestCookies.has(COOKIE_LOCALE_NAME)) {
-    const value = requestCookies.get(COOKIE_LOCALE_NAME)?.value;
-    if (value && locales.includes(value)) {
+  if (routing.localeCookie && requestCookies.has(routing.localeCookie.name)) {
+    const value = requestCookies.get(routing.localeCookie.name)?.value;
+    if (value && routing.locales.includes(value)) {
       return value;
     }
   }
@@ -74,14 +83,19 @@ function getLocaleFromCookie<AppLocales extends Locales>(
 
 function resolveLocaleFromPrefix<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
-  {
-    defaultLocale,
-    localePrefix,
-    locales
-  }: ResolvedRoutingConfig<AppLocales, AppPathnames>,
-  {localeDetection}: ResolvedMiddlewareOptions,
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -90,22 +104,30 @@ function resolveLocaleFromPrefix<
 
   // Prio 1: Use route prefix
   if (pathname) {
-    locale = getPathnameMatch(pathname, locales, localePrefix)?.locale;
+    locale = getPathnameMatch(
+      pathname,
+      routing.locales,
+      routing.localePrefix
+    )?.locale;
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && localeDetection) {
-    locale = getLocaleFromCookie(requestCookies, locales);
+  if (!locale && routing.localeDetection) {
+    locale = getLocaleFromCookie(routing, requestCookies);
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && localeDetection) {
-    locale = getAcceptLanguageLocale(requestHeaders, locales, defaultLocale);
+  if (!locale && routing.localeDetection) {
+    locale = getAcceptLanguageLocale(
+      requestHeaders,
+      routing.locales,
+      routing.defaultLocale
+    );
   }
 
   // Prio 4: Use default locale
   if (!locale) {
-    locale = defaultLocale;
+    locale = routing.defaultLocale;
   }
 
   return locale;
@@ -113,11 +135,19 @@ function resolveLocaleFromPrefix<
 
 function resolveLocaleFromDomain<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
-  routing: Omit<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'> &
-    Required<Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>>,
-  options: ResolvedMiddlewareOptions,
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
@@ -129,7 +159,6 @@ function resolveLocaleFromDomain<
     return {
       locale: resolveLocaleFromPrefix(
         routing,
-        options,
         requestHeaders,
         requestCookies,
         pathname
@@ -157,8 +186,8 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 2: Use existing cookie
-  if (!locale && options.localeDetection) {
-    const cookieLocale = getLocaleFromCookie(requestCookies, routing.locales);
+  if (!locale && routing.localeDetection) {
+    const cookieLocale = getLocaleFromCookie(routing, requestCookies);
     if (cookieLocale) {
       if (isLocaleSupportedOnDomain(cookieLocale, domain)) {
         locale = cookieLocale;
@@ -169,7 +198,7 @@ function resolveLocaleFromDomain<
   }
 
   // Prio 3: Use the `accept-language` header
-  if (!locale && options.localeDetection) {
+  if (!locale && routing.localeDetection) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
       domain.locales || routing.locales,
@@ -191,25 +220,26 @@ function resolveLocaleFromDomain<
 
 export default function resolveLocale<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >(
-  routing: ResolvedRoutingConfig<AppLocales, AppPathnames>,
-  options: ResolvedMiddlewareOptions,
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >,
   requestHeaders: Headers,
   requestCookies: RequestCookies,
   pathname: string
 ): {locale: AppLocales[number]; domain?: DomainConfig<AppLocales>} {
   if (routing.domains) {
-    const routingWithDomains = routing as Omit<
-      ResolvedRoutingConfig<AppLocales, AppPathnames>,
-      'domains'
-    > &
-      Required<
-        Pick<ResolvedRoutingConfig<AppLocales, AppPathnames>, 'domains'>
-      >;
     return resolveLocaleFromDomain(
-      routingWithDomains,
-      options,
+      routing,
       requestHeaders,
       requestCookies,
       pathname
@@ -218,7 +248,6 @@ export default function resolveLocale<
     return {
       locale: resolveLocaleFromPrefix(
         routing,
-        options,
         requestHeaders,
         requestCookies,
         pathname

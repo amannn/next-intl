@@ -1,27 +1,37 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
-import {LocalePrefixConfigVerbose, Locales} from '../../routing/types';
+import {
+  LocalePrefixConfigVerbose,
+  LocalePrefixMode,
+  Locales
+} from '../../routing/types';
 import {getLocalePrefix} from '../../shared/utils';
-import BaseLink from '../shared/BaseLink';
+import LegacyBaseLink from '../shared/LegacyBaseLink';
 
-type Props<AppLocales extends Locales> = Omit<
-  ComponentProps<typeof BaseLink>,
+type Props<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+> = Omit<
+  ComponentProps<typeof LegacyBaseLink>,
   'locale' | 'prefix' | 'localePrefixMode'
 > & {
   locale?: AppLocales[number];
-  localePrefix: LocalePrefixConfigVerbose<AppLocales>;
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
 };
 
-function ClientLink<AppLocales extends Locales>(
-  {locale, localePrefix, ...rest}: Props<AppLocales>,
-  ref: Props<AppLocales>['ref']
+function ClientLink<
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
+>(
+  {locale, localePrefix, ...rest}: Props<AppLocales, AppLocalePrefixMode>,
+  ref: Props<AppLocales, AppLocalePrefixMode>['ref']
 ) {
   const defaultLocale = useLocale();
   const finalLocale = locale || defaultLocale;
   const prefix = getLocalePrefix(finalLocale, localePrefix);
 
   return (
-    <BaseLink
+    <LegacyBaseLink
       ref={ref}
       locale={finalLocale}
       localePrefixMode={localePrefix.mode}
@@ -52,9 +62,12 @@ function ClientLink<AppLocales extends Locales>(
  * page to be overwritten before the user even decides to change the locale.
  */
 const ClientLinkWithRef = forwardRef(ClientLink) as <
-  AppLocales extends Locales
+  AppLocales extends Locales,
+  AppLocalePrefixMode extends LocalePrefixMode
 >(
-  props: Props<AppLocales> & {ref?: Props<AppLocales>['ref']}
+  props: Props<AppLocales, AppLocalePrefixMode> & {
+    ref?: Props<AppLocales, AppLocalePrefixMode>['ref'];
+  }
 ) => ReactElement;
 (ClientLinkWithRef as any).displayName = 'ClientLink';
 export default ClientLinkWithRef;

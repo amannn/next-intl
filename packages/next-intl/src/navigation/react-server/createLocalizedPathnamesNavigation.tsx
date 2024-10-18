@@ -3,8 +3,13 @@ import {
   RoutingConfigLocalizedNavigation,
   receiveRoutingConfig
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
+import {getRequestLocale} from '../../server/react-server/RequestLocaleLegacy';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   HrefOrHrefWithParams,
@@ -17,13 +22,22 @@ import {serverPermanentRedirect, serverRedirect} from './redirects';
 
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
->(routing: RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>) {
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing: RoutingConfigLocalizedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  >
+) {
   const config = receiveRoutingConfig(routing);
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ServerLink>,
-    'href' | 'name' | 'localePrefix'
+    'href' | 'name' | 'localePrefix' | 'localeCookie'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: AppLocales[number];
@@ -47,6 +61,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames: config.pathnames
         })}
         locale={locale}
+        localeCookie={config.localeCookie}
         localePrefix={config.localePrefix}
         {...rest}
       />

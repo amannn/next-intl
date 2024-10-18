@@ -3,14 +3,30 @@ import minLight from 'shiki/themes/min-light.mjs';
 
 const lightTheme = {
   ...minLight,
-  tokenColors: minLight.tokenColors.map((color) => {
-    // Increase the contrast of comments
-    if (color.scope?.includes('comment')) {
-      return {...color, settings: {foreground: '#808ea3'}};
-    } else {
-      return color;
-    }
-  })
+  tokenColors: minLight.tokenColors
+    .map((color) => {
+      // Increase the contrast of comments
+      if (color.scope?.includes('comment')) {
+        return {...color, settings: {foreground: '#808ea3'}};
+      } else {
+        return color;
+      }
+    })
+    // Add colors for diffs
+    .concat([
+      {
+        scope: 'markup.deleted.diff',
+        settings: {
+          foreground: '#D32F2F'
+        }
+      },
+      {
+        scope: 'markup.inserted.diff',
+        settings: {
+          foreground: '#22863A'
+        }
+      }
+    ])
 };
 
 const withNextra = nextra({
@@ -150,12 +166,12 @@ export default withNextra({
       permanent: true
     },
     {
-      source: '/examples/minimal',
+      source: '/examples/advanced',
       destination: '/examples',
       permanent: true
     },
     {
-      source: '/examples/advanced',
+      source: '/examples/minimal',
       destination: '/examples',
       permanent: true
     }

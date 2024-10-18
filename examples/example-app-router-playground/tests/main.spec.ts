@@ -1,22 +1,7 @@
-import {test as it, expect, Page, BrowserContext} from '@playwright/test';
-import getAlternateLinks from './getAlternateLinks';
+import {test as it, expect, BrowserContext} from '@playwright/test';
+import {getAlternateLinks, assertLocaleCookieValue} from './utils';
 
 const describe = it.describe;
-
-async function assertLocaleCookieValue(
-  page: Page,
-  value: string,
-  otherProps?: Record<string, unknown>
-) {
-  const cookie = (await page.context().cookies()).find(
-    (cur) => cur.name === 'NEXT_LOCALE'
-  );
-  expect(cookie).toMatchObject({
-    name: 'NEXT_LOCALE',
-    value,
-    ...otherProps
-  });
-}
 
 function getPageLoadTracker(context: BrowserContext) {
   const state = {numPageLoads: 0};
@@ -230,21 +215,15 @@ it('can use next-intl on the client side', async ({page}) => {
 it('can use rich text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RichText');
-  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
+  expect(await element.innerHTML()).toBe(
+    'This is a <b style="font-weight:bold">rich</b> text.'
+  );
 });
 
 it('can use raw text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RawText');
-  expect(await element.innerHTML()).toBe(
-    'This is a <important>rich</important> text.'
-  );
-});
-
-it('can use global defaults', async ({page}) => {
-  await page.goto('/en');
-  const element = page.getByTestId('GlobalDefaults');
-  expect(await element.innerHTML()).toBe('<strong>Global string</strong>');
+  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
 });
 
 it('can use `getMessageFallback`', async ({page}) => {
@@ -657,7 +636,7 @@ it('can use async APIs in async components', async ({page}) => {
   const element1 = page.getByTestId('AsyncComponent');
   element1.getByText('AsyncComponent');
   expect(await element1.innerHTML()).toContain('This is a <b>rich</b> text.');
-  element1.getByText('Markup with <b>Global string</b>');
+  element1.getByText('Markup with <b>bold content</b>');
 
   page
     .getByTestId('AsyncComponentWithoutNamespace')
@@ -697,6 +676,11 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
 });
 
+it('can define custom cookie options', async ({request}) => {
+  const response = await request.get('/');
+  expect(response.headers()['set-cookie']).toContain('Max-Age=17280000');
+});
+
 it('can use `t.has` in a Server Component', async ({page}) => {
   await page.goto('/');
   await expect(page.getByTestId('HasTitle')).toHaveText('true');
@@ -708,6 +692,17 @@ it('can render mdx content', async ({page}) => {
 
   await page.goto('/de/about');
   await page.getByRole('heading', {name: 'Über uns'}).waitFor();
+});
+
+// https://github.com/radix-ui/primitives/issues/3165
+it.skip('provides a `Link` that works with Radix Primitives', async ({
+  page
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', {name: 'Toggle dropdown'}).click();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByText('Link to about')).toBeFocused();
 });
 
 describe('server actions', () => {
