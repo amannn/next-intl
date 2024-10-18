@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc",
+    "lint": "eslint src && tsc && prettier src --check",
     "test": "playwright test",
     "build": "next build",
     "start": "next start"
@@ -16,13 +16,14 @@
     "react-dom": "19.0.0-rc-cd22717c-20241013"
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.1",
+    "@playwright/test": "^1.48.1",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
-    "eslint": "^8.56.0",
-    "eslint-config-molindo": "^7.0.0",
-    "eslint-config-next": "15.0.0-rc.1",
+    "eslint": "^9.11.1",
+    "eslint-config-molindo": "^8.0.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.3"
-  }
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
 }

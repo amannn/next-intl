@@ -31,7 +31,7 @@ describe('pathnames', () => {
     });
 
     // Ensures the result is typed as narrow as possible
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     routing.pathnames['/about'].en;
   });
 

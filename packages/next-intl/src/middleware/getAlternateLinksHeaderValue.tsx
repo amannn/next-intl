@@ -98,10 +98,9 @@ export default function getAlternateLinksHeaderValue<
     let url: URL;
 
     if (routing.domains) {
-      const domainConfigs =
-        routing.domains.filter((cur) =>
-          isLocaleSupportedOnDomain(locale, cur)
-        ) || [];
+      const domainConfigs = routing.domains.filter((cur) =>
+        isLocaleSupportedOnDomain(locale, cur)
+      );
 
       return domainConfigs.map((domainConfig) => {
         url = new URL(normalizedUrl);

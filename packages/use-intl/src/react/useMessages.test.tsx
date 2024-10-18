@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import React from 'react';
-import {it, expect} from 'vitest';
+import {expect, it} from 'vitest';
 import IntlProvider from './IntlProvider';
 import useMessages from './useMessages';
 

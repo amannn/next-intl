@@ -2,8 +2,8 @@
 
 import {useRouter} from 'next/navigation';
 import {useLocale} from 'next-intl';
-import updateLocale from './updateLocale';
 import {Locale} from '@/config';
+import updateLocale from './updateLocale';
 
 export default function AppNavigationLocaleSwitcher() {
   const router = useRouter();

@@ -3,10 +3,10 @@ import {notFound} from 'next/navigation';
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, unstable_setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
-import PublicNavigation from './PublicNavigation';
-import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
 import Document from '@/components/Document';
 import {locales} from '@/config';
+import PublicNavigation from './PublicNavigation';
+import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
 
 type Props = {
   children: ReactNode;

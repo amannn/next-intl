@@ -1,7 +1,7 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {usePathname, useParams} from 'next/navigation';
+import {useParams, usePathname} from 'next/navigation';
 import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
-import {it, describe, vi, beforeEach, expect} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {NextIntlClientProvider} from '../../index.react-client';
 import {LocalePrefixConfigVerbose} from '../../routing/types';
 import ClientLink from './ClientLink';
@@ -15,6 +15,7 @@ function mockLocation(pathname: string, basePath = '') {
   vi.mocked(usePathname).mockReturnValue(pathname);
 
   delete (global.window as any).location;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   global.window ??= Object.create(window);
   (global.window as any).location = {pathname: basePath + pathname};
 }
@@ -44,6 +45,7 @@ const MockClientLink = forwardRef(
     />
   )
 );
+MockClientLink.displayName = 'MockClientLink';
 
 describe('unprefixed routing', () => {
   beforeEach(() => {

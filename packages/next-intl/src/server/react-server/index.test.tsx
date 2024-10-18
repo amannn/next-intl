@@ -1,13 +1,13 @@
 // @vitest-environment edge-runtime
 
-import {it, vi, expect, describe} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
 import {
-  getTranslations,
-  getMessages,
   getFormatter,
+  getMessages,
   getNow,
-  getTimeZone
+  getTimeZone,
+  getTranslations
 } from '.';
 
 vi.mock('next-intl/config', () => ({

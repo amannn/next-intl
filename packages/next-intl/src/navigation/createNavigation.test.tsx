@@ -1,14 +1,14 @@
 import {render, screen} from '@testing-library/react';
 import {
   RedirectType,
-  redirect as nextRedirect,
   permanentRedirect as nextPermanentRedirect,
+  redirect as nextRedirect,
   useParams as nextUseParams
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
-import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {defineRouting, DomainsConfig, Pathnames} from '../routing';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {DomainsConfig, Pathnames, defineRouting} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocale';
 import createNavigationClient from './react-client/createNavigation';
 import createNavigationServer from './react-server/createNavigation';
@@ -40,7 +40,7 @@ function mockCurrentLocale(locale: string) {
 
 function mockLocation(location: Partial<typeof window.location>) {
   delete (global.window as any).location;
-  global.window ??= Object.create(window);
+  global.window = Object.create(window);
   (global.window as any).location = location;
 }
 
@@ -226,7 +226,7 @@ describe.each([
       });
 
       it('does not accept `query` on the root', () => {
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () =>
           getPathname({
             href: '/about',
@@ -237,7 +237,7 @@ describe.each([
       });
 
       it('does not accept `params` on href', () => {
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () =>
           getPathname({
             href: {
@@ -259,7 +259,7 @@ describe.each([
         // works in either environment.
 
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
 
@@ -699,7 +699,7 @@ describe.each([
 
       it('requires a locale', () => {
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
     });
@@ -1010,7 +1010,7 @@ describe.each([
 
       it('requires a locale', () => {
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
     });

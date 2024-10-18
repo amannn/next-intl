@@ -3,9 +3,9 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
-import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
+import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import createMiddleware from '../middleware';
-import {defineRouting, Pathnames} from '../routing';
+import {Pathnames, defineRouting} from '../routing';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 
@@ -535,7 +535,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
+      it('serves requests for a non-default locale at nested paths for "de"', () => {
         middlewareWithPathnames(createMockRequest('/de/ueber', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer', 'de'));
         middlewareWithPathnames(createMockRequest('/de/benutzer/1', 'de'));
@@ -572,7 +572,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths', () => {
+      it('serves requests for a non-default locale at nested paths for "ja"', () => {
         middlewareWithPathnames(createMockRequest('/ja/約', 'ja'));
         middlewareWithPathnames(createMockRequest('/ja/ユーザー', 'ja'));
         middlewareWithPathnames(createMockRequest('/ja/ユーザー/1', 'ja'));
@@ -715,7 +715,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('prioritizes static routes over dynamic and catch-all routes for the non-default locale', () => {
+      it('prioritizes static routes over dynamic and catch-all routes for the default locale', () => {
         middlewareWithPathnames(createMockRequest('/products/add', 'en'));
         middlewareWithPathnames(createMockRequest('/categories/new', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
@@ -2276,7 +2276,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a dynamic internal route for the default locale', () => {
+      it('redirects a dynamic internal route for the default locale (1)', () => {
         middlewareWithPathnames(createMockRequest('/internal/22?hello', 'en'));
         expect(MockedNextResponse.next).not.toHaveBeenCalled();
         expect(MockedNextResponse.rewrite).not.toHaveBeenCalled();
@@ -2286,7 +2286,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('redirects a dynamic internal route for the default locale', () => {
+      it('redirects a dynamic internal route for the default locale (2)', () => {
         middlewareWithPathnames(
           createMockRequest('/internal/22/foo/bar?hello', 'en')
         );
@@ -3066,7 +3066,7 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects a dynamic internal route for the default locale', () => {
+      it('redirects a dynamic internal route for the default locale (1)', () => {
         middlewareWithPathnames(
           createMockRequest('/internal/22', 'en', 'http://ca.example.com')
         );
@@ -3078,7 +3078,7 @@ describe('domain-based routing', () => {
         );
       });
 
-      it('redirects a dynamic internal route for the default locale', () => {
+      it('redirects a dynamic internal route for the default locale (2)', () => {
         middlewareWithPathnames(
           createMockRequest(
             '/internal/22/foo/bar',

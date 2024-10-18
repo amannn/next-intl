@@ -1,7 +1,7 @@
 // @vitest-environment edge-runtime
 
 import {NextRequest} from 'next/server';
-import {it, expect, describe, beforeEach, afterEach} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {Pathnames} from '../routing';
 import {receiveRoutingConfig} from '../routing/config';
 import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';

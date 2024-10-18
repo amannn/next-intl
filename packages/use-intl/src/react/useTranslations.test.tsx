@@ -1,9 +1,8 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
 import React, {ComponentProps, PropsWithChildren, ReactNode} from 'react';
-import {it, expect, vi, describe, beforeEach} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
   Formats,
   IntlError,

@@ -2,9 +2,9 @@ import {UrlObject} from 'url';
 import NextLink from 'next/link';
 import {ComponentProps} from 'react';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../routing/types';
 
 type Href = ComponentProps<typeof NextLink>['href'];
@@ -32,21 +32,21 @@ export function localizeHref(
   locale: string,
   curLocale: string,
   curPathname: string,
-  prefix: string
+  prefix?: string
 ): string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string,
   curPathname: string,
-  prefix: string
+  prefix?: string
 ): UrlObject | string;
 export function localizeHref(
   href: UrlObject | string,
   locale: string,
   curLocale: string = locale,
   curPathname: string,
-  prefix: string
+  prefix?: string
 ) {
   if (!isLocalizableHref(href)) {
     return href;
@@ -99,7 +99,10 @@ export function prefixPathname(prefix: string, pathname: string) {
   return localizedHref;
 }
 
-export function hasPathnamePrefixed(prefix: string, pathname: string) {
+export function hasPathnamePrefixed(
+  prefix: string | undefined,
+  pathname: string
+) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }
 
@@ -107,7 +110,7 @@ function hasTrailingSlash() {
   try {
     // Provided via `env` setting in `next.config.js` via the plugin
     return process.env._next_intl_trailing_slash === 'true';
-  } catch (e) {
+  } catch {
     return false;
   }
 }

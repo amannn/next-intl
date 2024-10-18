@@ -39,33 +39,24 @@ Now, you're all set and you can work on individual packages.
 ### Tests
 
 There are currently two test setups:
+
 1. Packages use [Vitest](https://vitest.dev/)
 2. Examples use [Playwright](https://playwright.dev/)
 
 In either case, you can focus individual tests during development via `it.only`.
 
-### Code formatting (ESLint & Prettier)
+### Linting & formatting
 
-This project uses ESLint both for detecting issues in code, as well as for formatting.
+This project uses ESLint for detecting issues in code, as well as Prettier for formatting.
 
-Prettier is integrated via an autofixable ESLint rule, therefore it's recommended to autofix all ESLint issues on save in your editor:
+It's recommended to use [an editor integration](https://github.com/molindo/eslint-config-molindo?tab=readme-ov-file#editor-integration) for both, so that autofixable issues are automatically resolved. For editor plugins to work correctly, you should open individual packages you work on as the workspace root (e.g. `next-intl/packages/next-intl` instead of `next-intl`).
 
-```js
-// settings.json (VSCode)
-{
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  }
-}
-```
-
-For ESLint to work correctly, you should open individual packages you work on as the workspace root (e.g. `./packages/next-intl`).
-
-Alternatively, you can run ESLint via the command line:
+Alternatively, you can run ESLint and Prettier via the command line:
 
 ```sh
+cd packages/next-intl
 pnpm eslint src --fix
+pnpm prettier src --write
 ```
 
 ### Pull requests
@@ -93,7 +84,7 @@ Due to this, it's important to clean up commit messages of merged PRs since the 
 
 Note that the exclamation mark syntax (`!`) for indicating breaking changes is currently [not supported by Lerna](https://github.com/lerna/lerna/issues/2668#issuecomment-1467902595). Instead, a block like `BREAKING CHANGE: Dropped support for Node.js 12` should be added to the body of the commit message.
 
-Other prefixes that are allowed and will *not* create a release are the following:
+Other prefixes that are allowed and will _not_ create a release are the following:
 
 1. `docs`: Documentation-only changes
 2. `test`: Missing tests were added or existing ones corrected

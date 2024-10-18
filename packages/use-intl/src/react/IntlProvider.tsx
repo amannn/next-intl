@@ -1,9 +1,9 @@
 import React, {ReactNode, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig';
 import {
+  Formatters,
   createCache,
-  createIntlFormatters,
-  Formatters
+  createIntlFormatters
 } from '../core/formatters';
 import initializeConfig from '../core/initializeConfig';
 import IntlContext from './IntlContext';
@@ -27,7 +27,7 @@ export default function IntlProvider({
   // long-running apps with a persistent `IntlProvider` at the root,
   // this can reduce the memory footprint (e.g. in React Native).
   const cache = useMemo(() => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     locale;
     return createCache();
   }, [locale]);

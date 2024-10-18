@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
-  useParams,
-  useRouter as useNextRouter
+  useRouter as useNextRouter,
+  useParams
 } from 'next/navigation';
 import React, {ComponentProps, useRef} from 'react';
-import {it, describe, vi, beforeEach, expect, Mock, afterEach} from 'vitest';
+import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Pathnames} from '../../routing';
 import createLocalizedPathnamesNavigation from './createLocalizedPathnamesNavigation';
 
@@ -429,6 +429,7 @@ describe("localePrefix: 'as-needed'", () => {
     const {
       Link: LinkWithUnknown,
       redirect: redirectWithUnknown,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       usePathname: usePathnameWithUnkown,
       useRouter: useRouterWithUnknown
     } = createLocalizedPathnamesNavigation({

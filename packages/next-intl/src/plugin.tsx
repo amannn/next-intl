@@ -13,6 +13,8 @@ function withExtensions(localPath: string) {
   ];
 }
 
+let hasWarnedForDeprecatedI18nConfig = false;
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -28,14 +30,12 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
   if (providedPath) {
     if (!pathExists(providedPath)) {
       throw new Error(
-        `Could not find i18n config at ${providedPath}, please provide a valid path.`
+        `[next-intl] Could not find i18n config at ${providedPath}, please provide a valid path.`
       );
     }
     return providedPath;
   } else {
     for (const candidate of [
-      ...withExtensions('./i18n'),
-      ...withExtensions('./src/i18n'),
       ...withExtensions('./i18n/request'),
       ...withExtensions('./src/i18n/request')
     ]) {
@@ -44,11 +44,28 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       }
     }
 
-    throw new Error(`\n\nCould not locate i18n request config for next-intl.
+    for (const candidate of [
+      ...withExtensions('./i18n'),
+      ...withExtensions('./src/i18n')
+    ]) {
+      if (pathExists(candidate)) {
+        if (!hasWarnedForDeprecatedI18nConfig) {
+          console.warn(
+            `\n[next-intl] Reading request configuration from ${candidate} is deprecated, please see https://next-intl-docs.vercel.app/blog/next-intl-3-22#i18n-request — you can either move your configuration to ./i18n/request.ts or provide a custom path in your Next.js config:
 
-These paths are supported by default:
-- ./(src/)i18n/request.{js,jsx,ts,tsx}
-- ./(src/)i18n.{js,jsx,ts,tsx}
+const withNextIntl = createNextIntlPlugin(
+  './path/to/i18n/request.tsx'
+);\n`
+          );
+          hasWarnedForDeprecatedI18nConfig = true;
+        }
+        return candidate;
+      }
+    }
+
+    throw new Error(`\n[next-intl] Could not locate request configuration module.
+
+This path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}
 
 Alternatively, you can specify a custom location in your Next.js config:
 
@@ -61,7 +78,7 @@ const withNextIntl = createNextIntlPlugin(
 function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   if (nextConfig?.i18n != null) {
     console.warn(
-      "\nnext-intl has found an `i18n` config in your next.config.js. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the `pages` folder, you can refer to this example: https://next-intl-docs.vercel.app/examples#app-router-migration\n"
+      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl-docs.vercel.app/examples#app-router-migration\n"
     );
   }
 
@@ -71,9 +88,9 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
 
   // Assign alias for `next-intl/config`
   if (useTurbo) {
-    if (i18nPath && i18nPath.startsWith('/')) {
+    if (i18nPath?.startsWith('/')) {
       throw new Error(
-        "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
+        "[next-intl] Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
           i18nPath +
           '\n'
       );

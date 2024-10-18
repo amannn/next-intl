@@ -1,6 +1,6 @@
 import {
-  useRouter as useNextRouter,
-  usePathname as useNextPathname
+  usePathname as useNextPathname,
+  useRouter as useNextRouter
 } from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';

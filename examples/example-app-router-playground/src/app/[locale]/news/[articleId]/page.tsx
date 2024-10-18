@@ -1,7 +1,7 @@
 import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
 import {use} from 'react';
-import {getPathname, Locale} from '@/i18n/routing';
+import {Locale, getPathname} from '@/i18n/routing';
 
 type Props = {
   params: Promise<{

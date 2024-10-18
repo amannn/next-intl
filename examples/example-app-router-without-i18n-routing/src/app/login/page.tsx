@@ -4,11 +4,11 @@ import {redirect} from 'next/navigation';
 import {useLocale, useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 import {z} from 'zod';
-import LoginForm from './LoginForm';
 import Button from '@/components/Button';
 import FormField from '@/components/FormField';
 import LocaleSwitcher from '@/components/LocaleSwitcher';
 import {loginUser} from '@/services/session';
+import LoginForm from './LoginForm';
 
 const loginFormSchema = z.object({
   email: z.string().email(),

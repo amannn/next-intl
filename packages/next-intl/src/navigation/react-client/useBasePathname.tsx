@@ -2,9 +2,9 @@ import {usePathname as useNextPathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {
   getLocalePrefix,
