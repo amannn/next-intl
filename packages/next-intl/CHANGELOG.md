@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.22.0 (2024-10-21)
+
+### Features
+
+* `next-intl@3.22` ([#1391](https://github.com/amannn/next-intl/issues/1391)) ([1999163](https://github.com/amannn/next-intl/commit/19991632c2f1b01871c97ceb778bc7f7527a329f)) – by @amannn
+
 ## 3.21.1 (2024-10-09)
 
 ### Bug Fixes
