@@ -1,7 +1,7 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages, unstable_setRequestLocale} from 'next-intl/server';
+import {getMessages, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Document from '@/components/Document';
 import {locales} from '@/config';
@@ -26,7 +26,7 @@ export default async function LocaleLayout({
   params: {locale}
 }: Props) {
   // Enable static rendering
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
 
   // Ensure that the incoming locale is valid
   if (!locales.includes(locale as any)) {

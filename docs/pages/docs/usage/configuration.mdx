@@ -699,7 +699,7 @@ Depending on if you're using [i18n routing](/docs/getting-started/app-router), t
 
 The returned value is resolved based on these priorities:
 
-1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`unstable_setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
+1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
 2. **Client Components**: In this case, the locale is received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
    explicitly.
 
