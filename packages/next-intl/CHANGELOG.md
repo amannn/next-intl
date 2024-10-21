@@ -7,7 +7,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* `next-intl@3.22` ([#1391](https://github.com/amannn/next-intl/issues/1391)) ([1999163](https://github.com/amannn/next-intl/commit/19991632c2f1b01871c97ceb778bc7f7527a329f)) – by @amannn
+- feat: `createNavigation` ([#1316](https://github.com/amannn/next-intl/pull/1316))
+- feat: Add async `requestLocale` param to getRequestConfig for Next.js 15 support ([#1383](https://github.com/amannn/next-intl/pull/1383))
+- feat: Add `localeCookie` option for middleware ([#1414](https://github.com/amannn/next-intl/pull/1414))
+- feat: Add `setRequestLocale` ([#1437](https://github.com/amannn/next-intl/pull/1437))
+
+### Fixes
+
+- fix: When using `domains`, handle unknown domains more gracefully ([#1389](https://github.com/amannn/next-intl/pull/1389))
+
+### Deprecations
+
+- Deprecate `defaultTranslationValues` ([#1411](https://github.com/amannn/next-intl/pull/1411))
+- Deprecate `unstable_setRequestLocale` ([#1437](https://github.com/amannn/next-intl/pull/1437))
 
 ## 3.21.1 (2024-10-09)
 
