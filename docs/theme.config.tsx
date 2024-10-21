@@ -108,7 +108,7 @@ export default {
       title: isDefault ? config.description : pageConfig.title,
       subtitle: pageConfig.frontMatter.subtitle
     };
-    const ogImageUrl = new URL('/api/og', config.baseUrl);
+    const ogImageUrl = new URL('/api/og-image', config.baseUrl);
     ogImageUrl.search = new URLSearchParams({
       params: JSON.stringify(ogPayload)
     }).toString();
