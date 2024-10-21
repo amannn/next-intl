@@ -61,6 +61,8 @@ export default createMiddleware(routing);
 // ...
 ```
 
+If you've used `defineRouting` previously to v3.22 and have provided middleware options as a second argument to `createMiddleware`, you can now pass these to `defineRouting` instead.
+
 The docs have been consistently updated to reflect these changes and also suggest the creation of navigation APIs directly in `i18n/routing.ts`. If you prefer to keep your navigation APIs separately, that's of course fine as well.
 
 ## `i18n/request.ts` [#i18n-request]
