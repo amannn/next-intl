@@ -64,7 +64,7 @@ export default createMiddleware(routing);
 
 If you've used `defineRouting` previously to v3.22 and have provided middleware options as a second argument to `createMiddleware`, you can now pass these to `defineRouting` instead.
 
-The docs have been consistently updated to reflect these changes and also suggest the creation of navigation APIs directly in `i18n/routing.ts`. If you prefer to keep your navigation APIs separately, that's of course fine as well.
+The docs have been consistently updated to reflect these changes and also suggest the creation of navigation APIs directly in `i18n/routing.ts` for simplicity. If you prefer to keep your navigation APIs separately, that's of course fine as well.
 
 ## `i18n/request.ts` [#i18n-request]
 
@@ -188,7 +188,7 @@ const locale = await getLocale();
 + getPathname(/* ... */);
 ```
 
-5. If you're using a combination of `localePrefix: 'as-needed'` and `domains` and you're using `getPathname`, you now need to provide a `domain` argument (see [Special case: Using `domains` with `localePrefix: 'as-needed'`](/docs/routing#domains-localeprefix-asneeded))
+5. If you're using a combination of `localePrefix: 'as-needed'` & `domains` and you're using `getPathname`, you now need to provide a `domain` argument (see [Special case: Using `domains` with `localePrefix: 'as-needed'`](/docs/routing#domains-localeprefix-asneeded))
 
 ## `setRequestLocale` marked as stable [#set-request-locale]
 
@@ -199,9 +199,9 @@ In case you rely on [static rendering](/docs/getting-started/app-router/with-i18
 + import {setRequestLocale} from 'next-intl/server';
 ```
 
-Close to a year ago, I've opened [discussion #58862](https://github.com/vercel/next.js/discussions/58862) in the Next.js repository. This was an attempt at starting a conversation about how Next.js could provide a more ergonomic way to access a user locale across an internationalized app. While the issue has gained in popularity and currently [ranks as #2](https://github.com/vercel/next.js/discussions?discussions_q=is%3Aopen+sort%3Atop+created%3A%3E%3D2023-10-22) of the top upvoted discussions of the past year, I've unfortunately not been able to get a response from the Next.js team on this topic.
+Close to a year ago, I opened [discussion #58862](https://github.com/vercel/next.js/discussions/58862) in the Next.js repository. This was an attempt at starting a conversation about how Next.js could provide a way to access a user locale in Server Components without a tradeoff in ergonomics or rendering implications. While the issue has gained in popularity and currently [ranks as #2](https://github.com/vercel/next.js/discussions?discussions_q=is%3Aopen+sort%3Atop+created%3A%3E%3D2023-10-22) of the top upvoted discussions of the past year, I've unfortunately not been able to get a response from the Next.js team on this topic so far. Based on my understanding, it's certainly not an easy problem to solve, but I'd be more than happy to collaborate on this if I can.
 
-While I'm still optimistic that we can make the `setRequestLocale` API obsolete at some point in the future, the "unstable" prefix doesn't seem to be justified anymore—especially since the API has been known for working reliably since its introduction.
+While I'm still optimistic that we can make the `setRequestLocale` API obsolete at some point in the future, the "unstable" prefix doesn't seem to be justified anymore—especially since the API has been known to work reliably since its introduction.
 
 ## `defaultTranslationValues` (deprecated) [#default-translation-values]
 
