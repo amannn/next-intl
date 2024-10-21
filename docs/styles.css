@@ -74,6 +74,10 @@
  */
 
 .nextra-content {
+  h1 {
+    @apply leading-[1.25em];
+  }
+
   figure {
     @apply my-8 flex flex-col items-center;
   }
