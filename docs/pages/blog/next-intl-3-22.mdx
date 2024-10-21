@@ -110,7 +110,7 @@ export default getRequestConfig(async ({
 +  requestLocale
 }) => {
 +  // This typically corresponds to the `[locale]` segment
-+  const locale = await requestLocale;
++  let locale = await requestLocale;
 
 -  // Validate that the incoming `locale` parameter is valid
 -  if (!routing.locales.includes(locale as any)) notFound();
