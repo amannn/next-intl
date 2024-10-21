@@ -10,11 +10,11 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {Pathnames, defineRouting} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
 import {getLocalePrefix} from '../shared/utils';
 import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';
 import createLocalizedPathnamesNavigationServer from './react-server/createLocalizedPathnamesNavigation';
-import BaseLink from './shared/BaseLink';
+import LegacyBaseLink from './shared/LegacyBaseLink';
 
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation');
@@ -39,7 +39,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     const finalLocale = locale || 'en';
     const prefix = getLocalePrefix(finalLocale, localePrefix);
     return (
-      <BaseLink
+      <LegacyBaseLink
         locale={finalLocale}
         localePrefixMode={localePrefix.mode}
         prefix={prefix}
@@ -48,7 +48,7 @@ vi.mock('../../src/navigation/react-server/ServerLink', () => ({
     );
   }
 }));
-vi.mock('../../src/server/react-server/RequestLocale', () => ({
+vi.mock('../../src/server/react-server/RequestLocaleLegacy', () => ({
   getRequestLocale: vi.fn(() => 'en')
 }));
 

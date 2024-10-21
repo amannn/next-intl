@@ -2,9 +2,15 @@ import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
   RoutingConfigLocalizedNavigation,
+  receiveLocaleCookie,
   receiveRoutingConfig
 } from '../../routing/config';
-import {Locales, Pathnames} from '../../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {
   HrefOrHrefWithParams,
@@ -18,11 +24,24 @@ import {clientPermanentRedirect, clientRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
+/**
+ * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)
+ **/
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales>
->(routing: RoutingConfigLocalizedNavigation<AppLocales, AppPathnames>) {
+  AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  AppPathnames extends Pathnames<AppLocales> = never,
+  AppDomains extends DomainsConfig<AppLocales> = never
+>(
+  routing: RoutingConfigLocalizedNavigation<
+    AppLocales,
+    AppLocalePrefixMode,
+    AppPathnames,
+    AppDomains
+  >
+) {
   const config = receiveRoutingConfig(routing);
+  const localeCookie = receiveLocaleCookie(routing.localeCookie);
 
   function useTypedLocale(): AppLocales[number] {
     const locale = useLocale();
@@ -39,7 +58,7 @@ export default function createLocalizedPathnamesNavigation<
 
   type LinkProps<Pathname extends keyof AppPathnames> = Omit<
     ComponentProps<typeof ClientLink>,
-    'href' | 'name' | 'localePrefix'
+    'href' | 'name' | 'localePrefix' | 'localeCookie'
   > & {
     href: HrefOrUrlObjectWithParams<Pathname>;
     locale?: AppLocales[number];
@@ -63,6 +82,7 @@ export default function createLocalizedPathnamesNavigation<
           pathnames: config.pathnames
         })}
         locale={locale}
+        localeCookie={localeCookie}
         localePrefix={config.localePrefix}
         {...rest}
       />
@@ -104,7 +124,7 @@ export default function createLocalizedPathnamesNavigation<
   }
 
   function useRouter() {
-    const baseRouter = useBaseRouter(config.localePrefix);
+    const baseRouter = useBaseRouter(config.localePrefix, localeCookie);
     const defaultLocale = useTypedLocale();
 
     return useMemo(

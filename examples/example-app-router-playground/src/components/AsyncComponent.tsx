@@ -7,7 +7,11 @@ export default async function AsyncComponent() {
     <div data-testid="AsyncComponent">
       <p>{t('basic')}</p>
       <p>{t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}</p>
-      <p>{t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})}</p>
+      <p>
+        {t.markup('markup', {
+          important: (chunks) => `<b>${chunks}</b>`
+        })}
+      </p>
       <p>{String(t.has('basic'))}</p>
     </div>
   );

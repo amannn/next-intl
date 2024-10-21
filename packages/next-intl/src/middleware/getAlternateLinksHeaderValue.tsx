@@ -1,6 +1,11 @@
 import {NextRequest} from 'next/server';
 import {ResolvedRoutingConfig} from '../routing/config';
-import {Locales, Pathnames} from '../routing/types';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
+} from '../routing/types';
 import {normalizeTrailingSlash} from '../shared/utils';
 import {
   applyBasePath,
@@ -16,14 +21,24 @@ import {
  */
 export default function getAlternateLinksHeaderValue<
   AppLocales extends Locales,
-  AppPathnames extends Pathnames<AppLocales> = never
+  AppLocalePrefixMode extends LocalePrefixMode,
+  AppPathnames extends Pathnames<AppLocales> | undefined,
+  AppDomains extends DomainsConfig<AppLocales> | undefined
 >({
   localizedPathnames,
   request,
   resolvedLocale,
   routing
 }: {
-  routing: ResolvedRoutingConfig<AppLocales, AppPathnames>;
+  routing: Omit<
+    ResolvedRoutingConfig<
+      AppLocales,
+      AppLocalePrefixMode,
+      AppPathnames,
+      AppDomains
+    >,
+    'pathnames'
+  >;
   request: NextRequest;
   resolvedLocale: AppLocales[number];
   localizedPathnames?: Pathnames<AppLocales>[string];

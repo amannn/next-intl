@@ -9,7 +9,7 @@ type Props = Omit<ComponentProps<typeof Link>, 'children'> & {
   type?: 'article' | 'video';
 };
 
-export default function CommunityLink({
+export default function BlogPostLink({
   author,
   date,
   title,

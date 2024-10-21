@@ -1,4 +1,5 @@
 import {Metadata} from 'next';
+import {notFound} from 'next/navigation';
 import {
   getFormatter,
   getNow,
@@ -6,6 +7,7 @@ import {
   getTranslations
 } from 'next-intl/server';
 import {ReactNode} from 'react';
+import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
 
 type Props = {
@@ -33,6 +35,11 @@ export async function generateMetadata({
 }
 
 export default function LocaleLayout({children, params: {locale}}: Props) {
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+
   return (
     <html lang={locale}>
       <body>

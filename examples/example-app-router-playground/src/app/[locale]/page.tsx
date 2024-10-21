@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import DropdownMenu from '@/components/DropdownMenu';
+import RichText from '@/components/RichText';
 import {Link} from '@/i18n/routing';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
@@ -26,14 +28,13 @@ export default function Index({searchParams}: Props) {
   return (
     <PageLayout title={t('title')}>
       <p>{t('description')}</p>
-      <p data-testid="RichText">
-        {t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}
-      </p>
+      <RichText data-testid="RichText">
+        {(tags) => t.rich('rich', tags)}
+      </RichText>
       <p
         dangerouslySetInnerHTML={{__html: t.raw('rich')}}
         data-testid="RawText"
       />
-      <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
       {/* @ts-expect-error Purposefully trigger an error */}
       <p data-testid="MissingMessage">{t('missing')}</p>
       <p data-testid="CurrentTime">
@@ -61,6 +62,7 @@ export default function Index({searchParams}: Props) {
       <AsyncComponentWithNamespaceAndLocale />
       <AsyncComponentWithoutNamespace />
       <AsyncComponentWithoutNamespaceAndLocale />
+      <DropdownMenu />
     </PageLayout>
   );
 }

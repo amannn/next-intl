@@ -1,8 +1,3 @@
-import AlgoliaSearch from 'components/AlgoliaSearch';
-import Footer from 'components/Footer';
-import Logo from 'components/Logo';
-import PartnerSidebar from 'components/PartnerSidebar';
-import Pre from 'components/Pre';
 import {useRouter} from 'next/router';
 import {
   DocsThemeConfig,
@@ -11,6 +6,11 @@ import {
   useConfig
 } from 'nextra-theme-docs';
 import {ComponentProps} from 'react';
+import AlgoliaSearch from 'components/AlgoliaSearch';
+import Footer from 'components/Footer';
+import Logo from 'components/Logo';
+import PartnerSidebar from 'components/PartnerSidebar';
+import Pre from 'components/Pre';
 import config from './config';
 
 export const TITLE_TEMPLATE_SUFFIX = ' – ' + config.description;
@@ -103,9 +103,15 @@ export default {
     const pageConfig = useConfig();
     const {route} = useRouter();
     const isDefault = route === '/' || !pageConfig.title;
-    const image = `/api/og?title=${encodeURIComponent(
-      isDefault ? config.description : pageConfig.title
-    )}`;
+
+    const ogPayload = {
+      title: isDefault ? config.description : pageConfig.title,
+      subtitle: pageConfig.frontMatter.subtitle
+    };
+    const ogImageUrl = new URL('/api/og-image', config.baseUrl);
+    ogImageUrl.search = new URLSearchParams({
+      params: JSON.stringify(ogPayload)
+    }).toString();
 
     const description =
       pageConfig.frontMatter.description ||
@@ -122,7 +128,7 @@ export default {
         <meta content={description} name="og:description" />
         <meta content={description} name="twitter:description" />
 
-        <meta content={config.baseUrl + image} name="og:image" />
+        <meta content={ogImageUrl.toString()} name="og:image" />
 
         <link
           href="/favicon/apple-touch-icon.png"

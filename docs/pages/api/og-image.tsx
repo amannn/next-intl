@@ -6,17 +6,27 @@ export const config = {
 };
 
 export default async function OG(req: Request) {
-  const inter = await fetch(
+  const interSemiBold = await fetch(
     new URL('./Inter-SemiBold.otf', import.meta.url)
+  ).then((res) => res.arrayBuffer());
+  const interRegular = await fetch(
+    new URL('./Inter-Regular.otf', import.meta.url)
   ).then((res) => res.arrayBuffer());
 
   const {searchParams} = new URL(req.url);
-
-  const hasTitle = searchParams.has('title');
-  let title = hasTitle ? searchParams.get('title')! : siteConfig.title;
-  const maxLength = 80;
-  if (title.length > maxLength) {
-    title = title.slice(0, maxLength) + '...';
+  let title = siteConfig.title,
+    subtitle;
+  if (searchParams.has('params')) {
+    let params;
+    try {
+      params = JSON.parse(searchParams.get('params')!);
+    } catch {
+      // Ignore
+    }
+    if (params) {
+      title = params.title || title;
+      subtitle = params.subtitle;
+    }
   }
 
   return new ImageResponse(
@@ -28,7 +38,6 @@ export default async function OG(req: Request) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          justifyContent: 'space-between',
           padding: 80,
           backgroundColor: 'white',
           fontWeight: 600,
@@ -118,11 +127,27 @@ export default async function OG(req: Request) {
             fontSize: 82,
             lineHeight: 1.1,
             letterSpacing: -4,
-            marginRight: 12
+            marginRight: 12,
+            marginTop: 'auto',
+            marginBottom: 0,
+            fontWeight: 600
           }}
         >
           {title}
         </h1>
+        {subtitle && (
+          <p
+            style={{
+              fontSize: 54,
+              lineHeight: 1.1,
+              letterSpacing: -4,
+              marginRight: 12,
+              fontWeight: 500
+            }}
+          >
+            {subtitle}
+          </p>
+        )}
       </div>
     ),
     {
@@ -131,8 +156,15 @@ export default async function OG(req: Request) {
       fonts: [
         {
           name: 'inter',
-          data: inter,
-          style: 'normal'
+          data: interSemiBold,
+          style: 'normal',
+          weight: 600
+        },
+        {
+          name: 'inter',
+          data: interRegular,
+          style: 'normal',
+          weight: 500
         }
       ]
     }
