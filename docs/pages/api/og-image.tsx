@@ -140,7 +140,7 @@ export default async function OG(req: Request) {
             style={{
               fontSize: 54,
               lineHeight: 1.1,
-              letterSpacing: -4,
+              letterSpacing: -2,
               marginRight: 12,
               fontWeight: 500
             }}
