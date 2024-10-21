@@ -1,5 +1,6 @@
 ---
-title: 'next-intl 3.22: Incrementally moving forward'
+title: next-intl 3.22
+subtitle: Incrementally moving forward
 ---
 
 # next-intl 3.22: Incrementally moving forward
@@ -60,7 +61,7 @@ export default createMiddleware(routing);
 // ...
 ```
 
-The docs have been consistently updated to reflect these changes and also suggest the creation of navigation APIs directly in `i18n/routing.ts`. If you prefer to keep your navigation APIs separately, that's fine too of course.
+The docs have been consistently updated to reflect these changes and also suggest the creation of navigation APIs directly in `i18n/routing.ts`. If you prefer to keep your navigation APIs separately, that's of course fine as well.
 
 ## `i18n/request.ts` [#i18n-request]
 
@@ -69,7 +70,7 @@ If you're using i18n routing, you'll typically end up with two configuration fil
 1. Routing configuration (defined via [`defineRouting`](/docs/routing#define-routing))
 2. Request configuration (defined via [`getRequestConfig`](/docs/usage/configuration#i18n-request))
 
-While (2) was historically suggested at `i18n.ts`, it's now suggested to be placed next to the routing configuration in order to streamline the organization of files:
+While (2) was historically suggested at `i18n.ts`, the default is now changing to `i18n/request.ts` in order to streamline the organization of files and to communicate the purpose of this file more clearly:
 
 ```
 └── src
@@ -95,7 +96,7 @@ const withNextIntl = createNextIntlPlugin('./somewhere/else/request.ts');
 Next.js 15 is on the horizon and introduces a change for request APIs to [turn async](https://nextjs.org/blog/next-15-rc2#async-request-apis-breaking-change). In preparation for this change, the `locale` that is passed to [`getRequestConfig`](/docs/usage/configuration#i18n-request) has been replaced by `requestLocale` with some minor differences:
 
 1. `requestLocale` needs to be awaited
-2. The result can be `undefined` in case the middleware didn't run as part of the request, therefore requiring a fallback to potentially be assigned
+2. The result can be `undefined`, therefore requiring a fallback
 3. The `locale` should now also be returned from `getRequestConfig`
 
 ```diff
@@ -122,9 +123,9 @@ export default getRequestConfig(async ({
 });
 ```
 
-While slightly more verbose, this change allows you to return a fallback locale for edge cases where the middleware can't run (e.g. a global country selection page at `/` or a global 404 page). If you'd like to return a 404 for invalid locales inside the `[locale]` segment, you can still do so in your [root layout](/docs/getting-started/app-router/with-i18n-routing#layout).
+While slightly more verbose, this change allows you to return a fallback locale for edge cases where the middleware can't provide a locale (e.g. a global country selection page at `/` or a global 404 page).
 
-Note that this change only applies in case you're using [i18n routing](/docs/getting-started/app-router).
+While it's good practice to always return a valid locale here, you may wish to add validation for the `[locale]` segment in your [root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to conditionally call `notFound()`.
 
 ## `createNavigation` [#create-navigation]
 
@@ -159,7 +160,7 @@ export const {Link, redirect, usePathname, useRouter} =
 + ComponentProps<typeof Link>
 ```
 
-3. If you've used [`redirect`](/docs/routing/navigation#redirect), you now have to provide an explicit locale (even if it's just the [current locale](/docs/usage/configuration#locale)). The previously passed href (whether it was a string or an object) now needs to be wrapped in an object and assigned to the `href` prop. This change was necessary in preparation for Next.js 15 (see [#1375](https://github.com/amannn/next-intl/issues/1375)).
+3. If you've used [`redirect`](/docs/routing/navigation#redirect), you now have to provide an explicit locale (even if it's just the [current locale](/docs/usage/configuration#locale)). The previously passed href (whether it was a string or an object) now needs to be wrapped in an object and assigned to the `href` prop. This change was necessary in [preparation for Next.js 15](https://github.com/amannn/next-intl/issues/1375).
 
 ```tsx
 // Retrieving the current locale
@@ -195,7 +196,17 @@ However, over time this feature has shown drawbacks:
 1. We can't serialize them automatically across the RSC boundary (see [#611](https://github.com/amannn/next-intl/issues/611))
 2. They get in the way of type-safe arguments (see [#410](https://github.com/amannn/next-intl/issues/410))
 
-Due to this, the feature will be deprecated and the docs now suggest a [better alternative](/docs/usage/messages#rich-text-reuse-tags).
+Due to this, the feature will be deprecated and the docs now suggest a [better alternative](/docs/usage/messages#rich-text-reuse-tags):
+
+```tsx
+import {useTranslations} from 'next-intl';
+import RichText from '@/components/RichText';
+
+function AboutPage() {
+  const t = useTranslations('AboutPage');
+  return <RichText>{(tags) => t.rich('description', tags)}</RichText>;
+}
+```
 
 ## What's next?
 
@@ -204,8 +215,6 @@ These release notes were originally planned to be posted as part of the next maj
 All of these changes were inspired by many conversations with users and contributors of `next-intl`. It's quite a privileged position to be in, being able to receive feedback from so many of you, and ensuring the spectrum of i18n use cases can be served by a lean, cohesive package. A big thank you also goes out to everyone who helped to test pre-releases of this version.
 
 With these changes out of the way, users can upgrade to modern APIs at their own pace in the v3 range. That being said, the 4.0 release is already in the works, but mostly aims to clean up deprecated functionality to ensure `next-intl` remains minimalistic.
-
-While this post focuses on recent changes that might require action, it's also worth noting that many other improvements have been made in the past months that don't fit into this post. For instance, we saw first-time contributions with the introduction of [optional messages](/docs/usage/messages#t-has) by [Théo Holander](https://github.com/tholander) and [type-safe global formats](http://localhost:3000/docs/workflows/typescript#formats) by [Gabriel Bianchi](https://github.com/dBianchii).
 
 —Jan
 
