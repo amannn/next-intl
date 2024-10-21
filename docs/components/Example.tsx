@@ -51,7 +51,7 @@ export default function Example({
         >
           {/* Styled by nextra via CSS class */}
         </a>
-        <h2 className="flex scroll-mt-8 items-center text-xl font-semibold">
+        <h2 className="flex scroll-mt-8 items-center !text-lg font-semibold">
           {name}
         </h2>
         <div className="mt-2">
