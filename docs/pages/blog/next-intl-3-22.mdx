@@ -19,7 +19,8 @@ While this release is fully backwards-compatible, it includes some modern altern
 2. [**`i18n/request.ts`**](#i18n-request): Streamlined file organization (introduced in `v3.19`)
 3. [**`await requestLocale`**](#await-request-locale): Preparation for Next.js 15 (introduced in `v3.22`)
 4. [**`createNavigation`**](#create-navigation): Streamlined navigation APIs (introduced in `v3.22`)
-5. [**`defaultTranslationValues`**](#default-translation-values): Deprecated in favor of a user-land pattern (introduced in `v3.22`)
+5. [**`setRequestLocale`**](#set-request-locale): Static rendering (marked as stable in `v3.22`)
+6. [**`defaultTranslationValues`**](#default-translation-values): Deprecated in favor of a user-land pattern (introduced in `v3.22`)
 
 Let's take a look at these changes in more detail.
 
@@ -188,6 +189,19 @@ const locale = await getLocale();
 ```
 
 5. If you're using a combination of `localePrefix: 'as-needed'` and `domains` and you're using `getPathname`, you now need to provide a `domain` argument (see [Special case: Using `domains` with `localePrefix: 'as-needed'`](/docs/routing#domains-localeprefix-asneeded))
+
+## `setRequestLocale` marked as stable [#set-request-locale]
+
+In case you rely on [static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering), you might have used the `unstable_setRequestLocale` API before. This function has now been marked as stable since it will likely remain required for the foreseeable future.
+
+```diff
+- import {unstable_setRequestLocale} from 'next-intl/server';
++ import {setRequestLocale} from 'next-intl/server';
+```
+
+Close to a year ago, I've opened [discussion #58862](https://github.com/vercel/next.js/discussions/58862) in the Next.js repository. This was an attempt at starting a conversation about how Next.js could provide a more ergonomic way to access a user locale across an internationalized app. While the issue has gained in popularity and currently [ranks as #2](https://github.com/vercel/next.js/discussions?discussions_q=is%3Aopen+sort%3Atop+created%3A%3E%3D2023-10-22) of the top upvoted discussions of the past year, I've unfortunately not been able to get a response from the Next.js team on this topic.
+
+While I'm still optimistic that we can make the `setRequestLocale` API obsolete at some point in the future, the "unstable" prefix doesn't seem to be justified anymore—especially since the API has been known for working reliably since its introduction.
 
 ## `defaultTranslationValues` (deprecated) [#default-translation-values]
 

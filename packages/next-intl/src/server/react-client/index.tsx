@@ -5,6 +5,7 @@ import type {
   getNow as getNow_type,
   getRequestConfig as getRequestConfig_type,
   getTimeZone as getTimeZone_type,
+  setRequestLocale as setRequestLocale_type,
   unstable_setRequestLocale as unstable_setRequestLocale_type
 } from '../react-server';
 
@@ -48,3 +49,7 @@ export const getTranslations = notSupported('getTranslations');
 export const unstable_setRequestLocale = notSupported(
   'unstable_setRequestLocale'
 ) as typeof unstable_setRequestLocale_type;
+
+export const setRequestLocale = notSupported(
+  'setRequestLocale'
+) as typeof setRequestLocale_type;
