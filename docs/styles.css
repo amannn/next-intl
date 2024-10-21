@@ -78,6 +78,14 @@
     @apply leading-[1.25em];
   }
 
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
   figure {
     @apply my-8 flex flex-col items-center;
   }
