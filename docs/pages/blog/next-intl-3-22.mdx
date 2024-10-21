@@ -127,7 +127,7 @@ export default getRequestConfig(async ({
 
 While slightly more verbose, this change allows you to return a fallback locale for edge cases where the middleware can't provide a locale (e.g. a global country selection page at `/` or a global 404 page).
 
-While it's good practice to always return a valid locale here, you may wish to add validation for the `[locale]` segment in your [root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to conditionally call `notFound()`.
+Also note that it's considered good practice to return a valid locale here in case any unknown values are encountered in the `[locale]` segment. However, you may wish to add validation in a central place like your [root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to conditionally call `notFound()` in this case.
 
 ## `createNavigation` [#create-navigation]
 
