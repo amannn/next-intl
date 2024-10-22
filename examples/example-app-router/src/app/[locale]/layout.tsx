@@ -1,5 +1,5 @@
 import {notFound} from 'next/navigation';
-import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
+import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
 import {routing} from '@/i18n/routing';
@@ -32,7 +32,7 @@ export default async function LocaleLayout({children, params}: Props) {
   }
 
   // Enable static rendering
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
 
   return <BaseLayout locale={locale}>{children}</BaseLayout>;
 }

@@ -12,7 +12,7 @@ import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 /**
- * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)
  **/
 export default function createSharedPathnamesNavigation<
   AppLocales extends Locales,

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.22.0 (2024-10-21)
+
+### Deprecations
+
+- Deprecate `defaultTranslationValues` ([#1411](https://github.com/amannn/next-intl/pull/1411))
+
 ## 3.21.1 (2024-10-09)
 
 ### Bug Fixes
