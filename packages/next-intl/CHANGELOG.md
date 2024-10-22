@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.2 (2024-10-22)
+
+### Bug Fixes
+
+* Handle inlined search params and hashes correctly in `<Link />` from `createNavigation` ([#1448](https://github.com/amannn/next-intl/issues/1448)) ([ba0a537](https://github.com/amannn/next-intl/commit/ba0a537571b49d2d31cbc3c5079a7ad738e1409b)) – by @amannn
+
 ## 3.23.1 (2024-10-22)
 
 ### Bug Fixes
