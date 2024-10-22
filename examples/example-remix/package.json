@@ -15,8 +15,8 @@
     "@remix-run/serve": "^2.9.2",
     "accept-language-parser": "^1.5.0",
     "isbot": "^5.1.9",
-    "react": "19.0.0-rc-cd22717c-20241013",
-    "react-dom": "19.0.0-rc-cd22717c-20241013",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "use-intl": "^3.0.0"
   },
   "devDependencies": {

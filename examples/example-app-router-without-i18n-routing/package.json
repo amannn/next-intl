@@ -13,10 +13,10 @@
     "@radix-ui/react-select": "^2.1.1",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",
-    "next": "15.0.0-rc.1",
+    "next": "^15.0.0",
     "next-intl": "^3.0.0",
-    "react": "19.0.0-rc-cd22717c-20241013",
-    "react-dom": "19.0.0-rc-cd22717c-20241013",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
