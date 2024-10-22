@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.1 (2024-10-22)
+
+### Bug Fixes
+
+* Remove usage of deprecated `ReactNodeArray` which is removed in React 19 ([#1445](https://github.com/amannn/next-intl/issues/1445)) ([2396345](https://github.com/amannn/next-intl/commit/23963458e3ef3d5d29eeb9df01f40bbe11245301)) – by @amannn
+
 ## 3.23.0 (2024-10-22)
 
 ### Features
