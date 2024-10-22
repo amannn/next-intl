@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray} from 'react';
+import {ReactNode} from 'react';
 import Formats from './Formats';
 import IntlConfig from './IntlConfig';
 import TranslationValues, {
@@ -86,7 +86,7 @@ export default function createTranslator<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
