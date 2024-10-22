@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.0 (2024-10-22)
+
+### Features
+
+* Add Next.js 15 to peer dependencies ([#1443](https://github.com/amannn/next-intl/issues/1443)) ([4cb22bb](https://github.com/amannn/next-intl/commit/4cb22bb10990961dba7e5accd2b5c70664f2b6d2)) – by @amannn
+
 ## 3.22.0 (2024-10-21)
 
 ### Features
