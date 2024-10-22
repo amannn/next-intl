@@ -132,11 +132,12 @@ export default function createSharedNavigationFns<
         ref={ref}
         // @ts-expect-error -- Available after the validation
         defaultLocale={config.defaultLocale}
-        href={{
-          ...(typeof href === 'object' && href),
-          // @ts-expect-error -- This is ok
-          pathname: finalPathname
-        }}
+        // @ts-expect-error -- This is ok
+        href={
+          typeof href === 'object'
+            ? {...href, pathname: finalPathname}
+            : finalPathname
+        }
         locale={locale}
         localeCookie={config.localeCookie}
         // Provide the minimal relevant information to the client side in order

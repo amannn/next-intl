@@ -128,6 +128,13 @@ describe.each([
         expect(markup).toContain('href="/en/about?foo=bar"');
       });
 
+      it('accepts search params and hashes as part of the pathname', () => {
+        const markup = renderToString(
+          <Link href="/about?foo=bar#top">About</Link>
+        );
+        expect(markup).toContain('href="/en/about?foo=bar#top"');
+      });
+
       it('renders a prefix for a different locale', () => {
         // Being able to accept a string and not only a strictly typed locale is
         // important in order to be able to use a result from `useLocale()`.
