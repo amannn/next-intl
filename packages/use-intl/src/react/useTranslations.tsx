@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray} from 'react';
+import {ReactNode} from 'react';
 import Formats from '../core/Formats';
 import TranslationValues, {
   MarkupTranslationValues,
@@ -66,7 +66,7 @@ export default function useTranslations<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<

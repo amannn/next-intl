@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray, cache} from 'react';
+import {ReactNode, cache} from 'react';
 import {
   Formats,
   MarkupTranslationValues,
@@ -64,7 +64,7 @@ Promise<{
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
@@ -171,7 +171,7 @@ Promise<{
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<

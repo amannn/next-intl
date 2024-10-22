@@ -1,11 +1,5 @@
 import IntlMessageFormat from 'intl-messageformat';
-import {
-  ReactElement,
-  ReactNode,
-  ReactNodeArray,
-  cloneElement,
-  isValidElement
-} from 'react';
+import {ReactNode, cloneElement, isValidElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
@@ -225,7 +219,7 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray {
+  ): ReactNode {
     if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
