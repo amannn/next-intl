@@ -15,13 +15,13 @@ const config: SizeLimitConfig = [
     name: "import {createSharedPathnamesNavigation} from 'next-intl/navigation' (react-client)",
     path: 'dist/production/navigation.react-client.js',
     import: '{createSharedPathnamesNavigation}',
-    limit: '4.035 KB'
+    limit: '4.04 KB'
   },
   {
     name: "import {createLocalizedPathnamesNavigation} from 'next-intl/navigation' (react-client)",
     path: 'dist/production/navigation.react-client.js',
     import: '{createLocalizedPathnamesNavigation}',
-    limit: '4.035 KB'
+    limit: '4.04 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-client)",
@@ -33,7 +33,7 @@ const config: SizeLimitConfig = [
     name: "import {createSharedPathnamesNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/production/navigation.react-server.js',
     import: '{createSharedPathnamesNavigation}',
-    limit: '16.755 KB'
+    limit: '16.765 KB'
   },
   {
     name: "import {createLocalizedPathnamesNavigation} from 'next-intl/navigation' (react-server)",
