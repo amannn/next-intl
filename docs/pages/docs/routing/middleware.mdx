@@ -175,7 +175,7 @@ export const config = {
 
 {/* Keep this in sync with `packages/next-intl/test/middleware/middleware.test.tsx` */}
 
-Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) and [umami](https://umami.is/docs/running-on-vercel) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't rewritten by accident.
+Note that some third-party providers like [Vercel Analytics](https://vercel.com/analytics) typically use internal endpoints that are then rewritten to an external URL (e.g. `/_vercel/insights/view`). Make sure to exclude such requests from your middleware matcher so they aren't rewritten by accident.
 
 ## Composing other middlewares
 
