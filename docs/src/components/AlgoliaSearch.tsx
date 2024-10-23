@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import {DocSearch} from '@docsearch/react';
 import Router from 'next/router';
-import {TITLE_TEMPLATE_SUFFIX} from 'theme.config';
+import {TITLE_TEMPLATE_SUFFIX} from '@/theme.config';
 import '@docsearch/css';
 import './AlgoliaSearch.css';
 
