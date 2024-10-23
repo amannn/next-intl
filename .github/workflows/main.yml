@@ -12,7 +12,10 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
+      # General setup
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # For Turborepo
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -23,13 +26,23 @@ jobs:
       # Next.js caching
       - uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/examples/*/.next/cache
+          path: |
+            ${{ github.workspace }}/examples/*/.next/cache
+            ${{ github.workspace }}/docs/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
 
-      # Setting up playwright in one example is sufficient
-      - run: pnpm --filter example-app-router-playground exec playwright install --with-deps
+      # Playwright (incl. caching)
+      - id: playwright-version
+        run: |
+          version=$(pnpm --filter example-app-router exec playwright --version | awk '{print $2}')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+      - run: pnpm --filter example-app-router exec playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
 
-      - run: pnpm run build
-      - run: pnpm run lint
-      - run: pnpm run test
-      - run: pnpm run size
+      # Main tasks
+      - run: pnpm turbo run lint build test size --affected
