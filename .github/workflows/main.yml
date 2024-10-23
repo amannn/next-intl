@@ -28,7 +28,16 @@ jobs:
           path: ${{ github.workspace }}/examples/*/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
 
-      # Setting up playwright in one example is sufficient
-      - run: pnpm --filter example-app-router-playground exec playwright install --with-deps
+      # Playwright (incl. caching)
+      - id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(pnpm --filter example-app-router exec playwright --version | awk '{print $2}')" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.PLAYWRIGHT_VERSION }}
+      - run: pnpm --filter example-app-router exec playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
 
       - run: pnpm turbo run lint build test size --affected
