@@ -1,0 +1,27 @@
+import Callout from '@/components/Callout';
+import Image from 'next/image';
+
+# Storybook integration for `next-intl`
+
+[Storybook](https://storybook.js.org/) is a tool for developing UI components in isolation.
+
+If you like to set up stories for components that use `next-intl`, you can use [`storybook-next-intl`](https://github.com/stevensacks/storybook-next-intl), a community-maintained addon that configures Storybook accordingly for you.
+
+**Features**
+
+- Sets up [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) globally for you
+- Provides a locale switcher so you can test components with different locales
+
+<Image
+  className="mt-6"
+  src="/storybook-integration.png"
+  width={1768}
+  height={1128}
+  alt="Storybook integration for next-intl"
+/>
+
+<Callout>
+
+**Tip:** If you declare components that render as Server Components in your app via non-async functions, these components can render as Client Components in Storybook and will consume configuration from `NextIntlClientProvider` (see also: [Non-async components](/docs/environments/server-client-components#shared-components)).
+
+</Callout>
