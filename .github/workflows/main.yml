@@ -30,7 +30,9 @@ jobs:
 
       # Playwright (incl. caching)
       - id: playwright-version
-        run: echo "version=$(pnpm --filter example-app-router exec playwright --version | awk '{print $2}') >> $GITHUB_OUTPUT"
+        run: |
+          version=$(pnpm --filter example-app-router exec playwright --version | awk '{print $2}')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v4
         id: playwright-cache
         with:
