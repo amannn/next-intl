@@ -12,6 +12,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
+      # General setup
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # For Turborepo
@@ -25,7 +26,9 @@ jobs:
       # Next.js caching
       - uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/examples/*/.next/cache
+          path: |
+            ${{ github.workspace }}/examples/*/.next/cache
+            ${{ github.workspace }}/docs/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
 
       # Playwright (incl. caching)
@@ -36,10 +39,10 @@ jobs:
       - uses: actions/cache@v4
         id: playwright-cache
         with:
-          path: |
-            ~/.cache/ms-playwright
+          path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
       - run: pnpm --filter example-app-router exec playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
 
+      # Main tasks
       - run: pnpm turbo run lint build test size --affected
