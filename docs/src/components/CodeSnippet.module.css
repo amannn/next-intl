@@ -1,0 +1,61 @@
+.root {
+  [data-token='comment'] {
+    color: rgba(100, 116, 139, 0.8);
+
+    :global(.dark) & {
+      color: #69737b;
+    }
+  }
+
+  [data-token='text'] {
+    color: #414140;
+
+    :global(.dark) & {
+      color: #d1d1d0;
+    }
+  }
+
+  [data-token='constant'] {
+    color: #0078d1;
+
+    :global(.dark) & {
+      color: #63b9fe;
+    }
+  }
+
+  [data-token='string'] {
+    color: #2e853b;
+
+    :global(.dark) & {
+      color: #ffaa70;
+    }
+  }
+
+  [data-token='keyword'] {
+    color: #d6302d;
+
+    :global(.dark) & {
+      color: #fc7582;
+    }
+  }
+
+  [data-token='parameter'] {
+    color: #ff9704;
+  }
+
+  [data-token='function'] {
+    color: #5e46c0;
+
+    :global(.dark) & {
+      color: #a894ef;
+    }
+  }
+
+  [data-token='string'] {
+    color: #2e853b;
+
+    :global(.dark) & {
+      color: #1dc98f;
+    }
+  }
+}
