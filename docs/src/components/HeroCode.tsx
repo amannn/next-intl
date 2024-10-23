@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import clsx from 'clsx';
 import {ReactNode, useState} from 'react';
+import CodeSnippet from './CodeSnippet';
 
 function CodeTab({
   active,
@@ -31,282 +32,232 @@ const files = [
   {
     name: 'UserProfile.tsx',
     code: (
-      <code data-language="tsx" data-theme="default">
+      <CodeSnippet>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-keyword)'}}>import</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
+          <span data-token="keyword">import</span>
+          <span data-token="text">
             {' '}
             {'{'}useTranslations{'}'}{' '}
           </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>from</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            'next-intl'
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>;</span>
+          <span data-token="keyword">from</span>
+          <span data-token="text"> </span>
+          <span data-token="string">'next-intl'</span>
+          <span data-token="text">;</span>
         </span>
         <span className="line"> </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-keyword)'}}>
-            export default function
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>
-            UserProfile
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
+          <span data-token="keyword">export default function</span>
+          <span data-token="text"> </span>
+          <span data-token="function">UserProfile</span>
+          <span data-token="text">
             ({'{'}user{'}'}) {'{'}
           </span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>const</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>=</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-function)'}}>
-            useTranslations
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            'UserProfile'
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>);</span>
+          <span data-token="text">{'  '}</span>
+          <span data-token="keyword">const</span>
+          <span data-token="text"> </span>
+          <span data-token="constant">t</span>
+          <span data-token="text"> </span>
+          <span data-token="keyword">=</span>
+          <span data-token="text"> </span>
+          <span data-token="function">useTranslations</span>
+          <span data-token="text">(</span>
+          <span data-token="string">'UserProfile'</span>
+          <span data-token="text">);</span>
         </span>
         <span className="line"> </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>return</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> (</span>
+          <span data-token="text">{'  '}</span>
+          <span data-token="keyword">return</span>
+          <span data-token="text"> (</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">{'    '}&lt;</span>
+          <span data-token="string">section</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            h1
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            'title'
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {' '}
-            {'{'}firstName
-          </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
+          <span data-token="text">{'      '}&lt;</span>
+          <span data-token="string">h1</span>
+          <span data-token="text">&gt;{'{'}</span>
+          <span data-token="function">t</span>
+          <span data-token="text">(</span>
+          <span data-token="string">'title'</span>
+          <span data-token="text">,</span>
+          <span data-token="text"> {'{'}firstName</span>
+          <span data-token="keyword">:</span>
+          <span data-token="text"> </span>
+          <span data-token="constant">user</span>
+          <span data-token="text">
             .firstName{'}'}){'}'}&lt;/
           </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            h1
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="string">h1</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            'membership'
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            {' '}
-            {'{'}memberSince
-          </span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
+          <span data-token="text">{'      '}&lt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;{'{'}</span>
+          <span data-token="function">t</span>
+          <span data-token="text">(</span>
+          <span data-token="string">'membership'</span>
+          <span data-token="text">,</span>
+          <span data-token="text"> {'{'}memberSince</span>
+          <span data-token="keyword">:</span>
+          <span data-token="text"> </span>
+          <span data-token="constant">user</span>
+          <span data-token="text">
             .memberSince{'}'}){'}'}&lt;/
           </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'      '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;{'{'}</span>
-          <span style={{color: 'var(--shiki-token-function)'}}>t</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>(</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            'followers'
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}count</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-constant)'}}>user</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
+          <span data-token="text">{'      '}&lt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;{'{'}</span>
+          <span data-token="function">t</span>
+          <span data-token="text">(</span>
+          <span data-token="string">'followers'</span>
+          <span data-token="text">,</span>
+          <span data-token="text"> {'{'}count</span>
+          <span data-token="keyword">:</span>
+          <span data-token="text"> </span>
+          <span data-token="constant">user</span>
+          <span data-token="text">
             .numFollowers{'}'}){'}'}&lt;/
           </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}&lt;/</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">{'    '}&lt;/</span>
+          <span data-token="string">section</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '});</span>
+          <span data-token="text">{'  '});</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
+          <span data-token="text">{'}'}</span>
         </span>
-      </code>
+      </CodeSnippet>
     )
   },
   {
     name: 'en.json',
     code: (
-      <code data-language="json" data-theme="default">
+      <CodeSnippet>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'{'}</span>
+          <span data-token="text">{'{'}</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>
-            "UserProfile"
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> {'{'}</span>
+          <span data-token="text">{'  '}</span>
+          <span data-token="keyword">"UserProfile"</span>
+          <span data-token="text">:</span>
+          <span data-token="text"> {'{'}</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>"title"</span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="text">{'    '}</span>
+          <span data-token="keyword">"title"</span>
+          <span data-token="text">:</span>
+          <span data-token="text"> </span>
+          <span data-token="string">
             "{'{'}firstname{'}'}'s profile"
           </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+          <span data-token="text">,</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>
-            "membership"
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="text">{'    '}</span>
+          <span data-token="keyword">"membership"</span>
+          <span data-token="text">:</span>
+          <span data-token="text"> </span>
+          <span data-token="string">
             "Member since {'{'}memberSince, date, short{'}'}"
           </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>,</span>
+          <span data-token="text">,</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'    '}</span>
-          <span style={{color: 'var(--shiki-token-keyword)'}}>"followers"</span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}>:</span>
-          <span style={{color: 'var(--shiki-color-text)'}}> </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            "{'{'}count, plural,
-          </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+          <span data-token="text">{'    '}</span>
+          <span data-token="keyword">"followers"</span>
+          <span data-token="text">:</span>
+          <span data-token="text"> </span>
+          <span data-token="string">"{'{'}count, plural,</span>
+          <span data-token="text"> ↵</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="string">
             {'                    '}
             =0 {'{'}No followers yet{'}'}
           </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+          <span data-token="text"> ↵</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="string">
             {'                    '}
             =1 {'{'}One follower{'}'}
           </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+          <span data-token="text"> ↵</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="string">
             {'                    '}
             other {'{'}# followers{'}'}
           </span>
-          <span style={{color: 'var(--shiki-token-punctuation)'}}> ↵</span>
+          <span data-token="text"> ↵</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
+          <span data-token="string">
             {'                  '}
             {'}'}"
           </span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  }'}</span>
+          <span data-token="text">{'  }'}</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'}'}</span>
+          <span data-token="text">{'}'}</span>
         </span>
-      </code>
+      </CodeSnippet>
     )
   },
   {
     name: 'Output',
     code: (
-      <code data-language="html" data-theme="default">
+      <CodeSnippet>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">&lt;</span>
+          <span data-token="string">section</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            h2
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            &gt;Jane's profile&lt;/
-          </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            h2
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">{'  '}&lt;</span>
+          <span data-token="string">h2</span>
+          <span data-token="text">&gt;Jane's profile&lt;/</span>
+          <span data-token="string">h2</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            &gt;Member since Oct 13, 2023&lt;/
-          </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">{'  '}&lt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;Member since Oct 13, 2023&lt;/</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>{'  '}&lt;</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>
-            &gt;1,481 followers&lt;/
-          </span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>p</span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">{'  '}&lt;</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;1,481 followers&lt;/</span>
+          <span data-token="string">p</span>
+          <span data-token="text">&gt;</span>
         </span>
         <span className="line">
-          <span style={{color: 'var(--shiki-color-text)'}}>&lt;/</span>
-          <span style={{color: 'var(--shiki-token-string-expression)'}}>
-            section
-          </span>
-          <span style={{color: 'var(--shiki-color-text)'}}>&gt;</span>
+          <span data-token="text">&lt;/</span>
+          <span data-token="string">section</span>
+          <span data-token="text">&gt;</span>
         </span>
-      </code>
+      </CodeSnippet>
     )
   }
 ];
@@ -343,7 +294,7 @@ export default function HeroCode() {
             ))}
           </div>
           <div className="mt-6 flex items-start lg:min-h-[275px] lg:w-[684px]">
-            <pre className="ml-[-16px] flex overflow-x-auto px-0" data-theme>
+            <pre className="ml-[-16px] flex overflow-x-auto px-0">
               {files[fileIndex].code}
             </pre>
           </div>
