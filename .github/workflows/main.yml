@@ -29,7 +29,4 @@ jobs:
       # Setting up playwright in one example is sufficient
       - run: pnpm --filter example-app-router-playground exec playwright install --with-deps
 
-      - run: pnpm run build
-      - run: pnpm run lint
-      - run: pnpm run test
-      - run: pnpm run size
+      - run: pnpm turbo run lint build test size
