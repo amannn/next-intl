@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import {use} from 'react';
 import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
 import {Link} from '@/i18n/routing';
@@ -16,10 +17,11 @@ import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCo
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
 
 type Props = {
-  searchParams: Record<string, string>;
+  searchParams: Promise<Record<string, string>>;
 };
 
-export default function Index({searchParams}: Props) {
+export default function Index(props: Props) {
+  const searchParams = use(props.searchParams);
   const t = useTranslations('Index');
   const format = useFormatter();
   const now = useNow();

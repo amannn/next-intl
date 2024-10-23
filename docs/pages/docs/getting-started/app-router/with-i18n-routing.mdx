@@ -193,12 +193,13 @@ import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({
   children,
-  params: {locale}
+  params
 }: {
   children: React.ReactNode;
-  params: {locale: string};
+  params: Promise<{locale: string}>;
 }) {
   // Ensure that the incoming `locale` is valid
+  const {locale} = await params;
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
@@ -300,7 +301,9 @@ import {setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
-export default async function LocaleLayout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params}) {
+  const {locale} = await params;
+
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();
@@ -318,7 +321,9 @@ export default async function LocaleLayout({children, params: {locale}}) {
 ```tsx filename="app/[locale]/page.tsx"
 import {setRequestLocale} from 'next-intl/server';
 
-export default function IndexPage({params: {locale}}) {
+export default function IndexPage({params}) {
+  const {locale} = use(params);
+
   // Enable static rendering
   setRequestLocale(locale);
 
@@ -368,7 +373,8 @@ To achieve this, you can forward the `locale` that you receive from Next.js via 
 ```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {

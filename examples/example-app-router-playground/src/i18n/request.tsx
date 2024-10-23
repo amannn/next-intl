@@ -34,8 +34,8 @@ export default getRequestConfig(async ({requestLocale}) => {
     locale = routing.defaultLocale;
   }
 
-  const now = headers().get('x-now');
-  const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
+  const now = (await headers()).get('x-now');
+  const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';
   const localeMessages = (await import(`../../messages/${locale}.json`))
     .default;
   const messages = {...defaultMessages, ...localeMessages};

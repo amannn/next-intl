@@ -1,15 +1,18 @@
 import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
+import {use} from 'react';
 import {Locale, getPathname} from '@/i18n/routing';
 
 type Props = {
-  params: {
+  params: Promise<{
     locale: Locale;
     articleId: string;
-  };
+  }>;
 };
 
-export async function generateMetadata({params}: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
+
   return {
     alternates: {
       canonical: getPathname({
@@ -23,7 +26,8 @@ export async function generateMetadata({params}: Props): Promise<Metadata> {
   };
 }
 
-export default function NewsArticle({params}: Props) {
+export default function NewsArticle(props: Props) {
+  const params = use(props.params);
   const t = useTranslations('NewsArticle');
   return <h1>{t('title', {articleId: params.articleId})}</h1>;
 }

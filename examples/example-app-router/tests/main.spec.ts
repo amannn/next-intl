@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
@@ -28,10 +28,10 @@ it("handles not found pages for routes that don't match the middleware", async (
   page
 }) => {
   await page.goto('/test.png');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 
   await page.goto('/api/hello');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 });
 
 it('sets caching headers', async ({request}) => {

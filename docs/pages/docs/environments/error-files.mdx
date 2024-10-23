@@ -82,7 +82,9 @@ For the 404 page to render, we need to call the `notFound` function in the root 
 ```tsx filename="app/[locale]/layout.tsx"
 import {notFound} from 'next/navigation';
 
-export default function LocaleLayout({children, params: {locale}}) {
+export default async function LocaleLayout({children, params}) {
+  const {locale} = await params;
+
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();
