@@ -217,3 +217,56 @@ export async function GET(request) {
   return NextResponse.json({title: t('title')});
 }
 ```
+
+### Pages Router API Routes
+
+You cannot use `next-intl` with API routes in the pages router as you would with route handlers. If you tried you may have run into the following error:
+
+```
+`getTranslations` is not supported in Client Components
+```
+
+Instead, you have to manually import the messages (as you would with a "page" in the pages router) and use the `createTranslator` function to create your `t` variable.
+
+Below is an example implementation of the `getTranslations` function that would work with pages router:
+
+```ts filename="/lib/intl-server.ts"
+import { createTranslator } from "next-intl";
+
+/**
+ * Workaround to use `getTranslations` in API routes in the pages router.
+ *
+ * @param opts options containing locale (required) and namespace.
+ * @returns translator
+ */
+export async function getTranslations(opts: {
+    locale: string;
+    namespace?: string;
+}) {
+    const messages = (await import(`../messages/${opts.locale}.json`)).default;
+
+    return createTranslator({
+        locale: opts.locale,
+        messages,
+        namespace: opts.namespace,
+    });
+}
+```
+
+Then use it as you would normally:
+
+```ts filename="/pages/api/some-route.ts"
+import { getTranslations } from "@/lib/intl-server";
+
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse,
+) {
+    // Example: Receive the `locale` via the `accept-language` HTTP header, or
+    // fallback to English.
+    const locale =  req.headers['accept-language'] ?? 'en';
+    const t = getTranslations({locale, namespace: 'Hello'});
+
+    return res.json({title: t('title')})
+}
+```
