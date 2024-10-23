@@ -1,6 +1,6 @@
 import {StatusCodes} from 'http-status-codes';
 import {NextResponse} from 'next/server';
-import ServerTracker from 'services/ServerTracker';
+import ServerTracker from '@/services/ServerTracker';
 
 export async function GET(request: Request) {
   const {searchParams} = new URL(request.url);

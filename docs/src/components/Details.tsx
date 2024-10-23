@@ -1,6 +1,6 @@
 import {useMDXComponents} from 'nextra/mdx';
 import {ComponentProps, useEffect, useReducer} from 'react';
-import useLocationHash from 'hooks/useLocationHash';
+import useLocationHash from '@/hooks/useLocationHash';
 
 type Props = ComponentProps<'details'>;
 

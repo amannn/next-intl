@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router';
-import config from 'config';
+import config from '@/config';
 import FooterLink from './FooterLink';
 import FooterSeparator from './FooterSeparator';
 

@@ -6,11 +6,11 @@ import {
   useConfig
 } from 'nextra-theme-docs';
 import {ComponentProps} from 'react';
-import AlgoliaSearch from 'components/AlgoliaSearch';
-import Footer from 'components/Footer';
-import Logo from 'components/Logo';
-import PartnerSidebar from 'components/PartnerSidebar';
-import Pre from 'components/Pre';
+import AlgoliaSearch from '@/components/AlgoliaSearch';
+import Footer from '@/components/Footer';
+import Logo from '@/components/Logo';
+import PartnerSidebar from '@/components/PartnerSidebar';
+import Pre from '@/components/Pre';
 import config from './config';
 
 export const TITLE_TEMPLATE_SUFFIX = ' – ' + config.description;

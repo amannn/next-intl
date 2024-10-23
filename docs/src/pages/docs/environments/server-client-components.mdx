@@ -1,5 +1,5 @@
-import Callout from 'components/Callout';
-import Details from 'components/Details';
+import Callout from '@/components/Callout';
+import Details from '@/components/Details';
 
 # Internationalization of Server & Client Components
 
@@ -170,7 +170,7 @@ If you implement a locale switcher as an interactive select, you can keep intern
 
 ```tsx filename="LocaleSwitcher.tsx"
 import {useLocale, useTranslations} from 'next-intl';
-import {locales} from 'config';
+import {locales} from '@/config';
 
 // A Client Component that registers an event listener for
 // the `change` event of the select, uses `useRouter`

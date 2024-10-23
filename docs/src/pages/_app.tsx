@@ -2,7 +2,7 @@ import {SpeedInsights} from '@vercel/speed-insights/next';
 import {AppProps} from 'next/app';
 import {Inter} from 'next/font/google';
 import {ReactNode} from 'react';
-import Analytics from 'components/Analytics';
+import Analytics from '@/components/Analytics';
 import 'nextra-theme-docs/style.css';
 import '../styles.css';
 

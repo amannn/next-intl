@@ -34,6 +34,7 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
+    "globals": "^15.11.0",
     "next-sitemap": "^4.2.3",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"

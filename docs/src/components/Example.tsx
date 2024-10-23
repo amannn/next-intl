@@ -1,6 +1,6 @@
 import {clsx} from 'clsx';
 import Image from 'next/image';
-import useLocationHash from 'hooks/useLocationHash';
+import useLocationHash from '@/hooks/useLocationHash';
 
 type Props = {
   demoLink?: string;

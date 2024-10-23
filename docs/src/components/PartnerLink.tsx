@@ -1,5 +1,5 @@
 import {HTMLAttributes} from 'react';
-import BrowserTracker from 'services/BrowserTracker';
+import BrowserTracker from '@/services/BrowserTracker';
 
 type Props = HTMLAttributes<HTMLAnchorElement> & {
   as?: React.ElementType;

@@ -1,5 +1,5 @@
 import {ImageResponse} from '@vercel/og';
-import siteConfig from 'config';
+import siteConfig from '@/config';
 
 export const config = {
   runtime: 'edge'
