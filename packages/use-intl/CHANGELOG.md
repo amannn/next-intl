@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.3 (2024-10-24)
+
+### Bug Fixes
+
+* Resolve locale for navigation APIs consistently from `i18n/request.ts` in `react-server` like all other APIs do ([#1459](https://github.com/amannn/next-intl/issues/1459)) ([8c6d5ff](https://github.com/amannn/next-intl/commit/8c6d5fff009ac3c54b2847c23b8148759d0b6ffa)) – by @amannn
+
 ## 3.23.2 (2024-10-22)
 
 ### Bug Fixes
