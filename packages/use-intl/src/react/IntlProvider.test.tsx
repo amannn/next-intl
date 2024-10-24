@@ -73,6 +73,7 @@ it('keeps a consistent context value that does not trigger unnecessary re-render
     numStaticTextRenders++;
     return t('hello');
   });
+  StaticText.displayName = 'StaticText';
 
   render(<Counter />);
   screen.getByText('Count: 0');
