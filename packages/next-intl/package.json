@@ -95,8 +95,8 @@
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
-    "@edge-runtime/vm": "^3.2.0",
+    "@arethetypeswrong/cli": "^0.16.4",
+    "@edge-runtime/vm": "^4.0.3",
     "@size-limit/preset-big-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
@@ -105,7 +105,7 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
+    "eslint-plugin-react-compiler": "19.0.0-beta-8a03594-20241020",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "prettier": "^3.3.3",
