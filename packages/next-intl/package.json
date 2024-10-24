@@ -87,7 +87,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "negotiator": "^0.6.3",
+    "negotiator": "^1.0.0",
     "use-intl": "workspace:^"
   },
   "peerDependencies": {
