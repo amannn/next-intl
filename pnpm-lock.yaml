@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@babel/parser': 7.21.9
+
 importers:
 
   .:
@@ -1212,13 +1215,8 @@ packages:
     resolution: {integrity: sha512-llL88JShoCsth8fF8R4SJnIn+WLvR6ccFxu1H3FlMhDontdcmZWf2HgIZ7AIqV3Xcck1idlohrN4EUBQz6klbw==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/parser@7.24.7':
-    resolution: {integrity: sha512-9uUYRm6OqQrCqQdG1iCBwBPZgN8ciDBro2nIOFaiRz1/BCxaI7CNvQbDHvsArAC7Tw9Hda/B3U+6ui9u4HWXPw==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-
-  '@babel/parser@7.25.9':
-    resolution: {integrity: sha512-aI3jjAAO1fh7vY/pBGsn1i9LDbRP43+asrRlkPuTXW5yHXtd1NgTEMudbBoDDxrf1daEEfPJqR+JBMakzrR4Dg==}
+  '@babel/parser@7.21.9':
+    resolution: {integrity: sha512-q5PNg/Bi1OpGgx5jYlvWZwAorZepEudDMCLtj967aeS7WMont7dUZI46M2XwcIQqvUlMxWfdLFu4S/qSxeUu5g==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -2597,7 +2595,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.4.11':
     resolution: {integrity: sha512-L9Ci9RBh0aPFEDF1AjDYPk54OgeUJIKzxF3lRgITm+lQpI3IEKjAc9LaYeQeO1mlZMUQmPkHArF8iyz1eOeVoQ==}
@@ -14862,7 +14860,7 @@ snapshots:
       '@babel/helper-compilation-targets': 7.25.9
       '@babel/helper-module-transforms': 7.25.9(@babel/core@7.25.9)
       '@babel/helpers': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/template': 7.25.9
       '@babel/traverse': 7.25.9
       '@babel/types': 7.25.9
@@ -14880,7 +14878,7 @@ snapshots:
       '@babel/generator': 7.25.9
       '@babel/helper-module-transforms': 7.25.9(@babel/core@7.9.0)
       '@babel/helpers': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/template': 7.25.9
       '@babel/traverse': 7.25.9
       '@babel/types': 7.25.9
@@ -14972,16 +14970,16 @@ snapshots:
 
   '@babel/helper-environment-visitor@7.24.7':
     dependencies:
-      '@babel/types': 7.24.7
+      '@babel/types': 7.25.9
 
   '@babel/helper-function-name@7.24.7':
     dependencies:
       '@babel/template': 7.25.9
-      '@babel/types': 7.24.7
+      '@babel/types': 7.25.9
 
   '@babel/helper-hoist-variables@7.24.7':
     dependencies:
-      '@babel/types': 7.24.7
+      '@babel/types': 7.25.9
 
   '@babel/helper-member-expression-to-functions@7.25.9':
     dependencies:
@@ -15061,7 +15059,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.24.7':
     dependencies:
-      '@babel/types': 7.24.7
+      '@babel/types': 7.25.9
 
   '@babel/helper-string-parser@7.24.7': {}
 
@@ -15095,11 +15093,7 @@ snapshots:
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
-  '@babel/parser@7.24.7':
-    dependencies:
-      '@babel/types': 7.24.7
-
-  '@babel/parser@7.25.9':
+  '@babel/parser@7.21.9':
     dependencies:
       '@babel/types': 7.25.9
 
@@ -15925,7 +15919,7 @@ snapshots:
   '@babel/template@7.25.9':
     dependencies:
       '@babel/code-frame': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/types': 7.25.9
 
   '@babel/traverse@7.24.7':
@@ -15936,7 +15930,7 @@ snapshots:
       '@babel/helper-function-name': 7.24.7
       '@babel/helper-hoist-variables': 7.24.7
       '@babel/helper-split-export-declaration': 7.24.7
-      '@babel/parser': 7.24.7
+      '@babel/parser': 7.21.9
       '@babel/types': 7.24.7
       debug: 4.3.7(supports-color@6.1.0)
       globals: 11.12.0
@@ -15947,7 +15941,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.25.9
       '@babel/generator': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/template': 7.25.9
       '@babel/types': 7.25.9
       debug: 4.3.5
@@ -18400,7 +18394,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.25.9
       '@babel/generator': 7.24.7
-      '@babel/parser': 7.24.7
+      '@babel/parser': 7.21.9
       '@babel/plugin-syntax-decorators': 7.24.7(@babel/core@7.25.9)
       '@babel/plugin-syntax-jsx': 7.24.7(@babel/core@7.25.9)
       '@babel/preset-typescript': 7.25.9(@babel/core@7.25.9)
@@ -19158,7 +19152,7 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/types': 7.25.9
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
@@ -19170,7 +19164,7 @@ snapshots:
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/types': 7.25.9
 
   '@types/babel__traverse@7.20.6':
@@ -23082,7 +23076,7 @@ snapshots:
   eslint-plugin-react-compiler@0.0.0-experimental-8e3b87c-20240822(eslint@9.13.0(jiti@2.3.3)):
     dependencies:
       '@babel/core': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/plugin-proposal-private-methods': 7.18.6(@babel/core@7.25.9)
       eslint: 9.13.0(jiti@2.3.3)
       hermes-parser: 0.20.1
@@ -25234,7 +25228,7 @@ snapshots:
   istanbul-lib-instrument@5.2.1:
     dependencies:
       '@babel/core': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 6.3.1
@@ -25244,7 +25238,7 @@ snapshots:
   istanbul-lib-instrument@6.0.2:
     dependencies:
       '@babel/core': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.6.3
@@ -25756,7 +25750,7 @@ snapshots:
   jscodeshift@0.14.0(@babel/preset-env@7.25.9(@babel/core@7.25.9)):
     dependencies:
       '@babel/core': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.25.9)
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.25.9)
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.25.9)
@@ -26812,7 +26806,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.25.9
       '@babel/generator': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/types': 7.25.9
       babel-preset-fbjs: 3.4.0(@babel/core@7.25.9)
       metro: 0.72.4(encoding@0.1.13)
@@ -26834,7 +26828,7 @@ snapshots:
       '@babel/code-frame': 7.25.9
       '@babel/core': 7.25.9
       '@babel/generator': 7.25.9
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       '@babel/template': 7.25.9
       '@babel/traverse': 7.25.9
       '@babel/types': 7.25.9
@@ -29382,7 +29376,7 @@ snapshots:
 
   react-native-codegen@0.70.7(@babel/preset-env@7.25.9(@babel/core@7.25.9)):
     dependencies:
-      '@babel/parser': 7.25.9
+      '@babel/parser': 7.21.9
       flow-parser: 0.121.0
       jscodeshift: 0.14.0(@babel/preset-env@7.25.9(@babel/core@7.25.9))
       nullthrows: 1.1.1
