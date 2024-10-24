@@ -35,22 +35,12 @@
     "./react": {
       "types": "./react.d.ts",
       "default": "./dist/react.js"
-    },
-    "./_useLocale": {
-      "types": "./_useLocale.d.ts",
-      "default": "./dist/_useLocale.js"
-    },
-    "./_IntlProvider": {
-      "types": "./_IntlProvider.d.ts",
-      "default": "./dist/_IntlProvider.js"
     }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts",
-    "_useLocale.d.ts",
-    "_IntlProvider.d.ts"
+    "react.d.ts"
   ],
   "keywords": [
     "react",

@@ -4,9 +4,7 @@ import getBuildConfig from '../../scripts/getBuildConfig.mjs';
 const input = {
   index: 'src/index.tsx',
   core: 'src/core.tsx',
-  react: 'src/react.tsx',
-  _useLocale: 'src/_useLocale.tsx',
-  _IntlProvider: 'src/_IntlProvider.tsx'
+  react: 'src/react.tsx'
 };
 
 export default [
