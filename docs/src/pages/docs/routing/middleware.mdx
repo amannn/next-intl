@@ -432,14 +432,23 @@ export default function RootPage() {
 
 ## Troubleshooting
 
+### "The middleware doesn't run for a particular page." [#middleware-not-running]
+
+To resolve this, make sure that:
+
+1. The [middleware](/docs/getting-started/app-router/with-i18n-routing#middleware) is set up in the correct file (e.g. `src/middleware.ts`).
+2. Your middleware [matcher](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
+3. In case you're [composing other middlewares](#composing-other-middlewares), ensure that the middleware is called correctly.
+4. In case you require static rendering, make sure to follow the [static rendering guide](/docs/getting-started/app-router/with-i18n-routing#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
+
+### "My page content isn't localized despite the pathname containing a locale prefix." [#content-not-localized]
+
+This is very likely the result of your [middleware not running](#middleware-not-running) on the request. As a result, a potential fallback from [`i18n/request.ts`](/docs/usage/configuration#i18n-request) might be applied.
+
 ### "Unable to find `next-intl` locale because the middleware didn't run on this request and no `locale` was returned in `getRequestConfig`." [#unable-to-find-locale]
 
-If the middleware is not expected to run on this request (e.g. because you're using a setup [without i18n routing](/docs/getting-started/app-router/without-i18n-routing)), you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
+If the middleware _is not_ expected to run on this request (e.g. because you're using a setup [without i18n routing](/docs/getting-started/app-router/without-i18n-routing)), you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
 
-If the error occurs for pathnames where the middleware is expected to run, please make sure that:
-
-1. The middleware is set up in the correct file (e.g. `src/middleware.ts`).
-2. Your middleware [matcher](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
-3. In case you require static rendering, make sure to follow the [static rendering guide](/docs/getting-started/app-router/with-i18n-routing#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
+If the middleware _is_ expected to run, verify that your [middleware is set up correctly](#middleware-not-running).
 
 Note that `next-intl` will invoke the `notFound()` function to abort the render if no locale is available after `getRequestConfig` has run. You should consider adding a [`not-found` page](/docs/environments/error-files#not-foundjs) due to this.
