@@ -215,21 +215,15 @@ it('can use next-intl on the client side', async ({page}) => {
 it('can use rich text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RichText');
-  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
+  expect(await element.innerHTML()).toBe(
+    'This is a <b style="font-weight:bold">rich</b> text.'
+  );
 });
 
 it('can use raw text', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('RawText');
-  expect(await element.innerHTML()).toBe(
-    'This is a <important>rich</important> text.'
-  );
-});
-
-it('can use global defaults', async ({page}) => {
-  await page.goto('/en');
-  const element = page.getByTestId('GlobalDefaults');
-  expect(await element.innerHTML()).toBe('<strong>Global string</strong>');
+  expect(await element.innerHTML()).toBe('This is a <b>rich</b> text.');
 });
 
 it('can use `getMessageFallback`', async ({page}) => {
@@ -642,7 +636,7 @@ it('can use async APIs in async components', async ({page}) => {
   const element1 = page.getByTestId('AsyncComponent');
   element1.getByText('AsyncComponent');
   expect(await element1.innerHTML()).toContain('This is a <b>rich</b> text.');
-  element1.getByText('Markup with <b>Global string</b>');
+  element1.getByText('Markup with <b>bold content</b>');
 
   page
     .getByTestId('AsyncComponentWithoutNamespace')
@@ -680,6 +674,24 @@ it('can use `getPahname` to define a canonical link', async ({page}) => {
 
   await page.goto('/de/neuigkeiten/3');
   await expect(getCanonicalPathname()).resolves.toBe('/de/neuigkeiten/3');
+});
+
+it('can define custom cookie options', async ({request}) => {
+  const response = await request.get('/');
+  expect(response.headers()['set-cookie']).toContain('Max-Age=17280000');
+});
+
+it('can use `t.has` in a Server Component', async ({page}) => {
+  await page.goto('/');
+  await expect(page.getByTestId('HasTitle')).toHaveText('true');
+});
+
+it('can render mdx content', async ({page}) => {
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'Über uns'}).waitFor();
 });
 
 // https://github.com/radix-ui/primitives/issues/3165

@@ -8,7 +8,7 @@ import {getCachedRequestLocale} from './RequestLocaleCache';
 // With https://github.com/vercel/next.js/pull/68812, the API became async.
 // This file can be removed once we remove the legacy navigation APIs.
 function getHeaders() {
-  return headers();
+  return headers() as unknown as Awaited<ReturnType<typeof headers>>;
 }
 
 function getLocaleFromHeaderImpl() {
@@ -22,7 +22,7 @@ function getLocaleFromHeaderImpl() {
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
       throw new Error(
-        'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `unstable_setRequestLocale` API to enable static rendering, see https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering',
+        'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `setRequestLocale` API to enable static rendering, see https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering',
         {cause: error}
       );
     } else {

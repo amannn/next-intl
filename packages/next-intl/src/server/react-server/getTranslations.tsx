@@ -1,14 +1,14 @@
-import {ReactElement, ReactNodeArray, cache} from 'react';
+import {ReactNode, cache} from 'react';
 import {
-  createTranslator,
   Formats,
-  TranslationValues,
+  MarkupTranslationValues,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
   RichTranslationValues,
-  MarkupTranslationValues
+  TranslationValues,
+  createTranslator
 } from 'use-intl/core';
 import getConfig from './getConfig';
 
@@ -64,7 +64,7 @@ Promise<{
     key: [TargetKey] extends [never] ? string : TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
@@ -103,6 +103,24 @@ Promise<{
   >(
     key: [TargetKey] extends [never] ? string : TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: [TargetKey] extends [never] ? string : TargetKey
+  ): boolean;
 }>;
 // CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
@@ -153,7 +171,7 @@ Promise<{
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<

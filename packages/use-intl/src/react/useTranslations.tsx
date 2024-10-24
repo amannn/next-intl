@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray} from 'react';
+import {ReactNode} from 'react';
 import Formats from '../core/Formats';
 import TranslationValues, {
   MarkupTranslationValues,
@@ -66,7 +66,7 @@ export default function useTranslations<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
@@ -105,6 +105,24 @@ export default function useTranslations<
   >(
     key: TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): boolean;
 } {
   const context = useIntlContext();
   const messages = context.messages as IntlMessages;

@@ -1,5 +1,4 @@
-import {memoize, Cache, strategies} from '@formatjs/fast-memoize';
-// eslint-disable-next-line import/no-named-as-default -- False positive
+import {Cache, memoize, strategies} from '@formatjs/fast-memoize';
 import type IntlMessageFormat from 'intl-messageformat';
 
 export type IntlCache = {

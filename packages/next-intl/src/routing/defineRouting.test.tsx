@@ -31,7 +31,7 @@ describe('pathnames', () => {
     });
 
     // Ensures the result is typed as narrow as possible
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     routing.pathnames['/about'].en;
   });
 
@@ -165,6 +165,62 @@ describe('localePrefix', () => {
           }
         }
       });
+    });
+  });
+});
+
+describe('localeCookie', () => {
+  it('can set it to `false`', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: false
+    });
+  });
+
+  it('accepts a custom config', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        name: 'custom',
+        domain: 'example.com',
+        maxAge: 60 * 60 * 24 * 365,
+        partitioned: true,
+        path: '/',
+        priority: 'high',
+        sameSite: 'strict',
+        secure: true
+      }
+    });
+  });
+
+  it('restricts the available attributes', () => {
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
+        httpOnly: true
+      }
+    });
+
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
+        value: 'custom'
+      }
+    });
+
+    defineRouting({
+      locales: ['en'],
+      defaultLocale: 'en',
+      localeCookie: {
+        // @ts-expect-error
+        expires: 123
+      }
     });
   });
 });

@@ -43,7 +43,10 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
   messages?: Messages;
   /** Global default values for translation values and rich text elements.
    * Can be used for consistent usage or styling of rich text elements.
-   * Defaults will be overidden by locally provided values. */
+   * Defaults will be overidden by locally provided values.
+   *
+   * @deprecated See https://next-intl-docs.vercel.app/docs/usage/messages#rich-text-reuse-tags
+   **/
   defaultTranslationValues?: RichTranslationValues;
 };
 

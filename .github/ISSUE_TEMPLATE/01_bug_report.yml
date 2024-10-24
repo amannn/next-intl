@@ -1,22 +1,17 @@
 name: Bug report
 description: Create a bug report
 labels:
- - bug
- - unconfirmed
+  - bug
+  - unconfirmed
 body:
   - type: markdown
     attributes:
-      value: Thanks for taking the time to file a bug report!
-  - type: markdown
-    attributes:
       value: |
-        **Creating a good bug report takes time.**
-        
-        To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
+        Thanks for taking the time to file a bug report!
 
         **Please note:**
-        1. `next-intl` is based on Next.js, therefore bugs in Next.js might cause errors in apps that use `next-intl`. Please make sure that the bug you're experiencing is _caused by_ by `next-intl`. If you're unsure, please search on [the Next.js issue tracker](https://github.com/vercel/next.js/issues) for similar issues.
-        2. General usage questions are not bug reports. Please [submit usage questions on Stack Overflow](https://stackoverflow.com/questions/ask) instead.
+        1. General usage questions are not bug reports. If you're looking for support with your app, you can consider asking for help on the [Next.js Discord](https://discord.com/invite/nextjs), [Stack Overflow](https://stackoverflow.com/questions/ask) or [GitHub discussions](https://github.com/amannn/next-intl/discussions) instead.
+        2. `next-intl` is based on Next.js, therefore bugs in Next.js might cause errors in apps that use `next-intl`. Please make sure that the bug you're experiencing is _caused by_ by `next-intl`. If you're unsure, please search on [the Next.js issue tracker](https://github.com/vercel/next.js/issues) for similar issues.
         3. Bug reports without a reproduction may be closed immediately.
   - type: textarea
     attributes:
@@ -30,7 +25,7 @@ body:
       options:
         - label: I've verified that the problem I'm experiencing isn't covered in [the docs](https://next-intl-docs.vercel.app/).
           required: true
-        - label: I've searched for similar, existing issues on GitHub and [Stack Overflow](https://stackoverflow.com/search?q=next-intl).
+        - label: I've searched for similar, existing issues on [GitHub](https://github.com/amannn/next-intl/issues) and [Stack Overflow](https://stackoverflow.com/search?q=next-intl).
           required: true
         - label: I've compared my app to [a working example](https://next-intl-docs.vercel.app/examples) to look for differences.
           required: true
@@ -41,6 +36,12 @@ body:
         **Templates:** [App Router](https://github.com/amannn/next-intl-bug-repro-app-router), [Pages Router](https://github.com/amannn/next-intl/tree/main/examples/example-pages-router)
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        **Creating a good reproduction takes time.**
+
+        To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
   - type: textarea
     attributes:
       label: Reproduction description
@@ -49,7 +50,7 @@ body:
         Steps to reproduce:
         1. Open reproduction
         2. Click on …
-        3. See error: … 
+        3. See error: …
     validations:
       required: true
   - type: textarea

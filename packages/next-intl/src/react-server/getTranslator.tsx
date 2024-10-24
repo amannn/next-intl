@@ -1,14 +1,14 @@
-import {ReactElement, ReactNodeArray, cache} from 'react';
+import {ReactNode, cache} from 'react';
 import {
   Formats,
-  TranslationValues,
-  RichTranslationValues,
+  MarkupTranslationValues,
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
-  createTranslator,
-  MarkupTranslationValues
+  RichTranslationValues,
+  TranslationValues,
+  createTranslator
 } from 'use-intl/core';
 
 function getTranslatorImpl<
@@ -59,7 +59,7 @@ function getTranslatorImpl<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
@@ -98,6 +98,24 @@ function getTranslatorImpl<
   >(
     key: TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): boolean;
 } {
   return createTranslator({
     ...config,

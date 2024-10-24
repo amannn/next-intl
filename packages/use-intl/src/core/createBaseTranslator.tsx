@@ -1,12 +1,5 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat from 'intl-messageformat';
-import {
-  cloneElement,
-  isValidElement,
-  ReactElement,
-  ReactNode,
-  ReactNodeArray
-} from 'react';
+import {ReactNode, cloneElement, isValidElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
@@ -21,8 +14,8 @@ import {
   Formatters,
   IntlCache,
   IntlFormatters,
-  memoFn,
-  MessageFormatter
+  MessageFormatter,
+  memoFn
 } from './formatters';
 import joinPath from './joinPath';
 import MessageKeys from './utils/MessageKeys';
@@ -68,6 +61,7 @@ function resolvePath(
   key.split('.').forEach((part) => {
     const next = (message as any)[part];
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (part == null || next == null) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -129,6 +123,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
       ? resolvePath(locale, messages, namespace)
       : messages;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!retrievedMessages) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
@@ -205,6 +200,8 @@ function createBaseTranslatorImpl<
   onError,
   timeZone
 }: CreateBaseTranslatorProps<Messages>) {
+  const hasMessagesError = messagesOrError instanceof IntlError;
+
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,
@@ -222,8 +219,8 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray {
-    if (messagesOrError instanceof IntlError) {
+  ): ReactNode {
+    if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
         error: messagesOrError,
@@ -419,7 +416,7 @@ function createBaseTranslatorImpl<
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
     key: string
   ): any => {
-    if (messagesOrError instanceof IntlError) {
+    if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
         error: messagesOrError,
@@ -437,6 +434,19 @@ function createBaseTranslatorImpl<
         IntlErrorCode.MISSING_MESSAGE,
         (error as Error).message
       );
+    }
+  };
+
+  translateFn.has = (key: Parameters<typeof translateBaseFn>[0]): boolean => {
+    if (hasMessagesError) {
+      return false;
+    }
+
+    try {
+      resolvePath(locale, messagesOrError, key, namespace);
+      return true;
+    } catch {
+      return false;
     }
   };
 

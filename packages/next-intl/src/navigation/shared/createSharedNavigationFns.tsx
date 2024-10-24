@@ -4,9 +4,9 @@ import {
 } from 'next/navigation';
 import React, {ComponentProps, forwardRef, use} from 'react';
 import {
-  receiveRoutingConfig,
   RoutingConfigLocalizedNavigation,
-  RoutingConfigSharedNavigation
+  RoutingConfigSharedNavigation,
+  receiveRoutingConfig
 } from '../../routing/config';
 import {
   DomainConfig,
@@ -84,7 +84,7 @@ export default function createSharedNavigationFns<
   type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
     Omit<
       ComponentProps<typeof BaseLink>,
-      'href' | 'localePrefix' | 'unprefixed' | 'defaultLocale'
+      'href' | 'localePrefix' | 'unprefixed' | 'defaultLocale' | 'localeCookie'
     > & {
       /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
       href: [AppPathnames] extends [never]
@@ -132,12 +132,14 @@ export default function createSharedNavigationFns<
         ref={ref}
         // @ts-expect-error -- Available after the validation
         defaultLocale={config.defaultLocale}
-        href={{
-          ...(typeof href === 'object' && href),
-          // @ts-expect-error -- This is ok
-          pathname: finalPathname
-        }}
+        // @ts-expect-error -- This is ok
+        href={
+          typeof href === 'object'
+            ? {...href, pathname: finalPathname}
+            : finalPathname
+        }
         locale={locale}
+        localeCookie={config.localeCookie}
         // Provide the minimal relevant information to the client side in order
         // to potentially remove the prefix in case of the `forcePrefixSsr` case
         unprefixed={

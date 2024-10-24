@@ -1,5 +1,8 @@
 import Image from 'next/image';
 import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
+import DropdownMenu from '@/components/DropdownMenu';
+import RichText from '@/components/RichText';
+import {Link} from '@/i18n/routing';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
@@ -11,8 +14,6 @@ import LocaleSwitcher from '../../components/LocaleSwitcher';
 import PageLayout from '../../components/PageLayout';
 import MessagesAsPropsCounter from '../../components/client/01-MessagesAsPropsCounter';
 import MessagesOnClientCounter from '../../components/client/02-MessagesOnClientCounter';
-import DropdownMenu from '@/components/DropdownMenu';
-import {Link} from '@/i18n/routing';
 
 type Props = {
   searchParams: Record<string, string>;
@@ -27,14 +28,13 @@ export default function Index({searchParams}: Props) {
   return (
     <PageLayout title={t('title')}>
       <p>{t('description')}</p>
-      <p data-testid="RichText">
-        {t.rich('rich', {important: (chunks) => <b>{chunks}</b>})}
-      </p>
+      <RichText data-testid="RichText">
+        {(tags) => t.rich('rich', tags)}
+      </RichText>
       <p
         dangerouslySetInnerHTML={{__html: t.raw('rich')}}
         data-testid="RawText"
       />
-      <p data-testid="GlobalDefaults">{t.rich('globalDefaults')}</p>
       {/* @ts-expect-error Purposefully trigger an error */}
       <p data-testid="MissingMessage">{t('missing')}</p>
       <p data-testid="CurrentTime">
@@ -56,6 +56,7 @@ export default function Index({searchParams}: Props) {
       </div>
       <ClientLink href="/">Link on client without provider</ClientLink>
       <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
+      <p data-testid="HasTitle">{JSON.stringify(t.has('title'))}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       <AsyncComponent />
       <AsyncComponentWithNamespaceAndLocale />

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-named-as-default -- False positive
 import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions';
 import Formats from './Formats';
@@ -53,11 +52,11 @@ export default function convertFormatsToIntlMessageFormat(
     ...formatsWithTimeZone,
     date: {
       ...defaultDateFormats,
-      ...formatsWithTimeZone?.dateTime
+      ...formatsWithTimeZone.dateTime
     },
     time: {
       ...defaultTimeFormats,
-      ...formatsWithTimeZone?.dateTime
+      ...formatsWithTimeZone.dateTime
     }
   };
 }

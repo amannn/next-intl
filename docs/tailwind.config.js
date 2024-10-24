@@ -1,11 +1,13 @@
+function makePrimaryColor(luminance) {
+  return ({opacityValue}) =>
+    `hsl(var(--nextra-primary-hue) var(--nextra-primary-saturation) ${luminance}%` +
+    (opacityValue ? ` / ${opacityValue})` : ')');
+}
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: [
-    './components/**/*.{js,tsx}',
-    './pages/**/*.{md,mdx}',
-    './theme.config.{js,tsx}'
-  ],
+  content: ['./src/**/*.{js,tsx,md,mdx}'],
   theme: {
     extend: {
       fontSize: {
@@ -16,7 +18,19 @@ module.exports = {
         slate: {
           850: 'hsl(222deg 47% 16%)'
         },
-        primary: '#5fc3e7'
+        primary: {
+          50: makePrimaryColor(97),
+          100: makePrimaryColor(94),
+          200: makePrimaryColor(86),
+          300: makePrimaryColor(77),
+          400: makePrimaryColor(66),
+          500: makePrimaryColor(50),
+          600: makePrimaryColor(45),
+          700: makePrimaryColor(39),
+          750: makePrimaryColor(35),
+          800: makePrimaryColor(32),
+          900: makePrimaryColor(24)
+        }
       }
     },
     fontFamily: {

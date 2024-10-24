@@ -1,17 +1,18 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
-  receiveLocalePrefixConfig,
-  RoutingConfigSharedNavigation
+  RoutingConfigSharedNavigation,
+  receiveLocaleCookie,
+  receiveLocalePrefixConfig
 } from '../../routing/config';
 import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import ClientLink from './ClientLink';
-import {clientRedirect, clientPermanentRedirect} from './redirects';
+import {clientPermanentRedirect, clientRedirect} from './redirects';
 import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 /**
- * @deprecated Consider switching to `createNavigation` (see https://github.com/amannn/next-intl/pull/1316)
+ * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)
  **/
 export default function createSharedPathnamesNavigation<
   AppLocales extends Locales,
@@ -25,21 +26,23 @@ export default function createSharedPathnamesNavigation<
   >
 ) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
+  const localeCookie = receiveLocaleCookie(routing?.localeCookie);
 
   type LinkProps = Omit<
     ComponentProps<typeof ClientLink<AppLocales, AppLocalePrefixMode>>,
-    'localePrefix'
+    'localePrefix' | 'localeCookie'
   >;
   function Link(props: LinkProps, ref: LinkProps['ref']) {
     return (
       <ClientLink<AppLocales, AppLocalePrefixMode>
         ref={ref}
+        localeCookie={localeCookie}
         localePrefix={localePrefix}
         {...props}
       />
     );
   }
-  const LinkWithRef = forwardRef(Link) as (
+  const LinkWithRef = forwardRef(Link) as unknown as (
     props: LinkProps & {ref?: LinkProps['ref']}
   ) => ReactElement;
   (LinkWithRef as any).displayName = 'Link';
@@ -65,7 +68,10 @@ export default function createSharedPathnamesNavigation<
   }
 
   function useRouter() {
-    return useBaseRouter<AppLocales, AppLocalePrefixMode>(localePrefix);
+    return useBaseRouter<AppLocales, AppLocalePrefixMode>(
+      localePrefix,
+      localeCookie
+    );
   }
 
   return {

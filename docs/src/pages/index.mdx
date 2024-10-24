@@ -1,0 +1,159 @@
+---
+title: next-intl
+---
+
+import Callout from '@/components/Callout';
+import CodeSnippets from '@/components/CodeSnippets';
+import FeaturePanel from '@/components/FeaturePanel';
+import Hero from '@/components/Hero';
+import Link from '@/components/Link';
+import LinkButton from '@/components/LinkButton';
+import PartnerBanner from '@/components/PartnerBanner';
+import Section from '@/components/Section';
+import UserTestimonial from '@/components/UserTestimonial';
+import GetStartedBackground from '@/components/GetStartedBackground';
+
+<div className="bg-slate-50 dark:bg-gray-900">
+
+<Hero
+  title="Internationalization for Next.js"
+  description="Support multiple languages, with your app code becoming simpler instead of more complex."
+  getStarted="Get started"
+  viewExample="View an example"
+/>
+<PartnerBanner intro="Presented by" />
+
+<Section
+  title="Batteries included, minimalistic API"
+  description="Internationalization (i18n) is an essential part of the user experience, therefore next‑intl gives you all the parts you need to get language nuances right."
+>
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-20">
+    <FeaturePanel
+      code={<CodeSnippets.icu />}
+      title="ICU message syntax"
+      description="Localize your messages with interpolation, cardinal & ordinal plurals, enum-based label selection and rich text."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.datesTimesNumbers />}
+      title="Dates, times & numbers"
+      description="Apply appropriate formatting without worrying about server/client differences like time zones."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.typeSafe />}
+      title="Type-safe"
+      description="Speed up development with autocompletion for message keys and catch typos early with compile-time checks."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.hooks />}
+      title="Hooks-based API"
+      description="Learn a single API that can be used across your code base to turn translations into plain strings or rich text."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.buildOutput />}
+      title="Next.js-native and performance-obsessed"
+      description="App Router, Server Components, static rendering—pick the right tool for the right job, next-intl works everywhere."
+    />
+    <FeaturePanel
+      code={<CodeSnippets.routing />}
+      title="Internationalized routing"
+      description="Provide unique pathnames per language and optionally localize pathnames for search engine optimization."
+    />
+  </div>
+</Section>
+<Section title="Trusted by the Next.js community" description="Powering localized web experiences from marketing sites to e-commerce portals and sophisticated apps, next-intl ensures your users will be as happy as the developers building them.">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-20">
+    <UserTestimonial
+      featured
+      userName="Claudio Wunder"
+      position="Cross Project Council at OpenJS Foundation"
+      quote="We love next-intl. We've adopted it on the Node.js website along with Next.js' App Router. From all the i18n solutions out there for React and Next.js, so far the API and the design of next-intl has definitely become my favorite."
+      portraitUrl="/user-claudio-wunder.jpeg"
+      href="https://nodejs.org"
+      bgUrlBright="/testimonial-bg-nodejs-bright.png"
+      bgUrlDark="/testimonial-bg-nodejs-dark.png"
+      linkTitle="Node.js"
+    />
+    <UserTestimonial
+      userName="Cali Castle"
+      position="Founder & CEO of Zolplay"
+      quote="I think next-intl should become a Next.js first-class citizen at some point, it’s just brilliant and simple to use."
+      portraitUrl="/user-cali-castle.png"
+      href="https://zolplay.com"
+      linkTitle="Zolplay"
+    />
+    <UserTestimonial
+      userName="Colin Sidoti"
+      position="Co-founder & CEO of Clerk"
+      quote="Interop with next-intl was a design requirement."
+      portraitUrl="/user-colin-sidoti.jpg"
+      href="https://clerk.com/"
+      linkTitle="Clerk"
+    />
+    <UserTestimonial
+      featured
+      userName="Kieran McHugh"
+      position="Founder & CEO of Daybridge"
+      quote="We were initially worried that adding support for multiple languages to our app would add overwhelming complexity, but next-intl genuinely made the process so much smoother than we expected. We've been able to build a calendar that can feel like home for millions more people around the world."
+      portraitUrl="/user-kieran-mchugh.jpg"
+      href="https://www.daybridge.com"
+      bgUrlBright="/testimonial-bg-daybridge-bright.png"
+      bgUrlDark="/testimonial-bg-daybridge-dark.png"
+      blendModeDark="multiply"
+      linkTitle="Daybridge"
+    />
+    <UserTestimonial
+      userName="Dawid Gaweł"
+      position="Frontend Engineer at Todoist"
+      featured
+      quote="We deeply care about internationalization. Our websites, apps, and materials are translated to almost 20 languages. Thanks a ton for working on this project!"
+      portraitUrl="/user-dawid-gawel.jpeg"
+      href="https://todoist.com"
+      linkTitle="Todoist"
+      blendModeDark="multiply"
+      bgUrlBright="/testimonial-bg-todoist-bright.png"
+      bgUrlDark="/testimonial-bg-todoist-dark.png"
+    />
+    <UserTestimonial
+      className="lg:-mt-16"
+      userName="Alvar Lagerlöf"
+      position="Senior Frontend Developer at Motatos"
+      quote="It's a great tool. We're using it now for our App Router rollout."
+      portraitUrl="/user-alvar-lagerlof.jpeg"
+      href="https://www.motatos.com/"
+      linkTitle="Motatos"
+    />
+    <UserTestimonial
+      className="lg:-mt-16"
+      userName="Jökull Solberg"
+      position="CTO of Trip to Japan"
+      quote="Amazing work on this library, launching our site today."
+      portraitUrl="/user-jokull-solberg.jpeg"
+      href="https://www.triptojapan.com/"
+      linkTitle="Trip to Japan"
+    />
+    <UserTestimonial
+      userName="Lachlan Campbell"
+      position="Web designer-developer at Watershed"
+      featured
+      quote="We're using next-intl on watershed.com! It's running entirely on App Router, using the Client Components version."
+      portraitUrl="/user-lachlan-campbell.jpeg"
+      href="https://watershed.com/"
+      linkTitle="Watershed"
+      blendModeDark="multiply"
+      bgUrlBright="/testimonial-bg-watershed-bright.png"
+      bgUrlDark="/testimonial-bg-watershed-dark.png"
+    />
+  </div>
+  <div className="mt-10 lg:mt-24 text-sm lg:ml-6 text-slate-600 dark:text-slate-400">
+    Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
+  </div>
+</Section>
+<div className="text-center pb-10 -mt-10">
+  <div className="py-60 relative">
+    <GetStartedBackground />
+    <div className='relative'>
+      <LinkButton href="/docs/getting-started">Get started with next-intl</LinkButton>
+    </div>
+  </div>
+</div>
+</div>

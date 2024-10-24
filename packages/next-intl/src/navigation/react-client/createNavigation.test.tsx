@@ -1,9 +1,9 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
-  useParams,
   usePathname as useNextPathname,
-  useRouter as useNextRouter
+  useRouter as useNextRouter,
+  useParams
 } from 'next/navigation';
 import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
@@ -19,13 +19,19 @@ function mockCurrentLocale(locale: string) {
   }));
 }
 
-function mockLocation(location: Partial<typeof window.location>) {
+function mockLocation(
+  location: Partial<typeof window.location>,
+  basePath?: string
+) {
   delete (global.window as any).location;
-  global.window ??= Object.create(window);
+  global.window = Object.create(window);
   (global.window as any).location = location;
 
   if (location.pathname) {
-    vi.mocked(useNextPathname).mockReturnValue(location.pathname);
+    const pathname = basePath
+      ? location.pathname.replace(basePath, '')
+      : location.pathname;
+    vi.mocked(useNextPathname).mockReturnValue(pathname);
   }
 }
 
@@ -252,6 +258,75 @@ describe("localePrefix: 'always'", () => {
   });
 });
 
+describe("localePrefix: 'always', with `localeCookie`", () => {
+  const {Link, useRouter} = createNavigation({
+    locales,
+    defaultLocale,
+    localePrefix: 'always',
+    localeCookie: {
+      maxAge: 60,
+      domain: 'example.com',
+      sameSite: 'strict',
+      partitioned: true,
+      path: '/nested',
+      priority: 'high',
+      secure: true
+    }
+  });
+
+  describe('Link', () => {
+    it('uses the provided cookie options', () => {
+      global.document.cookie = 'NEXT_LOCALE=en';
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+      render(
+        <Link href="/" locale="de">
+          Test
+        </Link>
+      );
+      fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=60',
+          'sameSite=strict',
+          'domain=example.com',
+          'partitioned',
+          'path=/nested',
+          'priority=high',
+          'secure'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
+    });
+  });
+
+  describe('useRouter', () => {
+    const invokeRouter = getInvokeRouter(useRouter);
+
+    it('uses the provided cookie options', () => {
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=60',
+          'sameSite=strict',
+          'domain=example.com',
+          'partitioned',
+          'path=/nested',
+          'priority=high',
+          'secure'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
+    });
+  });
+});
+
 describe("localePrefix: 'always', with `basePath`", () => {
   const {useRouter} = createNavigation({
     locales,
@@ -260,7 +335,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
   });
 
   beforeEach(() => {
-    mockLocation({pathname: '/base/path/en'});
+    mockLocation({pathname: '/base/path/en'}, '/base/path');
   });
 
   describe('useRouter', () => {
@@ -280,10 +355,26 @@ describe("localePrefix: 'always', with `basePath`", () => {
       invokeRouter((router) => router.prefetch('/test'));
       expect(useNextRouter().prefetch).toHaveBeenCalledWith('/en/test');
     });
+
+    it('sets the right cookie', () => {
+      const cookieSpy = vi.spyOn(global.document, 'cookie', 'set');
+      invokeRouter((router) => router.push('/about', {locale: 'de'}));
+
+      expect(cookieSpy).toHaveBeenCalledWith(
+        [
+          'NEXT_LOCALE=de',
+          'max-age=31536000',
+          'sameSite=lax',
+          'path=/base/path'
+        ].join(';') + ';'
+      );
+      cookieSpy.mockRestore();
+    });
   });
 });
 
 describe("localePrefix: 'always', with `pathnames`", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
@@ -413,10 +504,15 @@ describe("localePrefix: 'as-needed'", () => {
         invokeRouter((router) => router[method]('/about', {locale: 'de'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
+
+      it('does not prefix the default locale when being switched to', () => {
+        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+      });
     });
 
     describe('prefetch', () => {
-      it('prefixes with the default locale', () => {
+      it('does not prefix with the default locale', () => {
         invokeRouter((router) => router.prefetch('/about'));
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
       });
@@ -460,7 +556,10 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
 
     describe('example.com, defaultLocale: "en"', () => {
       beforeEach(() => {
-        mockLocation({pathname: '/base/path/about', host: 'example.com'});
+        mockLocation(
+          {pathname: '/base/path/about', host: 'example.com'},
+          '/base/path'
+        );
       });
 
       it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
@@ -477,7 +576,10 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
     describe('example.de, defaultLocale: "de"', () => {
       beforeEach(() => {
         mockCurrentLocale('de');
-        mockLocation({pathname: '/base/path/about', host: 'example.de'});
+        mockLocation(
+          {pathname: '/base/path/about', host: 'example.de'},
+          '/base/path'
+        );
       });
 
       it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
@@ -690,7 +792,7 @@ describe("localePrefix: 'never', with `basePath`", () => {
   });
 
   beforeEach(() => {
-    mockLocation({pathname: '/base/path/en'});
+    mockLocation({pathname: '/base/path/en'}, '/base/path');
   });
 
   describe('useRouter', () => {

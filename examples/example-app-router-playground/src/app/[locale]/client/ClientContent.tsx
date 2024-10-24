@@ -1,6 +1,6 @@
 'use client';
 
-import {useNow, useTimeZone, useLocale, useFormatter} from 'next-intl';
+import {useFormatter, useLocale, useNow, useTimeZone} from 'next-intl';
 import {Link, usePathname} from '@/i18n/routing';
 
 export default function ClientContent() {

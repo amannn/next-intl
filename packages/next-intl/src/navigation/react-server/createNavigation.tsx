@@ -8,8 +8,8 @@ import {
   Locales,
   Pathnames
 } from '../../routing/types';
-import {getRequestLocale} from '../../server/react-server/RequestLocale';
 import createSharedNavigationFns from '../shared/createSharedNavigationFns';
+import getServerLocale from './getServerLocale';
 
 export default function createNavigation<
   const AppLocales extends Locales,
@@ -35,7 +35,7 @@ export default function createNavigation<
   type Locale = AppLocales extends never ? string : AppLocales[number];
 
   function getLocale() {
-    return getRequestLocale() as Promise<Locale>;
+    return getServerLocale() as Promise<Locale>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

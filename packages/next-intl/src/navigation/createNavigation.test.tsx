@@ -1,17 +1,17 @@
 import {render, screen} from '@testing-library/react';
 import {
   RedirectType,
-  redirect as nextRedirect,
   permanentRedirect as nextPermanentRedirect,
+  redirect as nextRedirect,
   useParams as nextUseParams
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
-import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {defineRouting, DomainsConfig, Pathnames} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {DomainsConfig, Pathnames, defineRouting} from '../routing';
 import createNavigationClient from './react-client/createNavigation';
 import createNavigationServer from './react-server/createNavigation';
+import getServerLocale from './react-server/getServerLocale';
 
 vi.mock('react');
 vi.mock('next/navigation', async () => {
@@ -23,15 +23,16 @@ vi.mock('next/navigation', async () => {
     permanentRedirect: vi.fn()
   };
 });
-vi.mock('../../src/server/react-server/RequestLocale');
+vi.mock('./react-server/getServerLocale');
 
 function mockCurrentLocale(locale: string) {
   // Enable synchronous rendering without having to suspend
-  const localePromise = Promise.resolve(locale);
-  (localePromise as any).status = 'fulfilled';
-  (localePromise as any).value = locale;
+  const value = locale;
+  const promise = Promise.resolve(value);
+  (promise as any).status = 'fulfilled';
+  (promise as any).value = value;
 
-  vi.mocked(getRequestLocale).mockImplementation(() => localePromise);
+  vi.mocked(getServerLocale).mockImplementation(() => promise);
 
   vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
     locale
@@ -40,7 +41,7 @@ function mockCurrentLocale(locale: string) {
 
 function mockLocation(location: Partial<typeof window.location>) {
   delete (global.window as any).location;
-  global.window ??= Object.create(window);
+  global.window = Object.create(window);
   (global.window as any).location = location;
 }
 
@@ -128,6 +129,13 @@ describe.each([
         expect(markup).toContain('href="/en/about?foo=bar"');
       });
 
+      it('accepts search params and hashes as part of the pathname', () => {
+        const markup = renderToString(
+          <Link href="/about?foo=bar#top">About</Link>
+        );
+        expect(markup).toContain('href="/en/about?foo=bar#top"');
+      });
+
       it('renders a prefix for a different locale', () => {
         // Being able to accept a string and not only a strictly typed locale is
         // important in order to be able to use a result from `useLocale()`.
@@ -196,6 +204,17 @@ describe.each([
           }}
         />;
       });
+
+      it('does not warn when setting the `prefetch` prop', () => {
+        const consoleSpy = vi.spyOn(console, 'error');
+        const markup = renderToString(
+          <Link href="/about" prefetch>
+            About
+          </Link>
+        );
+        expect(markup).toContain('href="/en/about"');
+        expect(consoleSpy).not.toHaveBeenCalled();
+      });
     });
 
     describe('getPathname', () => {
@@ -226,7 +245,7 @@ describe.each([
       });
 
       it('does not accept `query` on the root', () => {
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () =>
           getPathname({
             href: '/about',
@@ -237,7 +256,7 @@ describe.each([
       });
 
       it('does not accept `params` on href', () => {
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () =>
           getPathname({
             href: {
@@ -259,7 +278,7 @@ describe.each([
         // works in either environment.
 
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
 
@@ -699,7 +718,7 @@ describe.each([
 
       it('requires a locale', () => {
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
     });
@@ -1010,7 +1029,7 @@ describe.each([
 
       it('requires a locale', () => {
         // @ts-expect-error -- Missing locale
-        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
     });

@@ -1,10 +1,11 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale';
+import {InitializedLocaleCookieConfig} from '../../routing/config';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {getLocalePrefix, localizeHref} from '../../shared/utils';
 import syncLocaleCookie from '../shared/syncLocaleCookie';
@@ -36,7 +37,10 @@ type IntlNavigateOptions<AppLocales extends Locales> = {
 export default function useBaseRouter<
   AppLocales extends Locales,
   AppLocalePrefixMode extends LocalePrefixMode
->(localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>) {
+>(
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>,
+  localeCookie: InitializedLocaleCookieConfig
+) {
   const router = useNextRouter();
   const locale = useLocale();
   const pathname = usePathname();
@@ -67,7 +71,7 @@ export default function useBaseRouter<
       ): void {
         const {locale: nextLocale, ...rest} = options || {};
 
-        syncLocaleCookie(pathname, locale, nextLocale);
+        syncLocaleCookie(localeCookie, pathname, locale, nextLocale);
 
         const args: [
           href: string,
@@ -97,5 +101,5 @@ export default function useBaseRouter<
         typeof router.prefetch
       >(router.prefetch)
     };
-  }, [locale, localePrefix, pathname, router]);
+  }, [locale, localeCookie, localePrefix, pathname, router]);
 }

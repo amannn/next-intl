@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray} from 'react';
+import {ReactNode} from 'react';
 import Formats from './Formats';
 import IntlConfig from './IntlConfig';
 import TranslationValues, {
@@ -8,10 +8,10 @@ import TranslationValues, {
 import createTranslatorImpl from './createTranslatorImpl';
 import {defaultGetMessageFallback, defaultOnError} from './defaults';
 import {
-  createCache,
-  createIntlFormatters,
   Formatters,
-  IntlCache
+  IntlCache,
+  createCache,
+  createIntlFormatters
 } from './formatters';
 import MessageKeys from './utils/MessageKeys';
 import NamespaceKeys from './utils/NamespaceKeys';
@@ -86,7 +86,7 @@ export default function createTranslator<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<
@@ -125,6 +125,24 @@ export default function createTranslator<
   >(
     key: TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: TargetKey
+  ): boolean;
 } {
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045

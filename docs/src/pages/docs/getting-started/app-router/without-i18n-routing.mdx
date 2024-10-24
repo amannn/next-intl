@@ -1,0 +1,195 @@
+import {Tabs} from 'nextra/components';
+import Callout from '@/components/Callout';
+import Steps from '@/components/Steps';
+import Details from '@/components/Details';
+
+# App Router setup without i18n routing
+
+Setting up an app without the i18n routing integration can be useful in the following cases:
+
+1. You'd like to provide a locale to `next-intl`, e.g. based on user settings
+2. Your app only supports a single language
+
+This is the easiest way to get started with `next-intl` and requires no changes to the structure of your app.
+
+## Getting started
+
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router and run:
+
+```sh
+npm install next-intl
+```
+
+Now, we're going to create the following file structure:
+
+```
+├── messages
+│   ├── en.json (1)
+│   └── ...
+├── next.config.mjs (2)
+└── src
+    ├── i18n
+    │   └── request.ts (3)
+    └── app
+        ├── layout.tsx (4)
+        └── page.tsx (5)
+```
+
+**Let's set up the files:**
+
+<Steps>
+
+### `messages/en.json` [#messages]
+
+Messages represent the translations that are available per language and can be provided either locally or loaded from a remote data source.
+
+The simplest option is to add JSON files in your local project folder:
+
+```json filename="messages/en.json"
+{
+  "HomePage": {
+    "title": "Hello world!"
+  }
+}
+```
+
+### `next.config.mjs` [#next-config]
+
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
+
+<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs.Tab>
+
+```js filename="next.config.mjs"
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default withNextIntl(nextConfig);
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```js filename="next.config.js"
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = withNextIntl(nextConfig);
+```
+
+</Tabs.Tab>
+</Tabs>
+
+### `i18n/request.ts` [#i18n-request]
+
+`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
+
+```tsx filename="src/i18n/request.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // Provide a static locale, fetch a user setting,
+  // read from `cookies()`, `headers()`, etc.
+  const locale = 'en';
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+<Details id="i18n-request-path">
+<summary>Can I move this file somewhere else?</summary>
+
+This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
+
+```js filename="next.config.mjs"
+const withNextIntl = createNextIntlPlugin(
+  // Specify a custom path here
+  './somewhere/else/request.ts'
+);
+```
+
+</Details>
+
+### `app/layout.tsx` [#layout]
+
+The `locale` that was provided in `i18n/request.ts` is available via `getLocale` and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
+
+```tsx filename="app/layout.tsx"
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale, getMessages} from 'next-intl/server';
+
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  const locale = await getLocale();
+
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+Note that `NextIntlClientProvider` automatically inherits configuration from `i18n/request.ts` here, but `messages` need to be passed explicitly.
+
+### `app/page.tsx` [#page]
+
+Use translations in your page components or anywhere else!
+
+```tsx filename="app/page.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function HomePage() {
+  const t = useTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+</Steps>
+
+That's all it takes!
+
+In case you ran into an issue, have a look at a working example:
+
+- [App Router without i18n routing](/examples#app-router-without-i18n-routing)
+- [App Router with single locale](/examples#example-app-router-single-locale)
+
+<Callout className="mt-8">
+
+**Next steps:**
+
+<ul className="ml-4 list-disc">
+  <li>
+    [Usage guide](/docs/usage): Learn how to format messages, dates and times
+  </li>
+  <li>
+    [Workflows](/docs/workflows): Integrate deeply with TypeScript and other
+    tools
+  </li>
+</ul>
+
+</Callout>

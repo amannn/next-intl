@@ -3,21 +3,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "dist/**/*.ts",
-        "dist/**/*.tsx",
-        "dist/**/*.mjs",
-        "dist/**/*.js",
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "build/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build"]
     },
     "test": {
       "dependsOn": ["build"]
     },
     "size": {
       "dependsOn": ["build"]
-    },
-    "lint": {}
+    }
   }
 }

@@ -1,10 +1,10 @@
 import {
-  Locales,
-  LocalePrefixConfigVerbose,
   DomainConfig,
-  Pathnames,
   DomainsConfig,
-  LocalePrefixMode
+  LocalePrefixConfigVerbose,
+  LocalePrefixMode,
+  Locales,
+  Pathnames
 } from '../routing/types';
 import {
   getLocalePrefix,
@@ -283,9 +283,7 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
 
   // Prio 3: Use alternative domain with restricted matching locale
   if (!domainConfig) {
-    domainConfig = domainsConfig.find(
-      (cur) => cur.locales != null && cur.locales.includes(locale)
-    );
+    domainConfig = domainsConfig.find((cur) => cur.locales?.includes(locale));
   }
 
   // Prio 4: Stay on the current domain if it supports all locales

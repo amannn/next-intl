@@ -1,8 +1,8 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactNode, ReactElement} from 'react';
-import {spyOn, SpyImpl} from 'tinyspy';
-import {it, expect, describe, vi, beforeEach} from 'vitest';
+import React, {ComponentProps, ReactElement, ReactNode} from 'react';
+import {SpyImpl, spyOn} from 'tinyspy';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {IntlError, IntlErrorCode} from '../core';
 import IntlProvider from './IntlProvider';
 import useFormatter from './useFormatter';
@@ -90,7 +90,7 @@ describe('dateTime', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderDateTime(mockDate, {
         dateStyle: 'full',
@@ -336,7 +336,7 @@ describe('number', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderNumber(2, {
         currency: 'USD',
@@ -537,7 +537,7 @@ describe('relativeTime', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderRelativeTime(parseISO('2020-11-20T10:36:00.000Z'), {
         unit: 'day',
@@ -733,7 +733,7 @@ describe('list', () => {
   });
 
   it('accepts type-safe custom options', () => {
-    // eslint-disable-next-line no-unused-expressions
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
       renderList([], {
         type: 'conjunction',

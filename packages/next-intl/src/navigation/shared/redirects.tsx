@@ -3,9 +3,9 @@ import {
   redirect as nextRedirect
 } from 'next/navigation';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
 import {

@@ -1,15 +1,23 @@
 name: Update docs
-description: Suggest an update to the docs
+description: Suggest an update to a docs page
 title: '[Docs]: '
 labels:
   - unconfirmed
   - documentation
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest an update to a docs page!
+
+        Please note that docs issues are meant to fix already existing documentation. If you're looking for support with your app, you can consider asking for help on the [Next.js Discord](https://discord.com/invite/nextjs), [Stack Overflow](https://stackoverflow.com/questions/ask) or [GitHub discussions](https://github.com/amannn/next-intl/discussions) instead.
   - type: input
     id: pageLink
     attributes:
       label: Link to page
-      description: A link to an existing page in the docs (if any)
+      description: A link to an existing page in the docs
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:

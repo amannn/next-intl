@@ -1,15 +1,15 @@
 import {render, screen} from '@testing-library/react';
 import {
-  usePathname as useNextPathname,
-  useParams,
-  redirect as nextRedirect,
+  RedirectType,
   permanentRedirect as nextPermanentRedirect,
-  RedirectType
+  redirect as nextRedirect,
+  usePathname as useNextPathname,
+  useParams
 } from 'next/navigation';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
-import {it, describe, vi, expect, beforeEach} from 'vitest';
-import {defineRouting, Pathnames} from '../routing';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {Pathnames, defineRouting} from '../routing';
 import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
 import {getLocalePrefix} from '../shared/utils';
 import createLocalizedPathnamesNavigationClient from './react-client/createLocalizedPathnamesNavigation';

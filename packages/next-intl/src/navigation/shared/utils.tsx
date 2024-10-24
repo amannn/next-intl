@@ -8,12 +8,12 @@ import {
   Pathnames
 } from '../../routing/types';
 import {
-  matchesPathname,
+  getLocalePrefix,
   getSortedPathnames,
-  normalizeTrailingSlash,
   isLocalizableHref,
-  prefixPathname,
-  getLocalePrefix
+  matchesPathname,
+  normalizeTrailingSlash,
+  prefixPathname
 } from '../../shared/utils';
 import StrictParams from './StrictParams';
 

@@ -3,6 +3,7 @@ import {defaultLocale, locales} from '../config';
 import {getUserLocale} from '../db';
 
 export default getRequestConfig(async ({requestLocale}) => {
+  // Read from potential `[locale]` segment
   let locale = await requestLocale;
 
   if (!locale) {

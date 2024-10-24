@@ -1,9 +1,9 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
 import useLocale from '../../react-client/useLocale';
 import {
-  Locales,
   LocalePrefixConfigVerbose,
-  LocalePrefixMode
+  LocalePrefixMode,
+  Locales
 } from '../../routing/types';
 import {getLocalePrefix} from '../../shared/utils';
 import LegacyBaseLink from '../shared/LegacyBaseLink';

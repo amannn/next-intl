@@ -1,7 +1,8 @@
 import React, {ComponentProps} from 'react';
 import {
-  receiveLocalePrefixConfig,
-  RoutingConfigSharedNavigation
+  RoutingConfigSharedNavigation,
+  receiveLocaleCookie,
+  receiveLocalePrefixConfig
 } from '../../routing/config';
 import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
 import {ParametersExceptFirst} from '../../shared/types';
@@ -20,6 +21,7 @@ export default function createSharedPathnamesNavigation<
   >
 ) {
   const localePrefix = receiveLocalePrefixConfig(routing?.localePrefix);
+  const localeCookie = receiveLocaleCookie(routing?.localeCookie);
 
   function notSupported(hookName: string) {
     return () => {
@@ -32,11 +34,12 @@ export default function createSharedPathnamesNavigation<
   function Link(
     props: Omit<
       ComponentProps<typeof ServerLink<AppLocales, AppLocalePrefixMode>>,
-      'localePrefix'
+      'localePrefix' | 'localeCookie'
     >
   ) {
     return (
       <ServerLink<AppLocales, AppLocalePrefixMode>
+        localeCookie={localeCookie}
         localePrefix={localePrefix}
         {...props}
       />
