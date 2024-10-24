@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.5 (2024-10-24)
+
+### Bug Fixes
+
+* Don't warn when setting `prefetch={true}` on `<Link />` ([#1463](https://github.com/amannn/next-intl/issues/1463)) ([fd6d73d](https://github.com/amannn/next-intl/commit/fd6d73dc145a0679e85a1a71fe40c43d3312e27e)), closes [#1462](https://github.com/amannn/next-intl/issues/1462) – by @amannn
+
 ## 3.23.4 (2024-10-24)
 
 ### Bug Fixes
