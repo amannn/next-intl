@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.23.4 (2024-10-24)
+
+### Bug Fixes
+
+* Upgrade to `negotiator@^1.0` ([#1460](https://github.com/amannn/next-intl/issues/1460)) ([b93f297](https://github.com/amannn/next-intl/commit/b93f29736250a749333d438b06b7a608e9d73c28)) – by @amannn
+
 ## 3.23.3 (2024-10-24)
 
 ### Bug Fixes
