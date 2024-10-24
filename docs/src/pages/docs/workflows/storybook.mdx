@@ -3,9 +3,46 @@ import Image from 'next/image';
 
 # Storybook integration for `next-intl`
 
-[Storybook](https://storybook.js.org/) is a tool for developing UI components in isolation.
+[Storybook](https://storybook.js.org/) is a tool for developing UI components in isolation and can be used in combination with `next-intl` to handle components that rely on internationalization.
 
-If you like to set up stories for components that use `next-intl`, you can use [`storybook-next-intl`](https://github.com/stevensacks/storybook-next-intl), a community-maintained addon that configures Storybook accordingly for you.
+## Manual setup
+
+To set up Storybook for `next-intl`, you can configure a [global decorator](https://storybook.js.org/docs/writing-stories/decorators#global-decorators) that renders [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) to wrap your stories accordingly:
+
+```tsx filename=".storybook/preview.tsx"
+import {Preview} from '@storybook/react';
+import defaultMessages from '../messages/en.json';
+
+const preview: Preview = {
+  decorators: [
+    (Story) => (
+      <NextIntlClientProvider
+        locale="en"
+        messages={defaultMessages}
+        // ... potentially other config
+      >
+        <Story />
+      </NextIntlClientProvider>
+    )
+  ]
+};
+
+export default preview;
+```
+
+With this setup in place, you're able to render components that use hook-based APIs like `useTranslations`.
+
+Note that support for async Server Components is currently [experimental](https://storybook.js.org/docs/get-started/frameworks/nextjs#react-server-components-rsc) in Storybook and might require additional configuration.
+
+<Callout>
+
+**Tip:** If you declare components that render as Server Components in your app via [non-async components](/docs/environments/server-client-components#shared-components), these components can render as Client Components in Storybook and will consume configuration from `NextIntlClientProvider`.
+
+</Callout>
+
+## `storybook-next-intl`
+
+Alternatively to setting up the global decorator yourself, you can use [`storybook-next-intl`](https://github.com/stevensacks/storybook-next-intl), a community-maintained addon that configures Storybook accordingly for you.
 
 **Features**
 
@@ -19,9 +56,3 @@ If you like to set up stories for components that use `next-intl`, you can use [
   height={1128}
   alt="Storybook integration for next-intl"
 />
-
-<Callout>
-
-**Tip:** If you declare components that render as Server Components in your app via non-async functions, these components can render as Client Components in Storybook and will consume configuration from `NextIntlClientProvider` (see also: [Non-async components](/docs/environments/server-client-components#shared-components)).
-
-</Callout>
