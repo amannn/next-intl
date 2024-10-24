@@ -204,6 +204,17 @@ describe.each([
           }}
         />;
       });
+
+      it('does not warn when setting the `prefetch` prop', () => {
+        const consoleSpy = vi.spyOn(console, 'error');
+        const markup = renderToString(
+          <Link href="/about" prefetch>
+            About
+          </Link>
+        );
+        expect(markup).toContain('href="/en/about"');
+        expect(consoleSpy).not.toHaveBeenCalled();
+      });
     });
 
     describe('getPathname', () => {
