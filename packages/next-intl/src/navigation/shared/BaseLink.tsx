@@ -38,7 +38,7 @@ function BaseLink(
   ref: ComponentProps<typeof NextLink>['ref']
 ) {
   const curLocale = useLocale();
-  const isChangingLocale = locale !== curLocale;
+  const isChangingLocale = locale != null && locale !== curLocale;
   const linkLocale = locale || curLocale;
   const host = useHost();
 
