@@ -6,5 +6,10 @@ export default getBuildConfig({
     core: 'src/core.tsx',
     react: 'src/react.tsx'
   },
-  external: ['intl-messageformat', 'react', '@formatjs/fast-memoize']
+  external: [
+    'intl-messageformat',
+    'react',
+    'react/jsx-runtime',
+    '@formatjs/fast-memoize'
+  ]
 });
