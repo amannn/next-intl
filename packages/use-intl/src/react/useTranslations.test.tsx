@@ -18,10 +18,10 @@ import useTranslations from './useTranslations.tsx';
 vi.mock('intl-messageformat', async (importOriginal) => {
   const ActualIntlMessageFormat: typeof IntlMessageFormat = (
     (await importOriginal()) as any
-  ).default;
+  ).IntlMessageFormat;
 
   return {
-    default: class MockIntlMessageFormat extends ActualIntlMessageFormat {
+    IntlMessageFormat: class MockIntlMessageFormat extends ActualIntlMessageFormat {
       public static invocationsByMessage: Record<string, number> = {};
 
       constructor(
@@ -1081,10 +1081,10 @@ describe('performance', () => {
     vi.mock('intl-messageformat', async (original) => {
       const ActualIntlMessageFormat: typeof IntlMessageFormat = (
         (await original()) as any
-      ).default;
+      ).IntlMessageFormat;
 
       return {
-        default: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
+        IntlMessageFormat: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
           public static invocationsByMessage: Record<string, number> = {};
 
           constructor(
