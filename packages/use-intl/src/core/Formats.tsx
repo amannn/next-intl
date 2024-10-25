@@ -1,5 +1,5 @@
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import NumberFormatOptions from './NumberFormatOptions';
+import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
+import NumberFormatOptions from './NumberFormatOptions.tsx';
 
 type Formats = {
   number?: Record<string, NumberFormatOptions>;

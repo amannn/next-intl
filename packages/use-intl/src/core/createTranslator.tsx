@@ -1,22 +1,22 @@
 import {ReactNode} from 'react';
-import Formats from './Formats';
-import IntlConfig from './IntlConfig';
+import Formats from './Formats.tsx';
+import IntlConfig from './IntlConfig.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
-} from './TranslationValues';
-import createTranslatorImpl from './createTranslatorImpl';
-import {defaultGetMessageFallback, defaultOnError} from './defaults';
+} from './TranslationValues.tsx';
+import createTranslatorImpl from './createTranslatorImpl.tsx';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
   Formatters,
   IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters';
-import MessageKeys from './utils/MessageKeys';
-import NamespaceKeys from './utils/NamespaceKeys';
-import NestedKeyOf from './utils/NestedKeyOf';
-import NestedValueOf from './utils/NestedValueOf';
+} from './formatters.tsx';
+import MessageKeys from './utils/MessageKeys.tsx';
+import NamespaceKeys from './utils/NamespaceKeys.tsx';
+import NestedKeyOf from './utils/NestedKeyOf.tsx';
+import NestedValueOf from './utils/NestedValueOf.tsx';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.

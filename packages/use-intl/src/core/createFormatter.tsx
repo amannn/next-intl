@@ -1,17 +1,17 @@
 import {ReactElement} from 'react';
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import Formats from './Formats';
-import IntlError, {IntlErrorCode} from './IntlError';
-import NumberFormatOptions from './NumberFormatOptions';
-import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
-import TimeZone from './TimeZone';
-import {defaultOnError} from './defaults';
+import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
+import Formats from './Formats.tsx';
+import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import NumberFormatOptions from './NumberFormatOptions.tsx';
+import RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
+import TimeZone from './TimeZone.tsx';
+import {defaultOnError} from './defaults.tsx';
 import {
   Formatters,
   IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters';
+} from './formatters.tsx';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;

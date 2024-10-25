@@ -1,4 +1,4 @@
-import NestedValueOf from './NestedValueOf';
+import NestedValueOf from './NestedValueOf.tsx';
 
 type MessageKeys<ObjectType, Keys extends string> = {
   [Property in Keys]: NestedValueOf<ObjectType, Property> extends string

@@ -3,9 +3,9 @@ import {parseISO} from 'date-fns';
 import React, {ComponentProps, ReactElement, ReactNode} from 'react';
 import {SpyImpl, spyOn} from 'tinyspy';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {IntlError, IntlErrorCode} from '../core';
-import IntlProvider from './IntlProvider';
-import useFormatter from './useFormatter';
+import {IntlError, IntlErrorCode} from '../core.tsx';
+import IntlProvider from './IntlProvider.tsx';
+import useFormatter from './useFormatter.tsx';
 
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}

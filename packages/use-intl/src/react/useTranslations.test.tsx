@@ -9,9 +9,9 @@ import {
   IntlErrorCode,
   RichTranslationValues,
   TranslationValues
-} from '../core';
-import IntlProvider from './IntlProvider';
-import useTranslations from './useTranslations';
+} from '../core.tsx';
+import IntlProvider from './IntlProvider.tsx';
+import useTranslations from './useTranslations.tsx';
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.

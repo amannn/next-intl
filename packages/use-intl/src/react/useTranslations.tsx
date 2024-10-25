@@ -1,15 +1,15 @@
 import {ReactNode} from 'react';
-import Formats from '../core/Formats';
+import Formats from '../core/Formats.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
-} from '../core/TranslationValues';
-import MessageKeys from '../core/utils/MessageKeys';
-import NamespaceKeys from '../core/utils/NamespaceKeys';
-import NestedKeyOf from '../core/utils/NestedKeyOf';
-import NestedValueOf from '../core/utils/NestedValueOf';
-import useIntlContext from './useIntlContext';
-import useTranslationsImpl from './useTranslationsImpl';
+} from '../core/TranslationValues.tsx';
+import MessageKeys from '../core/utils/MessageKeys.tsx';
+import NamespaceKeys from '../core/utils/NamespaceKeys.tsx';
+import NestedKeyOf from '../core/utils/NestedKeyOf.tsx';
+import NestedValueOf from '../core/utils/NestedValueOf.tsx';
+import useIntlContext from './useIntlContext.tsx';
+import useTranslationsImpl from './useTranslationsImpl.tsx';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
