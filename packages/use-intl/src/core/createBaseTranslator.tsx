@@ -1,4 +1,4 @@
-import IntlMessageFormat from 'intl-messageformat';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {ReactNode, cloneElement, isValidElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages.tsx';
 import Formats from './Formats.tsx';

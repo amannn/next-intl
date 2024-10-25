@@ -1,4 +1,4 @@
-import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
+import {Formats as IntlFormats, IntlMessageFormat} from 'intl-messageformat';
 import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
 import Formats from './Formats.tsx';
 import TimeZone from './TimeZone.tsx';
