@@ -1,5 +1,4 @@
 /* eslint-env node */
-import fs from 'fs';
 import {babel} from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve, {
@@ -13,36 +12,17 @@ const extensions = [...resolveDefaults.extensions, '.tsx'];
 
 const outDir = 'dist/';
 
-function writeEnvIndex(input) {
-  Object.keys(input).forEach((key) => {
-    fs.writeFileSync(
-      `./${outDir}${key}.js`,
-      `'use strict';
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./production/${key}.js');
-} else {
-  module.exports = require('./development/${key}.js');
-}
-`
-    );
-  });
-}
-
 async function buildTypes() {
-  await execa(
-    'tsc',
-    '--noEmit false --emitDeclarationOnly true --outDir dist/types'.split(' ')
-  );
-  // eslint-disable-next-line no-console
+  await execa('tsc', '-p tsconfig.build.json'.split(' '));
+
   console.log('\ncreated types');
 }
 
-export default function getConfig({
+function getBundleConfig({
   env,
   external = [],
   input,
-  output,
+  output = undefined,
   plugins = [],
   ...rest
 }) {
@@ -51,8 +31,8 @@ export default function getConfig({
     input,
     external: [/node_modules/, ...external],
     output: {
-      dir: outDir + env,
-      format: 'cjs',
+      dir: outDir + 'esm/' + env,
+      format: 'es',
       interop: 'auto',
       freeze: false,
       esModule: true,
@@ -98,7 +78,6 @@ export default function getConfig({
       {
         buildEnd() {
           if (env === 'production') {
-            writeEnvIndex(input);
             buildTypes();
           }
         }
@@ -109,4 +88,11 @@ export default function getConfig({
   };
 
   return config;
+}
+
+export default function getConfig(config) {
+  return [
+    getBundleConfig({...config, env: 'development'}),
+    getBundleConfig({...config, env: 'production'})
+  ];
 }
