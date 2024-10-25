@@ -7,8 +7,8 @@
     "target": "ES2020",
     "declaration": true,
     "rootDir": ".",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "jsx": "react",
     "skipLibCheck": true,
     "noEmit": true
