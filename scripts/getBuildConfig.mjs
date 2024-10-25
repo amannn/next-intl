@@ -30,6 +30,7 @@ function ignoreSideEffectImports(imports) {
   return {
     name: 'ignore-side-effect-imports',
     generateBundle(outputOptions, bundle) {
+      if (imports.length === 0) return;
       for (const fileName in bundle) {
         const file = bundle[fileName];
         if (file.type === 'chunk' && fileName.endsWith('.js')) {
