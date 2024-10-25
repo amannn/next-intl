@@ -1,5 +1,4 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
 import {it} from 'vitest';
 import IntlProvider from './IntlProvider.tsx';
 import useLocale from './useLocale.tsx';

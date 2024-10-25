@@ -1,4 +1,4 @@
-import React, {ReactNode, useContext, useMemo} from 'react';
+import {ReactNode, useContext, useMemo} from 'react';
 import IntlConfig from '../core/IntlConfig.tsx';
 import {
   Formatters,

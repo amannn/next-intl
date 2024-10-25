@@ -1,6 +1,5 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import IntlProvider from './IntlProvider.tsx';
 import useFormatter from './useFormatter.tsx';

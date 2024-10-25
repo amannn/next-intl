@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import React, {memo, useState} from 'react';
+import {memo, useState} from 'react';
 import {expect, it, vi} from 'vitest';
 import IntlProvider from './IntlProvider.tsx';
 import useNow from './useNow.tsx';

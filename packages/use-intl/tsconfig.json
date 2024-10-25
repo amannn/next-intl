@@ -9,7 +9,7 @@
     "rootDir": ".",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     "noEmit": true
   }
