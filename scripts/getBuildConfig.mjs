@@ -18,6 +18,28 @@ async function buildTypes() {
   console.log('\ncreated types');
 }
 
+function ignoreSideEffectImports(imports) {
+  // Rollup somehow leaves a few imports in the bundle that
+  // would only be relevant if they had side effects.
+
+  const pattern = imports
+    .map((importName) => `import\\s*['"]${importName}['"];?`)
+    .join('|');
+  const regex = new RegExp(pattern, 'g');
+
+  return {
+    name: 'ignore-side-effect-imports',
+    generateBundle(outputOptions, bundle) {
+      for (const fileName in bundle) {
+        const file = bundle[fileName];
+        if (file.type === 'chunk' && fileName.endsWith('.js')) {
+          file.code = file.code.replace(regex, '');
+        }
+      }
+    }
+  };
+}
+
 function getBundleConfig({
   env,
   external = [],
@@ -33,10 +55,6 @@ function getBundleConfig({
     output: {
       dir: outDir + 'esm/' + env,
       format: 'es',
-      interop: 'auto',
-      freeze: false,
-      esModule: true,
-      exports: 'named',
       ...output
     },
     treeshake: {
@@ -74,6 +92,7 @@ function getBundleConfig({
         'process.env.NODE_ENV': JSON.stringify(env),
         preventAssignment: true
       }),
+      ignoreSideEffectImports(external),
       env !== 'development' && terser(),
       {
         buildEnd() {
