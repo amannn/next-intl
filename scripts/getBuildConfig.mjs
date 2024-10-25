@@ -1,6 +1,5 @@
 /* eslint-env node */
 import {babel} from '@rollup/plugin-babel';
-import commonjs from '@rollup/plugin-commonjs';
 import resolve, {
   DEFAULTS as resolveDefaults
 } from '@rollup/plugin-node-resolve';
@@ -65,7 +64,6 @@ function getBundleConfig({
     },
     plugins: [
       resolve({extensions}),
-      commonjs(),
       babel({
         babelHelpers: 'bundled',
         extensions,
@@ -75,16 +73,12 @@ function getBundleConfig({
           [
             '@babel/preset-env',
             {
-              targets: {
-                // Same as https://nextjs.org/docs/architecture/supported-browsers#browserslist
-                browsers: [
-                  'chrome 64',
-                  'edge 79',
-                  'firefox 67',
-                  'opera 51',
-                  'safari 12'
-                ]
-              }
+              // > 0.5%, last 2 versions, Firefox ESR, not dead
+              targets: 'defaults',
+
+              // Maybe a bug in browserslist? This is required for
+              // ios<16.3, but MDN says available from Safari 10
+              exclude: ['transform-parameters']
             }
           ]
         ]
