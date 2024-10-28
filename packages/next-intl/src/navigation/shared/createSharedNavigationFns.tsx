@@ -2,7 +2,7 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation.js';
-import {ComponentProps, forwardRef, use} from 'react';
+import {ComponentProps, forwardRef} from 'react';
 import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation,
@@ -16,6 +16,7 @@ import {
   Pathnames
 } from '../../routing/types.tsx';
 import {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
+import use from '../../shared/use.tsx';
 import {isLocalizableHref} from '../../shared/utils.tsx';
 import BaseLink from './BaseLink.tsx';
 import {
@@ -111,7 +112,7 @@ export default function createSharedNavigationFns<
     const isLocalizable = isLocalizableHref(href);
 
     const localePromiseOrValue = getLocale();
-    const curLocale =
+    const curLocale: AppLocales extends never ? string : AppLocales[number] =
       localePromiseOrValue instanceof Promise
         ? use(localePromiseOrValue)
         : localePromiseOrValue;
