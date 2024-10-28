@@ -76,6 +76,7 @@
     "./plugin": {
       "types": "./dist/types/plugin.d.ts",
       "development": "./dist/esm/development/plugin.js",
+      "require": "./dist/cjs/production/plugin.cjs",
       "default": "./dist/esm/production/plugin.js"
     }
   },

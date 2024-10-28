@@ -105,8 +105,6 @@ function getBundleConfig({
 }
 
 export default function getConfig(config) {
-  return [
-    getBundleConfig({...config, env: 'development'}),
-    getBundleConfig({...config, env: 'production'})
-  ];
+  const env = config.env || ['development', 'production'];
+  return env.map((env) => getBundleConfig({...config, env}));
 }
