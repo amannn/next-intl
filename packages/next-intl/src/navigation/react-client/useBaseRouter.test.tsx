@@ -109,7 +109,7 @@ describe('unprefixed routing', () => {
     callRouter((router) =>
       router.prefetch('/about', {
         locale: 'es',
-        // @ts-expect-error -- Somhow only works via the enum (which is not exported)
+        // @ts-expect-error -- Somehow only works via the enum (which is not exported)
         kind: 'auto'
       })
     );
@@ -133,7 +133,7 @@ describe('unprefixed routing', () => {
     callRouter((router) =>
       router.prefetch('/about', {
         locale: 'it',
-        // @ts-expect-error -- Somhow only works via the enum (which is not exported)
+        // @ts-expect-error -- Somehow only works via the enum (which is not exported)
         kind: 'auto'
       })
     );

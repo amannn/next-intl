@@ -228,7 +228,7 @@ describe("localePrefix: 'always'", () => {
         invokeRouter((router) =>
           router.prefetch('/about', {
             locale: 'de',
-            // @ts-expect-error -- Somhow only works via the enum (which is not exported)
+            // @ts-expect-error -- Somehow only works via the enum (which is not exported)
             kind: 'full'
           })
         );
@@ -751,7 +751,7 @@ describe("localePrefix: 'never'", () => {
       invokeRouter((router) =>
         router.prefetch('/about', {
           locale: 'ja',
-          // @ts-expect-error -- Somhow only works via the enum (which is not exported)
+          // @ts-expect-error -- Somehow only works via the enum (which is not exported)
           kind: 'auto'
         })
       );
