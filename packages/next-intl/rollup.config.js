@@ -1,8 +1,8 @@
-/* eslint-env node */
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 import getBuildConfig from '../../scripts/getBuildConfig.mjs';
+import pkg from './package.json' with {type: 'json'};
 
-const config = {
+export default getBuildConfig({
   input: {
     'index.react-client': 'src/index.react-client.tsx',
     'index.react-server': 'src/index.react-server.tsx',
@@ -18,7 +18,14 @@ const config = {
     plugin: 'src/plugin.tsx',
     config: 'src/config.tsx'
   },
-  external: ['next-intl/config', /use-intl/],
+  external: [
+    ...Object.keys(pkg.dependencies),
+    ...Object.keys(pkg.peerDependencies),
+    'react/jsx-runtime',
+    'next-intl/config',
+    'use-intl/core',
+    'use-intl/react'
+  ],
   output: {
     preserveModules: true
   },
@@ -27,23 +34,4 @@ const config = {
     warn(warning);
   },
   plugins: [preserveDirectives()]
-};
-
-export default [
-  getBuildConfig({
-    ...config,
-    env: 'development'
-  }),
-  getBuildConfig({
-    ...config,
-    output: {
-      ...config.output,
-      format: 'es'
-    },
-    env: 'esm'
-  }),
-  getBuildConfig({
-    ...config,
-    env: 'production'
-  })
-];
+});

@@ -1,4 +1,4 @@
 // Needed for project with `moduleResolution: 'node'`
-import config from './dist/types/src/config';
+import config from './dist/types/config';
 
 export = config;

@@ -1,4 +1,5 @@
 import getBuildConfig from '../../scripts/getBuildConfig.mjs';
+import pkg from './package.json' with {type: 'json'};
 
 export default getBuildConfig({
   input: {
@@ -7,9 +8,8 @@ export default getBuildConfig({
     react: 'src/react.tsx'
   },
   external: [
-    'intl-messageformat',
-    'react',
-    'react/jsx-runtime',
-    '@formatjs/fast-memoize'
+    ...Object.keys(pkg.dependencies),
+    ...Object.keys(pkg.peerDependencies),
+    'react/jsx-runtime'
   ]
 });

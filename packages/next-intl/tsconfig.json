@@ -2,20 +2,15 @@
   "extends": "eslint-config-molindo/tsconfig.json",
   "include": ["src", "test", "__mocks__", "types", "next-env.d.ts"],
   "compilerOptions": {
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "module": "esnext",
+    "allowImportingTsExtensions": true, // For ESM
     "lib": ["dom", "esnext"],
     "target": "ES2020",
-    "importHelpers": false,
     "declaration": true,
-    "sourceMap": true,
     "rootDir": ".",
-    "moduleResolution": "Bundler",
-    "jsx": "react",
-    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
-    "noEmit": false,
-    "outDir": "dist"
+    "noEmit": true
   }
 }
