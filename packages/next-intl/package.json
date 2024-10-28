@@ -41,7 +41,7 @@
       "default": "./dist/esm/production/index.react-client.js"
     },
     "./server": {
-      "types": "./dist/types/server.react-client.d.ts",
+      "types": "./dist/types/server.react-server.d.ts",
       "react-server": {
         "development": "./dist/esm/development/server.react-server.js",
         "default": "./dist/esm/production/server.react-server.js"
