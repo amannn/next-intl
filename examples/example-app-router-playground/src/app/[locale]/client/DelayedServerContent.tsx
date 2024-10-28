@@ -1,5 +1,4 @@
 import {useNow} from 'next-intl';
-// @ts-ignore -- Not available in current types
 import {use} from 'react';
 
 export default function DelayedServerContent() {
