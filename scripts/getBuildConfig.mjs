@@ -77,7 +77,7 @@ function getBundleConfig({
               targets: 'defaults',
 
               // Maybe a bug in browserslist? This is required for
-              // ios<16.3, but MDN says available from Safari 10
+              // ios<16.3, but MDN says it's available from Safari 10
               exclude: ['transform-parameters']
             }
           ]

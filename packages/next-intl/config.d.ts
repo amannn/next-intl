@@ -1,4 +1,4 @@
-// Needed for project with `moduleResolution: 'node'`
+// Needed for projects with `moduleResolution: 'node'`
 import config from './dist/types/config';
 
 export = config;
