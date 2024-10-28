@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {useParams, usePathname} from 'next/navigation';
+import {useParams, usePathname} from 'next/navigation.js';
 import {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {NextIntlClientProvider} from '../../index.react-client.tsx';
@@ -9,7 +9,7 @@ import ClientLink from './ClientLink.tsx';
 // Note: Once we remove the legacy navigation APIs, this test suite can be
 // removed too. All relevant tests have been moved to the new navigation API.
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
 
 function mockLocation(pathname: string, basePath = '') {
   vi.mocked(usePathname).mockReturnValue(pathname);

@@ -1,4 +1,4 @@
-import {headers} from 'next/headers';
+import {headers} from 'next/headers.js';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
 import {getCachedRequestLocale} from './RequestLocaleCache.tsx';

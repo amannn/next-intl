@@ -1,4 +1,4 @@
-import {useRouter as useNextRouter, usePathname} from 'next/navigation';
+import {useRouter as useNextRouter, usePathname} from 'next/navigation.js';
 import {useMemo} from 'react';
 import useLocale from '../../react-client/useLocale.tsx';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';

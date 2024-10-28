@@ -1,5 +1,5 @@
-import {headers} from 'next/headers';
-import {notFound} from 'next/navigation';
+import {headers} from 'next/headers.js';
+import {notFound} from 'next/navigation.js';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
 import {getCachedRequestLocale} from './RequestLocaleCache.tsx';

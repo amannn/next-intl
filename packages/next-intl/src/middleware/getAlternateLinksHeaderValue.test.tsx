@@ -1,6 +1,6 @@
 // @vitest-environment edge-runtime
 
-import {NextRequest} from 'next/server';
+import {NextRequest} from 'next/server.js';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import {receiveRoutingConfig} from '../routing/config.tsx';
 import {Pathnames} from '../routing.tsx';

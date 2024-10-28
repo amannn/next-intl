@@ -4,7 +4,7 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect,
   useParams as nextUseParams
-} from 'next/navigation';
+} from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {DomainsConfig, Pathnames, defineRouting} from '../routing.tsx';
@@ -13,8 +13,8 @@ import createNavigationServer from './react-server/createNavigation.tsx';
 import getServerLocale from './react-server/getServerLocale.tsx';
 
 vi.mock('react');
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation');
+vi.mock('next/navigation.js', async () => {
+  const actual = await vi.importActual('next/navigation.js');
   return {
     ...actual,
     useParams: vi.fn(() => ({locale: 'en'})),

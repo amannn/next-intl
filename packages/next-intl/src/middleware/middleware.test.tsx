@@ -1,7 +1,7 @@
 // @vitest-environment edge-runtime
 
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server.js';
 import {pathToRegexp} from 'path-to-regexp';
 import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import createMiddleware from '../middleware.tsx';
@@ -9,7 +9,7 @@ import {Pathnames, defineRouting} from '../routing.tsx';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 
-vi.mock('next/server', async (importActual) => {
+vi.mock('next/server.js', async (importActual) => {
   const ActualNextServer = (await importActual()) as any;
   type MiddlewareResponseInit = Parameters<(typeof NextResponse)['next']>[0];
 

@@ -5,7 +5,7 @@ import {
   redirect as nextRedirect,
   usePathname as useNextPathname,
   useParams
-} from 'next/navigation';
+} from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {Pathnames, defineRouting} from '../routing.tsx';
@@ -15,8 +15,8 @@ import createLocalizedPathnamesNavigationClient from './react-client/createLocal
 import createLocalizedPathnamesNavigationServer from './react-server/createLocalizedPathnamesNavigation.tsx';
 import LegacyBaseLink from './shared/LegacyBaseLink.tsx';
 
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation');
+vi.mock('next/navigation.js', async () => {
+  const actual = await vi.importActual('next/navigation.js');
   return {
     ...actual,
     usePathname: vi.fn(),

@@ -1,6 +1,6 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
+import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies.js';
 import {ResolvedRoutingConfig} from '../routing/config.tsx';
 import {
   DomainConfig,

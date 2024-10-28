@@ -3,13 +3,13 @@ import {
   usePathname as useNextPathname,
   useRouter as useNextRouter,
   useParams
-} from 'next/navigation';
-import {ComponentProps, useRef} from 'react';
+} from 'next/navigation.js';
+import {ComponentProps, createRef, useRef} from 'react';
 import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Pathnames} from '../../routing.tsx';
 import createLocalizedPathnamesNavigation from './createLocalizedPathnamesNavigation.tsx';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
 
 const locales = ['en', 'de', 'ja'] as const;
 const pathnames = {
@@ -64,7 +64,7 @@ describe("localePrefix: 'as-needed'", () => {
 
   describe('Link', () => {
     it('supports receiving a ref', () => {
-      const ref = React.createRef<HTMLAnchorElement>();
+      const ref = createRef<HTMLAnchorElement>();
       render(<Link ref={ref} href="/about" />);
       expect(ref.current).not.toBe(null);
     });

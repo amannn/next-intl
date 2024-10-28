@@ -28,7 +28,7 @@ vi.mock('next-intl/config', () => ({
     })
 }));
 
-vi.mock('next/headers', () => ({
+vi.mock('next/headers.js', () => ({
   headers: () => ({
     get(name: string) {
       if (name === HEADER_LOCALE_NAME) {

@@ -1,7 +1,6 @@
 'use client';
 
-import NextLink from 'next/link';
-import {usePathname} from 'next/navigation';
+import {usePathname} from 'next/navigation.js';
 import {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import useLocale from '../../react-client/useLocale.tsx';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
@@ -13,7 +12,10 @@ import {
 } from '../../shared/utils.tsx';
 import BaseLink from './BaseLink.tsx';
 
-type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
+type Props = Omit<
+  ComponentProps<typeof BaseLink>,
+  'locale' | 'unprefixed' | 'defaultLocale'
+> & {
   locale: string;
   prefix: string;
   localePrefixMode: LocalePrefixMode;

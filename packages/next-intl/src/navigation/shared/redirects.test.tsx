@@ -1,11 +1,11 @@
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
-} from 'next/navigation';
+} from 'next/navigation.js';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {basePermanentRedirect, baseRedirect} from './redirects.tsx';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
 
 beforeEach(() => {
   vi.clearAllMocks();

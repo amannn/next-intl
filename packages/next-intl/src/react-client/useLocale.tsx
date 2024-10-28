@@ -1,4 +1,4 @@
-import {useParams} from 'next/navigation';
+import {useParams} from 'next/navigation.js';
 import {useLocale as useBaseLocale} from 'use-intl/react';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants.tsx';
 

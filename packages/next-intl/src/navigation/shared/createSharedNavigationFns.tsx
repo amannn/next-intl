@@ -1,7 +1,7 @@
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
-} from 'next/navigation';
+} from 'next/navigation.js';
 import {ComponentProps, forwardRef, use} from 'react';
 import {
   RoutingConfigLocalizedNavigation,
