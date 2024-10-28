@@ -5,7 +5,7 @@ import {
   usePathname as useNextPathname,
   useRouter as useNextRouter
 } from 'next/navigation';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import useBaseRouter from './useBaseRouter.tsx';
 

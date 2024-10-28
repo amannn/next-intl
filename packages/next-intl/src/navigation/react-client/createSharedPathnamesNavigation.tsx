@@ -1,4 +1,4 @@
-import React, {ComponentProps, ReactElement, forwardRef} from 'react';
+import {ComponentProps, ReactElement, forwardRef} from 'react';
 import {
   RoutingConfigSharedNavigation,
   receiveLocaleCookie,

@@ -1,4 +1,4 @@
-import React, {ComponentProps} from 'react';
+import {ComponentProps} from 'react';
 import getFormats from '../server/react-server/getFormats.tsx';
 import {getLocale, getNow, getTimeZone} from '../server.react-server.tsx';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.tsx';

@@ -1,6 +1,5 @@
 import {render, screen} from '@testing-library/react';
 import {useParams} from 'next/navigation';
-import React from 'react';
 import {expect, it, vi} from 'vitest';
 import {NextIntlClientProvider, useLocale} from './index.tsx';
 

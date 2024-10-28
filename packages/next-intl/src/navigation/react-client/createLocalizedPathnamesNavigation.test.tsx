@@ -4,7 +4,7 @@ import {
   useRouter as useNextRouter,
   useParams
 } from 'next/navigation';
-import React, {ComponentProps, useRef} from 'react';
+import {ComponentProps, useRef} from 'react';
 import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {Pathnames} from '../../routing.tsx';
 import createLocalizedPathnamesNavigation from './createLocalizedPathnamesNavigation.tsx';

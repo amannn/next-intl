@@ -1,4 +1,3 @@
-import React from 'react';
 import {describe, expect, it, vi} from 'vitest';
 import {getTranslations} from '../server.react-server.tsx';
 import {

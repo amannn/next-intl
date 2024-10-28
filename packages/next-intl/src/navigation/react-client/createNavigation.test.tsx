@@ -5,7 +5,6 @@ import {
   useRouter as useNextRouter,
   useParams
 } from 'next/navigation';
-import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {NextIntlClientProvider} from '../../react-client.tsx';
 import {DomainsConfig, Pathnames} from '../../routing.tsx';

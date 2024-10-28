@@ -1,6 +1,5 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname as useNextPathname, useParams} from 'next/navigation';
-import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {NextIntlClientProvider} from '../../index.react-client.tsx';
 import useBasePathname from './useBasePathname.tsx';

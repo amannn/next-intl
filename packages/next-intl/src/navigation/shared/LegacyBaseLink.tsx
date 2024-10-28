@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
-import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
+import {ComponentProps, forwardRef, useEffect, useState} from 'react';
 import useLocale from '../../react-client/useLocale.tsx';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import {LocalePrefixMode} from '../../routing/types.tsx';

@@ -1,5 +1,4 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
 import {expect, it} from 'vitest';
 import {NextIntlClientProvider, useFormatter} from './index.tsx';
 

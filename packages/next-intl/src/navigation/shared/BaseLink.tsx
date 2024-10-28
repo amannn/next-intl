@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
-import React, {
+import {
   ComponentProps,
   MouseEvent,
   forwardRef,

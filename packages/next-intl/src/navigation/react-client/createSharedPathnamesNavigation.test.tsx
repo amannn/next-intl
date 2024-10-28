@@ -4,7 +4,6 @@ import {
   useRouter as useNextRouter,
   useParams
 } from 'next/navigation';
-import React from 'react';
 import {Mock, beforeEach, describe, expect, it, vi} from 'vitest';
 import createSharedPathnamesNavigation from './createSharedPathnamesNavigation.tsx';
 

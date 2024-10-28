@@ -1,4 +1,4 @@
-import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
+import {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
 import useLocale from '../../react-client/useLocale.tsx';
 import {
   RoutingConfigLocalizedNavigation,
