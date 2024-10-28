@@ -87,7 +87,7 @@
   }
 
   summary {
-    @apply font-bold !pr-8;
+    @apply flex-wrap font-bold !pr-8;
   }
   summary > code {
     margin: 0 0.3em;
