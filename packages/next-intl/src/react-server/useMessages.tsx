@@ -1,6 +1,6 @@
 import type {useMessages as useMessagesType} from 'use-intl';
-import {getMessagesFromConfig} from '../server/react-server/getMessages';
-import useConfig from './useConfig';
+import {getMessagesFromConfig} from '../server/react-server/getMessages.tsx';
+import useConfig from './useConfig.tsx';
 
 export default function useMessages(
   // eslint-disable-next-line no-empty-pattern

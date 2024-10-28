@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import type {AbstractIntlMessages} from 'use-intl';
-import getConfig from './getConfig';
+import getConfig from './getConfig.tsx';
 
 export function getMessagesFromConfig(
   config: Awaited<ReturnType<typeof getConfig>>

@@ -1,5 +1,5 @@
 import type {useLocale as useLocaleType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
 export default function useLocale(
   // eslint-disable-next-line no-empty-pattern

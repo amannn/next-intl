@@ -3,21 +3,21 @@ import {
   useRouter as useNextRouter
 } from 'next/navigation';
 import {useMemo} from 'react';
-import useLocale from '../../react-client/useLocale';
+import useLocale from '../../react-client/useLocale.tsx';
 import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
-} from '../../routing/config';
+} from '../../routing/config.tsx';
 import {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import createSharedNavigationFns from '../shared/createSharedNavigationFns';
-import syncLocaleCookie from '../shared/syncLocaleCookie';
-import {getRoute} from '../shared/utils';
-import useBasePathname from './useBasePathname';
+} from '../../routing/types.tsx';
+import createSharedNavigationFns from '../shared/createSharedNavigationFns.tsx';
+import syncLocaleCookie from '../shared/syncLocaleCookie.tsx';
+import {getRoute} from '../shared/utils.tsx';
+import useBasePathname from './useBasePathname.tsx';
 
 export default function createNavigation<
   const AppLocales extends Locales,

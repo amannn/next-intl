@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import getConfig from './getConfig';
+import getConfig from './getConfig.tsx';
 
 async function getFormatsCachedImpl() {
   const config = await getConfig();

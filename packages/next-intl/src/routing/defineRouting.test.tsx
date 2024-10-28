@@ -1,5 +1,5 @@
 import {describe, it} from 'vitest';
-import defineRouting from './defineRouting';
+import defineRouting from './defineRouting.tsx';
 
 describe('defaultLocale', () => {
   it('ensures the `defaultLocale` is within `locales`', () => {

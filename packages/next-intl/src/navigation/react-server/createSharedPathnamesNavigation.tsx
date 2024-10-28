@@ -3,11 +3,15 @@ import {
   RoutingConfigSharedNavigation,
   receiveLocaleCookie,
   receiveLocalePrefixConfig
-} from '../../routing/config';
-import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
-import ServerLink from './ServerLink';
-import {serverPermanentRedirect, serverRedirect} from './redirects';
+} from '../../routing/config.tsx';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
+import ServerLink from './ServerLink.tsx';
+import {serverPermanentRedirect, serverRedirect} from './redirects.tsx';
 
 export default function createSharedPathnamesNavigation<
   AppLocales extends Locales,

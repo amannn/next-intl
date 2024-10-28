@@ -1,1 +1,1 @@
-export {default} from './middleware/index';
+export {default} from './middleware/index.tsx';

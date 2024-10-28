@@ -3,7 +3,7 @@ import {
   redirect as nextRedirect
 } from 'next/navigation';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {basePermanentRedirect, baseRedirect} from './redirects';
+import {basePermanentRedirect, baseRedirect} from './redirects.tsx';
 
 vi.mock('next/navigation');
 

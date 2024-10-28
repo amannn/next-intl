@@ -1,5 +1,5 @@
 import type {useNow as useNowType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
 export default function useNow(
   ...[options]: Parameters<typeof useNowType>

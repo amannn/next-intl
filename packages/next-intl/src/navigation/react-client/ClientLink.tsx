@@ -1,12 +1,12 @@
 import React, {ComponentProps, ReactElement, forwardRef} from 'react';
-import useLocale from '../../react-client/useLocale';
+import useLocale from '../../react-client/useLocale.tsx';
 import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types';
-import {getLocalePrefix} from '../../shared/utils';
-import LegacyBaseLink from '../shared/LegacyBaseLink';
+} from '../../routing/types.tsx';
+import {getLocalePrefix} from '../../shared/utils.tsx';
+import LegacyBaseLink from '../shared/LegacyBaseLink.tsx';
 
 type Props<
   AppLocales extends Locales,

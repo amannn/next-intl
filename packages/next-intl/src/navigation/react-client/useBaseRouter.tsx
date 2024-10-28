@@ -1,15 +1,15 @@
 import {useRouter as useNextRouter, usePathname} from 'next/navigation';
 import {useMemo} from 'react';
-import useLocale from '../../react-client/useLocale';
-import {InitializedLocaleCookieConfig} from '../../routing/config';
+import useLocale from '../../react-client/useLocale.tsx';
+import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types';
-import {getLocalePrefix, localizeHref} from '../../shared/utils';
-import syncLocaleCookie from '../shared/syncLocaleCookie';
-import {getBasePath} from '../shared/utils';
+} from '../../routing/types.tsx';
+import {getLocalePrefix, localizeHref} from '../../shared/utils.tsx';
+import syncLocaleCookie from '../shared/syncLocaleCookie.tsx';
+import {getBasePath} from '../shared/utils.tsx';
 
 type IntlNavigateOptions<AppLocales extends Locales> = {
   locale?: AppLocales[number];

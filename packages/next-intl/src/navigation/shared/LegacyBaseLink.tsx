@@ -3,11 +3,15 @@
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import React, {ComponentProps, forwardRef, useEffect, useState} from 'react';
-import useLocale from '../../react-client/useLocale';
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import {LocalePrefixMode} from '../../routing/types';
-import {isLocalizableHref, localizeHref, prefixHref} from '../../shared/utils';
-import BaseLink from './BaseLink';
+import useLocale from '../../react-client/useLocale.tsx';
+import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import {LocalePrefixMode} from '../../routing/types.tsx';
+import {
+  isLocalizableHref,
+  localizeHref,
+  prefixHref
+} from '../../shared/utils.tsx';
+import BaseLink from './BaseLink.tsx';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale: string;

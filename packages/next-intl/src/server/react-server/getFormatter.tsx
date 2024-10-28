@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import {createFormatter} from 'use-intl/core';
-import getConfig from './getConfig';
+import getConfig from './getConfig.tsx';
 
 async function getFormatterCachedImpl(locale?: string) {
   const config = await getConfig(locale);

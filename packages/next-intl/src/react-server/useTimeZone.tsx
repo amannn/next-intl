@@ -1,5 +1,5 @@
 import type {useTimeZone as useTimeZoneType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
 export default function useTimeZone(
   // eslint-disable-next-line no-empty-pattern

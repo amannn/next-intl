@@ -1,7 +1,6 @@
 import {useParams} from 'next/navigation';
-// Workaround for some bundle splitting until we have ESM
-import {useLocale as useBaseLocale} from 'use-intl/_useLocale';
-import {LOCALE_SEGMENT_NAME} from '../shared/constants';
+import {useLocale as useBaseLocale} from 'use-intl/react';
+import {LOCALE_SEGMENT_NAME} from '../shared/constants.tsx';
 
 export default function useLocale(): string {
   // The types aren't entirely correct here. Outside of Next.js

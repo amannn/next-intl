@@ -1,8 +1,8 @@
 import {expect, it, vi} from 'vitest';
-import getFormats from '../server/react-server/getFormats';
-import {getLocale, getNow, getTimeZone} from '../server.react-server';
-import NextIntlClientProvider from '../shared/NextIntlClientProvider';
-import NextIntlClientProviderServer from './NextIntlClientProviderServer';
+import getFormats from '../server/react-server/getFormats.tsx';
+import {getLocale, getNow, getTimeZone} from '../server.react-server.tsx';
+import NextIntlClientProvider from '../shared/NextIntlClientProvider.tsx';
+import NextIntlClientProviderServer from './NextIntlClientProviderServer.tsx';
 
 vi.mock('../../src/server/react-server', async () => ({
   getLocale: vi.fn(async () => 'en-US'),

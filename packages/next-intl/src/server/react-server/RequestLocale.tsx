@@ -1,7 +1,7 @@
 import {headers} from 'next/headers';
 import {cache} from 'react';
-import {HEADER_LOCALE_NAME} from '../../shared/constants';
-import {getCachedRequestLocale} from './RequestLocaleCache';
+import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
+import {getCachedRequestLocale} from './RequestLocaleCache.tsx';
 
 async function getHeadersImpl(): Promise<Headers> {
   const promiseOrValue = headers();

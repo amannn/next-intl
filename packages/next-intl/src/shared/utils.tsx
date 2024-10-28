@@ -5,7 +5,7 @@ import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../routing/types';
+} from '../routing/types.tsx';
 
 type Href = ComponentProps<typeof NextLink>['href'];
 

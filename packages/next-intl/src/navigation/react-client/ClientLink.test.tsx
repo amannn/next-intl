@@ -2,9 +2,9 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import {useParams, usePathname} from 'next/navigation';
 import React, {ComponentProps, LegacyRef, forwardRef} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../index.react-client';
-import {LocalePrefixConfigVerbose} from '../../routing/types';
-import ClientLink from './ClientLink';
+import {NextIntlClientProvider} from '../../index.react-client.tsx';
+import {LocalePrefixConfigVerbose} from '../../routing/types.tsx';
+import ClientLink from './ClientLink.tsx';
 
 // Note: Once we remove the legacy navigation APIs, this test suite can be
 // removed too. All relevant tests have been moved to the new navigation API.

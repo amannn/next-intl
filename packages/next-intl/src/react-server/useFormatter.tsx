@@ -1,7 +1,7 @@
 import {cache} from 'react';
 import {type useFormatter as useFormatterType} from 'use-intl';
 import {createFormatter} from 'use-intl/core';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
 const createFormatterCached = cache(createFormatter);
 

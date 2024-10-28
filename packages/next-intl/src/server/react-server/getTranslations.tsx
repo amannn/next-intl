@@ -10,7 +10,7 @@ import {
   TranslationValues,
   createTranslator
 } from 'use-intl/core';
-import getConfig from './getConfig';
+import getConfig from './getConfig.tsx';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript

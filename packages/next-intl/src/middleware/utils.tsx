@@ -5,7 +5,7 @@ import {
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
+} from '../routing/types.tsx';
 import {
   getLocalePrefix,
   getSortedPathnames,
@@ -13,7 +13,7 @@ import {
   normalizeTrailingSlash,
   prefixPathname,
   templateToRegex
-} from '../shared/utils';
+} from '../shared/utils.tsx';
 
 export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];

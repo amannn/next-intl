@@ -2,23 +2,23 @@ import React, {ComponentProps} from 'react';
 import {
   RoutingConfigLocalizedNavigation,
   receiveRoutingConfig
-} from '../../routing/config';
+} from '../../routing/config.tsx';
 import {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import {getRequestLocale} from '../../server/react-server/RequestLocaleLegacy';
-import {ParametersExceptFirst} from '../../shared/types';
+} from '../../routing/types.tsx';
+import {getRequestLocale} from '../../server/react-server/RequestLocaleLegacy.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams
-} from '../shared/utils';
-import ServerLink from './ServerLink';
-import {serverPermanentRedirect, serverRedirect} from './redirects';
+} from '../shared/utils.tsx';
+import ServerLink from './ServerLink.tsx';
+import {serverPermanentRedirect, serverRedirect} from './redirects.tsx';
 
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,

@@ -4,8 +4,8 @@ import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server';
 import {pathToRegexp} from 'path-to-regexp';
 import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import createMiddleware from '../middleware';
-import {Pathnames, defineRouting} from '../routing';
+import createMiddleware from '../middleware.tsx';
+import {Pathnames, defineRouting} from '../routing.tsx';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 

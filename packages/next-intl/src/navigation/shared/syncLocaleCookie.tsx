@@ -1,5 +1,5 @@
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import {getBasePath} from './utils';
+import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import {getBasePath} from './utils.tsx';
 
 /**
  * We have to keep the cookie value in sync as Next.js might

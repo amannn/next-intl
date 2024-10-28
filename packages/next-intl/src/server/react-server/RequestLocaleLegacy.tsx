@@ -1,8 +1,8 @@
 import {headers} from 'next/headers';
 import {notFound} from 'next/navigation';
 import {cache} from 'react';
-import {HEADER_LOCALE_NAME} from '../../shared/constants';
-import {getCachedRequestLocale} from './RequestLocaleCache';
+import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
+import {getCachedRequestLocale} from './RequestLocaleCache.tsx';
 
 // This was originally built for Next.js <14, where `headers()` was not async.
 // With https://github.com/vercel/next.js/pull/68812, the API became async.

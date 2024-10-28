@@ -6,13 +6,13 @@ import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
 import {
   getLocalePrefix,
   isLocalizableHref,
   prefixPathname
-} from '../../shared/utils';
+} from '../../shared/utils.tsx';
 
 function createRedirectFn(redirectFn: typeof nextRedirect) {
   return function baseRedirect<

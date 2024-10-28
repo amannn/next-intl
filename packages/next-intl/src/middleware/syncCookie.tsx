@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {LocaleCookieConfig} from '../routing/config';
+import {LocaleCookieConfig} from '../routing/config.tsx';
 
 export default function syncCookie(
   request: NextRequest,

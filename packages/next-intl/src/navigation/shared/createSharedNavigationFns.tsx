@@ -7,17 +7,17 @@ import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation,
   receiveRoutingConfig
-} from '../../routing/config';
+} from '../../routing/config.tsx';
 import {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import {ParametersExceptFirst, Prettify} from '../../shared/types';
-import {isLocalizableHref} from '../../shared/utils';
-import BaseLink from './BaseLink';
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
+import {isLocalizableHref} from '../../shared/utils.tsx';
+import BaseLink from './BaseLink.tsx';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -27,7 +27,7 @@ import {
   normalizeNameOrNameWithParams,
   serializeSearchParams,
   validateReceivedConfig
-} from './utils';
+} from './utils.tsx';
 
 type PromiseOrValue<Type> = Type | Promise<Type>;
 type UnwrapPromiseOrValue<Type> =

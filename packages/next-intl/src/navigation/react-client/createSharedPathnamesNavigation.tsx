@@ -3,13 +3,17 @@ import {
   RoutingConfigSharedNavigation,
   receiveLocaleCookie,
   receiveLocalePrefixConfig
-} from '../../routing/config';
-import {DomainsConfig, LocalePrefixMode, Locales} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
-import ClientLink from './ClientLink';
-import {clientPermanentRedirect, clientRedirect} from './redirects';
-import useBasePathname from './useBasePathname';
-import useBaseRouter from './useBaseRouter';
+} from '../../routing/config.tsx';
+import {
+  DomainsConfig,
+  LocalePrefixMode,
+  Locales
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
+import ClientLink from './ClientLink.tsx';
+import {clientPermanentRedirect, clientRedirect} from './redirects.tsx';
+import useBasePathname from './useBasePathname.tsx';
+import useBaseRouter from './useBaseRouter.tsx';
 
 /**
  * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)

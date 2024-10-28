@@ -1,28 +1,28 @@
 import React, {ComponentProps, ReactElement, forwardRef, useMemo} from 'react';
-import useLocale from '../../react-client/useLocale';
+import useLocale from '../../react-client/useLocale.tsx';
 import {
   RoutingConfigLocalizedNavigation,
   receiveLocaleCookie,
   receiveRoutingConfig
-} from '../../routing/config';
+} from '../../routing/config.tsx';
 import {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import {ParametersExceptFirst} from '../../shared/types';
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
   compileLocalizedPathname,
   getRoute,
   normalizeNameOrNameWithParams
-} from '../shared/utils';
-import ClientLink from './ClientLink';
-import {clientPermanentRedirect, clientRedirect} from './redirects';
-import useBasePathname from './useBasePathname';
-import useBaseRouter from './useBaseRouter';
+} from '../shared/utils.tsx';
+import ClientLink from './ClientLink.tsx';
+import {clientPermanentRedirect, clientRedirect} from './redirects.tsx';
+import useBasePathname from './useBasePathname.tsx';
+import useBaseRouter from './useBaseRouter.tsx';
 
 /**
  * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)

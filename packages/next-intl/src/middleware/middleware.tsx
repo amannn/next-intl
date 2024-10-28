@@ -1,20 +1,20 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {RoutingConfig, receiveRoutingConfig} from '../routing/config';
+import {RoutingConfig, receiveRoutingConfig} from '../routing/config.tsx';
 import {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
-import {HEADER_LOCALE_NAME} from '../shared/constants';
+} from '../routing/types.tsx';
+import {HEADER_LOCALE_NAME} from '../shared/constants.tsx';
 import {
   getLocalePrefix,
   matchesPathname,
   normalizeTrailingSlash
-} from '../shared/utils';
-import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
-import resolveLocale from './resolveLocale';
-import syncCookie from './syncCookie';
+} from '../shared/utils.tsx';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue.tsx';
+import resolveLocale from './resolveLocale.tsx';
+import syncCookie from './syncCookie.tsx';
 import {
   applyBasePath,
   formatPathname,
@@ -26,7 +26,7 @@ import {
   getPathnameMatch,
   isLocaleSupportedOnDomain,
   sanitizePathname
-} from './utils';
+} from './utils.tsx';
 
 export default function createMiddleware<
   AppLocales extends Locales,

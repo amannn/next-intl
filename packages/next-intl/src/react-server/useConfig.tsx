@@ -1,5 +1,5 @@
 import {use} from 'react';
-import getConfig from '../server/react-server/getConfig';
+import getConfig from '../server/react-server/getConfig.tsx';
 
 function useHook<Value>(hookName: string, promise: Promise<Value>) {
   try {

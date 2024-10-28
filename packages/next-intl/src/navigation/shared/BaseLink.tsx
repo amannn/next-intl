@@ -9,9 +9,9 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import useLocale from '../../react-client/useLocale';
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import syncLocaleCookie from './syncLocaleCookie';
+import useLocale from '../../react-client/useLocale.tsx';
+import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import syncLocaleCookie from './syncLocaleCookie.tsx';
 
 type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
   locale?: string;

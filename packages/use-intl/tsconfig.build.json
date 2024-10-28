@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["src/**/*.test.tsx", "test", "src/react/**/*.tsx"],
+  "exclude": ["src/**/*.test.tsx", "test"],
   "compilerOptions": {
     "rootDir": "src",
     "noEmit": false,

@@ -3,10 +3,10 @@ import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types';
-import {getLocale} from '../../server.react-server';
-import {getLocalePrefix} from '../../shared/utils';
-import LegacyBaseLink from '../shared/LegacyBaseLink';
+} from '../../routing/types.tsx';
+import {getLocale} from '../../server.react-server.tsx';
+import {getLocalePrefix} from '../../shared/utils.tsx';
+import LegacyBaseLink from '../shared/LegacyBaseLink.tsx';
 
 // Only used by legacy navigation APIs, can be removed when they are removed
 
