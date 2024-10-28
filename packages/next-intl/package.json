@@ -33,20 +33,20 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.react-client.d.ts",
-      "development": "./dist/esm/development/index.react-client.js",
       "react-server": {
         "development": "./dist/esm/development/index.react-server.js",
         "default": "./dist/esm/production/index.react-server.js"
       },
+      "development": "./dist/esm/development/index.react-client.js",
       "default": "./dist/esm/production/index.react-client.js"
     },
     "./server": {
       "types": "./dist/types/server.react-client.d.ts",
-      "development": "./dist/esm/development/server.react-client.js",
       "react-server": {
         "development": "./dist/esm/development/server.react-server.js",
         "default": "./dist/esm/production/server.react-server.js"
       },
+      "development": "./dist/esm/development/server.react-client.js",
       "default": "./dist/esm/production/server.react-client.js"
     },
     "./config": {
@@ -65,6 +65,7 @@
         "development": "./dist/esm/development/navigation.react-server.js",
         "default": "./dist/esm/production/navigation.react-server.js"
       },
+      "development": "./dist/esm/development/navigation.react-client.js",
       "default": "./dist/esm/production/navigation.react-client.js"
     },
     "./routing": {
