@@ -64,7 +64,7 @@
     "react": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
+    "@arethetypeswrong/cli": "^0.16.4",
     "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/node": "^20.14.5",

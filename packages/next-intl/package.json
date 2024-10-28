@@ -74,8 +74,11 @@
       "default": "./dist/esm/production/routing.js"
     },
     "./plugin": {
-      "types": "./dist/types/plugin.d.ts",
-      "development": "./dist/esm/development/plugin.js",
+      "import": {
+        "types": "./dist/types/plugin.d.ts",
+        "development": "./dist/esm/development/plugin.js",
+        "default": "./dist/esm/production/plugin.js"
+      },
       "require": {
         "types": "./plugin.d.cts",
         "default": "./dist/cjs/development/plugin.cjs"
@@ -116,7 +119,7 @@
     "react": "^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
+    "@arethetypeswrong/cli": "^0.16.4",
     "@edge-runtime/vm": "^3.2.0",
     "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
