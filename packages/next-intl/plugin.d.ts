@@ -1,3 +1,4 @@
+// Needed for project with `moduleResolution: 'node'`
 import {NextConfig} from 'next';
 
 function createNextIntlPlugin(
