@@ -76,7 +76,10 @@
     "./plugin": {
       "types": "./dist/types/plugin.d.ts",
       "development": "./dist/esm/development/plugin.js",
-      "require": "./dist/cjs/production/plugin.cjs",
+      "require": {
+        "types": "./plugin.d.cts",
+        "default": "./dist/cjs/development/plugin.cjs"
+      },
       "default": "./dist/esm/production/plugin.js"
     }
   },
@@ -86,6 +89,7 @@
     "navigation.d.ts",
     "middleware.d.ts",
     "plugin.d.ts",
+    "plugin.d.cts",
     "routing.d.ts",
     "config.d.ts"
   ],

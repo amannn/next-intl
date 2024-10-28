@@ -37,12 +37,12 @@ export default [
     plugins: [preserveDirectives()]
   }),
   ...getBuildConfig({
-    env: ['production'],
+    env: ['development'],
     input: {
       plugin: 'src/plugin.tsx'
     },
     output: {
-      dir: 'dist/cjs/production',
+      dir: 'dist/cjs/development',
       format: 'cjs',
       entryFileNames: '[name].cjs'
     }
