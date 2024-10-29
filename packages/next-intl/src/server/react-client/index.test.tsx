@@ -4,18 +4,18 @@ import {getRequestConfig} from '../../server.react-client.tsx';
 describe('getRequestConfig', () => {
   it('can be called in the outer module closure', () => {
     expect(
-      getRequestConfig(({locale}) => ({
-        messages: {hello: 'Hello ' + locale}
+      getRequestConfig(async ({requestLocale}) => ({
+        messages: {hello: 'Hello ' + (await requestLocale)}
       }))
     );
   });
 
   it('can not call the returned function', () => {
-    const getConfig = getRequestConfig(({locale}) => ({
-      messages: {hello: 'Hello ' + locale}
+    const getConfig = getRequestConfig(async ({requestLocale}) => ({
+      messages: {hello: 'Hello ' + (await requestLocale)}
     }));
-    expect(() =>
-      getConfig({locale: 'en', requestLocale: Promise.resolve('en')})
-    ).toThrow('`getRequestConfig` is not supported in Client Components.');
+    expect(() => getConfig({requestLocale: Promise.resolve('en')})).toThrow(
+      '`getRequestConfig` is not supported in Client Components.'
+    );
   });
 });

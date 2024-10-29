@@ -16,17 +16,6 @@ export type RequestConfig = Omit<IntlConfig, 'locale'> & {
 
 export type GetRequestConfigParams = {
   /**
-   * Deprecated in favor of `requestLocale` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#await-request-locale).
-   *
-   * The locale that was matched by the `[locale]` path segment. Note however
-   * that this can be overridden in async APIs when the `locale` is explicitly
-   * passed (e.g. `getTranslations({locale: 'en'})`).
-   *
-   * @deprecated
-   */
-  locale: string;
-
-  /**
    * Typically corresponds to the `[locale]` segment that was matched by the middleware.
    *
    * However, there are three special cases to consider:

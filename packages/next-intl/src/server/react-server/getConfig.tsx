@@ -7,7 +7,6 @@ import {
   initializeConfig
 } from 'use-intl/core';
 import {getRequestLocale} from './RequestLocale.tsx';
-import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy.tsx';
 import createRequestConfig from './createRequestConfig.tsx';
 import {GetRequestConfigParams} from './getRequestConfig.tsx';
 
@@ -48,10 +47,6 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     // In case the consumer doesn't read `params.locale` and instead provides the
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.
-    get locale() {
-      return localeOverride || getRequestLocaleLegacy();
-    },
-
     get requestLocale() {
       return localeOverride
         ? Promise.resolve(localeOverride)
