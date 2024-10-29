@@ -1,11 +1,10 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import IntlProvider from './IntlProvider';
-import useFormatter from './useFormatter';
-import useNow from './useNow';
-import useTranslations from './useTranslations';
+import IntlProvider from './IntlProvider.tsx';
+import useFormatter from './useFormatter.tsx';
+import useNow from './useNow.tsx';
+import useTranslations from './useTranslations.tsx';
 
 describe('performance', () => {
   beforeEach(() => {

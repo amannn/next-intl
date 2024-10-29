@@ -1,6 +1,6 @@
-import AbstractIntlMessages from './AbstractIntlMessages';
-import IntlError, {IntlErrorCode} from './IntlError';
-import joinPath from './joinPath';
+import AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import joinPath from './joinPath.tsx';
 
 function validateMessagesSegment(
   messages: AbstractIntlMessages,

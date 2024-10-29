@@ -1,10 +1,10 @@
 // @vitest-environment edge-runtime
 
-import {NextRequest} from 'next/server';
+import {NextRequest} from 'next/server.js';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import {Pathnames} from '../routing';
-import {receiveRoutingConfig} from '../routing/config';
-import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
+import {receiveRoutingConfig} from '../routing/config.tsx';
+import {Pathnames} from '../routing.tsx';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue.tsx';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',

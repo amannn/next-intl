@@ -5,19 +5,18 @@ import {
   redirect as nextRedirect,
   usePathname as useNextPathname,
   useParams
-} from 'next/navigation';
-import React from 'react';
+} from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {defineRouting} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy';
-import {getLocalePrefix} from '../shared/utils';
-import createSharedPathnamesNavigationClient from './react-client/createSharedPathnamesNavigation';
-import createSharedPathnamesNavigationServer from './react-server/createSharedPathnamesNavigation';
-import LegacyBaseLink from './shared/LegacyBaseLink';
+import {defineRouting} from '../routing.tsx';
+import {getRequestLocale} from '../server/react-server/RequestLocaleLegacy.tsx';
+import {getLocalePrefix} from '../shared/utils.tsx';
+import createSharedPathnamesNavigationClient from './react-client/createSharedPathnamesNavigation.tsx';
+import createSharedPathnamesNavigationServer from './react-server/createSharedPathnamesNavigation.tsx';
+import LegacyBaseLink from './shared/LegacyBaseLink.tsx';
 
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation');
+vi.mock('next/navigation.js', async () => {
+  const actual = await vi.importActual('next/navigation.js');
   return {
     ...actual,
     useParams: vi.fn(() => ({locale: 'en'})),

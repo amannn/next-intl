@@ -7,7 +7,7 @@ import type {
   getTimeZone as getTimeZone_type,
   setRequestLocale as setRequestLocale_type,
   unstable_setRequestLocale as unstable_setRequestLocale_type
-} from '../react-server';
+} from '../react-server/index.tsx';
 
 /**
  * Allows to import `next-intl/server` in non-RSC environments.

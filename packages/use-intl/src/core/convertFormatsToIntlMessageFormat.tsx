@@ -1,7 +1,10 @@
-import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import Formats from './Formats';
-import TimeZone from './TimeZone';
+import {
+  type Formats as IntlFormats,
+  IntlMessageFormat
+} from 'intl-messageformat';
+import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
+import Formats from './Formats.tsx';
+import TimeZone from './TimeZone.tsx';
 
 function setTimeZoneInFormats(
   formats: Record<string, DateTimeFormatOptions> | undefined,

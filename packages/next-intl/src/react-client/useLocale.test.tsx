@@ -1,10 +1,9 @@
 import {render, screen} from '@testing-library/react';
-import {useParams} from 'next/navigation';
-import React from 'react';
+import {useParams} from 'next/navigation.js';
 import {expect, it, vi} from 'vitest';
-import {NextIntlClientProvider, useLocale} from '.';
+import {NextIntlClientProvider, useLocale} from './index.tsx';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation.js', () => ({
   useParams: vi.fn(() => ({locale: 'en'}))
 }));
 

@@ -1,7 +1,4 @@
-/* eslint-env node */
-import fs from 'fs';
 import {babel} from '@rollup/plugin-babel';
-import commonjs from '@rollup/plugin-commonjs';
 import resolve, {
   DEFAULTS as resolveDefaults
 } from '@rollup/plugin-node-resolve';
@@ -13,36 +10,41 @@ const extensions = [...resolveDefaults.extensions, '.tsx'];
 
 const outDir = 'dist/';
 
-function writeEnvIndex(input) {
-  Object.keys(input).forEach((key) => {
-    fs.writeFileSync(
-      `./${outDir}${key}.js`,
-      `'use strict';
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./production/${key}.js');
-} else {
-  module.exports = require('./development/${key}.js');
-}
-`
-    );
-  });
-}
-
 async function buildTypes() {
-  await execa(
-    'tsc',
-    '--noEmit false --emitDeclarationOnly true --outDir dist/types'.split(' ')
-  );
+  await execa('tsc', '-p tsconfig.build.json'.split(' '));
+
   // eslint-disable-next-line no-console
   console.log('\ncreated types');
 }
 
-export default function getConfig({
+function ignoreSideEffectImports(imports) {
+  // Rollup somehow leaves a few imports in the bundle that
+  // would only be relevant if they had side effects.
+
+  const pattern = imports
+    .map((importName) => `import\\s*['"]${importName}['"];?`)
+    .join('|');
+  const regex = new RegExp(pattern, 'g');
+
+  return {
+    name: 'ignore-side-effect-imports',
+    generateBundle(outputOptions, bundle) {
+      if (imports.length === 0) return;
+
+      for (const [fileName, file] of Object.entries(bundle)) {
+        if (file.type === 'chunk' && fileName.endsWith('.js')) {
+          file.code = file.code.replace(regex, '');
+        }
+      }
+    }
+  };
+}
+
+function getBundleConfig({
   env,
   external = [],
   input,
-  output,
+  output = undefined,
   plugins = [],
   ...rest
 }) {
@@ -51,12 +53,8 @@ export default function getConfig({
     input,
     external: [/node_modules/, ...external],
     output: {
-      dir: outDir + env,
-      format: 'cjs',
-      interop: 'auto',
-      freeze: false,
-      esModule: true,
-      exports: 'named',
+      dir: outDir + 'esm/' + env,
+      format: 'es',
       ...output
     },
     treeshake: {
@@ -66,26 +64,21 @@ export default function getConfig({
     },
     plugins: [
       resolve({extensions}),
-      commonjs(),
       babel({
         babelHelpers: 'bundled',
         extensions,
         presets: [
           '@babel/preset-typescript',
-          '@babel/preset-react',
+          ['@babel/preset-react', {runtime: 'automatic'}],
           [
             '@babel/preset-env',
             {
-              targets: {
-                // Same as https://nextjs.org/docs/architecture/supported-browsers#browserslist
-                browsers: [
-                  'chrome 64',
-                  'edge 79',
-                  'firefox 67',
-                  'opera 51',
-                  'safari 12'
-                ]
-              }
+              // > 0.5%, last 2 versions, Firefox ESR, not dead
+              targets: 'defaults',
+
+              // Maybe a bug in browserslist? This is required for
+              // ios<16.3, but MDN says it's available from Safari 10
+              exclude: ['transform-parameters']
             }
           ]
         ]
@@ -94,11 +87,11 @@ export default function getConfig({
         'process.env.NODE_ENV': JSON.stringify(env),
         preventAssignment: true
       }),
+      ignoreSideEffectImports(external),
       env !== 'development' && terser(),
       {
         buildEnd() {
           if (env === 'production') {
-            writeEnvIndex(input);
             buildTypes();
           }
         }
@@ -109,4 +102,9 @@ export default function getConfig({
   };
 
   return config;
+}
+
+export default function getConfig(config) {
+  const envNames = config.env || ['development', 'production'];
+  return envNames.map((env) => getBundleConfig({...config, env}));
 }

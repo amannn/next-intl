@@ -1,10 +1,7 @@
 import type {useTimeZone as useTimeZoneType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
-export default function useTimeZone(
-  // eslint-disable-next-line no-empty-pattern
-  ...[]: Parameters<typeof useTimeZoneType>
-): ReturnType<typeof useTimeZoneType> {
+export default function useTimeZone(): ReturnType<typeof useTimeZoneType> {
   const config = useConfig('useTimeZone');
   return config.timeZone;
 }

@@ -1,26 +1,26 @@
-import IntlMessageFormat from 'intl-messageformat';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {ReactNode, cloneElement, isValidElement} from 'react';
-import AbstractIntlMessages from './AbstractIntlMessages';
-import Formats from './Formats';
-import {InitializedIntlConfig} from './IntlConfig';
-import IntlError, {IntlErrorCode} from './IntlError';
+import AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import Formats from './Formats.tsx';
+import {InitializedIntlConfig} from './IntlConfig.tsx';
+import IntlError, {IntlErrorCode} from './IntlError.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
-} from './TranslationValues';
-import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
-import {defaultGetMessageFallback, defaultOnError} from './defaults';
+} from './TranslationValues.tsx';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.tsx';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
   Formatters,
   IntlCache,
   IntlFormatters,
   MessageFormatter,
   memoFn
-} from './formatters';
-import joinPath from './joinPath';
-import MessageKeys from './utils/MessageKeys';
-import NestedKeyOf from './utils/NestedKeyOf';
-import NestedValueOf from './utils/NestedValueOf';
+} from './formatters.tsx';
+import joinPath from './joinPath.tsx';
+import MessageKeys from './utils/MessageKeys.tsx';
+import NestedKeyOf from './utils/NestedKeyOf.tsx';
+import NestedValueOf from './utils/NestedValueOf.tsx';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.

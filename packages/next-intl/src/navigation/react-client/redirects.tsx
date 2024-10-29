@@ -1,6 +1,6 @@
-import useLocale from '../../react-client/useLocale';
-import {ParametersExceptFirst} from '../../shared/types';
-import {basePermanentRedirect, baseRedirect} from '../shared/redirects';
+import useLocale from '../../react-client/useLocale.tsx';
+import {ParametersExceptFirst} from '../../shared/types.tsx';
+import {basePermanentRedirect, baseRedirect} from '../shared/redirects.tsx';
 
 function createRedirectFn(redirectFn: typeof baseRedirect) {
   return function clientRedirect(

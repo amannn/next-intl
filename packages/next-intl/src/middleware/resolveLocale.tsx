@@ -1,15 +1,19 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
-import {ResolvedRoutingConfig} from '../routing/config';
+import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies.js';
+import {ResolvedRoutingConfig} from '../routing/config.tsx';
 import {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
-import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
+} from '../routing/types.tsx';
+import {
+  getHost,
+  getPathnameMatch,
+  isLocaleSupportedOnDomain
+} from './utils.tsx';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,

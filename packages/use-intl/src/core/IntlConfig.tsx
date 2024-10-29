@@ -1,8 +1,8 @@
-import type AbstractIntlMessages from './AbstractIntlMessages';
-import type Formats from './Formats';
-import type IntlError from './IntlError';
-import type TimeZone from './TimeZone';
-import type {RichTranslationValues} from './TranslationValues';
+import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import type Formats from './Formats.tsx';
+import type IntlError from './IntlError.tsx';
+import type TimeZone from './TimeZone.tsx';
+import type {RichTranslationValues} from './TranslationValues.tsx';
 
 /**
  * Should be used for entry points that configure the library.

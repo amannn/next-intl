@@ -1,8 +1,7 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
 import {expect, it} from 'vitest';
-import IntlProvider from './IntlProvider';
-import useMessages from './useMessages';
+import IntlProvider from './IntlProvider.tsx';
+import useMessages from './useMessages.tsx';
 
 function Component() {
   const messages = useMessages();

@@ -1,17 +1,15 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
   usePathname as useNextPathname,
   useRouter as useNextRouter,
   useParams
-} from 'next/navigation';
-import React from 'react';
+} from 'next/navigation.js';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../react-client';
-import {DomainsConfig, Pathnames} from '../../routing';
-import createNavigation from './createNavigation';
+import {NextIntlClientProvider} from '../../index.react-client.tsx';
+import {DomainsConfig, Pathnames} from '../../routing.tsx';
+import createNavigation from './createNavigation.tsx';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
 
 function mockCurrentLocale(locale: string) {
   vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
@@ -228,7 +226,11 @@ describe("localePrefix: 'always'", () => {
 
       it('prefixes with a secondary locale', () => {
         invokeRouter((router) =>
-          router.prefetch('/about', {locale: 'de', kind: PrefetchKind.FULL})
+          router.prefetch('/about', {
+            locale: 'de',
+            // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+            kind: 'full'
+          })
         );
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about', {
           kind: 'full'
@@ -747,7 +749,11 @@ describe("localePrefix: 'never'", () => {
       expect(document.cookie).toContain('NEXT_LOCALE=de');
 
       invokeRouter((router) =>
-        router.prefetch('/about', {locale: 'ja', kind: PrefetchKind.AUTO})
+        router.prefetch('/about', {
+          locale: 'ja',
+          // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+          kind: 'auto'
+        })
       );
       expect(document.cookie).toContain('NEXT_LOCALE=ja');
     });

@@ -1,13 +1,12 @@
 import {UrlObject} from 'url';
-import NextLink from 'next/link';
-import {ComponentProps} from 'react';
+import {LinkProps} from 'next/link.js';
 import {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../routing/types';
+} from '../routing/types.tsx';
 
-type Href = ComponentProps<typeof NextLink>['href'];
+type Href = LinkProps['href'];
 
 function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;

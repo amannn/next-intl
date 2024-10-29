@@ -1,4 +1,4 @@
-import React, {ReactNode, Suspense} from 'react';
+import {ReactNode, Suspense} from 'react';
 import {ReactDOMServerReadableStream} from 'react-dom/server';
 // @ts-expect-error -- Not available in types
 import {renderToReadableStream as _renderToReadableStream} from 'react-dom/server.browser';

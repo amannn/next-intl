@@ -1,4 +1,4 @@
-import {notFound} from 'next/navigation';
+import {notFound} from 'next/navigation.js';
 import {cache} from 'react';
 import {
   IntlConfig,
@@ -6,10 +6,10 @@ import {
   _createIntlFormatters,
   initializeConfig
 } from 'use-intl/core';
-import {getRequestLocale} from './RequestLocale';
-import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy';
-import createRequestConfig from './createRequestConfig';
-import {GetRequestConfigParams} from './getRequestConfig';
+import {getRequestLocale} from './RequestLocale.tsx';
+import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy.tsx';
+import createRequestConfig from './createRequestConfig.tsx';
+import {GetRequestConfigParams} from './getRequestConfig.tsx';
 
 // Make sure `now` is consistent across the request in case none was configured
 function getDefaultNowImpl() {

@@ -1,16 +1,15 @@
 import {render} from '@testing-library/react';
-import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
-import {AppRouterInstance} from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import {
   usePathname as useNextPathname,
-  useRouter as useNextRouter
-} from 'next/navigation';
-import React, {useEffect} from 'react';
+  useRouter as useNextRouter,
+  type useRouter
+} from 'next/navigation.js';
+import {useEffect} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import useBaseRouter from './useBaseRouter';
+import useBaseRouter from './useBaseRouter.tsx';
 
-vi.mock('next/navigation', () => {
-  const router: AppRouterInstance = {
+vi.mock('next/navigation.js', () => {
+  const router: ReturnType<typeof useRouter> = {
     push: vi.fn(),
     replace: vi.fn(),
     prefetch: vi.fn(),
@@ -108,10 +107,14 @@ describe('unprefixed routing', () => {
 
   it('can prefetch a new locale', () => {
     callRouter((router) =>
-      router.prefetch('/about', {locale: 'es', kind: PrefetchKind.AUTO})
+      router.prefetch('/about', {
+        locale: 'es',
+        // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+        kind: 'auto'
+      })
     );
     expect(useNextRouter().prefetch).toHaveBeenCalledWith('/es/about', {
-      kind: PrefetchKind.AUTO
+      kind: 'auto'
     });
   });
 
@@ -128,7 +131,11 @@ describe('unprefixed routing', () => {
     expect(document.cookie).toContain('NEXT_LOCALE=es');
 
     callRouter((router) =>
-      router.prefetch('/about', {locale: 'it', kind: PrefetchKind.AUTO})
+      router.prefetch('/about', {
+        locale: 'it',
+        // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+        kind: 'auto'
+      })
     );
     expect(document.cookie).toContain('NEXT_LOCALE=it');
   });

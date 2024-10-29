@@ -1,4 +1,4 @@
-import type {NextResponse} from 'next/server';
+import type {NextResponse} from 'next/server.js';
 import {
   DomainsConfig,
   LocalePrefix,
@@ -6,7 +6,7 @@ import {
   LocalePrefixMode,
   Locales,
   Pathnames
-} from './types';
+} from './types.tsx';
 
 type CookieAttributes = Pick<
   NonNullable<Parameters<typeof NextResponse.prototype.cookies.set>['2']>,

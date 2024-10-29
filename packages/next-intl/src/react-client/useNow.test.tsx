@@ -1,7 +1,6 @@
 import {render, screen} from '@testing-library/react';
-import React from 'react';
 import {it} from 'vitest';
-import {NextIntlClientProvider, useNow} from '.';
+import {NextIntlClientProvider, useNow} from './index.tsx';
 
 function Component() {
   const now = useNow();

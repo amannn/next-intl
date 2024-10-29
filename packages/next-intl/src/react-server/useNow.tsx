@@ -1,8 +1,8 @@
 import type {useNow as useNowType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.tsx';
 
 export default function useNow(
-  ...[options]: Parameters<typeof useNowType>
+  options?: Parameters<typeof useNowType>[0]
 ): ReturnType<typeof useNowType> {
   if (options?.updateInterval != null) {
     console.error(

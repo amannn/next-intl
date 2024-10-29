@@ -132,8 +132,8 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   return Object.assign({}, nextConfig, nextIntlConfig);
 }
 
-module.exports = function createNextIntlPlugin(i18nPath?: string) {
+export default function createNextIntlPlugin(i18nPath?: string) {
   return function withNextIntl(nextConfig?: NextConfig) {
     return initPlugin(i18nPath, nextConfig);
   };
-};
+}

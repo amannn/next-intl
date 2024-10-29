@@ -1,23 +1,24 @@
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
-} from 'next/navigation';
-import React, {ComponentProps, forwardRef, use} from 'react';
+} from 'next/navigation.js';
+import {ComponentProps, forwardRef} from 'react';
 import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation,
   receiveRoutingConfig
-} from '../../routing/config';
+} from '../../routing/config.tsx';
 import {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import {ParametersExceptFirst, Prettify} from '../../shared/types';
-import {isLocalizableHref} from '../../shared/utils';
-import BaseLink from './BaseLink';
+} from '../../routing/types.tsx';
+import {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
+import use from '../../shared/use.tsx';
+import {isLocalizableHref} from '../../shared/utils.tsx';
+import BaseLink from './BaseLink.tsx';
 import {
   HrefOrHrefWithParams,
   HrefOrUrlObjectWithParams,
@@ -27,7 +28,7 @@ import {
   normalizeNameOrNameWithParams,
   serializeSearchParams,
   validateReceivedConfig
-} from './utils';
+} from './utils.tsx';
 
 type PromiseOrValue<Type> = Type | Promise<Type>;
 type UnwrapPromiseOrValue<Type> =
@@ -111,7 +112,7 @@ export default function createSharedNavigationFns<
     const isLocalizable = isLocalizableHref(href);
 
     const localePromiseOrValue = getLocale();
-    const curLocale =
+    const curLocale: AppLocales extends never ? string : AppLocales[number] =
       localePromiseOrValue instanceof Promise
         ? use(localePromiseOrValue)
         : localePromiseOrValue;

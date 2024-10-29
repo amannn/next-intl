@@ -1,6 +1,6 @@
 import type {useTranslations as useTranslationsType} from 'use-intl';
-import getBaseTranslator from './getTranslator';
-import useConfig from './useConfig';
+import getBaseTranslator from './getTranslator.tsx';
+import useConfig from './useConfig.tsx';
 
 export default function useTranslations(
   ...[namespace]: Parameters<typeof useTranslationsType>

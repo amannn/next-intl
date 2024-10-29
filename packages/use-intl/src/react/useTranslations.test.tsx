@@ -1,7 +1,7 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import IntlMessageFormat from 'intl-messageformat';
-import React, {ComponentProps, PropsWithChildren, ReactNode} from 'react';
+import {IntlMessageFormat} from 'intl-messageformat';
+import {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
   Formats,
@@ -9,19 +9,19 @@ import {
   IntlErrorCode,
   RichTranslationValues,
   TranslationValues
-} from '../core';
-import IntlProvider from './IntlProvider';
-import useTranslations from './useTranslations';
+} from '../core.tsx';
+import IntlProvider from './IntlProvider.tsx';
+import useTranslations from './useTranslations.tsx';
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.
 vi.mock('intl-messageformat', async (importOriginal) => {
   const ActualIntlMessageFormat: typeof IntlMessageFormat = (
     (await importOriginal()) as any
-  ).default;
+  ).IntlMessageFormat;
 
   return {
-    default: class MockIntlMessageFormat extends ActualIntlMessageFormat {
+    IntlMessageFormat: class MockIntlMessageFormat extends ActualIntlMessageFormat {
       public static invocationsByMessage: Record<string, number> = {};
 
       constructor(
@@ -1081,10 +1081,10 @@ describe('performance', () => {
     vi.mock('intl-messageformat', async (original) => {
       const ActualIntlMessageFormat: typeof IntlMessageFormat = (
         (await original()) as any
-      ).default;
+      ).IntlMessageFormat;
 
       return {
-        default: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
+        IntlMessageFormat: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
           public static invocationsByMessage: Record<string, number> = {};
 
           constructor(
