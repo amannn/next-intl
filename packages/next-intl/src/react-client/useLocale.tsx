@@ -1,11 +1,9 @@
-import {useParams} from 'next/navigation.js';
 import {useLocale as useBaseLocale} from 'use-intl/react';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants.tsx';
+import useParams from '../shared/useParams.tsx';
 
 export default function useLocale(): string {
-  // The types aren't entirely correct here. Outside of Next.js
-  // `useParams` can be called, but the return type is `null`.
-  const params = useParams() as ReturnType<typeof useParams> | null;
+  const params = useParams();
 
   let locale;
 
