@@ -1,4 +1,3 @@
-/* eslint-env node */
 import {babel} from '@rollup/plugin-babel';
 import resolve, {
   DEFAULTS as resolveDefaults
@@ -14,6 +13,7 @@ const outDir = 'dist/';
 async function buildTypes() {
   await execa('tsc', '-p tsconfig.build.json'.split(' '));
 
+  // eslint-disable-next-line no-console
   console.log('\ncreated types');
 }
 
@@ -30,8 +30,8 @@ function ignoreSideEffectImports(imports) {
     name: 'ignore-side-effect-imports',
     generateBundle(outputOptions, bundle) {
       if (imports.length === 0) return;
-      for (const fileName in bundle) {
-        const file = bundle[fileName];
+
+      for (const [fileName, file] of Object.entries(bundle)) {
         if (file.type === 'chunk' && fileName.endsWith('.js')) {
           file.code = file.code.replace(regex, '');
         }
@@ -105,6 +105,6 @@ function getBundleConfig({
 }
 
 export default function getConfig(config) {
-  const env = config.env || ['development', 'production'];
-  return env.map((env) => getBundleConfig({...config, env}));
+  const envNames = config.env || ['development', 'production'];
+  return envNames.map((env) => getBundleConfig({...config, env}));
 }

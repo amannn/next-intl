@@ -1,4 +1,4 @@
-import getBuildConfig from '../../scripts/getBuildConfig.mjs';
+import {getBuildConfig} from 'tools';
 import pkg from './package.json' with {type: 'json'};
 
 export default getBuildConfig({

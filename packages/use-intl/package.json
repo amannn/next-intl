@@ -81,6 +81,7 @@
     "rollup": "^4.18.0",
     "size-limit": "^11.1.4",
     "tinyspy": "^3.0.0",
+    "tools": "workspace:^",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },

@@ -139,6 +139,7 @@
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^11.1.4",
+    "tools": "workspace:^",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },
