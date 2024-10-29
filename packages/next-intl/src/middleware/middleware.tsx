@@ -39,38 +39,9 @@ export default function createMiddleware<
     AppLocalePrefixMode,
     AppPathnames,
     AppDomains
-  >,
-  /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
-  options?: {
-    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
-    localeCookie?: RoutingConfig<
-      AppLocales,
-      AppLocalePrefixMode,
-      AppPathnames,
-      AppDomains
-    >['localeCookie'];
-    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
-    localeDetection?: RoutingConfig<
-      AppLocales,
-      AppLocalePrefixMode,
-      AppPathnames,
-      AppDomains
-    >['localeDetection'];
-    /** @deprecated Should be passed via the first parameter `routing` instead (ideally defined with `defineRouting`) */
-    alternateLinks?: RoutingConfig<
-      AppLocales,
-      AppLocalePrefixMode,
-      AppPathnames,
-      AppDomains
-    >['alternateLinks'];
-  }
+  >
 ) {
-  const resolvedRouting = receiveRoutingConfig({
-    ...routing,
-    alternateLinks: options?.alternateLinks ?? routing.alternateLinks,
-    localeDetection: options?.localeDetection ?? routing.localeDetection,
-    localeCookie: options?.localeCookie ?? routing.localeCookie
-  });
+  const resolvedRouting = receiveRoutingConfig(routing);
 
   return function middleware(request: NextRequest) {
     let unsafeExternalPathname: string;
