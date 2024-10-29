@@ -11,8 +11,3 @@ export {default as getMessages} from './getMessages.tsx';
 export {default as getLocale} from './getLocale.tsx';
 
 export {setCachedRequestLocale as setRequestLocale} from './RequestLocaleCache.tsx';
-
-export {
-  /** @deprecated Deprecated in favor of `setRequestLocale`. */
-  setCachedRequestLocale as unstable_setRequestLocale
-} from './RequestLocaleCache.tsx';
