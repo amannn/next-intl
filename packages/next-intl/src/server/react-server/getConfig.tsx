@@ -1,4 +1,3 @@
-import {notFound} from 'next/navigation.js';
 import {cache} from 'react';
 import {
   IntlConfig,
@@ -59,20 +58,15 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     result = await result;
   }
 
-  const locale = result.locale || (await params.requestLocale);
-
-  if (!locale) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(
-        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
-      );
-    }
-    notFound();
+  if (!result.locale) {
+    throw new Error(
+      'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request'
+    );
   }
 
   return {
     ...result,
-    locale,
+    locale: result.locale,
     now: result.now || getDefaultNow(),
     timeZone: result.timeZone || getDefaultTimeZone()
   };
