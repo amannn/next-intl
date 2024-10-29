@@ -2,7 +2,6 @@ import type {IntlConfig} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
-   * The locale to use in server-only code like Server Components & friends.
    * @see https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
    **/
   locale?: IntlConfig['locale'];
