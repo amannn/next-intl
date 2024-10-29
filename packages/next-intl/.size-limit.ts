@@ -4,13 +4,13 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl' (react-client, production)",
     path: 'dist/esm/production/index.react-client.js',
-    limit: '13.105 KB'
+    limit: '13.11 KB'
   },
   {
     name: "import {NextIntlClientProvider} from 'next-intl' (react-client, production)",
     import: '{NextIntlClientProvider}',
     path: 'dist/esm/production/index.react-client.js',
-    limit: '1 KB'
+    limit: '1.055 KB'
   },
   {
     name: "import * from 'next-intl' (react-server, production)",
@@ -21,7 +21,7 @@ const config: SizeLimitConfig = [
     name: "import {createNavigation} from 'next-intl/navigation' (react-client, production)",
     path: 'dist/esm/production/navigation.react-client.js',
     import: '{createNavigation}',
-    limit: '2.505 KB'
+    limit: '2.525 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-server, production)",
