@@ -2,7 +2,7 @@
   "name": "example-app-router-mixed-routing",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "lint": "eslint src && tsc && prettier src --check",
     "test": "playwright test",
     "build": "next build",
