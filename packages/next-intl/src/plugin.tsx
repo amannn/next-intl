@@ -13,8 +13,6 @@ function withExtensions(localPath: string) {
   ];
 }
 
-let hasWarnedForDeprecatedI18nConfig = false;
-
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -40,25 +38,6 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       ...withExtensions('./src/i18n/request')
     ]) {
       if (pathExists(candidate)) {
-        return candidate;
-      }
-    }
-
-    for (const candidate of [
-      ...withExtensions('./i18n'),
-      ...withExtensions('./src/i18n')
-    ]) {
-      if (pathExists(candidate)) {
-        if (!hasWarnedForDeprecatedI18nConfig) {
-          console.warn(
-            `\n[next-intl] Reading request configuration from ${candidate} is deprecated, please see https://next-intl-docs.vercel.app/blog/next-intl-3-22#i18n-request — you can either move your configuration to ./i18n/request.ts or provide a custom path in your Next.js config:
-
-const withNextIntl = createNextIntlPlugin(
-  './path/to/i18n/request.tsx'
-);\n`
-          );
-          hasWarnedForDeprecatedI18nConfig = true;
-        }
         return candidate;
       }
     }

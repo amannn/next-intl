@@ -151,7 +151,7 @@ export function receiveRoutingConfig<
   };
 }
 
-export function receiveLocaleCookie(
+function receiveLocaleCookie(
   localeCookie?: boolean | CookieAttributes
 ): InitializedLocaleCookieConfig {
   return (localeCookie ?? true)
@@ -175,7 +175,7 @@ export type LocaleCookieConfig = Omit<
 > &
   Required<Pick<CookieAttributes, 'name' | 'maxAge' | 'sameSite'>>;
 
-export function receiveLocalePrefixConfig<
+function receiveLocalePrefixConfig<
   AppLocales extends Locales,
   AppLocalePrefixMode extends LocalePrefixMode
 >(localePrefix?: LocalePrefix<AppLocales, AppLocalePrefixMode>) {
