@@ -74,6 +74,10 @@ function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
           '\n'
       );
     }
+
+    // `NextConfig['turbo']` is stable in Next.js 15. In case the
+    // experimental feature is removed in the future, we should
+    // replace this accordingly in a future major version.
     nextIntlConfig.experimental = {
       ...nextConfig?.experimental,
       turbo: {
