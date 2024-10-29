@@ -111,7 +111,8 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 1. If you use this strategy, you should adapt your matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
 2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
+3. You might want to consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference reliably.
+4. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
 
 #### Custom prefixes [#locale-prefix-custom]
 
@@ -476,7 +477,7 @@ By default, the middleware will set a cookie called `NEXT_LOCALE` that contains 
 
 By default, the cookie will be configured with the following attributes:
 
-1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 1 year so that the preference of the user is kept as long as possible.
+1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 5 hours in order to be [GDPR-compliant](#locale-cookie-gdpr) out of the box.
 2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
 3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
 
@@ -492,8 +493,8 @@ export const routing = defineRouting({
   localeCookie: {
     // Custom cookie name
     name: 'USER_LOCALE',
-    // Expire in one day
-    maxAge: 60 * 60 * 24
+    // Expire in one year
+    maxAge: 60 * 60 * 24 * 365
   }
 });
 ```
@@ -511,6 +512,19 @@ export const routing = defineRouting({
 ```
 
 Note that the cookie is only set when the user switches the locale and is not updated on every request.
+
+<Details id="locale-cookie-gdpr">
+<summary>Which `maxAge` value should I consider for GDPR compliance?</summary>
+
+The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies".
+
+In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended. To be compliant out of the box, `next-intl` sets the `maxAge` value of the cookie to 5 hours.
+
+However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider setting the `maxAge` value to a longer duration.
+
+Please note that legal requirements may vary by region, so it's advisable to verify them independently. While we strive to keep this information as up-to-date as possible, we cannot guarantee its accuracy.
+
+</Details>
 
 ### Alternate links [#alternate-links]
 

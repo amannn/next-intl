@@ -157,7 +157,7 @@ function receiveLocaleCookie(
   return (localeCookie ?? true)
     ? {
         name: 'NEXT_LOCALE',
-        maxAge: 31536000, // 1 year
+        maxAge: 5 * 60 * 60, // 5 hours
         sameSite: 'lax',
         ...(typeof localeCookie === 'object' && localeCookie)
 
