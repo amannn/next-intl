@@ -1,4 +1,3 @@
-import {UrlObject} from 'url';
 import {LinkProps} from 'next/link.js';
 import {
   LocalePrefixConfigVerbose,
@@ -24,61 +23,6 @@ function isLocalHref(href: Href) {
 
 export function isLocalizableHref(href: Href) {
   return isLocalHref(href) && !isRelativeHref(href);
-}
-
-export function localizeHref(
-  href: string,
-  locale: string,
-  curLocale: string,
-  curPathname: string,
-  prefix?: string
-): string;
-export function localizeHref(
-  href: UrlObject | string,
-  locale: string,
-  curLocale: string,
-  curPathname: string,
-  prefix?: string
-): UrlObject | string;
-export function localizeHref(
-  href: UrlObject | string,
-  locale: string,
-  curLocale: string = locale,
-  curPathname: string,
-  prefix?: string
-) {
-  if (!isLocalizableHref(href)) {
-    return href;
-  }
-
-  const isSwitchingLocale = locale !== curLocale;
-  const isPathnamePrefixed = hasPathnamePrefixed(prefix, curPathname);
-  const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
-
-  if (shouldPrefix && prefix != null) {
-    return prefixHref(href, prefix);
-  }
-
-  return href;
-}
-
-export function prefixHref(href: string, prefix: string): string;
-export function prefixHref(
-  href: UrlObject | string,
-  prefix: string
-): UrlObject | string;
-export function prefixHref(href: UrlObject | string, prefix: string) {
-  let prefixedHref;
-  if (typeof href === 'string') {
-    prefixedHref = prefixPathname(prefix, href);
-  } else {
-    prefixedHref = {...href};
-    if (href.pathname) {
-      prefixedHref.pathname = prefixPathname(prefix, href.pathname);
-    }
-  }
-
-  return prefixedHref;
 }
 
 export function unprefixPathname(pathname: string, prefix: string) {
