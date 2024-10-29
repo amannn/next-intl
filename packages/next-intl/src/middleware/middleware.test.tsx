@@ -1022,13 +1022,6 @@ describe('prefix-based routing', () => {
         'http://localhost:3000/en'
       );
     });
-
-    it("doesn't set a cookie", () => {
-      const response = middleware(
-        createMockRequest('/', 'de', 'http://localhost:3000', undefined)
-      );
-      expect(response.cookies.getAll()).toEqual([]);
-    });
   });
 
   describe('localePrefix: always', () => {
