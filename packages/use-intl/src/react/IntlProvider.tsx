@@ -14,7 +14,6 @@ type Props = IntlConfig & {
 
 export default function IntlProvider({
   children,
-  defaultTranslationValues,
   formats,
   getMessageFallback,
   locale,
@@ -50,8 +49,6 @@ export default function IntlProvider({
     () => ({
       ...initializeConfig({
         locale, // (required by provider)
-        defaultTranslationValues:
-          defaultTranslationValues || prevContext?.defaultTranslationValues,
         formats: formats || prevContext?.formats,
         getMessageFallback:
           getMessageFallback || prevContext?.getMessageFallback,
@@ -65,7 +62,6 @@ export default function IntlProvider({
     }),
     [
       cache,
-      defaultTranslationValues,
       formats,
       formatters,
       getMessageFallback,

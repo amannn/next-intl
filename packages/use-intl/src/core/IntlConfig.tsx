@@ -2,7 +2,6 @@ import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
 import type Formats from './Formats.tsx';
 import type IntlError from './IntlError.tsx';
 import type TimeZone from './TimeZone.tsx';
-import type {RichTranslationValues} from './TranslationValues.tsx';
 
 /**
  * Should be used for entry points that configure the library.
@@ -41,13 +40,6 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
   now?: Date;
   /** All messages that will be available. */
   messages?: Messages;
-  /** Global default values for translation values and rich text elements.
-   * Can be used for consistent usage or styling of rich text elements.
-   * Defaults will be overidden by locally provided values.
-   *
-   * @deprecated See https://next-intl-docs.vercel.app/docs/usage/messages#rich-text-reuse-tags
-   **/
-  defaultTranslationValues?: RichTranslationValues;
 };
 
 /**

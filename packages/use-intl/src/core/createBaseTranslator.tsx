@@ -77,8 +77,6 @@ function resolvePath(
 }
 
 function prepareTranslationValues(values: RichTranslationValues) {
-  if (Object.keys(values).length === 0) return undefined;
-
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: RichTranslationValues = {};
   Object.keys(values).forEach((key) => {
@@ -146,7 +144,6 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   cache: IntlCache;
   formatters: Formatters;
-  defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
   messagesOrError: Messages | IntlError;
 };
@@ -190,7 +187,6 @@ function createBaseTranslatorImpl<
   NestedKey extends NestedKeyOf<Messages>
 >({
   cache,
-  defaultTranslationValues,
   formats: globalFormats,
   formatters,
   getMessageFallback = defaultGetMessageFallback,
@@ -317,7 +313,7 @@ function createBaseTranslatorImpl<
         // for rich text elements since a recent minor update. This
         // needs to be evaluated in detail, possibly also in regards
         // to be able to format to parts.
-        prepareTranslationValues({...defaultTranslationValues, ...values})
+        values ? prepareTranslationValues(values) : values
       );
 
       if (formattedMessage == null) {
@@ -393,23 +389,17 @@ function createBaseTranslatorImpl<
       formats
     );
 
-    // When only string chunks are provided to the parser, only
-    // strings should be returned here. Note that we need a runtime
-    // check for this since rich text values could be accidentally
-    // inherited from `defaultTranslationValues`.
-    if (typeof result !== 'string') {
+    if (process.env.NODE_ENV !== 'production' && typeof result !== 'string') {
       const error = new IntlError(
         IntlErrorCode.FORMATTING_ERROR,
-        process.env.NODE_ENV !== 'production'
-          ? "`t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
-          : undefined
+        "`t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
       );
 
       onError(error);
       return getMessageFallback({error, key, namespace});
     }
 
-    return result;
+    return result as string;
   };
 
   translateFn.raw = (

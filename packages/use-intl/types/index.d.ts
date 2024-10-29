@@ -1,3 +1,9 @@
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production';
+  }
+}
+
 // This type is intended to be overridden
 // by the consumer for optional type safety of messages
 declare interface IntlMessages extends Record<string, any> {}

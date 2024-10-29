@@ -19,7 +19,6 @@ export default function useTranslationsImpl<
 ) {
   const {
     cache,
-    defaultTranslationValues,
     formats: globalFormats,
     formatters,
     getMessageFallback,
@@ -56,7 +55,6 @@ export default function useTranslationsImpl<
         formatters,
         getMessageFallback,
         messages: allMessages,
-        defaultTranslationValues,
         namespace,
         onError,
         formats: globalFormats,
@@ -68,7 +66,6 @@ export default function useTranslationsImpl<
       formatters,
       getMessageFallback,
       allMessages,
-      defaultTranslationValues,
       namespace,
       onError,
       globalFormats,
