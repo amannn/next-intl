@@ -29,10 +29,10 @@ import {
 } from './utils.tsx';
 
 export default function createMiddleware<
-  AppLocales extends Locales,
-  AppLocalePrefixMode extends LocalePrefixMode = 'always',
-  AppPathnames extends Pathnames<AppLocales> = never,
-  AppDomains extends DomainsConfig<AppLocales> = never
+  const AppLocales extends Locales,
+  const AppLocalePrefixMode extends LocalePrefixMode = 'always',
+  const AppPathnames extends Pathnames<AppLocales> = never,
+  const AppDomains extends DomainsConfig<AppLocales> = never
 >(
   routing: RoutingConfig<
     AppLocales,
