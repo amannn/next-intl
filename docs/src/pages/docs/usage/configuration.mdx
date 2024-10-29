@@ -126,15 +126,14 @@ These props are inherited if you're rendering `NextIntlClientProvider` from a Se
 In contrast, these props can be provided as necessary:
 
 1. `messages` (see [Internationalization in Client Components](/docs/environments/server-client-components#using-internationalization-in-client-components))
-2. `defaultTranslationValues`
-3. `onError` and `getMessageFallback`
+2. `onError` and `getMessageFallback`
 
 Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
 
 <Details id="nextintlclientprovider-non-serializable-props">
 <summary>How can I provide non-serializable props like `onError` to `NextIntlClientProvider`?</summary>
 
-React limits the types of props that can be passed to Client Components to the ones that are [serializable](https://react.dev/reference/rsc/use-client#serializable-types). Since `onError`, `getMessageFallback` and `defaultTranslationValues` can receive functions, these configuration options can't be automatically inherited by the client side.
+React limits the types of props that can be passed to Client Components to the ones that are [serializable](https://react.dev/reference/rsc/use-client#serializable-types). Since `onError` and `getMessageFallback` can receive functions, these configuration options can't be automatically inherited by the client side.
 
 In order to define these values on the client side, you can add a provider that defines these props:
 
@@ -523,54 +522,6 @@ function Component() {
 ```
 
 Formats are automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
-
-## Default translation values (deprecated) [#default-translation-values]
-
-<Callout>
-  This feature is deprecated and will be removed in the next major version of `next-intl` ([alternative](/docs/usage/messages#rich-text-reuse-tags)).
-
-</Callout>
-
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
-
-<Tabs items={['i18n/request.ts', 'Provider']}>
-<Tabs.Tab>
-
-```tsx filename="i18n/request.tsx"
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async () => {
-  return {
-    defaultTranslationValues: {
-      important: (chunks) => <b>{chunks}</b>,
-      value: 123
-    }
-
-    // ...
-  };
-});
-```
-
-Note that `defaultTranslationValues` are not automatically inherited by Client Components. If you want to make this available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
-
-</Tabs.Tab>
-<Tabs.Tab>
-
-```tsx
-<NextIntlClientProvider
-  defaultTranslationValues={{
-    important: (chunks) => <b>{chunks}</b>,
-    value: 123
-  }}
->
-  ...
-</NextIntlClientProvider>
-```
-
-Note that `NextIntlClientProvider` is a Client Component, therefore if you render it from a Server Component, the props need to be serializable across the server/client boundary (see: [How can I provide non-serializable props to `NextIntlClientProvider`](#nextintlclientprovider-non-serializable-props)).
-
-</Tabs.Tab>
-</Tabs>
 
 ## Error handling (`onError` & `getMessageFallback`) [#error-handling]
 

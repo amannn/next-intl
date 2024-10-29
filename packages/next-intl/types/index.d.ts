@@ -1,3 +1,9 @@
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: 'development' | 'production';
+  }
+}
+
 declare interface IntlMessages extends Record<string, any> {}
 
 // Temporarly copied here until the "es2020.intl" lib is published.
