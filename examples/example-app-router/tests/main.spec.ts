@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
@@ -68,7 +68,7 @@ it('sets a cookie', async ({page}) => {
   expect(value).toContain('NEXT_LOCALE=en;');
   expect(value).toContain('Path=/;');
   expect(value).toContain('SameSite=lax');
-  expect(value).toContain('Max-Age=31536000;');
+  expect(value).toContain('Max-Age=18000;');
   expect(value).toContain('Expires=');
   expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
 
