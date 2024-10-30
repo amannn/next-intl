@@ -150,7 +150,7 @@ describe('getMessages', () => {
     const messages = await getMessages();
 
     // @ts-expect-error
-    messages.about();
+    messages();
 
     // Valid
     return messages.about;
