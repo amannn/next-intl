@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
@@ -58,19 +58,13 @@ it('can be used to localize the page', async ({page}) => {
   page.getByRole('heading', {name: 'next-intl Beispiel'});
 });
 
-it('sets a cookie', async ({page}) => {
+it('sets a cookie when necessary', async ({page}) => {
   function getCookieValue() {
     return page.evaluate(() => document.cookie);
   }
 
   const response = await page.goto('/en');
-  const value = await response?.headerValue('set-cookie');
-  expect(value).toContain('NEXT_LOCALE=en;');
-  expect(value).toContain('Path=/;');
-  expect(value).toContain('SameSite=lax');
-  expect(value).toContain('Max-Age=31536000;');
-  expect(value).toContain('Expires=');
-  expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
+  expect(await response?.headerValue('set-cookie')).toBe(null);
 
   await page
     .getByRole('combobox', {name: 'Change language'})
@@ -91,6 +85,18 @@ it('sets a cookie', async ({page}) => {
     .selectOption({value: 'de'});
   await expect(page).toHaveURL('/de');
   expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
+});
+
+it("sets a cookie when requesting a locale that doesn't match the `accept-language` header", async ({
+  page
+}) => {
+  const response = await page.goto('/de');
+  const value = await response?.headerValue('set-cookie');
+  expect(value).toContain('NEXT_LOCALE=de;');
+  expect(value).toContain('Path=/;');
+  expect(value).toContain('SameSite=lax');
+  expect(value).toContain('Max-Age=18000;');
+  expect(value).toContain('Expires=');
 });
 
 it('serves a robots.txt', async ({page}) => {

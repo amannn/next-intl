@@ -365,7 +365,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=31536000',
+          'max-age=18000',
           'sameSite=lax',
           'path=/base/path'
         ].join(';') + ';'
