@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name: Build, lint, and test
-    runs-on: macos-latest
+    runs-on: macos-15
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
