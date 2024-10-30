@@ -1,4 +1,4 @@
-import {test as it, expect, chromium} from '@playwright/test';
+import {chromium, expect, test as it} from '@playwright/test';
 
 it('can use config based on the default locale on an unknown domain', async ({
   page
