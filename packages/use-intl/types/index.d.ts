@@ -6,7 +6,7 @@ declare namespace NodeJS {
 
 // This type is intended to be overridden
 // by the consumer for optional type safety of messages
-declare interface IntlMessages extends Record<string, any> {}
+declare interface IntlMessages extends Record<string, IntlMessages | string> {}
 
 // This type is intended to be overridden
 // by the consumer for optional type safety of formats

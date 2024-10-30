@@ -1,10 +1,10 @@
 import {cache} from 'react';
-import type {AbstractIntlMessages} from 'use-intl';
+import type {useMessages as useMessagesType} from 'use-intl';
 import getConfig from './getConfig.tsx';
 
 export function getMessagesFromConfig(
   config: Awaited<ReturnType<typeof getConfig>>
-): AbstractIntlMessages {
+): ReturnType<typeof useMessagesType> {
   if (!config.messages) {
     throw new Error(
       'No messages found. Have you configured them correctly? See https://next-intl-docs.vercel.app/docs/configuration#messages'
@@ -19,8 +19,6 @@ async function getMessagesCachedImpl(locale?: string) {
 }
 const getMessagesCached = cache(getMessagesCachedImpl);
 
-export default async function getMessages(opts?: {
-  locale?: string;
-}): Promise<AbstractIntlMessages> {
+export default async function getMessages(opts?: {locale?: string}) {
   return getMessagesCached(opts?.locale);
 }

@@ -1,4 +1,6 @@
 import {notFound} from 'next/navigation';
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages} from 'next-intl/server';
 import {ReactNode} from 'react';
 import {routing} from '@/i18n/routing';
 
@@ -13,12 +15,20 @@ export default async function LocaleLayout({children, params}: Props) {
     notFound();
   }
 
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
   return (
     <html lang={params.locale}>
       <head>
         <title>next-intl</title>
       </head>
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }

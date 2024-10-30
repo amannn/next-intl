@@ -4,7 +4,7 @@ declare namespace NodeJS {
   }
 }
 
-declare interface IntlMessages extends Record<string, any> {}
+declare interface IntlMessages extends Record<string, IntlMessages | string> {}
 
 // Temporarly copied here until the "es2020.intl" lib is published.
 declare namespace Intl {

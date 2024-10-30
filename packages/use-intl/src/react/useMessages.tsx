@@ -1,7 +1,6 @@
-import {AbstractIntlMessages} from '../core.tsx';
 import useIntlContext from './useIntlContext.tsx';
 
-export default function useMessages(): AbstractIntlMessages {
+export default function useMessages(): IntlMessages {
   const context = useIntlContext();
 
   if (!context.messages) {
