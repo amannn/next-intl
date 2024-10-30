@@ -346,6 +346,13 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('sets a cookie when changing to the default locale', () => {
+      const response = middleware(
+        createMockRequest('/en', 'en', undefined, 'de')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')?.value).toBe('en');
+    });
+
     it('always provides the locale via a request header, even if a cookie exists with the correct value (see https://github.com/amannn/next-intl/discussions/446)', () => {
       middleware(createMockRequest('/', 'en', 'http://localhost:3000', 'en'));
       expect(MockedNextResponse.rewrite).toHaveBeenCalled();

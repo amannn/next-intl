@@ -42,9 +42,11 @@ export default function syncCookie<
     domain?.locales || routing.locales,
     routing.defaultLocale
   );
-  const hasOutdatedCookie = request.cookies.get(name)?.value !== locale;
+  const hasLocaleCookie = request.cookies.has(name);
+  const hasOutdatedCookie =
+    hasLocaleCookie && request.cookies.get(name)?.value !== locale;
 
-  if (acceptLanguageLocale !== locale && hasOutdatedCookie) {
+  if (hasLocaleCookie ? hasOutdatedCookie : acceptLanguageLocale !== locale) {
     response.cookies.set(name, locale, {
       path: request.nextUrl.basePath || undefined,
       ...rest
