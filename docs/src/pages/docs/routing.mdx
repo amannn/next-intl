@@ -110,9 +110,8 @@ In this case, requests for all locales will be rewritten to have the locale only
 **Note that:**
 
 1. If you use this strategy, you should adapt your matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
-2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. You might want to consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference reliably.
-4. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
+2. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
+3. You can consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference across sessions.
 
 #### Custom prefixes [#locale-prefix-custom]
 
@@ -473,7 +472,7 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 ### Locale cookie [#locale-cookie]
 
-By default, the middleware will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for future requests.
+If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for future requests.
 
 By default, the cookie will be configured with the following attributes:
 
@@ -511,8 +510,6 @@ export const routing = defineRouting({
 });
 ```
 
-Note that the cookie is only set when the user switches the locale and is not updated on every request.
-
 <Details id="locale-cookie-gdpr">
 <summary>Which `maxAge` value should I consider for GDPR compliance?</summary>
 
@@ -520,7 +517,7 @@ The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/arti
 
 In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended. To be compliant out of the box, `next-intl` sets the `maxAge` value of the cookie to 5 hours.
 
-However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider setting the `maxAge` value to a longer duration.
+However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
 
 Please note that legal requirements may vary by region, so it's advisable to verify them independently. While we strive to keep this information as up-to-date as possible, we cannot guarantee its accuracy.
 

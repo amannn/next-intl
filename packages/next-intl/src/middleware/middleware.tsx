@@ -299,9 +299,7 @@ export default function createMiddleware<
       }
     }
 
-    if (resolvedRouting.localeDetection && resolvedRouting.localeCookie) {
-      syncCookie(request, response, locale, resolvedRouting.localeCookie);
-    }
+    syncCookie(request, response, locale, resolvedRouting, domain);
 
     if (
       resolvedRouting.localePrefix.mode !== 'never' &&
