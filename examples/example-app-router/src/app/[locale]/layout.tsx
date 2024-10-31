@@ -1,4 +1,5 @@
 import {notFound} from 'next/navigation';
+import {Locale, isValidLocale} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
@@ -6,7 +7,7 @@ import {routing} from '@/i18n/routing';
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: {locale: Locale};
 };
 
 export function generateStaticParams() {
@@ -27,8 +28,7 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!isValidLocale(routing.locales, locale)) {
     notFound();
   }
 
