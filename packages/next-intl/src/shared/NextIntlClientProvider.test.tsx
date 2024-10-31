@@ -1,4 +1,5 @@
 import {render, screen} from '@testing-library/react';
+import type {Locale} from 'use-intl';
 import {it, vi} from 'vitest';
 import {
   NextIntlClientProvider,
@@ -16,7 +17,7 @@ function Component() {
   return <>{t('message', {price: 29000.5})}</>;
 }
 
-function TestProvider({locale}: {locale?: string}) {
+function TestProvider({locale}: {locale?: Locale}) {
   return (
     <NextIntlClientProvider
       locale={locale}

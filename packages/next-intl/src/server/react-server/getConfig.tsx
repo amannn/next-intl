@@ -1,6 +1,7 @@
 import {cache} from 'react';
 import {
   IntlConfig,
+  type Locale,
   _createCache,
   _createIntlFormatters,
   initializeConfig
@@ -24,7 +25,7 @@ const getDefaultTimeZone = cache(getDefaultTimeZoneImpl);
 
 async function receiveRuntimeConfigImpl(
   getConfig: typeof createRequestConfig,
-  localeOverride?: string
+  localeOverride?: Locale
 ) {
   if (
     process.env.NODE_ENV !== 'production' &&
@@ -76,7 +77,7 @@ const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 const getFormatters = cache(_createIntlFormatters);
 const getCache = cache(_createCache);
 
-async function getConfigImpl(localeOverride?: string): Promise<
+async function getConfigImpl(localeOverride?: Locale): Promise<
   IntlConfig & {
     getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
     now: NonNullable<IntlConfig['now']>;

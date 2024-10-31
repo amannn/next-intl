@@ -1,4 +1,5 @@
 import {ReactElement} from 'react';
+import {Locale} from './AppConfig.tsx';
 import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
 import Formats from './Formats.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
@@ -70,7 +71,7 @@ function calculateRelativeTimeValue(
 }
 
 type Props = {
-  locale: string;
+  locale: Locale;
   timeZone?: TimeZone;
   onError?(error: IntlError): void;
   formats?: Formats;

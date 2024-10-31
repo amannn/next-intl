@@ -1,8 +1,8 @@
 import {cache} from 'react';
-import {createFormatter} from 'use-intl/core';
+import {type Locale, createFormatter} from 'use-intl/core';
 import getConfig from './getConfig.tsx';
 
-async function getFormatterCachedImpl(locale?: string) {
+async function getFormatterCachedImpl(locale?: Locale) {
   const config = await getConfig(locale);
   return createFormatter(config);
 }
@@ -15,7 +15,7 @@ const getFormatterCached = cache(getFormatterCachedImpl);
  * you can override it by passing in additional options.
  */
 export default async function getFormatter(opts?: {
-  locale?: string;
+  locale?: Locale;
 }): Promise<ReturnType<typeof createFormatter>> {
   return getFormatterCached(opts?.locale);
 }

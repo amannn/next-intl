@@ -4,15 +4,16 @@ import {
   useRouter as useNextRouter,
   useParams
 } from 'next/navigation.js';
+import type {Locale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../index.react-client.tsx';
+import {NextIntlClientProvider, useLocale} from '../../index.react-client.tsx';
 import {DomainsConfig, Pathnames} from '../../routing.tsx';
 import createNavigation from './createNavigation.tsx';
 
 vi.mock('next/navigation.js');
 
-function mockCurrentLocale(locale: string) {
-  vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
+function mockCurrentLocale(locale: Locale) {
+  vi.mocked(useParams<{locale: Locale}>).mockImplementation(() => ({
     locale
   }));
 }
@@ -169,14 +170,18 @@ describe("localePrefix: 'always'", () => {
       });
 
       it('prefixes with a secondary locale', () => {
-        // Being able to accept a string and not only a strictly typed locale is
-        // important in order to be able to use a result from `useLocale()`.
-        // This is less relevant for `Link`, but this should be in sync across
-        // al navigation APIs (see https://github.com/amannn/next-intl/issues/1377)
-        const locale = 'de' as string;
-
-        invokeRouter((router) => router[method]('/about', {locale}));
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          const router = useRouter();
+          router.push('/about', {locale});
+          return null;
+        }
+        render(<Component />);
       });
 
       it('passes through unknown options to the Next.js router', () => {

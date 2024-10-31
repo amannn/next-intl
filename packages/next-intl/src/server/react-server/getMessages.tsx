@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import type {useMessages as useMessagesType} from 'use-intl';
+import type {Locale, useMessages as useMessagesType} from 'use-intl';
 import getConfig from './getConfig.tsx';
 
 export function getMessagesFromConfig(
@@ -13,12 +13,12 @@ export function getMessagesFromConfig(
   return config.messages;
 }
 
-async function getMessagesCachedImpl(locale?: string) {
+async function getMessagesCachedImpl(locale?: Locale) {
   const config = await getConfig(locale);
   return getMessagesFromConfig(config);
 }
 const getMessagesCached = cache(getMessagesCachedImpl);
 
-export default async function getMessages(opts?: {locale?: string}) {
+export default async function getMessages(opts?: {locale?: Locale}) {
   return getMessagesCached(opts?.locale);
 }

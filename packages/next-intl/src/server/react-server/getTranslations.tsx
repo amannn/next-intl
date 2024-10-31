@@ -1,6 +1,7 @@
 import {ReactNode, cache} from 'react';
 import {
   Formats,
+  Locale,
   MarkupTranslationValues,
   MessageKeys,
   NamespaceKeys,
@@ -129,7 +130,7 @@ function getTranslations<
     NestedKeyOf<IntlMessages>
   > = never
 >(opts?: {
-  locale: string;
+  locale: Locale;
   namespace?: NestedKey;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
@@ -217,9 +218,9 @@ async function getTranslations<
     IntlMessages,
     NestedKeyOf<IntlMessages>
   > = never
->(namespaceOrOpts?: NestedKey | {locale: string; namespace?: NestedKey}) {
+>(namespaceOrOpts?: NestedKey | {locale: Locale; namespace?: NestedKey}) {
   let namespace: NestedKey | undefined;
-  let locale: string | undefined;
+  let locale: Locale | undefined;
 
   if (typeof namespaceOrOpts === 'string') {
     namespace = namespaceOrOpts;

@@ -32,14 +32,8 @@ export default function createNavigation<
         AppDomains
       >
 ) {
-  type Locale = AppLocales extends never ? string : AppLocales[number];
-
-  function getLocale() {
-    return getServerLocale() as Promise<Locale>;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {config, ...fns} = createSharedNavigationFns(getLocale, routing);
+  const {config, ...fns} = createSharedNavigationFns(getServerLocale, routing);
 
   function notSupported(hookName: string) {
     return () => {

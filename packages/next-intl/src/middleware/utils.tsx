@@ -1,3 +1,4 @@
+import type {Locale} from 'use-intl';
 import {
   DomainConfig,
   DomainsConfig,
@@ -254,7 +255,7 @@ export function getHost(requestHeaders: Headers) {
 }
 
 export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
-  locale: string,
+  locale: Locale,
   domain: DomainConfig<AppLocales>
 ) {
   return (
@@ -266,7 +267,7 @@ export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
 
 export function getBestMatchingDomain<AppLocales extends Locales>(
   curHostDomain: DomainConfig<AppLocales> | undefined,
-  locale: string,
+  locale: Locale,
   domainsConfig: DomainsConfig<AppLocales>
 ) {
   let domainConfig;

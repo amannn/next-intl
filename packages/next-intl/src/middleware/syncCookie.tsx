@@ -1,4 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server.js';
+import type {Locale} from 'use-intl';
 import {
   InitializedLocaleCookieConfig,
   ResolvedRoutingConfig
@@ -20,7 +21,7 @@ export default function syncCookie<
 >(
   request: NextRequest,
   response: NextResponse,
-  locale: string,
+  locale: Locale,
   routing: Pick<
     ResolvedRoutingConfig<
       AppLocales,

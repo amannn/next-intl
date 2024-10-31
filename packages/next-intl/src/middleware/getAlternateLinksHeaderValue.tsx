@@ -59,7 +59,7 @@ export default function getAlternateLinksHeaderValue<
     routing.localePrefix
   );
 
-  function getAlternateEntry(url: URL, locale: string) {
+  function getAlternateEntry(url: URL, locale: AppLocales[number]) {
     url.pathname = normalizeTrailingSlash(url.pathname);
 
     if (request.nextUrl.basePath) {

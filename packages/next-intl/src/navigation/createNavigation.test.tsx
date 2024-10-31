@@ -6,7 +6,9 @@ import {
   useParams as nextUseParams
 } from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
+import {Locale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {useLocale} from '../index.react-server.tsx';
 import {DomainsConfig, Pathnames, defineRouting} from '../routing.tsx';
 import createNavigationClient from './react-client/createNavigation.tsx';
 import createNavigationServer from './react-server/createNavigation.tsx';
@@ -24,7 +26,7 @@ vi.mock('next/navigation.js', async () => {
 });
 vi.mock('./react-server/getServerLocale');
 
-function mockCurrentLocale(locale: string) {
+function mockCurrentLocale(locale: Locale) {
   // Enable synchronous rendering without having to suspend
   const value = locale;
   const promise = Promise.resolve(value);
@@ -33,7 +35,7 @@ function mockCurrentLocale(locale: string) {
 
   vi.mocked(getServerLocale).mockImplementation(() => promise);
 
-  vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
+  vi.mocked(nextUseParams<{locale: Locale}>).mockImplementation(() => ({
     locale
   }));
 }
@@ -214,6 +216,14 @@ describe.each([
         expect(markup).toContain('href="/en/about"');
         expect(consoleSpy).not.toHaveBeenCalled();
       });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return <Link href="/about" locale={locale} />;
+        }
+        render(<Component />);
+      });
     });
 
     describe('getPathname', () => {
@@ -305,6 +315,17 @@ describe.each([
           true
         );
       });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return getPathname({
+            locale,
+            href: '/about'
+          });
+        }
+        render(<Component />);
+      });
     });
 
     describe.each([
@@ -352,6 +373,14 @@ describe.each([
         redirectFn('/');
         // @ts-expect-error -- Missing locale
         redirectFn({pathname: '/about'});
+      });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return redirectFn({href: '/about', locale});
+        }
+        render(<Component />);
       });
     });
   });

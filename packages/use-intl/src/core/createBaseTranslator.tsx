@@ -1,6 +1,7 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {ReactNode, cloneElement, isValidElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import {Locale} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import {InitializedIntlConfig} from './IntlConfig.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
@@ -41,7 +42,7 @@ function createMessageFormatter(
 }
 
 function resolvePath(
-  locale: string,
+  locale: Locale,
   messages: AbstractIntlMessages | undefined,
   key: string,
   namespace?: string
@@ -103,7 +104,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 }
 
 function getMessagesOrError<Messages extends AbstractIntlMessages>(
-  locale: string,
+  locale: Locale,
   messages?: Messages,
   namespace?: string,
   onError: (error: IntlError) => void = defaultOnError

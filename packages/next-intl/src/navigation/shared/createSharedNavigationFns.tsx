@@ -3,6 +3,7 @@ import {
   redirect as nextRedirect
 } from 'next/navigation.js';
 import {ComponentProps, forwardRef} from 'react';
+import type {Locale} from 'use-intl';
 import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation,
@@ -31,8 +32,6 @@ import {
 } from './utils.tsx';
 
 type PromiseOrValue<Type> = Type | Promise<Type>;
-type UnwrapPromiseOrValue<Type> =
-  Type extends Promise<infer Value> ? Value : Type;
 
 /**
  * Shared implementations for `react-server` and `react-client`
@@ -43,9 +42,7 @@ export default function createSharedNavigationFns<
   const AppLocalePrefixMode extends LocalePrefixMode = 'always',
   const AppDomains extends DomainsConfig<AppLocales> = never
 >(
-  getLocale: () => PromiseOrValue<
-    AppLocales extends never ? string : AppLocales[number]
-  >,
+  getLocale: () => PromiseOrValue<Locale>,
   routing?: [AppPathnames] extends [never]
     ?
         | RoutingConfigSharedNavigation<
@@ -61,8 +58,6 @@ export default function createSharedNavigationFns<
         AppDomains
       >
 ) {
-  type Locale = UnwrapPromiseOrValue<ReturnType<typeof getLocale>>;
-
   const config = receiveRoutingConfig(routing || {});
   if (process.env.NODE_ENV !== 'production') {
     validateReceivedConfig(config);
@@ -92,7 +87,7 @@ export default function createSharedNavigationFns<
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#link */
-      locale?: string;
+      locale?: Locale;
     }
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
@@ -112,7 +107,7 @@ export default function createSharedNavigationFns<
     const isLocalizable = isLocalizableHref(href);
 
     const localePromiseOrValue = getLocale();
-    const curLocale: AppLocales extends never ? string : AppLocales[number] =
+    const curLocale =
       localePromiseOrValue instanceof Promise
         ? use(localePromiseOrValue)
         : localePromiseOrValue;
@@ -148,10 +143,9 @@ export default function createSharedNavigationFns<
             ? {
                 domains: (config as any).domains.reduce(
                   (
-                    acc: Record<Locale, string>,
+                    acc: Record<string, Locale>,
                     domain: DomainConfig<AppLocales>
                   ) => {
-                    // @ts-expect-error -- This is ok
                     acc[domain.domain] = domain.defaultLocale;
                     return acc;
                   },
@@ -194,7 +188,7 @@ export default function createSharedNavigationFns<
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
-      locale: string;
+      locale: Locale;
     } & DomainConfigForAsNeeded,
     /** @private Removed in types returned below */
     _forcePrefix?: boolean
