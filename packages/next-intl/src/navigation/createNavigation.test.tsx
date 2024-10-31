@@ -111,6 +111,19 @@ describe.each([
       localePrefix: 'always'
     });
 
+    describe('createNavigation', () => {
+      it('ensures `defaultLocale` is in `locales`', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () =>
+          createNavigation({
+            locales,
+            // @ts-expect-error
+            defaultLocale: 'zh',
+            localePrefix: 'always'
+          });
+      });
+    });
+
     describe('Link', () => {
       it('renders a prefix when currently on the default locale', () => {
         const markup = renderToString(<Link href="/about">About</Link>);
