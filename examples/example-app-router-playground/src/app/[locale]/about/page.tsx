@@ -1,6 +1,8 @@
+import {Locale} from 'next-intl';
+
 type Props = {
   params: {
-    locale: string;
+    locale: Locale;
   };
 };
 

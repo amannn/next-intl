@@ -1,5 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
+import {Locale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -12,7 +13,7 @@ import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: {locale: Locale};
 };
 
 export async function generateMetadata({
@@ -29,7 +30,7 @@ export async function generateMetadata({
     description: t('description'),
     other: {
       currentYear: formatter.dateTime(now, {year: 'numeric'}),
-      timeZone: timeZone || 'N/A'
+      timeZone
     }
   };
 }

@@ -1,9 +1,10 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {Locale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 
 type Props = {
   params: {
-    locale: string;
+    locale: Locale;
   };
 };
 
