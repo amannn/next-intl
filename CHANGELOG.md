@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.24.0 (2024-10-31)
+
+### Features
+
+* Add support for React 19 RC ([#1490](https://github.com/amannn/next-intl/issues/1490)) ([2dea022](https://github.com/amannn/next-intl/commit/2dea02271f79e183dfd18a3c77112a79e1fce581)) – by @amannn
+
 ## 3.23.5 (2024-10-24)
 
 ### Bug Fixes
