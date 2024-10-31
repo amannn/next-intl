@@ -8,14 +8,6 @@ declare namespace NodeJS {
 // by the consumer for optional type safety of messages
 declare interface IntlMessages extends Record<string, any> {}
 
-// This type is intended to be overridden
-// by the consumer for optional type safety of formats
-declare interface IntlFormats {
-  dateTime: any;
-  number: any;
-  list: any;
-}
-
 // Temporarly copied here until the "es2020.intl" lib is published.
 
 declare namespace Intl {

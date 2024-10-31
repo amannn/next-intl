@@ -10,6 +10,11 @@ export const formats = {
       dateStyle: 'medium',
       timeStyle: 'short',
       hour12: false
+    },
+    long: {
+      dateStyle: 'full',
+      timeStyle: 'long',
+      hour12: false
     }
   },
   number: {
