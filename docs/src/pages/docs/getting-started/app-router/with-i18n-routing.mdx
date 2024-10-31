@@ -295,12 +295,12 @@ export function generateStaticParams() {
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {setRequestLocale} from 'next-intl/server';
+import {isValidLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({children, params: {locale}}) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!isValidLocale(routing.locales, locale)) {
     notFound();
   }
 
