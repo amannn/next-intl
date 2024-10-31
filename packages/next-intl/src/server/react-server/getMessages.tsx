@@ -19,6 +19,8 @@ async function getMessagesCachedImpl(locale?: Locale) {
 }
 const getMessagesCached = cache(getMessagesCachedImpl);
 
-export default async function getMessages(opts?: {locale?: Locale}) {
+export default async function getMessages(opts?: {
+  locale?: Locale;
+}): Promise<ReturnType<typeof useMessagesType>> {
   return getMessagesCached(opts?.locale);
 }

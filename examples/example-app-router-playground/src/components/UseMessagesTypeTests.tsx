@@ -2,7 +2,7 @@
 import {useMessages} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
-export async function GetMessages() {
+export async function AsyncComponent() {
   const messages = await getMessages();
 
   // Valid
@@ -16,7 +16,7 @@ export async function GetMessages() {
   messages.Index.unknown;
 }
 
-export function UseMessages() {
+export function RegularComponent() {
   const messages = useMessages();
 
   // Valid

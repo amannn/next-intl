@@ -1,4 +1,5 @@
 import {ReactNode} from 'react';
+import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import TranslationValues, {
@@ -27,10 +28,7 @@ import NestedValueOf from './utils/NestedValueOf.tsx';
  * (e.g. `namespace.Component`).
  */
 export default function createTranslator<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >({
   _cache = createCache(),
   _formatters = createIntlFormatters(_cache),
@@ -39,8 +37,8 @@ export default function createTranslator<
   namespace,
   onError = defaultOnError,
   ...rest
-}: Omit<IntlConfig<IntlMessages>, 'messages'> & {
-  messages?: IntlConfig<IntlMessages>['messages'];
+}: Omit<IntlConfig<Messages>, 'messages'> & {
+  messages?: IntlConfig<Messages>['messages'];
   namespace?: NestedKey;
   /** @private */
   _formatters?: Formatters;
@@ -52,12 +50,12 @@ export default function createTranslator<
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -72,12 +70,12 @@ export default function createTranslator<
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -92,12 +90,12 @@ export default function createTranslator<
   markup<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -112,12 +110,12 @@ export default function createTranslator<
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -130,12 +128,12 @@ export default function createTranslator<
   has<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -148,7 +146,7 @@ export default function createTranslator<
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
   return createTranslatorImpl<
-    {'!': IntlMessages},
+    {'!': Messages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
   >(
     {

@@ -29,3 +29,9 @@ export type FormatNames = AppConfig extends {
       number: string;
       list: string;
     };
+
+export type Messages = AppConfig extends {
+  Messages: infer AppMessages;
+}
+  ? AppMessages
+  : Record<string, any>;

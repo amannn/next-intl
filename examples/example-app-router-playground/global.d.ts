@@ -7,12 +7,6 @@ declare module 'next-intl' {
   interface AppConfig {
     Locale: (typeof routing.locales)[number];
     Formats: typeof formats;
+    Messages: typeof en;
   }
-}
-
-type Messages = typeof en;
-
-declare global {
-  // Use type safe message keys with `next-intl`
-  interface IntlMessages extends Messages {}
 }
