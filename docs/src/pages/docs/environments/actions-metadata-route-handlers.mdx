@@ -156,6 +156,7 @@ Next.js supports providing alternate URLs per language via the [`alternates` ent
 
 ```tsx filename="app/sitemap.ts" {4-5,8-9}
 import {MetadataRoute} from 'next';
+import {Locale} from 'next-intl';
 import {routing, getPathname} from '@/i18n/routing';
 
 // Adapt this as necessary
@@ -179,7 +180,7 @@ function getEntry(href: Href) {
   };
 }
 
-function getUrl(href: Href, locale: (typeof routing.locales)[number]) {
+function getUrl(href: Href, locale: Locale) {
   const pathname = getPathname({locale, href});
   return host + pathname;
 }

@@ -1,12 +1,117 @@
+import Details from '@/components/Details';
+import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
 
 # TypeScript integration
 
 `next-intl` integrates seamlessly with TypeScript right out of the box, requiring no additional setup.
 
-However, you can optionally provide supplemental type definitions for your messages and formats to enable autocompletion and improve type safety.
+However, you can optionally provide supplemental definitions to augment the types that `next-intl` works with, enabling improved autocompletion and type safety across your app.
 
-## Messages
+```tsx filename="global.d.ts"
+import 'next-intl';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+  }
+}
+```
+
+Type augmentation is available for:
+
+- [`Locale`](#locale)
+- [`Messages`](#messages)
+- [`Formats`](#formats)
+
+## `Locale`
+
+Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are received by `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
+
+```tsx
+// ✅ 'en' | 'de'
+const locale = useLocale();
+```
+
+To enable this validation, you can adapt `AppConfig` as follows:
+
+<Tabs items={['With i18n routing', 'Without i18n routing']}>
+<Tabs.Tab>
+
+```tsx filename="global.d.ts"
+import 'next-intl';
+import {routing} from '@/i18n/routing';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof routing.locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```tsx filename="global.d.ts"
+import 'next-intl';
+
+// Potentially imported from a shared config
+const locales = ['en', 'de'] as const;
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+</Tabs>
+
+### Using the `Locale` type for layout and page params [#locale-params]
+
+You can use the `Locale` type across your codebase, for example when reading from the `[locale]` parameter in a layout or page:
+
+```tsx filename="app/[locale]/page.tsx"
+import {Locale} from 'next-intl';
+
+type Props = {
+  params: {
+    locale: Locale;
+  };
+};
+
+export default function Page(props: Props) {
+  // ...
+}
+```
+
+However, keep in mind that this _assumes_ the locale to be valid in this place—Next.js doesn't validate the `[locale]` parameter automatically for you. Due to this, you can add your own validation logic in a central place like the root layout:
+
+```tsx filename="app/[locale]/layout.tsx"
+import {isValidLocale} from 'next-intl';
+import {routing} from '@/i18n/routing';
+
+type Props = {
+  params: {
+    children: React.ReactNode;
+    locale: Locale;
+  };
+};
+
+export default async function LocaleLayout({params: {locale}}: Props) {
+  if (!isValidLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  // ✅ 'en' | 'de'
+  console.log(locale);
+}
+```
+
+## `Messages`
 
 Messages can be strictly typed to ensure you're using valid keys.
 
@@ -31,22 +136,23 @@ function About() {
 }
 ```
 
-To enable this validation, add a global type definition file in your project root (e.g. `global.d.ts`):
+To enable this validation, you can adapt `AppConfig` as follows:
 
 ```ts filename="global.d.ts"
+import 'next-intl';
 import en from './messages/en.json';
 
-type Messages = typeof en;
-
-declare global {
-  // Use type safe message keys with `next-intl`
-  interface IntlMessages extends Messages {}
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Messages: typeof en;
+  }
 }
 ```
 
-You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on the messages from your default locale by importing it.
+You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the type based on the messages from your default locale.
 
-## Formats
+## `Formats`
 
 [Global formats](/docs/usage/configuration#formats) that are referenced in calls like `format.dateTime` can be strictly typed to ensure you're using valid format names across your app.
 
@@ -97,16 +203,16 @@ export const formats = {
 // ...
 ```
 
-Now, a global type definition file in the root of your project can pick up the shape of your formats and use them for declaring the `IntlFormats` interface:
+Now, you can include the `formats` in your `AppConfig`:
 
 ```ts filename="global.d.ts"
 import {formats} from './src/i18n/request';
 
-type Formats = typeof formats;
-
-declare global {
-  // Use type safe formats with `next-intl`
-  interface IntlFormats extends Formats {}
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Formats: typeof formats;
+  }
 }
 ```
 
