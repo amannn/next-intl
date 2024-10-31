@@ -10,7 +10,7 @@ import type {Locale} from './AppConfig.tsx';
  */
 export default function isValidLocale<LocaleType extends Locale>(
   locales: ReadonlyArray<LocaleType>,
-  candidate?: string
+  candidate?: string | null
 ): candidate is LocaleType {
   if (process.env.NODE_ENV !== 'production') {
     for (const locale of locales) {
