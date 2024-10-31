@@ -1,4 +1,3 @@
-import 'next-intl';
 import {locales} from '@/config';
 import en from './messages/en.json';
 

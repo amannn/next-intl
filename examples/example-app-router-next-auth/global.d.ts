@@ -1,4 +1,3 @@
-import 'next-intl';
 import {routing} from '@/i18n/routing';
 import en from './messages/en.json';
 

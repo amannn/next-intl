@@ -9,8 +9,6 @@ import Callout from '@/components/Callout';
 However, you can optionally provide supplemental definitions to augment the types that `next-intl` works with, enabling improved autocompletion and type safety across your app.
 
 ```tsx filename="global.d.ts"
-import 'next-intl';
-
 declare module 'next-intl' {
   interface AppConfig {
     // ...
@@ -52,7 +50,6 @@ function About() {
 To enable this validation, you can adapt `AppConfig` as follows:
 
 ```ts filename="global.d.ts"
-import 'next-intl';
 import en from './messages/en.json';
 
 declare module 'next-intl' {
@@ -144,7 +141,6 @@ To enable this validation, you can adapt `AppConfig` as follows:
 <Tabs.Tab>
 
 ```tsx filename="global.d.ts"
-import 'next-intl';
 import {routing} from '@/i18n/routing';
 
 declare module 'next-intl' {
@@ -159,8 +155,6 @@ declare module 'next-intl' {
 <Tabs.Tab>
 
 ```tsx filename="global.d.ts"
-import 'next-intl';
-
 // Potentially imported from a shared config
 const locales = ['en', 'de'] as const;
 
