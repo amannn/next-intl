@@ -1,5 +1,6 @@
 import {headers} from 'next/headers.js';
 import {cache} from 'react';
+import {Locale} from 'use-intl';
 import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
 import {getCachedRequestLocale} from './RequestLocaleCache.tsx';
 
@@ -13,7 +14,7 @@ async function getHeadersImpl(): Promise<Headers> {
 }
 const getHeaders = cache(getHeadersImpl);
 
-async function getLocaleFromHeaderImpl(): Promise<string | undefined> {
+async function getLocaleFromHeaderImpl(): Promise<Locale | undefined> {
   let locale;
 
   try {

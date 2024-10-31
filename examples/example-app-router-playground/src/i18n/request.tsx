@@ -1,5 +1,5 @@
 import {headers} from 'next/headers';
-import {Formats} from 'next-intl';
+import {Formats, isValidLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
@@ -26,13 +26,11 @@ export const formats = {
 } satisfies Formats;
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale;
-
-  // Ensure that the incoming locale is valid
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = isValidLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   const now = headers().get('x-now');
   const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
