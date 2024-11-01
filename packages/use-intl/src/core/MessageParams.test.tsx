@@ -22,42 +22,42 @@ it('accepts two plain params', () => {
 it('accepts cardinal plural params', () => {
   type Result =
     MessageParams<'{count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}'>;
-  assertType<{count: number}>({} as Result);
+  assertType<{count: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts cardinal plural params surrounded by text', () => {
   type Result =
     MessageParams<'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.'>;
-  assertType<{count: number}>({} as Result);
+  assertType<{count: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts ordinal plural params', () => {
   type Result =
     MessageParams<'{year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}'>;
-  assertType<{year: number}>({} as Result);
+  assertType<{year: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts ordinal plural params surrounded by text', () => {
   type Result =
     MessageParams<"It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!">;
-  assertType<{year: number}>({} as Result);
+  assertType<{year: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts basic number params', () => {
   type Result = MessageParams<'Basic formatting: {value, number}'>;
-  assertType<{value: number}>({} as Result);
+  assertType<{value: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts number params with percent format', () => {
   type Result =
     MessageParams<'Displayed as a percentage: {value, number, percent}'>;
-  assertType<{value: number}>({} as Result);
+  assertType<{value: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts number params with a skeleton format', () => {
   type Result =
     MessageParams<'At most 2 fraction digits: {value, number, ::.##}'>;
-  assertType<{value: number}>({} as Result);
+  assertType<{value: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts date params with predefined format', () => {
@@ -94,7 +94,7 @@ it('accepts complex params', () => {
     MessageParams<'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'>;
   assertType<{
     name: PlainTranslationValue;
-    count: number;
+    count: PlainTranslationValue;
     user:
       | ((chunks: React.ReactNode) => React.ReactNode)
       | ((chunks: string) => string);
