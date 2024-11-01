@@ -161,7 +161,10 @@ describe('type safety', () => {
           '{gender, select, female {She} male {He} other {They}} is online.',
         escaped: "Escape curly braces with single quotes (e.g. '{name'})",
         richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
-        richNested: 'This is <important><very>very</very> important</important>'
+        richNested:
+          'This is <important><very>very</very> important</important>',
+        complex:
+          'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers}}.'
       }
     });
 
@@ -210,6 +213,8 @@ describe('type safety', () => {
       // @ts-expect-error
       t('richSimple', {guidelines: 'test'});
       // @ts-expect-error
+      t('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
+      // @ts-expect-error
       t('richSimple', {unknown: 'test'});
       // @ts-expect-error
       t('richSimple');
@@ -233,6 +238,26 @@ describe('type safety', () => {
       t('richNested', {unknown: 'test'});
       // @ts-expect-error
       t('richNested');
+    });
+
+    it('validates a complex message', () => {
+      t.rich('complex', {
+        name: 'Jane',
+        count: 2,
+        user: (chunks) => <p>{chunks}</p>
+      });
+      // @ts-expect-error
+      t.rich('complex', {
+        name: 'Jane',
+        user: (chunks) => <p>{chunks}</p>
+      });
+      t.rich('complex', {
+        // @ts-expect-error
+        user: 'Jane',
+        // @ts-expect-error
+        name: (chunks) => <p>{chunks}</p>,
+        count: 2
+      });
     });
 
     it("doesn't allow params for `has`", () => {
