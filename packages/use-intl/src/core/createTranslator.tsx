@@ -3,10 +3,6 @@ import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import {
-  MarkupTranslationValues,
-  RichTranslationValues
-} from './TranslationValues.tsx';
-import {
   MessageKeys,
   MessageParams,
   NamespaceKeys,
@@ -105,8 +101,24 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    values?: RichTranslationValues,
-    formats?: Formats
+    ...args: MessageParams<
+      NestedValueOf<
+        TranslatorMessages,
+        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
+      >
+    > extends Record<string, never>
+      ? [values?: undefined, formats?: Formats]
+      : [
+          values: MessageParams<
+            NestedValueOf<
+              TranslatorMessages,
+              [Namespace] extends [never]
+                ? TargetKey
+                : `${Namespace}.${TargetKey}`
+            >
+          >,
+          formats?: Formats
+        ]
   ): ReactNode;
 
   // `markup`
@@ -125,8 +137,24 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    values?: MarkupTranslationValues,
-    formats?: Formats
+    ...args: MessageParams<
+      NestedValueOf<
+        TranslatorMessages,
+        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
+      >
+    > extends Record<string, never>
+      ? [values?: undefined, formats?: Formats]
+      : [
+          values: MessageParams<
+            NestedValueOf<
+              TranslatorMessages,
+              [Namespace] extends [never]
+                ? TargetKey
+                : `${Namespace}.${TargetKey}`
+            >
+          >,
+          formats?: Formats
+        ]
   ): string;
 
   // `raw`
