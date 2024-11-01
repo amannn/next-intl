@@ -1,6 +1,6 @@
 import {ImageResponse} from 'next/og';
+import {Locale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
-import {Locale} from '@/i18n/routing';
 
 type Props = {
   params: {

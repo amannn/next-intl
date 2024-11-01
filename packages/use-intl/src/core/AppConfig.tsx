@@ -1,7 +1,7 @@
 export default interface AppConfig {
   // Locale
   // Formats
-  // Messages (todo)
+  // Messages
 }
 
 export type Locale = AppConfig extends {

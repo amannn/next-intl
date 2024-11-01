@@ -154,7 +154,7 @@ Note that by default, `next-intl` returns [the `link` response header](/docs/rou
 
 Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
 
-```tsx filename="app/sitemap.ts" {4-5,8-9}
+```tsx filename="app/sitemap.ts" {5-6,9-10}
 import {MetadataRoute} from 'next';
 import {Locale} from 'next-intl';
 import {routing, getPathname} from '@/i18n/routing';

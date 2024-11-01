@@ -84,7 +84,7 @@ function Component() {
 }
 ```
 
-To enable this validation, export the formats that you're using in your request configuration:
+To enable this validation, export the formats that you're using e.g. from your request configuration:
 
 ```ts filename="i18n/request.ts"
 import {Formats} from 'next-intl';
@@ -128,7 +128,7 @@ declare module 'next-intl' {
 
 ## `Locale`
 
-Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are received by `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
+Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are accepted by APIs from `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
 
 ```tsx
 // ✅ 'en' | 'de'
@@ -173,9 +173,9 @@ declare module 'next-intl' {
 
 Once the `Locale` type is augmented, it can be used across your codebase if you need to pass the locale to functions outside of your components:
 
-```tsx {2,10}
-import {getLocale} from 'next-intl/server';
+```tsx {1,10}
 import {Locale} from 'next-intl';
+import {getLocale} from 'next-intl/server';
 
 async function BlogPosts() {
   const locale = await getLocale();
@@ -238,4 +238,4 @@ If you're encountering problems, double check that:
 1. The interface uses the correct name `AppConfig`.
 2. You're using correct paths for all modules you're importing into your global declaration file.
 3. Your type declaration file is included in `tsconfig.json`.
-4. Your editor has loaded the most recent type declarations. When in doubt, you can restart.
+4. Your editor has loaded the latest types. When in doubt, restart your editor.
