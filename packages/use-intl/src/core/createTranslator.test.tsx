@@ -149,22 +149,20 @@ describe('type safety', () => {
   });
 
   describe('params', () => {
-    const messages = {
-      param: 'Hello {name}',
-      cardinalPlural:
-        'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.',
-      ordinalPlural:
-        "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-      select:
-        '{gender, select, female {She} male {He} other {They}} is online.',
-      escaped: "Escape curly braces with single quotes (e.g. '{name'})",
-      richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
-      richNested: 'This is <important><very>very</very> important</important>'
-    };
-
     const t = createTranslator({
       locale: 'en',
-      messages
+      messages: {
+        param: 'Hello {name}',
+        cardinalPlural:
+          'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.',
+        ordinalPlural:
+          "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+        select:
+          '{gender, select, female {She} male {He} other {They}} is online.',
+        escaped: "Escape curly braces with single quotes (e.g. '{name'})",
+        richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
+        richNested: 'This is <important><very>very</very> important</important>'
+      }
     });
 
     it('validates plain params', () => {
