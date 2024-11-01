@@ -1,5 +1,5 @@
 import {notFound} from 'next/navigation';
-import {Locale, isValidLocale} from 'next-intl';
+import {Locale, hasLocale} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
@@ -28,7 +28,7 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  if (!isValidLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

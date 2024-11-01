@@ -207,14 +207,14 @@ You can use `next-intl` in [Route Handlers](https://nextjs.org/docs/app/building
 
 ```tsx filename="app/api/hello/route.tsx"
 import {NextResponse} from 'next/server';
-import {isValidLocale} from 'next-intl';
+import {hasLocale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 
 export async function GET(request) {
   // Example: Receive the `locale` via a search param
   const {searchParams} = new URL(request.url);
   const locale = searchParams.get('locale');
-  if (!isValidLocale(locales, locale)) {
+  if (!hasLocale(locales, locale)) {
     return NextResponse.json({error: 'Invalid locale'}, {status: 400});
   }
 

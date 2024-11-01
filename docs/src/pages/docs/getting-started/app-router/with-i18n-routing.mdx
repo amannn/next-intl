@@ -147,13 +147,13 @@ When using features from `next-intl` in Server Components, the relevant configur
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
-import {isValidLocale} from 'next-intl';
+import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
 export default getRequestConfig(async ({requestLocale}) => {
   // Typically corresponds to the `[locale]` segment
   const requested = await requestLocale;
-  const locale = isValidLocale(routing.locales, requested)
+  const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
 
@@ -185,7 +185,7 @@ const withNextIntl = createNextIntlPlugin(
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {NextIntlClientProvider, Locale, isValidLocale} from 'next-intl';
+import {NextIntlClientProvider, Locale, hasLocale} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
@@ -197,7 +197,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: {locale: Locale};
 }) {
-  if (!isValidLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
@@ -295,12 +295,12 @@ export function generateStaticParams() {
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {setRequestLocale} from 'next-intl/server';
-import {isValidLocale} from 'next-intl';
+import {hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({children, params: {locale}}) {
-  if (!isValidLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

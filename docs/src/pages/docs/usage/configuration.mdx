@@ -155,7 +155,7 @@ Depending on if you're using [i18n routing](/docs/getting-started/app-router), y
 export default getRequestConfig(async ({requestLocale}) => {
   // Typically corresponds to the `[locale]` segment
   const requested = await requestLocale;
-  const locale = isValidLocale(routing.locales, requested)
+  const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
 

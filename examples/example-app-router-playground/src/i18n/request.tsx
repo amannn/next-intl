@@ -1,5 +1,5 @@
 import {headers} from 'next/headers';
-import {Formats, isValidLocale} from 'next-intl';
+import {Formats, hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
@@ -33,7 +33,7 @@ export const formats = {
 export default getRequestConfig(async ({requestLocale}) => {
   // Typically corresponds to the `[locale]` segment
   const requested = await requestLocale;
-  const locale = isValidLocale(routing.locales, requested)
+  const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
 

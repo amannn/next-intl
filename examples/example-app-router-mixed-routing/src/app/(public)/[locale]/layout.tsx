@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {Locale, NextIntlClientProvider, isValidLocale} from 'next-intl';
+import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {getMessages, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Document from '@/components/Document';
@@ -26,7 +26,7 @@ export default async function LocaleLayout({
   params: {locale}
 }: Props) {
   // Ensure that the incoming locale is valid
-  if (!isValidLocale(locales, locale)) {
+  if (!hasLocale(locales, locale)) {
     notFound();
   }
 

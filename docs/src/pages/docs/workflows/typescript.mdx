@@ -209,7 +209,7 @@ export default function Page(props: Props) {
 However, keep in mind that this _assumes_ the locale to be valid in this place—Next.js doesn't validate the `[locale]` parameter automatically for you. Due to this, you can add your own validation logic in a central place like the root layout:
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {isValidLocale} from 'next-intl';
+import {hasLocale} from 'next-intl';
 
 // Can be imported e.g. from `@/i18n/routing`
 const locales = ['en', 'de'] as const;
@@ -222,7 +222,7 @@ type Props = {
 };
 
 export default async function LocaleLayout({params: {locale}}: Props) {
-  if (!isValidLocale(locales, locale)) {
+  if (!hasLocale(locales, locale)) {
     notFound();
   }
 

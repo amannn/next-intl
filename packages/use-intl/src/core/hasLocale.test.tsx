@@ -1,11 +1,27 @@
 import {describe, expect, it} from 'vitest';
-import isValidLocale from './isValidLocale.tsx';
+import hasLocale from './hasLocale.tsx';
 
 it('narrows down the type', () => {
   const locales = ['en-US', 'en-GB'] as const;
   const candidate = 'en-US' as string;
-  if (isValidLocale(locales, candidate)) {
+  if (hasLocale(locales, candidate)) {
     candidate satisfies (typeof locales)[number];
+  }
+});
+
+it('can be called with a matching narrow candidate', () => {
+  const locales = ['en-US', 'en-GB'] as const;
+  const candidate = 'en-US' as const;
+  if (hasLocale(locales, candidate)) {
+    candidate satisfies (typeof locales)[number];
+  }
+});
+
+it('can be called with a non-matching narrow candidate', () => {
+  const locales = ['en-US', 'en-GB'] as const;
+  const candidate = 'de' as const;
+  if (hasLocale(locales, candidate)) {
+    candidate satisfies never;
   }
 });
 
@@ -32,7 +48,7 @@ describe('accepts valid formats', () => {
     // Somehow tolerated by Intl.Locale
     'english'
   ])('accepts: %s', (locale) => {
-    expect(isValidLocale([locale] as const, locale)).toBe(true);
+    expect(hasLocale([locale] as const, locale)).toBe(true);
   });
 });
 
@@ -52,6 +68,6 @@ describe('rejects invalid formats', () => {
     'en US',
     'en.US'
   ])('rejects: %s', (locale) => {
-    expect(() => isValidLocale([locale] as const, locale)).toThrow();
+    expect(() => hasLocale([locale] as const, locale)).toThrow();
   });
 });

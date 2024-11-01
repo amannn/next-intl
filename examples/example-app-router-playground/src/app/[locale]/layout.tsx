@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {Locale, isValidLocale} from 'next-intl';
+import {Locale, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -36,7 +36,7 @@ export async function generateMetadata({
 }
 
 export default function LocaleLayout({children, params: {locale}}: Props) {
-  if (!isValidLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

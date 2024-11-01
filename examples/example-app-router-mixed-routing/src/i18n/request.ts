@@ -1,4 +1,4 @@
-import {isValidLocale} from 'next-intl';
+import {hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import {defaultLocale, locales} from '../config';
 import {getUserLocale} from '../db';
@@ -11,7 +11,7 @@ export default getRequestConfig(async ({requestLocale}) => {
     // The user is logged in
     candidate = await getUserLocale();
   }
-  const locale = isValidLocale(locales, candidate) ? candidate : defaultLocale;
+  const locale = hasLocale(locales, candidate) ? candidate : defaultLocale;
 
   return {
     locale,

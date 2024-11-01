@@ -1,14 +1,14 @@
 import type {Locale} from './AppConfig.tsx';
 
 /**
- * Validates a locale against a list of valid locales.
+ * Checks if a locale exists in a list of locales.
  *
- * Additionally, the provided locales are validated to
- * ensure they follow the IETF language tag standard.
+ * Additionally, in development, the provided locales are validated to
+ * ensure they follow the Unicode language identifier standard.
  *
- * @see https://en.wikipedia.org/wiki/IETF_language_tag#Extension_U_(Unicode_Locale)
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale
  */
-export default function isValidLocale<LocaleType extends Locale>(
+export default function hasLocale<LocaleType extends Locale>(
   locales: ReadonlyArray<LocaleType>,
   candidate?: string | null
 ): candidate is LocaleType {
@@ -21,7 +21,7 @@ export default function isValidLocale<LocaleType extends Locale>(
         }
       } catch (cause) {
         throw new Error(
-          `Found invalid locale within provided \`locales\`: "${locale}"\nPlease ensure you're using valid IETF language tags (e.g. "en-US").`,
+          `Found invalid locale within provided \`locales\`: "${locale}"\nPlease ensure you're using a valid Unicode locale identifier (e.g. "en-US").`,
           {cause}
         );
       }
