@@ -31,6 +31,20 @@ it('accepts cardinal plural params surrounded by text', () => {
   assertType<{count: PlainTranslationValue}>({} as Result);
 });
 
+it('can use a value both as a plain param as well as a plural param', () => {
+  type Result =
+    MessageParams<'{count, plural, =0 {no followers yet} =1 {one follower} other {# followers}} {count}'>;
+  assertType<{count: PlainTranslationValue}>({} as Result);
+});
+
+it('can combine a plain param with a plural param', () => {
+  type Result =
+    MessageParams<'{name} has {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}'>;
+  assertType<{name: PlainTranslationValue; count: PlainTranslationValue}>(
+    {} as Result
+  );
+});
+
 it('accepts ordinal plural params', () => {
   type Result =
     MessageParams<'{year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}'>;
