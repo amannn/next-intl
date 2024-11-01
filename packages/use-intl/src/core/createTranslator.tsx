@@ -43,7 +43,7 @@ export default function createTranslator<
   namespace,
   onError = defaultOnError,
   ...rest
-}: Omit<IntlConfig<Messages>, 'messages'> & {
+}: Omit<IntlConfig<TranslatorMessages>, 'messages'> & {
   messages?: TranslatorMessages;
   namespace?: NestedKey;
   /** @private */
