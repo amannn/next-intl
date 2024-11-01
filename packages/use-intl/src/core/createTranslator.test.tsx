@@ -165,7 +165,7 @@ describe('type safety', () => {
         richNested:
           'This is <important><very>very</very> important</important>',
         complex:
-          'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers}}.'
+          'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'
       }
     });
 
