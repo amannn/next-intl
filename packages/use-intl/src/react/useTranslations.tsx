@@ -5,10 +5,12 @@ import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from '../core/TranslationValues.tsx';
-import MessageKeys from '../core/utils/MessageKeys.tsx';
-import NamespaceKeys from '../core/utils/NamespaceKeys.tsx';
-import NestedKeyOf from '../core/utils/NestedKeyOf.tsx';
-import NestedValueOf from '../core/utils/NestedValueOf.tsx';
+import {
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from '../core/TypesafeMessages.tsx';
 import useIntlContext from './useIntlContext.tsx';
 import useTranslationsImpl from './useTranslationsImpl.tsx';
 

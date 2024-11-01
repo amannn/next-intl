@@ -6,6 +6,12 @@ import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues.tsx';
+import {
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from './TypesafeMessages.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
@@ -14,10 +20,6 @@ import {
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-import MessageKeys from './utils/MessageKeys.tsx';
-import NamespaceKeys from './utils/NamespaceKeys.tsx';
-import NestedKeyOf from './utils/NestedKeyOf.tsx';
-import NestedValueOf from './utils/NestedValueOf.tsx';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
