@@ -17,7 +17,7 @@ export type {
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './TypesafeMessages.tsx';
+} from './TypesafeKeys.tsx';
 export {createIntlFormatters as _createIntlFormatters} from './formatters.tsx';
 export {createCache as _createCache} from './formatters.tsx';
 export type {default as AppConfig, Locale, Messages} from './AppConfig.tsx';

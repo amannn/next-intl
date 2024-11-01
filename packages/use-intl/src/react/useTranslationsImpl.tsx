@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
 import AbstractIntlMessages from '../core/AbstractIntlMessages.tsx';
-import {NestedKeyOf} from '../core/TypesafeMessages.tsx';
+import {NestedKeyOf} from '../core/TypesafeKeys.tsx';
 import createBaseTranslator from '../core/createBaseTranslator.tsx';
 import resolveNamespace from '../core/resolveNamespace.tsx';
 import {IntlError, IntlErrorCode} from '../core.tsx';

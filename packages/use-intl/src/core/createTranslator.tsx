@@ -4,11 +4,11 @@ import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import {
   MessageKeys,
-  MessageParams,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './TypesafeMessages.tsx';
+} from './TypesafeKeys.tsx';
+import {MessageParams} from './TypesafeMessages.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
