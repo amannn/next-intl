@@ -5,7 +5,7 @@ const config: SizeLimitConfig = [
     name: "import * from 'use-intl' (production)",
     import: '*',
     path: 'dist/esm/production/index.js',
-    limit: '12.975 kB'
+    limit: '12.985 kB'
   },
   {
     name: "import {IntlProvider, useLocale, useNow, useTimeZone, useMessages, useFormatter} from 'use-intl' (production)",

@@ -19,10 +19,9 @@ export default function hasLocale<LocaleType extends Locale>(
         if (!constructed.language) {
           throw new Error('Language is required');
         }
-      } catch (cause) {
-        throw new Error(
-          `Found invalid locale within provided \`locales\`: "${locale}"\nPlease ensure you're using a valid Unicode locale identifier (e.g. "en-US").`,
-          {cause}
+      } catch {
+        console.error(
+          `Found invalid locale within provided \`locales\`: "${locale}"\nPlease ensure you're using a valid Unicode locale identifier (e.g. "en-US").`
         );
       }
     }

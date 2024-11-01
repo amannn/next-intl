@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import hasLocale from './hasLocale.tsx';
 
 it('narrows down the type', () => {
@@ -26,6 +26,16 @@ it('can be called with a non-matching narrow candidate', () => {
 });
 
 describe('accepts valid formats', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
   it.each([
     'en',
     'en-US',
@@ -49,10 +59,21 @@ describe('accepts valid formats', () => {
     'english'
   ])('accepts: %s', (locale) => {
     expect(hasLocale([locale] as const, locale)).toBe(true);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 });
 
-describe('rejects invalid formats', () => {
+describe('warns for invalid formats', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
+  });
+
   it.each([
     'en_US',
     'en-',
@@ -68,6 +89,7 @@ describe('rejects invalid formats', () => {
     'en US',
     'en.US'
   ])('rejects: %s', (locale) => {
-    expect(() => hasLocale([locale] as const, locale)).toThrow();
+    hasLocale([locale] as const, locale);
+    expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });
