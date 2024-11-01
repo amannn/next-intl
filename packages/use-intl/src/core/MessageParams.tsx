@@ -1,10 +1,6 @@
 import {ReactNode} from 'react';
 import {PlainTranslationValue} from './TranslationValues.tsx';
 
-/**
- * Params
- */
-
 type RichTextFunction = (chunks: ReactNode) => ReactNode;
 type MarkupFunction = (chunks: string) => string;
 
