@@ -1,5 +1,5 @@
-import {assertType, it} from 'vitest';
-import MessageParams from './MessageParams.tsx';
+import {assertType, describe, it} from 'vitest';
+import {MessageParams, MessageParamsRichText} from './MessageParams.tsx';
 import {PlainTranslationValue} from './TranslationValues.tsx';
 
 it('handles no params', () => {
@@ -62,41 +62,59 @@ it('accepts number params with a skeleton format', () => {
 
 it('accepts date params with predefined format', () => {
   type Result = MessageParams<'Ordered on {orderDate, date, medium}'>;
-  assertType<{orderDate: Date | number}>({} as Result);
+  assertType<{orderDate: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts date params with a skeleton format', () => {
   type Result = MessageParams<'Ordered on {orderDate, date, ::yyyyMMMd}'>;
-  assertType<{orderDate: Date | number}>({} as Result);
+  assertType<{orderDate: PlainTranslationValue}>({} as Result);
 });
 
 it('accepts select params', () => {
   type Result =
     MessageParams<'{gender, select, female {She} male {He} other {They}} is online.'>;
-  assertType<{gender: string}>({} as Result);
+  assertType<{gender: PlainTranslationValue}>({} as Result);
 });
 
-it('accepts nested rich params', () => {
+it('accepts a combination of value types', () => {
   type Result =
-    MessageParams<'This is <important><very>very</very> important</important>'>;
-  assertType<{
-    important:
-      | ((chunks: React.ReactNode) => React.ReactNode)
-      | ((chunks: string) => string);
-    very:
-      | ((chunks: React.ReactNode) => React.ReactNode)
-      | ((chunks: string) => string);
-  }>({} as Result);
-});
-
-it('accepts complex params', () => {
-  type Result =
-    MessageParams<'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'>;
+    MessageParams<'<user>{name}</user> ordered {count, plural, =0 {nothing} =1 {one item} other {# items}} on {orderDate, date, medium}. {gender, select, female {She} male {He} other {They}} paid {price, number, ::currency/USD .00}'>;
   assertType<{
     name: PlainTranslationValue;
     count: PlainTranslationValue;
+    orderDate: PlainTranslationValue;
+    gender: PlainTranslationValue;
+    price: PlainTranslationValue;
     user:
       | ((chunks: React.ReactNode) => React.ReactNode)
       | ((chunks: string) => string);
   }>({} as Result);
 });
+
+describe('MessageParamsRichText', () => {
+  it('accepts nested rich params', () => {
+    type Result =
+      MessageParamsRichText<'This is <important><very>very</very> important</important>'>;
+    assertType<{
+      important:
+        | ((chunks: React.ReactNode) => React.ReactNode)
+        | ((chunks: string) => string);
+      very:
+        | ((chunks: React.ReactNode) => React.ReactNode)
+        | ((chunks: string) => string);
+    }>({} as Result);
+  });
+
+  it('accepts complex params', () => {
+    type Result =
+      MessageParamsRichText<'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'>;
+    assertType<{
+      name: PlainTranslationValue;
+      count: PlainTranslationValue;
+      user:
+        | ((chunks: React.ReactNode) => React.ReactNode)
+        | ((chunks: string) => string);
+    }>({} as Result);
+  });
+});
+

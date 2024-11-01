@@ -2,7 +2,11 @@ import {ReactNode} from 'react';
 import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
-import MessageParams from './MessageParams.tsx';
+import {
+  MessageParams,
+  MessageParamsMarkup,
+  MessageParamsRichText
+} from './MessageParams.tsx';
 import {
   MessageKeys,
   NamespaceKeys,
@@ -101,7 +105,7 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    ...args: MessageParams<
+    ...args: MessageParamsRichText<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
@@ -109,7 +113,7 @@ export default function createTranslator<
     > extends Record<string, never>
       ? [values?: undefined, formats?: Formats]
       : [
-          values: MessageParams<
+          values: MessageParamsRichText<
             NestedValueOf<
               TranslatorMessages,
               [Namespace] extends [never]
@@ -137,7 +141,7 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    ...args: MessageParams<
+    ...args: MessageParamsMarkup<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
@@ -145,7 +149,7 @@ export default function createTranslator<
     > extends Record<string, never>
       ? [values?: undefined, formats?: Formats]
       : [
-          values: MessageParams<
+          values: MessageParamsMarkup<
             NestedValueOf<
               TranslatorMessages,
               [Namespace] extends [never]

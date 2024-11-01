@@ -10,7 +10,7 @@ const messages = {
     rich: '<b>Hello <i>{name}</i>!</b>',
     markup: '<b>Hello <i>{name}</i>!</b>'
   }
-};
+} as const;
 
 it('can translate a message within a namespace', () => {
   const t = createTranslator({
@@ -212,13 +212,13 @@ describe('type safety', () => {
       t.rich('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
       t.markup('richSimple', {guidelines: (chunks) => `<p>${chunks}</p>`});
       // @ts-expect-error
-      t('richSimple', {guidelines: 'test'});
+      t.rich('richSimple', {guidelines: 'test'});
       // @ts-expect-error
-      t('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
+      t.rich('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
       // @ts-expect-error
-      t('richSimple', {unknown: 'test'});
+      t.rich('richSimple', {unknown: 'test'});
       // @ts-expect-error
-      t('richSimple');
+      t.rich('richSimple');
     });
 
     it('validates nested rich text', () => {
@@ -234,11 +234,11 @@ describe('type safety', () => {
       // @ts-expect-error
       t.rich('richNested', {important: (chunks) => <p>{chunks}</p>});
       // @ts-expect-error
-      t('richNested', {important: 'test', very: 'test'});
+      t.rich('richNested', {important: 'test', very: 'test'});
       // @ts-expect-error
-      t('richNested', {unknown: 'test'});
+      t.rich('richNested', {unknown: 'test'});
       // @ts-expect-error
-      t('richNested');
+      t.rich('richNested');
     });
 
     it('validates a complex message', () => {

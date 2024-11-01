@@ -1,32 +1,22 @@
-import {ReactNode} from 'react';
-import {PlainTranslationValue} from './TranslationValues.tsx';
+import {
+  ExtractTags,
+  MarkupFunction,
+  RichTextFunction
+} from './MessageParamsTags.tsx';
+import MessageParamsValues from './MessageParamsValues.tsx';
 
-type RichTextFunction = (chunks: ReactNode) => ReactNode;
-type MarkupFunction = (chunks: string) => string;
+export type MessageParams<
+  MessageString extends string,
+  ChunksFn extends RichTextFunction | MarkupFunction = never
+> = MessageParamsValues<MessageString> &
+  ([ChunksFn] extends [never] ? {} : ExtractTags<MessageString, ChunksFn>);
 
-type ExtractParams<MessageString extends string> =
-  MessageString extends `${string}{${infer ParamName}}${infer RestOfMessage}`
-    ? ParamName extends `${infer Name}, ${string}`
-      ? Record<Name, InferParamType<`${string}`>> & ExtractParams<RestOfMessage>
-      : Record<ParamName, PlainTranslationValue> & ExtractParams<RestOfMessage>
-    : {};
+export type MessageParamsRichText<MessageString extends string> = MessageParams<
+  MessageString,
+  RichTextFunction
+>;
 
-type ExtractTags<MessageString extends string> =
-  MessageString extends `${infer Pre}<${infer TagName}>${infer Content}</${string}>${infer RestOfMessage}`
-    ? Record<TagName, RichTextFunction | MarkupFunction> &
-        ExtractTags<`${Pre}${Content}${RestOfMessage}`>
-    : {};
-
-type InferParamType<FormatType extends string> =
-  FormatType extends `plural, ${string}`
-    ? number
-    : FormatType extends `selectordinal, ${string}`
-      ? number
-      : FormatType extends `select, ${string}`
-        ? string
-        : PlainTranslationValue;
-
-type MessageParams<MessageString extends string> =
-  ExtractParams<MessageString> & ExtractTags<MessageString>;
-
-export default MessageParams;
+export type MessageParamsMarkup<MessageString extends string> = MessageParams<
+  MessageString,
+  MarkupFunction
+>;
