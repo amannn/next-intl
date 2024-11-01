@@ -75,77 +75,75 @@ it('throws an error for non-alphanumeric value names', () => {
 });
 
 describe('type safety', () => {
-  describe('keys', () => {
-    it('allows valid namespaces', () => {
-      createTranslator({
-        locale: 'en',
-        messages,
-        namespace: 'Home'
-      });
+  it('allows valid namespaces', () => {
+    createTranslator({
+      locale: 'en',
+      messages,
+      namespace: 'Home'
+    });
+  });
+
+  it('allows valid keys', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages,
+      namespace: 'Home'
     });
 
-    it('allows valid keys', () => {
-      const t = createTranslator({
-        locale: 'en',
-        messages,
-        namespace: 'Home'
-      });
+    t('title');
+    t.has('title');
+    t.markup('title');
+    t.rich('title');
+  });
 
-      t('title');
-      t.has('title');
-      t.markup('title');
-      t.rich('title');
+  it('allows an undefined namespace with a valid key', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages
+    });
+    t('Home.title');
+  });
+
+  it('disallows an undefined namespace with an invalid key', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages
     });
 
-    it('allows an undefined namespace with a valid key', () => {
-      const t = createTranslator({
-        locale: 'en',
-        messages
-      });
-      t('Home.title');
+    // @ts-expect-error
+    t('unknown');
+    // @ts-expect-error
+    t.has('unknown');
+    // @ts-expect-error
+    t.markup('unknown');
+    // @ts-expect-error
+    t.rich('unknown');
+  });
+
+  it('disallows invalid namespaces', () => {
+    createTranslator<typeof messages>({
+      locale: 'en',
+      messages,
+      // @ts-expect-error
+      namespace: 'unknown'
+    });
+  });
+
+  it('disallows invalid keys', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages,
+      namespace: 'Home'
     });
 
-    it('disallows an undefined namespace with an invalid key', () => {
-      const t = createTranslator({
-        locale: 'en',
-        messages
-      });
-
-      // @ts-expect-error
-      t('unknown');
-      // @ts-expect-error
-      t.has('unknown');
-      // @ts-expect-error
-      t.markup('unknown');
-      // @ts-expect-error
-      t.rich('unknown');
-    });
-
-    it('disallows invalid namespaces', () => {
-      createTranslator<typeof messages>({
-        locale: 'en',
-        messages,
-        // @ts-expect-error
-        namespace: 'unknown'
-      });
-    });
-
-    it('disallows invalid keys', () => {
-      const t = createTranslator({
-        locale: 'en',
-        messages,
-        namespace: 'Home'
-      });
-
-      // @ts-expect-error
-      t('unknown');
-      // @ts-expect-error
-      t.has('unknown');
-      // @ts-expect-error
-      t.markup('unknown');
-      // @ts-expect-error
-      t.rich('unknown');
-    });
+    // @ts-expect-error
+    t('unknown');
+    // @ts-expect-error
+    t.has('unknown');
+    // @ts-expect-error
+    t.markup('unknown');
+    // @ts-expect-error
+    t.rich('unknown');
   });
 });
 
