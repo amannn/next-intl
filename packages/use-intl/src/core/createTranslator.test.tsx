@@ -39,6 +39,7 @@ it('handles formatting errors', () => {
     onError
   });
 
+  // @ts-expect-error
   const result = t('price');
 
   const error: IntlError = onError.mock.calls[0][0];
