@@ -1,16 +1,6 @@
-import {ReactNode} from 'react';
 import {Messages} from '../core/AppConfig.tsx';
-import Formats from '../core/Formats.tsx';
-import TranslationValues, {
-  MarkupTranslationValues,
-  RichTranslationValues
-} from '../core/TranslationValues.tsx';
-import {
-  MessageKeys,
-  NamespaceKeys,
-  NestedKeyOf,
-  NestedValueOf
-} from '../core/TypesafeMessages.tsx';
+import {NamespaceKeys, NestedKeyOf} from '../core/TypesafeMessages.tsx';
+import type createTranslator from '../core/createTranslator.tsx';
 import useIntlContext from './useIntlContext.tsx';
 import useTranslationsImpl from './useTranslationsImpl.tsx';
 
@@ -26,104 +16,7 @@ export default function useTranslations<
   NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
-): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-{
-  // Default invocation
-  <
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': Messages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': Messages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: TranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `rich`
-  rich<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': Messages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': Messages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: RichTranslationValues,
-    formats?: Formats
-  ): ReactNode;
-
-  // `markup`
-  markup<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': Messages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': Messages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: MarkupTranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `raw`
-  raw<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': Messages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': Messages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey
-  ): any;
-
-  // `has`
-  has<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': Messages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': Messages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey
-  ): boolean;
-} {
+): ReturnType<typeof createTranslator<Messages, NestedKey>> {
   const context = useIntlContext();
   const messages = context.messages as Messages;
 
