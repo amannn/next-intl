@@ -92,6 +92,9 @@ describe('type safety', () => {
       });
 
       t('title');
+      t.has('title');
+      t.markup('title');
+      t.rich('title');
     });
 
     it('allows an undefined namespace with a valid key', () => {
@@ -107,8 +110,15 @@ describe('type safety', () => {
         locale: 'en',
         messages
       });
+
       // @ts-expect-error
       t('unknown');
+      // @ts-expect-error
+      t.has('unknown');
+      // @ts-expect-error
+      t.markup('unknown');
+      // @ts-expect-error
+      t.rich('unknown');
     });
 
     it('disallows invalid namespaces', () => {
@@ -129,6 +139,12 @@ describe('type safety', () => {
 
       // @ts-expect-error
       t('unknown');
+      // @ts-expect-error
+      t.has('unknown');
+      // @ts-expect-error
+      t.markup('unknown');
+      // @ts-expect-error
+      t.rich('unknown');
     });
   });
 });
