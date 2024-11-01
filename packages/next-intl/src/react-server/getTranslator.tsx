@@ -3,6 +3,7 @@ import {
   Formats,
   MarkupTranslationValues,
   MessageKeys,
+  Messages,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
@@ -12,10 +13,7 @@ import {
 } from 'use-intl/core';
 
 function getTranslatorImpl<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   config: Parameters<typeof createTranslator>[0],
   namespace?: NestedKey
@@ -25,12 +23,12 @@ function getTranslatorImpl<
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -45,12 +43,12 @@ function getTranslatorImpl<
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -65,12 +63,12 @@ function getTranslatorImpl<
   markup<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -85,12 +83,12 @@ function getTranslatorImpl<
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -103,12 +101,12 @@ function getTranslatorImpl<
   has<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >

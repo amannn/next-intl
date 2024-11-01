@@ -1,5 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
+import {Locale, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -12,7 +13,7 @@ import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: {locale: Locale};
 };
 
 export async function generateMetadata({
@@ -29,14 +30,13 @@ export async function generateMetadata({
     description: t('description'),
     other: {
       currentYear: formatter.dateTime(now, {year: 'numeric'}),
-      timeZone: timeZone || 'N/A'
+      timeZone
     }
   };
 }
 
 export default function LocaleLayout({children, params: {locale}}: Props) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

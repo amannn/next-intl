@@ -1,4 +1,5 @@
 import {ReactElement} from 'react';
+import {FormatNames, Locale} from './AppConfig.tsx';
 import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
 import Formats from './Formats.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
@@ -70,7 +71,7 @@ function calculateRelativeTimeValue(
 }
 
 type Props = {
-  locale: string;
+  locale: Locale;
   timeZone?: TimeZone;
   onError?(error: IntlError): void;
   formats?: Formats;
@@ -163,9 +164,7 @@ export default function createFormatter({
     value: Date | number,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['dateTime'], string>
-      | DateTimeFormatOptions
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -185,9 +184,7 @@ export default function createFormatter({
     end: Date | number,
     /** If a time zone is supplied, the values are converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['dateTime'], string>
-      | DateTimeFormatOptions
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -204,9 +201,7 @@ export default function createFormatter({
 
   function number(
     value: number | bigint,
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['number'], string>
-      | NumberFormatOptions
+    formatOrOptions?: FormatNames['number'] | NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -290,9 +285,7 @@ export default function createFormatter({
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['list'], string>
-      | Intl.ListFormatOptions
+    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();

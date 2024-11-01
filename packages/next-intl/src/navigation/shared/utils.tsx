@@ -1,5 +1,6 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
+import type {Locale} from 'use-intl';
 import {ResolvedRoutingConfig} from '../../routing/config.tsx';
 import {
   DomainsConfig,
@@ -49,7 +50,7 @@ export function normalizeNameOrNameWithParams<Pathname>(
   href:
     | HrefOrHrefWithParams<Pathname>
     | {
-        locale: string;
+        locale: Locale;
         href: HrefOrHrefWithParams<Pathname>;
       }
 ): {

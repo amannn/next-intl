@@ -18,3 +18,5 @@ export type {default as NestedKeyOf} from './utils/NestedKeyOf.tsx';
 export type {default as NestedValueOf} from './utils/NestedValueOf.tsx';
 export {createIntlFormatters as _createIntlFormatters} from './formatters.tsx';
 export {createCache as _createCache} from './formatters.tsx';
+export type {default as AppConfig, Locale, Messages} from './AppConfig.tsx';
+export {default as hasLocale} from './hasLocale.tsx';

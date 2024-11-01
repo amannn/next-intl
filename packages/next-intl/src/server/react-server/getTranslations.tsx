@@ -1,8 +1,10 @@
 import {ReactNode, cache} from 'react';
 import {
   Formats,
+  Locale,
   MarkupTranslationValues,
   MessageKeys,
+  Messages,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf,
@@ -18,10 +20,7 @@ import getConfig from './getConfig.tsx';
 
 // CALL SIGNATURE 1: `getTranslations(namespace)`
 function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
@@ -30,12 +29,12 @@ Promise<{
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -50,12 +49,12 @@ Promise<{
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -70,12 +69,12 @@ Promise<{
   markup<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -90,12 +89,12 @@ Promise<{
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -108,12 +107,12 @@ Promise<{
   has<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -124,12 +123,9 @@ Promise<{
 }>;
 // CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(opts?: {
-  locale: string;
+  locale: Locale;
   namespace?: NestedKey;
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 Promise<{
@@ -137,12 +133,12 @@ Promise<{
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -157,12 +153,12 @@ Promise<{
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -177,12 +173,12 @@ Promise<{
   markup<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -197,12 +193,12 @@ Promise<{
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -213,13 +209,10 @@ Promise<{
 }>;
 // IMPLEMENTATION
 async function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
->(namespaceOrOpts?: NestedKey | {locale: string; namespace?: NestedKey}) {
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
+>(namespaceOrOpts?: NestedKey | {locale: Locale; namespace?: NestedKey}) {
   let namespace: NestedKey | undefined;
-  let locale: string | undefined;
+  let locale: Locale | undefined;
 
   if (typeof namespaceOrOpts === 'string') {
     namespace = namespaceOrOpts;

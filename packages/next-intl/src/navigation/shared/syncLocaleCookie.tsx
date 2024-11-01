@@ -1,3 +1,4 @@
+import type {Locale} from 'use-intl';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import {getBasePath} from './utils.tsx';
 
@@ -9,8 +10,8 @@ import {getBasePath} from './utils.tsx';
 export default function syncLocaleCookie(
   localeCookie: InitializedLocaleCookieConfig,
   pathname: string | null,
-  locale: string,
-  nextLocale?: string
+  locale: Locale,
+  nextLocale?: Locale
 ) {
   const isSwitchingLocale = nextLocale !== locale && nextLocale != null;
 

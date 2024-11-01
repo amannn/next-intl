@@ -1,9 +1,9 @@
 import {AppProps} from 'next/app';
 import {useRouter} from 'next/router';
-import {NextIntlClientProvider} from 'next-intl';
+import {Messages, NextIntlClientProvider} from 'next-intl';
 
 type PageProps = {
-  messages: IntlMessages;
+  messages: Messages;
   now: number;
 };
 

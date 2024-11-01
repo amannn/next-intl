@@ -2,7 +2,7 @@ import {useLocale as useBaseLocale} from 'use-intl/react';
 import {LOCALE_SEGMENT_NAME} from '../shared/constants.tsx';
 import useParams from '../shared/useParams.tsx';
 
-export default function useLocale(): string {
+export default function useLocale(): ReturnType<typeof useBaseLocale> {
   const params = useParams();
 
   let locale;

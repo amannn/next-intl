@@ -10,6 +10,7 @@ import {
   useEffect,
   useState
 } from 'react';
+import type {Locale} from 'use-intl';
 import useLocale from '../../react-client/useLocale.tsx';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import syncLocaleCookie from './syncLocaleCookie.tsx';
@@ -18,12 +19,12 @@ type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &
   Omit<LinkProps, 'locale'>;
 
 type Props = NextLinkProps & {
-  locale?: string;
-  defaultLocale?: string;
+  locale?: Locale;
+  defaultLocale?: Locale;
   localeCookie: InitializedLocaleCookieConfig;
   /** Special case for `localePrefix: 'as-needed'` and `domains`. */
   unprefixed?: {
-    domains: {[domain: string]: string};
+    domains: {[domain: string]: Locale};
     pathname: string;
   };
 };

@@ -1,9 +1,9 @@
-import {useTranslations} from 'next-intl';
+import {Locale, useTranslations} from 'next-intl';
 import {setRequestLocale} from 'next-intl/server';
 import PageLayout from '@/components/PageLayout';
 
 type Props = {
-  params: {locale: string};
+  params: {locale: Locale};
 };
 
 export default function IndexPage({params: {locale}}: Props) {

@@ -1,4 +1,5 @@
 import {ReactNode} from 'react';
+import {Messages} from '../core/AppConfig.tsx';
 import Formats from '../core/Formats.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
@@ -20,10 +21,7 @@ import useTranslationsImpl from './useTranslationsImpl.tsx';
  * (e.g. `namespace.Component`).
  */
 export default function useTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
 ): // Explicitly defining the return type is necessary as TypeScript would get it wrong
@@ -32,12 +30,12 @@ export default function useTranslations<
   <
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -52,12 +50,12 @@ export default function useTranslations<
   rich<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -72,12 +70,12 @@ export default function useTranslations<
   markup<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -92,12 +90,12 @@ export default function useTranslations<
   raw<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -110,12 +108,12 @@ export default function useTranslations<
   has<
     TargetKey extends MessageKeys<
       NestedValueOf<
-        {'!': IntlMessages},
+        {'!': Messages},
         [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
       >,
       NestedKeyOf<
         NestedValueOf<
-          {'!': IntlMessages},
+          {'!': Messages},
           [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
         >
       >
@@ -125,13 +123,13 @@ export default function useTranslations<
   ): boolean;
 } {
   const context = useIntlContext();
-  const messages = context.messages as IntlMessages;
+  const messages = context.messages as Messages;
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
   return useTranslationsImpl<
-    {'!': IntlMessages},
+    {'!': Messages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
   >(
     {'!': messages},

@@ -3,6 +3,7 @@ import {
   useRouter as useNextRouter
 } from 'next/navigation.js';
 import {useMemo} from 'react';
+import type {Locale} from 'use-intl';
 import useLocale from '../../react-client/useLocale.tsx';
 import {
   RoutingConfigLocalizedNavigation,
@@ -40,14 +41,8 @@ export default function createNavigation<
         AppDomains
       >
 ) {
-  type Locale = AppLocales extends never ? string : AppLocales[number];
-
-  function useTypedLocale() {
-    return useLocale() as Locale;
-  }
-
   const {Link, config, getPathname, ...redirects} = createSharedNavigationFns(
-    useTypedLocale,
+    useLocale,
     routing
   );
 
@@ -56,7 +51,7 @@ export default function createNavigation<
     ? string
     : keyof AppPathnames {
     const pathname = useBasePathname(config.localePrefix);
-    const locale = useTypedLocale();
+    const locale = useLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return useMemo(
@@ -77,7 +72,7 @@ export default function createNavigation<
 
   function useRouter() {
     const router = useNextRouter();
-    const curLocale = useTypedLocale();
+    const curLocale = useLocale();
     const nextPathname = useNextPathname();
 
     return useMemo(() => {
@@ -87,7 +82,7 @@ export default function createNavigation<
       >(fn: Fn) {
         return function handler(
           href: Parameters<typeof getPathname>[0]['href'],
-          options?: Partial<Options> & {locale?: string}
+          options?: Partial<Options> & {locale?: Locale}
         ): void {
           const {locale: nextLocale, ...rest} = options || {};
 

@@ -1,4 +1,5 @@
 import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import type {Locale} from './AppConfig.tsx';
 import type Formats from './Formats.tsx';
 import type IntlError from './IntlError.tsx';
 import type TimeZone from './TimeZone.tsx';
@@ -9,7 +10,7 @@ import type TimeZone from './TimeZone.tsx';
 
 type IntlConfig<Messages = AbstractIntlMessages> = {
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
-  locale: string;
+  locale: Locale;
   /** Global formats can be provided to achieve consistent
    * formatting across components. */
   formats?: Formats;
