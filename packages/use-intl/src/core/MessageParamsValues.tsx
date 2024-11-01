@@ -9,54 +9,99 @@ type PluralValue =
   | 'many'
   | 'other';
 
-type SelectType = 'plural' | 'selectordinal' | 'select';
-
-type ExtractParams<Value extends PlainTranslationValue> = Value extends ''
-  ? []
-  : Value extends `${string}{${infer Param}}${infer Tail}`
-    ? [Param, ...ExtractParams<Tail>]
-    : [];
-
 type NumberFormatOption = string | `::${string}`;
 type NumberFormat = 'number' | `number, ${NumberFormatOption}`;
 
 type DateFormatOption = string | `::${string}`;
 type DateFormat = 'date' | `date, ${DateFormatOption}`;
 
-export type Params<Value extends PlainTranslationValue> = Value extends ''
+type ExtractParams<Value extends PlainTranslationValue> = Value extends ''
   ? []
-  : // Select formatting
-    Value extends `${string}{${infer Param}, select, ${string} {${infer Content}} ${string} {${infer Content2}} other {${infer Content3}}}${string}`
-    ? [
-        Param,
-        ...ExtractParams<Content>,
-        ...ExtractParams<Content2>,
-        ...ExtractParams<Content3>
-      ]
-    : // Date formatting
-      Value extends `${string}{${infer Param}, ${DateFormat}}${infer Tail}`
-      ? [Param, ...Params<Tail>]
-      : // Number formatting
-        Value extends `${string}{${infer Param}, ${NumberFormat}}${infer Tail}`
-        ? [Param, ...Params<Tail>]
-        : // Plural/Selectordinal with 3 cases
-          Value extends `${string}{${infer Param}, ${SelectType}, ${PluralValue} {${infer Content}} ${PluralValue} {${infer Content2}} ${PluralValue} {${infer Content3}}}${string}`
-          ? [
-              Param,
-              ...ExtractParams<Content>,
-              ...ExtractParams<Content2>,
-              ...ExtractParams<Content3>
-            ]
-          : // Plural/Selectordinal with 2 cases
-            Value extends `${string}{${infer Param}, ${SelectType}, ${PluralValue} {${infer Content}} ${PluralValue} {${infer Content2}}}${string}`
-            ? [Param, ...ExtractParams<Content>, ...ExtractParams<Content2>]
-            : // Simple cases (e.g `This is a {param}`)
-              Value extends `${string}{${infer Param}}${infer Tail}`
-              ? [Param, ...Params<Tail>]
-              : [];
+  : Value extends `${infer Prefix}{${infer Param}}${infer Tail}`
+    ? [...ExtractParams<Prefix>, Param, ...ExtractParams<Tail>]
+    : Value extends `${infer Prefix}<${string}>${infer Inner}</>${infer Tail}`
+      ? [
+          ...ExtractParams<Prefix>,
+          ...ExtractParams<Inner>,
+          ...ExtractParams<Tail>
+        ]
+      : [];
 
-type MessageParamsValues<Value extends PlainTranslationValue> = Record<
+type DateOrNumberPattern<Value> =
+  Value extends `${infer Prefix}{${infer Param}, ${
+    | DateFormat
+    | NumberFormat}${infer Tail}`
+    ? [...ExtractParams<Prefix>, Param, ...Params<Tail>]
+    : never;
+
+type ExtractPluralCase<Rest> =
+  Rest extends `${PluralValue} {${infer Content}} ${infer Remaining}`
+    ? [Content, ...ExtractPluralCase<Remaining>]
+    : Rest extends `${PluralValue} {${infer Content}}}${infer Tail}`
+      ? [Content, Tail]
+      : [];
+
+type ExtractSelectCase<Rest> =
+  Rest extends `${string} {${infer Content}} ${infer Remaining}`
+    ? [Content, ...ExtractSelectCase<Remaining>]
+    : Rest extends `other {${infer Content}}}${infer Tail}`
+      ? [Content, Tail]
+      : [];
+
+type Flatten<T extends ReadonlyArray<any>> = T extends [
+  infer First,
+  ...infer Rest
+]
+  ? [...(First extends Array<any> ? First : [First]), ...Flatten<Rest>]
+  : [];
+
+type SelectOrPluralPattern<Value> =
+  Value extends `${infer Prefix}{${infer Param}, select, ${infer Rest}`
+    ? ExtractSelectCase<Rest> extends [...infer Contents, infer Tail]
+      ? Flatten<
+          [
+            ...ExtractParams<Prefix>,
+            Param,
+            ...{
+              [K in keyof Contents]: ExtractParams<Contents[K] & string>;
+            }[number],
+            ...ExtractParams<Tail & string>
+          ]
+        >
+      : never
+    : Value extends `${infer Prefix}{${infer Param}, ${'plural' | 'selectordinal'}, ${infer Rest}`
+      ? ExtractPluralCase<Rest> extends [...infer Contents, infer Tail]
+        ? Flatten<
+            [
+              ...ExtractParams<Prefix>,
+              Param,
+              ...{
+                [K in keyof Contents]: ExtractParams<Contents[K] & string>;
+              }[number],
+              ...ExtractParams<Tail & string>
+            ]
+          >
+        : never
+      : never;
+
+type SimplePattern<Value> =
+  Value extends `${infer Prefix}{${infer Param}}${infer Tail}`
+    ? [...ExtractParams<Prefix>, Param, ...Params<Tail>]
+    : never;
+
+export type Params<Value extends string> = Value extends ''
+  ? []
+  : SelectOrPluralPattern<Value> extends never
+    ? DateOrNumberPattern<Value> extends never
+      ? SimplePattern<Value> extends never
+        ? []
+        : SimplePattern<Value>
+      : DateOrNumberPattern<Value>
+    : SelectOrPluralPattern<Value>;
+
+type MessageParamsValues<Value extends string> = Record<
   Params<Value>[number],
   PlainTranslationValue
 >;
+
 export default MessageParamsValues;

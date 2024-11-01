@@ -37,6 +37,20 @@ it('can use a value both as a plain param as well as a plural param', () => {
   assertType<{count: PlainTranslationValue}>({} as Result);
 });
 
+it('can use a plain param within a plural param', () => {
+  type Result =
+    MessageParams<'{count, plural, zero {{zero}} one {{one}} two {{two}} few {{few}} many {{many}} =24 {{custom}} other {{other}}}'>;
+  assertType<{
+    count: PlainTranslationValue;
+    zero: PlainTranslationValue;
+    one: PlainTranslationValue;
+    two: PlainTranslationValue;
+    few: PlainTranslationValue;
+    many: PlainTranslationValue;
+    custom: PlainTranslationValue;
+  }>({} as Result);
+});
+
 it('can combine a plain param with a plural param', () => {
   type Result =
     MessageParams<'{name} has {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}'>;
