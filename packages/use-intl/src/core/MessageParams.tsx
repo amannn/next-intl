@@ -30,5 +30,7 @@ type InferParamType<FormatType extends string> =
         ? string
         : PlainTranslationValue;
 
-export type MessageParams<MessageString extends string> =
+type MessageParams<MessageString extends string> =
   ExtractParams<MessageString> & ExtractTags<MessageString>;
+
+export default MessageParams;

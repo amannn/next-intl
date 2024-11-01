@@ -2,13 +2,13 @@ import {ReactNode} from 'react';
 import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
+import MessageParams from './MessageParams.tsx';
 import {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
 } from './TypesafeKeys.tsx';
-import {MessageParams} from './TypesafeMessages.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
