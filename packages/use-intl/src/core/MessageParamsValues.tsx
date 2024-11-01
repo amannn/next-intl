@@ -89,9 +89,8 @@ type SimplePattern<Value> =
     ? [...ExtractParams<Prefix>, Param, ...Params<Tail>]
     : never;
 
-export type Params<Value extends string> = Value extends ''
-  ? []
-  : SelectOrPluralPattern<Value> extends never
+export type Params<Value extends string> =
+  SelectOrPluralPattern<Value> extends never
     ? DateOrNumberPattern<Value> extends never
       ? SimplePattern<Value> extends never
         ? []

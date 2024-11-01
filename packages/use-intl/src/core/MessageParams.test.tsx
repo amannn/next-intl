@@ -2,6 +2,11 @@ import {assertType, describe, it} from 'vitest';
 import {MessageParams, MessageParamsRichText} from './MessageParams.tsx';
 import {PlainTranslationValue} from './TranslationValues.tsx';
 
+it('handles an empty string', () => {
+  type Result = MessageParams<''>;
+  assertType<{}>({} as Result);
+});
+
 it('handles no params', () => {
   type Result = MessageParams<'Hello'>;
   assertType<{}>({} as Result);
