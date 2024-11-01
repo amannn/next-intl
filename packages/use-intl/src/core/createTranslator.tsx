@@ -2,12 +2,13 @@ import {ReactNode} from 'react';
 import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import IntlConfig from './IntlConfig.tsx';
-import TranslationValues, {
+import {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues.tsx';
 import {
   MessageKeys,
+  MessageParams,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
@@ -30,8 +31,8 @@ import {
  * (e.g. `namespace.Component`).
  */
 export default function createTranslator<
-  TranslatorMessages extends Messages = Messages,
-  NestedKey extends NamespaceKeys<
+  const TranslatorMessages extends Messages = Messages,
+  const Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
   > = never
@@ -45,7 +46,7 @@ export default function createTranslator<
   ...rest
 }: Omit<IntlConfig<TranslatorMessages>, 'messages'> & {
   messages?: TranslatorMessages;
-  namespace?: NestedKey;
+  namespace?: Namespace;
   /** @private */
   _formatters?: Formatters;
   /** @private */
@@ -57,19 +58,35 @@ export default function createTranslator<
     TargetKey extends MessageKeys<
       NestedValueOf<
         {'!': TranslatorMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        [Namespace] extends [never] ? '!' : `!.${Namespace}`
       >,
       NestedKeyOf<
         NestedValueOf<
           {'!': TranslatorMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+          [Namespace] extends [never] ? '!' : `!.${Namespace}`
         >
       >
     >
   >(
     key: TargetKey,
-    values?: TranslationValues,
-    formats?: Formats
+    ...args: MessageParams<
+      NestedValueOf<
+        TranslatorMessages,
+        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
+      >
+    > extends Record<string, never>
+      ? [values?: undefined, formats?: Formats]
+      : [
+          values: MessageParams<
+            NestedValueOf<
+              TranslatorMessages,
+              [Namespace] extends [never]
+                ? TargetKey
+                : `${Namespace}.${TargetKey}`
+            >
+          >,
+          formats?: Formats
+        ]
   ): string;
 
   // `rich`
@@ -77,12 +94,12 @@ export default function createTranslator<
     TargetKey extends MessageKeys<
       NestedValueOf<
         {'!': TranslatorMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        [Namespace] extends [never] ? '!' : `!.${Namespace}`
       >,
       NestedKeyOf<
         NestedValueOf<
           {'!': TranslatorMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+          [Namespace] extends [never] ? '!' : `!.${Namespace}`
         >
       >
     >
@@ -97,12 +114,12 @@ export default function createTranslator<
     TargetKey extends MessageKeys<
       NestedValueOf<
         {'!': TranslatorMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        [Namespace] extends [never] ? '!' : `!.${Namespace}`
       >,
       NestedKeyOf<
         NestedValueOf<
           {'!': TranslatorMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+          [Namespace] extends [never] ? '!' : `!.${Namespace}`
         >
       >
     >
@@ -117,12 +134,12 @@ export default function createTranslator<
     TargetKey extends MessageKeys<
       NestedValueOf<
         {'!': TranslatorMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        [Namespace] extends [never] ? '!' : `!.${Namespace}`
       >,
       NestedKeyOf<
         NestedValueOf<
           {'!': TranslatorMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+          [Namespace] extends [never] ? '!' : `!.${Namespace}`
         >
       >
     >
@@ -135,12 +152,12 @@ export default function createTranslator<
     TargetKey extends MessageKeys<
       NestedValueOf<
         {'!': TranslatorMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        [Namespace] extends [never] ? '!' : `!.${Namespace}`
       >,
       NestedKeyOf<
         NestedValueOf<
           {'!': TranslatorMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+          [Namespace] extends [never] ? '!' : `!.${Namespace}`
         >
       >
     >
@@ -153,7 +170,7 @@ export default function createTranslator<
   // The prefix ("!") is arbitrary.
   return createTranslatorImpl<
     {'!': TranslatorMessages},
-    [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+    [Namespace] extends [never] ? '!' : `!.${Namespace}`
   >(
     {
       ...rest,

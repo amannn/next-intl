@@ -1,30 +1,75 @@
+import {ReactNode} from 'react';
+
+/**
+ * Namespaces & keys
+ */
+
 export type NestedKeyOf<ObjectType> = ObjectType extends object
   ? {
-      [Key in keyof ObjectType]:
-        | `${Key & string}`
-        | `${Key & string}.${NestedKeyOf<ObjectType[Key]>}`;
+      [Property in keyof ObjectType]:
+        | `${Property & string}`
+        | `${Property & string}.${NestedKeyOf<ObjectType[Property]>}`;
     }[keyof ObjectType]
   : never;
 
 export type NestedValueOf<
   ObjectType,
-  Property extends string
-> = Property extends `${infer Key}.${infer Rest}`
-  ? Key extends keyof ObjectType
-    ? NestedValueOf<ObjectType[Key], Rest>
+  Path extends string
+> = Path extends `${infer Cur}.${infer Rest}`
+  ? Cur extends keyof ObjectType
+    ? NestedValueOf<ObjectType[Cur], Rest>
     : never
-  : Property extends keyof ObjectType
-    ? ObjectType[Property]
+  : Path extends keyof ObjectType
+    ? ObjectType[Path]
     : never;
 
-export type NamespaceKeys<ObjectType, Keys extends string> = {
-  [Property in Keys]: NestedValueOf<ObjectType, Property> extends string
+export type NamespaceKeys<ObjectType, AllKeys extends string> = {
+  [PropertyPath in AllKeys]: NestedValueOf<
+    ObjectType,
+    PropertyPath
+  > extends string
     ? never
-    : Property;
-}[Keys];
+    : PropertyPath;
+}[AllKeys];
 
-export type MessageKeys<ObjectType, Keys extends string> = {
-  [Property in Keys]: NestedValueOf<ObjectType, Property> extends string
-    ? Property
+export type MessageKeys<ObjectType, AllKeys extends string> = {
+  [PropertyPath in AllKeys]: NestedValueOf<
+    ObjectType,
+    PropertyPath
+  > extends string
+    ? PropertyPath
     : never;
-}[Keys];
+}[AllKeys];
+
+/**
+ * Params
+ */
+
+type PlainParam = string | number;
+type RichTextFunction = (chunks: ReactNode) => ReactNode;
+type MarkupFunction = (chunks: string) => string;
+
+type ExtractParams<MessageString extends string> =
+  MessageString extends `${string}{${infer ParamName}}${infer RestOfMessage}`
+    ? ParamName extends `${infer Name}, ${infer FormatType}`
+      ? Record<Name, InferParamType<FormatType>> & ExtractParams<RestOfMessage>
+      : Record<ParamName, PlainParam> & ExtractParams<RestOfMessage>
+    : {};
+
+type ExtractTags<MessageString extends string> =
+  MessageString extends `${infer Pre}<${infer TagName}>${infer Content}</${string}>${infer RestOfMessage}`
+    ? Record<TagName, RichTextFunction | MarkupFunction> &
+        ExtractTags<`${Pre}${Content}${RestOfMessage}`>
+    : {};
+
+type InferParamType<FormatType extends string> =
+  FormatType extends `plural, ${string}`
+    ? number
+    : FormatType extends `selectordinal, ${string}`
+      ? number
+      : FormatType extends `select, ${string}`
+        ? string
+        : PlainParam;
+
+export type MessageParams<MessageString extends string> =
+  ExtractParams<MessageString> & ExtractTags<MessageString>;
