@@ -74,6 +74,65 @@ it('throws an error for non-alphanumeric value names', () => {
   expect(error.code).toBe('INVALID_MESSAGE');
 });
 
+describe('type safety', () => {
+  describe('keys', () => {
+    it('allows valid namespaces', () => {
+      createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+    });
+
+    it('allows valid keys', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+
+      t('title');
+    });
+
+    it('allows an undefined namespace with a valid key', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages
+      });
+      t('Home.title');
+    });
+
+    it('disallows an undefined namespace with an invalid key', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages
+      });
+      // @ts-expect-error
+      t('unknown');
+    });
+
+    it('disallows invalid namespaces', () => {
+      createTranslator<typeof messages>({
+        locale: 'en',
+        messages,
+        // @ts-expect-error
+        namespace: 'unknown'
+      });
+    });
+
+    it('disallows invalid keys', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+
+      // @ts-expect-error
+      t('unknown');
+    });
+  });
+});
+
 describe('dates in messages', () => {
   it.each([
     ['G', '7/9/2024 AD'], // 🤔 Includes date
