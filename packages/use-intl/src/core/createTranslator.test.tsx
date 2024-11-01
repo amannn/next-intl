@@ -147,6 +147,142 @@ describe('type safety', () => {
       t.rich('unknown');
     });
   });
+
+  describe('params', () => {
+    const messages = {
+      param: 'Hello {name}',
+      cardinalPlural:
+        'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.',
+      ordinalPlural:
+        "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+      select:
+        '{gender, select, female {She} male {He} other {They}} is online.',
+      escaped: "Escape curly braces with single quotes (e.g. '{name'})",
+      richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
+      richNested: 'This is <important><very>very</very> important</important>'
+    };
+
+    const t = createTranslator({
+      locale: 'en',
+      messages
+    });
+
+    it('validates plain params', () => {
+      t('param', {name: 'Jane'});
+
+      // @ts-expect-error
+      t('param', {unknown: 'Jane'});
+      // @ts-expect-error
+      t('param');
+    });
+
+    it('validates cardinal plurals', () => {
+      t('cardinalPlural', {count: 0});
+      // @ts-expect-error
+      t('cardinalPlural', {unknown: 1.5});
+      // @ts-expect-error
+      t('cardinalPlural');
+    });
+
+    it('validates ordinal plurals', () => {
+      t('ordinalPlural', {year: 1});
+      // @ts-expect-error
+      t('ordinalPlural', {unknown: 1});
+      // @ts-expect-error
+      t('ordinalPlural');
+    });
+
+    it('validates selects', () => {
+      t('select', {gender: 'female'});
+      // @ts-expect-error
+      t('select', {unknown: 'female'});
+      // @ts-expect-error
+      t('select');
+    });
+
+    it('validates escaped', () => {
+      t('escaped');
+      // @ts-expect-error
+      t('escaped', {name: 'Jane'});
+    });
+
+    it('validates simple rich text', () => {
+      t.rich('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
+      t.markup('richSimple', {guidelines: (chunks) => `<p>${chunks}</p>`});
+      // @ts-expect-error
+      t('richSimple', {guidelines: 'test'});
+      // @ts-expect-error
+      t('richSimple', {unknown: 'test'});
+      // @ts-expect-error
+      t('richSimple');
+    });
+
+    it('validates nested rich text', () => {
+      t.rich('richNested', {
+        important: (chunks) => <strong>{chunks}</strong>,
+        very: (chunks) => <i>{chunks}</i>
+      });
+      t.markup('richNested', {
+        important: (chunks) => `<strong>${chunks}</strong>`,
+        very: (chunks) => `<i>${chunks}</i>`
+      });
+
+      // @ts-expect-error
+      t.rich('richNested', {important: (chunks) => <p>{chunks}</p>});
+      // @ts-expect-error
+      t('richNested', {important: 'test', very: 'test'});
+      // @ts-expect-error
+      t('richNested', {unknown: 'test'});
+      // @ts-expect-error
+      t('richNested');
+    });
+
+    it("doesn't allow params for `has`", () => {
+      t.has('param');
+      t.has('cardinalPlural');
+      t.has('ordinalPlural');
+      t.has('select');
+      t.has('escaped');
+      t.has('richSimple');
+      t.has('richNested');
+
+      // @ts-expect-error
+      t.has('param', {name: 'Jane'});
+      // @ts-expect-error
+      t.has('cardinalPlural', {count: 0});
+      // @ts-expect-error
+      t.has('ordinalPlural', {year: 1});
+      // @ts-expect-error
+      t.has('select', {gender: 'female'});
+      // @ts-expect-error
+      t.has('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
+      // @ts-expect-error
+      t.has('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+    });
+
+    it("doesn't allow params for `raw`", () => {
+      t.raw('param');
+      t.raw('cardinalPlural');
+      t.raw('ordinalPlural');
+      t.raw('select');
+      t.raw('escaped');
+      t.raw('richSimple');
+      t.raw('richNested');
+
+      // @ts-expect-error
+      t.raw('param', {name: 'Jane'});
+      // @ts-expect-error
+      t.raw('cardinalPlural', {count: 0});
+      // @ts-expect-error
+      t.raw('ordinalPlural', {year: 1});
+      // @ts-expect-error
+      t.raw('select', {gender: 'female'});
+      // @ts-expect-error
+      t.raw('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
+      // @ts-expect-error
+      t.raw('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+    });
+  });
 });
 
 describe('dates in messages', () => {
