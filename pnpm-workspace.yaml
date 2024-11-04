@@ -1,5 +1,5 @@
 packages:
   - 'packages/*'
-  - 'export-test'
+  - 'type-export-test'
   - 'examples/*'
   - 'docs'
