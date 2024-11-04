@@ -75,6 +75,34 @@ it('throws an error for non-alphanumeric value names', () => {
   expect(error.code).toBe('INVALID_MESSAGE');
 });
 
+it('can handle nested blocks in selects', () => {
+  const t = createTranslator({
+    locale: 'en',
+    messages: {
+      label:
+        '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}'
+    }
+  });
+  expect(
+    t('label', {
+      foo: 'one',
+      one: 'One',
+      two: 'Two',
+      other: 'Other'
+    })
+  ).toBe('One: One');
+});
+
+it('can handle nested blocks in plural', () => {
+  const t = createTranslator({
+    locale: 'en',
+    messages: {
+      label: '{count, plural, one {One: {one}} other {Other: {other}}}'
+    }
+  });
+  expect(t('label', {count: 1, one: 'One', other: 'Other'})).toBe('One: One');
+});
+
 describe('type safety', () => {
   describe('keys', () => {
     it('allows valid namespaces', () => {
@@ -160,6 +188,8 @@ describe('type safety', () => {
           "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
         select:
           '{gender, select, female {She} male {He} other {They}} is online.',
+        selectNested:
+          '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}',
         escaped: "Escape curly braces with single quotes (e.g. '{name'})",
         richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
         richNested:
@@ -200,6 +230,24 @@ describe('type safety', () => {
       t('select', {unknown: 'female'});
       // @ts-expect-error
       t('select');
+    });
+
+    it('validates nested selects', () => {
+      t('selectNested', {
+        foo: 'one',
+        one: 'One',
+        two: 'Two',
+        other: 'Other'
+      });
+      t('selectNested', {foo: 'one', one: 'One'}); // Only `one` is required
+      t('selectNested', {foo: 'one', one: 'One', two: 'Two'}); // …but `two` is also allowed
+      t('selectNested', {foo: 'two', two: 'Two'});
+      // @ts-expect-error
+      t('selectNested', {foo: 'unknown' as string, other: 'Other'});
+      // @ts-expect-error
+      t('selectNested', {unknown: 'one'});
+      // @ts-expect-error
+      t('selectNested');
     });
 
     it('validates escaped', () => {

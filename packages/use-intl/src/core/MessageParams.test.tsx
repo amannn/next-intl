@@ -109,6 +109,12 @@ it('accepts select params', () => {
   assertType<{gender: PlainTranslationValue}>({} as Result);
 });
 
+it('can handle nested blocks in selects', () => {
+  type Result =
+    MessageParams<'{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}'>;
+  assertType<{foo: PlainTranslationValue}>({} as Result);
+});
+
 it('accepts a combination of value types', () => {
   type Result =
     MessageParams<'<user>{name}</user> ordered {count, plural, =0 {nothing} =1 {one item} other {# items}} on {orderDate, date, medium}. {gender, select, female {She} male {He} other {They}} paid {price, number, ::currency/USD .00}'>;
@@ -150,4 +156,3 @@ describe('MessageParamsRichText', () => {
     }>({} as Result);
   });
 });
-
