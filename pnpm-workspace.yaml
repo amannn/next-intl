@@ -1,4 +1,5 @@
 packages:
-  - "packages/*"
-  - "examples/*"
-  - "docs"
+  - 'packages/*'
+  - 'export-test'
+  - 'examples/*'
+  - 'docs'
