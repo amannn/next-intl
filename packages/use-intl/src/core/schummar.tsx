@@ -136,9 +136,7 @@ type StripEscapes<T> = T extends `${infer Left}''${infer Right}`
       ? Start
       : T;
 
-////////////////////////////////////////////////////////////////////////////////
-
-// Makes type readable
+// Readability /////////////////////////////////////////////////////////////////
 
 // Make provided args optional
 type MakeProvidedOptional<T, ProvidedArgs extends string = never> = {
@@ -146,6 +144,8 @@ type MakeProvidedOptional<T, ProvidedArgs extends string = never> = {
 } & {
   [K in ProvidedArgs & keyof T]?: T[K];
 };
+
+// Export //////////////////////////////////////////////////////////////////////
 
 /** Calculates an object type with all variables and their types in the given ICU format string */
 export type GetICUArgs<
