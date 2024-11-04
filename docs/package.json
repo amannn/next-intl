@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc && prettier src --check",
+    "lint": "eslint src && tsc && prettier src --check && node lintLinks.mjs",
     "test": "echo 'No tests yet'",
     "build": "next build",
     "sitemap": "next-sitemap",
@@ -34,8 +34,10 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
+    "fast-glob": "^3.3.2",
     "globals": "^15.11.0",
     "next-sitemap": "^4.2.3",
+    "next-validate-link": "^1.2.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
