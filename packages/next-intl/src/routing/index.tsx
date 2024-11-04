@@ -1,2 +1,9 @@
-export type {Pathnames, LocalePrefix, DomainsConfig} from './types';
-export {default as defineRouting} from './defineRouting';
+export type {
+  Pathnames,
+  DomainsConfig,
+  DomainConfig,
+  LocalePrefixMode,
+  LocalePrefixes
+} from './types';
+export type {InitializedLocaleCookieConfig} from './config';
+export {default as defineRouting, type RoutingConfig} from './defineRouting';

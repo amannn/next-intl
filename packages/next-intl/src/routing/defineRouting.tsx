@@ -1,6 +1,7 @@
 import {RoutingConfig} from './config';
 import {DomainsConfig, LocalePrefixMode, Locales, Pathnames} from './types';
 
+export type {RoutingConfig};
 export default function defineRouting<
   const AppLocales extends Locales,
   const AppLocalePrefixMode extends LocalePrefixMode = 'always',

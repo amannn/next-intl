@@ -25,3 +25,4 @@ type StrictParams<Pathname> = Pathname extends `${string}[${string}`
   : never;
 
 export default StrictParams;
+export type {StrictParams};
