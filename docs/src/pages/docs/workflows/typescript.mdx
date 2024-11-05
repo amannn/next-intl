@@ -68,15 +68,15 @@ Apart from strictly typing message keys, you can also ensure type safety for mes
 
 ```json filename="messages/en.json"
 {
-  "UserPage": {
+  "UserProfile": {
     "title": "Hello {firstName}"
   }
 }
 ```
 
 ```tsx
-function UserPage({user}) {
-  const t = useTranslations('UserPage');
+function UserProfile({user}) {
+  const t = useTranslations('UserProfile');
 
   // ✖️ Missing argument
   t('title');
