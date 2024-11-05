@@ -1,6 +1,6 @@
 import AbstractIntlMessages from './AbstractIntlMessages.tsx';
 import {InitializedIntlConfig} from './IntlConfig.tsx';
-import {NestedKeyOf} from './TypesafeKeys.tsx';
+import {NestedKeyOf} from './MessageKeys.tsx';
 import createBaseTranslator from './createBaseTranslator.tsx';
 import {Formatters, IntlCache} from './formatters.tsx';
 import resolveNamespace from './resolveNamespace.tsx';

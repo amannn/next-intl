@@ -9,7 +9,7 @@ import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues.tsx';
-import {MessageKeys, NestedKeyOf, NestedValueOf} from './TypesafeKeys.tsx';
+import {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {

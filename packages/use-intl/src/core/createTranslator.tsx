@@ -5,10 +5,10 @@ import ICUArgs from './ICUArgs.tsx';
 import ICUTags from './ICUTags.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import {
-  DateTranslationValue,
+  ICUArg,
+  ICUDate,
+  ICUNumber,
   MarkupFunction,
-  NumberTranslationValue,
-  PlainTranslationValue,
   RichTextFunction
 } from './TranslationValues.tsx';
 import {
@@ -16,7 +16,7 @@ import {
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './TypesafeKeys.tsx';
+} from './MessageKeys.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
@@ -30,12 +30,7 @@ import {OnlyOptional, Prettify} from './types.tsx';
 type ICUArgsWithTags<
   MessageString extends string,
   TagsFn extends RichTextFunction | MarkupFunction = never
-> = ICUArgs<
-  MessageString,
-  PlainTranslationValue,
-  NumberTranslationValue,
-  DateTranslationValue
-> &
+> = ICUArgs<MessageString, ICUArg, ICUNumber, ICUDate> &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
 
 type TranslateArgs<
@@ -45,10 +40,7 @@ type TranslateArgs<
 > =
   // If an unknown string is passed, allow any values
   string extends Value
-    ? [
-        values?: Record<string, PlainTranslationValue | TagsFn>,
-        formats?: Formats
-      ]
+    ? [values?: Record<string, ICUArg | TagsFn>, formats?: Formats]
     : (
           Value extends any
             ? (key: ICUArgsWithTags<Value, TagsFn>) => void
