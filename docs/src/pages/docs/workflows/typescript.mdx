@@ -62,6 +62,77 @@ declare module 'next-intl' {
 
 You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the type based on the messages from your default locale.
 
+### Strict arguments [#messages-arguments]
+
+Apart from strictly typing message keys, you can also ensure type safety for message arguments:
+
+```json filename="messages/en.json"
+{
+  "UserPage": {
+    "title": "Hello {firstName}"
+  }
+}
+```
+
+```tsx
+function UserPage({user}) {
+  const t = useTranslations('UserPage');
+
+  // ✖️ Missing argument
+  t('title');
+
+  // ✅ Required arguments are present
+  t('title', {firstName: user.firstName});
+}
+```
+
+TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers the types of an imported JSON module as rather broad.
+
+Due to this, `next-intl` provides a stopgap solution that allows you to compile an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
+
+**Usage:**
+
+1. Enable the `compileMessagesDeclaration` setting in your Next.js config:
+
+```tsx filename="next.config.mjs"
+import {createNextIntlPlugin} from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // Use the path to the messages that you're using in `AppConfig`
+    compileMessagesDeclaration: './messages/en.json'
+  }
+});
+
+// ...
+```
+
+2. Add support for JSON type declarations:
+
+```json filename="tsconfig.json"
+{
+  "compilerOptions": {
+    // ...
+    "allowArbitraryExtensions": true
+  }
+}
+```
+
+3. Upvote [microsoft/TypeScript#32063](https://github.com/microsoft/TypeScript/issues/32063) so that we can remove this workaround in the future.
+
+With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev` or `next build`:
+
+```diff
+  messages/en.json
++ messages/en.d.json.ts
+```
+
+You can choose to ignore the generated declaration file in Git:
+
+```text filename=".gitignore"
+messages/*.d.json.ts
+```
+
 ## `Formats`
 
 If you're using [global formats](/docs/usage/configuration#formats), you can strictly type the format names that are referenced in calls to `format.dateTime`, `format.number` and `format.list`.

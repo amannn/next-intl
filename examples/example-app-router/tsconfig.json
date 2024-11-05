@@ -1,6 +1,7 @@
 {
   "extends": "eslint-config-molindo/tsconfig.json",
   "compilerOptions": {
+    "allowArbitraryExtensions": true,
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
