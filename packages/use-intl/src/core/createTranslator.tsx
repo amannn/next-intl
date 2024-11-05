@@ -25,8 +25,7 @@ import {
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-
-type OnlyOptional<T> = Partial<T> extends T ? true : false;
+import {OnlyOptional, Prettify} from './types.tsx';
 
 type ICUArgsWithTags<
   MessageString extends string,
@@ -57,7 +56,7 @@ type TranslateArgs<
         ) extends (key: infer Args) => void
       ? OnlyOptional<Args> extends true
         ? [values?: undefined, formats?: Formats]
-        : [values: Args, formats?: Formats]
+        : [values: Prettify<Args>, formats?: Formats]
       : never;
 
 /**
