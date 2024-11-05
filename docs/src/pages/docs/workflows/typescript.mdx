@@ -9,18 +9,129 @@ import Callout from '@/components/Callout';
 However, you can optionally provide supplemental definitions to augment the types that `next-intl` works with, enabling improved autocompletion and type safety across your app.
 
 ```tsx filename="global.d.ts"
+import {routing} from '@/i18n/routing';
+import {formats} from '@/i18n/request';
+import messages from './messages/en.json';
+
 declare module 'next-intl' {
   interface AppConfig {
-    // ...
+    Locale: (typeof routing.locales)[number];
+    Messages: typeof messages;
+    Formats: typeof formats;
   }
 }
 ```
 
 Type augmentation is available for:
 
+- [`Locale`](#locale)
 - [`Messages`](#messages)
 - [`Formats`](#formats)
-- [`Locale`](#locale)
+
+## `Locale`
+
+Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are accepted by APIs from `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
+
+```tsx
+// ✅ 'en' | 'de'
+const locale = useLocale();
+```
+
+To enable this validation, you can adapt `AppConfig` as follows:
+
+<Tabs items={['With i18n routing', 'Without i18n routing']}>
+<Tabs.Tab>
+
+```tsx filename="global.d.ts"
+import {routing} from '@/i18n/routing';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof routing.locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```tsx filename="global.d.ts"
+// Potentially imported from a shared config
+const locales = ['en', 'de'] as const;
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+</Tabs>
+
+### Using the `Locale` type for arguments
+
+Once the `Locale` type is augmented, it can be used across your codebase if you need to pass the locale to functions outside of your components:
+
+```tsx {1,10}
+import {Locale} from 'next-intl';
+import {getLocale} from 'next-intl/server';
+
+async function BlogPosts() {
+  const locale = await getLocale();
+  const posts = await getPosts(locale);
+  // ...
+}
+
+async function getPosts(locale: Locale) {
+  // ...
+}
+```
+
+### Using the `Locale` type for layout and page params [#locale-segment-params]
+
+You can also use the `Locale` type when working with the `[locale]` parameter in layouts and pages:
+
+```tsx filename="app/[locale]/page.tsx"
+import {Locale} from 'next-intl';
+
+type Props = {
+  params: {
+    locale: Locale;
+  };
+};
+
+export default function Page(props: Props) {
+  // ...
+}
+```
+
+However, keep in mind that this _assumes_ the locale to be valid in this place—Next.js doesn't validate the `[locale]` parameter automatically for you. Due to this, you can add your own validation logic in a central place like the root layout:
+
+```tsx filename="app/[locale]/layout.tsx"
+import {hasLocale} from 'next-intl';
+
+// Can be imported e.g. from `@/i18n/routing`
+const locales = ['en', 'de'] as const;
+
+type Props = {
+  params: {
+    children: React.ReactNode;
+    locale: string;
+  };
+};
+
+export default async function LocaleLayout({params: {locale}}: Props) {
+  if (!hasLocale(locales, locale)) {
+    notFound();
+  }
+
+  // ✅ 'en' | 'de'
+  console.log(locale);
+}
+```
 
 ## `Messages`
 
@@ -196,111 +307,6 @@ declare module 'next-intl' {
     // ...
     Formats: typeof formats;
   }
-}
-```
-
-## `Locale`
-
-Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are accepted by APIs from `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
-
-```tsx
-// ✅ 'en' | 'de'
-const locale = useLocale();
-```
-
-To enable this validation, you can adapt `AppConfig` as follows:
-
-<Tabs items={['With i18n routing', 'Without i18n routing']}>
-<Tabs.Tab>
-
-```tsx filename="global.d.ts"
-import {routing} from '@/i18n/routing';
-
-declare module 'next-intl' {
-  interface AppConfig {
-    // ...
-    Locale: (typeof routing.locales)[number];
-  }
-}
-```
-
-</Tabs.Tab>
-<Tabs.Tab>
-
-```tsx filename="global.d.ts"
-// Potentially imported from a shared config
-const locales = ['en', 'de'] as const;
-
-declare module 'next-intl' {
-  interface AppConfig {
-    // ...
-    Locale: (typeof locales)[number];
-  }
-}
-```
-
-</Tabs.Tab>
-</Tabs>
-
-### Using the `Locale` type for arguments
-
-Once the `Locale` type is augmented, it can be used across your codebase if you need to pass the locale to functions outside of your components:
-
-```tsx {1,10}
-import {Locale} from 'next-intl';
-import {getLocale} from 'next-intl/server';
-
-async function BlogPosts() {
-  const locale = await getLocale();
-  const posts = await getPosts(locale);
-  // ...
-}
-
-async function getPosts(locale: Locale) {
-  // ...
-}
-```
-
-### Using the `Locale` type for layout and page params [#locale-segment-params]
-
-You can also use the `Locale` type when working with the `[locale]` parameter in layouts and pages:
-
-```tsx filename="app/[locale]/page.tsx"
-import {Locale} from 'next-intl';
-
-type Props = {
-  params: {
-    locale: Locale;
-  };
-};
-
-export default function Page(props: Props) {
-  // ...
-}
-```
-
-However, keep in mind that this _assumes_ the locale to be valid in this place—Next.js doesn't validate the `[locale]` parameter automatically for you. Due to this, you can add your own validation logic in a central place like the root layout:
-
-```tsx filename="app/[locale]/layout.tsx"
-import {hasLocale} from 'next-intl';
-
-// Can be imported e.g. from `@/i18n/routing`
-const locales = ['en', 'de'] as const;
-
-type Props = {
-  params: {
-    children: React.ReactNode;
-    locale: string;
-  };
-};
-
-export default async function LocaleLayout({params: {locale}}: Props) {
-  if (!hasLocale(locales, locale)) {
-    notFound();
-  }
-
-  // ✅ 'en' | 'de'
-  console.log(locale);
 }
 ```
 
