@@ -1,6 +1,7 @@
 import {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
 import {describe, expect, it, vi} from 'vitest';
+import {Messages} from './AppConfig.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
 import createTranslator from './createTranslator.tsx';
 
@@ -104,7 +105,7 @@ it('can handle nested blocks in plural', () => {
 });
 
 describe('type safety', () => {
-  describe('keys', () => {
+  describe('keys, strictly-typed', () => {
     it('allows valid namespaces', () => {
       createTranslator({
         locale: 'en',
@@ -140,23 +141,29 @@ describe('type safety', () => {
         messages
       });
 
-      // @ts-expect-error
-      t('unknown');
-      // @ts-expect-error
-      t.has('unknown');
-      // @ts-expect-error
-      t.markup('unknown');
-      // @ts-expect-error
-      t.rich('unknown');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('unknown');
+        // @ts-expect-error
+        t.has('unknown');
+        // @ts-expect-error
+        t.markup('unknown');
+        // @ts-expect-error
+        t.rich('unknown');
+      };
     });
 
     it('disallows invalid namespaces', () => {
-      createTranslator<typeof messages>({
-        locale: 'en',
-        messages,
-        // @ts-expect-error
-        namespace: 'unknown'
-      });
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        createTranslator<typeof messages>({
+          locale: 'en',
+          messages,
+          // @ts-expect-error
+          namespace: 'unknown'
+        });
+      };
     });
 
     it('disallows invalid keys', () => {
@@ -166,18 +173,45 @@ describe('type safety', () => {
         namespace: 'Home'
       });
 
-      // @ts-expect-error
-      t('unknown');
-      // @ts-expect-error
-      t.has('unknown');
-      // @ts-expect-error
-      t.markup('unknown');
-      // @ts-expect-error
-      t.rich('unknown');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('unknown');
+        // @ts-expect-error
+        t.has('unknown');
+        // @ts-expect-error
+        t.markup('unknown');
+        // @ts-expect-error
+        t.rich('unknown');
+      };
     });
   });
 
-  describe('params', () => {
+  describe('keys, untyped', () => {
+    it('allows any namespace', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        createTranslator({
+          locale: 'en',
+          messages: messages as Messages,
+          namespace: 'unknown'
+        });
+      };
+    });
+
+    it('allows any key', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator({
+          locale: 'en',
+          messages: messages as Messages
+        });
+        t('unknown');
+      };
+    });
+  });
+
+  describe('params, strictly-typed', () => {
     const t = createTranslator({
       locale: 'en',
       messages: {
@@ -202,34 +236,57 @@ describe('type safety', () => {
     it('validates plain params', () => {
       t('param', {name: 'Jane'});
 
-      // @ts-expect-error
-      t('param', {unknown: 'Jane'});
-      // @ts-expect-error
-      t('param');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('param', {unknown: 'Jane'});
+        // @ts-expect-error
+        t('param');
+      };
+    });
+
+    it('can handle undefined values', () => {
+      const obj = {
+        name: 'Jane',
+        age: undefined
+      };
+      t('param', obj);
     });
 
     it('validates cardinal plurals', () => {
       t('cardinalPlural', {count: 0});
-      // @ts-expect-error
-      t('cardinalPlural', {unknown: 1.5});
-      // @ts-expect-error
-      t('cardinalPlural');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('cardinalPlural', {unknown: 1.5});
+        // @ts-expect-error
+        t('cardinalPlural');
+      };
     });
 
     it('validates ordinal plurals', () => {
       t('ordinalPlural', {year: 1});
-      // @ts-expect-error
-      t('ordinalPlural', {unknown: 1});
-      // @ts-expect-error
-      t('ordinalPlural');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('ordinalPlural', {unknown: 1});
+        // @ts-expect-error
+        t('ordinalPlural');
+      };
     });
 
     it('validates selects', () => {
       t('select', {gender: 'female'});
-      // @ts-expect-error
-      t('select', {unknown: 'female'});
-      // @ts-expect-error
-      t('select');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('select', {unknown: 'female'});
+        // @ts-expect-error
+        t('select');
+      };
     });
 
     it('validates nested selects', () => {
@@ -242,31 +299,43 @@ describe('type safety', () => {
       t('selectNested', {foo: 'one', one: 'One'}); // Only `one` is required
       t('selectNested', {foo: 'one', one: 'One', two: 'Two'}); // …but `two` is also allowed
       t('selectNested', {foo: 'two', two: 'Two'});
-      // @ts-expect-error
-      t('selectNested', {foo: 'unknown' as string, other: 'Other'});
-      // @ts-expect-error
-      t('selectNested', {unknown: 'one'});
-      // @ts-expect-error
-      t('selectNested');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('selectNested', {foo: 'unknown' as string, other: 'Other'});
+        // @ts-expect-error
+        t('selectNested', {unknown: 'one'});
+        // @ts-expect-error
+        t('selectNested');
+      };
     });
 
     it('validates escaped', () => {
       t('escaped');
-      // @ts-expect-error
-      t('escaped', {name: 'Jane'});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('escaped', {name: 'Jane'});
+      };
     });
 
     it('validates simple rich text', () => {
       t.rich('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
       t.markup('richSimple', {guidelines: (chunks) => `<p>${chunks}</p>`});
-      // @ts-expect-error
-      t.rich('richSimple', {guidelines: 'test'});
-      // @ts-expect-error
-      t.rich('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
-      // @ts-expect-error
-      t.rich('richSimple', {unknown: 'test'});
-      // @ts-expect-error
-      t.rich('richSimple');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.rich('richSimple', {guidelines: 'test'});
+        // @ts-expect-error
+        t.rich('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.rich('richSimple', {unknown: 'test'});
+        // @ts-expect-error
+        t.rich('richSimple');
+      };
     });
 
     it('validates nested rich text', () => {
@@ -279,14 +348,17 @@ describe('type safety', () => {
         very: (chunks) => `<i>${chunks}</i>`
       });
 
-      // @ts-expect-error
-      t.rich('richNested', {important: (chunks) => <p>{chunks}</p>});
-      // @ts-expect-error
-      t.rich('richNested', {important: 'test', very: 'test'});
-      // @ts-expect-error
-      t.rich('richNested', {unknown: 'test'});
-      // @ts-expect-error
-      t.rich('richNested');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.rich('richNested', {important: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.rich('richNested', {important: 'test', very: 'test'});
+        // @ts-expect-error
+        t.rich('richNested', {unknown: 'test'});
+        // @ts-expect-error
+        t.rich('richNested');
+      };
     });
 
     it('validates a complex message', () => {
@@ -295,18 +367,22 @@ describe('type safety', () => {
         count: 2,
         user: (chunks) => <p>{chunks}</p>
       });
-      // @ts-expect-error
-      t.rich('complex', {
-        name: 'Jane',
-        user: (chunks) => <p>{chunks}</p>
-      });
-      t.rich('complex', {
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
         // @ts-expect-error
-        user: 'Jane',
-        // @ts-expect-error
-        name: (chunks) => <p>{chunks}</p>,
-        count: 2
-      });
+        t.rich('complex', {
+          name: 'Jane',
+          user: (chunks) => <p>{chunks}</p>
+        });
+        t.rich('complex', {
+          // @ts-expect-error
+          user: 'Jane',
+          // @ts-expect-error
+          name: (chunks) => <p>{chunks}</p>,
+          count: 2
+        });
+      };
     });
 
     it("doesn't allow params for `has`", () => {
@@ -318,18 +394,21 @@ describe('type safety', () => {
       t.has('richSimple');
       t.has('richNested');
 
-      // @ts-expect-error
-      t.has('param', {name: 'Jane'});
-      // @ts-expect-error
-      t.has('cardinalPlural', {count: 0});
-      // @ts-expect-error
-      t.has('ordinalPlural', {year: 1});
-      // @ts-expect-error
-      t.has('select', {gender: 'female'});
-      // @ts-expect-error
-      t.has('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
-      // @ts-expect-error
-      t.has('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.has('param', {name: 'Jane'});
+        // @ts-expect-error
+        t.has('cardinalPlural', {count: 0});
+        // @ts-expect-error
+        t.has('ordinalPlural', {year: 1});
+        // @ts-expect-error
+        t.has('select', {gender: 'female'});
+        // @ts-expect-error
+        t.has('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.has('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+      };
     });
 
     it("doesn't allow params for `raw`", () => {
@@ -341,18 +420,76 @@ describe('type safety', () => {
       t.raw('richSimple');
       t.raw('richNested');
 
-      // @ts-expect-error
-      t.raw('param', {name: 'Jane'});
-      // @ts-expect-error
-      t.raw('cardinalPlural', {count: 0});
-      // @ts-expect-error
-      t.raw('ordinalPlural', {year: 1});
-      // @ts-expect-error
-      t.raw('select', {gender: 'female'});
-      // @ts-expect-error
-      t.raw('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
-      // @ts-expect-error
-      t.raw('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.raw('param', {name: 'Jane'});
+        // @ts-expect-error
+        t.raw('cardinalPlural', {count: 0});
+        // @ts-expect-error
+        t.raw('ordinalPlural', {year: 1});
+        // @ts-expect-error
+        t.raw('select', {gender: 'female'});
+        // @ts-expect-error
+        t.raw('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.raw('richNested', {important: (chunks) => <strong>{chunks}</strong>});
+      };
+    });
+  });
+
+  describe('params, untyped', () => {
+    it('allows passing no values', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        t('param');
+        t.rich('param');
+        t.markup('param');
+        t.raw('param');
+        t.has('param');
+      };
+    });
+
+    it('allows passing any values', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        t('param', {unknown: 'Jane'});
+        t.rich('param', {unknown: 'Jane', p: (chunks) => <p>{chunks}</p>});
+        t.markup('param', {unknown: 'Jane', p: (chunks) => `<p>${chunks}</p>`});
+      };
+    });
+
+    it('limits values where relevant', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('param', {p: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t('param', {p: (chunks) => `<p>${chunks}</p>`});
+
+        // @ts-expect-error
+        t.markup('param', {unknown: 'Jane', p: (chunks) => <p>{chunks}</p>});
+
+        // @ts-expect-error
+        t.raw('param', {unknown: 'Jane'});
+        // @ts-expect-error
+        t.has('param', {unknown: 'Jane'});
+      };
     });
   });
 });

@@ -1,32 +1,12 @@
 // From https://github.com/schummar/schummar-translate
 
-type OnlyOptional<T> = Partial<T> extends T ? true : false;
-
 export type Flatten<T> = T extends object
   ? {
       [P in keyof T]: T[P];
     }
   : T;
 
-export type TranslateArgs<Value extends string, Options> =
-  // any string => unknown arguments
-  string extends Value
-    ? [value?: Record<string, unknown>, options?: Options]
-    : // for unions, extract arguments for each union member individually
-      (Value extends any ? (k: GetICUArgs<Value>) => void : never) extends (
-          k: infer Args
-        ) => void
-      ? OnlyOptional<Args> extends true
-        ? // if no arguments are found, allow omitting values
-          [values?: Flatten<Args>, options?: Options]
-        : [values: Flatten<Args>, options?: Options]
-      : never;
-
-export type ICUArgument = string | number | boolean | Date;
-export type ICUNumberArgument = number;
-export type ICUDateArgument = Date | number | string;
-
-export type OtherString = string & {__type: 'other'};
+type OtherString = string & {__type: 'other'};
 
 type Whitespace = ' ' | '\t' | '\n' | '\r';
 
@@ -65,26 +45,53 @@ type ReadBlock<
   : []; // no }, return emptry result
 
 /** Parse block, return variables with types and recursively find nested blocks within */
-type ParseBlock<Block> =
+type ParseBlock<Block, ICUArgument, ICUNumberArgument, ICUDateArgument> =
   Block extends `${infer Name},${infer Format},${infer Rest}`
     ? Trim<Format> extends 'select'
-      ? SelectOptions<Trim<Name>, Trim<Rest>>
-      : {[K in Trim<Name>]: VariableType<Trim<Format>>} & TupleParseBlock<
-          TupleFindBlocks<FindBlocks<Rest>>
+      ? SelectOptions<
+          Trim<Name>,
+          Trim<Rest>,
+          ICUArgument,
+          ICUNumberArgument,
+          ICUDateArgument
+        >
+      : {
+          [K in Trim<Name>]: VariableType<
+            Trim<Format>,
+            ICUArgument,
+            ICUNumberArgument,
+            ICUDateArgument
+          >;
+        } & TupleParseBlock<
+          TupleFindBlocks<FindBlocks<Rest>>,
+          ICUArgument,
+          ICUNumberArgument,
+          ICUDateArgument
         >
     : Block extends `${infer Name},${infer Format}`
-      ? {[K in Trim<Name>]: VariableType<Trim<Format>>}
+      ? {
+          [K in Trim<Name>]: VariableType<
+            Trim<Format>,
+            ICUArgument,
+            ICUNumberArgument,
+            ICUDateArgument
+          >;
+        }
       : {[K in Trim<Block>]: ICUArgument};
 
 /** Parse block for each tuple entry */
-type TupleParseBlock<T> = T extends readonly [infer First, ...infer Rest]
-  ? ParseBlock<First> & TupleParseBlock<Rest>
-  : {};
+type TupleParseBlock<T, ICUArgument, ICUNumberArgument, ICUDateArgument> =
+  T extends readonly [infer First, ...infer Rest]
+    ? ParseBlock<First, ICUArgument, ICUNumberArgument, ICUDateArgument> &
+        TupleParseBlock<Rest, ICUArgument, ICUNumberArgument, ICUDateArgument>
+    : {};
 
-type VariableType<T extends string> = T extends
-  | 'number'
-  | 'plural'
-  | 'selectordinal'
+type VariableType<
+  T extends string,
+  ICUArgument,
+  ICUNumberArgument,
+  ICUDateArgument
+> = T extends 'number' | 'plural' | 'selectordinal'
   ? ICUNumberArgument
   : T extends 'date' | 'time'
     ? ICUDateArgument
@@ -92,20 +99,38 @@ type VariableType<T extends string> = T extends
 
 // Select //////////////////////////////////////////////////////////////////////
 
-type SelectOptions<Name extends string, Rest> = KeepAndMerge<
-  ParseSelectBlock<Name, Rest>
+type SelectOptions<
+  Name extends string,
+  Rest,
+  ICUArgument,
+  ICUNumberArgument,
+  ICUDateArgument
+> = KeepAndMerge<
+  ParseSelectBlock<Name, Rest, ICUArgument, ICUNumberArgument, ICUDateArgument>
 >;
 
 type ParseSelectBlock<
   Name extends string,
-  Rest
+  Rest,
+  ICUArgument,
+  ICUNumberArgument,
+  ICUDateArgument
 > = Rest extends `${infer Left}{${infer Right}`
   ? ReadBlock<'', Right, ''> extends [infer Block, infer Tail]
     ?
         | ({[K in Name]: HandleOther<Trim<Left>>} & TupleParseBlock<
-            FindBlocks<Block>
+            FindBlocks<Block>,
+            ICUArgument,
+            ICUNumberArgument,
+            ICUDateArgument
           >)
-        | ParseSelectBlock<Name, Tail>
+        | ParseSelectBlock<
+            Name,
+            Tail,
+            ICUArgument,
+            ICUNumberArgument,
+            ICUDateArgument
+          >
     : never
   : never;
 
@@ -136,24 +161,21 @@ type StripEscapes<T> = T extends `${infer Left}''${infer Right}`
       ? Start
       : T;
 
-// Readability /////////////////////////////////////////////////////////////////
-
-// Make provided args optional
-type MakeProvidedOptional<T, ProvidedArgs extends string = never> = {
-  [K in keyof T as K extends ProvidedArgs ? never : K]: T[K];
-} & {
-  [K in ProvidedArgs & keyof T]?: T[K];
-};
-
 // Export //////////////////////////////////////////////////////////////////////
 
 /** Calculates an object type with all variables and their types in the given ICU format string */
-export type GetICUArgs<
+type ICUArgs<
   T extends string,
-  ProvidedArgs extends string = never
+  ICUArgument,
+  ICUNumberArgument,
+  ICUDateArgument
 > = Flatten<
-  MakeProvidedOptional<
-    TupleParseBlock<FindBlocks<StripEscapes<T>>>,
-    ProvidedArgs
+  TupleParseBlock<
+    FindBlocks<StripEscapes<T>>,
+    ICUArgument,
+    ICUNumberArgument,
+    ICUDateArgument
   >
 >;
+
+export default ICUArgs;

@@ -23,6 +23,7 @@ export default function useTranslations<
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
+  // @ts-expect-error Use the explicit annotation instead
   return useTranslationsImpl<
     {'!': Messages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`

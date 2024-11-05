@@ -1,12 +1,16 @@
 import {ReactNode} from 'react';
 import {Messages} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
+import ICUArgs from './ICUArgs.tsx';
+import ICUTags from './ICUTags.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import {
-  MessageParams,
-  MessageParamsMarkup,
-  MessageParamsRichText
-} from './MessageParams.tsx';
+  DateTranslationValue,
+  MarkupFunction,
+  NumberTranslationValue,
+  PlainTranslationValue,
+  RichTextFunction
+} from './TranslationValues.tsx';
 import {
   MessageKeys,
   NamespaceKeys,
@@ -21,6 +25,40 @@ import {
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
+
+type OnlyOptional<T> = Partial<T> extends T ? true : false;
+
+type ICUArgsWithTags<
+  MessageString extends string,
+  TagsFn extends RichTextFunction | MarkupFunction = never
+> = ICUArgs<
+  MessageString,
+  PlainTranslationValue,
+  NumberTranslationValue,
+  DateTranslationValue
+> &
+  ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
+
+type TranslateArgs<
+  Value extends string,
+  Formats,
+  TagsFn extends RichTextFunction | MarkupFunction = never
+> =
+  // If an unknown string is passed, allow any values
+  string extends Value
+    ? [
+        values?: Record<string, PlainTranslationValue | TagsFn>,
+        formats?: Formats
+      ]
+    : (
+          Value extends any
+            ? (key: ICUArgsWithTags<Value, TagsFn>) => void
+            : never
+        ) extends (key: infer Args) => void
+      ? OnlyOptional<Args> extends true
+        ? [values?: undefined, formats?: Formats]
+        : [values: Args, formats?: Formats]
+      : never;
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -69,24 +107,13 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    ...args: MessageParams<
+    ...args: TranslateArgs<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >
-    > extends Record<string, never>
-      ? [values?: undefined, formats?: Formats]
-      : [
-          values: MessageParams<
-            NestedValueOf<
-              TranslatorMessages,
-              [Namespace] extends [never]
-                ? TargetKey
-                : `${Namespace}.${TargetKey}`
-            >
-          >,
-          formats?: Formats
-        ]
+      >,
+      Formats
+    >
   ): string;
 
   // `rich`
@@ -105,24 +132,14 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    ...args: MessageParamsRichText<
+    ...args: TranslateArgs<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >
-    > extends Record<string, never>
-      ? [values?: undefined, formats?: Formats]
-      : [
-          values: MessageParamsRichText<
-            NestedValueOf<
-              TranslatorMessages,
-              [Namespace] extends [never]
-                ? TargetKey
-                : `${Namespace}.${TargetKey}`
-            >
-          >,
-          formats?: Formats
-        ]
+      >,
+      Formats,
+      RichTextFunction
+    >
   ): ReactNode;
 
   // `markup`
@@ -141,24 +158,14 @@ export default function createTranslator<
     >
   >(
     key: TargetKey,
-    ...args: MessageParamsMarkup<
+    ...args: TranslateArgs<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >
-    > extends Record<string, never>
-      ? [values?: undefined, formats?: Formats]
-      : [
-          values: MessageParamsMarkup<
-            NestedValueOf<
-              TranslatorMessages,
-              [Namespace] extends [never]
-                ? TargetKey
-                : `${Namespace}.${TargetKey}`
-            >
-          >,
-          formats?: Formats
-        ]
+      >,
+      Formats,
+      MarkupFunction
+    >
   ): string;
 
   // `raw`
@@ -200,6 +207,7 @@ export default function createTranslator<
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
+  // @ts-expect-error Use the explicit annotation instead
   return createTranslatorImpl<
     {'!': TranslatorMessages},
     [Namespace] extends [never] ? '!' : `!.${Namespace}`
