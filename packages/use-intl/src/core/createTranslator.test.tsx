@@ -94,7 +94,7 @@ it('can handle nested blocks in selects', () => {
   ).toBe('One: One');
 });
 
-it('can handle nested blocks in plural', () => {
+it('can handle nested blocks in plurals', () => {
   const t = createTranslator({
     locale: 'en',
     messages: {
@@ -212,138 +212,156 @@ describe('type safety', () => {
   });
 
   describe('params, strictly-typed', () => {
-    const t = createTranslator({
-      locale: 'en',
-      messages: {
-        param: 'Hello {name}',
-        cardinalPlural:
-          'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.',
-        ordinalPlural:
-          "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-        select:
-          '{gender, select, female {She} male {He} other {They}} is online.',
-        selectNested:
-          '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}',
-        escaped: "Escape curly braces with single quotes (e.g. '{name'})",
-        richSimple: 'Please refer to <guidelines>the guidelines</guidelines>.',
-        richNested:
-          'This is <important><very>very</very> important</important>',
-        complex:
-          'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'
-      }
-    });
+    function translateMessage<const T extends string>(msg: T) {
+      return createTranslator({
+        locale: 'en',
+        messages: {msg}
+      });
+    }
 
     it('validates plain params', () => {
-      t('param', {name: 'Jane'});
+      const t = translateMessage('Hello {name}');
+
+      t('msg', {name: 'Jane'});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('param', {unknown: 'Jane'});
+        t('msg', {unknown: 'Jane'});
         // @ts-expect-error
-        t('param');
+        t('msg');
       };
     });
 
     it('can handle undefined values', () => {
+      const t = translateMessage('Hello {name}');
+
       const obj = {
         name: 'Jane',
         age: undefined
       };
-      t('param', obj);
+      t('msg', obj);
     });
 
     it('validates cardinal plurals', () => {
-      t('cardinalPlural', {count: 0});
+      const t = translateMessage(
+        'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.'
+      );
+
+      t('msg', {count: 0});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('cardinalPlural', {unknown: 1.5});
+        t('msg', {unknown: 1.5});
         // @ts-expect-error
-        t('cardinalPlural');
+        t('msg');
       };
     });
 
     it('validates ordinal plurals', () => {
-      t('ordinalPlural', {year: 1});
+      const t = translateMessage(
+        "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+      );
+
+      t('msg', {year: 1});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('ordinalPlural', {unknown: 1});
+        t('msg', {unknown: 1});
         // @ts-expect-error
-        t('ordinalPlural');
+        t('msg');
       };
     });
 
     it('validates selects', () => {
-      t('select', {gender: 'female'});
+      const t = translateMessage(
+        '{gender, select, female {She} male {He} other {They}} is online.'
+      );
+
+      t('msg', {gender: 'female'});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('select', {unknown: 'female'});
+        t('msg', {unknown: 'female'});
         // @ts-expect-error
-        t('select');
+        t('msg');
       };
     });
 
     it('validates nested selects', () => {
-      t('selectNested', {
+      const t = translateMessage(
+        '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}'
+      );
+
+      t('msg', {
         foo: 'one',
         one: 'One',
         two: 'Two',
         other: 'Other'
       });
-      t('selectNested', {foo: 'one', one: 'One'}); // Only `one` is required
-      t('selectNested', {foo: 'one', one: 'One', two: 'Two'}); // …but `two` is also allowed
-      t('selectNested', {foo: 'two', two: 'Two'});
+      t('msg', {foo: 'one', one: 'One'}); // Only `one` is required
+      t('msg', {foo: 'one', one: 'One', two: 'Two'}); // …but `two` is also allowed
+      t('msg', {foo: 'two', two: 'Two'});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('selectNested', {foo: 'unknown' as string, other: 'Other'});
+        t('msg', {foo: 'unknown' as string, other: 'Other'});
         // @ts-expect-error
-        t('selectNested', {unknown: 'one'});
+        t('msg', {unknown: 'one'});
         // @ts-expect-error
-        t('selectNested');
+        t('msg');
       };
     });
 
     it('validates escaped', () => {
-      t('escaped');
+      const t = translateMessage(
+        "Escape curly braces with single quotes (e.g. '{name')"
+      );
+
+      t('msg');
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t('escaped', {name: 'Jane'});
+        t('msg', {name: 'Jane'});
       };
     });
 
     it('validates simple rich text', () => {
-      t.rich('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
-      t.markup('richSimple', {guidelines: (chunks) => `<p>${chunks}</p>`});
+      const t = translateMessage(
+        'Please refer to <guidelines>the guidelines</guidelines>.'
+      );
+
+      t.rich('msg', {guidelines: (chunks) => <p>{chunks}</p>});
+      t.markup('msg', {guidelines: (chunks) => `<p>${chunks}</p>`});
 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t.rich('richSimple', {guidelines: 'test'});
+        t.rich('msg', {guidelines: 'test'});
         // @ts-expect-error
-        t.rich('richSimple', {unknown: (chunks) => <p>{chunks}</p>});
+        t.rich('msg', {unknown: (chunks) => <p>{chunks}</p>});
         // @ts-expect-error
-        t.rich('richSimple', {unknown: 'test'});
+        t.rich('msg', {unknown: 'test'});
         // @ts-expect-error
-        t.rich('richSimple');
+        t.rich('msg');
       };
     });
 
     it('validates nested rich text', () => {
-      t.rich('richNested', {
+      const t = translateMessage(
+        'This is <important><very>very</very> important</important>'
+      );
+
+      t.rich('msg', {
         important: (chunks) => <strong>{chunks}</strong>,
         very: (chunks) => <i>{chunks}</i>
       });
-      t.markup('richNested', {
+      t.markup('msg', {
         important: (chunks) => `<strong>${chunks}</strong>`,
         very: (chunks) => `<i>${chunks}</i>`
       });
@@ -351,18 +369,22 @@ describe('type safety', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t.rich('richNested', {important: (chunks) => <p>{chunks}</p>});
+        t.rich('msg', {important: (chunks) => <p>{chunks}</p>});
         // @ts-expect-error
-        t.rich('richNested', {important: 'test', very: 'test'});
+        t.rich('msg', {important: 'test', very: 'test'});
         // @ts-expect-error
-        t.rich('richNested', {unknown: 'test'});
+        t.rich('msg', {unknown: 'test'});
         // @ts-expect-error
-        t.rich('richNested');
+        t.rich('msg');
       };
     });
 
     it('validates a complex message', () => {
-      t.rich('complex', {
+      const t = translateMessage(
+        'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'
+      );
+
+      t.rich('msg', {
         name: 'Jane',
         count: 2,
         user: (chunks) => <p>{chunks}</p>
@@ -371,11 +393,11 @@ describe('type safety', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       () => {
         // @ts-expect-error
-        t.rich('complex', {
+        t.rich('msg', {
           name: 'Jane',
           user: (chunks) => <p>{chunks}</p>
         });
-        t.rich('complex', {
+        t.rich('msg', {
           // @ts-expect-error
           user: 'Jane',
           // @ts-expect-error
@@ -385,56 +407,81 @@ describe('type safety', () => {
       };
     });
 
-    it("doesn't allow params for `has`", () => {
-      t.has('param');
-      t.has('cardinalPlural');
-      t.has('ordinalPlural');
-      t.has('select');
-      t.has('escaped');
-      t.has('richSimple');
-      t.has('richNested');
+    describe('disallowed params', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: {
+          simpleParam: 'Hello {name}',
+          pluralMessage:
+            'You have {count, plural, =0 {no followers} =1 {one follower} other {# followers}}.',
+          ordinalMessage:
+            "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+          selectMessage:
+            '{gender, select, female {She} male {He} other {They}} is online.',
+          escapedParam:
+            "Escape curly braces with single quotes (e.g. '{name'})",
+          simpleRichText:
+            'Please refer to <guidelines>the guidelines</guidelines>.',
+          nestedRichText:
+            'This is <important><very>very</very> important</important>'
+        }
+      });
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      () => {
-        // @ts-expect-error
-        t.has('param', {name: 'Jane'});
-        // @ts-expect-error
-        t.has('cardinalPlural', {count: 0});
-        // @ts-expect-error
-        t.has('ordinalPlural', {year: 1});
-        // @ts-expect-error
-        t.has('select', {gender: 'female'});
-        // @ts-expect-error
-        t.has('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
-        // @ts-expect-error
-        t.has('richNested', {important: (chunks) => <strong>{chunks}</strong>});
-      };
-    });
+      it("doesn't allow params for `has`", () => {
+        t.has('simpleParam');
+        t.has('pluralMessage');
+        t.has('ordinalMessage');
+        t.has('selectMessage');
+        t.has('escapedParam');
+        t.has('simpleRichText');
+        t.has('nestedRichText');
 
-    it("doesn't allow params for `raw`", () => {
-      t.raw('param');
-      t.raw('cardinalPlural');
-      t.raw('ordinalPlural');
-      t.raw('select');
-      t.raw('escaped');
-      t.raw('richSimple');
-      t.raw('richNested');
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () => {
+          // @ts-expect-error
+          t.has('simpleParam', {name: 'Jane'});
+          // @ts-expect-error
+          t.has('pluralMessage', {count: 0});
+          // @ts-expect-error
+          t.has('ordinalMessage', {year: 1});
+          // @ts-expect-error
+          t.has('selectMessage', {gender: 'female'});
+          // @ts-expect-error
+          t.has('simpleRichText', {guidelines: (chunks) => <p>{chunks}</p>});
+          // @ts-expect-error
+          t.has('nestedRichText', {
+            important: (chunks: any) => <strong>{chunks}</strong>
+          });
+        };
+      });
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      () => {
-        // @ts-expect-error
-        t.raw('param', {name: 'Jane'});
-        // @ts-expect-error
-        t.raw('cardinalPlural', {count: 0});
-        // @ts-expect-error
-        t.raw('ordinalPlural', {year: 1});
-        // @ts-expect-error
-        t.raw('select', {gender: 'female'});
-        // @ts-expect-error
-        t.raw('richSimple', {guidelines: (chunks) => <p>{chunks}</p>});
-        // @ts-expect-error
-        t.raw('richNested', {important: (chunks) => <strong>{chunks}</strong>});
-      };
+      it("doesn't allow params for `raw`", () => {
+        t.raw('simpleParam');
+        t.raw('pluralMessage');
+        t.raw('ordinalMessage');
+        t.raw('selectMessage');
+        t.raw('escapedParam');
+        t.raw('simpleRichText');
+        t.raw('nestedRichText');
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () => {
+          // @ts-expect-error
+          t.raw('simpleParam', {name: 'Jane'});
+          // @ts-expect-error
+          t.raw('pluralMessage', {count: 0});
+          // @ts-expect-error
+          t.raw('ordinalMessage', {year: 1});
+          // @ts-expect-error
+          t.raw('selectMessage', {gender: 'female'});
+          // @ts-expect-error
+          t.raw('simpleRichText', {guidelines: (chunks) => <p>{chunks}</p>});
+          // @ts-expect-error
+          t.raw('nestedRichText', {
+            important: (chunks: any) => <strong>{chunks}</strong>
+          });
+        };
+      });
     });
   });
 
