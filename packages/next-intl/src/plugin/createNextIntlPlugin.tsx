@@ -1,5 +1,5 @@
 import type {NextConfig} from 'next';
-import compileMessagesDeclaration from './compileMessagesDeclaration.tsx';
+import createMessagesDeclaration from './createMessagesDeclaration.tsx';
 import getNextConfig from './getNextConfig.tsx';
 import type {PluginConfig} from './types.tsx';
 import {warn} from './utils.tsx';
@@ -14,9 +14,9 @@ function initPlugin(
     );
   }
 
-  if (pluginConfig.experimental?.compileMessagesDeclaration) {
-    compileMessagesDeclaration(
-      pluginConfig.experimental.compileMessagesDeclaration
+  if (pluginConfig.experimental?.createMessagesDeclaration) {
+    createMessagesDeclaration(
+      pluginConfig.experimental.createMessagesDeclaration
     );
   }
 

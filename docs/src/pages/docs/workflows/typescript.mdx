@@ -88,11 +88,11 @@ function UserPage({user}) {
 
 TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers the types of an imported JSON module as rather broad.
 
-Due to this, `next-intl` provides a stopgap solution that allows you to compile an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
+Due to this, `next-intl` provides a stopgap solution that allows you to generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
 
 **Usage:**
 
-1. Enable the `compileMessagesDeclaration` setting in your Next.js config:
+1. Enable the `createMessagesDeclaration` setting in your Next.js config:
 
 ```tsx filename="next.config.mjs"
 import {createNextIntlPlugin} from 'next-intl/plugin';
@@ -100,7 +100,7 @@ import {createNextIntlPlugin} from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     // Use the path to the messages that you're using in `AppConfig`
-    compileMessagesDeclaration: './messages/en.json'
+    createMessagesDeclaration: './messages/en.json'
   }
 });
 
@@ -118,8 +118,6 @@ const withNextIntl = createNextIntlPlugin({
 }
 ```
 
-3. Upvote [microsoft/TypeScript#32063](https://github.com/microsoft/TypeScript/issues/32063) so that we can remove this workaround in the future.
-
 With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev` or `next build`:
 
 ```diff
@@ -127,11 +125,15 @@ With this setup in place, you'll see a new declaration file generated in your `m
 + messages/en.d.json.ts
 ```
 
-You can choose to ignore the generated declaration file in Git:
+This declaration file will provide the exact types for the messages that you're using in `AppConfig`, enabling type safety for message arguments.
+
+You can choose to ignore this file in Git:
 
 ```text filename=".gitignore"
 messages/*.d.json.ts
 ```
+
+Please consider upvoting [microsoft/TypeScript#32063](https://github.com/microsoft/TypeScript/issues/32063) so that we can hopefully remove this workaround in the future.
 
 ## `Formats`
 

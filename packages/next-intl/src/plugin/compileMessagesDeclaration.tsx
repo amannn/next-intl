@@ -11,17 +11,17 @@ function runOnce(fn: () => void) {
   fn();
 }
 
-export default function compileMessagesDeclaration(messagesPath: string) {
+export default function createMessagesDeclaration(messagesPath: string) {
   const fullPath = path.resolve(messagesPath);
 
   if (!fs.existsSync(fullPath)) {
     throwError(
-      `\`compileMessagesDeclaration\` points to a non-existent file: ${fullPath}`
+      `\`createMessagesDeclaration\` points to a non-existent file: ${fullPath}`
     );
   }
   if (!fullPath.endsWith('.json')) {
     throwError(
-      `\`compileMessagesDeclaration\` needs to point to a JSON file. Received: ${fullPath}`
+      `\`createMessagesDeclaration\` needs to point to a JSON file. Received: ${fullPath}`
     );
   }
 
