@@ -5,11 +5,11 @@ import {Locale} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import {InitializedIntlConfig} from './IntlConfig.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
 } from './TranslationValues.tsx';
-import {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {

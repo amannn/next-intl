@@ -5,18 +5,18 @@ import ICUArgs from './ICUArgs.tsx';
 import ICUTags from './ICUTags.tsx';
 import IntlConfig from './IntlConfig.tsx';
 import {
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from './MessageKeys.tsx';
+import {
   ICUArg,
   ICUDate,
   ICUNumber,
   MarkupFunction,
   RichTextFunction
 } from './TranslationValues.tsx';
-import {
-  MessageKeys,
-  NamespaceKeys,
-  NestedKeyOf,
-  NestedValueOf
-} from './MessageKeys.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
