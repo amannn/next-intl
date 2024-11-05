@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {NextConfig} from 'next';
 import {PluginConfig} from './types.tsx';
+import {throwError} from './utils.tsx';
 
 function withExtensions(localPath: string) {
   return [
@@ -26,8 +27,8 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
 
   if (providedPath) {
     if (!pathExists(providedPath)) {
-      throw new Error(
-        `[next-intl] Could not find i18n config at ${providedPath}, please provide a valid path.`
+      throwError(
+        `Could not find i18n config at ${providedPath}, please provide a valid path.`
       );
     }
     return providedPath;
@@ -41,15 +42,15 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       }
     }
 
-    throw new Error(`\n[next-intl] Could not locate request configuration module.
-
-This path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}
+    throwError(
+      `Could not locate request configuration module.\n\nThis path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}\n\nAlternatively, you can specify a custom location in your Next.js config:\n\nconst withNextIntl = createNextIntlPlugin(
 
 Alternatively, you can specify a custom location in your Next.js config:
 
 const withNextIntl = createNextIntlPlugin(
   './path/to/i18n/request.tsx'
-);\n`);
+);`
+    );
   }
 }
 export default function getNextConfig(
@@ -62,10 +63,9 @@ export default function getNextConfig(
   // Assign alias for `next-intl/config`
   if (useTurbo) {
     if (pluginConfig.requestConfig?.startsWith('/')) {
-      throw new Error(
-        "[next-intl] Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
-          pluginConfig.requestConfig +
-          '\n'
+      throwError(
+        "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
+          pluginConfig.requestConfig
       );
     }
 
