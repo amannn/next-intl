@@ -5,3 +5,4 @@ tsconfig.tsbuildinfo
 *storybook.log
 storybook-static
 test-results
+messages/*.d.json.ts
