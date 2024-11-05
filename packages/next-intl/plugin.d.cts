@@ -1,7 +1,3 @@
-import {NextConfig} from 'next';
-
-function createNextIntlPlugin(
-  i18nPath?: string
-): (config?: NextConfig) => NextConfig;
+import createNextIntlPlugin from './dist/types/plugin.ts';
 
 export = createNextIntlPlugin;
