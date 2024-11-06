@@ -3,11 +3,7 @@ export {default as createLocalizedPathnamesNavigation} from './createLocalizedPa
 export {default as createNavigation} from './createNavigation';
 
 export type {StrictParams} from '../shared/StrictParams';
-export type {
-  HrefOrHrefWithParams,
-  HrefOrUrlObjectWithParams,
-  QueryParams
-} from '../shared/utils';
+export type {QueryParams} from '../shared/utils';
 
 import type {
   Locales,
