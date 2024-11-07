@@ -1,4 +1,4 @@
-// From https://github.com/schummar/schummar-translate
+// See https://github.com/schummar/schummar-translate/issues/28
 
 export type Flatten<T> = T extends object
   ? {
