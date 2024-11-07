@@ -3,7 +3,12 @@
 import mdxPlugin from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.tsx');
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: './src/i18n/request.tsx',
+  experimental: {
+    createMessagesDeclaration: './messages/en.json'
+  }
+});
 const withMdx = mdxPlugin();
 
 export default withMdx(

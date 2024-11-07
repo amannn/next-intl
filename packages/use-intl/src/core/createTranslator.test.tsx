@@ -1,6 +1,7 @@
 import {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
 import {describe, expect, it, vi} from 'vitest';
+import {Messages} from './AppConfig.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
 import createTranslator from './createTranslator.tsx';
 
@@ -10,7 +11,7 @@ const messages = {
     rich: '<b>Hello <i>{name}</i>!</b>',
     markup: '<b>Hello <i>{name}</i>!</b>'
   }
-};
+} as const;
 
 it('can translate a message within a namespace', () => {
   const t = createTranslator({
@@ -39,6 +40,7 @@ it('handles formatting errors', () => {
     onError
   });
 
+  // @ts-expect-error
   const result = t('price');
 
   const error: IntlError = onError.mock.calls[0][0];
@@ -72,6 +74,471 @@ it('throws an error for non-alphanumeric value names', () => {
   t('label', {'val-u3': 'Hello'});
   const error: IntlError = onError.mock.calls[0][0];
   expect(error.code).toBe('INVALID_MESSAGE');
+});
+
+it('can handle nested blocks in selects', () => {
+  const t = createTranslator({
+    locale: 'en',
+    messages: {
+      label:
+        '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}'
+    }
+  });
+  expect(
+    t('label', {
+      foo: 'one',
+      one: 'One',
+      two: 'Two',
+      other: 'Other'
+    })
+  ).toBe('One: One');
+});
+
+it('can handle nested blocks in plurals', () => {
+  const t = createTranslator({
+    locale: 'en',
+    messages: {
+      label: '{count, plural, one {One: {one}} other {Other: {other}}}'
+    }
+  });
+  expect(t('label', {count: 1, one: 'One', other: 'Other'})).toBe('One: One');
+});
+
+describe('type safety', () => {
+  describe('keys, strictly-typed', () => {
+    it('allows valid namespaces', () => {
+      createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+    });
+
+    it('allows valid keys', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+
+      t('title');
+      t.has('title');
+      t.markup('title');
+      t.rich('title');
+    });
+
+    it('allows an undefined namespace with a valid key', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages
+      });
+      t('Home.title');
+    });
+
+    it('disallows an undefined namespace with an invalid key', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('unknown');
+        // @ts-expect-error
+        t.has('unknown');
+        // @ts-expect-error
+        t.markup('unknown');
+        // @ts-expect-error
+        t.rich('unknown');
+      };
+    });
+
+    it('disallows invalid namespaces', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        createTranslator<typeof messages>({
+          locale: 'en',
+          messages,
+          // @ts-expect-error
+          namespace: 'unknown'
+        });
+      };
+    });
+
+    it('disallows invalid keys', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages,
+        namespace: 'Home'
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('unknown');
+        // @ts-expect-error
+        t.has('unknown');
+        // @ts-expect-error
+        t.markup('unknown');
+        // @ts-expect-error
+        t.rich('unknown');
+      };
+    });
+  });
+
+  describe('keys, untyped', () => {
+    it('allows any namespace', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        createTranslator({
+          locale: 'en',
+          messages: messages as Messages,
+          namespace: 'unknown'
+        });
+      };
+    });
+
+    it('allows any key', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        const t = createTranslator({
+          locale: 'en',
+          messages: messages as Messages
+        });
+        t('unknown');
+      };
+    });
+  });
+
+  describe('params, strictly-typed', () => {
+    function translateMessage<const T extends string>(msg: T) {
+      return createTranslator({
+        locale: 'en',
+        messages: {msg}
+      });
+    }
+
+    it('validates plain params', () => {
+      const t = translateMessage('Hello {name}');
+
+      t('msg', {name: 'Jane'});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {unknown: 'Jane'});
+        // @ts-expect-error
+        t('msg');
+      };
+    });
+
+    it('can handle undefined values', () => {
+      const t = translateMessage('Hello {name}');
+
+      const obj = {
+        name: 'Jane',
+        age: undefined
+      };
+      t('msg', obj);
+    });
+
+    it('validates cardinal plurals', () => {
+      const t = translateMessage(
+        'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.'
+      );
+
+      t('msg', {count: 0});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {unknown: 1.5});
+        // @ts-expect-error
+        t('msg');
+      };
+    });
+
+    it('validates ordinal plurals', () => {
+      const t = translateMessage(
+        "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+      );
+
+      t('msg', {year: 1});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {unknown: 1});
+        // @ts-expect-error
+        t('msg');
+      };
+    });
+
+    it('validates selects', () => {
+      const t = translateMessage(
+        '{gender, select, female {She} male {He} other {They}} is online.'
+      );
+
+      t('msg', {gender: 'female'});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {unknown: 'female'});
+        // @ts-expect-error
+        t('msg');
+      };
+    });
+
+    it('validates nested selects', () => {
+      const t = translateMessage(
+        '{foo, select, one {One: {one}} two {Two: {two}} other {Other: {other}}}'
+      );
+
+      t('msg', {
+        foo: 'one',
+        one: 'One',
+        two: 'Two',
+        other: 'Other'
+      });
+      t('msg', {foo: 'one', one: 'One'}); // Only `one` is required
+      t('msg', {foo: 'one', one: 'One', two: 'Two'}); // …but `two` is also allowed
+      t('msg', {foo: 'two', two: 'Two'});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {foo: 'unknown' as string, other: 'Other'});
+        // @ts-expect-error
+        t('msg', {unknown: 'one'});
+        // @ts-expect-error
+        t('msg');
+      };
+    });
+
+    it('validates escaped', () => {
+      const t = translateMessage(
+        "Escape curly braces with single quotes (e.g. '{name')"
+      );
+
+      t('msg');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {name: 'Jane'});
+      };
+    });
+
+    it('validates simple rich text', () => {
+      const t = translateMessage(
+        'Please refer to <guidelines>the guidelines</guidelines>.'
+      );
+
+      t.rich('msg', {guidelines: (chunks) => <p>{chunks}</p>});
+      t.markup('msg', {guidelines: (chunks) => `<p>${chunks}</p>`});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.rich('msg', {guidelines: 'test'});
+        // @ts-expect-error
+        t.rich('msg', {unknown: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.rich('msg', {unknown: 'test'});
+        // @ts-expect-error
+        t.rich('msg');
+      };
+    });
+
+    it('validates nested rich text', () => {
+      const t = translateMessage(
+        'This is <important><very>very</very> important</important>'
+      );
+
+      t.rich('msg', {
+        important: (chunks) => <strong>{chunks}</strong>,
+        very: (chunks) => <i>{chunks}</i>
+      });
+      t.markup('msg', {
+        important: (chunks) => `<strong>${chunks}</strong>`,
+        very: (chunks) => `<i>${chunks}</i>`
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.rich('msg', {important: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t.rich('msg', {important: 'test', very: 'test'});
+        // @ts-expect-error
+        t.rich('msg', {unknown: 'test'});
+        // @ts-expect-error
+        t.rich('msg');
+      };
+    });
+
+    it('validates a complex message', () => {
+      const t = translateMessage(
+        'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'
+      );
+
+      t.rich('msg', {
+        name: 'Jane',
+        count: 2,
+        user: (chunks) => <p>{chunks}</p>
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t.rich('msg', {
+          name: 'Jane',
+          user: (chunks) => <p>{chunks}</p>
+        });
+        t.rich('msg', {
+          // @ts-expect-error
+          user: 'Jane',
+          // @ts-expect-error
+          name: (chunks) => <p>{chunks}</p>,
+          count: 2
+        });
+      };
+    });
+
+    describe('disallowed params', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: {
+          simpleParam: 'Hello {name}',
+          pluralMessage:
+            'You have {count, plural, =0 {no followers} =1 {one follower} other {# followers}}.',
+          ordinalMessage:
+            "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
+          selectMessage:
+            '{gender, select, female {She} male {He} other {They}} is online.',
+          escapedParam:
+            "Escape curly braces with single quotes (e.g. '{name'})",
+          simpleRichText:
+            'Please refer to <guidelines>the guidelines</guidelines>.',
+          nestedRichText:
+            'This is <important><very>very</very> important</important>'
+        }
+      });
+
+      it("doesn't allow params for `has`", () => {
+        t.has('simpleParam');
+        t.has('pluralMessage');
+        t.has('ordinalMessage');
+        t.has('selectMessage');
+        t.has('escapedParam');
+        t.has('simpleRichText');
+        t.has('nestedRichText');
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () => {
+          // @ts-expect-error
+          t.has('simpleParam', {name: 'Jane'});
+          // @ts-expect-error
+          t.has('pluralMessage', {count: 0});
+          // @ts-expect-error
+          t.has('ordinalMessage', {year: 1});
+          // @ts-expect-error
+          t.has('selectMessage', {gender: 'female'});
+          // @ts-expect-error
+          t.has('simpleRichText', {guidelines: (chunks) => <p>{chunks}</p>});
+          // @ts-expect-error
+          t.has('nestedRichText', {
+            important: (chunks: any) => <strong>{chunks}</strong>
+          });
+        };
+      });
+
+      it("doesn't allow params for `raw`", () => {
+        t.raw('simpleParam');
+        t.raw('pluralMessage');
+        t.raw('ordinalMessage');
+        t.raw('selectMessage');
+        t.raw('escapedParam');
+        t.raw('simpleRichText');
+        t.raw('nestedRichText');
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () => {
+          // @ts-expect-error
+          t.raw('simpleParam', {name: 'Jane'});
+          // @ts-expect-error
+          t.raw('pluralMessage', {count: 0});
+          // @ts-expect-error
+          t.raw('ordinalMessage', {year: 1});
+          // @ts-expect-error
+          t.raw('selectMessage', {gender: 'female'});
+          // @ts-expect-error
+          t.raw('simpleRichText', {guidelines: (chunks) => <p>{chunks}</p>});
+          // @ts-expect-error
+          t.raw('nestedRichText', {
+            important: (chunks: any) => <strong>{chunks}</strong>
+          });
+        };
+      });
+    });
+  });
+
+  describe('params, untyped', () => {
+    it('allows passing no values', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        t('param');
+        t.rich('param');
+        t.markup('param');
+        t.raw('param');
+        t.has('param');
+      };
+    });
+
+    it('allows passing any values', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        t('param', {unknown: 'Jane'});
+        t.rich('param', {unknown: 'Jane', p: (chunks) => <p>{chunks}</p>});
+        t.markup('param', {unknown: 'Jane', p: (chunks) => `<p>${chunks}</p>`});
+      };
+    });
+
+    it('limits values where relevant', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: messages as Messages
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('param', {p: (chunks) => <p>{chunks}</p>});
+        // @ts-expect-error
+        t('param', {p: (chunks) => `<p>${chunks}</p>`});
+
+        // @ts-expect-error
+        t.markup('param', {unknown: 'Jane', p: (chunks) => <p>{chunks}</p>});
+
+        // @ts-expect-error
+        t.raw('param', {unknown: 'Jane'});
+        // @ts-expect-error
+        t.has('param', {unknown: 'Jane'});
+      };
+    });
+  });
 });
 
 describe('dates in messages', () => {

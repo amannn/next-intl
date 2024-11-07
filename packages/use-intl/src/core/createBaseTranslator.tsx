@@ -5,6 +5,7 @@ import {Locale} from './AppConfig.tsx';
 import Formats from './Formats.tsx';
 import {InitializedIntlConfig} from './IntlConfig.tsx';
 import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
 import TranslationValues, {
   MarkupTranslationValues,
   RichTranslationValues
@@ -19,9 +20,6 @@ import {
   memoFn
 } from './formatters.tsx';
 import joinPath from './joinPath.tsx';
-import MessageKeys from './utils/MessageKeys.tsx';
-import NestedKeyOf from './utils/NestedKeyOf.tsx';
-import NestedValueOf from './utils/NestedValueOf.tsx';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.

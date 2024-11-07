@@ -170,8 +170,12 @@ export default getRequestConfig(async ({requestLocale}) => {
 
 ```tsx filename="i18n/request.ts"
 export default getRequestConfig(async () => {
+  // Provide a static locale, fetch a user setting,
+  // read from `cookies()`, `headers()`, etc.
+  const locale = 'en';
+
   return {
-    locale: 'en'
+    locale
     // ...
   };
 });
@@ -213,6 +217,8 @@ const locale = useLocale();
 import {getLocale} from 'next-intl/server';
 const locale = await getLocale();
 ```
+
+### `Locale` [#locale-type]
 
 When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
 

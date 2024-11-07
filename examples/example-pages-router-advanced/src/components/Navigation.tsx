@@ -6,7 +6,7 @@ export default function Navigation() {
   const t = useTranslations('Navigation');
 
   const {locale, locales, route} = useRouter();
-  const otherLocale = locales?.find((cur) => cur !== locale);
+  const otherLocale = locales?.find((cur) => cur !== locale) as string;
 
   return (
     <div style={{display: 'flex', justifyContent: 'space-between'}}>

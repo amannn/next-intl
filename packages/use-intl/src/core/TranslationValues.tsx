@@ -1,27 +1,20 @@
 import {ReactNode} from 'react';
 
-// From IntlMessageFormat#format
-export type TranslationValue =
-  | string
-  | number
-  | boolean
-  | Date
-  | null
-  | undefined;
+// These type names are shown to consumers in autocomplete
+export type ICUArg = string | number | boolean | Date;
+export type ICUNumber = number;
+export type ICUDate = Date | number | string;
 
-type TranslationValues = Record<string, TranslationValue>;
+type TranslationValues = Record<string, ICUArg>;
+
+export type RichTextFunction = (chunks: ReactNode) => ReactNode;
+export type MarkupFunction = (chunks: string) => string;
 
 // We could consider renaming this to `ReactRichTranslationValues` and defining
 // it in the `react` namespace if the core becomes useful to other frameworks.
 // It would be a breaking change though, so let's wait for now.
-export type RichTranslationValues = Record<
-  string,
-  TranslationValue | ((chunks: ReactNode) => ReactNode)
->;
+export type RichTranslationValues = Record<string, ICUArg | RichTextFunction>;
 
-export type MarkupTranslationValues = Record<
-  string,
-  TranslationValue | ((chunks: string) => string)
->;
+export type MarkupTranslationValues = Record<string, ICUArg | MarkupFunction>;
 
 export default TranslationValues;
