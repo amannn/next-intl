@@ -1,16 +1,16 @@
-import {ReactNode} from 'react';
-import {Messages} from './AppConfig.tsx';
-import Formats from './Formats.tsx';
-import ICUArgs from './ICUArgs.tsx';
-import ICUTags from './ICUTags.tsx';
-import IntlConfig from './IntlConfig.tsx';
-import {
+import type {ReactNode} from 'react';
+import type {Messages} from './AppConfig.tsx';
+import type Formats from './Formats.tsx';
+import type ICUArgs from './ICUArgs.tsx';
+import type ICUTags from './ICUTags.tsx';
+import type IntlConfig from './IntlConfig.tsx';
+import type {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
 } from './MessageKeys.tsx';
-import {
+import type {
   ICUArg,
   ICUDate,
   ICUNumber,
@@ -20,12 +20,12 @@ import {
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
-  Formatters,
-  IntlCache,
+  type Formatters,
+  type IntlCache,
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-import {OnlyOptional, Prettify} from './types.tsx';
+import type {OnlyOptional, Prettify} from './types.tsx';
 
 type ICUArgsWithTags<
   MessageString extends string,
@@ -35,7 +35,6 @@ type ICUArgsWithTags<
 
 type TranslateArgs<
   Value extends string,
-  Formats,
   TagsFn extends RichTextFunction | MarkupFunction = never
 > =
   // If an unknown string is passed, allow any values
@@ -102,8 +101,7 @@ export default function createTranslator<
       NestedValueOf<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >,
-      Formats
+      >
     >
   ): string;
 
@@ -128,7 +126,6 @@ export default function createTranslator<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
       >,
-      Formats,
       RichTextFunction
     >
   ): ReactNode;
@@ -154,7 +151,6 @@ export default function createTranslator<
         TranslatorMessages,
         [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
       >,
-      Formats,
       MarkupFunction
     >
   ): string;

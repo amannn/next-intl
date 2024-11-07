@@ -1,15 +1,16 @@
-import {ReactElement} from 'react';
-import {FormatNames, Locale} from './AppConfig.tsx';
-import DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
-import Formats from './Formats.tsx';
-import IntlError, {IntlErrorCode} from './IntlError.tsx';
-import NumberFormatOptions from './NumberFormatOptions.tsx';
-import RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
-import TimeZone from './TimeZone.tsx';
+import type {ReactElement} from 'react';
+import type {FormatNames, Locale} from './AppConfig.tsx';
+import type DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
+import type Formats from './Formats.tsx';
+import IntlError from './IntlError.tsx';
+import {IntlErrorCode} from './IntlErrorCode.tsx';
+import type NumberFormatOptions from './NumberFormatOptions.tsx';
+import type RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
+import type TimeZone from './TimeZone.tsx';
 import {defaultOnError} from './defaults.tsx';
 import {
-  Formatters,
-  IntlCache,
+  type Formatters,
+  type IntlCache,
   createCache,
   createIntlFormatters
 } from './formatters.tsx';

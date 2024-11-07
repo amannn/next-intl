@@ -1,4 +1,4 @@
-import IntlConfig from './IntlConfig.tsx';
+import type IntlConfig from './IntlConfig.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import validateMessages from './validateMessages.tsx';
 

@@ -1,11 +1,11 @@
-import {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 
 // These type names are shown to consumers in autocomplete
 export type ICUArg = string | number | boolean | Date;
 export type ICUNumber = number;
 export type ICUDate = Date | number | string;
 
-type TranslationValues = Record<string, ICUArg>;
+export type TranslationValues = Record<string, ICUArg>;
 
 export type RichTextFunction = (chunks: ReactNode) => ReactNode;
 export type MarkupFunction = (chunks: string) => string;
@@ -16,5 +16,3 @@ export type MarkupFunction = (chunks: string) => string;
 export type RichTranslationValues = Record<string, ICUArg | RichTextFunction>;
 
 export type MarkupTranslationValues = Record<string, ICUArg | MarkupFunction>;
-
-export default TranslationValues;

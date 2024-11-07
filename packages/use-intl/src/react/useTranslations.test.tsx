@@ -1,14 +1,14 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import {IntlMessageFormat} from 'intl-messageformat';
-import {ComponentProps, PropsWithChildren, ReactNode} from 'react';
+import type {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
-  Formats,
-  IntlError,
+  type Formats,
+  type IntlError,
   IntlErrorCode,
-  RichTranslationValues,
-  TranslationValues
+  type RichTranslationValues,
+  type TranslationValues
 } from '../core.tsx';
 import IntlProvider from './IntlProvider.tsx';
 import useTranslations from './useTranslations.tsx';

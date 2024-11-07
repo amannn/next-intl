@@ -1,8 +1,9 @@
 import {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
 import {describe, expect, it, vi} from 'vitest';
-import {Messages} from './AppConfig.tsx';
-import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import type {Messages} from './AppConfig.tsx';
+import type IntlError from './IntlError.tsx';
+import {IntlErrorCode} from './IntlErrorCode.tsx';
 import createTranslator from './createTranslator.tsx';
 
 const messages = {
