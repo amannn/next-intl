@@ -1,3 +1,8 @@
+// Ensure that exported types function as expected for library creators.
+//
+// Most functionality is already tested through usage in this application.
+// This file includes exports for any that are not yet covered.
+
 import {
   createFormatter,
   createTranslator,

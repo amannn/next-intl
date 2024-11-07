@@ -1,7 +1,0 @@
-/node_modules
-/.next/
-.DS_Store
-tsconfig.tsbuildinfo
-*storybook.log
-storybook-static
-test-results

@@ -2,7 +2,7 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "next-intl#test": {
-      "dependsOn": ["type-export-test#test"]
+      "dependsOn": ["example-app-router-playground#lint"]
     },
     "build": {
       "dependsOn": ["^build"],

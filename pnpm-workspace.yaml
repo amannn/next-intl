@@ -1,5 +1,4 @@
 packages:
   - 'packages/*'
-  - 'type-export-test'
   - 'examples/*'
   - 'docs'
