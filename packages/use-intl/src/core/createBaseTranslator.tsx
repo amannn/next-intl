@@ -148,20 +148,22 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
 };
 
 function getPlainMessage(candidate: string, values?: unknown) {
-  if (values) return undefined;
+  if (process.env.NODE_ENV !== 'production') {
+    // Keep fast path in development
+    if (values) return undefined;
 
-  const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+    // Despite potentially no values being available, there can still be
+    // placeholders in the message if the user has forgotten to provide
+    // values. In this case we compile the message to receive an error.
+    const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+    const hasPlaceholders = /<|{/.test(unescapedMessage);
 
-  // Placeholders can be in the message if there are default values,
-  // or if the user has forgotten to provide values. In the latter
-  // case we need to compile the message to receive an error.
-  const hasPlaceholders = /<|{/.test(unescapedMessage);
-
-  if (!hasPlaceholders) {
-    return unescapedMessage;
+    if (!hasPlaceholders) {
+      return unescapedMessage;
+    }
+  } else {
+    return values ? undefined : candidate;
   }
-
-  return undefined;
 }
 
 export default function createBaseTranslator<
