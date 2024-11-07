@@ -277,10 +277,7 @@ function createBaseTranslatorImpl<
       messageFormat = formatters.getMessageFormat(
         message,
         locale,
-        convertFormatsToIntlMessageFormat(
-          {...globalFormats, ...formats},
-          timeZone
-        ),
+        convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
         {
           formatters: {
             ...formatters,

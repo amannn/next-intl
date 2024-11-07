@@ -541,6 +541,29 @@ describe('type safety', () => {
   });
 });
 
+describe('numbers in messages', () => {
+  it('can pass an inline format', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: '{count, number, precise}'}
+    });
+    expect(
+      t('label', {count: 1.5}, {number: {precise: {minimumFractionDigits: 5}}})
+    ).toBe('1.50000');
+  });
+
+  it('can merge an inline format with global formats', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: '{count, number, precise} {count, number, integer}'},
+      formats: {number: {precise: {minimumFractionDigits: 5}}}
+    });
+    expect(
+      t('label', {count: 1.5}, {number: {integer: {minimumFractionDigits: 0}}})
+    ).toBe('1.50000 2');
+  });
+});
+
 describe('dates in messages', () => {
   it.each([
     ['G', '7/9/2024 AD'], // 🤔 Includes date
@@ -637,6 +660,17 @@ describe('dates in messages', () => {
       messages: {date: `{date, date, ::${value}}`}
     });
     expect(t('date', {date})).toBe(expected);
+  });
+
+  it('can set a time zone in a built-in default format', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {date: `{date, time, full}`},
+      timeZone: 'Asia/Kolkata'
+    });
+    expect(t('date', {date: new Date('2023-12-31T18:30:00.000Z')})).toBe(
+      '12:00:00 AM GMT+5:30'
+    );
   });
 });
 
