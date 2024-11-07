@@ -392,6 +392,17 @@ export default function RichText({children}: Props) {
 }
 ```
 
+If you need to combine shared tags with values from your component, you can merge them accordingly by using the spread operator:
+
+```js
+function UserPage({username}) {
+  const t = useTranslations('UserPage');
+  return (
+    <RichText>{(tags) => t.rich('description', {...tags, username})}</RichText>
+  );
+}
+```
+
 </Details>
 
 <Details id="rich-text-self-closing">
