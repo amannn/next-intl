@@ -30,12 +30,23 @@ Type augmentation is available for:
 
 ## `Locale`
 
-Augmenting the `Locale` type will affect the return type of [`useLocale`](/docs/usage/configuration#locale), as well as all `locale` arguments that are accepted by APIs from `next-intl` (e.g. the `locale` prop of [`<Link />`](/docs/routing/navigation#link)).
+Augmenting the `Locale` type will affect all APIs from `next-intl` that either return or receive a locale:
 
 ```tsx
+import {useLocale} from 'next-intl';
+
 // ✅ 'en' | 'de'
 const locale = useLocale();
 ```
+
+```tsx
+import {Link} from '@/i18n/routing';
+
+// ✅ Passes the validation
+<Link href="/" locale="en" />;
+```
+
+Additionally, `next-intl` provides a [`Locale`](/docs/usage/configuration#locale-type) type that can be used when passing the locale as an argument.
 
 To enable this validation, you can adapt `AppConfig` as follows:
 
@@ -70,68 +81,6 @@ declare module 'next-intl' {
 
 </Tabs.Tab>
 </Tabs>
-
-### Using the `Locale` type for arguments
-
-Once the `Locale` type is augmented, it can be used across your codebase if you need to pass the locale to functions outside of your components:
-
-```tsx {1,10}
-import {Locale} from 'next-intl';
-import {getLocale} from 'next-intl/server';
-
-async function BlogPosts() {
-  const locale = await getLocale();
-  const posts = await getPosts(locale);
-  // ...
-}
-
-async function getPosts(locale: Locale) {
-  // ...
-}
-```
-
-### Using the `Locale` type for layout and page params [#locale-segment-params]
-
-You can also use the `Locale` type when working with the `[locale]` parameter in layouts and pages:
-
-```tsx filename="app/[locale]/page.tsx"
-import {Locale} from 'next-intl';
-
-type Props = {
-  params: {
-    locale: Locale;
-  };
-};
-
-export default function Page(props: Props) {
-  // ...
-}
-```
-
-However, keep in mind that this _assumes_ the locale to be valid in this place—Next.js doesn't validate the `[locale]` parameter automatically for you. Due to this, you can add your own validation logic in a central place like the root layout:
-
-```tsx filename="app/[locale]/layout.tsx"
-import {hasLocale} from 'next-intl';
-
-// Can be imported e.g. from `@/i18n/routing`
-const locales = ['en', 'de'] as const;
-
-type Props = {
-  params: {
-    children: React.ReactNode;
-    locale: string;
-  };
-};
-
-export default async function LocaleLayout({params: {locale}}: Props) {
-  if (!hasLocale(locales, locale)) {
-    notFound();
-  }
-
-  // ✅ 'en' | 'de'
-  console.log(locale);
-}
-```
 
 ## `Messages`
 
@@ -197,9 +146,7 @@ function UserProfile({user}) {
 }
 ```
 
-TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers the types of an imported JSON module as rather broad.
-
-Due to this, `next-intl` provides a stopgap solution that allows you to generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
+TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers the types of an imported JSON module as rather wide. Due to this, `next-intl` provides a stopgap solution that allows you to generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
 
 **Usage:**
 
@@ -213,12 +160,13 @@ const withNextIntl = createNextIntlPlugin({
     // Use the path to the messages that you're using in `AppConfig`
     createMessagesDeclaration: './messages/en.json'
   }
+  // ...
 });
 
 // ...
 ```
 
-2. Add support for JSON type declarations:
+2. Add support for JSON type declarations in your `tsconfig.json`:
 
 ```json filename="tsconfig.json"
 {
@@ -238,13 +186,13 @@ With this setup in place, you'll see a new declaration file generated in your `m
 
 This declaration file will provide the exact types for the messages that you're using in `AppConfig`, enabling type safety for message arguments.
 
-You can choose to ignore this file in Git:
+To keep your code base tidy, you can ignore this file in Git:
 
 ```text filename=".gitignore"
 messages/*.d.json.ts
 ```
 
-Please consider upvoting [microsoft/TypeScript#32063](https://github.com/microsoft/TypeScript/issues/32063) so that we can hopefully remove this workaround in the future.
+Please consider upvoting [`TypeScript#32063`](https://github.com/microsoft/TypeScript/issues/32063) to potentially remove this workaround in the future.
 
 ## `Formats`
 
