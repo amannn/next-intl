@@ -1,9 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "next-intl#test": {
-      "dependsOn": ["example-app-router-playground#lint"]
-    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "build/**"]

@@ -2,7 +2,6 @@ export {default as createSharedPathnamesNavigation} from './createSharedPathname
 export {default as createLocalizedPathnamesNavigation} from './createLocalizedPathnamesNavigation';
 export {default as createNavigation} from './createNavigation';
 
-export type {StrictParams} from '../shared/StrictParams';
 export type {QueryParams} from '../shared/utils';
 
 import type {

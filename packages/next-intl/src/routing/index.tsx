@@ -4,5 +4,5 @@ export type {
   LocalePrefix,
   LocalePrefixMode
 } from './types';
-export type {InitializedLocaleCookieConfig} from './config';
-export {default as defineRouting, type RoutingConfig} from './defineRouting';
+export type {RoutingConfig} from './config';
+export {default as defineRouting} from './defineRouting';
