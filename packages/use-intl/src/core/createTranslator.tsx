@@ -14,8 +14,8 @@ import {
   ICUArg,
   ICUDate,
   ICUNumber,
-  MarkupFunction,
-  RichTextFunction
+  MarkupTagsFunction,
+  RichTagsFunction
 } from './TranslationValues.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
@@ -25,17 +25,19 @@ import {
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-import {OnlyOptional, Prettify} from './types.tsx';
+import {Prettify} from './types.tsx';
 
 type ICUArgsWithTags<
   MessageString extends string,
-  TagsFn extends RichTextFunction | MarkupFunction = never
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
 > = ICUArgs<MessageString, ICUArg, ICUNumber, ICUDate> &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
 
+type OnlyOptional<T> = Partial<T> extends T ? true : false;
+
 type TranslateArgs<
   Value extends string,
-  TagsFn extends RichTextFunction | MarkupFunction = never
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
 > =
   // If an unknown string is passed, allow any values
   string extends Value
@@ -125,7 +127,7 @@ export default function createTranslator<
     key: TargetKey,
     ...args: TranslateArgs<
       NamespacedValue<TranslatorMessages, Namespace, TargetKey>,
-      RichTextFunction
+      RichTagsFunction
     >
   ): ReactNode;
 
@@ -136,7 +138,7 @@ export default function createTranslator<
     key: TargetKey,
     ...args: TranslateArgs<
       NamespacedValue<TranslatorMessages, Namespace, TargetKey>,
-      MarkupFunction
+      MarkupTagsFunction
     >
   ): string;
 
