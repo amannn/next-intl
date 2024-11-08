@@ -165,17 +165,22 @@ type StripEscapes<T> = T extends `${infer Left}''${infer Right}`
 
 /** Calculates an object type with all variables and their types in the given ICU format string */
 type ICUArgs<
-  T extends string,
+  Message extends string,
   ICUArgument,
   ICUNumberArgument,
   ICUDateArgument
-> = Flatten<
-  TupleParseBlock<
-    FindBlocks<StripEscapes<T>>,
-    ICUArgument,
-    ICUNumberArgument,
-    ICUDateArgument
-  >
->;
+> =
+  // This is important when `t` is returned from a function and there's no
+  // known `Message` yet. Otherwise, we'd run into an infinite loop.
+  string extends Message
+    ? {}
+    : Flatten<
+        TupleParseBlock<
+          FindBlocks<StripEscapes<Message>>,
+          ICUArgument,
+          ICUNumberArgument,
+          ICUDateArgument
+        >
+      >;
 
 export default ICUArgs;
