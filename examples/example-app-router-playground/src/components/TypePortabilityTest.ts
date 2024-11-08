@@ -5,14 +5,14 @@
 
 import {
   createFormatter,
-  createTranslator,
   initializeConfig,
   useFormatter,
   useLocale,
   useMessages,
   useNow,
-  useTimeZone,
-  useTranslations
+  useTimeZone
+  // createTranslator,
+  // useTranslations
 } from 'next-intl';
 import createNextIntlPlugin from 'next-intl/plugin';
 import {
@@ -20,8 +20,8 @@ import {
   getLocale,
   getMessages,
   getNow,
-  getTimeZone,
-  getTranslations
+  getTimeZone
+  // getTranslations
 } from 'next-intl/server';
 
 export function useExports() {
@@ -30,15 +30,15 @@ export function useExports() {
   const locale = useLocale();
   const timezone = useTimeZone();
   const formatter = useFormatter();
-  const translations = useTranslations();
+  // const translations = useTranslations();
 
   return {
     messages,
     now,
     locale,
     timezone,
-    formatter,
-    translations
+    formatter
+    // translations
   };
 }
 
@@ -48,21 +48,21 @@ export async function asyncApis() {
   const locale = await getLocale();
   const timezone = await getTimeZone();
   const formatter = await getFormatter();
-  const translations = await getTranslations();
+  // const translations = await getTranslations();
 
   return {
     messages,
     now,
     locale,
     timezone,
-    formatter,
-    translations
+    formatter
+    // translations
   };
 }
 
 export const withNextIntl = createNextIntlPlugin();
 export const config = initializeConfig({locale: 'en'});
-export const translator = createTranslator({locale: 'en'});
+// export const translator = createTranslator({locale: 'en'});
 export const formatter = createFormatter({
   locale: 'en',
   now: new Date(2022, 10, 6, 20, 20, 0, 0)
