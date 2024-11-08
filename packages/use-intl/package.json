@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.23.5",
+  "version": "3.25.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
@@ -61,7 +61,7 @@
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0"
+    "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",

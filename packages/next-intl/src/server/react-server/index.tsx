@@ -2,7 +2,11 @@
  * Server-only APIs available via `next-intl/server`.
  */
 
-export {default as getRequestConfig} from './getRequestConfig.tsx';
+export {
+  default as getRequestConfig,
+  type GetRequestConfigParams,
+  type RequestConfig
+} from './getRequestConfig.tsx';
 export {default as getFormatter} from './getFormatter.tsx';
 export {default as getNow} from './getNow.tsx';
 export {default as getTimeZone} from './getTimeZone.tsx';

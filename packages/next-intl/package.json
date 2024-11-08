@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.23.5",
+  "version": "3.25.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -117,7 +117,7 @@
   },
   "peerDependencies": {
     "next": "^13.3.0 || ^14.0.0 || ^15.0.0",
-    "react": "^17.0.0 || ^18.0.0",
+    "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0",
     "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {

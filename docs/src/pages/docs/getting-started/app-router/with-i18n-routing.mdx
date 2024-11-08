@@ -334,6 +334,7 @@ export default function IndexPage({params: {locale}}) {
 
 1. The locale that you pass to `setRequestLocale` should be validated (e.g. in your [root layout](#layout)).
 2. You need to call this function in every page and every layout that you intend to enable static rendering for since Next.js can render layouts and pages independently.
+3. `setRequestLocale` needs to be called before you invoke any functions from `next-intl` like `useTranslations` or `getMessages`.
 
 <Details id="setrequestlocale-implementation">
 <summary>How does setRequestLocale work?</summary>
