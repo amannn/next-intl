@@ -7,17 +7,17 @@ export type ICUDate = Date | number | string;
 
 type TranslationValues = Record<string, ICUArg>;
 
-export type RichChunksFunction = (chunks: ReactNode) => ReactNode;
-export type MarkupChunksFunction = (chunks: string) => string;
+export type RichTagsFunction = (chunks: ReactNode) => ReactNode;
+export type MarkupTagsFunction = (chunks: string) => string;
 
 // We could consider renaming this to `ReactRichTranslationValues` and defining
 // it in the `react` namespace if the core becomes useful to other frameworks.
 // It would be a breaking change though, so let's wait for now.
-export type RichTranslationValues = Record<string, ICUArg | RichChunksFunction>;
+export type RichTranslationValues = Record<string, ICUArg | RichTagsFunction>;
 
 export type MarkupTranslationValues = Record<
   string,
-  ICUArg | MarkupChunksFunction
+  ICUArg | MarkupTagsFunction
 >;
 
 export default TranslationValues;

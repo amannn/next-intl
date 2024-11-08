@@ -6,8 +6,8 @@ export type {
   ICUArg,
   ICUNumber,
   ICUDate,
-  RichChunksFunction,
-  MarkupChunksFunction
+  RichTagsFunction as RichChunksFunction,
+  MarkupTagsFunction as MarkupChunksFunction
 } from './TranslationValues.tsx';
 export type {default as Formats} from './Formats.tsx';
 export type {default as IntlConfig} from './IntlConfig.tsx';
