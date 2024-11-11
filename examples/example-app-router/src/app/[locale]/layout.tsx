@@ -1,6 +1,7 @@
-import {Locale} from 'next-intl';
-import {getTranslations, setRequestLocale} from 'next-intl/server';
-import {ReactNode} from 'react';
+import {notFound} from 'next/navigation';
+import {Locale, hasLocale} from 'next-intl';
+import {getTranslations} from 'next-intl/server';
+import {ReactNode, Suspense} from 'react';
 import BaseLayout from '@/components/BaseLayout';
 import {routing} from '@/i18n/routing';
 
@@ -22,13 +23,27 @@ export async function generateMetadata({params}: Omit<Props, 'children'>) {
   };
 }
 
-// Return a 404 for unknown locales
-export const dynamicParams = false;
+export default function LocaleLayoutMain(props: Props) {
+  return (
+    <Suspense
+      fallback={
+        <html lang="en">
+          <body>
+            <div>Loading …</div>
+          </body>
+        </html>
+      }
+    >
+      <LocaleLayout {...props} />
+    </Suspense>
+  );
+}
 
-export default async function LocaleLayout({children, params}: Props) {
-  // Enable static rendering
+async function LocaleLayout({children, params}: Props) {
   const {locale} = await params;
-  setRequestLocale(locale);
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
 
   return <BaseLayout locale={locale}>{children}</BaseLayout>;
 }

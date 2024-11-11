@@ -9,6 +9,11 @@ const withNextIntl = createNextIntlPlugin({
 });
 
 /** @type {import('next').NextConfig} */
-const config = {};
+const config = {
+  experimental: {
+    dynamicIO: true,
+    ppr: true
+  }
+};
 
 export default withNextIntl(config);
