@@ -6,16 +6,15 @@ import {routing} from '@/i18n/routing';
 
 type Props = {
   children: ReactNode;
-  params: {locale: Locale};
+  params: Promise<{locale: Locale}>;
 };
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
 
-export async function generateMetadata({
-  params: {locale}
-}: Omit<Props, 'children'>) {
+export async function generateMetadata({params}: Omit<Props, 'children'>) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'LocaleLayout'});
 
   return {
@@ -26,11 +25,9 @@ export async function generateMetadata({
 // Return a 404 for unknown locales
 export const dynamicParams = false;
 
-export default async function LocaleLayout({
-  children,
-  params: {locale}
-}: Props) {
+export default async function LocaleLayout({children, params}: Props) {
   // Enable static rendering
+  const {locale} = await params;
   setRequestLocale(locale);
 
   return <BaseLayout locale={locale}>{children}</BaseLayout>;
