@@ -1,5 +1,4 @@
-import {notFound} from 'next/navigation';
-import {Locale, hasLocale} from 'next-intl';
+import {Locale} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
@@ -24,14 +23,13 @@ export async function generateMetadata({
   };
 }
 
+// Return a 404 for unknown locales
+export const dynamicParams = false;
+
 export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
-
   // Enable static rendering
   setRequestLocale(locale);
 
