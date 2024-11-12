@@ -1125,6 +1125,20 @@ describe('prefix-based routing', () => {
           'http://localhost:3000/en/'
         );
       });
+      
+      it('keeps search params when redirecting to a locale at the root', () => {
+        middleware(createMockRequest('/?sort=asc'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/?sort=asc'
+        );
+      });
+
+      it('keeps search params when redirecting to a locale', () => {
+        middleware(createMockRequest('/users?sort=asc'));
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/en/users/?sort=asc'
+        );
+      });
     });
 
     describe('localized pathnames', () => {
