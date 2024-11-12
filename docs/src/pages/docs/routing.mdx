@@ -46,6 +46,23 @@ Still, in case you're defining other routing config, make sure to keep them in s
 
 </Details>
 
+<Details id="typescript-version-error">
+  <summary>What if I encounter a TypeScript error like `TS2554: Expected 0 arguments, but got 1`?</summary>
+
+  If you're seeing TypeScript errors such as `TS2554: Expected 0 arguments, but got 1` when using `defineRouting` or other routing functions, this may be due to an incompatible TypeScript version. To fix this, ensure that your project is using **TypeScript version 5 or later**.
+
+  You can upgrade your TypeScript version by running:
+
+  ```sh
+  npm install typescript@latest
+  # or with yarn
+  yarn add typescript@latest
+  ```
+
+  After upgrading, restart your editor or TypeScript server to ensure the latest types are loaded.
+
+</Details>
+
 ### Locale prefix
 
 By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `/en/about` → `app/[locale]/about/page.tsx`). You can however adapt the routing to optionally remove the prefix or customize it per locale by configuring the `localePrefix` setting.
