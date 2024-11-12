@@ -13,17 +13,8 @@ function getTranslatorImpl<
   namespace?: NestedKey
 ): ReturnType<typeof createTranslator<Messages, NestedKey>> {
   return createTranslator({
-    locale: config.locale,
-    _cache: config._cache,
-    _formatters: config._formatters,
-    formats: config.formats,
-    getMessageFallback: config.getMessageFallback,
-    messages: config.messages,
-    onError: config.onError,
-    timeZone: config.timeZone,
+    ...config,
     namespace
-    // We don't pass `now` here because a) it's not needed and b) it might
-    // require reading the current time, which causes an error with `dynamicIO`
   });
 }
 
