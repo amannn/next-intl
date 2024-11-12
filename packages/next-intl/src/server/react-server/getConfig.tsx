@@ -65,12 +65,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     );
   }
 
-  return {
-    ...result,
-    locale: result.locale,
-    now: result.now || getDefaultNow(),
-    timeZone: result.timeZone || getDefaultTimeZone()
-  };
+  return result;
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 
@@ -92,7 +87,14 @@ async function getConfigImpl(localeOverride?: Locale): Promise<
   );
   return {
     ...initializeConfig(runtimeConfig),
-    _formatters: getFormatters(getCache())
+    _formatters: getFormatters(getCache()),
+    timeZone: runtimeConfig.timeZone || getDefaultTimeZone(),
+
+    // Only init when necessary to avoid triggering a `dynamicIO` error
+    // (i.e. when using `format.relativeTime` or `useNow`)
+    get now() {
+      return runtimeConfig.now ?? getDefaultNow();
+    }
   };
 }
 const getConfig = cache(getConfigImpl);
