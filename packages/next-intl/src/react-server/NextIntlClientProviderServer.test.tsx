@@ -1,12 +1,12 @@
 import {expect, it, vi} from 'vitest';
+import getConfigNow from '../server/react-server/getConfigNow.tsx';
 import getFormats from '../server/react-server/getFormats.tsx';
-import {getLocale, getNow, getTimeZone} from '../server.react-server.tsx';
+import {getLocale, getTimeZone} from '../server.react-server.tsx';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.tsx';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.tsx';
 
 vi.mock('../../src/server/react-server', async () => ({
   getLocale: vi.fn(async () => 'en-US'),
-  getNow: vi.fn(async () => new Date('2020-01-01T00:00:00.000Z')),
   getTimeZone: vi.fn(async () => 'America/New_York')
 }));
 
@@ -18,6 +18,10 @@ vi.mock('../../src/server/react-server/getFormats', () => ({
       }
     }
   }))
+}));
+
+vi.mock('../../src/server/react-server/getConfigNow', () => ({
+  default: vi.fn(async () => new Date('2020-01-01T00:00:00.000Z'))
 }));
 
 vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
@@ -43,7 +47,7 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
   });
 
   expect(getLocale).not.toHaveBeenCalled();
-  expect(getNow).not.toHaveBeenCalled();
+  expect(getConfigNow).not.toHaveBeenCalled();
   expect(getTimeZone).not.toHaveBeenCalled();
   expect(getFormats).not.toHaveBeenCalled();
 });
@@ -69,7 +73,7 @@ it('reads missing configuration from getter functions', async () => {
   });
 
   expect(getLocale).toHaveBeenCalled();
-  expect(getNow).toHaveBeenCalled();
+  expect(getConfigNow).toHaveBeenCalled();
   expect(getTimeZone).toHaveBeenCalled();
   expect(getFormats).toHaveBeenCalled();
 });
