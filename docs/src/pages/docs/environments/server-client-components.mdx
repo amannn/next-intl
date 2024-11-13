@@ -69,7 +69,7 @@ These functions are available:
 
 Components that aren't declared with the `async` keyword and don't use interactive features like `useState`, are referred to as [shared components](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md#sharing-code-between-server-and-client). These can render either as a Server or Client Component, depending on where they are imported from.
 
-In Next.js, Server Components are the default, and therefore shared components will typically execute as Server Components.
+In Next.js, Server Components are the default, and therefore shared components will typically execute as Server Components:
 
 ```tsx filename="UserDetails.tsx"
 import {useTranslations} from 'next-intl';
@@ -77,6 +77,9 @@ import {useTranslations} from 'next-intl';
 export default function UserDetails({user}) {
   const t = useTranslations('UserProfile');
 
+  // This component will execute as a Server Component by default.
+  // However, if it is imported from a Client Component, it will
+  // execute as a Client Component.
   return (
     <section>
       <h2>{t('title')}</h2>
