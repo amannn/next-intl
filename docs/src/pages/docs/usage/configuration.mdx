@@ -461,7 +461,7 @@ If you prefer to provide a global default, you can configure an explicit value f
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-function now() {
+async function now() {
   'use cache';
 
   // Use this value consistently
@@ -470,7 +470,7 @@ function now() {
 
 export default getRequestConfig(async () => {
   return {
-    now: now()
+    now: await now()
 
     // ...
   };
