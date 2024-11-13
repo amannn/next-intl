@@ -19,7 +19,9 @@ export default async function NextIntlClientProviderServer({
       // See https://github.com/amannn/next-intl/issues/631
       formats={formats === undefined ? await getFormats() : formats}
       locale={locale ?? (await getLocale())}
-      // Note that don't assign a default for `now` here
+      // Note that we don't assign a default for `now` here,
+      // we only read one from the request config - if any.
+      // Otherwise this would cause a `dynamicIO` error.
       now={now ?? (await getConfigNow())}
       timeZone={timeZone ?? (await getTimeZone())}
       {...rest}
