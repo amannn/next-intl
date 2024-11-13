@@ -5,6 +5,6 @@ async function getFormatsCachedImpl() {
   const config = await getConfig();
   return config.formats;
 }
-const getFormatsCached = cache(getFormatsCachedImpl);
+const getFormats = cache(getFormatsCachedImpl);
 
-export default getFormatsCached;
+export default getFormats;

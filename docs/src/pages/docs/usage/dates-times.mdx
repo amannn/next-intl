@@ -77,7 +77,7 @@ Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" 
 
 ### Supplying `now`
 
-By default, `relativeTime` will use [the global value for `now`](/docs/usage/configuration#now). If you want to use a different value, you can explicitly pass this as the second parameter.
+By default, `relativeTime` will use the [global value for `now`](/docs/usage/configuration#now). If you want to use a different value, you can explicitly pass this as the second parameter.
 
 ```js
 import {useFormatter} from 'next-intl';
@@ -92,7 +92,7 @@ function Component() {
 }
 ```
 
-If you want the relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
+In case you want the relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
 
 ```js
 import {useNow, useFormatter} from 'next-intl';
@@ -114,7 +114,7 @@ function Component() {
 
 ### Customizing the unit
 
-By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` (e.g. 3 seconds, 40 minutes, 4 days, etc.).
+By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` like "3 seconds" or "5 days".
 
 If you want to use a specific unit, you can provide options via the second argument:
 

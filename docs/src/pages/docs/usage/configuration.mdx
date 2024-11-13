@@ -218,7 +218,7 @@ import {getLocale} from 'next-intl/server';
 const locale = await getLocale();
 ```
 
-### `Locale` [#locale-type]
+### `Locale` type [#locale-type]
 
 When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
 
@@ -453,7 +453,7 @@ const timeZone = await getTimeZone();
 
 When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". By default, this is the time a component renders.
 
-If you prefer to override the default, you can provide an explicit value for `now`:
+If you prefer to provide a global default, you can configure an explicit value for `now`:
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
@@ -461,32 +461,35 @@ If you prefer to override the default, you can provide an explicit value for `no
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
+async function now() {
+  'use cache';
+
+  // Use this value consistently
+  return new Date();
+}
+
 export default getRequestConfig(async () => {
   return {
-    // This is the default, a single date instance will be
-    // used by all Server Components to ensure consistency.
-    // Tip: This value can be mocked to a constant value
-    // for consistent results in end-to-end-tests.
-    now: new Date()
+    now: await now()
 
     // ...
   };
 });
 ```
 
+If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
+
 </Tabs.Tab>
 <Tabs.Tab>
 
 ```tsx
-const now = new Date('2020-11-20T10:36:01.516Z');
+const now = new Date();
 
 <NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
 
 </Tabs.Tab>
 </Tabs>
-
-Similarly to the `timeZone`, the `now` value in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
 
 ### `useNow` & `getNow` [#use-now]
 
