@@ -13,6 +13,9 @@ const withMdx = mdxPlugin();
 
 export default withMdx(
   withNextIntl({
+    eslint: {
+      ignoreDuringBuilds: true
+    },
     trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
     basePath:
       process.env.NEXT_PUBLIC_USE_CASE === 'base-path'

@@ -1,4 +1,5 @@
 import type {useNow as useNowType} from 'use-intl';
+import getDefaultNow from '../server/react-server/getDefaultNow.tsx';
 import useConfig from './useConfig.tsx';
 
 export default function useNow(
@@ -11,5 +12,5 @@ export default function useNow(
   }
 
   const config = useConfig('useNow');
-  return config.now;
+  return config.now ?? getDefaultNow();
 }

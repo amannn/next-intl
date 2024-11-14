@@ -6,7 +6,7 @@ import {
   createTranslator
 } from 'use-intl/core';
 
-function getTranslatorImpl<
+function getServerTranslatorImpl<
   NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   config: Parameters<typeof createTranslator>[0],
@@ -18,4 +18,4 @@ function getTranslatorImpl<
   });
 }
 
-export default cache(getTranslatorImpl);
+export default cache(getServerTranslatorImpl);

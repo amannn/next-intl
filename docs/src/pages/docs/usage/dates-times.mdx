@@ -67,32 +67,82 @@ function Component() {
   const format = useFormatter();
   const dateTime = new Date('2020-11-20T08:30:00.000Z');
 
-  // At 2020-11-20T10:36:00.000Z,
-  // this will render "2 hours ago"
-  format.relativeTime(dateTime);
+  // A reference point in time
+  const now = new Date('2020-11-20T10:36:00.000Z');
+
+  // This will render "2 hours ago"
+  format.relativeTime(dateTime, now);
 }
 ```
 
 Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" will be returned.
 
-### Supplying `now`
+### `useNow` [#relative-times-usenow]
 
-By default, `relativeTime` will use [the global value for `now`](/docs/usage/configuration#now). If you want to use a different value, you can explicitly pass this as the second parameter.
+Since providing `now` is a common pattern, `next-intl` provides a convenience hook that can be used to retrieve the current date and time:
 
-```js
-import {useFormatter} from 'next-intl';
+```tsx {4}
+import {useNow, useFormatter} from 'next-intl';
 
-function Component() {
+function FormattedDate({date}) {
+  const now = useNow();
   const format = useFormatter();
-  const dateTime = new Date('2020-11-20T08:30:00.000Z');
-  const now = new Date('2020-11-20T10:36:00.000Z');
 
-  // Renders "2 hours ago"
-  format.relativeTime(dateTime, now);
+  format.relativeTime(date, now);
 }
 ```
 
-If you want the relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
+In contrast to simply calling `new Date()` in your component, `useNow` has some benefits:
+
+1. The returned value is consistent across re-renders.
+2. The value can optionally be [updated continuously](#relative-times-update) based on an interval.
+3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests.
+
+<Details id="relative-times-hydration">
+<summary>How can I avoid hydration errors with `useNow`?</summary>
+
+If you're using `useNow` in a component that renders both on the server as well as the client, you can consider using [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that this particular text is expected to potentially be updated on the client side:
+
+```tsx {7}
+import {useNow, useFormatter} from 'next-intl';
+
+function FormattedDate({date}) {
+  const now = useNow();
+  const format = useFormatter();
+
+  return <span suppressHydrationWarning>{format.relativeTime(date, now)}</span>;
+}
+```
+
+While this prop has a somewhat intimidating name, it's an escape hatch that was purposefully designed for cases like this.
+
+</Details>
+
+<Details id="relative-times-server">
+<summary>How can I use `now` in Server Components with `dynamicIO`?</summary>
+
+If you're using [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO), Next.js may prompt you to specify a cache expiration in case you're using `useNow` in a Server Component.
+
+You can do so by annotating your component with the `'use cache'` directive, while converting it to an async function:
+
+```tsx
+import {getNow, getFormatter} from 'next-intl/server';
+
+async function FormattedDate({date}) {
+  'use cache';
+
+  const now = await getNow();
+  const format = await getFormatter();
+
+  return format.relativeTime(date, now);
+}
+```
+
+</Details>
+
+### `updateInterval` [#relative-times-update]
+
+In case you want a relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#use-now):
 
 ```js
 import {useNow, useFormatter} from 'next-intl';
@@ -112,9 +162,9 @@ function Component() {
 }
 ```
 
-### Customizing the unit
+### Customizing the unit [#relative-times-unit]
 
-By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` (e.g. 3 seconds, 40 minutes, 4 days, etc.).
+By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` like "3 seconds" or "5 days".
 
 If you want to use a specific unit, you can provide options via the second argument:
 

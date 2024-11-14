@@ -218,7 +218,7 @@ import {getLocale} from 'next-intl/server';
 const locale = await getLocale();
 ```
 
-### `Locale` [#locale-type]
+### `Locale` type [#locale-type]
 
 When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
 
@@ -451,9 +451,7 @@ const timeZone = await getTimeZone();
 
 ## Now value [#now]
 
-When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". By default, this is the time a component renders.
-
-If you prefer to override the default, you can provide an explicit value for `now`:
+When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". While it can be beneficial in terms of caching to [provide this value](/docs/usage/dates-times#relative-times-usenow) where necessary, you can provide a global value for `now`, e.g. to ensure consistency when running tests.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
@@ -463,11 +461,7 @@ import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
   return {
-    // This is the default, a single date instance will be
-    // used by all Server Components to ensure consistency.
-    // Tip: This value can be mocked to a constant value
-    // for consistent results in end-to-end-tests.
-    now: new Date()
+    now: new Date('2024-11-14T10:36:01.516Z')
 
     // ...
   };
@@ -478,7 +472,7 @@ export default getRequestConfig(async () => {
 <Tabs.Tab>
 
 ```tsx
-const now = new Date('2020-11-20T10:36:01.516Z');
+const now = new Date('2024-11-14T10:36:01.516Z');
 
 <NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
@@ -486,7 +480,7 @@ const now = new Date('2020-11-20T10:36:01.516Z');
 </Tabs.Tab>
 </Tabs>
 
-Similarly to the `timeZone`, the `now` value in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
+If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
 
 ### `useNow` & `getNow` [#use-now]
 
@@ -501,6 +495,8 @@ const now = useNow();
 import {getNow} from 'next-intl/server';
 const now = await getNow();
 ```
+
+Note that the returned value defaults to the current date and time, therefore making this hook useful when [providing `now`](/docs/usage/dates-times#relative-times-usenow) for `format.relativeTime` even when you haven't configured a global `now` value.
 
 ## Formats
 
