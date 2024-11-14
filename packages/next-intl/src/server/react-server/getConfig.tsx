@@ -10,12 +10,6 @@ import {getRequestLocale} from './RequestLocale.tsx';
 import createRequestConfig from './createRequestConfig.tsx';
 import {GetRequestConfigParams} from './getRequestConfig.tsx';
 
-// Make sure `now` is consistent across the request in case none was configured
-function getDefaultNowImpl() {
-  return new Date();
-}
-const getDefaultNow = cache(getDefaultNowImpl);
-
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component
 function getDefaultTimeZoneImpl() {
@@ -65,12 +59,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     );
   }
 
-  return {
-    ...result,
-    locale: result.locale,
-    now: result.now || getDefaultNow(),
-    timeZone: result.timeZone || getDefaultTimeZone()
-  };
+  return result;
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 
@@ -80,7 +69,6 @@ const getCache = cache(_createCache);
 async function getConfigImpl(localeOverride?: Locale): Promise<
   IntlConfig & {
     getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
-    now: NonNullable<IntlConfig['now']>;
     onError: NonNullable<IntlConfig['onError']>;
     timeZone: NonNullable<IntlConfig['timeZone']>;
     _formatters: ReturnType<typeof _createIntlFormatters>;
@@ -92,7 +80,8 @@ async function getConfigImpl(localeOverride?: Locale): Promise<
   );
   return {
     ...initializeConfig(runtimeConfig),
-    _formatters: getFormatters(getCache())
+    _formatters: getFormatters(getCache()),
+    timeZone: runtimeConfig.timeZone || getDefaultTimeZone()
   };
 }
 const getConfig = cache(getConfigImpl);

@@ -1,21 +1,22 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {
   usePathname as useNextPathname,
-  useRouter as useNextRouter,
-  useParams
+  useRouter as useNextRouter
 } from 'next/navigation.js';
 import type {Locale} from 'use-intl';
+import {useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider, useLocale} from '../../index.react-client.tsx';
 import {DomainsConfig, Pathnames} from '../../routing.tsx';
 import createNavigation from './createNavigation.tsx';
 
 vi.mock('next/navigation.js');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
 function mockCurrentLocale(locale: Locale) {
-  vi.mocked(useParams<{locale: Locale}>).mockImplementation(() => ({
-    locale
-  }));
+  vi.mocked(useLocale).mockImplementation(() => locale);
 }
 
 function mockLocation(
@@ -112,29 +113,6 @@ describe("localePrefix: 'always'", () => {
   });
 
   describe('Link', () => {
-    describe('usage outside of Next.js', () => {
-      beforeEach(() => {
-        vi.mocked(useParams<any>).mockImplementation((() => null) as any);
-      });
-
-      it('works with a provider', () => {
-        render(
-          <NextIntlClientProvider locale="en">
-            <Link href="/test">Test</Link>
-          </NextIntlClientProvider>
-        );
-        expect(
-          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
-        ).toBe('/en/test');
-      });
-
-      it('throws without a provider', () => {
-        expect(() => render(<Link href="/test">Test</Link>)).toThrow(
-          'No intl context found. Have you configured the provider?'
-        );
-      });
-    });
-
     it('can receive a ref', () => {
       let ref;
 

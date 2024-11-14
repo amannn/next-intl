@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.25.0 (2024-11-08)
+
+### Features
+
+* Add type exports to enable `declaration: true` in `tsconfig.json` ([#1509](https://github.com/amannn/next-intl/issues/1509)) ([6b2ca9c](https://github.com/amannn/next-intl/commit/6b2ca9cfddcf8611893f76f9690e0bafb534e8fd)) – by @osaton
+
+## 3.24.0 (2024-10-31)
+
+### Features
+
+* Add support for React 19 RC ([#1490](https://github.com/amannn/next-intl/issues/1490)) ([2dea022](https://github.com/amannn/next-intl/commit/2dea02271f79e183dfd18a3c77112a79e1fce581)) – by @amannn
+
 ## 3.23.5 (2024-10-24)
 
 ### Bug Fixes

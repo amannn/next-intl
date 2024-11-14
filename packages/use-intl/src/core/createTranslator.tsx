@@ -14,8 +14,8 @@ import type {
   ICUArg,
   ICUDate,
   ICUNumber,
-  MarkupFunction,
-  RichTextFunction
+  MarkupTagsFunction,
+  RichTagsFunction
 } from './TranslationValues.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
@@ -25,17 +25,26 @@ import {
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-import type {OnlyOptional, Prettify} from './types.tsx';
+import type {Prettify} from './types.tsx';
 
 type ICUArgsWithTags<
   MessageString extends string,
-  TagsFn extends RichTextFunction | MarkupFunction = never
-> = ICUArgs<MessageString, ICUArg, ICUNumber, ICUDate> &
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
+> = ICUArgs<
+  MessageString,
+  {
+    ICUArgument: ICUArg;
+    ICUNumberArgument: ICUNumber;
+    ICUDateArgument: ICUDate;
+  }
+> &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
+
+type OnlyOptional<T> = Partial<T> extends T ? true : false;
 
 type TranslateArgs<
   Value extends string,
-  TagsFn extends RichTextFunction | MarkupFunction = never
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
 > =
   // If an unknown string is passed, allow any values
   string extends Value
@@ -49,6 +58,37 @@ type TranslateArgs<
         ? [values?: undefined, formats?: Formats]
         : [values: Prettify<Args>, formats?: Formats]
       : never;
+
+type NamespacedMessageKeys<
+  TranslatorMessages extends Messages,
+  Namespace extends NamespaceKeys<
+    TranslatorMessages,
+    NestedKeyOf<TranslatorMessages>
+  > = never
+> = MessageKeys<
+  NestedValueOf<
+    {'!': TranslatorMessages},
+    [Namespace] extends [never] ? '!' : `!.${Namespace}`
+  >,
+  NestedKeyOf<
+    NestedValueOf<
+      {'!': TranslatorMessages},
+      [Namespace] extends [never] ? '!' : `!.${Namespace}`
+    >
+  >
+>;
+
+type NamespacedValue<
+  TranslatorMessages extends Messages,
+  Namespace extends NamespaceKeys<
+    TranslatorMessages,
+    NestedKeyOf<TranslatorMessages>
+  >,
+  TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>
+> = NestedValueOf<
+  TranslatorMessages,
+  [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
+>;
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -82,112 +122,40 @@ export default function createTranslator<
 }): // Explicitly defining the return type is necessary as TypeScript would get it wrong
 {
   // Default invocation
-  <
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': TranslatorMessages},
-        [Namespace] extends [never] ? '!' : `!.${Namespace}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': TranslatorMessages},
-          [Namespace] extends [never] ? '!' : `!.${Namespace}`
-        >
-      >
-    >
-  >(
+  <TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey,
     ...args: TranslateArgs<
-      NestedValueOf<
-        TranslatorMessages,
-        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >
+      NamespacedValue<TranslatorMessages, Namespace, TargetKey>
     >
   ): string;
 
   // `rich`
-  rich<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': TranslatorMessages},
-        [Namespace] extends [never] ? '!' : `!.${Namespace}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': TranslatorMessages},
-          [Namespace] extends [never] ? '!' : `!.${Namespace}`
-        >
-      >
-    >
-  >(
+  rich<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey,
     ...args: TranslateArgs<
-      NestedValueOf<
-        TranslatorMessages,
-        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >,
-      RichTextFunction
+      NamespacedValue<TranslatorMessages, Namespace, TargetKey>,
+      RichTagsFunction
     >
   ): ReactNode;
 
   // `markup`
   markup<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': TranslatorMessages},
-        [Namespace] extends [never] ? '!' : `!.${Namespace}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': TranslatorMessages},
-          [Namespace] extends [never] ? '!' : `!.${Namespace}`
-        >
-      >
-    >
+    TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>
   >(
     key: TargetKey,
     ...args: TranslateArgs<
-      NestedValueOf<
-        TranslatorMessages,
-        [Namespace] extends [never] ? TargetKey : `${Namespace}.${TargetKey}`
-      >,
-      MarkupFunction
+      NamespacedValue<TranslatorMessages, Namespace, TargetKey>,
+      MarkupTagsFunction
     >
   ): string;
 
   // `raw`
-  raw<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': TranslatorMessages},
-        [Namespace] extends [never] ? '!' : `!.${Namespace}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': TranslatorMessages},
-          [Namespace] extends [never] ? '!' : `!.${Namespace}`
-        >
-      >
-    >
-  >(
+  raw<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey
   ): any;
 
   // `has`
-  has<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': TranslatorMessages},
-        [Namespace] extends [never] ? '!' : `!.${Namespace}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': TranslatorMessages},
-          [Namespace] extends [never] ? '!' : `!.${Namespace}`
-        >
-      >
-    >
-  >(
+  has<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey
   ): boolean;
 } {

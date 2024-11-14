@@ -279,9 +279,7 @@ describe('dateTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `timeZone` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
       expect(container.textContent).toBe('11/20/2020');
     });
@@ -622,9 +620,7 @@ describe('relativeTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });

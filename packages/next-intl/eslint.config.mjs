@@ -6,6 +6,21 @@ export default (await getPresets('typescript', 'react', 'vitest')).concat({
     'react-compiler': reactCompilerPlugin
   },
   rules: {
-    'react-compiler/react-compiler': 'error'
+    'react-compiler/react-compiler': 'error',
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            // Because:
+            // - Avoid hardcoding the `locale` param
+            // - Prepare for a new API in Next.js to read params deeply
+            // - Avoid issues with `dynamicIO`
+            name: 'next/navigation.js',
+            importNames: ['useParams']
+          }
+        ]
+      }
+    ]
   }
 });

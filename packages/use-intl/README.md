@@ -35,7 +35,7 @@ export default function UserProfile({user}) {
 // en.json
 {
   "UserProfile": {
-    "title": "{username}'s profile",
+    "title": "{firstName}'s profile",
     "membership": "Member since {memberSince, date, short}",
     "followers": "{count, plural, ↵
                     =0 {No followers yet} ↵
@@ -60,21 +60,21 @@ import {IntlProvider, useTranslations} from 'use-intl';
 // along with your app once you have the messages.
 const messages = {
   App: {
-    hello: 'Hello {username}!'
+    hello: 'Hello {firstName}!'
   }
 };
 
 function Root() {
   return (
     <IntlProvider messages={messages} locale="en">
-      <App user={{name: 'Jane'}} />
+      <App user={{firstName: 'Jane'}} />
     </IntlProvider>
   );
 }
 
 function App({user}) {
   const t = useTranslations('App');
-  return <h1>{t('hello', {username: user.name})}</h1>;
+  return <h1>{t('hello', {firstName: user.firstName})}</h1>;
 }
 ```
 

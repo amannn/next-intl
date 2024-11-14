@@ -10,8 +10,7 @@ import {
   useEffect,
   useState
 } from 'react';
-import type {Locale} from 'use-intl';
-import useLocale from '../../react-client/useLocale.tsx';
+import {type Locale, useLocale} from 'use-intl';
 import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import syncLocaleCookie from './syncLocaleCookie.tsx';
 

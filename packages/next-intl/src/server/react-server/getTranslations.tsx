@@ -7,6 +7,7 @@ import {
   createTranslator
 } from 'use-intl/core';
 import getConfig from './getConfig.tsx';
+import getServerTranslator from './getServerTranslator.tsx';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
@@ -40,12 +41,7 @@ async function getTranslations<
   }
 
   const config = await getConfig(locale);
-
-  return createTranslator({
-    ...config,
-    namespace,
-    messages: config.messages
-  });
+  return getServerTranslator(config, namespace);
 }
 
 export default cache(getTranslations);

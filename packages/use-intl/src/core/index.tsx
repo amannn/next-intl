@@ -2,7 +2,12 @@ export type {default as AbstractIntlMessages} from './AbstractIntlMessages.tsx';
 export type {
   TranslationValues,
   RichTranslationValues,
-  MarkupTranslationValues
+  MarkupTranslationValues,
+  ICUArg,
+  ICUNumber,
+  ICUDate,
+  RichTagsFunction,
+  MarkupTagsFunction
 } from './TranslationValues.tsx';
 export type {default as Formats} from './Formats.tsx';
 export type {default as IntlConfig} from './IntlConfig.tsx';
@@ -23,3 +28,7 @@ export {createIntlFormatters as _createIntlFormatters} from './formatters.tsx';
 export {createCache as _createCache} from './formatters.tsx';
 export type {default as AppConfig, Locale, Messages} from './AppConfig.tsx';
 export {default as hasLocale} from './hasLocale.tsx';
+export type {default as RelativeTimeFormatOptions} from './RelativeTimeFormatOptions.tsx';
+export type {default as Timezone} from './TimeZone.tsx';
+export type {default as ICUArgs} from './ICUArgs.tsx';
+export type {default as ICUTags} from './ICUTags.tsx';

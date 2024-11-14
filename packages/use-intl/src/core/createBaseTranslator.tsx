@@ -427,7 +427,7 @@ function createBaseTranslatorImpl<
     }
   };
 
-  translateFn.has = (key: Parameters<typeof translateBaseFn>[0]): boolean => {
+  translateFn.has = (key: string): boolean => {
     if (hasMessagesError) {
       return false;
     }

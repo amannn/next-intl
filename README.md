@@ -47,7 +47,7 @@ export default function UserProfile({user}) {
 // en.json
 {
   "UserProfile": {
-    "title": "{username}'s profile",
+    "title": "{firstName}'s profile",
     "membership": "Member since {memberSince, date, short}",
     "followers": "{count, plural, ↵
                     =0 {No followers yet} ↵

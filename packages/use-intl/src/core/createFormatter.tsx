@@ -83,15 +83,16 @@ type Props = {
   _cache?: IntlCache;
 };
 
-export default function createFormatter({
-  _cache: cache = createCache(),
-  _formatters: formatters = createIntlFormatters(cache),
-  formats,
-  locale,
-  now: globalNow,
-  onError = defaultOnError,
-  timeZone: globalTimeZone
-}: Props) {
+export default function createFormatter(props: Props) {
+  const {
+    _cache: cache = createCache(),
+    _formatters: formatters = createIntlFormatters(cache),
+    formats,
+    locale,
+    onError = defaultOnError,
+    timeZone: globalTimeZone
+  } = props;
+
   function applyTimeZone(options?: DateTimeFormatOptions) {
     if (!options?.timeZone) {
       if (globalTimeZone) {
@@ -213,14 +214,16 @@ export default function createFormatter({
   }
 
   function getGlobalNow() {
-    if (globalNow) {
-      return globalNow;
+    // Only read when necessary to avoid triggering a `dynamicIO` error
+    // unnecessarily (`now` is only needed for `format.relativeTime`)
+    if (props.now) {
+      return props.now;
     } else {
       onError(
         new IntlError(
           IntlErrorCode.ENVIRONMENT_FALLBACK,
           process.env.NODE_ENV !== 'production'
-            ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+            ? `The \`now\` parameter wasn't provided and there is no global default configured, therefore the current time will be used as a fallback. To avoid markup mismatches caused by environment differences, either provide the \`now\` parameter or configure a global default. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
             : undefined
         )
       );
@@ -231,7 +234,7 @@ export default function createFormatter({
   function relativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
-    /** The reference point in time to which `date` will be formatted in relation to.  */
+    /** The reference point in time to which `date` will be formatted in relation to. If this value is absent, a globally configured `now` value or alternatively the current time will be used. */
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {

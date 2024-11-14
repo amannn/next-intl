@@ -250,7 +250,7 @@ export const config = {
 };
 ```
 
-Note that if you use a [`localePrefix`](/docs/routing#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too.
+Note that if you use a [`localePrefix`](/docs/routing#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too. Also, make sure to only rewrite pathnames that will not lead to a redirect, as otherwise rewritten pathnames will be redirected to.
 
 ### Example: Integrating with Clerk
 
