@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {Locale} from '../core.tsx';
+import type {Locale} from '../core.tsx';
 import IntlProvider from './IntlProvider.tsx';
 import useFormatter from './useFormatter.tsx';
 import useNow from './useNow.tsx';

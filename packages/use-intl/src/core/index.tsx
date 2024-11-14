@@ -1,6 +1,6 @@
 export type {default as AbstractIntlMessages} from './AbstractIntlMessages.tsx';
 export type {
-  default as TranslationValues,
+  TranslationValues,
   RichTranslationValues,
   MarkupTranslationValues,
   ICUArg,
@@ -13,7 +13,8 @@ export type {default as Formats} from './Formats.tsx';
 export type {default as IntlConfig} from './IntlConfig.tsx';
 export type {default as DateTimeFormatOptions} from './DateTimeFormatOptions.tsx';
 export type {default as NumberFormatOptions} from './NumberFormatOptions.tsx';
-export {default as IntlError, IntlErrorCode} from './IntlError.tsx';
+export {default as IntlError} from './IntlError.tsx';
+export {default as IntlErrorCode} from './IntlErrorCode.tsx';
 export {default as createTranslator} from './createTranslator.tsx';
 export {default as createFormatter} from './createFormatter.tsx';
 export {default as initializeConfig} from './initializeConfig.tsx';

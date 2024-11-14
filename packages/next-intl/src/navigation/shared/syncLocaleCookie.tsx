@@ -1,5 +1,5 @@
 import type {Locale} from 'use-intl';
-import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import {getBasePath} from './utils.tsx';
 
 /**

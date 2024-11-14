@@ -1,17 +1,17 @@
 'use client';
 
-import NextLink, {LinkProps} from 'next/link.js';
+import NextLink, {type LinkProps} from 'next/link.js';
 import {usePathname} from 'next/navigation.js';
 import {
-  ComponentProps,
-  MouseEvent,
-  Ref,
+  type ComponentProps,
+  type MouseEvent,
+  type Ref,
   forwardRef,
   useEffect,
   useState
 } from 'react';
 import {type Locale, useLocale} from 'use-intl';
-import {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
 import syncLocaleCookie from './syncLocaleCookie.tsx';
 
 type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &

@@ -2,28 +2,28 @@ import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
 } from 'next/navigation.js';
-import {ComponentProps, forwardRef} from 'react';
+import {type ComponentProps, forwardRef} from 'react';
 import type {Locale} from 'use-intl';
 import {
-  RoutingConfigLocalizedNavigation,
-  RoutingConfigSharedNavigation,
+  type RoutingConfigLocalizedNavigation,
+  type RoutingConfigSharedNavigation,
   receiveRoutingConfig
 } from '../../routing/config.tsx';
-import {
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
 } from '../../routing/types.tsx';
-import {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
+import type {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
 import use from '../../shared/use.tsx';
 import {isLocalizableHref} from '../../shared/utils.tsx';
 import BaseLink from './BaseLink.tsx';
 import {
-  HrefOrHrefWithParams,
-  HrefOrUrlObjectWithParams,
-  QueryParams,
+  type HrefOrHrefWithParams,
+  type HrefOrUrlObjectWithParams,
+  type QueryParams,
   applyPathnamePrefix,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams,

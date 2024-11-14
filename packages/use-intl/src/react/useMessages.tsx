@@ -1,4 +1,4 @@
-import {Messages} from '../core/AppConfig.tsx';
+import type {Messages} from '../core/AppConfig.tsx';
 import useIntlContext from './useIntlContext.tsx';
 
 export default function useMessages(): Messages {

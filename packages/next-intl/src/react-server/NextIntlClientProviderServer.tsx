@@ -1,4 +1,4 @@
-import {ComponentProps} from 'react';
+import type {ComponentProps} from 'react';
 import getConfigNow from '../server/react-server/getConfigNow.tsx';
 import getFormats from '../server/react-server/getFormats.tsx';
 import {getLocale, getTimeZone} from '../server.react-server.tsx';

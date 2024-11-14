@@ -1,7 +1,7 @@
 'use client';
 
-import {ComponentProps} from 'react';
-import {type Locale} from 'use-intl';
+import type {ComponentProps} from 'react';
+import type {Locale} from 'use-intl';
 import {IntlProvider} from 'use-intl/react';
 
 type Props = Omit<ComponentProps<typeof IntlProvider>, 'locale'> & {

@@ -1,22 +1,24 @@
 import {IntlMessageFormat} from 'intl-messageformat';
-import {ReactNode, cloneElement, isValidElement} from 'react';
-import AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import {Locale} from './AppConfig.tsx';
-import Formats from './Formats.tsx';
-import {InitializedIntlConfig} from './IntlConfig.tsx';
-import IntlError, {IntlErrorCode} from './IntlError.tsx';
-import {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
-import TranslationValues, {
+import {type ReactNode, cloneElement, isValidElement} from 'react';
+import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import type {Locale} from './AppConfig.tsx';
+import type Formats from './Formats.tsx';
+import type {InitializedIntlConfig} from './IntlConfig.tsx';
+import IntlError from './IntlError.tsx';
+import IntlErrorCode from './IntlErrorCode.tsx';
+import type {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
+import type {
   MarkupTranslationValues,
-  RichTranslationValues
+  RichTranslationValues,
+  TranslationValues
 } from './TranslationValues.tsx';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
-  Formatters,
-  IntlCache,
-  IntlFormatters,
-  MessageFormatter,
+  type Formatters,
+  type IntlCache,
+  type IntlFormatters,
+  type MessageFormatter,
   memoFn
 } from './formatters.tsx';
 import joinPath from './joinPath.tsx';

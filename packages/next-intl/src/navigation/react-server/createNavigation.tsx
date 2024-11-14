@@ -1,8 +1,8 @@
-import {
+import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config.tsx';
-import {
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,

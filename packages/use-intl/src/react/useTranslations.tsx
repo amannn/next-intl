@@ -1,5 +1,5 @@
-import {Messages} from '../core/AppConfig.tsx';
-import {NamespaceKeys, NestedKeyOf} from '../core/MessageKeys.tsx';
+import type {Messages} from '../core/AppConfig.tsx';
+import type {NamespaceKeys, NestedKeyOf} from '../core/MessageKeys.tsx';
 import type createTranslator from '../core/createTranslator.tsx';
 import useIntlContext from './useIntlContext.tsx';
 import useTranslationsImpl from './useTranslationsImpl.tsx';

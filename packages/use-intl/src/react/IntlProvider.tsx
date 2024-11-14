@@ -1,7 +1,7 @@
-import {ReactNode, useContext, useMemo} from 'react';
-import IntlConfig from '../core/IntlConfig.tsx';
+import {type ReactNode, useContext, useMemo} from 'react';
+import type IntlConfig from '../core/IntlConfig.tsx';
 import {
-  Formatters,
+  type Formatters,
   createCache,
   createIntlFormatters
 } from '../core/formatters.tsx';

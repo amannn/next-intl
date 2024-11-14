@@ -1,6 +1,6 @@
 import {headers} from 'next/headers.js';
 import {cache} from 'react';
-import {Locale} from 'use-intl';
+import type {Locale} from 'use-intl';
 import {HEADER_LOCALE_NAME} from '../../shared/constants.tsx';
 import {getCachedRequestLocale} from './RequestLocaleCache.tsx';
 

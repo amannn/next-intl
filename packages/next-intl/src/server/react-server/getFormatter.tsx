@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {type Locale, createFormatter} from 'use-intl/core';
+import type {Locale, createFormatter} from 'use-intl/core';
 import getConfig from './getConfig.tsx';
 import getServerFormatter from './getServerFormatter.tsx';
 

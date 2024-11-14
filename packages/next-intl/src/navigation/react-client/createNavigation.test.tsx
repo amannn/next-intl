@@ -3,10 +3,9 @@ import {
   usePathname as useNextPathname,
   useRouter as useNextRouter
 } from 'next/navigation.js';
-import type {Locale} from 'use-intl';
-import {useLocale} from 'use-intl';
+import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {DomainsConfig, Pathnames} from '../../routing.tsx';
+import type {DomainsConfig, Pathnames} from '../../routing.tsx';
 import createNavigation from './createNavigation.tsx';
 
 vi.mock('next/navigation.js');

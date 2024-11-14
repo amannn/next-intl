@@ -1,8 +1,8 @@
-import AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import {InitializedIntlConfig} from './IntlConfig.tsx';
-import {NestedKeyOf} from './MessageKeys.tsx';
+import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import type {InitializedIntlConfig} from './IntlConfig.tsx';
+import type {NestedKeyOf} from './MessageKeys.tsx';
 import createBaseTranslator from './createBaseTranslator.tsx';
-import {Formatters, IntlCache} from './formatters.tsx';
+import type {Formatters, IntlCache} from './formatters.tsx';
 import resolveNamespace from './resolveNamespace.tsx';
 
 export type CreateTranslatorImplProps<Messages> = Omit<

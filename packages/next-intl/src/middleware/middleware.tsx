@@ -1,6 +1,6 @@
-import {NextRequest, NextResponse} from 'next/server.js';
-import {RoutingConfig, receiveRoutingConfig} from '../routing/config.tsx';
-import {
+import {type NextRequest, NextResponse} from 'next/server.js';
+import {type RoutingConfig, receiveRoutingConfig} from '../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
