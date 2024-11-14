@@ -30,7 +30,14 @@ import {Prettify} from './types.tsx';
 type ICUArgsWithTags<
   MessageString extends string,
   TagsFn extends RichTagsFunction | MarkupTagsFunction = never
-> = ICUArgs<MessageString, ICUArg, ICUNumber, ICUDate> &
+> = ICUArgs<
+  MessageString,
+  {
+    ICUArgument: ICUArg;
+    ICUNumberArgument: ICUNumber;
+    ICUDateArgument: ICUDate;
+  }
+> &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
 
 type OnlyOptional<T> = Partial<T> extends T ? true : false;
