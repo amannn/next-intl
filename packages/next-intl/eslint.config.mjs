@@ -12,9 +12,10 @@ export default (await getPresets('typescript', 'react', 'vitest')).concat({
       {
         paths: [
           {
-            // Two reasons:
+            // Because:
             // - Avoid hardcoding the `locale` param
             // - Prepare for a new API in Next.js to read params deeply
+            // - Avoid issues with `dynamicIO`
             name: 'next/navigation.js',
             importNames: ['useParams']
           }
