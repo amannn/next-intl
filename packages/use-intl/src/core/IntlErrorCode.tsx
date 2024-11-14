@@ -1,4 +1,4 @@
-export const enum IntlErrorCode {
+const enum IntlErrorCode {
   MISSING_MESSAGE = 'MISSING_MESSAGE',
   MISSING_FORMAT = 'MISSING_FORMAT',
   ENVIRONMENT_FALLBACK = 'ENVIRONMENT_FALLBACK',
@@ -7,3 +7,5 @@ export const enum IntlErrorCode {
   INVALID_KEY = 'INVALID_KEY',
   FORMATTING_ERROR = 'FORMATTING_ERROR'
 }
+
+export default IntlErrorCode;

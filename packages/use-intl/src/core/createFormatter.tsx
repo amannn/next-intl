@@ -3,7 +3,7 @@ import type {FormatNames, Locale} from './AppConfig.tsx';
 import type DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
 import type Formats from './Formats.tsx';
 import IntlError from './IntlError.tsx';
-import {IntlErrorCode} from './IntlErrorCode.tsx';
+import IntlErrorCode from './IntlErrorCode.tsx';
 import type NumberFormatOptions from './NumberFormatOptions.tsx';
 import type RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
 import type TimeZone from './TimeZone.tsx';

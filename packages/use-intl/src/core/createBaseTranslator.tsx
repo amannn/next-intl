@@ -5,7 +5,7 @@ import type {Locale} from './AppConfig.tsx';
 import type Formats from './Formats.tsx';
 import type {InitializedIntlConfig} from './IntlConfig.tsx';
 import IntlError from './IntlError.tsx';
-import {IntlErrorCode} from './IntlErrorCode.tsx';
+import IntlErrorCode from './IntlErrorCode.tsx';
 import type {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
 import type {
   MarkupTranslationValues,
