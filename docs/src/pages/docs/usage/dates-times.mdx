@@ -67,32 +67,30 @@ function Component() {
   const format = useFormatter();
   const dateTime = new Date('2020-11-20T08:30:00.000Z');
 
-  // At 2020-11-20T10:36:00.000Z,
-  // this will render "2 hours ago"
-  format.relativeTime(dateTime);
+  // A reference point in time
+  const now = new Date('2020-11-20T10:36:00.000Z');
+
+  // This will render "2 hours ago"
+  format.relativeTime(dateTime, now);
 }
 ```
 
 Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" will be returned.
 
-### Supplying `now`
+### Providing `now` [#relative-times-now]
 
-By default, `relativeTime` will use the [global value for `now`](/docs/usage/configuration#now). If you want to use a different value, you can explicitly pass this as the second parameter.
+The `now` value can either be provided on a case-by-case basis or configured [globally](/docs/usage/configuration#now).
+
+If you've configured a global `now` value, you can omit the corresponding parameter:
 
 ```js
-import {useFormatter} from 'next-intl';
-
-function Component() {
-  const format = useFormatter();
-  const dateTime = new Date('2020-11-20T08:30:00.000Z');
-  const now = new Date('2020-11-20T10:36:00.000Z');
-
-  // Renders "2 hours ago"
-  format.relativeTime(dateTime, now);
-}
+// Uses the global now value
+format.relativeTime(dateTime);
 ```
 
-In case you want the relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
+### Continuously updating relative times [#relative-times-update]
+
+In case you want a relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
 
 ```js
 import {useNow, useFormatter} from 'next-intl';

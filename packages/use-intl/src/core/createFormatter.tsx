@@ -82,15 +82,16 @@ type Props = {
   _cache?: IntlCache;
 };
 
-export default function createFormatter({
-  _cache: cache = createCache(),
-  _formatters: formatters = createIntlFormatters(cache),
-  formats,
-  locale,
-  now: globalNow,
-  onError = defaultOnError,
-  timeZone: globalTimeZone
-}: Props) {
+export default function createFormatter(props: Props) {
+  const {
+    _cache: cache = createCache(),
+    _formatters: formatters = createIntlFormatters(cache),
+    formats,
+    locale,
+    onError = defaultOnError,
+    timeZone: globalTimeZone
+  } = props;
+
   function applyTimeZone(options?: DateTimeFormatOptions) {
     if (!options?.timeZone) {
       if (globalTimeZone) {
@@ -212,8 +213,10 @@ export default function createFormatter({
   }
 
   function getGlobalNow() {
-    if (globalNow) {
-      return globalNow;
+    // Only read when necessary to avoid triggering a `dynamicIO` error
+    // unnecessarily (`now` is only needed for `format.relativeTime`)
+    if (props.now) {
+      return props.now;
     } else {
       onError(
         new IntlError(
