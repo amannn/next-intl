@@ -234,7 +234,9 @@ const locale = await getLocale();
 Depending on how a component renders, the returned locale corresponds to:
 
 1. **Server Components**: The locale represents the value returned in [`i18n/request.ts`](#i18n-request).
-2. **Client Components**: In this case, the locale is received from [`NextIntlClientProvider`](#nextintlclientprovider). Note that `NextIntlClientProvider` automatically inherits the locale if it is rendered by a Server Component.
+2. **Client Components**: The locale is received from [`NextIntlClientProvider`](#nextintlclientprovider).
+
+Note that `NextIntlClientProvider` automatically inherits the locale if it is rendered by a Server Component, therefore you rarely need to pass a locale to `NextIntlClientProvider` yourself.
 
 </Details>
 
