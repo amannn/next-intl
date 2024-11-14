@@ -12,7 +12,7 @@ const withNextIntl = createNextIntlPlugin({
 const withMdx = mdxPlugin();
 
 export default withMdx(
-  withNextIntl({,
+  withNextIntl({
     eslint: {
       ignoreDuringBuilds: true
     },
