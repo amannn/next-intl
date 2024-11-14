@@ -181,6 +181,17 @@ export default getRequestConfig(async () => {
 });
 ```
 
+<Details id="server-request-locale">
+<summary>Which values can the `requestLocale` parameter hold?</summary>
+
+While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
+
+1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
+1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
+
+</Details>
+
 </Tabs.Tab>
 <Tabs.Tab>
 
@@ -191,14 +202,13 @@ export default getRequestConfig(async () => {
 </Tabs.Tab>
 </Tabs>
 
-<Details id="server-request-locale">
-<summary>Which values can the `requestLocale` parameter hold?</summary>
+<Details id="locale-change">
+<summary>How can I change the locale?</summary>
 
-While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
+Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale can be changed as follows:
 
-1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
-1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
+1. **With i18n routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+2. **Without i18n routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
 
 </Details>
 
@@ -218,41 +228,15 @@ import {getLocale} from 'next-intl/server';
 const locale = await getLocale();
 ```
 
-### `Locale` type [#locale-type]
-
-When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
-
-```tsx
-import {Locale} from 'next-intl';
-
-async function getPosts(locale: Locale) {
-  // ...
-}
-```
-
-<Callout>
-  By default, `Locale` is typed as `string`. However, you can optionally provide
-  a strict union based on your supported locales for this type by [augmenting
-  the `Locale` type](/docs/workflows/typescript#locale).
-</Callout>
-
-<Details id="locale-change">
-<summary>How can I change the locale?</summary>
-
-Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale can be changed as follows:
-
-1. **With i18n routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
-2. **Without i18n routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
-
-</Details>
-
 <Details id="locale-return-value">
 <summary>Which value is returned from `useLocale`?</summary>
 
-The returned value is resolved based on these priorities:
+Depending on how a component renders, the returned locale corresponds to:
 
-1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
-2. **Client Components**: In this case, the locale is received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component.
+1. **Server Components**: The locale represents the value returned in [`i18n/request.ts`](#i18n-request).
+2. **Client Components**: The locale is received from [`NextIntlClientProvider`](#nextintlclientprovider).
+
+Note that `NextIntlClientProvider` automatically inherits the locale if it is rendered by a Server Component, therefore you rarely need to pass a locale to `NextIntlClientProvider` yourself.
 
 </Details>
 
@@ -276,6 +260,24 @@ return (
 ```
 
 </Details>
+
+### `Locale` type [#locale-type]
+
+When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
+
+```tsx
+import {Locale} from 'next-intl';
+
+async function getPosts(locale: Locale) {
+  // ...
+}
+```
+
+<Callout>
+  By default, `Locale` is typed as `string`. However, you can optionally provide
+  a strict union based on your supported locales for this type by [augmenting
+  the `Locale` type](/docs/workflows/typescript#locale).
+</Callout>
 
 ## Messages
 

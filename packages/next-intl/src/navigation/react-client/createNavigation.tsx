@@ -3,8 +3,7 @@ import {
   useRouter as useNextRouter
 } from 'next/navigation.js';
 import {useMemo} from 'react';
-import type {Locale} from 'use-intl';
-import useLocale from '../../react-client/useLocale.tsx';
+import {type Locale, useLocale} from 'use-intl';
 import {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation

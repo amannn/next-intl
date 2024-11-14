@@ -2,29 +2,27 @@ import {render, screen} from '@testing-library/react';
 import {
   RedirectType,
   permanentRedirect as nextPermanentRedirect,
-  redirect as nextRedirect,
-  useParams as nextUseParams
+  redirect as nextRedirect
 } from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
-import {Locale} from 'use-intl';
+import {Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {useLocale} from '../index.react-server.tsx';
 import {DomainsConfig, Pathnames, defineRouting} from '../routing.tsx';
 import createNavigationClient from './react-client/createNavigation.tsx';
 import createNavigationServer from './react-server/createNavigation.tsx';
 import getServerLocale from './react-server/getServerLocale.tsx';
 
 vi.mock('react');
-vi.mock('next/navigation.js', async () => {
-  const actual = await vi.importActual('next/navigation.js');
-  return {
-    ...actual,
-    useParams: vi.fn(() => ({locale: 'en'})),
-    redirect: vi.fn(),
-    permanentRedirect: vi.fn()
-  };
-});
+vi.mock('next/navigation.js', async () => ({
+  ...(await vi.importActual('next/navigation.js')),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn()
+}));
 vi.mock('./react-server/getServerLocale');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
 function mockCurrentLocale(locale: Locale) {
   // Enable synchronous rendering without having to suspend
@@ -35,9 +33,7 @@ function mockCurrentLocale(locale: Locale) {
 
   vi.mocked(getServerLocale).mockImplementation(() => promise);
 
-  vi.mocked(nextUseParams<{locale: Locale}>).mockImplementation(() => ({
-    locale
-  }));
+  vi.mocked(useLocale).mockImplementation(() => locale);
 }
 
 function mockLocation(location: Partial<typeof window.location>) {

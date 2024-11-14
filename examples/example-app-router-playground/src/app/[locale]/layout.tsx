@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {Locale, hasLocale} from 'next-intl';
+import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -50,8 +50,10 @@ export default function LocaleLayout({children, params: {locale}}: Props) {
             lineHeight: 1.5
           }}
         >
-          <Navigation />
-          {children}
+          <NextIntlClientProvider>
+            <Navigation />
+            {children}
+          </NextIntlClientProvider>
         </div>
       </body>
     </html>
