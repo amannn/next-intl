@@ -1,8 +1,10 @@
 import {cache} from 'react';
 
-function getDefaultNowImpl() {
+function defaultNow() {
+  // See https://next-intl-docs.vercel.app/docs/usage/dates-times#relative-times
   return new Date();
 }
-const getDefaultNow = cache(getDefaultNowImpl);
+
+const getDefaultNow = cache(defaultNow);
 
 export default getDefaultNow;
