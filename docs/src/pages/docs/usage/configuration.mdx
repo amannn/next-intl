@@ -461,15 +461,6 @@ When formatting [relative dates and times](/docs/usage/dates-times#relative-time
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-async function now() {
-  // (if you're using `dynamicIO`)
-  // 'use cache';
-
-  // Use this value consistently
-  // when formatting relative times
-  return new Date();
-}
-
 export default getRequestConfig(async () => {
   return {
     now: new Date('2024-11-14T10:36:01.516Z')
@@ -478,26 +469,6 @@ export default getRequestConfig(async () => {
   };
 });
 ```
-
-If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
-
-<Details id="now-cache">
-<summary>How does the usage of `'use cache'` with `now` relate to cache expiration?</summary>
-
-If you're using [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO), you can cache the value of `now` with the [`'use cache'`](https://nextjs.org/docs/canary/app/api-reference/directives/use-cache) directive:
-
-```tsx
-async function now() {
-  'use cache';
-  const now = new Date();
-}
-```
-
-Since the request config from `i18n/request.ts` is shared among all Server Components that use features from `next-intl`, the cache expiration for `now` will apply to all of these, regardless of if they're using relative time formatting or not.
-
-If you want more granular cache control, you can consider passing the `now` value to [`format.relativeTime`](/docs/usage/dates-times#relative-times) explicitly as a second argument where relevant.
-
-</Details>
 
 </Tabs.Tab>
 <Tabs.Tab>
