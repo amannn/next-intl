@@ -451,7 +451,7 @@ const timeZone = await getTimeZone();
 
 ## Now value [#now]
 
-When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". If you want to ensure that this value is consistent across components, you can configure a global `now` value:
+When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". While it can be beneficial in terms of caching to [provide this value](/docs/usage/dates-times#relative-times-usenow) where necessary, you can provide a global value for `now`, e.g. to ensure consistency when running tests.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
@@ -459,55 +459,28 @@ When formatting [relative dates and times](/docs/usage/dates-times#relative-time
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 
-async function now() {
-  // (if you're using `dynamicIO`)
-  // 'use cache';
-
-  // Use this value consistently
-  // when formatting relative times
-  return new Date();
-}
-
 export default getRequestConfig(async () => {
   return {
-    now: await now()
+    now: new Date('2024-11-14T10:36:01.516Z')
 
     // ...
   };
 });
 ```
 
-If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
-
-<Details id="now-cache">
-<summary>How does the usage of `'use cache'` with `now` relate to cache expiration?</summary>
-
-If you're using [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO), you can cache the value of `now` with the [`'use cache'`](https://nextjs.org/docs/canary/app/api-reference/directives/use-cache) directive:
-
-```tsx
-async function now() {
-  'use cache';
-  const now = new Date();
-}
-```
-
-Since the request config from `i18n/request.ts` is shared among all Server Components that use features from `next-intl`, the cache expiration for `now` will apply to all of these, regardless of if they're using relative time formatting or not.
-
-If you want more granular cache control, you can consider passing the `now` value to [`format.relativeTime`](/docs/usage/dates-times#relative-times) explicitly as a second argument where relevant.
-
-</Details>
-
 </Tabs.Tab>
 <Tabs.Tab>
 
 ```tsx
-const now = new Date();
+const now = new Date('2024-11-14T10:36:01.516Z');
 
 <NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
 
 </Tabs.Tab>
 </Tabs>
+
+If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
 
 ### `useNow` & `getNow` [#use-now]
 
@@ -522,6 +495,8 @@ const now = useNow();
 import {getNow} from 'next-intl/server';
 const now = await getNow();
 ```
+
+Note that the returned value defaults to the current date and time, therefore making this hook useful when [providing `now`](/docs/usage/dates-times#relative-times-usenow) for `format.relativeTime` even when you haven't configured a global `now` value.
 
 ## Formats
 
