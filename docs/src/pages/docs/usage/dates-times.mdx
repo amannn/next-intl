@@ -77,20 +77,72 @@ function Component() {
 
 Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" will be returned.
 
-### Providing `now` [#relative-times-now]
+### `useNow` [#relative-times-usenow]
 
-The `now` value can either be provided on a case-by-case basis or configured [globally](/docs/usage/configuration#now).
+Since providing `now` is a common pattern, `next-intl` provides a convenience hook that can be used to retrieve the current date and time:
 
-If you've configured a global `now` value, you can omit the corresponding parameter:
+```tsx {4}
+import {useNow, useFormatter} from 'next-intl';
 
-```js
-// Uses the global now value
-format.relativeTime(dateTime);
+function FormattedDate({date}) {
+  const now = useNow();
+  const format = useFormatter();
+
+  format.relativeTime(date, now);
+}
 ```
 
-### Continuously updating relative times [#relative-times-update]
+In contrast to simply calling `new Date()` in your component, `useNow` has some benefits:
 
-In case you want a relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#now):
+1. The returned value is consistent across re-renders.
+2. The value can optionally be [updated continuously](#relative-times-update) based on an interval.
+3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests.
+
+<Details id="relative-times-hydration">
+<summary>How can I avoid hydration errors with `useNow`?</summary>
+
+If you're using `useNow` in a component that renders both on the server as well as the client, you can consider using [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that this particular text is expected to potentially be updated on the client side:
+
+```tsx {7}
+import {useNow, useFormatter} from 'next-intl';
+
+function FormattedDate({date}) {
+  const now = useNow();
+  const format = useFormatter();
+
+  return <span suppressHydrationWarning>{format.relativeTime(date, now)}</span>;
+}
+```
+
+While this prop has a somewhat intimidating name, it's an escape hatch that was purposefully designed for cases like this.
+
+</Details>
+
+<Details id="relative-times-server">
+<summary>How can I use `now` in Server Components with `dynamicIO`?</summary>
+
+If you're using [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO), Next.js may prompt you to specify a cache expiration in case you're using `useNow` in a Server Component.
+
+You can do so by annotating your component with the `'use cache'` directive, while converting it to an async function:
+
+```tsx
+import {getNow, getFormatter} from 'next-intl/server';
+
+async function FormattedDate({date}) {
+  'use cache';
+
+  const now = await getNow();
+  const format = await getFormatter();
+
+  return format.relativeTime(date, now);
+}
+```
+
+</Details>
+
+### `updateInterval` [#relative-times-update]
+
+In case you want a relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#use-now):
 
 ```js
 import {useNow, useFormatter} from 'next-intl';
@@ -110,7 +162,7 @@ function Component() {
 }
 ```
 
-### Customizing the unit
+### Customizing the unit [#relative-times-unit]
 
 By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` like "3 seconds" or "5 days".
 

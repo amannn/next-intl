@@ -45,7 +45,10 @@ export default getRequestConfig(async ({requestLocale}) => {
 
   return {
     locale,
-    now: now ? new Date(now) : new Date(),
+    now: now
+      ? new Date(now)
+      : // Ensure a consistent value for a render
+        new Date(),
     timeZone,
     messages,
     formats,
