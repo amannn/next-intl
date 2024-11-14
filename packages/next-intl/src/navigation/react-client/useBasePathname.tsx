@@ -1,7 +1,7 @@
 import {usePathname as useNextPathname} from 'next/navigation.js';
 import {useMemo} from 'react';
 import {useLocale} from 'use-intl';
-import {
+import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales

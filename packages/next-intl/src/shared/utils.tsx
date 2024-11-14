@@ -1,5 +1,5 @@
-import {LinkProps} from 'next/link.js';
-import {
+import type {LinkProps} from 'next/link.js';
+import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales

@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {
+import type {
   Locale,
   Messages,
   NamespaceKeys,

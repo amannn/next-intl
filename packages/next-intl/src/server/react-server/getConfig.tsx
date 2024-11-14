@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import {
-  IntlConfig,
+  type IntlConfig,
   type Locale,
   _createCache,
   _createIntlFormatters,
@@ -8,7 +8,7 @@ import {
 } from 'use-intl/core';
 import {getRequestLocale} from './RequestLocale.tsx';
 import createRequestConfig from './createRequestConfig.tsx';
-import {GetRequestConfigParams} from './getRequestConfig.tsx';
+import type {GetRequestConfigParams} from './getRequestConfig.tsx';
 
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component

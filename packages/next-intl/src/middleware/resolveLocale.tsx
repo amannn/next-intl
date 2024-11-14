@@ -1,9 +1,9 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies.js';
+import type {RequestCookies} from 'next/dist/server/web/spec-extension/cookies.js';
 import type {Locale} from 'use-intl';
-import {ResolvedRoutingConfig} from '../routing/config.tsx';
-import {
+import type {ResolvedRoutingConfig} from '../routing/config.tsx';
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,

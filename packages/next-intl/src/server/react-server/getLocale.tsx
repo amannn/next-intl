@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import {Locale} from 'use-intl';
+import type {Locale} from 'use-intl';
 import getConfig from './getConfig.tsx';
 
 async function getLocaleCachedImpl(): Promise<Locale> {

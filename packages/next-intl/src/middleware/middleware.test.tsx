@@ -3,9 +3,17 @@
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
 import {NextRequest, NextResponse} from 'next/server.js';
 import {pathToRegexp} from 'path-to-regexp';
-import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {
+  type Mock,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
 import createMiddleware from '../middleware.tsx';
-import {Pathnames, defineRouting} from '../routing.tsx';
+import {type Pathnames, defineRouting} from '../routing.tsx';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 

@@ -1,5 +1,5 @@
 import type {NextResponse} from 'next/server.js';
-import {
+import type {
   DomainsConfig,
   LocalePrefix,
   LocalePrefixConfigVerbose,

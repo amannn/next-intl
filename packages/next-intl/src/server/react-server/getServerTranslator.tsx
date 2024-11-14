@@ -1,8 +1,8 @@
 import {cache} from 'react';
 import {
-  Messages,
-  NamespaceKeys,
-  NestedKeyOf,
+  type Messages,
+  type NamespaceKeys,
+  type NestedKeyOf,
   createTranslator
 } from 'use-intl/core';
 

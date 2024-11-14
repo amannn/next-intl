@@ -4,11 +4,11 @@ import {
 } from 'next/navigation.js';
 import {useMemo} from 'react';
 import {type Locale, useLocale} from 'use-intl';
-import {
+import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
 } from '../../routing/config.tsx';
-import {
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
