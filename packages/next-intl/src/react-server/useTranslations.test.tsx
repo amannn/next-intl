@@ -31,6 +31,20 @@ vi.mock('use-intl/core', async (importActual) => {
   };
 });
 
+describe('dynamicIO', () => {
+  it('should not include `now` in the translator config', async () => {
+    function TestComponent() {
+      useTranslations('A');
+      return null;
+    }
+
+    await renderToStream(<TestComponent />);
+    expect(createTranslator).toHaveBeenCalledWith(
+      expect.not.objectContaining({now: expect.anything()})
+    );
+  });
+});
+
 describe('performance', () => {
   let attemptedRenders: Record<string, number>;
   let finishedRenders: Record<string, number>;
