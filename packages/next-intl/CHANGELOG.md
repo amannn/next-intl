@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.25.1 (2024-11-13)
+
+### Bug Fixes
+
+* Correctly handle search params in redirects when using `trailingSlash: true` ([#1537](https://github.com/amannn/next-intl/issues/1537)) ([03a4620](https://github.com/amannn/next-intl/commit/03a4620432ff063b2b84f4dba5c49ae36b92fd73)) – by @deini
+
 ## 3.25.0 (2024-11-08)
 
 ### Features
