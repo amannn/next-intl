@@ -1,9 +1,7 @@
 import type {ReactNode} from 'react';
 
-// These type names are shown to consumers in autocomplete
 export type ICUArg = string | number | boolean | Date;
-export type ICUNumber = number;
-export type ICUDate = Date | number | string;
+// ^ Keep this in sync with `ICUArgument` in `createTranslator.tsx`
 
 export type TranslationValues = Record<string, ICUArg>;
 

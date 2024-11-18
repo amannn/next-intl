@@ -3,9 +3,6 @@ export type {
   TranslationValues,
   RichTranslationValues,
   MarkupTranslationValues,
-  ICUArg,
-  ICUNumber,
-  ICUDate,
   RichTagsFunction,
   MarkupTagsFunction
 } from './TranslationValues.tsx';
