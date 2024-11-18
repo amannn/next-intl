@@ -12,8 +12,6 @@ import type {
 } from './MessageKeys.tsx';
 import type {
   ICUArg,
-  ICUDate,
-  ICUNumber,
   MarkupTagsFunction,
   RichTagsFunction
 } from './TranslationValues.tsx';
@@ -33,9 +31,12 @@ type ICUArgsWithTags<
 > = ICUArgs<
   MessageString,
   {
-    ICUArgument: ICUArg;
-    ICUNumberArgument: ICUNumber;
-    ICUDateArgument: ICUDate;
+    // Provide types inline instead of an alias so the
+    // consumer can see the types instead of the alias
+    ICUArgument: string | number | boolean | Date;
+    // ^ Keep this in sync with `ICUArg` in `TranslationValues.tsx`
+    ICUNumberArgument: number;
+    ICUDateArgument: Date | number;
   }
 > &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
