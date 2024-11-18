@@ -1,6 +1,7 @@
 export type {default as AbstractIntlMessages} from './AbstractIntlMessages.tsx';
 export type {
   TranslationValues,
+  ICUArg,
   RichTranslationValues,
   MarkupTranslationValues,
   RichTagsFunction,
