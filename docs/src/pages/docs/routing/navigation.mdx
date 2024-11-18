@@ -18,7 +18,7 @@ import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting(/* ... */);
 
-export const {Link, redirect, usePathname, useRouter} =
+export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
 
@@ -32,10 +32,11 @@ In case you're building an app where locales can be added and removed at runtime
 ```tsx filename="routing.ts"
 import {createNavigation} from 'next-intl/navigation';
 
-export const {Link, redirect, usePathname, useRouter} = createNavigation({
-  // ... potentially other routing
-  // config, but no `locales` ...
-});
+export const {Link, redirect, usePathname, useRouter, getPathname} =
+  createNavigation({
+    // ... potentially other routing
+    // config, but no `locales` ...
+  });
 ```
 
 Note however that the `locales` argument for the middleware is still mandatory. If you need to fetch the available locales at runtime, you can provide the routing configuration for the middleware [dynamically per request](/docs/routing/middleware#composing-other-middlewares).
@@ -324,7 +325,7 @@ function UserProfile({userId}: {userId?: string}) {
 To work around this limitation, you can add an explicit type annotation to the `redirect` function:
 
 ```tsx filename="routing.ts"
-const {redirect: _redirect} = createNavigation(routing);
+const {/* ..., */ redirect: _redirect} = createNavigation(routing);
 
 // Enable type narrowing after calling `redirect`
 export const redirect: typeof _redirect = _redirect;
