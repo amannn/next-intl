@@ -146,11 +146,22 @@ function UserProfile({user}) {
 }
 ```
 
-TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers the types of an imported JSON module as rather wide. Due to this, `next-intl` provides a stopgap solution that allows you to generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
+TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers values of imported JSON modules as loose types like `string` instead of the actual value. To bridge this gap for the time being, `next-intl` can generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
 
 **Usage:**
 
-1. Enable the `createMessagesDeclaration` setting in your Next.js config:
+1. Add support for JSON type declarations in your `tsconfig.json`:
+
+```json filename="tsconfig.json"
+{
+  "compilerOptions": {
+    // ...
+    "allowArbitraryExtensions": true
+  }
+}
+```
+
+2. Enable the `createMessagesDeclaration` setting in your Next.js config:
 
 ```tsx filename="next.config.mjs"
 import {createNextIntlPlugin} from 'next-intl/plugin';
@@ -166,17 +177,6 @@ const withNextIntl = createNextIntlPlugin({
 // ...
 ```
 
-2. Add support for JSON type declarations in your `tsconfig.json`:
-
-```json filename="tsconfig.json"
-{
-  "compilerOptions": {
-    // ...
-    "allowArbitraryExtensions": true
-  }
-}
-```
-
 With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev` or `next build`:
 
 ```diff
@@ -184,7 +184,7 @@ With this setup in place, you'll see a new declaration file generated in your `m
 + messages/en.d.json.ts
 ```
 
-This declaration file will provide the exact types for the messages that you're using in `AppConfig`, enabling type safety for message arguments.
+This declaration file will provide the exact types for the JSON messages that you're importing and assigning to `AppConfig`, enabling type safety for message arguments.
 
 To keep your code base tidy, you can ignore this file in Git:
 
