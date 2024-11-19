@@ -134,6 +134,7 @@ const handleI18nRouting = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
+  // Matches '/', as well as all paths that start with a locale like '/en'
   const shouldHandle =
     pathname === '/' ||
     new RegExp(`^/(${locales.join('|')})(/.*)?$`).test(
