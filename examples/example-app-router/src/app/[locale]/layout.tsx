@@ -1,12 +1,15 @@
 import {notFound} from 'next/navigation';
 import {hasLocale} from 'next-intl';
-import {getLocale, getTranslations} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
 import {routing} from '@/i18n/routing';
 
 type Props = {
   children: ReactNode;
+  params: Promise<{
+    locale: string;
+  }>;
 };
 
 export function generateStaticParams() {
@@ -21,9 +24,9 @@ export async function generateMetadata() {
   };
 }
 
-export default async function LocaleLayout({children}: Props) {
+export default async function LocaleLayout({children, params}: Props) {
   // This is only necessary as long as there's no `dynamicParams = false`
-  const locale = await getLocale();
+  const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
