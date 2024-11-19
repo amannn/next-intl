@@ -9,6 +9,7 @@ import createTranslator from './createTranslator.tsx';
 const messages = {
   Home: {
     title: 'Hello world!',
+    param: 'Hello {param}',
     rich: '<b>Hello <i>{name}</i>!</b>',
     markup: '<b>Hello <i>{name}</i>!</b>'
   }
@@ -51,6 +52,21 @@ it('handles formatting errors', () => {
   expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
 
   expect(result).toBe('price');
+});
+
+it('restricts boolean and date values as plain params', () => {
+  const onError = vi.fn();
+  const t = createTranslator({
+    locale: 'en',
+    namespace: 'Home',
+    messages: messages as any,
+    onError
+  });
+
+  t('param', {param: new Date()});
+  // @ts-expect-error
+  t('param', {param: true});
+  expect(onError.mock.calls.length).toBe(2);
 });
 
 it('supports alphanumeric value names', () => {
@@ -234,6 +250,22 @@ describe('type safety', () => {
       };
     });
 
+    it('restricts non-string values', () => {
+      const t = translateMessage('{param}');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error -- should use {param, number} instead
+        t('msg', {param: 1.5});
+
+        // @ts-expect-error
+        t('msg', {param: new Date()});
+
+        // @ts-expect-error
+        t('msg', {param: true});
+      };
+    });
+
     it('can handle undefined values', () => {
       const t = translateMessage('Hello {name}');
 
@@ -263,6 +295,16 @@ describe('type safety', () => {
       () => {
         // @ts-expect-error
         t('msg', {date: '2024-07-09T07:06:03.320Z'});
+      };
+    });
+
+    it('restricts numbers in dates', () => {
+      const t = translateMessage('Date: {date, date, full}');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {date: 1.5});
       };
     });
 
@@ -340,6 +382,28 @@ describe('type safety', () => {
       };
     });
 
+    it('restricts numbers in selects', () => {
+      const t = translateMessage(
+        '{count, select, 0 {zero} 1 {one} other {other}}'
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {count: 1.5});
+      };
+    });
+
+    it('restricts booleans in selects', () => {
+      const t = translateMessage('{bool, select, true {true} false {false}}');
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {bool: true});
+      };
+    });
+
     it('validates escaped', () => {
       const t = translateMessage(
         "Escape curly braces with single quotes (e.g. '{name')"
@@ -404,7 +468,7 @@ describe('type safety', () => {
 
     it('validates a complex message', () => {
       const t = translateMessage(
-        'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count})}}.'
+        'Hello <user>{name}</user>, you have {count, plural, =0 {no followers} =1 {one follower} other {# followers ({count, number})}}.'
       );
 
       t.rich('msg', {

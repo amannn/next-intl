@@ -131,12 +131,10 @@ t('message', {});
 t('message', {});
 //           ^? {country: 'US' | 'CA' | (string & {})}
 
-// "Please refer to <guidelines>the guidelines</guidelines>."
+// "Please refer to the <link>guidelines</link>."
 t('message', {});
-//           ^? {guidelines: (chunks: ReactNode) => ReactNode}
+//           ^? {link: (chunks: ReactNode) => ReactNode}
 ```
-
-(the types in these examples are slightly simplified, e.g. a date can also be provided as a timestamp)
 
 With this type inference in place, you can now use autocompletion in your IDE to get suggestions for the available arguments of a given ICU message and catch potential errors early.
 

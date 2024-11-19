@@ -12,7 +12,8 @@ import type {
 } from './MessageKeys.tsx';
 import type {
   MarkupTagsFunction,
-  RichTagsFunction
+  RichTagsFunction,
+  TranslationValues
 } from './TranslationValues.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
@@ -30,12 +31,11 @@ type ICUArgsWithTags<
 > = ICUArgs<
   MessageString,
   {
-    // Provide types inline instead of an alias so the
-    // consumer can see the types instead of the alias
-    ICUArgument: string | number | boolean | Date;
-    // ^ Keep this in sync with `ICUArg` in `TranslationValues.tsx`
+    // Numbers and dates should use the corresponding operators
+    ICUArgument: string;
+
     ICUNumberArgument: number;
-    ICUDateArgument: Date | number;
+    ICUDateArgument: Date;
   }
 > &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
@@ -49,9 +49,7 @@ type TranslateArgs<
   // If an unknown string is passed, allow any values
   string extends Value
     ? [
-        // Provide types inline instead of an alias so the
-        // consumer can see the types instead of the alias
-        values?: Record<string, string | number | boolean | Date | TagsFn>,
+        values?: Record<string, TranslationValues[string] | TagsFn>,
         formats?: Formats
       ]
     : (
