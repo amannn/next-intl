@@ -1,10 +1,10 @@
-import {NextRequest, NextResponse} from 'next/server.js';
+import type {NextRequest, NextResponse} from 'next/server.js';
 import type {Locale} from 'use-intl';
-import {
+import type {
   InitializedLocaleCookieConfig,
   ResolvedRoutingConfig
 } from '../routing/config.tsx';
-import {
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,

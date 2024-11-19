@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.25.0",
+  "version": "3.25.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
@@ -58,6 +58,7 @@
   ],
   "dependencies": {
     "@formatjs/fast-memoize": "^2.2.0",
+    "@schummar/icu-type-parser": "1.21.5",
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {

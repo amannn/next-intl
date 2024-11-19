@@ -1,8 +1,9 @@
 import {isValidElement} from 'react';
 import {renderToString} from 'react-dom/server';
 import {describe, expect, it, vi} from 'vitest';
-import {Messages} from './AppConfig.tsx';
-import IntlError, {IntlErrorCode} from './IntlError.tsx';
+import type {Messages} from './AppConfig.tsx';
+import type IntlError from './IntlError.tsx';
+import IntlErrorCode from './IntlErrorCode.tsx';
 import createTranslator from './createTranslator.tsx';
 
 const messages = {
@@ -241,6 +242,28 @@ describe('type safety', () => {
         age: undefined
       };
       t('msg', obj);
+    });
+
+    it('validates numbers', () => {
+      const t = translateMessage('Percentage: {value, number, percent}');
+      t('msg', {value: 1.5});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {value: 'test'});
+      };
+    });
+
+    it('validates dates', () => {
+      const t = translateMessage('Date: {date, date, full}');
+      t('msg', {date: new Date('2024-07-09T07:06:03.320Z')});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {date: '2024-07-09T07:06:03.320Z'});
+      };
     });
 
     it('validates cardinal plurals', () => {

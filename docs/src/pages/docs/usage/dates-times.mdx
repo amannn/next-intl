@@ -94,7 +94,7 @@ function FormattedDate({date}) {
 
 In contrast to simply calling `new Date()` in your component, `useNow` has some benefits:
 
-1. The returned value is consistent across re-renders.
+1. The returned value is consistent across re-renders on the client side.
 2. The value can optionally be [updated continuously](#relative-times-update) based on an interval.
 3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests.
 

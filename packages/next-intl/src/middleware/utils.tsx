@@ -1,5 +1,5 @@
 import type {Locale} from 'use-intl';
-import {
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixConfigVerbose,

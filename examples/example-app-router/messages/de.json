@@ -15,7 +15,6 @@
     "locale": "{locale, select, de {🇩🇪 Deutsch} en {🇺🇸 English} other {Unbekannt}}"
   },
   "Manifest": {
-    "description": "",
     "name": ""
   },
   "Navigation": {

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import {watch} from 'chokidar';
 import {throwError} from './utils.tsx';
 
 function runOnce(fn: () => void) {
@@ -44,14 +43,14 @@ export default function createMessagesDeclaration(messagesPath: string) {
 }
 
 function startWatching(messagesPath: string) {
-  const watcher = watch(messagesPath);
-
-  watcher.on('change', () => {
-    compileDeclaration(messagesPath, true);
+  const watcher = fs.watch(messagesPath, (eventType) => {
+    if (eventType === 'change') {
+      compileDeclaration(messagesPath, true);
+    }
   });
 
   process.on('exit', () => {
-    void watcher.close();
+    watcher.close();
   });
 }
 

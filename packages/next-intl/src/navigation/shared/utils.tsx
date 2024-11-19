@@ -1,8 +1,8 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import type {Locale} from 'use-intl';
-import {ResolvedRoutingConfig} from '../../routing/config.tsx';
-import {
+import type {ResolvedRoutingConfig} from '../../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
@@ -16,7 +16,7 @@ import {
   normalizeTrailingSlash,
   prefixPathname
 } from '../../shared/utils.tsx';
-import StrictParams from './StrictParams.tsx';
+import type StrictParams from './StrictParams.tsx';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 

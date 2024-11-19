@@ -1,4 +1,4 @@
-import IntlError from './IntlError.tsx';
+import type IntlError from './IntlError.tsx';
 import joinPath from './joinPath.tsx';
 
 /**

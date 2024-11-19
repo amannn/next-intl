@@ -1,6 +1,6 @@
-import {NextRequest, NextResponse} from 'next/server.js';
-import {RoutingConfig, receiveRoutingConfig} from '../routing/config.tsx';
-import {
+import {type NextRequest, NextResponse} from 'next/server.js';
+import {type RoutingConfig, receiveRoutingConfig} from '../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
@@ -91,7 +91,9 @@ export default function createMiddleware<
     }
 
     function redirect(url: string, redirectDomain?: string) {
-      const urlObj = new URL(normalizeTrailingSlash(url), request.url);
+      const urlObj = new URL(url, request.url);
+
+      urlObj.pathname = normalizeTrailingSlash(urlObj.pathname);
 
       if (domainsConfig.length > 0 && !redirectDomain && domain) {
         const bestMatchingDomain = getBestMatchingDomain(

@@ -766,9 +766,6 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: ^0.5.4
         version: 0.5.5
-      chokidar:
-        specifier: ^4.0.1
-        version: 4.0.1
       negotiator:
         specifier: ^1.0.0
         version: 1.0.0
@@ -851,6 +848,9 @@ importers:
       '@formatjs/fast-memoize':
         specifier: ^2.2.0
         version: 2.2.1
+      '@schummar/icu-type-parser':
+        specifier: 1.21.5
+        version: 1.21.5
       intl-messageformat:
         specifier: ^10.5.14
         version: 10.7.1
@@ -4373,6 +4373,9 @@ packages:
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
+
+  '@schummar/icu-type-parser@1.21.5':
+    resolution: {integrity: sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==}
 
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
@@ -18682,6 +18685,8 @@ snapshots:
     optional: true
 
   '@rtsao/scc@1.1.0': {}
+
+  '@schummar/icu-type-parser@1.21.5': {}
 
   '@sec-ant/readable-stream@0.4.1': {}
 

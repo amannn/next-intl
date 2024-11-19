@@ -5,9 +5,13 @@ import {
   redirect as nextRedirect
 } from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
-import {Locale, useLocale} from 'use-intl';
+import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {DomainsConfig, Pathnames, defineRouting} from '../routing.tsx';
+import {
+  type DomainsConfig,
+  type Pathnames,
+  defineRouting
+} from '../routing.tsx';
 import createNavigationClient from './react-client/createNavigation.tsx';
 import createNavigationServer from './react-server/createNavigation.tsx';
 import getServerLocale from './react-server/getServerLocale.tsx';

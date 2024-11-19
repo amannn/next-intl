@@ -1,36 +1,44 @@
-import {ReactNode} from 'react';
-import {Messages} from './AppConfig.tsx';
-import Formats from './Formats.tsx';
-import ICUArgs from './ICUArgs.tsx';
-import ICUTags from './ICUTags.tsx';
-import IntlConfig from './IntlConfig.tsx';
-import {
+import type {ReactNode} from 'react';
+import type {Messages} from './AppConfig.tsx';
+import type Formats from './Formats.tsx';
+import type ICUArgs from './ICUArgs.tsx';
+import type ICUTags from './ICUTags.tsx';
+import type IntlConfig from './IntlConfig.tsx';
+import type {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
 } from './MessageKeys.tsx';
-import {
+import type {
   ICUArg,
-  ICUDate,
-  ICUNumber,
   MarkupTagsFunction,
   RichTagsFunction
 } from './TranslationValues.tsx';
 import createTranslatorImpl from './createTranslatorImpl.tsx';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
 import {
-  Formatters,
-  IntlCache,
+  type Formatters,
+  type IntlCache,
   createCache,
   createIntlFormatters
 } from './formatters.tsx';
-import {Prettify} from './types.tsx';
+import type {Prettify} from './types.tsx';
 
 type ICUArgsWithTags<
   MessageString extends string,
   TagsFn extends RichTagsFunction | MarkupTagsFunction = never
-> = ICUArgs<MessageString, ICUArg, ICUNumber, ICUDate> &
+> = ICUArgs<
+  MessageString,
+  {
+    // Provide types inline instead of an alias so the
+    // consumer can see the types instead of the alias
+    ICUArgument: string | number | boolean | Date;
+    // ^ Keep this in sync with `ICUArg` in `TranslationValues.tsx`
+    ICUNumberArgument: number;
+    ICUDateArgument: Date | number;
+  }
+> &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
 
 type OnlyOptional<T> = Partial<T> extends T ? true : false;
