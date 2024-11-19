@@ -223,7 +223,7 @@ export default function createFormatter(props: Props) {
         new IntlError(
           IntlErrorCode.ENVIRONMENT_FALLBACK,
           process.env.NODE_ENV !== 'production'
-            ? `The \`now\` parameter wasn't provided and there is no global default configured, therefore the current time will be used as a fallback. To avoid markup mismatches caused by environment differences, either provide the \`now\` parameter or configure a global default. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+            ? `The \`now\` parameter wasn't provided to \`relativeTime\` and there is no global default configured, therefore the current time will be used as a fallback. See https://next-intl-docs.vercel.app/docs/usage/dates-times#relative-times-usenow`
             : undefined
         )
       );
