@@ -111,7 +111,6 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "chokidar": "^4.0.1",
     "negotiator": "^1.0.0",
     "use-intl": "workspace:^"
   },

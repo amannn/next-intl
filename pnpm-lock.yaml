@@ -766,9 +766,6 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: ^0.5.4
         version: 0.5.5
-      chokidar:
-        specifier: ^4.0.1
-        version: 4.0.1
       negotiator:
         specifier: ^1.0.0
         version: 1.0.0
