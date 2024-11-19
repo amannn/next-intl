@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react';
 
-export type ICUArg = string | number | boolean | Date;
+type ICUArg = string | number | boolean | Date;
 // ^ Keep this in sync with `ICUArgument` in `createTranslator.tsx`
 
 export type TranslationValues = Record<string, ICUArg>;

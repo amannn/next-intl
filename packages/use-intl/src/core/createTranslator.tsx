@@ -11,7 +11,6 @@ import type {
   NestedValueOf
 } from './MessageKeys.tsx';
 import type {
-  ICUArg,
   MarkupTagsFunction,
   RichTagsFunction
 } from './TranslationValues.tsx';
@@ -49,7 +48,12 @@ type TranslateArgs<
 > =
   // If an unknown string is passed, allow any values
   string extends Value
-    ? [values?: Record<string, ICUArg | TagsFn>, formats?: Formats]
+    ? [
+        // Provide types inline instead of an alias so the
+        // consumer can see the types instead of the alias
+        values?: Record<string, string | number | boolean | Date | TagsFn>,
+        formats?: Formats
+      ]
     : (
           Value extends any
             ? (key: ICUArgsWithTags<Value, TagsFn>) => void
