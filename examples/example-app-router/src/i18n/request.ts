@@ -15,3 +15,20 @@ export default getRequestConfig(async () => {
     messages
   };
 });
+
+// Use case for overriding locale:
+// export default getRequestConfig(async (args) => {
+//   const params = await rootParams();
+//
+//   let locale = args.locale;
+//   if (!locale) {
+//     locale = hasLocale(routing.locales, params.locale)
+//       ? params.locale
+//       : routing.defaultLocale;
+//   }
+//
+//   return {
+//     locale,
+//     messages
+//   };
+// });
