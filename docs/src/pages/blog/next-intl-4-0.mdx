@@ -119,9 +119,9 @@ t('message', {});
 t('message', {});
 //           ^? {today: Date}
 
-// "Market share: {value, number, percent}"
+// "Page {page, number} out of {total, number}"
 t('message', {});
-//           ^? {value: number}
+//           ^? {page: number, total: number}
 
 // "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
 t('message', {});
@@ -137,6 +137,20 @@ t('message', {});
 ```
 
 With this type inference in place, you can now use autocompletion in your IDE to get suggestions for the available arguments of a given ICU message and catch potential errors early.
+
+This also addresses one of my favorite pet peeves:
+
+```tsx
+t('followers', {count: 30000});
+```
+
+```json
+// ✖️ Would be: "30000 followers"
+"{count} followers"
+
+// ✅ Valid: "30,000 followers"
+"{count, number} followers"
+```
 
 Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
 
