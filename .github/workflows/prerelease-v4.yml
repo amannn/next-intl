@@ -26,7 +26,7 @@ jobs:
       - run: |
           sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && git commit -am "use fixed version"
       - run: pnpm lerna publish 4.0.0-beta-${GITHUB_SHA::7} --no-git-reset --dist-tag v4-beta --no-push --yes
-        if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}}"
+        if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ')}} || ${{startsWith(github.event.head_commit.message, 'feat!: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
