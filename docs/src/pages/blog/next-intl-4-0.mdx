@@ -119,9 +119,9 @@ t('message', {});
 t('message', {});
 //           ^? {today: Date}
 
-// "Market share: {value, number, percent}"
+// "Page {page, number} out of {total, number}"
 t('message', {});
-//           ^? {value: number}
+//           ^? {page: number, total: number}
 
 // "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
 t('message', {});
@@ -131,14 +131,26 @@ t('message', {});
 t('message', {});
 //           ^? {country: 'US' | 'CA' | (string & {})}
 
-// "Please refer to <guidelines>the guidelines</guidelines>."
+// "Please refer to the <link>guidelines</link>."
 t('message', {});
-//           ^? {guidelines: (chunks: ReactNode) => ReactNode}
+//           ^? {link: (chunks: ReactNode) => ReactNode}
 ```
 
-(the types in these examples are slightly simplified, e.g. a date can also be provided as a timestamp)
-
 With this type inference in place, you can now use autocompletion in your IDE to get suggestions for the available arguments of a given ICU message and catch potential errors early.
+
+This also addresses one of my favorite pet peeves:
+
+```tsx
+t('followers', {count: 30000});
+```
+
+```json
+// ✖️ Would be: "30000 followers"
+"{count} followers"
+
+// ✅ Valid: "30,000 followers"
+"{count, number} followers"
+```
 
 Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
 
@@ -211,9 +223,10 @@ If things go well, I think this will finally fill in the [missing piece](https:/
 2. Inherit context in case nested `NextIntlClientProvider` instances are present (see [PR #1413](https://github.com/amannn/next-intl/pull/1413))
 3. Automatically inherit formats when `NextIntlClientProvider` is rendered from a Server Component (see [PR #1191](https://github.com/amannn/next-intl/pull/1191))
 4. Require locale to be returned from `getRequestConfig` (see [PR #1486](https://github.com/amannn/next-intl/pull/1486))
-5. Bump minimum required typescript version to 5 for projects using TypeScript (see [PR #1481](https://github.com/amannn/next-intl/pull/1481))
-6. Remove deprecated APIs (see [PR #1479](https://github.com/amannn/next-intl/pull/1479))
-7. Remove deprecated APIs pt. 2 (see [PR #1482](https://github.com/amannn/next-intl/pull/1482))
+5. Disallow passing `null`, `undefined` or `boolean` as an ICU argument (see [PR #1561](https://github.com/amannn/next-intl/pull/1561))
+6. Bump minimum required typescript version to 5 for projects using TypeScript (see [PR #1481](https://github.com/amannn/next-intl/pull/1481))
+7. Remove deprecated APIs (see [PR #1479](https://github.com/amannn/next-intl/pull/1479))
+8. Remove deprecated APIs pt. 2 (see [PR #1482](https://github.com/amannn/next-intl/pull/1482))
 
 ## Upgrade now
 
