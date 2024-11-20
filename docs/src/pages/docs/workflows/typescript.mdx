@@ -122,7 +122,49 @@ declare module 'next-intl' {
 
 You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the type based on the messages from your default locale.
 
-### Strict arguments [#messages-arguments]
+<Details id="messages-performance-tsc">
+<summary>Does this affect the performance of type checking?</summary>
+
+While the size of your messages file can have an effect on the time it takes to run the TypeScript compiler on your project, the overhead of augmenting `Messages` should be reasonably fast.
+
+Here's a benchmark from a sample project with 340 messages:
+
+- No type augmentation for messages: ~2.20s
+- Type-safe keys: ~2.82s
+- Type-safe arguments: ~2.85s
+
+This was observed on a MacBook Pro 2019 (Intel).
+
+---
+
+If you experience performance issues on larger projects, you can consider:
+
+1. Using type augmentation of messages only on your continuous integration pipeline as a safety net
+2. Splitting your project into multiple packages in a monorepo, allowing you to work with separate messages per package
+
+</Details>
+
+<Details id="messages-performance-editor">
+<summary>Does this affect the performance of my editor?</summary>
+
+Generally, type augmentation for `Messages` should be [reasonably fast](#messages-performance-tsc).
+
+In case you notice your editor performance related to saving files to be impacted, it might be caused by running ESLint on save when using [type-aware](https://typescript-eslint.io/troubleshooting/typed-linting/performance/) rules from `@typescript-eslint`.
+
+To ensure your editor performance is optimal, you can consider running expensive, type-aware rules only on your continuous integration pipeline:
+
+```tsx filename="eslint.config.js"
+// ...
+
+  // Run expensive, type-aware linting only on CI
+  '@typescript-eslint/no-misused-promises': process.env.CI
+    ? 'error'
+    : 'off'
+```
+
+</Details>
+
+### Type-safe arguments [#messages-arguments]
 
 Apart from strictly typing message keys, you can also ensure type safety for message arguments:
 
