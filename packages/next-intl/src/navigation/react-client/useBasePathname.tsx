@@ -7,6 +7,7 @@ import {
   Locales
 } from '../../routing/types';
 import {
+  getLocaleAsPrefix,
   getLocalePrefix,
   hasPathnamePrefixed,
   unprefixPathname
@@ -34,11 +35,20 @@ export default function useBasePathname<
   return useMemo(() => {
     if (!pathname) return pathname;
 
+    let unlocalizedPathname = pathname;
+
     const prefix = getLocalePrefix(locale, localePrefix);
     const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
-    const unlocalizedPathname = isPathnamePrefixed
-      ? unprefixPathname(pathname, prefix)
-      : pathname;
+
+    if (isPathnamePrefixed) {
+      unlocalizedPathname = unprefixPathname(pathname, prefix);
+    } else {
+      // https://github.com/vercel/next.js/issues/73085
+      const localeAsPrefix = getLocaleAsPrefix(locale);
+      if (hasPathnamePrefixed(localeAsPrefix, pathname)) {
+        unlocalizedPathname = unprefixPathname(pathname, localeAsPrefix);
+      }
+    }
 
     return unlocalizedPathname;
   }, [locale, localePrefix, pathname]);

@@ -467,6 +467,14 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
       renderPathname();
       screen.getByText('/about');
     });
+
+    // https://github.com/vercel/next.js/issues/73085
+    it('is tolerant when a locale is used in the pathname', () => {
+      mockCurrentLocale('en');
+      mockLocation({pathname: '/en/about'});
+      renderPathname();
+      screen.getByText('/about');
+    });
   });
 });
 
