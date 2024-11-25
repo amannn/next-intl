@@ -50,7 +50,7 @@ export default function useBasePathname<
       config.defaultLocale === locale &&
       config.localePrefix.prefixes
     ) {
-      // Workaround for https://github.com/vercel/next.js/issues/73085.
+      // Workaround for https://github.com/vercel/next.js/issues/73085
       const localeAsPrefix = getLocaleAsPrefix(locale);
       if (hasPathnamePrefixed(localeAsPrefix, pathname)) {
         unlocalizedPathname = unprefixPathname(pathname, localeAsPrefix);
