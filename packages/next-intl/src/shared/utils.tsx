@@ -154,8 +154,12 @@ export function getLocalePrefix<
     (localePrefix.mode !== 'never' && localePrefix.prefixes?.[locale]) ||
     // We return a prefix even if `mode: 'never'`. It's up to the consumer
     // to decide to use it or not.
-    '/' + locale
+    getLocaleAsPrefix(locale)
   );
+}
+
+export function getLocaleAsPrefix(locale: string) {
+  return '/' + locale;
 }
 
 export function templateToRegex(template: string): RegExp {

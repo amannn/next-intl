@@ -7,6 +7,7 @@ import {
   Locales
 } from '../../routing/types';
 import {
+  getLocaleAsPrefix,
   getLocalePrefix,
   hasPathnamePrefixed,
   unprefixPathname
@@ -15,7 +16,10 @@ import {
 export default function useBasePathname<
   AppLocales extends Locales,
   AppLocalePrefixMode extends LocalePrefixMode
->(localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>) {
+>(config: {
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>;
+  defaultLocale?: AppLocales[number];
+}) {
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
 
@@ -34,12 +38,25 @@ export default function useBasePathname<
   return useMemo(() => {
     if (!pathname) return pathname;
 
-    const prefix = getLocalePrefix(locale, localePrefix);
+    let unlocalizedPathname = pathname;
+
+    const prefix = getLocalePrefix(locale, config.localePrefix);
     const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
-    const unlocalizedPathname = isPathnamePrefixed
-      ? unprefixPathname(pathname, prefix)
-      : pathname;
+
+    if (isPathnamePrefixed) {
+      unlocalizedPathname = unprefixPathname(pathname, prefix);
+    } else if (
+      config.localePrefix.mode === 'as-needed' &&
+      config.defaultLocale === locale &&
+      config.localePrefix.prefixes
+    ) {
+      // Workaround for https://github.com/vercel/next.js/issues/73085
+      const localeAsPrefix = getLocaleAsPrefix(locale);
+      if (hasPathnamePrefixed(localeAsPrefix, pathname)) {
+        unlocalizedPathname = unprefixPathname(pathname, localeAsPrefix);
+      }
+    }
 
     return unlocalizedPathname;
-  }, [locale, localePrefix, pathname]);
+  }, [config.defaultLocale, config.localePrefix, locale, pathname]);
 }
