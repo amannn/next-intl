@@ -55,7 +55,7 @@ export default function createNavigation<
   function usePathname(): [AppPathnames] extends [never]
     ? string
     : keyof AppPathnames {
-    const pathname = useBasePathname(config.localePrefix);
+    const pathname = useBasePathname(config);
     const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.

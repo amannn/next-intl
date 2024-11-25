@@ -62,7 +62,10 @@ export default function createSharedPathnamesNavigation<
   }
 
   function usePathname(): string {
-    const result = useBasePathname(localePrefix);
+    const result = useBasePathname({
+      localePrefix,
+      defaultLocale: routing?.defaultLocale
+    });
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return result;
   }
