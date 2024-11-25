@@ -467,14 +467,6 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
       renderPathname();
       screen.getByText('/about');
     });
-
-    // https://github.com/vercel/next.js/issues/73085
-    it('is tolerant when a locale is used in the pathname', () => {
-      mockCurrentLocale('en');
-      mockLocation({pathname: '/en/about'});
-      renderPathname();
-      screen.getByText('/about');
-    });
   });
 });
 
@@ -548,6 +540,28 @@ describe("localePrefix: 'as-needed'", () => {
       renderPathname();
       screen.getByText('/about');
     });
+  });
+});
+
+describe("localePrefix: 'as-needed', custom `prefixes`", () => {
+  const {usePathname} = createNavigation({
+    defaultLocale,
+    locales,
+    localePrefix: {
+      mode: 'as-needed',
+      prefixes: {
+        en: '/uk'
+      }
+    }
+  });
+  const renderPathname = getRenderPathname(usePathname);
+
+  // https://github.com/vercel/next.js/issues/73085
+  it('is tolerant when a locale is used in the pathname for the default locale', () => {
+    mockCurrentLocale('en');
+    mockLocation({pathname: '/en/about'});
+    renderPathname();
+    screen.getByText('/about');
   });
 });
 
