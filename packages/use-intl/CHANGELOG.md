@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.25.2 (2024-11-25)
+
+### Bug Fixes
+
+* Handle inconsistency in Next.js when using `usePathname` with custom prefixes, `localePrefix: 'as-needed'` and static rendering ([#1573](https://github.com/amannn/next-intl/issues/1573)) ([20fd0f0](https://github.com/amannn/next-intl/commit/20fd0f0015839357893bcd256ff880a98b01ea1f)) – by @amannn
+
 ## 3.25.1 (2024-11-13)
 
 ### Bug Fixes
