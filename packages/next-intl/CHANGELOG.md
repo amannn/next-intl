@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.25.3 (2024-11-26)
+
+### Bug Fixes
+
+* Follow-up for [#1573](https://github.com/amannn/next-intl/issues/1573) to also handle the case when a non-default locale is in use ([#1578](https://github.com/amannn/next-intl/issues/1578)) ([fd71741](https://github.com/amannn/next-intl/commit/fd7174179881a19e3573fceb9c6e903923644761)), closes [#1568](https://github.com/amannn/next-intl/issues/1568) – by @amannn
+
 ## 3.25.2 (2024-11-25)
 
 ### Bug Fixes
