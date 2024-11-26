@@ -550,7 +550,8 @@ describe("localePrefix: 'as-needed', custom `prefixes`", () => {
     localePrefix: {
       mode: 'as-needed',
       prefixes: {
-        en: '/uk'
+        en: '/english',
+        de: '/deutsch'
       }
     }
   });
@@ -560,6 +561,13 @@ describe("localePrefix: 'as-needed', custom `prefixes`", () => {
   it('is tolerant when a locale is used in the pathname for the default locale', () => {
     mockCurrentLocale('en');
     mockLocation({pathname: '/en/about'});
+    renderPathname();
+    screen.getByText('/about');
+  });
+
+  it('is tolerant when a locale is used in the pathname for a non-default locale', () => {
+    mockCurrentLocale('de');
+    mockLocation({pathname: '/de/about'});
     renderPathname();
     screen.getByText('/about');
   });
