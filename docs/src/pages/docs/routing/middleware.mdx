@@ -123,7 +123,7 @@ This enables:
 <Details id="matcher-avoid-hardcoding">
 <summary>Can I avoid hardcoding the locales in the `matcher` config?</summary>
 
-A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, you can implement the matcher dynamically instead:
+A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value. However, you can alternatively implement a programmatic condition in the middleware:
 
 ```tsx filename="middleware.ts"
 import {NextRequest} from 'next/server';
@@ -135,6 +135,7 @@ const handleI18nRouting = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
+  // Matches '/', as well as all paths that start with a locale like '/en'
   const shouldHandle =
     pathname === '/' ||
     new RegExp(`^/(${locales.join('|')})(/.*)?$`).test(

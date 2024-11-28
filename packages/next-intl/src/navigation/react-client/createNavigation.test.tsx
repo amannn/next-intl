@@ -527,6 +527,36 @@ describe("localePrefix: 'as-needed'", () => {
   });
 });
 
+describe("localePrefix: 'as-needed', custom `prefixes`", () => {
+  const {usePathname} = createNavigation({
+    defaultLocale,
+    locales,
+    localePrefix: {
+      mode: 'as-needed',
+      prefixes: {
+        en: '/english',
+        de: '/deutsch'
+      }
+    }
+  });
+  const renderPathname = getRenderPathname(usePathname);
+
+  // https://github.com/vercel/next.js/issues/73085
+  it('is tolerant when a locale is used in the pathname for the default locale', () => {
+    mockCurrentLocale('en');
+    mockLocation({pathname: '/en/about'});
+    renderPathname();
+    screen.getByText('/about');
+  });
+
+  it('is tolerant when a locale is used in the pathname for a non-default locale', () => {
+    mockCurrentLocale('de');
+    mockLocation({pathname: '/de/about'});
+    renderPathname();
+    screen.getByText('/about');
+  });
+});
+
 describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
   const {useRouter} = createNavigation({
     locales,
