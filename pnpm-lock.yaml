@@ -621,15 +621,15 @@ importers:
       next:
         specifier: ^12.0.0
         version: 12.3.4(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      next-intl:
+        specifier: ^3.0.0
+        version: link:../../packages/next-intl
       react:
         specifier: ^17.0.0
         version: 17.0.2
       react-dom:
         specifier: ^17.0.0
         version: 17.0.2(react@17.0.2)
-      use-intl:
-        specifier: ^3.0.0
-        version: link:../../packages/use-intl
     devDependencies:
       eslint:
         specifier: ^9.11.1
