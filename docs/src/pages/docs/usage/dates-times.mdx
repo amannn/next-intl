@@ -96,12 +96,12 @@ In contrast to simply calling `new Date()` in your component, `useNow` has some 
 
 1. The returned value is consistent across re-renders on the client side.
 2. The value can optionally be [updated continuously](#relative-times-update) based on an interval.
-3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests.
+3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests. If a global value is not provided, `useNow` will use the current time.
 
 <Details id="relative-times-hydration">
 <summary>How can I avoid hydration errors with `useNow`?</summary>
 
-If you're using `useNow` in a component that renders both on the server as well as the client, you can consider using [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that this particular text is expected to potentially be updated on the client side:
+If you're using `useNow` in a component that renders both on the server as well as the client and you're not using a global `now` value, you can consider using [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that this particular text is expected to potentially be updated on the client side:
 
 ```tsx {7}
 import {useNow, useFormatter} from 'next-intl';
