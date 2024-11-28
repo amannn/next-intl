@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import {useRouter} from 'next/router';
-import {IntlProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 
 export default function App({Component, pageProps}) {
   const router = useRouter();
   const {messages, now, ...rest} = pageProps;
 
   return (
-    <IntlProvider
+    <NextIntlClientProvider
       locale={router.locale}
       messages={messages}
       now={new Date(now)}
@@ -17,6 +17,6 @@ export default function App({Component, pageProps}) {
         <title>example-pages-router-legacy</title>
       </Head>
       <Component {...rest} />
-    </IntlProvider>
+    </NextIntlClientProvider>
   );
 }
