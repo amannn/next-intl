@@ -2,6 +2,10 @@ export default {
   index: {
     title: 'Overview'
   },
+  'next-intl-4-0': {
+    title: 'next-intl 4.0',
+    display: 'hidden'
+  },
   'next-intl-3-22': {
     title: 'next-intl 3.22',
     display: 'hidden'

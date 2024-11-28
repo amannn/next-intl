@@ -154,9 +154,9 @@ t('followers', {count: 30000});
 
 Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
 
-## GDPR compliance
+## GDPR compliance [#gdpr-compliance]
 
-In order to comply with the current GDPR regulations, the following changes have been made:
+In order to comply with the current GDPR regulations, the following changes have been made if you're using the `next-intl` middleware for i18n routing:
 
 1. The locale cookie expiration has been decreased to 5 hours.
 2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
@@ -178,6 +178,8 @@ export const routing = defineRouting({
 });
 ```
 
+Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
+
 As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
 
 Learn more in the [locale cookie](/docs/routing#locale-cookie) docs.
@@ -188,7 +190,7 @@ The build output of `next-intl` has been modernized and now leverages the follow
 
 1. **ESM-only:** To enable enhanced tree-shaking and align with the modern JavaScript ecosystem, `next-intl` is now ESM-only. The only exception is `next-intl/plugin` which is published both as CommonJS as well as ESM, due to `next.config.js` still being popular.
 2. **Modern JSX transform:** The peer dependency for React has been bumped to v17 in order to use the more efficient, modern JSX transform.
-3. **Modern syntax:** Syntax is now compiled down to the Browserslist `defaults` query, which is a shortcut for `>0.5%, last 2 versions, Firefox ESR, not dead`—a baseline that is considered a reasonable target for modern apps.
+3. **Modern syntax:** Syntax is now compiled down to the Browserslist `defaults` query, which is a shortcut for ">0.5%, last 2 versions, Firefox ESR, not dead"—a baseline that is considered a reasonable target for modern apps.
 
 With these changes, the bundle size of `next-intl` has been reduced by ~7% ([all details](https://github.com/amannn/next-intl/pull/1470)).
 
