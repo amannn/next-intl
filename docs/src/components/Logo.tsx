@@ -16,14 +16,14 @@ export default function Logo() {
           <path
             d="M528.8,509q-6.3,6-13.2,11.4a190,190,0,1,1,38-40.2"
             fill="none"
-            stroke="#5fc3e7"
+            stroke="var(--logo-color)"
             strokeWidth="18"
             transform="translate(-197.5 -171.5)"
           />
-          <circle cx="329.2" cy="339.5" fill="#5fc3e7" r="9" />
+          <circle cx="329.2" cy="339.5" fill="var(--logo-color)" r="9" />
           <line
             fill="none"
-            stroke="#5fc3e7"
+            stroke="var(--logo-color)"
             strokeLinecap="square"
             strokeWidth="18"
             x1="40"
@@ -37,12 +37,12 @@ export default function Logo() {
             fill="none"
             rx="93.5"
             ry="190.5"
-            stroke="#5fc3e7"
+            stroke="var(--logo-color)"
             strokeWidth="18"
           />
           <line
             fill="none"
-            stroke="#5fc3e7"
+            stroke="var(--logo-color)"
             strokeLinecap="square"
             strokeWidth="18"
             x1="49.5"
@@ -52,7 +52,7 @@ export default function Logo() {
           />
           <line
             fill="none"
-            stroke="#5fc3e7"
+            stroke="var(--logo-color)"
             strokeLinecap="square"
             strokeWidth="18"
             x1="9"

@@ -63,7 +63,7 @@ export default async function OG(req: Request) {
                 d="M528.8,509q-6.3,6-13.2,11.4a190,190,0,1,1,38-40.2"
                 fill="none"
                 id="Oval"
-                stroke="#5fc3e7"
+                stroke="#008FD6"
                 strokeWidth={18}
                 transform="translate(-197.5 -171.5)"
               />
@@ -71,14 +71,14 @@ export default async function OG(req: Request) {
                 cx="329.2"
                 cy="339.5"
                 data-name="Oval"
-                fill="#5fc3e7"
+                fill="#008FD6"
                 id="Oval-2-2"
                 r={9}
               />
               <line
                 fill="none"
                 id="Line-3"
-                stroke="#5fc3e7"
+                stroke="#008FD6"
                 strokeLinecap="square"
                 strokeWidth={18}
                 x1={40}
@@ -94,13 +94,13 @@ export default async function OG(req: Request) {
                 id="Oval-3"
                 rx="93.5"
                 ry="190.5"
-                stroke="#5fc3e7"
+                stroke="#008FD6"
                 strokeWidth={18}
               />
               <line
                 fill="none"
                 id="Line-3-Copy"
-                stroke="#5fc3e7"
+                stroke="#008FD6"
                 strokeLinecap="square"
                 strokeWidth={18}
                 x1="49.5"
@@ -111,7 +111,7 @@ export default async function OG(req: Request) {
               <line
                 fill="none"
                 id="Line-2"
-                stroke="#5fc3e7"
+                stroke="#008FD6"
                 strokeLinecap="square"
                 strokeWidth={18}
                 x1={9}

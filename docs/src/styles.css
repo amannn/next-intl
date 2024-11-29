@@ -6,6 +6,7 @@
   --color-text-primary: #0073e6;
   --nextra-bg: white;
   --docsearch-text-color: black;
+  --logo-color: #008fd6;
 }
 
 /**
@@ -13,6 +14,7 @@
  */
 .navbar-home {
   @apply bg-slate-850 text-white dark:bg-slate-850;
+  --logo-color: #70d1ff;
 }
 
 .navbar-home .nextra-scrollbar > a {
