@@ -24,9 +24,9 @@ export default function GetStartedBackground() {
             width={patternSize}
           >
             <circle
+              className={styles.dot}
               cx="3"
               cy="3"
-              className={styles.dot}
               fill="var(--GetStartedBackground-dot)"
               r={radius}
             />
