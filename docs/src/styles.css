@@ -9,6 +9,10 @@
   --logo-color: #008fd6;
 }
 
+.dark {
+  --logo-color: #70d1ff;
+}
+
 /**
  * Navbar on home
  */
