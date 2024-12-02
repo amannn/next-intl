@@ -207,7 +207,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `onlyYear` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `onlyYear` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -234,7 +234,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `medium` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `medium` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -397,7 +397,7 @@ describe('number', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `missing` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `missing` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toBe('10000');

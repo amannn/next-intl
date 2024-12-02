@@ -113,7 +113,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
     if (!messages) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `No messages were configured on the provider.`
+          ? `No messages were configured.`
           : undefined
       );
     }

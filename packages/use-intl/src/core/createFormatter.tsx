@@ -125,7 +125,7 @@ export default function createFormatter(props: Props) {
         const error = new IntlError(
           IntlErrorCode.MISSING_FORMAT,
           process.env.NODE_ENV !== 'production'
-            ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
+            ? `Format \`${formatName}\` is not available.`
             : undefined
         );
         onError(error);

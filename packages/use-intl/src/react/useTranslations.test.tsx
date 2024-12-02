@@ -776,9 +776,7 @@ describe('error handling', () => {
     expect(onError).toHaveBeenCalledTimes(1);
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-    expect(error.message).toBe(
-      'MISSING_MESSAGE: No messages were configured on the provider.'
-    );
+    expect(error.message).toBe('MISSING_MESSAGE: No messages were configured.');
     screen.getByText('Component.test');
   });
 
