@@ -1,16 +1,13 @@
-import {ReactNode, cache} from 'react';
-import {
-  Formats,
-  MarkupTranslationValues,
-  MessageKeys,
+import {cache} from 'react';
+import type {
+  Locale,
+  Messages,
   NamespaceKeys,
   NestedKeyOf,
-  NestedValueOf,
-  RichTranslationValues,
-  TranslationValues,
   createTranslator
 } from 'use-intl/core';
-import getConfig from './getConfig';
+import getConfig from './getConfig.tsx';
+import getServerTranslator from './getServerTranslator.tsx';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
@@ -18,208 +15,23 @@ import getConfig from './getConfig';
 
 // CALL SIGNATURE 1: `getTranslations(namespace)`
 function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
-): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-Promise<{
-  // Default invocation
-  <
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: [TargetKey] extends [never] ? string : TargetKey,
-    values?: TranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `rich`
-  rich<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: [TargetKey] extends [never] ? string : TargetKey,
-    values?: RichTranslationValues,
-    formats?: Formats
-  ): ReactNode;
-
-  // `markup`
-  markup<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: [TargetKey] extends [never] ? string : TargetKey,
-    values?: MarkupTranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `raw`
-  raw<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: [TargetKey] extends [never] ? string : TargetKey
-  ): any;
-
-  // `has`
-  has<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: [TargetKey] extends [never] ? string : TargetKey
-  ): boolean;
-}>;
+): Promise<ReturnType<typeof createTranslator<Messages, NestedKey>>>;
 // CALL SIGNATURE 2: `getTranslations({locale, namespace})`
 function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(opts?: {
-  locale: string;
+  locale: Locale;
   namespace?: NestedKey;
-}): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-Promise<{
-  // Default invocation
-  <
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: TranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `rich`
-  rich<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: RichTranslationValues,
-    formats?: Formats
-  ): ReactNode;
-
-  // `markup`
-  markup<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: MarkupTranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `raw`
-  raw<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey
-  ): any;
-}>;
+}): Promise<ReturnType<typeof createTranslator<Messages, NestedKey>>>;
 // IMPLEMENTATION
 async function getTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
->(namespaceOrOpts?: NestedKey | {locale: string; namespace?: NestedKey}) {
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
+>(namespaceOrOpts?: NestedKey | {locale: Locale; namespace?: NestedKey}) {
   let namespace: NestedKey | undefined;
-  let locale: string | undefined;
+  let locale: Locale | undefined;
 
   if (typeof namespaceOrOpts === 'string') {
     namespace = namespaceOrOpts;
@@ -229,12 +41,7 @@ async function getTranslations<
   }
 
   const config = await getConfig(locale);
-
-  return createTranslator({
-    ...config,
-    namespace,
-    messages: config.messages
-  });
+  return getServerTranslator(config, namespace);
 }
 
 export default cache(getTranslations);

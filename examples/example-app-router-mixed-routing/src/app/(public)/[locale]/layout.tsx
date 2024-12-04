@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {NextIntlClientProvider} from 'next-intl';
+import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {getMessages, setRequestLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Document from '@/components/Document';
@@ -10,7 +10,7 @@ import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: {locale: Locale};
 };
 
 export function generateStaticParams() {
@@ -25,13 +25,13 @@ export default async function LocaleLayout({
   children,
   params: {locale}
 }: Props) {
-  // Enable static rendering
-  setRequestLocale(locale);
-
   // Ensure that the incoming locale is valid
-  if (!locales.includes(locale as any)) {
+  if (!hasLocale(locales, locale)) {
     notFound();
   }
+
+  // Enable static rendering
+  setRequestLocale(locale);
 
   // Providing all messages to the client
   // side is the easiest way to get started

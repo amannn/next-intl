@@ -1,12 +1,12 @@
-import {NextRequest} from 'next/server';
-import {ResolvedRoutingConfig} from '../routing/config';
-import {
+import type {NextRequest} from 'next/server.js';
+import type {ResolvedRoutingConfig} from '../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
-import {normalizeTrailingSlash} from '../shared/utils';
+} from '../routing/types.tsx';
+import {normalizeTrailingSlash} from '../shared/utils.tsx';
 import {
   applyBasePath,
   formatTemplatePathname,
@@ -14,7 +14,7 @@ import {
   getLocalePrefixes,
   getNormalizedPathname,
   isLocaleSupportedOnDomain
-} from './utils';
+} from './utils.tsx';
 
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
@@ -59,7 +59,7 @@ export default function getAlternateLinksHeaderValue<
     routing.localePrefix
   );
 
-  function getAlternateEntry(url: URL, locale: string) {
+  function getAlternateEntry(url: URL, locale: AppLocales[number]) {
     url.pathname = normalizeTrailingSlash(url.pathname);
 
     if (request.nextUrl.basePath) {

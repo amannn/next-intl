@@ -1,9 +1,10 @@
 import {ImageResponse} from 'next/og';
+import {Locale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 
 type Props = {
   params: {
-    locale: string;
+    locale: Locale;
   };
 };
 

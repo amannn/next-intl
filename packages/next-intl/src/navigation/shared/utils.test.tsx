@@ -3,7 +3,7 @@ import {
   compileLocalizedPathname,
   getBasePath,
   serializeSearchParams
-} from './utils';
+} from './utils.tsx';
 
 describe('serializeSearchParams', () => {
   it('handles strings', () => {

@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 import {getAlternateLinks} from './utils';
 
 it('redirects to a locale prefix correctly', async ({request}) => {

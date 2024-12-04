@@ -1,10 +1,10 @@
 import {useMemo} from 'react';
-import {IntlError, IntlErrorCode} from '../core';
-import AbstractIntlMessages from '../core/AbstractIntlMessages';
-import createBaseTranslator from '../core/createBaseTranslator';
-import resolveNamespace from '../core/resolveNamespace';
-import NestedKeyOf from '../core/utils/NestedKeyOf';
-import useIntlContext from './useIntlContext';
+import type AbstractIntlMessages from '../core/AbstractIntlMessages.tsx';
+import type {NestedKeyOf} from '../core/MessageKeys.tsx';
+import createBaseTranslator from '../core/createBaseTranslator.tsx';
+import resolveNamespace from '../core/resolveNamespace.tsx';
+import {IntlError, IntlErrorCode} from '../core.tsx';
+import useIntlContext from './useIntlContext.tsx';
 
 let hasWarnedForMissingTimezone = false;
 const isServer = typeof window === 'undefined';
@@ -19,7 +19,6 @@ export default function useTranslationsImpl<
 ) {
   const {
     cache,
-    defaultTranslationValues,
     formats: globalFormats,
     formatters,
     getMessageFallback,
@@ -56,7 +55,6 @@ export default function useTranslationsImpl<
         formatters,
         getMessageFallback,
         messages: allMessages,
-        defaultTranslationValues,
         namespace,
         onError,
         formats: globalFormats,
@@ -68,7 +66,6 @@ export default function useTranslationsImpl<
       formatters,
       getMessageFallback,
       allMessages,
-      defaultTranslationValues,
       namespace,
       onError,
       globalFormats,

@@ -1,11 +1,12 @@
-import {
+import type {Locale} from 'use-intl';
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
+} from '../routing/types.tsx';
 import {
   getLocalePrefix,
   getSortedPathnames,
@@ -13,7 +14,7 @@ import {
   normalizeTrailingSlash,
   prefixPathname,
   templateToRegex
-} from '../shared/utils';
+} from '../shared/utils.tsx';
 
 export function getFirstPathnameSegment(pathname: string) {
   return pathname.split('/')[1];
@@ -254,7 +255,7 @@ export function getHost(requestHeaders: Headers) {
 }
 
 export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
-  locale: string,
+  locale: Locale,
   domain: DomainConfig<AppLocales>
 ) {
   return (
@@ -266,7 +267,7 @@ export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
 
 export function getBestMatchingDomain<AppLocales extends Locales>(
   curHostDomain: DomainConfig<AppLocales> | undefined,
-  locale: string,
+  locale: Locale,
   domainsConfig: DomainsConfig<AppLocales>
 ) {
   let domainConfig;

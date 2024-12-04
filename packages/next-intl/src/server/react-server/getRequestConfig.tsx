@@ -2,30 +2,12 @@ import type {IntlConfig} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
-   * Instead of reading a `requestLocale` from the argument that's passed to the
-   * function within `getRequestConfig`, you can include a locale as part of the
-   * returned request configuration.
-   *
-   * This can be helpful for the following use cases:
-   * - Apps that only support a single language
-   * - Apps where the locale should be read from user settings instead of the pathname
-   * - Providing a fallback locale in case the locale was not matched by the middleware
+   * @see https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
    **/
-  locale?: IntlConfig['locale'];
+  locale: IntlConfig['locale'];
 };
 
 export type GetRequestConfigParams = {
-  /**
-   * Deprecated in favor of `requestLocale` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#await-request-locale).
-   *
-   * The locale that was matched by the `[locale]` path segment. Note however
-   * that this can be overridden in async APIs when the `locale` is explicitly
-   * passed (e.g. `getTranslations({locale: 'en'})`).
-   *
-   * @deprecated
-   */
-  locale: string;
-
   /**
    * Typically corresponds to the `[locale]` segment that was matched by the middleware.
    *

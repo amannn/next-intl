@@ -5,7 +5,7 @@ import {
   matchesPathname,
   prefixPathname,
   unprefixPathname
-} from './utils';
+} from './utils.tsx';
 
 describe('prefixPathname', () => {
   it("doesn't add trailing slashes for the root", () => {

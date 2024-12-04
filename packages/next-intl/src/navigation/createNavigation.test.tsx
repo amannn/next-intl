@@ -2,30 +2,33 @@ import {render, screen} from '@testing-library/react';
 import {
   RedirectType,
   permanentRedirect as nextPermanentRedirect,
-  redirect as nextRedirect,
-  useParams as nextUseParams
-} from 'next/navigation';
-import React from 'react';
+  redirect as nextRedirect
+} from 'next/navigation.js';
 import {renderToString} from 'react-dom/server';
+import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {DomainsConfig, Pathnames, defineRouting} from '../routing';
-import createNavigationClient from './react-client/createNavigation';
-import createNavigationServer from './react-server/createNavigation';
-import getServerLocale from './react-server/getServerLocale';
+import {
+  type DomainsConfig,
+  type Pathnames,
+  defineRouting
+} from '../routing.tsx';
+import createNavigationClient from './react-client/createNavigation.tsx';
+import createNavigationServer from './react-server/createNavigation.tsx';
+import getServerLocale from './react-server/getServerLocale.tsx';
 
 vi.mock('react');
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation');
-  return {
-    ...actual,
-    useParams: vi.fn(() => ({locale: 'en'})),
-    redirect: vi.fn(),
-    permanentRedirect: vi.fn()
-  };
-});
+vi.mock('next/navigation.js', async () => ({
+  ...(await vi.importActual('next/navigation.js')),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn()
+}));
 vi.mock('./react-server/getServerLocale');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
-function mockCurrentLocale(locale: string) {
+function mockCurrentLocale(locale: Locale) {
   // Enable synchronous rendering without having to suspend
   const value = locale;
   const promise = Promise.resolve(value);
@@ -34,9 +37,7 @@ function mockCurrentLocale(locale: string) {
 
   vi.mocked(getServerLocale).mockImplementation(() => promise);
 
-  vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
-    locale
-  }));
+  vi.mocked(useLocale).mockImplementation(() => locale);
 }
 
 function mockLocation(location: Partial<typeof window.location>) {
@@ -108,6 +109,19 @@ describe.each([
       locales,
       defaultLocale,
       localePrefix: 'always'
+    });
+
+    describe('createNavigation', () => {
+      it('ensures `defaultLocale` is in `locales`', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        () =>
+          createNavigation({
+            locales,
+            // @ts-expect-error
+            defaultLocale: 'zh',
+            localePrefix: 'always'
+          });
+      });
     });
 
     describe('Link', () => {
@@ -215,6 +229,14 @@ describe.each([
         expect(markup).toContain('href="/en/about"');
         expect(consoleSpy).not.toHaveBeenCalled();
       });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return <Link href="/about" locale={locale} />;
+        }
+        render(<Component />);
+      });
     });
 
     describe('getPathname', () => {
@@ -306,6 +328,17 @@ describe.each([
           true
         );
       });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return getPathname({
+            locale,
+            href: '/about'
+          });
+        }
+        render(<Component />);
+      });
     });
 
     describe.each([
@@ -353,6 +386,14 @@ describe.each([
         redirectFn('/');
         // @ts-expect-error -- Missing locale
         redirectFn({pathname: '/about'});
+      });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          return redirectFn({href: '/about', locale});
+        }
+        render(<Component />);
       });
     });
   });

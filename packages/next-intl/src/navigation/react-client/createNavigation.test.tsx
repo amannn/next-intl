@@ -1,22 +1,21 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
   usePathname as useNextPathname,
-  useRouter as useNextRouter,
-  useParams
-} from 'next/navigation';
-import React from 'react';
+  useRouter as useNextRouter
+} from 'next/navigation.js';
+import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../react-client';
-import {DomainsConfig, Pathnames} from '../../routing';
-import createNavigation from './createNavigation';
+import type {DomainsConfig, Pathnames} from '../../routing.tsx';
+import createNavigation from './createNavigation.tsx';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
-function mockCurrentLocale(locale: string) {
-  vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
-    locale
-  }));
+function mockCurrentLocale(locale: Locale) {
+  vi.mocked(useLocale).mockImplementation(() => locale);
 }
 
 function mockLocation(
@@ -113,29 +112,6 @@ describe("localePrefix: 'always'", () => {
   });
 
   describe('Link', () => {
-    describe('usage outside of Next.js', () => {
-      beforeEach(() => {
-        vi.mocked(useParams<any>).mockImplementation((() => null) as any);
-      });
-
-      it('works with a provider', () => {
-        render(
-          <NextIntlClientProvider locale="en">
-            <Link href="/test">Test</Link>
-          </NextIntlClientProvider>
-        );
-        expect(
-          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
-        ).toBe('/en/test');
-      });
-
-      it('throws without a provider', () => {
-        expect(() => render(<Link href="/test">Test</Link>)).toThrow(
-          'No intl context found. Have you configured the provider?'
-        );
-      });
-    });
-
     it('can receive a ref', () => {
       let ref;
 
@@ -171,14 +147,18 @@ describe("localePrefix: 'always'", () => {
       });
 
       it('prefixes with a secondary locale', () => {
-        // Being able to accept a string and not only a strictly typed locale is
-        // important in order to be able to use a result from `useLocale()`.
-        // This is less relevant for `Link`, but this should be in sync across
-        // al navigation APIs (see https://github.com/amannn/next-intl/issues/1377)
-        const locale = 'de' as string;
-
-        invokeRouter((router) => router[method]('/about', {locale}));
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          const router = useRouter();
+          router.push('/about', {locale});
+          return null;
+        }
+        render(<Component />);
       });
 
       it('passes through unknown options to the Next.js router', () => {
@@ -228,7 +208,11 @@ describe("localePrefix: 'always'", () => {
 
       it('prefixes with a secondary locale', () => {
         invokeRouter((router) =>
-          router.prefetch('/about', {locale: 'de', kind: PrefetchKind.FULL})
+          router.prefetch('/about', {
+            locale: 'de',
+            // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+            kind: 'full'
+          })
         );
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about', {
           kind: 'full'
@@ -363,7 +347,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=31536000',
+          'max-age=18000',
           'sameSite=lax',
           'path=/base/path'
         ].join(';') + ';'
@@ -777,7 +761,11 @@ describe("localePrefix: 'never'", () => {
       expect(document.cookie).toContain('NEXT_LOCALE=de');
 
       invokeRouter((router) =>
-        router.prefetch('/about', {locale: 'ja', kind: PrefetchKind.AUTO})
+        router.prefetch('/about', {
+          locale: 'ja',
+          // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+          kind: 'auto'
+        })
       );
       expect(document.cookie).toContain('NEXT_LOCALE=ja');
     });
