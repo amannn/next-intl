@@ -2704,6 +2704,27 @@ describe('domain-based routing', () => {
         } satisfies Pathnames<ReadonlyArray<'en' | 'fr'>>
       });
 
+      it('redirects an unprefixed pathname from the fr locale on the en domain', () => {
+        middlewareWithPathnames(
+          createMockRequest('/a-propos', 'fr', 'http://en.example.com')
+        );
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          'http://en.example.com/about'
+        );
+      });
+
+      it('redirects a prefixed pathname from the fr locale on the en domain', () => {
+        middlewareWithPathnames(
+          createMockRequest('/fr/a-propos', 'fr', 'http://en.example.com')
+        );
+        expect(MockedNextResponse.redirect).toHaveBeenCalled();
+        expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+          // (will get another redirect to /a-propos on this domain)
+          'http://fr.example.com/fr/a-propos'
+        );
+      });
+
       it('serves requests for the default locale at the root', () => {
         middlewareWithPathnames(
           createMockRequest('/', 'en', 'http://en.example.com')
