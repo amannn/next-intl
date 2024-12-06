@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.0 (2024-12-06)
+
+### Features
+
+* Support React 19 ([#1597](https://github.com/amannn/next-intl/issues/1597)) ([e0ffe29](https://github.com/amannn/next-intl/commit/e0ffe292a3cae8955fcd06bd8e8e2b02c525ef69)) – by @amannn
+
 ## 3.25.3 (2024-11-26)
 
 ### Bug Fixes
