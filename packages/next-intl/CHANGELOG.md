@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.1 (2024-12-11)
+
+### Bug Fixes
+
+* Use new domain `next-intl.dev` in links ([#1601](https://github.com/amannn/next-intl/issues/1601)) ([40a9a77](https://github.com/amannn/next-intl/commit/40a9a7722edc8e7787ed799a4bf1d3c4a2e04848)) – by @amannn
+
 ## 3.26.0 (2024-12-06)
 
 ### Features
