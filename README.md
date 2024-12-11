@@ -58,7 +58,7 @@ export default function UserProfile({user}) {
 }
 ```
 
-### [→ Read the docs](https://next-intl.dev/)
+### [→ Read the docs](https://next-intl.dev)
 
 <div align="center">
   <a href="https://next-intl.dev/redirect?href=https://crowdin.com" target="_blank">
