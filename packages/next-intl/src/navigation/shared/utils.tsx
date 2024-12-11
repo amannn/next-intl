@@ -273,7 +273,7 @@ export function applyPathnamePrefix<
         } else if (process.env.NODE_ENV !== 'production') {
           if (!domain) {
             console.error(
-              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter.\n\nSee: https://next-intl-docs.vercel.app/docs/routing#domains-localeprefix-asneeded"
+              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter.\n\nSee: https://next-intl.dev/docs/routing#domains-localeprefix-asneeded"
             );
           } else {
             // If a domain was provided, but it wasn't found in the routing

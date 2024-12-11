@@ -23,11 +23,11 @@ body:
     attributes:
       label: Verifications
       options:
-        - label: I've verified that the problem I'm experiencing isn't covered in [the docs](https://next-intl-docs.vercel.app/).
+        - label: I've verified that the problem I'm experiencing isn't covered in [the docs](https://next-intl.dev/).
           required: true
         - label: I've searched for similar, existing issues on [GitHub](https://github.com/amannn/next-intl/issues) and [Stack Overflow](https://stackoverflow.com/search?q=next-intl).
           required: true
-        - label: I've compared my app to [a working example](https://next-intl-docs.vercel.app/examples) to look for differences.
+        - label: I've compared my app to [a working example](https://next-intl.dev/examples) to look for differences.
           required: true
   - type: input
     attributes:

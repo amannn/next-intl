@@ -43,7 +43,7 @@ export default function useTranslationsImpl<
       new IntlError(
         IntlErrorCode.ENVIRONMENT_FALLBACK,
         process.env.NODE_ENV !== 'production'
-          ? `There is no \`timeZone\` configured, this can lead to markup mismatches caused by environment differences. Consider adding a global default: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+          ? `There is no \`timeZone\` configured, this can lead to markup mismatches caused by environment differences. Consider adding a global default: https://next-intl.dev/docs/configuration#time-zone`
           : undefined
       )
     );
