@@ -39,7 +39,7 @@ Please verify that:
 1. In case you've specified a custom location in your Next.js config, make sure that the path is correct.
 2. You have a default export in your i18n request configuration file.
 
-See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+See also: https://next-intl.dev/docs/usage/configuration#i18n-request
 `
     );
   }
@@ -69,7 +69,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
   if (!locale) {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
-        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl.dev/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
       );
     }
     notFound();
