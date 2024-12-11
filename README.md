@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://next-intl.dev/">
+  <a href="https://next-intl.dev">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="media/logo-dark-mode.svg">
       <source media="(prefers-color-scheme: light)" srcset="media/logo.svg">
