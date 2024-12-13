@@ -5,8 +5,7 @@
     "dev": "next dev",
     "lint": "eslint src && tsc && prettier src --check && node lintLinks.mjs",
     "test": "echo 'No tests yet'",
-    "build": "next build",
-    "sitemap": "next-sitemap",
+    "build": "next build && next-sitemap",
     "start": "next start"
   },
   "dependencies": {
