@@ -1,4 +1,4 @@
-import {getLocale, getTranslations} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
 import {routing} from '@/i18n/routing';
@@ -23,6 +23,5 @@ export async function generateMetadata() {
 }
 
 export default async function LocaleLayout({children}: Props) {
-  const locale = await getLocale();
-  return <BaseLayout locale={locale}>{children}</BaseLayout>;
+  return <BaseLayout>{children}</BaseLayout>;
 }
