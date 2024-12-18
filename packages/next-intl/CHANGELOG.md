@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.2 (2024-12-18)
+
+### Bug Fixes
+
+* Support `t.has` when `getTranslations` is called with an object argument ([#1616](https://github.com/amannn/next-intl/issues/1616)) ([64895a2](https://github.com/amannn/next-intl/commit/64895a2bb3c445f6e3deab85152a0d04ced17e46)), closes [/github.com/amannn/next-intl/discussions/437#discussioncomment-11593318](https://github.com/amannn//github.com/amannn/next-intl/discussions/437/issues/discussioncomment-11593318) – by @amannn
+
 ## 3.26.1 (2024-12-11)
 
 ### Bug Fixes
