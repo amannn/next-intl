@@ -1,12 +1,12 @@
+import {unstable_rootParams as rootParams} from 'next/server';
 import {hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from './routing';
 
-export default getRequestConfig(async ({requestLocale}) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
+export default getRequestConfig(async () => {
+  const params = await rootParams();
+  const locale = hasLocale(routing.locales, params.locale)
+    ? params.locale
     : routing.defaultLocale;
 
   return {

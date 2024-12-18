@@ -12,6 +12,8 @@ type Props = {
   locale: string;
 };
 
+// Inline?
+
 export default async function BaseLayout({children, locale}: Props) {
   // Providing all messages to the client
   // side is the easiest way to get started
