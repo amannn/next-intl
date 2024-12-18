@@ -2,7 +2,6 @@ import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
 import BaseLayout from '@/components/BaseLayout';
 import {routing} from '@/i18n/routing';
-import './styles.css';
 
 type Props = {
   children: ReactNode;

@@ -4,6 +4,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getMessages} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Navigation from '@/components/Navigation';
+import '../styles.css';
 
 const inter = Inter({subsets: ['latin']});
 
