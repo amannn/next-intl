@@ -32,7 +32,7 @@ Please verify that:
 1. In case you've specified a custom location in your Next.js config, make sure that the path is correct.
 2. You have a default export in your i18n request configuration file.
 
-See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+See also: https://next-intl.dev/docs/usage/configuration#i18n-request
 `
     );
   }
@@ -55,7 +55,7 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
 
   if (!result.locale) {
     throw new Error(
-      'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request'
+      'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl.dev/docs/usage/configuration#i18n-request'
     );
   }
 

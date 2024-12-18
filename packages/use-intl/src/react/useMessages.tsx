@@ -7,7 +7,7 @@ export default function useMessages(): Messages {
   if (!context.messages) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? 'No messages found. Have you configured them correctly? See https://next-intl-docs.vercel.app/docs/configuration#messages'
+        ? 'No messages found. Have you configured them correctly? See https://next-intl.dev/docs/configuration#messages'
         : undefined
     );
   }

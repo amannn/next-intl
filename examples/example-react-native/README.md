@@ -2,7 +2,7 @@
 
 An example that showcases the usage of `use-intl` with React Native.
 
-Please double check that [the runtime requirements](https://next-intl-docs.vercel.app/docs/environments/runtime-requirements) are fulfilled.
+Please double check that [the runtime requirements](https://next-intl.dev/docs/environments/runtime-requirements) are fulfilled.
 
 ```
 pnpm install

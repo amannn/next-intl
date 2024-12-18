@@ -432,6 +432,14 @@ export default function RootPage() {
 }
 ```
 
+Additionally, Next.js will ask for a root layout for `app/page.tsx`, even if it's just passing `children` through:
+
+```tsx filename="app/layout.tsx"
+export default function RootLayout({children}) {
+  return children;
+}
+```
+
 ## Troubleshooting
 
 ### "The middleware doesn't run for a particular page." [#middleware-not-running]
