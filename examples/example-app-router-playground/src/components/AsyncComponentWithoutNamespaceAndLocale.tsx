@@ -1,8 +1,7 @@
-import {getLocale, getTranslations} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 
 export default async function AsyncComponentWithoutNamespaceAndLocale() {
-  const locale = await getLocale();
-  const t = await getTranslations({locale});
+  const t = await getTranslations();
 
   return (
     <div data-testid="AsyncComponentWithoutNamespaceAndLocale">
@@ -12,8 +11,7 @@ export default async function AsyncComponentWithoutNamespaceAndLocale() {
 }
 
 export async function TypeTest() {
-  const locale = await getLocale();
-  const t = await getTranslations({locale});
+  const t = await getTranslations();
 
   // @ts-expect-error
   t('AsyncComponent.unknown');

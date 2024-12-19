@@ -40,10 +40,10 @@ importers:
         version: 2.1.5(react@18.3.1)
       '@vercel/analytics':
         specifier: 1.3.1
-        version: 1.3.1(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 1.3.1(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@vercel/speed-insights':
         specifier: ^1.0.12
-        version: 1.0.13(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 1.0.13(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -55,10 +55,10 @@ importers:
         version: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nextra:
         specifier: ^3.1.0
-        version: 3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
+        version: 3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       nextra-theme-docs:
         specifier: ^3.1.0
-        version: 3.1.0(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.1.0(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -83,13 +83,13 @@ importers:
         version: 18.3.12
       autoprefixer:
         specifier: ^10.4.19
-        version: 10.4.20(postcss@8.4.47)
+        version: 10.4.20(postcss@8.4.39)
       eslint:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.11.0(@typescript-eslint/parser@8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(@typescript-eslint/parser@8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(jest@29.7.0(@types/node@20.17.0))(tailwindcss@3.4.14)(typescript@5.6.3)(vitest@2.1.3(@edge-runtime/vm@4.0.3)(@types/node@20.17.0)(jsdom@25.0.1)(terser@5.36.0))
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.11.0(@typescript-eslint/parser@8.9.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(@typescript-eslint/parser@8.9.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(jest@29.7.0(@types/node@20.17.0))(tailwindcss@3.4.14)(typescript@5.6.3)(vitest@2.1.3(@edge-runtime/vm@4.0.3)(@types/node@20.17.0)(jsdom@25.0.1)(terser@5.36.0))
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.2
@@ -98,7 +98,7 @@ importers:
         version: 15.11.0
       next-sitemap:
         specifier: ^4.2.3
-        version: 4.2.3(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        version: 4.2.3(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       next-validate-link:
         specifier: ^1.3.0
         version: 1.3.0
@@ -159,7 +159,7 @@ importers:
         version: 9.13.0(jiti@2.3.3)
       eslint-config-molindo:
         specifier: ^8.0.0
-        version: 8.0.0(@typescript-eslint/eslint-plugin@8.11.0(@typescript-eslint/parser@8.9.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(@typescript-eslint/parser@8.9.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(jest@29.7.0(@types/node@20.17.0))(tailwindcss@3.4.14)(typescript@5.6.3)(vitest@2.1.3(@edge-runtime/vm@4.0.3)(@types/node@20.17.0)(jsdom@25.0.1)(terser@5.36.0))
+        version: 8.0.0(@typescript-eslint/eslint-plugin@8.11.0(@typescript-eslint/parser@8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(@typescript-eslint/parser@8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(jest@29.7.0(@types/node@20.17.0))(tailwindcss@3.4.14)(typescript@5.6.3)(vitest@2.1.3(@edge-runtime/vm@4.0.3)(@types/node@20.17.0)(jsdom@25.0.1)(terser@5.36.0))
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.0)
@@ -266,7 +266,7 @@ importers:
         version: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-auth:
         specifier: ^4.24.7
-        version: 4.24.8(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.24.8(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-intl:
         specifier: ^3.0.0
         version: link:../../packages/next-intl
@@ -305,7 +305,7 @@ importers:
   examples/example-app-router-playground:
     dependencies:
       '@mdx-js/react':
-        specifier: ^3.0.1
+        specifier: ^3.1.0
         version: 3.1.0(@types/react@18.3.12)(react@18.3.1)
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.1
@@ -317,8 +317,8 @@ importers:
         specifier: 2.1.3
         version: 2.1.3
       next:
-        specifier: ^14.2.4
-        version: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 15.1.1-canary.12
+        version: 15.1.1-canary.12(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-intl:
         specifier: ^3.0.0
         version: link:../../packages/next-intl
@@ -336,17 +336,17 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       '@mdx-js/loader':
-        specifier: ^3.0.1
-        version: 3.1.0(webpack@5.95.0(esbuild@0.23.1))
+        specifier: ^3.1.0
+        version: 3.1.0(acorn@7.4.1)(webpack@5.95.0(esbuild@0.23.1))
       '@next/mdx':
-        specifier: ^14.2.5
-        version: 14.2.16(@mdx-js/loader@3.1.0(webpack@5.95.0(esbuild@0.23.1)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))
+        specifier: 15.1.1-canary.12
+        version: 15.1.1-canary.12(@mdx-js/loader@3.1.0(acorn@7.4.1)(webpack@5.95.0(esbuild@0.23.1)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))
       '@playwright/test':
         specifier: ^1.48.1
         version: 1.48.1
       '@storybook/nextjs':
         specifier: ^8.2.9
-        version: 8.3.6(@types/webpack@5.28.5(esbuild@0.23.1))(esbuild@0.23.1)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sockjs-client@1.6.1)(storybook@8.3.6)(type-fest@4.26.1)(typescript@5.6.3)(webpack-dev-server@5.1.0(webpack@5.95.0(esbuild@0.23.1)))(webpack-hot-middleware@2.26.1)(webpack@5.95.0(esbuild@0.23.1))
+        version: 8.3.6(@types/webpack@5.28.5(esbuild@0.23.1))(esbuild@0.23.1)(next@15.1.1-canary.12(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sockjs-client@1.6.1)(storybook@8.3.6)(type-fest@4.26.1)(typescript@5.6.3)(webpack-dev-server@5.1.0(webpack@5.95.0(esbuild@0.23.1)))(webpack-hot-middleware@2.26.1)(webpack@5.95.0(esbuild@0.23.1))
       '@storybook/react':
         specifier: ^8.2.9
         version: 8.3.6(@storybook/test@8.3.6(storybook@8.3.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.3.6)(typescript@5.6.3)
@@ -617,7 +617,7 @@ importers:
     dependencies:
       next:
         specifier: ^12.0.0
-        version: 12.3.4(@babel/core@7.25.9)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+        version: 12.3.4(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       next-intl:
         specifier: ^3.0.0
         version: link:../../packages/next-intl
@@ -2746,7 +2746,7 @@ packages:
 
   '@expo/bunyan@4.0.1':
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
 
   '@expo/cli@0.4.11':
     resolution: {integrity: sha512-L9Ci9RBh0aPFEDF1AjDYPk54OgeUJIKzxF3lRgITm+lQpI3IEKjAc9LaYeQeO1mlZMUQmPkHArF8iyz1eOeVoQ==}
@@ -3273,9 +3273,6 @@ packages:
   '@mdx-js/mdx@2.3.0':
     resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
 
-  '@mdx-js/mdx@3.0.1':
-    resolution: {integrity: sha512-eIQ4QTrOWyL3LWEe/bu6Taqzq2HQvHcyTMaOrI95P2/LmJE7AsfPfgJGuFLPVqBUE1BC1rik3VIhU+s9u72arA==}
-
   '@mdx-js/mdx@3.1.0':
     resolution: {integrity: sha512-/QxEhPAvGwbQmy1Px8F899L5Uc2KZ6JtXwlCgJmjSTBedwOZkByYcBG4GceIGPXRDsmfxhHazuS+hlOShRLeDw==}
 
@@ -3388,8 +3385,8 @@ packages:
   '@next/env@15.1.1-canary.12':
     resolution: {integrity: sha512-8jh0yUEk+tGbgaZWBCU+kYD7y0sukwGTFdBBEbbwvXFSHuPcd65R6ss5HfxjNXqxx8gs4+uFVlUFfthLMc3Tlg==}
 
-  '@next/mdx@14.2.16':
-    resolution: {integrity: sha512-IVd/Z3vYpIZ/nzqhmSHmTKfSrQ6eZrorkzs0uzMCXt3hL6lw4qf/jcEExZmXoenqnZ5vX0xkou+y4uWAKZhvfw==}
+  '@next/mdx@15.1.1-canary.12':
+    resolution: {integrity: sha512-WFR/g1erCYl51GLUbW/Q9oowdQGAyesbpmaYTgP21T3y+ihNurAFygKMGwaYQ688G0/Yfi1SXpbSSX14xlJ3QA==}
     peerDependencies:
       '@mdx-js/loader': '>=0.15.0'
       '@mdx-js/react': '>=0.15.0'
@@ -12221,9 +12218,6 @@ packages:
   remark-mdx@2.3.0:
     resolution: {integrity: sha512-g53hMkpM0I98MU266IzDFMrTD980gNF3BJnkyFcmN+dD873mQeD5rdMO3Y2X+x8umQfbSE0PcoEDl7ledSA+2g==}
 
-  remark-mdx@3.0.1:
-    resolution: {integrity: sha512-3Pz3yPQ5Rht2pM5R+0J2MrGoBSrzf+tJG94N+t/ilfdh8YLyyKYtidAYwTveB20BoHAcwIopOUqhcmh2F7hGYA==}
-
   remark-mdx@3.1.0:
     resolution: {integrity: sha512-Ngl/H3YXyBV9RcRNdlYsZujAmhsxwzxpDzpDEhFBVAGthS4GDgnctpDjgFl/ULx5UEDzqtW1cyBSNKqYYrqLBA==}
 
@@ -17342,13 +17336,14 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mdx-js/loader@3.1.0(webpack@5.95.0(esbuild@0.23.1))':
+  '@mdx-js/loader@3.1.0(acorn@7.4.1)(webpack@5.95.0(esbuild@0.23.1))':
     dependencies:
-      '@mdx-js/mdx': 3.0.1
+      '@mdx-js/mdx': 3.1.0(acorn@7.4.1)
       source-map: 0.7.4
     optionalDependencies:
       webpack: 5.95.0(esbuild@0.23.1)
     transitivePeerDependencies:
+      - acorn
       - supports-color
 
   '@mdx-js/mdx@2.3.0':
@@ -17373,7 +17368,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/mdx@3.0.1':
+  '@mdx-js/mdx@3.1.0(acorn@7.4.1)':
     dependencies:
       '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
@@ -17381,15 +17376,16 @@ snapshots:
       '@types/mdx': 2.0.13
       collapse-white-space: 2.1.0
       devlop: 1.1.0
-      estree-util-build-jsx: 3.0.1
       estree-util-is-identifier-name: 3.0.0
-      estree-util-to-js: 2.0.0
+      estree-util-scope: 1.0.0
       estree-walker: 3.0.3
-      hast-util-to-estree: 3.1.0
       hast-util-to-jsx-runtime: 2.3.2
       markdown-extensions: 2.0.0
-      periscopic: 3.1.0
-      remark-mdx: 3.0.1
+      recma-build-jsx: 1.0.0
+      recma-jsx: 1.0.0(acorn@7.4.1)
+      recma-stringify: 1.0.0
+      rehype-recma: 1.0.0
+      remark-mdx: 3.1.0
       remark-parse: 11.0.0
       remark-rehype: 11.1.1
       source-map: 0.7.4
@@ -17399,6 +17395,7 @@ snapshots:
       unist-util-visit: 5.0.0
       vfile: 6.0.3
     transitivePeerDependencies:
+      - acorn
       - supports-color
 
   '@mdx-js/mdx@3.1.0(acorn@8.13.0)':
@@ -17508,11 +17505,11 @@ snapshots:
 
   '@next/env@15.1.1-canary.12': {}
 
-  '@next/mdx@14.2.16(@mdx-js/loader@3.1.0(webpack@5.95.0(esbuild@0.23.1)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))':
+  '@next/mdx@15.1.1-canary.12(@mdx-js/loader@3.1.0(acorn@7.4.1)(webpack@5.95.0(esbuild@0.23.1)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))':
     dependencies:
       source-map: 0.7.4
     optionalDependencies:
-      '@mdx-js/loader': 3.1.0(webpack@5.95.0(esbuild@0.23.1))
+      '@mdx-js/loader': 3.1.0(acorn@7.4.1)(webpack@5.95.0(esbuild@0.23.1))
       '@mdx-js/react': 3.1.0(@types/react@18.3.12)(react@18.3.1)
 
   '@next/swc-android-arm-eabi@12.3.4':
@@ -18825,7 +18822,7 @@ snapshots:
     dependencies:
       storybook: 8.3.6
 
-  '@storybook/nextjs@8.3.6(@types/webpack@5.28.5(esbuild@0.23.1))(esbuild@0.23.1)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sockjs-client@1.6.1)(storybook@8.3.6)(type-fest@4.26.1)(typescript@5.6.3)(webpack-dev-server@5.1.0(webpack@5.95.0(esbuild@0.23.1)))(webpack-hot-middleware@2.26.1)(webpack@5.95.0(esbuild@0.23.1))':
+  '@storybook/nextjs@8.3.6(@types/webpack@5.28.5(esbuild@0.23.1))(esbuild@0.23.1)(next@15.1.1-canary.12(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sockjs-client@1.6.1)(storybook@8.3.6)(type-fest@4.26.1)(typescript@5.6.3)(webpack-dev-server@5.1.0(webpack@5.95.0(esbuild@0.23.1)))(webpack-hot-middleware@2.26.1)(webpack@5.95.0(esbuild@0.23.1))':
     dependencies:
       '@babel/core': 7.25.9
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.25.9)
@@ -18853,7 +18850,7 @@ snapshots:
       fs-extra: 11.2.0
       image-size: 1.0.2
       loader-utils: 3.2.1
-      next: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next: 15.1.1-canary.12(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.95.0(esbuild@0.23.1))
       pnp-webpack-plugin: 1.7.0(typescript@5.6.3)
       postcss: 8.4.47
@@ -19633,14 +19630,14 @@ snapshots:
 
   '@vanilla-extract/private@1.0.3': {}
 
-  '@vercel/analytics@1.3.1(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@vercel/analytics@1.3.1(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       server-only: 0.0.1
     optionalDependencies:
       next: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
 
-  '@vercel/speed-insights@1.0.13(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@vercel/speed-insights@1.0.13(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     optionalDependencies:
       next: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
@@ -20315,6 +20312,16 @@ snapshots:
   at-least-node@1.0.0: {}
 
   atob@2.1.2: {}
+
+  autoprefixer@10.4.20(postcss@8.4.39):
+    dependencies:
+      browserslist: 4.24.0
+      caniuse-lite: 1.0.30001669
+      fraction.js: 4.3.7
+      normalize-range: 0.1.2
+      picocolors: 1.0.1
+      postcss: 8.4.39
+      postcss-value-parser: 4.2.0
 
   autoprefixer@10.4.20(postcss@8.4.47):
     dependencies:
@@ -27447,7 +27454,7 @@ snapshots:
     dependencies:
       type-fest: 2.19.0
 
-  next-auth@4.24.8(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next-auth@4.24.8(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.24.7
       '@panva/hkdf': 1.2.0
@@ -27462,7 +27469,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       uuid: 8.3.2
 
-  next-sitemap@4.2.3(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  next-sitemap@4.2.3(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       '@corex/deepmerge': 4.0.43
       '@next/env': 13.5.6
@@ -27486,7 +27493,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  next@12.3.4(@babel/core@7.25.9)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
+  next@12.3.4(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
     dependencies:
       '@next/env': 12.3.4
       '@swc/helpers': 0.4.11
@@ -27494,7 +27501,7 @@ snapshots:
       postcss: 8.4.14
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      styled-jsx: 5.0.7(@babel/core@7.25.9)(react@17.0.2)
+      styled-jsx: 5.0.7(react@17.0.2)
       use-sync-external-store: 1.2.0(react@17.0.2)
     optionalDependencies:
       '@next/swc-android-arm-eabi': 12.3.4
@@ -27566,7 +27573,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextra-theme-docs@3.1.0(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  nextra-theme-docs@3.1.0(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@headlessui/react': 2.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
@@ -27574,13 +27581,13 @@ snapshots:
       flexsearch: 0.7.43
       next: 14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nextra: 3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
+      nextra: 3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.23.8
 
-  nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@babel/core@7.25.9)(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3):
+  nextra@3.1.0(@types/react@18.3.12)(acorn@8.13.0)(next@14.2.16(@playwright/test@1.48.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3):
     dependencies:
       '@formatjs/intl-localematcher': 0.5.5
       '@headlessui/react': 2.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -29384,6 +29391,16 @@ snapshots:
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
+  recma-jsx@1.0.0(acorn@7.4.1):
+    dependencies:
+      acorn-jsx: 5.3.2(acorn@7.4.1)
+      estree-util-to-js: 2.0.0
+      recma-parse: 1.0.0
+      recma-stringify: 1.0.0
+      unified: 11.0.5
+    transitivePeerDependencies:
+      - acorn
+
   recma-jsx@1.0.0(acorn@8.13.0):
     dependencies:
       acorn-jsx: 5.3.2(acorn@8.13.0)
@@ -29576,13 +29593,6 @@ snapshots:
     dependencies:
       mdast-util-mdx: 2.0.1
       micromark-extension-mdxjs: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
-
-  remark-mdx@3.0.1:
-    dependencies:
-      mdast-util-mdx: 3.0.0
-      micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
 
@@ -30638,11 +30648,9 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.0.7(@babel/core@7.25.9)(react@17.0.2):
+  styled-jsx@5.0.7(react@17.0.2):
     dependencies:
       react: 17.0.2
-    optionalDependencies:
-      '@babel/core': 7.25.9
 
   styled-jsx@5.1.1(@babel/core@7.25.9)(react@18.3.1):
     dependencies:
