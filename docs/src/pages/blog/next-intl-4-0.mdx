@@ -11,7 +11,7 @@ import StayUpdated from '@/components/StayUpdated.mdx';
 
 (this post is still a draft)
 
-After a year of feature development, this release mostly aims to clean up the API surface to ensure `next-intl` remains lean—there should be no big surprises. Many significant improvements have already been shipped in [minor versions](/blog/next-intl-3-22) previously. However, this release also comes with a series of improvements that you might find useful.
+After a year of feature development, this release focuses on streamlining the API surface while maintaining the lean core architecture of `next-intl`. While many major improvements were already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several valuable enhancements that will improve your development experience and make working with internationalization even more seamless.
 
 Here's what's new in `next-intl@4.0`:
 
@@ -20,7 +20,7 @@ Here's what's new in `next-intl@4.0`:
 3. [**Strictly-typed ICU arguments**](#strictly-typed-icu-arguments)
 4. [**GDPR compliance**](#gdpr-compliance)
 5. [**Modernized build output**](#modernized-build-output)
-6. [**Preparation for upcoming Next.js features**](#nextjs-future)
+6. [**Preparation for upcoming Next.js features**](#nextjs-ppr-dynamicio)
 
 Please also have a look at the [other breaking changes](#other-breaking-changes) before you [upgrade](#upgrade-now).
 
@@ -38,8 +38,8 @@ import en from './messages/en.json';
 
 declare module 'next-intl' {
   interface AppConfig {
-    Formats: typeof formats;
     Messages: typeof en;
+    Formats: typeof formats;
   }
 }
 ```
@@ -194,7 +194,7 @@ The build output of `next-intl` has been modernized and now leverages the follow
 
 With these changes, the bundle size of `next-intl` has been reduced by ~7% ([all details](https://github.com/amannn/next-intl/pull/1470)).
 
-## Preparation for upcoming Next.js features [#nextjs-future]
+## Preparation for `ppr` and `dynamicIO` [#nextjs-ppr-dynamicio]
 
 To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) for `next-intl`.
 
@@ -240,10 +240,16 @@ Afterwards, you can upgrade by running:
 npm install next-intl@v4-beta
 ```
 
-## Thank you
+If you need help, you can refer to the [examples](/examples) which have all been updated.
 
-I want to sincerely thank everyone who has helped to make `next-intl` what it is today. A special thank you goes to <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>, the primary sponsor of `next-intl`, enabling me to regularly work on this project.
+## Thank you!
+
+I want to sincerely thank everyone who has helped to make `next-intl` what it is today.
+
+A special thank you goes to <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>, the primary sponsor of `next-intl`, enabling me to regularly work on this project and provide it as a free and open-source library for everyone.
 
 —Jan
+
+PS: Have you heard that [learn.next-intl.dev](https://learn.next-intl.dev) is coming?
 
 <StayUpdated />
