@@ -659,6 +659,13 @@ it('can use async APIs in async components', async ({page}) => {
     .getByText('AsyncComponent');
 });
 
+it('can use an explicit locale in an async component', async ({page}) => {
+  await page.goto('/de');
+  await expect(page.getByTestId('AsyncComponentGerman')).toHaveText(
+    'AsyncComponent (de)'
+  );
+});
+
 it('supports custom prefixes', async ({page}) => {
   await page.goto('/spain');
   await expect(page).toHaveURL('/spain');
