@@ -7,7 +7,7 @@ import type {Locale} from './AppConfig.tsx';
  */
 export default function hasLocale<LocaleType extends Locale>(
   locales: ReadonlyArray<LocaleType>,
-  candidate?: string | null
+  candidate?: unknown
 ): candidate is LocaleType {
   return locales.includes(candidate as LocaleType);
 }
