@@ -28,6 +28,7 @@ it('can be called with a non-matching narrow candidate', () => {
 it('can be called with any candidate', () => {
   const locales = ['en-US', 'en-GB'] as const;
   expect(hasLocale(locales, 'unknown')).toBe(false);
+  expect(hasLocale(locales, undefined)).toBe(false);
 
   // Relevant since `ParamValue` in Next.js includes `string[]`
   expect(hasLocale(locales, ['de'])).toBe(false);
