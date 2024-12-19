@@ -1,25 +1,29 @@
 'use client';
 
-import NextLink from 'next/link';
-import {usePathname} from 'next/navigation';
-import React, {
-  ComponentProps,
-  MouseEvent,
+import NextLink, {type LinkProps} from 'next/link.js';
+import {usePathname} from 'next/navigation.js';
+import {
+  type ComponentProps,
+  type MouseEvent,
+  type Ref,
   forwardRef,
   useEffect,
   useState
 } from 'react';
-import useLocale from '../../react-client/useLocale';
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import syncLocaleCookie from './syncLocaleCookie';
+import {type Locale, useLocale} from 'use-intl';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
+import syncLocaleCookie from './syncLocaleCookie.tsx';
 
-type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
-  locale?: string;
-  defaultLocale?: string;
+type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &
+  Omit<LinkProps, 'locale'>;
+
+type Props = NextLinkProps & {
+  locale?: Locale;
+  defaultLocale?: Locale;
   localeCookie: InitializedLocaleCookieConfig;
   /** Special case for `localePrefix: 'as-needed'` and `domains`. */
   unprefixed?: {
-    domains: {[domain: string]: string};
+    domains: {[domain: string]: Locale};
     pathname: string;
   };
 };
@@ -35,7 +39,7 @@ function BaseLink(
     unprefixed,
     ...rest
   }: Props,
-  ref: ComponentProps<typeof NextLink>['ref']
+  ref: Ref<HTMLAnchorElement>
 ) {
   const curLocale = useLocale();
   const isChangingLocale = locale != null && locale !== curLocale;
@@ -76,8 +80,12 @@ function BaseLink(
     prefetch = false;
   }
 
+  // Somehow the types for `next/link` don't work as expected
+  // when `moduleResolution: "nodenext"` is used.
+  const Link = NextLink as unknown as (props: NextLinkProps) => JSX.Element;
+
   return (
-    <NextLink
+    <Link
       ref={ref}
       href={finalHref}
       hrefLang={isChangingLocale ? locale : undefined}

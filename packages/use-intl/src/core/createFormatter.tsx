@@ -1,17 +1,19 @@
-import {ReactElement} from 'react';
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import Formats from './Formats';
-import IntlError, {IntlErrorCode} from './IntlError';
-import NumberFormatOptions from './NumberFormatOptions';
-import RelativeTimeFormatOptions from './RelativeTimeFormatOptions';
-import TimeZone from './TimeZone';
-import {defaultOnError} from './defaults';
+import type {ReactElement} from 'react';
+import type {FormatNames, Locale} from './AppConfig.tsx';
+import type DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
+import type Formats from './Formats.tsx';
+import IntlError from './IntlError.tsx';
+import IntlErrorCode from './IntlErrorCode.tsx';
+import type NumberFormatOptions from './NumberFormatOptions.tsx';
+import type RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
+import type TimeZone from './TimeZone.tsx';
+import {defaultOnError} from './defaults.tsx';
 import {
-  Formatters,
-  IntlCache,
+  type Formatters,
+  type IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters';
+} from './formatters.tsx';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -70,7 +72,7 @@ function calculateRelativeTimeValue(
 }
 
 type Props = {
-  locale: string;
+  locale: Locale;
   timeZone?: TimeZone;
   onError?(error: IntlError): void;
   formats?: Formats;
@@ -81,15 +83,16 @@ type Props = {
   _cache?: IntlCache;
 };
 
-export default function createFormatter({
-  _cache: cache = createCache(),
-  _formatters: formatters = createIntlFormatters(cache),
-  formats,
-  locale,
-  now: globalNow,
-  onError = defaultOnError,
-  timeZone: globalTimeZone
-}: Props) {
+export default function createFormatter(props: Props) {
+  const {
+    _cache: cache = createCache(),
+    _formatters: formatters = createIntlFormatters(cache),
+    formats,
+    locale,
+    onError = defaultOnError,
+    timeZone: globalTimeZone
+  } = props;
+
   function applyTimeZone(options?: DateTimeFormatOptions) {
     if (!options?.timeZone) {
       if (globalTimeZone) {
@@ -122,7 +125,7 @@ export default function createFormatter({
         const error = new IntlError(
           IntlErrorCode.MISSING_FORMAT,
           process.env.NODE_ENV !== 'production'
-            ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
+            ? `Format \`${formatName}\` is not available.`
             : undefined
         );
         onError(error);
@@ -163,9 +166,7 @@ export default function createFormatter({
     value: Date | number,
     /** If a time zone is supplied, the `value` is converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['dateTime'], string>
-      | DateTimeFormatOptions
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -185,9 +186,7 @@ export default function createFormatter({
     end: Date | number,
     /** If a time zone is supplied, the values are converted to that time zone.
      * Otherwise the user time zone will be used. */
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['dateTime'], string>
-      | DateTimeFormatOptions
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -204,9 +203,7 @@ export default function createFormatter({
 
   function number(
     value: number | bigint,
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['number'], string>
-      | NumberFormatOptions
+    formatOrOptions?: FormatNames['number'] | NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
@@ -217,14 +214,16 @@ export default function createFormatter({
   }
 
   function getGlobalNow() {
-    if (globalNow) {
-      return globalNow;
+    // Only read when necessary to avoid triggering a `dynamicIO` error
+    // unnecessarily (`now` is only needed for `format.relativeTime`)
+    if (props.now) {
+      return props.now;
     } else {
       onError(
         new IntlError(
           IntlErrorCode.ENVIRONMENT_FALLBACK,
           process.env.NODE_ENV !== 'production'
-            ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/configuration#now`
+            ? `The \`now\` parameter wasn't provided to \`relativeTime\` and there is no global default configured, therefore the current time will be used as a fallback. See https://next-intl.dev/docs/usage/dates-times#relative-times-usenow`
             : undefined
         )
       );
@@ -235,7 +234,7 @@ export default function createFormatter({
   function relativeTime(
     /** The date time that needs to be formatted. */
     date: number | Date,
-    /** The reference point in time to which `date` will be formatted in relation to.  */
+    /** The reference point in time to which `date` will be formatted in relation to. If this value is absent, a globally configured `now` value or alternatively the current time will be used. */
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
@@ -290,9 +289,7 @@ export default function createFormatter({
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?:
-      | Extract<keyof IntlFormats['list'], string>
-      | Intl.ListFormatOptions
+    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();

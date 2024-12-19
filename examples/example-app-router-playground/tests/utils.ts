@@ -1,4 +1,4 @@
-import {APIResponse, expect, Page} from '@playwright/test';
+import {APIResponse, Page, expect} from '@playwright/test';
 
 export async function getAlternateLinks(response: APIResponse) {
   return (
@@ -14,15 +14,19 @@ export async function getAlternateLinks(response: APIResponse) {
 
 export async function assertLocaleCookieValue(
   page: Page,
-  value: string,
+  value?: string,
   otherProps?: Record<string, unknown>
 ) {
   const cookie = (await page.context().cookies()).find(
     (cur) => cur.name === 'NEXT_LOCALE'
   );
-  expect(cookie).toMatchObject({
-    name: 'NEXT_LOCALE',
-    value,
-    ...otherProps
-  });
+  if (value) {
+    expect(cookie).toMatchObject({
+      name: 'NEXT_LOCALE',
+      value,
+      ...otherProps
+    });
+  } else {
+    expect(cookie).toBeUndefined();
+  }
 }

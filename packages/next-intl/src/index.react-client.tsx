@@ -6,4 +6,4 @@
  * from `./react-server` instead.
  */
 
-export * from './react-client';
+export * from './react-client/index.tsx';

@@ -1,1 +1,1 @@
-export * from './routing/index';
+export * from './routing/index.tsx';

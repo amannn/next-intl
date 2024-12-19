@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
-import createFormatter from '../core/createFormatter';
-import useIntlContext from './useIntlContext';
+import createFormatter from '../core/createFormatter.tsx';
+import useIntlContext from './useIntlContext.tsx';
 
 export default function useFormatter(): ReturnType<typeof createFormatter> {
   const {

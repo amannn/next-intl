@@ -1,23 +1,23 @@
 import {
   usePathname as useNextPathname,
   useRouter as useNextRouter
-} from 'next/navigation';
+} from 'next/navigation.js';
 import {useMemo} from 'react';
-import useLocale from '../../react-client/useLocale';
-import {
+import {type Locale, useLocale} from 'use-intl';
+import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
-} from '../../routing/config';
-import {
+} from '../../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import createSharedNavigationFns from '../shared/createSharedNavigationFns';
-import syncLocaleCookie from '../shared/syncLocaleCookie';
-import {getRoute} from '../shared/utils';
-import useBasePathname from './useBasePathname';
+} from '../../routing/types.tsx';
+import createSharedNavigationFns from '../shared/createSharedNavigationFns.tsx';
+import syncLocaleCookie from '../shared/syncLocaleCookie.tsx';
+import {getRoute} from '../shared/utils.tsx';
+import useBasePathname from './useBasePathname.tsx';
 
 export default function createNavigation<
   const AppLocales extends Locales,
@@ -40,14 +40,8 @@ export default function createNavigation<
         AppDomains
       >
 ) {
-  type Locale = AppLocales extends never ? string : AppLocales[number];
-
-  function useTypedLocale() {
-    return useLocale() as Locale;
-  }
-
   const {Link, config, getPathname, ...redirects} = createSharedNavigationFns(
-    useTypedLocale,
+    useLocale,
     routing
   );
 
@@ -56,7 +50,7 @@ export default function createNavigation<
     ? string
     : keyof AppPathnames {
     const pathname = useBasePathname(config);
-    const locale = useTypedLocale();
+    const locale = useLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return useMemo(
@@ -77,7 +71,7 @@ export default function createNavigation<
 
   function useRouter() {
     const router = useNextRouter();
-    const curLocale = useTypedLocale();
+    const curLocale = useLocale();
     const nextPathname = useNextPathname();
 
     return useMemo(() => {
@@ -87,7 +81,7 @@ export default function createNavigation<
       >(fn: Fn) {
         return function handler(
           href: Parameters<typeof getPathname>[0]['href'],
-          options?: Partial<Options> & {locale?: string}
+          options?: Partial<Options> & {locale?: Locale}
         ): void {
           const {locale: nextLocale, ...rest} = options || {};
 

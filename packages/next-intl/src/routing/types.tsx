@@ -1,3 +1,5 @@
+// We intentionally don't use `Locale` here to avoid a circular reference
+// when `routing` is used to initialize the `Locale` type.
 export type Locales = ReadonlyArray<string>;
 
 export type LocalePrefixMode = 'always' | 'as-needed' | 'never';

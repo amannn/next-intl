@@ -1,12 +1,13 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {ResolvedRoutingConfig} from '../../routing/config';
-import {
+import type {Locale} from 'use-intl';
+import type {ResolvedRoutingConfig} from '../../routing/config.tsx';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
+} from '../../routing/types.tsx';
 import {
   getLocalePrefix,
   getSortedPathnames,
@@ -14,8 +15,8 @@ import {
   matchesPathname,
   normalizeTrailingSlash,
   prefixPathname
-} from '../../shared/utils';
-import StrictParams from './StrictParams';
+} from '../../shared/utils.tsx';
+import type StrictParams from './StrictParams.tsx';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 
@@ -49,7 +50,7 @@ export function normalizeNameOrNameWithParams<Pathname>(
   href:
     | HrefOrHrefWithParams<Pathname>
     | {
-        locale: string;
+        locale: Locale;
         href: HrefOrHrefWithParams<Pathname>;
       }
 ): {

@@ -1,8 +1,8 @@
-import type AbstractIntlMessages from './AbstractIntlMessages';
-import type Formats from './Formats';
-import type IntlError from './IntlError';
-import type TimeZone from './TimeZone';
-import type {RichTranslationValues} from './TranslationValues';
+import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
+import type {Locale} from './AppConfig.tsx';
+import type Formats from './Formats.tsx';
+import type IntlError from './IntlError.tsx';
+import type TimeZone from './TimeZone.tsx';
 
 /**
  * Should be used for entry points that configure the library.
@@ -10,7 +10,7 @@ import type {RichTranslationValues} from './TranslationValues';
 
 type IntlConfig<Messages = AbstractIntlMessages> = {
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
-  locale: string;
+  locale: Locale;
   /** Global formats can be provided to achieve consistent
    * formatting across components. */
   formats?: Formats;
@@ -41,13 +41,6 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
   now?: Date;
   /** All messages that will be available. */
   messages?: Messages;
-  /** Global default values for translation values and rich text elements.
-   * Can be used for consistent usage or styling of rich text elements.
-   * Defaults will be overidden by locally provided values.
-   *
-   * @deprecated See https://next-intl.dev/docs/usage/messages#rich-text-reuse-tags
-   **/
-  defaultTranslationValues?: RichTranslationValues;
 };
 
 /**

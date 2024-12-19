@@ -30,7 +30,7 @@ export const config = {
 
 ## Locale detection [#locale-detection]
 
-The locale is negotiated based on your [`localePrefix`](/docs/routing#locale-prefix) and [`domains`](/docs/routing#domains) setting. Once a locale is detected, it will be remembered for future requests by being stored in the `NEXT_LOCALE` cookie.
+The locale is negotiated based on your routing configuration, taking into account your settings for [`localePrefix`](/docs/routing#locale-prefix), [`domains`](/docs/routing#domains), [`localeDetection`](/docs/routing#locale-detection), and [`localeCookie`](/docs/routing#locale-cookie).
 
 ### Prefix-based routing (default) [#location-detection-prefix]
 
@@ -48,10 +48,11 @@ To change the locale, users can visit a prefixed route. This will take precedenc
 **Example workflow:**
 
 1. A user requests `/` and based on the `accept-language` header, the `en` locale is matched.
-2. The `en` locale is saved in a cookie and the user is redirected to `/en`.
+2. The user is redirected to `/en`.
 3. The app renders `<Link locale="de" href="/">Switch to German</Link>` to allow the user to change the locale to `de`.
 4. When the user clicks on the link, a request to `/de` is initiated.
-5. The middleware will update the cookie value to `de`.
+5. The middleware will add a cookie to remember the preference for the `de` locale.
+6. The user later requests `/` again and the middleware will redirect to `/de` based on the cookie.
 
 <Details id="accept-language-matching">
 <summary>Which algorithm is used to match the accept-language header against the available locales?</summary>
