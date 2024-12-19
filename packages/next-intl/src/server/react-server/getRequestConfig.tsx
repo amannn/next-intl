@@ -1,4 +1,4 @@
-import type {IntlConfig} from 'use-intl/core';
+import type {IntlConfig, Locale} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
@@ -8,6 +8,13 @@ export type RequestConfig = Omit<IntlConfig, 'locale'> & {
 };
 
 export type GetRequestConfigParams = {
+  /**
+   * If you provide an explicit locale to an async server-side function like
+   * `getTranslations({locale: 'en'})`, it will be passed via `locale` to
+   * `getRequestConfig` so you can use it instead of the segment value.
+   */
+  locale?: Locale;
+
   /**
    * Typically corresponds to the `[locale]` segment that was matched by the middleware.
    *

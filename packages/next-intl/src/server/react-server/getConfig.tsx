@@ -38,6 +38,8 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
   }
 
   const params: GetRequestConfigParams = {
+    locale: localeOverride,
+
     // In case the consumer doesn't read `params.locale` and instead provides the
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.

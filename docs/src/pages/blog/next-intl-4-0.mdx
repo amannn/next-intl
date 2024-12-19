@@ -205,7 +205,7 @@ This led to two minor changes:
 
 While the mentioned Next.js features are still under development and may change, these two changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
-As a closing note for this section, it seems like another feature is on its way to Next.js: [`rootParams`](https://github.com/vercel/next.js/pull/72837).
+Last, but far from least, I'm incredibly excited about another Next.js feature coming up: [`rootParams`](https://github.com/vercel/next.js/pull/72837)
 
 ```tsx
 import {unstable_rootParams as rootParams} from 'next/server';
@@ -217,7 +217,9 @@ async function Component() {
 }
 ```
 
-If things go well, I think this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
+This is nothing short of a game-changer for `next-intl`, finally enabling static rendering for apps with i18n routing without workarounds like `setRequestLocale` and generally allowing the library to integrate much tighter with Next.js.
+
+If you're using a setup with i18n routing, I'd encourage you to [give `rootParams` a try today](/blog/nextjs-root-params)!
 
 ## Other breaking changes
 
