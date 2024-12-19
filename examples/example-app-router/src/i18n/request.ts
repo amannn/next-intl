@@ -1,16 +1,34 @@
 import {hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
+import messages from '../../messages/en.json';
+import {rootParams} from './future';
 import {routing} from './routing';
 
-export default getRequestConfig(async ({requestLocale}) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
+export default getRequestConfig(async () => {
+  const params = await rootParams();
+  const locale = hasLocale(routing.locales, params.locale)
+    ? params.locale
     : routing.defaultLocale;
 
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    messages
   };
 });
+
+// Use case for overriding locale:
+// export default getRequestConfig(async (args) => {
+//   const params = await rootParams();
+//
+//   let locale = args.locale;
+//   if (!locale) {
+//     locale = hasLocale(routing.locales, params.locale)
+//       ? params.locale
+//       : routing.defaultLocale;
+//   }
+//
+//   return {
+//     locale,
+//     messages
+//   };
+// });
