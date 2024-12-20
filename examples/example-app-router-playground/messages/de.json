@@ -3,7 +3,7 @@
     "hello": "Hallo {name}!"
   },
   "AsyncComponent": {
-    "basic": "AsyncComponent",
+    "basic": "AsyncComponent (de)",
     "markup": "Markup with <important>bold content</important>",
     "rich": "This is a <important>rich</important> text."
   },
