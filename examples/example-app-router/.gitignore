@@ -6,3 +6,4 @@ tsconfig.tsbuildinfo
 /playwright-report/
 /playwright/.cache/
 out
+messages/en.d.json.ts

@@ -6,17 +6,12 @@ export {
   default as getRequestConfig,
   type GetRequestConfigParams,
   type RequestConfig
-} from './getRequestConfig';
-export {default as getFormatter} from './getFormatter';
-export {default as getNow} from './getNow';
-export {default as getTimeZone} from './getTimeZone';
-export {default as getTranslations} from './getTranslations';
-export {default as getMessages} from './getMessages';
-export {default as getLocale} from './getLocale';
+} from './getRequestConfig.tsx';
+export {default as getFormatter} from './getFormatter.tsx';
+export {default as getNow} from './getNow.tsx';
+export {default as getTimeZone} from './getTimeZone.tsx';
+export {default as getTranslations} from './getTranslations.tsx';
+export {default as getMessages} from './getMessages.tsx';
+export {default as getLocale} from './getLocale.tsx';
 
-export {setCachedRequestLocale as setRequestLocale} from './RequestLocaleCache';
-
-export {
-  /** @deprecated Deprecated in favor of `setRequestLocale`. */
-  setCachedRequestLocale as unstable_setRequestLocale
-} from './RequestLocaleCache';
+export {setCachedRequestLocale as setRequestLocale} from './RequestLocaleCache.tsx';

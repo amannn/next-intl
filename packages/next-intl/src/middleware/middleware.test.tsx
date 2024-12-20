@@ -1,15 +1,23 @@
 // @vitest-environment edge-runtime
 
 import {RequestCookies} from 'next/dist/compiled/@edge-runtime/cookies';
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server.js';
 import {pathToRegexp} from 'path-to-regexp';
-import {Mock, afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import createMiddleware from '../middleware';
-import {Pathnames, defineRouting} from '../routing';
+import {
+  type Mock,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi
+} from 'vitest';
+import createMiddleware from '../middleware.tsx';
+import {type Pathnames, defineRouting} from '../routing.tsx';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 
-vi.mock('next/server', async (importActual) => {
+vi.mock('next/server.js', async (importActual) => {
   const ActualNextServer = (await importActual()) as any;
   type MiddlewareResponseInit = Parameters<(typeof NextResponse)['next']>[0];
 
@@ -287,14 +295,6 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('sets a cookie', () => {
-      const response = middleware(createMockRequest('/'));
-      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
-        name: 'NEXT_LOCALE',
-        value: 'en'
-      });
-    });
-
     it('can turn off the cookie', () => {
       const response = createMiddleware({...routing, localeCookie: false})(
         createMockRequest('/')
@@ -352,6 +352,13 @@ describe('prefix-based routing', () => {
           '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
         ].join(', ')
       );
+    });
+
+    it('sets a cookie when changing to the default locale', () => {
+      const response = middleware(
+        createMockRequest('/en', 'en', undefined, 'de')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')?.value).toBe('en');
     });
 
     it('always provides the locale via a request header, even if a cookie exists with the correct value (see https://github.com/amannn/next-intl/discussions/446)', () => {
@@ -1022,13 +1029,6 @@ describe('prefix-based routing', () => {
         'http://localhost:3000/en'
       );
     });
-
-    it("doesn't set a cookie", () => {
-      const response = middleware(
-        createMockRequest('/', 'de', 'http://localhost:3000', undefined)
-      );
-      expect(response.cookies.getAll()).toEqual([]);
-    });
   });
 
   describe('localePrefix: always', () => {
@@ -1100,6 +1100,24 @@ describe('prefix-based routing', () => {
       middleware(createMockRequest('/en/a%'));
       middleware(createMockRequest('/en/about/a%'));
       expect(MockedNextResponse.next).toHaveBeenCalledTimes(3);
+    });
+
+    it("does not set a cookie when the user's locale matches the prefix as well as the default locale", () => {
+      const response = middleware(createMockRequest('/en', 'en'));
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it("does not set a cookie when the user's locale matches the prefix as well as a non-default locale", () => {
+      const response = middleware(createMockRequest('/de', 'de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it('sets a cookie when the user locale does not match the prefix', () => {
+      const response = middleware(createMockRequest('/en', 'de'));
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'en'
+      });
     });
 
     describe('base path', () => {
@@ -2025,20 +2043,24 @@ describe('prefix-based routing', () => {
       );
     });
 
-    it('sets a cookie', () => {
+    it('does not set a cookie by default', () => {
       const response = middleware(createMockRequest('/'));
-      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
-        name: 'NEXT_LOCALE',
-        value: 'en'
-      });
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
     });
 
-    it('sets a cookie based on accept-language header', () => {
-      const response = middleware(createMockRequest('/', 'de'));
+    it('sets a cookie if the user requests a different locale than what is configured in accept-language', () => {
+      const response = middleware(createMockRequest('/de', 'en'));
       expect(response.cookies.get('NEXT_LOCALE')).toEqual({
         name: 'NEXT_LOCALE',
         value: 'de'
       });
+    });
+
+    it('does not set a cookie if it is already set', () => {
+      const response = middleware(
+        createMockRequest('/de', 'en', undefined, 'de')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
     });
 
     it('keeps a cookie if already set', () => {
@@ -2447,6 +2469,30 @@ describe('domain-based routing', () => {
       expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
         'http://ca.example.com/fr'
       );
+    });
+
+    it("doesn't set a cookie when on a domain that doesn't support the user's locale", () => {
+      const response = middleware(
+        createMockRequest('/', 'fr', 'http://en.example.com')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it("doesn't set a cookie when on a domain that supports the user's locale", () => {
+      const response = middleware(
+        createMockRequest('/', 'fr', 'http://en.example.com')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toBeUndefined();
+    });
+
+    it("sets a cookie when on a domain that supports the user's locale and a different locale is requested", () => {
+      const response = middleware(
+        createMockRequest('/en', 'fr', 'http://ca.example.com')
+      );
+      expect(response.cookies.get('NEXT_LOCALE')).toEqual({
+        name: 'NEXT_LOCALE',
+        value: 'en'
+      });
     });
 
     describe('unknown hosts', () => {
@@ -3327,18 +3373,5 @@ describe('domain-based routing', () => {
         );
       });
     });
-  });
-});
-
-describe('deprecated middleware options', () => {
-  it('still accepts them', () => {
-    createMiddleware(
-      {locales: ['en'], defaultLocale: 'en'},
-      {
-        localeDetection: false,
-        alternateLinks: false,
-        localeCookie: false
-      }
-    );
   });
 });

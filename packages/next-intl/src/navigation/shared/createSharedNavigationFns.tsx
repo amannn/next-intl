@@ -1,37 +1,37 @@
 import {
   permanentRedirect as nextPermanentRedirect,
   redirect as nextRedirect
-} from 'next/navigation';
-import React, {ComponentProps, forwardRef, use} from 'react';
+} from 'next/navigation.js';
+import {type ComponentProps, forwardRef} from 'react';
+import type {Locale} from 'use-intl';
 import {
-  RoutingConfigLocalizedNavigation,
-  RoutingConfigSharedNavigation,
+  type RoutingConfigLocalizedNavigation,
+  type RoutingConfigSharedNavigation,
   receiveRoutingConfig
-} from '../../routing/config';
-import {
+} from '../../routing/config.tsx';
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import {ParametersExceptFirst, Prettify} from '../../shared/types';
-import {isLocalizableHref} from '../../shared/utils';
-import BaseLink from './BaseLink';
+} from '../../routing/types.tsx';
+import type {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
+import use from '../../shared/use.tsx';
+import {isLocalizableHref} from '../../shared/utils.tsx';
+import BaseLink from './BaseLink.tsx';
 import {
-  HrefOrHrefWithParams,
-  HrefOrUrlObjectWithParams,
-  QueryParams,
+  type HrefOrHrefWithParams,
+  type HrefOrUrlObjectWithParams,
+  type QueryParams,
   applyPathnamePrefix,
   compileLocalizedPathname,
   normalizeNameOrNameWithParams,
   serializeSearchParams,
   validateReceivedConfig
-} from './utils';
+} from './utils.tsx';
 
 type PromiseOrValue<Type> = Type | Promise<Type>;
-type UnwrapPromiseOrValue<Type> =
-  Type extends Promise<infer Value> ? Value : Type;
 
 /**
  * Shared implementations for `react-server` and `react-client`
@@ -42,9 +42,7 @@ export default function createSharedNavigationFns<
   const AppLocalePrefixMode extends LocalePrefixMode = 'always',
   const AppDomains extends DomainsConfig<AppLocales> = never
 >(
-  getLocale: () => PromiseOrValue<
-    AppLocales extends never ? string : AppLocales[number]
-  >,
+  getLocale: () => PromiseOrValue<Locale>,
   routing?: [AppPathnames] extends [never]
     ?
         | RoutingConfigSharedNavigation<
@@ -60,8 +58,6 @@ export default function createSharedNavigationFns<
         AppDomains
       >
 ) {
-  type Locale = UnwrapPromiseOrValue<ReturnType<typeof getLocale>>;
-
   const config = receiveRoutingConfig(routing || {});
   if (process.env.NODE_ENV !== 'production') {
     validateReceivedConfig(config);
@@ -91,7 +87,7 @@ export default function createSharedNavigationFns<
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl.dev/docs/routing/navigation#link */
-      locale?: string;
+      locale?: Locale;
     }
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
@@ -147,10 +143,9 @@ export default function createSharedNavigationFns<
             ? {
                 domains: (config as any).domains.reduce(
                   (
-                    acc: Record<Locale, string>,
+                    acc: Record<string, Locale>,
                     domain: DomainConfig<AppLocales>
                   ) => {
-                    // @ts-expect-error -- This is ok
                     acc[domain.domain] = domain.defaultLocale;
                     return acc;
                   },
@@ -193,7 +188,7 @@ export default function createSharedNavigationFns<
       href: [AppPathnames] extends [never]
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
-      locale: string;
+      locale: Locale;
     } & DomainConfigForAsNeeded,
     /** @private Removed in types returned below */
     _forcePrefix?: boolean

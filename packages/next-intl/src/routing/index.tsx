@@ -1,8 +1,8 @@
 export type {
   Pathnames,
-  DomainsConfig,
   LocalePrefix,
+  DomainsConfig,
   LocalePrefixMode
-} from './types';
-export type {RoutingConfig} from './config';
-export {default as defineRouting} from './defineRouting';
+} from './types.tsx';
+export {default as defineRouting} from './defineRouting.tsx';
+export type {RoutingConfig} from './config.tsx';
