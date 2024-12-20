@@ -26,12 +26,12 @@ async function Component() {
 
 This addition is a game-changer for `next-intl`.
 
-While the library previously relied on workarounds to provide a locale to all Server Components, this API now provides native support in Next.js for this use case, allowing the library to integrate much tighter with Next.js.
+While the library previously relied on workarounds to provide a locale to Server Components, this API now provides native support in Next.js for this use case, allowing the library to integrate much tighter with Next.js.
 
 Practically, for users of `next-intl` this means:
 
 1. Being able to support static rendering of apps with i18n routing without `setRequestLocale`
-2. Improved integration with the Next.js cache
+2. Improved integration with Next.js cache mechanisms
 3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) (although there's more work necessary here on the Next.js side)
 
 But first, let's have a look at how this API works in practice.
@@ -40,22 +40,32 @@ But first, let's have a look at how this API works in practice.
 
 Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`.
 
-Now, you can move this to a nested folder, e.g.:
+Now, you can move these to a nested folder that can be a dynamic segment, e.g.:
+
+```
+src
+└── app
+    └── [locale]
+        ├── layout.tsx (root layout)
+        └── page.tsx
+```
+
+A root layout is a layout that has no other layouts located above it.
+
+In contrast, layouts that do have other layout ancestors are regular layouts:
 
 ```
 src
 └── app
     └── [locale]
         ├── layout.tsx
-        ├── page.tsx
+        ├── (...)
         └── news
-            ├── layout.tsx
+            ├── layout.tsx (regular layout)
             └── page.tsx
 ```
 
-A root layout is defined as the layout that has no pages located above it. In our example, `src/app/[locale]/layout.tsx` is the root layout. In contrast, layouts that do have pages above them are regular layouts (e.g. `src/app/[locale]/news/layout.tsx`).
-
-That being said, with the addition of `rootParams`, you can now read the params of a root layout in all Server Components that are located below it:
+With the addition of `rootParams`, you can now read the param values of a root layout in all Server Components that render within it:
 
 ```tsx filename=src/components/LocaleSwitcher.tsx
 import {unstable_rootParams as rootParams} from 'next/server';
@@ -70,7 +80,7 @@ export async function LocaleSwitcher() {
 
 ## Multiple root layouts
 
-Here's where it gets interesting: Since Next.js supports [route groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups), you can have multiple root layouts:
+Here's where it gets interesting: With [route groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups), you can provide another layout for pages that are not located in the `[locale]` segment:
 
 ```
 src
@@ -83,7 +93,7 @@ src
         └── page.tsx
 ```
 
-The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` are on the same level, therefore both qualify as root layouts. Due to this, in this case the returned value of `rootParams` will depend on where the component that calls the function is being rendered from.
+The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore both qualify as root layouts. Due to this, in this case the returned value of `rootParams` will depend on where the component that calls the function is being rendered from.
 
 If you call `rootParams` in shared code that is used by both root layouts, this allows for a pattern like this:
 
@@ -135,9 +145,9 @@ export const dynamicParams = false;
 
 So, how can you use this feature in `next-intl`?
 
-Similarly to how we've defined the `getLocale` function above, we do in fact already have a shared place that is called by all server-side functions that require the current locale of the user: [`src/i18n/request.ts`](/docs/usage/configuration#server-client-components).
+Similarly to how we've defined the `getLocale` function above, we do in fact already have a shared place that is called by all server-side functions that require the current locale of the user: [`i18n/request.ts`](/docs/usage/configuration#server-client-components).
 
-Check it out:
+So let's use `rootParams` here:
 
 ```tsx filename="src/i18n/request.ts"
 import {unstable_rootParams as rootParams} from 'next/server';
@@ -160,7 +170,7 @@ export default getRequestConfig(async () => {
 
 `hasLocale` is a new addition scheduled for [`next-intl@4.0`](/blog/next-intl-4-0), but practically simply checks if the provided `locales` array contains a given `locale`. If it doesn't, typically because we're not in the `[locale]` segment, a default locale is used instead.
 
-That's it—a single change to `src/i18n/request.ts` is all you need to do to start using `rootParams`!
+That's it—a single change to `i18n/request.ts` is all you need to do to start using `rootParams`!
 
 ## Cleaning up
 
