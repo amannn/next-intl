@@ -141,8 +141,8 @@ Check it out:
 
 ```tsx filename="src/i18n/request.ts"
 import {unstable_rootParams as rootParams} from 'next/server';
-import {hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
 export default getRequestConfig(async () => {
@@ -236,6 +236,8 @@ export async function generateMetadata(
 The only case where you might still want to pass a locale to `getTranslations` is if your UI renders multiple locales in parallel. If this is the case in your app, you should make sure to accept an override in your `i18n/request.ts` config:
 
 ```tsx filename="src/i18n/request.ts"
+import {unstable_rootParams as rootParams} from 'next/server';
+import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
@@ -254,6 +256,8 @@ export default getRequestConfig(async ({locale}) => {
   // ...
 });
 ```
+
+This is a very rare case, so if you're unsure, you very likely don't need this.
 
 ### Static rendering
 
