@@ -7,9 +7,9 @@ import StayUpdated from '@/components/StayUpdated.mdx';
 
 # next-intl 4.0 beta
 
-<small>Dec XX, 2024 · by Jan Amann</small>
+<small>Dec 23, 2024 · by Jan Amann</small>
 
-After a year of feature development, this release focuses on streamlining the API surface while maintaining the lean core architecture of `next-intl`. While many major improvements were already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several valuable enhancements that will improve your development experience and make working with internationalization even more seamless.
+After a year of feature development, this release focuses on streamlining the API surface while maintaining the core architecture of `next-intl`. With many major improvements already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several enhancements that will improve your development experience and make working with internationalization even more seamless.
 
 Here's what's new in `next-intl@4.0`:
 
@@ -20,7 +20,7 @@ Here's what's new in `next-intl@4.0`:
 5. [**Modernized build output**](#modernized-build-output)
 6. [**Preparation for upcoming Next.js features**](#nextjs-future)
 
-Please also have a look at the [other breaking changes](#other-breaking-changes) before you [upgrade](#upgrade-now).
+Please also have a look at the [other breaking changes](#other-breaking-changes) listed below before you upgrade.
 
 ## Revamped augmented types
 
@@ -194,30 +194,17 @@ With these changes, the bundle size of `next-intl` has been reduced by ~7% ([all
 
 ## Preparation for upcoming Next.js features [#nextjs-future]
 
-To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) for `next-intl`.
+To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [`ppr`](https://nextjs.org/docs/app/api-reference/next-config-js/ppr), [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) and [`rootParams`](https://github.com/vercel/next.js/pull/72837) for `next-intl`.
 
-This led to two minor changes:
+This led to three minor changes:
 
 1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
+3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](https://next-intl.dev/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
 
-While the mentioned Next.js features are still under development and may change, these two changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
+While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
-Last, but far from least, I'm incredibly excited about another Next.js feature coming up: [`rootParams`](https://github.com/vercel/next.js/pull/72837)
-
-```tsx
-import {unstable_rootParams as rootParams} from 'next/server';
-
-async function Component() {
-  // The ability to read params deeply in
-  // Server Components ... finally!
-  const {locale} = await rootParams();
-}
-```
-
-This is nothing short of a game-changer for `next-intl`, finally enabling static rendering for apps with i18n routing without workarounds like `setRequestLocale` and generally allowing the library to integrate much tighter with Next.js.
-
-If you're using a setup with i18n routing, I'd encourage you to [give `rootParams` a try today](/blog/nextjs-root-params)!
+I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I'd encourage you to [give `rootParams` a try today](/blog/nextjs-root-params)!
 
 ## Other breaking changes
 
@@ -226,7 +213,7 @@ If you're using a setup with i18n routing, I'd encourage you to [give `rootParam
 3. Automatically inherit formats when `NextIntlClientProvider` is rendered from a Server Component (see [PR #1191](https://github.com/amannn/next-intl/pull/1191))
 4. Require locale to be returned from `getRequestConfig` (see [PR #1486](https://github.com/amannn/next-intl/pull/1486))
 5. Disallow passing `null`, `undefined` or `boolean` as an ICU argument (see [PR #1561](https://github.com/amannn/next-intl/pull/1561))
-6. Bump minimum required typescript version to 5 for projects using TypeScript (see [PR #1481](https://github.com/amannn/next-intl/pull/1481))
+6. Bump minimum required TypeScript version to 5 for projects using TypeScript (see [PR #1481](https://github.com/amannn/next-intl/pull/1481))
 7. Remove deprecated APIs (see [PR #1479](https://github.com/amannn/next-intl/pull/1479))
 8. Remove deprecated APIs pt. 2 (see [PR #1482](https://github.com/amannn/next-intl/pull/1482))
 
@@ -239,8 +226,6 @@ Afterwards, you can upgrade by running:
 ```
 npm install next-intl@v4-beta
 ```
-
-If you need help, you can refer to the [examples](/examples) which have all been updated.
 
 I'd also invite you to share your experiences with `next-intl@4.0` in the [discussions](https://github.com/amannn/next-intl/discussions/1631).
 
