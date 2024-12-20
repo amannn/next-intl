@@ -11,6 +11,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && (github.event.pull_request.base.sha || github.event.before) }}
     steps:
       # General setup
       - uses: actions/checkout@v4

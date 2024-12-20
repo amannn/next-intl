@@ -51,7 +51,7 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       if (pathExists(candidate)) {
         if (!hasWarnedForDeprecatedI18nConfig) {
           console.warn(
-            `\n[next-intl] Reading request configuration from ${candidate} is deprecated, please see https://next-intl-docs.vercel.app/blog/next-intl-3-22#i18n-request — you can either move your configuration to ./i18n/request.ts or provide a custom path in your Next.js config:
+            `\n[next-intl] Reading request configuration from ${candidate} is deprecated, please see https://next-intl.dev/blog/next-intl-3-22#i18n-request — you can either move your configuration to ./i18n/request.ts or provide a custom path in your Next.js config:
 
 const withNextIntl = createNextIntlPlugin(
   './path/to/i18n/request.tsx'
@@ -78,7 +78,7 @@ const withNextIntl = createNextIntlPlugin(
 function initPlugin(i18nPath?: string, nextConfig?: NextConfig): NextConfig {
   if (nextConfig?.i18n != null) {
     console.warn(
-      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl-docs.vercel.app/examples#app-router-migration\n"
+      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl.dev/examples#app-router-migration\n"
     );
   }
 

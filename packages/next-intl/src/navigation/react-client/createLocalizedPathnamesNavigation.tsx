@@ -25,7 +25,7 @@ import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 /**
- * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)
+ * @deprecated Consider switching to `createNavigation` (see https://next-intl.dev/blog/next-intl-3-22#create-navigation)
  **/
 export default function createLocalizedPathnamesNavigation<
   AppLocales extends Locales,
@@ -168,7 +168,7 @@ export default function createLocalizedPathnamesNavigation<
   }
 
   function usePathname(): keyof AppPathnames {
-    const pathname = useBasePathname(config.localePrefix);
+    const pathname = useBasePathname(config);
     const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.

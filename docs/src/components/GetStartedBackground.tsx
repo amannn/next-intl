@@ -23,7 +23,13 @@ export default function GetStartedBackground() {
             patternUnits="userSpaceOnUse"
             width={patternSize}
           >
-            <circle cx="3" cy="3" fill="#D0D3E2" r={radius} />
+            <circle
+              className={styles.dot}
+              cx="3"
+              cy="3"
+              fill="var(--GetStartedBackground-dot)"
+              r={radius}
+            />
           </pattern>
           <radialGradient cx="50%" cy="50%" id="fade-out" r="50%">
             <stop offset="0%" stopColor="white" stopOpacity="1" />

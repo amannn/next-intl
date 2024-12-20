@@ -99,7 +99,7 @@ export default function createFormatter({
           new IntlError(
             IntlErrorCode.ENVIRONMENT_FALLBACK,
             process.env.NODE_ENV !== 'production'
-              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/configuration#time-zone`
               : undefined
           )
         );
@@ -224,7 +224,7 @@ export default function createFormatter({
         new IntlError(
           IntlErrorCode.ENVIRONMENT_FALLBACK,
           process.env.NODE_ENV !== 'production'
-            ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+            ? `The \`now\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/configuration#now`
             : undefined
         )
       );

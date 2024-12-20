@@ -51,11 +51,11 @@ export default function createNavigation<
     routing
   );
 
-  /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#usepathname */
+  /** @see https://next-intl.dev/docs/routing/navigation#usepathname */
   function usePathname(): [AppPathnames] extends [never]
     ? string
     : keyof AppPathnames {
-    const pathname = useBasePathname(config.localePrefix);
+    const pathname = useBasePathname(config);
     const locale = useTypedLocale();
 
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
@@ -117,17 +117,17 @@ export default function createNavigation<
 
       return {
         ...router,
-        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
+        /** @see https://next-intl.dev/docs/routing/navigation#userouter */
         push: createHandler<
           Parameters<typeof router.push>[1],
           typeof router.push
         >(router.push),
-        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
+        /** @see https://next-intl.dev/docs/routing/navigation#userouter */
         replace: createHandler<
           Parameters<typeof router.replace>[1],
           typeof router.replace
         >(router.replace),
-        /** @see https://next-intl-docs.vercel.app/docs/routing/navigation#userouter */
+        /** @see https://next-intl.dev/docs/routing/navigation#userouter */
         prefetch: createHandler<
           Parameters<typeof router.prefetch>[1],
           typeof router.prefetch

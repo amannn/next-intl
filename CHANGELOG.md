@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.2 (2024-12-18)
+
+### Bug Fixes
+
+* Support `t.has` when `getTranslations` is called with an object argument ([#1616](https://github.com/amannn/next-intl/issues/1616)) ([64895a2](https://github.com/amannn/next-intl/commit/64895a2bb3c445f6e3deab85152a0d04ced17e46)), closes [/github.com/amannn/next-intl/discussions/437#discussioncomment-11593318](https://github.com/amannn//github.com/amannn/next-intl/discussions/437/issues/discussioncomment-11593318) – by @amannn
+
+## 3.26.1 (2024-12-11)
+
+### Bug Fixes
+
+* Use new domain `next-intl.dev` in links ([#1601](https://github.com/amannn/next-intl/issues/1601)) ([40a9a77](https://github.com/amannn/next-intl/commit/40a9a7722edc8e7787ed799a4bf1d3c4a2e04848)) – by @amannn
+
+## 3.26.0 (2024-12-06)
+
+### Features
+
+* Support React 19 ([#1597](https://github.com/amannn/next-intl/issues/1597)) ([e0ffe29](https://github.com/amannn/next-intl/commit/e0ffe292a3cae8955fcd06bd8e8e2b02c525ef69)) – by @amannn
+
+## 3.25.3 (2024-11-26)
+
+### Bug Fixes
+
+* Follow-up for [#1573](https://github.com/amannn/next-intl/issues/1573) to also handle the case when a non-default locale is in use ([#1578](https://github.com/amannn/next-intl/issues/1578)) ([fd71741](https://github.com/amannn/next-intl/commit/fd7174179881a19e3573fceb9c6e903923644761)), closes [#1568](https://github.com/amannn/next-intl/issues/1568) – by @amannn
+
+## 3.25.2 (2024-11-25)
+
+### Bug Fixes
+
+* Handle inconsistency in Next.js when using `usePathname` with custom prefixes, `localePrefix: 'as-needed'` and static rendering ([#1573](https://github.com/amannn/next-intl/issues/1573)) ([20fd0f0](https://github.com/amannn/next-intl/commit/20fd0f0015839357893bcd256ff880a98b01ea1f)) – by @amannn
+
+## 3.25.1 (2024-11-13)
+
+### Bug Fixes
+
+* Correctly handle search params in redirects when using `trailingSlash: true` ([#1537](https://github.com/amannn/next-intl/issues/1537)) ([03a4620](https://github.com/amannn/next-intl/commit/03a4620432ff063b2b84f4dba5c49ae36b92fd73)) – by @deini
+
+## 3.25.0 (2024-11-08)
+
+### Features
+
+* Add type exports to enable `declaration: true` in `tsconfig.json` ([#1509](https://github.com/amannn/next-intl/issues/1509)) ([6b2ca9c](https://github.com/amannn/next-intl/commit/6b2ca9cfddcf8611893f76f9690e0bafb534e8fd)) – by @osaton
+
+## 3.24.0 (2024-10-31)
+
+### Features
+
+* Add support for React 19 RC ([#1490](https://github.com/amannn/next-intl/issues/1490)) ([2dea022](https://github.com/amannn/next-intl/commit/2dea02271f79e183dfd18a3c77112a79e1fce581)) – by @amannn
+
 ## 3.23.5 (2024-10-24)
 
 ### Bug Fixes

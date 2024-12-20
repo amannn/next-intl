@@ -1,6 +1,6 @@
 # example-app-router-without-i18n-routing
 
-An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup ([without i18n routing setup](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing)).
+An example that showcases how an app can provide a locale in `i18n.ts` to `next-intl` in an App Router setup ([without i18n routing setup](https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing)).
 
 This app uses Server Actions in two places:
 

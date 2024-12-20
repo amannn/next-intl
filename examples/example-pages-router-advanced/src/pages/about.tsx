@@ -31,7 +31,7 @@ export async function getServerSideProps({locale}: GetServerSidePropsContext) {
       ),
       // Note that when `now` is passed to the app, you need to make sure the
       // value is updated from time to time, so relative times are updated. See
-      // https://next-intl-docs.vercel.app/docs/usage/configuration#global-now-value
+      // https://next-intl.dev/docs/usage/configuration#global-now-value
       now: new Date().getTime()
     }
   };

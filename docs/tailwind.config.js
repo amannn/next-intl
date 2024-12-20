@@ -7,7 +7,7 @@ function makePrimaryColor(luminance) {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
-  content: ['./src/**/*.{js,tsx,md,mdx}'],
+  content: ['./src/**/*.{js,tsx,md,mdx}', './theme.config.tsx'],
   theme: {
     extend: {
       fontSize: {

@@ -3,41 +3,89 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.2 (2024-12-18)
+
+### Bug Fixes
+
+- Support `t.has` when `getTranslations` is called with an object argument ([#1616](https://github.com/amannn/next-intl/issues/1616)) ([64895a2](https://github.com/amannn/next-intl/commit/64895a2bb3c445f6e3deab85152a0d04ced17e46)), closes [/github.com/amannn/next-intl/discussions/437#discussioncomment-11593318](https://github.com/amannn//github.com/amannn/next-intl/discussions/437/issues/discussioncomment-11593318) – by @amannn
+
+## 3.26.1 (2024-12-11)
+
+### Bug Fixes
+
+- Use new domain `next-intl.dev` in links ([#1601](https://github.com/amannn/next-intl/issues/1601)) ([40a9a77](https://github.com/amannn/next-intl/commit/40a9a7722edc8e7787ed799a4bf1d3c4a2e04848)) – by @amannn
+
+## 3.26.0 (2024-12-06)
+
+### Features
+
+- Support React 19 ([#1597](https://github.com/amannn/next-intl/issues/1597)) ([e0ffe29](https://github.com/amannn/next-intl/commit/e0ffe292a3cae8955fcd06bd8e8e2b02c525ef69)) – by @amannn
+
+## 3.25.3 (2024-11-26)
+
+### Bug Fixes
+
+- Follow-up for [#1573](https://github.com/amannn/next-intl/issues/1573) to also handle the case when a non-default locale is in use ([#1578](https://github.com/amannn/next-intl/issues/1578)) ([fd71741](https://github.com/amannn/next-intl/commit/fd7174179881a19e3573fceb9c6e903923644761)), closes [#1568](https://github.com/amannn/next-intl/issues/1568) – by @amannn
+
+## 3.25.2 (2024-11-25)
+
+### Bug Fixes
+
+- Handle inconsistency in Next.js when using `usePathname` with custom prefixes, `localePrefix: 'as-needed'` and static rendering ([#1573](https://github.com/amannn/next-intl/issues/1573)) ([20fd0f0](https://github.com/amannn/next-intl/commit/20fd0f0015839357893bcd256ff880a98b01ea1f)) – by @amannn
+
+## 3.25.1 (2024-11-13)
+
+### Bug Fixes
+
+- Correctly handle search params in redirects when using `trailingSlash: true` ([#1537](https://github.com/amannn/next-intl/issues/1537)) ([03a4620](https://github.com/amannn/next-intl/commit/03a4620432ff063b2b84f4dba5c49ae36b92fd73)) – by @deini
+
+## 3.25.0 (2024-11-08)
+
+### Features
+
+- Add type exports to enable `declaration: true` in `tsconfig.json` ([#1509](https://github.com/amannn/next-intl/issues/1509)) ([6b2ca9c](https://github.com/amannn/next-intl/commit/6b2ca9cfddcf8611893f76f9690e0bafb534e8fd)) – by @osaton
+
+## 3.24.0 (2024-10-31)
+
+### Features
+
+- Add support for React 19 RC ([#1490](https://github.com/amannn/next-intl/issues/1490)) ([2dea022](https://github.com/amannn/next-intl/commit/2dea02271f79e183dfd18a3c77112a79e1fce581)) – by @amannn
+
 ## 3.23.5 (2024-10-24)
 
 ### Bug Fixes
 
-* Don't warn when setting `prefetch={true}` on `<Link />` ([#1463](https://github.com/amannn/next-intl/issues/1463)) ([fd6d73d](https://github.com/amannn/next-intl/commit/fd6d73dc145a0679e85a1a71fe40c43d3312e27e)), closes [#1462](https://github.com/amannn/next-intl/issues/1462) – by @amannn
+- Don't warn when setting `prefetch={true}` on `<Link />` ([#1463](https://github.com/amannn/next-intl/issues/1463)) ([fd6d73d](https://github.com/amannn/next-intl/commit/fd6d73dc145a0679e85a1a71fe40c43d3312e27e)), closes [#1462](https://github.com/amannn/next-intl/issues/1462) – by @amannn
 
 ## 3.23.4 (2024-10-24)
 
 ### Bug Fixes
 
-* Upgrade to `negotiator@^1.0` ([#1460](https://github.com/amannn/next-intl/issues/1460)) ([b93f297](https://github.com/amannn/next-intl/commit/b93f29736250a749333d438b06b7a608e9d73c28)) – by @amannn
+- Upgrade to `negotiator@^1.0` ([#1460](https://github.com/amannn/next-intl/issues/1460)) ([b93f297](https://github.com/amannn/next-intl/commit/b93f29736250a749333d438b06b7a608e9d73c28)) – by @amannn
 
 ## 3.23.3 (2024-10-24)
 
 ### Bug Fixes
 
-* Resolve locale for navigation APIs consistently from `i18n/request.ts` in `react-server` like all other APIs do ([#1459](https://github.com/amannn/next-intl/issues/1459)) ([8c6d5ff](https://github.com/amannn/next-intl/commit/8c6d5fff009ac3c54b2847c23b8148759d0b6ffa)) – by @amannn
+- Resolve locale for navigation APIs consistently from `i18n/request.ts` in `react-server` like all other APIs do ([#1459](https://github.com/amannn/next-intl/issues/1459)) ([8c6d5ff](https://github.com/amannn/next-intl/commit/8c6d5fff009ac3c54b2847c23b8148759d0b6ffa)) – by @amannn
 
 ## 3.23.2 (2024-10-22)
 
 ### Bug Fixes
 
-* Handle inlined search params and hashes correctly in `<Link />` from `createNavigation` ([#1448](https://github.com/amannn/next-intl/issues/1448)) ([ba0a537](https://github.com/amannn/next-intl/commit/ba0a537571b49d2d31cbc3c5079a7ad738e1409b)) – by @amannn
+- Handle inlined search params and hashes correctly in `<Link />` from `createNavigation` ([#1448](https://github.com/amannn/next-intl/issues/1448)) ([ba0a537](https://github.com/amannn/next-intl/commit/ba0a537571b49d2d31cbc3c5079a7ad738e1409b)) – by @amannn
 
 ## 3.23.1 (2024-10-22)
 
 ### Bug Fixes
 
-* Remove usage of deprecated `ReactNodeArray` which is removed in React 19 ([#1445](https://github.com/amannn/next-intl/issues/1445)) ([2396345](https://github.com/amannn/next-intl/commit/23963458e3ef3d5d29eeb9df01f40bbe11245301)) – by @amannn
+- Remove usage of deprecated `ReactNodeArray` which is removed in React 19 ([#1445](https://github.com/amannn/next-intl/issues/1445)) ([2396345](https://github.com/amannn/next-intl/commit/23963458e3ef3d5d29eeb9df01f40bbe11245301)) – by @amannn
 
 ## 3.23.0 (2024-10-22)
 
 ### Features
 
-* Add Next.js 15 to peer dependencies ([#1443](https://github.com/amannn/next-intl/issues/1443)) ([4cb22bb](https://github.com/amannn/next-intl/commit/4cb22bb10990961dba7e5accd2b5c70664f2b6d2)) – by @amannn
+- Add Next.js 15 to peer dependencies ([#1443](https://github.com/amannn/next-intl/issues/1443)) ([4cb22bb](https://github.com/amannn/next-intl/commit/4cb22bb10990961dba7e5accd2b5c70664f2b6d2)) – by @amannn
 
 ## 3.22.0 (2024-10-21)
 
@@ -389,7 +437,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-- Invoke `notFound()` when no locale was attached to the request and update docs to suggest validating the locale in `i18n.ts` ([#742](https://github.com/amannn/next-intl/issues/742)) ([e6d9878](https://github.com/amannn/next-intl/commit/e6d98787ad43aec50dcb6594353da83a958a81d1)), closes [#736](https://github.com/amannn/next-intl/issues/736) [#716](https://github.com/amannn/next-intl/issues/716) [/next-intl-docs.vercel.app/docs/usage/configuration#i18](https://github.com//next-intl-docs.vercel.app/docs/usage/configuration/issues/i18)
+- Invoke `notFound()` when no locale was attached to the request and update docs to suggest validating the locale in `i18n.ts` ([#742](https://github.com/amannn/next-intl/issues/742)) ([e6d9878](https://github.com/amannn/next-intl/commit/e6d98787ad43aec50dcb6594353da83a958a81d1)), closes [#736](https://github.com/amannn/next-intl/issues/736) [#716](https://github.com/amannn/next-intl/issues/716) [/next-intl.dev/docs/usage/configuration#i18](https://github.com//next-intl.dev/docs/usage/configuration/issues/i18)
 
 ## 3.3.3 (2023-12-20)
 
@@ -497,7 +545,7 @@ Add provenance statement to published packages.
 
 # 3.0.0 (2023-11-14)
 
-Please refer to [the release notes](https://next-intl-docs.vercel.app/blog/next-intl-3-0).
+Please refer to [the release notes](https://next-intl.dev/blog/next-intl-3-0).
 
 ## 2.22.1 (2023-11-02)
 
@@ -727,7 +775,7 @@ Please refer to [the release notes](https://next-intl-docs.vercel.app/blog/next-
 
 ### Features
 
-- Add support for using `next-intl` in the `app` folder with Next.js 13 (see https://next-intl-docs.vercel.app/docs/next-13, [#144](https://github.com/amannn/next-intl/issues/144)) ([18c94d6](https://github.com/amannn/next-intl/commit/18c94d623a05afa7710fea83360f12f9811fb38d))
+- Add support for using `next-intl` in the `app` folder with Next.js 13 (see https://next-intl.dev/docs/next-13, [#144](https://github.com/amannn/next-intl/issues/144)) ([18c94d6](https://github.com/amannn/next-intl/commit/18c94d623a05afa7710fea83360f12f9811fb38d))
 
 ## 2.9.2 (2022-12-08)
 

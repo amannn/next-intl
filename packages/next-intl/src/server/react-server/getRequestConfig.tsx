@@ -2,14 +2,14 @@ import type {IntlConfig} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
-   * @see https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+   * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    **/
   locale?: IntlConfig['locale'];
 };
 
 export type GetRequestConfigParams = {
   /**
-   * Deprecated in favor of `requestLocale` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#await-request-locale).
+   * Deprecated in favor of `requestLocale` (see https://next-intl.dev/blog/next-intl-3-22#await-request-locale).
    *
    * The locale that was matched by the `[locale]` path segment. Note however
    * that this can be overridden in async APIs when the `locale` is explicitly
@@ -32,7 +32,7 @@ export type GetRequestConfigParams = {
    *    catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should
    *    be replaced with a valid locale.
    *
-   * @see https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+   * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    */
   requestLocale: Promise<string | undefined>;
 };
