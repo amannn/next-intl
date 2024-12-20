@@ -12,6 +12,7 @@ import createRequestConfig from './createRequestConfig';
 import {GetRequestConfigParams} from './getRequestConfig';
 
 let hasWarnedForMissingReturnedLocale = false;
+let hasWarnedForAccessedLocaleParam = false;
 
 // Make sure `now` is consistent across the request in case none was configured
 function getDefaultNowImpl() {
@@ -51,6 +52,12 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.
     get locale() {
+      if (!hasWarnedForAccessedLocaleParam && process.env.NODE_ENV !== 'production') {
+        console.warn(
+          `\nThe \`locale\` parameter in \`getRequestConfig\` is deprecated, please switch to \`await requestLocale\`. See https://next-intl.dev/blog/next-intl-3-22#await-request-locale\n`
+        );
+        hasWarnedForAccessedLocaleParam = true;
+      }
       return localeOverride || getRequestLocaleLegacy();
     },
 
