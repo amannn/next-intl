@@ -42,7 +42,7 @@ declare module 'next-intl' {
 }
 ```
 
-See the updated [TypeScript augmentation](/docs/workflows/typescript) guide.
+See the updated [TypeScript augmentation](https://v4.next-intl.dev/docs/workflows/typescript) guide.
 
 ## Strictly-typed locale
 
@@ -63,7 +63,7 @@ declare module 'next-intl' {
 
 By doing so, APIs like `useLocale()` or `<Link />` that either return or receive a `locale` will now pick up your app-specific `Locale` type, improving type safety across your app.
 
-To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-request) to return a valid locale:
+To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](https://v4.next-intl.dev/docs/getting-started/app-router/with-i18n-routing#i18n-request) to return a valid locale:
 
 ```tsx
 import {getRequestConfig} from 'next-intl/server';
@@ -150,7 +150,7 @@ t('followers', {count: 30000});
 "{count, number} followers"
 ```
 
-Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
+Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](https://v4.next-intl.dev/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
 
 ## GDPR compliance [#gdpr-compliance]
 
@@ -176,11 +176,11 @@ export const routing = defineRouting({
 });
 ```
 
-Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
+Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](https://v4.next-intl.dev/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
 
-As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
+As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](https://v4.next-intl.dev/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
 
-Learn more in the [locale cookie](/docs/routing#locale-cookie) docs.
+Learn more in the [locale cookie](https://v4.next-intl.dev/docs/routing#locale-cookie) docs.
 
 ## Modernized build output
 
