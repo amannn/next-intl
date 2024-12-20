@@ -52,7 +52,10 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.
     get locale() {
-      if (!hasWarnedForAccessedLocaleParam && process.env.NODE_ENV !== 'production') {
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        !hasWarnedForAccessedLocaleParam
+      ) {
         console.warn(
           `\nThe \`locale\` parameter in \`getRequestConfig\` is deprecated, please switch to \`await requestLocale\`. See https://next-intl.dev/blog/next-intl-3-22#await-request-locale\n`
         );
@@ -77,8 +80,8 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
 
   if (!locale) {
     if (
-      !hasWarnedForMissingReturnedLocale &&
-      process.env.NODE_ENV !== 'production'
+      process.env.NODE_ENV !== 'production' &&
+      !hasWarnedForMissingReturnedLocale
     ) {
       console.error(
         `\nA \`locale\` is expected to be returned from \`getRequestConfig\`, but none was returned. This will be an error in the next major version of next-intl.\n\nSee: https://next-intl.dev/blog/next-intl-3-22#await-request-locale\n`
