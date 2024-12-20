@@ -194,28 +194,17 @@ With these changes, the bundle size of `next-intl` has been reduced by ~7% ([all
 
 ## Preparation for upcoming Next.js features [#nextjs-future]
 
-To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) for `next-intl`.
+To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [`ppr`](https://nextjs.org/docs/app/api-reference/next-config-js/ppr), [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) and [`rootParams`](https://github.com/vercel/next.js/pull/72837) for `next-intl`.
 
-This led to two minor changes:
+This led to three minor changes:
 
 1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
+3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](https://next-intl.dev/blog/next-intl-3-22#await-request-locale) (introduced in `next-intl@3.22`). The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
 
-While the mentioned Next.js features are still under development and may change, these two changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
+While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
-As a closing note for this section, it seems like another feature is on its way to Next.js: [`rootParams`](https://github.com/vercel/next.js/pull/72837).
-
-```tsx
-import {unstable_rootParams as rootParams} from 'next/server';
-
-async function Component() {
-  // The ability to read params deeply in
-  // Server Components ... finally!
-  const {locale} = await rootParams();
-}
-```
-
-If things go well, I think this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
+I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
 
 ## Other breaking changes
 
