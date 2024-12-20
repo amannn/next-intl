@@ -198,7 +198,7 @@ To ensure that the sails of `next-intl` are set for a steady course in the upcom
 
 This led to two minor changes:
 
-1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
+1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
 
 While the mentioned Next.js features are still under development and may change, these two changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
@@ -239,6 +239,8 @@ npm install next-intl@v4-beta
 ```
 
 If you need help, you can refer to the [examples](/examples) which have all been updated.
+
+I'd also invite you to share your experiences with `next-intl@4.0` in the [discussions](https://github.com/amannn/next-intl/discussions/1631).
 
 ## Thank you!
 
