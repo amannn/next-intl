@@ -2,14 +2,7 @@ import type {IntlConfig} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
-   * Instead of reading a `requestLocale` from the argument that's passed to the
-   * function within `getRequestConfig`, you can include a locale as part of the
-   * returned request configuration.
-   *
-   * This can be helpful for the following use cases:
-   * - Apps that only support a single language
-   * - Apps where the locale should be read from user settings instead of the pathname
-   * - Providing a fallback locale in case the locale was not matched by the middleware
+   * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    **/
   locale?: IntlConfig['locale'];
 };
