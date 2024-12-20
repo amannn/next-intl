@@ -32,7 +32,7 @@ Practically, for users of `next-intl` this means:
 
 1. Being able to support static rendering of apps with i18n routing without `setRequestLocale`
 2. Improved integration with Next.js cache mechanisms
-3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) (although there's more work necessary here on the Next.js side)
+3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) (although there seems to be more work necessary here on the Next.js side)
 
 But first, let's have a look at how this API works in practice.
 
@@ -113,7 +113,7 @@ export async function getLocale() {
 }
 ```
 
-With this, we can use the `getLocale` function across our codebase to read the current locale without having to worry about where it's being called from.
+With this, you can use the `getLocale` function across your codebase to read the current locale without having to worry about where it's being called from.
 
 In an internationalized app, this can for example be useful to implement a country selection page at the root where you have to rely on a default locale.
 
@@ -172,7 +172,7 @@ export default getRequestConfig(async () => {
 
 That's it—a single change to `i18n/request.ts` is all you need to do to start using `rootParams`!
 
-## Cleaning up
+## So much cleaner
 
 With this change, you can now simplify your codebase in various ways:
 
