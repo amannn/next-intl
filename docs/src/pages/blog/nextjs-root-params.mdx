@@ -194,7 +194,7 @@ This needs to be removed now as otherwise this will qualify as a root layout ins
 
 ### Avoid reading the `[locale]` segment
 
-Since `next-intl` provides the current locale via [`useLocale` and `getLocale`](/docs/usage/configuration#locale), you can seamlessly read the locale from these APIs instead of `params`:
+Since `next-intl` provides the current locale via [`useLocale` and `getLocale`](/docs/usage/configuration#locale), you can seamlessly read the locale from these APIs instead of `params` now:
 
 ```diff filename="src/app/[locale]/layout.tsx"
 + import {getLocale} from 'next-intl/server';
@@ -223,7 +223,7 @@ Behind the scenes, if you call `useLocale` or `getLocale` in a Server Component,
 
 ### Remove manual locale overrides [#locale-override]
 
-If you're using async APIs like `getTranslations`, you might have previously passed the locale manually, e.g. to enable static rendering in the Metadata API.
+If you're using async APIs like `getTranslations`, you might have previously passed the locale manually, typically to enable static rendering in the Metadata API.
 
 Now, you can remove this and rely on the locale that is returned from `i18n/request.ts`:
 
@@ -243,7 +243,17 @@ export async function generateMetadata(
 }
 ```
 
-The only case where you might still want to pass a locale to `getTranslations` is if your UI renders multiple locales in parallel. If this is the case in your app, you should make sure to accept an override in your `i18n/request.ts` config:
+The only rare case where you might still want to pass a locale to `getTranslations` is if your UI renders messages from multiple locales in parallel:
+
+```tsx
+// Use messages from the current locale
+const t = getTranslations();
+
+// Use messages from 'en', regardless of what the current user locale is
+const t = getTranslations({locale: 'en'});
+```
+
+In this case, you should make sure to accept an override in your `i18n/request.ts` config:
 
 ```tsx filename="src/i18n/request.ts"
 import {unstable_rootParams as rootParams} from 'next/server';
@@ -281,9 +291,10 @@ If you've previously used `setRequestLocale` to enable static rendering, you can
 - }
 
 - export default function Page({params}: Props) {
-- setRequestLocale(params.locale);
+-   setRequestLocale(params.locale);
 + export default function Page() {
-// ...
+  // ...
+}
 ```
 
 Note that `generateStaticParams` is naturally still required though.
@@ -297,7 +308,7 @@ Not strictly a new feature of Next.js, but in case you're using `generateStaticP
 export const dynamicParams = false;
 ```
 
-If you don't use `generateStaticParams`, you can still disallow unknown locales by manually calling `notFound()` in your root layout:
+If you don't use `generateStaticParams`, you can still disallow unknown locales by manually calling `notFound()` based on `params` in your root layout:
 
 ```tsx filename="src/app/[locale]/layout.tsx"
 import {hasLocale} from 'next-intl';
@@ -321,7 +332,7 @@ export default async function RootLayout({children, params}: Props) {
 
 ## Try `rootParams` today!
 
-While this article mentions an upcoming `hasLocale` API from `next-intl@4.0` that simplifies working with `rootParams`, you can already try out the API today in the `3.0` range.
+While this article mentions an upcoming `hasLocale` API from `next-intl@4.0` that simplifies working with `rootParams`, you can already try out the API today even in the `3.0` range.
 
 The one rare case where a change from `next-intl@4.0` is required, is if you need to [manually pass a locale](#locale-override) to async APIs like `getTranslations` in case your UI renders multiple locales in parallel.
 
