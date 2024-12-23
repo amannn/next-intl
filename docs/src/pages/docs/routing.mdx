@@ -515,7 +515,7 @@ export const routing = defineRouting({
 
 The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies". In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended.
 
-To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires after a browser session has ended.
+To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires when a browser is closed.
 
 However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
 
