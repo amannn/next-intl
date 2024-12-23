@@ -9,7 +9,7 @@ import StayUpdated from '@/components/StayUpdated.mdx';
 
 <small>Dec 23, 2024 · by Jan Amann</small>
 
-After a year of feature development, this release focuses on streamlining the API surface while maintaining the core architecture of `next-intl`. With many major improvements already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several enhancements that will improve your development experience and make working with internationalization even more seamless.
+After a year of feature development, this release focuses on streamlining the API surface while maintaining the core architecture of `next-intl`. With many improvements already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several enhancements that will improve your development experience and make working with internationalization even more seamless.
 
 Here's what's new in `next-intl@4.0`:
 
@@ -106,10 +106,6 @@ Check it out:
 
 ```tsx
 // "Hello {name}"
-t('message');
-//         ^? Expected 2 arguments
-
-// "Hello {name}"
 t('message', {});
 //           ^? {name: string}
 
@@ -154,7 +150,7 @@ Due to a current limitation in TypeScript, this feature is opt-in for now. Pleas
 
 ## GDPR compliance [#gdpr-compliance]
 
-In order to comply with the current GDPR regulations, the following changes have been made if you're using the `next-intl` middleware for i18n routing:
+In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware for i18n routing:
 
 1. The locale cookie expiration has been decreased to 5 hours.
 2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
