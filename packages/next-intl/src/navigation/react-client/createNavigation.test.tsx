@@ -273,8 +273,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -297,8 +297,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -345,12 +345,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
       invokeRouter((router) => router.push('/about', {locale: 'de'}));
 
       expect(cookieSpy).toHaveBeenCalledWith(
-        [
-          'NEXT_LOCALE=de',
-          'max-age=18000',
-          'sameSite=lax',
-          'path=/base/path'
-        ].join(';') + ';'
+        ['NEXT_LOCALE=de', 'sameSite=lax', 'path=/base/path'].join(';') + ';'
       );
       cookieSpy.mockRestore();
     });
