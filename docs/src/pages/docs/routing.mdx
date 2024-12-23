@@ -517,7 +517,9 @@ The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/arti
 
 To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires when a browser is closed.
 
-However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
+Note that this can be beneficial in comparison to an expiration of a few hours since the cookie is guaranteed to remain active while the browser session lasts. On mobile devices, where browsers are infrequently closed but rather suspended to the background, the cookie can remain active even for an extended period.
+
+The Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
 
 Please note that legal requirements may vary by region, so it's advisable to verify them independently. While we strive to keep this information as up-to-date as possible, we cannot guarantee its accuracy.
 
