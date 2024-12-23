@@ -157,7 +157,6 @@ function receiveLocaleCookie(
   return (localeCookie ?? true)
     ? {
         name: 'NEXT_LOCALE',
-        maxAge: 5 * 60 * 60, // 5 hours
         sameSite: 'lax',
         ...(typeof localeCookie === 'object' && localeCookie)
 
@@ -173,7 +172,7 @@ export type LocaleCookieConfig = Omit<
   CookieAttributes,
   'name' | 'maxAge' | 'sameSite'
 > &
-  Required<Pick<CookieAttributes, 'name' | 'maxAge' | 'sameSite'>>;
+  Required<Pick<CookieAttributes, 'name' | 'sameSite'>>;
 
 function receiveLocalePrefixConfig<
   AppLocales extends Locales,
