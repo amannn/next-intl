@@ -138,6 +138,8 @@ async function FormattedDate({date}) {
 }
 ```
 
+Alternatively, if you don't want to use any caching, you can mark the component with [`await connection()`](https://nextjs.org/docs/app/api-reference/functions/connection) instead to render at request time.
+
 </Details>
 
 ### `updateInterval` [#relative-times-update]
