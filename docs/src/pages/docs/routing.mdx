@@ -473,11 +473,10 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 ### Locale cookie [#locale-cookie]
 
-If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for future requests.
+If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
 
 By default, the cookie will be configured with the following attributes:
 
-1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 5 hours in order to be [GDPR-compliant](#locale-cookie-gdpr) out of the box.
 2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
 3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
 
@@ -514,9 +513,9 @@ export const routing = defineRouting({
 <Details id="locale-cookie-gdpr">
 <summary>Which `maxAge` value should I consider for GDPR compliance?</summary>
 
-The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies".
+The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies". In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended.
 
-In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended. To be compliant out of the box, `next-intl` sets the `maxAge` value of the cookie to 5 hours.
+To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires after a browser session has ended.
 
 However, the Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
 
