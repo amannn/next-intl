@@ -1,7 +1,0 @@
-{
-  "testEnvironment": "jsdom",
-  "rootDir": "../",
-  "transform": {
-    "\\.tsx$": ["babel-jest", {"configFile": "./config/babel.config.js"}]
-  }
-}

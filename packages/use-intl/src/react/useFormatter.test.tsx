@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactElement, ReactNode} from 'react';
-import {SpyImpl, spyOn} from 'tinyspy';
+import type {ComponentProps, ReactElement, ReactNode} from 'react';
+import {type SpyImpl, spyOn} from 'tinyspy';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {IntlError, IntlErrorCode} from '../core';
-import IntlProvider from './IntlProvider';
-import useFormatter from './useFormatter';
+import {type IntlError, IntlErrorCode} from '../core.tsx';
+import IntlProvider from './IntlProvider.tsx';
+import useFormatter from './useFormatter.tsx';
 
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
@@ -207,7 +207,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `onlyYear` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `onlyYear` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -234,7 +234,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `medium` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `medium` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -279,9 +279,7 @@ describe('dateTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `timeZone` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
       expect(container.textContent).toBe('11/20/2020');
     });
@@ -399,7 +397,7 @@ describe('number', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `missing` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `missing` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toBe('10000');
@@ -622,9 +620,7 @@ describe('relativeTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });

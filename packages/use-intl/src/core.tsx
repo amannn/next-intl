@@ -1,1 +1,1 @@
-export * from './core/index';
+export * from './core/index.tsx';
