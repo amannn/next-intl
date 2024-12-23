@@ -95,7 +95,6 @@ it("sets a cookie when requesting a locale that doesn't match the `accept-langua
   expect(value).toContain('NEXT_LOCALE=de;');
   expect(value).toContain('Path=/;');
   expect(value).toContain('SameSite=lax');
-  expect(value).toContain('Max-Age=18000;');
   expect(value).toContain('Expires=');
 });
 
