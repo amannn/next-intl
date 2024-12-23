@@ -152,7 +152,7 @@ Due to a current limitation in TypeScript, this feature is opt-in for now. Pleas
 
 In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware for i18n routing:
 
-1. The locale cookie expiration has been decreased to 5 hours.
+1. The locale cookie has been changed to a session cookie that expires when a browser is closed.
 2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
 
 If you want to increase the cookie expiration, e.g. because you're informing users about the usage of cookies or if GDPR doesn't apply to your app, you can use the `maxAge` attribute to do so:
