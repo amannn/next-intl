@@ -109,9 +109,9 @@ See the [App Router without i18n routing example](/examples#app-router-without-i
 
 ### Open Graph images
 
-If you're programmatically generating [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image), you can apply internationalization by calling functions from `next-intl` in the exported function:
+If you're programmatically generating [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image), you can call functions from `next-intl` in the exported component:
 
-```tsx filename="opengraph-image.tsx"
+```tsx filename="app/[locale]/opengraph-image.tsx"
 import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 
@@ -119,6 +119,29 @@ export default async function OpenGraphImage({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
+```
+
+Next.js will create a public route based on the segment where `opengraph-image.tsx` is placed, e.g.:
+
+```
+http://localhost:3000/en/opengraph-image?f87b2d56cee109c7
+```
+
+However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
+
+If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
+
+```tsx filename="middleware.ts"
+// ...
+
+export const config = {
+  matcher: [
+    // Skip all paths that should not be internationalized
+    '/((?!api|_next|_vercel|.*/opengraph-image|.*\\..*).*)'
+
+    // ...
+  ]
+};
 ```
 
 ### Manifest
