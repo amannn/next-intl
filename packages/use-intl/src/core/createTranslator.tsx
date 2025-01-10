@@ -1,5 +1,4 @@
 import type {ReactNode} from 'react';
-import type {Messages} from './AppConfig.tsx';
 import type Formats from './Formats.tsx';
 import type ICUArgs from './ICUArgs.tsx';
 import type ICUTags from './ICUTags.tsx';
@@ -62,8 +61,12 @@ type TranslateArgs<
         : [values: Prettify<Args>, formats?: Formats]
       : never;
 
+// This type is slightly more loose than `AbstractIntlMessages`
+// in order to avoid a type error.
+type IntlMessages = Record<string, any>;
+
 type NamespacedMessageKeys<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -82,7 +85,7 @@ type NamespacedMessageKeys<
 >;
 
 type NamespacedValue<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -102,7 +105,7 @@ type NamespacedValue<
  * (e.g. `namespace.Component`).
  */
 export default function createTranslator<
-  const TranslatorMessages extends Messages = Messages,
+  const TranslatorMessages extends IntlMessages,
   const Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
