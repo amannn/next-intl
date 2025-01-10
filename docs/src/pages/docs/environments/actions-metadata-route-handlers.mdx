@@ -121,6 +121,23 @@ export default async function OpenGraphImage({params: {locale}}) {
 }
 ```
 
+Next.js will create a public route based on the segment where `opengraph-image.tsx` is placed. However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing#locale-prefix) setting, this route might not be accessible due to a redirect or rewrite of the middleware.
+
+If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
+
+```tsx filename="middleware.ts"
+// ...
+
+export const config = {
+  matcher: [
+    // Skip all paths that should not be internationalized
+    '/((?!api|_next|_vercel|.*/opengraph-image|.*\\..*).*)'
+
+    // ...
+  ]
+};
+```
+
 ### Manifest
 
 Since [the manifest file](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest) needs to be placed in the root of the `app` folder (outside the `[locale]` dynamic segment), you need to provide a locale explicitly since `next-intl` can't infer it from the pathname:

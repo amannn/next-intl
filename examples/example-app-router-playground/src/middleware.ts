@@ -6,7 +6,7 @@ export default createMiddleware(routing);
 export const config = {
   matcher: [
     // Skip all paths that should not be internationalized
-    '/((?!_next|.*\\..*).*)',
+    '/((?!_next|.*/opengraph-image|.*\\..*).*)',
 
     // Necessary for base path to work
     '/'
