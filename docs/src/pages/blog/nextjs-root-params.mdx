@@ -10,7 +10,7 @@ import StayUpdated from '@/components/StayUpdated.mdx';
 
 (this post is still a draft)
 
-Next.js v15.X was just released and with it comes a new feature: [`rootParams`](https://github.com/vercel/next.js/pull/72837).
+Next.js v15.X was just released and comes with a new feature: [`rootParams`](https://github.com/vercel/next.js/pull/72837).
 
 This new API fills in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that allows apps that use top-level dynamic segments like `[locale]` to read segment values deeply in Server Components:
 
@@ -40,7 +40,7 @@ But first, let's have a look at how this API works in practice.
 
 Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`.
 
-Now, you can move these to a nested folder that can be a dynamic segment, e.g.:
+Now, you can move a root layout to a nested folder that can be a dynamic segment, e.g.:
 
 ```
 src
@@ -58,14 +58,14 @@ In contrast, layouts that do have other layout ancestors are regular layouts:
 src
 └── app
     └── [locale]
-        ├── layout.tsx
+        ├── layout.tsx (root layout)
         ├── (...)
         └── news
             ├── layout.tsx (regular layout)
             └── page.tsx
 ```
 
-With the addition of `rootParams`, you can now read the param values of a root layout in all Server Components that render within it:
+With the addition of `rootParams`, you can now read param values of a root layout in all Server Components that render within it:
 
 ```tsx filename=src/components/LocaleSwitcher.tsx
 import {unstable_rootParams as rootParams} from 'next/server';
@@ -100,7 +100,7 @@ If you call `rootParams` in shared code that is used by both root layouts, this 
 ```tsx filename="src/utils/getLocale.tsx"
 import {unstable_rootParams as rootParams} from 'next/server';
 
-export async function getLocale() {
+export default async function getLocale() {
   // Try to read the locale in case we're in `[locale]/layout.tsx`
   let {locale} = await rootParams();
 
@@ -115,7 +115,7 @@ export async function getLocale() {
 
 With this, you can use the `getLocale` function across your codebase to read the current locale without having to worry about where it's being called from.
 
-In an internationalized app, this can for example be useful to implement a country selection page at the root where you have to rely on a default locale.
+In an internationalized app, this can for example be useful to implement a country selection page at the root where you have to rely on a default locale. Once the user is within the `[locale]` segment, this param value can be used instead for localizing page content.
 
 ## Static rendering
 
@@ -132,7 +132,7 @@ export async function generateStaticParams() {
 // ...
 ```
 
-In combination with [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams), we can furthermore instruct Next.js to disallow values that are encountered at runtime and do not match the values we provided to `generateStaticParams`:
+In combination with [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams), we can furthermore instruct Next.js to disallow values that are encountered at runtime and do not match the values we've provided to `generateStaticParams`:
 
 ```tsx filename="src/app/[locale]/layout.tsx"
 // Return a 404 for any unknown locales
@@ -172,7 +172,7 @@ export default getRequestConfig(async () => {
 
 That's it—a single change to `i18n/request.ts` is all you need to do to start using `rootParams`!
 
-## So much cleaner
+## Time for spring cleaning
 
 With this change, you can now simplify your codebase in various ways:
 
@@ -219,7 +219,7 @@ export default async function RootLayout({
 }
 ```
 
-Behind the scenes, if you call `useLocale` or `getLocale` in a Server Component, your `i18n/request.ts` config will be consulted, potentially using a fallback that you've defined.
+Behind the scenes, if you call `useLocale` or `getLocale` in a Server Component, your `i18n/request.ts` config will be consulted, potentially using a fallback that you have defined.
 
 ### Remove manual locale overrides [#locale-override]
 
@@ -336,7 +336,7 @@ While this article mentions an upcoming `hasLocale` API from `next-intl@4.0` tha
 
 The one rare case where a change from `next-intl@4.0` is required, is if you need to [manually pass a locale](#locale-override) to async APIs like `getTranslations` in case your UI renders multiple locales in parallel.
 
-In case you're trying out `rootParams` with `next-intl`, let me know how it goes by joining the discussion here: [Experiences with `rootParams`](https://github.com/amannn/next-intl/discussions/1627). I'm curious to hear how it simplifies your codebase!
+If you're giving `rootParams` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `rootParams`](https://github.com/amannn/next-intl/discussions/1627). I'm curious to hear how it simplifies your codebase!
 
 —Jan
 
