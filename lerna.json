@@ -6,7 +6,7 @@
   "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
     "publish": {
-      "removePackageFields": ["scripts", "devDependencies", "prettier"],
+      "removePackageFields": ["devDependencies", "prettier"],
       "yes": true
     },
     "version": {
