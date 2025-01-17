@@ -1,7 +1,6 @@
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 import {getBuildConfig} from 'tools';
 import pkg from './package.json' with {type: 'json'};
-import {glob} from 'glob';
 
 function rewriteBundle(regex, replaceFn) {
   return {
@@ -31,14 +30,7 @@ export default [
       middleware: 'src/middleware.tsx',
       routing: 'src/routing.tsx',
       plugin: 'src/plugin.tsx',
-      config: 'src/config.tsx',
-
-      // Workaround for https://github.com/rollup/rollup/issues/3916
-      // See https://x.com/jamannnnnn/status/1880199734280732841
-      ...glob.sync('src/**/index.tsx').reduce((acc, file) => {
-        acc[file.replace('src/', '').replace('/index.tsx', '/index')] = file;
-        return acc;
-      }, {})
+      config: 'src/config.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),
