@@ -6,8 +6,8 @@ import type {
   NestedKeyOf,
   createTranslator
 } from 'use-intl/core';
-import getConfig from './getConfig.tsx';
-import getServerTranslator from './getServerTranslator.tsx';
+import getConfig from './getConfig.js';
+import getServerTranslator from './getServerTranslator.js';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript

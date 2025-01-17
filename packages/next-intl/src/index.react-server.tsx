@@ -1,1 +1,1 @@
-export * from './react-server/index.tsx';
+export * from './react-server/index.js';

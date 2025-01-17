@@ -1,13 +1,13 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
 import type {Locale} from 'use-intl';
-import type {ResolvedRoutingConfig} from '../../routing/config.tsx';
+import type {ResolvedRoutingConfig} from '../../routing/config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types.tsx';
+} from '../../routing/types.js';
 import {
   getLocalePrefix,
   getSortedPathnames,
@@ -15,8 +15,8 @@ import {
   matchesPathname,
   normalizeTrailingSlash,
   prefixPathname
-} from '../../shared/utils.tsx';
-import type StrictParams from './StrictParams.tsx';
+} from '../../shared/utils.js';
+import type StrictParams from './StrictParams.js';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 

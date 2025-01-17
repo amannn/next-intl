@@ -8,18 +8,18 @@ import {
   type RoutingConfigLocalizedNavigation,
   type RoutingConfigSharedNavigation,
   receiveRoutingConfig
-} from '../../routing/config.tsx';
+} from '../../routing/config.js';
 import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types.tsx';
-import type {ParametersExceptFirst, Prettify} from '../../shared/types.tsx';
-import use from '../../shared/use.tsx';
-import {isLocalizableHref} from '../../shared/utils.tsx';
-import BaseLink from './BaseLink.tsx';
+} from '../../routing/types.js';
+import type {ParametersExceptFirst, Prettify} from '../../shared/types.js';
+import use from '../../shared/use.js';
+import {isLocalizableHref} from '../../shared/utils.js';
+import BaseLink from './BaseLink.js';
 import {
   type HrefOrHrefWithParams,
   type HrefOrUrlObjectWithParams,
@@ -29,7 +29,7 @@ import {
   normalizeNameOrNameWithParams,
   serializeSearchParams,
   validateReceivedConfig
-} from './utils.tsx';
+} from './utils.js';
 
 type PromiseOrValue<Type> = Type | Promise<Type>;
 

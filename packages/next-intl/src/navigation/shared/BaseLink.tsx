@@ -11,8 +11,8 @@ import {
   useState
 } from 'react';
 import {type Locale, useLocale} from 'use-intl';
-import type {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
-import syncLocaleCookie from './syncLocaleCookie.tsx';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.js';
+import syncLocaleCookie from './syncLocaleCookie.js';
 
 type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &
   Omit<LinkProps, 'locale'>;

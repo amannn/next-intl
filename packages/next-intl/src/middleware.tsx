@@ -1,1 +1,1 @@
-export {default} from './middleware/index.tsx';
+export {default} from './middleware/index.js';

@@ -1,4 +1,4 @@
-import type {Locales} from './types.tsx';
+import type {Locales} from './types.js';
 
 export default function validateLocales(locales: Locales) {
   for (const locale of locales) {

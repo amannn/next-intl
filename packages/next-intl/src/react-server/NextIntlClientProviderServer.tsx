@@ -1,8 +1,8 @@
 import type {ComponentProps} from 'react';
-import getConfigNow from '../server/react-server/getConfigNow.tsx';
-import getFormats from '../server/react-server/getFormats.tsx';
-import {getLocale, getTimeZone} from '../server.react-server.tsx';
-import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.tsx';
+import getConfigNow from '../server/react-server/getConfigNow.js';
+import getFormats from '../server/react-server/getFormats.js';
+import {getLocale, getTimeZone} from '../server.react-server.js';
+import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.js';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 

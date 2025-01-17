@@ -1,11 +1,11 @@
-import type {RoutingConfig} from './config.tsx';
+import type {RoutingConfig} from './config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from './types.tsx';
-import validateLocales from './validateLocales.tsx';
+} from './types.js';
+import validateLocales from './validateLocales.js';
 
 export default function defineRouting<
   const AppLocales extends Locales,

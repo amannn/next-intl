@@ -1,15 +1,15 @@
 import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
-} from '../../routing/config.tsx';
+} from '../../routing/config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types.tsx';
-import createSharedNavigationFns from '../shared/createSharedNavigationFns.tsx';
-import getServerLocale from './getServerLocale.tsx';
+} from '../../routing/types.js';
+import createSharedNavigationFns from '../shared/createSharedNavigationFns.js';
+import getServerLocale from './getServerLocale.js';
 
 export default function createNavigation<
   const AppLocales extends Locales,

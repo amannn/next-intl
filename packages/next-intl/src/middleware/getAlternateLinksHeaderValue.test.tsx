@@ -2,9 +2,9 @@
 
 import {NextRequest} from 'next/server.js';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import {receiveRoutingConfig} from '../routing/config.tsx';
-import type {Pathnames} from '../routing.tsx';
-import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue.tsx';
+import {receiveRoutingConfig} from '../routing/config.js';
+import type {Pathnames} from '../routing.js';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue.js';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',

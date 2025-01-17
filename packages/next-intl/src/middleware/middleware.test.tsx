@@ -12,8 +12,8 @@ import {
   it,
   vi
 } from 'vitest';
-import createMiddleware from '../middleware.tsx';
-import {type Pathnames, defineRouting} from '../routing.tsx';
+import createMiddleware from '../middleware.js';
+import {type Pathnames, defineRouting} from '../routing.js';
 
 const COOKIE_LOCALE_NAME = 'NEXT_LOCALE';
 

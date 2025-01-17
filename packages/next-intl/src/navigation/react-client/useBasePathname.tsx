@@ -5,13 +5,13 @@ import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types.tsx';
+} from '../../routing/types.js';
 import {
   getLocaleAsPrefix,
   getLocalePrefix,
   hasPathnamePrefixed,
   unprefixPathname
-} from '../../shared/utils.tsx';
+} from '../../shared/utils.js';
 
 export default function useBasePathname<
   AppLocales extends Locales,

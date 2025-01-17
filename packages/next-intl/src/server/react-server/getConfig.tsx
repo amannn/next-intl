@@ -6,9 +6,9 @@ import {
   _createIntlFormatters,
   initializeConfig
 } from 'use-intl/core';
-import {getRequestLocale} from './RequestLocale.tsx';
-import createRequestConfig from './createRequestConfig.tsx';
-import type {GetRequestConfigParams} from './getRequestConfig.tsx';
+import {getRequestLocale} from './RequestLocale.js';
+import createRequestConfig from './createRequestConfig.js';
+import type {GetRequestConfigParams} from './getRequestConfig.js';
 
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component

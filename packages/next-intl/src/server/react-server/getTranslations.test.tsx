@@ -1,6 +1,6 @@
 import {createTranslator} from 'use-intl/core';
 import {expect, it, vi} from 'vitest';
-import getTranslations from './getTranslations.tsx';
+import getTranslations from './getTranslations.js';
 
 vi.mock('react');
 vi.mock('use-intl/core');

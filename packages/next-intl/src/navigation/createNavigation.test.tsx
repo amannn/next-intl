@@ -11,10 +11,10 @@ import {
   type DomainsConfig,
   type Pathnames,
   defineRouting
-} from '../routing.tsx';
-import createNavigationClient from './react-client/createNavigation.tsx';
-import createNavigationServer from './react-server/createNavigation.tsx';
-import getServerLocale from './react-server/getServerLocale.tsx';
+} from '../routing.js';
+import createNavigationClient from './react-client/createNavigation.js';
+import createNavigationServer from './react-server/createNavigation.js';
+import getServerLocale from './react-server/getServerLocale.js';
 
 vi.mock('react');
 vi.mock('next/navigation.js', async () => ({

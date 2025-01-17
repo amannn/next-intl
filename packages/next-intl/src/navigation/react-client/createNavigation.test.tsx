@@ -5,8 +5,8 @@ import {
 } from 'next/navigation.js';
 import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import type {DomainsConfig, Pathnames} from '../../routing.tsx';
-import createNavigation from './createNavigation.tsx';
+import type {DomainsConfig, Pathnames} from '../../routing.js';
+import createNavigation from './createNavigation.js';
 
 vi.mock('next/navigation.js');
 vi.mock('use-intl', async () => ({

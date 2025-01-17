@@ -2,7 +2,7 @@ import getRuntimeConfig from 'next-intl/config';
 import type {
   GetRequestConfigParams,
   RequestConfig
-} from './getRequestConfig.tsx';
+} from './getRequestConfig.js';
 
 export default getRuntimeConfig as unknown as (
   params: GetRequestConfigParams
