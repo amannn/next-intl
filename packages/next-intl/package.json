@@ -136,6 +136,7 @@
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
+    "glob": "^11.0.1",
     "next": "^14.2.4",
     "path-to-regexp": "^6.2.2",
     "prettier": "^3.3.3",
