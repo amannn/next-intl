@@ -7,11 +7,7 @@ import {
 import {renderToString} from 'react-dom/server';
 import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {
-  type DomainsConfig,
-  type Pathnames,
-  defineRouting
-} from '../routing.js';
+import {type DomainsConfig, type Pathnames, defineRouting} from '../routing.js';
 import createNavigationClient from './react-client/createNavigation.js';
 import createNavigationServer from './react-server/createNavigation.js';
 import getServerLocale from './react-server/getServerLocale.js';

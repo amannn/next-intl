@@ -1,12 +1,12 @@
 import {type ReactNode, useContext, useMemo} from 'react';
-import type IntlConfig from '../core/IntlConfig.tsx';
+import type IntlConfig from '../core/IntlConfig.js';
 import {
   type Formatters,
   createCache,
   createIntlFormatters
-} from '../core/formatters.tsx';
-import initializeConfig from '../core/initializeConfig.tsx';
-import IntlContext from './IntlContext.tsx';
+} from '../core/formatters.js';
+import initializeConfig from '../core/initializeConfig.js';
+import IntlContext from './IntlContext.js';
 
 type Props = IntlConfig & {
   children: ReactNode;

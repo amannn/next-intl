@@ -1,5 +1,5 @@
-import type {Locale} from '../core.tsx';
-import useIntlContext from './useIntlContext.tsx';
+import type {Locale} from '../core.js';
+import useIntlContext from './useIntlContext.js';
 
 export default function useLocale(): Locale {
   return useIntlContext().locale;

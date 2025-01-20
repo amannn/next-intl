@@ -1,4 +1,4 @@
-import type IntlErrorCode from './IntlErrorCode.tsx';
+import type IntlErrorCode from './IntlErrorCode.js';
 
 export default class IntlError extends Error {
   public readonly code: IntlErrorCode;

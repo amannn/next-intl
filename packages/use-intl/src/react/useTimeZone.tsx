@@ -1,4 +1,4 @@
-import useIntlContext from './useIntlContext.tsx';
+import useIntlContext from './useIntlContext.js';
 
 export default function useTimeZone() {
   return useIntlContext().timeZone;

@@ -1,27 +1,27 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
-import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import type {Locale} from './AppConfig.tsx';
-import type Formats from './Formats.tsx';
-import type {InitializedIntlConfig} from './IntlConfig.tsx';
-import IntlError from './IntlError.tsx';
-import IntlErrorCode from './IntlErrorCode.tsx';
-import type {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.tsx';
+import type AbstractIntlMessages from './AbstractIntlMessages.js';
+import type {Locale} from './AppConfig.js';
+import type Formats from './Formats.js';
+import type {InitializedIntlConfig} from './IntlConfig.js';
+import IntlError from './IntlError.js';
+import IntlErrorCode from './IntlErrorCode.js';
+import type {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.js';
 import type {
   MarkupTranslationValues,
   RichTranslationValues,
   TranslationValues
-} from './TranslationValues.tsx';
-import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.tsx';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
+} from './TranslationValues.js';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
   type IntlFormatters,
   type MessageFormatter,
   memoFn
-} from './formatters.tsx';
-import joinPath from './joinPath.tsx';
+} from './formatters.js';
+import joinPath from './joinPath.js';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.

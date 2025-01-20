@@ -2,8 +2,8 @@ import {
   type Formats as IntlFormats,
   IntlMessageFormat
 } from 'intl-messageformat';
-import type Formats from './Formats.tsx';
-import type TimeZone from './TimeZone.tsx';
+import type Formats from './Formats.js';
+import type TimeZone from './TimeZone.js';
 
 /**
  * `intl-messageformat` uses separate keys for `date` and `time`, but there's

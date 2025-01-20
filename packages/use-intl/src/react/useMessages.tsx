@@ -1,5 +1,5 @@
-import type {Messages} from '../core/AppConfig.tsx';
-import useIntlContext from './useIntlContext.tsx';
+import type {Messages} from '../core/AppConfig.js';
+import useIntlContext from './useIntlContext.js';
 
 export default function useMessages(): Messages {
   const context = useIntlContext();

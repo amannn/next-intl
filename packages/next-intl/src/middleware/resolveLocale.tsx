@@ -10,11 +10,7 @@ import type {
   Locales,
   Pathnames
 } from '../routing/types.js';
-import {
-  getHost,
-  getPathnameMatch,
-  isLocaleSupportedOnDomain
-} from './utils.js';
+import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils.js';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,

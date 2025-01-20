@@ -1,8 +1,8 @@
-import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import type {Locale} from './AppConfig.tsx';
-import type Formats from './Formats.tsx';
-import type IntlError from './IntlError.tsx';
-import type TimeZone from './TimeZone.tsx';
+import type AbstractIntlMessages from './AbstractIntlMessages.js';
+import type {Locale} from './AppConfig.js';
+import type Formats from './Formats.js';
+import type IntlError from './IntlError.js';
+import type TimeZone from './TimeZone.js';
 
 /**
  * Should be used for entry points that configure the library.

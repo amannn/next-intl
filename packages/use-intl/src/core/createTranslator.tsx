@@ -1,28 +1,28 @@
 import type {ReactNode} from 'react';
-import type Formats from './Formats.tsx';
-import type ICUArgs from './ICUArgs.tsx';
-import type ICUTags from './ICUTags.tsx';
-import type IntlConfig from './IntlConfig.tsx';
+import type Formats from './Formats.js';
+import type ICUArgs from './ICUArgs.js';
+import type ICUTags from './ICUTags.js';
+import type IntlConfig from './IntlConfig.js';
 import type {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './MessageKeys.tsx';
+} from './MessageKeys.js';
 import type {
   MarkupTagsFunction,
   RichTagsFunction,
   TranslationValues
-} from './TranslationValues.tsx';
-import createTranslatorImpl from './createTranslatorImpl.tsx';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
+} from './TranslationValues.js';
+import createTranslatorImpl from './createTranslatorImpl.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters.tsx';
-import type {Prettify} from './types.tsx';
+} from './formatters.js';
+import type {Prettify} from './types.js';
 
 type ICUArgsWithTags<
   MessageString extends string,
