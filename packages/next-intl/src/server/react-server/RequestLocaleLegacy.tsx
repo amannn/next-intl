@@ -22,7 +22,7 @@ function getLocaleFromHeaderImpl() {
       (error as any).digest === 'DYNAMIC_SERVER_USAGE'
     ) {
       throw new Error(
-        'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `setRequestLocale` API to enable static rendering, see https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing#static-rendering',
+        'Usage of next-intl APIs in Server Components currently opts into dynamic rendering. This limitation will eventually be lifted, but as a stopgap solution, you can use the `setRequestLocale` API to enable static rendering, see https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing#static-rendering',
         {cause: error}
       );
     } else {
@@ -33,7 +33,7 @@ function getLocaleFromHeaderImpl() {
   if (!locale) {
     if (process.env.NODE_ENV !== 'production') {
       console.error(
-        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request. See https://next-intl.dev/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
       );
     }
     notFound();

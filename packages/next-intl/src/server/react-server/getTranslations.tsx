@@ -210,6 +210,24 @@ Promise<{
   >(
     key: TargetKey
   ): any;
+
+  // `has`
+  has<
+    TargetKey extends MessageKeys<
+      NestedValueOf<
+        {'!': IntlMessages},
+        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+      >,
+      NestedKeyOf<
+        NestedValueOf<
+          {'!': IntlMessages},
+          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
+        >
+      >
+    >
+  >(
+    key: [TargetKey] extends [never] ? string : TargetKey
+  ): boolean;
 }>;
 // IMPLEMENTATION
 async function getTranslations<

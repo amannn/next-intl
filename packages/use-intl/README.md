@@ -80,4 +80,4 @@ function App({user}) {
 
 Have a look at [the minimal setup example](https://github.com/amannn/next-intl/tree/main/examples/example-use-intl) to explore a working app.
 
-### [→ Read the docs](https://next-intl-docs.vercel.app/docs/environments/core-library)
+### [→ Read the docs](https://next-intl.dev/docs/environments/core-library)

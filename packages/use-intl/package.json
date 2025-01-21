@@ -1,11 +1,11 @@
 {
   "name": "use-intl",
-  "version": "3.25.2",
+  "version": "3.26.3",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
   "license": "MIT",
-  "homepage": "https://next-intl-docs.vercel.app/",
+  "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
@@ -68,7 +68,7 @@
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",

@@ -1,0 +1,240 @@
+---
+title: next-intl 4.0 beta
+---
+
+import PartnerContentLink from '@/components/PartnerContentLink';
+import StayUpdated from '@/components/StayUpdated.mdx';
+
+# next-intl 4.0 beta
+
+<small>Dec 23, 2024 · by Jan Amann</small>
+
+After a year of feature development, this release focuses on streamlining the API surface while maintaining the core architecture of `next-intl`. With many improvements already released in [previous minor versions](/blog/next-intl-3-22), this update introduces several enhancements that will improve your development experience and make working with internationalization even more seamless.
+
+Here's what's new in `next-intl@4.0`:
+
+1. [**Revamped augmented types**](#revamped-augmented-types)
+2. [**Strictly-typed locale**](#strictly-typed-locale)
+3. [**Strictly-typed ICU arguments**](#strictly-typed-icu-arguments)
+4. [**GDPR compliance**](#gdpr-compliance)
+5. [**Modernized build output**](#modernized-build-output)
+6. [**Preparation for upcoming Next.js features**](#nextjs-future)
+
+Please also have a look at the [other breaking changes](#other-breaking-changes) listed below before you upgrade.
+
+## Revamped augmented types
+
+After type-safe [`Formats`](/docs/usage/configuration#formats) was added in `next-intl@3.20`, it became clear that a new API was needed that centralizes the registration of augmented types.
+
+With `next-intl@4.0`, both `Messages` as well as `Formats` can now be registered under a single type that is scoped to `next-intl` and no longer affects the global scope:
+
+```tsx
+// global.d.ts
+
+import {formats} from '@/i18n/request';
+import en from './messages/en.json';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    Messages: typeof en;
+    Formats: typeof formats;
+  }
+}
+```
+
+See the updated [TypeScript augmentation](https://v4.next-intl.dev/docs/workflows/typescript) guide.
+
+## Strictly-typed locale
+
+Building on the new type augmentation mechanism, `next-intl@4.0` now allows you to strictly type locales across your app:
+
+```tsx
+// global.d.ts
+
+import {routing} from '@/i18n/routing';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof routing.locales)[number];
+  }
+}
+```
+
+By doing so, APIs like `useLocale()` or `<Link />` that either return or receive a `locale` will now pick up your app-specific `Locale` type, improving type safety across your app.
+
+To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](https://v4.next-intl.dev/docs/getting-started/app-router/with-i18n-routing#i18n-request) to return a valid locale:
+
+```tsx
+import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
+import {routing} from './routing';
+
+export default getRequestConfig(async ({requestLocale}) => {
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+Furthermore, the `Locale` type can be imported into your app code in case you're passing a locale to another function and want to ensure type safety:
+
+```tsx
+import {Locale} from 'next-intl';
+
+async function getPosts(locale: Locale) {
+  // ...
+}
+```
+
+Note that strictly-typing the `Locale` is optional and can be used as desired in case you wish to have additional guardrails in your app.
+
+## Strictly-typed ICU arguments
+
+How type-safe can your app be?
+
+The quest to bring type safety to the last corner of `next-intl` has led me down a rabbit hole with the discovery of an ICU parser by [Marco Schumacher](https://github.com/schummar)—written entirely in types. Marco kindly published his implementation for usage in `next-intl`, with me only adding support for rich tags on top.
+
+Check it out:
+
+```tsx
+// "Hello {name}"
+t('message', {});
+//           ^? {name: string}
+
+// "It's {today, date, long}"
+t('message', {});
+//           ^? {today: Date}
+
+// "Page {page, number} out of {total, number}"
+t('message', {});
+//           ^? {page: number, total: number}
+
+// "You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}."
+t('message', {});
+//           ^? {count: number}
+
+// "Country: {country, select, US {United States} CA {Canada} other {Other}}"
+t('message', {});
+//           ^? {country: 'US' | 'CA' | (string & {})}
+
+// "Please refer to the <link>guidelines</link>."
+t('message', {});
+//           ^? {link: (chunks: ReactNode) => ReactNode}
+```
+
+With this type inference in place, you can now use autocompletion in your IDE to get suggestions for the available arguments of a given ICU message and catch potential errors early.
+
+This also addresses one of my favorite pet peeves:
+
+```tsx
+t('followers', {count: 30000});
+```
+
+```json
+// ✖️ Would be: "30000 followers"
+"{count} followers"
+
+// ✅ Valid: "30,000 followers"
+"{count, number} followers"
+```
+
+Due to a current limitation in TypeScript, this feature is opt-in for now. Please refer to the [strict arguments](https://v4.next-intl.dev/docs/workflows/typescript#messages-arguments) docs to learn how to enable it.
+
+## GDPR compliance [#gdpr-compliance]
+
+In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware for i18n routing:
+
+1. The locale cookie has been changed to a session cookie that expires when a browser is closed.
+2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
+
+If you want to increase the cookie expiration, e.g. because you're informing users about the usage of cookies or if GDPR doesn't apply to your app, you can use the `maxAge` attribute to do so:
+
+```tsx
+// i18n/routing.tsx
+
+import {defineRouting} from 'next-intl/routing';
+
+export const routing = defineRouting({
+  // ...
+
+  localeCookie: {
+    // Expire in one year
+    maxAge: 60 * 60 * 24 * 365
+  }
+});
+```
+
+Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](https://v4.next-intl.dev/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
+
+As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](https://v4.next-intl.dev/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
+
+Learn more in the [locale cookie](https://v4.next-intl.dev/docs/routing#locale-cookie) docs.
+
+## Modernized build output
+
+The build output of `next-intl` has been modernized and now leverages the following optimizations:
+
+1. **ESM-only:** To enable enhanced tree-shaking and align with the modern JavaScript ecosystem, `next-intl` is now ESM-only. The only exception is `next-intl/plugin` which is published both as CommonJS as well as ESM, due to `next.config.js` still being popular.
+2. **Modern JSX transform:** The peer dependency for React has been bumped to v17 in order to use the more efficient, modern JSX transform.
+3. **Modern syntax:** Syntax is now compiled down to the Browserslist `defaults` query, which is a shortcut for ">0.5%, last 2 versions, Firefox ESR, not dead"—a baseline that is considered a reasonable target for modern apps.
+
+With these changes, the bundle size of `next-intl` has been reduced by ~7% ([all details](https://github.com/amannn/next-intl/pull/1470)).
+
+## Preparation for upcoming Next.js features [#nextjs-future]
+
+To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [`ppr`](https://nextjs.org/docs/app/api-reference/next-config-js/ppr), [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) and [`rootParams`](https://github.com/vercel/next.js/pull/72837) for `next-intl`.
+
+This led to three minor changes:
+
+1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
+2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
+3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](https://next-intl.dev/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
+
+While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
+
+I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
+
+## Other breaking changes
+
+1. Return type-safe messages from `useMessages` and `getMessages` (see [PR #1489](https://github.com/amannn/next-intl/pull/1489))
+2. Inherit context in case nested `NextIntlClientProvider` instances are present (see [PR #1413](https://github.com/amannn/next-intl/pull/1413))
+3. Automatically inherit formats when `NextIntlClientProvider` is rendered from a Server Component (see [PR #1191](https://github.com/amannn/next-intl/pull/1191))
+4. Require locale to be returned from `getRequestConfig` (see [PR #1486](https://github.com/amannn/next-intl/pull/1486))
+5. Disallow passing `null`, `undefined` or `boolean` as an ICU argument (see [PR #1561](https://github.com/amannn/next-intl/pull/1561))
+6. Bump minimum required TypeScript version to 5 for projects using TypeScript (see [PR #1481](https://github.com/amannn/next-intl/pull/1481))
+7. Remove deprecated APIs (see [PR #1479](https://github.com/amannn/next-intl/pull/1479))
+8. Remove deprecated APIs pt. 2 (see [PR #1482](https://github.com/amannn/next-intl/pull/1482))
+
+## Upgrade now
+
+For a smooth upgrade, please initially upgrade to the latest v3.x version and check for deprecation warnings.
+
+Afterwards, you can upgrade by running:
+
+```
+npm install next-intl@v4-beta
+```
+
+The beta docs are available here: [v4.next-intl.dev](https://v4.next-intl.dev)
+
+I'd love to hear about your experiences with `next-intl@4.0`! Join the conversation in the [discussions](https://github.com/amannn/next-intl/discussions/1631).
+
+## Thank you!
+
+I want to sincerely thank everyone who has helped to make `next-intl` what it is today.
+
+A special thank you goes to <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>, the primary sponsor of `next-intl`, enabling me to regularly work on this project and provide it as a free and open-source library for everyone.
+
+—Jan
+
+PS: Have you heard that [learn.next-intl.dev](https://learn.next-intl.dev) is coming?
+
+<StayUpdated />

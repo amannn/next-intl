@@ -183,7 +183,7 @@ export default async function RootLayout({children}) {
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider
+        <IntlProvider
           locale={locale}
           now={now}
           timeZone={timeZone}
@@ -362,7 +362,7 @@ The configured time zone can be read via `useTimeZone` or `getTimeZone` in compo
 ```tsx
 // Regular components
 import {useTimeZone} from 'next-intl';
-const messages = useTimeZone();
+const timeZone = useTimeZone();
 
 // Async Server Components
 import {getTimeZone} from 'next-intl/server';
