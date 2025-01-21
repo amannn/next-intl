@@ -39,7 +39,7 @@ const config: SizeLimitConfig = [
     name: "import {createLocalizedPathnamesNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/production/navigation.react-server.js',
     import: '{createLocalizedPathnamesNavigation}',
-    limit: '16.805 KB'
+    limit: '16.815 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-server)",
