@@ -1,13 +1,18 @@
 import {notFound} from 'next/navigation';
-import {getTranslations, setRequestLocale} from 'next-intl/server';
+import {getMessages, getTranslations, setRequestLocale} from 'next-intl/server';
+import {NextIntlClientProvider} from 'next-intl';
 import {ReactNode} from 'react';
-import BaseLayout from '@/components/BaseLayout';
+import {clsx} from 'clsx';
+import {Inter} from 'next/font/google';
 import {routing} from '@/i18n/routing';
+import Navigation from '@/components/Navigation';
 
 type Props = {
   children: ReactNode;
   params: Promise<{locale: string}>;
 };
+
+const inter = Inter({subsets: ['latin']});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
@@ -34,5 +39,18 @@ export default async function LocaleLayout({children, params}: Props) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  return <BaseLayout locale={locale}>{children}</BaseLayout>;
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+
+  return (
+    <html className="h-full" lang={locale}>
+      <body className={clsx(inter.className, 'flex h-full flex-col')}>
+        <NextIntlClientProvider messages={messages}>
+          <Navigation />
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }
