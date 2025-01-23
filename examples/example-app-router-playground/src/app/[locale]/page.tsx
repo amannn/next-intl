@@ -3,7 +3,7 @@ import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
 import {use} from 'react';
 import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 import AsyncComponent from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
