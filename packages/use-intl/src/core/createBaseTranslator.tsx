@@ -1,11 +1,5 @@
 import IntlMessageFormat from 'intl-messageformat';
-import {
-  ReactElement,
-  ReactNode,
-  ReactNodeArray,
-  cloneElement,
-  isValidElement
-} from 'react';
+import {ReactNode, cloneElement, isValidElement} from 'react';
 import AbstractIntlMessages from './AbstractIntlMessages';
 import Formats from './Formats';
 import {InitializedIntlConfig} from './IntlConfig';
@@ -225,7 +219,7 @@ function createBaseTranslatorImpl<
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray {
+  ): ReactNode {
     if (hasMessagesError) {
       // We have already warned about this during render
       return getMessageFallback({
@@ -255,7 +249,7 @@ function createBaseTranslatorImpl<
           errorMessage = `Message at \`${joinPath(
             namespace,
             key
-          )}\` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages`;
+          )}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages`;
         }
       } else {
         code = IntlErrorCode.INSUFFICIENT_PATH;
@@ -263,7 +257,7 @@ function createBaseTranslatorImpl<
           errorMessage = `Message at \`${joinPath(
             namespace,
             key
-          )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages`;
+          )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages`;
         }
       }
 

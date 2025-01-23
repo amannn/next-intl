@@ -4,8 +4,8 @@ An example of how to achieve locale prefixes on public routes while reading the 
 
 **Relevant docs:**
 
-1. [Setting up `next-intl` with i18n routing](https://next-intl-docs.vercel.app/docs/getting-started/app-router/with-i18n-routing)
-2. [Setting up `next-intl` without i18n routing](https://next-intl-docs.vercel.app/docs/getting-started/app-router/without-i18n-routing)
+1. [Setting up `next-intl` with i18n routing](https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing)
+2. [Setting up `next-intl` without i18n routing](https://next-intl.dev/docs/getting-started/app-router/without-i18n-routing)
 
 **Relevant parts in app code:**
 

@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://next-intl-docs.vercel.app/">
+  <a href="https://next-intl.dev">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="media/logo-dark-mode.svg">
       <source media="(prefers-color-scheme: light)" srcset="media/logo.svg">
@@ -29,10 +29,10 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 ```jsx
 // UserProfile.tsx
 import {useTranslations} from 'next-intl';
- 
+
 export default function UserProfile({user}) {
   const t = useTranslations('UserProfile');
- 
+
   return (
     <section>
       <h1>{t('title', {firstName: user.firstName})}</h1>
@@ -47,7 +47,7 @@ export default function UserProfile({user}) {
 // en.json
 {
   "UserProfile": {
-    "title": "{username}'s profile",
+    "title": "{firstName}'s profile",
     "membership": "Member since {memberSince, date, short}",
     "followers": "{count, plural, ↵
                     =0 {No followers yet} ↵
@@ -58,10 +58,10 @@ export default function UserProfile({user}) {
 }
 ```
 
-### [→ Read the docs](https://next-intl-docs.vercel.app/)
+### [→ Read the docs](https://next-intl.dev)
 
 <div align="center">
-  <a href="https://next-intl-docs.vercel.app/redirect?href=https://crowdin.com" target="_blank">
+  <a href="https://next-intl.dev/redirect?href=https://crowdin.com" target="_blank">
     <img width="350" src="media/partner.svg" alt="Crowdin logo">
   </a>
   <br>

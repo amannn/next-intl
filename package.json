@@ -2,11 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "build": "turbo run build --env-mode=loose",
-    "test": "turbo run test --concurrency 1 --env-mode=loose",
-    "lint": "turbo run lint --env-mode=loose",
-    "postinstall": "turbo run build --filter './packages/**' --env-mode=loose",
-    "size": "turbo run size --env-mode=loose",
+    "postinstall": "turbo run build --filter './packages/**'",
     "publish": "lerna publish"
   },
   "devDependencies": {
@@ -24,7 +20,12 @@
     "conventional-changelog-conventionalcommits": "^7.0.0",
     "execa": "^9.2.0",
     "rollup": "^4.18.0",
-    "turbo": "^2.0.4"
+    "turbo": "^2.2.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "@babel/parser": "7.21.9"
+    }
   },
   "packageManager": "pnpm@9.11.0"
 }

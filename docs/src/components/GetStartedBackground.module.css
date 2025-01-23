@@ -1,0 +1,39 @@
+@keyframes pulsate {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.dot {
+  --GetStartedBackground-dot: rgba(0, 0, 0, 0.1);
+
+  :global(.dark) & {
+    --GetStartedBackground-dot: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.dot1 {
+  animation: pulsate 4s infinite;
+}
+
+.dot2 {
+  animation: pulsate 4s infinite 1s;
+}
+
+.dot3 {
+  animation: pulsate 4s infinite 4s;
+}
+
+.dot4 {
+  animation: pulsate 4s infinite 3s;
+}
+
+.dot5 {
+  animation: pulsate 4s infinite 2s;
+}

@@ -11,6 +11,9 @@ import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy'
 import createRequestConfig from './createRequestConfig';
 import {GetRequestConfigParams} from './getRequestConfig';
 
+let hasWarnedForMissingReturnedLocale = false;
+let hasWarnedForAccessedLocaleParam = false;
+
 // Make sure `now` is consistent across the request in case none was configured
 function getDefaultNowImpl() {
   return new Date();
@@ -39,7 +42,7 @@ Please verify that:
 1. In case you've specified a custom location in your Next.js config, make sure that the path is correct.
 2. You have a default export in your i18n request configuration file.
 
-See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-request
+See also: https://next-intl.dev/docs/usage/configuration#i18n-request
 `
     );
   }
@@ -49,6 +52,15 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.
     get locale() {
+      if (
+        process.env.NODE_ENV !== 'production' &&
+        !hasWarnedForAccessedLocaleParam
+      ) {
+        console.warn(
+          `\nThe \`locale\` parameter in \`getRequestConfig\` is deprecated, please switch to \`await requestLocale\`. See https://next-intl.dev/blog/next-intl-3-22#await-request-locale\n`
+        );
+        hasWarnedForAccessedLocaleParam = true;
+      }
       return localeOverride || getRequestLocaleLegacy();
     },
 
@@ -64,15 +76,28 @@ See also: https://next-intl-docs.vercel.app/docs/usage/configuration#i18n-reques
     result = await result;
   }
 
-  const locale = result.locale || (await params.requestLocale);
+  let locale = result.locale;
 
   if (!locale) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      !hasWarnedForMissingReturnedLocale
+    ) {
       console.error(
-        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl-docs.vercel.app/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+        `\nA \`locale\` is expected to be returned from \`getRequestConfig\`, but none was returned. This will be an error in the next major version of next-intl.\n\nSee: https://next-intl.dev/blog/next-intl-3-22#await-request-locale\n`
       );
+      hasWarnedForMissingReturnedLocale = true;
     }
-    notFound();
+
+    locale = await params.requestLocale;
+    if (!locale) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(
+          `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl.dev/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
+        );
+      }
+      notFound();
+    }
   }
 
   return {

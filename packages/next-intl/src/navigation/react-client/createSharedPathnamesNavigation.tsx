@@ -12,7 +12,7 @@ import useBasePathname from './useBasePathname';
 import useBaseRouter from './useBaseRouter';
 
 /**
- * @deprecated Consider switching to `createNavigation` (see https://next-intl-docs.vercel.app/blog/next-intl-3-22#create-navigation)
+ * @deprecated Consider switching to `createNavigation` (see https://next-intl.dev/blog/next-intl-3-22#create-navigation)
  **/
 export default function createSharedPathnamesNavigation<
   AppLocales extends Locales,
@@ -62,7 +62,10 @@ export default function createSharedPathnamesNavigation<
   }
 
   function usePathname(): string {
-    const result = useBasePathname(localePrefix);
+    const result = useBasePathname({
+      localePrefix,
+      defaultLocale: routing?.defaultLocale
+    });
     // @ts-expect-error -- Mirror the behavior from Next.js, where `null` is returned when `usePathname` is used outside of Next, but the types indicate that a string is always returned.
     return result;
   }

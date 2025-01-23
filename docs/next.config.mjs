@@ -31,7 +31,7 @@ const lightTheme = {
 
 const withNextra = nextra({
   theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.tsx',
+  themeConfig: './src/theme.config.tsx',
   staticImage: true,
   defaultShowCopyCode: true,
   mdxOptions: {

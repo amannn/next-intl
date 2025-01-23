@@ -1,4 +1,4 @@
-import {ReactElement, ReactNodeArray, cache} from 'react';
+import {ReactNode, cache} from 'react';
 import {
   Formats,
   MarkupTranslationValues,
@@ -59,7 +59,7 @@ function getTranslatorImpl<
     key: TargetKey,
     values?: RichTranslationValues,
     formats?: Formats
-  ): string | ReactElement | ReactNodeArray;
+  ): ReactNode;
 
   // `markup`
   markup<

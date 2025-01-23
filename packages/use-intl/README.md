@@ -35,7 +35,7 @@ export default function UserProfile({user}) {
 // en.json
 {
   "UserProfile": {
-    "title": "{username}'s profile",
+    "title": "{firstName}'s profile",
     "membership": "Member since {memberSince, date, short}",
     "followers": "{count, plural, ↵
                     =0 {No followers yet} ↵
@@ -60,24 +60,24 @@ import {IntlProvider, useTranslations} from 'use-intl';
 // along with your app once you have the messages.
 const messages = {
   App: {
-    hello: 'Hello {username}!'
+    hello: 'Hello {firstName}!'
   }
 };
 
 function Root() {
   return (
     <IntlProvider messages={messages} locale="en">
-      <App user={{name: 'Jane'}} />
+      <App user={{firstName: 'Jane'}} />
     </IntlProvider>
   );
 }
 
 function App({user}) {
   const t = useTranslations('App');
-  return <h1>{t('hello', {username: user.name})}</h1>;
+  return <h1>{t('hello', {firstName: user.firstName})}</h1>;
 }
 ```
 
 Have a look at [the minimal setup example](https://github.com/amannn/next-intl/tree/main/examples/example-use-intl) to explore a working app.
 
-### [→ Read the docs](https://next-intl-docs.vercel.app/docs/environments/core-library)
+### [→ Read the docs](https://next-intl.dev/docs/environments/core-library)

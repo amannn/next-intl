@@ -9,9 +9,9 @@ import React from 'react';
 import {renderToString} from 'react-dom/server';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {DomainsConfig, Pathnames, defineRouting} from '../routing';
-import {getRequestLocale} from '../server/react-server/RequestLocale';
 import createNavigationClient from './react-client/createNavigation';
 import createNavigationServer from './react-server/createNavigation';
+import getServerLocale from './react-server/getServerLocale';
 
 vi.mock('react');
 vi.mock('next/navigation', async () => {
@@ -23,15 +23,16 @@ vi.mock('next/navigation', async () => {
     permanentRedirect: vi.fn()
   };
 });
-vi.mock('../../src/server/react-server/RequestLocale');
+vi.mock('./react-server/getServerLocale');
 
 function mockCurrentLocale(locale: string) {
   // Enable synchronous rendering without having to suspend
-  const localePromise = Promise.resolve(locale);
-  (localePromise as any).status = 'fulfilled';
-  (localePromise as any).value = locale;
+  const value = locale;
+  const promise = Promise.resolve(value);
+  (promise as any).status = 'fulfilled';
+  (promise as any).value = value;
 
-  vi.mocked(getRequestLocale).mockImplementation(() => localePromise);
+  vi.mocked(getServerLocale).mockImplementation(() => promise);
 
   vi.mocked(nextUseParams<{locale: string}>).mockImplementation(() => ({
     locale
@@ -128,6 +129,13 @@ describe.each([
         expect(markup).toContain('href="/en/about?foo=bar"');
       });
 
+      it('accepts search params and hashes as part of the pathname', () => {
+        const markup = renderToString(
+          <Link href="/about?foo=bar#top">About</Link>
+        );
+        expect(markup).toContain('href="/en/about?foo=bar#top"');
+      });
+
       it('renders a prefix for a different locale', () => {
         // Being able to accept a string and not only a strictly typed locale is
         // important in order to be able to use a result from `useLocale()`.
@@ -195,6 +203,17 @@ describe.each([
             }
           }}
         />;
+      });
+
+      it('does not warn when setting the `prefetch` prop', () => {
+        const consoleSpy = vi.spyOn(console, 'error');
+        const markup = renderToString(
+          <Link href="/about" prefetch>
+            About
+          </Link>
+        );
+        expect(markup).toContain('href="/en/about"');
+        expect(consoleSpy).not.toHaveBeenCalled();
       });
     });
 
