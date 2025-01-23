@@ -26,12 +26,13 @@ Now, we're going to create the following file structure:
 ├── messages
 │   ├── en.json (1)
 │   └── ...
-├── next.config.mjs (2)
+├── next.config.ts (2)
 └── src
     ├── i18n
     │   ├── routing.ts (3)
-    │   └── request.ts (5)
-    ├── middleware.ts (4)
+    │   ├── navigation.ts (4)
+    │   └── request.ts (6)
+    ├── middleware.ts (5)
     └── app
         └── [locale]
             ├── layout.tsx (6)
@@ -59,21 +60,20 @@ The simplest option is to add JSON files in your local project folder:
 }
 ```
 
-### `next.config.mjs` [#next-config]
+### `next.config.ts` [#next-config]
 
 Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components—more on this in the following steps.
 
-<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs items={['next.config.ts', 'next.config.js']}>
 <Tabs.Tab>
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
+import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const nextConfig: NextConfig = {};
+
 const withNextIntl = createNextIntlPlugin();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
-
 export default withNextIntl(nextConfig);
 ```
 
@@ -125,9 +125,21 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
 
 Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
 
+### `src/i18n/navigation.ts` [#i18n-navigation]
+
+Once we have our routing configuration in place, we can use it to set up the navigation APIs.
+
+```ts filename="src/i18n/navigation.ts"
+import {createNavigation} from 'next-intl/navigation';
+import {routing} from './routing';
+
+export const {Link, redirect, usePathname, useRouter, getPathname} =
+  createNavigation(routing);
+```
+
 ### `src/middleware.ts` [#middleware]
 
-Once we have our routing configuration in place, we can use it to set up the middleware.
+Additionally, we can use our routing configuration to set up the middleware.
 
 ```tsx filename="src/middleware.ts"
 import createMiddleware from 'next-intl/middleware';
@@ -172,7 +184,7 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'

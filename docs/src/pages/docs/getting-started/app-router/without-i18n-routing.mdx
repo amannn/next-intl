@@ -26,7 +26,7 @@ Now, we're going to create the following file structure:
 ├── messages
 │   ├── en.json (1)
 │   └── ...
-├── next.config.mjs (2)
+├── next.config.ts (2)
 └── src
     ├── i18n
     │   └── request.ts (3)
@@ -53,21 +53,20 @@ The simplest option is to add JSON files in your local project folder:
 }
 ```
 
-### `next.config.mjs` [#next-config]
+### `next.config.ts` [#next-config]
 
 Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
 
-<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs items={['next.config.ts', 'next.config.js']}>
 <Tabs.Tab>
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
+import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const nextConfig: NextConfig = {};
+
 const withNextIntl = createNextIntlPlugin();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
-
 export default withNextIntl(nextConfig);
 ```
 
@@ -114,7 +113,7 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'
