@@ -7,14 +7,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname
 });
 
-export default [
-  {
-    ignores: ['**/node_modules/*', '.next/*', 'dist/*']
-  },
-  ...compat.extends('next/core-web-vitals'),
-  {
-    rules: {
-      // Add any custom rules here
-    }
-  }
+const eslintConfig = [
+  ...compat.extends('next/core-web-vitals', 'next/typescript')
 ];
+export default eslintConfig;
