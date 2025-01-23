@@ -20,6 +20,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
     "@playwright/test": "^1.48.1",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
@@ -27,11 +28,15 @@
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "^8.0.0",
+    "eslint-config-next": "15.1.6",
     "postcss": "^8.4.38",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }
