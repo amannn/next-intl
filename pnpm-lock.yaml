@@ -691,9 +691,6 @@ importers:
       eslint:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
-      eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
