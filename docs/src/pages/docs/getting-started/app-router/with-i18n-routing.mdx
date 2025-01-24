@@ -24,19 +24,19 @@ Now, we're going to create the following file structure:
 
 ```
 ├── messages
-│   ├── en.json (1)
+│   ├── en.json
 │   └── ...
-├── next.config.ts (2)
+├── next.config.ts
 └── src
     ├── i18n
-    │   ├── routing.ts (3)
-    │   ├── navigation.ts (4)
-    │   └── request.ts (6)
-    ├── middleware.ts (5)
+    │   ├── routing.ts
+    │   ├── navigation.ts
+    │   └── request.ts
+    ├── middleware.ts
     └── app
         └── [locale]
-            ├── layout.tsx (6)
-            └── page.tsx (7)
+            ├── layout.tsx
+            └── page.tsx
 ```
 
 In case you're migrating an existing app to `next-intl`, you'll typically move your existing pages into the `[locale]` folder as part of the setup.
@@ -116,11 +116,6 @@ export const routing = defineRouting({
   // Used when no locale matches
   defaultLocale: 'en'
 });
-
-// Lightweight wrappers around Next.js' navigation APIs
-// that will consider the routing configuration
-export const {Link, redirect, usePathname, useRouter, getPathname} =
-  createNavigation(routing);
 ```
 
 Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
