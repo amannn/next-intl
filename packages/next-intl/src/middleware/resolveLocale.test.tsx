@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {getAcceptLanguageLocale} from './resolveLocale.tsx';
+import {getAcceptLanguageLocale} from './resolveLocale.js';
 
 describe('getAcceptLanguageLocale', () => {
   it('resolves a more specific locale to a generic one', () => {

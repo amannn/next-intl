@@ -6,7 +6,7 @@ import type {
   LocalePrefixMode,
   Locales,
   Pathnames
-} from './types.tsx';
+} from './types.js';
 
 type CookieAttributes = Pick<
   NonNullable<Parameters<typeof NextResponse.prototype.cookies.set>['2']>,

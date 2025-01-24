@@ -1,6 +1,6 @@
 import type {Locale} from 'use-intl';
-import type {InitializedLocaleCookieConfig} from '../../routing/config.tsx';
-import {getBasePath} from './utils.tsx';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.js';
+import {getBasePath} from './utils.js';
 
 /**
  * We have to keep the cookie value in sync as Next.js might

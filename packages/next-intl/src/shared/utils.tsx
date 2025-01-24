@@ -3,7 +3,7 @@ import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../routing/types.tsx';
+} from '../routing/types.js';
 
 type Href = LinkProps['href'];
 

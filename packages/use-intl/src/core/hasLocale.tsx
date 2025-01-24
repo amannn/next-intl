@@ -1,4 +1,4 @@
-import type {Locale} from './AppConfig.tsx';
+import type {Locale} from './AppConfig.js';
 
 /**
  * Checks if a locale exists in a list of locales.

@@ -1,8 +1,8 @@
-import type {Messages} from '../core/AppConfig.tsx';
-import type {NamespaceKeys, NestedKeyOf} from '../core/MessageKeys.tsx';
-import type createTranslator from '../core/createTranslator.tsx';
-import useIntlContext from './useIntlContext.tsx';
-import useTranslationsImpl from './useTranslationsImpl.tsx';
+import type {Messages} from '../core/AppConfig.js';
+import type {NamespaceKeys, NestedKeyOf} from '../core/MessageKeys.js';
+import type createTranslator from '../core/createTranslator.js';
+import useIntlContext from './useIntlContext.js';
+import useTranslationsImpl from './useTranslationsImpl.js';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.

@@ -1,2 +1,2 @@
-export * from './core.tsx';
-export * from './react.tsx';
+export * from './core.js';
+export * from './react.js';

@@ -1,12 +1,12 @@
 import type {NextRequest} from 'next/server.js';
-import type {ResolvedRoutingConfig} from '../routing/config.tsx';
+import type {ResolvedRoutingConfig} from '../routing/config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types.tsx';
-import {normalizeTrailingSlash} from '../shared/utils.tsx';
+} from '../routing/types.js';
+import {normalizeTrailingSlash} from '../shared/utils.js';
 import {
   applyBasePath,
   formatTemplatePathname,
@@ -14,7 +14,7 @@ import {
   getLocalePrefixes,
   getNormalizedPathname,
   isLocaleSupportedOnDomain
-} from './utils.tsx';
+} from './utils.js';
 
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions

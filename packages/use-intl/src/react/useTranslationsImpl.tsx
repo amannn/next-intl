@@ -1,10 +1,10 @@
 import {useMemo} from 'react';
-import type AbstractIntlMessages from '../core/AbstractIntlMessages.tsx';
-import type {NestedKeyOf} from '../core/MessageKeys.tsx';
-import createBaseTranslator from '../core/createBaseTranslator.tsx';
-import resolveNamespace from '../core/resolveNamespace.tsx';
-import {IntlError, IntlErrorCode} from '../core.tsx';
-import useIntlContext from './useIntlContext.tsx';
+import type AbstractIntlMessages from '../core/AbstractIntlMessages.js';
+import type {NestedKeyOf} from '../core/MessageKeys.js';
+import createBaseTranslator from '../core/createBaseTranslator.js';
+import resolveNamespace from '../core/resolveNamespace.js';
+import {IntlError, IntlErrorCode} from '../core.js';
+import useIntlContext from './useIntlContext.js';
 
 let hasWarnedForMissingTimezone = false;
 const isServer = typeof window === 'undefined';

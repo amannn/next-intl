@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
-import getDefaultNow from './getDefaultNow.tsx';
-import getFormatter from './getFormatter.tsx';
+import getDefaultNow from './getDefaultNow.js';
+import getFormatter from './getFormatter.js';
 
 vi.mock('react');
 vi.mock('./getDefaultNow.tsx', () => ({

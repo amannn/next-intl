@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import validateLocales from './validateLocales.tsx';
+import validateLocales from './validateLocales.js';
 
 describe('accepts valid formats', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;

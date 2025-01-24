@@ -7,17 +7,17 @@ import {type Locale, useLocale} from 'use-intl';
 import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
-} from '../../routing/config.tsx';
+} from '../../routing/config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types.tsx';
-import createSharedNavigationFns from '../shared/createSharedNavigationFns.tsx';
-import syncLocaleCookie from '../shared/syncLocaleCookie.tsx';
-import {getRoute} from '../shared/utils.tsx';
-import useBasePathname from './useBasePathname.tsx';
+} from '../../routing/types.js';
+import createSharedNavigationFns from '../shared/createSharedNavigationFns.js';
+import syncLocaleCookie from '../shared/syncLocaleCookie.js';
+import {getRoute} from '../shared/utils.js';
+import useBasePathname from './useBasePathname.js';
 
 export default function createNavigation<
   const AppLocales extends Locales,

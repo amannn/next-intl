@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import {createFormatter} from 'use-intl/core';
-import getDefaultNow from './getDefaultNow.tsx';
+import getDefaultNow from './getDefaultNow.js';
 
 function getFormatterCachedImpl(config: Parameters<typeof createFormatter>[0]) {
   // same here?

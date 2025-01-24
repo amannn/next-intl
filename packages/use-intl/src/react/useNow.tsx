@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import useIntlContext from './useIntlContext.tsx';
+import useIntlContext from './useIntlContext.js';
 
 type Options = {
   updateInterval?: number;

@@ -1,6 +1,6 @@
-import type IntlConfig from './IntlConfig.tsx';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
-import validateMessages from './validateMessages.tsx';
+import type IntlConfig from './IntlConfig.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
+import validateMessages from './validateMessages.js';
 
 /**
  * Enhances the incoming props with defaults.

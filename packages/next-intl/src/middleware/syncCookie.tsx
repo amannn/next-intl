@@ -3,15 +3,15 @@ import type {Locale} from 'use-intl';
 import type {
   InitializedLocaleCookieConfig,
   ResolvedRoutingConfig
-} from '../routing/config.tsx';
+} from '../routing/config.js';
 import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types.tsx';
-import {getAcceptLanguageLocale} from './resolveLocale.tsx';
+} from '../routing/types.js';
+import {getAcceptLanguageLocale} from './resolveLocale.js';
 
 export default function syncCookie<
   AppLocales extends Locales,

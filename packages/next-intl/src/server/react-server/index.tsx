@@ -6,12 +6,12 @@ export {
   default as getRequestConfig,
   type GetRequestConfigParams,
   type RequestConfig
-} from './getRequestConfig.tsx';
-export {default as getFormatter} from './getFormatter.tsx';
-export {default as getNow} from './getNow.tsx';
-export {default as getTimeZone} from './getTimeZone.tsx';
-export {default as getTranslations} from './getTranslations.tsx';
-export {default as getMessages} from './getMessages.tsx';
-export {default as getLocale} from './getLocale.tsx';
+} from './getRequestConfig.js';
+export {default as getFormatter} from './getFormatter.js';
+export {default as getNow} from './getNow.js';
+export {default as getTimeZone} from './getTimeZone.js';
+export {default as getTranslations} from './getTranslations.js';
+export {default as getMessages} from './getMessages.js';
+export {default as getLocale} from './getLocale.js';
 
-export {setCachedRequestLocale as setRequestLocale} from './RequestLocaleCache.tsx';
+export {setCachedRequestLocale as setRequestLocale} from './RequestLocaleCache.js';

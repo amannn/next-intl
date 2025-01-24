@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
-import type {PluginConfig} from './types.tsx';
-import {throwError} from './utils.tsx';
+import type {PluginConfig} from './types.js';
+import {throwError} from './utils.js';
 
 function withExtensions(localPath: string) {
   return [

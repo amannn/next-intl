@@ -46,4 +46,4 @@ export const useFormatter = callHook(
   base_useFormatter
 ) as typeof base_useFormatter;
 
-export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider.tsx';
+export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider.js';

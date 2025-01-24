@@ -27,6 +27,7 @@ export default (await getPresets('typescript', 'react', 'vitest')).concat({
     '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/consistent-type-exports': 'error',
     '@typescript-eslint/no-import-type-side-effects': 'error',
-    'import/no-duplicates': ['error', {'prefer-inline': true}]
+    'import/no-duplicates': ['error', {'prefer-inline': true}],
+    'import/extensions': 'error'
   }
 });
