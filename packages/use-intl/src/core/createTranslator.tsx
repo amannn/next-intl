@@ -118,7 +118,7 @@ export default function createTranslator<
   namespace,
   onError = defaultOnError,
   ...rest
-}: Omit<IntlConfig<TranslatorMessages>, 'messages'> & {
+}: Omit<IntlConfig, 'messages'> & {
   messages?: TranslatorMessages;
   namespace?: Namespace;
   /** @private */

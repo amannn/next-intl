@@ -745,13 +745,7 @@ describe('error handling', () => {
     const onError = vi.fn();
 
     render(
-      <IntlProvider
-        locale="en"
-        // @ts-expect-error The types don't allow this,
-        // but this shouldn't lead to an error.
-        messages={{a: null}}
-        onError={onError}
-      >
+      <IntlProvider locale="en" messages={{a: null}} onError={onError}>
         <span />
       </IntlProvider>
     );
@@ -878,7 +872,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
@@ -904,7 +897,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
