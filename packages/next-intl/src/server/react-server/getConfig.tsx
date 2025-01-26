@@ -68,14 +68,16 @@ const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 const getFormatters = cache(_createIntlFormatters);
 const getCache = cache(_createCache);
 
-async function getConfigImpl(localeOverride?: Locale): Promise<
-  IntlConfig & {
-    getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
-    onError: NonNullable<IntlConfig['onError']>;
-    timeZone: NonNullable<IntlConfig['timeZone']>;
-    _formatters: ReturnType<typeof _createIntlFormatters>;
-  }
-> {
+async function getConfigImpl(localeOverride?: Locale): Promise<{
+  locale: IntlConfig['locale'];
+  formats?: NonNullable<IntlConfig['formats']>;
+  timeZone: NonNullable<IntlConfig['timeZone']>;
+  onError: NonNullable<IntlConfig['onError']>;
+  getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+  messages?: NonNullable<IntlConfig['messages']>;
+  now?: NonNullable<IntlConfig['now']>;
+  _formatters: ReturnType<typeof _createIntlFormatters>;
+}> {
   const runtimeConfig = await receiveRuntimeConfig(
     createRequestConfig,
     localeOverride
