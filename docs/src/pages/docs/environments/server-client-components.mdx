@@ -115,11 +115,13 @@ Regarding performance, async functions and hooks can be used interchangeably. Th
 
 ## Using internationalization in Client Components
 
-Depending on your situation, you may need to handle internationalization in Client Components. While providing all messages to the client side is typically the easiest way to [get started](/docs/getting-started/app-router#layout) and a reasonable approach for many apps, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
+Depending on your situation, you may need to handle internationalization in Client Components. Providing all messages to the client side is the easiest way to get started, therefore `next-intl` automatically does this when you render [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider). This is a reasonable approach for many apps.
+
+However, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
 
 There are several options for using translations from `next-intl` in Client Components, listed here in order of enabling the best performance:
 
-### Option 1: Passing translations to Client Components
+### Option 1: Passing translated labels to Client Components
 
 The preferred approach is to pass the processed labels as props or `children` from a Server Component.
 
@@ -278,8 +280,6 @@ In particular, page and search params are often a great option because they offe
 
 ### Option 3: Providing individual messages
 
-To reduce bundle size, `next-intl` doesn't automatically provide [messages](/docs/usage/configuration#messages) to Client Components.
-
 If you need to incorporate dynamic state into components that can not be moved to the server side, you can wrap these components with `NextIntlClientProvider` and provide the relevant messages.
 
 ```tsx filename="Counter.tsx"
@@ -315,22 +315,16 @@ An automatic, compiler-driven approach is being evaluated in [`next-intl#1`](htt
 
 ### Option 4: Providing all messages
 
-If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components.
+If you're building a highly dynamic app where most components use React's interactive features, you may prefer to make all messages available to Client Components—this is the default behavior of `next-intl`.
 
 ```tsx filename="layout.tsx" /NextIntlClientProvider/
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
 
 export default async function RootLayout(/* ... */) {
-  // Receive messages provided in `i18n/request.ts`
-  const messages = await getMessages();
-
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

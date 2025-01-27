@@ -3,10 +3,6 @@ import {createFormatter} from 'use-intl/core';
 import getDefaultNow from './getDefaultNow.js';
 
 function getFormatterCachedImpl(config: Parameters<typeof createFormatter>[0]) {
-  // same here?
-  // also add a test
-  // also for getTranslations/useTranslations
-  // add a test with a getter maybe, don't mock
   return createFormatter({
     ...config,
     // Only init when necessary to avoid triggering a `dynamicIO` error
