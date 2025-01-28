@@ -11,10 +11,12 @@ body:
     attributes:
       value: |
         Please keep in mind:
-        - If you're looking for specific support with your project, you can consider asking for help on the [Next.js Discord](https://discord.com/invite/nextjs), [Stack Overflow](https://stackoverflow.com/questions/ask) or [GitHub discussions](https://github.com/amannn/next-intl/discussions) instead.
+
+        - If you're looking for specific support with your project, you can consider [asking for community support](https://github.com/amannn/next-intl/issues/new/choose) instead.
         - If something doesn't work as expected, you might want to [create a bug report](https://github.com/amannn/next-intl/issues/new/choose) instead.
         - Please double check the [docs](https://next-intl.dev) to see if your feature request is already supported.
         - Please also check the [existing issues](https://github.com/amannn/next-intl/issues) to see if your feature request was already discussed.
+
         If you have a feature request that has not been discussed yet, please fill out this form completely.
   - type: textarea
     attributes:
