@@ -1,3 +1,13 @@
-import {getPresets} from 'eslint-config-molindo';
+import path from 'path';
+import {fileURLToPath} from 'url';
+import {FlatCompat} from '@eslint/eslintrc';
 
-export default await getPresets('typescript', 'react');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const compat = new FlatCompat({
+  baseDirectory: __dirname
+});
+
+const eslintConfig = [
+  ...compat.extends('next/core-web-vitals', 'next/typescript')
+];
+export default eslintConfig;
