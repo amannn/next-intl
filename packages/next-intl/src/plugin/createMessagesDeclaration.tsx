@@ -24,19 +24,16 @@ export default function createMessagesDeclaration(messagesPath: string) {
     );
   }
 
-  const isDev = process.argv.includes('dev');
-  const isBuild = process.argv.includes('build');
-
-  if (!isDev && !isBuild) {
-    return;
-  }
+  // Keep this as a runtime check and don't replace
+  // this with a constant during the build process
+  const env = process.env['NODE_ENV'.trim()];
 
   // Next.js can call the Next.js config multiple
   // times - ensure we only run once.
   runOnce(() => {
     compileDeclaration(messagesPath);
 
-    if (isDev) {
+    if (env === 'development') {
       startWatching(messagesPath);
     }
   });
