@@ -80,22 +80,18 @@ async function loginAction(data: FormData) {
   const t = await getTranslations('LoginForm');
   const values = Object.fromEntries(data);
 
-  const result = await loginFormSchema
-    .refine(async (credentials) => loginUser(credentials), {
-      message: t('invalidCredentials')
-    })
-    .safeParseAsync(values, {
-      errorMap(issue, ctx) {
-        const path = issue.path.join('.');
+  const result = loginFormSchema.safeParse(values, {
+    errorMap(issue, ctx) {
+      const path = issue.path.join('.');
 
-        const message = {
-          email: t('invalidEmail')
-          password: t('invalidPassword')
-        }[path];
+      const message = {
+        email: t('invalidEmail')
+        password: t('invalidPassword')
+      }[path];
 
-        return {message: message || ctx.defaultError};
-      }
-    });
+      return {message: message || ctx.defaultError};
+    }
+  });
 
   // ...
 }
