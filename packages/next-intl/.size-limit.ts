@@ -4,7 +4,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl' (react-client)",
     path: 'dist/esm/production/index.react-client.js',
-    limit: '13.065 KB'
+    limit: '13.125 KB'
   },
   {
     name: "import {NextIntlClientProvider} from 'next-intl' (react-client)",
