@@ -275,6 +275,15 @@ export default function createFormatter(props: Props) {
     /** The date time that needs to be formatted. */
     date: number | Date,
     /** The reference point in time to which `date` will be formatted in relation to. If this value is absent, a globally configured `now` value or alternatively the current time will be used. */
+    now?: RelativeTimeFormatOptions['now']
+  ): string;
+  function relativeTime(
+    /** The date time that needs to be formatted. */
+    date: number | Date,
+    options?: RelativeTimeFormatOptions
+  ): string;
+  function relativeTime(
+    date: number | Date,
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
