@@ -114,7 +114,8 @@ export default function createFormatter(props: Props) {
 
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
-    formatOrOptions?: string | Options
+    formatOrOptions?: string | Options,
+    overrides?: Options
   ) {
     let options;
     if (typeof formatOrOptions === 'string') {
@@ -135,18 +136,23 @@ export default function createFormatter(props: Props) {
       options = formatOrOptions;
     }
 
+    if (overrides) {
+      options = {...options, ...overrides};
+    }
+
     return options;
   }
 
   function getFormattedValue<Options, Output>(
     formatOrOptions: string | Options | undefined,
+    overrides: Options | undefined,
     typeFormats: Record<string, Options> | undefined,
     formatter: (options?: Options) => Output,
     getFallback: () => Output
   ) {
     let options;
     try {
-      options = resolveFormatOrOptions(typeFormats, formatOrOptions);
+      options = resolveFormatOrOptions(typeFormats, formatOrOptions, overrides);
     } catch {
       return getFallback();
     }
@@ -164,12 +170,22 @@ export default function createFormatter(props: Props) {
   function dateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
     value: Date | number,
-    /** If a time zone is supplied, the `value` is converted to that time zone.
-     * Otherwise the user time zone will be used. */
-    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTime(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    value: Date | number,
+    format?: FormatNames['dateTime'],
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTime(
+    value: Date | number,
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
+    overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
@@ -184,12 +200,25 @@ export default function createFormatter(props: Props) {
     start: Date | number,
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
     end: Date | number,
-    /** If a time zone is supplied, the values are converted to that time zone.
-     * Otherwise the user time zone will be used. */
-    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTimeRange(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    start: Date | number,
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    end: Date | number,
+    format?: FormatNames['dateTime'],
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTimeRange(
+    start: Date | number,
+    end: Date | number,
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
+    overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
@@ -203,10 +232,21 @@ export default function createFormatter(props: Props) {
 
   function number(
     value: number | bigint,
-    formatOrOptions?: FormatNames['number'] | NumberFormatOptions
+    options?: NumberFormatOptions
+  ): string;
+  function number(
+    value: number | bigint,
+    format?: FormatNames['number'],
+    options?: NumberFormatOptions
+  ): string;
+  function number(
+    value: number | bigint,
+    formatOrOptions?: FormatNames['number'] | NumberFormatOptions,
+    overrides?: NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.number,
       (options) => formatters.getNumberFormat(locale, options).format(value),
       () => String(value)
@@ -289,7 +329,17 @@ export default function createFormatter(props: Props) {
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions
+    options?: Intl.ListFormatOptions
+  ): Value extends string ? string : Iterable<ReactElement>;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
+    format?: FormatNames['list'],
+    options?: Intl.ListFormatOptions
+  ): Value extends string ? string : Iterable<ReactElement>;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
+    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions,
+    overrides?: Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();
@@ -315,6 +365,7 @@ export default function createFormatter(props: Props) {
       Value extends string ? string : Iterable<ReactElement>
     >(
       formatOrOptions,
+      overrides,
       formats?.list,
       // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
       (options) => {

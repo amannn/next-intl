@@ -3,7 +3,12 @@ import {parseISO} from 'date-fns';
 import type {ComponentProps, ReactElement, ReactNode} from 'react';
 import {type SpyImpl, spyOn} from 'tinyspy';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {type IntlError, IntlErrorCode} from '../core.js';
+import {
+  type DateTimeFormatOptions,
+  type IntlError,
+  IntlErrorCode,
+  type NumberFormatOptions
+} from '../core.js';
 import IntlProvider from './IntlProvider.js';
 import useFormatter from './useFormatter.js';
 
@@ -25,7 +30,7 @@ describe('dateTime', () => {
 
   function renderDateTime(
     value: Date | number,
-    options?: Parameters<ReturnType<typeof useFormatter>['dateTime']>['1']
+    options?: DateTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
@@ -287,10 +292,7 @@ describe('dateTime', () => {
 });
 
 describe('number', () => {
-  function renderNumber(
-    value: number | bigint,
-    options?: Parameters<ReturnType<typeof useFormatter>['number']>['1']
-  ) {
+  function renderNumber(value: number | bigint, options?: NumberFormatOptions) {
     function Component() {
       const format = useFormatter();
       return <>{format.number(value, options)}</>;
@@ -629,7 +631,7 @@ describe('relativeTime', () => {
 describe('list', () => {
   function renderList(
     value: Iterable<string>,
-    options?: Parameters<ReturnType<typeof useFormatter>['list']>['1']
+    options?: Intl.ListFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
