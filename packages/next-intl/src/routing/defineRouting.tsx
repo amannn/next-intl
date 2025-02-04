@@ -5,7 +5,6 @@ import type {
   Locales,
   Pathnames
 } from './types.js';
-import validateLocales from './validateLocales.js';
 
 export default function defineRouting<
   const AppLocales extends Locales,
@@ -20,8 +19,5 @@ export default function defineRouting<
     AppDomains
   >
 ) {
-  if (process.env.NODE_ENV !== 'production') {
-    validateLocales(config.locales);
-  }
   return config;
 }

@@ -9,6 +9,7 @@ import {
 import {getRequestLocale} from './RequestLocale.js';
 import createRequestConfig from './createRequestConfig.js';
 import type {GetRequestConfigParams} from './getRequestConfig.js';
+import validateLocale from './validateLocale.js';
 
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component
@@ -60,6 +61,7 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
       'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl.dev/docs/usage/configuration#i18n-request'
     );
   }
+  validateLocale(result.locale);
 
   return result;
 }
