@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {throwError} from './utils.js';
+import watchFile from './watchFile.js';
 
 function runOnce(fn: () => void) {
   if (process.env._NEXT_INTL_COMPILE_MESSAGES === '1') {
@@ -40,10 +41,8 @@ export default function createMessagesDeclaration(messagesPath: string) {
 }
 
 function startWatching(messagesPath: string) {
-  const watcher = fs.watch(messagesPath, (eventType) => {
-    if (eventType === 'change') {
-      compileDeclaration(messagesPath, true);
-    }
+  const watcher = watchFile(messagesPath, () => {
+    compileDeclaration(messagesPath, true);
   });
 
   process.on('exit', () => {
