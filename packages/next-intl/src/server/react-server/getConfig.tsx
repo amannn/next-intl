@@ -61,7 +61,9 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
       'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl.dev/docs/usage/configuration#i18n-request'
     );
   }
-  validateLocale(result.locale);
+  if (process.env.NODE_ENV !== 'production') {
+    validateLocale(result.locale);
+  }
 
   return result;
 }
