@@ -1,5 +1,5 @@
 import type {NextConfig} from 'next';
-import createMessagesDeclaration from './createMessagesDeclaration.js';
+import createMessagesDeclarations from './createMessagesDeclarations.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
 import {warn} from './utils.js';
@@ -14,9 +14,9 @@ function initPlugin(
     );
   }
 
-  if (pluginConfig.experimental?.createMessagesDeclaration) {
-    createMessagesDeclaration(
-      pluginConfig.experimental.createMessagesDeclaration
+  if (pluginConfig.experimental?.createMessagesDeclarations) {
+    createMessagesDeclarations(
+      pluginConfig.experimental.createMessagesDeclarations
     );
   }
 
