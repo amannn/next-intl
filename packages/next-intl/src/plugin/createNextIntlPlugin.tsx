@@ -14,9 +14,13 @@ function initPlugin(
     );
   }
 
-  if (pluginConfig.experimental?.createMessagesDeclaration) {
+  const messagesPathOrPaths =
+    pluginConfig.experimental?.createMessagesDeclaration;
+  if (messagesPathOrPaths) {
     createMessagesDeclaration(
-      pluginConfig.experimental.createMessagesDeclaration
+      typeof messagesPathOrPaths === 'string'
+        ? [messagesPathOrPaths]
+        : messagesPathOrPaths
     );
   }
 

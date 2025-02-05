@@ -11,31 +11,35 @@ function runOnce(fn: () => void) {
   fn();
 }
 
-export default function createMessagesDeclaration(messagesPath: string) {
-  const fullPath = path.resolve(messagesPath);
-
-  if (!fs.existsSync(fullPath)) {
-    throwError(
-      `\`createMessagesDeclaration\` points to a non-existent file: ${fullPath}`
-    );
-  }
-  if (!fullPath.endsWith('.json')) {
-    throwError(
-      `\`createMessagesDeclaration\` needs to point to a JSON file. Received: ${fullPath}`
-    );
-  }
-
-  // Keep this as a runtime check and don't replace
-  // this with a constant during the build process
-  const env = process.env['NODE_ENV'.trim()];
-
+export default function createMessagesDeclaration(
+  messagesPaths: Array<string>
+) {
   // Next.js can call the Next.js config multiple
   // times - ensure we only run once.
   runOnce(() => {
-    compileDeclaration(messagesPath);
+    for (const messagesPath of messagesPaths) {
+      const fullPath = path.resolve(messagesPath);
 
-    if (env === 'development') {
-      startWatching(messagesPath);
+      if (!fs.existsSync(fullPath)) {
+        throwError(
+          `\`createMessagesDeclaration\` points to a non-existent file: ${fullPath}`
+        );
+      }
+      if (!fullPath.endsWith('.json')) {
+        throwError(
+          `\`createMessagesDeclaration\` needs to point to a JSON file. Received: ${fullPath}`
+        );
+      }
+
+      // Keep this as a runtime check and don't replace
+      // this with a constant during the build process
+      const env = process.env['NODE_ENV'.trim()];
+
+      compileDeclaration(messagesPath);
+
+      if (env === 'development') {
+        startWatching(messagesPath);
+      }
     }
   });
 }
