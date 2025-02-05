@@ -203,7 +203,7 @@ TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/
 }
 ```
 
-2. Configure the `createMessagesDeclarations` setting in your Next.js config:
+2. Configure the `createMessagesDeclaration` setting in your Next.js config:
 
 ```tsx filename="next.config.mjs"
 import {createNextIntlPlugin} from 'next-intl/plugin';
@@ -211,7 +211,7 @@ import {createNextIntlPlugin} from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     // Provide the path to the messages that you're using in `AppConfig`
-    createMessagesDeclarations: ['./messages/en.json']
+    createMessagesDeclaration: './messages/en.json'
   }
   // ...
 });
