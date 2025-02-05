@@ -11,7 +11,7 @@ function runOnce(fn: () => void) {
   fn();
 }
 
-export default function createMessagesDeclarations(
+export default function createMessagesDeclaration(
   messagesPaths: Array<string>
 ) {
   // Next.js can call the Next.js config multiple
