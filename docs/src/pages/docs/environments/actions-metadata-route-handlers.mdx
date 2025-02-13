@@ -169,7 +169,7 @@ If you're using a sitemap to inform search engines about all pages of your site,
 
 Note that by default, `next-intl` returns [the `link` response header](/docs/routing#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
 
-Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
+Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap). You can construct a list of entries for each pathname and locale as follows:
 
 ```tsx filename="app/sitemap.ts" {4-5,8-9}
 import {MetadataRoute} from 'next';
@@ -180,20 +180,20 @@ const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Adapt this as necessary
-  return [getEntry('/'), getEntry('/users')];
+  return [...getEntries('/'), ...getEntries('/users')];
 }
 
 type Href = Parameters<typeof getPathname>[0]['href'];
 
-function getEntry(href: Href) {
-  return {
-    url: getUrl(href, routing.defaultLocale),
+function getEntries(href: Href) {
+  return routing.locales.map((locale) => ({
+    url: getUrl(href, locale),
     alternates: {
       languages: Object.fromEntries(
-        routing.locales.map((locale) => [locale, getUrl(href, locale)])
+        routing.locales.map((cur) => [cur, getUrl(href, cur)])
       )
     }
-  };
+  }));
 }
 
 function getUrl(href: Href, locale: (typeof routing.locales)[number]) {
@@ -206,14 +206,19 @@ Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting,
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
-getEntry('/users/1');
+getEntries('/users/1');
 
 // 2. An object (when using `pathnames`)
-getEntry({
+getEntries({
   pathname: '/users/[id]',
   params: {id: '1'}
 });
 ```
+
+**Keep in mind**:
+
+- Each pathname should have a separate entry for every locale that your app supports.
+- Also the locale of a given pathname should be included in the `alternates` object.
 
 ([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
 

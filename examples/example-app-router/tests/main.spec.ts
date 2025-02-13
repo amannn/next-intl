@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
@@ -111,7 +111,17 @@ it('serves a sitemap.xml', async ({page}) => {
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
 </url>
 <url>
+<loc>http://localhost:3000/de</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
+</url>
+<url>
 <loc>http://localhost:3000/en/pathnames</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
+</url>
+<url>
+<loc>http://localhost:3000/de/pfadnamen</loc>
 <xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
 </url>
