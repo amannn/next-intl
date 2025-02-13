@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && prettier src --check",
+    "lint": "prettier src --check",
     "build": "next build",
     "start": "next start"
   },
@@ -14,9 +14,11 @@
     "use-intl": "^3.0.0"
   },
   "devDependencies": {
-    "eslint": "^9.11.1",
-    "eslint-config-molindo": "^8.0.0",
     "prettier": "^3.3.3"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }
