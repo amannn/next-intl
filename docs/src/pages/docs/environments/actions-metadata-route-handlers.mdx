@@ -65,7 +65,6 @@ Note that when you're displaying messages generated in Server Actions to the use
 ```tsx
 import {getTranslations} from 'next-intl/server';
 import {loginUser} from '@/services/session';
-import {isEqual} from 'lodash';
 import {z} from 'zod';
 
 const loginFormSchema = z.object({
@@ -81,23 +80,18 @@ async function loginAction(data: FormData) {
   const t = await getTranslations('LoginForm');
   const values = Object.fromEntries(data);
 
-  const result = await loginFormSchema
-    .refine(async (credentials) => loginUser(credentials), {
-      message: t('invalidCredentials')
-    })
-    .safeParseAsync(values, {
-      errorMap(issue, ctx) {
-        let message;
+  const result = loginFormSchema.safeParse(values, {
+    errorMap(issue, ctx) {
+      const path = issue.path.join('.');
 
-        if (isEqual(issue.path, ['email'])) {
-          message = t('invalidEmail');
-        } else if (isEqual(issue.path, ['password'])) {
-          message = t('invalidPassword');
-        }
+      const message = {
+        email: t('invalidEmail')
+        password: t('invalidPassword')
+      }[path];
 
-        return {message: message || ctx.defaultError};
-      }
-    });
+      return {message: message || ctx.defaultError};
+    }
+  });
 
   // ...
 }
@@ -109,9 +103,9 @@ See the [App Router without i18n routing example](/examples#app-router-without-i
 
 ### Open Graph images
 
-If you're programmatically generating [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image), you can apply internationalization by calling functions from `next-intl` in the exported function:
+If you're programmatically generating [Open Graph images](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image), you can call functions from `next-intl` in the exported component:
 
-```tsx filename="opengraph-image.tsx"
+```tsx filename="app/[locale]/opengraph-image.tsx"
 import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 
@@ -119,6 +113,29 @@ export default async function OpenGraphImage({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
+```
+
+Next.js will create a public route based on the segment where `opengraph-image.tsx` is placed, e.g.:
+
+```
+http://localhost:3000/en/opengraph-image?f87b2d56cee109c7
+```
+
+However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
+
+If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
+
+```tsx filename="middleware.ts"
+// ...
+
+export const config = {
+  matcher: [
+    // Skip all paths that should not be internationalized
+    '/((?!api|_next|_vercel|.*/opengraph-image|.*\\..*).*)'
+
+    // ...
+  ]
+};
 ```
 
 ### Manifest
@@ -152,7 +169,7 @@ If you're using a sitemap to inform search engines about all pages of your site,
 
 Note that by default, `next-intl` returns [the `link` response header](/docs/routing#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
 
-Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) as of version 14.2. You can use your default locale for the main URL and provide alternate URLs based on all locales that your app supports. Keep in mind that also the default locale should be included in the `alternates` object.
+Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap). You can construct a list of entries for each pathname and locale as follows:
 
 ```tsx filename="app/sitemap.ts" {5-6,9-10}
 import {MetadataRoute} from 'next';
@@ -164,20 +181,20 @@ const host = 'https://acme.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Adapt this as necessary
-  return [getEntry('/'), getEntry('/users')];
+  return [...getEntries('/'), ...getEntries('/users')];
 }
 
 type Href = Parameters<typeof getPathname>[0]['href'];
 
-function getEntry(href: Href) {
-  return {
-    url: getUrl(href, routing.defaultLocale),
+function getEntries(href: Href) {
+  return routing.locales.map((locale) => ({
+    url: getUrl(href, locale),
     alternates: {
       languages: Object.fromEntries(
-        routing.locales.map((locale) => [locale, getUrl(href, locale)])
+        routing.locales.map((cur) => [cur, getUrl(href, cur)])
       )
     }
-  };
+  }));
 }
 
 function getUrl(href: Href, locale: Locale) {
@@ -190,14 +207,19 @@ Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting,
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
-getEntry('/users/1');
+getEntries('/users/1');
 
 // 2. An object (when using `pathnames`)
-getEntry({
+getEntries({
   pathname: '/users/[id]',
   params: {id: '1'}
 });
 ```
+
+**Keep in mind**:
+
+- Each pathname should have a separate entry for every locale that your app supports.
+- Also the locale of a given pathname should be included in the `alternates` object.
 
 ([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
 

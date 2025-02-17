@@ -626,7 +626,10 @@ it('populates metadata', async ({page}) => {
   );
 });
 
-it('supports opengraph images', async ({page, request}) => {
+it('supports opengraph images for the default locale', async ({
+  page,
+  request
+}) => {
   await page.goto('/');
   const ogImage = await page
     .locator('meta[property="og:image"]')
@@ -634,6 +637,21 @@ it('supports opengraph images', async ({page, request}) => {
   expect(ogImage).toBeTruthy();
   const ogImageUrl = new URL(ogImage!);
   expect(ogImageUrl.pathname).toBe('/en/opengraph-image');
+  const result = await request.get(ogImageUrl.pathname);
+  expect(result.ok()).toBe(true);
+});
+
+it('supports opengraph images for a locale with a custom prefix', async ({
+  page,
+  request
+}) => {
+  await page.goto('/spain');
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute('content');
+  expect(ogImage).toBeTruthy();
+  const ogImageUrl = new URL(ogImage!);
+  expect(ogImageUrl.pathname).toBe('/es/opengraph-image');
   const result = await request.get(ogImageUrl.pathname);
   expect(result.ok()).toBe(true);
 });

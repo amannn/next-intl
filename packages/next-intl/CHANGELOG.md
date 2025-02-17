@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.3 (2024-12-20)
+
+### Bug Fixes
+
+* Add missing deprecation warnings for `next-intl@4.0` ([#1485](https://github.com/amannn/next-intl/issues/1485)) ([1d60d08](https://github.com/amannn/next-intl/commit/1d60d08c446d9eeac8bcc5bfbd0654113a737518)) – by @amannn
+
 ## 3.26.2 (2024-12-18)
 
 ### Bug Fixes

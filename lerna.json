@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "3.26.2",
+  "version": "3.26.3",
   "packages": ["packages/*"],
   "npmClient": "pnpm",
   "changelogPreset": "conventional-changelog-conventionalcommits",
