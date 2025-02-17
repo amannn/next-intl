@@ -61,7 +61,7 @@ The simplest option is to add JSON files in your local project folder:
 
 ### `next.config.mjs` [#next-config]
 
-Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components—more on this in the following steps.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration like your messages to Server Components—more on this in the following steps.
 
 <Tabs items={['next.config.mjs', 'next.config.js']}>
 <Tabs.Tab>
@@ -117,8 +117,8 @@ export const routing = defineRouting({
   defaultLocale: 'en'
 });
 
-// Lightweight wrappers around Next.js' navigation APIs
-// that will consider the routing configuration
+// Lightweight wrappers around Next.js' navigation
+// APIs that consider the routing configuration
 export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
@@ -136,10 +136,37 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  // Match all pathnames except for
+  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+  // - … the ones containing a dot (e.g. `favicon.ico`)
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
+
+<Details id="middleware-matcher-dots">
+  <summary>How can I match pathnames that contain dots like `/users/jane.doe`?</summary>
+
+If you have pathnames where dots are expected, you can match them with explicit entries:
+
+```tsx filename="src/middleware.ts" {10,11}
+// ...
+
+export const config = {
+  matcher: [
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+
+    // Match all pathnames within `{/:locale}/users`
+    '/([\\w-]+)?/users/(.+)'
+  ];
+}
+```
+
+This will match e.g. `/users/jane.doe`, also optionally with a locale prefix.
+
+</Details>
 
 ### `src/i18n/request.ts` [#i18n-request]
 

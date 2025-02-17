@@ -63,13 +63,6 @@ export const routing = defineRouting({
 });
 ```
 
-<Details id="redirect-unprefixed-pathnames">
-<summary>How can I redirect unprefixed pathnames?</summary>
-
-If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix) too.
-
-</Details>
-
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
 If you want to use no prefix for the default locale (e.g. `/about`), you can configure your routing accordingly:
@@ -83,9 +76,10 @@ export const routing = defineRouting({
 });
 ```
 
-**Important**: For this routing strategy to work as expected, you should additionally adapt your middleware matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
+**Note that:**
 
-Note that if a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
+1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
+2. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
 
 #### Never use a locale prefix [#locale-prefix-never]
 
@@ -109,7 +103,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 **Note that:**
 
-1. If you use this strategy, you should adapt your matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
+1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
 2. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
 3. You can consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference across sessions.
 
@@ -561,12 +555,7 @@ link: <https://example.com/en>; rel="alternate"; hreflang="en",
 
 The [`x-default`](https://developers.google.com/search/docs/specialty/international/localized-versions#xdefault) entry is included to point to a variant that can be used if no other language matches the user's browser setting. This special entry is reserved for language selection & detection, in our case issuing a 307 redirect to the best matching locale.
 
-Note that middleware configuration is automatically incorporated with the following special cases:
-
-1. **`localePrefix: 'always'` (default)**: The `x-default` entry is only included for `/`, not for nested pathnames like `/about`. The reason is that the default [matcher](#matcher-config) doesn't handle unprefixed pathnames apart from `/`, therefore these URLs could be 404s. Note that this only applies to the optional `x-default` entry, locale-specific URLs are always included.
-2. **`localePrefix: 'never'`**: Alternate links are entirely turned off since there might not be unique URLs per locale.
-
-Other configuration options like `domains`, `pathnames` and `basePath` are automatically considered.
+Your middleware configuration, including options like `domains`, `pathnames` and `basePath`, is automatically incorporated.
 
 </Details>
 
