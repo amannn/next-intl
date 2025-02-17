@@ -143,8 +143,7 @@ export default function getAlternateLinksHeaderValue<
   // Add x-default entry
   const shouldAddXDefault =
     // For domain-based routing there is no reasonable x-default
-    !routing.domains &&
-    (routing.localePrefix.mode !== 'always' || normalizedUrl.pathname === '/');
+    !routing.domains || routing.domains.length === 0;
   if (shouldAddXDefault) {
     const url = new URL(
       getLocalizedPathname(normalizedUrl.pathname, routing.defaultLocale),
