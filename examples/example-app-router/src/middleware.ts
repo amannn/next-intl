@@ -5,10 +5,9 @@ export default createMiddleware(routing);
 
 export const config = {
   matcher: [
-    // Only match content pages by excluding:
-    // - Next.js internals at /_next
-    // - Vercel internals at /_vercel
-    // - Pathnames that look like static files
-    '/((?!_next|_vercel|.*\\..*).*)'
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
   ]
 };
