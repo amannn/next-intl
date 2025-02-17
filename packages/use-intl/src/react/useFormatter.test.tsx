@@ -7,7 +7,8 @@ import {
   type DateTimeFormatOptions,
   type IntlError,
   IntlErrorCode,
-  type NumberFormatOptions
+  type NumberFormatOptions,
+  type RelativeTimeFormatOptions
 } from '../core.js';
 import IntlProvider from './IntlProvider.js';
 import useFormatter from './useFormatter.js';
@@ -432,13 +433,15 @@ describe('number', () => {
 describe('relativeTime', () => {
   function renderRelativeTime(
     date: Date | number,
-    nowOrOptions: Parameters<
-      ReturnType<typeof useFormatter>['relativeTime']
-    >['1']
+    nowOrOptions: Date | number | RelativeTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
-      return <>{format.relativeTime(date, nowOrOptions)}</>;
+      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+        return format.relativeTime(date, nowOrOptions);
+      } else {
+        return format.relativeTime(date, nowOrOptions);
+      }
     }
 
     render(
