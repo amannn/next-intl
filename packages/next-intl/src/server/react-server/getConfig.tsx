@@ -6,6 +6,7 @@ import {
   _createIntlFormatters,
   initializeConfig
 } from 'use-intl/core';
+import {isPromise} from '../../shared/utils.js';
 import {getRequestLocale} from './RequestLocale.js';
 import createRequestConfig from './createRequestConfig.js';
 import type {GetRequestConfigParams} from './getRequestConfig.js';
@@ -52,7 +53,7 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
   };
 
   let result = getConfig(params);
-  if (result instanceof Promise) {
+  if (isPromise(result)) {
     result = await result;
   }
 
