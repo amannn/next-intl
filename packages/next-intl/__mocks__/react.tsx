@@ -1,10 +1,12 @@
+import {isPromise} from '../src/shared/utils';
+
 // @ts-expect-error -- React uses CJS
 export * from 'react';
 
 export {default} from 'react';
 
 export function use(promise: Promise<unknown> & {value?: unknown}) {
-  if (!(promise instanceof Promise)) {
+  if (!isPromise(promise)) {
     throw new Error('Expected a promise, got ' + typeof promise);
   }
 

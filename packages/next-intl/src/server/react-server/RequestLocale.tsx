@@ -1,15 +1,14 @@
 import {headers} from 'next/headers';
 import {cache} from 'react';
 import {HEADER_LOCALE_NAME} from '../../shared/constants';
+import {isPromise} from '../../shared/utils';
 import {getCachedRequestLocale} from './RequestLocaleCache';
 
 async function getHeadersImpl(): Promise<Headers> {
   const promiseOrValue = headers();
 
   // Compatibility with Next.js <15
-  return promiseOrValue instanceof Promise
-    ? await promiseOrValue
-    : promiseOrValue;
+  return isPromise(promiseOrValue) ? await promiseOrValue : promiseOrValue;
 }
 const getHeaders = cache(getHeadersImpl);
 

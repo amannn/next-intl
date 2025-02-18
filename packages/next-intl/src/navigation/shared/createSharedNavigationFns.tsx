@@ -16,7 +16,7 @@ import {
   Pathnames
 } from '../../routing/types';
 import {ParametersExceptFirst, Prettify} from '../../shared/types';
-import {isLocalizableHref} from '../../shared/utils';
+import {isLocalizableHref, isPromise} from '../../shared/utils';
 import BaseLink from './BaseLink';
 import {
   HrefOrHrefWithParams,
@@ -111,10 +111,9 @@ export default function createSharedNavigationFns<
     const isLocalizable = isLocalizableHref(href);
 
     const localePromiseOrValue = getLocale();
-    const curLocale =
-      localePromiseOrValue instanceof Promise
-        ? use(localePromiseOrValue)
-        : localePromiseOrValue;
+    const curLocale = isPromise(localePromiseOrValue)
+      ? use(localePromiseOrValue)
+      : localePromiseOrValue;
 
     const finalPathname = isLocalizable
       ? getPathname(
