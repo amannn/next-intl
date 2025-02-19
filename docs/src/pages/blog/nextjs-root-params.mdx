@@ -38,9 +38,9 @@ But first, let's have a look at how this API works in practice.
 
 ## Root layouts
 
-Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`.
+Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`—the root of your app.
 
-Now, you can move a root layout to a nested folder that can be a dynamic segment, e.g.:
+Now, you can move a root layout to a nested segment, which can also be dynamic:
 
 ```
 src
@@ -50,7 +50,7 @@ src
         └── page.tsx
 ```
 
-A root layout is a layout that has no other layouts located above it.
+In this extended definition, a root layout now is any layout that has no other layouts located above it.
 
 In contrast, layouts that do have other layout ancestors are regular layouts:
 
@@ -93,7 +93,9 @@ src
         └── page.tsx
 ```
 
-The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore both qualify as root layouts. Due to this, in this case the returned value of `rootParams` will depend on where the component that calls the function is being rendered from.
+The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore both qualify as root layouts.
+
+Due to this, in this case the returned value of `rootParams` will depend on where the component that calls the function is being rendered from.
 
 If you call `rootParams` in shared code that is used by both root layouts, this allows for a pattern like this:
 
