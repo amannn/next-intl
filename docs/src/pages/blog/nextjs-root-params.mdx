@@ -151,7 +151,7 @@ Similarly to how we've defined the `getLocale` function above, we do in fact alr
 
 So let's use `rootParams` here:
 
-```tsx filename="src/i18n/request.ts"
+```tsx filename="src/i18n/request.ts" {7}
 import {unstable_rootParams as rootParams} from 'next/server';
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
@@ -275,7 +275,10 @@ export default getRequestConfig(async ({locale}) => {
       : routing.defaultLocale;
   }
 
-  // ...
+  return {
+    locale
+    // ...
+  };
 });
 ```
 
