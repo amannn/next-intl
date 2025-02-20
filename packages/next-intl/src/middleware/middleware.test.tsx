@@ -354,6 +354,14 @@ describe('prefix-based routing', () => {
       );
     });
 
+    it('does not return alternate links when redirecting', () => {
+      const response = middleware(
+        createMockRequest('/en', 'en', 'http://localhost:3000', 'de')
+      );
+      expect(MockedNextResponse.redirect).toHaveBeenCalled();
+      expect(response.headers.get('link')).toBe(null);
+    });
+
     it('sets a cookie when changing to the default locale', () => {
       const response = middleware(
         createMockRequest('/en', 'en', undefined, 'de')
@@ -3002,7 +3010,7 @@ describe('domain-based routing', () => {
         ]);
         expect(
           getLinks(
-            createMockRequest('/a-propos', 'fr', 'http://ca.example.com')
+            createMockRequest('/fr/a-propos', 'fr', 'http://ca.example.com')
           )
         ).toEqual([
           '<http://en.example.com/about>; rel="alternate"; hreflang="en"',
@@ -3045,7 +3053,7 @@ describe('domain-based routing', () => {
         expect(
           getLinks(
             createMockRequest(
-              '/fr/produits/apparel/t-shirts',
+              '/produits/apparel/t-shirts',
               'fr',
               'http://fr.example.com'
             )
@@ -3246,7 +3254,7 @@ describe('domain-based routing', () => {
             ?.split(', ');
         }
 
-        ['/en', '/uk'].forEach((pathname) => {
+        ['/', '/uk'].forEach((pathname) => {
           expect(getLinks(createMockRequest(pathname))).toEqual([
             '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
             '<http://localhost:3000/uk>; rel="alternate"; hreflang="en-gb"',
@@ -3254,7 +3262,7 @@ describe('domain-based routing', () => {
           ]);
         });
 
-        ['/en/about', '/uk/about'].forEach((pathname) => {
+        ['/about', '/uk/about'].forEach((pathname) => {
           expect(getLinks(createMockRequest(pathname))).toEqual([
             '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
             '<http://localhost:3000/uk/about>; rel="alternate"; hreflang="en-gb"',
@@ -3262,7 +3270,7 @@ describe('domain-based routing', () => {
           ]);
         });
 
-        expect(getLinks(createMockRequest('/en/unknown'))).toEqual([
+        expect(getLinks(createMockRequest('/unknown'))).toEqual([
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
           '<http://localhost:3000/uk/unknown>; rel="alternate"; hreflang="en-gb"',
           '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
@@ -3371,6 +3379,39 @@ describe('domain-based routing', () => {
       );
       expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
         'http://ca.example.com/fr/about'
+      );
+    });
+
+    it('keeps the port when there is a x-forwarded-host', () => {
+      createMiddleware({
+        defaultLocale: 'en',
+        locales: ['en', 'es'],
+        domains: [
+          {
+            domain: 'localhost:3000',
+            defaultLocale: 'en',
+            locales: ['en']
+          },
+          {
+            domain: 'localhost:3001',
+            defaultLocale: 'es',
+            locales: ['es']
+          }
+        ]
+      })(
+        createMockRequest(
+          '/en',
+          undefined,
+          'http://localhost:3001',
+          undefined,
+          {
+            'x-forwarded-host': 'localhost:3001'
+          }
+        )
+      );
+
+      expect(MockedNextResponse.redirect.mock.calls[0][0].toString()).toBe(
+        'http://localhost:3000/en'
       );
     });
 
