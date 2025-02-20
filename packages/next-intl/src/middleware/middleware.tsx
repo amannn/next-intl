@@ -124,7 +124,11 @@ export default function createMiddleware<
             request.headers.get('x-forwarded-proto') ??
             request.nextUrl.protocol;
 
-          urlObj.port = request.headers.get('x-forwarded-port') ?? '';
+          const redirectDomainPort = redirectDomain.split(':')[1] as
+            | string
+            | undefined;
+          urlObj.port =
+            redirectDomainPort ?? request.headers.get('x-forwarded-port') ?? '';
         }
       }
 
@@ -135,6 +139,7 @@ export default function createMiddleware<
         );
       }
 
+      hasRedirected = true;
       return NextResponse.redirect(urlObj.toString());
     }
 
@@ -158,6 +163,7 @@ export default function createMiddleware<
 
     let response;
     let internalTemplateName: string | undefined;
+    let hasRedirected: boolean | undefined;
 
     let unprefixedInternalPathname = unprefixedExternalPathname;
     const pathnames = (resolvedRouting as any).pathnames as
@@ -304,6 +310,7 @@ export default function createMiddleware<
     syncCookie(request, response, locale, resolvedRouting, domain);
 
     if (
+      !hasRedirected &&
       resolvedRouting.localePrefix.mode !== 'never' &&
       resolvedRouting.alternateLinks &&
       resolvedRouting.locales.length > 1
