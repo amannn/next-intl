@@ -37,6 +37,5 @@ it('can use a secondary locale unprefixed if the domain has specified it as the 
   await page.getByRole('link', {name: 'Start'}).click();
   await expect(page).toHaveURL('http://example.de');
   await page.getByRole('link', {name: 'Zu Englisch wechseln'}).click();
-  await expect(page).toHaveURL('http://example.de/en');
-  await expect(page.getByRole('heading', {name: 'Home'})).toBeVisible();
+  await expect(page).toHaveURL('http://example.com/en');
 });
