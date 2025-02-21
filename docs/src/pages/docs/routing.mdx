@@ -324,9 +324,9 @@ If you want to serve your localized content based on different domains, you can 
 - `us.example.com`: `en-US`
 - `ca.example.com`: `en-CA`
 - `ca.example.com/fr`: `fr-CA`
-- `fr.example.com`: `fr-CA`
+- `fr.example.com`: `fr-FR`
 
-In many cases, `domains` are combined with a [`localePrefix`](#locale-prefix) setting to achieve results as shown above. Also [custom prefixes](#locale-prefix-custom) can be used to customize the user-facing prefix per domain.
+In many cases, `domains` are combined with a [`localePrefix`](#locale-prefix) setting to achieve results as shown above. Also [custom prefixes](#locale-prefix-custom) can be used to customize the user-facing prefix per locale.
 
 ```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
@@ -347,15 +347,14 @@ export const routing = defineRouting({
     },
     {
       domain: 'fr.example.com',
-      defaultLocale: 'fr-CA',
-      locales: ['fr-CA']
+      defaultLocale: 'fr-FR',
+      locales: ['fr-FR']
     }
   ],
   localePrefix: {
     mode: 'as-needed',
     prefixes: {
-      // Omit the regional variant
-      // for `ca.example.com/fr`
+      // Cleaner prefix for `ca.example.com/fr`
       'fr-CA': '/fr'
     }
   }
