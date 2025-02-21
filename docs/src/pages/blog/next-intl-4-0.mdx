@@ -19,7 +19,8 @@ Here's what's new in `next-intl@4.0`:
 4. [**GDPR compliance**](#gdpr-compliance)
 5. [**Modernized build output**](#modernized-build-output)
 6. [**Improved inheritance in `NextIntlClientProvider`**](#nextintlclientprovider-inheritance)
-7. [**Preparation for upcoming Next.js features**](#nextjs-future)
+7. [**Stricter config for `domains`**](#domains-config)
+8. [**Preparation for upcoming Next.js features**](#nextjs-future)
 
 Please also have a look at the [other breaking changes](#other-breaking-changes) listed below before you upgrade.
 
@@ -213,6 +214,58 @@ With this, `NextIntlClientProvider` now inherits all of your configuration, with
 
 To make it easier to work with error handling functions on the client side, `NextIntlClientProvider` can now also be used in a nested fashion and will inherit the configuration from a parent provider ([PR #1413](https://github.com/amannn/next-intl/pull/1413)).
 
+## Stricter config for `domains` [#domains-config]
+
+So far, when using [`domains`](/docs/routing#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://next-intl-docs-6wwcmwb9a-next-intl.vercel.app/docs/routing#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
+
+Now, by introducing two new constraints, `next-intl` can avoid these tradeoffs altogether:
+
+1. A locale can now only be used for a single domain
+2. Each domain now must specify its `locales`
+
+The result is a simplified, more intuitive model that works as expected for this popular use case.
+
+If you previously used locales across multiple domains, you now have to be more specific—typically by introducing a regional variant for a base language. You can additionally customize the prefixes if desired.
+
+**Example:**
+
+```tsx
+import {defineRouting} from 'next-intl/routing';
+
+export const routing = defineRouting({
+  locales: ['sv-SE', 'en-SE', 'no-NO', 'en-NO'],
+  defaultLocale: 'en-SE',
+  localePrefix: {
+    mode: 'as-needed',
+    prefixes: {
+      'en-SE': '/en',
+      'en-NO': '/en'
+    }
+  },
+  domains: [
+    {
+      domain: 'example.se',
+      defaultLocale: 'sv-SE',
+      locales: ['sv-SE', 'en-SE']
+    },
+    {
+      domain: 'example.no',
+      defaultLocale: 'no-NO',
+      locales: ['no-NO', 'en-NO']
+    }
+  ]
+});
+```
+
+This will create the following structure:
+
+- `example.se`: `sv-SE`
+- `example.se/en`: `en-SE`
+- `example.no`: `no-NO`
+- `example.no/en`: `en-NO`
+
+Learn more in the updated docs for [`domains`](https://v4.next-intl.dev/docs/routing#domains).
+
 ## Preparation for upcoming Next.js features [#nextjs-future]
 
 To ensure that the sails of `next-intl` are set for a steady course in the upcoming future, I've investigated the implications of upcoming Next.js features like [`ppr`](https://nextjs.org/docs/app/api-reference/next-config-js/ppr), [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) and [`rootParams`](https://github.com/vercel/next.js/pull/72837) for `next-intl`.
@@ -221,7 +274,7 @@ This led to three minor changes:
 
 1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
-3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](https://next-intl.dev/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
+3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
 
 While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
