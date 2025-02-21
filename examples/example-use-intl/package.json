@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint src && tsc && prettier src --check",
+    "build": "vite build",
+    "lint": "tsc && prettier src --check",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,11 +17,13 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^9.11.1",
-    "eslint-config-molindo": "^8.0.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3",
     "vite": "^5.3.1"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }

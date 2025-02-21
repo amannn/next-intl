@@ -1,6 +1,6 @@
-import BaseLayout from '@/components/BaseLayout';
-import NotFoundPage from '@/components/NotFoundPage';
-import {routing} from '@/i18n/routing';
+'use client';
+
+import Error from 'next/error';
 
 // This page renders when a route like `/unknown.txt` is requested.
 // In this case, the layout at `app/[locale]/layout.tsx` receives
@@ -8,8 +8,10 @@ import {routing} from '@/i18n/routing';
 
 export default function GlobalNotFound() {
   return (
-    <BaseLayout locale={routing.defaultLocale}>
-      <NotFoundPage />
-    </BaseLayout>
+    <html lang="en">
+      <body>
+        <Error statusCode={404} />;
+      </body>
+    </html>
   );
 }

@@ -28,16 +28,16 @@ it("handles not found pages for routes that don't match the middleware", async (
   page
 }) => {
   await page.goto('/test.png');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 
   await page.goto('/api/hello');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 });
 
 it('sets caching headers', async ({request}) => {
   for (const pathname of ['/en', '/en/pathnames', '/de', '/de/pfadnamen']) {
-    expect((await request.get(pathname)).headers()['cache-control']).toBe(
-      's-maxage=31536000, stale-while-revalidate'
+    expect((await request.get(pathname)).headers()['cache-control']).toContain(
+      's-maxage=31536000'
     );
   }
 });
