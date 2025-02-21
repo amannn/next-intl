@@ -924,6 +924,15 @@ describe.each([
         );
         expect(markup).toContain('href="/de/about"');
       });
+
+      it('accepts search params', () => {
+        render(
+          <Link href={{pathname: '/about', query: {foo: 'bar'}}}>Test</Link>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+        ).toBe('/about?foo=bar');
+      });
     });
 
     describe('getPathname', () => {
@@ -974,6 +983,39 @@ describe.each([
       it('adds a prefix for a secondary locale', () => {
         runInRender(() => redirectFn({href: '/', locale: 'de'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
+      });
+    });
+  });
+
+  describe("localePrefix: 'as-needed', with `domains` and `pathnames`", () => {
+    const {Link, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: 'as-needed',
+      pathnames
+    });
+
+    describe('Link', () => {
+      it('accepts search params', () => {
+        render(
+          <Link href={{pathname: '/about', query: {foo: 'bar'}}}>Test</Link>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+        ).toBe('/about?foo=bar');
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('accepts search params', () => {
+        runInRender(() =>
+          redirectFn({href: {pathname: '/', query: {foo: 'bar'}}, locale: 'en'})
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en?foo=bar');
       });
     });
   });
