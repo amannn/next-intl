@@ -3194,20 +3194,73 @@ describe('domain-based routing', () => {
     describe('custom prefixes with pathnames', () => {
       const middlewareWithPrefixes = createMiddleware({
         defaultLocale: 'en',
-        locales: ['en', 'en-gb'],
+        locales: ['en', 'en-gb', 'sv-SE', 'en-SE', 'no-NO', 'en-NO'],
         localePrefix: {
           mode: 'as-needed',
           prefixes: {
-            'en-gb': '/uk'
+            'en-gb': '/uk',
+            'en-SE': '/en',
+            'en-NO': '/en'
           }
         },
         pathnames: {
           '/': '/',
           '/about': {
             en: '/about',
-            'en-gb': '/about'
+            'en-gb': '/about',
+            'en-SE': '/about',
+            'en-NO': '/about',
+            'sv-SE': '/about',
+            'no-NO': '/about'
           }
-        } satisfies Pathnames<ReadonlyArray<'en' | 'en-gb'>>
+        } satisfies Pathnames<
+          ReadonlyArray<'en' | 'en-gb' | 'sv-SE' | 'en-SE' | 'no-NO' | 'en-NO'>
+        >,
+        domains: [
+          {
+            defaultLocale: 'en-gb',
+            domain: 'example.co.uk',
+            locales: ['en-gb']
+          },
+          {
+            defaultLocale: 'sv-SE',
+            domain: 'example.se',
+            locales: ['sv-SE', 'en-SE']
+          },
+          {
+            defaultLocale: 'no-NO',
+            domain: 'example.no',
+            locales: ['no-NO', 'en-NO']
+          },
+          {
+            defaultLocale: 'en',
+            domain: 'example.com',
+            locales: ['en']
+          }
+        ]
+      });
+
+      it('serves requests for overlapping prefixes', () => {
+        middlewareWithPrefixes(
+          createMockRequest('/', undefined, 'http://example.com')
+        );
+        middlewareWithPrefixes(
+          createMockRequest('/en', undefined, 'http://example.no')
+        );
+        middlewareWithPrefixes(
+          createMockRequest('/en', undefined, 'http://example.se')
+        );
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(3);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://example.com/en'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://example.no/en-NO'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://example.se/en-SE'
+        );
       });
 
       it('serves requests for the default locale at the root', () => {
@@ -3257,24 +3310,33 @@ describe('domain-based routing', () => {
 
         ['/', '/uk'].forEach((pathname) => {
           expect(getLinks(createMockRequest(pathname))).toEqual([
-            '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
-            '<http://localhost:3000/uk>; rel="alternate"; hreflang="en-gb"',
-            '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+            '<http://example.com/>; rel="alternate"; hreflang="en"',
+            '<http://example.co.uk/>; rel="alternate"; hreflang="en-gb"',
+            '<http://example.se/>; rel="alternate"; hreflang="sv-SE"',
+            '<http://example.se/en>; rel="alternate"; hreflang="en-SE"',
+            '<http://example.no/>; rel="alternate"; hreflang="no-NO"',
+            '<http://example.no/en>; rel="alternate"; hreflang="en-NO"'
           ]);
         });
 
         ['/about', '/uk/about'].forEach((pathname) => {
           expect(getLinks(createMockRequest(pathname))).toEqual([
-            '<http://localhost:3000/about>; rel="alternate"; hreflang="en"',
-            '<http://localhost:3000/uk/about>; rel="alternate"; hreflang="en-gb"',
-            '<http://localhost:3000/about>; rel="alternate"; hreflang="x-default"'
+            '<http://example.com/about>; rel="alternate"; hreflang="en"',
+            '<http://example.co.uk/about>; rel="alternate"; hreflang="en-gb"',
+            '<http://example.se/about>; rel="alternate"; hreflang="sv-SE"',
+            '<http://example.se/en/about>; rel="alternate"; hreflang="en-SE"',
+            '<http://example.no/about>; rel="alternate"; hreflang="no-NO"',
+            '<http://example.no/en/about>; rel="alternate"; hreflang="en-NO"'
           ]);
         });
 
         expect(getLinks(createMockRequest('/unknown'))).toEqual([
-          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="en"',
-          '<http://localhost:3000/uk/unknown>; rel="alternate"; hreflang="en-gb"',
-          '<http://localhost:3000/unknown>; rel="alternate"; hreflang="x-default"'
+          '<http://example.com/unknown>; rel="alternate"; hreflang="en"',
+          '<http://example.co.uk/unknown>; rel="alternate"; hreflang="en-gb"',
+          '<http://example.se/unknown>; rel="alternate"; hreflang="sv-SE"',
+          '<http://example.se/en/unknown>; rel="alternate"; hreflang="en-SE"',
+          '<http://example.no/unknown>; rel="alternate"; hreflang="no-NO"',
+          '<http://example.no/en/unknown>; rel="alternate"; hreflang="en-NO"'
         ]);
       });
     });

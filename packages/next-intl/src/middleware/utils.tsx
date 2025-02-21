@@ -159,7 +159,8 @@ export function getPathnameMatch<
 >(
   pathname: string,
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>,
+  domain?: DomainConfig<AppLocales>
 ):
   | {
       locale: AppLocales[number];
@@ -169,6 +170,21 @@ export function getPathnameMatch<
     }
   | undefined {
   const localePrefixes = getLocalePrefixes(locales, localePrefix);
+
+  // Sort to prioritize domain locales
+  if (domain) {
+    localePrefixes.sort(([localeA], [localeB]) => {
+      if (localeA === domain.defaultLocale) return -1;
+      if (localeB === domain.defaultLocale) return 1;
+
+      const isLocaleAInDomain = domain.locales.includes(localeA);
+      const isLocaleBInDomain = domain.locales.includes(localeB);
+      if (isLocaleAInDomain && !isLocaleBInDomain) return -1;
+      if (!isLocaleAInDomain && isLocaleBInDomain) return 1;
+
+      return 0;
+    });
+  }
 
   for (const [locale, prefix] of localePrefixes) {
     let exact, matches;

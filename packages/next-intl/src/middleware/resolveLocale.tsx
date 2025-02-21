@@ -169,7 +169,8 @@ function resolveLocaleFromDomain<
     const prefixLocale = getPathnameMatch(
       pathname,
       routing.locales,
-      routing.localePrefix
+      routing.localePrefix,
+      domain
     )?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
