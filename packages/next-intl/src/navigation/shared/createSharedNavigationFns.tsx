@@ -98,9 +98,10 @@ export default function createSharedNavigationFns<
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref: ComponentProps<typeof BaseLink>['ref']
   ) {
-    let pathname, params;
+    let pathname, params, query;
     if (typeof href === 'object') {
       pathname = href.pathname;
+      query = href.query;
       // @ts-expect-error -- This is ok
       params = href.params;
     } else {
@@ -159,7 +160,10 @@ export default function createSharedNavigationFns<
                   // @ts-expect-error -- This is ok
                   {
                     locale: curLocale,
-                    href: pathnames == null ? pathname : {pathname, params}
+                    href:
+                      pathnames == null
+                        ? {pathname, query}
+                        : {pathname, query, params}
                   },
                   false
                 )
