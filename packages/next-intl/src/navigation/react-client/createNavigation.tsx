@@ -85,11 +85,9 @@ export default function createNavigation<
         ): void {
           const {locale: nextLocale, ...rest} = options || {};
 
-          // @ts-expect-error -- We're passing a domain here just in case
           const pathname = getPathname({
             href,
-            locale: nextLocale || curLocale,
-            domain: window.location.host
+            locale: nextLocale || curLocale
           });
 
           const args: [href: string, options?: Options] = [pathname];

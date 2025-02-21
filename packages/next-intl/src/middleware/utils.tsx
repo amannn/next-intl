@@ -258,11 +258,7 @@ export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
   locale: Locale,
   domain: DomainConfig<AppLocales>
 ) {
-  return (
-    domain.defaultLocale === locale ||
-    !domain.locales ||
-    domain.locales.includes(locale)
-  );
+  return domain.defaultLocale === locale || domain.locales.includes(locale);
 }
 
 export function getBestMatchingDomain<AppLocales extends Locales>(
@@ -282,19 +278,9 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
     domainConfig = domainsConfig.find((cur) => cur.defaultLocale === locale);
   }
 
-  // Prio 3: Use alternative domain with restricted matching locale
+  // Prio 3: Use alternative domain that supports the locale
   if (!domainConfig) {
-    domainConfig = domainsConfig.find((cur) => cur.locales?.includes(locale));
-  }
-
-  // Prio 4: Stay on the current domain if it supports all locales
-  if (!domainConfig && curHostDomain?.locales == null) {
-    domainConfig = curHostDomain;
-  }
-
-  // Prio 5: Use alternative domain that supports all locales
-  if (!domainConfig) {
-    domainConfig = domainsConfig.find((cur) => !cur.locales);
+    domainConfig = domainsConfig.find((cur) => cur.locales.includes(locale));
   }
 
   return domainConfig;

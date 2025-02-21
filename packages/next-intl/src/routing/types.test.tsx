@@ -42,14 +42,7 @@ describe('LocalePrefix', () => {
 });
 
 describe('DomainConfig', () => {
-  it('allows to handle all locales', () => {
-    const config: DomainConfig<['en', 'de']> = {
-      defaultLocale: 'en',
-      domain: 'example.com'
-    };
-  });
-
-  it('allows to restrict locales', () => {
+  it('allows to define locales', () => {
     const config: DomainConfig<['en', 'de']> = {
       defaultLocale: 'en',
       domain: 'example.com',

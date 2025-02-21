@@ -197,7 +197,7 @@ function resolveLocaleFromDomain<
   if (!locale && routing.localeDetection) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
-      domain.locales || routing.locales,
+      domain.locales,
       domain.defaultLocale
     );
 

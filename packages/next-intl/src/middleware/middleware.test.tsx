@@ -2480,7 +2480,8 @@ describe('domain-based routing', () => {
         domains: [
           {
             defaultLocale: 'fr',
-            domain: 'ca.example.com'
+            domain: 'ca.example.com',
+            locales: ['en', 'fr']
           }
         ]
       });

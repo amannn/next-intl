@@ -18,11 +18,13 @@ export const routing = defineRouting({
       ? [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
+            defaultLocale: 'en',
+            locales: ['en', 'de', 'es', 'ja']
           },
           {
             domain: 'example.de',
-            defaultLocale: 'de'
+            defaultLocale: 'de',
+            locales: ['en', 'de', 'es', 'ja']
           }
         ]
       : undefined,

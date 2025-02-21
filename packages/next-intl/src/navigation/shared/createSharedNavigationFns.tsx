@@ -10,7 +10,6 @@ import {
   receiveRoutingConfig
 } from '../../routing/config.js';
 import type {
-  DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
@@ -67,16 +66,6 @@ export default function createSharedNavigationFns<
     ? undefined
     : AppPathnames;
 
-  // This combination requires that the current host is known in order to
-  // compute a correct pathname. Since that can only be achieved by reading from
-  // headers, this would break static rendering. Therefore, as a workaround we
-  // always add a prefix in this case to be on the safe side. The downside is
-  // that the user might get redirected again if the middleware detects that the
-  // prefix is not needed.
-  const forcePrefixSsr =
-    (config.localePrefix.mode === 'as-needed' && (config as any).domains) ||
-    undefined;
-
   type LinkProps<Pathname extends keyof AppPathnames = never> = Prettify<
     Omit<
       ComponentProps<typeof BaseLink>,
@@ -94,10 +83,9 @@ export default function createSharedNavigationFns<
     {href, locale, ...rest}: LinkProps<Pathname>,
     ref: ComponentProps<typeof BaseLink>['ref']
   ) {
-    let pathname, params, query;
+    let pathname, params;
     if (typeof href === 'object') {
       pathname = href.pathname;
-      query = href.query;
       // @ts-expect-error -- This is ok
       params = href.params;
     } else {
@@ -114,20 +102,18 @@ export default function createSharedNavigationFns<
 
     const finalPathname = isLocalizable
       ? getPathname(
-          // @ts-expect-error -- This is ok
           {
             locale: locale || curLocale,
+            // @ts-expect-error -- This is ok
             href: pathnames == null ? pathname : {pathname, params}
           },
-          locale != null || forcePrefixSsr || undefined
+          locale != null || undefined
         )
       : pathname;
 
     return (
       <BaseLink
         ref={ref}
-        // @ts-expect-error -- Available after the validation
-        defaultLocale={config.defaultLocale}
         // @ts-expect-error -- This is ok
         href={
           typeof href === 'object'
@@ -136,54 +122,11 @@ export default function createSharedNavigationFns<
         }
         locale={locale}
         localeCookie={config.localeCookie}
-        // Provide the minimal relevant information to the client side in order
-        // to potentially remove the prefix in case of the `forcePrefixSsr` case
-        unprefixed={
-          forcePrefixSsr && isLocalizable
-            ? {
-                domains: (config as any).domains.reduce(
-                  (
-                    acc: Record<string, Locale>,
-                    domain: DomainConfig<AppLocales>
-                  ) => {
-                    acc[domain.domain] = domain.defaultLocale;
-                    return acc;
-                  },
-                  {}
-                ),
-                pathname: getPathname(
-                  // @ts-expect-error -- This is ok
-                  {
-                    locale: curLocale,
-                    href:
-                      pathnames == null
-                        ? {pathname, query}
-                        : {pathname, query, params}
-                  },
-                  false
-                )
-              }
-            : undefined
-        }
         {...rest}
       />
     );
   }
   const LinkWithRef = forwardRef(Link);
-
-  type DomainConfigForAsNeeded = typeof routing extends undefined
-    ? {}
-    : AppLocalePrefixMode extends 'as-needed'
-      ? [AppDomains] extends [never]
-        ? {}
-        : {
-            /**
-             * In case you're using `localePrefix: 'as-needed'` in combination with `domains`, the `defaultLocale` can differ by domain and therefore the locales that need to be prefixed can differ as well. For this particular case, this parameter should be provided in order to compute the correct pathname. Note that the actual domain is not part of the result, but only the pathname is returned.
-             * @see https://next-intl.dev/docs/routing/navigation#getpathname
-             */
-            domain: AppDomains[number]['domain'];
-          }
-      : {};
 
   function getPathname(
     args: {
@@ -192,7 +135,7 @@ export default function createSharedNavigationFns<
         ? string | {pathname: string; query?: QueryParams}
         : HrefOrHrefWithParams<keyof AppPathnames>;
       locale: Locale;
-    } & DomainConfigForAsNeeded,
+    },
     /** @private Removed in types returned below */
     _forcePrefix?: boolean
   ) {
@@ -218,14 +161,7 @@ export default function createSharedNavigationFns<
       });
     }
 
-    return applyPathnamePrefix(
-      pathname,
-      locale,
-      config,
-      // @ts-expect-error -- This is ok
-      args.domain,
-      _forcePrefix
-    );
+    return applyPathnamePrefix(pathname, locale, config, _forcePrefix);
   }
 
   function getRedirectFn(
@@ -233,15 +169,10 @@ export default function createSharedNavigationFns<
   ) {
     /** @see https://next-intl.dev/docs/routing/navigation#redirect */
     return function redirectFn(
-      args: Omit<Parameters<typeof getPathname>[0], 'domain'> &
-        Partial<DomainConfigForAsNeeded>,
+      args: Omit<Parameters<typeof getPathname>[0], 'domain'>,
       ...rest: ParametersExceptFirst<typeof nextRedirect>
     ) {
-      return fn(
-        // @ts-expect-error -- We're forcing the prefix when no domain is provided
-        getPathname(args, args.domain ? undefined : forcePrefixSsr),
-        ...rest
-      );
+      return fn(getPathname(args), ...rest);
     };
   }
 
