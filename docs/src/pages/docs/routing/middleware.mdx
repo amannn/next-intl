@@ -93,14 +93,13 @@ Since the middleware is aware of all your domains, if a domain receives a reques
 4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
 
 <Details id="domain-matching">
-<summary>How is the best matching domain for a given locale detected?</summary>
+<summary>How is the best-matching domain for a given locale detected?</summary>
 
-The bestmatching domain is detected based on these priorities:
+The best-matching domain is detected based on these priorities:
 
 1. Stay on the current domain if the locale is supported here
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
-3. Use an alternative domain where the available `locales` are restricted and the locale is supported
-4. Use an alternative domain that supports all locales
+3. Use an alternative domain that supports the locale
 
 </Details>
 

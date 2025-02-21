@@ -321,37 +321,49 @@ If you want to serve your localized content based on different domains, you can 
 
 **Examples:**
 
-- `us.example.com/en`
-- `ca.example.com/en`
-- `ca.example.com/fr`
+- `us.example.com`: `en-US`
+- `ca.example.com`: `en-CA`
+- `ca.example.com/fr`: `fr-CA`
+- `fr.example.com`: `fr-FR`
+
+In many cases, `domains` are combined with a [`localePrefix`](#locale-prefix) setting to achieve results as shown above. Also [custom prefixes](#locale-prefix-custom) can be used to customize the user-facing prefix per locale.
 
 ```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'fr'],
-  defaultLocale: 'en',
+  locales: ['en-US', 'en-CA', 'fr-CA', 'fr-FR'],
+  defaultLocale: 'en-US',
   domains: [
     {
       domain: 'us.example.com',
-      defaultLocale: 'en',
-      // Optionally restrict the locales available on this domain
-      locales: ['en']
+      defaultLocale: 'en-US',
+      locales: ['en-US']
     },
     {
       domain: 'ca.example.com',
-      defaultLocale: 'en'
-      // If there are no `locales` specified on a domain,
-      // all available locales will be supported here
+      defaultLocale: 'en-CA',
+      locales: ['en-CA', 'fr-CA']
+    },
+    {
+      domain: 'fr.example.com',
+      defaultLocale: 'fr-FR',
+      locales: ['fr-FR']
     }
-  ]
+  ],
+  localePrefix: {
+    mode: 'as-needed',
+    prefixes: {
+      // Cleaner prefix for `ca.example.com/fr`
+      'fr-CA': '/fr'
+    }
+  }
 });
 ```
 
-**Note that:**
+Locales are required to be unique across domains, therefore regional variants are typically used to avoid conflicts. Note however that you don't necessarily need to [provide messages for each locale](/docs/usage/configuration#messages-per-locale) if the overall language is sufficient for your use case.
 
-1. You can optionally remove the locale prefix in pathnames by changing the [`localePrefix`](#locale-prefix) setting. E.g. [`localePrefix: 'never'`](#locale-prefix-never) can be helpful in case you have unique domains per locale.
-2. If no domain matches, the middleware will fall back to the [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
+If no domain matches, the middleware will fall back to the general [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
 
 <Details id="domains-testing">
 <summary>How can I locally test if my setup is working?</summary>
@@ -393,9 +405,7 @@ PORT=3001 npm run dev
 <Details id="domains-localeprefix-individual">
 <summary>Can I use a different `localePrefix` setting per domain?</summary>
 
-Since such a configuration would require reading the domain at runtime, this would prevent the ability to render pages statically. Due to this, `next-intl` doesn't support this configuration out of the box.
-
-However, you can still achieve this by building the app for each domain separately, while injecting diverging routing configuration via an environment variable.
+While this is currently not supported out of the box, you can still achieve this by building the app for each domain separately while injecting diverging routing configuration via an environment variable.
 
 **Example:**
 
@@ -406,45 +416,11 @@ const isUsDomain =
   process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com';
 
 export const routing = defineRouting({
-  locales: isUsDomain ? ['en'] : ['en', 'fr'],
-  defaultLocale: 'en',
+  locales: isUsDomain ? ['en-US'] : ['en-CA', 'fr-CA'],
+  defaultLocale: isUsDomain ? 'en-US' : 'en-CA',
   localePrefix: isUsDomain ? 'never' : 'always'
 });
 ```
-
-</Details>
-
-<Details id="domains-localeprefix-asneeded">
-<summary>Special case: Using `domains` with `localePrefix: 'as-needed'`</summary>
-
-Since domains can have different default locales, this combination requires some tradeoffs that apply to the [navigation APIs](/docs/routing/navigation) in order for `next-intl` to avoid reading the current host on the server side (which would prevent the usage of static rendering).
-
-1. [`<Link />`](/docs/routing/navigation#link): This component will always render a locale prefix on the server side, even for the default locale of a given domain. However, during hydration on the client side, the prefix is potentially removed, if the default locale of the current domain is used. Note that the temporarily prefixed pathname will always be valid, however the middleware will potentially clean up a superfluous prefix via a redirect if the user clicks on a link before hydration.
-2. [`redirect`](/docs/routing/navigation#redirect): When calling this function, a locale prefix is always added, regardless of the provided locale. However, similar to the handling with `<Link />`, the middleware will potentially clean up a superfluous prefix.
-3. [`getPathname`](/docs/routing/navigation#getpathname): This function requires that a `domain` is passed as part of the arguments in order to avoid ambiguity. This can either be provided statically (e.g. when used in a sitemap), or read from a header like [`x-forwarded-host`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host).
-
-```tsx
-import {getPathname} from '@/i18n/routing';
-import {headers} from 'next/headers';
-
-// Case 1: Statically known domain
-const domain = 'ca.example.com';
-
-// Case 2: Read at runtime (dynamic rendering)
-const domain = headers().get('x-forwarded-host');
-
-// Assuming the current domain is `ca.example.com`,
-// the returned pathname will be `/about`
-const pathname = getPathname({
-  href: '/about',
-  locale: 'en',
-  domain
-});
-```
-
-A `domain` can optionally also be passed to `redirect` in the same manner to ensure that a prefix is only added when necessary. Alternatively, you can also consider redirecting in the middleware or via [`useRouter`](/docs/routing/navigation#usrouter) on the client side.
-
-If you need to avoid these tradeoffs, you can consider building the same app for each domain separately, while injecting diverging routing configuration via an [environment variable](#domains-localeprefix-individual).
 
 </Details>
 

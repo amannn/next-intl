@@ -152,7 +152,8 @@ export default function createMiddleware<
     const pathnameMatch = getPathnameMatch(
       externalPathname,
       resolvedRouting.locales,
-      resolvedRouting.localePrefix
+      resolvedRouting.localePrefix,
+      domain
     );
     const hasLocalePrefix = pathnameMatch != null;
 

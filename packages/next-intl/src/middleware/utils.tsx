@@ -159,7 +159,8 @@ export function getPathnameMatch<
 >(
   pathname: string,
   locales: AppLocales,
-  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>
+  localePrefix: LocalePrefixConfigVerbose<AppLocales, AppLocalePrefixMode>,
+  domain?: DomainConfig<AppLocales>
 ):
   | {
       locale: AppLocales[number];
@@ -169,6 +170,21 @@ export function getPathnameMatch<
     }
   | undefined {
   const localePrefixes = getLocalePrefixes(locales, localePrefix);
+
+  // Sort to prioritize domain locales
+  if (domain) {
+    localePrefixes.sort(([localeA], [localeB]) => {
+      if (localeA === domain.defaultLocale) return -1;
+      if (localeB === domain.defaultLocale) return 1;
+
+      const isLocaleAInDomain = domain.locales.includes(localeA);
+      const isLocaleBInDomain = domain.locales.includes(localeB);
+      if (isLocaleAInDomain && !isLocaleBInDomain) return -1;
+      if (!isLocaleAInDomain && isLocaleBInDomain) return 1;
+
+      return 0;
+    });
+  }
 
   for (const [locale, prefix] of localePrefixes) {
     let exact, matches;
@@ -258,11 +274,7 @@ export function isLocaleSupportedOnDomain<AppLocales extends Locales>(
   locale: Locale,
   domain: DomainConfig<AppLocales>
 ) {
-  return (
-    domain.defaultLocale === locale ||
-    !domain.locales ||
-    domain.locales.includes(locale)
-  );
+  return domain.defaultLocale === locale || domain.locales.includes(locale);
 }
 
 export function getBestMatchingDomain<AppLocales extends Locales>(
@@ -282,19 +294,9 @@ export function getBestMatchingDomain<AppLocales extends Locales>(
     domainConfig = domainsConfig.find((cur) => cur.defaultLocale === locale);
   }
 
-  // Prio 3: Use alternative domain with restricted matching locale
+  // Prio 3: Use alternative domain that supports the locale
   if (!domainConfig) {
-    domainConfig = domainsConfig.find((cur) => cur.locales?.includes(locale));
-  }
-
-  // Prio 4: Stay on the current domain if it supports all locales
-  if (!domainConfig && curHostDomain?.locales == null) {
-    domainConfig = curHostDomain;
-  }
-
-  // Prio 5: Use alternative domain that supports all locales
-  if (!domainConfig) {
-    domainConfig = domainsConfig.find((cur) => !cur.locales);
+    domainConfig = domainsConfig.find((cur) => cur.locales.includes(locale));
   }
 
   return domainConfig;

@@ -358,6 +358,30 @@ Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integr
 
 </Details>
 
+<Details id="messages-per-locale">
+<summary>Do I need separate messages for each locale that my app supports?</summary>
+
+Since you have full control over how messages are loaded, you can choose to load messages for example merely based on the overall language, ignoring any regional variants:
+
+```tsx
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // E.g. "en-US", "en-CA", …
+  const locale = 'en-US';
+
+  // E.g. "en"
+  const language = new Intl.Locale(locale).language;
+
+  // Load messages based on the language
+  const messages = (await import(`../../messages/${language}.json`)).default;
+
+  // ...
+});
+```
+
+</Details>
+
 ### `useMessages` & `getMessages` [#use-messages]
 
 In case you require access to messages in a component, you can read them via `useMessages()` or `getMessages()` from your configuration:

@@ -197,8 +197,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         domains: [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
-            // (supports all locales)
+            defaultLocale: 'en',
+            locales: ['en', 'es', 'fr']
           },
           {
             domain: 'example.es',
@@ -264,8 +264,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         domains: [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
-            // (supports all locales)
+            defaultLocale: 'en',
+            locales: ['en', 'es', 'fr']
           },
           {
             domain: 'example.es',

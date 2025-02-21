@@ -251,7 +251,6 @@ export function applyPathnamePrefix<
         'defaultLocale'
       >
     >,
-  domain?: string,
   force?: boolean
 ): string {
   const {mode} = routing.localePrefix;
@@ -263,29 +262,11 @@ export function applyPathnamePrefix<
     if (mode === 'always') {
       shouldPrefix = true;
     } else if (mode === 'as-needed') {
-      let defaultLocale: AppLocales[number] | undefined = routing.defaultLocale;
-
-      if (routing.domains) {
-        const domainConfig = routing.domains.find(
-          (cur) => cur.domain === domain
-        );
-        if (domainConfig) {
-          defaultLocale = domainConfig.defaultLocale;
-        } else if (process.env.NODE_ENV !== 'production') {
-          if (!domain) {
-            console.error(
-              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter.\n\nSee: https://next-intl.dev/docs/routing#domains-localeprefix-asneeded"
-            );
-          } else {
-            // If a domain was provided, but it wasn't found in the routing
-            // configuration, this can be an indicator that the user is on
-            // localhost. In this case, we can simply use the domain-agnostic
-            // default locale.
-          }
-        }
-      }
-
-      shouldPrefix = defaultLocale !== locale;
+      shouldPrefix = routing.domains
+        ? // Since locales are unique per domain, any locale that is a
+          // default locale of a domain doesn't require a prefix
+          !routing.domains.some((cur) => cur.defaultLocale === locale)
+        : locale !== routing.defaultLocale;
     }
   }
 

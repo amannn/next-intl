@@ -6,9 +6,7 @@ import {
   type ComponentProps,
   type MouseEvent,
   type Ref,
-  forwardRef,
-  useEffect,
-  useState
+  forwardRef
 } from 'react';
 import {type Locale, useLocale} from 'use-intl';
 import type {InitializedLocaleCookieConfig} from '../../routing/config.js';
@@ -19,48 +17,15 @@ type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &
 
 type Props = NextLinkProps & {
   locale?: Locale;
-  defaultLocale?: Locale;
   localeCookie: InitializedLocaleCookieConfig;
-  /** Special case for `localePrefix: 'as-needed'` and `domains`. */
-  unprefixed?: {
-    domains: {[domain: string]: Locale};
-    pathname: string;
-  };
 };
 
 function BaseLink(
-  {
-    defaultLocale,
-    href,
-    locale,
-    localeCookie,
-    onClick,
-    prefetch,
-    unprefixed,
-    ...rest
-  }: Props,
+  {href, locale, localeCookie, onClick, prefetch, ...rest}: Props,
   ref: Ref<HTMLAnchorElement>
 ) {
   const curLocale = useLocale();
   const isChangingLocale = locale != null && locale !== curLocale;
-  const linkLocale = locale || curLocale;
-  const host = useHost();
-
-  const finalHref =
-    // Only after hydration (to avoid mismatches)
-    host &&
-    // If there is an `unprefixed` prop, the
-    // `defaultLocale` might differ by domain
-    unprefixed &&
-    // Unprefix the pathname if a domain matches
-    (unprefixed.domains[host] === linkLocale ||
-      // … and handle unknown domains by applying the
-      // global `defaultLocale` (e.g. on localhost)
-      (!Object.keys(unprefixed.domains).includes(host) &&
-        curLocale === defaultLocale &&
-        !locale))
-      ? unprefixed.pathname
-      : href;
 
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
@@ -87,23 +52,13 @@ function BaseLink(
   return (
     <Link
       ref={ref}
-      href={finalHref}
+      href={href}
       hrefLang={isChangingLocale ? locale : undefined}
       onClick={onLinkClick}
       prefetch={prefetch}
       {...rest}
     />
   );
-}
-
-function useHost() {
-  const [host, setHost] = useState<string>();
-
-  useEffect(() => {
-    setHost(window.location.host);
-  }, []);
-
-  return host;
 }
 
 export default forwardRef(BaseLink);
