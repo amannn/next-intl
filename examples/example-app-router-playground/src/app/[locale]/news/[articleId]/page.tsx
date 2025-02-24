@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
-import {useTranslations} from 'next-intl';
-import {Locale, getPathname} from '@/i18n/routing';
+import {Locale, useTranslations} from 'next-intl';
+import {getPathname} from '@/i18n/routing';
 
 type Props = {
   params: {

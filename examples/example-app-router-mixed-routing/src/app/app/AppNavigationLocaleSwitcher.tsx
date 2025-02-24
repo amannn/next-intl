@@ -1,8 +1,7 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import {useLocale} from 'next-intl';
-import {Locale} from '@/config';
+import {Locale, useLocale} from 'next-intl';
 import updateLocale from './updateLocale';
 
 export default function AppNavigationLocaleSwitcher() {

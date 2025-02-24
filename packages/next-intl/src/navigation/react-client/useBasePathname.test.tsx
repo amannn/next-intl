@@ -1,15 +1,18 @@
 import {render, screen} from '@testing-library/react';
-import {usePathname as useNextPathname, useParams} from 'next/navigation';
-import React from 'react';
+import {usePathname as useNextPathname} from 'next/navigation.js';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../index.react-client';
-import useBasePathname from './useBasePathname';
+import {NextIntlClientProvider, useLocale} from '../../index.react-client.js';
+import useBasePathname from './useBasePathname.js';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
 function mockPathname(pathname: string) {
   vi.mocked(useNextPathname).mockImplementation(() => pathname);
-  vi.mocked(useParams<any>).mockImplementation(() => ({locale: 'en'}));
+  vi.mocked(useLocale).mockImplementation(() => 'en');
 }
 
 function Component() {
@@ -53,7 +56,6 @@ describe('prefixed routing', () => {
 describe('usage outside of Next.js', () => {
   beforeEach(() => {
     vi.mocked(useNextPathname).mockImplementation((() => null) as any);
-    vi.mocked(useParams<any>).mockImplementation((() => null) as any);
   });
 
   it('returns `null` when used within a provider', () => {
@@ -63,11 +65,5 @@ describe('usage outside of Next.js', () => {
       </NextIntlClientProvider>
     );
     expect(container.innerHTML).toBe('');
-  });
-
-  it('throws without a provider', () => {
-    expect(() => render(<Component />)).toThrow(
-      'No intl context found. Have you configured the provider?'
-    );
   });
 });

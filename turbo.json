@@ -8,6 +8,9 @@
     "lint": {
       "dependsOn": ["^build"]
     },
+    "example-app-router-playground#lint": {
+      "dependsOn": ["example-app-router-playground#build"]
+    },
     "test": {
       "dependsOn": ["build"]
     },

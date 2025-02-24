@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest';
-import createNavigation from './createNavigation';
+import createNavigation from './createNavigation.js';
 
 vi.mock('react');
 

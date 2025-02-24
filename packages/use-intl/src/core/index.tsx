@@ -1,22 +1,31 @@
-export type {default as AbstractIntlMessages} from './AbstractIntlMessages';
+export type {default as AbstractIntlMessages} from './AbstractIntlMessages.js';
 export type {
-  default as TranslationValues,
+  TranslationValues,
   RichTranslationValues,
-  MarkupTranslationValues
-} from './TranslationValues';
-export type {default as Formats} from './Formats';
-export type {default as IntlConfig} from './IntlConfig';
-export type {default as DateTimeFormatOptions} from './DateTimeFormatOptions';
-export type {default as NumberFormatOptions} from './NumberFormatOptions';
-export type {default as RelativeTimeFormatOptions} from './RelativeTimeFormatOptions';
-export type {default as Timezone} from './TimeZone';
-export {default as IntlError, IntlErrorCode} from './IntlError';
-export {default as createTranslator} from './createTranslator';
-export {default as createFormatter} from './createFormatter';
-export {default as initializeConfig} from './initializeConfig';
-export type {default as MessageKeys} from './utils/MessageKeys';
-export type {default as NamespaceKeys} from './utils/NamespaceKeys';
-export type {default as NestedKeyOf} from './utils/NestedKeyOf';
-export type {default as NestedValueOf} from './utils/NestedValueOf';
-export {createIntlFormatters as _createIntlFormatters} from './formatters';
-export {createCache as _createCache} from './formatters';
+  MarkupTranslationValues,
+  RichTagsFunction,
+  MarkupTagsFunction
+} from './TranslationValues.js';
+export type {default as Formats} from './Formats.js';
+export type {default as IntlConfig} from './IntlConfig.js';
+export type {default as DateTimeFormatOptions} from './DateTimeFormatOptions.js';
+export type {default as NumberFormatOptions} from './NumberFormatOptions.js';
+export {default as IntlError} from './IntlError.js';
+export {default as IntlErrorCode} from './IntlErrorCode.js';
+export {default as createTranslator} from './createTranslator.js';
+export {default as createFormatter} from './createFormatter.js';
+export {default as initializeConfig} from './initializeConfig.js';
+export type {
+  MessageKeys,
+  NamespaceKeys,
+  NestedKeyOf,
+  NestedValueOf
+} from './MessageKeys.js';
+export {createIntlFormatters as _createIntlFormatters} from './formatters.js';
+export {createCache as _createCache} from './formatters.js';
+export type {default as AppConfig, Locale, Messages} from './AppConfig.js';
+export {default as hasLocale} from './hasLocale.js';
+export type {default as RelativeTimeFormatOptions} from './RelativeTimeFormatOptions.js';
+export type {default as Timezone} from './TimeZone.js';
+export type {default as ICUArgs} from './ICUArgs.js';
+export type {default as ICUTags} from './ICUTags.js';

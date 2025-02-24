@@ -1,14 +1,14 @@
 // @vitest-environment edge-runtime
 
 import {describe, expect, it, vi} from 'vitest';
-import {HEADER_LOCALE_NAME} from '../../shared/constants';
+import {HEADER_LOCALE_NAME} from '../../shared/constants.js';
 import {
   getFormatter,
   getMessages,
   getNow,
   getTimeZone,
   getTranslations
-} from '.';
+} from './index.js';
 
 vi.mock('next-intl/config', () => ({
   default: async () =>
@@ -28,7 +28,7 @@ vi.mock('next-intl/config', () => ({
     })
 }));
 
-vi.mock('next/headers', () => ({
+vi.mock('next/headers.js', () => ({
   headers: () => ({
     get(name: string) {
       if (name === HEADER_LOCALE_NAME) {
@@ -150,7 +150,7 @@ describe('getMessages', () => {
     const messages = await getMessages();
 
     // @ts-expect-error
-    messages.about();
+    messages();
 
     // Valid
     return messages.about;

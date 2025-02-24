@@ -77,14 +77,15 @@ export default function RootLayout({children}) {
 }
 ```
 
-For the 404 page to render, we need to call the `notFound` function in the root layout when we detect an incoming `locale` param that isn't a valid locale.
+For the 404 page to render, we need to call the `notFound` function in the root layout when we detect an incoming `locale` param that isn't valid.
 
 ```tsx filename="app/[locale]/layout.tsx"
+import {hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
 
 export default function LocaleLayout({children, params: {locale}}) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
