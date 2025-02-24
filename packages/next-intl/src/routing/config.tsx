@@ -67,6 +67,12 @@ export type RoutingConfig<
   alternateLinks?: boolean;
 
   /**
+   * Allows having the optimal routing for the current request by bypassing middleware
+   * and using the default locale when no locale is presented via the URL or domains.
+   **/
+  optimalRouting?: boolean;
+
+  /**
    * By setting this to `false`, the cookie as well as the `accept-language` header will no longer be used for locale detection.
    * @see https://next-intl.dev/docs/routing/middleware#locale-detection
    **/
