@@ -2,7 +2,8 @@ import type {LinkProps} from 'next/link.js';
 import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
-  Locales
+  Locales,
+  Pathnames
 } from '../routing/types.js';
 
 type Href = LinkProps['href'];
@@ -56,6 +57,16 @@ function hasTrailingSlash() {
   } catch {
     return false;
   }
+}
+
+export function getLocalizedTemplate<AppLocales extends Locales>(
+  pathnameConfig: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
+  locale: AppLocales[number],
+  internalTemplate: string
+) {
+  return typeof pathnameConfig === 'string'
+    ? pathnameConfig
+    : pathnameConfig[locale] || internalTemplate;
 }
 
 export function normalizeTrailingSlash(pathname: string) {

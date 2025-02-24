@@ -25,6 +25,7 @@ export default function getAlternateLinksHeaderValue<
   AppPathnames extends Pathnames<AppLocales> | undefined,
   AppDomains extends DomainsConfig<AppLocales> | undefined
 >({
+  internalTemplateName,
   localizedPathnames,
   request,
   resolvedLocale,
@@ -42,6 +43,7 @@ export default function getAlternateLinksHeaderValue<
   request: NextRequest;
   resolvedLocale: AppLocales[number];
   localizedPathnames?: Pathnames<AppLocales>[string];
+  internalTemplateName?: string;
 }) {
   const normalizedUrl = request.nextUrl.clone();
 
@@ -72,10 +74,13 @@ export default function getAlternateLinksHeaderValue<
 
   function getLocalizedPathname(pathname: string, locale: AppLocales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
+      if (localizedPathnames[locale] === null) return;
+      const sourceTemplate = localizedPathnames[resolvedLocale];
+
       return formatTemplatePathname(
         pathname,
-        localizedPathnames[resolvedLocale],
-        localizedPathnames[locale]
+        sourceTemplate ?? internalTemplateName ?? pathname,
+        localizedPathnames[locale] ?? internalTemplateName ?? pathname
       );
     } else {
       return pathname;
@@ -86,70 +91,83 @@ export default function getAlternateLinksHeaderValue<
     routing.locales as AppLocales,
     routing.localePrefix,
     false
-  ).flatMap(([locale, prefix]) => {
-    function prefixPathname(pathname: string) {
-      if (pathname === '/') {
-        return prefix;
-      } else {
-        return prefix + pathname;
+  )
+    .flatMap(([locale, prefix]) => {
+      function prefixPathname(pathname: string) {
+        if (pathname === '/') {
+          return prefix;
+        } else {
+          return prefix + pathname;
+        }
       }
-    }
 
-    let url: URL;
+      let url: URL;
 
-    if (routing.domains) {
-      const domainConfigs = routing.domains.filter((cur) =>
-        isLocaleSupportedOnDomain(locale, cur)
-      );
+      if (routing.domains) {
+        const domainConfigs = routing.domains.filter((cur) =>
+          isLocaleSupportedOnDomain(locale, cur)
+        );
 
-      return domainConfigs.map((domainConfig) => {
-        url = new URL(normalizedUrl);
-        url.port = '';
-        url.host = domainConfig.domain;
+        return domainConfigs.map((domainConfig) => {
+          const pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+          if (!pathname) return undefined;
 
-        // Important: Use `normalizedUrl` here, as `url` potentially uses
-        // a `basePath` that automatically gets applied to the pathname
-        url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+          url = new URL(normalizedUrl);
+          url.port = '';
+          url.host = domainConfig.domain;
 
-        if (
-          locale !== domainConfig.defaultLocale ||
-          routing.localePrefix.mode === 'always'
-        ) {
-          url.pathname = prefixPathname(url.pathname);
+          // Important: Use `normalizedUrl` here, as `url` potentially uses
+          // a `basePath` that automatically gets applied to the pathname
+          url.pathname = pathname;
+
+          if (
+            locale !== domainConfig.defaultLocale ||
+            routing.localePrefix.mode === 'always'
+          ) {
+            url.pathname = prefixPathname(url.pathname);
+          }
+
+          return getAlternateEntry(url, locale);
+        });
+      } else {
+        let pathname: string;
+        if (localizedPathnames && typeof localizedPathnames === 'object') {
+          const candidate = getLocalizedPathname(
+            normalizedUrl.pathname,
+            locale
+          );
+          if (!candidate) return undefined;
+          pathname = candidate;
+        } else {
+          pathname = normalizedUrl.pathname;
         }
 
-        return getAlternateEntry(url, locale);
-      });
-    } else {
-      let pathname: string;
-      if (localizedPathnames && typeof localizedPathnames === 'object') {
-        pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
-      } else {
-        pathname = normalizedUrl.pathname;
+        if (
+          locale !== routing.defaultLocale ||
+          routing.localePrefix.mode === 'always'
+        ) {
+          pathname = prefixPathname(pathname);
+        }
+        url = new URL(pathname, normalizedUrl);
       }
 
-      if (
-        locale !== routing.defaultLocale ||
-        routing.localePrefix.mode === 'always'
-      ) {
-        pathname = prefixPathname(pathname);
-      }
-      url = new URL(pathname, normalizedUrl);
-    }
-
-    return getAlternateEntry(url, locale);
-  });
+      return getAlternateEntry(url, locale);
+    })
+    .filter((link) => link != null);
 
   // Add x-default entry
   const shouldAddXDefault =
     // For domain-based routing there is no reasonable x-default
     !routing.domains || routing.domains.length === 0;
   if (shouldAddXDefault) {
-    const url = new URL(
-      getLocalizedPathname(normalizedUrl.pathname, routing.defaultLocale),
-      normalizedUrl
+    const localizedPathname = getLocalizedPathname(
+      normalizedUrl.pathname,
+      routing.defaultLocale
     );
-    links.push(getAlternateEntry(url, 'x-default'));
+    if (localizedPathname) {
+      const url = new URL(localizedPathname, normalizedUrl);
+      links.push(getAlternateEntry(url, 'x-default'));
+    }
   }
 
   return links.join(', ');

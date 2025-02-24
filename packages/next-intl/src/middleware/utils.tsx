@@ -9,6 +9,7 @@ import type {
 } from '../routing/types.js';
 import {
   getLocalePrefix,
+  getLocalizedTemplate,
   getSortedPathnames,
   matchesPathname,
   normalizeTrailingSlash,
@@ -49,8 +50,13 @@ export function getInternalTemplate<
         sortedEntries.unshift(sortedEntries.splice(curLocaleIndex, 1)[0]);
       }
 
-      for (const [entryLocale, entryPathname] of sortedEntries) {
-        if (matchesPathname(entryPathname as string, pathname)) {
+      for (const [entryLocale] of sortedEntries) {
+        const localizedTemplate = getLocalizedTemplate(
+          pathnames[internalPathname],
+          entryLocale,
+          internalPathname
+        );
+        if (matchesPathname(localizedTemplate, pathname)) {
           return [entryLocale, internalPathname];
         }
       }

@@ -9,6 +9,7 @@ import type {
 import {HEADER_LOCALE_NAME} from '../shared/constants.js';
 import {
   getLocalePrefix,
+  getLocalizedTemplate,
   matchesPathname,
   normalizeTrailingSlash
 } from '../shared/utils.js';
@@ -180,10 +181,11 @@ export default function createMiddleware<
 
       if (internalTemplateName) {
         const pathnameConfig = pathnames[internalTemplateName];
-        const localeTemplate: string =
-          typeof pathnameConfig === 'string'
-            ? pathnameConfig
-            : pathnameConfig[locale];
+        const localeTemplate: string = getLocalizedTemplate(
+          pathnameConfig,
+          locale,
+          internalTemplateName
+        );
 
         if (matchesPathname(localeTemplate, unprefixedExternalPathname)) {
           unprefixedInternalPathname = formatTemplatePathname(
@@ -195,10 +197,11 @@ export default function createMiddleware<
           let sourceTemplate: string;
           if (resolvedTemplateLocale) {
             // A localized pathname from another locale has matched
-            sourceTemplate =
-              typeof pathnameConfig === 'string'
-                ? pathnameConfig
-                : pathnameConfig[resolvedTemplateLocale];
+            sourceTemplate = getLocalizedTemplate(
+              pathnameConfig,
+              resolvedTemplateLocale,
+              internalTemplateName
+            );
           } else {
             // An internal pathname has matched that
             // doesn't have a localized pathname
@@ -320,6 +323,7 @@ export default function createMiddleware<
         'Link',
         getAlternateLinksHeaderValue({
           routing: resolvedRouting,
+          internalTemplateName,
           localizedPathnames:
             internalTemplateName != null && pathnames
               ? pathnames[internalTemplateName]

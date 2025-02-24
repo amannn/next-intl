@@ -426,72 +426,90 @@ describe('prefix-based routing', () => {
         pathnames: {
           '/': '/',
           '/about': {
-            en: '/about',
             de: '/ueber',
             'de-AT': '/ueber',
             ja: '/約'
           },
           '/users': {
-            en: '/users',
             de: '/benutzer',
             'de-AT': '/benutzer',
             ja: '/ユーザー'
           },
           '/users/[userId]': {
-            en: '/users/[userId]',
             de: '/benutzer/[userId]',
             'de-AT': '/benutzer/[userId]',
             ja: '/ユーザー/[userId]'
           },
           '/news/[articleSlug]-[articleId]': {
-            en: '/news/[articleSlug]-[articleId]',
             de: '/neuigkeiten/[articleSlug]-[articleId]',
             'de-AT': '/neuigkeiten/[articleSlug]-[articleId]',
             ja: '/ニュース/[articleSlug]-[articleId]'
           },
           '/articles/[category]/[articleSlug]': {
-            en: '/articles/[category]/[articleSlug]',
             de: '/artikel/[category]/[articleSlug]',
             'de-AT': '/artikel/[category]/[articleSlug]',
             ja: '/記事/[category]/[articleSlug]'
           },
           '/articles/[category]/just-in': {
-            en: '/articles/[category]/just-in',
             de: '/artikel/[category]/aktuell',
             'de-AT': '/artikel/[category]/aktuell',
             ja: '/記事/[category]/最新'
           },
           '/products/[...slug]': {
-            en: '/products/[...slug]',
             de: '/produkte/[...slug]',
             'de-AT': '/produkte/[...slug]',
             ja: '/製品/[...slug]'
           },
           '/products/[slug]': {
-            en: '/products/[slug]',
             de: '/produkte/[slug]',
             'de-AT': '/produkte/[slug]',
             ja: '/製品/[slug]'
           },
           '/products/add': {
-            en: '/products/add',
             de: '/produkte/hinzufuegen',
             'de-AT': '/produkte/hinzufuegen',
             ja: '/製品/追加'
           },
           '/categories/[[...slug]]': {
-            en: '/categories/[[...slug]]',
             de: '/kategorien/[[...slug]]',
             'de-AT': '/kategorien/[[...slug]]',
             ja: '/カテゴリー/[[...slug]]'
           },
           '/categories/new': {
-            en: '/categories/new',
             de: '/kategorien/neu',
             'de-AT': '/kategorien/neu',
             ja: '/カテゴリー/新着'
+          },
+          '/partially-available': {
+            de: '/teilweise-verfuegbar',
+            'de-AT': null
+            // (ja inherits en)
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT' | 'ja'>>
+      });
+
+      describe('partially available locales', () => {
+        it('serves requests for available locales', () => {
+          middlewareWithPathnames(
+            createMockRequest('/de/teilweise-verfuegbar', 'de')
+          );
+          expect(MockedNextResponse.rewrite).toHaveBeenCalled();
+          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+            'http://localhost:3000/de/partially-available'
+          );
+        });
+
+        it('uses the internal default for undefined entries', () => {
+          middlewareWithPathnames(createMockRequest('/partially-available'));
+          middlewareWithPathnames(createMockRequest('/ja/partially-available'));
+          expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(2);
+          expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+            'http://localhost:3000/en/partially-available'
+          );
+          expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+            'http://localhost:3000/ja/partially-available'
+          );
+        });
       });
 
       it('serves requests for the default locale at the root', () => {
