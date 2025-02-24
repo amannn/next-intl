@@ -35,14 +35,13 @@ describe('pathnames', () => {
     routing.pathnames['/about'].en;
   });
 
-  it('ensures all locales have a value', () => {
+  it('accepts a partial config for only some locales', () => {
     defineRouting({
       locales: ['en', 'de'],
       defaultLocale: 'en',
       pathnames: {
-        // @ts-expect-error -- Missing de
         '/about': {
-          en: '/about'
+          de: '/ueber-uns'
         }
       }
     });

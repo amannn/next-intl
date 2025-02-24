@@ -171,8 +171,8 @@ Since you typically want to define these routes only once internally, you can us
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
+  locales: ['en-US', 'en-UK', 'de'],
+  defaultLocale: 'en-US',
 
   // The `pathnames` object holds pairs of internal and
   // external paths. Based on the locale, the external
@@ -183,29 +183,25 @@ export const routing = defineRouting({
     '/': '/',
     '/blog': '/blog',
 
-    // If locales use different paths, you can
-    // specify each external path per locale
+    // If some locales use different paths, you can
+    // specify the relevant external pathnames
     '/about': {
-      en: '/about',
       de: '/ueber-uns'
     },
 
     // Dynamic params are supported via square brackets
-    '/news/[articleSlug]-[articleId]': {
-      en: '/news/[articleSlug]-[articleId]',
-      de: '/neuigkeiten/[articleSlug]-[articleId]'
+    '/news/[articleSlug]': {
+      de: '/neuigkeiten/[articleSlug]'
     },
 
     // Static pathnames that overlap with dynamic segments
     // will be prioritized over the dynamic segment
     '/news/just-in': {
-      en: '/news/just-in',
       de: '/neuigkeiten/aktuell'
     },
 
     // Also (optional) catch-all segments are supported
     '/categories/[...slug]': {
-      en: '/categories/[...slug]',
       de: '/kategorien/[...slug]'
     }
   }

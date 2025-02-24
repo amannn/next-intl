@@ -10,6 +10,7 @@ import type {
 } from '../../routing/types.js';
 import {
   getLocalePrefix,
+  getLocalizedTemplate,
   getSortedPathnames,
   isLocalizableHref,
   matchesPathname,
@@ -132,10 +133,10 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 
   function compilePath(
-    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>]
+    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
+    internalPathname: string
   ) {
-    const template =
-      typeof namedPath === 'string' ? namedPath : namedPath[locale];
+    const template = getLocalizedTemplate(namedPath, locale, internalPathname);
     let compiled = template;
 
     if (params) {
@@ -176,12 +177,12 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
   if (typeof pathname === 'string') {
     const namedPath = getNamedPath(pathname);
-    const compiled = compilePath(namedPath);
+    const compiled = compilePath(namedPath, pathname);
     return compiled;
   } else {
-    const {pathname: href, ...rest} = pathname;
-    const namedPath = getNamedPath(href);
-    const compiled = compilePath(namedPath);
+    const {pathname: internalPathname, ...rest} = pathname;
+    const namedPath = getNamedPath(internalPathname);
+    const compiled = compilePath(namedPath, internalPathname);
     const result: UrlObject = {...rest, pathname: compiled};
     return result;
   }
@@ -203,7 +204,16 @@ export function getRoute<AppLocales extends Locales>(
         return internalPathname;
       }
     } else {
-      if (matchesPathname(localizedPathnamesOrPathname[locale], decoded)) {
+      if (
+        matchesPathname(
+          getLocalizedTemplate(
+            localizedPathnamesOrPathname,
+            locale,
+            internalPathname
+          ),
+          decoded
+        )
+      ) {
         return internalPathname;
       }
     }

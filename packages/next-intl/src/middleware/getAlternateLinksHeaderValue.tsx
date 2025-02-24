@@ -25,6 +25,7 @@ export default function getAlternateLinksHeaderValue<
   AppPathnames extends Pathnames<AppLocales> | undefined,
   AppDomains extends DomainsConfig<AppLocales> | undefined
 >({
+  internalTemplateName,
   localizedPathnames,
   request,
   resolvedLocale,
@@ -42,6 +43,7 @@ export default function getAlternateLinksHeaderValue<
   request: NextRequest;
   resolvedLocale: AppLocales[number];
   localizedPathnames?: Pathnames<AppLocales>[string];
+  internalTemplateName?: string;
 }) {
   const normalizedUrl = request.nextUrl.clone();
 
@@ -72,10 +74,12 @@ export default function getAlternateLinksHeaderValue<
 
   function getLocalizedPathname(pathname: string, locale: AppLocales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
+      const sourceTemplate = localizedPathnames[resolvedLocale];
+
       return formatTemplatePathname(
         pathname,
-        localizedPathnames[resolvedLocale],
-        localizedPathnames[locale]
+        sourceTemplate ?? internalTemplateName!,
+        localizedPathnames[locale] ?? internalTemplateName!
       );
     } else {
       return pathname;
@@ -145,11 +149,14 @@ export default function getAlternateLinksHeaderValue<
     // For domain-based routing there is no reasonable x-default
     !routing.domains || routing.domains.length === 0;
   if (shouldAddXDefault) {
-    const url = new URL(
-      getLocalizedPathname(normalizedUrl.pathname, routing.defaultLocale),
-      normalizedUrl
+    const localizedPathname = getLocalizedPathname(
+      normalizedUrl.pathname,
+      routing.defaultLocale
     );
-    links.push(getAlternateEntry(url, 'x-default'));
+    if (localizedPathname) {
+      const url = new URL(localizedPathname, normalizedUrl);
+      links.push(getAlternateEntry(url, 'x-default'));
+    }
   }
 
   return links.join(', ');
