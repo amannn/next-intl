@@ -266,7 +266,9 @@ export default function createMiddleware<
       } else {
         const internalHref = formatPathname(
           unprefixedInternalPathname,
-          getLocaleAsPrefix(locale),
+          resolvedRouting.optimalRouting
+            ? undefined
+            : getLocaleAsPrefix(locale),
           request.nextUrl.search
         );
 
