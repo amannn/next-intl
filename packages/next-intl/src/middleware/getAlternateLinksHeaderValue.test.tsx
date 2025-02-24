@@ -159,7 +159,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
       ]);
     });
 
-    it('works for partial pathnames with undefined and null entries', () => {
+    it('works for partial pathnames with undefined entries', () => {
       const routing = receiveRoutingConfig({
         defaultLocale: 'en',
         locales: ['en', 'de', 'ja'],
@@ -168,8 +168,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
       const pathnames = {
         '/': '/',
         '/about': {
-          de: '/ueber',
-          ja: null
+          de: '/ueber'
         }
       };
 
@@ -184,6 +183,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
       ).toEqual([
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
         `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/ja/about>; rel="alternate"; hreflang="ja"`,
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
     });

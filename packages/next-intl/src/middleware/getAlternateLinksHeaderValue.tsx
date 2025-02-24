@@ -74,13 +74,12 @@ export default function getAlternateLinksHeaderValue<
 
   function getLocalizedPathname(pathname: string, locale: AppLocales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
-      if (localizedPathnames[locale] === null) return;
       const sourceTemplate = localizedPathnames[resolvedLocale];
 
       return formatTemplatePathname(
         pathname,
-        sourceTemplate ?? internalTemplateName ?? pathname,
-        localizedPathnames[locale] ?? internalTemplateName ?? pathname
+        sourceTemplate ?? internalTemplateName!,
+        localizedPathnames[locale] ?? internalTemplateName!
       );
     } else {
       return pathname;
@@ -91,69 +90,59 @@ export default function getAlternateLinksHeaderValue<
     routing.locales as AppLocales,
     routing.localePrefix,
     false
-  )
-    .flatMap(([locale, prefix]) => {
-      function prefixPathname(pathname: string) {
-        if (pathname === '/') {
-          return prefix;
-        } else {
-          return prefix + pathname;
-        }
-      }
-
-      let url: URL;
-
-      if (routing.domains) {
-        const domainConfigs = routing.domains.filter((cur) =>
-          isLocaleSupportedOnDomain(locale, cur)
-        );
-
-        return domainConfigs.map((domainConfig) => {
-          const pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
-          if (!pathname) return undefined;
-
-          url = new URL(normalizedUrl);
-          url.port = '';
-          url.host = domainConfig.domain;
-
-          // Important: Use `normalizedUrl` here, as `url` potentially uses
-          // a `basePath` that automatically gets applied to the pathname
-          url.pathname = pathname;
-
-          if (
-            locale !== domainConfig.defaultLocale ||
-            routing.localePrefix.mode === 'always'
-          ) {
-            url.pathname = prefixPathname(url.pathname);
-          }
-
-          return getAlternateEntry(url, locale);
-        });
+  ).flatMap(([locale, prefix]) => {
+    function prefixPathname(pathname: string) {
+      if (pathname === '/') {
+        return prefix;
       } else {
-        let pathname: string;
-        if (localizedPathnames && typeof localizedPathnames === 'object') {
-          const candidate = getLocalizedPathname(
-            normalizedUrl.pathname,
-            locale
-          );
-          if (!candidate) return undefined;
-          pathname = candidate;
-        } else {
-          pathname = normalizedUrl.pathname;
-        }
+        return prefix + pathname;
+      }
+    }
+
+    let url: URL;
+
+    if (routing.domains) {
+      const domainConfigs = routing.domains.filter((cur) =>
+        isLocaleSupportedOnDomain(locale, cur)
+      );
+
+      return domainConfigs.map((domainConfig) => {
+        url = new URL(normalizedUrl);
+        url.port = '';
+        url.host = domainConfig.domain;
+
+        // Important: Use `normalizedUrl` here, as `url` potentially uses
+        // a `basePath` that automatically gets applied to the pathname
+        url.pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
 
         if (
-          locale !== routing.defaultLocale ||
+          locale !== domainConfig.defaultLocale ||
           routing.localePrefix.mode === 'always'
         ) {
-          pathname = prefixPathname(pathname);
+          url.pathname = prefixPathname(url.pathname);
         }
-        url = new URL(pathname, normalizedUrl);
+
+        return getAlternateEntry(url, locale);
+      });
+    } else {
+      let pathname: string;
+      if (localizedPathnames && typeof localizedPathnames === 'object') {
+        pathname = getLocalizedPathname(normalizedUrl.pathname, locale);
+      } else {
+        pathname = normalizedUrl.pathname;
       }
 
-      return getAlternateEntry(url, locale);
-    })
-    .filter((link) => link != null);
+      if (
+        locale !== routing.defaultLocale ||
+        routing.localePrefix.mode === 'always'
+      ) {
+        pathname = prefixPathname(pathname);
+      }
+      url = new URL(pathname, normalizedUrl);
+    }
+
+    return getAlternateEntry(url, locale);
+  });
 
   // Add x-default entry
   const shouldAddXDefault =

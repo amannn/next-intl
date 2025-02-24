@@ -36,7 +36,7 @@ export type LocalePrefix<
 
 export type Pathnames<AppLocales extends Locales> = Record<
   Pathname,
-  Partial<Record<AppLocales[number], Pathname | null>> | Pathname
+  Partial<Record<AppLocales[number], Pathname>> | Pathname
 >;
 
 export type DomainConfig<AppLocales extends Locales> = {

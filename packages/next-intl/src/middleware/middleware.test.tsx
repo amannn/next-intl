@@ -482,7 +482,7 @@ describe('prefix-based routing', () => {
           },
           '/partially-available': {
             de: '/teilweise-verfuegbar',
-            'de-AT': null
+            'de-AT': '/teilweise-verfuegbar'
             // (ja inherits en)
           }
         } satisfies Pathnames<ReadonlyArray<'en' | 'de' | 'de-AT' | 'ja'>>

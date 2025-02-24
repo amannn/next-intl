@@ -35,7 +35,6 @@ describe('pathnames', () => {
     routing.pathnames['/about'].en;
   });
 
-
   it('accepts a partial config for only some locales', () => {
     defineRouting({
       locales: ['en', 'de'],
@@ -43,18 +42,6 @@ describe('pathnames', () => {
       pathnames: {
         '/about': {
           de: '/ueber-uns'
-        }
-      }
-    });
-  });
-
-  it('allows to mark locales as not supported', () => {
-    defineRouting({
-      locales: ['en', 'de'],
-      defaultLocale: 'en',
-      pathnames: {
-        '/about': {
-          de: null
         }
       }
     });
