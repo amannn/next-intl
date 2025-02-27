@@ -194,8 +194,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.0)
@@ -243,8 +243,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -289,8 +289,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       postcss:
         specifier: ^8.4.38
         version: 8.4.47
@@ -338,8 +338,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -432,8 +432,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.0)
@@ -490,8 +490,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -554,8 +554,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       postcss:
         specifier: ^8.4.38
         version: 8.4.47
@@ -603,8 +603,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -658,8 +658,8 @@ importers:
         specifier: ^9.11.1
         version: 9.13.0(jiti@2.3.3)
       eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
+        specifier: ^15.2.0
+        version: 15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.0)
@@ -3326,8 +3326,8 @@ packages:
   '@next/env@15.2.0':
     resolution: {integrity: sha512-eMgJu1RBXxxqqnuRJQh5RozhskoNUDHBFybvi+Z+yK9qzKeG7dadhv/Vp1YooSZmCnegf7JxWuapV77necLZNA==}
 
-  '@next/eslint-plugin-next@15.1.6':
-    resolution: {integrity: sha512-+slMxhTgILUntZDGNgsKEYHUvpn72WP1YTlkmEhS51vnVd7S9jEEy0n9YAMcI21vUG4akTw9voWH02lrClt/yw==}
+  '@next/eslint-plugin-next@15.2.0':
+    resolution: {integrity: sha512-jHFUG2OwmAuOASqq253RAEG/5BYcPHn27p1NoWZDCf4OdvdK0yRYWX92YKkL+Mk2s+GyJrmd/GATlL5b2IySpw==}
 
   '@next/mdx@15.0.0-rc.1':
     resolution: {integrity: sha512-LaumSB8uW4Ps3jTjigieDqkuAR7h64jzzP6ZXcEq5yH02BlJvhYJDWDkQyXMYU1ThWM1Kvs47pd/elIqQ4TFUg==}
@@ -7578,8 +7578,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0
 
-  eslint-config-next@15.1.6:
-    resolution: {integrity: sha512-Wd1uy6y7nBbXUSg9QAuQ+xYEKli5CgUhLjz1QHW11jLDis5vK5XB3PemL6jEmy7HrdhaRFDz+GTZ/3FoH+EUjg==}
+  eslint-config-next@15.2.0:
+    resolution: {integrity: sha512-LkG0KKpinAoNPk2HXSx0fImFb/hQ6RnhSxTkpJFTkQ0SmnzsbRsjjN95WC/mDY34nKOenpptYEVvfkCR/h+VjA==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0 || ^9.0.0
       typescript: '>=3.3.1'
@@ -18037,7 +18037,7 @@ snapshots:
 
   '@next/env@15.2.0': {}
 
-  '@next/eslint-plugin-next@15.1.6':
+  '@next/eslint-plugin-next@15.2.0':
     dependencies:
       fast-glob: 3.3.1
 
@@ -23488,9 +23488,9 @@ snapshots:
       - typescript
       - vitest
 
-  eslint-config-next@15.1.6(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3):
+  eslint-config-next@15.2.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3):
     dependencies:
-      '@next/eslint-plugin-next': 15.1.6
+      '@next/eslint-plugin-next': 15.2.0
       '@rushstack/eslint-patch': 1.10.5
       '@typescript-eslint/eslint-plugin': 8.11.0(@typescript-eslint/parser@8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3))(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
       '@typescript-eslint/parser': 8.11.0(eslint@9.13.0(jiti@2.3.3))(typescript@5.6.3)
