@@ -1,6 +1,7 @@
 import React from 'react';
 import {describe, expect, it, vi} from 'vitest';
 import {getTranslations} from '../server.react-server';
+import {isPromise} from '../shared/utils';
 import {renderToStream} from './testUtils';
 import {
   _createCache,
@@ -73,7 +74,7 @@ describe('performance', () => {
     try {
       useTranslations('Component');
     } catch (promiseOrError) {
-      if (promiseOrError instanceof Promise) {
+      if (isPromise(promiseOrError)) {
         await promiseOrError;
         useTranslations('Component');
       } else {

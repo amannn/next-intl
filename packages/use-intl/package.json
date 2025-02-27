@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.26.3",
+  "version": "3.26.5",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
