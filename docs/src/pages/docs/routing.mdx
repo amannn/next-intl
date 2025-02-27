@@ -300,14 +300,15 @@ import {notFound} from 'next';
 import {fetchContent} from './cms';
 
 type Props = {
-  params: {
+  params: Promise<{
     locale: string;
     slug: Array<string>;
-  };
+  }>;
 };
 
 export default async function CatchAllPage({params}: Props) {
-  const content = await fetchContent(params.locale, params.slug);
+  const {locale, slug} = await params;
+  const content = await fetchContent(locale, slug);
   if (!content) notFound();
 
   // ...

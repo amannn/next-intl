@@ -1,24 +1,19 @@
-// @ts-check
-
-import mdxPlugin from '@next/mdx';
+import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
+import createBundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.tsx');
-const withMdx = mdxPlugin();
+const withMdx = createMDX({});
+const withBundleAnalyzer = createBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true'
+});
 
-export default withMdx(
-  withNextIntl({
-    trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
-    basePath:
-      process.env.NEXT_PUBLIC_USE_CASE === 'base-path'
-        ? '/base/path'
-        : undefined,
-    experimental: {
-      staleTimes: {
-        // Next.js 14.2 broke `locale-prefix-never.spec.ts`.
-        // This is a workaround for the time being.
-        dynamic: 0
-      }
-    }
-  })
-);
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
+  basePath:
+    process.env.NEXT_PUBLIC_USE_CASE === 'base-path' ? '/base/path' : undefined
+};
+
+export default withNextIntl(withMdx(withBundleAnalyzer(nextConfig)));

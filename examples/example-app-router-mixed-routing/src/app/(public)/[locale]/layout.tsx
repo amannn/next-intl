@@ -10,7 +10,7 @@ import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
 
 type Props = {
   children: ReactNode;
-  params: {locale: string};
+  params: Promise<{locale: string}>;
 };
 
 export function generateStaticParams() {
@@ -21,10 +21,9 @@ export const metadata: Metadata = {
   title: 'next-intl-mixed-routing (public)'
 };
 
-export default async function LocaleLayout({
-  children,
-  params: {locale}
-}: Props) {
+export default async function LocaleLayout({children, params}: Props) {
+  const {locale} = await params;
+
   // Enable static rendering
   setRequestLocale(locale);
 

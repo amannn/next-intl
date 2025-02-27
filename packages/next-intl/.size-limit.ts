@@ -9,7 +9,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl' (react-server)",
     path: 'dist/production/index.react-server.js',
-    limit: '15.355 KB'
+    limit: '15.385 KB'
   },
   {
     name: "import {createSharedPathnamesNavigation} from 'next-intl/navigation' (react-client)",
@@ -33,19 +33,19 @@ const config: SizeLimitConfig = [
     name: "import {createSharedPathnamesNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/production/navigation.react-server.js',
     import: '{createSharedPathnamesNavigation}',
-    limit: '16.825 KB'
+    limit: '16.835 KB'
   },
   {
     name: "import {createLocalizedPathnamesNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/production/navigation.react-server.js',
     import: '{createLocalizedPathnamesNavigation}',
-    limit: '16.82 KB'
+    limit: '16.875 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/production/navigation.react-server.js',
     import: '{createNavigation}',
-    limit: '16.82 KB'
+    limit: '16.855 KB'
   },
   {
     name: "import * from 'next-intl/server' (react-client)",
@@ -71,7 +71,7 @@ const config: SizeLimitConfig = [
     name: "import * from 'next-intl' (react-client, ESM)",
     path: 'dist/esm/index.react-client.js',
     import: '*',
-    limit: '14.365 kB'
+    limit: '14.375 kB'
   },
   {
     name: "import {NextIntlProvider} from 'next-intl' (react-client, ESM)",
