@@ -6,9 +6,11 @@ import {
   _createIntlFormatters,
   initializeConfig
 } from 'use-intl/core';
-import {getRequestLocale} from './RequestLocale.tsx';
-import createRequestConfig from './createRequestConfig.tsx';
-import type {GetRequestConfigParams} from './getRequestConfig.tsx';
+import {isPromise} from '../../shared/utils.js';
+import {getRequestLocale} from './RequestLocale.js';
+import createRequestConfig from './createRequestConfig.js';
+import type {GetRequestConfigParams} from './getRequestConfig.js';
+import validateLocale from './validateLocale.js';
 
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component
@@ -51,7 +53,7 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
   };
 
   let result = getConfig(params);
-  if (result instanceof Promise) {
+  if (isPromise(result)) {
     result = await result;
   }
 
@@ -59,6 +61,9 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
     throw new Error(
       'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl.dev/docs/usage/configuration#i18n-request'
     );
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    validateLocale(result.locale);
   }
 
   return result;
@@ -68,14 +73,16 @@ const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 const getFormatters = cache(_createIntlFormatters);
 const getCache = cache(_createCache);
 
-async function getConfigImpl(localeOverride?: Locale): Promise<
-  IntlConfig & {
-    getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
-    onError: NonNullable<IntlConfig['onError']>;
-    timeZone: NonNullable<IntlConfig['timeZone']>;
-    _formatters: ReturnType<typeof _createIntlFormatters>;
-  }
-> {
+async function getConfigImpl(localeOverride?: Locale): Promise<{
+  locale: IntlConfig['locale'];
+  formats?: NonNullable<IntlConfig['formats']>;
+  timeZone: NonNullable<IntlConfig['timeZone']>;
+  onError: NonNullable<IntlConfig['onError']>;
+  getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+  messages?: NonNullable<IntlConfig['messages']>;
+  now?: NonNullable<IntlConfig['now']>;
+  _formatters: ReturnType<typeof _createIntlFormatters>;
+}> {
   const runtimeConfig = await receiveRuntimeConfig(
     createRequestConfig,
     localeOverride

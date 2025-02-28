@@ -5,7 +5,7 @@ import {
   getNormalizedPathname,
   getPathnameMatch,
   getRouteParams
-} from './utils.tsx';
+} from './utils.js';
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {

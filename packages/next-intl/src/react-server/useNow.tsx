@@ -1,6 +1,6 @@
 import type {useNow as useNowType} from 'use-intl';
-import getDefaultNow from '../server/react-server/getDefaultNow.tsx';
-import useConfig from './useConfig.tsx';
+import getDefaultNow from '../server/react-server/getDefaultNow.js';
+import useConfig from './useConfig.js';
 
 export default function useNow(
   options?: Parameters<typeof useNowType>[0]

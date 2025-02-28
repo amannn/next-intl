@@ -41,7 +41,7 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'
@@ -64,9 +64,7 @@ export default async function RootLayout(/* ... */) {
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
@@ -76,14 +74,15 @@ export default async function RootLayout(/* ... */) {
 These props are inherited if you're rendering `NextIntlClientProvider` from a Server Component:
 
 1. `locale`
-2. `now`
-3. `timeZone`
-4. `formats`
+2. `messages`
+3. `now`
+4. `timeZone`
+5. `formats`
 
 In contrast, these props can be provided as necessary:
 
-1. `messages` (see [Internationalization in Client Components](/docs/environments/server-client-components#using-internationalization-in-client-components))
-2. `onError` and `getMessageFallback`
+1. `onError`
+2. `getMessageFallback`
 
 Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
 
@@ -115,17 +114,16 @@ Once you have defined your client-side provider component, you can use it in a S
 
 ```tsx filename="layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
-import {getLocale, getMessages} from 'next-intl/server';
+import {getLocale} from 'next-intl/server';
 import IntlErrorHandlingProvider from './IntlErrorHandlingProvider';
 
 export default async function RootLayout({children}) {
   const locale = await getLocale();
-  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider>
           <IntlErrorHandlingProvider>{children}</IntlErrorHandlingProvider>
         </NextIntlClientProvider>
       </body>
@@ -360,6 +358,30 @@ Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integr
 
 </Details>
 
+<Details id="messages-per-locale">
+<summary>Do I need separate messages for each locale that my app supports?</summary>
+
+Since you have full control over how messages are loaded, you can choose to load messages for example merely based on the overall language, ignoring any regional variants:
+
+```tsx
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // E.g. "en-US", "en-CA", …
+  const locale = 'en-US';
+
+  // E.g. "en"
+  const language = new Intl.Locale(locale).language;
+
+  // Load messages based on the language
+  const messages = (await import(`../../messages/${language}.json`)).default;
+
+  // ...
+});
+```
+
+</Details>
+
 ### `useMessages` & `getMessages` [#use-messages]
 
 In case you require access to messages in a component, you can read them via `useMessages()` or `getMessages()` from your configuration:
@@ -380,13 +402,14 @@ const messages = await getMessages();
 ```tsx
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
+import pick from 'lodash/pick';
 
 async function Component({children}) {
   // Read messages configured via `i18n/request.ts`
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider messages={pick(messages, ['Navigation'])}>
       {children}
     </NextIntlClientProvider>
   );

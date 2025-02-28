@@ -7,14 +7,10 @@ import {
 import {renderToString} from 'react-dom/server';
 import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {
-  type DomainsConfig,
-  type Pathnames,
-  defineRouting
-} from '../routing.tsx';
-import createNavigationClient from './react-client/createNavigation.tsx';
-import createNavigationServer from './react-server/createNavigation.tsx';
-import getServerLocale from './react-server/getServerLocale.tsx';
+import {type DomainsConfig, type Pathnames, defineRouting} from '../routing.js';
+import createNavigationClient from './react-client/createNavigation.js';
+import createNavigationServer from './react-server/createNavigation.js';
+import getServerLocale from './react-server/getServerLocale.js';
 
 vi.mock('react');
 vi.mock('next/navigation.js', async () => ({
@@ -57,12 +53,13 @@ const defaultLocale = 'en' as const;
 const domains = [
   {
     defaultLocale: 'en',
-    domain: 'example.com'
+    domain: 'example.com',
+    locales: ['en']
   },
   {
     defaultLocale: 'de',
     domain: 'example.de',
-    locales: ['de', 'en']
+    locales: ['de', 'ja']
   }
 ] satisfies DomainsConfig<typeof locales>;
 
@@ -911,10 +908,9 @@ describe.each([
     });
 
     describe('Link', () => {
-      it('renders a prefix during SSR even for the default locale', () => {
-        // (see comment in source for reasoning)
+      it('renders no prefix during SSR for the default locale', () => {
         const markup = renderToString(<Link href="/about">About</Link>);
-        expect(markup).toContain('href="/en/about"');
+        expect(markup).toContain('href="/about"');
       });
 
       it('does not render a prefix eventually on the client side for the default locale of the given domain', () => {
@@ -939,11 +935,11 @@ describe.each([
 
       it('renders a prefix when currently on a secondary locale', () => {
         mockLocation({host: 'example.de'});
-        mockCurrentLocale('en');
+        mockCurrentLocale('ja');
         render(<Link href="/about">About</Link>);
         expect(
           screen.getByRole('link', {name: 'About'}).getAttribute('href')
-        ).toBe('/en/about');
+        ).toBe('/ja/about');
       });
 
       it('does not render a prefix when currently on a domain with a different default locale', () => {
@@ -965,33 +961,21 @@ describe.each([
         );
         expect(markup).toContain('href="/de/about"');
       });
+
+      it('accepts search params', () => {
+        render(
+          <Link href={{pathname: '/about', query: {foo: 'bar'}}}>Test</Link>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+        ).toBe('/about?foo=bar');
+      });
     });
 
     describe('getPathname', () => {
-      it('does not add a prefix for the default locale', () => {
-        expect(
-          getPathname({locale: 'en', href: '/about', domain: 'example.com'})
-        ).toBe('/about');
-        expect(
-          getPathname({locale: 'de', href: '/about', domain: 'example.de'})
-        ).toBe('/about');
-      });
-
-      it('adds a prefix for a secondary locale', () => {
-        expect(
-          getPathname({locale: 'de', href: '/about', domain: 'example.com'})
-        ).toBe('/de/about');
-        expect(
-          getPathname({locale: 'en', href: '/about', domain: 'example.de'})
-        ).toBe('/en/about');
-      });
-
-      it('prints a warning when no domain is provided', () => {
-        const consoleSpy = vi.spyOn(console, 'error');
-        // @ts-expect-error -- Domain is not provided
-        getPathname({locale: 'de', href: '/about'});
-        expect(consoleSpy).toHaveBeenCalled();
-        consoleSpy.mockRestore();
+      it('does not add a prefix for a default locale', () => {
+        expect(getPathname({locale: 'en', href: '/about'})).toBe('/about');
+        expect(getPathname({locale: 'de', href: '/about'})).toBe('/about');
       });
     });
 
@@ -1000,21 +984,52 @@ describe.each([
       ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
     ])('%s', (_, redirectFn, nextRedirectFn) => {
       it('adds a prefix even for the default locale', () => {
-        // (see comment in source for reasoning)
+        // There's one edge case that is not handled here: If `localePrefix:
+        // 'as-needed'` is used and the user redirects from a non-default locale
+        // to the default locale, no cookie will be updated and therefore the user
+        // redirected back to the original locale. Typically, redirect is not used
+        // for language switching though and uses the current locale of the user,
+        // therefore this is currently neglected.
         runInRender(() => redirectFn({href: '/', locale: 'en'}));
-        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
-      });
-
-      it('does not add a prefix when domain is provided for the default locale', () => {
-        runInRender(() =>
-          redirectFn({href: '/', locale: 'en', domain: 'example.com'})
-        );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/');
       });
 
       it('adds a prefix for a secondary locale', () => {
-        runInRender(() => redirectFn({href: '/', locale: 'de'}));
-        expect(nextRedirectFn).toHaveBeenLastCalledWith('/de');
+        runInRender(() => redirectFn({href: '/', locale: 'ja'}));
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/ja');
+      });
+    });
+  });
+
+  describe("localePrefix: 'as-needed', with `domains` and `pathnames`", () => {
+    const {Link, permanentRedirect, redirect} = createNavigation({
+      locales,
+      defaultLocale,
+      domains,
+      localePrefix: 'as-needed',
+      pathnames
+    });
+
+    describe('Link', () => {
+      it('accepts search params', () => {
+        render(
+          <Link href={{pathname: '/about', query: {foo: 'bar'}}}>Test</Link>
+        );
+        expect(
+          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
+        ).toBe('/about?foo=bar');
+      });
+    });
+
+    describe.each([
+      ['redirect', redirect, nextRedirect],
+      ['permanentRedirect', permanentRedirect, nextPermanentRedirect]
+    ])('%s', (_, redirectFn, nextRedirectFn) => {
+      it('accepts search params', () => {
+        runInRender(() =>
+          redirectFn({href: {pathname: '/', query: {foo: 'bar'}}, locale: 'en'})
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/?foo=bar');
       });
     });
   });

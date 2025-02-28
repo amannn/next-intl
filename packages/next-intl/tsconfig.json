@@ -2,7 +2,6 @@
   "extends": "eslint-config-molindo/tsconfig.json",
   "include": ["src", "test", "__mocks__", "types", "next-env.d.ts"],
   "compilerOptions": {
-    "allowImportingTsExtensions": true, // For ESM
     "lib": ["dom", "esnext"],
     "target": "ES2020",
     "declaration": true,

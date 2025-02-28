@@ -1,8 +1,8 @@
 import type {NextConfig} from 'next';
-import createMessagesDeclaration from './createMessagesDeclaration.tsx';
-import getNextConfig from './getNextConfig.tsx';
-import type {PluginConfig} from './types.tsx';
-import {warn} from './utils.tsx';
+import createMessagesDeclaration from './createMessagesDeclaration.js';
+import getNextConfig from './getNextConfig.js';
+import type {PluginConfig} from './types.js';
+import {warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,
@@ -14,9 +14,13 @@ function initPlugin(
     );
   }
 
-  if (pluginConfig.experimental?.createMessagesDeclaration) {
+  const messagesPathOrPaths =
+    pluginConfig.experimental?.createMessagesDeclaration;
+  if (messagesPathOrPaths) {
     createMessagesDeclaration(
-      pluginConfig.experimental.createMessagesDeclaration
+      typeof messagesPathOrPaths === 'string'
+        ? [messagesPathOrPaths]
+        : messagesPathOrPaths
     );
   }
 

@@ -3,6 +3,6 @@ export type {
   LocalePrefix,
   DomainsConfig,
   LocalePrefixMode
-} from './types.tsx';
-export {default as defineRouting} from './defineRouting.tsx';
-export type {RoutingConfig} from './config.tsx';
+} from './types.js';
+export {default as defineRouting} from './defineRouting.js';
+export type {RoutingConfig} from './config.js';

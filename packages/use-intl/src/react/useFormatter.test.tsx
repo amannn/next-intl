@@ -3,9 +3,15 @@ import {parseISO} from 'date-fns';
 import type {ComponentProps, ReactElement, ReactNode} from 'react';
 import {type SpyImpl, spyOn} from 'tinyspy';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {type IntlError, IntlErrorCode} from '../core.tsx';
-import IntlProvider from './IntlProvider.tsx';
-import useFormatter from './useFormatter.tsx';
+import {
+  type DateTimeFormatOptions,
+  type IntlError,
+  IntlErrorCode,
+  type NumberFormatOptions,
+  type RelativeTimeFormatOptions
+} from '../core.js';
+import IntlProvider from './IntlProvider.js';
+import useFormatter from './useFormatter.js';
 
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
@@ -25,7 +31,7 @@ describe('dateTime', () => {
 
   function renderDateTime(
     value: Date | number,
-    options?: Parameters<ReturnType<typeof useFormatter>['dateTime']>['1']
+    options?: DateTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
@@ -287,10 +293,7 @@ describe('dateTime', () => {
 });
 
 describe('number', () => {
-  function renderNumber(
-    value: number | bigint,
-    options?: Parameters<ReturnType<typeof useFormatter>['number']>['1']
-  ) {
+  function renderNumber(value: number | bigint, options?: NumberFormatOptions) {
     function Component() {
       const format = useFormatter();
       return <>{format.number(value, options)}</>;
@@ -430,13 +433,15 @@ describe('number', () => {
 describe('relativeTime', () => {
   function renderRelativeTime(
     date: Date | number,
-    nowOrOptions: Parameters<
-      ReturnType<typeof useFormatter>['relativeTime']
-    >['1']
+    nowOrOptions: Date | number | RelativeTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
-      return <>{format.relativeTime(date, nowOrOptions)}</>;
+      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+        return format.relativeTime(date, nowOrOptions);
+      } else {
+        return format.relativeTime(date, nowOrOptions);
+      }
     }
 
     render(
@@ -629,7 +634,7 @@ describe('relativeTime', () => {
 describe('list', () => {
   function renderList(
     value: Iterable<string>,
-    options?: Parameters<ReturnType<typeof useFormatter>['list']>['1']
+    options?: Intl.ListFormatOptions
   ) {
     function Component() {
       const format = useFormatter();

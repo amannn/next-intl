@@ -1,29 +1,28 @@
 import type {ReactNode} from 'react';
-import type {Messages} from './AppConfig.tsx';
-import type Formats from './Formats.tsx';
-import type ICUArgs from './ICUArgs.tsx';
-import type ICUTags from './ICUTags.tsx';
-import type IntlConfig from './IntlConfig.tsx';
+import type Formats from './Formats.js';
+import type ICUArgs from './ICUArgs.js';
+import type ICUTags from './ICUTags.js';
+import type IntlConfig from './IntlConfig.js';
 import type {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './MessageKeys.tsx';
+} from './MessageKeys.js';
 import type {
   MarkupTagsFunction,
   RichTagsFunction,
   TranslationValues
-} from './TranslationValues.tsx';
-import createTranslatorImpl from './createTranslatorImpl.tsx';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
+} from './TranslationValues.js';
+import createTranslatorImpl from './createTranslatorImpl.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters.tsx';
-import type {Prettify} from './types.tsx';
+} from './formatters.js';
+import type {Prettify} from './types.js';
 
 type ICUArgsWithTags<
   MessageString extends string,
@@ -62,8 +61,12 @@ type TranslateArgs<
         : [values: Prettify<Args>, formats?: Formats]
       : never;
 
+// This type is slightly more loose than `AbstractIntlMessages`
+// in order to avoid a type error.
+type IntlMessages = Record<string, any>;
+
 type NamespacedMessageKeys<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -82,7 +85,7 @@ type NamespacedMessageKeys<
 >;
 
 type NamespacedValue<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -102,7 +105,7 @@ type NamespacedValue<
  * (e.g. `namespace.Component`).
  */
 export default function createTranslator<
-  const TranslatorMessages extends Messages = Messages,
+  const TranslatorMessages extends IntlMessages,
   const Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -115,7 +118,7 @@ export default function createTranslator<
   namespace,
   onError = defaultOnError,
   ...rest
-}: Omit<IntlConfig<TranslatorMessages>, 'messages'> & {
+}: Omit<IntlConfig, 'messages'> & {
   messages?: TranslatorMessages;
   namespace?: Namespace;
   /** @private */

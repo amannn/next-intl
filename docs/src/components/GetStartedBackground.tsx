@@ -4,7 +4,7 @@ export default function GetStartedBackground() {
   const size = 530;
   const radius = 2;
   const className =
-    'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-screen';
+    'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full';
   const patternSize = 19;
 
   return (

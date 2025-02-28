@@ -1,5 +1,5 @@
-import type IntlError from './IntlError.tsx';
-import joinPath from './joinPath.tsx';
+import type IntlError from './IntlError.js';
+import joinPath from './joinPath.js';
 
 /**
  * Contains defaults that are used for all entry points into the core.

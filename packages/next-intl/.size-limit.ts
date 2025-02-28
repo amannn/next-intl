@@ -4,30 +4,30 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl' (react-client)",
     path: 'dist/esm/production/index.react-client.js',
-    limit: '13.065 KB'
+    limit: '13.125 KB'
   },
   {
     name: "import {NextIntlClientProvider} from 'next-intl' (react-client)",
     import: '{NextIntlClientProvider}',
     path: 'dist/esm/production/index.react-client.js',
-    limit: '1 KB'
+    limit: '1.005 KB'
   },
   {
     name: "import * from 'next-intl' (react-server)",
     path: 'dist/esm/production/index.react-server.js',
-    limit: '14.035 KB'
+    limit: '14.095 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-client)",
     path: 'dist/esm/production/navigation.react-client.js',
     import: '{createNavigation}',
-    limit: '2.475 KB'
+    limit: '2.305 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-server)",
     path: 'dist/esm/production/navigation.react-server.js',
     import: '{createNavigation}',
-    limit: '3.25 KB'
+    limit: '3.075 KB'
   },
   {
     name: "import * from 'next-intl/server' (react-client)",
@@ -37,12 +37,12 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl/server' (react-server)",
     path: 'dist/esm/production/server.react-server.js',
-    limit: '13.335 KB'
+    limit: '13.395 KB'
   },
   {
     name: "import * from 'next-intl/middleware'",
     path: 'dist/esm/production/middleware.js',
-    limit: '9.305 KB'
+    limit: '9.505 KB'
   },
   {
     name: "import * from 'next-intl/routing'",

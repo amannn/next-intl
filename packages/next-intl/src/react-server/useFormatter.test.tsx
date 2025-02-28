@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
-import getDefaultNow from '../server/react-server/getDefaultNow.tsx';
-import {renderToStream} from './testUtils.tsx';
-import useFormatter from './useFormatter.tsx';
+import getDefaultNow from '../server/react-server/getDefaultNow.js';
+import {renderToStream} from './testUtils.js';
+import useFormatter from './useFormatter.js';
 
 vi.mock('react');
 vi.mock('../server/react-server/getDefaultNow.tsx', () => ({

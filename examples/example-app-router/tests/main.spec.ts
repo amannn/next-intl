@@ -28,10 +28,10 @@ it("handles not found pages for routes that don't match the middleware", async (
   page
 }) => {
   await page.goto('/test.png');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 
   await page.goto('/api/hello');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 });
 
 it('sets caching headers', async ({request}) => {
@@ -95,8 +95,6 @@ it("sets a cookie when requesting a locale that doesn't match the `accept-langua
   expect(value).toContain('NEXT_LOCALE=de;');
   expect(value).toContain('Path=/;');
   expect(value).toContain('SameSite=lax');
-  expect(value).toContain('Max-Age=18000;');
-  expect(value).toContain('Expires=');
 });
 
 it('serves a robots.txt', async ({page}) => {
@@ -117,7 +115,17 @@ it('serves a sitemap.xml', async ({page}) => {
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
 </url>
 <url>
+<loc>http://localhost:3000/de</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
+</url>
+<url>
 <loc>http://localhost:3000/en/pathnames</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
+</url>
+<url>
+<loc>http://localhost:3000/de/pfadnamen</loc>
 <xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
 </url>

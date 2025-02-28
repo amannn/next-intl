@@ -10,10 +10,10 @@ import {defaultLocale, locales} from './config';
 const COOKIE_NAME = 'NEXT_LOCALE';
 
 export async function getUserLocale(): Promise<Locale> {
-  const candidate = cookies().get(COOKIE_NAME)?.value;
+  const candidate = (await cookies()).get(COOKIE_NAME)?.value;
   return hasLocale(locales, candidate) ? candidate : defaultLocale;
 }
 
 export async function setUserLocale(locale: string) {
-  cookies().set(COOKIE_NAME, locale);
+  (await cookies()).set(COOKIE_NAME, locale);
 }

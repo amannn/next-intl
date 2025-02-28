@@ -2,7 +2,7 @@ import {Metadata} from 'next';
 import {useTranslations} from 'next-intl';
 import {getLocale} from 'next-intl/server';
 import {use} from 'react';
-import {getPathname} from '@/i18n/routing';
+import {getPathname} from '@/i18n/navigation';
 
 type Props = {
   params: Promise<{

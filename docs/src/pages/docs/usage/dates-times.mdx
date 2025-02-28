@@ -34,7 +34,11 @@ See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/do
 If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
 
 ```js
+// Use a global format
 format.dateTime(dateTime, 'short');
+
+// Optionally override some options
+format.dateTime(dateTime, 'short', {year: 'numeric'});
 ```
 
 <Details id="parsing-manipulation">
@@ -138,6 +142,8 @@ async function FormattedDate({date}) {
 }
 ```
 
+Alternatively, if you don't want to use any caching, you can mark the component with [`await connection()`](https://nextjs.org/docs/app/api-reference/functions/connection) instead to render at request time.
+
 </Details>
 
 ### `updateInterval` [#relative-times-update]
@@ -202,10 +208,14 @@ function Component() {
 }
 ```
 
-If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the trailing argument:
+If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the third argument:
 
 ```js
+// Use a global format
 format.dateTimeRange(dateTimeA, dateTimeB, 'short');
+
+// Optionally override some options
+format.dateTimeRange(dateTimeA, dateTimeB, 'short', {year: 'numeric'});
 ```
 
 ## Dates and times within messages

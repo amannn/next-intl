@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import {expect, it} from 'vitest';
-import IntlProvider from './IntlProvider.tsx';
-import useTimeZone from './useTimeZone.tsx';
+import IntlProvider from './IntlProvider.js';
+import useTimeZone from './useTimeZone.js';
 
 it('returns the time zone when it is configured', () => {
   function Component() {

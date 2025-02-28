@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {getRequestConfig} from '../../server.react-client.tsx';
+import {getRequestConfig} from '../../server.react-client.js';
 
 describe('getRequestConfig', () => {
   it('can be called in the outer module closure', () => {

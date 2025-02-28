@@ -6,13 +6,11 @@ import {routing} from '@/i18n/routing';
 
 type Props = {
   children: ReactNode;
-  params: {locale: Locale};
+  params: Promise<{locale: Locale}>;
 };
 
-export default async function LocaleLayout({
-  children,
-  params: {locale}
-}: Props) {
+export default async function LocaleLayout({children, params}: Props) {
+  const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }

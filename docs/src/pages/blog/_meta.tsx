@@ -3,7 +3,7 @@ export default {
     title: 'Overview'
   },
   'next-intl-4-0': {
-    title: 'next-intl 4.0',
+    title: 'next-intl 4.0 beta',
     display: 'hidden'
   },
   'next-intl-3-22': {

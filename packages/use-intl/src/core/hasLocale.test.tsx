@@ -1,5 +1,5 @@
 import {expect, it} from 'vitest';
-import hasLocale from './hasLocale.tsx';
+import hasLocale from './hasLocale.js';
 
 it('narrows down the type', () => {
   const locales = ['en-US', 'en-GB'] as const;

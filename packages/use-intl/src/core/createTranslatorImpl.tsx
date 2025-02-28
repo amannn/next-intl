@@ -1,9 +1,9 @@
-import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import type {InitializedIntlConfig} from './IntlConfig.tsx';
-import type {NestedKeyOf} from './MessageKeys.tsx';
-import createBaseTranslator from './createBaseTranslator.tsx';
-import type {Formatters, IntlCache} from './formatters.tsx';
-import resolveNamespace from './resolveNamespace.tsx';
+import type AbstractIntlMessages from './AbstractIntlMessages.js';
+import type {InitializedIntlConfig} from './IntlConfig.js';
+import type {NestedKeyOf} from './MessageKeys.js';
+import createBaseTranslator from './createBaseTranslator.js';
+import type {Formatters, IntlCache} from './formatters.js';
+import resolveNamespace from './resolveNamespace.js';
 
 export type CreateTranslatorImplProps<Messages> = Omit<
   InitializedIntlConfig,

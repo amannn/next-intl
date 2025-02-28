@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {describe, it} from 'vitest';
-import type {DomainConfig, LocalePrefix} from './types.tsx';
+import type {DomainConfig, LocalePrefix} from './types.js';
 
 describe('LocalePrefix', () => {
   it('does not require a type param for simple values', () => {
@@ -42,14 +42,7 @@ describe('LocalePrefix', () => {
 });
 
 describe('DomainConfig', () => {
-  it('allows to handle all locales', () => {
-    const config: DomainConfig<['en', 'de']> = {
-      defaultLocale: 'en',
-      domain: 'example.com'
-    };
-  });
-
-  it('allows to restrict locales', () => {
+  it('allows to define locales', () => {
     const config: DomainConfig<['en', 'de']> = {
       defaultLocale: 'en',
       domain: 'example.com',

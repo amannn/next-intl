@@ -1,6 +1,6 @@
 import {cache} from 'react';
 import type {Locale} from 'use-intl';
-import getConfig from './getConfig.tsx';
+import getConfig from './getConfig.js';
 
 async function getConfigNowImpl(locale?: Locale) {
   const config = await getConfig(locale);

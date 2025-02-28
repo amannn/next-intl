@@ -1,9 +1,9 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {memo, useState} from 'react';
 import {expect, it, vi} from 'vitest';
-import IntlProvider from './IntlProvider.tsx';
-import useNow from './useNow.tsx';
-import useTranslations from './useTranslations.tsx';
+import IntlProvider from './IntlProvider.js';
+import useNow from './useNow.js';
+import useTranslations from './useTranslations.js';
 
 it("doesn't re-render context consumers unnecessarily", () => {
   const messages = {StaticText: {hello: 'Hello!'}};
@@ -147,5 +147,27 @@ it('does not merge messages in nested providers', () => {
     </IntlProvider>
   );
 
+  expect(onError.mock.calls.length).toBe(1);
+});
+
+it('can opt-out of messages inheritance', () => {
+  const onError = vi.fn();
+
+  function Component() {
+    const t = useTranslations();
+    return <span>{t('hello')}</span>;
+  }
+
+  render(
+    <IntlProvider locale="en" messages={{hello: 'Hey!'}} onError={onError}>
+      <Component />
+      <IntlProvider locale="en" messages={null}>
+        <Component />
+      </IntlProvider>
+    </IntlProvider>
+  );
+
+  screen.getByText('Hey!');
+  screen.getByText('hello');
   expect(onError.mock.calls.length).toBe(1);
 });

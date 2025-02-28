@@ -3,7 +3,7 @@ import {useFormatter, useNow, useTimeZone, useTranslations} from 'next-intl';
 import {use} from 'react';
 import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 import AsyncComponent, {
   AsyncComponentGerman
 } from '../../components/AsyncComponent';
@@ -22,7 +22,8 @@ type Props = {
   searchParams: Promise<Record<string, string>>;
 };
 
-export default function Index({searchParams}: Props) {
+export default function Index(props: Props) {
+  const searchParams = use(props.searchParams);
   const t = useTranslations('Index');
   const format = useFormatter();
   const now = useNow();
@@ -58,9 +59,7 @@ export default function Index({searchParams}: Props) {
         </Link>
       </div>
       <ClientLink href="/">Link on client without provider</ClientLink>
-      <p data-testid="SearchParams">
-        {JSON.stringify(use(searchParams), null, 2)}
-      </p>
+      <p data-testid="SearchParams">{JSON.stringify(searchParams, null, 2)}</p>
       <p data-testid="HasTitle">{JSON.stringify(t.has('title'))}</p>
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       <AsyncComponent />

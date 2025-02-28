@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "next": "15.1.1-canary.12",
+    "next": "^15.2.0",
     "next-intl": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -28,12 +28,17 @@
     "@types/react": "^18.3.3",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "^8.0.0",
+    "eslint-config-next": "^15.2.0",
+    "@eslint/eslintrc": "^3.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.38",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.5 (2025-02-21)
+
+### Bug Fixes
+
+* Handle `query` in `<Link />` correctly when using `localePrefix: 'as-needed'` with `domains` ([#1732](https://github.com/amannn/next-intl/issues/1732)) ([ec8776e](https://github.com/amannn/next-intl/commit/ec8776e8f0344f78fea4f71284c48312484a7059)), closes [#1731](https://github.com/amannn/next-intl/issues/1731) – by @amannn
+
+## 3.26.4 (2025-02-18)
+
+### Bug Fixes
+
+* Add workaround for OpenTelemetry/Zone.js ([#1719](https://github.com/amannn/next-intl/issues/1719)) ([1cac9a6](https://github.com/amannn/next-intl/commit/1cac9a65d2aefe20ff7fcf734e70f1fe85cac19d)), closes [#1711](https://github.com/amannn/next-intl/issues/1711) – by @amannn
+
+## 3.26.3 (2024-12-20)
+
+### Bug Fixes
+
+* Add missing deprecation warnings for `next-intl@4.0` ([#1485](https://github.com/amannn/next-intl/issues/1485)) ([1d60d08](https://github.com/amannn/next-intl/commit/1d60d08c446d9eeac8bcc5bfbd0654113a737518)) – by @amannn
+
 ## 3.26.2 (2024-12-18)
 
 ### Bug Fixes
