@@ -1,6 +1,6 @@
 import {notFound} from 'next/navigation';
 import {Locale, hasLocale, NextIntlClientProvider} from 'next-intl';
-import {getTranslations, setRequestLocale} from 'next-intl/server';
+import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
 import {clsx} from 'clsx';
 import {Inter} from 'next/font/google';
@@ -19,10 +19,8 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
 
-export async function generateMetadata(props: Omit<Props, 'children'>) {
-  const {locale} = await props.params;
-
-  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
+export async function generateMetadata() {
+  const t = await getTranslations('LocaleLayout');
 
   return {
     title: t('title')
@@ -30,14 +28,11 @@ export async function generateMetadata(props: Omit<Props, 'children'>) {
 }
 
 export default async function LocaleLayout({children, params}: Props) {
-  // Ensure that the incoming `locale` is valid
+  // This is only necessary as long as there's no `dynamicParams = false`
   const {locale} = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-
-  // Enable static rendering
-  setRequestLocale(locale);
 
   return (
     <html className="h-full" lang={locale}>

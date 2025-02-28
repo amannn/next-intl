@@ -7,6 +7,11 @@ const withNextIntl = createNextIntlPlugin({
   }
 });
 
-const config: NextConfig = {};
+const config: NextConfig = {
+  experimental: {
+    dynamicIO: true,
+    ppr: true
+  }
+};
 
 export default withNextIntl(config);
