@@ -1,11 +1,12 @@
 import {MetadataRoute} from 'next';
+import {getTranslations} from 'next-intl/server';
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  // const t = await getTranslations('Manifest');
+  const t = await getTranslations('Manifest');
 
   return {
     // InvariantError: Invariant: Missing Client Reference Manifest for /manifest.webmanifest. This is a bug in Next.js.
-    // name: t('name'),
+    name: t('name'),
     start_url: '/',
     theme_color: '#101E33'
   };
