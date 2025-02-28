@@ -265,10 +265,11 @@ const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
+export default clerkMiddleware(async (auth, req) => {
+  const intlResponse = handleI18nRouting(req);
+  if (intlResponse) return intlResponse;
 
-  return handleI18nRouting(req);
+  if (isProtectedRoute(req)) await auth.protect();
 });
 
 export const config = {
