@@ -1,19 +1,19 @@
 import type {ReactElement} from 'react';
-import type {FormatNames, Locale} from './AppConfig.tsx';
-import type DateTimeFormatOptions from './DateTimeFormatOptions.tsx';
-import type Formats from './Formats.tsx';
-import IntlError from './IntlError.tsx';
-import IntlErrorCode from './IntlErrorCode.tsx';
-import type NumberFormatOptions from './NumberFormatOptions.tsx';
-import type RelativeTimeFormatOptions from './RelativeTimeFormatOptions.tsx';
-import type TimeZone from './TimeZone.tsx';
-import {defaultOnError} from './defaults.tsx';
+import type {FormatNames, Locale} from './AppConfig.js';
+import type DateTimeFormatOptions from './DateTimeFormatOptions.js';
+import type Formats from './Formats.js';
+import IntlError from './IntlError.js';
+import IntlErrorCode from './IntlErrorCode.js';
+import type NumberFormatOptions from './NumberFormatOptions.js';
+import type RelativeTimeFormatOptions from './RelativeTimeFormatOptions.js';
+import type TimeZone from './TimeZone.js';
+import {defaultOnError} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters.tsx';
+} from './formatters.js';
 
 const SECOND = 1;
 const MINUTE = SECOND * 60;
@@ -102,7 +102,7 @@ export default function createFormatter(props: Props) {
           new IntlError(
             IntlErrorCode.ENVIRONMENT_FALLBACK,
             process.env.NODE_ENV !== 'production'
-              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+              ? `The \`timeZone\` parameter wasn't provided and there is no global default configured. Consider adding a global default to avoid markup mismatches caused by environment differences. Learn more: https://next-intl.dev/docs/configuration#time-zone`
               : undefined
           )
         );
@@ -114,7 +114,8 @@ export default function createFormatter(props: Props) {
 
   function resolveFormatOrOptions<Options>(
     typeFormats: Record<string, Options> | undefined,
-    formatOrOptions?: string | Options
+    formatOrOptions?: string | Options,
+    overrides?: Options
   ) {
     let options;
     if (typeof formatOrOptions === 'string') {
@@ -125,7 +126,7 @@ export default function createFormatter(props: Props) {
         const error = new IntlError(
           IntlErrorCode.MISSING_FORMAT,
           process.env.NODE_ENV !== 'production'
-            ? `Format \`${formatName}\` is not available. You can configure it on the provider or provide custom options.`
+            ? `Format \`${formatName}\` is not available.`
             : undefined
         );
         onError(error);
@@ -135,18 +136,23 @@ export default function createFormatter(props: Props) {
       options = formatOrOptions;
     }
 
+    if (overrides) {
+      options = {...options, ...overrides};
+    }
+
     return options;
   }
 
   function getFormattedValue<Options, Output>(
     formatOrOptions: string | Options | undefined,
+    overrides: Options | undefined,
     typeFormats: Record<string, Options> | undefined,
     formatter: (options?: Options) => Output,
     getFallback: () => Output
   ) {
     let options;
     try {
-      options = resolveFormatOrOptions(typeFormats, formatOrOptions);
+      options = resolveFormatOrOptions(typeFormats, formatOrOptions, overrides);
     } catch {
       return getFallback();
     }
@@ -164,12 +170,22 @@ export default function createFormatter(props: Props) {
   function dateTime(
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
     value: Date | number,
-    /** If a time zone is supplied, the `value` is converted to that time zone.
-     * Otherwise the user time zone will be used. */
-    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTime(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    value: Date | number,
+    format?: FormatNames['dateTime'],
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTime(
+    value: Date | number,
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
+    overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
@@ -184,12 +200,25 @@ export default function createFormatter(props: Props) {
     start: Date | number,
     /** If a number is supplied, this is interpreted as a UTC timestamp. */
     end: Date | number,
-    /** If a time zone is supplied, the values are converted to that time zone.
-     * Otherwise the user time zone will be used. */
-    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTimeRange(
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    start: Date | number,
+    /** If a number is supplied, this is interpreted as a UTC timestamp. */
+    end: Date | number,
+    format?: FormatNames['dateTime'],
+    options?: DateTimeFormatOptions
+  ): string;
+  function dateTimeRange(
+    start: Date | number,
+    end: Date | number,
+    formatOrOptions?: FormatNames['dateTime'] | DateTimeFormatOptions,
+    overrides?: DateTimeFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.dateTime,
       (options) => {
         options = applyTimeZone(options);
@@ -203,10 +232,21 @@ export default function createFormatter(props: Props) {
 
   function number(
     value: number | bigint,
-    formatOrOptions?: FormatNames['number'] | NumberFormatOptions
+    options?: NumberFormatOptions
+  ): string;
+  function number(
+    value: number | bigint,
+    format?: FormatNames['number'],
+    options?: NumberFormatOptions
+  ): string;
+  function number(
+    value: number | bigint,
+    formatOrOptions?: FormatNames['number'] | NumberFormatOptions,
+    overrides?: NumberFormatOptions
   ) {
     return getFormattedValue(
       formatOrOptions,
+      overrides,
       formats?.number,
       (options) => formatters.getNumberFormat(locale, options).format(value),
       () => String(value)
@@ -223,7 +263,7 @@ export default function createFormatter(props: Props) {
         new IntlError(
           IntlErrorCode.ENVIRONMENT_FALLBACK,
           process.env.NODE_ENV !== 'production'
-            ? `The \`now\` parameter wasn't provided and there is no global default configured, therefore the current time will be used as a fallback. To avoid markup mismatches caused by environment differences, either provide the \`now\` parameter or configure a global default. Learn more: https://next-intl-docs.vercel.app/docs/configuration#now`
+            ? `The \`now\` parameter wasn't provided to \`relativeTime\` and there is no global default configured, therefore the current time will be used as a fallback. See https://next-intl.dev/docs/usage/dates-times#relative-times-usenow`
             : undefined
         )
       );
@@ -235,6 +275,15 @@ export default function createFormatter(props: Props) {
     /** The date time that needs to be formatted. */
     date: number | Date,
     /** The reference point in time to which `date` will be formatted in relation to. If this value is absent, a globally configured `now` value or alternatively the current time will be used. */
+    now?: RelativeTimeFormatOptions['now']
+  ): string;
+  function relativeTime(
+    /** The date time that needs to be formatted. */
+    date: number | Date,
+    options?: RelativeTimeFormatOptions
+  ): string;
+  function relativeTime(
+    date: number | Date,
     nowOrOptions?: RelativeTimeFormatOptions['now'] | RelativeTimeFormatOptions
   ) {
     try {
@@ -289,7 +338,17 @@ export default function createFormatter(props: Props) {
   type FormattableListValue = string | ReactElement;
   function list<Value extends FormattableListValue>(
     value: Iterable<Value>,
-    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions
+    options?: Intl.ListFormatOptions
+  ): Value extends string ? string : Iterable<ReactElement>;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
+    format?: FormatNames['list'],
+    options?: Intl.ListFormatOptions
+  ): Value extends string ? string : Iterable<ReactElement>;
+  function list<Value extends FormattableListValue>(
+    value: Iterable<Value>,
+    formatOrOptions?: FormatNames['list'] | Intl.ListFormatOptions,
+    overrides?: Intl.ListFormatOptions
   ): Value extends string ? string : Iterable<ReactElement> {
     const serializedValue: Array<string> = [];
     const richValues = new Map<string, Value>();
@@ -315,6 +374,7 @@ export default function createFormatter(props: Props) {
       Value extends string ? string : Iterable<ReactElement>
     >(
       formatOrOptions,
+      overrides,
       formats?.list,
       // @ts-expect-error -- `richValues.size` is used to determine the return type, but TypeScript can't infer the meaning of this correctly
       (options) => {

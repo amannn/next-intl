@@ -6,27 +6,27 @@ import type {
   NestedKeyOf,
   createTranslator
 } from 'use-intl/core';
-import getConfig from './getConfig.tsx';
-import getServerTranslator from './getServerTranslator.tsx';
+import getConfig from './getConfig.js';
+import getServerTranslator from './getServerTranslator.js';
 
 // Maintainer note: `getTranslations` has two different call signatures.
 // We need to define these with function overloads, otherwise TypeScript
 // messes up the return type.
 
-// CALL SIGNATURE 1: `getTranslations(namespace)`
+// Call signature 1: `getTranslations(namespace)`
 function getTranslations<
   NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
 ): Promise<ReturnType<typeof createTranslator<Messages, NestedKey>>>;
-// CALL SIGNATURE 2: `getTranslations({locale, namespace})`
+// Call signature 2: `getTranslations({locale, namespace})`
 function getTranslations<
   NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(opts?: {
   locale: Locale;
   namespace?: NestedKey;
 }): Promise<ReturnType<typeof createTranslator<Messages, NestedKey>>>;
-// IMPLEMENTATION
+// Implementation
 async function getTranslations<
   NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(namespaceOrOpts?: NestedKey | {locale: Locale; namespace?: NestedKey}) {

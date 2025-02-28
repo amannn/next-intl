@@ -23,8 +23,10 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  // Match all pathnames except for
+  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+  // - … the ones containing a dot (e.g. `favicon.ico`)
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
@@ -91,71 +93,19 @@ Since the middleware is aware of all your domains, if a domain receives a reques
 4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
 
 <Details id="domain-matching">
-<summary>How is the best matching domain for a given locale detected?</summary>
+<summary>How is the best-matching domain for a given locale detected?</summary>
 
-The bestmatching domain is detected based on these priorities:
+The best-matching domain is detected based on these priorities:
 
 1. Stay on the current domain if the locale is supported here
 2. Use an alternative domain where the locale is configured as the `defaultLocale`
-3. Use an alternative domain where the available `locales` are restricted and the locale is supported
-4. Use an alternative domain that supports all locales
+3. Use an alternative domain that supports the locale
 
 </Details>
 
 ## Matcher config
 
 The middleware is intended to only run on pages, not on arbitrary files that you serve independently of the user locale (e.g. `/favicon.ico`).
-
-Because of this, the following config is generally recommended:
-
-```tsx filename="middleware.ts"
-export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
-};
-```
-
-This enables:
-
-1. A redirect at `/` to a suitable locale
-2. Internationalization of all pathnames starting with a locale (e.g. `/en/about`)
-
-<Details id="matcher-avoid-hardcoding">
-<summary>Can I avoid hardcoding the locales in the `matcher` config?</summary>
-
-A [Next.js `matcher`](https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher) needs to be statically analyzable, therefore you can't use variables to generate this value dynamically. However, you can implement the matcher dynamically instead:
-
-```tsx filename="middleware.ts"
-import {NextRequest} from 'next/server';
-import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
-
-const handleI18nRouting = createMiddleware(routing);
-
-export default function middleware(request: NextRequest) {
-  const {pathname} = request.nextUrl;
-
-  const shouldHandle =
-    pathname === '/' ||
-    new RegExp(`^/(${locales.join('|')})(/.*)?$`).test(
-      request.nextUrl.pathname
-    );
-  if (!shouldHandle) return;
-
-  return handleI18nRouting(request);
-}
-```
-
-</Details>
-
-### Pathnames without a locale prefix [#matcher-no-prefix]
-
-There are two use cases where you might want to match pathnames without a locale prefix:
-
-1. You're using a config for [`localePrefix`](/docs/routing#locale-prefix) other than [`always`](/docs/routing#locale-prefix-always)
-2. You want to enable redirects that add a locale for unprefixed pathnames (e.g. `/about` → `/en/about`)
-
-For these cases, the middleware should run on requests for pathnames without a locale prefix as well.
 
 A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically indicate static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
@@ -168,6 +118,7 @@ export const config = {
     // - … if they start with `/api`, `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
     '/((?!api|_next|_vercel|.*\\..*).*)',
+
     // However, match all pathnames within `/users`, optionally with a locale prefix
     '/([\\w-]+)?/users/(.+)'
   ]
@@ -428,6 +379,14 @@ import {redirect} from 'next/navigation';
 // Redirect the user to the default locale when `/` is requested
 export default function RootPage() {
   redirect('/en');
+}
+```
+
+Additionally, Next.js will ask for a root layout for `app/page.tsx`, even if it's just passing `children` through:
+
+```tsx filename="app/layout.tsx"
+export default function RootLayout({children}) {
+  return children;
 }
 ```
 

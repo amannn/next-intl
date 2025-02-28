@@ -1,4 +1,3 @@
-import {createNavigation} from 'next-intl/navigation';
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
@@ -18,11 +17,13 @@ export const routing = defineRouting({
       ? [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
+            defaultLocale: 'en',
+            locales: ['en', 'es', 'ja']
           },
           {
             domain: 'example.de',
-            defaultLocale: 'de'
+            defaultLocale: 'de',
+            locales: ['de']
           }
         ]
       : undefined,
@@ -59,6 +60,3 @@ export const routing = defineRouting({
           maxAge: 200 * 24 * 60 * 60
         }
 });
-
-export const {Link, getPathname, redirect, usePathname, useRouter} =
-  createNavigation(routing);

@@ -2,8 +2,9 @@ import type {LinkProps} from 'next/link.js';
 import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
-  Locales
-} from '../routing/types.tsx';
+  Locales,
+  Pathnames
+} from '../routing/types.js';
 
 type Href = LinkProps['href'];
 
@@ -58,6 +59,16 @@ function hasTrailingSlash() {
   }
 }
 
+export function getLocalizedTemplate<AppLocales extends Locales>(
+  pathnameConfig: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
+  locale: AppLocales[number],
+  internalTemplate: string
+) {
+  return typeof pathnameConfig === 'string'
+    ? pathnameConfig
+    : pathnameConfig[locale] || internalTemplate;
+}
+
 export function normalizeTrailingSlash(pathname: string) {
   const trailingSlash = hasTrailingSlash();
 
@@ -97,8 +108,12 @@ export function getLocalePrefix<
     (localePrefix.mode !== 'never' && localePrefix.prefixes?.[locale]) ||
     // We return a prefix even if `mode: 'never'`. It's up to the consumer
     // to decide to use it or not.
-    '/' + locale
+    getLocaleAsPrefix(locale)
   );
+}
+
+export function getLocaleAsPrefix(locale: string) {
+  return '/' + locale;
 }
 
 export function templateToRegex(template: string): RegExp {
@@ -171,4 +186,11 @@ function comparePathnamePairs(a: string, b: string): number {
 
 export function getSortedPathnames(pathnames: Array<string>) {
   return pathnames.sort(comparePathnamePairs);
+}
+
+export function isPromise<Value>(
+  value: Value | Promise<Value>
+): value is Promise<Value> {
+  // https://github.com/amannn/next-intl/issues/1711
+  return typeof (value as any).then === 'function';
 }

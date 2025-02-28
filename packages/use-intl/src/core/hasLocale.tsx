@@ -1,4 +1,4 @@
-import type {Locale} from './AppConfig.tsx';
+import type {Locale} from './AppConfig.js';
 
 /**
  * Checks if a locale exists in a list of locales.
@@ -7,7 +7,7 @@ import type {Locale} from './AppConfig.tsx';
  */
 export default function hasLocale<LocaleType extends Locale>(
   locales: ReadonlyArray<LocaleType>,
-  candidate?: string | null
+  candidate: unknown
 ): candidate is LocaleType {
   return locales.includes(candidate as LocaleType);
 }

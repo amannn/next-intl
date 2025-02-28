@@ -5,7 +5,7 @@
 
 import {
   createFormatter,
-  initializeConfig,
+  createTranslator,
   useFormatter,
   useLocale,
   useMessages,
@@ -60,9 +60,12 @@ export async function asyncApis() {
 }
 
 export const withNextIntl = createNextIntlPlugin();
-export const config = initializeConfig({locale: 'en'});
-// export const translator = createTranslator({locale: 'en'});
+
 export const formatter = createFormatter({
   locale: 'en',
   now: new Date(2022, 10, 6, 20, 20, 0, 0)
+});
+
+export const translator = createTranslator({
+  locale: 'en'
 });

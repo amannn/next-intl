@@ -1,8 +1,8 @@
 import {render, screen} from '@testing-library/react';
 import {usePathname as useNextPathname} from 'next/navigation.js';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider, useLocale} from '../../index.react-client.tsx';
-import useBasePathname from './useBasePathname.tsx';
+import {NextIntlClientProvider, useLocale} from '../../index.react-client.js';
+import useBasePathname from './useBasePathname.js';
 
 vi.mock('next/navigation.js');
 vi.mock('use-intl', async () => ({
@@ -16,12 +16,13 @@ function mockPathname(pathname: string) {
 }
 
 function Component() {
-  const pathname = useBasePathname({
-    // The mode is not used, only the absence of
-    // `prefixes` is relevant for this test suite
-    mode: 'as-needed'
+  return useBasePathname({
+    localePrefix: {
+      // The mode is not used, only the absence of
+      // `prefixes` is relevant for this test suite
+      mode: 'as-needed'
+    }
   });
-  return <>{pathname}</>;
 }
 
 describe('unprefixed routing', () => {

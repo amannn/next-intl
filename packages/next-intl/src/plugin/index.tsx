@@ -1,1 +1,1 @@
-export {default} from './createNextIntlPlugin.tsx';
+export {default} from './createNextIntlPlugin.js';

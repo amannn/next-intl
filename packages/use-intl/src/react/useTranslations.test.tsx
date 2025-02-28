@@ -9,9 +9,9 @@ import {
   IntlErrorCode,
   type RichTranslationValues,
   type TranslationValues
-} from '../core.tsx';
-import IntlProvider from './IntlProvider.tsx';
-import useTranslations from './useTranslations.tsx';
+} from '../core.js';
+import IntlProvider from './IntlProvider.js';
+import useTranslations from './useTranslations.js';
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.
@@ -745,13 +745,7 @@ describe('error handling', () => {
     const onError = vi.fn();
 
     render(
-      <IntlProvider
-        locale="en"
-        // @ts-expect-error The types don't allow this,
-        // but this shouldn't lead to an error.
-        messages={{a: null}}
-        onError={onError}
-      >
+      <IntlProvider locale="en" messages={{a: null}} onError={onError}>
         <span />
       </IntlProvider>
     );
@@ -776,9 +770,7 @@ describe('error handling', () => {
     expect(onError).toHaveBeenCalledTimes(1);
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-    expect(error.message).toBe(
-      'MISSING_MESSAGE: No messages were configured on the provider.'
-    );
+    expect(error.message).toBe('MISSING_MESSAGE: No messages were configured.');
     screen.getByText('Component.test');
   });
 
@@ -840,7 +832,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
     );
   });
 
@@ -865,7 +857,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl-docs.vercel.app/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
     );
   });
 
@@ -880,7 +872,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
@@ -891,7 +882,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
     );
   });
 
@@ -906,7 +897,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
@@ -917,7 +907,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl-docs.vercel.app/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
     );
   });
 });

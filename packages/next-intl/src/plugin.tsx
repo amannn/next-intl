@@ -1,1 +1,1 @@
-export {default} from './plugin/index.tsx';
+export {default} from './plugin/index.js';

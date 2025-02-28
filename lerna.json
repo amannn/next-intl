@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "3.25.1",
+  "version": "3.26.5",
   "packages": [
     "packages/*"
   ],
@@ -8,10 +8,7 @@
   "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
     "publish": {
-      "removePackageFields": [
-        "devDependencies",
-        "prettier"
-      ],
+      "removePackageFields": ["devDependencies", "prettier"],
       "yes": true
     },
     "version": {

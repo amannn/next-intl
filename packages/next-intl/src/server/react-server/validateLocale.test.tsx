@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import validateLocales from './validateLocales.tsx';
+import validateLocale from './validateLocale.js';
 
 describe('accepts valid formats', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
@@ -34,7 +34,7 @@ describe('accepts valid formats', () => {
     // Somehow tolerated by Intl.Locale
     'english'
   ])('accepts: %s', (locale) => {
-    validateLocales([locale]);
+    validateLocale(locale);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 });
@@ -65,7 +65,7 @@ describe('warns for invalid formats', () => {
     'en US',
     'en.US'
   ])('rejects: %s', (locale) => {
-    validateLocales([locale]);
+    validateLocale(locale);
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
 });

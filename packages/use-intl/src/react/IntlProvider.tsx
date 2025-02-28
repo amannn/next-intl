@@ -1,12 +1,12 @@
 import {type ReactNode, useContext, useMemo} from 'react';
-import type IntlConfig from '../core/IntlConfig.tsx';
+import type IntlConfig from '../core/IntlConfig.js';
 import {
   type Formatters,
   createCache,
   createIntlFormatters
-} from '../core/formatters.tsx';
-import initializeConfig from '../core/initializeConfig.tsx';
-import IntlContext from './IntlContext.tsx';
+} from '../core/formatters.js';
+import initializeConfig from '../core/initializeConfig.js';
+import IntlContext from './IntlContext.js';
 
 type Props = IntlConfig & {
   children: ReactNode;
@@ -49,10 +49,10 @@ export default function IntlProvider({
     () => ({
       ...initializeConfig({
         locale, // (required by provider)
-        formats: formats || prevContext?.formats,
+        formats: formats === undefined ? prevContext?.formats : formats,
         getMessageFallback:
           getMessageFallback || prevContext?.getMessageFallback,
-        messages: messages || prevContext?.messages,
+        messages: messages === undefined ? prevContext?.messages : messages,
         now: now || prevContext?.now,
         onError: onError || prevContext?.onError,
         timeZone: timeZone || prevContext?.timeZone

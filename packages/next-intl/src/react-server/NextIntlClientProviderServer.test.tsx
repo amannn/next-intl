@@ -1,12 +1,13 @@
 import {expect, it, vi} from 'vitest';
-import getConfigNow from '../server/react-server/getConfigNow.tsx';
-import getFormats from '../server/react-server/getFormats.tsx';
-import {getLocale, getTimeZone} from '../server.react-server.tsx';
-import NextIntlClientProvider from '../shared/NextIntlClientProvider.tsx';
-import NextIntlClientProviderServer from './NextIntlClientProviderServer.tsx';
+import getConfigNow from '../server/react-server/getConfigNow.js';
+import getFormats from '../server/react-server/getFormats.js';
+import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
+import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
+import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
   getLocale: vi.fn(async () => 'en-US'),
+  getMessages: vi.fn(async () => ({})),
   getTimeZone: vi.fn(async () => 'America/New_York')
 }));
 
@@ -34,7 +35,8 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
     locale: 'en-GB',
     now: new Date('2020-02-01T00:00:00.000Z'),
     timeZone: 'Europe/London',
-    formats: {}
+    formats: {},
+    messages: {}
   });
 
   expect(result.type).toBe(NextIntlClientProvider);
@@ -43,13 +45,15 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
     locale: 'en-GB',
     now: new Date('2020-02-01T00:00:00.000Z'),
     timeZone: 'Europe/London',
-    formats: {}
+    formats: {},
+    messages: {}
   });
 
   expect(getLocale).not.toHaveBeenCalled();
   expect(getConfigNow).not.toHaveBeenCalled();
   expect(getTimeZone).not.toHaveBeenCalled();
   expect(getFormats).not.toHaveBeenCalled();
+  expect(getMessages).not.toHaveBeenCalled();
 });
 
 it('reads missing configuration from getter functions', async () => {
@@ -63,6 +67,7 @@ it('reads missing configuration from getter functions', async () => {
     locale: 'en-US',
     now: new Date('2020-01-01T00:00:00.000Z'),
     timeZone: 'America/New_York',
+    messages: {},
     formats: {
       dateTime: {
         short: {
@@ -76,4 +81,5 @@ it('reads missing configuration from getter functions', async () => {
   expect(getConfigNow).toHaveBeenCalled();
   expect(getTimeZone).toHaveBeenCalled();
   expect(getFormats).toHaveBeenCalled();
+  expect(getMessages).toHaveBeenCalled();
 });

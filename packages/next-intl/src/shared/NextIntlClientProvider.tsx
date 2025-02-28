@@ -13,7 +13,7 @@ export default function NextIntlClientProvider({locale, ...rest}: Props) {
   if (!locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
-        ? "Couldn't infer the `locale` prop in `NextIntlClientProvider`, please provide it explicitly.\n\nSee https://next-intl-docs.vercel.app/docs/configuration#locale"
+        ? "Couldn't infer the `locale` prop in `NextIntlClientProvider`, please provide it explicitly.\n\nSee https://next-intl.dev/docs/configuration#locale"
         : undefined
     );
   }

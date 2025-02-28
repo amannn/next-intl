@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 3.26.5 (2025-02-21)
+
+### Bug Fixes
+
+* Handle `query` in `<Link />` correctly when using `localePrefix: 'as-needed'` with `domains` ([#1732](https://github.com/amannn/next-intl/issues/1732)) ([ec8776e](https://github.com/amannn/next-intl/commit/ec8776e8f0344f78fea4f71284c48312484a7059)), closes [#1731](https://github.com/amannn/next-intl/issues/1731) – by @amannn
+
+## 3.26.4 (2025-02-18)
+
+### Bug Fixes
+
+* Add workaround for OpenTelemetry/Zone.js ([#1719](https://github.com/amannn/next-intl/issues/1719)) ([1cac9a6](https://github.com/amannn/next-intl/commit/1cac9a65d2aefe20ff7fcf734e70f1fe85cac19d)), closes [#1711](https://github.com/amannn/next-intl/issues/1711) – by @amannn
+
+## 3.26.3 (2024-12-20)
+
+### Bug Fixes
+
+* Add missing deprecation warnings for `next-intl@4.0` ([#1485](https://github.com/amannn/next-intl/issues/1485)) ([1d60d08](https://github.com/amannn/next-intl/commit/1d60d08c446d9eeac8bcc5bfbd0654113a737518)) – by @amannn
+
+## 3.26.2 (2024-12-18)
+
+### Bug Fixes
+
+* Support `t.has` when `getTranslations` is called with an object argument ([#1616](https://github.com/amannn/next-intl/issues/1616)) ([64895a2](https://github.com/amannn/next-intl/commit/64895a2bb3c445f6e3deab85152a0d04ced17e46)), closes [/github.com/amannn/next-intl/discussions/437#discussioncomment-11593318](https://github.com/amannn//github.com/amannn/next-intl/discussions/437/issues/discussioncomment-11593318) – by @amannn
+
+## 3.26.1 (2024-12-11)
+
+### Bug Fixes
+
+* Use new domain `next-intl.dev` in links ([#1601](https://github.com/amannn/next-intl/issues/1601)) ([40a9a77](https://github.com/amannn/next-intl/commit/40a9a7722edc8e7787ed799a4bf1d3c4a2e04848)) – by @amannn
+
+## 3.26.0 (2024-12-06)
+
+### Features
+
+* Support React 19 ([#1597](https://github.com/amannn/next-intl/issues/1597)) ([e0ffe29](https://github.com/amannn/next-intl/commit/e0ffe292a3cae8955fcd06bd8e8e2b02c525ef69)) – by @amannn
+
+## 3.25.3 (2024-11-26)
+
+### Bug Fixes
+
+* Follow-up for [#1573](https://github.com/amannn/next-intl/issues/1573) to also handle the case when a non-default locale is in use ([#1578](https://github.com/amannn/next-intl/issues/1578)) ([fd71741](https://github.com/amannn/next-intl/commit/fd7174179881a19e3573fceb9c6e903923644761)), closes [#1568](https://github.com/amannn/next-intl/issues/1568) – by @amannn
+
+## 3.25.2 (2024-11-25)
+
+### Bug Fixes
+
+* Handle inconsistency in Next.js when using `usePathname` with custom prefixes, `localePrefix: 'as-needed'` and static rendering ([#1573](https://github.com/amannn/next-intl/issues/1573)) ([20fd0f0](https://github.com/amannn/next-intl/commit/20fd0f0015839357893bcd256ff880a98b01ea1f)) – by @amannn
+
 ## 3.25.1 (2024-11-13)
 
 ### Bug Fixes

@@ -36,7 +36,7 @@ export type LocalePrefix<
 
 export type Pathnames<AppLocales extends Locales> = Record<
   Pathname,
-  Record<AppLocales[number], Pathname> | Pathname
+  Partial<Record<AppLocales[number], Pathname>> | Pathname
 >;
 
 export type DomainConfig<AppLocales extends Locales> = {
@@ -46,8 +46,8 @@ export type DomainConfig<AppLocales extends Locales> = {
   /** The domain name (e.g. "example.com", "www.example.com" or "fr.example.com"). Note that the `x-forwarded-host` or alternatively the `host` header will be used to determine the requested domain. */
   domain: string;
 
-  /** Optionally restrict which locales are available on this domain. */
-  locales?: Array<AppLocales[number]>;
+  /** The locales that are available on this domain. */
+  locales: Array<AppLocales[number]>;
 };
 
 export type DomainsConfig<AppLocales extends Locales> = Array<

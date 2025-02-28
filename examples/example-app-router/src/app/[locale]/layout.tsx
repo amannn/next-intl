@@ -1,16 +1,19 @@
 import {notFound} from 'next/navigation';
-import {hasLocale} from 'next-intl';
+import {Locale, hasLocale, NextIntlClientProvider} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 import {ReactNode} from 'react';
-import BaseLayout from '@/components/BaseLayout';
+import {clsx} from 'clsx';
+import {Inter} from 'next/font/google';
 import {routing} from '@/i18n/routing';
+import Navigation from '@/components/Navigation';
+import '../styles.css';
 
 type Props = {
   children: ReactNode;
-  params: Promise<{
-    locale: string;
-  }>;
+  params: Promise<{locale: Locale}>;
 };
+
+const inter = Inter({subsets: ['latin']});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
@@ -31,5 +34,14 @@ export default async function LocaleLayout({children, params}: Props) {
     notFound();
   }
 
-  return <BaseLayout locale={locale}>{children}</BaseLayout>;
+  return (
+    <html className="h-full" lang={locale}>
+      <body className={clsx(inter.className, 'flex h-full flex-col')}>
+        <NextIntlClientProvider>
+          <Navigation />
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }

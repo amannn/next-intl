@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {it} from 'vitest';
-import {NextIntlClientProvider, useTimeZone} from './index.tsx';
+import {NextIntlClientProvider, useTimeZone} from './index.js';
 
 function Component() {
   const timeZone = useTimeZone();

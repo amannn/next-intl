@@ -1,5 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
-import {getTranslations} from '../server.react-server.tsx';
+import {getTranslations} from '../server.react-server.js';
+import {isPromise} from '../shared/utils.js';
+import {renderToStream} from './testUtils.js';
 import {
   _createCache,
   useFormatter,
@@ -7,8 +9,7 @@ import {
   useMessages,
   useNow,
   useTranslations
-} from './index.tsx';
-import {renderToStream} from './testUtils.tsx';
+} from './index.js';
 
 vi.mock('react');
 
@@ -72,7 +73,7 @@ describe('performance', () => {
     try {
       useTranslations('Component');
     } catch (promiseOrError) {
-      if (promiseOrError instanceof Promise) {
+      if (isPromise(promiseOrError)) {
         await promiseOrError;
         useTranslations('Component');
       } else {

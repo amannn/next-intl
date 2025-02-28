@@ -1,6 +1,6 @@
 import {Locale, useLocale} from 'next-intl';
 import {getLocale} from 'next-intl/server';
-import {Link, getPathname, redirect, useRouter} from '@/i18n/routing';
+import {Link, getPathname, redirect, useRouter} from '@/i18n/navigation';
 
 export function RegularComponent() {
   const locale = useLocale();

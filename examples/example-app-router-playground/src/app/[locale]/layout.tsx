@@ -1,4 +1,5 @@
 import {Metadata} from 'next';
+import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
 import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {
@@ -13,12 +14,17 @@ import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
-  params: {locale: Locale};
+  params: Promise<{locale: Locale}>;
 };
 
-export async function generateMetadata({
-  params: {locale}
-}: Omit<Props, 'children'>): Promise<Metadata> {
+const inter = Inter({subsets: ['latin']});
+
+export async function generateMetadata(
+  props: Omit<Props, 'children'>
+): Promise<Metadata> {
+  const params = await props.params;
+  const {locale} = params;
+
   const t = await getTranslations({locale, namespace: 'LocaleLayout'});
   const formatter = await getFormatter({locale});
   const now = await getNow({locale});
@@ -35,13 +41,16 @@ export async function generateMetadata({
   };
 }
 
-export default function LocaleLayout({children, params: {locale}}: Props) {
+export default async function LocaleLayout({params, children}: Props) {
+  const {locale} = await params;
+
+  // Ensure that the incoming `locale` is valid
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
   return (
-    <html lang={locale}>
+    <html className={inter.className} lang={locale}>
       <body>
         <div
           style={{

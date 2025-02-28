@@ -4,7 +4,7 @@ export default function GetStartedBackground() {
   const size = 530;
   const radius = 2;
   const className =
-    'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-screen';
+    'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full';
   const patternSize = 19;
 
   return (
@@ -23,7 +23,13 @@ export default function GetStartedBackground() {
             patternUnits="userSpaceOnUse"
             width={patternSize}
           >
-            <circle cx="3" cy="3" fill="#D0D3E2" r={radius} />
+            <circle
+              className={styles.dot}
+              cx="3"
+              cy="3"
+              fill="var(--GetStartedBackground-dot)"
+              r={radius}
+            />
           </pattern>
           <radialGradient cx="50%" cy="50%" id="fade-out" r="50%">
             <stop offset="0%" stopColor="white" stopOpacity="1" />

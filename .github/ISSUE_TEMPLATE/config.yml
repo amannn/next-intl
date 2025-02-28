@@ -1,11 +1,17 @@
 blank_issues_enabled: false
 contact_links:
   - name: View documentation
-    url: https://next-intl-docs.vercel.app/
+    url: https://next-intl.dev
     about: Check out the official docs for answers to common questions
-  - name: Get community support
+  - name: Get community support on the Next.js Discord
+    url: https://discord.com/invite/nextjs
+    about: Join the Next.js community on Discord to get real-time help and connect with other developers
+  - name: Get community support on Stack Overflow
     url: https://stackoverflow.com/questions/ask
-    about: Ask questions and discuss with other community members
+    about: Post your technical questions on Stack Overflow where experienced developers can help
+  - name: Get community support on GitHub Discussions
+    url: https://github.com/amannn/next-intl/discussions
+    about: Start a discussion to share ideas and ask questions
   - name: Get maintainer support
     url: https://github.com/sponsors/amannn?frequency=one-time
     about: Book a consulting session to get help with your specific project

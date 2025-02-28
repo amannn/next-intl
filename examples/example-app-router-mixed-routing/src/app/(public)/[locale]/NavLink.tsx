@@ -2,7 +2,7 @@
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {Link} from '@/i18n/routing.public';
+import {Link} from '@/i18n/navigation.public';
 
 export default function NavLink({href, ...rest}: ComponentProps<typeof Link>) {
   const selectedLayoutSegment = useSelectedLayoutSegment();

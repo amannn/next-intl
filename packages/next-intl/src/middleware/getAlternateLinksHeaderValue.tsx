@@ -1,12 +1,12 @@
 import type {NextRequest} from 'next/server.js';
-import type {ResolvedRoutingConfig} from '../routing/config.tsx';
+import type {ResolvedRoutingConfig} from '../routing/config.js';
 import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types.tsx';
-import {normalizeTrailingSlash} from '../shared/utils.tsx';
+} from '../routing/types.js';
+import {normalizeTrailingSlash} from '../shared/utils.js';
 import {
   applyBasePath,
   formatTemplatePathname,
@@ -14,7 +14,7 @@ import {
   getLocalePrefixes,
   getNormalizedPathname,
   isLocaleSupportedOnDomain
-} from './utils.tsx';
+} from './utils.js';
 
 /**
  * See https://developers.google.com/search/docs/specialty/international/localized-versions
@@ -25,6 +25,7 @@ export default function getAlternateLinksHeaderValue<
   AppPathnames extends Pathnames<AppLocales> | undefined,
   AppDomains extends DomainsConfig<AppLocales> | undefined
 >({
+  internalTemplateName,
   localizedPathnames,
   request,
   resolvedLocale,
@@ -42,6 +43,7 @@ export default function getAlternateLinksHeaderValue<
   request: NextRequest;
   resolvedLocale: AppLocales[number];
   localizedPathnames?: Pathnames<AppLocales>[string];
+  internalTemplateName?: string;
 }) {
   const normalizedUrl = request.nextUrl.clone();
 
@@ -72,10 +74,12 @@ export default function getAlternateLinksHeaderValue<
 
   function getLocalizedPathname(pathname: string, locale: AppLocales[number]) {
     if (localizedPathnames && typeof localizedPathnames === 'object') {
+      const sourceTemplate = localizedPathnames[resolvedLocale];
+
       return formatTemplatePathname(
         pathname,
-        localizedPathnames[resolvedLocale],
-        localizedPathnames[locale]
+        sourceTemplate ?? internalTemplateName!,
+        localizedPathnames[locale] ?? internalTemplateName!
       );
     } else {
       return pathname;
@@ -143,14 +147,16 @@ export default function getAlternateLinksHeaderValue<
   // Add x-default entry
   const shouldAddXDefault =
     // For domain-based routing there is no reasonable x-default
-    !routing.domains &&
-    (routing.localePrefix.mode !== 'always' || normalizedUrl.pathname === '/');
+    !routing.domains || routing.domains.length === 0;
   if (shouldAddXDefault) {
-    const url = new URL(
-      getLocalizedPathname(normalizedUrl.pathname, routing.defaultLocale),
-      normalizedUrl
+    const localizedPathname = getLocalizedPathname(
+      normalizedUrl.pathname,
+      routing.defaultLocale
     );
-    links.push(getAlternateEntry(url, 'x-default'));
+    if (localizedPathname) {
+      const url = new URL(localizedPathname, normalizedUrl);
+      links.push(getAlternateEntry(url, 'x-default'));
+    }
   }
 
   return links.join(', ');

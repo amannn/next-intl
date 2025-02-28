@@ -1,7 +1,7 @@
 import {cache} from 'react';
 
 function defaultNow() {
-  // See https://next-intl-docs.vercel.app/docs/usage/dates-times#relative-times-server
+  // See https://next-intl.dev/docs/usage/dates-times#relative-times-server
   return new Date();
 }
 

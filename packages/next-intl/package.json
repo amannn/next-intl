@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "3.25.1",
+  "version": "3.26.5",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -11,7 +11,7 @@
   ],
   "description": "Internationalization (i18n) for Next.js",
   "license": "MIT",
-  "homepage": "https://next-intl-docs.vercel.app",
+  "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/amannn/next-intl"
@@ -115,8 +115,8 @@
     "use-intl": "workspace:^"
   },
   "peerDependencies": {
-    "next": "^13.0.0 || ^14.0.0 || ^15.0.0",
-    "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0",
+    "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0",
     "typescript": "^5.0.0"
   },
   "peerDependenciesMeta": {
@@ -136,7 +136,7 @@
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
-    "next": "^14.2.4",
+    "next": "^15.2.0",
     "path-to-regexp": "^6.2.2",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",

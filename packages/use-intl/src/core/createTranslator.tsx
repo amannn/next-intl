@@ -1,29 +1,28 @@
 import type {ReactNode} from 'react';
-import type {Messages} from './AppConfig.tsx';
-import type Formats from './Formats.tsx';
-import type ICUArgs from './ICUArgs.tsx';
-import type ICUTags from './ICUTags.tsx';
-import type IntlConfig from './IntlConfig.tsx';
+import type Formats from './Formats.js';
+import type ICUArgs from './ICUArgs.js';
+import type ICUTags from './ICUTags.js';
+import type IntlConfig from './IntlConfig.js';
 import type {
   MessageKeys,
   NamespaceKeys,
   NestedKeyOf,
   NestedValueOf
-} from './MessageKeys.tsx';
+} from './MessageKeys.js';
 import type {
-  ICUArg,
   MarkupTagsFunction,
-  RichTagsFunction
-} from './TranslationValues.tsx';
-import createTranslatorImpl from './createTranslatorImpl.tsx';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.tsx';
+  RichTagsFunction,
+  TranslationValues
+} from './TranslationValues.js';
+import createTranslatorImpl from './createTranslatorImpl.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
   createCache,
   createIntlFormatters
-} from './formatters.tsx';
-import type {Prettify} from './types.tsx';
+} from './formatters.js';
+import type {Prettify} from './types.js';
 
 type ICUArgsWithTags<
   MessageString extends string,
@@ -31,12 +30,11 @@ type ICUArgsWithTags<
 > = ICUArgs<
   MessageString,
   {
-    // Provide types inline instead of an alias so the
-    // consumer can see the types instead of the alias
-    ICUArgument: string | number | boolean | Date;
-    // ^ Keep this in sync with `ICUArg` in `TranslationValues.tsx`
+    // Numbers and dates should use the corresponding operators
+    ICUArgument: string;
+
     ICUNumberArgument: number;
-    ICUDateArgument: Date | number;
+    ICUDateArgument: Date;
   }
 > &
   ([TagsFn] extends [never] ? {} : ICUTags<MessageString, TagsFn>);
@@ -49,7 +47,10 @@ type TranslateArgs<
 > =
   // If an unknown string is passed, allow any values
   string extends Value
-    ? [values?: Record<string, ICUArg | TagsFn>, formats?: Formats]
+    ? [
+        values?: Record<string, TranslationValues[string] | TagsFn>,
+        formats?: Formats
+      ]
     : (
           Value extends any
             ? (key: ICUArgsWithTags<Value, TagsFn>) => void
@@ -60,8 +61,12 @@ type TranslateArgs<
         : [values: Prettify<Args>, formats?: Formats]
       : never;
 
+// This type is slightly more loose than `AbstractIntlMessages`
+// in order to avoid a type error.
+type IntlMessages = Record<string, any>;
+
 type NamespacedMessageKeys<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -80,7 +85,7 @@ type NamespacedMessageKeys<
 >;
 
 type NamespacedValue<
-  TranslatorMessages extends Messages,
+  TranslatorMessages extends IntlMessages,
   Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -100,7 +105,7 @@ type NamespacedValue<
  * (e.g. `namespace.Component`).
  */
 export default function createTranslator<
-  const TranslatorMessages extends Messages = Messages,
+  const TranslatorMessages extends IntlMessages,
   const Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
@@ -113,7 +118,7 @@ export default function createTranslator<
   namespace,
   onError = defaultOnError,
   ...rest
-}: Omit<IntlConfig<TranslatorMessages>, 'messages'> & {
+}: Omit<IntlConfig, 'messages'> & {
   messages?: TranslatorMessages;
   namespace?: Namespace;
   /** @private */

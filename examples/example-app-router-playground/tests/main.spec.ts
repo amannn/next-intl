@@ -533,23 +533,27 @@ it('sets alternate links', async ({request}) => {
   }
 
   for (const pathname of ['/', '/en', '/de']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 });
 
@@ -626,7 +630,10 @@ it('populates metadata', async ({page}) => {
   );
 });
 
-it('supports opengraph images', async ({page, request}) => {
+it('supports opengraph images for the default locale', async ({
+  page,
+  request
+}) => {
   await page.goto('/');
   const ogImage = await page
     .locator('meta[property="og:image"]')
@@ -634,6 +641,21 @@ it('supports opengraph images', async ({page, request}) => {
   expect(ogImage).toBeTruthy();
   const ogImageUrl = new URL(ogImage!);
   expect(ogImageUrl.pathname).toBe('/en/opengraph-image');
+  const result = await request.get(ogImageUrl.pathname);
+  expect(result.ok()).toBe(true);
+});
+
+it('supports opengraph images for a locale with a custom prefix', async ({
+  page,
+  request
+}) => {
+  await page.goto('/spain');
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute('content');
+  expect(ogImage).toBeTruthy();
+  const ogImageUrl = new URL(ogImage!);
+  expect(ogImageUrl.pathname).toBe('/es/opengraph-image');
   const result = await request.get(ogImageUrl.pathname);
   expect(result.ok()).toBe(true);
 });

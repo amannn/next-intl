@@ -1,13 +1,13 @@
 import {cache} from 'react';
 import type {Locale, useMessages as useMessagesType} from 'use-intl';
-import getConfig from './getConfig.tsx';
+import getConfig from './getConfig.js';
 
 export function getMessagesFromConfig(
   config: Awaited<ReturnType<typeof getConfig>>
 ): ReturnType<typeof useMessagesType> {
   if (!config.messages) {
     throw new Error(
-      'No messages found. Have you configured them correctly? See https://next-intl-docs.vercel.app/docs/configuration#messages'
+      'No messages found. Have you configured them correctly? See https://next-intl.dev/docs/configuration#messages'
     );
   }
   return config.messages;

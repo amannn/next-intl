@@ -1,19 +1,19 @@
-import type AbstractIntlMessages from './AbstractIntlMessages.tsx';
-import type {Locale} from './AppConfig.tsx';
-import type Formats from './Formats.tsx';
-import type IntlError from './IntlError.tsx';
-import type TimeZone from './TimeZone.tsx';
+import type {Locale, Messages} from './AppConfig.js';
+import type Formats from './Formats.js';
+import type IntlError from './IntlError.js';
+import type TimeZone from './TimeZone.js';
+import type {DeepPartial} from './types.js';
 
 /**
  * Should be used for entry points that configure the library.
  */
 
-type IntlConfig<Messages = AbstractIntlMessages> = {
+type IntlConfig = {
   /** A valid Unicode locale tag (e.g. "en" or "en-GB"). */
   locale: Locale;
   /** Global formats can be provided to achieve consistent
    * formatting across components. */
-  formats?: Formats;
+  formats?: Formats | null;
   /** A time zone as defined in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) which will be applied when formatting dates and times. If this is absent, the user time zone will be used. You can override this by supplying an explicit time zone to `formatDateTime`. */
   timeZone?: TimeZone;
   /** This callback will be invoked when an error is encountered during
@@ -40,17 +40,22 @@ type IntlConfig<Messages = AbstractIntlMessages> = {
    */
   now?: Date;
   /** All messages that will be available. */
-  messages?: Messages;
+  messages?: DeepPartial<Messages> | null;
 };
 
+/**
 /**
  * A stricter set of the configuration that should be used internally
  * once defaults are assigned to `IntlConfiguration`.
  */
-export type InitializedIntlConfig<Messages = AbstractIntlMessages> =
-  IntlConfig<Messages> & {
-    onError: NonNullable<IntlConfig<Messages>['onError']>;
-    getMessageFallback: NonNullable<IntlConfig<Messages>['getMessageFallback']>;
-  };
+export type InitializedIntlConfig = Omit<
+  IntlConfig,
+  'formats' | 'messages' | 'onError' | 'getMessageFallback'
+> & {
+  formats?: NonNullable<IntlConfig['formats']>;
+  messages?: NonNullable<IntlConfig['messages']>;
+  onError: NonNullable<IntlConfig['onError']>;
+  getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+};
 
 export default IntlConfig;

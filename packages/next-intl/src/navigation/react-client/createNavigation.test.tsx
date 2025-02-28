@@ -5,8 +5,8 @@ import {
 } from 'next/navigation.js';
 import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import type {DomainsConfig, Pathnames} from '../../routing.tsx';
-import createNavigation from './createNavigation.tsx';
+import type {DomainsConfig, Pathnames} from '../../routing.js';
+import createNavigation from './createNavigation.js';
 
 vi.mock('next/navigation.js');
 vi.mock('use-intl', async () => ({
@@ -55,12 +55,13 @@ const defaultLocale = 'en' as const;
 const domains: DomainsConfig<typeof locales> = [
   {
     defaultLocale: 'en',
-    domain: 'example.com'
+    domain: 'example.com',
+    locales: ['en']
   },
   {
     defaultLocale: 'de',
     domain: 'example.de',
-    locales: ['de', 'en']
+    locales: ['de', 'ja']
   }
 ];
 
@@ -273,8 +274,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -297,8 +298,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -345,12 +346,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
       invokeRouter((router) => router.push('/about', {locale: 'de'}));
 
       expect(cookieSpy).toHaveBeenCalledWith(
-        [
-          'NEXT_LOCALE=de',
-          'max-age=18000',
-          'sameSite=lax',
-          'path=/base/path'
-        ].join(';') + ';'
+        ['NEXT_LOCALE=de', 'sameSite=lax', 'path=/base/path'].join(';') + ';'
       );
       cookieSpy.mockRestore();
     });
@@ -527,6 +523,36 @@ describe("localePrefix: 'as-needed'", () => {
   });
 });
 
+describe("localePrefix: 'as-needed', custom `prefixes`", () => {
+  const {usePathname} = createNavigation({
+    defaultLocale,
+    locales,
+    localePrefix: {
+      mode: 'as-needed',
+      prefixes: {
+        en: '/english',
+        de: '/deutsch'
+      }
+    }
+  });
+  const renderPathname = getRenderPathname(usePathname);
+
+  // https://github.com/vercel/next.js/issues/73085
+  it('is tolerant when a locale is used in the pathname for the default locale', () => {
+    mockCurrentLocale('en');
+    mockLocation({pathname: '/en/about'});
+    renderPathname();
+    screen.getByText('/about');
+  });
+
+  it('is tolerant when a locale is used in the pathname for a non-default locale', () => {
+    mockCurrentLocale('de');
+    mockLocation({pathname: '/de/about'});
+    renderPathname();
+    screen.getByText('/about');
+  });
+});
+
 describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
   const {useRouter} = createNavigation({
     locales,
@@ -538,43 +564,20 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
   describe('useRouter', () => {
     const invokeRouter = getInvokeRouter(useRouter);
 
-    describe('example.com, defaultLocale: "en"', () => {
-      beforeEach(() => {
-        mockLocation(
-          {pathname: '/base/path/about', host: 'example.com'},
-          '/base/path'
-        );
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
-        invokeRouter((router) => router.push('/test'));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
-        invokeRouter((router) => router.push('/test', {locale: 'de'}));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/de/test');
-      });
+    it('can compute the correct pathname when on the default locale and not supplying a locale', () => {
+      invokeRouter((router) => router.push('/test'));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
     });
 
-    describe('example.de, defaultLocale: "de"', () => {
-      beforeEach(() => {
-        mockCurrentLocale('de');
-        mockLocation(
-          {pathname: '/base/path/about', host: 'example.de'},
-          '/base/path'
-        );
-      });
+    it('can compute the correct pathname when on the default locale and supplying a secondary locale', () => {
+      invokeRouter((router) => router.push('/test', {locale: 'ja'}));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/ja/test');
+    });
 
-      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
-        invokeRouter((router) => router.push('/test'));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
-        invokeRouter((router) => router.push('/test', {locale: 'en'}));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
-      });
+    it('can compute the correct pathname when on a secondary locale and navigating to the default locale', () => {
+      mockCurrentLocale('ja');
+      invokeRouter((router) => router.push('/test', {locale: 'en'}));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
     });
   });
 });
@@ -613,13 +616,6 @@ describe("localePrefix: 'as-needed', with `domains`", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
         expect(consoleSpy).not.toHaveBeenCalled();
         consoleSpy.mockRestore();
-      });
-
-      it('prefixes the default locale when on a domain with a different defaultLocale', () => {
-        mockCurrentLocale('de');
-        mockLocation({pathname: '/about', host: 'example.de'});
-        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
       });
     });
   });

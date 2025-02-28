@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import useIntlContext from './useIntlContext.tsx';
+import useIntlContext from './useIntlContext.js';
 
 type Options = {
   updateInterval?: number;
@@ -10,7 +10,7 @@ function getNow() {
 }
 
 /**
- * @see https://next-intl-docs.vercel.app/docs/usage/dates-times#relative-times-usenow
+ * @see https://next-intl.dev/docs/usage/dates-times#relative-times-usenow
  */
 export default function useNow(options?: Options) {
   const updateInterval = options?.updateInterval;

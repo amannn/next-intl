@@ -1,8 +1,8 @@
 import type {NextConfig} from 'next';
-import createMessagesDeclaration from './createMessagesDeclaration.tsx';
-import getNextConfig from './getNextConfig.tsx';
-import type {PluginConfig} from './types.tsx';
-import {warn} from './utils.tsx';
+import createMessagesDeclaration from './createMessagesDeclaration.js';
+import getNextConfig from './getNextConfig.js';
+import type {PluginConfig} from './types.js';
+import {warn} from './utils.js';
 
 function initPlugin(
   pluginConfig: PluginConfig,
@@ -10,13 +10,17 @@ function initPlugin(
 ): NextConfig {
   if (nextConfig?.i18n != null) {
     warn(
-      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl-docs.vercel.app/examples#app-router-migration\n"
+      "\n[next-intl] An `i18n` property was found in your Next.js config. This likely causes conflicts and should therefore be removed if you use the App Router.\n\nIf you're in progress of migrating from the Pages Router, you can refer to this example: https://next-intl.dev/examples#app-router-migration\n"
     );
   }
 
-  if (pluginConfig.experimental?.createMessagesDeclaration) {
+  const messagesPathOrPaths =
+    pluginConfig.experimental?.createMessagesDeclaration;
+  if (messagesPathOrPaths) {
     createMessagesDeclaration(
-      pluginConfig.experimental.createMessagesDeclaration
+      typeof messagesPathOrPaths === 'string'
+        ? [messagesPathOrPaths]
+        : messagesPathOrPaths
     );
   }
 

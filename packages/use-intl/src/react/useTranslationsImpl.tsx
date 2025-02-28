@@ -1,10 +1,10 @@
 import {useMemo} from 'react';
-import type AbstractIntlMessages from '../core/AbstractIntlMessages.tsx';
-import type {NestedKeyOf} from '../core/MessageKeys.tsx';
-import createBaseTranslator from '../core/createBaseTranslator.tsx';
-import resolveNamespace from '../core/resolveNamespace.tsx';
-import {IntlError, IntlErrorCode} from '../core.tsx';
-import useIntlContext from './useIntlContext.tsx';
+import type AbstractIntlMessages from '../core/AbstractIntlMessages.js';
+import type {NestedKeyOf} from '../core/MessageKeys.js';
+import createBaseTranslator from '../core/createBaseTranslator.js';
+import resolveNamespace from '../core/resolveNamespace.js';
+import {IntlError, IntlErrorCode} from '../core.js';
+import useIntlContext from './useIntlContext.js';
 
 let hasWarnedForMissingTimezone = false;
 const isServer = typeof window === 'undefined';
@@ -42,7 +42,7 @@ export default function useTranslationsImpl<
       new IntlError(
         IntlErrorCode.ENVIRONMENT_FALLBACK,
         process.env.NODE_ENV !== 'production'
-          ? `There is no \`timeZone\` configured, this can lead to markup mismatches caused by environment differences. Consider adding a global default: https://next-intl-docs.vercel.app/docs/configuration#time-zone`
+          ? `There is no \`timeZone\` configured, this can lead to markup mismatches caused by environment differences. Consider adding a global default: https://next-intl.dev/docs/configuration#time-zone`
           : undefined
       )
     );

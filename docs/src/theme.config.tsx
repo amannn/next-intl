@@ -26,6 +26,14 @@ export default {
   components: {
     pre: Pre
   },
+  banner: {
+    content: (
+      <div className="text-center">
+        You‘re viewing the next-intl 4 beta docs
+      </div>
+    ),
+    dismissible: false
+  },
   footer: {
     component: Footer
   },
