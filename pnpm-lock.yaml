@@ -349,7 +349,7 @@ importers:
         version: 29.7.0
       '@mdx-js/loader':
         specifier: ^3.0.1
-        version: 3.1.0(webpack@5.97.1(esbuild@0.24.2))
+        version: 3.1.0(acorn@8.14.0)(webpack@5.97.1(esbuild@0.24.2))
       '@mdx-js/react':
         specifier: ^3.0.1
         version: 3.1.0(@types/react@18.3.12)(react@18.3.1)
@@ -358,7 +358,7 @@ importers:
         version: 15.1.6
       '@next/mdx':
         specifier: ^15.0.0-rc.1
-        version: 15.0.0-rc.1(@mdx-js/loader@3.1.0(webpack@5.97.1(esbuild@0.24.2)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))
+        version: 15.0.0-rc.1(@mdx-js/loader@3.1.0(acorn@8.14.0)(webpack@5.97.1(esbuild@0.24.2)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))
       '@playwright/test':
         specifier: ^1.48.1
         version: 1.48.1
@@ -3349,9 +3349,6 @@ packages:
 
   '@mdx-js/mdx@2.3.0':
     resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
-
-  '@mdx-js/mdx@3.0.1':
-    resolution: {integrity: sha512-eIQ4QTrOWyL3LWEe/bu6Taqzq2HQvHcyTMaOrI95P2/LmJE7AsfPfgJGuFLPVqBUE1BC1rik3VIhU+s9u72arA==}
 
   '@mdx-js/mdx@3.1.0':
     resolution: {integrity: sha512-/QxEhPAvGwbQmy1Px8F899L5Uc2KZ6JtXwlCgJmjSTBedwOZkByYcBG4GceIGPXRDsmfxhHazuS+hlOShRLeDw==}
@@ -12453,9 +12450,6 @@ packages:
   remark-mdx@2.3.0:
     resolution: {integrity: sha512-g53hMkpM0I98MU266IzDFMrTD980gNF3BJnkyFcmN+dD873mQeD5rdMO3Y2X+x8umQfbSE0PcoEDl7ledSA+2g==}
 
-  remark-mdx@3.0.1:
-    resolution: {integrity: sha512-3Pz3yPQ5Rht2pM5R+0J2MrGoBSrzf+tJG94N+t/ilfdh8YLyyKYtidAYwTveB20BoHAcwIopOUqhcmh2F7hGYA==}
-
   remark-mdx@3.1.0:
     resolution: {integrity: sha512-Ngl/H3YXyBV9RcRNdlYsZujAmhsxwzxpDzpDEhFBVAGthS4GDgnctpDjgFl/ULx5UEDzqtW1cyBSNKqYYrqLBA==}
 
@@ -17726,13 +17720,14 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mdx-js/loader@3.1.0(webpack@5.97.1(esbuild@0.24.2))':
+  '@mdx-js/loader@3.1.0(acorn@8.14.0)(webpack@5.97.1(esbuild@0.24.2))':
     dependencies:
-      '@mdx-js/mdx': 3.0.1
+      '@mdx-js/mdx': 3.1.0(acorn@8.14.0)
       source-map: 0.7.4
     optionalDependencies:
       webpack: 5.97.1(esbuild@0.24.2)
     transitivePeerDependencies:
+      - acorn
       - supports-color
 
   '@mdx-js/mdx@2.3.0':
@@ -17754,34 +17749,6 @@ snapshots:
       unist-util-stringify-position: 3.0.3
       unist-util-visit: 4.1.2
       vfile: 5.3.7
-    transitivePeerDependencies:
-      - supports-color
-
-  '@mdx-js/mdx@3.0.1':
-    dependencies:
-      '@types/estree': 1.0.6
-      '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
-      '@types/mdx': 2.0.13
-      collapse-white-space: 2.1.0
-      devlop: 1.1.0
-      estree-util-build-jsx: 3.0.1
-      estree-util-is-identifier-name: 3.0.0
-      estree-util-to-js: 2.0.0
-      estree-walker: 3.0.3
-      hast-util-to-estree: 3.1.0
-      hast-util-to-jsx-runtime: 2.3.2
-      markdown-extensions: 2.0.0
-      periscopic: 3.1.0
-      remark-mdx: 3.0.1
-      remark-parse: 11.0.0
-      remark-rehype: 11.1.1
-      source-map: 0.7.4
-      unified: 11.0.5
-      unist-util-position-from-estree: 2.0.0
-      unist-util-stringify-position: 4.0.0
-      unist-util-visit: 5.0.0
-      vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -17903,11 +17870,11 @@ snapshots:
     dependencies:
       fast-glob: 3.3.1
 
-  '@next/mdx@15.0.0-rc.1(@mdx-js/loader@3.1.0(webpack@5.97.1(esbuild@0.24.2)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))':
+  '@next/mdx@15.0.0-rc.1(@mdx-js/loader@3.1.0(acorn@8.14.0)(webpack@5.97.1(esbuild@0.24.2)))(@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1))':
     dependencies:
       source-map: 0.7.4
     optionalDependencies:
-      '@mdx-js/loader': 3.1.0(webpack@5.97.1(esbuild@0.24.2))
+      '@mdx-js/loader': 3.1.0(acorn@8.14.0)(webpack@5.97.1(esbuild@0.24.2))
       '@mdx-js/react': 3.1.0(@types/react@18.3.12)(react@18.3.1)
 
   '@next/swc-android-arm-eabi@12.3.4':
@@ -30218,13 +30185,6 @@ snapshots:
     dependencies:
       mdast-util-mdx: 2.0.1
       micromark-extension-mdxjs: 1.0.1
-    transitivePeerDependencies:
-      - supports-color
-
-  remark-mdx@3.0.1:
-    dependencies:
-      mdast-util-mdx: 3.0.0
-      micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
 

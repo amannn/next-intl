@@ -1,7 +1,5 @@
 import {Metadata} from 'next';
-import {Inter} from 'next/font/google';
-import {notFound} from 'next/navigation';
-import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
+import {NextIntlClientProvider, useLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -9,26 +7,23 @@ import {
   getTranslations
 } from 'next-intl/server';
 import {ReactNode} from 'react';
+import {Inter} from 'next/font/google';
 import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
 
-type Props = {
-  children: ReactNode;
-  params: Promise<{locale: Locale}>;
-};
-
 const inter = Inter({subsets: ['latin']});
 
-export async function generateMetadata(
-  props: Omit<Props, 'children'>
-): Promise<Metadata> {
-  const params = await props.params;
-  const {locale} = params;
+export async function generateStaticParams() {
+  return routing.locales.map((locale) => ({locale}));
+}
 
-  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
-  const formatter = await getFormatter({locale});
-  const now = await getNow({locale});
-  const timeZone = await getTimeZone({locale});
+export const dynamicParams = false;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('LocaleLayout');
+  const formatter = await getFormatter();
+  const now = await getNow();
+  const timeZone = await getTimeZone();
 
   return {
     metadataBase: new URL('http://localhost:3000'),
@@ -41,13 +36,12 @@ export async function generateMetadata(
   };
 }
 
-export default async function LocaleLayout({params, children}: Props) {
-  const {locale} = await params;
+type Props = {
+  children: ReactNode;
+};
 
-  // Ensure that the incoming `locale` is valid
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+export default function LocaleLayout({children}: Props) {
+  const locale = useLocale();
 
   return (
     <html className={inter.className} lang={locale}>

@@ -1,4 +1,5 @@
 import {headers} from 'next/headers';
+import {unstable_rootParams as rootParams} from 'next/server';
 import {Formats, hasLocale} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
@@ -30,12 +31,13 @@ export const formats = {
   }
 } satisfies Formats;
 
-export default getRequestConfig(async ({requestLocale}) => {
-  // Typically corresponds to the `[locale]` segment
-  const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested)
-    ? requested
-    : routing.defaultLocale;
+export default getRequestConfig(async ({locale}) => {
+  if (!locale) {
+    const params = await rootParams();
+    locale = hasLocale(routing.locales, params.locale)
+      ? params.locale
+      : routing.defaultLocale;
+  }
 
   const now = (await headers()).get('x-now');
   const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';

@@ -17,6 +17,15 @@ export default async function AsyncComponent() {
   );
 }
 
+export async function AsyncComponentGerman() {
+  const t = await getTranslations({locale: 'de', namespace: 'AsyncComponent'});
+  return (
+    <p data-testid="AsyncComponentGerman" lang="de">
+      {t('basic')}
+    </p>
+  );
+}
+
 export async function TypeTest() {
   const t = await getTranslations('AsyncComponent');
 

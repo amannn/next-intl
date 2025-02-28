@@ -4,7 +4,9 @@ import {use} from 'react';
 import DropdownMenu from '@/components/DropdownMenu';
 import RichText from '@/components/RichText';
 import {Link} from '@/i18n/navigation';
-import AsyncComponent from '../../components/AsyncComponent';
+import AsyncComponent, {
+  AsyncComponentGerman
+} from '../../components/AsyncComponent';
 import AsyncComponentWithNamespaceAndLocale from '../../components/AsyncComponentWithNamespaceAndLocale';
 import AsyncComponentWithoutNamespace from '../../components/AsyncComponentWithoutNamespace';
 import AsyncComponentWithoutNamespaceAndLocale from '../../components/AsyncComponentWithoutNamespaceAndLocale';
@@ -62,6 +64,7 @@ export default function Index(props: Props) {
       <Image alt="" height={77} priority src="/assets/image.jpg" width={128} />
       <AsyncComponent />
       <AsyncComponentWithNamespaceAndLocale />
+      <AsyncComponentGerman />
       <AsyncComponentWithoutNamespace />
       <AsyncComponentWithoutNamespaceAndLocale />
       <DropdownMenu />
