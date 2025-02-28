@@ -1,7 +1,6 @@
 'use client';
 
-import {ReactNode} from 'react';
-import {useFormState} from 'react-dom';
+import {ReactNode, useActionState} from 'react';
 import {FormResult} from './ZodFormExample';
 
 type Props = {
@@ -10,7 +9,7 @@ type Props = {
 };
 
 export default function ZodForm({action, children}: Props) {
-  const [state, formAction] = useFormState(action, null);
+  const [state, formAction] = useActionState(action, null);
   const hasErrors = state && !state.success;
 
   return (
