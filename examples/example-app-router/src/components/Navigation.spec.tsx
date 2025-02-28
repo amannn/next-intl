@@ -19,9 +19,7 @@ jest.mock('next/navigation', () => ({
   useSelectedLayoutSegment: () => ({locale: 'en'})
 }));
 
-// Disabled until canary version is reverted
-// eslint-disable-next-line jest/no-disabled-tests
-it.skip('renders', () => {
+it('renders', () => {
   render(
     <NextIntlClientProvider
       locale="en"
