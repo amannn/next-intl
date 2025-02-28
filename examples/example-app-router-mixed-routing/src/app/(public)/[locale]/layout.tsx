@@ -10,7 +10,7 @@ import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
 
 type Props = {
   children: ReactNode;
-  params: {locale: Locale};
+  params: Promise<{locale: Locale}>;
 };
 
 export function generateStaticParams() {
@@ -21,11 +21,9 @@ export const metadata: Metadata = {
   title: 'next-intl-mixed-routing (public)'
 };
 
-export default async function LocaleLayout({
-  children,
-  params: {locale}
-}: Props) {
+export default async function LocaleLayout({children, params}: Props) {
   // Ensure that the incoming locale is valid
+  const {locale} = await params;
   if (!hasLocale(locales, locale)) {
     notFound();
   }

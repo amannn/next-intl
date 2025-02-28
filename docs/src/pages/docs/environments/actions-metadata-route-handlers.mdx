@@ -21,7 +21,8 @@ To internationalize metadata like the page title, you can use functionality from
 ```tsx filename="layout.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {
@@ -109,7 +110,8 @@ If you're programmatically generating [Open Graph images](https://nextjs.org/doc
 import {ImageResponse} from 'next/og';
 import {getTranslations} from 'next-intl/server';
 
-export default async function OpenGraphImage({params: {locale}}) {
+export default async function OpenGraphImage({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'OpenGraphImage'});
   return new ImageResponse(<div style={{fontSize: 128}}>{t('title')}</div>);
 }
@@ -231,12 +233,13 @@ You can use `next-intl` in [Route Handlers](https://nextjs.org/docs/app/building
 import {NextResponse} from 'next/server';
 import {hasLocale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
+import {routing} from '@/i18n/routing';
 
 export async function GET(request) {
   // Example: Receive the `locale` via a search param
   const {searchParams} = new URL(request.url);
   const locale = searchParams.get('locale');
-  if (!hasLocale(locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     return NextResponse.json({error: 'Invalid locale'}, {status: 400});
   }
 

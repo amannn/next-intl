@@ -1,4 +1,3 @@
-import {createNavigation} from 'next-intl/navigation';
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
@@ -61,6 +60,3 @@ export const routing = defineRouting({
           maxAge: 200 * 24 * 60 * 60
         }
 });
-
-export const {Link, getPathname, redirect, usePathname, useRouter} =
-  createNavigation(routing);

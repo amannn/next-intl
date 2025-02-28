@@ -12,24 +12,22 @@ import Details from '@/components/Details';
 
 To create these APIs, you can call the `createNavigation` function with your `routing` configuration:
 
-```tsx filename="routing.ts"
+```tsx filename="navigation.ts"
 import {createNavigation} from 'next-intl/navigation';
-import {defineRouting} from 'next-intl/routing';
-
-export const routing = defineRouting(/* ... */);
+import {routing} from './routing';
 
 export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
 
-This function is typically called in a central module like [`src/i18n/routing.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-routing) in order to provide easy access to navigation APIs in your components.
+This function is typically called in a central module like [`src/i18n/navigation.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-navigation) in order to provide easy access to navigation APIs in your components.
 
 <Details id="locales-unknown">
 <summary>What if the locales aren't known at build time?</summary>
 
 In case you're building an app where locales can be added and removed at runtime, `createNavigation` can be called without the `locales` argument, therefore allowing any string that is encountered at runtime to be a valid locale. In this case, you'd not use the [`defineRouting`](/docs/routing#define-routing) function.
 
-```tsx filename="routing.ts"
+```tsx filename="navigation.ts"
 import {createNavigation} from 'next-intl/navigation';
 
 export const {Link, redirect, usePathname, useRouter, getPathname} =
@@ -61,7 +59,7 @@ To avoid importing APIs like `<Link />` directly from Next.js by accident, you c
 This component wraps [`next/link`](https://nextjs.org/docs/app/api-reference/components/link) and localizes the pathname as necessary.
 
 ```tsx
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 
 // When the user is on `/en`, the link will point to `/en/about`
 <Link href="/about">About</Link>
@@ -99,7 +97,7 @@ The [`useSelectedLayoutSegment` hook](https://nextjs.org/docs/app/api-reference/
 
 import {useSelectedLayoutSegment} from 'next/navigation';
 import {ComponentProps} from 'react';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 
 export default function NavigationLink({
   href,
@@ -139,7 +137,7 @@ If you need to create a component that receives an `href` prop that is forwarded
 
 ```tsx filename="StyledLink.tsx"
 import {ComponentProps} from 'react';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 
 type Props = ComponentProps<typeof Link> & {
   color: 'blue' | 'red';
@@ -181,7 +179,7 @@ If you need to navigate programmatically, e.g. in an event handler, `next-intl` 
 ```tsx
 'use client';
 
-import {useRouter} from '@/i18n/routing';
+import {useRouter} from '@/i18n/navigation';
 
 const router = useRouter();
 
@@ -221,7 +219,7 @@ Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting,
 ```tsx
 'use client';
 
-import {usePathname, useRouter} from '@/i18n/routing';
+import {usePathname, useRouter} from '@/i18n/navigation';
 import {useParams} from 'next/navigation';
 
 const pathname = usePathname();
@@ -250,7 +248,7 @@ To retrieve the current pathname without a potential locale prefix, you can call
 ```tsx
 'use client';
 
-import {usePathname} from '@/i18n/routing';
+import {usePathname} from '@/i18n/navigation';
 
 // When the user is on `/en`, this will be `/`
 const pathname = usePathname();
@@ -274,7 +272,7 @@ If you want to interrupt the render and redirect to another page, you can invoke
 Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#locale).
 
 ```tsx
-import {redirect} from '@/i18n/routing';
+import {redirect} from '@/i18n/navigation';
 
 // Redirects to `/en/login`
 redirect({href: '/login', locale: 'en'});
@@ -310,7 +308,7 @@ redirect({
 TypeScript currently has a [limitation](https://github.com/amannn/next-intl/issues/823#issuecomment-2421891151) with control flow analysis, which results in not being able to narrow types correctly after calling `redirect` as well as detecting unreachable code:
 
 ```tsx
-import {routing} from '@/i18n/routing';
+import {redirect} from '@/i18n/navigation';
 
 function UserProfile({userId}: {userId?: string}) {
   if (!userId) {
@@ -324,7 +322,7 @@ function UserProfile({userId}: {userId?: string}) {
 
 To work around this limitation, you can add an explicit type annotation to the `redirect` function:
 
-```tsx filename="routing.ts"
+```tsx filename="navigation.ts"
 const {/* ..., */ redirect: _redirect} = createNavigation(routing);
 
 // Enable type narrowing after calling `redirect`
@@ -338,7 +336,7 @@ export const redirect: typeof _redirect = _redirect;
 If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
 
 ```tsx
-import {getPathname} from '@/i18n/routing';
+import {getPathname} from '@/i18n/navigation';
 
 // Will return `/en/about`
 const pathname = getPathname({

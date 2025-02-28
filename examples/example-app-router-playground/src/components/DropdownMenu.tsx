@@ -1,5 +1,5 @@
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
-import {Link as NextIntlLink} from '@/i18n/routing';
+import {Link as NextIntlLink} from '@/i18n/navigation';
 
 export default function DropdownMenu() {
   return (

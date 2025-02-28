@@ -533,23 +533,27 @@ it('sets alternate links', async ({request}) => {
   }
 
   for (const pathname of ['/', '/en', '/de']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 });
 

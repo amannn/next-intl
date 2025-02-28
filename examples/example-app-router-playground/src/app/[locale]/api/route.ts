@@ -3,12 +3,15 @@ import {Locale} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 
 type Props = {
-  params: {
+  params: Promise<{
     locale: Locale;
-  };
+  }>;
 };
 
-export async function GET(request: NextRequest, {params: {locale}}: Props) {
+export async function GET(request: NextRequest, props: Props) {
+  const params = await props.params;
+  const {locale} = params;
+
   const name = request.nextUrl.searchParams.get('name');
   if (!name) {
     return new Response('Search param `name` was not provided.', {status: 400});
