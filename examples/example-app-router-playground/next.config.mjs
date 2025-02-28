@@ -8,7 +8,7 @@ const withNextIntl = createNextIntlPlugin({
     createMessagesDeclaration: './messages/en.json'
   }
 });
-const withMdx = createMDX();
+const withMdx = createMDX({});
 const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true'
 });
@@ -21,13 +21,7 @@ const nextConfig = {
   trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
   basePath:
     process.env.NEXT_PUBLIC_USE_CASE === 'base-path' ? '/base/path' : undefined,
-  experimental: {
-    staleTimes: {
-      // Next.js 14.2 broke `locale-prefix-never.spec.ts`.
-      // This is a workaround for the time being.
-      dynamic: 0
-    }
-  }
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']
 };
 
 export default withNextIntl(withMdx(withBundleAnalyzer(nextConfig)));
