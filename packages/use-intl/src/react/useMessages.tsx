@@ -1,7 +1,7 @@
-import {AbstractIntlMessages} from '../core';
-import useIntlContext from './useIntlContext';
+import type {Messages} from '../core/AppConfig.js';
+import useIntlContext from './useIntlContext.js';
 
-export default function useMessages(): AbstractIntlMessages {
+export default function useMessages(): Messages {
   const context = useIntlContext();
 
   if (!context.messages) {

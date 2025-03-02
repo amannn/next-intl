@@ -1,26 +1,27 @@
-import IntlMessageFormat from 'intl-messageformat';
-import {ReactNode, cloneElement, isValidElement} from 'react';
-import AbstractIntlMessages from './AbstractIntlMessages';
-import Formats from './Formats';
-import {InitializedIntlConfig} from './IntlConfig';
-import IntlError, {IntlErrorCode} from './IntlError';
-import TranslationValues, {
+import {IntlMessageFormat} from 'intl-messageformat';
+import {type ReactNode, cloneElement, isValidElement} from 'react';
+import type AbstractIntlMessages from './AbstractIntlMessages.js';
+import type {Locale} from './AppConfig.js';
+import type Formats from './Formats.js';
+import type {InitializedIntlConfig} from './IntlConfig.js';
+import IntlError from './IntlError.js';
+import IntlErrorCode from './IntlErrorCode.js';
+import type {MessageKeys, NestedKeyOf, NestedValueOf} from './MessageKeys.js';
+import type {
   MarkupTranslationValues,
-  RichTranslationValues
-} from './TranslationValues';
-import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat';
-import {defaultGetMessageFallback, defaultOnError} from './defaults';
+  RichTranslationValues,
+  TranslationValues
+} from './TranslationValues.js';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
+import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import {
-  Formatters,
-  IntlCache,
-  IntlFormatters,
-  MessageFormatter,
+  type Formatters,
+  type IntlCache,
+  type IntlFormatters,
+  type MessageFormatter,
   memoFn
-} from './formatters';
-import joinPath from './joinPath';
-import MessageKeys from './utils/MessageKeys';
-import NestedKeyOf from './utils/NestedKeyOf';
-import NestedValueOf from './utils/NestedValueOf';
+} from './formatters.js';
+import joinPath from './joinPath.js';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.
@@ -41,7 +42,7 @@ function createMessageFormatter(
 }
 
 function resolvePath(
-  locale: string,
+  locale: Locale,
   messages: AbstractIntlMessages | undefined,
   key: string,
   namespace?: string
@@ -77,8 +78,6 @@ function resolvePath(
 }
 
 function prepareTranslationValues(values: RichTranslationValues) {
-  if (Object.keys(values).length === 0) return undefined;
-
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: RichTranslationValues = {};
   Object.keys(values).forEach((key) => {
@@ -105,7 +104,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 }
 
 function getMessagesOrError<Messages extends AbstractIntlMessages>(
-  locale: string,
+  locale: Locale,
   messages?: Messages,
   namespace?: string,
   onError: (error: IntlError) => void = defaultOnError
@@ -114,7 +113,7 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
     if (!messages) {
       throw new Error(
         process.env.NODE_ENV !== 'production'
-          ? `No messages were configured on the provider.`
+          ? `No messages were configured.`
           : undefined
       );
     }
@@ -146,26 +145,27 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
 export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   cache: IntlCache;
   formatters: Formatters;
-  defaultTranslationValues?: RichTranslationValues;
   namespace?: string;
   messagesOrError: Messages | IntlError;
 };
 
 function getPlainMessage(candidate: string, values?: unknown) {
-  if (values) return undefined;
+  if (process.env.NODE_ENV !== 'production') {
+    // Keep fast path in development
+    if (values) return undefined;
 
-  const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+    // Despite potentially no values being available, there can still be
+    // placeholders in the message if the user has forgotten to provide
+    // values. In this case we compile the message to receive an error.
+    const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
+    const hasPlaceholders = /<|{/.test(unescapedMessage);
 
-  // Placeholders can be in the message if there are default values,
-  // or if the user has forgotten to provide values. In the latter
-  // case we need to compile the message to receive an error.
-  const hasPlaceholders = /<|{/.test(unescapedMessage);
-
-  if (!hasPlaceholders) {
-    return unescapedMessage;
+    if (!hasPlaceholders) {
+      return unescapedMessage;
+    }
+  } else {
+    return values ? undefined : candidate;
   }
-
-  return undefined;
 }
 
 export default function createBaseTranslator<
@@ -190,7 +190,6 @@ function createBaseTranslatorImpl<
   NestedKey extends NestedKeyOf<Messages>
 >({
   cache,
-  defaultTranslationValues,
   formats: globalFormats,
   formatters,
   getMessageFallback = defaultGetMessageFallback,
@@ -280,10 +279,7 @@ function createBaseTranslatorImpl<
       messageFormat = formatters.getMessageFormat(
         message,
         locale,
-        convertFormatsToIntlMessageFormat(
-          {...globalFormats, ...formats},
-          timeZone
-        ),
+        convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
         {
           formatters: {
             ...formatters,
@@ -317,7 +313,7 @@ function createBaseTranslatorImpl<
         // for rich text elements since a recent minor update. This
         // needs to be evaluated in detail, possibly also in regards
         // to be able to format to parts.
-        prepareTranslationValues({...defaultTranslationValues, ...values})
+        values ? prepareTranslationValues(values) : values
       );
 
       if (formattedMessage == null) {
@@ -393,23 +389,17 @@ function createBaseTranslatorImpl<
       formats
     );
 
-    // When only string chunks are provided to the parser, only
-    // strings should be returned here. Note that we need a runtime
-    // check for this since rich text values could be accidentally
-    // inherited from `defaultTranslationValues`.
-    if (typeof result !== 'string') {
+    if (process.env.NODE_ENV !== 'production' && typeof result !== 'string') {
       const error = new IntlError(
         IntlErrorCode.FORMATTING_ERROR,
-        process.env.NODE_ENV !== 'production'
-          ? "`t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
-          : undefined
+        "`t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
       );
 
       onError(error);
       return getMessageFallback({error, key, namespace});
     }
 
-    return result;
+    return result as string;
   };
 
   translateFn.raw = (
@@ -437,7 +427,7 @@ function createBaseTranslatorImpl<
     }
   };
 
-  translateFn.has = (key: Parameters<typeof translateBaseFn>[0]): boolean => {
+  translateFn.has = (key: string): boolean => {
     if (hasMessagesError) {
       return false;
     }

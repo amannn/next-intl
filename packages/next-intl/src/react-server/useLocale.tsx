@@ -1,10 +1,7 @@
 import type {useLocale as useLocaleType} from 'use-intl';
-import useConfig from './useConfig';
+import useConfig from './useConfig.js';
 
-export default function useLocale(
-  // eslint-disable-next-line no-empty-pattern
-  ...[]: Parameters<typeof useLocaleType>
-): ReturnType<typeof useLocaleType> {
+export default function useLocale(): ReturnType<typeof useLocaleType> {
   const config = useConfig('useLocale');
   return config.locale;
 }

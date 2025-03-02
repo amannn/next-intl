@@ -300,16 +300,24 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
   const tracker = getPageLoadTracker(context);
 
   await page.goto('/');
-  await assertLocaleCookieValue(page, 'en');
+  await assertLocaleCookieValue(page, undefined);
   expect(tracker.numPageLoads).toBe(1);
 
-  const link = page.getByRole('link', {name: 'Switch to German'});
-  await link.hover();
-  await assertLocaleCookieValue(page, 'en');
-  await link.click();
+  const linkDe = page.getByRole('link', {name: 'Switch to German'});
+  await linkDe.hover();
+  await assertLocaleCookieValue(page, undefined);
+  await linkDe.click();
 
   await expect(page).toHaveURL('/de');
   await assertLocaleCookieValue(page, 'de');
+
+  const linkEn = page.getByRole('link', {name: 'Zu Englisch wechseln'});
+  await linkEn.hover();
+  await assertLocaleCookieValue(page, 'de');
+  await linkEn.click();
+
+  await expect(page).toHaveURL('/');
+  await assertLocaleCookieValue(page, 'en');
 
   // Currently, a root layout outside of the `[locale]`
   // folder is required for this to work.

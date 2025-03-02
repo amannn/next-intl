@@ -62,7 +62,7 @@ The simplest option is to add JSON files in your local project folder:
 
 ### `next.config.ts` [#next-config]
 
-Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components—more on this in the following steps.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration like your messages to Server Components—more on this in the following steps.
 
 <Tabs items={['next.config.ts', 'next.config.js']}>
 <Tabs.Tab>
@@ -128,6 +128,8 @@ Once we have our routing configuration in place, we can use it to set up the nav
 import {createNavigation} from 'next-intl/navigation';
 import {routing} from './routing';
 
+// Lightweight wrappers around Next.js' navigation
+// APIs that consider the routing configuration
 export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
@@ -143,10 +145,37 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  // Match all pathnames except for
+  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+  // - … the ones containing a dot (e.g. `favicon.ico`)
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
+
+<Details id="middleware-matcher-dots">
+  <summary>How can I match pathnames that contain dots like `/users/jane.doe`?</summary>
+
+If you have pathnames where dots are expected, you can match them with explicit entries:
+
+```tsx filename="src/middleware.ts" {10,11}
+// ...
+
+export const config = {
+  matcher: [
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+
+    // Match all pathnames within `{/:locale}/users`
+    '/([\\w-]+)?/users/(.+)'
+  ];
+}
+```
+
+This will match e.g. `/users/jane.doe`, also optionally with a locale prefix.
+
+</Details>
 
 ### `src/i18n/request.ts` [#i18n-request]
 
@@ -154,16 +183,15 @@ When using features from `next-intl` in Server Components, the relevant configur
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale;
-
-  // Ensure that a valid locale is used
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   return {
     locale,
@@ -193,8 +221,7 @@ const withNextIntl = createNextIntlPlugin(
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
+import {NextIntlClientProvider, Locale, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
@@ -207,27 +234,19 @@ export default async function LocaleLayout({
 }) {
   // Ensure that the incoming `locale` is valid
   const {locale} = await params;
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
 }
 ```
-
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n/request.ts` here, but `messages` need to be passed explicitly.
 
 ### `src/app/[locale]/page.tsx` [#page]
 
@@ -305,14 +324,13 @@ export function generateStaticParams() {
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {setRequestLocale} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({children, params}) {
   const {locale} = await params;
-
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 

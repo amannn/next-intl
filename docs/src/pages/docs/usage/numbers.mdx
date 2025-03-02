@@ -31,7 +31,11 @@ See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs
 If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
 
 ```js
+// Use a global format
 format.number(499.9, 'precise');
+
+// Optionally override some options
+format.number(499.9, 'price', {currency: 'USD'});
 ```
 
 ## Numbers within messages

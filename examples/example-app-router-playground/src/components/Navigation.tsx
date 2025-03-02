@@ -13,7 +13,7 @@ export default function Navigation() {
       <NavigationLink
         href={{pathname: '/news/[articleId]', params: {articleId: 3}}}
       >
-        {t('newsArticle', {articleId: 3})}
+        {t('newsArticle', {articleId: String(3)})}
       </NavigationLink>
     </nav>
   );

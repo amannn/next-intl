@@ -2,8 +2,8 @@
 
 import clsx from 'clsx';
 import {useParams} from 'next/navigation';
+import {Locale} from 'next-intl';
 import {ChangeEvent, ReactNode, useTransition} from 'react';
-import {Locale} from '@/i18n/routing';
 import {usePathname, useRouter} from '@/i18n/navigation';
 
 type Props = {

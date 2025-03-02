@@ -1,11 +1,8 @@
 import type {useMessages as useMessagesType} from 'use-intl';
-import {getMessagesFromConfig} from '../server/react-server/getMessages';
-import useConfig from './useConfig';
+import {getMessagesFromConfig} from '../server/react-server/getMessages.js';
+import useConfig from './useConfig.js';
 
-export default function useMessages(
-  // eslint-disable-next-line no-empty-pattern
-  ...[]: Parameters<typeof useMessagesType>
-): ReturnType<typeof useMessagesType> {
+export default function useMessages(): ReturnType<typeof useMessagesType> {
   const config = useConfig('useMessages');
   return getMessagesFromConfig(config);
 }

@@ -1,8 +1,8 @@
 export type {
   Pathnames,
-  DomainsConfig,
   LocalePrefix,
+  DomainsConfig,
   LocalePrefixMode
-} from './types';
-export type {RoutingConfig} from './config';
-export {default as defineRouting} from './defineRouting';
+} from './types.js';
+export {default as defineRouting} from './defineRouting.js';
+export type {RoutingConfig} from './config.js';

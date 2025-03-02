@@ -1,5 +1,6 @@
 import {cookies} from 'next/headers';
-import {defaultLocale} from './config';
+import {Locale, hasLocale} from 'next-intl';
+import {defaultLocale, locales} from './config';
 
 // This cookie name is used by `next-intl` on the public pages too. By
 // reading/writing to this locale, we can ensure that the user's locale
@@ -8,8 +9,9 @@ import {defaultLocale} from './config';
 // that instead when the user is logged in.
 const COOKIE_NAME = 'NEXT_LOCALE';
 
-export async function getUserLocale() {
-  return (await cookies()).get(COOKIE_NAME)?.value || defaultLocale;
+export async function getUserLocale(): Promise<Locale> {
+  const candidate = (await cookies()).get(COOKIE_NAME)?.value;
+  return hasLocale(locales, candidate) ? candidate : defaultLocale;
 }
 
 export async function setUserLocale(locale: string) {

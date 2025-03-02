@@ -1,2 +1,2 @@
-export * from './core';
-export * from './react';
+export * from './core.js';
+export * from './react.js';

@@ -1,1 +1,2 @@
-export * from './dist/types/src/server/react-server';
+// Needed for projects with `moduleResolution: 'node'`
+export * from './dist/types/server/react-server';

@@ -1,15 +1,8 @@
-import {ReactNode} from 'react';
-import Formats from '../core/Formats';
-import TranslationValues, {
-  MarkupTranslationValues,
-  RichTranslationValues
-} from '../core/TranslationValues';
-import MessageKeys from '../core/utils/MessageKeys';
-import NamespaceKeys from '../core/utils/NamespaceKeys';
-import NestedKeyOf from '../core/utils/NestedKeyOf';
-import NestedValueOf from '../core/utils/NestedValueOf';
-import useIntlContext from './useIntlContext';
-import useTranslationsImpl from './useTranslationsImpl';
+import type {Messages} from '../core/AppConfig.js';
+import type {NamespaceKeys, NestedKeyOf} from '../core/MessageKeys.js';
+import type createTranslator from '../core/createTranslator.js';
+import useIntlContext from './useIntlContext.js';
+import useTranslationsImpl from './useTranslationsImpl.js';
 
 /**
  * Translates messages from the given namespace by using the ICU syntax.
@@ -20,118 +13,19 @@ import useTranslationsImpl from './useTranslationsImpl';
  * (e.g. `namespace.Component`).
  */
 export default function useTranslations<
-  NestedKey extends NamespaceKeys<
-    IntlMessages,
-    NestedKeyOf<IntlMessages>
-  > = never
+  NestedKey extends NamespaceKeys<Messages, NestedKeyOf<Messages>> = never
 >(
   namespace?: NestedKey
-): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-{
-  // Default invocation
-  <
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: TranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `rich`
-  rich<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: RichTranslationValues,
-    formats?: Formats
-  ): ReactNode;
-
-  // `markup`
-  markup<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey,
-    values?: MarkupTranslationValues,
-    formats?: Formats
-  ): string;
-
-  // `raw`
-  raw<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey
-  ): any;
-
-  // `has`
-  has<
-    TargetKey extends MessageKeys<
-      NestedValueOf<
-        {'!': IntlMessages},
-        [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-      >,
-      NestedKeyOf<
-        NestedValueOf<
-          {'!': IntlMessages},
-          [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
-        >
-      >
-    >
-  >(
-    key: TargetKey
-  ): boolean;
-} {
+): ReturnType<typeof createTranslator<Messages, NestedKey>> {
   const context = useIntlContext();
-  const messages = context.messages as IntlMessages;
+  const messages = context.messages as Messages;
 
   // We have to wrap the actual hook so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
+  // @ts-expect-error Use the explicit annotation instead
   return useTranslationsImpl<
-    {'!': IntlMessages},
+    {'!': Messages},
     [NestedKey] extends [never] ? '!' : `!.${NestedKey}`
   >(
     {'!': messages},

@@ -13,7 +13,7 @@ export default function Index() {
     <PageLayout title={t('title')}>
       <div>
         {t.rich('description', {
-          locale,
+          locale: locale!,
           p: (children) => <p>{children}</p>,
           code: (children) => <Code>{children}</Code>
         })}

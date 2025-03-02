@@ -1,15 +1,16 @@
 import {match} from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import {RequestCookies} from 'next/dist/server/web/spec-extension/cookies';
-import {ResolvedRoutingConfig} from '../routing/config';
-import {
+import type {RequestCookies} from 'next/dist/server/web/spec-extension/cookies.js';
+import type {Locale} from 'use-intl';
+import type {ResolvedRoutingConfig} from '../routing/config.js';
+import type {
   DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../routing/types';
-import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils';
+} from '../routing/types.js';
+import {getHost, getPathnameMatch, isLocaleSupportedOnDomain} from './utils.js';
 
 function findDomainFromHost<AppLocales extends Locales>(
   requestHeaders: Headers,
@@ -32,7 +33,7 @@ function orderLocales<AppLocales extends Locales>(locales: AppLocales) {
 export function getAcceptLanguageLocale<AppLocales extends Locales>(
   requestHeaders: Headers,
   locales: AppLocales,
-  defaultLocale: string
+  defaultLocale: Locale
 ) {
   let locale;
 
@@ -43,12 +44,7 @@ export function getAcceptLanguageLocale<AppLocales extends Locales>(
   }).languages();
   try {
     const orderedLocales = orderLocales(locales);
-
-    locale = match(
-      languages,
-      orderedLocales as unknown as Array<string>,
-      defaultLocale
-    );
+    locale = match(languages, orderedLocales, defaultLocale);
   } catch {
     // Invalid language
   }
@@ -173,7 +169,8 @@ function resolveLocaleFromDomain<
     const prefixLocale = getPathnameMatch(
       pathname,
       routing.locales,
-      routing.localePrefix
+      routing.localePrefix,
+      domain
     )?.locale;
     if (prefixLocale) {
       if (isLocaleSupportedOnDomain(prefixLocale, domain)) {
@@ -201,7 +198,7 @@ function resolveLocaleFromDomain<
   if (!locale && routing.localeDetection) {
     const headerLocale = getAcceptLanguageLocale(
       requestHeaders,
-      domain.locales || routing.locales,
+      domain.locales,
       domain.defaultLocale
     );
 
