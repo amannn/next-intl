@@ -1,12 +1,12 @@
-import React, {ReactNode, useMemo} from 'react';
-import IntlConfig from '../core/IntlConfig';
+import {type ReactNode, useContext, useMemo} from 'react';
+import type IntlConfig from '../core/IntlConfig.js';
 import {
-  Formatters,
+  type Formatters,
   createCache,
   createIntlFormatters
-} from '../core/formatters';
-import initializeConfig from '../core/initializeConfig';
-import IntlContext from './IntlContext';
+} from '../core/formatters.js';
+import initializeConfig from '../core/initializeConfig.js';
+import IntlContext from './IntlContext.js';
 
 type Props = IntlConfig & {
   children: ReactNode;
@@ -14,7 +14,6 @@ type Props = IntlConfig & {
 
 export default function IntlProvider({
   children,
-  defaultTranslationValues,
   formats,
   getMessageFallback,
   locale,
@@ -23,17 +22,19 @@ export default function IntlProvider({
   onError,
   timeZone
 }: Props) {
+  const prevContext = useContext(IntlContext);
+
   // The formatter cache is released when the locale changes. For
   // long-running apps with a persistent `IntlProvider` at the root,
   // this can reduce the memory footprint (e.g. in React Native).
   const cache = useMemo(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     locale;
-    return createCache();
-  }, [locale]);
+    return prevContext?.cache || createCache();
+  }, [locale, prevContext?.cache]);
   const formatters: Formatters = useMemo(
-    () => createIntlFormatters(cache),
-    [cache]
+    () => prevContext?.formatters || createIntlFormatters(cache),
+    [cache, prevContext?.formatters]
   );
 
   // Memoizing this value helps to avoid triggering a re-render of all
@@ -47,21 +48,20 @@ export default function IntlProvider({
   const value = useMemo(
     () => ({
       ...initializeConfig({
-        locale,
-        defaultTranslationValues,
-        formats,
-        getMessageFallback,
-        messages,
-        now,
-        onError,
-        timeZone
+        locale, // (required by provider)
+        formats: formats === undefined ? prevContext?.formats : formats,
+        getMessageFallback:
+          getMessageFallback || prevContext?.getMessageFallback,
+        messages: messages === undefined ? prevContext?.messages : messages,
+        now: now || prevContext?.now,
+        onError: onError || prevContext?.onError,
+        timeZone: timeZone || prevContext?.timeZone
       }),
       formatters,
       cache
     }),
     [
       cache,
-      defaultTranslationValues,
       formats,
       formatters,
       getMessageFallback,
@@ -69,6 +69,7 @@ export default function IntlProvider({
       messages,
       now,
       onError,
+      prevContext,
       timeZone
     ]
   );

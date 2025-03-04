@@ -1,15 +1,15 @@
-import {
+import type {
   RoutingConfigLocalizedNavigation,
   RoutingConfigSharedNavigation
-} from '../../routing/config';
-import {
+} from '../../routing/config.js';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
-import createSharedNavigationFns from '../shared/createSharedNavigationFns';
-import getServerLocale from './getServerLocale';
+} from '../../routing/types.js';
+import createSharedNavigationFns from '../shared/createSharedNavigationFns.js';
+import getServerLocale from './getServerLocale.js';
 
 export default function createNavigation<
   const AppLocales extends Locales,
@@ -32,14 +32,8 @@ export default function createNavigation<
         AppDomains
       >
 ) {
-  type Locale = AppLocales extends never ? string : AppLocales[number];
-
-  function getLocale() {
-    return getServerLocale() as Promise<Locale>;
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {config, ...fns} = createSharedNavigationFns(getLocale, routing);
+  const {config, ...fns} = createSharedNavigationFns(getServerLocale, routing);
 
   function notSupported(hookName: string) {
     return () => {

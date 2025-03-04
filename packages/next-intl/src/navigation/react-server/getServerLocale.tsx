@@ -1,4 +1,4 @@
-import getConfig from '../../server/react-server/getConfig';
+import getConfig from '../../server/react-server/getConfig.js';
 
 /**
  * This is only moved to a separate module for easier mocking in

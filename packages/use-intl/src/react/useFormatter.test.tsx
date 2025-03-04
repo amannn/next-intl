@@ -1,11 +1,17 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React, {ComponentProps, ReactElement, ReactNode} from 'react';
-import {SpyImpl, spyOn} from 'tinyspy';
+import type {ComponentProps, ReactElement, ReactNode} from 'react';
+import {type SpyImpl, spyOn} from 'tinyspy';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {IntlError, IntlErrorCode} from '../core';
-import IntlProvider from './IntlProvider';
-import useFormatter from './useFormatter';
+import {
+  type DateTimeFormatOptions,
+  type IntlError,
+  IntlErrorCode,
+  type NumberFormatOptions,
+  type RelativeTimeFormatOptions
+} from '../core.js';
+import IntlProvider from './IntlProvider.js';
+import useFormatter from './useFormatter.js';
 
 function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
@@ -25,7 +31,7 @@ describe('dateTime', () => {
 
   function renderDateTime(
     value: Date | number,
-    options?: Parameters<ReturnType<typeof useFormatter>['dateTime']>['1']
+    options?: DateTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
@@ -207,7 +213,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `onlyYear` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `onlyYear` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -234,7 +240,7 @@ describe('dateTime', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `medium` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `medium` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toMatch(/Nov 20 2020/);
@@ -279,9 +285,7 @@ describe('dateTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `timeZone` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
       expect(container.textContent).toBe('11/20/2020');
     });
@@ -289,10 +293,7 @@ describe('dateTime', () => {
 });
 
 describe('number', () => {
-  function renderNumber(
-    value: number | bigint,
-    options?: Parameters<ReturnType<typeof useFormatter>['number']>['1']
-  ) {
+  function renderNumber(value: number | bigint, options?: NumberFormatOptions) {
     function Component() {
       const format = useFormatter();
       return <>{format.number(value, options)}</>;
@@ -399,7 +400,7 @@ describe('number', () => {
 
       const error: IntlError = onError.mock.calls[0][0];
       expect(error.message).toBe(
-        'MISSING_FORMAT: Format `missing` is not available. You can configure it on the provider or provide custom options.'
+        'MISSING_FORMAT: Format `missing` is not available.'
       );
       expect(error.code).toBe(IntlErrorCode.MISSING_FORMAT);
       expect(container.textContent).toBe('10000');
@@ -432,13 +433,15 @@ describe('number', () => {
 describe('relativeTime', () => {
   function renderRelativeTime(
     date: Date | number,
-    nowOrOptions: Parameters<
-      ReturnType<typeof useFormatter>['relativeTime']
-    >['1']
+    nowOrOptions: Date | number | RelativeTimeFormatOptions
   ) {
     function Component() {
       const format = useFormatter();
-      return <>{format.relativeTime(date, nowOrOptions)}</>;
+      if (nowOrOptions instanceof Date || typeof nowOrOptions === 'number') {
+        return format.relativeTime(date, nowOrOptions);
+      } else {
+        return format.relativeTime(date, nowOrOptions);
+      }
     }
 
     render(
@@ -622,9 +625,7 @@ describe('relativeTime', () => {
       );
 
       const error: IntlError = onError.mock.calls[0][0];
-      expect(error.message).toMatch(
-        "ENVIRONMENT_FALLBACK: The `now` parameter wasn't provided and there is no global default configured."
-      );
+      expect(error.message).toMatch(/^ENVIRONMENT_FALLBACK/);
       expect(error.code).toBe(IntlErrorCode.ENVIRONMENT_FALLBACK);
     });
   });
@@ -633,7 +634,7 @@ describe('relativeTime', () => {
 describe('list', () => {
   function renderList(
     value: Iterable<string>,
-    options?: Parameters<ReturnType<typeof useFormatter>['list']>['1']
+    options?: Intl.ListFormatOptions
   ) {
     function Component() {
       const format = useFormatter();

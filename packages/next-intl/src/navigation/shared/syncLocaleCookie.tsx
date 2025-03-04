@@ -1,5 +1,6 @@
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import {getBasePath} from './utils';
+import type {Locale} from 'use-intl';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.js';
+import {getBasePath} from './utils.js';
 
 /**
  * We have to keep the cookie value in sync as Next.js might
@@ -9,8 +10,8 @@ import {getBasePath} from './utils';
 export default function syncLocaleCookie(
   localeCookie: InitializedLocaleCookieConfig,
   pathname: string | null,
-  locale: string,
-  nextLocale?: string
+  locale: Locale,
+  nextLocale?: Locale
 ) {
   const isSwitchingLocale = nextLocale !== locale && nextLocale != null;
 

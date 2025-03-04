@@ -1,22 +1,21 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {PrefetchKind} from 'next/dist/client/components/router-reducer/router-reducer-types';
 import {
   usePathname as useNextPathname,
-  useRouter as useNextRouter,
-  useParams
-} from 'next/navigation';
-import React from 'react';
+  useRouter as useNextRouter
+} from 'next/navigation.js';
+import {type Locale, useLocale} from 'use-intl';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {NextIntlClientProvider} from '../../react-client';
-import {DomainsConfig, Pathnames} from '../../routing';
-import createNavigation from './createNavigation';
+import type {DomainsConfig, Pathnames} from '../../routing.js';
+import createNavigation from './createNavigation.js';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation.js');
+vi.mock('use-intl', async () => ({
+  ...(await vi.importActual('use-intl')),
+  useLocale: vi.fn(() => 'en')
+}));
 
-function mockCurrentLocale(locale: string) {
-  vi.mocked(useParams<{locale: string}>).mockImplementation(() => ({
-    locale
-  }));
+function mockCurrentLocale(locale: Locale) {
+  vi.mocked(useLocale).mockImplementation(() => locale);
 }
 
 function mockLocation(
@@ -56,12 +55,13 @@ const defaultLocale = 'en' as const;
 const domains: DomainsConfig<typeof locales> = [
   {
     defaultLocale: 'en',
-    domain: 'example.com'
+    domain: 'example.com',
+    locales: ['en']
   },
   {
     defaultLocale: 'de',
     domain: 'example.de',
-    locales: ['de', 'en']
+    locales: ['de', 'ja']
   }
 ];
 
@@ -113,29 +113,6 @@ describe("localePrefix: 'always'", () => {
   });
 
   describe('Link', () => {
-    describe('usage outside of Next.js', () => {
-      beforeEach(() => {
-        vi.mocked(useParams<any>).mockImplementation((() => null) as any);
-      });
-
-      it('works with a provider', () => {
-        render(
-          <NextIntlClientProvider locale="en">
-            <Link href="/test">Test</Link>
-          </NextIntlClientProvider>
-        );
-        expect(
-          screen.getByRole('link', {name: 'Test'}).getAttribute('href')
-        ).toBe('/en/test');
-      });
-
-      it('throws without a provider', () => {
-        expect(() => render(<Link href="/test">Test</Link>)).toThrow(
-          'No intl context found. Have you configured the provider?'
-        );
-      });
-    });
-
     it('can receive a ref', () => {
       let ref;
 
@@ -171,14 +148,18 @@ describe("localePrefix: 'always'", () => {
       });
 
       it('prefixes with a secondary locale', () => {
-        // Being able to accept a string and not only a strictly typed locale is
-        // important in order to be able to use a result from `useLocale()`.
-        // This is less relevant for `Link`, but this should be in sync across
-        // al navigation APIs (see https://github.com/amannn/next-intl/issues/1377)
-        const locale = 'de' as string;
-
-        invokeRouter((router) => router[method]('/about', {locale}));
+        invokeRouter((router) => router[method]('/about', {locale: 'de'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
+      });
+
+      it('can use a locale from `useLocale`', () => {
+        function Component() {
+          const locale = useLocale();
+          const router = useRouter();
+          router.push('/about', {locale});
+          return null;
+        }
+        render(<Component />);
       });
 
       it('passes through unknown options to the Next.js router', () => {
@@ -228,7 +209,11 @@ describe("localePrefix: 'always'", () => {
 
       it('prefixes with a secondary locale', () => {
         invokeRouter((router) =>
-          router.prefetch('/about', {locale: 'de', kind: PrefetchKind.FULL})
+          router.prefetch('/about', {
+            locale: 'de',
+            // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+            kind: 'full'
+          })
         );
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about', {
           kind: 'full'
@@ -289,8 +274,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -313,8 +298,8 @@ describe("localePrefix: 'always', with `localeCookie`", () => {
       expect(cookieSpy).toHaveBeenCalledWith(
         [
           'NEXT_LOCALE=de',
-          'max-age=60',
           'sameSite=strict',
+          'max-age=60',
           'domain=example.com',
           'partitioned',
           'path=/nested',
@@ -361,12 +346,7 @@ describe("localePrefix: 'always', with `basePath`", () => {
       invokeRouter((router) => router.push('/about', {locale: 'de'}));
 
       expect(cookieSpy).toHaveBeenCalledWith(
-        [
-          'NEXT_LOCALE=de',
-          'max-age=31536000',
-          'sameSite=lax',
-          'path=/base/path'
-        ].join(';') + ';'
+        ['NEXT_LOCALE=de', 'sameSite=lax', 'path=/base/path'].join(';') + ';'
       );
       cookieSpy.mockRestore();
     });
@@ -584,43 +564,20 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
   describe('useRouter', () => {
     const invokeRouter = getInvokeRouter(useRouter);
 
-    describe('example.com, defaultLocale: "en"', () => {
-      beforeEach(() => {
-        mockLocation(
-          {pathname: '/base/path/about', host: 'example.com'},
-          '/base/path'
-        );
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
-        invokeRouter((router) => router.push('/test'));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
-        invokeRouter((router) => router.push('/test', {locale: 'de'}));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/de/test');
-      });
+    it('can compute the correct pathname when on the default locale and not supplying a locale', () => {
+      invokeRouter((router) => router.push('/test'));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
     });
 
-    describe('example.de, defaultLocale: "de"', () => {
-      beforeEach(() => {
-        mockCurrentLocale('de');
-        mockLocation(
-          {pathname: '/base/path/about', host: 'example.de'},
-          '/base/path'
-        );
-      });
+    it('can compute the correct pathname when on the default locale and supplying a secondary locale', () => {
+      invokeRouter((router) => router.push('/test', {locale: 'ja'}));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/ja/test');
+    });
 
-      it('can compute the correct pathname when the default locale on the current domain matches the current locale', () => {
-        invokeRouter((router) => router.push('/test'));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/test');
-      });
-
-      it('can compute the correct pathname when the default locale on the current domain does not match the current locale', () => {
-        invokeRouter((router) => router.push('/test', {locale: 'en'}));
-        expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
-      });
+    it('can compute the correct pathname when on a secondary locale and navigating to the default locale', () => {
+      mockCurrentLocale('ja');
+      invokeRouter((router) => router.push('/test', {locale: 'en'}));
+      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
     });
   });
 });
@@ -659,13 +616,6 @@ describe("localePrefix: 'as-needed', with `domains`", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
         expect(consoleSpy).not.toHaveBeenCalled();
         consoleSpy.mockRestore();
-      });
-
-      it('prefixes the default locale when on a domain with a different defaultLocale', () => {
-        mockCurrentLocale('de');
-        mockLocation({pathname: '/about', host: 'example.de'});
-        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
       });
     });
   });
@@ -777,7 +727,11 @@ describe("localePrefix: 'never'", () => {
       expect(document.cookie).toContain('NEXT_LOCALE=de');
 
       invokeRouter((router) =>
-        router.prefetch('/about', {locale: 'ja', kind: PrefetchKind.AUTO})
+        router.prefetch('/about', {
+          locale: 'ja',
+          // @ts-expect-error -- Somehow only works via the enum (which is not exported)
+          kind: 'auto'
+        })
       );
       expect(document.cookie).toContain('NEXT_LOCALE=ja');
     });

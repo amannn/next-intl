@@ -1,11 +1,11 @@
 import {render, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import IntlProvider from './IntlProvider';
-import useFormatter from './useFormatter';
-import useNow from './useNow';
-import useTranslations from './useTranslations';
+import type {Locale} from '../core.js';
+import IntlProvider from './IntlProvider.js';
+import useFormatter from './useFormatter.js';
+import useNow from './useNow.js';
+import useTranslations from './useTranslations.js';
 
 describe('performance', () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('performance', () => {
     );
   }
 
-  function App({locale}: {locale: string}) {
+  function App({locale}: {locale: Locale}) {
     return (
       <IntlProvider
         locale={locale}

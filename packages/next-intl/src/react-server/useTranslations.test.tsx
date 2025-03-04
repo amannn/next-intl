@@ -1,7 +1,7 @@
-import React, {cache} from 'react';
+import {cache} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {renderToStream} from './testUtils';
-import {createTranslator, useTranslations} from '.';
+import {renderToStream} from './testUtils.js';
+import {createTranslator, useTranslations} from './index.js';
 
 vi.mock('../../src/server/react-server/createRequestConfig', () => ({
   default: async () => ({
@@ -29,6 +29,20 @@ vi.mock('use-intl/core', async (importActual) => {
     ...actual,
     createTranslator: vi.fn(actualCreateTranslator)
   };
+});
+
+describe('dynamicIO', () => {
+  it('should not include `now` in the translator config', async () => {
+    function TestComponent() {
+      useTranslations('A');
+      return null;
+    }
+
+    await renderToStream(<TestComponent />);
+    expect(createTranslator).toHaveBeenCalledWith(
+      expect.not.objectContaining({now: expect.anything()})
+    );
+  });
 });
 
 describe('performance', () => {

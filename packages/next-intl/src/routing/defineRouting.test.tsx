@@ -1,5 +1,5 @@
-import {describe, it} from 'vitest';
-import defineRouting from './defineRouting';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import defineRouting from './defineRouting.js';
 
 describe('defaultLocale', () => {
   it('ensures the `defaultLocale` is within `locales`', () => {
@@ -35,14 +35,13 @@ describe('pathnames', () => {
     routing.pathnames['/about'].en;
   });
 
-  it('ensures all locales have a value', () => {
+  it('accepts a partial config for only some locales', () => {
     defineRouting({
       locales: ['en', 'de'],
       defaultLocale: 'en',
       pathnames: {
-        // @ts-expect-error -- Missing de
         '/about': {
-          en: '/about'
+          de: '/ueber-uns'
         }
       }
     });
@@ -57,7 +56,8 @@ describe('domains', () => {
       domains: [
         {
           defaultLocale: 'en',
-          domain: 'example.com'
+          domain: 'example.com',
+          locales: ['en']
         }
       ]
     });
@@ -71,7 +71,8 @@ describe('domains', () => {
         {
           // @ts-expect-error
           defaultLocale: 'es',
-          domain: 'example.com'
+          domain: 'example.com',
+          locales: ['en']
         }
       ]
     });
@@ -101,6 +102,73 @@ describe('domains', () => {
           locales: ['es']
         }
       ]
+    });
+  });
+
+  describe('validation', () => {
+    beforeEach(() => {
+      const originalConsoleWarn = console.warn;
+      console.warn = vi.fn();
+      return () => {
+        console.warn = originalConsoleWarn;
+      };
+    });
+
+    it('does not warn if locales are unique per domain', () => {
+      defineRouting({
+        locales: ['en-US', 'en-CA', 'fr-CA', 'fr-FR'],
+        defaultLocale: 'en-US',
+        domains: [
+          {
+            domain: 'us.example.com',
+            defaultLocale: 'en-US',
+            locales: ['en-US']
+          },
+          {
+            domain: 'ca.example.com',
+            defaultLocale: 'en-CA',
+            locales: ['en-CA', 'fr-CA']
+          },
+          {
+            domain: 'fr.example.com',
+            defaultLocale: 'fr-FR',
+            locales: ['fr-FR']
+          }
+        ]
+      });
+
+      expect(console.warn).not.toHaveBeenCalled();
+    });
+
+    it('should warn if locales are not unique per domain', () => {
+      defineRouting({
+        locales: ['en', 'fr'],
+        defaultLocale: 'en',
+        domains: [
+          {
+            domain: 'us.example.com',
+            defaultLocale: 'en',
+            locales: ['en']
+          },
+          {
+            domain: 'ca.example.com',
+            defaultLocale: 'en',
+            locales: ['en', 'fr']
+          },
+          {
+            domain: 'fr.example.com',
+            defaultLocale: 'fr',
+            locales: ['fr']
+          }
+        ]
+      });
+
+      expect(console.warn).toHaveBeenCalledWith(
+        'Locales are expected to be unique per domain, but found overlap:\n' +
+          '- "en" is used by: us.example.com, ca.example.com\n' +
+          '- "fr" is used by: ca.example.com, fr.example.com\n' +
+          'Please see https://next-intl.dev/docs/routing#domains'
+      );
     });
   });
 });

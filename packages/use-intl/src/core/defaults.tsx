@@ -1,5 +1,5 @@
-import IntlError from './IntlError';
-import joinPath from './joinPath';
+import type IntlError from './IntlError.js';
+import joinPath from './joinPath.js';
 
 /**
  * Contains defaults that are used for all entry points into the core.

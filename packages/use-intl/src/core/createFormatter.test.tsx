@@ -1,6 +1,6 @@
 import {parseISO} from 'date-fns';
 import {describe, expect, it} from 'vitest';
-import createFormatter from './createFormatter';
+import createFormatter from './createFormatter.js';
 
 describe('dateTime', () => {
   it('formats a date and time', () => {
@@ -27,6 +27,26 @@ describe('dateTime', () => {
         timeZone: 'America/New_York'
       })
     ).toBe('Nov 20, 2020, 5:36:01 AM');
+  });
+
+  it('can combine a global format with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        dateTime: {
+          short: {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          }
+        }
+      }
+    });
+    expect(
+      formatter.dateTime(parseISO('2020-11-20T10:36:01.516Z'), 'short', {
+        timeZone: 'America/New_York'
+      })
+    ).toBe('11/20/20, 5:36 AM');
   });
 });
 
@@ -70,6 +90,25 @@ describe('number', () => {
         currency: 'USD'
       })
     ).toBe('$123,456,789,123,456,789.00');
+  });
+
+  it('can combine a global format with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        number: {
+          price: {
+            style: 'currency',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }
+        }
+      }
+    });
+    expect(formatter.number(123456.789, 'price', {currency: 'EUR'})).toBe(
+      '€123,456.79'
+    );
   });
 });
 
@@ -349,6 +388,31 @@ describe('dateTimeRange', () => {
       )
     ).toBe('Jan 10, 2007, 4:00:00 AM – Jan 10, 2008, 5:00:00 AM');
   });
+
+  it('can combine a global format with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        dateTime: {
+          short: {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          }
+        }
+      }
+    });
+    expect(
+      formatter.dateTimeRange(
+        new Date(2007, 0, 10, 10, 0, 0),
+        new Date(2008, 0, 10, 11, 0, 0),
+        'short',
+        {
+          timeZone: 'America/New_York'
+        }
+      )
+    ).toBe('1/10/07, 4:00 AM – 1/10/08, 5:00 AM');
+  });
 });
 
 describe('list', () => {
@@ -372,5 +436,23 @@ describe('list', () => {
         type: 'disjunction'
       })
     ).toBe('apple, banana, or orange');
+  });
+
+  it('can combine a global format with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      formats: {
+        list: {
+          short: {
+            type: 'disjunction'
+          }
+        }
+      }
+    });
+    expect(
+      formatter.list(['apple', 'banana', 'orange'], 'short', {
+        type: 'conjunction'
+      })
+    ).toBe('apple, banana, and orange');
   });
 });
