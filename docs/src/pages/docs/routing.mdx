@@ -456,7 +456,7 @@ If you need to avoid these tradeoffs, you can consider building the same app for
 
 ### Turning off locale detection [#locale-detection]
 
-The middleware will [detect a matching locale](/docs/routing/middleware#locale-detection) based on your routing configuration and the incoming request.
+The middleware will [detect a matching locale](/docs/routing/middleware#locale-detection) based on your routing configuration & the incoming request and will either pass the request through for a matching locale or redirect to one that matches.
 
 If you want to rely entirely on the URL to resolve the locale, you can set the `localeDetection` property to `false`. This will disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
