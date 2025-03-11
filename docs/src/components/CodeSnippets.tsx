@@ -293,23 +293,23 @@ function buildOutput() {
       <span className="line">
         <span data-token="text">┌ ● /</span>
         <span data-token="text"> </span>
-        <span data-token="text">{'           '}2.5 kB</span>
+        <span data-token="text">{'           '}1.5 kB</span>
         <span data-token="text">{'     '}</span>
-        <span data-token="string">115 kB</span>
+        <span data-token="string">102 kB</span>
       </span>
       <span className="line">
         <span data-token="text">├ ● /about</span>
         <span data-token="text">{'       '}</span>
-        <span data-token="text">2.6 kB</span>
+        <span data-token="text">2.2 kB</span>
         <span data-token="text">{'     '}</span>
-        <span data-token="string">116 kB</span>
+        <span data-token="string">102 kB</span>
       </span>
       <span className="line">
         <span data-token="text">└ λ /[username]</span>
         <span data-token="text">{'  '}</span>
-        <span data-token="text">3.2 kB</span>
+        <span data-token="text">3.6 kB</span>
         <span data-token="text">{'     '}</span>
-        <span data-token="string">117 kB</span>
+        <span data-token="string">104 kB</span>
       </span>
       <span className="line"> </span>
       <span className="line">
