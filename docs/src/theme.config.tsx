@@ -27,12 +27,21 @@ export default {
     pre: Pre
   },
   banner: {
+    key: 'banner-learn-next-intl',
     content: (
       <div className="text-center">
-        You‘re viewing the next-intl 4 beta docs
+        Announcing{' '}
+        <a
+          className="underline"
+          href="https://learn.next-intl.dev"
+          rel="noreferrer"
+          target="_blank"
+        >
+          learn.next-intl.dev
+        </a>
+        !
       </div>
-    ),
-    dismissible: false
+    )
   },
   footer: {
     component: Footer
