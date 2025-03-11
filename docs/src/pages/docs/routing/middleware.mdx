@@ -216,8 +216,8 @@ const handleI18nRouting = createMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth().protect();
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect();
 
   return handleI18nRouting(req);
 });
@@ -228,7 +228,7 @@ export const config = {
 };
 ```
 
-(based on `@clerk/nextjs@^5.0.0`)
+(based on `@clerk/nextjs@^6.0.0`)
 
 ### Example: Integrating with Supabase Authentication
 
