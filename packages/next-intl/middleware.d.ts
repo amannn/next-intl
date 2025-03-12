@@ -1,4 +1,4 @@
 // Needed for projects with `moduleResolution: 'node'`
 import createMiddleware from './dist/types/middleware';
 
-export = createMiddleware;
+export default createMiddleware;
