@@ -5,13 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 4.0.0 (2025-03-12)
 
-### ⚠ BREAKING CHANGES
+See [the announcement](https://next-intl.dev/blog/next-intl-4-0).
 
-* See [announcement](https://next-intl.dev/blog/next-intl-4-0)
-
-### Features
-
-* `next-intl@4` ([#1412](https://github.com/amannn/next-intl/issues/1412)) ([172656f](https://github.com/amannn/next-intl/commit/172656fc6a25c6deb2ce6d152eede201262c13bf)) – by @amannn
+([#1412](https://github.com/amannn/next-intl/issues/1412)) ([172656f](https://github.com/amannn/next-intl/commit/172656fc6a25c6deb2ce6d152eede201262c13bf)) – by @amannn
 
 ## 3.26.5 (2025-02-21)
 
