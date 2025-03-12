@@ -1,8 +1,9 @@
 import type {useNow as useNowType} from 'use-intl';
-import useConfig from './useConfig';
+import getDefaultNow from '../server/react-server/getDefaultNow.js';
+import useConfig from './useConfig.js';
 
 export default function useNow(
-  ...[options]: Parameters<typeof useNowType>
+  options?: Parameters<typeof useNowType>[0]
 ): ReturnType<typeof useNowType> {
   if (options?.updateInterval != null) {
     console.error(
@@ -11,5 +12,5 @@ export default function useNow(
   }
 
   const config = useConfig('useNow');
-  return config.now;
+  return config.now ?? getDefaultNow();
 }

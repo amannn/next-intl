@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('never sets a cookie', async ({page}) => {
   async function expectNoCookie() {

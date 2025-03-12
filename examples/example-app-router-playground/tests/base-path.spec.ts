@@ -1,9 +1,9 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 import {assertLocaleCookieValue} from './utils';
 
 it('updates the cookie correctly', async ({page}) => {
   await page.goto('/base/path');
-  await assertLocaleCookieValue(page, 'en', {path: '/base/path'});
+  await assertLocaleCookieValue(page, undefined);
 
   await page.getByRole('button', {name: 'Go to nested page'}).click();
   await expect(page).toHaveURL('/base/path/nested');

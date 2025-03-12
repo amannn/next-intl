@@ -63,13 +63,6 @@ export const routing = defineRouting({
 });
 ```
 
-<Details id="redirect-unprefixed-pathnames">
-<summary>How can I redirect unprefixed pathnames?</summary>
-
-If you want to redirect unprefixed pathnames like `/about` to a prefixed alternative like `/en/about`, you can adjust your middleware matcher to [match unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix) too.
-
-</Details>
-
 #### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
 
 If you want to use no prefix for the default locale (e.g. `/about`), you can configure your routing accordingly:
@@ -83,9 +76,10 @@ export const routing = defineRouting({
 });
 ```
 
-**Important**: For this routing strategy to work as expected, you should additionally adapt your middleware matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
+**Note that:**
 
-Note that if a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
+1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
+2. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
 
 #### Never use a locale prefix [#locale-prefix-never]
 
@@ -109,9 +103,9 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 **Note that:**
 
-1. If you use this strategy, you should adapt your matcher to detect [unprefixed pathnames](/docs/routing/middleware#matcher-no-prefix).
-2. If you don't use domain-based routing, the cookie is now the source of truth for determining the locale. Make sure that your hosting solution reliably returns the `set-cookie` header from the middleware (e.g. Vercel and Cloudflare are known to potentially [strip this header](https://developers.cloudflare.com/cache/concepts/cache-behavior/#interaction-of-set-cookie-response-header-with-cache) for cacheable requests).
-3. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
+1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
+2. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
+3. You can consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference across sessions.
 
 #### Custom prefixes [#locale-prefix-custom]
 
@@ -177,8 +171,8 @@ Since you typically want to define these routes only once internally, you can us
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'de'],
-  defaultLocale: 'en',
+  locales: ['en-US', 'en-UK', 'de'],
+  defaultLocale: 'en-US',
 
   // The `pathnames` object holds pairs of internal and
   // external paths. Based on the locale, the external
@@ -189,29 +183,25 @@ export const routing = defineRouting({
     '/': '/',
     '/blog': '/blog',
 
-    // If locales use different paths, you can
-    // specify each external path per locale
+    // If some locales use different paths, you can
+    // specify the relevant external pathnames
     '/about': {
-      en: '/about',
       de: '/ueber-uns'
     },
 
     // Dynamic params are supported via square brackets
-    '/news/[articleSlug]-[articleId]': {
-      en: '/news/[articleSlug]-[articleId]',
-      de: '/neuigkeiten/[articleSlug]-[articleId]'
+    '/news/[articleSlug]': {
+      de: '/neuigkeiten/[articleSlug]'
     },
 
     // Static pathnames that overlap with dynamic segments
     // will be prioritized over the dynamic segment
     '/news/just-in': {
-      en: '/news/just-in',
       de: '/neuigkeiten/aktuell'
     },
 
     // Also (optional) catch-all segments are supported
     '/categories/[...slug]': {
-      en: '/categories/[...slug]',
       de: '/kategorien/[...slug]'
     }
   }
@@ -297,17 +287,19 @@ In case you're using a system like a CMS to configure localized pathnames, you'l
 
 ```tsx filename="page.tsx"
 import {notFound} from 'next';
+import {Locale} from 'next-intl';
 import {fetchContent} from './cms';
 
 type Props = {
-  params: {
-    locale: string;
+  params: Promise<{
+    locale: Locale;
     slug: Array<string>;
-  };
+  }>;
 };
 
 export default async function CatchAllPage({params}: Props) {
-  const content = await fetchContent(params.locale, params.slug);
+  const {locale, slug} = await params;
+  const content = await fetchContent(locale, slug);
   if (!content) notFound();
 
   // ...
@@ -326,37 +318,49 @@ If you want to serve your localized content based on different domains, you can 
 
 **Examples:**
 
-- `us.example.com/en`
-- `ca.example.com/en`
-- `ca.example.com/fr`
+- `us.example.com`: `en-US`
+- `ca.example.com`: `en-CA`
+- `ca.example.com/fr`: `fr-CA`
+- `fr.example.com`: `fr-FR`
+
+In many cases, `domains` are combined with a [`localePrefix`](#locale-prefix) setting to achieve results as shown above. Also [custom prefixes](#locale-prefix-custom) can be used to customize the user-facing prefix per locale.
 
 ```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
 
 export const routing = defineRouting({
-  locales: ['en', 'fr'],
-  defaultLocale: 'en',
+  locales: ['en-US', 'en-CA', 'fr-CA', 'fr-FR'],
+  defaultLocale: 'en-US',
   domains: [
     {
       domain: 'us.example.com',
-      defaultLocale: 'en',
-      // Optionally restrict the locales available on this domain
-      locales: ['en']
+      defaultLocale: 'en-US',
+      locales: ['en-US']
     },
     {
       domain: 'ca.example.com',
-      defaultLocale: 'en'
-      // If there are no `locales` specified on a domain,
-      // all available locales will be supported here
+      defaultLocale: 'en-CA',
+      locales: ['en-CA', 'fr-CA']
+    },
+    {
+      domain: 'fr.example.com',
+      defaultLocale: 'fr-FR',
+      locales: ['fr-FR']
     }
-  ]
+  ],
+  localePrefix: {
+    mode: 'as-needed',
+    prefixes: {
+      // Cleaner prefix for `ca.example.com/fr`
+      'fr-CA': '/fr'
+    }
+  }
 });
 ```
 
-**Note that:**
+Locales are required to be unique across domains, therefore regional variants are typically used to avoid conflicts. Note however that you don't necessarily need to [provide messages for each locale](/docs/usage/configuration#messages-per-locale) if the overall language is sufficient for your use case.
 
-1. You can optionally remove the locale prefix in pathnames by changing the [`localePrefix`](#locale-prefix) setting. E.g. [`localePrefix: 'never'`](#locale-prefix-never) can be helpful in case you have unique domains per locale.
-2. If no domain matches, the middleware will fall back to the [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
+If no domain matches, the middleware will fall back to the general [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
 
 <Details id="domains-testing">
 <summary>How can I locally test if my setup is working?</summary>
@@ -398,9 +402,7 @@ PORT=3001 npm run dev
 <Details id="domains-localeprefix-individual">
 <summary>Can I use a different `localePrefix` setting per domain?</summary>
 
-Since such a configuration would require reading the domain at runtime, this would prevent the ability to render pages statically. Due to this, `next-intl` doesn't support this configuration out of the box.
-
-However, you can still achieve this by building the app for each domain separately, while injecting diverging routing configuration via an environment variable.
+While this is currently not supported out of the box, you can still achieve this by building the app for each domain separately while injecting diverging routing configuration via an environment variable.
 
 **Example:**
 
@@ -411,51 +413,17 @@ const isUsDomain =
   process.env.VERCEL_PROJECT_PRODUCTION_URL === 'us.example.com';
 
 export const routing = defineRouting({
-  locales: isUsDomain ? ['en'] : ['en', 'fr'],
-  defaultLocale: 'en',
+  locales: isUsDomain ? ['en-US'] : ['en-CA', 'fr-CA'],
+  defaultLocale: isUsDomain ? 'en-US' : 'en-CA',
   localePrefix: isUsDomain ? 'never' : 'always'
 });
 ```
 
 </Details>
 
-<Details id="domains-localeprefix-asneeded">
-<summary>Special case: Using `domains` with `localePrefix: 'as-needed'`</summary>
-
-Since domains can have different default locales, this combination requires some tradeoffs that apply to the [navigation APIs](/docs/routing/navigation) in order for `next-intl` to avoid reading the current host on the server side (which would prevent the usage of static rendering).
-
-1. [`<Link />`](/docs/routing/navigation#link): This component will always render a locale prefix on the server side, even for the default locale of a given domain. However, during hydration on the client side, the prefix is potentially removed, if the default locale of the current domain is used. Note that the temporarily prefixed pathname will always be valid, however the middleware will potentially clean up a superfluous prefix via a redirect if the user clicks on a link before hydration.
-2. [`redirect`](/docs/routing/navigation#redirect): When calling this function, a locale prefix is always added, regardless of the provided locale. However, similar to the handling with `<Link />`, the middleware will potentially clean up a superfluous prefix.
-3. [`getPathname`](/docs/routing/navigation#getpathname): This function requires that a `domain` is passed as part of the arguments in order to avoid ambiguity. This can either be provided statically (e.g. when used in a sitemap), or read from a header like [`x-forwarded-host`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host).
-
-```tsx
-import {getPathname} from '@/i18n/routing';
-import {headers} from 'next/headers';
-
-// Case 1: Statically known domain
-const domain = 'ca.example.com';
-
-// Case 2: Read at runtime (dynamic rendering)
-const domain = headers().get('x-forwarded-host');
-
-// Assuming the current domain is `ca.example.com`,
-// the returned pathname will be `/about`
-const pathname = getPathname({
-  href: '/about',
-  locale: 'en',
-  domain
-});
-```
-
-A `domain` can optionally also be passed to `redirect` in the same manner to ensure that a prefix is only added when necessary. Alternatively, you can also consider redirecting in the middleware or via [`useRouter`](/docs/routing/navigation#usrouter) on the client side.
-
-If you need to avoid these tradeoffs, you can consider building the same app for each domain separately, while injecting diverging routing configuration via an [environment variable](#domains-localeprefix-individual).
-
-</Details>
-
 ### Turning off locale detection [#locale-detection]
 
-The middleware will [detect a matching locale](/docs/routing/middleware#locale-detection) based on your routing configuration and the incoming request.
+The middleware will [detect a matching locale](/docs/routing/middleware#locale-detection) based on your routing configuration & the incoming request and will either pass the request through for a matching locale or redirect to one that matches.
 
 If you want to rely entirely on the URL to resolve the locale, you can set the `localeDetection` property to `false`. This will disable locale detection based on the `accept-language` header and a potentially existing cookie value from a previous visit.
 
@@ -472,11 +440,10 @@ In this case, only the locale prefix and a potentially [matching domain](#domain
 
 ### Locale cookie [#locale-cookie]
 
-By default, the middleware will set a cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for future requests.
+If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
 
 By default, the cookie will be configured with the following attributes:
 
-1. [**`maxAge`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#max-agenumber): This value is set to 1 year so that the preference of the user is kept as long as possible.
 2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
 3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
 
@@ -492,8 +459,8 @@ export const routing = defineRouting({
   localeCookie: {
     // Custom cookie name
     name: 'USER_LOCALE',
-    // Expire in one day
-    maxAge: 60 * 60 * 24
+    // Expire in one year
+    maxAge: 60 * 60 * 24 * 365
   }
 });
 ```
@@ -510,7 +477,20 @@ export const routing = defineRouting({
 });
 ```
 
-Note that the cookie is only set when the user switches the locale and is not updated on every request.
+<Details id="locale-cookie-gdpr">
+<summary>Which `maxAge` value should I consider for GDPR compliance?</summary>
+
+The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies". In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended.
+
+To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires when a browser is closed.
+
+Note that this can be beneficial in comparison to an expiration of a few hours since the cookie is guaranteed to remain active while the browser session lasts. On mobile devices, where browsers are infrequently closed but rather suspended to the background, the cookie can remain active even for an extended period.
+
+The Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
+
+Please note that legal requirements may vary by region, so it's advisable to verify them independently. While we strive to keep this information as up-to-date as possible, we cannot guarantee its accuracy.
+
+</Details>
 
 ### Alternate links [#alternate-links]
 
@@ -548,12 +528,7 @@ link: <https://example.com/en>; rel="alternate"; hreflang="en",
 
 The [`x-default`](https://developers.google.com/search/docs/specialty/international/localized-versions#xdefault) entry is included to point to a variant that can be used if no other language matches the user's browser setting. This special entry is reserved for language selection & detection, in our case issuing a 307 redirect to the best matching locale.
 
-Note that middleware configuration is automatically incorporated with the following special cases:
-
-1. **`localePrefix: 'always'` (default)**: The `x-default` entry is only included for `/`, not for nested pathnames like `/about`. The reason is that the default [matcher](#matcher-config) doesn't handle unprefixed pathnames apart from `/`, therefore these URLs could be 404s. Note that this only applies to the optional `x-default` entry, locale-specific URLs are always included.
-2. **`localePrefix: 'never'`**: Alternate links are entirely turned off since there might not be unique URLs per locale.
-
-Other configuration options like `domains`, `pathnames` and `basePath` are automatically considered.
+Your middleware configuration, including options like `domains`, `pathnames` and `basePath`, is automatically incorporated.
 
 </Details>
 

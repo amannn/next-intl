@@ -1,5 +1,5 @@
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import NumberFormatOptions from './NumberFormatOptions';
+import type DateTimeFormatOptions from './DateTimeFormatOptions.js';
+import type NumberFormatOptions from './NumberFormatOptions.js';
 
 type Formats = {
   number?: Record<string, NumberFormatOptions>;

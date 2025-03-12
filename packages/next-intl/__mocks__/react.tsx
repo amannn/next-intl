@@ -1,4 +1,4 @@
-import {isPromise} from '../src/shared/utils';
+import {isPromise} from '../src/shared/utils.js';
 
 // @ts-expect-error -- React uses CJS
 export * from 'react';

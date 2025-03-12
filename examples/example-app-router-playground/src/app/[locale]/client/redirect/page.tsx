@@ -1,7 +1,7 @@
 'use client';
 
 import {useLocale} from 'next-intl';
-import {redirect} from '@/i18n/routing';
+import {redirect} from '@/i18n/navigation';
 
 export default function ClientRedirectPage() {
   const locale = useLocale();

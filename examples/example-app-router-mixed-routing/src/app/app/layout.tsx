@@ -1,6 +1,6 @@
 import {Metadata} from 'next';
 import {NextIntlClientProvider} from 'next-intl';
-import {getLocale, getMessages} from 'next-intl/server';
+import {getLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import Document from '@/components/Document';
 import AppNavigation from './AppNavigation';
@@ -18,13 +18,9 @@ export const metadata: Metadata = {
 export default async function LocaleLayout({children}: Props) {
   const locale = await getLocale();
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
   return (
     <Document locale={locale}>
-      <NextIntlClientProvider messages={messages}>
+      <NextIntlClientProvider>
         <div className="flex">
           <div className="flex min-h-[100vh] w-[270px] shrink-0 flex-col justify-between bg-slate-100 p-8">
             <AppNavigation />

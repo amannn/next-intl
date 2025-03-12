@@ -1,1 +1,2 @@
-export * from './dist/types/src/react';
+// Needed for projects with `moduleResolution: 'node'`
+export * from './dist/types/react.d.ts';

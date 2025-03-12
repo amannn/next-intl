@@ -1,27 +1,27 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import IntlMessageFormat from 'intl-messageformat';
-import React, {ComponentProps, PropsWithChildren, ReactNode} from 'react';
+import {IntlMessageFormat} from 'intl-messageformat';
+import type {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
-  Formats,
-  IntlError,
+  type Formats,
+  type IntlError,
   IntlErrorCode,
-  RichTranslationValues,
-  TranslationValues
-} from '../core';
-import IntlProvider from './IntlProvider';
-import useTranslations from './useTranslations';
+  type RichTranslationValues,
+  type TranslationValues
+} from '../core.js';
+import IntlProvider from './IntlProvider.js';
+import useTranslations from './useTranslations.js';
 
 // Wrap the library to include a counter for parse
 // invocations for the cache test below.
 vi.mock('intl-messageformat', async (importOriginal) => {
   const ActualIntlMessageFormat: typeof IntlMessageFormat = (
     (await importOriginal()) as any
-  ).default;
+  ).IntlMessageFormat;
 
   return {
-    default: class MockIntlMessageFormat extends ActualIntlMessageFormat {
+    IntlMessageFormat: class MockIntlMessageFormat extends ActualIntlMessageFormat {
       public static invocationsByMessage: Record<string, number> = {};
 
       constructor(
@@ -318,7 +318,7 @@ it('has a stable reference', () => {
 });
 
 it('renders the correct message when the namespace changes', () => {
-  function Component({namespace}: {namespace: string}): JSX.Element {
+  function Component({namespace}: {namespace: string}) {
     const t = useTranslations(namespace);
 
     return <span>{t('title')}</span>;
@@ -745,13 +745,7 @@ describe('error handling', () => {
     const onError = vi.fn();
 
     render(
-      <IntlProvider
-        locale="en"
-        // @ts-expect-error The types don't allow this,
-        // but this shouldn't lead to an error.
-        messages={{a: null}}
-        onError={onError}
-      >
+      <IntlProvider locale="en" messages={{a: null}} onError={onError}>
         <span />
       </IntlProvider>
     );
@@ -776,9 +770,7 @@ describe('error handling', () => {
     expect(onError).toHaveBeenCalledTimes(1);
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.MISSING_MESSAGE);
-    expect(error.message).toBe(
-      'MISSING_MESSAGE: No messages were configured on the provider.'
-    );
+    expect(error.message).toBe('MISSING_MESSAGE: No messages were configured.');
     screen.getByText('Component.test');
   });
 
@@ -880,7 +872,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
@@ -906,7 +897,6 @@ describe('error handling', () => {
     render(
       <IntlProvider
         locale="en"
-        // @ts-expect-error Arrays are not allowed
         messages={{Component: {array: ['a', 'b']}}}
         onError={onError}
       >
@@ -989,89 +979,6 @@ describe('global formats', () => {
   });
 });
 
-describe('default translation values', () => {
-  function renderRichTextMessageWithDefault(
-    message: string,
-    values?: RichTranslationValues,
-    formats?: Formats
-  ) {
-    function Component() {
-      const t = useTranslations();
-      return <>{t.rich('message', values, formats)}</>;
-    }
-
-    return render(
-      <IntlProvider
-        defaultTranslationValues={{
-          important: (children) => <b>{children}</b>
-        }}
-        formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
-        locale="en"
-        messages={{message}}
-        timeZone="Europe/London"
-      >
-        <Component />
-      </IntlProvider>
-    );
-  }
-
-  function renderMessageWithDefault(
-    message: string,
-    values?: TranslationValues,
-    formats?: Formats
-  ) {
-    function Component() {
-      const t = useTranslations();
-      return <>{t('message', values, formats)}</>;
-    }
-
-    return render(
-      <IntlProvider
-        defaultTranslationValues={{
-          value: 123
-        }}
-        formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
-        locale="en"
-        messages={{message}}
-        timeZone="Europe/London"
-      >
-        <Component />
-      </IntlProvider>
-    );
-  }
-
-  it('uses default rich text element', () => {
-    const {container} = renderRichTextMessageWithDefault(
-      'This is <important>important</important> and <important>this as well</important>'
-    );
-    expect(container.innerHTML).toBe(
-      'This is <b>important</b> and <b>this as well</b>'
-    );
-  });
-
-  it('overrides default rich text element', () => {
-    const {container} = renderRichTextMessageWithDefault(
-      'This is <important>important</important> and <important>this as well</important>',
-      {
-        important: (children) => <i>{children}</i>
-      }
-    );
-    expect(container.innerHTML).toBe(
-      'This is <i>important</i> and <i>this as well</i>'
-    );
-  });
-
-  it('uses default translation values', () => {
-    renderMessageWithDefault('Hello {value}');
-    screen.getByText('Hello 123');
-  });
-
-  it('overrides default translation values', () => {
-    renderMessageWithDefault('Hello {value}', {value: 234});
-    screen.getByText('Hello 234');
-  });
-});
-
 describe('performance', () => {
   const MockIntlMessageFormat: typeof IntlMessageFormat & {
     invocationsByMessage: Record<string, number>;
@@ -1081,10 +988,10 @@ describe('performance', () => {
     vi.mock('intl-messageformat', async (original) => {
       const ActualIntlMessageFormat: typeof IntlMessageFormat = (
         (await original()) as any
-      ).default;
+      ).IntlMessageFormat;
 
       return {
-        default: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
+        IntlMessageFormat: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
           public static invocationsByMessage: Record<string, number> = {};
 
           constructor(

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import {Inter} from 'next/font/google';
 import {NextIntlClientProvider} from 'next-intl';
-import {getLocale, getMessages} from 'next-intl/server';
+import {getLocale} from 'next-intl/server';
 import {ReactNode} from 'react';
 import './globals.css';
 
@@ -14,10 +14,6 @@ type Props = {
 export default async function LocaleLayout({children}: Props) {
   const locale = await getLocale();
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
   return (
     <html lang={locale}>
       <head>
@@ -29,9 +25,7 @@ export default async function LocaleLayout({children}: Props) {
           inter.className
         )}
       >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

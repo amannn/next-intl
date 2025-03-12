@@ -1,6 +1,8 @@
 import {MetadataRoute} from 'next';
+import {Locale} from 'next-intl';
 import {host} from '@/config';
-import {Locale, getPathname, routing} from '@/i18n/routing';
+import {routing} from '@/i18n/routing';
+import {getPathname} from '@/i18n/navigation';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [...getEntries('/'), ...getEntries('/pathnames')];

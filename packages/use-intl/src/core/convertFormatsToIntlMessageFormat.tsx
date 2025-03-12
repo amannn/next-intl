@@ -1,27 +1,9 @@
-import IntlMessageFormat, {Formats as IntlFormats} from 'intl-messageformat';
-import DateTimeFormatOptions from './DateTimeFormatOptions';
-import Formats from './Formats';
-import TimeZone from './TimeZone';
-
-function setTimeZoneInFormats(
-  formats: Record<string, DateTimeFormatOptions> | undefined,
-  timeZone: TimeZone
-) {
-  if (!formats) return formats;
-
-  // The only way to set a time zone with `intl-messageformat` is to merge it into the formats
-  // https://github.com/formatjs/formatjs/blob/8256c5271505cf2606e48e3c97ecdd16ede4f1b5/packages/intl/src/message.ts#L15
-  return Object.keys(formats).reduce(
-    (acc: Record<string, DateTimeFormatOptions>, key) => {
-      acc[key] = {
-        timeZone,
-        ...formats[key]
-      };
-      return acc;
-    },
-    {}
-  );
-}
+import {
+  type Formats as IntlFormats,
+  IntlMessageFormat
+} from 'intl-messageformat';
+import type Formats from './Formats.js';
+import type TimeZone from './TimeZone.js';
 
 /**
  * `intl-messageformat` uses separate keys for `date` and `time`, but there's
@@ -31,32 +13,51 @@ function setTimeZoneInFormats(
  * to convert the format before `intl-messageformat` can be used.
  */
 export default function convertFormatsToIntlMessageFormat(
-  formats: Formats,
+  globalFormats?: Formats,
+  inlineFormats?: Formats,
   timeZone?: TimeZone
 ): Partial<IntlFormats> {
-  const formatsWithTimeZone = timeZone
-    ? {...formats, dateTime: setTimeZoneInFormats(formats.dateTime, timeZone)}
-    : formats;
+  const mfDateDefaults = IntlMessageFormat.formats.date as NonNullable<
+    Formats['dateTime']
+  >;
+  const mfTimeDefaults = IntlMessageFormat.formats.time as NonNullable<
+    Formats['dateTime']
+  >;
 
-  const mfDateDefaults = IntlMessageFormat.formats.date as Formats['dateTime'];
-  const defaultDateFormats = timeZone
-    ? setTimeZoneInFormats(mfDateDefaults, timeZone)
-    : mfDateDefaults;
+  const dateTimeFormats = {
+    ...globalFormats?.dateTime,
+    ...inlineFormats?.dateTime
+  };
 
-  const mfTimeDefaults = IntlMessageFormat.formats.time as Formats['dateTime'];
-  const defaultTimeFormats = timeZone
-    ? setTimeZoneInFormats(mfTimeDefaults, timeZone)
-    : mfTimeDefaults;
-
-  return {
-    ...formatsWithTimeZone,
+  const allFormats = {
     date: {
-      ...defaultDateFormats,
-      ...formatsWithTimeZone.dateTime
+      ...mfDateDefaults,
+      ...dateTimeFormats
     },
     time: {
-      ...defaultTimeFormats,
-      ...formatsWithTimeZone.dateTime
+      ...mfTimeDefaults,
+      ...dateTimeFormats
+    },
+    number: {
+      ...globalFormats?.number,
+      ...inlineFormats?.number
     }
+    // (list is not supported in ICU messages)
   };
+
+  if (timeZone) {
+    // The only way to set a time zone with `intl-messageformat` is to merge it into the formats
+    // https://github.com/formatjs/formatjs/blob/8256c5271505cf2606e48e3c97ecdd16ede4f1b5/packages/intl/src/message.ts#L15
+    ['date', 'time'].forEach((property) => {
+      const formats = allFormats[property as keyof typeof allFormats];
+      for (const [key, value] of Object.entries(formats)) {
+        formats[key] = {
+          timeZone,
+          ...value
+        };
+      }
+    });
+  }
+
+  return allFormats;
 }

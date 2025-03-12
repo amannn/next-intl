@@ -1,3 +1,4 @@
-import createMiddleware from './dist/types/src/middleware';
+// Needed for projects with `moduleResolution: 'node'`
+import createMiddleware from './dist/types/middleware';
 
 export = createMiddleware;

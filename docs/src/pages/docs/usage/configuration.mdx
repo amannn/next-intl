@@ -15,50 +15,20 @@ Depending on if you handle [internationalization in Server- or Client Components
 
 `i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and needs to be set up based on whether you're using [i18n routing](/docs/getting-started/app-router) or not.
 
-<Tabs items={['With i18n routing', 'Without i18n routing']}>
-
-<Tabs.Tab>
-
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // This typically corresponds to the `[locale]` segment.
-  let locale = await requestLocale;
-
-  // Ensure that a valid locale is used
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
+  // ...
 
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    messages
+    // ...
   };
 });
 ```
-
-</Tabs.Tab>
-<Tabs.Tab>
-
-```tsx filename="i18n/request.ts"
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async () => {
-  // Provide a static locale, fetch a user setting,
-  // read from `cookies()`, `headers()`, etc.
-  const locale = 'en';
-
-  return {
-    locale,
-    messages: (await import(`../../messages/${locale}.json`)).default
-  };
-});
-```
-
-</Tabs.Tab>
-</Tabs>
 
 The configuration object is created once for each request by internally using React's [`cache`](https://react.dev/reference/react/cache). The first component to use internationalization will call the function defined with `getRequestConfig`.
 
@@ -71,23 +41,12 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'
 );
 ```
-
-</Details>
-
-<Details id="server-request-locale">
-<summary>Which values can the `requestLocale` parameter hold?</summary>
-
-While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
-
-1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
-1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
 
 </Details>
 
@@ -100,16 +59,12 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages} from 'next-intl/server';
 
 export default async function RootLayout(/* ... */) {
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
+  // ...
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
@@ -119,51 +74,38 @@ export default async function RootLayout(/* ... */) {
 These props are inherited if you're rendering `NextIntlClientProvider` from a Server Component:
 
 1. `locale`
-2. `now`
-3. `timeZone`
+2. `messages`
+3. `now`
+4. `timeZone`
+5. `formats`
 
 In contrast, these props can be provided as necessary:
 
-1. `messages` (see [Internationalization in Client Components](/docs/environments/server-client-components#using-internationalization-in-client-components))
-2. `formats`
-3. `defaultTranslationValues`
-4. `onError` and `getMessageFallback`
+1. `onError`
+2. `getMessageFallback`
+
+Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
 
 <Details id="nextintlclientprovider-non-serializable-props">
 <summary>How can I provide non-serializable props like `onError` to `NextIntlClientProvider`?</summary>
 
-React limits the types of props that can be passed to Client Components to the ones that are [serializable](https://react.dev/reference/rsc/use-client#serializable-types). Since `onError`, `getMessageFallback` and `defaultTranslationValues` can receive functions, these configuration options can't be automatically inherited by the client side.
+React limits the types of props that can be passed to Client Components to the ones that are [serializable](https://react.dev/reference/rsc/use-client#serializable-types). Since `onError` and `getMessageFallback` can receive functions, these configuration options can't be automatically inherited by the client side.
 
-In order to define these values, you can wrap `NextIntlClientProvider` with another component that is marked with `'use client'` and defines the relevant props:
+In order to define these values on the client side, you can add a provider that defines these props:
 
-```tsx filename="IntlProvider.tsx"
+```tsx filename="IntlErrorHandlingProvider.tsx"
 'use client';
 
 import {NextIntlClientProvider} from 'next-intl';
 
-export default function IntlProvider({
-  locale,
-  now,
-  timeZone,
-  messages,
-  formats
-}) {
+export default function IntlErrorHandlingProvider({children}) {
   return (
     <NextIntlClientProvider
-      // Define non-serializable props here
-      defaultTranslationValues={{
-        i: (text) => <i>{text}</i>
-      }}
       onError={(error) => console.error(error)}
       getMessageFallback={({namespace, key}) => `${namespace}.${key}`}
-      // Make sure to forward these props to avoid markup mismatches
-      locale={locale}
-      now={now}
-      timeZone={timeZone}
-      // Provide as necessary
-      messages={messages}
-      formats={formats}
-    />
+    >
+      {children}
+    </NextIntlClientProvider>
   );
 }
 ```
@@ -171,26 +113,19 @@ export default function IntlProvider({
 Once you have defined your client-side provider component, you can use it in a Server Component:
 
 ```tsx filename="layout.tsx"
-import IntlProvider from './IntlProvider';
-import {getLocale, getNow, getTimeZone, getMessages} from 'next-intl/server';
+import {NextIntlClientProvider} from 'next-intl';
+import {getLocale} from 'next-intl/server';
+import IntlErrorHandlingProvider from './IntlErrorHandlingProvider';
 
 export default async function RootLayout({children}) {
   const locale = await getLocale();
-  const now = await getNow();
-  const timeZone = await getTimeZone();
-  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <IntlProvider
-          locale={locale}
-          now={now}
-          timeZone={timeZone}
-          messages={messages}
-        >
-          {children}
-        </IntlProvider>
+        <NextIntlClientProvider>
+          <IntlErrorHandlingProvider>{children}</IntlErrorHandlingProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
@@ -199,9 +134,148 @@ export default async function RootLayout({children}) {
 
 By doing this, your provider component will already be part of the client-side bundle and can therefore define and pass functions as props.
 
-**Important:** Be sure to pass explicit `locale`, `timeZone` and `now` props to `NextIntlClientProvider` in this case, since these aren't automatically inherited from a Server Component when you import `NextIntlClientProvider` from a Client Component.
+Note that the inner `NextIntlClientProvider` inherits the configuration from the outer one, only the `onError` and `getMessageFallback` functions are added.
 
 </Details>
+
+## Locale
+
+The `locale` represents an identifier that contains the language and formatting preferences of users, optionally including regional information (e.g. `en-US`). Locales are specified as [IETF BCP 47 language tags](https://en.wikipedia.org/wiki/IETF_language_tag).
+
+<Tabs items={['i18n/request.ts', 'Provider']}>
+<Tabs.Tab>
+
+Depending on if you're using [i18n routing](/docs/getting-started/app-router), you can read the locale from the `requestLocale` parameter or provide a value on your own:
+
+**With i18n routing:**
+
+```tsx filename="i18n/request.ts"
+export default getRequestConfig(async ({requestLocale}) => {
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
+
+  return {
+    locale
+    // ...
+  };
+});
+```
+
+**Without i18n routing:**
+
+```tsx filename="i18n/request.ts"
+export default getRequestConfig(async () => {
+  // Provide a static locale, fetch a user setting,
+  // read from `cookies()`, `headers()`, etc.
+  const locale = 'en';
+
+  return {
+    locale
+    // ...
+  };
+});
+```
+
+<Details id="server-request-locale">
+<summary>Which values can the `requestLocale` parameter hold?</summary>
+
+While the `requestLocale` parameter typically corresponds to the `[locale]` segment that was matched by the middleware, there are three special cases to consider:
+
+1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
+1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to abort the render in this case.
+
+</Details>
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```tsx
+<NextIntlClientProvider locale="en">...</NextIntlClientProvider>
+```
+
+</Tabs.Tab>
+</Tabs>
+
+<Details id="locale-change">
+<summary>How can I change the locale?</summary>
+
+Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale can be changed as follows:
+
+1. **With i18n routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
+2. **Without i18n routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
+
+</Details>
+
+### `useLocale` & `getLocale` [#use-locale]
+
+The current locale of your app is automatically incorporated into hooks like `useTranslations` & `useFormatter` and will affect the rendered output.
+
+In case you need to use this value in other places of your app, e.g. to implement a locale switcher or to pass it to API calls, you can read it via `useLocale` or `getLocale`:
+
+```tsx
+// Regular components
+import {useLocale} from 'next-intl';
+const locale = useLocale();
+
+// Async Server Components
+import {getLocale} from 'next-intl/server';
+const locale = await getLocale();
+```
+
+<Details id="locale-return-value">
+<summary>Which value is returned from `useLocale`?</summary>
+
+Depending on how a component renders, the returned locale corresponds to:
+
+1. **Server Components**: The locale represents the value returned in [`i18n/request.ts`](#i18n-request).
+2. **Client Components**: The locale is received from [`NextIntlClientProvider`](#nextintlclientprovider).
+
+Note that `NextIntlClientProvider` automatically inherits the locale if it is rendered by a Server Component, therefore you rarely need to pass a locale to `NextIntlClientProvider` yourself.
+
+</Details>
+
+<Details id="locale-pages-router">
+<summary>I'm using the Pages Router, how can I access the locale?</summary>
+
+If you use [internationalized routing with the Pages Router](https://nextjs.org/docs/pages/building-your-application/routing/internationalization), you can receive the locale from the router in order to pass it to `NextIntlClientProvider`:
+
+```tsx filename="_app.tsx"
+import {useRouter} from 'next/router';
+
+// ...
+
+const router = useRouter();
+
+return (
+  <NextIntlClientProvider locale={router.locale}>
+    ...
+  </NextIntlClientProvider>;
+);
+```
+
+</Details>
+
+### `Locale` type [#locale-type]
+
+When passing a `locale` to another function, you can use the `Locale` type for the receiving parameter:
+
+```tsx
+import {Locale} from 'next-intl';
+
+async function getPosts(locale: Locale) {
+  // ...
+}
+```
+
+<Callout>
+  By default, `Locale` is typed as `string`. However, you can optionally provide
+  a strict union based on your supported locales for this type by [augmenting
+  the `Locale` type](/docs/workflows/typescript#locale).
+</Callout>
 
 ## Messages
 
@@ -234,40 +308,6 @@ export default getRequestConfig(async () => {
 ```
 
 After messages are configured, they can be used via [`useTranslations`](/docs/usage/messages#rendering-messages-with-usetranslations).
-
-In case you require access to messages in a component, you can read them via `useMessages()` or `getMessages()` from your configuration:
-
-```tsx
-// Regular components
-import {useMessages} from 'next-intl';
-const messages = useMessages();
-
-// Async Server Components
-import {getMessages} from 'next-intl/server';
-const messages = await getMessages();
-```
-
-</Tabs.Tab>
-<Tabs.Tab>
-
-```tsx
-import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
-
-async function Component({children}) {
-  // Read messages configured via `i18n/request.ts`
-  const messages = await getMessages();
-
-  return (
-    <NextIntlClientProvider messages={messages}>
-      {children}
-    </NextIntlClientProvider>
-  );
-}
-```
-
-</Tabs.Tab>
-</Tabs>
 
 <Details id="messages-remote-sources">
 <summary>How can I load messages from remote sources?</summary>
@@ -318,6 +358,67 @@ Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integr
 
 </Details>
 
+<Details id="messages-per-locale">
+<summary>Do I need separate messages for each locale that my app supports?</summary>
+
+Since you have full control over how messages are loaded, you can choose to load messages for example merely based on the overall language, ignoring any regional variants:
+
+```tsx
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // E.g. "en-US", "en-CA", …
+  const locale = 'en-US';
+
+  // E.g. "en"
+  const language = new Intl.Locale(locale).language;
+
+  // Load messages based on the language
+  const messages = (await import(`../../messages/${language}.json`)).default;
+
+  // ...
+});
+```
+
+</Details>
+
+### `useMessages` & `getMessages` [#use-messages]
+
+In case you require access to messages in a component, you can read them via `useMessages()` or `getMessages()` from your configuration:
+
+```tsx
+// Regular components
+import {useMessages} from 'next-intl';
+const messages = useMessages();
+
+// Async Server Components
+import {getMessages} from 'next-intl/server';
+const messages = await getMessages();
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```tsx
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages} from 'next-intl/server';
+import pick from 'lodash/pick';
+
+async function Component({children}) {
+  // Read messages configured via `i18n/request.ts`
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider messages={pick(messages, ['Navigation'])}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
+```
+
+</Tabs.Tab>
+</Tabs>
+
 ## Time zone
 
 Specifying a time zone affects the rendering of dates and times. By default, the time zone of the server runtime will be used, but can be customized as necessary.
@@ -357,6 +458,10 @@ const timeZone = 'Europe/Vienna';
 
 The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
+The time zone in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component. For all other cases, you can specify the value explicitly on a wrapping `NextIntlClientProvider`.
+
+### `useTimeZone` & `getTimeZone` [#use-time-zone]
+
 The configured time zone can be read via `useTimeZone` or `getTimeZone` in components:
 
 ```tsx
@@ -369,16 +474,9 @@ import {getTimeZone} from 'next-intl/server';
 const timeZone = await getTimeZone();
 ```
 
-The time zone in Client Components is automatically inherited from the server
-side if you wrap the relevant components in a `NextIntlClientProvider` that is
-rendered by a Server Component. For all other cases, you can specify the value
-explicitly on a wrapping `NextIntlClientProvider`.
-
 ## Now value [#now]
 
-When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". By default, this is the time a component renders.
-
-If you prefer to override the default, you can provide an explicit value for `now`:
+When formatting [relative dates and times](/docs/usage/dates-times#relative-times), `next-intl` will format times in relation to a reference point in time that is referred to as "now". While it can be beneficial in terms of caching to [provide this value](/docs/usage/dates-times#relative-times-usenow) where necessary, you can provide a global value for `now`, e.g. to ensure consistency when running tests.
 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
@@ -388,11 +486,7 @@ import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => {
   return {
-    // This is the default, a single date instance will be
-    // used by all Server Components to ensure consistency.
-    // Tip: This value can be mocked to a constant value
-    // for consistent results in end-to-end-tests.
-    now: new Date()
+    now: new Date('2024-11-14T10:36:01.516Z')
 
     // ...
   };
@@ -403,13 +497,17 @@ export default getRequestConfig(async () => {
 <Tabs.Tab>
 
 ```tsx
-const now = new Date('2020-11-20T10:36:01.516Z');
+const now = new Date('2024-11-14T10:36:01.516Z');
 
 <NextIntlClientProvider now={now}>...</NextIntlClientProvider>;
 ```
 
 </Tabs.Tab>
 </Tabs>
+
+If a `now` value is provided in `i18n/request.ts`, this will automatically be inherited by Client Components if you wrap them in a `NextIntlClientProvider` that is rendered by a Server Component.
+
+### `useNow` & `getNow` [#use-now]
 
 The configured `now` value can be read in components via `useNow` or `getNow`:
 
@@ -423,10 +521,7 @@ import {getNow} from 'next-intl/server';
 const now = await getNow();
 ```
 
-Similarly to the `timeZone`, the `now` value in Client Components is
-automatically inherited from the server side if you wrap the relevant
-components in a `NextIntlClientProvider` that is rendered by a Server
-Component.
+Note that the returned value defaults to the current date and time, therefore making this hook useful when [providing `now`](/docs/usage/dates-times#relative-times-usenow) for `format.relativeTime` even when you haven't configured a global `now` value.
 
 ## Formats
 
@@ -465,8 +560,6 @@ export default getRequestConfig(async () => {
   };
 });
 ```
-
-Note that `formats` are not automatically inherited by Client Components. If you want to make this available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
 
 </Tabs.Tab>
 <Tabs.Tab>
@@ -516,9 +609,9 @@ function Component() {
 ```
 
 <Callout>
-  You can optionally [specify a global type for
-  `formats`](/docs/workflows/typescript#formats) to get autocompletion and type
-  safety.
+  By default, format names are loosely typed as `string`. However, you can
+  optionally use strict types by [augmenting the `Formats`
+  type](/docs/workflows/typescript#formats).
 </Callout>
 
 Global formats for numbers, dates and times can be referenced in messages too:
@@ -541,53 +634,7 @@ function Component() {
 }
 ```
 
-## Default translation values (deprecated) [#default-translation-values]
-
-<Callout>
-  This feature is deprecated and will be removed in the next major version of `next-intl` ([alternative](/docs/usage/messages#rich-text-reuse-tags)).
-
-</Callout>
-
-To achieve consistent usage of translation values and reduce redundancy, you can define a set of global default values. This configuration can also be used to apply consistent styling of commonly used rich text elements.
-
-<Tabs items={['i18n/request.ts', 'Provider']}>
-<Tabs.Tab>
-
-```tsx filename="i18n/request.tsx"
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async () => {
-  return {
-    defaultTranslationValues: {
-      important: (chunks) => <b>{chunks}</b>,
-      value: 123
-    }
-
-    // ...
-  };
-});
-```
-
-Note that `defaultTranslationValues` are not automatically inherited by Client Components. If you want to make this available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
-
-</Tabs.Tab>
-<Tabs.Tab>
-
-```tsx
-<NextIntlClientProvider
-  defaultTranslationValues={{
-    important: (chunks) => <b>{chunks}</b>,
-    value: 123
-  }}
->
-  ...
-</NextIntlClientProvider>
-```
-
-Note that `NextIntlClientProvider` is a Client Component, therefore if you render it from a Server Component, the props need to be serializable across the server/client boundary (see: [How can I provide non-serializable props to `NextIntlClientProvider`](#nextintlclientprovider-non-serializable-props)).
-
-</Tabs.Tab>
-</Tabs>
+Formats are automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component.
 
 ## Error handling (`onError` & `getMessageFallback`) [#error-handling]
 
@@ -629,7 +676,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components, you should provide the same configuration to [`NextIntlClientProvider`](#nextintlclientprovider).
+Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components too, you can however create a [client-side provider](#nextintlclientprovider-non-serializable-props) that defines these props.
 
 </Tabs.Tab>
 <Tabs.Tab>
@@ -667,61 +714,3 @@ function getMessageFallback({namespace, key, error}) {
 
 </Tabs.Tab>
 </Tabs>
-
-## Locale
-
-The current locale of your app is automatically incorporated into hooks like `useTranslations` & `useFormatter` and will affect the rendered output.
-
-In case you need to use this value in other places of your app, e.g. to implement a locale switcher or to pass it to API calls, you can read it via `useLocale` or `getLocale`:
-
-```tsx
-// Regular components
-import {useLocale} from 'next-intl';
-const locale = useLocale();
-
-// Async Server Components
-import {getLocale} from 'next-intl/server';
-const locale = await getLocale();
-```
-
-<Details id="locale-change">
-<summary>How can I change the locale?</summary>
-
-Depending on if you're using [i18n routing](/docs/getting-started/app-router), the locale can be changed as follows:
-
-1. **With i18n routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
-2. **Without i18n routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
-
-</Details>
-
-<Details id="locale-return-value">
-<summary>Which value is returned from `useLocale`?</summary>
-
-The returned value is resolved based on these priorities:
-
-1. **Server Components**: If you're using [i18n routing](/docs/getting-started/app-router), the returned locale is the one that you've either provided via [`setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) or alternatively the one in the `[locale]` segment that was matched by the middleware. If you're not using i18n routing, the returned locale is the one that you've provided via `getRequestConfig`.
-2. **Client Components**: In this case, the locale is received from `NextIntlClientProvider` or alternatively `useParams().locale`. Note that `NextIntlClientProvider` automatically inherits the locale if the component is rendered by a Server Component. For all other cases, you can specify the value
-   explicitly.
-
-</Details>
-
-<Details id="locale-pages-router">
-<summary>I'm using the Pages Router, how can I access the locale?</summary>
-
-If you use [internationalized routing with the Pages Router](https://nextjs.org/docs/pages/building-your-application/routing/internationalization), you can receive the locale from the router in order to pass it to `NextIntlClientProvider`:
-
-```tsx filename="_app.tsx"
-import {useRouter} from 'next/router';
-
-// ...
-
-const router = useRouter();
-
-return (
-  <NextIntlClientProvider locale={router.locale}>
-    ...
-  </NextIntlClientProvider>;
-);
-```
-
-</Details>

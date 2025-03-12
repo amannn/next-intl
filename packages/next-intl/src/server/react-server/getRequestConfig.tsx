@@ -1,23 +1,19 @@
-import type {IntlConfig} from 'use-intl/core';
+import type {IntlConfig, Locale} from 'use-intl/core';
 
 export type RequestConfig = Omit<IntlConfig, 'locale'> & {
   /**
    * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    **/
-  locale?: IntlConfig['locale'];
+  locale: IntlConfig['locale'];
 };
 
 export type GetRequestConfigParams = {
   /**
-   * Deprecated in favor of `requestLocale` (see https://next-intl.dev/blog/next-intl-3-22#await-request-locale).
-   *
-   * The locale that was matched by the `[locale]` path segment. Note however
-   * that this can be overridden in async APIs when the `locale` is explicitly
-   * passed (e.g. `getTranslations({locale: 'en'})`).
-   *
-   * @deprecated
+   * If you provide an explicit locale to an async server-side function like
+   * `getTranslations({locale: 'en'})`, it will be passed via `locale` to
+   * `getRequestConfig` so you can use it instead of the segment value.
    */
-  locale: string;
+  locale?: Locale;
 
   /**
    * Typically corresponds to the `[locale]` segment that was matched by the middleware.

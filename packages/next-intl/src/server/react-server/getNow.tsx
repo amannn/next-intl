@@ -1,12 +1,7 @@
-import {cache} from 'react';
-import getConfig from './getConfig';
+import type {Locale} from 'use-intl';
+import getConfigNow from './getConfigNow.js';
+import getDefaultNow from './getDefaultNow.js';
 
-async function getNowCachedImpl(locale?: string) {
-  const config = await getConfig(locale);
-  return config.now;
-}
-const getNowCached = cache(getNowCachedImpl);
-
-export default async function getNow(opts?: {locale?: string}): Promise<Date> {
-  return getNowCached(opts?.locale);
+export default async function getNow(opts?: {locale?: Locale}): Promise<Date> {
+  return (await getConfigNow(opts?.locale)) ?? getDefaultNow();
 }

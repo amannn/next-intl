@@ -49,6 +49,7 @@ export default function App() {
 
   return (
     <IntlProvider locale={locale} messages={messages} timeZone={timeZone}>
+      {/* @ts-expect-error */}
       <Outlet />
     </IntlProvider>
   );

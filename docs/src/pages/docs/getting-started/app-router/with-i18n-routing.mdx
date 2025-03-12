@@ -24,18 +24,19 @@ Now, we're going to create the following file structure:
 
 ```
 ├── messages
-│   ├── en.json (1)
+│   ├── en.json
 │   └── ...
-├── next.config.mjs (2)
+├── next.config.ts
 └── src
     ├── i18n
-    │   ├── routing.ts (3)
-    │   └── request.ts (5)
-    ├── middleware.ts (4)
+    │   ├── routing.ts
+    │   ├── navigation.ts
+    │   └── request.ts
+    ├── middleware.ts
     └── app
         └── [locale]
-            ├── layout.tsx (6)
-            └── page.tsx (7)
+            ├── layout.tsx
+            └── page.tsx
 ```
 
 In case you're migrating an existing app to `next-intl`, you'll typically move your existing pages into the `[locale]` folder as part of the setup.
@@ -59,21 +60,20 @@ The simplest option is to add JSON files in your local project folder:
 }
 ```
 
-### `next.config.mjs` [#next-config]
+### `next.config.ts` [#next-config]
 
-Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components—more on this in the following steps.
+Now, set up the plugin which creates an alias to provide a request-specific i18n configuration like your messages to Server Components—more on this in the following steps.
 
-<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs items={['next.config.ts', 'next.config.js']}>
 <Tabs.Tab>
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
+import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const nextConfig: NextConfig = {};
+
 const withNextIntl = createNextIntlPlugin();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
-
 export default withNextIntl(nextConfig);
 ```
 
@@ -116,18 +116,27 @@ export const routing = defineRouting({
   // Used when no locale matches
   defaultLocale: 'en'
 });
-
-// Lightweight wrappers around Next.js' navigation APIs
-// that will consider the routing configuration
-export const {Link, redirect, usePathname, useRouter, getPathname} =
-  createNavigation(routing);
 ```
 
 Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
 
+### `src/i18n/navigation.ts` [#i18n-navigation]
+
+Once we have our routing configuration in place, we can use it to set up the navigation APIs.
+
+```ts filename="src/i18n/navigation.ts"
+import {createNavigation} from 'next-intl/navigation';
+import {routing} from './routing';
+
+// Lightweight wrappers around Next.js' navigation
+// APIs that consider the routing configuration
+export const {Link, redirect, usePathname, useRouter, getPathname} =
+  createNavigation(routing);
+```
+
 ### `src/middleware.ts` [#middleware]
 
-Once we have our routing configuration in place, we can use it to set up the middleware.
+Additionally, we can use our routing configuration to set up the middleware.
 
 ```tsx filename="src/middleware.ts"
 import createMiddleware from 'next-intl/middleware';
@@ -136,10 +145,37 @@ import {routing} from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  // Match all pathnames except for
+  // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+  // - … the ones containing a dot (e.g. `favicon.ico`)
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
+
+<Details id="middleware-matcher-dots">
+  <summary>How can I match pathnames that contain dots like `/users/jane.doe`?</summary>
+
+If you have pathnames where dots are expected, you can match them with explicit entries:
+
+```tsx filename="src/middleware.ts" {10,11}
+// ...
+
+export const config = {
+  matcher: [
+    // Match all pathnames except for
+    // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
+    // - … the ones containing a dot (e.g. `favicon.ico`)
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+
+    // Match all pathnames within `{/:locale}/users`
+    '/([\\w-]+)?/users/(.+)'
+  ];
+}
+```
+
+This will match e.g. `/users/jane.doe`, also optionally with a locale prefix.
+
+</Details>
 
 ### `src/i18n/request.ts` [#i18n-request]
 
@@ -147,16 +183,15 @@ When using features from `next-intl` in Server Components, the relevant configur
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale;
-
-  // Ensure that a valid locale is used
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   return {
     locale,
@@ -172,7 +207,7 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'
@@ -186,40 +221,32 @@ const withNextIntl = createNextIntlPlugin(
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {NextIntlClientProvider} from 'next-intl';
-import {getMessages} from 'next-intl/server';
+import {NextIntlClientProvider, Locale, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
 export default async function LocaleLayout({
   children,
-  params: {locale}
+  params
 }: {
   children: React.ReactNode;
-  params: {locale: string};
+  params: Promise<{locale: string}>;
 }) {
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
-
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
 }
 ```
-
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n/request.ts` here, but `messages` need to be passed explicitly.
 
 ### `src/app/[locale]/page.tsx` [#page]
 
@@ -229,7 +256,7 @@ Now you can use translations and other functionality from `next-intl` in your co
 
 ```tsx filename="app/[locale]/page.tsx"
 import {useTranslations} from 'next-intl';
-import {Link} from '@/i18n/routing';
+import {Link} from '@/i18n/navigation';
 
 export default function HomePage() {
   const t = useTranslations('HomePage');
@@ -297,12 +324,13 @@ export function generateStaticParams() {
 
 ```tsx filename="app/[locale]/layout.tsx"
 import {setRequestLocale} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
-export default async function LocaleLayout({children, params: {locale}}) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+export default async function LocaleLayout({children, params}) {
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
@@ -318,7 +346,9 @@ export default async function LocaleLayout({children, params: {locale}}) {
 ```tsx filename="app/[locale]/page.tsx"
 import {setRequestLocale} from 'next-intl/server';
 
-export default function IndexPage({params: {locale}}) {
+export default function IndexPage({params}) {
+  const {locale} = use(params);
+
   // Enable static rendering
   setRequestLocale(locale);
 
@@ -369,7 +399,8 @@ To achieve this, you can forward the `locale` that you receive from Next.js via 
 ```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'Metadata'});
 
   return {

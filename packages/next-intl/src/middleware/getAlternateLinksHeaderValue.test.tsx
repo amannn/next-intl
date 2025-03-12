@@ -1,10 +1,10 @@
 // @vitest-environment edge-runtime
 
-import {NextRequest} from 'next/server';
+import {NextRequest} from 'next/server.js';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import {Pathnames} from '../routing';
-import {receiveRoutingConfig} from '../routing/config';
-import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue';
+import {receiveRoutingConfig} from '../routing/config.js';
+import type {Pathnames} from '../routing.js';
+import getAlternateLinksHeaderValue from './getAlternateLinksHeaderValue.js';
 
 describe.each([{basePath: undefined}, {basePath: '/base'}])(
   'basePath: $basePath',
@@ -103,7 +103,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://example.com/'),
           resolvedLocale: 'en',
-          localizedPathnames: pathnames['/']
+          localizedPathnames: pathnames['/'],
+          internalTemplateName: '/'
         }).split(', ')
       ).toEqual([
         `<https://example.com${
@@ -120,7 +121,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://example.com/about'),
           resolvedLocale: 'en',
-          localizedPathnames: pathnames['/about']
+          localizedPathnames: pathnames['/about'],
+          internalTemplateName: '/about'
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
@@ -133,7 +135,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://example.com/de/ueber'),
           resolvedLocale: 'de',
-          localizedPathnames: pathnames['/about']
+          localizedPathnames: pathnames['/about'],
+          internalTemplateName: '/about'
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
@@ -146,12 +149,42 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://example.com/users/2'),
           resolvedLocale: 'en',
-          localizedPathnames: pathnames['/users/[userId]']
+          localizedPathnames: pathnames['/users/[userId]'],
+          internalTemplateName: '/users/[userId]'
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/users/2>; rel="alternate"; hreflang="en"`,
         `<https://example.com${basePath}/de/benutzer/2>; rel="alternate"; hreflang="de"`,
         `<https://example.com${basePath}/users/2>; rel="alternate"; hreflang="x-default"`
+      ]);
+    });
+
+    it('works for partial pathnames with undefined entries', () => {
+      const routing = receiveRoutingConfig({
+        defaultLocale: 'en',
+        locales: ['en', 'de', 'ja'],
+        localePrefix: 'as-needed'
+      });
+      const pathnames = {
+        '/': '/',
+        '/about': {
+          de: '/ueber'
+        }
+      };
+
+      expect(
+        getAlternateLinksHeaderValue({
+          routing,
+          request: getMockRequest('https://example.com/about'),
+          resolvedLocale: 'en',
+          localizedPathnames: pathnames['/about'],
+          internalTemplateName: '/about'
+        }).split(', ')
+      ).toEqual([
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
+        `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/ja/about>; rel="alternate"; hreflang="ja"`,
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
     });
 
@@ -184,7 +217,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/en/about>; rel="alternate"; hreflang="en"`,
-        `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`
+        `<https://example.com${basePath}/es/about>; rel="alternate"; hreflang="es"`,
+        `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
     });
 
@@ -196,8 +230,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         domains: [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
-            // (supports all locales)
+            defaultLocale: 'en',
+            locales: ['en', 'es', 'fr']
           },
           {
             domain: 'example.es',
@@ -263,8 +297,8 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         domains: [
           {
             domain: 'example.com',
-            defaultLocale: 'en'
-            // (supports all locales)
+            defaultLocale: 'en',
+            locales: ['en', 'es', 'fr']
           },
           {
             domain: 'example.es',
@@ -403,25 +437,29 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://en.example.com/about'),
           resolvedLocale: 'en',
-          localizedPathnames: routing.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about'],
+          internalTemplateName: '/about'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://ca.example.com/about'),
           resolvedLocale: 'en',
-          localizedPathnames: routing.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about'],
+          internalTemplateName: '/about'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://ca.example.com/fr/a-propos'),
           resolvedLocale: 'fr',
-          localizedPathnames: routing.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about'],
+          internalTemplateName: '/about'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://fr.example.com/a-propos'),
           resolvedLocale: 'fr',
-          localizedPathnames: routing.pathnames!['/about']
+          localizedPathnames: routing.pathnames!['/about'],
+          internalTemplateName: '/about'
         })
       ]
         .map((links) => links.split(', '))
@@ -439,25 +477,29 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
           routing,
           request: getMockRequest('https://en.example.com/users/42'),
           resolvedLocale: 'en',
-          localizedPathnames: routing.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]'],
+          internalTemplateName: '/users/[userId]'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://ca.example.com/users/42'),
           resolvedLocale: 'en',
-          localizedPathnames: routing.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]'],
+          internalTemplateName: '/users/[userId]'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://ca.example.com/fr/utilisateurs/42'),
           resolvedLocale: 'fr',
-          localizedPathnames: routing.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]'],
+          internalTemplateName: '/users/[userId]'
         }),
         getAlternateLinksHeaderValue({
           routing,
           request: getMockRequest('https://fr.example.com/utilisateurs/42'),
           resolvedLocale: 'fr',
-          localizedPathnames: routing.pathnames!['/users/[userId]']
+          localizedPathnames: routing.pathnames!['/users/[userId]'],
+          internalTemplateName: '/users/[userId]'
         })
       ]
         .map((links) => links.split(', '))
@@ -600,7 +642,8 @@ describe('trailingSlash: true', () => {
             routing,
             request: new NextRequest(new URL('https://example.com' + pathname)),
             resolvedLocale: 'en',
-            localizedPathnames: pathnames['/about']
+            localizedPathnames: pathnames['/about'],
+            internalTemplateName: '/about'
           }).split(', ')
         ).toEqual([
           `<https://example.com/about/>; rel="alternate"; hreflang="en"`,
@@ -617,7 +660,8 @@ describe('trailingSlash: true', () => {
             routing,
             request: new NextRequest(new URL('https://example.com' + pathname)),
             resolvedLocale: 'en',
-            localizedPathnames: pathnames['/']
+            localizedPathnames: pathnames['/'],
+            internalTemplateName: '/'
           }).split(', ')
         ).toEqual([
           `<https://example.com/>; rel="alternate"; hreflang="en"`,

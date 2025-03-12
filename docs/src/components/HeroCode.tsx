@@ -164,7 +164,7 @@ const files = [
           <span data-token="text">:</span>
           <span data-token="text"> </span>
           <span data-token="string">
-            "{'{'}firstname{'}'}'s profile"
+            "{'{'}firstName{'}'}'s profile"
           </span>
           <span data-token="text">,</span>
         </span>

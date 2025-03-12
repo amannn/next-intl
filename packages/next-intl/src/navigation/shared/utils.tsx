@@ -1,21 +1,23 @@
 import type {ParsedUrlQueryInput} from 'node:querystring';
 import type {UrlObject} from 'url';
-import {ResolvedRoutingConfig} from '../../routing/config';
-import {
+import type {Locale} from 'use-intl';
+import type {ResolvedRoutingConfig} from '../../routing/config.js';
+import type {
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from '../../routing/types';
+} from '../../routing/types.js';
 import {
   getLocalePrefix,
+  getLocalizedTemplate,
   getSortedPathnames,
   isLocalizableHref,
   matchesPathname,
   normalizeTrailingSlash,
   prefixPathname
-} from '../../shared/utils';
-import StrictParams from './StrictParams';
+} from '../../shared/utils.js';
+import type StrictParams from './StrictParams.js';
 
 type SearchParamValue = ParsedUrlQueryInput[keyof ParsedUrlQueryInput];
 
@@ -49,7 +51,7 @@ export function normalizeNameOrNameWithParams<Pathname>(
   href:
     | HrefOrHrefWithParams<Pathname>
     | {
-        locale: string;
+        locale: Locale;
         href: HrefOrHrefWithParams<Pathname>;
       }
 ): {
@@ -131,10 +133,10 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 
   function compilePath(
-    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>]
+    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
+    internalPathname: string
   ) {
-    const template =
-      typeof namedPath === 'string' ? namedPath : namedPath[locale];
+    const template = getLocalizedTemplate(namedPath, locale, internalPathname);
     let compiled = template;
 
     if (params) {
@@ -175,12 +177,12 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
   if (typeof pathname === 'string') {
     const namedPath = getNamedPath(pathname);
-    const compiled = compilePath(namedPath);
+    const compiled = compilePath(namedPath, pathname);
     return compiled;
   } else {
-    const {pathname: href, ...rest} = pathname;
-    const namedPath = getNamedPath(href);
-    const compiled = compilePath(namedPath);
+    const {pathname: internalPathname, ...rest} = pathname;
+    const namedPath = getNamedPath(internalPathname);
+    const compiled = compilePath(namedPath, internalPathname);
     const result: UrlObject = {...rest, pathname: compiled};
     return result;
   }
@@ -202,7 +204,16 @@ export function getRoute<AppLocales extends Locales>(
         return internalPathname;
       }
     } else {
-      if (matchesPathname(localizedPathnamesOrPathname[locale], decoded)) {
+      if (
+        matchesPathname(
+          getLocalizedTemplate(
+            localizedPathnamesOrPathname,
+            locale,
+            internalPathname
+          ),
+          decoded
+        )
+      ) {
         return internalPathname;
       }
     }
@@ -250,7 +261,6 @@ export function applyPathnamePrefix<
         'defaultLocale'
       >
     >,
-  domain?: string,
   force?: boolean
 ): string {
   const {mode} = routing.localePrefix;
@@ -262,29 +272,11 @@ export function applyPathnamePrefix<
     if (mode === 'always') {
       shouldPrefix = true;
     } else if (mode === 'as-needed') {
-      let defaultLocale: AppLocales[number] | undefined = routing.defaultLocale;
-
-      if (routing.domains) {
-        const domainConfig = routing.domains.find(
-          (cur) => cur.domain === domain
-        );
-        if (domainConfig) {
-          defaultLocale = domainConfig.defaultLocale;
-        } else if (process.env.NODE_ENV !== 'production') {
-          if (!domain) {
-            console.error(
-              "You're using a routing configuration with `localePrefix: 'as-needed'` in combination with `domains`. In order to compute a correct pathname, you need to provide a `domain` parameter.\n\nSee: https://next-intl.dev/docs/routing#domains-localeprefix-asneeded"
-            );
-          } else {
-            // If a domain was provided, but it wasn't found in the routing
-            // configuration, this can be an indicator that the user is on
-            // localhost. In this case, we can simply use the domain-agnostic
-            // default locale.
-          }
-        }
-      }
-
-      shouldPrefix = defaultLocale !== locale;
+      shouldPrefix = routing.domains
+        ? // Since locales are unique per domain, any locale that is a
+          // default locale of a domain doesn't require a prefix
+          !routing.domains.some((cur) => cur.defaultLocale === locale)
+        : locale !== routing.defaultLocale;
     }
   }
 

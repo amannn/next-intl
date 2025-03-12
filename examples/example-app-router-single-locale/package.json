@@ -2,27 +2,32 @@
   "name": "example-app-router-single-locale",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "lint": "eslint src && tsc && prettier src --check",
     "test": "playwright test",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "next": "^14.2.4",
-    "next-intl": "^3.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "^15.2.2",
+    "next-intl": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.1",
+    "@playwright/test": "^1.51.0",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
-    "@types/react": "^18.3.3",
+    "@types/react": "^19.0.0",
+    "@eslint/eslintrc": "^3.1.0",
     "eslint": "^9.11.1",
-    "eslint-config-molindo": "^8.0.0",
+    "eslint-config-next": "^15.2.0",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": {
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "none"
+  }
 }
