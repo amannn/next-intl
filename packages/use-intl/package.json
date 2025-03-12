@@ -67,15 +67,15 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
     "@size-limit/preset-small-lib": "^11.1.4",
-    "@testing-library/react": "^16.0.0",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20.14.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "date-fns": "^3.6.0",
-    "eslint": "^9.11.1",
+    "date-fns": "^4.1.0",
+    "eslint": "^9.22.0",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
-    "prettier": "^3.3.3",
+    "prettier": "^3.5.3",
     "publint": "^0.2.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -83,7 +83,7 @@
     "size-limit": "^11.1.4",
     "tinyspy": "^3.0.0",
     "tools": "workspace:^",
-    "typescript": "^5.5.3",
+    "typescript": "^5.8.2",
     "vitest": "^2.0.2"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
