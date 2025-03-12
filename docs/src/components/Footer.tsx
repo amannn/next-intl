@@ -19,6 +19,8 @@ export default function Footer() {
           <FooterLink href="/examples">Examples</FooterLink>
           <FooterSeparator />
           <FooterLink href="/blog">Blog</FooterLink>
+          <FooterSeparator />
+          <FooterLink href="https://next-intl.dev">v4</FooterLink>
         </div>
         <div>
           <FooterLink href={config.blueskyUrl} target="_blank">

@@ -28,20 +28,7 @@ export default {
   },
   banner: {
     key: 'banner-learn-next-intl',
-    content: (
-      <div className="text-center">
-        Announcing{' '}
-        <a
-          className="underline"
-          href="https://learn.next-intl.dev"
-          rel="noreferrer"
-          target="_blank"
-        >
-          learn.next-intl.dev
-        </a>
-        !
-      </div>
-    )
+    content: "You're browsing the v3 docs"
   },
   footer: {
     component: Footer
