@@ -318,7 +318,7 @@ it('has a stable reference', () => {
 });
 
 it('renders the correct message when the namespace changes', () => {
-  function Component({namespace}: {namespace: string}): JSX.Element {
+  function Component({namespace}: {namespace: string}) {
     const t = useTranslations(namespace);
 
     return <span>{t('title')}</span>;
