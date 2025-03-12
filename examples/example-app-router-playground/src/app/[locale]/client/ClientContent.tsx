@@ -1,6 +1,6 @@
 'use client';
 
-import {useFormatter, useLocale, useNow, useTimeZone} from 'next-intl';
+import {useLocale, useNow, useTimeZone} from 'next-intl';
 import {Link, usePathname} from '@/i18n/navigation';
 
 export default function ClientContent() {
@@ -17,24 +17,4 @@ export default function ClientContent() {
       <p data-testid="Locale">{locale}</p>
     </>
   );
-}
-
-export function TypeTest() {
-  const format = useFormatter();
-
-  format.dateTime(new Date(), 'medium');
-  // @ts-expect-error
-  format.dateTime(new Date(), 'unknown');
-
-  format.dateTimeRange(new Date(), new Date(), 'medium');
-  // @ts-expect-error
-  format.dateTimeRange(new Date(), new Date(), 'unknown');
-
-  format.number(420, 'precise');
-  // @ts-expect-error
-  format.number(420, 'unknown');
-
-  format.list(['this', 'is', 'a', 'list'], 'enumeration');
-  // @ts-expect-error
-  format.list(['this', 'is', 'a', 'list'], 'unknown');
 }

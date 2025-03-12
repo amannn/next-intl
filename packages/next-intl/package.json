@@ -21,46 +21,69 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
-    "lint:package": "publint && attw --pack",
+    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
     "lint:prettier": "prettier src --check",
     "prepublishOnly": "turbo build && cp ../../README.md .",
     "postpublish": "git checkout . && rm ./README.md",
     "size": "size-limit"
   },
-  "main": "./dist/index.react-client.js",
-  "module": "./dist/esm/index.react-client.js",
-  "typings": "./dist/types/src/index.react-client.d.ts",
+  "type": "module",
+  "main": "./dist/esm/production/index.react-client.js",
+  "typings": "./dist/types/index.react-client.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.react-client.d.ts",
-      "react-server": "./dist/esm/index.react-server.js",
-      "default": "./dist/index.react-client.js"
+      "types": "./dist/types/index.react-client.d.ts",
+      "react-server": {
+        "development": "./dist/esm/development/index.react-server.js",
+        "default": "./dist/esm/production/index.react-server.js"
+      },
+      "development": "./dist/esm/development/index.react-client.js",
+      "default": "./dist/esm/production/index.react-client.js"
     },
     "./server": {
-      "types": "./server.d.ts",
-      "react-server": "./dist/esm/server.react-server.js",
-      "default": "./dist/server.react-client.js"
+      "types": "./dist/types/server.react-server.d.ts",
+      "react-server": {
+        "development": "./dist/esm/development/server.react-server.js",
+        "default": "./dist/esm/production/server.react-server.js"
+      },
+      "development": "./dist/esm/development/server.react-client.js",
+      "default": "./dist/esm/production/server.react-client.js"
     },
     "./config": {
-      "types": "./config.d.ts",
-      "default": "./dist/config.js"
+      "types": "./dist/types/config.d.ts",
+      "development": "./dist/esm/development/config.js",
+      "default": "./dist/esm/production/config.js"
     },
     "./middleware": {
-      "types": "./middleware.d.ts",
-      "default": "./dist/middleware.js"
+      "types": "./dist/types/middleware.d.ts",
+      "development": "./dist/esm/development/middleware.js",
+      "default": "./dist/esm/production/middleware.js"
     },
     "./navigation": {
-      "types": "./navigation.d.ts",
-      "react-server": "./dist/esm/navigation.react-server.js",
-      "default": "./dist/navigation.react-client.js"
+      "types": "./dist/types/navigation.react-client.d.ts",
+      "react-server": {
+        "development": "./dist/esm/development/navigation.react-server.js",
+        "default": "./dist/esm/production/navigation.react-server.js"
+      },
+      "development": "./dist/esm/development/navigation.react-client.js",
+      "default": "./dist/esm/production/navigation.react-client.js"
     },
     "./routing": {
-      "types": "./routing.d.ts",
-      "default": "./dist/routing.js"
+      "types": "./dist/types/routing.d.ts",
+      "development": "./dist/esm/development/routing.js",
+      "default": "./dist/esm/production/routing.js"
     },
     "./plugin": {
-      "types": "./plugin.d.ts",
-      "default": "./dist/plugin.js"
+      "import": {
+        "types": "./dist/types/plugin.d.ts",
+        "development": "./dist/esm/development/plugin.js",
+        "default": "./dist/esm/production/plugin.js"
+      },
+      "require": {
+        "types": "./plugin.d.cts",
+        "default": "./dist/cjs/development/plugin.cjs"
+      },
+      "default": "./dist/esm/production/plugin.js"
     }
   },
   "files": [
@@ -69,6 +92,7 @@
     "navigation.d.ts",
     "middleware.d.ts",
     "plugin.d.ts",
+    "plugin.d.cts",
     "routing.d.ts",
     "config.d.ts"
   ],
@@ -91,13 +115,19 @@
     "use-intl": "workspace:^"
   },
   "peerDependencies": {
-    "next": "^10.0.0 || ^11.0.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0",
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
+    "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0",
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
+    "@arethetypeswrong/cli": "^0.16.4",
     "@edge-runtime/vm": "^3.2.0",
-    "@size-limit/preset-big-lib": "^11.1.4",
+    "@size-limit/preset-small-lib": "^11.1.4",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
@@ -115,6 +145,7 @@
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
     "size-limit": "^11.1.4",
+    "tools": "workspace:^",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
   },

@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && tsc && prettier src --check",
-    "test": "jest --config config/jest.json",
+    "test": "jest",
     "build": "next build",
     "start": "next start"
   },

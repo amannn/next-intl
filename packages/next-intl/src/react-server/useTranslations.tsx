@@ -1,10 +1,10 @@
 import type {useTranslations as useTranslationsType} from 'use-intl';
-import getBaseTranslator from './getTranslator';
-import useConfig from './useConfig';
+import getServerTranslator from '../server/react-server/getServerTranslator.js';
+import useConfig from './useConfig.js';
 
 export default function useTranslations(
   ...[namespace]: Parameters<typeof useTranslationsType>
 ): ReturnType<typeof useTranslationsType> {
   const config = useConfig('useTranslations');
-  return getBaseTranslator(config, namespace);
+  return getServerTranslator(config, namespace);
 }

@@ -1,11 +1,13 @@
+import {Locale} from 'next-intl';
+
 type Props = {
   params: Promise<{
-    locale: string;
+    locale: Locale;
   }>;
 };
 
-export default async function AboutPage(props: Props) {
-  const params = await props.params;
-  const Content = (await import(`./${params.locale}.mdx`)).default;
+export default async function AboutPage({params}: Props) {
+  const {locale} = await params;
+  const Content = (await import(`./${locale}.mdx`)).default;
   return <Content />;
 }

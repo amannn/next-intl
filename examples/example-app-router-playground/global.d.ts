@@ -1,13 +1,11 @@
-import en from './messages/en.json';
-import {formats} from './src/i18n/request';
+import {formats} from '@/i18n/request';
+import {routing} from '@/i18n/routing';
+import messages from './messages/en.json';
 
-type Messages = typeof en;
-type Formats = typeof formats;
-
-declare global {
-  // Use type safe message keys with `next-intl`
-  interface IntlMessages extends Messages {}
-
-  // Use type safe formats with `next-intl`
-  interface IntlFormats extends Formats {}
+declare module 'next-intl' {
+  interface AppConfig {
+    Locale: (typeof routing.locales)[number];
+    Formats: typeof formats;
+    Messages: typeof messages;
+  }
 }

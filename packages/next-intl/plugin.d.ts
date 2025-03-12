@@ -1,8 +1,4 @@
-import {NextConfig} from 'next';
+// Needed for projects with `moduleResolution: 'node'`
+import plugin from './dist/types/plugin';
 
-function createNextIntlPlugin(
-  i18nPath?: string
-): (config?: NextConfig) => NextConfig;
-
-// Currently only available via CJS
-export = createNextIntlPlugin;
+export = plugin;

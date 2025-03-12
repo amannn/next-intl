@@ -1,12 +1,12 @@
-import type {NextResponse} from 'next/server';
-import {
+import type {NextResponse} from 'next/server.js';
+import type {
   DomainsConfig,
   LocalePrefix,
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales,
   Pathnames
-} from './types';
+} from './types.js';
 
 type CookieAttributes = Pick<
   NonNullable<Parameters<typeof NextResponse.prototype.cookies.set>['2']>,
@@ -151,13 +151,12 @@ export function receiveRoutingConfig<
   };
 }
 
-export function receiveLocaleCookie(
+function receiveLocaleCookie(
   localeCookie?: boolean | CookieAttributes
 ): InitializedLocaleCookieConfig {
   return (localeCookie ?? true)
     ? {
         name: 'NEXT_LOCALE',
-        maxAge: 31536000, // 1 year
         sameSite: 'lax',
         ...(typeof localeCookie === 'object' && localeCookie)
 
@@ -173,9 +172,9 @@ export type LocaleCookieConfig = Omit<
   CookieAttributes,
   'name' | 'maxAge' | 'sameSite'
 > &
-  Required<Pick<CookieAttributes, 'name' | 'maxAge' | 'sameSite'>>;
+  Required<Pick<CookieAttributes, 'name' | 'sameSite'>>;
 
-export function receiveLocalePrefixConfig<
+function receiveLocalePrefixConfig<
   AppLocales extends Locales,
   AppLocalePrefixMode extends LocalePrefixMode
 >(localePrefix?: LocalePrefix<AppLocales, AppLocalePrefixMode>) {

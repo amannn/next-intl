@@ -46,7 +46,4 @@ export const useFormatter = callHook(
   base_useFormatter
 ) as typeof base_useFormatter;
 
-// Replace `useLocale` export from `use-intl`
-export {default as useLocale} from './useLocale';
-
-export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider';
+export {default as NextIntlClientProvider} from '../shared/NextIntlClientProvider.js';

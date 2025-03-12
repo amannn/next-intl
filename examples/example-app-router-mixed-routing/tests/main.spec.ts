@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('syncs the locale across the public and private pages', async ({page}) => {
   await page.goto('/');

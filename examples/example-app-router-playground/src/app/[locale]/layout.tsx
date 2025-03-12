@@ -1,6 +1,7 @@
 import {Metadata} from 'next';
 import {Inter} from 'next/font/google';
 import {notFound} from 'next/navigation';
+import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
 import {
   getFormatter,
   getNow,
@@ -13,7 +14,7 @@ import Navigation from '../../components/Navigation';
 
 type Props = {
   children: ReactNode;
-  params: Promise<{locale: string}>;
+  params: Promise<{locale: Locale}>;
 };
 
 const inter = Inter({subsets: ['latin']});
@@ -35,7 +36,7 @@ export async function generateMetadata(
     description: t('description'),
     other: {
       currentYear: formatter.dateTime(now, {year: 'numeric'}),
-      timeZone: timeZone || 'N/A'
+      timeZone
     }
   };
 }
@@ -44,7 +45,7 @@ export default async function LocaleLayout({params, children}: Props) {
   const {locale} = await params;
 
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
@@ -58,8 +59,10 @@ export default async function LocaleLayout({params, children}: Props) {
             lineHeight: 1.5
           }}
         >
-          <Navigation />
-          {children}
+          <NextIntlClientProvider>
+            <Navigation />
+            {children}
+          </NextIntlClientProvider>
         </div>
       </body>
     </html>

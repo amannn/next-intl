@@ -1,1 +1,2 @@
-export * from './dist/types/src/routing';
+// Needed for projects with `moduleResolution: 'node'`
+export * from './dist/types/routing';

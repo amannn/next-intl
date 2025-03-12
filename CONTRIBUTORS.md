@@ -86,7 +86,7 @@ Note that the exclamation mark syntax (`!`) for indicating breaking changes is c
 
 Other prefixes that are allowed and will _not_ create a release are the following:
 
-1. `docs`: Documentation-only changes
+1. `docs`: Documentation-only changes and updated examples
 2. `test`: Missing tests were added or existing ones corrected
 3. `ci`: Changes to CI configuration files and scripts
 4. `build`: Changes that affect the build system or external dependencies

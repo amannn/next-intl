@@ -1,6 +1,7 @@
-import AbstractIntlMessages from './AbstractIntlMessages';
-import IntlError, {IntlErrorCode} from './IntlError';
-import joinPath from './joinPath';
+import type AbstractIntlMessages from './AbstractIntlMessages.js';
+import IntlError from './IntlError.js';
+import IntlErrorCode from './IntlErrorCode.js';
+import joinPath from './joinPath.js';
 
 function validateMessagesSegment(
   messages: AbstractIntlMessages,
