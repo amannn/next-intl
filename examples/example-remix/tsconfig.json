@@ -1,8 +1,8 @@
 {
-  "extends": "eslint-config-molindo/tsconfig.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "strict": true,
     "types": ["@remix-run/node"],
     "isolatedModules": true,
     "esModuleInterop": true,
