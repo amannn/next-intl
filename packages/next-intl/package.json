@@ -125,8 +125,8 @@
     }
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.16.4",
-    "@edge-runtime/vm": "^3.2.0",
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@edge-runtime/vm": "^5.0.0",
     "@size-limit/preset-small-lib": "^11.2.0",
     "@testing-library/react": "^16.2.0",
     "@types/negotiator": "^0.6.3",
@@ -144,10 +144,10 @@
     "react-dom": "^19.0.0",
     "rollup": "^4.18.0",
     "rollup-plugin-preserve-directives": "0.4.0",
-    "size-limit": "^11.1.4",
+    "size-limit": "^11.2.0",
     "tools": "workspace:^",
     "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "vitest": "^3.0.8"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }
