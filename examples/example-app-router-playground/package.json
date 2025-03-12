@@ -19,18 +19,18 @@
     "next-intl": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@jest/globals": "^29.7.0",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
-    "@next/bundle-analyzer": "^15.1.6",
-    "@next/mdx": "^15.0.0-rc.1",
+    "@next/bundle-analyzer": "^15.2.2",
+    "@next/mdx": "^15.2.2",
     "@playwright/test": "^1.51.0",
-    "@storybook/nextjs": "^8.5.1",
-    "@storybook/react": "^8.5.1",
+    "@storybook/nextjs": "^8.6.4",
+    "@storybook/react": "^8.6.4",
     "@testing-library/react": "^16.2.0",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.5",
@@ -46,8 +46,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.3.3",
     "sharp": "^0.33.4",
-    "storybook": "^8.5.1",
-    "storybook-next-intl": "^1.1.4",
+    "storybook": "^8.6.4",
+    "storybook-next-intl": "^1.2.5",
     "typescript": "^5.5.3"
   },
   "prettier": {

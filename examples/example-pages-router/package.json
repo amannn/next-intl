@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "next": "^15.2.2",
     "next-intl": "^4.0.0",
     "react": "^19.0.0",

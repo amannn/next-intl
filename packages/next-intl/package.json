@@ -127,7 +127,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
     "@edge-runtime/vm": "^3.2.0",
-    "@size-limit/preset-small-lib": "^11.1.4",
+    "@size-limit/preset-small-lib": "^11.2.0",
     "@testing-library/react": "^16.2.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.5",
