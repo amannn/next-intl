@@ -65,26 +65,26 @@
     "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.16.4",
-    "@size-limit/preset-small-lib": "^11.1.4",
-    "@testing-library/react": "^16.0.0",
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20.14.5",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "date-fns": "^3.6.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "date-fns": "^4.1.0",
     "eslint": "^9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "rollup": "^4.18.0",
-    "size-limit": "^11.1.4",
+    "size-limit": "^11.2.0",
     "tinyspy": "^3.0.0",
     "tools": "workspace:^",
     "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "vitest": "^3.0.8"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }

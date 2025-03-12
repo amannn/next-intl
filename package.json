@@ -6,10 +6,10 @@
     "publish": "lerna publish"
   },
   "devDependencies": {
-    "@lerna-lite/cli": "^3.9.0",
-    "@lerna-lite/publish": "^3.9.0",
-    "conventional-changelog-conventionalcommits": "^7.0.0",
-    "turbo": "^2.2.3"
+    "@lerna-lite/cli": "^3.12.1",
+    "@lerna-lite/publish": "^3.12.2",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "turbo": "^2.4.4"
   },
   "pnpm": {
     "overrides": {

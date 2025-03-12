@@ -1,5 +1,5 @@
 import {useMDXComponents} from 'nextra/mdx';
-import {ComponentProps, useEffect, useReducer} from 'react';
+import {ComponentProps, ReactNode, useEffect, useReducer} from 'react';
 import useLocationHash from '@/hooks/useLocationHash';
 
 type Props = ComponentProps<'details'>;
@@ -12,7 +12,7 @@ export default function Details({children, id, ...rest}: Props) {
 
   const OriginalDetails = useMDXComponents().details as (
     props: Props
-  ) => JSX.Element;
+  ) => ReactNode;
 
   useEffect(() => {
     // Use cases:

@@ -5,6 +5,7 @@ import {usePathname} from 'next/navigation.js';
 import {
   type ComponentProps,
   type MouseEvent,
+  type ReactNode,
   type Ref,
   forwardRef
 } from 'react';
@@ -47,7 +48,7 @@ function BaseLink(
 
   // Somehow the types for `next/link` don't work as expected
   // when `moduleResolution: "nodenext"` is used.
-  const Link = NextLink as unknown as (props: NextLinkProps) => JSX.Element;
+  const Link = NextLink as unknown as (props: NextLinkProps) => ReactNode;
 
   return (
     <Link
