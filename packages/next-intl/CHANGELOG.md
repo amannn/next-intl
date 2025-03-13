@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.0.2 (2025-03-13)
+
+### Bug Fixes
+
+* Allow to use `IntlErrorCode` in user code ([#1788](https://github.com/amannn/next-intl/issues/1788)) ([913d307](https://github.com/amannn/next-intl/commit/913d3078ac63892ab086214a0418ca37b382cd7e)), closes [#1787](https://github.com/amannn/next-intl/issues/1787) – by @amannn
+
 ## 4.0.1 (2025-03-12)
 
 ### Bug Fixes
