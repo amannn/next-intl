@@ -47,7 +47,7 @@
     "prettier": "^3.3.3",
     "sharp": "^0.33.4",
     "storybook": "^8.6.4",
-    "storybook-next-intl": "^1.2.5",
+    "storybook-next-intl": "^1.2.6",
     "typescript": "^5.5.3"
   },
   "prettier": {
