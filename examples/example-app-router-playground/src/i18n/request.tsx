@@ -1,5 +1,5 @@
 import {headers} from 'next/headers';
-import {Formats, hasLocale} from 'next-intl';
+import {Formats, hasLocale, IntlErrorCode} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
@@ -56,7 +56,7 @@ export default getRequestConfig(async ({requestLocale}) => {
       if (
         error.message ===
         (process.env.NODE_ENV === 'production'
-          ? 'MISSING_MESSAGE'
+          ? IntlErrorCode.MISSING_MESSAGE
           : 'MISSING_MESSAGE: Could not resolve `missing` in `Index`.')
       ) {
         // Do nothing, this error is triggered on purpose
