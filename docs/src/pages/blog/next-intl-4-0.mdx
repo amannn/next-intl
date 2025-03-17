@@ -188,6 +188,8 @@ The build output of `next-intl` has been modernized and now leverages the follow
 2. **Modern JSX transform:** The peer dependency for React has been bumped to v17 in order to use the more efficient, modern JSX transform.
 3. **Modern syntax:** Syntax is now compiled down to the Browserslist `defaults` query, which is a shortcut for ">0.5%, last 2 versions, Firefox ESR, not dead"—a baseline that is considered a reasonable target for modern apps.
 
+If you're using `next-intl` with Jest or Vitest, please also refer to the new [testing docs](/docs/environments/testing).
+
 With these changes, the bundle size of `next-intl` has been reduced by ~7% ([PR #1470](https://github.com/amannn/next-intl/pull/1470)).
 
 ## Improved inheritance of `NextIntlClientProvider` [#nextintlclientprovider-inheritance]
