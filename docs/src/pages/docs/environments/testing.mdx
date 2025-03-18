@@ -29,7 +29,7 @@ To avoid having to mock server components, it can be beneficial to define compon
 
 Vitest correctly assumes a file extension though, therefore for the time being, if you're using [`createNavigation`](/docs/routing/navigation), you need to ask Vitest to process imports within `next-intl`:
 
-```tsx
+```tsx filename="vitest.config.mts"
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
@@ -48,7 +48,7 @@ export default defineConfig({
 
 Since Jest doesn't have built-in ESM support, you need to instruct Jest to transform imports from `next-intl`:
 
-```tsx
+```tsx filename="jest.config.js"
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({dir: './'});
