@@ -65,7 +65,7 @@ export const routing = defineRouting({
 
 #### `localePrefix: 'as-needed'` [#locale-prefix-as-needed]
 
-If you want to use no prefix for the default locale (e.g. `/about`), you can configure your routing accordingly:
+If you want to use no prefix for the default locale (e.g. `/about`) while keeping it for other locales (e.g. `/de/about`), you can configure your routing accordingly:
 
 ```tsx filename="routing.ts" {5}
 import {defineRouting} from 'next-intl/routing';
@@ -79,7 +79,8 @@ export const routing = defineRouting({
 **Note that:**
 
 1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
-2. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
+2. The middleware will by default set a [cookie](#locale-cookie) to remember the user's locale preference. If no explicit locale prefix is present in the pathname, then [locale detection](/docs/routing/middleware#locale-detection-prefix) will potentially redirect users to the latest locale that was matched based on the cookie value (e.g. `/` → `/de`).
+3. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
 
 #### `localePrefix: 'never'` [#locale-prefix-never]
 
