@@ -3,7 +3,7 @@ import Card from '@/components/Card';
 import Cards from '@/components/Cards';
 import Callout from '@/components/Callout';
 
-# Next.js internationalized routing
+# Routing
 
 <Callout>
   Routing APIs are only needed when you're using [i18n
@@ -17,7 +17,7 @@ import Callout from '@/components/Callout';
 
 This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/ueber-uns`).
 
-## Define routing
+## `defineRouting`
 
 The routing configuration that is shared between the [middleware](/docs/routing/middleware) and [the navigation APIs](/docs/routing/navigation) can be defined with the `defineRouting` function.
 
@@ -46,11 +46,11 @@ Still, in case you're defining other routing config, make sure to keep them in s
 
 </Details>
 
-### Locale prefix
+### `localePrefix`
 
 By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `/en/about` → `app/[locale]/about/page.tsx`). You can however adapt the routing to optionally remove the prefix or customize it per locale by configuring the `localePrefix` setting.
 
-#### Always use a locale prefix (default) [#locale-prefix-always]
+#### `localePrefix: 'always'` (default) [#locale-prefix-always]
 
 By default, pathnames always start with the locale (e.g. `/en/about`).
 
@@ -63,7 +63,7 @@ export const routing = defineRouting({
 });
 ```
 
-#### Don't use a locale prefix for the default locale [#locale-prefix-as-needed]
+#### `localePrefix: 'as-needed'` [#locale-prefix-as-needed]
 
 If you want to use no prefix for the default locale (e.g. `/about`), you can configure your routing accordingly:
 
@@ -81,7 +81,7 @@ export const routing = defineRouting({
 1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
 2. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
 
-#### Never use a locale prefix [#locale-prefix-never]
+#### `localePrefix: 'never'` [#locale-prefix-never]
 
 If you'd like to provide a locale to `next-intl`, e.g. based on user settings, you can consider setting up `next-intl` [without i18n routing](/docs/getting-started/app-router/without-i18n-routing). This way, you don't need to use the routing integration in the first place.
 
@@ -158,7 +158,7 @@ If you'd like to encode custom information in the locale, you can use arbitrary 
 
 </Details>
 
-### Localized pathnames [#pathnames]
+### `pathnames` [#pathnames]
 
 Many apps choose to localize pathnames, especially when search engine optimization is relevant, e.g.:
 
@@ -312,7 +312,7 @@ Furthermore, in case you provide a locale switcher, it might require special car
 
 </Details>
 
-### Domains
+### `domains`
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales via the `domains` setting.
 
@@ -421,7 +421,7 @@ export const routing = defineRouting({
 
 </Details>
 
-### Turning off locale detection [#locale-detection]
+### `localeDetection` [#locale-detection]
 
 The middleware will [detect a matching locale](/docs/routing/middleware#locale-detection) based on your routing configuration & the incoming request and will either pass the request through for a matching locale or redirect to one that matches.
 
@@ -438,14 +438,14 @@ export const routing = defineRouting({
 
 In this case, only the locale prefix and a potentially [matching domain](#domains) are used to determine the locale.
 
-### Locale cookie [#locale-cookie]
+### `localeCookie`
 
 If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
 
 By default, the cookie will be configured with the following attributes:
 
 2. [**`sameSite`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#samesitesamesite-value): This value is set to `lax` so that the cookie can be set when coming from an external site.
-3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#base-path) if configured.
+3. [**`path`**](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#pathpath-value): This value is not set by default, but will use the value of your [`basePath`](#basepath) if configured.
 
 If you have more specific requirements, you can adjust these settings accordingly:
 
@@ -492,7 +492,7 @@ Please note that legal requirements may vary by region, so it's advisable to ver
 
 </Details>
 
-### Alternate links [#alternate-links]
+### `alternateLinks` [#alternate-links]
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
@@ -559,7 +559,11 @@ export default async function middleware(request: NextRequest) {
 
 </Details>
 
-### Base path
+## `next.config.ts` [#next-config]
+
+Apart from your routing configuration, `next-intl` will also incorporate settings from [`next.config.ts`](https://nextjs.org/docs/pages/api-reference/config/next-config-js).
+
+### `basePath`
 
 The `next-intl` middleware as well as [the navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
 
@@ -578,8 +582,8 @@ export const config = {
 };
 ```
 
-### Trailing slash
+### `trailingSlash`
 
 If you have [`trailingSlash`](https://nextjs.org/docs/app/api-reference/next-config-js/trailingSlash) set to `true` in your Next.js config, this setting will be taken into account by the middleware and the navigation APIs.
 
-Note that if you're using [localized pathnames](#pathnames), your internal and external pathnames can be defined either with or without a trailing slash as they will be normalized internally.
+Note that if you're using [`pathnames`](#pathnames), your internal and external pathnames can be defined either with or without a trailing slash as they will be normalized internally.

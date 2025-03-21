@@ -8,7 +8,9 @@ import Details from '@/components/Details';
   routing](/docs/getting-started/app-router).
 </Callout>
 
-The middleware receives a [`routing`](/docs/routing#define-routing) configuration and takes care of:
+The middleware can be created via `createMiddleware`.
+
+It receives a [`routing`](/docs/routing#define-routing) configuration and takes care of:
 
 1. Locale negotiation
 2. Applying relevant redirects & rewrites
@@ -45,7 +47,7 @@ In this case, the locale is detected based on these priorities:
 3. A locale can be matched based on the [`accept-language` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
 4. As a last resort, the `defaultLocale` is used
 
-To change the locale, users can visit a prefixed route. This will take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header and will update the previous cookie value.
+To change the locale, users can visit a prefixed route. This will take precedence over a previously matched locale that is saved in a cookie or the `accept-language` header and will update a previous cookie value.
 
 **Example workflow:**
 
@@ -91,17 +93,6 @@ Since the middleware is aware of all your domains, if a domain receives a reques
 2. The app renders `<Link locale="fr" href="/">Switch to French</Link>` to allow the user to change the locale to `fr`.
 3. When the link is clicked, a request to `us.example.com/fr` is initiated.
 4. The middleware recognizes that the user wants to switch to another domain and responds with a redirect to `ca.example.com/fr`.
-
-<Details id="domain-matching">
-<summary>How is the best-matching domain for a given locale detected?</summary>
-
-The best-matching domain is detected based on these priorities:
-
-1. Stay on the current domain if the locale is supported here
-2. Use an alternative domain where the locale is configured as the `defaultLocale`
-3. Use an alternative domain that supports the locale
-
-</Details>
 
 ## Matcher config
 
