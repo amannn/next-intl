@@ -168,7 +168,10 @@ Unknown routes will be passed through as-is, but will receive relevant locale pr
 
 <Details id="link-prefetching">
 <summary>How does prefetching of localized links work?</summary>
-Just like `next/link`, by default all links are prefetched. The one exception to this is that links to other locales aren't prefetched, because this may result in prematurely overwriting the locale cookie.
+
+`<Link />` from `next-intl` inherits the default prefetch behavior from `next/link`.
+
+The one exception to this is when you've set the `locale` prop. In this case, the link will not be prefetched, because this would otherwise result in prematurely overwriting the [locale cookie](/docs/routing#locale-cookie) as part of the prefetch request.
 
 </Details>
 

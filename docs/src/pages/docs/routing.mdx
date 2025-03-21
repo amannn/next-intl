@@ -440,7 +440,7 @@ export const routing = defineRouting({
 
 In this case, only the locale prefix and a potentially [matching domain](#domains) are used to determine the locale.
 
-### `localeCookie`
+### `localeCookie` [#locale-cookie]
 
 If a user changes the locale to a value that doesn't match the `accept-language` header, `next-intl` will set a session cookie called `NEXT_LOCALE` that contains the most recently detected locale. This is used to [remember the user's locale](/docs/routing/middleware#locale-detection) preference for subsequent requests.
 
