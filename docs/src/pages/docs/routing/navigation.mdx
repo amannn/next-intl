@@ -152,6 +152,28 @@ In case you're using the [`pathnames`](/docs/routing#pathnames) setting, the `hr
 
 </Details>
 
+<Details id="link-locale">
+<summary>Why does `<Link />` always set a locale prefix when using the `locale` prop?</summary>
+
+If you're providing a `locale` prop, typically to change the locale of the target page, you might notice that the link's `href` will always include a locale prefix, even if you're using a [`localePrefix`](/docs/routing#locale-prefix) setting other than `always`.
+
+**Example:**
+
+If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed) and `en` is your default locale, then the `href` for this link will still be `/en/about`:
+
+```tsx
+// Links to `/en/about`
+<Link href="/about" locale="en">
+  About
+</Link>
+```
+
+The reason for this is that a potential [cookie](/docs/routing#locale-cookie) may need to be updated before the user can visit the unprefixed route at `/about`. The prefixed pathname will take care of this and will subsequently redirect to the unprefixed route. This behavior is necessary because links might be interacted with before your page is hydrated and client-side code would have a chance to update the cookie.
+
+If you'd like to avoid this behavior, you can instead use [`useRouter`](#userouter) to switch the locale, which can rely on updating the cookie on the client side before navigating to the target page.
+
+</Details>
+
 <Details id="link-unknown-routes">
 <summary>How can I link to unknown routes when using the `pathnames` setting?</summary>
 
