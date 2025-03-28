@@ -71,7 +71,7 @@ React is not particularly happy when it encounters such a situation:
 
 > Text content does not match server-rendered HTML
 
-We'll likely get better error reporting for this type of error in [Next.js 15](https://nextjs.org/blog/next-15-rc#hydration-error-improvements) (yay!), but the error still won't vanish by itself—or at least not yet. Interestingly, there's a discussion about React patching the `Date` object in the future, which could potentially help to mitigate this issue.
+Interestingly, there's a discussion about React patching the `Date` object in the future, which could potentially help to mitigate this issue.
 
 <Tweet id="1785691330988986587" />
 
@@ -121,7 +121,7 @@ The `now` prop that we're passing to `BlogPostPublishedDate` is an instance of `
 
 It's worth mentioning that the published date will now update based on the caching rules of the page, therefore if your page renders statically, you might want to consider introducing a [`revalidate`](https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration) interval.
 
-There's an argument that you might even _want_ to render an updated date on the client side—however, this approach comes with trade-offs. Since the final render now depends on your app's hydration, this can lead to a noticable "flicker" or layout shift as the content updates, affecting core web vitals like [Largest Contentful Paint (LCP)](https://web.dev/articles/lcp) and [Cumulative Layout Shift (CLS)](https://web.dev/articles/cls). Due to this, getting the initial render on the server side right might still be preferable.
+There's an argument that you might even _want_ to render an updated date on the client side—however, this approach comes with the tradeoff that your final render depends on client-side code to be executed. If this is what makes sense for your use case, you can instead use [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that it's ok for this markup to be updated on the client side.
 
 Are we done yet?
 
@@ -279,7 +279,7 @@ The challenge we've discussed in this post is rather about the centralization an
 import {getRequestConfig} from 'next-intl/server';
 
 export default getRequestConfig(async () => ({
-  // (defaults to the current time)
+  // (opt-in to use a shared value across the app)
   now: new Date(),
 
   // (defaults to the server's time zone)
@@ -291,6 +291,8 @@ export default getRequestConfig(async () => ({
   // ...
 }));
 ```
+
+It's worth noting that a shared value for `now` is opt-in, as some apps might prefer rendering updated dates on the client side when using [relative time formatting](/docs/usage/dates-times#relative-times) or might be fine with slightly diverging dates in favor of granular cache control when using [`dynamicIO`](/docs/usage/dates-times#relative-times-server).
 
 Note that, as the name of `getRequestConfig` implies, the configuration object can be created per request, allowing for dynamic configuration based on a given user's preferences.
 
@@ -318,6 +320,8 @@ export default function BlogPostPublishedDate({published}: Props) {
 Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout), commonly placed in the root layout of your app, inherits this configuration and makes it available to all client-side code.
 
 As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This configuration is then passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
+
+(this post has been updated for `next-intl@4.0`)
 
 ---
 
