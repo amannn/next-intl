@@ -8,7 +8,7 @@ import Callout from '@/components/Callout';
 
 However, you can optionally provide supplemental definitions to augment the types that `next-intl` works with, enabling improved autocompletion and type safety across your app.
 
-```tsx filename="global.d.ts"
+```tsx filename="global.ts"
 import {routing} from '@/i18n/routing';
 import {formats} from '@/i18n/request';
 import messages from './messages/en.json';
@@ -53,7 +53,7 @@ To enable this validation, you can adapt `AppConfig` as follows:
 <Tabs items={['With i18n routing', 'Without i18n routing']}>
 <Tabs.Tab>
 
-```tsx filename="global.d.ts"
+```tsx filename="global.ts"
 import {routing} from '@/i18n/routing';
 
 declare module 'next-intl' {
@@ -67,7 +67,7 @@ declare module 'next-intl' {
 </Tabs.Tab>
 <Tabs.Tab>
 
-```tsx filename="global.d.ts"
+```tsx filename="global.ts"
 // Potentially imported from a shared config
 const locales = ['en', 'de'] as const;
 
@@ -109,7 +109,7 @@ function About() {
 
 To enable this validation, you can adapt `AppConfig` as follows:
 
-```ts filename="global.d.ts"
+```ts filename="global.ts"
 import messages from './messages/en.json';
 
 declare module 'next-intl' {
@@ -289,7 +289,7 @@ export const formats = {
 
 Now, you can include the `formats` in your `AppConfig`:
 
-```ts filename="global.d.ts"
+```ts filename="global.ts"
 import {formats} from '@/i18n/request';
 
 declare module 'next-intl' {
@@ -305,6 +305,5 @@ declare module 'next-intl' {
 If you're encountering problems, double check that:
 
 1. The interface uses the correct name `AppConfig`.
-2. You're using correct paths for all modules you're importing into your global declaration file.
-3. Your type declaration file is included in `tsconfig.json`.
-4. Your editor has loaded the latest types. When in doubt, restart your editor.
+2. Your type declaration file is included in `tsconfig.json`.
+3. Your editor has loaded the latest types. When in doubt, restart your editor.

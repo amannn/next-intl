@@ -31,7 +31,7 @@ After type-safe [`Formats`](/docs/usage/configuration#formats) was added in `nex
 With `next-intl@4.0`, both `Messages` as well as `Formats` can now be registered under a single type that is scoped to `next-intl` and no longer affects the global scope:
 
 ```tsx
-// global.d.ts
+// global.ts
 
 import {formats} from '@/i18n/request';
 import en from './messages/en.json';
@@ -51,7 +51,7 @@ See the updated [TypeScript augmentation](/docs/workflows/typescript) guide.
 Building on the new type augmentation mechanism, `next-intl@4.0` now allows you to strictly type locales across your app:
 
 ```tsx
-// global.d.ts
+// global.ts
 
 import {routing} from '@/i18n/routing';
 
