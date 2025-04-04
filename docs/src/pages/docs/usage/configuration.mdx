@@ -64,7 +64,7 @@ export default async function RootLayout(/* ... */) {
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>...</NextIntlClientProvider>
       </body>
     </html>
   );
@@ -79,12 +79,24 @@ These props are inherited if you're rendering `NextIntlClientProvider` from a Se
 4. `timeZone`
 5. `formats`
 
-In contrast, these props can be provided as necessary:
+If you don't want to inherit some of these props, e.g. because you're selective about how you use [internationalization in Server & Client Components](/docs/environments/server-client-components), you can opt-out:
+
+```tsx filename="layout.tsx"
+<NextIntlClientProvider
+  // Don't pass any messages to the client
+  messages={null}
+  // ...
+>
+  ...
+</NextIntlClientProvider>
+```
+
+Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
+
+In contrast, these props are not inherited:
 
 1. `onError`
 2. `getMessageFallback`
-
-Additionally, nested instances of `NextIntlClientProvider` will inherit configuration from their respective ancestors. Note however that individual props are treated as atomic, therefore e.g. `messages` need to be merged manually—if necessary.
 
 <Details id="nextintlclientprovider-non-serializable-props">
 <summary>How can I provide non-serializable props like `onError` to `NextIntlClientProvider`?</summary>
@@ -410,7 +422,7 @@ async function Component({children}) {
 
   return (
     <NextIntlClientProvider messages={pick(messages, ['Navigation'])}>
-      {children}
+      ...
     </NextIntlClientProvider>
   );
 }

@@ -208,11 +208,21 @@ Due to this, you can now remove these props from `NextIntlClientProvider` if you
 -  messages={messages}
 -  formats={formats}
 >
-  {/* ... */}
+  ...
 </NextIntlClientProvider>
 ```
 
-If you don't want to inherit these props, you can either opt-out via `messages={null}` and `formats={null}`, or by passing a specific value for these props.
+If you don't want to inherit these props and stick to the previous behavior, you can opt-out:
+
+```tsx
+<NextIntlClientProvider
+  // Don't pass these to the client
+  messages={null}
+  formats={null}
+>
+  ...
+</NextIntlClientProvider>
+```
 
 With this, `NextIntlClientProvider` now inherits all of your configuration, with the minor exception of [error handling functions](/docs/usage/configuration#error-handling). Since functions are not serializable, they cannot be passed across the server/client boundary. However, [an alternative](https://github.com/amannn/next-intl/issues/1285) for this is also on the horizon.
 
