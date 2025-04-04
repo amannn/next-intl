@@ -169,7 +169,7 @@ export const config = {
     // Match all pathnames within `{/:locale}/users`
     '/([\\w-]+)?/users/(.+)'
   ]
-}
+};
 ```
 
 This will match e.g. `/users/jane.doe`, also optionally with a locale prefix.
@@ -249,8 +249,6 @@ export default async function LocaleLayout({
 
 ### `src/app/[locale]/page.tsx` [#page]
 
-And that's it!
-
 Now you can use translations and other functionality from `next-intl` in your components:
 
 ```tsx filename="app/[locale]/page.tsx"
@@ -268,7 +266,20 @@ export default function HomePage() {
 }
 ```
 
+In case of async components, you can use the awaitable `getTranslations` function instead:
+
+```tsx filename="app/[locale]/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
 </Steps>
+
+That's all it takes!
 
 In case you ran into an issue, have a look at [the App Router example](/examples#app-router) to explore a working app.
 

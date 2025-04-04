@@ -351,7 +351,12 @@ If you pass messages to `NextIntlClientProvider`, Next.js will emit them during 
 
 However, as the general rule for optimization goes: Always measure before you optimize. If your app already performs well, there's no need for optimization.
 
-Note that an automatic, compiler-driven approach for automatically splitting messages is being evaluated in [`next-intl#1`](https://github.com/amannn/next-intl/issues/1).
+There are currently two research areas that aim to maximize the performance of using messages on the client side:
+
+1. [Automatic tree shaking of messages](https://github.com/amannn/next-intl/issues/1)
+2. [Ahead-of-time compilation of messages](https://github.com/amannn/next-intl/issues/962)
+
+The goal of these are to optimize the patterns you're already using with `next-intl`, enabling best-in-class performance for your app without changes to your code.
 
 </Details>
 
