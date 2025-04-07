@@ -354,7 +354,9 @@ export default async function LocaleLayout({children, params}) {
 ```
 
 ```tsx filename="app/[locale]/page.tsx"
+import {use} from 'react';
 import {setRequestLocale} from 'next-intl/server';
+import {useTranslations} from 'next-intl';
 
 export default function IndexPage({params}) {
   const {locale} = use(params);
