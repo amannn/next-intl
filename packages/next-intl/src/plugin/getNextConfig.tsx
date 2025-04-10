@@ -68,20 +68,15 @@ export default function getNextConfig(
           pluginConfig.requestConfig
       );
     }
-
-    // `NextConfig['turbo']` is stable in Next.js 15. In case the
-    // experimental feature is removed in the future, we should
-    // replace this accordingly in a future major version.
-    nextIntlConfig.experimental = {
-      ...nextConfig?.experimental,
-      turbo: {
-        ...nextConfig?.experimental?.turbo,
-        resolveAlias: {
-          ...nextConfig?.experimental?.turbo?.resolveAlias,
-          // Turbo aliases don't work with absolute
-          // paths (see error handling above)
-          'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
-        }
+    
+    // https://nextjs.org/blog/next-15-3#turbopack-configuration-in-nextconfigts-stable
+    nextIntlConfig.turbopack = {
+      ...nextConfig?.turbopack,
+      resolveAlias: {
+        ...nextConfig?.turbopack?.resolveAlias,
+        // Turbo aliases don't work with absolute
+        // paths (see error handling above)
+        'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
       }
     };
   } else {
