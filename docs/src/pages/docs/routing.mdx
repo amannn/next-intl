@@ -495,14 +495,14 @@ Please note that legal requirements may vary by region, so it's advisable to ver
 
 </Details>
 
-### `alternateLinks` [#alternate-links]
+### `alternateLinks` (`hreflang`) [#alternate-links]
 
 The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
 However, there are cases where you may want to provide these links yourself:
 
 1. You have pages that are only available for certain locales
-2. You're using an external system like a CMS to manage localized slugs of your pages
+2. You're using an external system like a CMS to manage pathnames of your pages
 
 In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`.
 
