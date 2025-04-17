@@ -107,7 +107,6 @@ To share the configuration between these two places, we'll set up `routing.ts`:
 
 ```ts filename="src/i18n/routing.ts"
 import {defineRouting} from 'next-intl/routing';
-import {createNavigation} from 'next-intl/navigation';
 
 export const routing = defineRouting({
   // A list of all locales that are supported
@@ -165,12 +164,12 @@ export const config = {
     // Match all pathnames except for
     // - … if they start with `/api`, `/trpc`, `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
-    '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
+    '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
 
     // Match all pathnames within `{/:locale}/users`
     '/([\\w-]+)?/users/(.+)'
-  ];
-}
+  ]
+};
 ```
 
 This will match e.g. `/users/jane.doe`, also optionally with a locale prefix.
@@ -221,7 +220,7 @@ const withNextIntl = createNextIntlPlugin(
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
 
 ```tsx filename="app/[locale]/layout.tsx"
-import {NextIntlClientProvider, Locale, hasLocale} from 'next-intl';
+import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 
@@ -250,8 +249,6 @@ export default async function LocaleLayout({
 
 ### `src/app/[locale]/page.tsx` [#page]
 
-And that's it!
-
 Now you can use translations and other functionality from `next-intl` in your components:
 
 ```tsx filename="app/[locale]/page.tsx"
@@ -269,7 +266,20 @@ export default function HomePage() {
 }
 ```
 
+In case of async components, you can use the awaitable `getTranslations` function instead:
+
+```tsx filename="app/[locale]/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
 </Steps>
+
+That's all it takes!
 
 In case you ran into an issue, have a look at [the App Router example](/examples#app-router) to explore a working app.
 
@@ -344,7 +354,9 @@ export default async function LocaleLayout({children, params}) {
 ```
 
 ```tsx filename="app/[locale]/page.tsx"
+import {use} from 'react';
 import {setRequestLocale} from 'next-intl/server';
+import {useTranslations} from 'next-intl';
 
 export default function IndexPage({params}) {
   const {locale} = use(params);

@@ -117,7 +117,18 @@ Regarding performance, async functions and hooks can be used interchangeably. Th
 
 Depending on your situation, you may need to handle internationalization in Client Components. Providing all messages to the client side is the easiest way to get started, therefore `next-intl` automatically does this when you render [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider). This is a reasonable approach for many apps.
 
-However, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app.
+However, you can be more selective about which messages are passed to the client side if you're interested in optimizing the performance of your app:
+
+```tsx filename="layout.tsx"
+<NextIntlClientProvider
+  // Don't pass any messages to the client
+  messages={null}
+>
+  ...
+</NextIntlClientProvider>
+```
+
+You can still add another instance of `NextIntlClientProvider` for certain parts of your app in case you want to pass `messages` to the client there.
 
 There are several options for using translations from `next-intl` in Client Components, listed here in order of enabling the best performance:
 
@@ -305,7 +316,7 @@ export default function Counter() {
 ```
 
 <Details id="messages-client-namespaces">
-<summary>How can I know the messages I need to provide to the client side?</summary>
+<summary>How can I know which messages I need to provide to the client side?</summary>
 
 Currently, the messages you select for being passed to the client side need to be picked based on knowledge about the implementation of the wrapped components.
 
@@ -324,7 +335,7 @@ export default async function RootLayout(/* ... */) {
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>...</NextIntlClientProvider>
       </body>
     </html>
   );
@@ -340,7 +351,12 @@ If you pass messages to `NextIntlClientProvider`, Next.js will emit them during 
 
 However, as the general rule for optimization goes: Always measure before you optimize. If your app already performs well, there's no need for optimization.
 
-Note that an automatic, compiler-driven approach for automatically splitting messages is being evaluated in [`next-intl#1`](https://github.com/amannn/next-intl/issues/1).
+There are currently two research areas that aim to maximize the performance of using messages on the client side:
+
+1. [Automatic tree shaking of messages](https://github.com/amannn/next-intl/issues/1)
+2. [Ahead-of-time compilation of messages](https://github.com/amannn/next-intl/issues/962)
+
+The goal of these are to optimize the patterns you're already using with `next-intl`, enabling best-in-class performance for your app without changes to your code.
 
 </Details>
 

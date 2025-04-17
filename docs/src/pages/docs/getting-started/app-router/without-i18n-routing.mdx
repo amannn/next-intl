@@ -160,6 +160,17 @@ export default function HomePage() {
 }
 ```
 
+In case of async components, you can use the awaitable `getTranslations` function instead:
+
+```tsx filename="app/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
 </Steps>
 
 That's all it takes!

@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "4.0.0",
+  "version": "4.0.2",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
@@ -72,7 +72,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "date-fns": "^4.1.0",
-    "eslint": "^9.11.1",
+    "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "prettier": "^3.3.3",

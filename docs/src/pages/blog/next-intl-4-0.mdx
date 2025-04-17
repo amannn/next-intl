@@ -31,7 +31,7 @@ After type-safe [`Formats`](/docs/usage/configuration#formats) was added in `nex
 With `next-intl@4.0`, both `Messages` as well as `Formats` can now be registered under a single type that is scoped to `next-intl` and no longer affects the global scope:
 
 ```tsx
-// global.d.ts
+// global.ts
 
 import {formats} from '@/i18n/request';
 import en from './messages/en.json';
@@ -51,7 +51,7 @@ See the updated [TypeScript augmentation](/docs/workflows/typescript) guide.
 Building on the new type augmentation mechanism, `next-intl@4.0` now allows you to strictly type locales across your app:
 
 ```tsx
-// global.d.ts
+// global.ts
 
 import {routing} from '@/i18n/routing';
 
@@ -188,6 +188,8 @@ The build output of `next-intl` has been modernized and now leverages the follow
 2. **Modern JSX transform:** The peer dependency for React has been bumped to v17 in order to use the more efficient, modern JSX transform.
 3. **Modern syntax:** Syntax is now compiled down to the Browserslist `defaults` query, which is a shortcut for ">0.5%, last 2 versions, Firefox ESR, not dead"—a baseline that is considered a reasonable target for modern apps.
 
+If you're using `next-intl` with Jest or Vitest, please also refer to the new [testing docs](/docs/environments/testing).
+
 With these changes, the bundle size of `next-intl` has been reduced by ~7% ([PR #1470](https://github.com/amannn/next-intl/pull/1470)).
 
 ## Improved inheritance of `NextIntlClientProvider` [#nextintlclientprovider-inheritance]
@@ -206,11 +208,21 @@ Due to this, you can now remove these props from `NextIntlClientProvider` if you
 -  messages={messages}
 -  formats={formats}
 >
-  {/* ... */}
+  ...
 </NextIntlClientProvider>
 ```
 
-If you don't want to inherit these props, you can either opt-out via `messages={null}` and `formats={null}`, or by passing a specific value for these props.
+If you don't want to inherit these props and stick to the previous behavior, you can opt-out:
+
+```tsx
+<NextIntlClientProvider
+  // Don't pass these to the client
+  messages={null}
+  formats={null}
+>
+  ...
+</NextIntlClientProvider>
+```
 
 With this, `NextIntlClientProvider` now inherits all of your configuration, with the minor exception of [error handling functions](/docs/usage/configuration#error-handling). Since functions are not serializable, they cannot be passed across the server/client boundary. However, [an alternative](https://github.com/amannn/next-intl/issues/1285) for this is also on the horizon.
 
@@ -313,7 +325,7 @@ A special thank you goes to <PartnerContentLink href="https://crowdin.com/">Crow
 
 —Jan
 
-(this post has been updated from an initial announcement for the 3.0 release candidate)
+(this post has been updated from an initial announcement for the 4.0 release candidate)
 
 PS: Have you heard that [learn.next-intl.dev](https://learn.next-intl.dev) is coming?
 

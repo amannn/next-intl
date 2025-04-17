@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.0.2 (2025-03-13)
+
+### Bug Fixes
+
+* Allow to use `IntlErrorCode` in user code ([#1788](https://github.com/amannn/next-intl/issues/1788)) ([913d307](https://github.com/amannn/next-intl/commit/913d3078ac63892ab086214a0418ca37b382cd7e)), closes [#1787](https://github.com/amannn/next-intl/issues/1787) – by @amannn
+
+## 4.0.1 (2025-03-12)
+
+### Bug Fixes
+
+* Handle default exports correctly for `moduleResolution: 'node'` ([#1785](https://github.com/amannn/next-intl/issues/1785)) ([b7a4a83](https://github.com/amannn/next-intl/commit/b7a4a83e584b1a7f00b287a07da84ef682d748a1)), closes [/github.com/amannn/next-intl/discussions/1631#discussioncomment-12477848](https://github.com/amannn//github.com/amannn/next-intl/discussions/1631/issues/discussioncomment-12477848) – by @amannn
+
 ## 4.0.0 (2025-03-12)
 
 ### ⚠ BREAKING CHANGES
