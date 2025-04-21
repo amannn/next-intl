@@ -28,9 +28,8 @@ function About() {
 To enable this validation, add a global type definition file in your project root (e.g. `global.d.ts`):
 
 ```jsx filename="global.d.ts"
-import en from './messages/en.json';
 
-type Messages = typeof en;
+type Messages = typeof import("./messages/en.json");
 
 declare global {
   // Use type safe message keys with `next-intl`
