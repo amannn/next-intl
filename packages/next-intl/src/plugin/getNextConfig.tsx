@@ -76,7 +76,7 @@ export default function getNextConfig(
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
 
-    if (hasStableTurboConfig) {
+    if (hasStableTurboConfig && !nextConfig?.experimental?.turbo) {
       nextIntlConfig.turbopack = {
         ...nextConfig?.turbopack,
         resolveAlias: {
@@ -113,10 +113,12 @@ export default function getNextConfig(
   }
 
   // Forward config
-  nextIntlConfig.env = {
-    ...nextConfig?.env,
-    _next_intl_trailing_slash: nextConfig?.trailingSlash ? 'true' : undefined
-  };
+  if (nextConfig?.trailingSlash) {
+    nextIntlConfig.env = {
+      ...nextConfig.env,
+      _next_intl_trailing_slash: 'true'
+    };
+  }
 
   return Object.assign({}, nextConfig, nextIntlConfig);
 }
