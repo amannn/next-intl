@@ -16,4 +16,19 @@ This CLI tool helps you validate against issues like:
 i18n-check --source en --locales messages
 ```
 
-Additionally, you can use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages but are not referenced anywhere in your codebase (currently experimental).
+**Output:**
+
+```
+Found missing keys!
+┌────────────────────┬───────────────────────────────┐
+│ file               │ key                           │
+├────────────────────┼───────────────────────────────┤
+│  messages/de.json  │  NewsArticle.title            │
+└────────────────────┴───────────────────────────────┘
+```
+
+<Callout>
+
+You can also use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages but are not referenced anywhere in your codebase (currently experimental).
+
+</Callout>
