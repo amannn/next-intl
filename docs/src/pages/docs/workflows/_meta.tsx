@@ -3,5 +3,6 @@ export default {
   'localization-management': 'Localization management with Crowdin',
   'vscode-integration': 'VSCode integration',
   linting: 'ESLint',
-  storybook: 'Storybook'
+  storybook: 'Storybook',
+  messages: 'Linting of messages'
 };
