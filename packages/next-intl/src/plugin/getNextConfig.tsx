@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
+import hasStableTurboConfig from './hasStableTurboConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
@@ -69,21 +70,32 @@ export default function getNextConfig(
       );
     }
 
-    // `NextConfig['turbo']` is stable in Next.js 15. In case the
-    // experimental feature is removed in the future, we should
-    // replace this accordingly in a future major version.
-    nextIntlConfig.experimental = {
-      ...nextConfig?.experimental,
-      turbo: {
-        ...nextConfig?.experimental?.turbo,
-        resolveAlias: {
-          ...nextConfig?.experimental?.turbo?.resolveAlias,
-          // Turbo aliases don't work with absolute
-          // paths (see error handling above)
-          'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
-        }
-      }
+    const resolveAlias = {
+      // Turbo aliases don't work with absolute
+      // paths (see error handling above)
+      'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    if (hasStableTurboConfig && !nextConfig?.experimental?.turbo) {
+      nextIntlConfig.turbopack = {
+        ...nextConfig?.turbopack,
+        resolveAlias: {
+          ...nextConfig?.turbopack?.resolveAlias,
+          ...resolveAlias
+        }
+      };
+    } else {
+      nextIntlConfig.experimental = {
+        ...nextConfig?.experimental,
+        turbo: {
+          ...nextConfig?.experimental?.turbo,
+          resolveAlias: {
+            ...nextConfig?.experimental?.turbo?.resolveAlias,
+            ...resolveAlias
+          }
+        }
+      };
+    }
   } else {
     nextIntlConfig.webpack = function webpack(
       ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
@@ -101,10 +113,12 @@ export default function getNextConfig(
   }
 
   // Forward config
-  nextIntlConfig.env = {
-    ...nextConfig?.env,
-    _next_intl_trailing_slash: nextConfig?.trailingSlash ? 'true' : undefined
-  };
+  if (nextConfig?.trailingSlash) {
+    nextIntlConfig.env = {
+      ...nextConfig.env,
+      _next_intl_trailing_slash: 'true'
+    };
+  }
 
   return Object.assign({}, nextConfig, nextIntlConfig);
 }
