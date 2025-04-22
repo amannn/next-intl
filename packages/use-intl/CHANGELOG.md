@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.0.3 (2025-04-22)
+
+### Bug Fixes
+
+* Support stable Turbopack config in Next.js 15.3 ([#1850](https://github.com/amannn/next-intl/issues/1850)) ([30ec8e0](https://github.com/amannn/next-intl/commit/30ec8e0d4a2f7cf4d7c587a6059e0b235df879b6)), closes [#1838](https://github.com/amannn/next-intl/issues/1838) – by @amannn
+
 ## 4.0.2 (2025-03-13)
 
 ### Bug Fixes
