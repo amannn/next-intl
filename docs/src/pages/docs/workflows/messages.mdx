@@ -1,20 +1,19 @@
 import Callout from '@/components/Callout';
 import Image from 'next/image';
 
-# Linting of messages
+# Validating messages
 
-To ensure the quality and completeness of your messages, you can use [i18n-check](https://github.com/lingualdev/i18n-check).
+To ensure quality and completeness of your messages, you can use [i18n-check](https://github.com/lingualdev/i18n-check).
 
-It helps you lint against:
+This CLI tool helps you validate against issues like:
 
 1. Missing translations in target locales
 2. Inconsistent usage of ICU arguments across translations
-3. Unused translation keys in your codebase
 
-**Example:**
+**Usage:**
 
 ```bash
 i18n-check --source en --locales messages
 ```
 
-You can also use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages but are not referenced anywhere in your codebase (currently experimental).
+Additionally, you can use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages but are not referenced anywhere in your codebase (currently experimental).

@@ -4,5 +4,5 @@ export default {
   'vscode-integration': 'VSCode integration',
   linting: 'ESLint',
   storybook: 'Storybook',
-  messages: 'Linting of messages'
+  messages: 'Validating messages'
 };
