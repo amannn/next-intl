@@ -46,9 +46,7 @@ export default defineConfig({
 
 ## Jest
 
-Since Jest doesn't have built-in ESM support, you need to Instruct Jest to transform imports from `next-intl`:
-
-To make it happen:
+Since Jest doesn't have built-in ESM support, you need to instruct Jest to transform imports from `next-intl`:
 
 1. Introduce [transformIgnorePatterns](https://jestjs.io/docs/configuration#transformignorepatterns-arraystring) in your `jest.config.js`
 
