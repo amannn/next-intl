@@ -46,19 +46,18 @@ export default defineConfig({
 
 ## Jest
 
-Since Jest doesn't have built-in ESM support, you need to instruct Jest to transform imports from `next-intl`:
+Since Jest doesn't have built-in ESM support, you need to Instruct Jest to transform imports from `next-intl`:
+
+To make it happen:
+
+1. Introduce [transformIgnorePatterns](https://jestjs.io/docs/configuration#transformignorepatterns-arraystring) in your `jest.config.js`
 
 ```tsx filename="jest.config.js"
-const nextJest = require('next/jest');
-
-const createJestConfig = nextJest({dir: './'});
-
-module.exports = async () => ({
-  ...(await createJestConfig({
-    testEnvironment: 'jsdom',
-    rootDir: 'src'
-  })()),
+module.exports = {
+  testEnvironment: 'jsdom' //  or 'jest-environment-jsdom' for jest v28+ 
   // https://github.com/vercel/next.js/issues/40183
-  transformIgnorePatterns: ['node_modules/(?!next-intl)/']
-});
+  transformIgnorePatterns: ['/node_modules/(?!(next-intl|use-intl)/)'],
+}
 ```
+
+2. If you are using `.babelrc`, [migrate](https://github.com/jestjs/jest/issues/6229#issuecomment-403539460) to `babel.config.js` 
