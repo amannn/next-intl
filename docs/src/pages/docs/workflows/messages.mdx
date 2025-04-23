@@ -1,0 +1,34 @@
+import Callout from '@/components/Callout';
+import Image from 'next/image';
+
+# Validating messages
+
+To ensure quality and completeness of your messages, you can use [i18n-check](https://github.com/lingualdev/i18n-check).
+
+This CLI helps you validate against issues like:
+
+1. Missing translations in target locales
+2. Inconsistent usage of ICU arguments across translations
+
+**Usage:**
+
+```bash
+i18n-check --source en --locales messages
+```
+
+**Output:**
+
+```
+Found missing keys!
+┌────────────────────┬───────────────────────────────┐
+│ file               │ key                           │
+├────────────────────┼───────────────────────────────┤
+│  messages/de.json  │  NewsArticle.title            │
+└────────────────────┴───────────────────────────────┘
+```
+
+<Callout>
+
+You can also use the [`--unused`](https://github.com/lingualdev/i18n-check#--unused--u) flag to detect keys that are defined in your messages, but are not referenced anywhere in your codebase (currently experimental).
+
+</Callout>
