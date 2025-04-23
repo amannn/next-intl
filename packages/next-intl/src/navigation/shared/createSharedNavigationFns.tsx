@@ -166,7 +166,7 @@ export default function createSharedNavigationFns<
   ) {
     /** @see https://next-intl.dev/docs/routing/navigation#redirect */
     return function redirectFn(
-      args: Omit<Parameters<typeof getPathname>[0], 'domain'>,
+      args: Parameters<typeof getPathname>[0],
       ...rest: ParametersExceptFirst<typeof nextRedirect>
     ) {
       return fn(getPathname(args), ...rest);
