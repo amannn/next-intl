@@ -759,6 +759,12 @@ describe.each([
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
+
+      it('can force a prefix for the default locale', () => {
+        expect(
+          getPathname({locale: 'en', href: '/about', forcePrefix: true})
+        ).toBe('/en/about');
+      });
     });
 
     describe.each([
@@ -781,10 +787,17 @@ describe.each([
         );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
       });
+
+      it('can force a prefix for the default locale', () => {
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en', forcePrefix: true})
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
+      });
     });
   });
 
-  describe('localePrefix: "always", with `prefixes`', () => {
+  describe("localePrefix: 'always', with `prefixes`", () => {
     const {Link, getPathname, permanentRedirect, redirect} = createNavigation({
       locales,
       defaultLocale,
@@ -1088,6 +1101,12 @@ describe.each([
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         () => getPathname({href: '/about'});
       });
+
+      it('can force a prefix', () => {
+        expect(
+          getPathname({locale: 'en', href: '/about', forcePrefix: true})
+        ).toBe('/en/about');
+      });
     });
 
     describe.each([
@@ -1104,6 +1123,13 @@ describe.each([
           redirectFn({href: '/', locale: 'en'}, RedirectType.push)
         );
         expect(nextRedirectFn).toHaveBeenLastCalledWith('/', RedirectType.push);
+      });
+
+      it('can force a prefix', () => {
+        runInRender(() =>
+          redirectFn({href: '/', locale: 'en', forcePrefix: true})
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith('/en');
       });
     });
   });
