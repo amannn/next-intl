@@ -292,9 +292,9 @@ const pathname = usePathname();
 
 ### `redirect`
 
-If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [the `redirect` function from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and localizes the pathname as necessary.
+If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [`redirect` from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and localizes the pathname as necessary.
 
-Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#locale).
+Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#use-locale).
 
 ```tsx
 import {redirect} from '@/i18n/navigation';
@@ -306,7 +306,7 @@ redirect({href: '/login', locale: 'en'});
 redirect({href: '/users', query: {sortBy: 'name'}, locale: 'en'});
 ```
 
-Depending on if you're using the pathnames setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
@@ -320,6 +320,14 @@ redirect({
   },
   locale: 'en'
 });
+```
+
+In case you're using a [`localePrefix`](/docs/routing#locale-prefix) setting other than `always`, you can also enforce a locale prefix with the `forcePrefix` option in case you're changing the user's locale and want to update the [locale cookie](/docs/routing#locale-cookie) first:
+
+```tsx
+// Will initially redirect to `/en/about` to update the locale
+// cookie, regardless of your `localePrefix` setting
+redirect({href: '/about', locale: 'en', forcePrefix: true});
 ```
 
 <Callout>
