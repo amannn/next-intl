@@ -105,6 +105,7 @@ export default function createSharedNavigationFns<
           locale: locale || curLocale,
           // @ts-expect-error -- This is ok
           href: pathnames == null ? pathname : {pathname, params},
+          // Always include a prefix when changing locales
           forcePrefix: locale != null || undefined
         })
       : pathname;
