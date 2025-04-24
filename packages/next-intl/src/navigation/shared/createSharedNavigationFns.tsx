@@ -101,14 +101,13 @@ export default function createSharedNavigationFns<
       : localePromiseOrValue;
 
     const finalPathname = isLocalizable
-      ? getPathname(
-          {
-            locale: locale || curLocale,
-            // @ts-expect-error -- This is ok
-            href: pathnames == null ? pathname : {pathname, params}
-          },
-          locale != null || undefined
-        )
+      ? getPathname({
+          locale: locale || curLocale,
+          // @ts-expect-error -- This is ok
+          href: pathnames == null ? pathname : {pathname, params},
+          // Always include a prefix when changing locales
+          forcePrefix: locale != null || undefined
+        })
       : pathname;
 
     return (
@@ -128,18 +127,17 @@ export default function createSharedNavigationFns<
   }
   const LinkWithRef = forwardRef(Link);
 
-  function getPathname(
-    args: {
-      /** @see https://next-intl.dev/docs/routing/navigation#getpathname */
-      href: [AppPathnames] extends [never]
-        ? string | {pathname: string; query?: QueryParams}
-        : HrefOrHrefWithParams<keyof AppPathnames>;
-      locale: Locale;
-    },
-    /** @private Removed in types returned below */
-    _forcePrefix?: boolean
-  ) {
-    const {href, locale} = args;
+  function getPathname(args: {
+    /** @see https://next-intl.dev/docs/routing/navigation#getpathname */
+    href: [AppPathnames] extends [never]
+      ? string | {pathname: string; query?: QueryParams}
+      : HrefOrHrefWithParams<keyof AppPathnames>;
+    /** The locale to compute the pathname for. */
+    locale: Locale;
+    /** Will prepend the pathname with the locale prefix, regardless of your `localePrefix` setting. This can be helpful to update a locale cookie when changing locales. */
+    forcePrefix?: boolean;
+  }) {
+    const {forcePrefix, href, locale} = args;
 
     let pathname: string;
     if (pathnames == null) {
@@ -161,7 +159,7 @@ export default function createSharedNavigationFns<
       });
     }
 
-    return applyPathnamePrefix(pathname, locale, config, _forcePrefix);
+    return applyPathnamePrefix(pathname, locale, config, forcePrefix);
   }
 
   function getRedirectFn(
@@ -169,7 +167,7 @@ export default function createSharedNavigationFns<
   ) {
     /** @see https://next-intl.dev/docs/routing/navigation#redirect */
     return function redirectFn(
-      args: Omit<Parameters<typeof getPathname>[0], 'domain'>,
+      args: Parameters<typeof getPathname>[0],
       ...rest: ParametersExceptFirst<typeof nextRedirect>
     ) {
       return fn(getPathname(args), ...rest);
@@ -184,10 +182,6 @@ export default function createSharedNavigationFns<
     Link: LinkWithRef,
     redirect,
     permanentRedirect,
-
-    // Remove `_forcePrefix` from public API
-    getPathname: getPathname as (
-      args: Parameters<typeof getPathname>[0]
-    ) => string
+    getPathname
   };
 }
