@@ -322,7 +322,7 @@ redirect({
 });
 ```
 
-In case you're using a [`localePrefix`](/docs/routing#locale-prefix) setting other than `always`, you can also enforce a locale prefix with the `forcePrefix` option in case you're changing the user's locale and want to update the [locale cookie](/docs/routing#locale-cookie) first:
+When using a [`localePrefix`](/docs/routing#localeprefix) setting other than `always`, you can enforce a locale prefix by setting the `forcePrefix` option to `true`. This is useful when changing the user's locale and you need to update the [locale cookie](/docs/routing#locale-cookie) first:
 
 ```tsx
 // Will initially redirect to `/en/about` to update the locale
