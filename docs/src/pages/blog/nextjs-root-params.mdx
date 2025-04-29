@@ -170,15 +170,13 @@ export default getRequestConfig(async () => {
 });
 ```
 
-`hasLocale` is a new addition scheduled for [`next-intl@4.0`](/blog/next-intl-4-0), but practically simply checks if the provided `locales` array contains a given `locale`. If it doesn't, typically because we're not in the `[locale]` segment, a default locale is used instead.
-
 That's it—a single change to `i18n/request.ts` is all you need to do to start using `rootParams`!
 
 ## Time for spring cleaning
 
 With this change, you can now simplify your codebase in various ways:
 
-### Removing a pass-through root layout
+### Remove a pass-through root layout
 
 For certain patterns like global 404 pages, you might have used a pass-through root layout so far:
 
@@ -336,10 +334,6 @@ export default async function RootLayout({children, params}: Props) {
 ```
 
 ## Try `rootParams` today!
-
-While this article mentions an upcoming `hasLocale` API from `next-intl@4.0` that simplifies working with `rootParams`, you can already try out the API today even in the `3.0` range.
-
-The one rare case where a change from `next-intl@4.0` is required, is if you need to [manually pass a locale](#locale-override) to async APIs like `getTranslations` in case your UI renders multiple locales in parallel.
 
 If you're giving `rootParams` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `rootParams`](https://github.com/amannn/next-intl/discussions/1627). I'm curious to hear how it simplifies your codebase!
 
