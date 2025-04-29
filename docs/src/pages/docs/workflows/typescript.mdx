@@ -1,12 +1,88 @@
+import Details from '@/components/Details';
+import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
 
-# TypeScript integration
+# TypeScript augmentation
 
 `next-intl` integrates seamlessly with TypeScript right out of the box, requiring no additional setup.
 
-However, you can optionally provide supplemental type definitions for your messages and formats to enable autocompletion and improve type safety.
+However, you can optionally provide supplemental definitions to augment the types that `next-intl` works with, enabling improved autocompletion and type safety across your app.
 
-## Messages
+```tsx filename="global.ts"
+import {routing} from '@/i18n/routing';
+import {formats} from '@/i18n/request';
+import messages from './messages/en.json';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    Locale: (typeof routing.locales)[number];
+    Messages: typeof messages;
+    Formats: typeof formats;
+  }
+}
+```
+
+Type augmentation is available for:
+
+- [`Locale`](#locale)
+- [`Messages`](#messages)
+- [`Formats`](#formats)
+
+## `Locale`
+
+Augmenting the `Locale` type will affect all APIs from `next-intl` that either return or receive a locale:
+
+```tsx
+import {useLocale} from 'next-intl';
+
+// ✅ 'en' | 'de'
+const locale = useLocale();
+```
+
+```tsx
+import {Link} from '@/i18n/routing';
+
+// ✅ Passes the validation
+<Link href="/" locale="en" />;
+```
+
+Additionally, `next-intl` provides a [`Locale`](/docs/usage/configuration#locale-type) type that can be used when passing the locale as an argument.
+
+To enable this validation, you can adapt `AppConfig` as follows:
+
+<Tabs items={['With i18n routing', 'Without i18n routing']}>
+<Tabs.Tab>
+
+```tsx filename="global.ts"
+import {routing} from '@/i18n/routing';
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof routing.locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```tsx filename="global.ts"
+// Potentially imported from a shared config
+const locales = ['en', 'de'] as const;
+
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Locale: (typeof locales)[number];
+  }
+}
+```
+
+</Tabs.Tab>
+</Tabs>
+
+## `Messages`
 
 Messages can be strictly typed to ensure you're using valid keys.
 
@@ -31,44 +107,158 @@ function About() {
 }
 ```
 
-To enable this validation, add a global type definition file in your project root (e.g. `global.d.ts`):
+To enable this validation, you can adapt `AppConfig` as follows:
 
-```ts filename="global.d.ts"
-import en from './messages/en.json';
+```ts filename="global.ts"
+import messages from './messages/en.json';
 
-type Messages = typeof en;
-
-declare global {
-  // Use type safe message keys with `next-intl`
-  interface IntlMessages extends Messages {}
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Messages: typeof messages;
+  }
 }
 ```
 
-You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the interface based on the messages from your default locale by importing it.
+You can freely define the interface, but if you have your messages available locally, it can be helpful to automatically create the type based on the messages from your default locale.
 
-## Formats
+<Details id="messages-performance-tsc">
+<summary>Does this affect the performance of type checking?</summary>
 
-[Global formats](/docs/usage/configuration#formats) that are referenced in calls like `format.dateTime` can be strictly typed to ensure you're using valid format names across your app.
+While the size of your messages file can have an effect on the time it takes to run the TypeScript compiler on your project, the overhead of augmenting `Messages` should be reasonably fast.
+
+Here's a benchmark from a sample project with 340 messages:
+
+- No type augmentation for messages: ~2.20s
+- Type-safe keys: ~2.82s
+- Type-safe arguments: ~2.85s
+
+This was observed on a MacBook Pro 2019 (Intel).
+
+---
+
+If you experience performance issues on larger projects, you can consider:
+
+1. Using type augmentation of messages only on your continuous integration pipeline as a safety net
+2. Splitting your project into multiple packages in a monorepo, allowing you to work with separate messages per package
+
+</Details>
+
+<Details id="messages-performance-editor">
+<summary>Does this affect the performance of my editor?</summary>
+
+Generally, type augmentation for `Messages` should be [reasonably fast](#messages-performance-tsc).
+
+In case you notice your editor performance related to saving files to be impacted, it might be caused by running ESLint on save when using [type-aware](https://typescript-eslint.io/troubleshooting/typed-linting/performance/) rules from `@typescript-eslint`.
+
+To ensure your editor performance is optimal, you can consider running expensive, type-aware rules only on your continuous integration pipeline:
+
+```tsx filename="eslint.config.js"
+// ...
+
+  // Run expensive, type-aware linting only on CI
+  '@typescript-eslint/no-misused-promises': process.env.CI
+    ? 'error'
+    : 'off'
+```
+
+</Details>
+
+### Type-safe arguments [#messages-arguments]
+
+Apart from strictly typing message keys, you can also ensure type safety for message arguments:
+
+```json filename="messages/en.json"
+{
+  "UserProfile": {
+    "title": "Hello {firstName}"
+  }
+}
+```
+
+```tsx
+function UserProfile({user}) {
+  const t = useTranslations('UserProfile');
+
+  // ✖️ Missing argument
+  t('title');
+
+  // ✅ Argument is provided
+  t('title', {firstName: user.firstName});
+}
+```
+
+TypeScript currently has a [limitation](https://github.com/microsoft/TypeScript/issues/32063) where it infers values of imported JSON modules as loose types like `string` instead of the actual value. To bridge this gap for the time being, `next-intl` can generate an accompanying `.d.json.ts` file for the messages that you're assigning to your `AppConfig`.
+
+**Usage:**
+
+1. Add support for JSON type declarations in your `tsconfig.json`:
+
+```json filename="tsconfig.json"
+{
+  "compilerOptions": {
+    // ...
+    "allowArbitraryExtensions": true
+  }
+}
+```
+
+2. Configure the `createMessagesDeclaration` setting in your Next.js config:
+
+```tsx filename="next.config.mjs"
+import {createNextIntlPlugin} from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // Provide the path to the messages that you're using in `AppConfig`
+    createMessagesDeclaration: './messages/en.json'
+  }
+  // ...
+});
+
+// ...
+```
+
+With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev` or `next build`:
+
+```diff
+  messages/en.json
++ messages/en.d.json.ts
+```
+
+This declaration file will provide the exact types for the JSON messages that you're importing and assigning to `AppConfig`, enabling type safety for message arguments.
+
+To keep your code base tidy, you can ignore this file in Git:
+
+```text filename=".gitignore"
+messages/*.d.json.ts
+```
+
+Please consider upvoting [`TypeScript#32063`](https://github.com/microsoft/TypeScript/issues/32063) to potentially remove this workaround in the future.
+
+## `Formats`
+
+If you're using [global formats](/docs/usage/configuration#formats), you can strictly type the format names that are referenced in calls to `format.dateTime`, `format.number` and `format.list`.
 
 ```tsx
 function Component() {
   const format = useFormatter();
-
-  // ✅ Valid format
-  format.number(2, 'precise');
-
-  // ✅ Valid format
-  format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
 
   // ✖️ Unknown format string
   format.dateTime(new Date(), 'unknown');
 
   // ✅ Valid format
   format.dateTime(new Date(), 'short');
+
+  // ✅ Valid format
+  format.number(2, 'precise');
+
+  // ✅ Valid format
+  format.list(['HTML', 'CSS', 'JavaScript'], 'enumeration');
 }
 ```
 
-To enable this validation, export the formats that you're using in your request configuration:
+To enable this validation, export the formats that you're using e.g. from your request configuration:
 
 ```ts filename="i18n/request.ts"
 import {Formats} from 'next-intl';
@@ -97,16 +287,16 @@ export const formats = {
 // ...
 ```
 
-Now, a global type definition file in the root of your project can pick up the shape of your formats and use them for declaring the `IntlFormats` interface:
+Now, you can include the `formats` in your `AppConfig`:
 
-```ts filename="global.d.ts"
-import {formats} from './src/i18n/request';
+```ts filename="global.ts"
+import {formats} from '@/i18n/request';
 
-type Formats = typeof formats;
-
-declare global {
-  // Use type safe formats with `next-intl`
-  interface IntlFormats extends Formats {}
+declare module 'next-intl' {
+  interface AppConfig {
+    // ...
+    Formats: typeof formats;
+  }
 }
 ```
 
@@ -114,8 +304,6 @@ declare global {
 
 If you're encountering problems, double check that:
 
-1. Your interface uses the correct name.
-2. You're using TypeScript version 5 or later.
-3. You're using correct paths for all modules you're importing into your global declaration file.
-4. Your type declaration file is included in `tsconfig.json`.
-5. Your editor has loaded the most recent type declarations. When in doubt, you can restart.
+1. The interface uses the correct name `AppConfig`.
+2. Your type declaration file is included in `tsconfig.json`.
+3. Your editor has loaded the latest types. When in doubt, restart your editor.

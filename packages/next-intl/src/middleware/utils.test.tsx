@@ -5,7 +5,7 @@ import {
   getNormalizedPathname,
   getPathnameMatch,
   getRouteParams
-} from './utils';
+} from './utils.js';
 
 describe('getNormalizedPathname', () => {
   it('should return the normalized pathname', () => {

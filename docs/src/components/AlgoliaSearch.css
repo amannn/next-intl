@@ -17,7 +17,7 @@
 }
 
 .DocSearch-Button {
-  @apply rounded-md md:min-w-[200px];
+  @apply rounded-md md:min-w-[200px] hover:text-[var(--docsearch-muted-color)];
 }
 
 .DocSearch-Button-Key {

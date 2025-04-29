@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.1.0 (2025-04-24)
+
+### Features
+
+* Add `forcePrefix` option for `redirect` and `getPathname` ([#1865](https://github.com/amannn/next-intl/issues/1865)) ([5905976](https://github.com/amannn/next-intl/commit/5905976daaa9cb6e4b07af5246d5a7cdfe958cf4)) – by @amannn
+
+## 4.0.3 (2025-04-22)
+
+### Bug Fixes
+
+* Support stable Turbopack config in Next.js 15.3 ([#1850](https://github.com/amannn/next-intl/issues/1850)) ([30ec8e0](https://github.com/amannn/next-intl/commit/30ec8e0d4a2f7cf4d7c587a6059e0b235df879b6)), closes [#1838](https://github.com/amannn/next-intl/issues/1838) – by @amannn
+
+## 4.0.2 (2025-03-13)
+
+### Bug Fixes
+
+* Allow to use `IntlErrorCode` in user code ([#1788](https://github.com/amannn/next-intl/issues/1788)) ([913d307](https://github.com/amannn/next-intl/commit/913d3078ac63892ab086214a0418ca37b382cd7e)), closes [#1787](https://github.com/amannn/next-intl/issues/1787) – by @amannn
+
+## 4.0.1 (2025-03-12)
+
+### Bug Fixes
+
+* Handle default exports correctly for `moduleResolution: 'node'` ([#1785](https://github.com/amannn/next-intl/issues/1785)) ([b7a4a83](https://github.com/amannn/next-intl/commit/b7a4a83e584b1a7f00b287a07da84ef682d748a1)), closes [/github.com/amannn/next-intl/discussions/1631#discussioncomment-12477848](https://github.com/amannn//github.com/amannn/next-intl/discussions/1631/issues/discussioncomment-12477848) – by @amannn
+
+## 4.0.0 (2025-03-12)
+
+### ⚠ BREAKING CHANGES
+
+* See [announcement](https://next-intl.dev/blog/next-intl-4-0)
+
+### Features
+
+* `next-intl@4` ([#1412](https://github.com/amannn/next-intl/issues/1412)) ([172656f](https://github.com/amannn/next-intl/commit/172656fc6a25c6deb2ce6d152eede201262c13bf)) – by @amannn
+
+## 3.26.5 (2025-02-21)
+
+### Bug Fixes
+
+* Handle `query` in `<Link />` correctly when using `localePrefix: 'as-needed'` with `domains` ([#1732](https://github.com/amannn/next-intl/issues/1732)) ([ec8776e](https://github.com/amannn/next-intl/commit/ec8776e8f0344f78fea4f71284c48312484a7059)), closes [#1731](https://github.com/amannn/next-intl/issues/1731) – by @amannn
+
+## 3.26.4 (2025-02-18)
+
+### Bug Fixes
+
+* Add workaround for OpenTelemetry/Zone.js ([#1719](https://github.com/amannn/next-intl/issues/1719)) ([1cac9a6](https://github.com/amannn/next-intl/commit/1cac9a65d2aefe20ff7fcf734e70f1fe85cac19d)), closes [#1711](https://github.com/amannn/next-intl/issues/1711) – by @amannn
+
+## 3.26.3 (2024-12-20)
+
+### Bug Fixes
+
+* Add missing deprecation warnings for `next-intl@4.0` ([#1485](https://github.com/amannn/next-intl/issues/1485)) ([1d60d08](https://github.com/amannn/next-intl/commit/1d60d08c446d9eeac8bcc5bfbd0654113a737518)) – by @amannn
+
 ## 3.26.2 (2024-12-18)
 
 ### Bug Fixes

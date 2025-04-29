@@ -1,0 +1,64 @@
+import Callout from '@/components/Callout';
+import Details from '@/components/Details';
+
+# Testing
+
+Components that use `next-intl` can be used in unit tests:
+
+```tsx
+import {render} from '@testing-library/react';
+import {NextIntlClientProvider} from 'next-intl';
+import {expect, it} from 'vitest';
+import messages from '../../messages/en.json';
+import UserProfile from './UserProfile';
+
+it('renders', () => {
+  render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <UserProfile />
+    </NextIntlClientProvider>
+  );
+});
+```
+
+To avoid having to mock server components, it can be beneficial to define components as [non-async functions](/docs/environments/server-client-components#async-or-non-async), allowing you to flexibly render them in any environment.
+
+## Vitest
+
+`next-intl` is bundled as ESM-only, which requires the usage of [explicit file extensions](https://nodejs.org/api/esm.html#mandatory-file-extensions) internally. However, in order to avoid a [deoptimization in Next.js](https://github.com/vercel/next.js/issues/77200), `next-intl` currently has to import from `next/navigation` instead of `next/navigation.js`.
+
+Vitest correctly assumes a file extension though, therefore for the time being, if you're using [`createNavigation`](/docs/routing/navigation), you need to ask Vitest to process imports within `next-intl`:
+
+```tsx filename="vitest.config.mts"
+import {defineConfig} from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    server: {
+      deps: {
+        // https://github.com/vercel/next.js/issues/77200
+        inline: ['next-intl']
+      }
+    }
+  }
+});
+```
+
+## Jest
+
+Since Jest doesn't have built-in ESM support, you need to instruct Jest to transform imports from `next-intl`:
+
+```tsx filename="jest.config.js"
+const nextJest = require('next/jest');
+
+const createJestConfig = nextJest({dir: './'});
+
+module.exports = async () => ({
+  ...(await createJestConfig({
+    testEnvironment: 'jsdom',
+    rootDir: 'src'
+  })()),
+  // https://github.com/vercel/next.js/issues/40183
+  transformIgnorePatterns: ['node_modules/(?!next-intl)/']
+});
+```

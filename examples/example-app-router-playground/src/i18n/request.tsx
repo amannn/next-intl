@@ -1,5 +1,5 @@
 import {headers} from 'next/headers';
-import {Formats} from 'next-intl';
+import {Formats, hasLocale, IntlErrorCode} from 'next-intl';
 import {getRequestConfig} from 'next-intl/server';
 import defaultMessages from '../../messages/en.json';
 import {routing} from './routing';
@@ -9,6 +9,11 @@ export const formats = {
     medium: {
       dateStyle: 'medium',
       timeStyle: 'short',
+      hour12: false
+    },
+    long: {
+      dateStyle: 'full',
+      timeStyle: 'long',
       hour12: false
     }
   },
@@ -26,23 +31,24 @@ export const formats = {
 } satisfies Formats;
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale;
+  // Typically corresponds to the `[locale]` segment
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
-  // Ensure that the incoming locale is valid
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
-  }
-
-  const now = headers().get('x-now');
-  const timeZone = headers().get('x-time-zone') ?? 'Europe/Vienna';
+  const now = (await headers()).get('x-now');
+  const timeZone = (await headers()).get('x-time-zone') ?? 'Europe/Vienna';
   const localeMessages = (await import(`../../messages/${locale}.json`))
     .default;
   const messages = {...defaultMessages, ...localeMessages};
 
   return {
     locale,
-    now: now ? new Date(now) : undefined,
+    now: now
+      ? new Date(now)
+      : // Ensure a consistent value for a render
+        new Date(),
     timeZone,
     messages,
     formats,
@@ -50,7 +56,7 @@ export default getRequestConfig(async ({requestLocale}) => {
       if (
         error.message ===
         (process.env.NODE_ENV === 'production'
-          ? 'MISSING_MESSAGE'
+          ? IntlErrorCode.MISSING_MESSAGE
           : 'MISSING_MESSAGE: Could not resolve `missing` in `Index`.')
       ) {
         // Do nothing, this error is triggered on purpose

@@ -1,4 +1,4 @@
-import {test as it, expect} from '@playwright/test';
+import {expect, test as it} from '@playwright/test';
 
 it('handles i18n routing', async ({page}) => {
   await page.goto('/');
@@ -28,16 +28,16 @@ it("handles not found pages for routes that don't match the middleware", async (
   page
 }) => {
   await page.goto('/test.png');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 
   await page.goto('/api/hello');
-  page.getByRole('heading', {name: 'Page not found'});
+  page.getByRole('heading', {name: 'This page could not be found.'});
 });
 
 it('sets caching headers', async ({request}) => {
   for (const pathname of ['/en', '/en/pathnames', '/de', '/de/pfadnamen']) {
-    expect((await request.get(pathname)).headers()['cache-control']).toBe(
-      's-maxage=31536000, stale-while-revalidate'
+    expect((await request.get(pathname)).headers()['cache-control']).toContain(
+      's-maxage=31536000'
     );
   }
 });
@@ -58,19 +58,13 @@ it('can be used to localize the page', async ({page}) => {
   page.getByRole('heading', {name: 'next-intl Beispiel'});
 });
 
-it('sets a cookie', async ({page}) => {
+it('sets a cookie when necessary', async ({page}) => {
   function getCookieValue() {
     return page.evaluate(() => document.cookie);
   }
 
   const response = await page.goto('/en');
-  const value = await response?.headerValue('set-cookie');
-  expect(value).toContain('NEXT_LOCALE=en;');
-  expect(value).toContain('Path=/;');
-  expect(value).toContain('SameSite=lax');
-  expect(value).toContain('Max-Age=31536000;');
-  expect(value).toContain('Expires=');
-  expect(await getCookieValue()).toBe('NEXT_LOCALE=en');
+  expect(await response?.headerValue('set-cookie')).toBe(null);
 
   await page
     .getByRole('combobox', {name: 'Change language'})
@@ -93,6 +87,16 @@ it('sets a cookie', async ({page}) => {
   expect(await getCookieValue()).toBe('NEXT_LOCALE=de');
 });
 
+it("sets a cookie when requesting a locale that doesn't match the `accept-language` header", async ({
+  page
+}) => {
+  const response = await page.goto('/de');
+  const value = await response?.headerValue('set-cookie');
+  expect(value).toContain('NEXT_LOCALE=de;');
+  expect(value).toContain('Path=/;');
+  expect(value).toContain('SameSite=lax');
+});
+
 it('serves a robots.txt', async ({page}) => {
   const response = await page.goto('/robots.txt');
   const body = await response?.body();
@@ -111,7 +115,17 @@ it('serves a sitemap.xml', async ({page}) => {
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
 </url>
 <url>
+<loc>http://localhost:3000/de</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de" />
+</url>
+<url>
 <loc>http://localhost:3000/en/pathnames</loc>
+<xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
+<xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
+</url>
+<url>
+<loc>http://localhost:3000/de/pfadnamen</loc>
 <xhtml:link rel="alternate" hreflang="en" href="http://localhost:3000/en/pathnames" />
 <xhtml:link rel="alternate" hreflang="de" href="http://localhost:3000/de/pfadnamen" />
 </url>

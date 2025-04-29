@@ -1,5 +1,5 @@
-import {test as it, expect, BrowserContext} from '@playwright/test';
-import {getAlternateLinks, assertLocaleCookieValue} from './utils';
+import {BrowserContext, expect, test as it} from '@playwright/test';
+import {assertLocaleCookieValue, getAlternateLinks} from './utils';
 
 const describe = it.describe;
 
@@ -300,16 +300,24 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
   const tracker = getPageLoadTracker(context);
 
   await page.goto('/');
-  await assertLocaleCookieValue(page, 'en');
+  await assertLocaleCookieValue(page, undefined);
   expect(tracker.numPageLoads).toBe(1);
 
-  const link = page.getByRole('link', {name: 'Switch to German'});
-  await link.hover();
-  await assertLocaleCookieValue(page, 'en');
-  await link.click();
+  const linkDe = page.getByRole('link', {name: 'Switch to German'});
+  await linkDe.hover();
+  await assertLocaleCookieValue(page, undefined);
+  await linkDe.click();
 
   await expect(page).toHaveURL('/de');
   await assertLocaleCookieValue(page, 'de');
+
+  const linkEn = page.getByRole('link', {name: 'Zu Englisch wechseln'});
+  await linkEn.hover();
+  await assertLocaleCookieValue(page, 'de');
+  await linkEn.click();
+
+  await expect(page).toHaveURL('/');
+  await assertLocaleCookieValue(page, 'en');
 
   // Currently, a root layout outside of the `[locale]`
   // folder is required for this to work.
@@ -525,23 +533,27 @@ it('sets alternate links', async ({request}) => {
   }
 
   for (const pathname of ['/', '/en', '/de']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 
   for (const pathname of ['/nested', '/en/nested', '/de/nested']) {
-    expect(await getLinks(pathname)).toEqual([
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
-      '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
-      '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
-      '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
-      '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
-    ]);
+    expect(await getLinks(pathname)).toEqual(
+      expect.arrayContaining([
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="en"',
+        '<http://localhost:3000/de/verschachtelt>; rel="alternate"; hreflang="de"',
+        '<http://localhost:3000/spain/anidada>; rel="alternate"; hreflang="es"',
+        '<http://localhost:3000/ja/%E3%83%8D%E3%82%B9%E3%83%88>; rel="alternate"; hreflang="ja"',
+        '<http://localhost:3000/nested>; rel="alternate"; hreflang="x-default"'
+      ])
+    );
   }
 });
 
@@ -618,7 +630,10 @@ it('populates metadata', async ({page}) => {
   );
 });
 
-it('supports opengraph images', async ({page, request}) => {
+it('supports opengraph images for the default locale', async ({
+  page,
+  request
+}) => {
   await page.goto('/');
   const ogImage = await page
     .locator('meta[property="og:image"]')
@@ -626,6 +641,21 @@ it('supports opengraph images', async ({page, request}) => {
   expect(ogImage).toBeTruthy();
   const ogImageUrl = new URL(ogImage!);
   expect(ogImageUrl.pathname).toBe('/en/opengraph-image');
+  const result = await request.get(ogImageUrl.pathname);
+  expect(result.ok()).toBe(true);
+});
+
+it('supports opengraph images for a locale with a custom prefix', async ({
+  page,
+  request
+}) => {
+  await page.goto('/spain');
+  const ogImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute('content');
+  expect(ogImage).toBeTruthy();
+  const ogImageUrl = new URL(ogImage!);
+  expect(ogImageUrl.pathname).toBe('/es/opengraph-image');
   const result = await request.get(ogImageUrl.pathname);
   expect(result.ok()).toBe(true);
 });

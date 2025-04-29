@@ -1,7 +1,7 @@
-export {default as IntlProvider} from './IntlProvider';
-export {default as useTranslations} from './useTranslations';
-export {default as useLocale} from './useLocale';
-export {default as useNow} from './useNow';
-export {default as useTimeZone} from './useTimeZone';
-export {default as useMessages} from './useMessages';
-export {default as useFormatter} from './useFormatter';
+export {default as IntlProvider} from './IntlProvider.js';
+export {default as useTranslations} from './useTranslations.js';
+export {default as useLocale} from './useLocale.js';
+export {default as useNow} from './useNow.js';
+export {default as useTimeZone} from './useTimeZone.js';
+export {default as useMessages} from './useMessages.js';
+export {default as useFormatter} from './useFormatter.js';

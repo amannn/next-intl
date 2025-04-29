@@ -1,21 +1,16 @@
-import {notFound} from 'next/navigation';
 import {cache} from 'react';
 import {
-  IntlConfig,
+  type IntlConfig,
+  type Locale,
   _createCache,
   _createIntlFormatters,
   initializeConfig
 } from 'use-intl/core';
-import {getRequestLocale} from './RequestLocale';
-import {getRequestLocale as getRequestLocaleLegacy} from './RequestLocaleLegacy';
-import createRequestConfig from './createRequestConfig';
-import {GetRequestConfigParams} from './getRequestConfig';
-
-// Make sure `now` is consistent across the request in case none was configured
-function getDefaultNowImpl() {
-  return new Date();
-}
-const getDefaultNow = cache(getDefaultNowImpl);
+import {isPromise} from '../../shared/utils.js';
+import {getRequestLocale} from './RequestLocale.js';
+import createRequestConfig from './createRequestConfig.js';
+import type {GetRequestConfigParams} from './getRequestConfig.js';
+import validateLocale from './validateLocale.js';
 
 // This is automatically inherited by `NextIntlClientProvider` if
 // the component is rendered from a Server Component
@@ -26,7 +21,7 @@ const getDefaultTimeZone = cache(getDefaultTimeZoneImpl);
 
 async function receiveRuntimeConfigImpl(
   getConfig: typeof createRequestConfig,
-  localeOverride?: string
+  localeOverride?: Locale
 ) {
   if (
     process.env.NODE_ENV !== 'production' &&
@@ -45,13 +40,11 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
   }
 
   const params: GetRequestConfigParams = {
+    locale: localeOverride,
+
     // In case the consumer doesn't read `params.locale` and instead provides the
     // `locale` (either in a single-language workflow or because the locale is
     // read from the user settings), don't attempt to read the request locale.
-    get locale() {
-      return localeOverride || getRequestLocaleLegacy();
-    },
-
     get requestLocale() {
       return localeOverride
         ? Promise.resolve(localeOverride)
@@ -60,49 +53,44 @@ See also: https://next-intl.dev/docs/usage/configuration#i18n-request
   };
 
   let result = getConfig(params);
-  if (result instanceof Promise) {
+  if (isPromise(result)) {
     result = await result;
   }
 
-  const locale = result.locale || (await params.requestLocale);
-
-  if (!locale) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(
-        `\nUnable to find \`next-intl\` locale because the middleware didn't run on this request and no \`locale\` was returned in \`getRequestConfig\`. See https://next-intl.dev/docs/routing/middleware#unable-to-find-locale. The \`notFound()\` function will be called as a result.\n`
-      );
-    }
-    notFound();
+  if (!result.locale) {
+    throw new Error(
+      'No locale was returned from `getRequestConfig`.\n\nSee https://next-intl.dev/docs/usage/configuration#i18n-request'
+    );
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    validateLocale(result.locale);
   }
 
-  return {
-    ...result,
-    locale,
-    now: result.now || getDefaultNow(),
-    timeZone: result.timeZone || getDefaultTimeZone()
-  };
+  return result;
 }
 const receiveRuntimeConfig = cache(receiveRuntimeConfigImpl);
 
 const getFormatters = cache(_createIntlFormatters);
 const getCache = cache(_createCache);
 
-async function getConfigImpl(localeOverride?: string): Promise<
-  IntlConfig & {
-    getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
-    now: NonNullable<IntlConfig['now']>;
-    onError: NonNullable<IntlConfig['onError']>;
-    timeZone: NonNullable<IntlConfig['timeZone']>;
-    _formatters: ReturnType<typeof _createIntlFormatters>;
-  }
-> {
+async function getConfigImpl(localeOverride?: Locale): Promise<{
+  locale: IntlConfig['locale'];
+  formats?: NonNullable<IntlConfig['formats']>;
+  timeZone: NonNullable<IntlConfig['timeZone']>;
+  onError: NonNullable<IntlConfig['onError']>;
+  getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
+  messages?: NonNullable<IntlConfig['messages']>;
+  now?: NonNullable<IntlConfig['now']>;
+  _formatters: ReturnType<typeof _createIntlFormatters>;
+}> {
   const runtimeConfig = await receiveRuntimeConfig(
     createRequestConfig,
     localeOverride
   );
   return {
     ...initializeConfig(runtimeConfig),
-    _formatters: getFormatters(getCache())
+    _formatters: getFormatters(getCache()),
+    timeZone: runtimeConfig.timeZone || getDefaultTimeZone()
   };
 }
 const getConfig = cache(getConfigImpl);

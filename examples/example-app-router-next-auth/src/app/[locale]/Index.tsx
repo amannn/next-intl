@@ -20,9 +20,9 @@ export default function Index({session}: Props) {
 
   return (
     <PageLayout title={t('title')}>
-      {session ? (
+      {session?.user?.name ? (
         <>
-          <p>{t('loggedIn', {username: session.user?.name})}</p>
+          <p>{t('loggedIn', {username: session.user.name})}</p>
           <p>
             <Link href={locale + '/secret'}>{t('secret')}</Link>
           </p>

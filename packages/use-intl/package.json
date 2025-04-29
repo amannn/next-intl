@@ -1,6 +1,6 @@
 {
   "name": "use-intl",
-  "version": "3.26.2",
+  "version": "4.1.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Internationalization (i18n) for React",
@@ -15,42 +15,35 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
-    "lint:package": "publint && attw --pack",
+    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
     "lint:prettier": "prettier src --check",
     "prepublishOnly": "turbo build",
     "size": "size-limit"
   },
-  "main": "./dist/index.js",
-  "module": "dist/esm/index.js",
-  "typings": "./dist/types/src/index.d.ts",
+  "type": "module",
+  "main": "./dist/esm/production/index.js",
+  "typings": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/src/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/types/index.d.ts",
+      "development": "./dist/esm/development/index.js",
+      "default": "./dist/esm/production/index.js"
     },
     "./core": {
-      "types": "./core.d.ts",
-      "default": "./dist/core.js"
+      "types": "./dist/types/core.d.ts",
+      "development": "./dist/esm/development/core.js",
+      "default": "./dist/esm/production/core.js"
     },
     "./react": {
-      "types": "./react.d.ts",
-      "default": "./dist/react.js"
-    },
-    "./_useLocale": {
-      "types": "./_useLocale.d.ts",
-      "default": "./dist/_useLocale.js"
-    },
-    "./_IntlProvider": {
-      "types": "./_IntlProvider.d.ts",
-      "default": "./dist/_IntlProvider.js"
+      "types": "./dist/types/react.d.ts",
+      "development": "./dist/esm/development/react.js",
+      "default": "./dist/esm/production/react.js"
     }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts",
-    "_useLocale.d.ts",
-    "_IntlProvider.d.ts"
+    "react.d.ts"
   ],
   "keywords": [
     "react",
@@ -65,31 +58,33 @@
   ],
   "dependencies": {
     "@formatjs/fast-memoize": "^2.2.0",
+    "@schummar/icu-type-parser": "1.21.5",
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
+    "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.3",
-    "@size-limit/preset-big-lib": "^11.1.4",
-    "@testing-library/react": "^16.0.0",
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "@testing-library/react": "^16.2.0",
     "@types/node": "^20.14.5",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "date-fns": "^3.6.0",
-    "eslint": "^9.11.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "date-fns": "^4.1.0",
+    "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "rollup": "^4.18.0",
-    "size-limit": "^11.1.4",
+    "size-limit": "^11.2.0",
     "tinyspy": "^3.0.0",
+    "tools": "workspace:^",
     "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "vitest": "^3.0.8"
   },
   "prettier": "eslint-config-molindo/.prettierrc.json"
 }

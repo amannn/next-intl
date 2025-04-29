@@ -1,7 +1,8 @@
 export default {
-  typescript: 'TypeScript',
+  typescript: 'TypeScript augmentation',
   'localization-management': 'Localization management with Crowdin',
   'vscode-integration': 'VSCode integration',
   linting: 'ESLint',
-  storybook: 'Storybook'
+  storybook: 'Storybook',
+  messages: 'Validating messages'
 };

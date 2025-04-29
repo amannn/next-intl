@@ -2,6 +2,7 @@ import {useRouter} from 'next/router';
 import config from '@/config';
 import FooterLink from './FooterLink';
 import FooterSeparator from './FooterSeparator';
+import FooterVersionSelector from './FooterVersionSelector';
 
 export default function Footer() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function Footer() {
           <FooterLink href="/examples">Examples</FooterLink>
           <FooterSeparator />
           <FooterLink href="/blog">Blog</FooterLink>
+          <FooterSeparator />
+          <FooterVersionSelector />
         </div>
         <div>
           <FooterLink href={config.blueskyUrl} target="_blank">

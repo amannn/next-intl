@@ -1,62 +1,32 @@
 'use client';
 
-import NextLink from 'next/link';
-import {usePathname} from 'next/navigation';
-import React, {
-  ComponentProps,
-  MouseEvent,
-  forwardRef,
-  useEffect,
-  useState
+import NextLink, {type LinkProps} from 'next/link.js';
+import {usePathname} from 'next/navigation.js';
+import {
+  type ComponentProps,
+  type MouseEvent,
+  type ReactNode,
+  type Ref,
+  forwardRef
 } from 'react';
-import useLocale from '../../react-client/useLocale';
-import {InitializedLocaleCookieConfig} from '../../routing/config';
-import syncLocaleCookie from './syncLocaleCookie';
+import {type Locale, useLocale} from 'use-intl';
+import type {InitializedLocaleCookieConfig} from '../../routing/config.js';
+import syncLocaleCookie from './syncLocaleCookie.js';
 
-type Props = Omit<ComponentProps<typeof NextLink>, 'locale'> & {
-  locale?: string;
-  defaultLocale?: string;
+type NextLinkProps = Omit<ComponentProps<'a'>, keyof LinkProps> &
+  Omit<LinkProps, 'locale'>;
+
+type Props = NextLinkProps & {
+  locale?: Locale;
   localeCookie: InitializedLocaleCookieConfig;
-  /** Special case for `localePrefix: 'as-needed'` and `domains`. */
-  unprefixed?: {
-    domains: {[domain: string]: string};
-    pathname: string;
-  };
 };
 
 function BaseLink(
-  {
-    defaultLocale,
-    href,
-    locale,
-    localeCookie,
-    onClick,
-    prefetch,
-    unprefixed,
-    ...rest
-  }: Props,
-  ref: ComponentProps<typeof NextLink>['ref']
+  {href, locale, localeCookie, onClick, prefetch, ...rest}: Props,
+  ref: Ref<HTMLAnchorElement>
 ) {
   const curLocale = useLocale();
   const isChangingLocale = locale != null && locale !== curLocale;
-  const linkLocale = locale || curLocale;
-  const host = useHost();
-
-  const finalHref =
-    // Only after hydration (to avoid mismatches)
-    host &&
-    // If there is an `unprefixed` prop, the
-    // `defaultLocale` might differ by domain
-    unprefixed &&
-    // Unprefix the pathname if a domain matches
-    (unprefixed.domains[host] === linkLocale ||
-      // … and handle unknown domains by applying the
-      // global `defaultLocale` (e.g. on localhost)
-      (!Object.keys(unprefixed.domains).includes(host) &&
-        curLocale === defaultLocale &&
-        !locale))
-      ? unprefixed.pathname
-      : href;
 
   // The types aren't entirely correct here. Outside of Next.js
   // `useParams` can be called, but the return type is `null`.
@@ -76,26 +46,20 @@ function BaseLink(
     prefetch = false;
   }
 
+  // Somehow the types for `next/link` don't work as expected
+  // when `moduleResolution: "nodenext"` is used.
+  const Link = NextLink as unknown as (props: NextLinkProps) => ReactNode;
+
   return (
-    <NextLink
+    <Link
       ref={ref}
-      href={finalHref}
+      href={href}
       hrefLang={isChangingLocale ? locale : undefined}
       onClick={onLinkClick}
       prefetch={prefetch}
       {...rest}
     />
   );
-}
-
-function useHost() {
-  const [host, setHost] = useState<string>();
-
-  useEffect(() => {
-    setHost(window.location.host);
-  }, []);
-
-  return host;
 }
 
 export default forwardRef(BaseLink);

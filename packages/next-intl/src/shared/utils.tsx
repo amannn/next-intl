@@ -1,13 +1,12 @@
-import {UrlObject} from 'url';
-import NextLink from 'next/link';
-import {ComponentProps} from 'react';
-import {
+import type {LinkProps} from 'next/link.js';
+import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
-  Locales
-} from '../routing/types';
+  Locales,
+  Pathnames
+} from '../routing/types.js';
 
-type Href = ComponentProps<typeof NextLink>['href'];
+type Href = LinkProps['href'];
 
 function isRelativeHref(href: Href) {
   const pathname = typeof href === 'object' ? href.pathname : href;
@@ -25,61 +24,6 @@ function isLocalHref(href: Href) {
 
 export function isLocalizableHref(href: Href) {
   return isLocalHref(href) && !isRelativeHref(href);
-}
-
-export function localizeHref(
-  href: string,
-  locale: string,
-  curLocale: string,
-  curPathname: string,
-  prefix?: string
-): string;
-export function localizeHref(
-  href: UrlObject | string,
-  locale: string,
-  curLocale: string,
-  curPathname: string,
-  prefix?: string
-): UrlObject | string;
-export function localizeHref(
-  href: UrlObject | string,
-  locale: string,
-  curLocale: string = locale,
-  curPathname: string,
-  prefix?: string
-) {
-  if (!isLocalizableHref(href)) {
-    return href;
-  }
-
-  const isSwitchingLocale = locale !== curLocale;
-  const isPathnamePrefixed = hasPathnamePrefixed(prefix, curPathname);
-  const shouldPrefix = isSwitchingLocale || isPathnamePrefixed;
-
-  if (shouldPrefix && prefix != null) {
-    return prefixHref(href, prefix);
-  }
-
-  return href;
-}
-
-export function prefixHref(href: string, prefix: string): string;
-export function prefixHref(
-  href: UrlObject | string,
-  prefix: string
-): UrlObject | string;
-export function prefixHref(href: UrlObject | string, prefix: string) {
-  let prefixedHref;
-  if (typeof href === 'string') {
-    prefixedHref = prefixPathname(prefix, href);
-  } else {
-    prefixedHref = {...href};
-    if (href.pathname) {
-      prefixedHref.pathname = prefixPathname(prefix, href.pathname);
-    }
-  }
-
-  return prefixedHref;
 }
 
 export function unprefixPathname(pathname: string, prefix: string) {
@@ -113,6 +57,16 @@ function hasTrailingSlash() {
   } catch {
     return false;
   }
+}
+
+export function getLocalizedTemplate<AppLocales extends Locales>(
+  pathnameConfig: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
+  locale: AppLocales[number],
+  internalTemplate: string
+) {
+  return typeof pathnameConfig === 'string'
+    ? pathnameConfig
+    : pathnameConfig[locale] || internalTemplate;
 }
 
 export function normalizeTrailingSlash(pathname: string) {
@@ -232,4 +186,11 @@ function comparePathnamePairs(a: string, b: string): number {
 
 export function getSortedPathnames(pathnames: Array<string>) {
   return pathnames.sort(comparePathnamePairs);
+}
+
+export function isPromise<Value>(
+  value: Value | Promise<Value>
+): value is Promise<Value> {
+  // https://github.com/amannn/next-intl/issues/1711
+  return typeof (value as any).then === 'function';
 }

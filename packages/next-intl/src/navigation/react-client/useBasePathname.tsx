@@ -1,17 +1,17 @@
-import {usePathname as useNextPathname} from 'next/navigation';
+import {usePathname as useNextPathname} from 'next/navigation.js';
 import {useMemo} from 'react';
-import useLocale from '../../react-client/useLocale';
-import {
+import {useLocale} from 'use-intl';
+import type {
   LocalePrefixConfigVerbose,
   LocalePrefixMode,
   Locales
-} from '../../routing/types';
+} from '../../routing/types.js';
 import {
   getLocaleAsPrefix,
   getLocalePrefix,
   hasPathnamePrefixed,
   unprefixPathname
-} from '../../shared/utils';
+} from '../../shared/utils.js';
 
 export default function useBasePathname<
   AppLocales extends Locales,

@@ -1,3 +1,4 @@
-import config from './dist/types/src/config';
+// Needed for projects with `moduleResolution: 'node'`
+import config from './dist/types/config';
 
-export = config;
+export default config;

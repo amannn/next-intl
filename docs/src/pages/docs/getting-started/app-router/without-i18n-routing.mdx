@@ -24,15 +24,15 @@ Now, we're going to create the following file structure:
 
 ```
 ├── messages
-│   ├── en.json (1)
+│   ├── en.json
 │   └── ...
-├── next.config.mjs (2)
+├── next.config.ts
 └── src
     ├── i18n
-    │   └── request.ts (3)
+    │   └── request.ts
     └── app
-        ├── layout.tsx (4)
-        └── page.tsx (5)
+        ├── layout.tsx
+        └── page.tsx
 ```
 
 **Let's set up the files:**
@@ -53,21 +53,20 @@ The simplest option is to add JSON files in your local project folder:
 }
 ```
 
-### `next.config.mjs` [#next-config]
+### `next.config.ts` [#next-config]
 
 Now, set up the plugin which creates an alias to provide a request-specific i18n configuration to Server Components (specified in the next step).
 
-<Tabs items={['next.config.mjs', 'next.config.js']}>
+<Tabs items={['next.config.ts', 'next.config.js']}>
 <Tabs.Tab>
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
+import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const nextConfig: NextConfig = {};
+
 const withNextIntl = createNextIntlPlugin();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
-
 export default withNextIntl(nextConfig);
 ```
 
@@ -114,7 +113,7 @@ This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` f
 
 If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
 
-```js filename="next.config.mjs"
+```js filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin(
   // Specify a custom path here
   './somewhere/else/request.ts'
@@ -129,7 +128,7 @@ The `locale` that was provided in `i18n/request.ts` is available via `getLocale`
 
 ```tsx filename="app/layout.tsx"
 import {NextIntlClientProvider} from 'next-intl';
-import {getLocale, getMessages} from 'next-intl/server';
+import {getLocale} from 'next-intl/server';
 
 export default async function RootLayout({
   children
@@ -138,23 +137,15 @@ export default async function RootLayout({
 }) {
   const locale = await getLocale();
 
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
 }
 ```
-
-Note that `NextIntlClientProvider` automatically inherits configuration from `i18n/request.ts` here, but `messages` need to be passed explicitly.
 
 ### `app/page.tsx` [#page]
 
@@ -165,6 +156,17 @@ import {useTranslations} from 'next-intl';
 
 export default function HomePage() {
   const t = useTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+In case of async components, you can use the awaitable `getTranslations` function instead:
+
+```tsx filename="app/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage');
   return <h1>{t('title')}</h1>;
 }
 ```
