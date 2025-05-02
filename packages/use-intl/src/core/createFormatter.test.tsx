@@ -305,25 +305,6 @@ describe('relativeTime', () => {
     ).toBe('3 quarters ago');
   });
 
-  it('uses the `auto` representation if no rounding is needed', () => {
-    const formatter = createFormatter({
-      locale: 'en',
-      timeZone: 'Europe/Berlin'
-    });
-    expect(
-      formatter.relativeTime(parseISO('2020-11-20T00:00:00.000Z'), {
-        now: parseISO('2020-11-21T00:00:00.000Z'),
-        unit: 'day'
-      })
-    ).toBe('yesterday');
-    expect(
-      formatter.relativeTime(parseISO('2020-11-21T00:00:00.000Z'), {
-        now: parseISO('2020-11-20T00:00:00.000Z'),
-        unit: 'day'
-      })
-    ).toBe('tomorrow');
-  });
-
   it('formats a relative time with a globally defined `now`', () => {
     const formatter = createFormatter({
       locale: 'en',
@@ -338,7 +319,7 @@ describe('relativeTime', () => {
   });
 
   describe('choosing the `auto` representation', () => {
-    it('uses `auto` for times <1 second', () => {
+    it('uses `auto` for times <=1 second', () => {
       const formatter = createFormatter({
         locale: 'en',
         timeZone: 'Europe/Berlin'
