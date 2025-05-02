@@ -196,22 +196,24 @@ import {useFormatter, useTimeZone} from 'next-intl';
 import {startOfDay} from 'date-fns';
 import {tz} from '@date-fns/tz';
 
-const format = useFormatter();
-const timeZone = useTimeZone();
+function Component() {
+  const format = useFormatter();
+  const timeZone = useTimeZone();
 
-const now = new Date('2020-12-23T10:36:00.000Z');
-const dateTime = new Date('2020-12-22T08:23:00.000Z');
+  const now = new Date('2020-12-23T10:36:00.000Z');
+  const dateTime = new Date('2020-12-22T08:23:00.000Z');
 
-function normalize(date) {
-  // The "start of a day" depends on a time zone
-  return startOfDay(date, {in: tz(timeZone)});
+  function normalize(date) {
+    // The "start of a day" depends on a time zone
+    return startOfDay(date, {in: tz(timeZone)});
+  }
+
+  // Renders "yesterday" instead of "1 day ago"
+  format.relativeTime(normalize(dateTime), {
+    now: normalize(now),
+    unit: 'day'
+  });
 }
-
-// Renders "yesterday" instead of "1 day ago"
-const result = format.relativeTime(normalize(dateTime), {
-  now: normalize(now),
-  unit: 'day'
-});
 ```
 
 ## Formatting date and time ranges [#date-time-ranges]
