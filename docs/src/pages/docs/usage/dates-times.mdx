@@ -168,9 +168,9 @@ function Component() {
 }
 ```
 
-### Customizing the unit [#relative-times-unit]
+### `unit` [#relative-times-unit]
 
-By default, `relativeTime` will pick a unit based on the difference between the passed date and `now` like "3 seconds" or "5 days".
+By default, `relativeTime` will pick an appropriate unit based on the difference between the passed date and `now` like "3 seconds", "5 days" or "1 year".
 
 If you want to use a specific unit, you can provide options via the second argument:
 
@@ -185,6 +185,33 @@ function Component() {
   // Renders "247 days ago"
   format.relativeTime(dateTime, {now, unit: 'day'});
 }
+```
+
+Furthermore, `relativeTime` will automatically use [`numeric: 'auto'`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat/RelativeTimeFormat#numeric) when the time difference divided by the unit is a whole number without a fractional part (e.g. exactly one day). This enables natural phrases like "yesterday" instead of "1 day ago" when appropriate.
+
+You can use utility functions like [`startOfDay`](https://date-fns.org/docs/startOfDay) to ensure that the time difference is a whole number:
+
+```js
+import {useFormatter, useTimeZone} from 'next-intl';
+import {startOfDay} from 'date-fns';
+import {tz} from '@date-fns/tz';
+
+const format = useFormatter();
+const timeZone = useTimeZone();
+
+const now = new Date('2020-12-23T10:36:00.000Z');
+const dateTime = new Date('2020-12-22T08:23:00.000Z');
+
+function normalize(date) {
+  // The "start of a day" depends on a time zone
+  return startOfDay(date, {in: tz(timeZone)});
+}
+
+// Renders "yesterday" instead of "1 day ago"
+const result = format.relativeTime(normalize(dateTime), {
+  now: normalize(now),
+  unit: 'day'
+});
 ```
 
 ## Formatting date and time ranges [#date-time-ranges]
