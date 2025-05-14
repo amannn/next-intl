@@ -353,13 +353,14 @@ function UserProfile({userId}: {userId?: string}) {
 }
 ```
 
-To work around this limitation, you can add an explicit type annotation to the `redirect` function:
+To work around this limitation, you can return the call to the `redirect` function:
 
-```tsx filename="navigation.ts"
-const {/* ..., */ redirect: _redirect} = createNavigation(routing);
+```tsx
+if (!userId) {
+  return redirect({href: '/login', locale: 'en'});
+}
 
-// Enable type narrowing after calling `redirect`
-export const redirect: typeof _redirect = _redirect;
+// ✅ `userId` is narrowed to `string` here
 ```
 
 </Details>
