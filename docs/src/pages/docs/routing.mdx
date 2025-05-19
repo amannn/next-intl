@@ -363,7 +363,7 @@ export const routing = defineRouting({
 
 Locales are required to be unique across domains, therefore regional variants are typically used to avoid conflicts. Note however that you don't necessarily need to [provide messages for each locale](/docs/usage/configuration#messages-per-locale) if the overall language is sufficient for your use case.
 
-If no domain matches, the middleware will fall back to the general [`defaultLocale`](/docs/routing/middleware#default-locale) (e.g. on `localhost`).
+If no domain matches, the middleware will fall back to default locale matching based on [prefixes](/docs/routing/middleware#location-detection-prefix) (e.g. on `localhost`, for local development). 
 
 <Details id="domains-testing">
 <summary>How can I locally test if my setup is working?</summary>
