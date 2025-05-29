@@ -4,7 +4,7 @@
 
 :root {
   --color-text-primary: #0073e6;
-  --nextra-bg: white;
+  --nextra-bg: 255, 255, 255;
   --docsearch-text-color: black;
   --logo-color: #008fd6;
 }
