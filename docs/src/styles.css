@@ -10,6 +10,7 @@
 }
 
 .dark {
+  --nextra-bg: 17, 17, 17;
   --logo-color: #70d1ff;
 }
 
