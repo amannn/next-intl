@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.1.0 (2025-04-24)
+
+### Features
+
+* Add `forcePrefix` option for `redirect` and `getPathname` ([#1865](https://github.com/amannn/next-intl/issues/1865)) ([5905976](https://github.com/amannn/next-intl/commit/5905976daaa9cb6e4b07af5246d5a7cdfe958cf4)) – by @amannn
+
 ## 4.0.3 (2025-04-22)
 
 ### Bug Fixes
