@@ -86,7 +86,7 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         '/': '/',
         '/about': {
           en: '/about',
-          de: '/ueber'
+          de: '/über'
         },
         '/users': {
           en: '/users',
@@ -126,21 +126,21 @@ describe.each([{basePath: undefined}, {basePath: '/base'}])(
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
-        `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/de/%C3%BCber>; rel="alternate"; hreflang="de"`,
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
 
       expect(
         getAlternateLinksHeaderValue({
           routing,
-          request: getMockRequest('https://example.com/de/ueber'),
+          request: getMockRequest('https://example.com/de/%C3%BCber'),
           resolvedLocale: 'de',
           localizedPathnames: pathnames['/about'],
           internalTemplateName: '/about'
         }).split(', ')
       ).toEqual([
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="en"`,
-        `<https://example.com${basePath}/de/ueber>; rel="alternate"; hreflang="de"`,
+        `<https://example.com${basePath}/de/%C3%BCber>; rel="alternate"; hreflang="de"`,
         `<https://example.com${basePath}/about>; rel="alternate"; hreflang="x-default"`
       ]);
 

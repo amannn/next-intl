@@ -605,7 +605,7 @@ describe('prefix-based routing', () => {
         );
       });
 
-      it('serves requests for a non-default locale at nested paths for "ja"', () => {
+      it('serves requests for non-ascii characters that are not encoded', () => {
         middlewareWithPathnames(createMockRequest('/ja/約', 'ja'));
         middlewareWithPathnames(createMockRequest('/ja/ユーザー', 'ja'));
         middlewareWithPathnames(createMockRequest('/ja/ユーザー/1', 'ja'));
@@ -617,6 +617,75 @@ describe('prefix-based routing', () => {
         );
         middlewareWithPathnames(
           createMockRequest('/ja/カテゴリー/女性/ティーシャツ', 'ja')
+        );
+
+        expect(MockedNextResponse.next).not.toHaveBeenCalled();
+        expect(MockedNextResponse.redirect).not.toHaveBeenCalled();
+        expect(MockedNextResponse.rewrite).toHaveBeenCalledTimes(6);
+        expect(MockedNextResponse.rewrite.mock.calls[0][0].toString()).toBe(
+          'http://localhost:3000/ja/about'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[1][0].toString()).toBe(
+          'http://localhost:3000/ja/users'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[2][0].toString()).toBe(
+          'http://localhost:3000/ja/users/1'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[3][0].toString()).toBe(
+          'http://localhost:3000/ja/news/happy-newyear-g5b116754'
+        );
+
+        // Dynamic segments are expected to be encoded
+        expect(MockedNextResponse.rewrite.mock.calls[4][0].toString()).toBe(
+          'http://localhost:3000/ja/products/%E3%82%A2%E3%83%91%E3%83%AC%E3%83%AB/%E3%83%86%E3%82%A3%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%84'
+        );
+        expect(MockedNextResponse.rewrite.mock.calls[5][0].toString()).toBe(
+          'http://localhost:3000/ja/categories/%E5%A5%B3%E6%80%A7/%E3%83%86%E3%82%A3%E3%83%BC%E3%82%B7%E3%83%A3%E3%83%84'
+        );
+      });
+
+      it('serves requests for non-ascii characters that are encoded', () => {
+        middlewareWithPathnames(
+          createMockRequest('/ja/' + encodeURIComponent('約'), 'ja')
+        );
+        middlewareWithPathnames(
+          createMockRequest('/ja/' + encodeURIComponent('ユーザー'), 'ja')
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/ja/' + encodeURIComponent('ユーザー') + '/1',
+            'ja'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/ja/' +
+              encodeURIComponent('ニュース') +
+              '/happy-newyear-g5b116754',
+            'ja'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/ja/' +
+              encodeURIComponent('製品') +
+              '/' +
+              encodeURIComponent('アパレル') +
+              '/' +
+              encodeURIComponent('ティーシャツ'),
+            'ja'
+          )
+        );
+        middlewareWithPathnames(
+          createMockRequest(
+            '/ja/' +
+              encodeURIComponent('カテゴリー') +
+              '/' +
+              encodeURIComponent('女性') +
+              '/' +
+              encodeURIComponent('ティーシャツ'),
+            'ja'
+          )
         );
 
         expect(MockedNextResponse.next).not.toHaveBeenCalled();

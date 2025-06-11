@@ -353,7 +353,7 @@ function routing() {
       <span className="line">
         <span data-token="text">/</span>
         <span data-token="constant">de</span>
-        <span data-token="text">/ueber-uns</span>
+        <span data-token="text">/über-uns</span>
       </span>
     </CodeSnippet>
   );

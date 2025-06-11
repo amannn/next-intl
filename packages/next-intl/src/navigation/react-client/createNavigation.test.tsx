@@ -412,6 +412,27 @@ describe("localePrefix: 'always', with `pathnames`", () => {
         // Still works
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/unknown');
       });
+
+      it('handles UTF-8 encoded pathnames', () => {
+        invokeRouter((router) =>
+          router[method](
+            {
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: 'launch-party'
+              },
+              query: {
+                foo: 'こんにちは'
+              }
+            },
+            {locale: 'ja'}
+          )
+        );
+        expect(useNextRouter()[method]).toHaveBeenCalledWith(
+          '/ja/%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9/launch-party-3?foo=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF'
+        );
+      });
     });
   });
 
