@@ -215,6 +215,28 @@ const withNextIntl = createNextIntlPlugin(
 
 </Details>
 
+### `src/app/layout.tsx` [#rootlayout]
+
+<Callout>
+<strong>Note on nested `<html>` and `<body>` tags:</strong>
+
+Next.js <strong>requires</strong> `<html>` and `<body>` in `app/layout.tsx`.
+If your `[locale]/layout.tsx` also contains them (it usually does so it can set `lang`), the tags are rendered twice and you’ll see hydration warnings in development.
+
+Add `suppressHydrationWarning` to <em>both</em> tags in <strong>both</strong> layouts
+
+</Callout>
+
+```tsx filename="app/layout.tsx"
+export default function RootLayout({children}: {children: React.ReactNode}) {
+  return (
+    <html suppressHydrationWarning>
+      <body suppressHydrationWarning>{children}</body>
+    </html>
+  );
+}
+```
+
 ### `src/app/[locale]/layout.tsx` [#layout]
 
 The `locale` that was matched by the middleware is available via the `locale` param and can be used to configure the document language. Additionally, we can use this place to pass configuration from `i18n/request.ts` to Client Components via `NextIntlClientProvider`.
@@ -238,8 +260,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale}>
-      <body>
+    <html lang={locale} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
