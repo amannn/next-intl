@@ -15,7 +15,7 @@ import Callout from '@/components/Callout';
 1. [**Middleware**](/docs/routing/middleware): Negotiates the locale and handles redirects & rewrites (e.g. `/` → `/en`)
 2. [**Navigation APIs**](/docs/routing/navigation): Lightweight wrappers around Next.js' navigation APIs like `<Link />`
 
-This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/ueber-uns`).
+This enables you to express your app in terms of APIs like `<Link href="/about">`, while aspects like the locale and user-facing pathnames are automatically handled behind the scenes (e.g. `/de/über-uns`).
 
 ## `defineRouting`
 
@@ -166,7 +166,7 @@ Many apps choose to localize pathnames, especially when search engine optimizati
 **Example:**
 
 - `/en/about`
-- `/de/ueber-uns`
+- `/de/über-uns`
 
 Since you typically want to define these routes only once internally, you can use the `next-intl` middleware to [rewrite](https://nextjs.org/docs/api-reference/next.config.js/rewrites) such incoming requests to shared pathnames.
 
@@ -186,10 +186,16 @@ export const routing = defineRouting({
     '/': '/',
     '/blog': '/blog',
 
-    // If some locales use different paths, you can
+    // If locales use different paths, you can
     // specify the relevant external pathnames
+    '/services': {
+      de: '/leistungen'
+    },
+
+    // Encoding of non-ASCII characters is handled
+    // automatically where relevant
     '/about': {
-      de: '/ueber-uns'
+      de: '/über-uns'
     },
 
     // Dynamic params are supported via square brackets
@@ -211,7 +217,7 @@ export const routing = defineRouting({
 });
 ```
 
-Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/ueber-uns` will be handled by the page at `/[locale]/about/page.tsx`.
+Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/über-uns` will be handled by the page at `/[locale]/about/page.tsx`.
 
 <Details id="localized-pathnames-revalidation">
 <summary>How can I revalidate localized pathnames?</summary>

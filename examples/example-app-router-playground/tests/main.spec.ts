@@ -735,6 +735,45 @@ it.skip('provides a `Link` that works with Radix Primitives', async ({
   await expect(page.getByText('Link to about')).toBeFocused();
 });
 
+describe('encoding of non-ASCII characters in URLs', () => {
+  it('renders a page with encoded characters in the pathname', async ({
+    page
+  }) => {
+    await page.goto('/ja/' + encodeURIComponent('ネスト'));
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('renders a page with non-encoded characters in the pathname', async ({
+    page
+  }) => {
+    await page.goto('/ja/ネスト');
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('can use `Link` to go to an encoded pathname', async ({page}) => {
+    await page.goto('/ja/client');
+    const link = page.getByRole('link', {name: 'Go to nested'});
+    await expect(link).toHaveAttribute(
+      'href',
+      '/ja/%E3%83%8D%E3%82%B9%E3%83%88'
+    );
+    await link.click();
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('can use `useRouter` to go to an encoded pathname', async ({page}) => {
+    await page.goto('/ja/client');
+    await page
+      .getByRole('button', {name: 'Go to nested (with router)'})
+      .click();
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+});
+
 describe('server actions', () => {
   it('can use `getTranslations` in server actions', async ({page}) => {
     await page.goto('/actions');

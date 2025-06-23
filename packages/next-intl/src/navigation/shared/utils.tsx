@@ -157,8 +157,6 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
 
     // Clean up optional catch-all segments that were not replaced
     compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
-    compiled = normalizeTrailingSlash(compiled);
-
     if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
       // Next.js throws anyway, therefore better provide a more helpful error message
       throw new Error(
@@ -168,7 +166,12 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
       );
     }
 
+    compiled = normalizeTrailingSlash(compiled);
+    compiled = encodePathname(compiled);
+
     if (query) {
+      // This also encodes non-ASCII characters by
+      // using `new URLSearchParams()` internally
       compiled += serializeSearchParams(query);
     }
 
@@ -186,6 +189,33 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
     const result: UrlObject = {...rest, pathname: compiled};
     return result;
   }
+}
+
+function encodePathname(pathname: string) {
+  // Generally, to comply with RFC 3986 and Google's best practices for URL structures
+  // (https://developers.google.com/search/docs/crawling-indexing/url-structure),
+  // we should always encode non-ASCII characters.
+  //
+  // There are two places where next-intl interacts with potentially non-ASCII URLs:
+  // 1. Middleware: When mapping a localized pathname to a non-localized pathname internally
+  // 2. Navigation APIs: When generating a URLs to be used for <Link /> & friends
+  //
+  // Next.js normalizes incoming pathnames to always be encoded, therefore we can safely
+  // decode them there (see middleware.tsx). On the other hand, Next.js doesn't consistently
+  // encode non-ASCII characters that are passed to navigation APIs:
+  // 1. <Link /> doesn't encode non-ASCII characters
+  // 2. useRouter() uses `new URL()` internally, which will encode—but only if necessary
+  // 3. redirect() uses useRouter() on the client, but on the server side only
+  //    assigns the location header without encoding.
+  //
+  // In addition to this, for getPathname() we need to encode non-ASCII characters.
+  //
+  // Therefore, the bottom line is that next-intl should take care of encoding non-ASCII
+  // characters in all cases, but can rely on `new URL()` to not double-encode characters.
+  return pathname
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
 }
 
 export function getRoute<AppLocales extends Locales>(
