@@ -287,6 +287,17 @@ describe('type safety', () => {
       };
     });
 
+    it('validates big integers', () => {
+      const t = translateMessage('Big integer: {value, number}');
+      t('msg', {value: 123456789123456789123456n});
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      () => {
+        // @ts-expect-error
+        t('msg', {value: 'test'});
+      };
+    });
+
     it('validates dates', () => {
       const t = translateMessage('Date: {date, date, full}');
       t('msg', {date: new Date('2024-07-09T07:06:03.320Z')});
@@ -648,6 +659,41 @@ describe('numbers in messages', () => {
     expect(
       t('label', {count: 1.5}, {number: {integer: {minimumFractionDigits: 0}}})
     ).toBe('1.50000 2');
+  });
+});
+
+describe('big integers in messages', () => {
+  it('can pass an inline format', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: '{count, number, coarse}'}
+    });
+    expect(
+      t(
+        'label',
+        {count: 123456789123456789123456n},
+        {number: {coarse: {maximumSignificantDigits: 3}}}
+      )
+    ).toBe('123,000,000,000,000,000,000,000');
+  });
+
+  it('can merge an inline format with global formats', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: '{count, number, coarse} {count, number, precise}'},
+      formats: {number: {coarse: {maximumSignificantDigits: 3}}}
+    });
+    expect(
+      t(
+        'label',
+        {count: 123456789123456789123456n},
+        {
+          number: {
+            precise: {maximumSignificantDigits: 21}
+          }
+        }
+      )
+    ).toBe('123,000,000,000,000,000,000,000 123,456,789,123,456,789,123,000');
   });
 });
 

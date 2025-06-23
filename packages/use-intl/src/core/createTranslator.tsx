@@ -32,8 +32,7 @@ type ICUArgsWithTags<
   {
     // Numbers and dates should use the corresponding operators
     ICUArgument: string;
-
-    ICUNumberArgument: number;
+    ICUNumberArgument: number | bigint;
     ICUDateArgument: Date;
   }
 > &
