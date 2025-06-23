@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.0 (2025-06-23)
+
+### Features
+
+* Support BigInt for `number` interpolation with `useTranslations` ([#1929](https://github.com/amannn/next-intl/issues/1929)) ([a893330](https://github.com/amannn/next-intl/commit/a893330470cf435392996159579c706780c7c071)), closes [#1928](https://github.com/amannn/next-intl/issues/1928) – by @sgleisner
+
 ## 4.2.0 (2025-06-23)
 
 ### Features
