@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.2.0 (2025-06-23)
+
+### Features
+
+* Encode non-ASCII characters in pathnames returned from navigation APIs ([#1923](https://github.com/amannn/next-intl/issues/1923)) ([3d23c61](https://github.com/amannn/next-intl/commit/3d23c6134c8e73c084a2c75f8029cd9e7b155418)) – by @amannn
+
 ## 4.1.0 (2025-04-24)
 
 ### Features
