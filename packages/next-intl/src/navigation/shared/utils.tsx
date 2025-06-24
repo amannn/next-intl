@@ -123,51 +123,48 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   pathnames: Pathnames<AppLocales>;
   query?: Record<string, SearchParamValue>;
 }) {
-  function getNamedPath(value: keyof typeof pathnames) {
-    let namedPath = pathnames[value];
-    if (!namedPath) {
+  function compilePath(value: string) {
+    const pathnameConfig = pathnames[value];
+
+    let compiled: string;
+    if (pathnameConfig) {
+      const template = getLocalizedTemplate(pathnameConfig, locale, value);
+      compiled = template;
+
+      if (params) {
+        Object.entries(params).forEach(([key, paramValue]) => {
+          let regexp: string, replacer: string;
+
+          if (Array.isArray(paramValue)) {
+            regexp = `(\\[)?\\[...${key}\\](\\])?`;
+            replacer = paramValue.map((v) => String(v)).join('/');
+          } else {
+            regexp = `\\[${key}\\]`;
+            replacer = String(paramValue);
+          }
+
+          compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
+        });
+      }
+
+      // Clean up optional catch-all segments that were not replaced
+      compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
+      if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
+        // Next.js throws anyway, therefore better provide a more helpful error message
+        throw new Error(
+          `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(
+            params
+          )}`
+        );
+      }
+
+      compiled = encodePathname(compiled);
+    } else {
       // Unknown pathnames
-      namedPath = value;
-    }
-    return namedPath;
-  }
-
-  function compilePath(
-    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
-    internalPathname: string
-  ) {
-    const template = getLocalizedTemplate(namedPath, locale, internalPathname);
-    let compiled = template;
-
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        let regexp: string, replacer: string;
-
-        if (Array.isArray(value)) {
-          regexp = `(\\[)?\\[...${key}\\](\\])?`;
-          replacer = value.map((v) => String(v)).join('/');
-        } else {
-          regexp = `\\[${key}\\]`;
-          replacer = String(value);
-        }
-
-        compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
-      });
-    }
-
-    // Clean up optional catch-all segments that were not replaced
-    compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
-    if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
-      // Next.js throws anyway, therefore better provide a more helpful error message
-      throw new Error(
-        `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(
-          params
-        )}`
-      );
+      compiled = value;
     }
 
     compiled = normalizeTrailingSlash(compiled);
-    compiled = encodePathname(compiled);
 
     if (query) {
       // This also encodes non-ASCII characters by
@@ -179,13 +176,10 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 
   if (typeof pathname === 'string') {
-    const namedPath = getNamedPath(pathname);
-    const compiled = compilePath(namedPath, pathname);
-    return compiled;
+    return compilePath(pathname);
   } else {
     const {pathname: internalPathname, ...rest} = pathname;
-    const namedPath = getNamedPath(internalPathname);
-    const compiled = compilePath(namedPath, internalPathname);
+    const compiled = compilePath(internalPathname);
     const result: UrlObject = {...rest, pathname: compiled};
     return result;
   }

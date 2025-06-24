@@ -1,8 +1,9 @@
-import {describe, expect, it} from 'vitest';
+import {beforeEach, describe, expect, it} from 'vitest';
 import {
   getSortedPathnames,
   hasPathnamePrefixed,
   matchesPathname,
+  normalizeTrailingSlash,
   prefixPathname,
   unprefixPathname
 } from './utils.js';
@@ -171,5 +172,62 @@ describe('getSortedPathnames', () => {
       '/articles/[category]/new',
       '/articles/[category]/[...articleSlug]'
     ]);
+  });
+});
+
+describe('normalizeTrailingSlash', () => {
+  describe('with trailing slash enabled', () => {
+    beforeEach(() => {
+      process.env._next_intl_trailing_slash = 'true';
+      return () => {
+        delete process.env._next_intl_trailing_slash;
+      };
+    });
+
+    it('should add trailing slash when pathname does not end with slash', () => {
+      expect(normalizeTrailingSlash('/about')).toBe('/about/');
+    });
+
+    it('should not modify pathname when it already ends with slash', () => {
+      expect(normalizeTrailingSlash('/about/')).toBe('/about/');
+    });
+
+    it('should not modify root path', () => {
+      expect(normalizeTrailingSlash('/')).toBe('/');
+    });
+
+    it('should handle pathnames with multiple segments', () => {
+      expect(
+        normalizeTrailingSlash('/categories/development/programming/')
+      ).toBe('/categories/development/programming/');
+    });
+
+    it('handles pathnames that contain a hash', () => {
+      expect(normalizeTrailingSlash('/about#section')).toBe('/about/#section');
+    });
+  });
+
+  describe('with trailing slash disabled', () => {
+    it('should remove trailing slash when pathname ends with slash', () => {
+      expect(normalizeTrailingSlash('/about/')).toBe('/about');
+    });
+
+    it('should not modify pathname when it already has no trailing slash', () => {
+      expect(normalizeTrailingSlash('/about')).toBe('/about');
+    });
+
+    it('should not modify root path', () => {
+      expect(normalizeTrailingSlash('/')).toBe('/');
+    });
+
+    it('should handle pathnames with multiple segments', () => {
+      expect(
+        normalizeTrailingSlash('/categories/development/programming/')
+      ).toBe('/categories/development/programming');
+    });
+
+    it('handles pathnames that contain a hash', () => {
+      expect(normalizeTrailingSlash('/about#section')).toBe('/about#section');
+    });
   });
 });
