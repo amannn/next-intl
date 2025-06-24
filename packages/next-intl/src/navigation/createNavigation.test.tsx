@@ -572,6 +572,12 @@ describe.each([
         expect(markup).toContain('href="/en/test"');
       });
 
+      it('handles unknown pathnames with a hash', () => {
+        // @ts-expect-error -- Validation is still on
+        const markup = renderToString(<Link href="/test#foo">Test</Link>);
+        expect(markup).toContain('href="/en/test#foo"');
+      });
+
       it('handles external links correctly', () => {
         const markup = renderToString(
           // @ts-expect-error -- Validation is still on
