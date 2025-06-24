@@ -221,9 +221,9 @@ describe('normalizeTrailingSlash', () => {
     });
 
     it('should handle pathnames with multiple segments', () => {
-      expect(normalizeTrailingSlash('/articles/tech/react-hooks/')).toBe(
-        '/articles/tech/react-hooks'
-      );
+      expect(
+        normalizeTrailingSlash('/categories/development/programming/')
+      ).toBe('/categories/development/programming');
     });
 
     it('handles pathnames that contain a hash', () => {
