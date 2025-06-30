@@ -26,6 +26,13 @@ export default function ClientContent() {
       <p data-testid="UnlocalizedPathname">{usePathname()}</p>
       <p data-testid="TimeZone">{timeZone}</p>
       <p data-testid="Locale">{locale}</p>
+      <button
+        onClick={() =>
+          router.replace('/client', {locale: locale === 'en' ? 'de' : 'en'})
+        }
+      >
+        Switch to {locale === 'en' ? 'de' : 'en'}
+      </button>
     </>
   );
 }
