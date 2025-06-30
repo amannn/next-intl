@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.1 (2025-06-24)
+
+### Bug Fixes
+
+* Don't encode hashes in unknown pathnames ([#1935](https://github.com/amannn/next-intl/issues/1935)) ([65978d2](https://github.com/amannn/next-intl/commit/65978d245dcc1550f4dfa30b75dcb9adc4379a5d)) – by @amannn
+
 ## 4.3.0 (2025-06-23)
 
 ### Features
