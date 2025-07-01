@@ -724,6 +724,14 @@ it('can render mdx content', async ({page}) => {
   await page.getByRole('heading', {name: 'Über uns'}).waitFor();
 });
 
+it('can switch the locale with `useRouter`', async ({page}) => {
+  await page.goto('/client');
+  await page.getByRole('button', {name: 'Switch to de'}).click();
+  await expect(page).toHaveURL('/de/client');
+  await page.getByRole('button', {name: 'Switch to en'}).click();
+  await expect(page).toHaveURL('/client');
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
