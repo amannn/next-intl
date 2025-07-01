@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.3 (2025-07-01)
+
+### Bug Fixes
+
+* Add friendly error message when failing to load current Next.js version ([#1945](https://github.com/amannn/next-intl/issues/1945)) ([5021773](https://github.com/amannn/next-intl/commit/502177306ca0e1e8a30fe09d38bcb71cac84d7f7)) – by @cupofjoakim
+
 ## 4.3.2 (2025-07-01)
 
 ### Bug Fixes
