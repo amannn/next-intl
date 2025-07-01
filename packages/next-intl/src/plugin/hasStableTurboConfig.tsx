@@ -1,8 +1,17 @@
-// eslint-disable-next-line import/order
 import {createRequire} from 'module';
 
-const require = createRequire(import.meta.url);
-const pkg = require('next/package.json');
+function getCurrentVersion() {
+  try {
+    const require = createRequire(import.meta.url);
+    const pkg = require('next/package.json');
+    return pkg.version;
+  } catch (error) {
+    throw new Error(
+      'Failed to get current Next.js version. This can happen if next-intl/plugin is imported into your app code outside of your next.config.js.',
+      {cause: error}
+    );
+  }
+}
 
 function compareVersions(version1: string, version2: string) {
   const v1Parts = version1.split('.').map(Number);
@@ -17,5 +26,6 @@ function compareVersions(version1: string, version2: string) {
   return 0;
 }
 
-const hasStableTurboConfig = compareVersions(pkg.version, '15.3.0') >= 0;
+const hasStableTurboConfig =
+  compareVersions(getCurrentVersion(), '15.3.0') >= 0;
 export default hasStableTurboConfig;
