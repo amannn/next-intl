@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.2 (2025-07-01)
+
+### Bug Fixes
+
+* Ensure cookie is synced before navigation with `useRouter` ([#1947](https://github.com/amannn/next-intl/issues/1947)) ([3ee9c4d](https://github.com/amannn/next-intl/commit/3ee9c4d27384c86d17c7141da54d5a9e4970164e)) – by @amannn
+
 ## 4.3.1 (2025-06-24)
 
 ### Bug Fixes
