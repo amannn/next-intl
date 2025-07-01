@@ -7,7 +7,7 @@ function getCurrentVersion() {
     return pkg.version;
   } catch (error) {
     throw new Error(
-      'Failed to get current Next.js version. This can happen if next-intl/plugin is imported into your app code outside of your next.config.js.,
+      'Failed to get current Next.js version. This can happen if next-intl/plugin is imported into your app code outside of your next.config.js.',
       {cause: error}
     );
   }
