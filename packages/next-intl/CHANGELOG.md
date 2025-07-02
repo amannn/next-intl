@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.4 (2025-07-02)
+
+### Bug Fixes
+
+* Correctly compile messages containing escaped curly braces (e.g. `'{name'}`) ([#1950](https://github.com/amannn/next-intl/issues/1950)) ([4d418f4](https://github.com/amannn/next-intl/commit/4d418f45679e471437ac5d2faafc9a68b9106bf8)), closes [#1948](https://github.com/amannn/next-intl/issues/1948) – by @amannn
+
 ## 4.3.3 (2025-07-01)
 
 ### Bug Fixes
