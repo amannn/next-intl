@@ -79,6 +79,13 @@ it('can escape curly brackets', () => {
   screen.getByText('Hello {name}');
 });
 
+it('can escape curly brackets in production', () => {
+  vi.stubEnv('NODE_ENV', 'production');
+  renderMessage("Hello '{name'}");
+  screen.getByText('Hello {name}');
+  vi.unstubAllEnvs();
+});
+
 it('handles number formatting with percent', () => {
   renderMessage('{value, number, percent}', {value: 0.312});
   screen.getByText('31%');
