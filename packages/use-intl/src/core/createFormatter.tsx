@@ -62,15 +62,6 @@ function resolveRelativeTimeUnit(seconds: number) {
   return 'year';
 }
 
-function calculateRelativeTimeValue(
-  seconds: number,
-  unit: Intl.RelativeTimeFormatUnit
-) {
-  // We have to round the resulting values, as `Intl.RelativeTimeFormat`
-  // will include fractions like '2.1 hours ago'.
-  return Math.round(seconds / UNIT_SECONDS[unit]);
-}
-
 type Props = {
   locale: Locale;
   timeZone?: TimeZone;
@@ -309,24 +300,40 @@ export default function createFormatter(props: Props) {
       }
 
       const dateDate = new Date(date);
-      const seconds = (dateDate.getTime() - nowDate.getTime()) / 1000;
+
+      // Rounding is fine here because `Intl.RelativeTimeFormat`
+      // doesn't support units smaller than seconds.
+      const seconds = Math.round(
+        (dateDate.getTime() - nowDate.getTime()) / 1000
+      );
 
       if (!unit) {
         unit = resolveRelativeTimeUnit(seconds);
       }
 
-      // `numeric: 'auto'` can theoretically produce output like "yesterday",
-      // but it only works with integers. E.g. -1 day will produce "yesterday",
-      // but -1.1 days will produce "-1.1 days". Rounding before formatting is
-      // not desired, as the given dates might cross a threshold were the
-      // output isn't correct anymore. Example: 2024-01-08T23:00:00.000Z and
-      // 2024-01-08T01:00:00.000Z would produce "yesterday", which is not the
-      // case. By using `always` we can ensure correct output. The only exception
-      // is the formatting of times <1 second as "now".
-      opts.numeric = unit === 'second' ? 'auto' : 'always';
+      // We have to round the resulting values, as `Intl.RelativeTimeFormat`
+      // would include fractions like '2.1 hours ago'.
+      const unitValue = seconds / UNIT_SECONDS[unit];
+      const rounded = Math.round(unitValue);
 
-      const value = calculateRelativeTimeValue(seconds, unit);
-      return formatters.getRelativeTimeFormat(locale, opts).format(value, unit);
+      // `numeric: 'auto'` works well for formatting values that don't
+      // have a fractional part (e.g. "yesterday")
+      //
+      // However, it should not be used with rounded values, as the given
+      // dates might cross a threshold were the output isn't correct anymore.
+      // Example: 2024-01-08T23:00:00.000Z and 2024-01-08T01:00:00.000Z would
+      // produce "yesterday", which is not the case. By using `always` in this
+      // case, we can ensure correct output.
+      //
+      // Note that due to approximations being used for months and years, it's
+      // practically impossible to trigger the cases "last month" or "last year".
+      if (unitValue === rounded) {
+        opts.numeric = 'auto';
+      }
+
+      return formatters
+        .getRelativeTimeFormat(locale, opts)
+        .format(rounded, unit);
     } catch (error) {
       onError(
         new IntlError(IntlErrorCode.FORMATTING_ERROR, (error as Error).message)
