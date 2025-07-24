@@ -2,6 +2,10 @@ export default {
   index: {
     title: 'Overview'
   },
+  'nextjs-root-params': {
+    title: 'New in Next.js 15.X: rootParams',
+    display: 'hidden'
+  },
   'next-intl-4-0': {
     title: 'next-intl 4.0',
     display: 'hidden'
