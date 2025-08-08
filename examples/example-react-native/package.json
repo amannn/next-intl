@@ -23,8 +23,5 @@
   "devDependencies": {
     "@babel/core": "^7.26.10"
   },
-  "private": true,
-  "engines": {
-    "node": ">=20.0.0"
-  }
+  "private": true
 }
