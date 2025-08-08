@@ -39,5 +39,8 @@
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
-  "prettier": "eslint-config-molindo/.prettierrc.json"
+  "prettier": "eslint-config-molindo/.prettierrc.json",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
