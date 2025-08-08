@@ -35,5 +35,8 @@
     "singleQuote": true,
     "bracketSpacing": false,
     "trailingComma": "none"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
