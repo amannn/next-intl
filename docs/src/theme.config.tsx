@@ -27,7 +27,7 @@ export default {
     pre: Pre
   },
   banner: {
-    key: 'banner-learn-next-intl',
+    key: 'banner-learn-next-intl-announcement',
     content: (
       <div className="text-center">
         Announcing{' '}
