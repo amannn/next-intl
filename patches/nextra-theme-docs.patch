@@ -1,0 +1,29 @@
+diff --git a/dist/index.js b/dist/index.js
+index 56201641fd965dcc5ab7c5df53e444c41293c00e..0c1b131ffea455aeaa988b9b550bf3ab37f7e5f0 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1406,7 +1406,7 @@ function Navbar({ items }) {
+           children: renderComponent(themeConfig.logo)
+         }
+       ) : /* @__PURE__ */ jsx19("div", { className: "_flex _items-center ltr:_mr-auto rtl:_ml-auto", children: renderComponent(themeConfig.logo) }),
+-      /* @__PURE__ */ jsx19("div", { className: "_flex _gap-4 _overflow-x-auto nextra-scrollbar _py-1.5", children: items.map((pageOrMenu) => {
++      /* @__PURE__ */ jsx19("div", { className: "_flex _overflow-x-auto nextra-scrollbar _py-1.5", style: {gap: '1.5rem'}, children: items.map((pageOrMenu) => {
+         if (pageOrMenu.display === "hidden") return null;
+         if (pageOrMenu.type === "menu") {
+           const menu2 = pageOrMenu;
+@@ -1424,12 +1424,13 @@ function Navbar({ items }) {
+             href,
+             className: cn11(
+               classes2.link,
+-              "max-md:_hidden _whitespace-nowrap _ring-inset",
++              page.className,
++              "max-md:_hidden _whitespace-nowrap _ring-inset _relative",
+               !isActive || page.newWindow ? classes2.inactive : classes2.active
+             ),
+             newWindow: page.newWindow,
+             "aria-current": !page.newWindow && isActive,
+-            children: page.title
++            children: [page.title, page.titleChildren]
+           },
+           href
+         );

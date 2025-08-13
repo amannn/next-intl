@@ -26,23 +26,6 @@ export default {
   components: {
     pre: Pre
   },
-  banner: {
-    key: 'banner-learn-next-intl-announcement',
-    content: (
-      <div className="text-center">
-        Announcing{' '}
-        <a
-          className="underline"
-          href="https://learn.next-intl.dev"
-          rel="noreferrer"
-          target="_blank"
-        >
-          learn.next-intl.dev
-        </a>
-        !
-      </div>
-    )
-  },
   footer: {
     component: Footer
   },
@@ -92,7 +75,7 @@ export default {
       if (!isRoot) return <Navbar {...props} />;
 
       return (
-        <div className="navbar-home">
+        <div className="navbar-home group">
           <Navbar {...props} />
         </div>
       );

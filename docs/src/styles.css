@@ -15,7 +15,7 @@
 }
 
 /**
- * Navbar on home
+ * Navbar
  */
 .navbar-home {
   @apply bg-slate-850 text-white dark:bg-slate-850;
@@ -41,6 +41,10 @@
 
 .nextra-sidebar-container {
   @apply bg-white dark:bg-black md:bg-transparent md:dark:bg-transparent;
+}
+
+.nextra-nav-container > nav > div:nth-child(2) {
+  @apply py-5;
 }
 
 /**
