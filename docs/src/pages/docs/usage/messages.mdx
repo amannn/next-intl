@@ -200,7 +200,7 @@ Static messages will be used as-is:
 t('message'); // "Hello world!"
 ```
 
-### Interpolation of dynamic values
+### Interpolation of arguments [#arguments]
 
 Dynamic values can be inserted into messages by using curly braces:
 
@@ -321,7 +321,7 @@ t('message', {locale: locale.replaceAll('-', '_')});
 
 ### Escaping
 
-Since curly braces are used for [interpolating dynamic values](/docs/usage/messages#interpolation-of-dynamic-values), you can escape them with the `'` marker to use the actual symbol in messages:
+Since curly braces are used for [interpolating arguments](/docs/usage/messages#arguments), you can escape them with the `'` marker to use the actual symbol in messages:
 
 ```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
@@ -516,7 +516,7 @@ Note that separately from this, you can also provide [fallback messages](/docs/u
 
 ## Arrays of messages
 
-If you need to render a list of messages, the recommended approach is to map an array of keys to the corresponding messages:
+If you need to render a list of messages, the recommended approach is to map message keys to an array within your React component:
 
 ```json filename="en.json"
 {
@@ -542,20 +542,35 @@ import {useTranslations} from 'next-intl';
 
 function CompanyStats() {
   const t = useTranslations('CompanyStats');
-  const keys = ['yearsOfService', 'happyClients', 'partners'] as const;
+  const items = [
+    {
+      title: t('yearsOfService.title'),
+      value: t('yearsOfService.value')
+    },
+    {
+      title: t('happyClients.title'),
+      value: t('happyClients.value')
+    },
+    {
+      title: t('partners.title'),
+      value: t('partners.value')
+    }
+  ];
 
   return (
     <ul>
-      {keys.map((key) => (
-        <li key={key}>
-          <h2>{t(`${key}.title`)}</h2>
-          <p>{t(`${key}.value`)}</p>
+      {items.map((item, index) => (
+        <li key={index}>
+          <h2>{item.title}</h2>
+          <p>{item.value}</p>
         </li>
       ))}
     </ul>
   );
 }
 ```
+
+This approach ensures that you can use ICU features while also enabling static [validation of messages](/docs/workflows/messages).
 
 <Details id="arrays-varying-amount">
 <summary>What if the amount of items varies depending on the locale?</summary>
