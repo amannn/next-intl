@@ -201,23 +201,21 @@ describe('relativeTime', () => {
     it.each([
       ['2022-07-10T15:00:00.000Z', '2 years ago'],
       ['2022-07-11T15:00:00.000Z', '1 year ago'],
-      ['2023-01-09T15:00:00.000Z', '1 year ago'],
+      ['2023-01-08T15:00:00.000Z', '1 year ago'],
       ['2023-01-10T15:00:00.000Z', '12 months ago'],
       ['2023-07-09T15:00:00.000Z', '6 months ago'],
       ['2023-12-09T15:00:00.000Z', '1 month ago'],
       ['2023-12-10T15:00:00.000Z', '4 weeks ago'],
-      ['2024-01-02T15:00:00.000Z', '1 week ago'],
+      ['2024-01-01T15:00:00.000Z', '1 week ago'],
       ['2024-01-03T15:00:00.000Z', '6 days ago'],
-      ['2024-01-08T15:00:00.000Z', '1 day ago'],
+      ['2024-01-08T14:00:00.000Z', '1 day ago'],
       ['2024-01-08T15:01:00.000Z', '24 hours ago'],
       ['2024-01-09T14:00:00.000Z', '1 hour ago'],
       ['2024-01-09T14:01:00.000Z', '59 minutes ago'],
       ['2024-01-09T14:59:00.000Z', '1 minute ago'],
       ['2024-01-09T14:59:01.000Z', '59 seconds ago'],
       ['2024-01-09T14:59:59.000Z', '1 second ago'],
-      ['2024-01-09T14:59:59.999Z', 'now'],
 
-      ['2024-01-09T15:00:00.001Z', 'now'],
       ['2024-01-09T15:00:01.000Z', 'in 1 second'],
       ['2024-01-09T15:00:59.000Z', 'in 59 seconds'],
       ['2024-01-09T15:01:00.000Z', 'in 1 minute'],
@@ -226,7 +224,7 @@ describe('relativeTime', () => {
       ['2024-01-09T23:59:00.000Z', 'in 9 hours'],
       ['2024-01-10T00:00:00.000Z', 'in 9 hours'],
       ['2024-01-10T14:59:00.000Z', 'in 24 hours'],
-      ['2024-01-10T15:00:00.000Z', 'in 1 day'],
+      ['2024-01-10T16:00:00.000Z', 'in 1 day'],
       ['2024-01-10T23:59:00.000Z', 'in 1 day'],
       ['2024-01-11T00:00:00.000Z', 'in 1 day'],
       ['2024-01-11T01:00:00.000Z', 'in 1 day'],
@@ -237,7 +235,7 @@ describe('relativeTime', () => {
       ['2024-02-06T00:00:00.000Z', 'in 4 weeks'],
       ['2024-02-06T15:00:00.000Z', 'in 4 weeks'],
       ['2024-02-09T00:00:00.000Z', 'in 4 weeks'],
-      ['2024-02-09T01:00:00.000Z', 'in 1 month'],
+      ['2024-02-10T01:00:00.000Z', 'in 1 month'],
       ['2024-04-09T00:00:00.000Z', 'in 3 months'],
       ['2024-12-09T00:00:00.000Z', 'in 11 months'],
       ['2024-12-31T00:00:00.000Z', 'in 12 months'],
@@ -318,6 +316,55 @@ describe('relativeTime', () => {
         unit: 'day'
       })
     ).toBe('in 2 days');
+  });
+
+  describe('choosing the `auto` representation', () => {
+    it('uses `auto` for times <=1 second', () => {
+      const formatter = createFormatter({
+        locale: 'en',
+        timeZone: 'Europe/Berlin'
+      });
+      const now = parseISO('2020-11-20T00:00:00.000Z');
+      expect(
+        formatter.relativeTime(parseISO('2020-11-20T00:00:00.200Z'), {
+          now
+        })
+      ).toBe('now');
+      expect(
+        formatter.relativeTime(parseISO('2020-11-19T23:59:59.900Z'), {
+          now
+        })
+      ).toBe('now');
+    });
+
+    it('can accept an explicit `unit`', () => {
+      const formatter = createFormatter({
+        locale: 'en',
+        timeZone: 'Europe/Berlin'
+      });
+      expect(
+        formatter.relativeTime(parseISO('2020-11-20T00:00:00.000Z'), {
+          now: parseISO('2020-11-20T00:00:00.000Z'),
+          unit: 'day'
+        })
+      ).toBe('today');
+    });
+
+    it.each([
+      ['last week', parseISO('2020-11-13T00:00:00.000Z')],
+      ['yesterday', parseISO('2020-11-19T00:00:00.000Z')],
+      ['tomorrow', parseISO('2020-11-21T00:00:00.000Z')]
+    ])('formats %s correctly', (expected, date) => {
+      const formatter = createFormatter({
+        locale: 'en',
+        timeZone: 'Europe/Berlin'
+      });
+      expect(
+        formatter.relativeTime(date, {
+          now: parseISO('2020-11-20T00:00:00.000Z')
+        })
+      ).toBe(expected);
+    });
   });
 });
 
