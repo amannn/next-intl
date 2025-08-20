@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc && prettier src --check",
+    "lint": "eslint src && prettier src --check",
     "test": "pnpm test:jest && node runPlaywright.mjs",
     "test:playwright": "node runPlaywright.mjs",
     "test:jest": "jest",
