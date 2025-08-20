@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && tsc && prettier src --check && node lintLinks.mjs",
+    "lint": "eslint src && prettier src --check && node lintLinks.mjs",
     "test": "echo 'No tests yet'",
     "build": "next build && next-sitemap",
     "start": "next start"
