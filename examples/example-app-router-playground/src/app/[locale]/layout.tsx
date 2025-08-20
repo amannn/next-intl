@@ -8,7 +8,6 @@ import {
   getTimeZone,
   getTranslations
 } from 'next-intl/server';
-import {ReactNode} from 'react';
 import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
 
