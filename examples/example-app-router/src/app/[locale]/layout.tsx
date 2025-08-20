@@ -10,7 +10,7 @@ import './styles.css';
 
 type Props = {
   children: ReactNode;
-  params: Promise<{locale: Locale}>;
+  params: Promise<{locale: string}>;
 };
 
 const inter = Inter({subsets: ['latin']});
@@ -22,7 +22,10 @@ export function generateStaticParams() {
 export async function generateMetadata(props: Omit<Props, 'children'>) {
   const {locale} = await props.params;
 
-  const t = await getTranslations({locale, namespace: 'LocaleLayout'});
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: 'LocaleLayout'
+  });
 
   return {
     title: t('title')
