@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^15.3.0",
+    "next": "^15.5.0",
     "next-intl": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -17,12 +17,12 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
-    "@playwright/test": "^1.51.0",
+    "@playwright/test": "^1.51.1",
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
     "autoprefixer": "^10.4.19",
     "eslint": "9.11.1",
-    "eslint-config-next": "^15.3.0",
+    "eslint-config-next": "^15.5.0",
     "postcss": "^8.5.3",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
