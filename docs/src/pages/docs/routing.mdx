@@ -296,12 +296,11 @@ In case you're using a system like a CMS to configure localized pathnames, you'l
 
 ```tsx filename="page.tsx"
 import {notFound} from 'next';
-import {Locale} from 'next-intl';
 import {fetchContent} from './cms';
 
 type Props = {
   params: Promise<{
-    locale: Locale;
+    locale: string;
     slug: Array<string>;
   }>;
 };
