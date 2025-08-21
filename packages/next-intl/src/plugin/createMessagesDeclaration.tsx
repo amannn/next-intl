@@ -14,6 +14,18 @@ function runOnce(fn: () => void) {
 export default function createMessagesDeclaration(
   messagesPaths: Array<string>
 ) {
+  const shouldRun = [
+    'dev',
+    'build',
+    'typegen'
+    // Note: The 'lint' task doesn't consult the
+    // Next.js config, so we can't detect it here.
+  ].some((arg) => process.argv.includes(arg));
+
+  if (!shouldRun) {
+    return;
+  }
+
   // Next.js can call the Next.js config multiple
   // times - ensure we only run once.
   runOnce(() => {
