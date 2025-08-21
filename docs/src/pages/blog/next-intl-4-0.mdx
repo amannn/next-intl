@@ -152,7 +152,7 @@ Due to a current limitation in TypeScript, this feature is opt-in for now. Pleas
 
 ## GDPR compliance [#gdpr-compliance]
 
-In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware for i18n routing:
+In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware with locale-based routing:
 
 1. The locale cookie now defaults to a session cookie that expires when the browser is closed.
 2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
@@ -288,11 +288,11 @@ This led to three minor changes:
 
 1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
-3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
+3. If you're using locale-based routing, make sure you've updated to [`await requestLocale`](/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
 
 While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
-I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
+I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with locale-based routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
 
 ## Other changes
 

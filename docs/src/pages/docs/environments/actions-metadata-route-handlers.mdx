@@ -98,7 +98,7 @@ async function loginAction(data: FormData) {
 }
 ```
 
-See the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) for a working implementation.
+See the [App Router without locale-based routing example](/examples#app-router-without-i18n-routing) for a working implementation.
 
 </Details>
 
@@ -123,7 +123,7 @@ Next.js will create a public route based on the segment where `opengraph-image.t
 http://localhost:3000/en/opengraph-image?f87b2d56cee109c7
 ```
 
-However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing/configuration#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
+However, if you're using [locale-based routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing/configuration#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
 
 If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
 
