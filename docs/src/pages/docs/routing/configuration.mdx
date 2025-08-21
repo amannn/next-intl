@@ -72,11 +72,11 @@ export const routing = defineRouting({
 
 #### `localePrefix: 'never'` [#locale-prefix-never]
 
-If you'd like to provide a locale to `next-intl`, e.g. based on user settings, you can consider setting up `next-intl` [without i18n routing](/docs/getting-started/app-router/without-i18n-routing). This way, you don't need to use the routing integration in the first place.
+If you'd like to provide a locale to `next-intl`, e.g. based on user settings, you can consider not using locale-based routing in the first place.
 
 However, you can also configure the middleware to never show a locale prefix in the URL, which can be helpful in the following cases:
 
-1. You want to use [domain-based routing](#domains) and have only one locale per domain
+1. You want to use [domain-based routing](#domains) and there's only one locale per domain
 2. You want to use a cookie to determine the locale while enabling static rendering
 
 ```tsx filename="routing.ts" {5}

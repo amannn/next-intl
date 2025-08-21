@@ -65,7 +65,7 @@ declare module 'next-intl' {
 
 By doing so, APIs like `useLocale()` or `<Link />` that either return or receive a `locale` will now pick up your app-specific `Locale` type, improving type safety across your app.
 
-To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-request) to return a valid locale:
+To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](/docs/routing/setup#i18n-request) to return a valid locale:
 
 ```tsx
 import {getRequestConfig} from 'next-intl/server';
@@ -176,9 +176,9 @@ export const routing = defineRouting({
 
 Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
 
-As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
+As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing/configuration#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
 
-Learn more in the [locale cookie](/docs/routing#locale-cookie) docs.
+Learn more in the [locale cookie](/docs/routing/configuration#locale-cookie) docs.
 
 ## Modernized build output
 
@@ -230,7 +230,7 @@ To make it easier to work with error handling functions on the client side, `Nex
 
 ## Stricter config for `domains` [#domains-config]
 
-So far, when using [`domains`](/docs/routing#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
+So far, when using [`domains`](/docs/routing/configuration#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing/configuration#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing/configuration#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
 
 Now, by introducing two new constraints, `next-intl` can avoid these tradeoffs altogether:
 
@@ -278,7 +278,7 @@ This will create the following structure:
 - `example.no`: `no-NO`
 - `example.no/en`: `en-NO`
 
-Learn more in the updated docs for [`domains`](/docs/routing#domains).
+Learn more in the updated docs for [`domains`](/docs/routing/configuration#domains).
 
 ## Preparation for upcoming Next.js features [#nextjs-future]
 

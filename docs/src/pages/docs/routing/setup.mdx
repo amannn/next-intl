@@ -94,7 +94,7 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
 
-### `src/i18n/request.ts`
+### `src/i18n/request.ts` [#i18n-request]
 
 Now, we can read the matched locale in our request configuration:
 
@@ -117,7 +117,7 @@ export default getRequestConfig(async ({requestLocale}) => {
 });
 ```
 
-### `src/app/[locale]` [#layout]
+### `src/app/[locale]/layout.tsx` [#layout]
 
 To complete our setup, we'll move all of our existing layouts and pages into the `[locale]` segment:
 

@@ -34,8 +34,8 @@ export async function generateMetadata({params}) {
 <Callout>
   By passing an explicit `locale` to the awaitable functions from `next-intl`,
   you can make the metadata handler eligible for [static
-  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
-  if you're using [i18n routing](/docs/getting-started/app-router).
+  rendering](/docs/routing/setup#static-rendering) if you're using [i18n
+  routing](/docs/getting-started/app-router).
 </Callout>
 
 ### Server Actions
@@ -123,7 +123,7 @@ Next.js will create a public route based on the segment where `opengraph-image.t
 http://localhost:3000/en/opengraph-image?f87b2d56cee109c7
 ```
 
-However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
+However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing/configuration#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
 
 If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
 
@@ -169,7 +169,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
 
 If you're using a sitemap to inform search engines about all pages of your site, you can attach locale-specific [alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL in the sitemap to indicate that a particular page is available in multiple languages or regions.
 
-Note that by default, `next-intl` returns [the `link` response header](/docs/routing#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
+Note that by default, `next-intl` returns [the `link` response header](/docs/routing/configuration#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
 
 Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap). You can construct a list of entries for each pathname and locale as follows:
 
@@ -206,7 +206,7 @@ function getUrl(href: Href, locale: Locale) {
 }
 ```
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)

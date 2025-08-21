@@ -28,7 +28,7 @@ Let's take a look at these changes in more detail.
 
 ## `defineRouting` [#define-routing]
 
-Previously, configuration that was shared among the middleware and the navigation APIs required special care to be kept in sync. With the introduction of [`defineRouting`](/docs/routing#define-routing), this configuration can now be centralized in a type-safe manner:
+Previously, configuration that was shared among the middleware and the navigation APIs required special care to be kept in sync. With the introduction of [`defineRouting`](/docs/routing/configuration#define-routing), this configuration can now be centralized in a type-safe manner:
 
 ```tsx filename="i18n/routing.ts"
 import {defineRouting} from 'next-intl/routing';
@@ -72,7 +72,7 @@ The docs have been consistently updated to reflect these changes and also sugges
 
 If you're using i18n routing, you'll typically end up with two configuration files for `next-intl`:
 
-1. Routing configuration (defined via [`defineRouting`](/docs/routing#define-routing))
+1. Routing configuration (defined via [`defineRouting`](/docs/routing/configuration#define-routing))
 2. Request configuration (defined via [`getRequestConfig`](/docs/usage/configuration#i18n-request))
 
 While (2) was historically suggested at `i18n.ts`, the default is now changing to `i18n/request.ts` in order to streamline the organization of files and to communicate the purpose of this file more clearly:
@@ -130,7 +130,7 @@ export default getRequestConfig(async ({
 
 While slightly more verbose, this change allows you to return a fallback locale for edge cases where the middleware can't provide a locale (e.g. a global country selection page at `/` or a global 404 page).
 
-Also note that it's considered good practice to return a valid locale here in case any unknown values are encountered in the `[locale]` segment. However, you may wish to add validation in a central place like your [root layout](/docs/getting-started/app-router/with-i18n-routing#layout) to conditionally call `notFound()` in this case.
+Also note that it's considered good practice to return a valid locale here in case any unknown values are encountered in the `[locale]` segment. However, you may wish to add validation in a central place like your [root layout](/docs/routing/setup#layout) to conditionally call `notFound()` in this case.
 
 ## `createNavigation` [#create-navigation]
 
@@ -157,7 +157,7 @@ export const {Link, redirect, usePathname, useRouter} =
 
 `createNavigation` is generally considered a drop-in replacement, but a few changes might be necessary:
 
-1. `createNavigation` is expected to receive your complete routing configuration. Ideally, you define this via the [`defineRouting`](/docs/routing#define-routing) function and pass the result to `createNavigation`. The one edge case is if you're [locales aren't known at build time](/docs/routing/navigation#locales-unknown).
+1. `createNavigation` is expected to receive your complete routing configuration. Ideally, you define this via the [`defineRouting`](/docs/routing/configuration#define-routing) function and pass the result to `createNavigation`. The one edge case is if you're [locales aren't known at build time](/docs/routing/navigation#locales-unknown).
 2. If you've used `createLocalizedPathnamesNavigation` and have [composed the `Link`](/docs/routing/navigation#link-composition) with its `href` prop, you should no longer provide the generic `Pathname` type argument.
 
 ```diff
@@ -190,11 +190,11 @@ const locale = await getLocale();
 + getPathname(/* ... */);
 ```
 
-5. If you're using a combination of `localePrefix: 'as-needed'` & `domains` and you're using `getPathname`, you now need to provide a `domain` argument (see [Special case: Using `domains` with `localePrefix: 'as-needed'`](/docs/routing#domains-localeprefix-asneeded))
+5. If you're using a combination of `localePrefix: 'as-needed'` & `domains` and you're using `getPathname`, you now need to provide a `domain` argument (see [Special case: Using `domains` with `localePrefix: 'as-needed'`](/docs/routing/configuration#domains-localeprefix-asneeded))
 
 ## `setRequestLocale` marked as stable [#set-request-locale]
 
-In case you rely on [static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering), you might have used the `unstable_setRequestLocale` API before. This function has now been marked as stable since it will likely remain required for the foreseeable future.
+In case you rely on [static rendering](/docs/routing/setup#static-rendering), you might have used the `unstable_setRequestLocale` API before. This function has now been marked as stable since it will likely remain required for the foreseeable future.
 
 ```diff
 - import {unstable_setRequestLocale} from 'next-intl/server';

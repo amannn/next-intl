@@ -167,7 +167,7 @@ describe('domains', () => {
         'Locales are expected to be unique per domain, but found overlap:\n' +
           '- "en" is used by: us.example.com, ca.example.com\n' +
           '- "fr" is used by: ca.example.com, fr.example.com\n' +
-          'Please see https://next-intl.dev/docs/routing#domains'
+          'Please see https://next-intl.dev/docs/routing/configuration#domains'
       );
     });
   });
