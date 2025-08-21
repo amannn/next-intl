@@ -13,7 +13,7 @@ Depending on if you handle [internationalization in Server- or Client Components
 
 ### `i18n/request.ts` & `getRequestConfig` [#i18n-request]
 
-`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and needs to be set up based on whether you're using [locale-based routing](/docs/getting-started/app-router) or not.
+`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and needs to be set up based on whether you're using [locale-based routing](/docs/routing) or not.
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -157,7 +157,7 @@ The `locale` represents an identifier that contains the language and formatting 
 <Tabs items={['i18n/request.ts', 'Provider']}>
 <Tabs.Tab>
 
-Depending on if you're using [locale-based routing](/docs/getting-started/app-router), you can read the locale from the `requestLocale` parameter or provide a value on your own:
+Depending on if you're using [locale-based routing](/docs/routing), you can read the locale from the `requestLocale` parameter or provide a value on your own:
 
 **With locale-based routing:**
 

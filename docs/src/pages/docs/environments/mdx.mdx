@@ -5,7 +5,7 @@ import PartnerContentLink from '@/components/PartnerContentLink';
 
 Especially for sites where the content varies significantly by locale and may require a different structure, it can be helpful to use Markdown or [MDX](https://mdxjs.com) to provide your localized content. To consume this content in a Next.js app, you can use the [`@next/mdx`](https://nextjs.org/docs/app/building-your-application/configuring/mdx) package, which allows you to import and render MDX content.
 
-While you can create entire pages using `page.mdx` files, in an app that uses [the `[locale]` segment](/docs/getting-started/app-router), it can be beneficial to import localized MDX content based on the user's locale into a single `page.tsx` file.
+While you can create entire pages using `page.mdx` files, in an app that uses [the `[locale]` segment](/docs/routing), it can be beneficial to import localized MDX content based on the user's locale into a single `page.tsx` file.
 
 After following the [setup instructions for `@next/mdx`](https://nextjs.org/docs/app/building-your-application/configuring/mdx), you can consider placing your localized MDX files next to a page that will render them:
 
