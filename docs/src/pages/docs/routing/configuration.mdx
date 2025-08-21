@@ -358,42 +358,7 @@ Locales are required to be unique across domains, therefore regional variants ar
 
 If no domain matches, the middleware will fall back to default locale matching based on [prefixes](/docs/routing/middleware#location-detection-prefix) (e.g. on `localhost`, for local development).
 
-<Details id="domains-testing">
-<summary>How can I locally test if my setup is working?</summary>
-
-To test your domain setup locally, you can conditionally adapt the domains to refer to hosts that are available locally:
-
-```tsx filename="routing.ts"
-import {defineRouting} from 'next-intl/routing';
-
-const isDev = process.env.NODE_ENV === 'development';
-
-export const routing = defineConfig({
-  // ...
-  domains: [
-    {
-      domain: isDev ? 'localhost:3000' : 'us.example.com'
-      // ...
-    },
-    {
-      domain: isDev ? 'localhost:3001' : 'ca.example.com'
-      // ...
-    }
-  ]
-});
-```
-
-Now, you can run your development server on one of the configured ports and test the routing for different use cases:
-
-```sh
-# Like `us.example.com`
-PORT=3000 npm run dev
-
-# Like `ca.example.com`
-PORT=3001 npm run dev
-```
-
-</Details>
+See also: [Domain-based routing](/docs/routing/middleware#location-detection-domain)
 
 <Details id="domains-localeprefix-individual">
 <summary>Can I use a different `localePrefix` setting per domain?</summary>

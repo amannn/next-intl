@@ -106,6 +106,16 @@ export default withNextra({
       permanent: true
     },
     {
+      source: '/docs/getting-started/app-router/without-i18n-routing',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router/with-i18n-routing',
+      destination: '/docs/routing/setup',
+      permanent: true
+    },
+    {
       source: '/docs/next-13/middleware',
       destination: '/docs/routing/middleware',
       permanent: true

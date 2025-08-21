@@ -71,7 +71,7 @@ In contrast, the "best fit" algorithm compares a _distance_ between the user's `
 
 ### Domain-based routing [#location-detection-domain]
 
-If you're using [domain-based routing](/docs/routing/configuration#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
+If you're using the [`domains`](/docs/routing/configuration#domains) setting, the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
 
 The locale is detected based on these priorities:
 
