@@ -4,9 +4,17 @@ import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
 import Steps from '@/components/Steps';
 import Details from '@/components/Details';
-import CourseBanner from '@/components/CourseBanner';
+import CourseBanner, {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Next.js App Router internationalization (i18n)
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/01-setup"
+  title="Set up next-intl"
+/>
 
 ## Getting started
 
@@ -199,7 +207,7 @@ export default getRequestConfig(async () => {
 However, building for a global audience spans a wider range of topics:
 
 - Choosing the right **architecture and routing strategy** for your app
-- Integrating with external **backend services or a CMS**
+- Integrating with **backend services or a CMS**
 - Leveraging **generative AI** for content localization
 - Streamlining your **development workflow** with TypeScript and IDE tooling
 - Collaborating with your team using a **translation management system**

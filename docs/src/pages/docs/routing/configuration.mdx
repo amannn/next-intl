@@ -2,12 +2,13 @@ import Details from '@/components/Details';
 import Card from '@/components/Card';
 import Cards from '@/components/Cards';
 import Callout from '@/components/Callout';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Routing configuration
 
 ## `defineRouting`
 
-The routing configuration that is shared between the [middleware](/docs/routing/middleware) and [the navigation APIs](/docs/routing/navigation) can be defined with the `defineRouting` function.
+The routing configuration that is shared between the [middleware](/docs/routing/middleware) and the [navigation APIs](/docs/routing/navigation) can be defined with the `defineRouting` function.
 
 ```tsx filename="src/i18n/routing.ts"
 import {defineRouting} from 'next-intl/routing';
@@ -37,6 +38,14 @@ Still, in case you're defining other routing config, make sure to keep them in s
 ### `localePrefix`
 
 By default, the pathnames of your app will be available under a prefix that matches your directory structure (e.g. `/en/about` → `app/[locale]/about/page.tsx`). You can however adapt the routing to optionally remove the prefix or customize it per locale by configuring the `localePrefix` setting.
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/05-prefix-based"
+  title="Prefix-based routing"
+/>
 
 #### `localePrefix: 'always'` (default) [#locale-prefix-always]
 
@@ -149,6 +158,14 @@ If you'd like to encode custom information in the locale, you can use arbitrary 
 
 ### `pathnames` [#pathnames]
 
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/06-localized-pathnames"
+  title="Localized pathnames"
+/>
+
 Many apps choose to localize pathnames, especially when search engine optimization is relevant.
 
 **Example:**
@@ -207,6 +224,38 @@ export const routing = defineRouting({
 
 Localized pathnames map to a single internal pathname that is created via the file-system based routing in Next.js. In the example above, `/de/über-uns` will be handled by the page at `/[locale]/about/page.tsx`.
 
+<Details id="localized-pathnames-dynamic-segments">
+<summary>How can I localize CMS-driven URLs?</summary>
+
+If you have a route like `/news/[articleSlug]`, you may want to localize your pathnames like this:
+
+```
+/en/news/launch-of-new-product
+/de/neuigkeiten/produktneuheit
+```
+
+In this case, you can use `pathnames` to localize the static part of the pathname:
+
+```tsx
+'/news/[articleSlug]': {
+  de: '/neuigkeiten/[articleSlug]'
+}
+```
+
+… and use a localized slug from your CMS for the dynamic part.
+
+When doing this, make sure your locale switcher and alternate links are also aware of your CMS-driven URLs so they point to the correct localized pathnames.
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/07-content/03-cms-driven-urls"
+  title="CMS-driven URLs"
+/>
+
+</Details>
+
 <Details id="localized-pathnames-revalidation">
 <summary>How can I revalidate localized pathnames?</summary>
 
@@ -254,61 +303,15 @@ See also: [`vercel/next.js#59825`](https://github.com/vercel/next.js/issues/5982
 
 </Details>
 
-<Details id="localized-pathnames-dynamic-segments">
-<summary>How can I localize dynamic segments?</summary>
-
-If you have a route like `/news/[articleSlug]-[articleId]`, you may want to localize the `articleSlug` part in the pathname like this:
-
-```
-/en/news/launch-of-new-product-94812
-/de/neuigkeiten/produktneuheit-94812
-```
-
-In this case, the localized slug can either be provided by the backend or generated in the frontend by slugifying the localized article title.
-
-A good practice is to include the ID in the URL, allowing you to retrieve the article based on this information from the backend. The ID can be further used to implement [self-healing URLs](https://mikebifulco.com/posts/self-healing-urls-nextjs-seo), where a redirect is added if the `articleSlug` doesn't match.
-
-If you localize the values for dynamic segments, you might want to turn off [alternate links](#alternate-links) and provide your own implementation that considers localized values for dynamic segments.
-
-</Details>
-
-<Details id="localized-pathnames-cms">
-<summary>How do I integrate with an external system like a CMS that provides localized pathnames?</summary>
-
-In case you're using a system like a CMS to configure localized pathnames, you'll typically implement this with a dynamic segment that catches all localized pathnames _instead_ of using the `pathnames` configuration from `next-intl`.
-
-**Examples:**
-
-1. All pathnames are handled by your CMS: `[locale]/[[...slug]]/page.tsx`
-2. Some pathnames are handled by your CMS: `[locale]/blog/[...slug]/page.tsx`
-
-```tsx filename="page.tsx"
-import {notFound} from 'next';
-import {fetchContent} from './cms';
-
-type Props = {
-  params: Promise<{
-    locale: string;
-    slug: Array<string>;
-  }>;
-};
-
-export default async function CatchAllPage({params}: Props) {
-  const {locale, slug} = await params;
-  const content = await fetchContent(locale, slug);
-  if (!content) notFound();
-
-  // ...
-}
-```
-
-In this case, you'll likely want to disable [alternate links](#alternate-links) and provide your own implementation instead.
-
-Furthermore, in case you provide a locale switcher, it might require special care to be able to switch between localized pathnames of the same page. A simplified implementation might always redirect to the home page instead.
-
-</Details>
-
 ### `domains`
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/04-domain-based"
+  title="Domain-based routing"
+/>
 
 If you want to serve your localized content based on different domains, you can provide a list of mappings between domains and locales via the `domains` setting.
 
@@ -354,7 +357,7 @@ export const routing = defineRouting({
 });
 ```
 
-Locales are required to be unique across domains, therefore regional variants are typically used to avoid conflicts. Note however that you don't necessarily need to [provide messages for each locale](/docs/usage/configuration#messages-per-locale) if the overall language is sufficient for your use case.
+Locales are required to be unique across domains, therefore regional variants are typically used to avoid conflicts. Note however that you don't necessarily need to [provide messages](/docs/usage/configuration#messages) for each locale if the overall language is sufficient for your use case.
 
 If no domain matches, the middleware will fall back to default locale matching based on [prefixes](/docs/routing/middleware#location-detection-prefix) (e.g. on `localhost`, for local development).
 
@@ -441,28 +444,30 @@ export const routing = defineRouting({
 <Details id="locale-cookie-gdpr">
 <summary>Which `maxAge` value should I consider for GDPR compliance?</summary>
 
-The [Article 29 Working Party opinion 04/2012](https://ec.europa.eu/justice/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf) provides a guideline for the expiration of cookies that are used to remember the user's language in section 3.6 "UI customization cookies". In this policy, a language preference cookie set as a result of an explicit user action, such as using a language switcher, is allowed to remain active for "a few additional hours" after a browser session has ended.
-
 To be compliant out of the box, `next-intl` does not set the `max-age` value of the cookie, making it a session cookie that expires when a browser is closed.
 
-Note that this can be beneficial in comparison to an expiration of a few hours since the cookie is guaranteed to remain active while the browser session lasts. On mobile devices, where browsers are infrequently closed but rather suspended to the background, the cookie can remain active even for an extended period.
-
-The Working Party also states that if additional information about the use of cookies is provided in a prominent location (e.g. a "uses cookies" notice next to the language switcher), the cookie can be configured to remember the user's preference for "a longer duration". If you're providing such a notice, you can consider increasing `maxAge` accordingly.
-
 Please note that legal requirements may vary by region, so it's advisable to verify them independently. While we strive to keep this information as up-to-date as possible, we cannot guarantee its accuracy.
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/07-cookie-regulations"
+  title="Cookie regulations"
+/>
 
 </Details>
 
 ### `alternateLinks` (`hreflang`) [#alternate-links]
 
-The middleware automatically sets [the `link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
+The middleware automatically sets the [`link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
 However, there are cases where you may want to provide these links yourself:
 
 1. You have pages that are only available for certain locales
 2. You're using an external system like a CMS to manage pathnames of your pages
 
-In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`.
+In this case, you can opt-out of this behavior by setting `alternateLinks` to `false`:
 
 ```tsx filename="routing.ts"
 import {defineRouting} from 'next-intl/routing';
@@ -474,7 +479,19 @@ export const routing = defineRouting({
 });
 ```
 
-If you decide to manage alternate links yourself, a good option can be to include them in a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap).
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/03-alternate-links"
+  title="hreflang & canonicals"
+/>
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/04-sitemap"
+  title="Sitemaps"
+/>
 
 <Details id="alternate-links-details">
 <summary>Which alternate links are included?</summary>
@@ -526,7 +543,7 @@ Apart from your routing configuration, `next-intl` will also incorporate setting
 
 ### `basePath`
 
-The `next-intl` middleware as well as [the navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
+The `next-intl` middleware as well as the [navigation APIs](/docs/routing/navigation) will automatically pick up a [`basePath`](https://nextjs.org/docs/app/api-reference/next-config-js/basePath) that you might have configured in your `next.config.js`.
 
 Note however that you should make sure that your [middleware `matcher`](#matcher-config) handles the root of your base path:
 

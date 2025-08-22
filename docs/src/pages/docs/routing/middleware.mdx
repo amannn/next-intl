@@ -1,5 +1,6 @@
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Middleware
 
@@ -32,6 +33,14 @@ export const config = {
 The locale is negotiated based on your routing configuration, taking into account your settings for [`localePrefix`](/docs/routing/configuration#locale-prefix), [`domains`](/docs/routing/configuration#domains), [`localeDetection`](/docs/routing/configuration#locale-detection), and [`localeCookie`](/docs/routing/configuration#locale-cookie).
 
 ### Prefix-based routing (default) [#location-detection-prefix]
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/05-prefix-based"
+  title="Prefix-based routing"
+/>
 
 By default, [prefix-based routing](/docs/routing/configuration#locale-prefix) is used to determine the locale of a request.
 
@@ -70,6 +79,14 @@ In contrast, the "best fit" algorithm compares a _distance_ between the user's `
 </Details>
 
 ### Domain-based routing [#location-detection-domain]
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/04-domain-based"
+  title="Domain-based routing"
+/>
 
 If you're using the [`domains`](/docs/routing/configuration#domains) setting, the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
 
@@ -286,7 +303,7 @@ export const config = {
 
 The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
 
-For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
+For pathnames specified in the [`pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
 
 ```tsx filename="middleware.ts"
 import {withAuth} from 'next-auth/middleware';

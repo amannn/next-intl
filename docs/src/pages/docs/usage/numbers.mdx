@@ -1,7 +1,16 @@
 import Callout from '@/components/Callout';
 import PartnerContentLink from '@/components/PartnerContentLink';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Number formatting
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/01-number-formatting"
+  title="Number formatting"
+/>
 
 The formatting of numbers can vary depending on the user's locale and may include different rules such as:
 
@@ -26,7 +35,7 @@ function Component() {
 }
 ```
 
-See [the MDN docs about `NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to the `number` function or try [the interactive explorer for `Intl.NumberFormat`](https://www.intl-explorer.com/NumberFormat).
+See the MDN docs about [`NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Using_options) to learn more about the options you can pass to the `number` function or try the [interactive explorer](https://www.intl-explorer.com/NumberFormat) for `Intl.NumberFormat`.
 
 If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
 
@@ -50,7 +59,7 @@ Numbers can be embedded within messages by using the ICU syntax.
 }
 ```
 
-Note the leading `::` that is used to indicate that a skeleton should be used. See the [ICU docs about number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this.
+Note the leading `::` that is used to indicate that a skeleton should be used. See the ICU docs on [number skeletons](https://unicode-org.github.io/icu/userguide/format_parse/numbers/skeletons.html) to learn more about this.
 
 These formats are supported out of the box: `currency` and `percent`.
 

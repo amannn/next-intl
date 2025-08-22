@@ -2,6 +2,7 @@ import PartnerContentLink from '@/components/PartnerContentLink';
 import Callout from '@/components/Callout';
 import {Tabs} from 'nextra/components';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Request configuration
 
@@ -9,11 +10,11 @@ Configuration properties that you use across your Next.js app can be set per req
 
 ## Server & Client Components [#server-client-components]
 
-Depending on if you handle [internationalization in Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n/request.ts` or `NextIntlClientProvider` will be applied respectively.
+Depending on if you handle internationalization in [Server- or Client Components](/docs/environments/server-client-components), the configuration from `i18n/request.ts` or `NextIntlClientProvider` will be applied respectively.
 
 ### `i18n/request.ts` & `getRequestConfig` [#i18n-request]
 
-`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and needs to be set up based on whether you're using [locale-based routing](/docs/routing) or not.
+`i18n/request.ts` can be used to provide configuration for **server-only** code, i.e. Server Components, Server Actions & friends. The configuration is provided via the `getRequestConfig` function and provides a `requestLocale` parameter in case you're using [locale-based routing](/docs/routing).
 
 ```tsx filename="i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -79,7 +80,7 @@ These props are inherited if you're rendering `NextIntlClientProvider` from a Se
 4. `timeZone`
 5. `formats`
 
-If you don't want to inherit some of these props, e.g. because you're selective about how you use [internationalization in Server & Client Components](/docs/environments/server-client-components), you can opt-out:
+If you don't want to inherit some of these props, e.g. because you're selective about how you use internationalization in [Server & Client Components](/docs/environments/server-client-components), you can opt-out:
 
 ```tsx filename="layout.tsx"
 <NextIntlClientProvider
@@ -198,7 +199,7 @@ While the `requestLocale` parameter typically corresponds to the `[locale]` segm
 
 1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
 1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in [the root layout](/docs/routing/setup#layout) to abort the render in this case.
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the[root layout](/docs/routing/setup#layout) to abort the render in this case.
 
 </Details>
 
@@ -218,7 +219,15 @@ While the `requestLocale` parameter typically corresponds to the `[locale]` segm
 Depending on if you're using [locale-based routing](/docs/routing), the locale can be changed as follows:
 
 1. **With locale-based routing**: The locale is managed by the router and can be changed by using navigation APIs from `next-intl` like [`Link`](/docs/routing/navigation#link) or [`useRouter`](/docs/routing/navigation#userouter).
-2. **Without locale-based routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.). If you're looking for inspiration, you can have a look at [an example](/examples#app-router-without-i18n-routing) that manages the locale via a cookie.
+2. **Without locale-based routing**: You can change the locale by updating the value where the locale is read from (e.g. a cookie, a user setting, etc.).
+
+Learn more:
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/04-adding-locales/02-locale-switcher"
+  title="Locale switcher"
+/>
 
 </Details>
 
@@ -283,6 +292,14 @@ async function getPosts(locale: Locale) {
 }
 ```
 
+This can be helpful when integrating with backend services or a CMS:
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/07-content/01-overview"
+  title="Backend content"
+/>
+
 <Callout>
   By default, `Locale` is typed as `string`. However, you can optionally provide
   a strict union based on your supported locales for this type by [augmenting
@@ -301,7 +318,15 @@ The most crucial aspect of internationalization is providing labels based on the
 ...
 ```
 
-Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript#messages). Translators can collaborate on messages by using CI tools, such as <PartnerContentLink name="localization-management-intro" href="https://store.crowdin.com/github">Crowdin's GitHub integration</PartnerContentLink>, which allows changes to be synchronized directly into your code repository.
+Colocating your messages with app code is beneficial because it allows developers to make changes quickly and additionally, you can use the shape of your local messages for [type checking](/docs/workflows/typescript#messages).
+
+If your team ships frequently, you can consider automating the translation process:
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/10-continuous-localization/01-local-workflow"
+  title="AI translations with Crowdin"
+/>
 
 That being said, `next-intl` is agnostic to how you store messages and allows you to freely define an async function that fetches them while your app renders:
 
@@ -321,38 +346,19 @@ export default getRequestConfig(async () => {
 
 After messages are configured, they can be used via [`useTranslations`](/docs/usage/messages#rendering-messages-with-usetranslations).
 
-<Details id="messages-remote-sources">
-<summary>How can I load messages from remote sources?</summary>
+Since `getRequestConfig` can execute arbitrary code, you can also:
 
-While it's recommended to colocate at least the messages for the default locale, you can also load messages from remote sources, e.g. with <PartnerContentLink name="localization-management-intro" href="https://crowdin.github.io/ota-client-js/">the Crowdin OTA JS Client</PartnerContentLink>.
+- Share messages across multiple locales
+- Merge messages from another locale as fallbacks
+- Load messages from a remote source
 
-```tsx
-import OtaClient from '@crowdin/ota-client';
+**Learn more:**
 
-const defaultLocale = 'en';
-const client = new OtaClient('<distribution-hash>');
-const messages =
-  locale === defaultLocale
-    ? (await import(`../../messages/en.json`)).default
-    : await client.getStringsByLocale(locale);
-```
-
-</Details>
-
-<Details id="messages-fallback">
-<summary>How can I use messages from another locale as fallbacks?</summary>
-
-If you have incomplete messages for a given locale and would like to use messages from another locale as a fallback, you can merge the two accordingly.
-
-```tsx
-import deepmerge from 'deepmerge';
-
-const userMessages = (await import(`../../messages/${locale}.json`)).default;
-const defaultMessages = (await import(`../../messages/en.json`)).default;
-const messages = deepmerge(defaultMessages, userMessages);
-```
-
-</Details>
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/04-adding-locales/01-messages"
+  title="Providing messages"
+/>
 
 <Details id="messages-split-files">
 <summary>How can I split my messages into multiple files?</summary>
@@ -366,31 +372,7 @@ const messages = {
 };
 ```
 
-Note that [the VSCode integration for `next-intl`](/docs/workflows/vscode-integration) can help you manage messages within a single, large file. If you're splitting messages purely for organizational reasons, you might want to consider using this instead.
-
-</Details>
-
-<Details id="messages-per-locale">
-<summary>Do I need separate messages for each locale that my app supports?</summary>
-
-Since you have full control over how messages are loaded, you can choose to load messages for example merely based on the overall language, ignoring any regional variants:
-
-```tsx
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async () => {
-  // E.g. "en-US", "en-CA", …
-  const locale = 'en-US';
-
-  // E.g. "en"
-  const language = new Intl.Locale(locale).language;
-
-  // Load messages based on the language
-  const messages = (await import(`../../messages/${language}.json`)).default;
-
-  // ...
-});
-```
+Note that the [VSCode integration](/docs/workflows/vscode-integration) for `next-intl` can help you manage messages within a single, large file. If you're splitting messages purely for organizational reasons, you might want to consider using this instead.
 
 </Details>
 
@@ -468,9 +450,17 @@ const timeZone = 'Europe/Vienna';
 </Tabs.Tab>
 </Tabs>
 
-The available time zone names can be looked up in [the tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+The available time zone names can be looked up in the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 The time zone in Client Components is automatically inherited from the server side if you wrap the relevant components in a `NextIntlClientProvider` that is rendered by a Server Component. For all other cases, you can specify the value explicitly on a wrapping `NextIntlClientProvider`.
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/02-dates-timezones"
+  title="Dates & time zones"
+/>
 
 ### `useTimeZone` & `getTimeZone` [#use-time-zone]
 
@@ -536,6 +526,14 @@ const now = await getNow();
 Note that the returned value defaults to the current date and time, therefore making this hook useful when [providing `now`](/docs/usage/dates-times#relative-times-usenow) for `format.relativeTime` even when you haven't configured a global `now` value.
 
 ## Formats
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/04-global-formats"
+  title="Global formats"
+/>
 
 To achieve consistent date, time, number and list formatting, you can define a set of global formats.
 

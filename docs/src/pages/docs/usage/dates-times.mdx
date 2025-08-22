@@ -1,8 +1,17 @@
 import Callout from '@/components/Callout';
 import PartnerContentLink from '@/components/PartnerContentLink';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Date and time formatting
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/03-date-formatting"
+  title="Date formatting"
+/>
 
 The formatting of dates and times varies greatly between locales (e.g. "Apr 24, 2023" in `en-US` vs. "24 квіт. 2023 р." in `uk-UA`). By using the formatting capabilities of `next-intl`, you can handle i18n differences in your Next.js app automatically.
 
@@ -29,7 +38,7 @@ function Component() {
 }
 ```
 
-See [the MDN docs about `DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to the `dateTime` function or try [the interactive explorer for `Intl.DateTimeFormat`](https://www.intl-explorer.com/DateTimeFormat).
+See the MDN docs on [`DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat#Using_options) to learn more about the options that you can provide to the `dateTime` function or try the [interactive explorer](https://www.intl-explorer.com/DateTimeFormat) for `Intl.DateTimeFormat`.
 
 If you have [global formats](/docs/usage/configuration#formats) configured, you can reference them by passing a name as the second argument:
 
@@ -42,21 +51,19 @@ format.dateTime(dateTime, 'short', {year: 'numeric'});
 ```
 
 <Details id="parsing-manipulation">
-<summary>How can I parse dates or manipulate them?</summary>
+<summary>How should I store and parse dates and time zones?</summary>
 
-Since `next-intl` is only concerned with formatting dates, you can use a library like [date-fns](https://date-fns.org/) to manipulate them.
+You should ensure that dates are full [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings, e.g. `2020-11-20T10:36:01.516Z`.
 
-To parse dates, you can pass them to [the `Date` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date).
+Since `next-intl` is only concerned with formatting dates, you can use the `Date` constructor to parse them before formatting them in the frontend.
 
-```tsx
-import {subDays} from 'date-fns';
+**Learn more:**
 
-// Make sure your date string conforms to ISO 8601
-const date = new Date('2020-11-20T10:36:01.516Z');
-
-// 2020-11-18T10:36:01.516Z
-const twoDaysAgo = subDays(date, 2);
-```
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/02-dates-timezones"
+  title="Dates & time zones"
+/>
 
 </Details>
 
@@ -81,6 +88,14 @@ function Component() {
 
 Note that values are rounded, so e.g. if 126 minutes have passed, "2 hours ago" will be returned.
 
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/05-formatting/05-relative-times"
+  title="Relative times"
+/>
+
 ### `useNow` [#relative-times-usenow]
 
 Since providing `now` is a common pattern, `next-intl` provides a convenience hook that can be used to retrieve the current date and time:
@@ -99,56 +114,12 @@ function FormattedDate({date}) {
 In contrast to simply calling `new Date()` in your component, `useNow` has some benefits:
 
 1. The returned value is consistent across re-renders on the client side.
-2. The value can optionally be [updated continuously](#relative-times-update) based on an interval.
-3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now), e.g. allowing you to use a static `now` value to ensure consistency when running tests. If a global value is not provided, `useNow` will use the current time.
-
-<Details id="relative-times-hydration">
-<summary>How can I avoid hydration errors with `useNow`?</summary>
-
-If you're using `useNow` in a component that renders both on the server as well as the client and you're not using a global `now` value, you can consider using [`suppressHydrationWarning`](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors) to tell React that this particular text is expected to potentially be updated on the client side:
-
-```tsx {7}
-import {useNow, useFormatter} from 'next-intl';
-
-function FormattedDate({date}) {
-  const now = useNow();
-  const format = useFormatter();
-
-  return <span suppressHydrationWarning>{format.relativeTime(date, now)}</span>;
-}
-```
-
-While this prop has a somewhat intimidating name, it's an escape hatch that was purposefully designed for cases like this.
-
-</Details>
-
-<Details id="relative-times-server">
-<summary>How can I use `now` in Server Components with `dynamicIO`?</summary>
-
-If you're using [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO), Next.js may prompt you to specify a cache expiration in case you're using `useNow` in a Server Component.
-
-You can do so by annotating your component with the `'use cache'` directive, while converting it to an async function:
-
-```tsx
-import {getNow, getFormatter} from 'next-intl/server';
-
-async function FormattedDate({date}) {
-  'use cache';
-
-  const now = await getNow();
-  const format = await getFormatter();
-
-  return format.relativeTime(date, now);
-}
-```
-
-Alternatively, if you don't want to use any caching, you can mark the component with [`await connection()`](https://nextjs.org/docs/app/api-reference/functions/connection) instead to render at request time.
-
-</Details>
+2. You can optionally use [`updateInterval`](#relative-times-update) to update the value continuously.
+3. The value can optionally be initialized from a [global value](/docs/usage/configuration#now). By default, `useNow` will use the current time.
 
 ### `updateInterval` [#relative-times-update]
 
-In case you want a relative time value to update over time, you can do so with [the `useNow` hook](/docs/usage/configuration#use-now):
+In case you want a relative time value to update over time, you can do so with the [`useNow`](/docs/usage/configuration#use-now) hook:
 
 ```js
 import {useNow, useFormatter} from 'next-intl';

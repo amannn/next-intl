@@ -171,6 +171,18 @@ export default withNextra({
       permanent: true
     },
     {
+      source: '/docs/environments/mdx',
+      destination:
+        'https://learn.next-intl.dev/chapters/07-content/06-markdown',
+      permanent: true
+    },
+    {
+      source: '/docs/workflows/linting',
+      destination:
+        'https://learn.next-intl.dev/chapters/03-translations/07-literals',
+      permanent: true
+    },
+    {
       source: '/examples/next-13',
       destination: '/examples',
       permanent: true

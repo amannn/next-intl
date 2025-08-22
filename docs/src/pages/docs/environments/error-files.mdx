@@ -9,7 +9,7 @@ The Next.js App Router's file convention provides two files that can be used for
 
 This page provides practical guides for these cases.
 
-**Tip:** You can have a look at [the App Router example](/examples#app-router) to explore a working app with error handling.
+**Tip:** You can have a look at the [App Router example](/examples#app-router) to explore a working app with error handling.
 
 ## `not-found.js`
 
@@ -18,7 +18,7 @@ This page provides practical guides for these cases.
   routing](/docs/routing).
 </Callout>
 
-Next.js renders the closest `not-found` page when a route segment calls the [`notFound` function](https://nextjs.org/docs/app/api-reference/functions/not-found). We can use this mechanism to provide a localized 404 page by adding a `not-found` file within the `[locale]` folder.
+Next.js renders the closest `not-found` page when a route segment calls the [`notFound`](https://nextjs.org/docs/app/api-reference/functions/not-found) function. We can use this mechanism to provide a localized 404 page by adding a `not-found` file within the `[locale]` folder.
 
 ```tsx filename="app/[locale]/not-found.tsx"
 import {useTranslations} from 'next-intl';
@@ -96,7 +96,7 @@ export default function LocaleLayout({children, params}) {
 
 ## `error.js`
 
-When an `error` file is defined, Next.js creates [an error boundary within your layout](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) that wraps pages accordingly to catch runtime errors:
+When an `error` file is defined, Next.js creates an [error boundary](https://nextjs.org/docs/app/building-your-application/routing/error-handling#how-errorjs-works) within your layout that wraps pages accordingly to catch runtime errors:
 
 <figure>
 <div className="w-full lg:w-[500px]">
@@ -115,7 +115,7 @@ When an `error` file is defined, Next.js creates [an error boundary within your 
 
 </figure>
 
-Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) to provide messages in case the `error` file renders.
+Since the `error` file must be defined as a Client Component, you have to use [`NextIntlClientProvider`](/docs/usage/configuration#nextintlclientprovider) to provide messages in case it renders:
 
 ```tsx filename="layout.tsx"
 import pick from 'lodash/pick';

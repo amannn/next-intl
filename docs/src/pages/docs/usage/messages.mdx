@@ -1,10 +1,17 @@
 import Callout from '@/components/Callout';
 import PartnerContentLink from '@/components/PartnerContentLink';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Rendering i18n messages
 
-The main part of handling internationalization (typically referred to as _i18n_) in your Next.js app is to provide messages based on the language of the user.
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/01-setup"
+  title="First translations"
+/>
 
 ## Terminology
 
@@ -13,7 +20,7 @@ The main part of handling internationalization (typically referred to as _i18n_)
 
 ## Structuring messages
 
-To group your messages within a locale, it's recommended to use component names as namespaces and embrace them as the primary unit of code organization in your app. You can of course also use a different structure, depending on what suits your app best.
+Messages are typically defined in JSON files:
 
 ```json filename="en.json"
 {
@@ -23,7 +30,7 @@ To group your messages within a locale, it's recommended to use component names 
 }
 ```
 
-You can render messages from within a React component via the `useTranslations` hook:
+You can render messages from within a React component with the `useTranslations` hook:
 
 ```tsx filename="About.tsx"
 import {useTranslations} from 'next-intl';
@@ -41,6 +48,26 @@ const t = useTranslations();
 
 t('About.title');
 ```
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/03-keys"
+  title="Organizing keys"
+/>
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/04-message-reuse"
+  title="Reusing messages"
+/>
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/05-tooling"
+  title="Editor tools"
+/>
 
 <Callout>
 
@@ -93,50 +120,14 @@ function SignUp() {
 
 </Details>
 
-<Details id="messages-reuse">
-<summary>How can I reuse messages?</summary>
-
-As your app grows, you'll want to reuse messages among your components. If you use component names as namespaces to structure your messages, you'll automatically benefit from reusable messages by reusing your components.
-
-**Examples:**
-
-- You're displaying products in your app and often need to resolve a category identifier to a human readable label (e.g. `new` → "Just in"). To ensure consistency, you can add a `ProductCategory` component that turns the `category` into a styled badge.
-- You commonly need a dialog that displays a "confirm" and "cancel" button. In this case, consider adding a `ConfirmDialog` component to reuse the messages along with the functionality.
-
-There might be cases where you want to use the same message in different components, but there's no reasonable opportunity for sharing the message via a component. This might be symptom that these components should use separate messages, even if they happen to be the same for the time being. By using separate labels, you gain the flexibility to use more specific labels (e.g. "not now" instead of "cancel").
-
-For edge cases where the reuse of messages among different components is hard to achieve with shared components, you can either use messages from different namespaces via `useTranslations()`, or you can consider adding a hook that shares the translation behavior:
-
-```tsx filename="useLocaleLabel.tsx"
-export default function useLocaleLabel() {
-  const t = useTranslations('useLocaleLabel');
-
-  function getLocaleLabel(locale: 'en' | 'de') {
-    return t('label', {locale});
-  }
-
-  return getLocaleLabel;
-}
-```
-
-```json
-{
-  "useLocaleLabel": {
-    "label": "{locale, select, en {English} de {German} other {Unknown}}"
-  }
-}
-```
-
-</Details>
-
 <Details id="messages-outside-components">
 <summary>How can I use translations outside of components?</summary>
 
-`next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components. This may seem like a limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues—especially if they are easy to overlook.
-
-If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
+`next-intl` is heavily based on the `useTranslations` API which is intended to consume translations from within React components. This may seem like a limitation, but this is intentional and aims to encourage the use of proven patterns that avoid potential issues that are easy to overlook.
 
 There's one exception however: [Using `next-intl` with Server Actions, Metadata and Route Handlers](/docs/environments/actions-metadata-route-handlers).
+
+If you're interested to dive deeper into this topic, there's a blog post that discusses the background of this design decision: [How (not) to use translations outside of React components](/blog/translations-outside-of-react-components).
 
 </Details>
 
@@ -187,6 +178,12 @@ If you've previously used human readable sentences for keys, you can theoretical
 ## Rendering messages with `useTranslations`
 
 `next-intl` uses [ICU message syntax](https://unicode-org.github.io/icu/userguide/format_parse/messages/) that allows you to express language nuances and separates state handling within messages from your app code.
+
+<CourseVideoBanner
+  className="mt-4"
+  href="https://learn.next-intl.dev/chapters/03-translations/06-icu-messages"
+  title="ICU messages"
+/>
 
 ### Static messages
 
@@ -251,7 +248,7 @@ While you can always use the `=value` syntax to match a specific number (e.g. `=
 - `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Croatian).
 - `other`: Used when the value doesn't match other plural categories.
 
-`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct tag that should be used for a given number. The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+`next-intl` uses [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) to detect the correct tag that should be used for a given number. The exact range that `few` and `many` applies to varies depending on the locale (see the [language plural rules](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html) table in the Unicode CLDR).
 
 </Details>
 
@@ -281,7 +278,7 @@ For example, English has four forms: "th", "st", "nd" and "rd" (e.g. 1st, 2nd, 3
 - `many`: For languages with grammar specific to a larger number of items (e.g., Arabic, Polish, Croatian).
 - `other`: Used when the value doesn't match other plural categories.
 
-The exact range that `few` and `many` applies to varies depending on the locale (see [the language plural rules table in the Unicode CLDR](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html)).
+The exact range that `few` and `many` applies to varies depending on the locale (see the [language plural rules](https://www.unicode.org/cldr/charts/43/supplemental/language_plural_rules.html) table in the Unicode CLDR).
 
 To match a specific number, `next-intl` additionally supports the special `=value` syntax (e.g. `=3`) that always takes precedence.
 
@@ -512,7 +509,7 @@ t.has('title'); // true
 t.has('unknown'); // false
 ```
 
-Note that separately from this, you can also provide [fallback messages](/docs/usage/configuration#messages-fallback), e.g. from the default locale, in case you have incomplete messages for certain locales.
+Note that separately from this, you can also provide [fallback messages](/docs/usage/configuration#messages), e.g. from the default locale, in case you have incomplete messages for certain locales.
 
 ## Arrays of messages
 
@@ -617,44 +614,14 @@ Languages such as Arabic, Hebrew and Persian use [right-to-left script](https://
 
 In addition to providing translated messages, proper RTL localization requires:
 
-1. Providing [the `dir` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) on the document
+1. Providing the [`dir` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) where relevant
 2. Layout mirroring, e.g. by using [CSS logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values)
 3. Element mirroring, e.g. by customizing icons
 
-To handle these cases in your components, you can use the [`rtl-detect`](https://www.npmjs.com/package/rtl-detect) package:
+**Learn more:**
 
-```tsx filename="layout.tsx"
-import {getLangDir} from 'rtl-detect';
-
-export default async function RootLayout(/* ... */) {
-  const locale = await getLocale();
-  const direction = getLangDir(locale);
-
-  return (
-    <html lang={locale} dir={direction}>
-      {/* ... */}
-    </html>
-  );
-}
-```
-
-```tsx filename="components/Breadcrumbs.tsx"
-import {useTranslations} from 'next-intl';
-import {getLangDir} from 'rtl-detect';
-
-export default function Breadcrumbs({children, params}) {
-  const t = useTranslations('Breadcrumbs');
-  const locale = useLocale();
-  const direction = getLangDir(locale);
-
-  return (
-    <div style={{display: 'flex'}}>
-      <p>{t('home')}</p>
-      <div style={{marginInlineStart: 10}}>
-        {direction === 'ltr' ? <ArrowRight /> : <ArrowLeft />}
-      </div>
-      <p style={{marginInlineStart: 10}}>{t('about')}</p>
-    </div>
-  );
-}
-```
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/09-design-localization/02-right-to-left"
+  title="Right-to-left layouts"
+/>

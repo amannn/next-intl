@@ -14,7 +14,7 @@ export default function CourseBanner({
   const id = useId();
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-slate-100 p-4 dark:bg-gray-800 lg:flex-row lg:items-center">
+    <div className="flex flex-col gap-4 rounded-lg bg-primary-700/5 p-4 dark:bg-primary-300/10 lg:flex-row lg:items-center">
       <a
         className="relative size-24 shrink-0 drop-shadow-lg lg:size-32"
         href="https://learn.next-intl.dev"

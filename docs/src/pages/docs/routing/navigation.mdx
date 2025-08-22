@@ -1,7 +1,16 @@
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Navigation APIs
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/02-navigation-apis"
+  title="Navigation APIs"
+/>
 
 `next-intl` provides lightweight wrappers around Next.js' navigation APIs like [`<Link />`](https://nextjs.org/docs/app/api-reference/components/link) and [`useRouter`](https://nextjs.org/docs/app/api-reference/functions/use-router) that automatically handle the user locale and pathnames behind the scenes.
 
@@ -41,13 +50,6 @@ Note however that the `locales` argument for the middleware is still mandatory. 
 The created navigation APIs are thin wrappers around the equivalents from Next.js and mostly adhere to the same function signatures. Your routing configuration and the user's locale are automatically incorporated.
 
 If you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting in your routing configuration, the internal pathnames that are accepted for `href` arguments will be strictly typed and localized to the given locale.
-
-<Details id="lint-consistent-usage">
-<summary>How can I ensure consistent usage of navigation APIs?</summary>
-
-To avoid importing APIs like `<Link />` directly from Next.js by accident, you can consider [linting](/docs/workflows/linting#consistent-usage-of-navigation-apis) for the consistent usage of internationalized navigation APIs.
-
-</Details>
 
 ### `Link`
 
@@ -259,6 +261,14 @@ router.replace(
 );
 ```
 
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/03-locale-switcher"
+  title="Locale switcher"
+/>
+
 </Details>
 
 ### `usePathname`
@@ -289,7 +299,7 @@ const pathname = usePathname();
 
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [`redirect` from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and localizes the pathname as necessary.
 
-Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#use-locale).
+Note that a `locale` prop is always required, even if you're just passing the [current locale](/docs/usage/configuration#use-locale).
 
 ```tsx
 import {redirect} from '@/i18n/navigation';
@@ -362,7 +372,7 @@ if (!userId) {
 
 ### `getPathname`
 
-If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
+If you need to construct a particular pathname based on a locale, you can call the `getPathname` function.
 
 ```tsx
 import {getPathname} from '@/i18n/navigation';
@@ -401,3 +411,17 @@ const pathname = getPathname({
   }
 });
 ```
+
+**Use cases:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/04-sitemap"
+  title="Sitemaps"
+/>
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/03-alternate-links"
+  title="hreflang & canonicals"
+/>

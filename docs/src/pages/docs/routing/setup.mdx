@@ -2,9 +2,17 @@ import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
 import Steps from '@/components/Steps';
 import Details from '@/components/Details';
-import CourseBanner from '@/components/CourseBanner';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Setup locale-based routing
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/01-setup"
+  title="Routing setup"
+/>
 
 In order to use unique pathnames for every language that your app supports, `next-intl` can be used to handle the following routing setups:
 
@@ -155,7 +163,7 @@ export default async function LocaleLayout({
 
 That's all it takes! From here, you can [configure your routing](/docs/routing/configuration) to cater to your specific needs.
 
-In case you ran into an issue, have a look at [the App Router example](/examples#app-router) to explore a working app.
+In case you ran into an issue, have a look at the [App Router example](/examples#app-router) to explore a working app.
 
 ## Static rendering
 
@@ -263,7 +271,7 @@ By using `setRequestLocale`, you can provide the locale that is received in layo
 
 In addition to the rendering of your pages, also page metadata needs to qualify for static rendering.
 
-To achieve this, you can forward the `locale` that you receive from Next.js via `params` to [the awaitable functions from `next-intl`](/docs/environments/server-client-components#async-components).
+To achieve this, you can forward the `locale` that you receive from Next.js via `params` to the [awaitable functions from `next-intl`](/docs/environments/server-client-components#async-components).
 
 ```tsx filename="page.tsx"
 import {getTranslations} from 'next-intl/server';
