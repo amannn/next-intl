@@ -44,13 +44,13 @@ export type RoutingConfig<
 
   /**
    * Configures whether and which prefix is shown for a given locale.
-   * @see https://next-intl.dev/docs/routing#locale-prefix
+   * @see https://next-intl.dev/docs/routing/configuration#locale-prefix
    **/
   localePrefix?: LocalePrefix<AppLocales, AppLocalePrefixMode>;
 
   /**
    * Can be used to change the locale handling per domain.
-   * @see https://next-intl.dev/docs/routing#domains
+   * @see https://next-intl.dev/docs/routing/configuration#domains
    **/
   domains?: AppDomains;
 
@@ -77,7 +77,7 @@ export type RoutingConfig<
   : {
       /**
        * A map of localized pathnames per locale.
-       * @see https://next-intl.dev/docs/routing#pathnames
+       * @see https://next-intl.dev/docs/routing/configuration#pathnames
        **/
       pathnames: AppPathnames;
     });

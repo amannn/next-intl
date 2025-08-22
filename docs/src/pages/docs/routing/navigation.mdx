@@ -1,12 +1,16 @@
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Navigation APIs
 
-<Callout>
-  The navigation APIs are only needed when you're using [i18n
-  routing](/docs/getting-started/app-router).
-</Callout>
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/02-navigation-apis"
+  title="Navigation APIs"
+/>
 
 `next-intl` provides lightweight wrappers around Next.js' navigation APIs like [`<Link />`](https://nextjs.org/docs/app/api-reference/components/link) and [`useRouter`](https://nextjs.org/docs/app/api-reference/functions/use-router) that automatically handle the user locale and pathnames behind the scenes.
 
@@ -20,12 +24,12 @@ export const {Link, redirect, usePathname, useRouter, getPathname} =
   createNavigation(routing);
 ```
 
-This function is typically called in a central module like [`src/i18n/navigation.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-navigation) in order to provide easy access to navigation APIs in your components.
+This function is typically called in a central module like [`src/i18n/navigation.ts`](/docs/routing/setup#i18n-navigation) in order to provide easy access to navigation APIs in your components.
 
 <Details id="locales-unknown">
 <summary>What if the locales aren't known at build time?</summary>
 
-In case you're building an app where locales can be added and removed at runtime, `createNavigation` can be called without the `locales` argument, therefore allowing any string that is encountered at runtime to be a valid locale. In this case, you'd not use the [`defineRouting`](/docs/routing#define-routing) function.
+In case you're building an app where locales can be added and removed at runtime, `createNavigation` can be called without the `locales` argument, therefore allowing any string that is encountered at runtime to be a valid locale. In this case, you'd not use the [`defineRouting`](/docs/routing/configuration#define-routing) function.
 
 ```tsx filename="navigation.ts"
 import {createNavigation} from 'next-intl/navigation';
@@ -45,14 +49,7 @@ Note however that the `locales` argument for the middleware is still mandatory. 
 
 The created navigation APIs are thin wrappers around the equivalents from Next.js and mostly adhere to the same function signatures. Your routing configuration and the user's locale are automatically incorporated.
 
-If you're using the [`pathnames`](/docs/routing#pathnames) setting in your routing configuration, the internal pathnames that are accepted for `href` arguments will be strictly typed and localized to the given locale.
-
-<Details id="lint-consistent-usage">
-<summary>How can I ensure consistent usage of navigation APIs?</summary>
-
-To avoid importing APIs like `<Link />` directly from Next.js by accident, you can consider [linting](/docs/workflows/linting#consistent-usage-of-navigation-apis) for the consistent usage of internationalized navigation APIs.
-
-</Details>
+If you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting in your routing configuration, the internal pathnames that are accepted for `href` arguments will be strictly typed and localized to the given locale.
 
 ### `Link`
 
@@ -72,7 +69,7 @@ import {Link} from '@/i18n/navigation';
 <Link href="/" locale="de">Switch to German</Link>
 ```
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
@@ -148,18 +145,18 @@ export default function StyledLink({color, href, ...rest}: Props) {
 }
 ```
 
-In case you're using the [`pathnames`](/docs/routing#pathnames) setting, the `href` prop of the wrapping component will now be strictly typed based on your routing configuration.
+In case you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, the `href` prop of the wrapping component will now be strictly typed based on your routing configuration.
 
 </Details>
 
 <Details id="link-locale">
 <summary>Why does `<Link />` always set a locale prefix when using the `locale` prop?</summary>
 
-If you're providing a `locale` prop, typically to change the locale of the target page, you might notice that the link's `href` will always include a locale prefix, even if you're using a [`localePrefix`](/docs/routing#locale-prefix) setting other than `always`.
+If you're providing a `locale` prop, typically to change the locale of the target page, you might notice that the link's `href` will always include a locale prefix, even if you're using a [`localePrefix`](/docs/routing/configuration#locale-prefix) setting other than `always`.
 
 **Example:**
 
-If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed) and `en` is your default locale, then the `href` for this link will still be `/en/about`:
+If you're using [`localePrefix: 'as-needed'`](/docs/routing/configuration#locale-prefix-as-needed) and `en` is your default locale, then the `href` for this link will still be `/en/about`:
 
 ```tsx
 // Links to `/en/about`
@@ -168,7 +165,7 @@ If you're using [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-nee
 </Link>
 ```
 
-The reason for this is that a potential [cookie](/docs/routing#locale-cookie) may need to be updated before the user can visit the unprefixed route at `/about`. The prefixed pathname will take care of this and will subsequently redirect to the unprefixed route. This behavior is necessary because links might be interacted with before your page is hydrated and client-side code would have a chance to update the cookie.
+The reason for this is that a potential [cookie](/docs/routing/configuration#locale-cookie) may need to be updated before the user can visit the unprefixed route at `/about`. The prefixed pathname will take care of this and will subsequently redirect to the unprefixed route. This behavior is necessary because links might be interacted with before your page is hydrated and client-side code would have a chance to update the cookie.
 
 If you'd like to avoid this behavior, you can instead use [`useRouter`](#userouter) to switch the locale, which can rely on updating the cookie on the client side before navigating to the target page.
 
@@ -193,7 +190,7 @@ Unknown routes will be passed through as-is, but will receive relevant locale pr
 
 `<Link />` from `next-intl` inherits the default prefetch behavior from `next/link`.
 
-The one exception to this is when you've set the `locale` prop. In this case, the link will not be prefetched, because this would otherwise result in prematurely overwriting the [locale cookie](/docs/routing#locale-cookie) as part of the prefetch request.
+The one exception to this is when you've set the `locale` prop. In this case, the link will not be prefetched, because this would otherwise result in prematurely overwriting the [locale cookie](/docs/routing/configuration#locale-cookie) as part of the prefetch request.
 
 </Details>
 
@@ -221,7 +218,7 @@ router.push({
 router.replace('/about', {locale: 'de'});
 ```
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
@@ -239,7 +236,7 @@ router.push({
 
 By combining [`usePathname`](#usepathname) with [`useRouter`](#userouter), you can change the locale for the current page programmatically by navigating to the same pathname, while overriding the `locale`.
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, you optionally have to forward `params` to potentially resolve an internal pathname.
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, you optionally have to forward `params` to potentially resolve an internal pathname.
 
 ```tsx
 'use client';
@@ -264,6 +261,14 @@ router.replace(
 );
 ```
 
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/03-locale-switcher"
+  title="Locale switcher"
+/>
+
 </Details>
 
 ### `usePathname`
@@ -279,7 +284,7 @@ import {usePathname} from '@/i18n/navigation';
 const pathname = usePathname();
 ```
 
-Note that if you're using the [`pathnames`](/docs/routing#pathnames) setting, the returned pathname will correspond to an internal pathname template (dynamic params will not be replaced by their values).
+Note that if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, the returned pathname will correspond to an internal pathname template (dynamic params will not be replaced by their values).
 
 ```tsx
 // When the user is on `/de/über-uns`, this will be `/about`
@@ -294,7 +299,7 @@ const pathname = usePathname();
 
 If you want to interrupt the render and redirect to another page, you can invoke the `redirect` function. This wraps [`redirect` from Next.js](https://nextjs.org/docs/app/api-reference/functions/redirect) and localizes the pathname as necessary.
 
-Note that a `locale` prop is always required, even if you're just passing [the current locale](/docs/usage/configuration#use-locale).
+Note that a `locale` prop is always required, even if you're just passing the [current locale](/docs/usage/configuration#use-locale).
 
 ```tsx
 import {redirect} from '@/i18n/navigation';
@@ -306,7 +311,7 @@ redirect({href: '/login', locale: 'en'});
 redirect({href: '/users', query: {sortBy: 'name'}, locale: 'en'});
 ```
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
@@ -322,7 +327,7 @@ redirect({
 });
 ```
 
-When using a [`localePrefix`](/docs/routing#localeprefix) setting other than `always`, you can enforce a locale prefix by setting the `forcePrefix` option to `true`. This is useful when changing the user's locale and you need to update the [locale cookie](/docs/routing#locale-cookie) first:
+When using a [`localePrefix`](/docs/routing/configuration#localeprefix) setting other than `always`, you can enforce a locale prefix by setting the `forcePrefix` option to `true`. This is useful when changing the user's locale and you need to update the [locale cookie](/docs/routing/configuration#locale-cookie) first:
 
 ```tsx
 // Will initially redirect to `/en/about` to update the locale
@@ -367,7 +372,7 @@ if (!userId) {
 
 ### `getPathname`
 
-If you need to construct a particular pathname based on a locale, you can call the `getPathname` function. This can for example be useful to retrieve a [canonical link](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#alternates) for a page that accepts search params.
+If you need to construct a particular pathname based on a locale, you can call the `getPathname` function.
 
 ```tsx
 import {getPathname} from '@/i18n/navigation';
@@ -388,7 +393,7 @@ const pathname = getPathname({
 });
 ```
 
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Depending on if you're using the [`pathnames`](/docs/routing/configuration#pathnames) setting, dynamic params can either be passed as:
 
 ```tsx
 // 1. A final string (when not using `pathnames`)
@@ -406,3 +411,17 @@ const pathname = getPathname({
   }
 });
 ```
+
+**Use cases:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/04-sitemap"
+  title="Sitemaps"
+/>
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/03-alternate-links"
+  title="hreflang & canonicals"
+/>

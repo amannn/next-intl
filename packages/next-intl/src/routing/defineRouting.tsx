@@ -50,7 +50,7 @@ function validateUniqueLocalesPerDomain<
     console.warn(
       'Locales are expected to be unique per domain, but found overlap:\n' +
         duplicateLocaleMessages.join('\n') +
-        '\nPlease see https://next-intl.dev/docs/routing#domains'
+        '\nPlease see https://next-intl.dev/docs/routing/configuration#domains'
     );
   }
 }

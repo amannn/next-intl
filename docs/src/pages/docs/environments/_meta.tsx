@@ -3,8 +3,7 @@ export default {
   'actions-metadata-route-handlers':
     'Server Actions, Metadata & Route Handlers',
   'error-files': 'Error files (e.g. not-found)',
-  mdx: 'Markdown (MDX)',
+  testing: 'Testing',
   'core-library': 'Core library',
-  'runtime-requirements': 'Runtime requirements',
-  testing: 'Testing'
+  'runtime-requirements': 'Runtime requirements'
 };

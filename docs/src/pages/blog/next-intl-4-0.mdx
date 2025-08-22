@@ -65,7 +65,7 @@ declare module 'next-intl' {
 
 By doing so, APIs like `useLocale()` or `<Link />` that either return or receive a `locale` will now pick up your app-specific `Locale` type, improving type safety across your app.
 
-To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](/docs/getting-started/app-router/with-i18n-routing#i18n-request) to return a valid locale:
+To simplify narrowing of `string`-based locales, a `hasLocale` function has been added. This can for example be used in [`i18n/request.ts`](/docs/routing/setup#i18n-request) to return a valid locale:
 
 ```tsx
 import {getRequestConfig} from 'next-intl/server';
@@ -152,7 +152,7 @@ Due to a current limitation in TypeScript, this feature is opt-in for now. Pleas
 
 ## GDPR compliance [#gdpr-compliance]
 
-In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware for i18n routing:
+In order to comply with the current GDPR regulations, the following changes have been made and are relevant to you if you're using the `next-intl` middleware with locale-based routing:
 
 1. The locale cookie now defaults to a session cookie that expires when the browser is closed.
 2. The locale cookie is now only set when a user switches to a locale that doesn't match the `accept-language` header.
@@ -176,9 +176,9 @@ export const routing = defineRouting({
 
 Since the cookie is now only available after a locale switch, make sure to not rely on it always being present. E.g. if you need access to the user's locale in a [Route Handler](/docs/environments/actions-metadata-route-handlers#route-handlers), a reliable option is to provide the locale as a search param (e.g. `/api/posts/12?locale=en`).
 
-As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
+As part of this change, disabling a cookie now requires you to set [`localeCookie: false`](/docs/routing/configuration#locale-cookie) in your routing configuration. Previously, `localeDetection: false` ambiguously also disabled the cookie from being set, but since a separate `localeCookie` option was introduced recently, this should now be used instead.
 
-Learn more in the [locale cookie](/docs/routing#locale-cookie) docs.
+Learn more in the [locale cookie](/docs/routing/configuration#locale-cookie) docs.
 
 ## Modernized build output
 
@@ -230,7 +230,7 @@ To make it easier to work with error handling functions on the client side, `Nex
 
 ## Stricter config for `domains` [#domains-config]
 
-So far, when using [`domains`](/docs/routing#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
+So far, when using [`domains`](/docs/routing/configuration#domains) in combination with [`localePrefix: 'as-needed'`](/docs/routing/configuration#locale-prefix-as-needed), `next-intl` had to make some [tradeoffs](https://v3.next-intl.dev/docs/routing/configuration#domains-localeprefix-asneeded) to avoid reading the current host of the incoming request in components.
 
 Now, by introducing two new constraints, `next-intl` can avoid these tradeoffs altogether:
 
@@ -278,7 +278,7 @@ This will create the following structure:
 - `example.no`: `no-NO`
 - `example.no/en`: `en-NO`
 
-Learn more in the updated docs for [`domains`](/docs/routing#domains).
+Learn more in the updated docs for [`domains`](/docs/routing/configuration#domains).
 
 ## Preparation for upcoming Next.js features [#nextjs-future]
 
@@ -288,11 +288,11 @@ This led to three minor changes:
 
 1. If you don't already have a `NextIntlClientProvider` in your app that wraps all Client Components that use `next-intl`, you now have to add one (see [PR #1541](https://github.com/amannn/next-intl/pull/1541) for details).
 2. If you're using `format.relativeTime` in Client Components, you may need to provide the `now` argument explicitly now (see [PR #1536](https://github.com/amannn/next-intl/pull/1536) for details).
-3. If you're using i18n routing, make sure you've updated to [`await requestLocale`](/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
+3. If you're using locale-based routing, make sure you've updated to [`await requestLocale`](/blog/next-intl-3-22#await-request-locale) that was introduced in `next-intl@3.22`. The previously deprecated `locale` argument will serve an edge case in the future once `rootParams` is a thing (see [PR #1625](https://github.com/amannn/next-intl/pull/1625/) for details).
 
 While the mentioned Next.js features are still under development and may change, these changes seem reasonable to me in any case—and ideally will be all that's necessary to adapt for `next-intl` to get the most out of these upcoming capabilities.
 
-I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with i18n routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
+I'm particularly excited about the announcement of `rootParams`, as it seems like this will finally fill in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that enables apps with locale-based routing to support static rendering without workarounds like `setRequestLocale`. I hope to have more to share on this soon!
 
 ## Other changes
 
