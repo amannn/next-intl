@@ -163,6 +163,19 @@ export default function createTranslator<
   has<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey
   ): boolean;
+
+  // `withFallback`
+  withFallback<
+    TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>
+  >(
+    key: TargetKey,
+    fallback: string | (() => string),
+    translateFallback?: boolean,
+    ...args: TranslateArgs<
+      NamespacedValue<TranslatorMessages, Namespace, TargetKey>,
+      RichTagsFunction
+    >
+  ): string;
 } {
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
