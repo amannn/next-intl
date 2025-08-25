@@ -688,6 +688,23 @@ export default getRequestConfig(async () => {
 
 Note that `onError` and `getMessageFallback` are not automatically inherited by Client Components. If you want to make this functionality available in Client Components too, you can however create a [client-side provider](#nextintlclientprovider-non-serializable-props) that defines these props.
 
+<Details id="error-handling-fallback">
+<summary>How can I use messages from another locale as a fallback?</summary>
+
+The `getMessageFallback` setting is intended to customize the error case for apps which want to treat missing messages as errors.
+
+If you expect missing messages for certain locales, you can consider merging messages e.g. from the default locale with the ones for the current locale when providing [messages](/docs/usage/configuration#messages).
+
+**Learn more:**
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/04-adding-locales/01-messages"
+  title="Providing messages"
+/>
+
+</Details>
+
 </Tabs.Tab>
 <Tabs.Tab>
 
