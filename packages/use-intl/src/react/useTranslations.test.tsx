@@ -605,6 +605,36 @@ describe('t.has', () => {
   });
 });
 
+describe('t.withFallback', () => {
+  function Component() {
+    const t = useTranslations();
+    return (
+      <>
+        <div data-testid="fallback-key">
+          {t.withFallback('missing', 'Home.fallback')}
+        </div>
+        <div data-testid="fallback-literal">
+          {t.withFallback('missing', 'Literal text', false)}
+        </div>
+        <div data-testid="fallback-function">
+          {t.withFallback('missing', () => 'Dynamic', false)}
+        </div>
+      </>
+    );
+  }
+
+  it('returns the fallback value when the message is missing', () => {
+    render(
+      <IntlProvider locale="en" messages={{Home: {fallback: 'Default message'}}}>
+        <Component />
+      </IntlProvider>
+    );
+    screen.getByText('Default message');
+    screen.getByText('Literal text');
+    screen.getByText('Dynamic');
+  });
+});
+
 describe('error handling', () => {
   it('allows to configure a fallback', () => {
     const onError = vi.fn();

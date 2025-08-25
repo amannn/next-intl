@@ -435,5 +435,41 @@ function createBaseTranslatorImpl<
     }
   };
 
+  translateFn.withFallback = (
+    key: string,
+    fallback: string | (() => string),
+    /** Whether to attempt to resolve fallback as a translation key. Defaults to true. */
+    translateFallback = true,
+    /** Key value pairs for values to interpolate into the message. */
+    values?: TranslationValues,
+    /** Provide custom formats for numbers, dates and times. */
+    formats?: Formats
+  ): string => {
+    if (translateFn.has(key)) {
+      const result = translateBaseFn(key, values, formats);
+      if (typeof result === 'string') {
+        return result;
+      }
+    }
+
+    const fallbackValue =
+      typeof fallback === 'function' ? fallback() : fallback;
+
+    if (translateFallback) {
+      if (!translateFn.has(fallbackValue)) {
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error(`Fallback key '${fallbackValue}' does not exist`);
+        }
+      }
+
+      const fallbackResult = translateBaseFn(fallbackValue);
+      if (typeof fallbackResult === 'string') {
+        return fallbackResult;
+      }
+    }
+
+    return fallbackValue;
+  };
+
   return translateFn;
 }

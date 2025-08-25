@@ -882,3 +882,36 @@ describe('t.raw', () => {
     expect(t.raw('rich')).toBe('<b>Hello <i>{name}</i>!</b>');
   });
 });
+
+describe('t.withFallback', () => {
+  it('handles missing messages with fallbacks', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {
+        Home: {fallback: 'Default message'}
+      } as any
+    });
+
+    // Valid translation key fallback
+    expect(t.withFallback('Home.missing', 'Home.fallback')).toBe(
+      'Default message'
+    );
+
+    // Literal string fallback
+    expect(t.withFallback('Home.missing', 'Literal text', false)).toBe(
+      'Literal text'
+    );
+
+    // Invalid fallback key
+    expect(() => t.withFallback('Home.missing', 'Invalid.key')).toThrow();
+
+    // Dynamic function that resolves to a literal string
+    expect(t.withFallback('Home.missing', () => 'Dynamic', false)).toBe(
+      'Dynamic'
+    );
+    // Dynamic function that resolves to a valid translation key
+    expect(t.withFallback('Home.missing', () => 'Home.fallback')).toBe(
+      'Default message'
+    );
+  });
+});
