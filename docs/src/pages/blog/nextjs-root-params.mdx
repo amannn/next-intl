@@ -335,6 +335,40 @@ export default async function RootLayout({children, params}: Props) {
 }
 ```
 
+### Custom routing setups
+
+While `next-intl` provides mechanisms like [`localePrefix`](/docs/routing/configuration#localeprefix) (and esp. [`prefixes`](/docs/routing/configuration#locale-prefix-prefixes)) that allow you to customize your [routing configuration](/docs/routing), the introduction of `next/root-params` now makes the usage of middleware optional.
+
+This in turn enables you to use a completely custom routing setup, while still being able to core APIs from `next-intl` like `useTranslations`.
+
+**Example:**
+
+```
+app/
+└── [tenant]
+      ├── layout.tsx
+      └── page.tsx
+```
+
+```tsx filename="src/i18n/request.ts"
+import * as rootParams from 'next/root-params';
+import {getRequestConfig} from 'next-intl/server';
+import {fetchTenant} from '@/services/tenant';
+
+export default getRequestConfig(async () => {
+  const tenantId = await rootParams.tenant();
+  const tenant = await fetchTenant(tenantId);
+  const locale = tenant.locale;
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+In this case, you can consider implementing your own [middleware](/docs/routing/middleware) and [navigation APIs](/docs/routing/navigation) if relevant.
+
 ## Try `next/root-params` today!
 
 If you're giving `next/root-params` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `next/root-params`](https://github.com/amannn/next-intl/discussions/1627).
