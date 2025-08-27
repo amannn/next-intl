@@ -1,26 +1,26 @@
 ---
-title: 'New in Next.js 15.X: rootParams'
+title: 'Using next/root-params in Next.js 15.X'
 ---
 
 import StayUpdated from '@/components/StayUpdated.mdx';
 
-# New in Next.js 15.X: `rootParams`
+# Using `next/root-params` in Next.js 15.X
 
 <small>May XX, 2025 · by Jan Amann</small>
 
 (this post is still a draft)
 
-Next.js v15.X was just released and comes with a new feature: [`rootParams`](https://github.com/vercel/next.js/pull/72837).
+Next.js v15.X was just released and comes with a new feature: [`next/root-params`](https://github.com/vercel/next.js/pull/80255).
 
 This new API fills in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that allows apps that use top-level dynamic segments like `[locale]` to read segment values deeply in Server Components:
 
 ```tsx
-import {unstable_rootParams as rootParams} from 'next/server';
+import {locale} from 'next/root-params';
 
 async function Component() {
   // The ability to read params deeply in
   // Server Components ... finally!
-  const {locale} = await rootParams();
+  const locale = await locale();
 }
 ```
 
@@ -32,7 +32,7 @@ Practically, for users of `next-intl` this means:
 
 1. Being able to support static rendering of apps with i18n routing without `setRequestLocale`
 2. Improved integration with Next.js cache mechanisms
-3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`dynamicIO`](https://nextjs.org/docs/canary/app/api-reference/config/next-config-js/dynamicIO) (although there seems to be more work necessary here on the Next.js side)
+3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`cacheComponents`](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)
 
 But first, let's have a look at how this API works in practice.
 
@@ -65,14 +65,14 @@ src
             └── page.tsx
 ```
 
-With the addition of `rootParams`, you can now read param values of a root layout in all Server Components that render within it:
+With the addition of `next/root-params`, you can now read param values of a root layout in all Server Components that render within it:
 
 ```tsx filename=src/components/LocaleSwitcher.tsx
-import {unstable_rootParams as rootParams} from 'next/server';
+import {locale} from 'next/root-params';
 
 export async function LocaleSwitcher() {
   // Read the value of `[locale]`
-  const {locale} = await rootParams();
+  const curLocale = await locale();
 
   // ...
 }
@@ -93,25 +93,25 @@ src
         └── page.tsx
 ```
 
-The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore both qualify as root layouts.
+The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore _both_ qualify as root layouts.
 
-Due to this, in this case the returned value of `rootParams` will depend on where the component that calls the function is being rendered from.
+Due to this, in this case the returned value of `next/root-params` will depend on where the component that calls the function is being rendered from.
 
-If you call `rootParams` in shared code that is used by both root layouts, this allows for a pattern like this:
+If you call `next/root-params` in shared code that is used by both layouts, this allows for a pattern like this:
 
 ```tsx filename="src/utils/getLocale.tsx"
-import {unstable_rootParams as rootParams} from 'next/server';
+import {locale} from 'next/root-params';
 
 export default async function getLocale() {
   // Try to read the locale in case we're in `[locale]/layout.tsx`
-  let {locale} = await rootParams();
+  let curLocale = await locale();
 
   // If we're in `(unlocalized)/layout.tsx`, let's use a fallback
-  if (!locale) {
-    locale = 'en';
+  if (!curLocale) {
+    curLocale = 'en';
   }
 
-  return locale;
+  return curLocale;
 }
 ```
 
@@ -143,24 +143,24 @@ export const dynamicParams = false;
 // ...
 ```
 
-## Leveraging `rootParams` in `next-intl`
+## Leveraging `next/root-params` in `next-intl`
 
-So, how can you use this feature in `next-intl`?
+So, how can you use this in `next-intl`?
 
-Similarly to how we've defined the `getLocale` function above, we do in fact already have a shared place that is called by all server-side functions that require the current locale of the user: [`i18n/request.ts`](/docs/usage/configuration#server-client-components).
+Similarly to how we've defined the `getLocale` function above, we do in fact already have a central place that is called by all server-side functions that require the current locale of the user: [`i18n/request.ts`](/docs/usage/configuration#server-client-components).
 
-So let's use `rootParams` here:
+So let's use `next/root-params` here:
 
 ```tsx filename="src/i18n/request.ts" {7}
-import {unstable_rootParams as rootParams} from 'next/server';
+import * as rootParams from 'next/root-params';
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
 import {routing} from './routing';
 
 export default getRequestConfig(async () => {
-  const params = await rootParams();
-  const locale = hasLocale(routing.locales, params.locale)
-    ? params.locale
+  const paramValue = await rootParams.locale();
+  const locale = hasLocale(routing.locales, paramValue)
+    ? paramValue
     : routing.defaultLocale;
 
   return {
@@ -170,7 +170,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-That's it—a single change to `i18n/request.ts` is all you need to do to start using `rootParams`!
+That's it—a single change to `i18n/request.ts` is all you need to start using `next/root-params`!
 
 ## Time for spring cleaning
 
@@ -192,9 +192,11 @@ export default function RootLayout({children}: Props) {
 
 This needs to be removed now as otherwise this will qualify as a root layout instead of the one defined at `src/app/[locale]/layout.tsx`.
 
+Instead, you can use [`global-not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found#global-not-foundjs-experimental) for this now.
+
 ### Avoid reading the `[locale]` segment
 
-Since `next-intl` provides the current locale via [`useLocale` and `getLocale`](/docs/usage/configuration#locale), you can seamlessly read the locale from these APIs instead of `params` now:
+Since `next-intl` provides the current locale via [`useLocale` and `getLocale`](/docs/usage/configuration#use-locale), you can seamlessly read the locale from these APIs instead of `params` now:
 
 ```diff filename="src/app/[locale]/layout.tsx"
 + import {getLocale} from 'next-intl/server';
@@ -256,7 +258,7 @@ const t = getTranslations({locale: 'en'});
 In this case, you should make sure to accept an override in your `i18n/request.ts` config:
 
 ```tsx filename="src/i18n/request.ts"
-import {unstable_rootParams as rootParams} from 'next/server';
+import * as rootParams from 'next/root-params';
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
 import {routing} from './routing';
@@ -267,9 +269,9 @@ export default getRequestConfig(async ({locale}) => {
   // 2. A locale from the `[locale]` segment
   // 3. A default locale
   if (!locale) {
-    const params = await rootParams();
-    locale = hasLocale(routing.locales, params.locale)
-      ? params.locale
+    const paramValue = await rootParams.locale();
+    locale = hasLocale(routing.locales, paramValue)
+      ? paramValue
       : routing.defaultLocale;
   }
 
@@ -333,9 +335,11 @@ export default async function RootLayout({children, params}: Props) {
 }
 ```
 
-## Try `rootParams` today!
+## Try `next/root-params` today!
 
-If you're giving `rootParams` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `rootParams`](https://github.com/amannn/next-intl/discussions/1627). I'm curious to hear how it simplifies your codebase!
+If you're giving `next/root-params` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `next/root-params`](https://github.com/amannn/next-intl/discussions/1627).
+
+I'm curious to hear how it simplifies your codebase!
 
 —Jan
 
