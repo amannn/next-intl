@@ -1,6 +1,8 @@
+import Details from '@/components/Details';
+
 # Core library
 
-While `next-intl` is primarily intended to be used in Next.js apps, the core is agnostic and can be used independently either in React apps or any other JavaScript environment.
+While `next-intl` is primarily intended to be used in Next.js apps, the core is agnostic and can be used independently—either in React apps or any other JavaScript environment.
 
 ## React apps
 
@@ -54,7 +56,15 @@ function App({user}) {
 }
 ```
 
-Since `next-intl` uses `use-intl` internally, you can even build shared components based on `use-intl` that can be used in both Next.js and non-Next.js apps.
+<Details id="shared-components">
+<summary>Can I build shared components that work in both Next.js and plain React apps?</summary>
+
+Yes, shared components that render in either environment are supported.
+
+In this case, it can be beneficial to import from `next-intl` for the relevant components, to be able to benefit from the [Server
+Components integration](/docs/environments/server-client-components) in case you render them in Next.js. In other environments, imports to `next-intl` will work as well, but will require `IntlProvider` to be present.
+
+</Details>
 
 ## Non-React apps
 

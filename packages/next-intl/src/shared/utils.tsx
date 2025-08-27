@@ -72,16 +72,24 @@ export function getLocalizedTemplate<AppLocales extends Locales>(
 export function normalizeTrailingSlash(pathname: string) {
   const trailingSlash = hasTrailingSlash();
 
-  if (pathname !== '/') {
-    const pathnameEndsWithSlash = pathname.endsWith('/');
+  const [path, ...hashParts] = pathname.split('#');
+  const hash = hashParts.join('#');
+
+  let normalizedPath = path;
+  if (normalizedPath !== '/') {
+    const pathnameEndsWithSlash = normalizedPath.endsWith('/');
     if (trailingSlash && !pathnameEndsWithSlash) {
-      pathname += '/';
+      normalizedPath += '/';
     } else if (!trailingSlash && pathnameEndsWithSlash) {
-      pathname = pathname.slice(0, -1);
+      normalizedPath = normalizedPath.slice(0, -1);
     }
   }
 
-  return pathname;
+  if (hash) {
+    normalizedPath += '#' + hash;
+  }
+
+  return normalizedPath;
 }
 
 export function matchesPathname(

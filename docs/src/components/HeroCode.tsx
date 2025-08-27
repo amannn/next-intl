@@ -233,9 +233,9 @@ const files = [
         </span>
         <span className="line">
           <span data-token="text">{'  '}&lt;</span>
-          <span data-token="string">h2</span>
+          <span data-token="string">h1</span>
           <span data-token="text">&gt;Jane's profile&lt;/</span>
-          <span data-token="string">h2</span>
+          <span data-token="string">h1</span>
           <span data-token="text">&gt;</span>
         </span>
         <span className="line">

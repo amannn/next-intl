@@ -37,13 +37,14 @@ export default function Hero({
               </p>
               <div className="mt-8 flex flex-col gap-4 md:flex-row lg:mt-10">
                 <div>
-                  <LinkButton href="/docs/getting-started">
+                  <LinkButton href="/docs/getting-started" size="lg">
                     {getStarted}
                   </LinkButton>
                 </div>
                 <div>
                   <LinkButton
                     href="https://next-intl-example-app-router.vercel.app"
+                    size="lg"
                     target="_blank"
                     variant="secondary"
                   >

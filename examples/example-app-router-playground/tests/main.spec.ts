@@ -724,6 +724,14 @@ it('can render mdx content', async ({page}) => {
   await page.getByRole('heading', {name: 'Über uns'}).waitFor();
 });
 
+it('can switch the locale with `useRouter`', async ({page}) => {
+  await page.goto('/client');
+  await page.getByRole('button', {name: 'Switch to de'}).click();
+  await expect(page).toHaveURL('/de/client');
+  await page.getByRole('button', {name: 'Switch to en'}).click();
+  await expect(page).toHaveURL('/client');
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
@@ -733,6 +741,45 @@ it.skip('provides a `Link` that works with Radix Primitives', async ({
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowDown');
   await expect(page.getByText('Link to about')).toBeFocused();
+});
+
+describe('encoding of non-ASCII characters in URLs', () => {
+  it('renders a page with encoded characters in the pathname', async ({
+    page
+  }) => {
+    await page.goto('/ja/' + encodeURIComponent('ネスト'));
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('renders a page with non-encoded characters in the pathname', async ({
+    page
+  }) => {
+    await page.goto('/ja/ネスト');
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('can use `Link` to go to an encoded pathname', async ({page}) => {
+    await page.goto('/ja/client');
+    const link = page.getByRole('link', {name: 'Go to nested'});
+    await expect(link).toHaveAttribute(
+      'href',
+      '/ja/%E3%83%8D%E3%82%B9%E3%83%88'
+    );
+    await link.click();
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
+
+  it('can use `useRouter` to go to an encoded pathname', async ({page}) => {
+    await page.goto('/ja/client');
+    await page
+      .getByRole('button', {name: 'Go to nested (with router)'})
+      .click();
+    await expect(page).toHaveURL('/ja/%E3%83%8D%E3%82%B9%E3%83%88');
+    page.getByRole('heading', {name: 'ネステッド'});
+  });
 });
 
 describe('server actions', () => {

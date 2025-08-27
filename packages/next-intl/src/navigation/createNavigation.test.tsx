@@ -537,6 +537,29 @@ describe.each([
         ).toBe('/de/neuigkeiten/launch-party-3');
       });
 
+      it('handles UTF-8 encoded pathnames', () => {
+        const markup = renderToString(
+          <Link
+            href={{
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: 'launch-party'
+              },
+              query: {
+                foo: 'こんにちは'
+              }
+            }}
+            locale="ja"
+          >
+            Create
+          </Link>
+        );
+        expect(markup).toContain(
+          'href="/ja/%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9/launch-party-3?foo=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF"'
+        );
+      });
+
       it('handles relative pathnames', () => {
         // @ts-expect-error -- Validation is still on
         const markup = renderToString(<Link href="test">Test</Link>);
@@ -547,6 +570,12 @@ describe.each([
         // @ts-expect-error -- Validation is still on
         const markup = renderToString(<Link href="/test">Test</Link>);
         expect(markup).toContain('href="/en/test"');
+      });
+
+      it('handles unknown pathnames with a hash', () => {
+        // @ts-expect-error -- Validation is still on
+        const markup = renderToString(<Link href="/test#foo">Test</Link>);
+        expect(markup).toContain('href="/en/test#foo"');
       });
 
       it('handles external links correctly', () => {
@@ -603,6 +632,26 @@ describe.each([
         // @ts-expect-error -- Validation is still on
         expect(getPathname({locale: 'en', href: 'about'})).toBe('about');
       });
+
+      it('handles UTF-8 encoded pathnames', () => {
+        expect(
+          getPathname({
+            locale: 'ja',
+            href: {
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: 'launch-party'
+              },
+              query: {
+                foo: 'こんにちは'
+              }
+            }
+          })
+        ).toBe(
+          '/ja/%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9/launch-party-3?foo=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF'
+        );
+      });
     });
 
     describe.each([
@@ -654,6 +703,27 @@ describe.each([
         // @ts-expect-error -- Validation is still on
         runInRender(() => redirectFn({href: 'about', locale: 'en'}));
         expect(nextRedirectFn).toHaveBeenLastCalledWith('about');
+      });
+
+      it('handles UTF-8 encoded pathnames', () => {
+        runInRender(() =>
+          redirectFn({
+            href: {
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: 'launch-party'
+              },
+              query: {
+                foo: 'こんにちは'
+              }
+            },
+            locale: 'ja'
+          })
+        );
+        expect(nextRedirectFn).toHaveBeenLastCalledWith(
+          '/ja/%E3%83%8B%E3%83%A5%E3%83%BC%E3%82%B9/launch-party-3?foo=%E3%81%93%E3%82%93%E3%81%AB%E3%81%A1%E3%81%AF'
+        );
       });
     });
   });

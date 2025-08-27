@@ -150,22 +150,17 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
 };
 
 function getPlainMessage(candidate: string, values?: unknown) {
-  if (process.env.NODE_ENV !== 'production') {
-    // Keep fast path in development
-    if (values) return undefined;
-
-    // Despite potentially no values being available, there can still be
-    // placeholders in the message if the user has forgotten to provide
-    // values. In this case we compile the message to receive an error.
-    const unescapedMessage = candidate.replace(/'([{}])/gi, '$1');
-    const hasPlaceholders = /<|{/.test(unescapedMessage);
-
-    if (!hasPlaceholders) {
-      return unescapedMessage;
-    }
-  } else {
-    return values ? undefined : candidate;
-  }
+  // To improve runtime performance, only compile message if:
+  return (
+    // 1. Values are provided
+    values ||
+      // 2. There are escaped braces (e.g. "'{name'}")
+      /'[{}]/.test(candidate) ||
+      // 3. There are missing arguments or tags (dev-only error handling)
+      (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
+      ? undefined // Compile
+      : candidate // Don't compile
+  );
 }
 
 export default function createBaseTranslator<

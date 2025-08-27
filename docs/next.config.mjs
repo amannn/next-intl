@@ -106,6 +106,16 @@ export default withNextra({
       permanent: true
     },
     {
+      source: '/docs/getting-started/app-router/without-i18n-routing',
+      destination: '/docs/getting-started/app-router',
+      permanent: true
+    },
+    {
+      source: '/docs/getting-started/app-router/with-i18n-routing',
+      destination: '/docs/routing/setup',
+      permanent: true
+    },
+    {
       source: '/docs/next-13/middleware',
       destination: '/docs/routing/middleware',
       permanent: true
@@ -158,6 +168,18 @@ export default withNextra({
     {
       source: '/docs/environments/metadata-route-handlers',
       destination: '/docs/environments/actions-metadata-route-handlers',
+      permanent: true
+    },
+    {
+      source: '/docs/environments/mdx',
+      destination:
+        'https://learn.next-intl.dev/chapters/07-content/06-markdown',
+      permanent: true
+    },
+    {
+      source: '/docs/workflows/linting',
+      destination:
+        'https://learn.next-intl.dev/chapters/03-translations/07-literals',
       permanent: true
     },
     {

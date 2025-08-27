@@ -1,5 +1,6 @@
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Server Actions, Metadata & Route Handlers
 
@@ -34,8 +35,8 @@ export async function generateMetadata({params}) {
 <Callout>
   By passing an explicit `locale` to the awaitable functions from `next-intl`,
   you can make the metadata handler eligible for [static
-  rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering)
-  if you're using [i18n routing](/docs/getting-started/app-router).
+  rendering](/docs/routing/setup#static-rendering) if you're using [locale-based
+  routing](/docs/routing).
 </Callout>
 
 ### Server Actions
@@ -56,7 +57,7 @@ async function loginAction(data: FormData) {
 }
 ```
 
-Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently. If you're using [a `[locale]` segment](/docs/getting-started/app-router) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
+Note that when you're displaying messages generated in Server Actions to the user, you should consider the case if the user can switch the locale while the message is displayed to ensure that the UI is localized consistently. If you're using [a `[locale]` segment](/docs/routing) as part of your routing strategy then this is handled automatically. If you're not, you might want to clear the message manually, e.g. by [resetting the state](https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key) of the respective component via `key={locale}`.
 
 <Details id="server-actions-zod">
 <summary>When using Zod for validation, how can I localize error messages?</summary>
@@ -98,7 +99,7 @@ async function loginAction(data: FormData) {
 }
 ```
 
-See the [App Router without i18n routing example](/examples#app-router-without-i18n-routing) for a working implementation.
+See the [App Router without locale-based routing example](/examples#app-router-without-i18n-routing) for a working implementation.
 
 </Details>
 
@@ -123,7 +124,7 @@ Next.js will create a public route based on the segment where `opengraph-image.t
 http://localhost:3000/en/opengraph-image?f87b2d56cee109c7
 ```
 
-However, if you're using [i18n routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
+However, if you're using [locale-based routing](/docs/routing) and you've customized the [`localePrefix`](/docs/routing/configuration#locale-prefix) setting, this route might not be accessible since Next.js doesn't know about potential rewrites of the middleware.
 
 If this applies to your app, you can adapt your [matcher](/docs/routing/middleware#matcher-config) to bypass requests to the `opengraph-image.tsx` file:
 
@@ -142,7 +143,7 @@ export const config = {
 
 ### Manifest
 
-Since [the manifest file](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest) needs to be placed in the root of the `app` folder (outside the `[locale]` dynamic segment), you need to provide a locale explicitly since `next-intl` can't infer it from the pathname:
+Since the [manifest file](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/manifest) needs to be placed in the root of the `app` folder (outside the `[locale]` dynamic segment), you need to provide a locale explicitly since `next-intl` can't infer it from the pathname:
 
 ```tsx filename="app/manifest.ts"
 import {MetadataRoute} from 'next';
@@ -167,63 +168,47 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
 
 ### Sitemap
 
-If you're using a sitemap to inform search engines about all pages of your site, you can attach locale-specific [alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL in the sitemap to indicate that a particular page is available in multiple languages or regions.
+If you're using a sitemap to inform search engines about all pages of your site, you can attach locale-specific [alternate entries](https://developers.google.com/search/docs/specialty/international/localized-versions#sitemap) to every URL to indicate that a particular page is available in multiple languages or regions.
 
-Note that by default, `next-intl` returns [the `link` response header](/docs/routing#alternate-links) to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap in case you have more specific requirements.
+Note that by default, `next-intl` returns the [`link`](/docs/routing/configuration#alternate-links) response header to instruct search engines that a page is available in multiple languages. While this sufficiently links localized pages for search engines, you may choose to provide this information in a sitemap instead if you have more specific requirements (e.g. when using CMS-driven URLs like `/news/[articleSlug]` where `articleSlug` depends on the locale).
 
-Next.js supports providing alternate URLs per language via the [`alternates` entry](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap). You can construct a list of entries for each pathname and locale as follows:
-
-```tsx filename="app/sitemap.ts" {5-6,9-10}
-import {MetadataRoute} from 'next';
-import {Locale} from 'next-intl';
-import {routing, getPathname} from '@/i18n/routing';
-
-// Adapt this as necessary
-const host = 'https://acme.com';
-
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Adapt this as necessary
-  return [...getEntries('/'), ...getEntries('/users')];
-}
-
-type Href = Parameters<typeof getPathname>[0]['href'];
-
-function getEntries(href: Href) {
-  return routing.locales.map((locale) => ({
-    url: getUrl(href, locale),
-    alternates: {
-      languages: Object.fromEntries(
-        routing.locales.map((cur) => [cur, getUrl(href, cur)])
-      )
-    }
-  }));
-}
-
-function getUrl(href: Href, locale: Locale) {
-  const pathname = getPathname({locale, href});
-  return host + pathname;
-}
-```
-
-Depending on if you're using the [`pathnames`](/docs/routing#pathnames) setting, dynamic params can either be passed as:
+Next.js supports providing alternate URLs per language via the [`alternates`](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap#generate-a-localized-sitemap) entry which can be combined with [`getPathname`](/docs/routing/navigation#getpathname) to construct URLs for each locale:
 
 ```tsx
-// 1. A final string (when not using `pathnames`)
-getEntries('/users/1');
+import {MetadataRoute} from 'next';
+import {getPathname} from '@/i18n/navigation';
 
-// 2. An object (when using `pathnames`)
-getEntries({
-  pathname: '/users/[id]',
-  params: {id: '1'}
-});
+const host = 'https://acme.com';
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  return [
+    {
+      url: host,
+      lastModified: new Date(),
+      alternates: {
+        languages: {
+          es: host + (await getPathname({locale: 'es', href: '/'})),
+          de: host + (await getPathname({locale: 'de', href: '/'}))
+        }
+      }
+    }
+  ];
+}
 ```
 
-**Keep in mind**:
+**Learn more:**
 
-- Each pathname should have a separate entry for every locale that your app supports.
-- Also the locale of a given pathname should be included in the `alternates` object.
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/08-seo/04-sitemap"
+  title="Sitemaps"
+/>
 
-([working implementation](https://github.com/amannn/next-intl/blob/main/examples/example-app-router/src/app/sitemap.ts))
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/07-content/03-cms-driven-urls"
+  title="CMS-driven URLs"
+/>
 
 ### Route Handlers
 

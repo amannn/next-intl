@@ -1,20 +1,16 @@
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Middleware
 
-<Callout>
-  The middleware is only needed when you're using [i18n
-  routing](/docs/getting-started/app-router).
-</Callout>
-
 The middleware can be created via `createMiddleware`.
 
-It receives a [`routing`](/docs/routing#define-routing) configuration and takes care of:
+It receives a [`routing`](/docs/routing/configuration#define-routing) configuration and takes care of:
 
 1. Locale negotiation
 2. Applying relevant redirects & rewrites
-3. Providing [alternate links](/docs/routing#alternate-links) for search engines
+3. Providing [alternate links](/docs/routing/configuration#alternate-links) for search engines
 
 **Example:**
 
@@ -34,11 +30,19 @@ export const config = {
 
 ## Locale detection [#locale-detection]
 
-The locale is negotiated based on your routing configuration, taking into account your settings for [`localePrefix`](/docs/routing#locale-prefix), [`domains`](/docs/routing#domains), [`localeDetection`](/docs/routing#locale-detection), and [`localeCookie`](/docs/routing#locale-cookie).
+The locale is negotiated based on your routing configuration, taking into account your settings for [`localePrefix`](/docs/routing/configuration#locale-prefix), [`domains`](/docs/routing/configuration#domains), [`localeDetection`](/docs/routing/configuration#locale-detection), and [`localeCookie`](/docs/routing/configuration#locale-cookie).
 
 ### Prefix-based routing (default) [#location-detection-prefix]
 
-By default, [prefix-based routing](/docs/routing#locale-prefix) is used to determine the locale of a request.
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/05-prefix-based"
+  title="Prefix-based routing"
+/>
+
+By default, [prefix-based routing](/docs/routing/configuration#locale-prefix) is used to determine the locale of a request.
 
 In this case, the locale is detected based on these priorities:
 
@@ -76,7 +80,15 @@ In contrast, the "best fit" algorithm compares a _distance_ between the user's `
 
 ### Domain-based routing [#location-detection-domain]
 
-If you're using [domain-based routing](/docs/routing#domains), the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/06-routing/04-domain-based"
+  title="Domain-based routing"
+/>
+
+If you're using the [`domains`](/docs/routing/configuration#domains) setting, the middleware will match the request against the available domains to determine the best-matching locale. To retrieve the domain, the host is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out-of-the-box).
 
 The locale is detected based on these priorities:
 
@@ -192,7 +204,7 @@ export const config = {
 };
 ```
 
-Note that if you use a [`localePrefix`](/docs/routing#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too. Also, make sure to only rewrite pathnames that will not lead to a redirect, as otherwise rewritten pathnames will be redirected to.
+Note that if you use a [`localePrefix`](/docs/routing/configuration#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too. Also, make sure to only rewrite pathnames that will not lead to a redirect, as otherwise rewritten pathnames will be redirected to.
 
 ### Example: Integrating with Clerk
 
@@ -291,7 +303,7 @@ export const config = {
 
 The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
 
-For pathnames specified in [the `pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
+For pathnames specified in the [`pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
 
 ```tsx filename="middleware.ts"
 import {withAuth} from 'next-auth/middleware';
@@ -351,14 +363,14 @@ Have a look at the [`next-intl` with NextAuth.js example](/examples#app-router-n
 
 ## Usage without middleware (static export)
 
-If you're using the [static export](https://nextjs.org/docs/app/building-your-application/deploying/static-exports) feature from Next.js (`output: 'export'`), the middleware will not run. You can use [prefix-based routing](/docs/routing#locale-prefix) nontheless to internationalize your app, but a few tradeoffs apply.
+If you're using the [static export](https://nextjs.org/docs/app/building-your-application/deploying/static-exports) feature from Next.js (`output: 'export'`), the middleware will not run. You can use [prefix-based routing](/docs/routing/configuration#locale-prefix) nontheless to internationalize your app, but a few tradeoffs apply.
 
 **Static export limitations:**
 
-1. Using a locale prefix is required (same as [`localePrefix: 'always'`](/docs/routing#locale-prefix-always))
-2. The locale can't be negotiated on the server (same as [`localeDetection: false`](/docs/routing#locale-detection))
-3. You can't use [pathname localization](/docs/routing#pathnames), as these require server-side rewrites
-4. [Static rendering](/docs/getting-started/app-router/with-i18n-routing#static-rendering) is required
+1. Using a locale prefix is required (same as [`localePrefix: 'always'`](/docs/routing/configuration#locale-prefix-always))
+2. The locale can't be negotiated on the server (same as [`localeDetection: false`](/docs/routing/configuration#locale-detection))
+3. You can't use [`pathnames`](/docs/routing/configuration#pathnames), as these require server-side rewrites
+4. [Static rendering](/docs/routing/setup#static-rendering) is required
 
 Additionally, other [limitations as documented by Next.js](https://nextjs.org/docs/app/building-your-application/deploying/static-exports#unsupported-features) will apply too.
 
@@ -387,10 +399,10 @@ export default function RootLayout({children}) {
 
 To resolve this, make sure that:
 
-1. The [middleware](/docs/getting-started/app-router/with-i18n-routing#middleware) is set up in the correct file (e.g. `src/middleware.ts`).
+1. The [middleware](/docs/routing/setup#middleware) is set up in the correct file (e.g. `src/middleware.ts`).
 2. Your middleware [matcher](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
 3. In case you're [composing other middlewares](#composing-other-middlewares), ensure that the middleware is called correctly.
-4. In case you require static rendering, make sure to follow the [static rendering guide](/docs/getting-started/app-router/with-i18n-routing#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
+4. In case you require static rendering, make sure to follow the [static rendering guide](/docs/routing/setup#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
 ### "My page content isn't localized despite the pathname containing a locale prefix." [#content-not-localized]
 
@@ -398,7 +410,7 @@ This is very likely the result of your [middleware not running](#middleware-not-
 
 ### "Unable to find `next-intl` locale because the middleware didn't run on this request and no `locale` was returned in `getRequestConfig`." [#unable-to-find-locale]
 
-If the middleware _is not_ expected to run on this request (e.g. because you're using a setup [without i18n routing](/docs/getting-started/app-router/without-i18n-routing)), you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
+If the middleware _is not_ expected to run on this request (e.g. because you're using a setup without locale-based routing, you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
 
 If the middleware _is_ expected to run, verify that your [middleware is set up correctly](#middleware-not-running).
 

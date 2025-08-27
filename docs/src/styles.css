@@ -4,17 +4,18 @@
 
 :root {
   --color-text-primary: #0073e6;
-  --nextra-bg: white;
+  --nextra-bg: 255, 255, 255;
   --docsearch-text-color: black;
   --logo-color: #008fd6;
 }
 
 .dark {
+  --nextra-bg: 17, 17, 17;
   --logo-color: #70d1ff;
 }
 
 /**
- * Navbar on home
+ * Navbar
  */
 .navbar-home {
   @apply bg-slate-850 text-white dark:bg-slate-850;
@@ -40,6 +41,10 @@
 
 .nextra-sidebar-container {
   @apply bg-white dark:bg-black md:bg-transparent md:dark:bg-transparent;
+}
+
+.nextra-nav-container > nav > div:nth-child(2) {
+  @apply py-5;
 }
 
 /**

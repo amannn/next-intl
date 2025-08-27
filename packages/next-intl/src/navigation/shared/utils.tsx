@@ -123,52 +123,52 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   pathnames: Pathnames<AppLocales>;
   query?: Record<string, SearchParamValue>;
 }) {
-  function getNamedPath(value: keyof typeof pathnames) {
-    let namedPath = pathnames[value];
-    if (!namedPath) {
+  function compilePath(value: string) {
+    const pathnameConfig = pathnames[value];
+
+    let compiled: string;
+    if (pathnameConfig) {
+      const template = getLocalizedTemplate(pathnameConfig, locale, value);
+      compiled = template;
+
+      if (params) {
+        Object.entries(params).forEach(([key, paramValue]) => {
+          let regexp: string, replacer: string;
+
+          if (Array.isArray(paramValue)) {
+            regexp = `(\\[)?\\[...${key}\\](\\])?`;
+            replacer = paramValue.map((v) => String(v)).join('/');
+          } else {
+            regexp = `\\[${key}\\]`;
+            replacer = String(paramValue);
+          }
+
+          compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
+        });
+      }
+
+      // Clean up optional catch-all segments that were not replaced
+      compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
+      if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
+        // Next.js throws anyway, therefore better provide a more helpful error message
+        throw new Error(
+          `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(
+            params
+          )}`
+        );
+      }
+
+      compiled = encodePathname(compiled);
+    } else {
       // Unknown pathnames
-      namedPath = value;
-    }
-    return namedPath;
-  }
-
-  function compilePath(
-    namedPath: Pathnames<AppLocales>[keyof Pathnames<AppLocales>],
-    internalPathname: string
-  ) {
-    const template = getLocalizedTemplate(namedPath, locale, internalPathname);
-    let compiled = template;
-
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        let regexp: string, replacer: string;
-
-        if (Array.isArray(value)) {
-          regexp = `(\\[)?\\[...${key}\\](\\])?`;
-          replacer = value.map((v) => String(v)).join('/');
-        } else {
-          regexp = `\\[${key}\\]`;
-          replacer = String(value);
-        }
-
-        compiled = compiled.replace(new RegExp(regexp, 'g'), replacer);
-      });
+      compiled = value;
     }
 
-    // Clean up optional catch-all segments that were not replaced
-    compiled = compiled.replace(/\[\[\.\.\..+\]\]/g, '');
     compiled = normalizeTrailingSlash(compiled);
 
-    if (process.env.NODE_ENV !== 'production' && compiled.includes('[')) {
-      // Next.js throws anyway, therefore better provide a more helpful error message
-      throw new Error(
-        `Insufficient params provided for localized pathname.\nTemplate: ${template}\nParams: ${JSON.stringify(
-          params
-        )}`
-      );
-    }
-
     if (query) {
+      // This also encodes non-ASCII characters by
+      // using `new URLSearchParams()` internally
       compiled += serializeSearchParams(query);
     }
 
@@ -176,16 +176,40 @@ export function compileLocalizedPathname<AppLocales extends Locales, Pathname>({
   }
 
   if (typeof pathname === 'string') {
-    const namedPath = getNamedPath(pathname);
-    const compiled = compilePath(namedPath, pathname);
-    return compiled;
+    return compilePath(pathname);
   } else {
     const {pathname: internalPathname, ...rest} = pathname;
-    const namedPath = getNamedPath(internalPathname);
-    const compiled = compilePath(namedPath, internalPathname);
+    const compiled = compilePath(internalPathname);
     const result: UrlObject = {...rest, pathname: compiled};
     return result;
   }
+}
+
+function encodePathname(pathname: string) {
+  // Generally, to comply with RFC 3986 and Google's best practices for URL structures
+  // (https://developers.google.com/search/docs/crawling-indexing/url-structure),
+  // we should always encode non-ASCII characters.
+  //
+  // There are two places where next-intl interacts with potentially non-ASCII URLs:
+  // 1. Middleware: When mapping a localized pathname to a non-localized pathname internally
+  // 2. Navigation APIs: When generating a URLs to be used for <Link /> & friends
+  //
+  // Next.js normalizes incoming pathnames to always be encoded, therefore we can safely
+  // decode them there (see middleware.tsx). On the other hand, Next.js doesn't consistently
+  // encode non-ASCII characters that are passed to navigation APIs:
+  // 1. <Link /> doesn't encode non-ASCII characters
+  // 2. useRouter() uses `new URL()` internally, which will encode—but only if necessary
+  // 3. redirect() uses useRouter() on the client, but on the server side only
+  //    assigns the location header without encoding.
+  //
+  // In addition to this, for getPathname() we need to encode non-ASCII characters.
+  //
+  // Therefore, the bottom line is that next-intl should take care of encoding non-ASCII
+  // characters in all cases, but can rely on `new URL()` to not double-encode characters.
+  return pathname
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
 }
 
 export function getRoute<AppLocales extends Locales>(

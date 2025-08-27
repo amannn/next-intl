@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.5 (2025-08-21)
+
+### Bug Fixes
+
+* Don't create messages declaration file when running `next {start,info,telemetry}` ([#1992](https://github.com/amannn/next-intl/issues/1992)) ([fd0722a](https://github.com/amannn/next-intl/commit/fd0722a15f38f982fdd30f61bc1637c80abfe138)) – by @amannn
+
+## 4.3.4 (2025-07-02)
+
+### Bug Fixes
+
+* Correctly compile messages containing escaped curly braces (e.g. `'{name'}`) ([#1950](https://github.com/amannn/next-intl/issues/1950)) ([4d418f4](https://github.com/amannn/next-intl/commit/4d418f45679e471437ac5d2faafc9a68b9106bf8)), closes [#1948](https://github.com/amannn/next-intl/issues/1948) – by @amannn
+
+## 4.3.3 (2025-07-01)
+
+### Bug Fixes
+
+* Add friendly error message when failing to load current Next.js version ([#1945](https://github.com/amannn/next-intl/issues/1945)) ([5021773](https://github.com/amannn/next-intl/commit/502177306ca0e1e8a30fe09d38bcb71cac84d7f7)) – by @cupofjoakim
+
+## 4.3.2 (2025-07-01)
+
+### Bug Fixes
+
+* Ensure cookie is synced before navigation with `useRouter` ([#1947](https://github.com/amannn/next-intl/issues/1947)) ([3ee9c4d](https://github.com/amannn/next-intl/commit/3ee9c4d27384c86d17c7141da54d5a9e4970164e)) – by @amannn
+
+## 4.3.1 (2025-06-24)
+
+### Bug Fixes
+
+* Don't encode hashes in unknown pathnames ([#1935](https://github.com/amannn/next-intl/issues/1935)) ([65978d2](https://github.com/amannn/next-intl/commit/65978d245dcc1550f4dfa30b75dcb9adc4379a5d)) – by @amannn
+
+## 4.3.0 (2025-06-23)
+
+### Features
+
+* Support BigInt for `number` interpolation with `useTranslations` ([#1929](https://github.com/amannn/next-intl/issues/1929)) ([a893330](https://github.com/amannn/next-intl/commit/a893330470cf435392996159579c706780c7c071)), closes [#1928](https://github.com/amannn/next-intl/issues/1928) – by @sgleisner
+
+## 4.2.0 (2025-06-23)
+
+### Features
+
+* Encode non-ASCII characters in pathnames returned from navigation APIs ([#1923](https://github.com/amannn/next-intl/issues/1923)) ([3d23c61](https://github.com/amannn/next-intl/commit/3d23c6134c8e73c084a2c75f8029cd9e7b155418)) – by @amannn
+
 ## 4.1.0 (2025-04-24)
 
 ### Features

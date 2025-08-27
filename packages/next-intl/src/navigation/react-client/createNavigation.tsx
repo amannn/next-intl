@@ -96,14 +96,14 @@ export default function createNavigation<
             args.push(rest);
           }
 
-          fn(...args);
-
           syncLocaleCookie(
             config.localeCookie,
             nextPathname,
             curLocale,
             nextLocale
           );
+
+          fn(...args);
         };
       }
 

@@ -273,7 +273,7 @@ Since you're reading this post on the `next-intl` blog, you've probably already 
 
 The challenge we've discussed in this post is rather about the centralization and distribution of environment configuration across a Next.js app, involving interleaved rendering across the server and client that is required for formatting dates consistently. Even when only supporting a single language within your app, this already requires careful consideration.
 
-`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router/without-i18n-routing#i18n-request) module that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
+`next-intl` uses a centralized [`i18n/request.ts`](/docs/getting-started/app-router#i18n-request) module that allows to provide request-specific environment configuration like `now`, `timeZone` and the `locale` of the user.
 
 ```tsx filename="src/i18n/request.ts"
 import {getRequestConfig} from 'next-intl/server';
@@ -317,7 +317,7 @@ export default function BlogPostPublishedDate({published}: Props) {
 }
 ```
 
-Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router/without-i18n-routing#layout), commonly placed in the root layout of your app, inherits this configuration and makes it available to all client-side code.
+Behind the scenes, `i18n/request.ts` is consulted by all server-only code, typically Server Components, but also Server Actions or Route Handlers. In turn, a component called [`NextIntlClientProvider`](/docs/getting-started/app-router#layout), commonly placed in the root layout of your app, inherits this configuration and makes it available to all client-side code.
 
 As a result, formatting functions like `format.dateTime(…)` can seamlessly access the necessary configuration in any environment. This configuration is then passed to native JavaScript APIs like [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) to achieve correct and consistent formatting.
 

@@ -1,8 +1,17 @@
 import Details from '@/components/Details';
 import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # TypeScript augmentation
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/05-tooling"
+  title="Editor tools"
+/>
 
 `next-intl` integrates seamlessly with TypeScript right out of the box, requiring no additional setup.
 
@@ -50,7 +59,7 @@ Additionally, `next-intl` provides a [`Locale`](/docs/usage/configuration#locale
 
 To enable this validation, you can adapt `AppConfig` as follows:
 
-<Tabs items={['With i18n routing', 'Without i18n routing']}>
+<Tabs items={['With locale-based routing', 'Without locale-based routing']}>
 <Tabs.Tab>
 
 ```tsx filename="global.ts"
@@ -219,7 +228,7 @@ const withNextIntl = createNextIntlPlugin({
 // ...
 ```
 
-With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev` or `next build`:
+With this setup in place, you'll see a new declaration file generated in your `messages` directory once you run `next dev`, `next build` or `next typegen`:
 
 ```diff
   messages/en.json

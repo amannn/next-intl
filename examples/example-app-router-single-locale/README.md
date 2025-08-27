@@ -1,6 +1,6 @@
 # example-app-router-single-locale
 
-An example that showcases an app that only supports a single language and doesn't utilize i18n routing.
+An example that showcases an app that only supports a single language.
 
 ## Deploy your own
 
