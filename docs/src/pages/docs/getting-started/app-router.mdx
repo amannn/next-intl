@@ -132,7 +132,11 @@ To make your request configuration available to Client Components, you can wrap 
 ```tsx filename="app/layout.tsx" {7}
 import {NextIntlClientProvider} from 'next-intl';
 
-export default async function RootLayout({children}: LayoutProps<'/'>) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default async function RootLayout({children}: Props) {
   return (
     <html>
       <body>
