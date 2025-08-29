@@ -8,25 +8,35 @@
     "start": "next start"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "next": "^15.5.0",
     "next-intl": "^4.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
+    "@tailwindcss/postcss": "^4.1.12",
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "9.11.1",
     "eslint-config-next": "^15.5.0",
+    "postcss": "^8.5.3",
     "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.5.3"
   },
   "prettier": {
     "singleQuote": true,
     "bracketSpacing": false,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "plugins": [
+      "prettier-plugin-organize-imports",
+      "prettier-plugin-tailwindcss"
+    ]
   },
   "engines": {
     "node": ">=20.0.0"
