@@ -143,3 +143,10 @@ it('provides a manifest', async ({page}) => {
     theme_color: '#101E33'
   });
 });
+
+it.only('returns unprefixed pathnames', async ({request}) => {
+  // Have to use `request` since the hydration error is not caught with `page`
+  const response = await request.get('/de/en/pathnames');
+  const body = await response.text();
+  expect(body).toContain('Pathname: /pathnames');
+});
