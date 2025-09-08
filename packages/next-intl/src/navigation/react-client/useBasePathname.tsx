@@ -40,11 +40,16 @@ export default function useBasePathname<
 
     let unlocalizedPathname = pathname;
 
-    const prefix = getLocalePrefix(locale, config.localePrefix);
-    const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
+    const defaultPrefix = getLocalePrefix(locale, config.localePrefix);
+    const customPrefix = getLocaleAsPrefix(locale);
 
-    if (isPathnamePrefixed) {
-      unlocalizedPathname = unprefixPathname(pathname, prefix);
+    const hasDefaultPrefix = hasPathnamePrefixed(defaultPrefix, pathname);
+    const hasCustomPrefix = hasPathnamePrefixed(customPrefix, pathname);
+
+    if (hasDefaultPrefix) {
+      unlocalizedPathname = unprefixPathname(pathname, defaultPrefix);
+    } else if (hasCustomPrefix) {
+      unlocalizedPathname = unprefixPathname(pathname, customPrefix);
     } else if (
       config.localePrefix.mode === 'as-needed' &&
       config.localePrefix.prefixes
