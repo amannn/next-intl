@@ -40,18 +40,13 @@ export default function useBasePathname<
 
     let unlocalizedPathname = pathname;
 
-    const defaultPrefix = getLocalePrefix(locale, config.localePrefix);
-    const customPrefix = getLocaleAsPrefix(locale);
+    const prefix = getLocalePrefix(locale, config.localePrefix);
+    const isPathnamePrefixed = hasPathnamePrefixed(prefix, pathname);
 
-    const hasDefaultPrefix = hasPathnamePrefixed(defaultPrefix, pathname);
-    const hasCustomPrefix = hasPathnamePrefixed(customPrefix, pathname);
-
-    if (hasDefaultPrefix) {
-      unlocalizedPathname = unprefixPathname(pathname, defaultPrefix);
-    } else if (hasCustomPrefix) {
-      unlocalizedPathname = unprefixPathname(pathname, customPrefix);
+    if (isPathnamePrefixed) {
+      unlocalizedPathname = unprefixPathname(pathname, prefix);
     } else if (
-      config.localePrefix.mode === 'as-needed' &&
+      config.localePrefix.mode !== 'never' &&
       config.localePrefix.prefixes
     ) {
       // Workaround for https://github.com/vercel/next.js/issues/73085
