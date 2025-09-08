@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.6 (2025-09-04)
+
+### Bug Fixes
+
+* Ensure messages declaration continues working in `next dev` for upcoming `next@15.5.1` ([#2008](https://github.com/amannn/next-intl/issues/2008)) ([2bf09ec](https://github.com/amannn/next-intl/commit/2bf09ecefbfe6f3eb57a166d257c4a0cc11724c6)) – by @amannn
+
+## 4.3.5 (2025-08-21)
+
+### Bug Fixes
+
+* Don't create messages declaration file when running `next {start,info,telemetry}` ([#1992](https://github.com/amannn/next-intl/issues/1992)) ([fd0722a](https://github.com/amannn/next-intl/commit/fd0722a15f38f982fdd30f61bc1637c80abfe138)) – by @amannn
+
 ## 4.3.4 (2025-07-02)
 
 ### Bug Fixes

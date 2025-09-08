@@ -4,11 +4,17 @@ import {useId} from 'react';
 import LinkButton from '@/components/LinkButton';
 import thumb from './thumb.jpg';
 
-export default function CourseBanner() {
+type Props = {
+  title: string;
+};
+
+export default function CourseBanner({
+  title = "Internationalization isn't just translating words"
+}: Props) {
   const id = useId();
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-slate-100 p-4 dark:bg-gray-800 lg:flex-row lg:items-center">
+    <div className="flex flex-col gap-4 rounded-lg bg-primary-700/5 p-4 dark:bg-primary-300/10 lg:flex-row lg:items-center">
       <a
         className="relative size-24 shrink-0 drop-shadow-lg lg:size-32"
         href="https://learn.next-intl.dev"
@@ -24,9 +30,7 @@ export default function CourseBanner() {
         <PlayIcon className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-1/2 text-white" />
       </a>
       <div>
-        <h3 className="text-balance text-lg font-semibold">
-          Internationalization isn&apos;t just translating words
-        </h3>
+        <h3 className="text-balance text-lg font-semibold">{title}</h3>
         <p className="mt-1 text-balance text-sm text-slate-600 dark:text-slate-400">
           Learn how to build delightful, multilingual apps with Next.js—from the
           basics to advanced patterns, all through a real-world project.
