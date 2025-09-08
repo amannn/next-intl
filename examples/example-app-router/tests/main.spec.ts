@@ -143,14 +143,3 @@ it('provides a manifest', async ({page}) => {
     theme_color: '#101E33'
   });
 });
-
-it('returns unprefixed pathnames', async ({page}) => {
-  await page.goto('/de/en/pathnames', {
-    // Use `domcontentloaded` to ensure the response to check the initial response
-    waitUntil: 'domcontentloaded'
-  });
-  const currentPathname = await page
-    .getByTestId('pathname-display')
-    .textContent();
-  expect(currentPathname).toBe('Pathname: /pathnames');
-});

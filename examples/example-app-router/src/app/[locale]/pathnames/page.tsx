@@ -2,7 +2,6 @@ import {Locale, useTranslations} from 'next-intl';
 import {setRequestLocale} from 'next-intl/server';
 import {use} from 'react';
 import PageLayout from '@/components/PageLayout';
-import {PathnameDisplay} from './pathname-display';
 
 export default function PathnamesPage({
   params
@@ -24,7 +23,6 @@ export default function PathnamesPage({
           )
         })}
       </div>
-      <PathnameDisplay />
     </PageLayout>
   );
 }
