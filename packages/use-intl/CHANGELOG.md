@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.7 (2025-09-09)
+
+### Bug Fixes
+
+* Avoid `usePathname` inconsistency in Next.js leading to a hydration error with custom prefixes, `localePrefix: 'always'` and static rendering ([#2012](https://github.com/amannn/next-intl/issues/2012)) ([bc9cb62](https://github.com/amannn/next-intl/commit/bc9cb624df28577d5d5d3a7e3e821a9f4b8fa2bb)), closes [#2011](https://github.com/amannn/next-intl/issues/2011) [vercel/next.js#73085](https://github.com/vercel/next.js/issues/73085) [#1571](https://github.com/amannn/next-intl/issues/1571) – by @hugotiger
+
 ## 4.3.6 (2025-09-04)
 
 ### Bug Fixes
