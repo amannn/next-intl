@@ -95,6 +95,21 @@ describe('dateTime', () => {
     screen.getByText('11 AM');
   });
 
+  it('can use a default global date format', () => {
+    function Component() {
+      const format = useFormatter();
+      return <>{format.dateTime(mockDate)}</>;
+    }
+
+    render(
+      <MockProvider formats={{dateTime: {default: {year: 'numeric'}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('2020');
+  });
+
   it('accepts type-safe custom options', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     () =>
@@ -329,6 +344,21 @@ describe('number', () => {
 
     render(
       <MockProvider formats={{number: {noGrouping: {useGrouping: false}}}}>
+        <Component />
+      </MockProvider>
+    );
+
+    screen.getByText('10000');
+  });
+
+  it('can use a default global format', () => {
+    function Component() {
+      const format = useFormatter();
+      return <>{format.number(10000)}</>;
+    }
+
+    render(
+      <MockProvider formats={{number: {default: {useGrouping: false}}}}>
         <Component />
       </MockProvider>
     );

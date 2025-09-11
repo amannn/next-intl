@@ -660,6 +660,28 @@ describe('numbers in messages', () => {
       t('label', {count: 1.5}, {number: {integer: {minimumFractionDigits: 0}}})
     ).toBe('1.50000 2');
   });
+
+  it('can pass a default global format', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: 'Test case {count, number}'},
+      formats: {number: {default: {useGrouping: false}}}
+    });
+    expect(
+      t('label', {count: 123456}, {number: {integer: {minimumFractionDigits: 0}}})
+    ).toBe('Test case 123456');
+  });
+
+  it('can merge an inline format with a default global formats', () => {
+    const t = createTranslator({
+      locale: 'en',
+      messages: {label: 'Test case {count, number} and {count, number, integer}'},
+      formats: {number: {default: {useGrouping: false}}}
+    });
+    expect(
+      t('label', {count: 123456}, {number: {integer: {maximumSignificantDigits: 3}}})
+    ).toBe('Test case 123456 and 123,000');
+  });
 });
 
 describe('big integers in messages', () => {

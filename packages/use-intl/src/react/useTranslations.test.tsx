@@ -53,7 +53,10 @@ function renderMessage(
 
   return render(
     <IntlProvider
-      formats={{dateTime: {time: {hour: 'numeric', minute: '2-digit'}}}}
+      formats={{
+        dateTime: {time: {hour: 'numeric', minute: '2-digit'}},
+        number: {default: { useGrouping: false }}
+      }}
       locale="en"
       messages={{message}}
       timeZone="Etc/UTC"
@@ -84,6 +87,11 @@ it('can escape curly brackets in production', () => {
   renderMessage("Hello '{name'}");
   screen.getByText('Hello {name}');
   vi.unstubAllEnvs();
+});
+
+it('handles number default formatting', () => {
+  renderMessage('Correct {value, number} and another {value2, number}', {value: 123456, value2: 654321});
+  screen.getByText('Correct 123456 and another 654321');
 });
 
 it('handles number formatting with percent', () => {
@@ -693,7 +701,7 @@ describe('error handling', () => {
 
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.message).toBe(
-      'INVALID_MESSAGE: INVALID_ARGUMENT_TYPE ({value, currency})'
+      'INVALID_MESSAGE: INVALID_ARGUMENT_TYPE ({value, currency, default})'
     );
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     screen.getByText('price');

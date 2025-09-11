@@ -15,6 +15,23 @@ describe('dateTime', () => {
     ).toBe('Nov 20, 2020');
   });
 
+  it('formats a date and time with global default format', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        dateTime: {
+          default: {
+            dateStyle: 'medium',
+          }
+        }
+      }
+    });
+    expect(
+      formatter.dateTime(parseISO('2020-11-20T10:36:01.516Z'))
+    ).toBe('Nov 20, 2020');
+  });
+
   it('allows to override a time zone', () => {
     const formatter = createFormatter({
       locale: 'en',
@@ -27,6 +44,26 @@ describe('dateTime', () => {
         timeZone: 'America/New_York'
       })
     ).toBe('Nov 20, 2020, 5:36:01 AM');
+  });
+
+  it('can combine a global default format with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        dateTime: {
+          default: {
+            dateStyle: 'short',
+            timeStyle: 'short'
+          }
+        }
+      }
+    });
+    expect(
+      formatter.dateTime(parseISO('2020-11-20T10:36:01.516Z'), {
+        timeZone: 'America/New_York'
+      })
+    ).toBe('11/20/20, 5:36 AM');
   });
 
   it('can combine a global format with an override', () => {
@@ -57,6 +94,52 @@ describe('number', () => {
       timeZone: 'Europe/Berlin'
     });
     expect(formatter.number(123456)).toBe('123,456');
+  });
+
+  it('formats a number with default formatters', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        number: {
+          default: {
+            useGrouping: false
+          },
+        },
+      },
+    });
+    expect(formatter.number(12345678)).toBe('12345678');
+  });
+
+  it('formats a number with default formatters and with an override', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        number: {
+          decimal: {
+            useGrouping: false
+          },
+        },
+      },
+    });
+    expect(formatter.number(12345678, { useGrouping: true })).toBe('12,345,678');
+  });
+
+  it('formats a number with default formatters and with an override for decimal style', () => {
+    const formatter = createFormatter({
+      locale: 'en',
+      timeZone: 'Europe/Berlin',
+      formats: {
+        number: {
+          default: {
+            maximumSignificantDigits: 3,
+            useGrouping: false
+          },
+        },
+      },
+    });
+    expect(formatter.number(12345678, { style: 'decimal', useGrouping: true })).toBe('12,300,000');
   });
 
   it('formats a bigint', () => {
@@ -456,3 +539,4 @@ describe('list', () => {
     ).toBe('apple, banana, and orange');
   });
 });
+2

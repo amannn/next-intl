@@ -77,6 +77,16 @@ function resolvePath(
   return message;
 }
 
+// Prepare message by converting `{ var, type }` to `{ var, type, default }`
+// to work around absence of default in ICU message syntax
+function prepareMessage(message: string) {
+  return message
+    .replace(
+      /\{\s*(\w+),\s*(\w+)\s*}/g,
+      '{$1, $2, default}'
+    );
+}
+
 function prepareTranslationValues(values: RichTranslationValues) {
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: RichTranslationValues = {};
@@ -272,7 +282,7 @@ function createBaseTranslatorImpl<
 
     try {
       messageFormat = formatters.getMessageFormat(
-        message,
+        prepareMessage(message),
         locale,
         convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
         {

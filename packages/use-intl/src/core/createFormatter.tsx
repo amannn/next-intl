@@ -113,7 +113,7 @@ export default function createFormatter(props: Props) {
   }
 
   function resolveFormatOrOptions<Options>(
-    typeFormats: Record<string, Options> | undefined,
+    typeFormats: Record<string | 'default', Options> | undefined,
     formatOrOptions?: string | Options,
     overrides?: Options
   ) {
@@ -140,7 +140,7 @@ export default function createFormatter(props: Props) {
       options = {...options, ...overrides};
     }
 
-    return options;
+    return Object.assign({}, typeFormats?.default, options);
   }
 
   function getFormattedValue<Options, Output>(
