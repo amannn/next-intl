@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.8 (2025-09-12)
+
+### Bug Fixes
+
+* Avoid double-encoding of already encoded params ([#2017](https://github.com/amannn/next-intl/issues/2017)) ([31265b4](https://github.com/amannn/next-intl/commit/31265b4a4d670c750eae3a7a7b2b9bc85c259577)), closes [#2014](https://github.com/amannn/next-intl/issues/2014) – by @amannn
+
 ## 4.3.7 (2025-09-09)
 
 ### Bug Fixes
