@@ -87,7 +87,8 @@ export default function createNavigation<
 
           const pathname = getPathname({
             href,
-            locale: nextLocale || curLocale
+            locale: nextLocale || curLocale,
+            forcePrefix: nextLocale != null || undefined
           });
 
           const args: [href: string, options?: Options] = [pathname];

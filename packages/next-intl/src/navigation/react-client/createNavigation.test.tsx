@@ -514,9 +514,9 @@ describe("localePrefix: 'as-needed'", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
 
-      it('does not prefix the default locale when being switched to', () => {
+      it('does prefix the default locale when being switched to', () => {
         invokeRouter((router) => router[method]('/about', {locale: 'en'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
       });
     });
 
@@ -606,7 +606,7 @@ describe("localePrefix: 'as-needed', with `basePath` and `domains`", () => {
     it('can compute the correct pathname when on a secondary locale and navigating to the default locale', () => {
       mockCurrentLocale('ja');
       invokeRouter((router) => router.push('/test', {locale: 'en'}));
-      expect(useNextRouter().push).toHaveBeenCalledWith('/test');
+      expect(useNextRouter().push).toHaveBeenCalledWith('/en/test');
     });
   });
 });
@@ -737,9 +737,9 @@ describe("localePrefix: 'never'", () => {
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
       });
 
-      it('does not prefix a secondary locale', () => {
+      it('does prefix a pathname when switching to another locale', () => {
         invokeRouter((router) => router[method]('/about', {locale: 'de'}));
-        expect(useNextRouter()[method]).toHaveBeenCalledWith('/about');
+        expect(useNextRouter()[method]).toHaveBeenCalledWith('/de/about');
       });
     });
 
@@ -771,9 +771,9 @@ describe("localePrefix: 'never'", () => {
         expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
       });
 
-      it('does not prefix a secondary locale', () => {
+      it('does prefix a pathname when switching to another locale', () => {
         invokeRouter((router) => router.prefetch('/about', {locale: 'de'}));
-        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/about');
+        expect(useNextRouter().prefetch).toHaveBeenCalledWith('/de/about');
       });
     });
   });
