@@ -206,10 +206,7 @@ function encodePathname(pathname: string) {
   //
   // Therefore, the bottom line is that next-intl should take care of encoding non-ASCII
   // characters in all cases, but can rely on `new URL()` to not double-encode characters.
-  return pathname
-    .split('/')
-    .map((segment) => encodeURIComponent(segment))
-    .join('/');
+  return new URL(pathname, 'http://l').pathname;
 }
 
 export function getRoute<AppLocales extends Locales>(
