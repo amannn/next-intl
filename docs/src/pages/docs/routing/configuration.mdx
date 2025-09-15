@@ -460,7 +460,7 @@ Please note that legal requirements may vary by region, so it's advisable to ver
 
 ### `alternateLinks` (`hreflang`) [#alternate-links]
 
-The middleware automatically sets the [`link` header](https://developers.google.com/search/docs/specialty/international/localized-versions#http) to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
+The middleware automatically sets the [`link`](https://developers.google.com/search/docs/specialty/international/localized-versions#http) header to inform search engines that your content is available in different languages. Note that this automatically integrates with your routing strategy and will generate the correct links based on your configuration.
 
 However, there are cases where you may want to provide these links yourself:
 
@@ -505,6 +505,8 @@ link: <https://example.com/en>; rel="alternate"; hreflang="en",
 ```
 
 The [`x-default`](https://developers.google.com/search/docs/specialty/international/localized-versions#xdefault) entry is included to point to a variant that can be used if no other language matches the user's browser setting. This special entry is reserved for language selection & detection, in our case issuing a 307 redirect to the best matching locale.
+
+To provide fully specified URLs, the domain is read from the `x-forwarded-host` header, with a fallback to `host` (hosting platforms typically provide these headers out of the box).
 
 Your middleware configuration, including options like `domains`, `pathnames` and `basePath`, is automatically incorporated.
 
