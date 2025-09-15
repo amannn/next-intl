@@ -480,7 +480,7 @@ describe("localePrefix: 'always', custom `prefixes`", () => {
 });
 
 describe("localePrefix: 'as-needed'", () => {
-  const {usePathname, useRouter} = createNavigation({
+  const {Link, usePathname, useRouter} = createNavigation({
     locales,
     defaultLocale,
     localePrefix: 'as-needed'
@@ -492,6 +492,20 @@ describe("localePrefix: 'as-needed'", () => {
     }
     render(<Component />);
   }
+
+  describe('Link', () => {
+    it('sets a cookie when switching to the default locale', () => {
+      mockCurrentLocale('de');
+      global.document.cookie = 'NEXT_LOCALE=de';
+      render(
+        <Link href="/" locale="en">
+          Test
+        </Link>
+      );
+      fireEvent.click(screen.getByRole('link', {name: 'Test'}));
+      expect(document.cookie).toContain('NEXT_LOCALE=en');
+    });
+  });
 
   describe('useRouter', () => {
     const invokeRouter = getInvokeRouter(useRouter);
@@ -517,6 +531,13 @@ describe("localePrefix: 'as-needed'", () => {
       it('does prefix the default locale when being switched to', () => {
         invokeRouter((router) => router[method]('/about', {locale: 'en'}));
         expect(useNextRouter()[method]).toHaveBeenCalledWith('/en/about');
+      });
+
+      it('sets a cookie when switching to the default locale', () => {
+        global.document.cookie = 'NEXT_LOCALE=de';
+        mockCurrentLocale('de');
+        invokeRouter((router) => router[method]('/about', {locale: 'en'}));
+        expect(document.cookie).toContain('NEXT_LOCALE=en');
       });
     });
 

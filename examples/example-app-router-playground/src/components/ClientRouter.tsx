@@ -2,7 +2,7 @@
 
 import {useRouter} from '@/i18n/navigation';
 
-export default function ClientRouterWithoutProvider() {
+export default function ClientRouter() {
   const router = useRouter();
 
   function onClick() {
@@ -10,11 +10,7 @@ export default function ClientRouterWithoutProvider() {
   }
 
   return (
-    <button
-      data-testid="ClientRouterWithoutProvider-link"
-      onClick={onClick}
-      type="button"
-    >
+    <button data-testid="ClientRouter-link" onClick={onClick} type="button">
       Go to nested page
     </button>
   );

@@ -88,6 +88,12 @@ export default function createNavigation<
           const pathname = getPathname({
             href,
             locale: nextLocale || curLocale,
+            // Always include a prefix when changing locales. Theoretically,
+            // this is only necessary for the case described in #2020. However,
+            // the full detection is rather expensive, and this behavior is
+            // consistent with the `Link` component. The downside is an
+            // additional redirect for users in other situations. Locale
+            // changes should be rare though, so this might be fine.
             forcePrefix: nextLocale != null || undefined
           });
 
