@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.9 (2025-09-15)
+
+### Bug Fixes
+
+* Prefix pathnames when switching with `useRouter` to another locale ([#2021](https://github.com/amannn/next-intl/issues/2021)) ([c82d0af](https://github.com/amannn/next-intl/commit/c82d0af59461f0309150fbe7a9919ce72d4d76e0)), closes [#2020](https://github.com/amannn/next-intl/issues/2020) – by @amannn
+
 ## 4.3.8 (2025-09-12)
 
 ### Bug Fixes
