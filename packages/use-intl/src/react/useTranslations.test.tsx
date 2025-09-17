@@ -839,7 +839,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
@@ -864,7 +864,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/messages#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
@@ -889,7 +889,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
     );
   });
 
@@ -914,7 +914,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INVALID_MESSAGE);
     expect(error.message).toBe(
-      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/messages#arrays-of-messages'
+      'INVALID_MESSAGE: Message at `Component.array` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
     );
   });
 });

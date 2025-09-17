@@ -1,5 +1,5 @@
 export default {
-  messages: 'Messages',
+  translations: 'Translations',
   numbers: 'Numbers',
   'dates-times': 'Dates and times',
   lists: 'Lists',

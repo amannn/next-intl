@@ -3,7 +3,7 @@ import PartnerContentLink from '@/components/PartnerContentLink';
 import Details from '@/components/Details';
 import {CourseVideoBanner} from '@/components/CourseBanner';
 
-# Rendering i18n messages
+# Rendering translations
 
 Prefer to watch a video?
 
@@ -16,7 +16,7 @@ Prefer to watch a video?
 ## Terminology
 
 - **Locale**: We use this term to describe an identifier that contains the language and formatting preferences of users. Apart from the language, a locale can include optional regional information (e.g. `en-US`).
-- **Messages**: These are collections of namespace-label pairs that are grouped by locale (e.g. `en-US.json`).
+- **Messages**: These are collections of key/translation pairs that are grouped by locale (e.g. `en-US.json`).
 
 ## Structuring messages
 
@@ -171,7 +171,7 @@ const output = Object.entries(input).reduce(
 
 This keeps the hierarchy while removing the redundancy of repeated parent keys. You can either execute this is in a one-off script or before passing your messages to `next-intl`.
 
-If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using [a VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
+If you've previously used human readable sentences for keys, you can theoretically map the `.` character to a different one (e.g. `_`) before passing the messages to `next-intl`, but it's generally recommended to use IDs as keys. You can still view human readable labels from your messages in your editor by using a [VSCode integration](/docs/workflows/vscode-integration) in case that's your primary motivation for using human readable keys.
 
 </Details>
 
@@ -318,7 +318,7 @@ t('message', {locale: locale.replaceAll('-', '_')});
 
 ### Escaping
 
-Since curly braces are used for [interpolating arguments](/docs/usage/messages#arguments), you can escape them with the `'` marker to use the actual symbol in messages:
+Since curly braces are used for [interpolating arguments](/docs/usage/translations#arguments), you can escape them with the `'` marker to use the actual symbol in messages:
 
 ```json filename="en.json"
 "message": "Escape curly braces with single quotes (e.g. '{name'})"
