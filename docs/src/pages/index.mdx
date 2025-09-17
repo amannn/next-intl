@@ -12,6 +12,7 @@ import PartnerBanner from '@/components/PartnerBanner';
 import Section from '@/components/Section';
 import UserTestimonial from '@/components/UserTestimonial';
 import GetStartedBackground from '@/components/GetStartedBackground';
+import UserCompanies from '@/components/UserCompanies';
 
 <div className="bg-slate-50 dark:bg-gray-900">
 
@@ -65,7 +66,8 @@ import GetStartedBackground from '@/components/GetStartedBackground';
   </div>
 </Section>
 <Section title="Trusted by the Next.js community" description="Powering localized web experiences from marketing sites to e-commerce portals and sophisticated apps, next-intl ensures your users will be as happy as the developers building them.">
-  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-20">
+  <UserCompanies />
+  <div className="mt-10 lg:mt-24 grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-20">
     <UserTestimonial
       featured
       userName="Claudio Wunder"
