@@ -39,6 +39,7 @@ export default function UserCompanies() {
             key={company.name}
             alt={company.name}
             className="inline-block opacity-40 grayscale invert"
+            priority
             src={company.logo}
             style={{
               height: `${(company.scale || 1) * 24}px`,
