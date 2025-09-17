@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import adidasRunningLogo from './adidas-running.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
-import boleroLogo from './bolero-logo.svg';
 import boltLogo from './bolt-logo.svg';
 import ethereumLogo from './ethereum-logo.svg';
 import mistralLogo from './mistral-logo.svg';
@@ -16,7 +15,6 @@ const companies = [
   {name: 'Adidas Running', logo: adidasRunningLogo, scale: 0.7},
   {name: 'BigCommerce', logo: bigcommerceLogo, scale: 1.2},
   {name: 'Bolt', logo: boltLogo, translateY: 2},
-  {name: 'Bolero', logo: boleroLogo},
   {name: 'Ethereum', logo: ethereumLogo, scale: 1.2},
   {name: 'Mistral', logo: mistralLogo, scale: 1.1},
   {name: 'Node.js', logo: nodejsLogo, translateY: -2},
@@ -30,7 +28,7 @@ const companies = [
 export default function UserCompanies() {
   return (
     <div>
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-white/50">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-white/40">
         Used by
       </h2>
       <div className="mt-6 flex max-h-[180px] flex-wrap items-center gap-6 overflow-y-hidden md:mt-2 md:max-h-12 md:flex-nowrap md:justify-between md:overflow-x-auto">
@@ -38,7 +36,7 @@ export default function UserCompanies() {
           <Image
             key={company.name}
             alt={company.name}
-            className="inline-block opacity-40 grayscale invert"
+            className="inline-block basis-0 opacity-30 grayscale invert"
             priority
             src={company.logo}
             style={{
