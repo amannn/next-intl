@@ -1,6 +1,7 @@
 import HeroAnnouncement from './HeroAnnouncement';
 import HeroCode from './HeroCode';
 import LinkButton from './LinkButton';
+import UserCompanies from './UserCompanies/UserCompanies';
 import Wrapper from './Wrapper';
 
 type Props = {
@@ -23,7 +24,7 @@ export default function Hero({
 }: Props) {
   return (
     <div className="dark overflow-hidden">
-      <div className="relative max-w-full overflow-hidden bg-slate-850 py-16 sm:px-2 lg:px-0 lg:py-40">
+      <div className="relative max-w-full overflow-hidden bg-slate-850 pb-12 pt-16 sm:px-2 lg:px-0 lg:pt-56">
         <div className="absolute left-0 top-0 h-[20500px] w-[20500px] translate-x-[-47.5%] rounded-full bg-gradient-to-b from-slate-900 via-cyan-500 md:top-1" />
         <Wrapper>
           <div className="flex flex-col gap-16 xl:flex-row xl:items-center xl:justify-between">
@@ -61,6 +62,9 @@ export default function Hero({
             <div className="max-w-[44rem] xl:-mr-8 2xl:-mr-24">
               <HeroCode />
             </div>
+          </div>
+          <div className="mt-12 md:mt-20">
+            <UserCompanies />
           </div>
         </Wrapper>
       </div>
