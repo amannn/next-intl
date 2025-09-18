@@ -175,14 +175,20 @@ When using locale-based routing, `next-intl` will currently opt into dynamic ren
 
 ### Add `generateStaticParams`
 
-Since we are using a dynamic route segment for the `[locale]` param, we need to pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
+Since we are using a dynamic route segment for the `[locale]` param, we need to do one of the following to enable static rendering:
 
-Depending on your needs, you can add `generateStaticParams` either to a layout or pages:
+- Pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
+- Return an empty array from `generateStaticParams` to [statically render all paths the first time they're visited](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#all-paths-at-runtime).
+- Export `dynamic = 'force-static'` from a layout or page to [force static rendering](hhttps://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
+
+Depending on your needs, you can add it either to a layout or pages:
 
 1. **Layout**: Enables static rendering for all pages within this layout (e.g. `app/[locale]/layout.tsx`)
 2. **Individual pages**: Enables static rendering for a specific page (e.g. `app/[locale]/page.tsx`)
 
-**Example:**
+**Examples:**
+
+For statically rendering all locales (this can increase build times):
 
 ```tsx
 import {routing} from '@/i18n/routing';
@@ -190,6 +196,22 @@ import {routing} from '@/i18n/routing';
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
+```
+
+For statically rendering a path when it's first visited you can either return an empty array or use `dynamic = 'force-static'`:
+
+```tsx
+import {routing} from '@/i18n/routing';
+
+export function generateStaticParams() {
+  return [];
+}
+```
+
+Using `dynamic = 'force-static'`:
+
+```tsx
+export const dynamic = 'force-static';
 ```
 
 ### Add `setRequestLocale` to all relevant layouts and pages
