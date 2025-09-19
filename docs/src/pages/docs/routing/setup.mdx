@@ -175,7 +175,7 @@ When using locale-based routing, `next-intl` will currently opt into dynamic ren
 
 ### Add `generateStaticParams`
 
-Since we are using a dynamic route segment for the `[locale]` param, we need to pass all possible values to Next.js via [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
+Since we are using a dynamic route segment for the `[locale]` param, we need to use [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) so that the routes can be rendered at build time.
 
 Depending on your needs, you can add `generateStaticParams` either to a layout or pages:
 
@@ -191,6 +191,13 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
 ```
+
+<Details id="generatestaticparams-locales">
+<summary>Do I need to return all locales from `generateStaticParams`?</summary>
+
+If you prefer to only render certain locales at build time, or none at all, you can be selective about the ones you return from `generateStaticParams` (see [Static Rendering](https://nextjs.org/docs/app/api-reference/functions/generate-static-params#static-rendering) in the Next.js docs).
+
+</Details>
 
 ### Add `setRequestLocale` to all relevant layouts and pages
 
