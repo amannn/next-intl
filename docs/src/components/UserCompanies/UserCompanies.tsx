@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import adidasRunningLogo from './adidas-running.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
 import billivLogo from './billiv-logo.svg';
@@ -19,33 +20,124 @@ import vintedgoLogo from './vintedgo-logo.svg';
 import watershedLogo from './watershed-logo.svg';
 
 const companies = [
-  {name: 'Adidas Running', logo: adidasRunningLogo, scale: 0.9},
-  {name: 'BigCommerce', logo: bigcommerceLogo, scale: 1.1},
-  {name: 'Billiv', logo: billivLogo, scale: 0.65},
-  {name: 'Bolt', logo: boltLogo, scale: 0.85},
-  {name: 'Bolero', logo: boleroLogo, scale: 0.8},
-  {name: 'Ethereum', logo: ethereumLogo, scale: 1.1},
-  {name: 'HashiCorp', logo: hashicorpLogo, scale: 1.1},
-  {name: 'Icelandair', logo: icelandairLogo, scale: 1.1},
-  {name: 'Mistral', logo: mistralLogo, scale: 1.1},
-  {name: 'Node.js', logo: nodejsLogo, scale: 1.3},
-  {name: 'Qasa', logo: qasaLogo, scale: 0.75},
-  {name: 'Solana', logo: solanaLogo, scale: 0.9},
-  {name: 'Speechify', logo: speechifyLogo, scale: 1.15},
-  {name: 'Soundtrack', logo: soundtrackLogo, scale: 1.1},
-  {name: 'Todoist', logo: todoistLogo, scale: 0.9},
-  {name: 'Ubisoft', logo: ubisoftLogo, scale: 0.95},
-  {name: 'VintedGo', logo: vintedgoLogo, scale: 0.85},
-  {name: 'Watershed', logo: watershedLogo}
+  {
+    name: 'Adidas Running',
+    logo: adidasRunningLogo,
+    scale: 0.9,
+    url: 'https://www.runtastic.com/'
+  },
+  {
+    name: 'BigCommerce Catalyst',
+    logo: bigcommerceLogo,
+    scale: 1.1,
+    url: 'https://www.catalyst.dev/'
+  },
+  {
+    name: 'Billiv',
+    logo: billivLogo,
+    scale: 0.65,
+    url: 'https://billiv.fr'
+  },
+  {
+    name: 'Bolt',
+    logo: boltLogo,
+    scale: 0.85,
+    url: 'https://bolt.eu'
+  },
+  {
+    name: 'Bolero',
+    logo: boleroLogo,
+    scale: 0.8,
+    url: 'https://www.boleromusic.com'
+  },
+  {
+    name: 'Ethereum',
+    logo: ethereumLogo,
+    scale: 1.1,
+    url: 'https://ethereum.org'
+  },
+  {
+    name: 'HashiCorp',
+    logo: hashicorpLogo,
+    scale: 1.1,
+    url: 'https://www.hashicorp.com'
+  },
+  {
+    name: 'Icelandair',
+    logo: icelandairLogo,
+    scale: 1.1,
+    url: 'https://www.icelandair.com'
+  },
+  {
+    name: 'Mistral',
+    logo: mistralLogo,
+    scale: 1.1,
+    url: 'https://mistral.ai'
+  },
+  {
+    name: 'Node.js',
+    logo: nodejsLogo,
+    scale: 1.3,
+    url: 'https://nodejs.org'
+  },
+  {
+    name: 'Qasa',
+    logo: qasaLogo,
+    scale: 0.75,
+    url: 'https://qasa.com'
+  },
+  {
+    name: 'Solana',
+    logo: solanaLogo,
+    scale: 0.9,
+    url: 'https://solana.com'
+  },
+  {
+    name: 'Speechify',
+    logo: speechifyLogo,
+    scale: 1.15,
+    url: 'https://speechify.com'
+  },
+  {
+    name: 'Soundtrack',
+    logo: soundtrackLogo,
+    scale: 1.1,
+    url: 'https://www.soundtrack.io'
+  },
+  {
+    name: 'Todoist',
+    logo: todoistLogo,
+    scale: 0.9,
+    url: 'https://todoist.com'
+  },
+  {
+    name: 'Ubisoft',
+    logo: ubisoftLogo,
+    scale: 0.95,
+    url: 'https://www.ubisoft.com'
+  },
+  {
+    name: 'VintedGo',
+    logo: vintedgoLogo,
+    scale: 0.85,
+    url: 'https://vintedgo.com'
+  },
+  {
+    name: 'Watershed',
+    logo: watershedLogo,
+    url: 'https://watershed.com'
+  }
 ];
 
 export default function UserCompanies() {
   return (
     <div className="grid grid-cols-2 items-center sm:grid-cols-3 lg:grid-cols-6 lg:gap-4">
       {companies.map((company) => (
-        <div
+        <Link
           key={company.name}
-          className="flex items-center justify-center p-4 opacity-40 grayscale"
+          className="flex items-center justify-center p-4 opacity-40 grayscale transition-opacity hover:opacity-100"
+          href={company.url}
+          target="_blank"
         >
           <Image
             alt={company.name}
@@ -54,7 +146,7 @@ export default function UserCompanies() {
             style={{transform: `scale(${company.scale || 1})`}}
             title={company.name}
           />
-        </div>
+        </Link>
       ))}
     </div>
   );
