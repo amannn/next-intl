@@ -59,7 +59,6 @@ const companies = [
   {
     name: 'HashiCorp',
     logo: hashicorpLogo,
-    scale: 1.1,
     url: 'https://www.hashicorp.com'
   },
   {
