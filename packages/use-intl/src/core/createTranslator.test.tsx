@@ -417,7 +417,7 @@ describe('type safety', () => {
 
     it('validates escaped', () => {
       const t = translateMessage(
-        "Escape curly braces with single quotes (e.g. '{name')"
+        "Escape curly braces with single quotes (e.g. '{name}')"
       );
 
       t('msg');

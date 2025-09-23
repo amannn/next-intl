@@ -75,13 +75,18 @@ it('handles basic interpolation', () => {
 });
 
 it('can escape curly brackets', () => {
-  renderMessage("Hello '{name'}");
+  renderMessage("Hello '{name}'");
   screen.getByText('Hello {name}');
+});
+
+it('can can use single quotes', () => {
+  renderMessage("Hello 'name'");
+  screen.getByText("Hello 'name'");
 });
 
 it('can escape curly brackets in production', () => {
   vi.stubEnv('NODE_ENV', 'production');
-  renderMessage("Hello '{name'}");
+  renderMessage("Hello '{name}'");
   screen.getByText('Hello {name}');
   vi.unstubAllEnvs();
 });

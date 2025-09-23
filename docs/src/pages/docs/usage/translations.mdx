@@ -318,10 +318,10 @@ t('message', {locale: locale.replaceAll('-', '_')});
 
 ### Escaping
 
-Since curly braces are used for [interpolating arguments](/docs/usage/translations#arguments), you can escape them with the `'` marker to use the actual symbol in messages:
+Since curly braces are used for [interpolating arguments](/docs/usage/translations#arguments), you can wrap them in single quotes (`'`) to use the actual symbol in messages:
 
 ```json filename="en.json"
-"message": "Escape curly braces with single quotes (e.g. '{name'})"
+"message": "Escape curly braces with single quotes (e.g. '{name}')"
 ```
 
 ```js
