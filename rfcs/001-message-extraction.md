@@ -224,13 +224,15 @@ While providing context for translators was always important, especially with th
 
 The following file formats are being considered:
 
-#### 1. Portable object (.po)
+#### 1. Portable object catalog (.po)
 
 ```
 #. Advance to the next slide
 #: src/components/Carousel.tsx:13
 msgid "5VpL9Z"
 msgstr "Right"
+
+...
 ```
 
 **Pro's:**
