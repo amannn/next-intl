@@ -510,7 +510,7 @@ This RFC draws a lot of inspiration from the following projects:
 
 [**i18n at zendesk**](https://www.youtube.com/watch?v=fUQAXo2DayQ)
 
-- Code example: `t(\`Hello ${name}\`)`
+- Code example: `t('Hello ${name}')`
 - Default key strategy: Hash + message as key
 - Default format: Structured JSON
 
