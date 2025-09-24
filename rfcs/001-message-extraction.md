@@ -446,8 +446,6 @@ This RFC draws a lot of inspiration from the following projects:
 - Default key strategy: `[sha512:contenthash:base64:6]`
 - Default format: Chrome JSON
 
-Many thanks to the authors of these projects for their work and inspiration!
-
 **i18n at zendesk**
 
 ```tsx
@@ -455,3 +453,7 @@ t(`Hello ${name}!`);
 ```
 
 → [Presentation](https://www.youtube.com/watch?v=fUQAXo2DayQ) by [Bazyli Brzoska](https://x.com/niieani)
+
+---
+
+Many thanks to the authors of these projects for their work and inspiration!
