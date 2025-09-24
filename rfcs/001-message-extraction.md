@@ -484,37 +484,35 @@ Related: [Statically analyzable](#statically-analyzable)
 
 This RFC draws a lot of inspiration from the following projects:
 
-**gettext**
+[**gettext**](https://en.wikipedia.org/wiki/Gettext)
 
 - Code example: `printf(_("My name is %s."), my_name)`
 - Default key strategy: Uses message as key
 - Default format: `.pot`
 
-**Lingui**
+[**Lingui**](https://lingui.dev/)
 
 - Code example: `<Trans>My name is {name}.</Trans>`
-- Default key strategy: [`hexToBase64(sha256(msg + UNIT_SEPARATOR + (context | ""))).slice(0, 6)`](https://github.com/lingui/js-lingui/blob/551950e1f743757101f036cd36282765c4203105/packages/message-utils/src/generateMessageId.ts)
+- Default key strategy: `hexToBase64(sha256(msg + UNIT_SEPARATOR + (context | ""))).slice(0, 6)`
 - Default format: `.po`
 
-**FormatJS**
+[**FormatJS**](https://formatjs.github.io/)
 
 - Code example: `<FormattedMessage defaultMessage="My name is {name}." values={{name: 'John'}} />`
 - Default key strategy: `[sha512:contenthash:base64:6]`
 - Default format: Chrome JSON
 
-**@wordpress/i18n**
+[**@wordpress/i18n**](https://www.npmjs.com/package/@wordpress/i18n)
 
 - Code example: `sprintf(__( 'Hello %s', 'my-text-domain' ), name)`
 - Default key strategy: Uses message as key
 - Default format: `.po`
 
-**i18n at zendesk**
+[**i18n at zendesk**](https://www.youtube.com/watch?v=fUQAXo2DayQ)
 
 ```tsx
 t(`Hello ${name}!`);
 ```
-
-→ [Presentation](https://www.youtube.com/watch?v=fUQAXo2DayQ) by [Bazyli Brzoska](https://x.com/niieani)
 
 ---
 
