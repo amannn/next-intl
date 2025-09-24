@@ -4,7 +4,7 @@ Start date: 2025-09-24
 
 ## Summary
 
-This RFC proposes a new way to define messages inline that avoids the need for managing keys.
+This RFC proposes a new way to define messages inline that doesn't require managing keys.
 
 ```tsx
 import {useExtracted} from 'next-intl';
