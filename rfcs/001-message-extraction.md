@@ -115,21 +115,43 @@ Besides message extraction, static analysis of messages might in the future be u
 
 ### ICU features
 
-For ICU features like argument interpolation, the ICU string can be defined inline and enriched with values:
+For ICU features like argument interpolation, the ICU string can be defined inline and enriched with values.
+
+**Interpolation of arguments**
 
 ```tsx
 t('Hello, {name}!', {name: 'John'});
+```
+
+**Cardinal pluralization**
+
+```tsx
 t(
   'You have {count, plural, =0 {no followers yet} =1 {one follower} other {# followers}}.',
   {count: 3580}
 );
+```
+
+**Ordinal pluralization**
+
+```tsx
 t(
   "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
   {year: 2025}
 );
+```
+
+**Select values**
+
+```tsx
 t('{gender, select, female {She} male {He} other {They}} is online.', {
   gender: 'female'
 });
+```
+
+**Rich text**
+
+```tsx
 t.rich('Please refer to the <link>guidelines</link>.', {
   link: (chunks) => <Link href="/guidelines">{chunks}</Link>
 });
