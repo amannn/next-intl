@@ -17,6 +17,8 @@ function InlineMessages() {
 
 This document contains a lot of background information and reasoning regarding API design and is intended for early adopters who are interested in providing feedback. The eventual goal for end users is to get started without much explanation, so don't feel obliged to dig into this if you're only interested in using this API in the future.
 
+→ [**Discussion**](https://github.com/amannn/next-intl/discussions/2036)
+
 **Table of contents:**
 
 - [Motivation](#motivation)
@@ -39,8 +41,6 @@ This document contains a lot of background information and reasoning regarding A
   - [Supporting human readable strings as keys](#supporting-human-readable-strings-as-keys)
   - [Macro for defining messages](#macro-for-defining-messages)
 - [Prior art & credits](#prior-art--credits)
-
-→ [Discussion](https://github.com/amannn/next-intl/discussions/2036)
 
 ## Motivation
 
