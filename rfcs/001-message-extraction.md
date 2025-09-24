@@ -260,9 +260,7 @@ msgstr "Right"
 
 This is an example of what [`chrome.i18n`](https://developer.chrome.com/docs/extensions/reference/api/i18n) uses.
 
-While sticking with JSON would be helpful due its popularity and compatibility, there's unfortunately no universal standard for this.
-
-To only list a few:
+Unfortunately, this is not a universal standard—to only list a few:
 
 1. [Chrome JSON as supported by Crowdin](https://store.crowdin.com/chrome-json)
 2. [Structured JSON as supported by Lokalise](https://docs.lokalise.com/en/articles/3229161-structured-json)
