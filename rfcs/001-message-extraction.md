@@ -53,7 +53,7 @@ If we consider the design of Tailwind, we can see that an i18n solution that fol
 3. **No naming of things**: Not having to come up with names is a major productivity boost, therefore manual keys should be avoided as much as possible.
 4. **Purging**: Similar to how Tailwind can purge unused styles, we should purge unused messages automatically. Related to this, changed messages might need to be invalidated.
 5. **Minification**: Tailwind class names have a tiny bundle footprint, messages should also use minified keys (e.g. `uxV9Xq`).
-6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of it's used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
+6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of whether it is used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
 7. **Incremental adoption**: Tailwind can be used alongside traditional stylesheets, making it migration-friendly. It should be possible to use inline messages alongside existing translations.
 8. **Refactoring-friendly**: Moving code across components is seamless with Tailwind, this should be possible with inline messages as well.
 
@@ -198,7 +198,7 @@ E.g. if you consider this catalog:
 
 … then it's ambiguous whether "right" refers to a direction (left/right) or whether something is correct.
 
-While providing context for translators was always important, esp. with the rise of AI translation, it's becoming more and more important to do this in a structured way that doesn't rely on trying to find messages in a running app.
+While providing context for translators was always important, especially with the rise of AI translation, it's becoming more and more important to do this in a structured way that doesn't rely on trying to find messages in a running app.
 
 The following file formats are being considered:
 
@@ -277,7 +277,7 @@ key === 'QM7ITA';
 
 **Potential future explorations:**
 
-- **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed messsage')` that is automatically removed during extraction)
+- **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed message')` that is automatically removed during extraction)
 - **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
 
 ### Bundler integration
@@ -299,9 +299,9 @@ Other than that, there are two use cases:
 
 ## Tradeoffs
 
-1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but esp. with recent innovations like `'use client'` it's clear that build steps are here to stay.
+1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but especially with recent innovations like `'use client'` it's clear that build steps are here to stay.
 2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation).)
-3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
+3. **Changing source locale translations in a TMS (Translation Management System):** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
 
 ## Considered alternatives
 
@@ -400,7 +400,7 @@ It largely depends on the project, but I've repeatedly seen that the majority of
 
 Some of the discussed benefits of this proposal would be possible if we'd allow human readable messages as keys. This is currently not supported because `next-intl` doesn't allow `.` to be used in keys.
 
-However, it would be a half-baked feature because you'd still have to extract the messages yourself and also minification isn't possible.
+However, it would be an incomplete feature because you'd still have to extract the messages yourself and also minification isn't possible.
 
 ### Macro for defining messages
 
