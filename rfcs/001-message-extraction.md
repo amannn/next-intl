@@ -233,7 +233,15 @@ msgid "5VpL9Z"
 msgstr "Right"
 ```
 
-File path(s) can be automatically retrieved during extraction, and also updated if call sites are moved without invalidating the key.
+**Pro's:**
+
+- Standardized format
+- Can attach contextual descriptions
+- File path(s) can be automatically added during extraction (and also updated if call sites are moved without invalidating the key)
+
+**Cons:**
+
+- Potentially less familiar for some developers (but `next-intl` will automatically handle parsing, so there's no effort here on the user side)
 
 **Future exploration:** Provide supplemental descriptions for translations automatically via AI (related: [Crowdin Context Harvester](https://store.crowdin.com/crowdin-context-harvester-cli))
 
@@ -258,6 +266,32 @@ To only list a few:
 2. [Structured JSON as supported by Lokalise](https://docs.lokalise.com/en/articles/3229161-structured-json)
 3. [Structured JSON as supported by Smartling](https://help.smartling.com/hc/en-us/articles/360008000733-JSON#StringInstructions)
 4. [Structured JSON as supported by Transifex](https://help.transifex.com/en/articles/6220899-structured-json)
+
+**Pro's:**
+
+- Can attach contextual descriptions
+
+**Cons:**
+
+- No universal standard
+- Might have to merge file metadata with descriptions
+
+#### 3. Simple JSON
+
+```json
+{
+  "5VpL9Z": "Right"
+}
+```
+
+**Pro's:**
+
+- Popular and widely used
+- Likely used by practically all `next-intl` users
+
+**Cons:**
+
+- No contextual descriptions
 
 ---
 
