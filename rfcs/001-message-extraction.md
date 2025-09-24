@@ -81,9 +81,9 @@ function InlineMessages() {
 1. Neither a namespace nor a key is needed.
 2. Retrieving `t` from a hook allows us to continue accessing messages either from React Context (Client Components) or from `i18n/request.ts` (Server Components).
 3. The invocation of `t` can be moved to another component without having to update a key. The only requirement is that a call to `useExtracted` is present.
-4. Server Components can use an awaitable version of the hook like `const t = await getExtracted()`.
+4. Server Components, Server Actions and other server-only code can use an awaitable version of the hook like `const t = await getExtracted()`.
 5. Dynamic invocations like `t(keyName)` are not allowed and will print an error (related: [Statically analyzable](#statically-analyzable))
-6. Tooling like [i18n Ally](https://next-intl.dev/docs/workflows/vscode-integration) is no longer needed.
+6. IDE tooling like [i18n Ally](https://next-intl.dev/docs/workflows/vscode-integration) is no longer needed.
 7. If the same label is used in multiple places, it will be reused automatically (related: [Explicit IDs](#explicit-ids))
 8. `t.raw` is not supported with this API.
 
@@ -146,7 +146,7 @@ Related: [Direct concatenation of arguments](#direct-concatenation-of-arguments)
 
 ### Provide more context
 
-If the developer wants to clarify the intent of a message, they can provide additional context:
+If the developer wants to clarify the intent of a message, they can provide additional context by passing an object:
 
 ```tsx
 t({
@@ -202,7 +202,7 @@ While providing context for translators was always important, especially with th
 
 The following file formats are being considered:
 
-**Portable object (.po)**
+#### 1. Portable object (.po)
 
 ```
 #. Advance to the next slide
@@ -213,9 +213,9 @@ msgstr "Right"
 
 File path(s) can be automatically retrieved during extraction, and also updated if call sites are moved without invalidating the key.
 
-Additionally, descriptions can optionally be attached to messages. There's also potential here for AI to automatically enrich the descriptions based on the context of the message (related: [Crowdin Context Harvester](https://store.crowdin.com/crowdin-context-harvester-cli)).
+**Future exploration:** Provide supplemental descriptions for translations automatically via AI (related: [Crowdin Context Harvester](https://store.crowdin.com/crowdin-context-harvester-cli))
 
-**Structured JSON**
+#### 2. Structured JSON
 
 ```json
 {
@@ -239,11 +239,9 @@ To only list a few:
 
 ---
 
-Due to this, it seems like `.po` might qualify as the best option for a default format that doesn't force users down the road to migrate to another format once their app grows. Still, it's important to have this be configurable and also support simple JSON.
+Due to this, it seems like `.po` might qualify as the best option for a default format that doesn't force users down the road to migrate to another format once the need for contextual descriptions arises. Still, it's important to have this be configurable and also support simple JSON.
 
-**Future explorations:**
-
-- A migration script for migrating from one format to another
+**Future exploration:** A migration script for migrating from one format to another.
 
 ### Generating minified keys
 
@@ -266,6 +264,7 @@ key === 'QM7ITA';
 
 - In my benchmarks on a 2019 MacBook Pro, SHA-512 appears to produce similar results as SHA-256 for real-world use cases, there doesn't seem to be a clear winner. FormatJS uses SHA-512, so being compatible here might be helpful.
 - Base64 is helpful to reduce collision risk (e.g. compared to hex), while keeping the key readable (e.g. avoiding cryptic symbols)
+- Descriptions are another candidate for the hash, but could lead to an increase in accidental invalidation. If collisions should be avoided for a particular message, an [explicit ID](#explicit-ids) should be used instead.
 
 ### Catalog generation
 
@@ -275,7 +274,7 @@ key === 'QM7ITA';
 - **A message is updated**: Extract the message to the source locale catalog and reset translations for all secondary locales
 - **A message is removed**: Extract the message to the source locale catalog and remove translations for all secondary locales
 
-**Potential future explorations:**
+**Future explorations:**
 
 - **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed message')` that is automatically removed during extraction)
 - **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
@@ -286,7 +285,7 @@ The extraction is primarily designed to be used with a running dev server. A Tur
 
 To get the extracted messages back into the app, a Turbopack loader will transform the messages catalogs on-the-fly into simple JSON messages that can be returned from `i18n/request.ts`. This happens behind the scenes and there's no public API necessary.
 
-For edge cases, one-off extraction will be possible, but potentially only with a Node.js API and no separate CLI. The reason is some configuration will be necessary and this way it can be shared across the Next.js plugin in `next.config.ts` and potential custom scripts. A config file like `next-intl.config.js` should be avoided.
+For edge cases, one-off extraction will be possible, but potentially only with a Node.js API and no separate CLI. The reason is some configuration will be necessary and this way it can be shared across the Next.js plugin in `next.config.ts` and a potential custom script. A config file like `next-intl.config.js` should be avoided.
 
 ## Migration
 
@@ -295,15 +294,19 @@ First of all, if the current APIs of `next-intl` are exactly what you like to us
 Other than that, there are two use cases:
 
 1. **Mixed codebases**: Users might want to try this API in some places to see if it's a good fit for them, while keeping all existing translations as-is.
-2. **Full migration**: If users are interested in migrating to the new API completely, ideally an automated migration is available (e.g. a [Codemod](https://codemod.com/))
+2. **Full migration**: If users are interested in migrating to the new API completely, ideally an automated migration is available.
+
+**Future exploration:** Consider a [Codemod](https://codemod.com/) for migrating the usage of `useTranslations` to `useExtracted`.
 
 ## Tradeoffs
 
 1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but especially with recent innovations like `'use client'` it's clear that build steps are here to stay.
-2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation).)
-3. **Changing source locale translations in a TMS (Translation Management System):** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
+2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation)).
+3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
 
 ## Considered alternatives
+
+This section lists some alternative ideas that were considered, but don't seem to be a good fit for `next-intl`.
 
 ### Direct concatenation of arguments
 
@@ -378,7 +381,7 @@ It might be personal taste, but a JSX-based approach can also become quite opaqu
 </t.rich>;
 
 // … in comparison to:
-t("Visit <link>{name}'s profile</link> to learn more", {
+t('Visit <link>{name}‘s profile</link> to learn more', {
   name: (await getUser()).name,
   link: (chunks) => <Link to="/users/jane">{chunks}</Link>
 });
@@ -390,7 +393,8 @@ Apart from rich text, there are other trade-offs:
 
 1. The extractor needs to guess a variable name (e.g. `name` in the first example above). While this works for simple cases, it breaks down for more complex cases like `Hello ${getName()}`, so at some point we have to resort to generic names like `$0`, `$1`, etc.
 2. For strings like `Page {index, number} out of {total, number}`, we can currently statically analyze with TypeScript that you're using the `number` formatter in the message definition. The same is true for `date`. If we use the above API with simple string concatenation, this is not possible.
-3. If we ever add a [macro for defining messages](#macro-for-defining-messages), this approach can't be used since arguments might not be available where the message is defined.
+3. We can provide type-safety that avoids placing invalid values like `undefined` in markup.
+4. If we ever add a [macro for defining messages](#macro-for-defining-messages), this approach can't be used since arguments might not be available where the message is defined.
 
 So it takes quite a bit of design effort to find something that works well, and also the implementation might take more effort to get right. If we just use inline ICU strings, we can avoid this.
 
@@ -400,7 +404,7 @@ It largely depends on the project, but I've repeatedly seen that the majority of
 
 Some of the discussed benefits of this proposal would be possible if we'd allow human readable messages as keys. This is currently not supported because `next-intl` doesn't allow `.` to be used in keys.
 
-However, it would be an incomplete feature because you'd still have to extract the messages yourself and also minification isn't possible.
+If we did allow this, it would still come with tradeoffs like having to extract messages yourself, not being able to minify keys, and more. So going all in with proper message extraction seems largely preferable.
 
 ### Macro for defining messages
 
@@ -414,7 +418,7 @@ const message = msg`Hello {name}`;
 t(message, {name: 'John'});
 ```
 
-The issue with this pattern is however that we can't statically analyze which module graphs use which messages (related to [next-intl#1](https://github.com/amannn/next-intl/issues/1)).
+The issue with this pattern is that we can't statically analyze which module graphs use which messages (related to [next-intl#1](https://github.com/amannn/next-intl/issues/1)).
 
 Additionally, we already restrict calls to `t` to be in components to avoid [stale translations](https://next-intl.dev/blog/translations-outside-of-react-components), so potentially it could simplify the mental model to also not allow the definition of messages outside of components.
 
@@ -426,8 +430,8 @@ This RFC draws a lot of inspiration from the following projects:
 
 **gettext**
 
-- Code example: `printf(_("My name is %s.\n"), my_name)`
-- Default key strategy: N/A (uses message as key)
+- Code example: `printf(_("My name is %s."), my_name)`
+- Default key strategy: Uses message as key
 - Default format: `.pot`
 
 **Lingui**
