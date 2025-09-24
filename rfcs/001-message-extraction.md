@@ -502,6 +502,12 @@ This RFC draws a lot of inspiration from the following projects:
 - Default key strategy: `[sha512:contenthash:base64:6]`
 - Default format: Chrome JSON
 
+**@wordpress/i18n**
+
+- Code example: `sprintf(__( 'Hello %s', 'my-text-domain' ), name)`
+- Default key strategy: Uses message as key
+- Default format: `.po`
+
 **i18n at zendesk**
 
 ```tsx
