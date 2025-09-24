@@ -1,6 +1,6 @@
 # RFC: Message Extraction
 
-Start date: 2025-09-23
+Start date: 2025-09-24
 
 ## Summary
 
@@ -14,6 +14,33 @@ function InlineMessages() {
   return <h1>{t('Look ma, no keys!')}</h1>;
 }
 ```
+
+This document contains a lot of background information and reasoning regarding API design and is intended for early adopters who are interested in providing feedback. The eventual goal for end users is to get started without much explanation, so don't feel obliged to dig into this if you're only interested in using this API in the future.
+
+**Table of contents:**
+
+- [Motivation](#motivation)
+- [Proposed API](#proposed-api)
+  - [Simple, plain strings](#simple-plain-strings)
+  - [Statically analyzable](#statically-analyzable)
+  - [ICU features](#icu-features)
+  - [Provide more context](#provide-more-context)
+  - [Explicit IDs](#explicit-ids)
+  - [Developer workflow](#developer-workflow)
+- [Implementation details](#implementation-details)
+  - [File formats & AI translation](#file-formats--ai-translation)
+  - [Generating minified keys](#generating-minified-keys)
+  - [Catalog generation](#catalog-generation)
+  - [Bundler integration](#bundler-integration)
+- [Migration](#migration)
+- [Tradeoffs](#tradeoffs)
+- [Considered alternatives](#considered-alternatives)
+  - [Direct concatenation of arguments](#direct-concatenation-of-arguments)
+  - [Supporting human readable strings as keys](#supporting-human-readable-strings-as-keys)
+  - [Macro for defining messages](#macro-for-defining-messages)
+- [Prior art & credits](#prior-art--credits)
+
+→ [Discussion](https://github.com/amannn/next-intl/discussions/2036)
 
 ## Motivation
 
@@ -55,7 +82,7 @@ function InlineMessages() {
 2. Retrieving `t` from a hook allows us to continue accessing messages either from React Context (Client Components) or from `i18n/request.ts` (Server Components).
 3. The invocation of `t` can be moved to another component without having to update a key. The only requirement is that a call to `useExtracted` is present.
 4. Server Components can use an awaitable version of the hook like `const t = await getExtracted()`.
-5. Dynamic invocations like `t(keyName)` are not allowed and will throw an error.
+5. Dynamic invocations like `t(keyName)` are not allowed and will print an error (related: [Statically analyzable](#statically-analyzable))
 6. Tooling like [i18n Ally](https://next-intl.dev/docs/workflows/vscode-integration) is no longer needed.
 7. If the same label is used in multiple places, it will be reused automatically (related: [Explicit IDs](#explicit-ids))
 8. `t.raw` is not supported with this API.
@@ -84,7 +111,7 @@ const items = [
 ];
 ```
 
-Besides message extraction, static analysis of messages might in the future be used for [tree shaking](https://github.com/amannn/next-intl/issues/1).
+Besides message extraction, static analysis of messages might in the future be used for [tree shaking](https://github.com/amannn/next-intl/issues/1), therefore this restriction is important beyond the scope of this RFC.
 
 ### ICU features
 
@@ -169,7 +196,7 @@ E.g. if you consider this catalog:
 }
 ```
 
-… then it's apparent that it's ambiguous whether "right" refers to a direction (left/right) or whether something is correct.
+… then it's ambiguous whether "right" refers to a direction (left/right) or whether something is correct.
 
 While providing context for translators was always important, esp. with the rise of AI translation, it's becoming more and more important to do this in a structured way that doesn't rely on trying to find messages in a running app.
 
@@ -184,7 +211,7 @@ msgid "5VpL9Z"
 msgstr "Right"
 ```
 
-The file path(s) can be automatically retrieved during extraction, and also updated if call sites are moved without invalidating the key.
+File path(s) can be automatically retrieved during extraction, and also updated if call sites are moved without invalidating the key.
 
 Additionally, descriptions can optionally be attached to messages. There's also potential here for AI to automatically enrich the descriptions based on the context of the message (related: [Crowdin Context Harvester](https://store.crowdin.com/crowdin-context-harvester-cli)).
 
@@ -237,7 +264,7 @@ key === 'QM7ITA';
 
 **Notes:**
 
-- In my benchmarks on a 2019 MacBook Pro, SHA-512 appears to produce similar results as SHA-256 for real-world use cases, there doesn't seem to be a clear winner. FormatJS uses SHA-512, so being compatible might be helpful.
+- In my benchmarks on a 2019 MacBook Pro, SHA-512 appears to produce similar results as SHA-256 for real-world use cases, there doesn't seem to be a clear winner. FormatJS uses SHA-512, so being compatible here might be helpful.
 - Base64 is helpful to reduce collision risk (e.g. compared to hex), while keeping the key readable (e.g. avoiding cryptic symbols)
 
 ### Catalog generation
@@ -250,7 +277,7 @@ key === 'QM7ITA';
 
 **Potential future explorations:**
 
-- **Typo fixing**: A workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed messsage')` that is automatically removed during extraction)
+- **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed messsage')` that is automatically removed during extraction)
 - **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
 
 ### Bundler integration
@@ -272,9 +299,9 @@ Other than that, there are two use cases:
 
 ## Tradeoffs
 
-1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but esp. with Next.js and recent innovations like `'use client'` it's clear that build steps are here to stay.
+1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but esp. with recent innovations like `'use client'` it's clear that build steps are here to stay.
 2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation).)
-3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in the app code.
+3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
 
 ## Considered alternatives
 
@@ -328,9 +355,19 @@ It seems like a JSX-based alternative works better here:
 </t.rich>
 ```
 
-… this however feels a bit clunky, it doesn't really appear like a unified API.
+… this however feels a bit clunky, it doesn't really appear like a unified API in combination with `t`.
 
-It might be personal taste, but this can become quite opaque for complex cases:
+Having a non-JSX variant is very important for certain use cases:
+
+```tsx
+function onClick() {
+  setNotification(t('Successfully sent'));
+}
+
+<img alt={t('Red running shoes on white background')} src="/shoes.jpg" />;
+```
+
+It might be personal taste, but a JSX-based approach can also become quite opaque for complex cases:
 
 ```tsx
 // What are the static parts that will be extracted? 🤔
@@ -357,7 +394,7 @@ Apart from rich text, there are other trade-offs:
 
 So it takes quite a bit of design effort to find something that works well, and also the implementation might take more effort to get right. If we just use inline ICU strings, we can avoid this.
 
-It largely depends on the project, but I've repeatedly seen that the majority of messages are typically simple strings, with rather the minority of cases requiring ICU features. So my impression is that for the common case this shouldn't make a difference anyway and therefore it might not be worth the effort to go down this path.
+It largely depends on the project, but I've repeatedly seen that the majority of messages in a typical app are simple strings, with rather the minority of cases requiring ICU features. So my impression is that for the common case this shouldn't make a difference anyway and therefore it might not be worth the effort to go down this path.
 
 ### Supporting human readable strings as keys
 
