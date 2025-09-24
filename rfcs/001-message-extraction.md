@@ -506,13 +506,13 @@ This RFC draws a lot of inspiration from the following projects:
 
 - Code example: `sprintf(__( 'Hello %s', 'my-text-domain' ), name)`
 - Default key strategy: Uses message as key
-- Default format: `.po`
+- Default format: `.pot`
 
 [**i18n at zendesk**](https://www.youtube.com/watch?v=fUQAXo2DayQ)
 
-```tsx
-t(`Hello ${name}!`);
-```
+- Code example: `t(\`Hello ${name}\`)`
+- Default key strategy: Hash + message as key
+- Default format: Structured JSON
 
 ---
 
