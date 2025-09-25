@@ -358,7 +358,9 @@ Other than that, there are two use cases:
 
 1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but especially with recent innovations like `'use client'` it's clear that build steps are here to stay.
 2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation)).
-3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code.
+3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code. However, if your use case requires frequent changes to the source locale catalog, the key-based approach might be more convenient (related: [Source Text Review](https://support.crowdin.com/enterprise/source-text-review/)).
+
+**Future exploration:** Consider adding validation that extracted messages match the source locale catalog. On top of this, consider adding a workflow that syncs differences back into app code.
 
 ## Considered alternatives
 
