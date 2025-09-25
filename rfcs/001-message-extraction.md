@@ -414,7 +414,7 @@ It seems like a JSX-based alternative works better here:
 </t.rich>
 ```
 
-… this however feels a bit clunky, it doesn't really appear like a unified API in combination with `t`.
+… this however doesn't really appear like a unified API in combination with `t` which is based on being called as a function.
 
 Having a non-JSX variant is very important for certain use cases:
 
@@ -426,35 +426,47 @@ function onClick() {
 <img alt={t('Red running shoes on white background')} src="/shoes.jpg" />;
 ```
 
-It might be personal taste, but a JSX-based approach can also become quite opaque for complex cases:
+It might be personal preference, but a JSX-based approach can also become quite opaque for complex cases:
 
 ```tsx
 // What are the static parts that will be extracted? 🤔
 <t.rich>
   Visit
-  <Link to="/users/jane">{(await getUser()).name}'s profile</Link>
+  <Link
+    className="underline text-blue-600 hover:text-blue-800 font-semibold transition-colors"
+    to="/users/jane"
+  >
+    {(await getUser()).name}'s profile
+  </Link>
   to learn more
 </t.rich>;
 
 // … in comparison to:
 t('Visit <link>{name}‘s profile</link> to learn more', {
   name: (await getUser()).name,
-  link: (chunks) => <Link to="/users/jane">{chunks}</Link>
+  link: (chunks) => (
+    <Link
+      className="underline text-blue-600 hover:text-blue-800 font-semibold transition-colors"
+      to="/users/jane"
+    >
+      {chunks}
+    </Link>
+  )
 });
 ```
 
-Also, there's another case with [HTML markup](https://next-intl.dev/docs/usage/translations#html-markup) that we haven't even covered yet.
+Also, there's another case with [HTML markup](https://next-intl.dev/docs/usage/translations#html-markup) which would again require a different call site.
 
-Apart from rich text, there are other trade-offs:
+Apart from rich text, there are further trade-offs:
 
 1. The extractor needs to guess a variable name (e.g. `name` in the first example above). While this works for simple cases, it breaks down for more complex cases like `Hello ${getName()}`, so at some point we have to resort to generic names like `$0`, `$1`, etc.
 2. For strings like `Page {index, number} out of {total, number}`, we can currently statically analyze with TypeScript that you're using the `number` formatter in the message definition. The same is true for `date`. If we use the above API with simple string concatenation, this is not possible.
-3. We can provide type-safety that avoids placing invalid values like `undefined` in markup.
+3. We can provide type-safety that avoids passing invalid values like `undefined` that would break translations.
 4. If we ever add a [macro for defining messages](#macro-for-defining-messages), this approach can't be used since arguments might not be available where the message is defined.
 
 So it takes quite a bit of design effort to find something that works well, and also the implementation might take more effort to get right. If we just use inline ICU strings, we can avoid this.
 
-It largely depends on the project, but I've repeatedly seen that the majority of messages in a typical app are simple strings, with rather the minority of cases requiring ICU features. So my impression is that for the common case this shouldn't make a difference anyway and therefore it might not be worth the effort to go down this path.
+It largely depends on the project, but I've repeatedly seen that the majority of messages in a typical app are simple strings, with rather the smaller part of cases requiring ICU features. So my impression is that for the common case this shouldn't make a difference anyway and therefore it might not be worth the effort to go down this path.
 
 ### Supporting human readable strings as keys
 
