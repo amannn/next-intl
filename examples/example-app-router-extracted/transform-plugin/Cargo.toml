@@ -1,0 +1,18 @@
+[package]
+name = "transform-plugin"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+lto = true
+
+[dependencies]
+serde = "1"
+swc_core = { version = "42.1.*", features = ["ecma_plugin_transform"] }
+
+# .cargo/config.toml defines few alias to build plugin.
+# cargo build-wasip1 generates wasm32-wasip1 binary
+# cargo build-wasm32 generates wasm32-unknown-unknown binary.

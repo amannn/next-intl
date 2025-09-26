@@ -1,0 +1,14 @@
+{
+    "name": "transform-plugin",
+    "version": "0.1.0",
+    "description": "",
+    "author": "",
+    "license": "ISC",
+    "keywords": ["swc-plugin"],
+    "main": "target/wasm32-wasip1/release/transform_plugin.wasm",
+    "scripts": {
+        "prepublishOnly": "cargo build-wasip1 --release"
+    },
+    "files": [],
+    "preferUnplugged": true
+}
