@@ -5,7 +5,8 @@ export default getBuildConfig({
   input: {
     index: 'src/index.tsx',
     core: 'src/core.tsx',
-    react: 'src/react.tsx'
+    react: 'src/react.tsx',
+    'react/useExtracted': 'src/react/useExtracted.tsx'
   },
   external: [
     ...Object.keys(pkg.dependencies),

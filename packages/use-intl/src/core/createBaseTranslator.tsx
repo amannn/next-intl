@@ -347,7 +347,7 @@ function createBaseTranslatorImpl<
     key: TargetKey,
     /** Key value pairs for values to interpolate into the message. */
     values?: TranslationValues,
-    /** Provide custom formats for numbers, dates and times. */
+    /** Custom formats for numbers, dates and times. */
     formats?: Formats
   ): string {
     const result = translateBaseFn(key, values, formats);

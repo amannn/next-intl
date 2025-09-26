@@ -38,6 +38,11 @@
       "types": "./dist/types/react.d.ts",
       "development": "./dist/esm/development/react.js",
       "default": "./dist/esm/production/react.js"
+    },
+    "./react/useExtracted": {
+      "types": "./dist/types/react/useExtracted.d.ts",
+      "development": "./dist/esm/development/react/useExtracted.js",
+      "default": "./dist/esm/production/react/useExtracted.js"
     }
   },
   "files": [

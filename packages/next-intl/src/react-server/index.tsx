@@ -17,3 +17,7 @@ export {default as NextIntlClientProvider} from './NextIntlClientProviderServer.
 
 // Everything from `core`
 export * from 'use-intl/core';
+
+// Separate export that doesn't pull in `use-intl/react`
+// with client-only APIs like React Context
+export {default as useExtracted} from 'use-intl/react/useExtracted';
