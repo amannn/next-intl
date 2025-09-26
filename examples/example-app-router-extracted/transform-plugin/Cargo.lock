@@ -1976,7 +1976,9 @@ dependencies = [
 name = "transform-plugin"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "serde",
+ "sha2",
  "swc_core",
 ]
 

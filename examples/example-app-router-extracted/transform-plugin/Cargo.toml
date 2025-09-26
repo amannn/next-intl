@@ -11,6 +11,8 @@ lto = true
 
 [dependencies]
 serde = "1"
+sha2 = "0.10"
+base64 = "0.22"
 swc_core = { version = "42.1.*", features = ["ecma_plugin_transform"] }
 
 # .cargo/config.toml defines few alias to build plugin.
