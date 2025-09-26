@@ -28,6 +28,7 @@ This document contains a lot of background information and reasoning regarding A
   - [ICU features](#icu-features)
   - [Provide more context](#provide-more-context)
   - [Explicit IDs](#explicit-ids)
+  - [Optional namespace](#optional-namespace)
   - [Developer workflow](#developer-workflow)
 - [Implementation details](#implementation-details)
   - [File formats & AI translation](#file-formats--ai-translation)
@@ -193,6 +194,32 @@ t({
 
 One use case is when you have a label that is used in multiple places, but should have different translations in other languages. This is an escape hatch that should rarely be necessary.
 
+### Optional namespace
+
+The user can provide an optional namespace:
+
+```tsx
+function Modal() {
+  const t = useExtracted('design-system');
+  t('Close');
+}
+```
+
+… would generate e.g.:
+
+```json
+{
+  "design-system": {
+    "5VpL9Z": "Close"
+  }
+}
+```
+
+This is useful for:
+
+1. **Libraries**: E.g. if you have a monorepo with multiple packages, you might want to merge messages from multiple packages into a single catalog that is used at runtime. This ensures that overlapping keys between packages are not merged.
+2. **Splitting**: While [`next-intl#1`](https://github.com/amannn/next-intl/issues/1) is the ultimate goal for splitting messages automatically, for the time being users might want to split messages manually by a namespace.
+
 ### Developer workflow
 
 From the perspective of the developer, the workflow is as follows:
@@ -334,7 +361,6 @@ key === 'QM7ITA';
 
 - **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed message')` that is automatically removed during extraction)
 - **Source text review**: Beyond just fixing typos, some projects require extensive [STR](https://support.crowdin.com/enterprise/source-text-review/) before translation work begins. For this use case, it could be helpful if there was a tool that syncs an updated source locale catalog back into source code. Alternatively, for projects where source text changes frequently in an external system, a key-based approach might still be more convenient. Related to this, there's also an architectural aspect to consider putting frequently-changing marketing labels into a CMS instead.
-- **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
 
 ### Bundler integration
 
