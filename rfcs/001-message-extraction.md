@@ -358,8 +358,8 @@ Other than that, there are two use cases:
 ## Tradeoffs
 
 1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but especially with recent innovations like `'use client'` it's clear that build steps are here to stay.
-2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation)).
-3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. It's expected that developers take care of changing source locale labels. Related: Future explorations in [Catalog generation](#catalog-generation).
+2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (related: [Catalog generation](#catalog-generation)).
+3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. For the current scope of this RFC, it's expected that developers take care of changing source locale labels. However, tooling could potentially help to support other workflows (related: [Catalog generation](#catalog-generation)).
 
 **Future exploration:** Consider adding validation that extracted messages match the source locale catalog. On top of this, consider adding a workflow that syncs differences back into app code.
 
