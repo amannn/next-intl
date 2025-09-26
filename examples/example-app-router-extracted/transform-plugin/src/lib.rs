@@ -1,7 +1,7 @@
 use swc_core::ecma::{
     ast::{CallExpr, Callee, Expr, Lit, Program},
     transforms::testing::test_inline,
-    visit::{VisitMut, VisitMutWith},
+    visit::{visit_mut_pass, VisitMut, VisitMutWith},
 };
 use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
 
