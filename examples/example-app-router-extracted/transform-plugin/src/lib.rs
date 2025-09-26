@@ -1,9 +1,11 @@
 use swc_core::ecma::{
     ast::{CallExpr, Callee, Expr, Lit, Program},
-    transforms::testing::test_inline,
-    visit::{visit_mut_pass, VisitMut, VisitMutWith},
+    visit::{VisitMut, VisitMutWith},
 };
 use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
+
+#[cfg(test)]
+mod lib_test;
 
 pub struct TransformVisitor;
 
@@ -25,7 +27,7 @@ impl VisitMut for TransformVisitor {
                 }
             }
         }
-        
+
         // Continue visiting child nodes
         call.visit_mut_children_with(self);
     }
@@ -47,21 +49,10 @@ impl VisitMut for TransformVisitor {
 /// This requires manual handling of serialization / deserialization from ptrs.
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
-pub fn process_transform(mut program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
+pub fn process_transform(
+    mut program: Program,
+    _metadata: TransformPluginProgramMetadata,
+) -> Program {
     program.visit_mut_with(&mut TransformVisitor);
     program
 }
-
-// An example to test plugin transform.
-// Recommended strategy to test plugin's transform is verify
-// the Visitor's behavior, instead of trying to run `process_transform` with mocks
-// unless explicitly required to do so.
-test_inline!(
-    Default::default(),
-    |_| visit_mut_pass(TransformVisitor),
-    transform_t_calls,
-    // Input codes
-    r#"t("Hey from server!");"#,
-    // Output codes after transformed with plugin
-    r#"t("CHANGED: Hey from server!");"#
-);
