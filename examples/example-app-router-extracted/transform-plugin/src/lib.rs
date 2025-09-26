@@ -1,16 +1,34 @@
 use swc_core::ecma::{
-    ast::Program,
+    ast::{CallExpr, Callee, Expr, Lit, Program},
     transforms::testing::test_inline,
-    visit::{visit_mut_pass, FoldWith, VisitMut},
+    visit::{VisitMut, VisitMutWith},
 };
 use swc_core::plugin::{plugin_transform, proxies::TransformPluginProgramMetadata};
 
 pub struct TransformVisitor;
 
 impl VisitMut for TransformVisitor {
-    // Implement necessary visit_mut_* methods for actual custom transform.
-    // A comprehensive list of possible visitor methods can be found here:
-    // https://rustdoc.swc.rs/swc_ecma_visit/trait.VisitMut.html
+    fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
+        // Check if this is a call to t()
+        if let Callee::Expr(expr) = &call.callee {
+            if let Expr::Ident(ident) = &**expr {
+                if ident.sym == "t" {
+                    // Check if the first argument is a string literal
+                    if let Some(first_arg) = call.args.first_mut() {
+                        if let Expr::Lit(Lit::Str(str_lit)) = &mut *first_arg.expr {
+                            // Prepend "CHANGED: " to the string
+                            let original_value = str_lit.value.to_string();
+                            str_lit.value = format!("CHANGED: {}", original_value).into();
+                            str_lit.raw = None; // Clear raw to force regeneration
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Continue visiting child nodes
+        call.visit_mut_children_with(self);
+    }
 }
 
 /// An example plugin function with macro support.
@@ -29,8 +47,9 @@ impl VisitMut for TransformVisitor {
 /// This requires manual handling of serialization / deserialization from ptrs.
 /// Refer swc_plugin_macro to see how does it work internally.
 #[plugin_transform]
-pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.fold_with(&mut visit_mut_pass(TransformVisitor))
+pub fn process_transform(mut program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
+    program.visit_mut_with(&mut TransformVisitor);
+    program
 }
 
 // An example to test plugin transform.
@@ -40,9 +59,9 @@ pub fn process_transform(program: Program, _metadata: TransformPluginProgramMeta
 test_inline!(
     Default::default(),
     |_| visit_mut_pass(TransformVisitor),
-    boo,
+    transform_t_calls,
     // Input codes
-    r#"console.log("transform");"#,
+    r#"t("Hey from server!");"#,
     // Output codes after transformed with plugin
-    r#"console.log("transform");"#
+    r#"t("CHANGED: Hey from server!");"#
 );
