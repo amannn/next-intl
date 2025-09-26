@@ -333,6 +333,7 @@ key === 'QM7ITA';
 **Future explorations:**
 
 - **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed message')` that is automatically removed during extraction)
+- **Source text review**: Beyond just fixing typos, some projects require extensive [STR](https://support.crowdin.com/enterprise/source-text-review/) before translation work begins. For this use case, it could be helpful if there was a tool that syncs an updated source locale catalog back into source code. Alternatively, for projects where source text changes frequently in an external system, a key-based approach might still be more convenient.
 - **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
 
 ### Bundler integration
@@ -358,7 +359,7 @@ Other than that, there are two use cases:
 
 1. **Relies on a build step:** The current API with `useTranslations` in theory works without a build step, but especially with recent innovations like `'use client'` it's clear that build steps are here to stay.
 2. **Reset of translations:** If a translation is fixed in the source locale, the translations of secondary locales will be reset. While this might be desired for substantial changes, it can be annoying e.g. for fixing typos. I think there's room for special handling of this case though (see [Catalog generation](#catalog-generation)).
-3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. Maybe it's more an educational problem where changes to the source locale catalog should always be done by developers in app code. However, if your use case requires frequent changes to the source locale catalog, the key-based approach might be more convenient (related: [Source Text Review](https://support.crowdin.com/enterprise/source-text-review/)).
+3. **Changing source locale translations in a TMS:** This would lead to a weird situation where the code contains a label that doesn't appear in this form in the app. It's expected that developers take care of changing source locale labels. Related: Future explorations in [Catalog generation](#catalog-generation).
 
 **Future exploration:** Consider adding validation that extracted messages match the source locale catalog. On top of this, consider adding a workflow that syncs differences back into app code.
 
