@@ -333,7 +333,7 @@ key === 'QM7ITA';
 **Future explorations:**
 
 - **Typo fixing**: Consider adding a workflow to fix typos in the source language while keeping existing translations (e.g. a magic comment like `t(/* keep */ 'Fixed message')` that is automatically removed during extraction)
-- **Source text review**: Beyond just fixing typos, some projects require extensive [STR](https://support.crowdin.com/enterprise/source-text-review/) before translation work begins. For this use case, it could be helpful if there was a tool that syncs an updated source locale catalog back into source code. Alternatively, for projects where source text changes frequently in an external system, a key-based approach might still be more convenient.
+- **Source text review**: Beyond just fixing typos, some projects require extensive [STR](https://support.crowdin.com/enterprise/source-text-review/) before translation work begins. For this use case, it could be helpful if there was a tool that syncs an updated source locale catalog back into source code. Alternatively, for projects where source text changes frequently in an external system, a key-based approach might still be more convenient. Related to this, there's also an architectural aspect to consider putting frequently-changing marketing labels into a CMS instead.
 - **Monorepo namespaces**: In complex monorepo setups, users might want to merge messages from multiple packages into a single catalog that is used at runtime. We could consider adding an optional namespace like `useExtracted('design-system')` that ensures overlapping keys are not merged.
 
 ### Bundler integration
