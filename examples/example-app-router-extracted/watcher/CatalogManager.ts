@@ -24,15 +24,26 @@ export class CatalogManager {
   }
 
   async extractFileMessages(absoluteFilePath: string): Promise<number> {
-    // TODO: If a known message id is encountered, check
-    // if it's still used in the previous location
     const messages = await this.extractor.extractFromFile(absoluteFilePath);
-    this.messagesByFile.set(absoluteFilePath, messages);
+
+    // If messages were removed from a file, we need to clean them up
+    const hadMessages = this.messagesByFile.has(absoluteFilePath);
+    const hasMessages = messages.length > 0;
+
+    if (hasMessages || hadMessages) {
+      if (hasMessages) {
+        this.messagesByFile.set(absoluteFilePath, messages);
+      } else {
+        this.messagesByFile.delete(absoluteFilePath);
+      }
+    }
+
     return messages.length;
   }
 
   async save(): Promise<number> {
     // Sort and group by file paths
+    // TODO: Is this always wanted?
     const messages = Array.from(this.messagesByFile.keys())
       .sort()
       .map((filePath) => this.messagesByFile.get(filePath) || [])

@@ -85,8 +85,5 @@ export default class SourceFileWatcher {
     } else {
       console.log(`   Duration: ${extractDuration.toFixed(2)}ms (extract)`);
     }
-
-    // TODO: Async schedule another scan if the extracted messages were also
-    // used in another file to check if they are still used.
   }
 }
