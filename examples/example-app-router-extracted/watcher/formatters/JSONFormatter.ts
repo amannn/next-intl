@@ -10,10 +10,15 @@ type JsonOnDisk = Record<string, unknown>;
 // to detect changed messages.
 
 export default class JSONFormatter implements Formatter {
+  static readonly EXTENSION = '.json';
+
   private filePath: string;
 
   constructor(messagesPath: string, sourceLocale: string) {
-    this.filePath = path.join(messagesPath, `${sourceLocale}.json`);
+    this.filePath = path.join(
+      messagesPath,
+      sourceLocale + JSONFormatter.EXTENSION
+    );
   }
 
   async write(messages: Array<ExtractedMessage>): Promise<void> {

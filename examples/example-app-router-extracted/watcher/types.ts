@@ -13,9 +13,3 @@ export type ExtractionConfig = {
   messagesPath: string;
   srcPath: string;
 };
-
-export type FileChangeEvent = {
-  type: 'change' | 'rename';
-  filename: string;
-  timestamp: string;
-};
