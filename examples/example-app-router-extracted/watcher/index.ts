@@ -1,9 +1,9 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
-import SourceFileWatcher from './SourceFileWatcher.ts';
+import SourceFileWatcher from './source/SourceFileWatcher.ts';
 import type {ExtractionConfig} from './types.ts';
 import {CatalogManager} from './CatalogManager.ts';
-import {JSONFormatter} from './JSONFormatter.ts';
+import JSONFormatter from './formatters/JSONFormatter.ts';
 
 const config: ExtractionConfig = {
   sourceLocale: 'en',

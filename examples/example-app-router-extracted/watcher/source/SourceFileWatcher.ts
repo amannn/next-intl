@@ -5,7 +5,7 @@ import {
   type Event as WatchEvent,
   subscribe
 } from '@parcel/watcher';
-import {CatalogManager} from './CatalogManager.ts';
+import {CatalogManager} from '../CatalogManager.ts';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 
 export default class SourceFileWatcher {

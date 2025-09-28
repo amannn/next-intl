@@ -1,5 +1,3 @@
-import fs from 'fs/promises';
-import path from 'path';
 import {
   parse,
   type Program,
@@ -10,32 +8,12 @@ import {
   type StringLiteral,
   type Node
 } from '@swc/core';
-import type {ExtractedMessage} from './types.ts';
+import type {ExtractedMessage} from '../types.ts';
 import KeyGenerator from './KeyGenerator.ts';
-
-class Scope {
-  parent?: Scope;
-  vars = new Map<string, string>();
-
-  constructor(parent?: Scope) {
-    this.parent = parent;
-  }
-
-  define(name: string, kind: string) {
-    this.vars.set(name, kind);
-  }
-
-  lookup(name: string): string | undefined {
-    if (this.vars.has(name)) return this.vars.get(name);
-    return this.parent?.lookup(name);
-  }
-}
+import ASTScope from './ASTScope.ts';
 
 export default class MessageExtractor {
-  async extractFromFile(filePath: string) {
-    const absPath = path.resolve(filePath);
-    const code = await fs.readFile(absPath, 'utf8');
-
+  async extractFromFileContent(code: string) {
     const ast = await parse(code, {
       syntax: 'typescript',
       tsx: true,
@@ -50,8 +28,11 @@ export default class MessageExtractor {
     const results: ExtractedMessage[] = [];
     let hookLocalName: string | null = null;
 
-    const scopeStack: Scope[] = [new Scope()];
-    const currentScope = () => scopeStack[scopeStack.length - 1];
+    const scopeStack: ASTScope[] = [new ASTScope()];
+
+    function currentScope() {
+      return scopeStack[scopeStack.length - 1];
+    }
 
     function visit(node: Node) {
       if (!node || typeof node !== 'object') return;
@@ -113,7 +94,7 @@ export default class MessageExtractor {
         case 'FunctionExpression':
         case 'ArrowFunctionExpression':
         case 'BlockStatement': {
-          scopeStack.push(new Scope(currentScope()));
+          scopeStack.push(new ASTScope(currentScope()));
           for (const key in node) {
             const child = (node as unknown as Record<string, unknown>)[key];
             if (Array.isArray(child)) {
@@ -131,7 +112,7 @@ export default class MessageExtractor {
         }
       }
 
-      // generic recursion
+      // Generic recursion
       for (const key in node) {
         const child = (node as unknown as Record<string, unknown>)[key];
         if (Array.isArray(child)) {

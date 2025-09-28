@@ -1,6 +1,7 @@
 import {promises as fs} from 'fs';
 import path from 'path';
-import type {ExtractedMessage, MessageFormatter} from './types.ts';
+import type {ExtractedMessage} from '../types.ts';
+import type Formatter from './Formatter.ts';
 
 type JsonOnDisk = Record<string, unknown>;
 
@@ -8,7 +9,7 @@ type JsonOnDisk = Record<string, unknown>;
 // metadata like the file path, which is needed for the watcher
 // to detect changed messages.
 
-export class JSONFormatter implements MessageFormatter {
+export default class JSONFormatter implements Formatter {
   private filePath: string;
 
   constructor(messagesPath: string, sourceLocale: string) {

@@ -1,14 +1,16 @@
-import MessageExtractor from './MessageExtractor.ts';
-import SourceFileScanner from './SourceFileScanner.ts';
-import type {ExtractedMessage, MessageFormatter} from './types.ts';
+import {promises as fs} from 'fs';
+import MessageExtractor from './extractor/MessageExtractor.ts';
+import SourceFileScanner from './source/SourceFileScanner.ts';
+import type {ExtractedMessage} from './types.ts';
+import type Formatter from './formatters/Formatter.ts';
 
 export class CatalogManager {
-  private formatter: MessageFormatter;
+  private formatter: Formatter;
   private messagesByFile: Map<string, Array<ExtractedMessage>> = new Map();
   private srcPath: string;
   private extractor: MessageExtractor;
 
-  constructor(formatter: MessageFormatter, srcPath: string) {
+  constructor(formatter: Formatter, srcPath: string) {
     this.formatter = formatter;
     this.srcPath = srcPath;
     this.extractor = new MessageExtractor();
@@ -24,7 +26,8 @@ export class CatalogManager {
   }
 
   async extractFileMessages(absoluteFilePath: string): Promise<number> {
-    const messages = await this.extractor.extractFromFile(absoluteFilePath);
+    const content = await fs.readFile(absoluteFilePath, 'utf8');
+    const messages = await this.extractor.extractFromFileContent(content);
 
     // If messages were removed from a file, we need to clean them up
     const hadMessages = this.messagesByFile.has(absoluteFilePath);
