@@ -4,10 +4,7 @@ import traverse, {type Node} from '@babel/traverse';
 import type {ExtractedMessage} from './types.ts';
 import KeyGenerator from './KeyGenerator.ts';
 
-export class MessageExtractor {
-  /**
-   * Extract messages from a file by analyzing its AST
-   */
+export default class MessageExtractor {
   async extractFromFile(filePath: string): Promise<Array<ExtractedMessage>> {
     try {
       const content = await fs.readFile(filePath, 'utf8');
@@ -18,10 +15,7 @@ export class MessageExtractor {
     }
   }
 
-  /**
-   * Extract messages from file content
-   */
-  async extractFromContent(
+  private async extractFromContent(
     content: string,
     filePath: string
   ): Promise<Array<ExtractedMessage>> {
@@ -64,9 +58,6 @@ export class MessageExtractor {
     return messages;
   }
 
-  /**
-   * Extract message from a call expression (t('message') or t({...}))
-   */
   private extractFromCallExpression(
     path: {
       node: {
@@ -108,9 +99,6 @@ export class MessageExtractor {
     return null;
   }
 
-  /**
-   * Check if this is a call to the translation function
-   */
   private isTranslationCall(node: {type: string}): boolean {
     // For now, we'll assume any function call is a translation call
     // In the future, we could be more specific and check for useExtracted
@@ -139,9 +127,6 @@ export class MessageExtractor {
     );
   }
 
-  /**
-   * Extract message from object expression
-   */
   private extractFromObjectExpression(
     objectExpression: {properties: Array<unknown>},
     filePath: string,
@@ -189,9 +174,6 @@ export class MessageExtractor {
     });
   }
 
-  /**
-   * Create an ExtractedMessage object
-   */
   private createMessage(
     message: string,
     filePath: string,

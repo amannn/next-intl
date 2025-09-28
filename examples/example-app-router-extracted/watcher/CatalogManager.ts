@@ -1,4 +1,4 @@
-import {MessageExtractor} from './MessageExtractor.ts';
+import MessageExtractor from './MessageExtractor.ts';
 import SourceFileScanner from './SourceFileScanner.ts';
 import type {ExtractedMessage, MessageFormatter} from './types.ts';
 
