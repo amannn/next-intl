@@ -20,15 +20,14 @@ const messagesDir = path.join(projectRoot, config.messagesPath);
 // TODO: Make configurable
 const formatter = new JSONFormatter(messagesDir, config.sourceLocale);
 
-async function extractAll() {
+export async function extractAll() {
   const manager = new CatalogManager(formatter, srcPath);
   await manager.initFromSource();
   const count = await manager.save();
   console.log(`💾 Saved ${count} messages`);
 }
 
-const args = process.argv.slice(2);
-if (args.includes('--watch')) {
+export async function startWatcher(persistent = false) {
   const manager = new CatalogManager(formatter, srcPath);
 
   // TODO: We could potentially skip this in favor of reading
@@ -37,17 +36,7 @@ if (args.includes('--watch')) {
   await manager.initFromSource();
   await manager.save();
 
-  const watcher = new SourceFileWatcher(srcPath, manager);
+  const watcher = new SourceFileWatcher(srcPath, manager, persistent);
   watcher.start();
-  console.log('👀 File watcher started');
-
-  function exit() {
-    watcher.stop();
-    process.exit(0);
-  }
-  process.on('SIGINT', exit);
-  process.on('SIGTERM', exit);
-} else {
-  await extractAll();
-  process.exit(0);
+  return watcher;
 }

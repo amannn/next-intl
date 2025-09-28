@@ -8,10 +8,12 @@ export default class SourceFileWatcher {
   private watcher: FSWatcher | null = null;
   private srcPath: string;
   private manager: CatalogManager;
+  private persistent: boolean;
 
-  constructor(srcPath: string, manager: CatalogManager) {
+  constructor(srcPath: string, manager: CatalogManager, persistent: boolean) {
     this.srcPath = srcPath;
     this.manager = manager;
+    this.persistent = persistent;
   }
 
   start() {
@@ -24,7 +26,7 @@ export default class SourceFileWatcher {
       ignored(file) {
         return file.includes('node_modules');
       },
-      persistent: true, // change later
+      persistent: this.persistent,
       ignoreInitial: true, // Don't trigger events for existing files
       cwd: this.srcPath
     });
