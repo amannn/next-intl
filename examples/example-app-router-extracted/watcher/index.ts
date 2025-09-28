@@ -1,24 +1,15 @@
-import path from 'path';
-import {fileURLToPath} from 'url';
 import SourceFileWatcher from './source/SourceFileWatcher.ts';
-import type {ExtractionConfig} from './types.ts';
 import {CatalogManager} from './CatalogManager.ts';
-import JSONFormatter from './formatters/JSONFormatter.ts';
+import ExtractorConfig, {type ExtractorConfigInput} from './ExtractorConfig.ts';
 
-const config: ExtractionConfig = {
+const config: ExtractorConfigInput = {
   sourceLocale: 'en',
   messagesPath: './messages',
-  srcPath: './src'
+  srcPath: './src',
+  formatter: 'json'
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '..');
-const srcPath = path.join(projectRoot, config.srcPath);
-const messagesDir = path.join(projectRoot, config.messagesPath);
-
-// TODO: Make configurable
-const formatter = new JSONFormatter(messagesDir, config.sourceLocale);
+const {srcPath, formatter} = await ExtractorConfig.loadConfig(config);
 
 export async function extractAll() {
   const manager = new CatalogManager(formatter, srcPath);
@@ -41,15 +32,14 @@ export async function startWatcher() {
   return watcher;
 }
 
-function runOnce(fn: () => void) {
-  if (process.env._NEXT_INTL_EXTRACT_WATCHER === '1') {
-    return;
-  }
-  process.env._NEXT_INTL_EXTRACT_WATCHER = '1';
-  fn();
-}
-
 export async function startNextJsWatcher() {
+  function runOnce(fn: () => void) {
+    if (process.env._NEXT_INTL_EXTRACT_WATCHER === '1') {
+      return;
+    }
+    process.env._NEXT_INTL_EXTRACT_WATCHER = '1';
+    fn();
+  }
   runOnce(() => {
     startWatcher();
   });

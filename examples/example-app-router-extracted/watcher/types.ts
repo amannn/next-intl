@@ -7,9 +7,3 @@ export type ExtractedMessage = {
   line?: number;
   column?: number;
 };
-
-export type ExtractionConfig = {
-  sourceLocale: string;
-  messagesPath: string;
-  srcPath: string;
-};
