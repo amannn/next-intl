@@ -1,199 +1,153 @@
-import {promises as fs} from 'fs';
-import {parse} from '@babel/parser';
-import traverse, {type Node} from '@babel/traverse';
+import fs from 'fs/promises';
+import path from 'path';
+import {
+  parse,
+  type Program,
+  type Module,
+  type VariableDeclarator,
+  type CallExpression,
+  type ImportDeclaration,
+  type StringLiteral,
+  type Node
+} from '@swc/core';
 import type {ExtractedMessage} from './types.ts';
 import KeyGenerator from './KeyGenerator.ts';
 
+class Scope {
+  parent?: Scope;
+  vars = new Map<string, string>();
+
+  constructor(parent?: Scope) {
+    this.parent = parent;
+  }
+
+  define(name: string, kind: string) {
+    this.vars.set(name, kind);
+  }
+
+  lookup(name: string): string | undefined {
+    if (this.vars.has(name)) return this.vars.get(name);
+    return this.parent?.lookup(name);
+  }
+}
+
 export default class MessageExtractor {
-  async extractFromFile(filePath: string): Promise<Array<ExtractedMessage>> {
-    try {
-      const content = await fs.readFile(filePath, 'utf8');
-      return this.extractFromContent(content, filePath);
-    } catch (error) {
-      console.error(`❌ Failed to read file ${filePath}: ${error}`);
-      return [];
-    }
+  async extractFromFile(filePath: string) {
+    const absPath = path.resolve(filePath);
+    const code = await fs.readFile(absPath, 'utf8');
+
+    const ast = await parse(code, {
+      syntax: 'typescript',
+      tsx: true,
+      target: 'es2022',
+      decorators: true
+    });
+
+    return this.extractFromAST(ast);
   }
 
-  private async extractFromContent(
-    content: string,
-    filePath: string
-  ): Promise<Array<ExtractedMessage>> {
-    // TODO: Shortcut with quick indexOf check
-    const messages: Array<ExtractedMessage> = [];
+  private extractFromAST(ast: Program | Module): ExtractedMessage[] {
+    const results: ExtractedMessage[] = [];
+    let hookLocalName: string | null = null;
 
-    try {
-      const ast = parse(content, {
-        sourceType: 'module',
-        plugins: [
-          'typescript',
-          'jsx',
-          'decorators-legacy',
-          'classProperties',
-          'objectRestSpread',
-          'functionBind',
-          'exportDefaultFrom',
-          'exportNamespaceFrom',
-          'dynamicImport',
-          'nullishCoalescingOperator',
-          'optionalChaining'
-        ]
-      }) as Node;
+    const scopeStack: Scope[] = [new Scope()];
+    const currentScope = () => scopeStack[scopeStack.length - 1];
 
-      // @ts-expect-error -- Somehow necessary
-      const traverseFn = (traverse.default || traverse) as typeof traverse;
+    function visit(node: Node) {
+      if (!node || typeof node !== 'object') return;
 
-      traverseFn(ast, {
-        CallExpression: (p) => {
-          const extractedMessage = this.extractFromCallExpression(p, filePath);
-          if (extractedMessage) {
-            messages.push(extractedMessage);
+      switch (node.type) {
+        case 'ImportDeclaration': {
+          const decl = node as ImportDeclaration;
+          for (const spec of decl.specifiers ?? []) {
+            if (spec.type === 'ImportSpecifier') {
+              // Check if the imported name is 'useExtracted' or if the local name is 'useExtracted'
+              const importedName = spec.imported?.value;
+              const localName = spec.local.value;
+
+              if (
+                importedName === 'useExtracted' ||
+                localName === 'useExtracted'
+              ) {
+                hookLocalName = localName;
+              }
+            }
           }
+          break;
         }
-      });
-    } catch (error) {
-      console.error(`❌ Failed to parse ${filePath}: ${error}`);
-    }
 
-    return messages;
-  }
-
-  private extractFromCallExpression(
-    path: {
-      node: {
-        type: 'CallExpression';
-        arguments: Array<unknown>;
-        loc?: {start?: {line?: number; column?: number}} | null | undefined;
-      };
-    },
-    filePath: string
-  ): ExtractedMessage | null {
-    const node = path.node;
-
-    // Check if this is a call to the translation function
-    if (!this.isTranslationCall(node)) {
-      return null;
-    }
-
-    const args = node.arguments;
-    if (args.length === 0) {
-      return null;
-    }
-
-    const firstArg = args[0] as Record<string, unknown> | undefined;
-
-    // Handle string literal: t('Hello world')
-    if (this.isStringLiteral(firstArg)) {
-      return this.createMessage(firstArg.value as string, filePath, node.loc);
-    }
-
-    // Handle object literal: t({ message: 'Hello', description: 'Greeting' })
-    if (this.isObjectExpression(firstArg)) {
-      return this.extractFromObjectExpression(
-        firstArg as {properties: Array<unknown>},
-        filePath,
-        node.loc
-      );
-    }
-
-    return null;
-  }
-
-  private isTranslationCall(node: {type: string}): boolean {
-    // For now, we'll assume any function call is a translation call
-    // In the future, we could be more specific and check for useExtracted
-    return node.type === 'CallExpression';
-  }
-
-  private isStringLiteral(
-    node: unknown
-  ): node is {type: string; value: string} {
-    return (
-      !!node &&
-      typeof (node as Record<string, unknown>).type === 'string' &&
-      (node as Record<string, unknown>).type === 'StringLiteral' &&
-      typeof (node as Record<string, unknown>).value === 'string'
-    );
-  }
-
-  private isObjectExpression(
-    node: unknown
-  ): node is {type: string; properties: Array<unknown>} {
-    return (
-      !!node &&
-      typeof (node as Record<string, unknown>).type === 'string' &&
-      (node as Record<string, unknown>).type === 'ObjectExpression' &&
-      Array.isArray((node as Record<string, unknown>).properties)
-    );
-  }
-
-  private extractFromObjectExpression(
-    objectExpression: {properties: Array<unknown>},
-    filePath: string,
-    location: {start?: {line?: number; column?: number}} | null | undefined
-  ): ExtractedMessage | null {
-    let message = '';
-    let description = '';
-    let id = '';
-    let namespace = '';
-
-    for (const propertyUnknown of objectExpression.properties) {
-      const property = propertyUnknown as Record<string, unknown>;
-      if (property.type !== 'ObjectProperty') continue;
-      const key = property.key as Record<string, unknown>;
-      if (key?.type !== 'Identifier' || typeof key?.name !== 'string') continue;
-      const keyName = key.name as string;
-      const value = property.value as Record<string, unknown>;
-      if (value?.type !== 'StringLiteral' || typeof value?.value !== 'string')
-        continue;
-      const stringValue = value.value as string;
-      switch (keyName) {
-        case 'message':
-          message = stringValue;
+        case 'VariableDeclarator': {
+          const decl = node as VariableDeclarator;
+          if (
+            decl.init?.type === 'CallExpression' &&
+            decl.init.callee.type === 'Identifier' &&
+            decl.init.callee.value === hookLocalName
+          ) {
+            if (decl.id.type === 'Identifier') {
+              currentScope().define(decl.id.value, 'translator');
+            }
+          }
           break;
-        case 'description':
-          description = stringValue;
+        }
+
+        case 'CallExpression': {
+          const call = node as CallExpression;
+          if (call.callee.type === 'Identifier') {
+            const name = call.callee.value;
+            const resolved = currentScope().lookup(name);
+            if (resolved === 'translator') {
+              const arg0 = call.arguments?.[0]?.expression;
+              if (arg0?.type === 'StringLiteral') {
+                const stringLiteral = arg0 as StringLiteral;
+                results.push({
+                  id: KeyGenerator.generate(stringLiteral.value),
+                  message: stringLiteral.value
+                });
+              }
+            }
+          }
           break;
-        case 'id':
-          id = stringValue;
-          break;
-        case 'namespace':
-          namespace = stringValue;
-          break;
+        }
+
+        case 'FunctionDeclaration':
+        case 'FunctionExpression':
+        case 'ArrowFunctionExpression':
+        case 'BlockStatement': {
+          scopeStack.push(new Scope(currentScope()));
+          for (const key in node) {
+            const child = (node as unknown as Record<string, unknown>)[key];
+            if (Array.isArray(child)) {
+              child.forEach((item) => {
+                if (item && typeof item === 'object' && 'type' in item) {
+                  visit(item as Node);
+                }
+              });
+            } else if (child && typeof child === 'object' && 'type' in child) {
+              visit(child as Node);
+            }
+          }
+          scopeStack.pop();
+          return;
+        }
+      }
+
+      // generic recursion
+      for (const key in node) {
+        const child = (node as unknown as Record<string, unknown>)[key];
+        if (Array.isArray(child)) {
+          child.forEach((item) => {
+            if (item && typeof item === 'object' && 'type' in item) {
+              visit(item as Node);
+            }
+          });
+        } else if (child && typeof child === 'object' && 'type' in child) {
+          visit(child as Node);
+        }
       }
     }
 
-    if (!message) {
-      return null;
-    }
+    visit(ast);
 
-    return this.createMessage(message, filePath, location, {
-      description,
-      id,
-      namespace
-    });
-  }
-
-  private createMessage(
-    message: string,
-    filePath: string,
-    location: {start?: {line?: number; column?: number}} | null | undefined,
-    options: {
-      description?: string;
-      id?: string;
-      namespace?: string;
-    } = {}
-  ): ExtractedMessage {
-    const key = options.id || KeyGenerator.generate(message);
-
-    return {
-      id: key,
-      message,
-      description: options.description,
-      namespace: options.namespace,
-      filePath,
-      line: location?.start?.line || 0,
-      column: location?.start?.column || 0
-    };
+    return results;
   }
 }
