@@ -1,10 +1,13 @@
 import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
-import {startWatcher} from './watcher';
+import {startNextJsWatcher} from './watcher';
+
+// const profile = 'debug';
+const profile = 'release';
 
 const withNextIntl = createNextIntlPlugin();
 if (process.env.NODE_ENV === 'development') {
-  startWatcher();
+  startNextJsWatcher();
 } else {
   // TODO: One-time compile for build?
   // If yes, we need to ensure this finishes before the build starts
@@ -19,7 +22,7 @@ const config: NextConfig = {
     swcPlugins: [
       [
         resolve(
-          './transform-plugin/target/wasm32-wasip1/debug/transform_plugin.wasm'
+          `./transform-plugin/target/wasm32-wasip1/${profile}/transform_plugin.wasm`
         ),
         {}
       ]

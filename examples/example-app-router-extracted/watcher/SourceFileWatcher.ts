@@ -32,13 +32,13 @@ export default class SourceFileWatcher {
     });
 
     this.watcher.on('change', (filePath: string) => {
-      this.handleFileChange('change', filePath);
+      this.onFileChange('change', filePath);
     });
     this.watcher.on('add', (filePath: string) => {
-      this.handleFileChange('rename', filePath);
+      this.onFileChange('rename', filePath);
     });
     this.watcher.on('unlink', (filePath: string) => {
-      this.handleFileChange('rename', filePath);
+      this.onFileChange('rename', filePath);
     });
     this.watcher.on('error', (error: unknown) => {
       console.error(`❌ Watcher error: ${error}`);
@@ -52,7 +52,7 @@ export default class SourceFileWatcher {
     }
   }
 
-  private async handleFileChange(
+  private async onFileChange(
     eventType: 'rename' | 'change',
     relativePath: string
   ) {
@@ -85,5 +85,8 @@ export default class SourceFileWatcher {
     } else {
       console.log(`   Duration: ${extractDuration.toFixed(2)}ms (extract)`);
     }
+
+    // TODO: Async schedule another scan if the extracted messages were also
+    // used in another file to check if they are still used.
   }
 }

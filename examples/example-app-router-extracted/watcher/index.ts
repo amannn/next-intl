@@ -40,3 +40,17 @@ export async function startWatcher(persistent = false) {
   watcher.start();
   return watcher;
 }
+
+function runOnce(fn: () => void) {
+  if (process.env._NEXT_INTL_EXTRACT_WATCHER === '1') {
+    return;
+  }
+  process.env._NEXT_INTL_EXTRACT_WATCHER = '1';
+  fn();
+}
+
+export async function startNextJsWatcher() {
+  runOnce(() => {
+    startWatcher();
+  });
+}
