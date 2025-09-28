@@ -1,8 +1,8 @@
 import {promises as fs} from 'fs';
 import {parse} from '@babel/parser';
-import traverse from '@babel/traverse';
+import traverse, {type Node} from '@babel/traverse';
 import type {ExtractedMessage} from './types.ts';
-import {KeyGenerator} from './KeyGenerator.ts';
+import KeyGenerator from './KeyGenerator.ts';
 
 export class MessageExtractor {
   /**
@@ -25,6 +25,7 @@ export class MessageExtractor {
     content: string,
     filePath: string
   ): Promise<Array<ExtractedMessage>> {
+    // TODO: Shortcut with quick indexOf check
     const messages: Array<ExtractedMessage> = [];
 
     try {
@@ -43,7 +44,7 @@ export class MessageExtractor {
           'nullishCoalescingOperator',
           'optionalChaining'
         ]
-      }) as any;
+      }) as Node;
 
       // @ts-expect-error -- Somehow necessary
       const traverseFn = (traverse.default || traverse) as typeof traverse;

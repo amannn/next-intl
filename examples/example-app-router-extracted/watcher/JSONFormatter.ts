@@ -21,11 +21,6 @@ export class JSONFormatter implements MessageFormatter {
       await fs.mkdir(outputDir, {recursive: true});
       const json = this.messagesToJson(messages);
       await fs.writeFile(this.filePath, JSON.stringify(json, null, 2));
-      console.log(
-        `💾 Updated message catalog: ${this.filePath.split('/').pop()}`
-      );
-
-      // No lockfile in this approach
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
     }

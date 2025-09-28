@@ -11,6 +11,7 @@ export type ExtractedMessage = {
 export type ExtractionConfig = {
   sourceLocale: string;
   messagesPath: string;
+  srcPath: string;
 };
 
 export type FileChangeEvent = {
