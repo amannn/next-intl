@@ -19,7 +19,6 @@ export class CatalogManager {
 
   async initFromSource() {
     const sourceFiles = await SourceFileScanner.getSourceFiles(this.srcPath);
-
     await Promise.all(
       sourceFiles.map(async (filePath) => this.extractFileMessages(filePath))
     );

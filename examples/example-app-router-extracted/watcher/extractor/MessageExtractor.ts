@@ -14,6 +14,11 @@ import ASTScope from './ASTScope.ts';
 
 export default class MessageExtractor {
   async extractFromFileContent(code: string) {
+    // Shortcut parsing if hook is not used
+    if (!code.includes('useExtracted')) {
+      return [];
+    }
+
     const ast = await parse(code, {
       syntax: 'typescript',
       tsx: true,

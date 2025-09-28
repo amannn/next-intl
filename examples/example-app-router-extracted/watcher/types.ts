@@ -19,7 +19,3 @@ export type FileChangeEvent = {
   filename: string;
   timestamp: string;
 };
-
-export type MessageFormatter = {
-  write(messages: Array<ExtractedMessage>): Promise<void>;
-};
