@@ -27,7 +27,7 @@ export async function extractAll() {
   console.log(`💾 Saved ${count} messages`);
 }
 
-export async function startWatcher(persistent = false) {
+export async function startWatcher() {
   const manager = new CatalogManager(formatter, srcPath);
 
   // TODO: We could potentially skip this in favor of reading
@@ -36,7 +36,7 @@ export async function startWatcher(persistent = false) {
   await manager.initFromSource();
   await manager.save();
 
-  const watcher = new SourceFileWatcher(srcPath, manager, persistent);
+  const watcher = new SourceFileWatcher(srcPath, manager);
   watcher.start();
   return watcher;
 }

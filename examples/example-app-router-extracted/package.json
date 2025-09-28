@@ -21,7 +21,7 @@
     "@types/babel__traverse": "^7.28.0",
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
-    "chokidar": "^4.0.3",
+    "@parcel/watcher": "^2.4.1",
     "eslint": "9.11.1",
     "eslint-config-next": "^15.5.0",
     "prettier": "^3.3.3",

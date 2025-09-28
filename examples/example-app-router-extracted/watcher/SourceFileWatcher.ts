@@ -1,19 +1,21 @@
 import fs from 'fs';
 import path from 'path';
-import chokidar, {FSWatcher} from 'chokidar';
+import {
+  type AsyncSubscription,
+  type Event as WatchEvent,
+  subscribe
+} from '@parcel/watcher';
 import {CatalogManager} from './CatalogManager.ts';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 
 export default class SourceFileWatcher {
-  private watcher: FSWatcher | null = null;
+  private watcher: AsyncSubscription | null = null;
   private srcPath: string;
   private manager: CatalogManager;
-  private persistent: boolean;
 
-  constructor(srcPath: string, manager: CatalogManager, persistent: boolean) {
+  constructor(srcPath: string, manager: CatalogManager) {
     this.srcPath = srcPath;
     this.manager = manager;
-    this.persistent = persistent;
   }
 
   start() {
@@ -22,57 +24,43 @@ export default class SourceFileWatcher {
       return;
     }
 
-    this.watcher = chokidar.watch(this.srcPath, {
-      ignored(file) {
-        return file.includes('node_modules');
-      },
-      persistent: this.persistent,
-      ignoreInitial: true, // Don't trigger events for existing files
-      cwd: this.srcPath
-    });
-
-    this.watcher.on('change', (filePath: string) => {
-      this.onFileChange('change', filePath);
-    });
-    this.watcher.on('add', (filePath: string) => {
-      this.onFileChange('rename', filePath);
-    });
-    this.watcher.on('unlink', (filePath: string) => {
-      this.onFileChange('rename', filePath);
-    });
-    this.watcher.on('error', (error: unknown) => {
-      console.error(`❌ Watcher error: ${error}`);
-    });
+    subscribe(this.srcPath, this.onFileChanges.bind(this), {
+      ignore: ['**/node_modules/**']
+    })
+      .then((subscription) => {
+        this.watcher = subscription;
+      })
+      .catch((err) => {
+        console.error(`❌ Failed to start watcher: ${err}`);
+      });
   }
 
-  stop() {
-    if (this.watcher) {
-      this.watcher.close();
-      this.watcher = null;
-    }
-  }
-
-  private async onFileChange(
-    eventType: 'rename' | 'change',
-    relativePath: string
-  ) {
-    if (!SourceFileAnalyzer.isSourceFile(relativePath)) {
+  private async onFileChanges(error: Error | null, events: Array<WatchEvent>) {
+    if (error) {
+      console.error(`❌ Watcher subscription error: ${error}`);
       return;
     }
-
     let now = performance.now(),
-      extractDuration = 0,
-      saveDuration = 0;
-    console.log(`📝 File ${eventType}: ${relativePath}`);
+      saveDuration = 0,
+      totalExtracted = 0;
 
-    const fullPath = path.join(this.srcPath, relativePath);
-    const numExtracted = await this.manager.extractFileMessages(fullPath);
-    extractDuration = performance.now() - now;
-    console.log(`   Extracted ${numExtracted} message(s)`);
+    for (const event of events) {
+      if (
+        event.type === 'delete' ||
+        !SourceFileAnalyzer.isSourceFile(event.path)
+      ) {
+        return;
+      }
 
-    if (numExtracted > 0) {
+      console.log(`📝 File ${event.type}: ${event.path.split(path.sep).pop()}`);
+      const numExtracted = await this.manager.extractFileMessages(event.path);
+      console.log(`   Extracted ${numExtracted} message(s)`);
+      totalExtracted += numExtracted;
+    }
+    const extractDuration = performance.now() - now;
+
+    if (totalExtracted > 0) {
       now = performance.now();
-      // TODO: Debounce
       const count = await this.manager.save();
       console.log(`   Saved ${count} messages`);
       saveDuration = performance.now() - now;
@@ -84,6 +72,14 @@ export default class SourceFileWatcher {
       );
     } else {
       console.log(`   Duration: ${extractDuration.toFixed(2)}ms (extract)`);
+    }
+  }
+
+  stop() {
+    if (this.watcher) {
+      this.watcher.unsubscribe().finally(() => {
+        this.watcher = null;
+      });
     }
   }
 }
