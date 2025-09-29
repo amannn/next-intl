@@ -24,8 +24,13 @@ export async function generateMetadata(
   const now = await getNow({locale});
   const timeZone = await getTimeZone({locale});
 
+  const base = new URL('http://localhost:3000');
+  if (process.env.NEXT_PUBLIC_USE_CASE === 'base-path') {
+    base.pathname = '/base/path';
+  }
+
   return {
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: base,
     title: t('title'),
     description: t('description'),
     other: {
