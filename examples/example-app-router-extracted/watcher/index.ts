@@ -1,25 +1,22 @@
 import SourceFileWatcher from './source/SourceFileWatcher.ts';
-import {CatalogManager} from './CatalogManager.ts';
-import ExtractorConfig, {type ExtractorConfigInput} from './ExtractorConfig.ts';
+import CatalogManager, {type ExtractorConfig} from './CatalogManager.ts';
 
-const config: ExtractorConfigInput = {
+const config: ExtractorConfig = {
   sourceLocale: 'en',
   messagesPath: './messages',
   srcPath: './src',
   formatter: 'json'
 };
 
-const {srcPath, formatter} = await ExtractorConfig.loadConfig(config);
-
 export async function extractAll() {
-  const manager = new CatalogManager(formatter, srcPath);
+  const manager = new CatalogManager(config);
   await manager.initFromSource();
   const count = await manager.save();
   console.log(`💾 Saved ${count} messages`);
 }
 
 export async function startWatcher() {
-  const manager = new CatalogManager(formatter, srcPath);
+  const manager = new CatalogManager(config);
 
   // TODO: We could potentially skip this in favor of reading
   // the existing messages for the .po format since it provides
@@ -27,7 +24,7 @@ export async function startWatcher() {
   await manager.initFromSource();
   await manager.save();
 
-  const watcher = new SourceFileWatcher(srcPath, manager);
+  const watcher = new SourceFileWatcher(manager);
   watcher.start();
   return watcher;
 }

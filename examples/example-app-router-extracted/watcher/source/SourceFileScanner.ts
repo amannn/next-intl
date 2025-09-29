@@ -2,10 +2,6 @@ import {promises as fs} from 'fs';
 import path from 'path';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 
-// SourceFileAnalyzer - it a source file?
-// SourceFileWatcher - watch all source files
-// SourceFileScanner - scan all source files
-
 export default class SourceFileScanner {
   static readonly IGNORED_DIRECTORIES = ['node_modules'];
 

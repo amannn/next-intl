@@ -10,23 +10,24 @@ type StoredFormat = Record<string, unknown>;
 // to detect changed messages.
 
 export default class JSONFormatter implements Formatter {
-  static readonly EXTENSION = '.json';
+  public readonly EXTENSION = '.json';
 
-  private filePath: string;
+  private messagesPath: string;
 
-  constructor(messagesPath: string, sourceLocale: string) {
-    this.filePath = path.join(
-      messagesPath,
-      sourceLocale + JSONFormatter.EXTENSION
-    );
+  constructor(messagesPath: string) {
+    this.messagesPath = messagesPath;
   }
 
-  async write(messages: Array<ExtractedMessage>): Promise<void> {
+  async write(
+    locale: string,
+    messages: Array<ExtractedMessage>
+  ): Promise<void> {
+    const filePath = path.join(this.messagesPath, locale + this.EXTENSION);
     try {
-      const outputDir = path.dirname(this.filePath);
+      const outputDir = path.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
       const json = this.serializeMessages(messages);
-      await fs.writeFile(this.filePath, JSON.stringify(json, null, 2));
+      await fs.writeFile(filePath, JSON.stringify(json, null, 2));
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
     }

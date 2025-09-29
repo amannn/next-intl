@@ -5,26 +5,28 @@ import {
   type Event as WatchEvent,
   subscribe
 } from '@parcel/watcher';
-import {CatalogManager} from '../CatalogManager.ts';
+import CatalogManager from '../CatalogManager.ts';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 
 export default class SourceFileWatcher {
   private watcher: AsyncSubscription | null = null;
-  private srcPath: string;
   private manager: CatalogManager;
 
-  constructor(srcPath: string, manager: CatalogManager) {
-    this.srcPath = srcPath;
+  constructor(manager: CatalogManager) {
     this.manager = manager;
   }
 
+  private getSrcPath() {
+    return this.manager.getSrcPath();
+  }
+
   start() {
-    if (!fs.existsSync(this.srcPath)) {
-      console.log(`❌ Directory does not exist: ${this.srcPath}`);
+    if (!fs.existsSync(this.getSrcPath())) {
+      console.log(`❌ Directory does not exist: ${this.getSrcPath()}`);
       return;
     }
 
-    subscribe(this.srcPath, this.onFileChanges.bind(this), {
+    subscribe(this.getSrcPath(), this.onFileChanges.bind(this), {
       ignore: ['**/node_modules/**']
     })
       .then((subscription) => {
