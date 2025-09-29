@@ -1,0 +1,18 @@
+[package]
+name = "next-intl-extractor"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+next-intl-shared = { path = "../shared" }
+napi.workspace = true
+napi-derive.workspace = true
+
+[build-dependencies]
+napi-build = "2.0"

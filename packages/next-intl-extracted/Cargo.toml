@@ -1,0 +1,35 @@
+[workspace]
+members = [
+    "crates/shared",
+    "crates/swc-plugin",
+    "crates/extractor"
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["next-intl team"]
+license = "MIT"
+repository = "https://github.com/amannn/next-intl"
+
+[workspace.dependencies]
+# Shared dependencies
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# SWC plugin dependencies
+swc_core = { version = "43.0", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "15.0"
+swc_ecma_visit = "15.0"
+
+# NAPI dependencies
+napi = { version = "2.16", features = ["napi4", "tokio_rt"] }
+napi-derive = "2.16"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = "symbols"
