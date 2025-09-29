@@ -10,7 +10,7 @@ use swc_core::ecma::{transforms::testing::test_inline, visit::visit_mut_pass};
 test_inline!(
     Default::default(),
     |_| visit_mut_pass(TransformVisitor::new()),
-    extract_use_extracted,
+    transform_use_extracted,
     r#"
 import {useExtracted} from 'next-intl';
 

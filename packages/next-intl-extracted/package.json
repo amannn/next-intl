@@ -3,11 +3,12 @@
   "private": true,
   "version": "0.1.0",
   "description": "Rust-based tools for next-intl message extraction",
-  "main": "index.js",
   "scripts": {
     "build:extractor": "napi build --platform --release --cargo-cwd crates/extractor --config napi.config.js dist/extractor",
     "build:swc-plugin": "cargo build --target wasm32-wasip1 --release --manifest-path crates/swc-plugin/Cargo.toml",
-    "test": "node tests/extractor.js"
+    "test:swc-plugin": "cargo test --manifest-path crates/swc-plugin/Cargo.toml",
+    "test:extractor": "cargo test --manifest-path crates/extractor/Cargo.toml",
+    "test:extractor:node": "node tests/extractor.js"
   },
   "keywords": [],
   "author": "Jan Amann <jan@amann.work>",
