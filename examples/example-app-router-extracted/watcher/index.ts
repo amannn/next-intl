@@ -10,18 +10,14 @@ const config: ExtractorConfig = {
 
 export async function extractAll() {
   const manager = new CatalogManager(config);
-  await manager.initFromSource();
+  await manager.loadMessages();
   const count = await manager.save();
   console.log(`💾 Saved ${count} messages`);
 }
 
 export async function startWatcher() {
   const manager = new CatalogManager(config);
-
-  // TODO: We could potentially skip this in favor of reading
-  // the existing messages for the .po format since it provides
-  // all the necessary context by itself
-  await manager.initFromSource();
+  await manager.loadMessages();
   await manager.save();
 
   const watcher = new SourceFileWatcher(manager);

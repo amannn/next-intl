@@ -1,7 +1,7 @@
 import {promises as fs} from 'fs';
 import path from 'path';
 import {set} from 'lodash-es';
-import type {ExtractedMessage} from '../types.ts';
+import type {ExtractedMessage, Locale} from '../types.ts';
 import type Formatter from './Formatter.ts';
 
 interface StoredFormat {
@@ -30,7 +30,7 @@ export default class JSONFormatter implements Formatter {
    *
    * This can however be used for target locales.
    */
-  async read(targetLocale: string): Promise<Array<ExtractedMessage>> {
+  async read(targetLocale: Locale): Promise<Array<ExtractedMessage>> {
     const filePath = path.join(
       this.messagesPath,
       targetLocale + this.EXTENSION
@@ -41,7 +41,7 @@ export default class JSONFormatter implements Formatter {
   }
 
   async write(
-    locale: string,
+    locale: Locale,
     messages: Array<ExtractedMessage>
   ): Promise<void> {
     const filePath = path.join(this.messagesPath, locale + this.EXTENSION);

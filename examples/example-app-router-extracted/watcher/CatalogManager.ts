@@ -1,7 +1,7 @@
 import {promises as fs} from 'fs';
 import MessageExtractor from './extractor/MessageExtractor.ts';
 import SourceFileScanner from './source/SourceFileScanner.ts';
-import type {ExtractedMessage} from './types.ts';
+import type {ExtractedMessage, Locale, MessageId} from './types.ts';
 import type Formatter from './formatters/Formatter.ts';
 import path from 'path';
 
@@ -12,7 +12,7 @@ const formatters = {
 type Format = keyof typeof formatters;
 
 export type ExtractorConfig = {
-  sourceLocale: string;
+  sourceLocale: Locale;
   messagesPath: string;
   srcPath: string;
   formatter: Format;
@@ -20,9 +20,21 @@ export type ExtractorConfig = {
 
 export default class CatalogManager {
   private config: ExtractorConfig;
-  private messagesByFile: Map<string, Array<ExtractedMessage>> = new Map();
   private extractor: MessageExtractor;
+
+  /* The source of truth for which messages are used. */
+  private messagesByFile: Map<string, Array<ExtractedMessage>> = new Map();
+
+  /**
+   * This potentially also includes outdated ones that were initially available,
+   * but are not used anymore. This allows to restore them if they are used again.
+   **/
+  private translationsByTargetLocale: Map<Locale, Map<MessageId, string>> =
+    new Map();
+
+  // Cached
   private formatter?: Formatter;
+  private targetLocales?: Array<Locale>;
 
   constructor(config: ExtractorConfig) {
     this.config = config;
@@ -40,17 +52,22 @@ export default class CatalogManager {
     }
   }
 
-  private async getTargetLocales() {
-    const messagesDir = path.join(
-      this.getProjectRoot(),
-      this.config.messagesPath
-    );
-    const files = await fs.readdir(messagesDir);
-    const formatter = await this.getFormatter();
-    return files
-      .filter((file) => file.endsWith(formatter.EXTENSION))
-      .map((file) => path.basename(file, formatter.EXTENSION))
-      .filter((locale) => locale !== this.config.sourceLocale);
+  private async getTargetLocales(): Promise<Array<Locale>> {
+    if (this.targetLocales) {
+      return this.targetLocales;
+    } else {
+      const messagesDir = path.join(
+        this.getProjectRoot(),
+        this.config.messagesPath
+      );
+      const files = await fs.readdir(messagesDir);
+      const formatter = await this.getFormatter();
+      this.targetLocales = files
+        .filter((file) => file.endsWith(formatter.EXTENSION))
+        .map((file) => path.basename(file, formatter.EXTENSION))
+        .filter((locale) => locale !== this.config.sourceLocale);
+      return this.targetLocales;
+    }
   }
 
   private getProjectRoot() {
@@ -61,12 +78,39 @@ export default class CatalogManager {
     return path.join(this.getProjectRoot(), this.config.srcPath);
   }
 
-  async initFromSource() {
+  async loadMessages() {
+    await this.loadSourceMessages();
+    await this.loadTargetMessages();
+  }
+
+  private async loadSourceMessages() {
+    // TODO: We could potentially skip this in favor of reading
+    // the existing messages for the .po format since it provides
+    // all the necessary context by itself.
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPath()
     );
     await Promise.all(
       sourceFiles.map(async (filePath) => this.extractFileMessages(filePath))
+    );
+  }
+
+  private async loadTargetMessages() {
+    const targetLocales = await this.getTargetLocales();
+    const formatter = await this.getFormatter();
+
+    for (const locale of targetLocales) {
+      this.translationsByTargetLocale.set(locale, new Map());
+    }
+
+    await Promise.all(
+      targetLocales.map(async (locale) => {
+        const messages = await formatter.read(locale);
+        for (const message of messages) {
+          const translations = this.translationsByTargetLocale.get(locale)!;
+          translations.set(message.id, message.message);
+        }
+      })
     );
   }
 
@@ -96,8 +140,21 @@ export default class CatalogManager {
       .sort()
       .map((filePath) => this.messagesByFile.get(filePath) || [])
       .flat();
+
     const formatter = await this.getFormatter();
     await formatter.write(this.config.sourceLocale, messages);
+
+    // TODO: This might be slow. Maybe it's better to use a bit more memory
+    // and update messages in a granular way as updates come in.
+    for (const locale of await this.getTargetLocales()) {
+      const translations = this.translationsByTargetLocale.get(locale)!;
+      const localeMessages = messages.map((message) => ({
+        ...message,
+        message: translations.get(message.id) || ''
+      }));
+      await formatter.write(locale, localeMessages);
+    }
+
     return messages.length;
   }
 }

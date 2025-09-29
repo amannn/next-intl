@@ -85,6 +85,8 @@ export default class MessageExtractor {
               const arg0 = call.arguments?.[0]?.expression;
               if (arg0?.type === 'StringLiteral') {
                 const stringLiteral = arg0 as StringLiteral;
+
+                // TODO: Optional namespace
                 results.push({
                   id: KeyGenerator.generate(stringLiteral.value),
                   message: stringLiteral.value

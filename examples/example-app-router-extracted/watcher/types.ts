@@ -1,5 +1,9 @@
+export type MessageId = string;
+
+export type Locale = string;
+
 export type ExtractedMessage = {
-  id: string;
+  id: MessageId;
   message: string;
   description?: string;
   filePath?: string;

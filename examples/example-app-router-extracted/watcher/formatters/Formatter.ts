@@ -1,8 +1,9 @@
-import type {ExtractedMessage} from '../types';
+import type {ExtractedMessage, Locale} from '../types';
 
 type Formatter = {
   EXTENSION: string;
-  write(locale: string, messages: Array<ExtractedMessage>): Promise<void>;
+  read(locale: Locale): Promise<Array<ExtractedMessage>>;
+  write(locale: Locale, messages: Array<ExtractedMessage>): Promise<void>;
 };
 
 export default Formatter;
