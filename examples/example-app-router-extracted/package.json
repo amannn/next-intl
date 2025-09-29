@@ -15,12 +15,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
+    "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.13.19",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
-    "@parcel/watcher": "^2.4.1",
     "eslint": "9.11.1",
     "eslint-config-next": "^15.5.0",
+    "lodash-es": "^4.17.21",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
