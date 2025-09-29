@@ -1,5 +1,5 @@
 import path from 'path';
-import {fileURLToPath} from 'url';
+import {readdir} from 'fs/promises';
 
 export type ExtractorConfigInput = {
   sourceLocale: string;
@@ -21,15 +21,32 @@ export default class ExtractorConfig {
     const FormatterImpl = (await formatters[input.formatter]()).default;
     const formatter = new FormatterImpl(messagesDir, input.sourceLocale);
 
+    const targetLocales = await this.getTargetLocales(
+      messagesDir,
+      FormatterImpl.EXTENSION,
+      input.sourceLocale
+    );
+
     return {
       srcPath,
+      targetLocales,
       formatter
     };
   }
 
   private static getProjectRoot() {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    return path.resolve(__dirname, '..');
+    return process.cwd();
+  }
+
+  private static async getTargetLocales(
+    messagesDir: string,
+    extension: string,
+    sourceLocale: string
+  ) {
+    const files = await readdir(messagesDir);
+    return files
+      .filter((file) => file.endsWith(extension))
+      .map((file) => path.basename(file, extension))
+      .filter((locale) => locale !== sourceLocale);
   }
 }
