@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Rust-based tools for next-intl message extraction",
   "scripts": {
-    "build:extractor": "napi build --platform --release --cargo-cwd crates/extractor --config napi.config.js dist/extractor",
+    "build:extractor": "napi build --platform --release --cargo-cwd crates/extractor dist/extractor",
     "build:swc-plugin": "cargo build --target wasm32-wasip1 --release --manifest-path crates/swc-plugin/Cargo.toml",
     "test:swc-plugin": "cargo test --manifest-path crates/swc-plugin/Cargo.toml",
     "test:extractor": "cargo test --manifest-path crates/extractor/Cargo.toml",
@@ -19,17 +19,19 @@
   },
   "files": [],
   "napi": {
-    "name": "next-intl-extractor",
+    "binaryName": "next-intl-extractor",
     "manifestPath": "crates/extractor/Cargo.toml",
+    "name": "next-intl-extractor",
+    "packageName": "next-intl-extracted",
     "triples": {
-      "defaults": true,
       "additional": [
-        "x86_64-unknown-linux-gnu",
+        "aarch64-apple-darwin",
         "aarch64-unknown-linux-gnu",
         "x86_64-apple-darwin",
-        "aarch64-apple-darwin",
-        "x86_64-pc-windows-msvc"
-      ]
+        "x86_64-pc-windows-msvc",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "defaults": true
     }
   },
   "devDependencies": {
