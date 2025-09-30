@@ -166,9 +166,9 @@ dependencies = [
 
 [[package]]
 name = "bytecheck"
-version = "0.8.1"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "50690fb3370fb9fe3550372746084c46f2ac8c9685c583d2be10eefd89d3d1a3"
+checksum = "0caa33a2c0edca0419d15ac723dff03f1956f7978329b1e3b5fdaaaed9d3ca8b"
 dependencies = [
  "bytecheck_derive",
  "ptr_meta",
@@ -178,9 +178,9 @@ dependencies = [
 
 [[package]]
 name = "bytecheck_derive"
-version = "0.8.1"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efb7846e0cb180355c2dec69e721edafa36919850f1a9f52ffba4ebc0393cb71"
+checksum = "89385e82b5d1821d2219e0b095efa2cc1f246cbf99080f3be46a1a85c0d392d9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -206,9 +206,9 @@ dependencies = [
 
 [[package]]
 name = "camino"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1de8bc0aa9e9385ceb3bf0c152e3a9b9544f6c4a912c8ae504e80c1f0368603"
+checksum = "276a59bf2b2c967788139340c9f0c5b12d7fd6630315c15c217e559de85d2609"
 dependencies = [
  "serde_core",
 ]
@@ -872,18 +872,18 @@ dependencies = [
 
 [[package]]
 name = "munge"
-version = "0.4.6"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7feb0b48aa0a25f9fe0899482c6e1379ee7a11b24a53073eacdecb9adb6dc60"
+checksum = "5e17401f259eba956ca16491461b6e8f72913a0a114e39736ce404410f915a0c"
 dependencies = [
  "munge_macro",
 ]
 
 [[package]]
 name = "munge_macro"
-version = "0.4.6"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2e3795a5d2da581a8b252fec6022eee01aea10161a4d1bf237d4cbe47f7e988"
+checksum = "4568f25ccbd45ab5d5603dc34318c1ec56b117531781260002151b8530a9f931"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -960,8 +960,6 @@ version = "0.1.0"
 dependencies = [
  "next-intl-shared",
  "swc_core",
- "swc_ecma_ast",
- "swc_ecma_visit",
  "wasm-bindgen",
 ]
 
@@ -973,6 +971,7 @@ dependencies = [
  "napi-build",
  "napi-derive",
  "next-intl-shared",
+ "swc_core",
 ]
 
 [[package]]
@@ -983,6 +982,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "swc_core",
 ]
 
 [[package]]
@@ -1056,9 +1056,9 @@ checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
 
 [[package]]
 name = "owo-colors"
-version = "4.2.2"
+version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48dd4f4a2c8405440fd0462561f0e5806bd0f77e86f51c761481bdd4018b545e"
+checksum = "9c6901729fa79e91a0913333229e9ca5dc725089d1c363b2f4b4760709dc4a52"
 
 [[package]]
 name = "par-core"
@@ -1185,18 +1185,18 @@ dependencies = [
 
 [[package]]
 name = "ptr_meta"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe9e76f66d3f9606f44e45598d155cb13ecf09f4a28199e48daf8c8fc937ea90"
+checksum = "0b9a0cf95a1196af61d4f1cbdab967179516d9a4a4312af1f31948f8f6224a79"
 dependencies = [
  "ptr_meta_derive",
 ]
 
 [[package]]
 name = "ptr_meta_derive"
-version = "0.3.0"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca414edb151b4c8d125c12566ab0d74dc9cdba36fb80eb7b848c15f495fd32d1"
+checksum = "7347867d0a7e1208d93b46767be83e2b8f978c3dad35f775ac8d8847551d6fe1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1226,9 +1226,9 @@ checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
 name = "rancor"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "caf5f7161924b9d1cea0e4cabc97c372cea92b5f927fc13c6bca67157a0ad947"
+checksum = "a063ea72381527c2a0561da9c80000ef822bdd7c3241b1cc1b12100e3df081ee"
 dependencies = [
  "ptr_meta",
 ]
@@ -1294,18 +1294,18 @@ checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
 
 [[package]]
 name = "rend"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a35e8a6bf28cd121053a66aa2e6a2e3eaffad4a60012179f0e864aa5ffeff215"
+checksum = "cadadef317c2f20755a64d7fdc48f9e7178ee6b0e1f7fce33fa60f1d68a276e6"
 dependencies = [
  "bytecheck",
 ]
 
 [[package]]
 name = "rkyv"
-version = "0.8.11"
+version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19f5c3e5da784cd8c69d32cdc84673f3204536ca56e1fa01be31a74b92c932ac"
+checksum = "35a640b26f007713818e9a9b65d34da1cf58538207b052916a83d80e43f3ffa4"
 dependencies = [
  "bytecheck",
  "bytes",
@@ -1322,9 +1322,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv_derive"
-version = "0.8.11"
+version = "0.8.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4270433626cffc9c4c1d3707dd681f2a2718d3d7b09ad754bec137acecda8d22"
+checksum = "bd83f5f173ff41e00337d97f6572e416d022ef8a19f371817259ae960324c482"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1622,6 +1622,7 @@ dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecma_ast",
+ "swc_ecma_parser",
  "swc_ecma_transforms_base",
  "swc_ecma_transforms_testing",
  "swc_ecma_visit",

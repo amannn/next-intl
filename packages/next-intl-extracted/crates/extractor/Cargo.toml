@@ -13,6 +13,7 @@ crate-type = ["cdylib"]
 next-intl-shared = { path = "../shared" }
 napi.workspace = true
 napi-derive.workspace = true
+swc_core.workspace = true
 
 [build-dependencies]
 napi-build = "2.0"
