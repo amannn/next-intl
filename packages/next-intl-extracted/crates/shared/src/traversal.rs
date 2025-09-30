@@ -6,8 +6,8 @@ use swc_core::ecma::{
     visit::{VisitMut, VisitMutWith},
 };
 
+use crate::extracted_message::ExtractedMessage;
 use crate::generate_key::generate_key;
-use crate::message::Message;
 use crate::scope_stack::ScopeStack;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -21,7 +21,7 @@ pub struct UseExtractedVisitor {
     pub mode: TraversalMode,
     pub hook_local_name: Option<String>,
     pub scopes: ScopeStack,
-    pub found_messages: Vec<Message>,
+    pub found_messages: Vec<ExtractedMessage>,
     pub file_path: Option<String>,
 }
 
@@ -114,7 +114,7 @@ impl VisitMut for UseExtractedVisitor {
                                 let message_text = str_lit.value.to_string();
                                 if self.should_collect() {
                                     let id = generate_key(&message_text);
-                                    self.found_messages.push(Message {
+                                    self.found_messages.push(ExtractedMessage {
                                         id,
                                         message: message_text.clone(),
                                         description: None,
