@@ -1,6 +1,6 @@
 import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
-import {startNextJsWatcher} from './watcher';
+import {startNextJsWatcher} from './extractor';
 
 const withNextIntl = createNextIntlPlugin();
 if (process.env.NODE_ENV === 'development') {

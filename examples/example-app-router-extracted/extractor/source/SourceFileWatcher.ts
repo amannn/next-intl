@@ -7,6 +7,7 @@ import {
 } from '@parcel/watcher';
 import CatalogManager from '../CatalogManager.ts';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
+import type {ExtractedMessage} from '../types.ts';
 
 export default class SourceFileWatcher {
   private watcher: AsyncSubscription | null = null;
@@ -18,6 +19,31 @@ export default class SourceFileWatcher {
 
   private getSrcPath() {
     return this.manager.getSrcPath();
+  }
+
+  private hasMessagesChanged(
+    messages1: Map<string, ExtractedMessage> | undefined,
+    messages2: Map<string, ExtractedMessage> | undefined
+  ): boolean {
+    // If one exists and the other doesn't, there's a change
+    if (!messages1 || !messages2) {
+      return messages1 !== messages2;
+    }
+
+    // Different sizes means changes
+    if (messages1.size !== messages2.size) {
+      return true;
+    }
+
+    // Check differences in messages1 vs messages2
+    for (const [id, msg1] of messages1) {
+      const msg2 = messages2.get(id);
+      if (!msg2 || msg1.message !== msg2.message) {
+        return true; // Early exit on first difference
+      }
+    }
+
+    return false;
   }
 
   start() {
@@ -44,7 +70,7 @@ export default class SourceFileWatcher {
     }
     let now = performance.now(),
       saveDuration = 0,
-      totalExtracted = 0;
+      hasChanges = false;
 
     for (const event of events) {
       if (
@@ -55,13 +81,28 @@ export default class SourceFileWatcher {
       }
 
       console.log(`📝 File ${event.type}: ${event.path.split(path.sep).pop()}`);
-      const numExtracted = await this.manager.extractFileMessages(event.path);
-      console.log(`   Extracted ${numExtracted} message(s)`);
-      totalExtracted += numExtracted;
+
+      // Get messages before extraction
+      const beforeMessages = this.manager.getFileMessages(event.path);
+
+      // Extract messages
+      const extractedCount = await this.manager.extractFileMessages(event.path);
+      console.log(`   Extracted ${extractedCount} message(s)`);
+
+      // Get messages after extraction
+      const afterMessages = this.manager.getFileMessages(event.path);
+
+      // Check if messages changed
+      const changed = this.hasMessagesChanged(beforeMessages, afterMessages);
+
+      if (changed) {
+        console.log(`   Messages changed`);
+        hasChanges = true;
+      }
     }
     const extractDuration = performance.now() - now;
 
-    if (totalExtracted > 0) {
+    if (hasChanges) {
       now = performance.now();
       const count = await this.manager.save();
       console.log(`   Saved ${count} messages`);

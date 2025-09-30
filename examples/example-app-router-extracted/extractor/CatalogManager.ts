@@ -25,7 +25,8 @@ export default class CatalogManager {
   private config: ExtractorConfig;
 
   /* The source of truth for which messages are used. */
-  private messagesByFile: Map<string, Array<ExtractedMessage>> = new Map();
+  private messagesByFile: Map<string, Map<string, ExtractedMessage>> =
+    new Map();
 
   /**
    * This potentially also includes outdated ones that were initially available,
@@ -79,6 +80,12 @@ export default class CatalogManager {
     return path.join(this.getProjectRoot(), this.config.srcPath);
   }
 
+  getFileMessages(
+    absoluteFilePath: string
+  ): Map<string, ExtractedMessage> | undefined {
+    return this.messagesByFile.get(absoluteFilePath);
+  }
+
   async loadMessages() {
     await this.loadSourceMessages();
     await this.loadTargetMessages();
@@ -91,7 +98,11 @@ export default class CatalogManager {
       SourceFileAnalyzer.IGNORED_DIRECTORIES
     );
     for (const fileMessage of fileMessages) {
-      this.messagesByFile.set(fileMessage.filePath, fileMessage.messages);
+      const messagesMap = new Map<string, ExtractedMessage>();
+      for (const message of fileMessage.messages) {
+        messagesMap.set(message.id, message);
+      }
+      this.messagesByFile.set(fileMessage.filePath, messagesMap);
     }
   }
 
@@ -118,15 +129,17 @@ export default class CatalogManager {
     const messages = await extractFileMessages(absoluteFilePath);
 
     // If messages were removed from a file, we need to clean them up
-    const hadMessages = this.messagesByFile.has(absoluteFilePath);
-    const hasMessages = messages.length > 0;
+    const newMessagesMap = new Map<string, ExtractedMessage>();
+    for (const message of messages) {
+      newMessagesMap.set(message.id, message);
+    }
 
-    if (hasMessages || hadMessages) {
-      if (hasMessages) {
-        this.messagesByFile.set(absoluteFilePath, messages);
-      } else {
-        this.messagesByFile.delete(absoluteFilePath);
-      }
+    // Update the stored messages
+    const hasMessages = messages.length > 0;
+    if (hasMessages) {
+      this.messagesByFile.set(absoluteFilePath, newMessagesMap);
+    } else {
+      this.messagesByFile.delete(absoluteFilePath);
     }
 
     return messages.length;
@@ -137,7 +150,9 @@ export default class CatalogManager {
     // TODO: Is this always wanted?
     const messages = Array.from(this.messagesByFile.keys())
       .sort()
-      .map((filePath) => this.messagesByFile.get(filePath) || [])
+      .map((filePath) =>
+        Array.from((this.messagesByFile.get(filePath) || new Map()).values())
+      )
       .flat();
 
     const formatter = await this.getFormatter();
