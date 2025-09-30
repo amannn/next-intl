@@ -53,10 +53,13 @@ impl VisitMut for UseExtractedVisitor {
                     if let Some(imported) = &mut named_spec.imported {
                         if let ModuleExportName::Ident(ident) = imported {
                             if ident.sym == "useExtracted" {
-                                if self.should_transform() {
-                                    ident.sym = "useTranslations".into();
-                                }
+                                // Track the local name before transforming
                                 self.hook_local_name = Some(named_spec.local.sym.to_string());
+                                if self.should_transform() {
+                                    // Change import to just {useTranslations} without alias
+                                    named_spec.local.sym = "useTranslations".into();
+                                    named_spec.imported = None;
+                                }
                             }
                         }
                     } else if named_spec.local.sym == "useExtracted" {

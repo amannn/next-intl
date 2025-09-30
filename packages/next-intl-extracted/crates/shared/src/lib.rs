@@ -9,3 +9,8 @@ pub use extracted_message::ExtractedMessage;
 pub use generate_key::generate_key;
 pub use scope_stack::ScopeStack;
 pub use traversal::{TraversalMode, UseExtractedVisitor};
+
+#[cfg(test)]
+mod traversal_test_analyze;
+#[cfg(test)]
+mod traversal_test_transform;

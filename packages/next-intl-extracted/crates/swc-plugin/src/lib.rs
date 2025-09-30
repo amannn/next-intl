@@ -7,9 +7,6 @@ use swc_core::{
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
-#[cfg(test)]
-mod lib_test;
-
 pub struct TransformVisitor;
 
 impl TransformVisitor {
