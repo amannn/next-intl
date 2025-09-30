@@ -122,8 +122,6 @@ impl VisitMut for UseExtractedVisitor {
                                         message: message_text.clone(),
                                         description: None,
                                         file_path: self.file_path.clone(),
-                                        line: None,
-                                        column: None,
                                     });
                                 }
                                 if self.should_transform() {

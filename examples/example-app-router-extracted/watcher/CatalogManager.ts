@@ -3,7 +3,7 @@ import {
   extractFileMessages,
   loadSourceMessages
 } from 'next-intl-extracted/dist/extractor/index.js';
-import type {ExtractedMessage, Locale, MessageId} from './types.ts';
+import type {ExtractedMessage, Locale} from './types.ts';
 import type Formatter from './formatters/Formatter.ts';
 import path from 'path';
 import SourceFileAnalyzer from './source/SourceFileAnalyzer.ts';
@@ -31,7 +31,7 @@ export default class CatalogManager {
    * This potentially also includes outdated ones that were initially available,
    * but are not used anymore. This allows to restore them if they are used again.
    **/
-  private translationsByTargetLocale: Map<Locale, Map<MessageId, string>> =
+  private translationsByTargetLocale: Map<Locale, Map<string, string>> =
     new Map();
 
   // Cached

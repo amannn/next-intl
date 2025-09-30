@@ -58,17 +58,13 @@ function Component() {
     "id": "+1F2If",
     "message": "Successfully sent!",
     "description": null,
-    "file_path": "test.tsx",
-    "line": null,
-    "column": null
+    "file_path": "test.tsx"
   },
   {
     "id": "9WRlF4",
     "message": "Send",
     "description": null,
-    "file_path": "test.tsx",
-    "line": null,
-    "column": null
+    "file_path": "test.tsx"
   }
 ]"#;
 

@@ -9,8 +9,6 @@ pub struct ExtractedMessage {
     pub description: Option<String>,
     #[napi(js_name = "filePath")]
     pub file_path: Option<String>,
-    pub line: Option<u32>,
-    pub column: Option<u32>,
 }
 
 impl From<InternalExtractedMessage> for ExtractedMessage {
@@ -20,8 +18,6 @@ impl From<InternalExtractedMessage> for ExtractedMessage {
             message: msg.message,
             description: msg.description,
             file_path: msg.file_path,
-            line: msg.line,
-            column: msg.column,
         }
     }
 }
