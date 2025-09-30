@@ -7,12 +7,28 @@ use swc_core::ecma::{
 };
 
 #[test]
-fn extract_use_extracted() {
+fn extract_messages() {
     let source_code = r#"
+import {useState} from 'react';
 import {useExtracted} from 'next-intl';
 
-const t = useExtracted();
-t("Hey from server!");
+function Component() {
+    const [notification, setNotification] = useState();
+    const t = useExtracted();
+
+    function onClick() {
+        setNotification(t("Successfully sent!"));
+    }
+
+    return (
+        <div>
+            <button onClick={onClick}>
+                {t("Send")}
+            </button>
+            {notification}
+        </div>
+    );
+}
     "#;
 
     let syntax = Syntax::Typescript(TsSyntax {
@@ -34,9 +50,27 @@ t("Hey from server!");
     module.visit_mut_with(&mut visitor);
 
     // Check that messages were extracted
-    assert_eq!(visitor.found_messages.len(), 1);
-    let extracted = &visitor.found_messages[0];
-    assert_eq!(extracted.id, "mwFebS");
-    assert_eq!(extracted.message, "Hey from server!");
-    assert_eq!(extracted.file_path, Some("test.tsx".to_string()));
+    let actual = serde_json::to_string_pretty(&visitor.found_messages)
+        .expect("Failed to serialize messages");
+
+    let expected = r#"[
+  {
+    "id": "+1F2If",
+    "message": "Successfully sent!",
+    "description": null,
+    "file_path": "test.tsx",
+    "line": null,
+    "column": null
+  },
+  {
+    "id": "9WRlF4",
+    "message": "Send",
+    "description": null,
+    "file_path": "test.tsx",
+    "line": null,
+    "column": null
+  }
+]"#;
+
+    assert_eq!(actual, expected);
 }
