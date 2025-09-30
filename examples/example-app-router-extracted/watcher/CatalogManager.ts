@@ -1,9 +1,12 @@
 import {promises as fs} from 'fs';
-import MessageExtractor from './extractor/MessageExtractor.ts';
-import SourceFileScanner from './source/SourceFileScanner.ts';
+import {
+  extractFileMessages,
+  loadSourceMessages
+} from 'next-intl-extracted/dist/extractor/index.js';
 import type {ExtractedMessage, Locale, MessageId} from './types.ts';
 import type Formatter from './formatters/Formatter.ts';
 import path from 'path';
+import SourceFileAnalyzer from './source/SourceFileAnalyzer.ts';
 
 const formatters = {
   json: () => import('./formatters/JSONFormatter.ts')
@@ -20,7 +23,6 @@ export type ExtractorConfig = {
 
 export default class CatalogManager {
   private config: ExtractorConfig;
-  private extractor: MessageExtractor;
 
   /* The source of truth for which messages are used. */
   private messagesByFile: Map<string, Array<ExtractedMessage>> = new Map();
@@ -38,7 +40,6 @@ export default class CatalogManager {
 
   constructor(config: ExtractorConfig) {
     this.config = config;
-    this.extractor = new MessageExtractor();
     this.messagesByFile = new Map();
   }
 
@@ -84,15 +85,14 @@ export default class CatalogManager {
   }
 
   private async loadSourceMessages() {
-    // TODO: We could potentially skip this in favor of reading
-    // the existing messages for the .po format since it provides
-    // all the necessary context by itself.
-    const sourceFiles = await SourceFileScanner.getSourceFiles(
-      this.getSrcPath()
+    const fileMessages = await loadSourceMessages(
+      this.getSrcPath(),
+      SourceFileAnalyzer.EXTENSIONS,
+      SourceFileAnalyzer.IGNORED_DIRECTORIES
     );
-    await Promise.all(
-      sourceFiles.map(async (filePath) => this.extractFileMessages(filePath))
-    );
+    for (const fileMessage of fileMessages) {
+      this.messagesByFile.set(fileMessage.filePath, fileMessage.messages);
+    }
   }
 
   private async loadTargetMessages() {
@@ -115,8 +115,7 @@ export default class CatalogManager {
   }
 
   async extractFileMessages(absoluteFilePath: string): Promise<number> {
-    const content = await fs.readFile(absoluteFilePath, 'utf8');
-    const messages = await this.extractor.extractFromFileContent(content);
+    const messages = await extractFileMessages(absoluteFilePath);
 
     // If messages were removed from a file, we need to clean them up
     const hadMessages = this.messagesByFile.has(absoluteFilePath);

@@ -1,7 +1,7 @@
 import path from 'path';
 
 export default class SourceFileAnalyzer {
-  private static readonly EXTENSIONS = [
+  static readonly EXTENSIONS = [
     '.ts',
     '.tsx',
     '.js',
@@ -11,6 +11,7 @@ export default class SourceFileAnalyzer {
     '.mts',
     '.cts'
   ];
+  static readonly IGNORED_DIRECTORIES = ['node_modules'];
 
   static isSourceFile(filePath: string) {
     const ext = path.extname(filePath);

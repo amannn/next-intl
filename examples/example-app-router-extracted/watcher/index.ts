@@ -9,10 +9,12 @@ const config: ExtractorConfig = {
 };
 
 export async function extractAll() {
+  const now = performance.now();
   const manager = new CatalogManager(config);
   await manager.loadMessages();
   const count = await manager.save();
   console.log(`💾 Saved ${count} messages`);
+  console.log(`🕒 Took ${(performance.now() - now).toFixed(2)}ms`);
 }
 
 export async function startWatcher() {

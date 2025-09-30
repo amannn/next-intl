@@ -14,6 +14,10 @@ next-intl-shared = { path = "../shared" }
 napi.workspace = true
 napi-derive.workspace = true
 swc_core.workspace = true
+tokio = { version = "1", features = ["fs", "rt"] }
+rayon = "1.10"
+futures = "0.3"
+walkdir = "2"
 
 [build-dependencies]
 napi-build = "2.0"
