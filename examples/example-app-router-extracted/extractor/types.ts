@@ -1,3 +1,10 @@
 export type Locale = string;
 
-export {type ExtractedMessage} from 'next-intl-extracted/dist/extractor/index.js';
+export type ExtractedMessage = {
+  id: string;
+  message: string;
+  description?: string;
+  filePath?: string;
+  line?: number;
+  column?: number;
+};

@@ -1,15 +1,13 @@
 import {promises as fs} from 'fs';
-import {
-  extractFileMessages,
-  loadSourceMessages
-} from 'next-intl-extracted/dist/extractor/index.js';
-import type {ExtractedMessage, Locale} from './types.ts';
-import type Formatter from './formatters/Formatter.ts';
+import type {ExtractedMessage, Locale} from '../types.ts';
+import type Formatter from '../formatters/Formatter.ts';
 import path from 'path';
-import SourceFileAnalyzer from './source/SourceFileAnalyzer.ts';
+import MessageExtractor from '../extractor/MessageExtractor.ts';
+import SourceFileScanner from '../source/SourceFileScanner.ts';
+import SaveScheduler from './SaveScheduler.ts';
 
 const formatters = {
-  json: () => import('./formatters/JSONFormatter.ts')
+  json: () => import('../formatters/JSONFormatter.ts')
 };
 
 type Format = keyof typeof formatters;
@@ -39,9 +37,13 @@ export default class CatalogManager {
   private formatter?: Formatter;
   private targetLocales?: Array<Locale>;
 
+  // Save scheduling
+  private saveScheduler: SaveScheduler<number>;
+
   constructor(config: ExtractorConfig) {
     this.config = config;
     this.messagesByFile = new Map();
+    this.saveScheduler = new SaveScheduler<number>(50);
   }
 
   private async getFormatter() {
@@ -87,23 +89,23 @@ export default class CatalogManager {
   }
 
   async loadMessages() {
+    // TODO: We could potentially skip this in favor of reading
+    // the existing messages for the .po format since it provides
+    // all the necessary context by itself.
     await this.loadSourceMessages();
+
     await this.loadTargetMessages();
   }
 
   private async loadSourceMessages() {
-    const fileMessages = await loadSourceMessages(
-      this.getSrcPath(),
-      SourceFileAnalyzer.EXTENSIONS,
-      SourceFileAnalyzer.IGNORED_DIRECTORIES
+    const sourceFiles = await SourceFileScanner.getSourceFiles(
+      this.getSrcPath()
     );
-    for (const fileMessage of fileMessages) {
-      const messagesMap = new Map<string, ExtractedMessage>();
-      for (const message of fileMessage.messages) {
-        messagesMap.set(message.id, message);
-      }
-      this.messagesByFile.set(fileMessage.filePath, messagesMap);
-    }
+    await Promise.all(
+      sourceFiles.map(async (filePath) =>
+        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+      )
+    );
   }
 
   private async loadTargetMessages() {
@@ -125,8 +127,12 @@ export default class CatalogManager {
     );
   }
 
-  async extractFileMessages(absoluteFilePath: string): Promise<number> {
-    const messages = await extractFileMessages(absoluteFilePath);
+  async extractFileMessages(
+    absoluteFilePath: string,
+    source: string
+  ): Promise<number> {
+    console.log('extractFileMessages', absoluteFilePath);
+    const messages = await MessageExtractor.extractFromFileContent(source);
 
     // If messages were removed from a file, we need to clean them up
     const newMessagesMap = new Map<string, ExtractedMessage>();
@@ -146,6 +152,10 @@ export default class CatalogManager {
   }
 
   async save(): Promise<number> {
+    return this.saveScheduler.schedule(() => this.saveImpl());
+  }
+
+  private async saveImpl(): Promise<number> {
     // Sort and group by file paths
     // TODO: Is this always wanted?
     const messages = Array.from(this.messagesByFile.keys())
@@ -170,5 +180,9 @@ export default class CatalogManager {
     }
 
     return messages.length;
+  }
+
+  destroy(): void {
+    this.saveScheduler.destroy();
   }
 }

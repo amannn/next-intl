@@ -5,12 +5,12 @@
     "dev": "next dev --turbo",
     "lint": "eslint src && prettier src --check",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "compile-extractor": "npx esbuild extractor/index.ts --bundle --platform=node --format=esm --outdir=extractor/dist --out-extension:.js=.js --external:@swc/core --external:fs --external:path --external:lodash-es"
   },
   "dependencies": {
     "next": "^15.5.0",
     "next-intl": "^4.0.0",
-    "next-intl-extracted": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -21,6 +21,8 @@
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
+    "@types/webpack": "^5.28.5",
+    "esbuild": "^0.25.10",
     "eslint": "9.11.1",
     "eslint-config-next": "^15.5.0",
     "lodash-es": "^4.17.21",

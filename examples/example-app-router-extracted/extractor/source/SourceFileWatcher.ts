@@ -5,7 +5,7 @@ import {
   type Event as WatchEvent,
   subscribe
 } from '@parcel/watcher';
-import CatalogManager from '../CatalogManager.ts';
+import CatalogManager from '../catalog/CatalogManager.ts';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 import type {ExtractedMessage} from '../types.ts';
 
@@ -86,7 +86,10 @@ export default class SourceFileWatcher {
       const beforeMessages = this.manager.getFileMessages(event.path);
 
       // Extract messages
-      const extractedCount = await this.manager.extractFileMessages(event.path);
+      const extractedCount = await this.manager.extractFileMessages(
+        event.path,
+        fs.readFileSync(event.path, 'utf8')
+      );
       console.log(`   Extracted ${extractedCount} message(s)`);
 
       // Get messages after extraction
