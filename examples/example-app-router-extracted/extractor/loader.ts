@@ -54,10 +54,13 @@ async function compile(
   // Get messages before extraction
   const beforeMessages = manager.getFileMessages(resourcePath);
 
-  // TODO: This should also change the AST
   // Extract messages
-  const numExtracted = await manager.extractFileMessages(resourcePath, source);
-  console.log(`   Extracted ${numExtracted} message(s)`);
+  const result = await manager.extractFileMessages(
+    resourcePath,
+    source,
+    'both'
+  );
+  console.log(`   Extracted ${result.messages.length} message(s)`);
 
   // Get messages after extraction
   const afterMessages = manager.getFileMessages(resourcePath);
@@ -67,11 +70,10 @@ async function compile(
 
   if (changed) {
     console.log(`   Messages changed`);
-    // If only one item in queue, then wait?
     void manager.save();
   }
 
-  return source;
+  return result.source;
 }
 
 export default function extractMessagesLoader(

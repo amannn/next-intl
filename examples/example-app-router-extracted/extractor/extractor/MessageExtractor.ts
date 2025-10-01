@@ -1,53 +1,91 @@
 import {
   parse,
+  print,
   type Program,
   type Module,
   type VariableDeclarator,
   type CallExpression,
   type ImportDeclaration,
   type StringLiteral,
-  type Node
+  type Node,
+  type Identifier
 } from '@swc/core';
 import type {ExtractedMessage} from '../types.ts';
 import KeyGenerator from './KeyGenerator.ts';
 import ASTScope from './ASTScope.ts';
 
+export const ExtractorMode = {
+  EXTRACT: 'extract',
+  TRANSFORM: 'transform',
+  BOTH: 'both'
+} as const;
+
+export type ExtractorMode = (typeof ExtractorMode)[keyof typeof ExtractorMode];
+
 // TODO: This could grow too large. If we really
 // need this we should use an LRU strategy.
-const compileCache = new Map<string, ExtractedMessage[]>();
+const compileCache = new Map<
+  string,
+  {messages: ExtractedMessage[]; source: string}
+>();
 
 export default class MessageExtractor {
-  static async extractFromFileContent(code: string) {
-    const cacheKey = code;
+  static async processFileContent(
+    absoluteFilePath: string,
+    source: string,
+    mode: ExtractorMode
+  ): Promise<{messages: ExtractedMessage[]; source: string}> {
+    const cacheKey = `${mode}:${source}`;
     if (compileCache.has(cacheKey)) {
       return compileCache.get(cacheKey)!;
     }
 
     // Shortcut parsing if hook is not used
-    if (!code.includes('useExtracted')) {
-      return [];
+    if (!source.includes('useExtracted')) {
+      return {messages: [], source};
     }
 
-    const ast = await parse(code, {
+    const ast = await parse(source, {
       syntax: 'typescript',
       tsx: true,
       target: 'es2022',
       decorators: true
     });
 
-    const result = MessageExtractor.extractFromAST(ast);
-    compileCache.set(cacheKey, result);
-    return result;
+    const processResult = await MessageExtractor.processAST(
+      ast,
+      mode,
+      absoluteFilePath
+    );
+
+    const finalResult = (
+      processResult.source ? processResult : {...processResult, source}
+    ) as {messages: ExtractedMessage[]; source: string};
+
+    compileCache.set(cacheKey, finalResult);
+    return finalResult;
   }
 
-  private static extractFromAST(ast: Program | Module): ExtractedMessage[] {
+  private static async processAST(
+    ast: Program | Module,
+    mode: ExtractorMode,
+    filePath?: string
+  ): Promise<{messages: ExtractedMessage[]; source?: string}> {
     const results: ExtractedMessage[] = [];
     let hookLocalName: string | null = null;
 
     const scopeStack: ASTScope[] = [new ASTScope()];
 
-    function currentScope() {
+    const currentScope = () => {
       return scopeStack[scopeStack.length - 1];
+    };
+
+    function shouldTransform(): boolean {
+      return mode === ExtractorMode.TRANSFORM || mode === ExtractorMode.BOTH;
+    }
+
+    function shouldCollect(): boolean {
+      return mode === ExtractorMode.EXTRACT || mode === ExtractorMode.BOTH;
     }
 
     function visit(node: Node) {
@@ -56,17 +94,23 @@ export default class MessageExtractor {
       switch (node.type) {
         case 'ImportDeclaration': {
           const decl = node as ImportDeclaration;
-          for (const spec of decl.specifiers ?? []) {
-            if (spec.type === 'ImportSpecifier') {
-              // Check if the imported name is 'useExtracted' or if the local name is 'useExtracted'
-              const importedName = spec.imported?.value;
-              const localName = spec.local.value;
+          if (decl.source.value === 'next-intl') {
+            for (const spec of decl.specifiers ?? []) {
+              if (spec.type === 'ImportSpecifier') {
+                const importedName = spec.imported?.value;
+                const localName = spec.local.value;
 
-              if (
-                importedName === 'useExtracted' ||
-                localName === 'useExtracted'
-              ) {
-                hookLocalName = localName;
+                if (
+                  importedName === 'useExtracted' ||
+                  localName === 'useExtracted'
+                ) {
+                  hookLocalName = localName;
+                  if (shouldTransform()) {
+                    // Transform import to useTranslations
+                    spec.imported = undefined;
+                    spec.local.value = 'useTranslations';
+                  }
+                }
               }
             }
           }
@@ -82,6 +126,10 @@ export default class MessageExtractor {
           ) {
             if (decl.id.type === 'Identifier') {
               currentScope().define(decl.id.value, 'translator');
+              if (shouldTransform()) {
+                // Transform the call to useTranslations
+                (decl.init.callee as Identifier).value = 'useTranslations';
+              }
             }
           }
           break;
@@ -96,12 +144,22 @@ export default class MessageExtractor {
               const arg0 = call.arguments?.[0]?.expression;
               if (arg0?.type === 'StringLiteral') {
                 const stringLiteral = arg0 as StringLiteral;
+                const messageText = stringLiteral.value;
 
-                // TODO: Optional namespace
-                results.push({
-                  id: KeyGenerator.generate(stringLiteral.value),
-                  message: stringLiteral.value
-                });
+                if (shouldCollect()) {
+                  results.push({
+                    id: KeyGenerator.generate(messageText),
+                    message: messageText,
+                    filePath: filePath
+                  });
+                }
+
+                if (shouldTransform()) {
+                  // Transform the string literal to the generated key
+                  const key = KeyGenerator.generate(messageText);
+                  stringLiteral.value = key;
+                  stringLiteral.raw = undefined;
+                }
               }
             }
           }
@@ -147,6 +205,9 @@ export default class MessageExtractor {
 
     visit(ast);
 
-    return results;
+    return {
+      messages: results,
+      source: shouldTransform() ? (await print(ast, {})).code : undefined
+    };
   }
 }

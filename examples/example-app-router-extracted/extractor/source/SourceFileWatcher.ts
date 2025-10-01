@@ -86,11 +86,12 @@ export default class SourceFileWatcher {
       const beforeMessages = this.manager.getFileMessages(event.path);
 
       // Extract messages
-      const extractedCount = await this.manager.extractFileMessages(
+      const result = await this.manager.extractFileMessages(
         event.path,
-        fs.readFileSync(event.path, 'utf8')
+        fs.readFileSync(event.path, 'utf8'),
+        'extract'
       );
-      console.log(`   Extracted ${extractedCount} message(s)`);
+      console.log(`   Extracted ${result.messages.length} message(s)`);
 
       // Get messages after extraction
       const afterMessages = this.manager.getFileMessages(event.path);

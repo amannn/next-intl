@@ -2,7 +2,9 @@ import {promises as fs} from 'fs';
 import type {ExtractedMessage, Locale} from '../types.ts';
 import type Formatter from '../formatters/Formatter.ts';
 import path from 'path';
-import MessageExtractor from '../extractor/MessageExtractor.ts';
+import MessageExtractor, {
+  ExtractorMode
+} from '../extractor/MessageExtractor.ts';
 import SourceFileScanner from '../source/SourceFileScanner.ts';
 import SaveScheduler from './SaveScheduler.ts';
 
@@ -103,7 +105,11 @@ export default class CatalogManager {
     );
     await Promise.all(
       sourceFiles.map(async (filePath) =>
-        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+        this.extractFileMessages(
+          filePath,
+          await fs.readFile(filePath, 'utf8'),
+          ExtractorMode.EXTRACT
+        )
       )
     );
   }
@@ -129,26 +135,32 @@ export default class CatalogManager {
 
   async extractFileMessages(
     absoluteFilePath: string,
-    source: string
-  ): Promise<number> {
+    source: string,
+    mode: ExtractorMode = ExtractorMode.EXTRACT
+  ): Promise<{messages: ExtractedMessage[]; source: string}> {
     console.log('extractFileMessages', absoluteFilePath);
-    const messages = await MessageExtractor.extractFromFileContent(source);
+
+    const result = await MessageExtractor.processFileContent(
+      absoluteFilePath,
+      source,
+      mode
+    );
 
     // If messages were removed from a file, we need to clean them up
     const newMessagesMap = new Map<string, ExtractedMessage>();
-    for (const message of messages) {
+    for (const message of result.messages) {
       newMessagesMap.set(message.id, message);
     }
 
     // Update the stored messages
-    const hasMessages = messages.length > 0;
+    const hasMessages = result.messages.length > 0;
     if (hasMessages) {
       this.messagesByFile.set(absoluteFilePath, newMessagesMap);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
     }
 
-    return messages.length;
+    return result;
   }
 
   async save(): Promise<number> {
