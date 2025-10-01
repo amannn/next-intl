@@ -32,6 +32,10 @@ function haveMessagesChanged(
   return false;
 }
 
+// We only want to emit messages continuously in development.
+// In production, we can do a single extraction pass.
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 async function compile(
   resourcePath: string,
   source: string,
@@ -46,8 +50,6 @@ async function compile(
     await manager.loadMessages();
 
     await manager.save();
-
-    // TODO: If we're doing a production build, we can skip saving
     // messages after the first pass (but: keep AST modification)
   }
 
@@ -58,7 +60,7 @@ async function compile(
   const result = await manager.extractFileMessages(
     resourcePath,
     source,
-    'both'
+    isDevelopment ? 'both' : 'transform'
   );
   console.log(`   Extracted ${result.messages.length} message(s)`);
 
@@ -68,7 +70,7 @@ async function compile(
   // Check if messages changed
   const changed = haveMessagesChanged(beforeMessages, afterMessages);
 
-  if (changed) {
+  if (isDevelopment && changed) {
     console.log(`   Messages changed`);
     void manager.save();
   }

@@ -1,7 +1,8 @@
+export {default} from './loader.ts';
+
 // import SourceFileWatcher from './source/SourceFileWatcher.ts';
 // import CatalogManager, {type ExtractorConfig} from './CatalogManager.ts';
 
-export {default} from './loader.ts';
 // export {type ExtractorConfig} from './CatalogManager.ts';
 
 // const config: ExtractorConfig = {
