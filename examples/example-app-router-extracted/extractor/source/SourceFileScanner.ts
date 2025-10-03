@@ -3,8 +3,6 @@ import path from 'path';
 import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
 
 export default class SourceFileScanner {
-  static readonly IGNORED_DIRECTORIES = ['node_modules'];
-
   private static async walkSourceFiles(
     dir: string,
     acc: Array<string> = []
@@ -13,7 +11,9 @@ export default class SourceFileScanner {
     for (const entry of entries) {
       const entryPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        if (SourceFileScanner.IGNORED_DIRECTORIES.includes(entryPath)) continue;
+        if (SourceFileAnalyzer.IGNORED_DIRECTORIES.includes(entryPath)) {
+          continue;
+        }
         await SourceFileScanner.walkSourceFiles(entryPath, acc);
       } else {
         if (SourceFileAnalyzer.isSourceFile(entry.name)) {

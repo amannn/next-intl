@@ -19,6 +19,7 @@ export type ExtractorConfig = {
   messagesPath: string;
   srcPath: string;
   formatter: Format;
+  // TODO: Should we let user configure extensions here? A glob?
 };
 
 export default class CatalogManager {

@@ -1,6 +1,7 @@
 import type {LoaderContext} from 'webpack';
 import CatalogManager, {ExtractorConfig} from './catalog/CatalogManager';
 import {ExtractedMessage} from './types';
+import path from 'path';
 
 // This instance:
 // - Remains available through HMR
@@ -78,13 +79,25 @@ async function compile(
   return result.source;
 }
 
+const cwd = process.cwd();
+
 export default function extractMessagesLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
   source: string
 ) {
+  const options = this.getOptions();
+
+  // Check if the file is within the `srcPath`
+  const srcPath = path.join(cwd, options.srcPath);
+  const isWithinSrcPath =
+    path.relative(srcPath, this.resourcePath).startsWith('..') === false;
+  if (!isWithinSrcPath) {
+    return source;
+  }
+
   const callback = this.async();
 
-  compile(this.resourcePath, source, this.getOptions())
+  compile(this.resourcePath, source, options)
     .then((result) => {
       callback(null, result);
     })
