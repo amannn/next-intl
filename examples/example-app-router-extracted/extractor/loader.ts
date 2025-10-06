@@ -19,11 +19,10 @@ export default function extractMessagesLoader(
 
   // Check if the file is within the `srcPath`
   const srcPath = path.join(cwd, options.srcPath);
-  const isWithinSrcPath =
-    path.relative(srcPath, this.resourcePath).startsWith('..') === false;
-  if (!isWithinSrcPath) {
-    return source;
-  }
+  const isWithinSrcPath = !path
+    .relative(srcPath, this.resourcePath)
+    .startsWith('..');
+  if (!isWithinSrcPath) return source;
 
   if (!compiler) {
     compiler = new ExtractionCompiler(options);

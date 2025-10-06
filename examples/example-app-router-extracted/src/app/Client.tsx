@@ -6,7 +6,7 @@ export default function Client() {
   const t = useExtracted();
   return (
     <>
-      <h1>{t('Hey from client!')}</h1>
+      <p>{t('Hey from client!')}</p>
     </>
   );
 }
