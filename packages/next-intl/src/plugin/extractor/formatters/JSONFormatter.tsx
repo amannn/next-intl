@@ -47,7 +47,13 @@ export default class JSONFormatter implements Formatter {
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
-      const json = this.encode(messages);
+
+      // Sort messages by id for consistent output
+      const sortedMessages = [...messages].sort((a, b) =>
+        a.id.localeCompare(b.id)
+      );
+
+      const json = this.encode(sortedMessages);
       await fs.writeFile(filePath, JSON.stringify(json, null, 2));
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);

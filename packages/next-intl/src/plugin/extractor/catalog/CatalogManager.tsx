@@ -153,14 +153,9 @@ export default class CatalogManager {
   }
 
   private async saveImpl(): Promise<number> {
-    // Sort and group by file paths
-    // TODO: Is this always wanted? Move to formatter.
-    const messages = Array.from(this.messagesByFile.keys())
-      .sort()
-      .map((filePath) =>
-        Array.from((this.messagesByFile.get(filePath) || new Map()).values())
-      )
-      .flat();
+    const messages = Array.from(this.messagesByFile.values()).flatMap(
+      (fileMessages) => Array.from(fileMessages.values())
+    );
 
     const formatter = await this.getFormatter();
     await formatter.write(this.config.sourceLocale, messages);
