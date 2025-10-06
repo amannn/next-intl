@@ -13,23 +13,21 @@ import {
 import type {ExtractedMessage} from '../types.js';
 import ASTScope from './ASTScope.js';
 import KeyGenerator from './KeyGenerator.js';
+import LRUCache from './LRUCache.js';
 
 export default class MessageExtractor {
-  // TODO: This could grow too large. If we really
-  // need this we should use an LRU strategy.
-  private compileCache = new Map<
-    string,
-    {messages: Array<ExtractedMessage>; source: string}
-  >();
+  private compileCache = new LRUCache<{
+    messages: Array<ExtractedMessage>;
+    source: string;
+  }>(750);
 
   async processFileContent(
     absoluteFilePath: string,
     source: string
   ): Promise<{messages: Array<ExtractedMessage>; source: string}> {
     const cacheKey = source;
-    if (this.compileCache.has(cacheKey)) {
-      return this.compileCache.get(cacheKey)!;
-    }
+    const cached = this.compileCache.get(cacheKey);
+    if (cached) return cached;
 
     // Shortcut parsing if hook is not used
     if (!source.includes('useExtracted')) {
@@ -195,7 +193,7 @@ export default class MessageExtractor {
 
     return {
       messages: results,
-      source: (await print(ast, {})).code
+      source: (await print(ast)).code
     };
   }
 }
