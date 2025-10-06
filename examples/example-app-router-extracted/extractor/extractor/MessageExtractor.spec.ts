@@ -196,7 +196,7 @@ function Component() {
     const t = useTranslations();
 
     function onClick() {
-        setNotification(t("Successfully sent!"));
+        setNotification(t("+1F2If"));
     }
 
     return (<div>
@@ -209,6 +209,11 @@ function Component() {
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
     assert.deepStrictEqual(result.messages, [
+      {
+        id: '+1F2If',
+        message: 'Successfully sent!',
+        filePath: 'test.tsx'
+      },
       {
         id: '9WRlF4',
         message: 'Send',

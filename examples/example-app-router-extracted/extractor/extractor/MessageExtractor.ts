@@ -151,8 +151,16 @@ export default class MessageExtractor {
             const child = (node as unknown as Record<string, unknown>)[key];
             if (Array.isArray(child)) {
               child.forEach((item) => {
-                if (item && typeof item === 'object' && 'type' in item) {
-                  visit(item as Node);
+                if (item && typeof item === 'object') {
+                  if (
+                    'expression' in item &&
+                    typeof item.expression === 'object' &&
+                    'type' in item.expression
+                  ) {
+                    visit(item.expression as Node);
+                  } else if ('type' in item) {
+                    visit(item as Node);
+                  }
                 }
               });
             } else if (child && typeof child === 'object' && 'type' in child) {
@@ -169,8 +177,17 @@ export default class MessageExtractor {
         const child = (node as unknown as Record<string, unknown>)[key];
         if (Array.isArray(child)) {
           child.forEach((item) => {
-            if (item && typeof item === 'object' && 'type' in item) {
-              visit(item as Node);
+            if (item && typeof item === 'object') {
+              if (
+                'expression' in item &&
+                item.expression &&
+                typeof item.expression === 'object' &&
+                'type' in item.expression
+              ) {
+                visit(item.expression as Node);
+              } else if ('type' in item) {
+                visit(item as Node);
+              }
             }
           });
         } else if (child && typeof child === 'object' && 'type' in child) {
