@@ -2,6 +2,7 @@ import path from 'path';
 
 export default class SourceFileFilter {
   static readonly EXTENSIONS = ['ts', 'tsx', 'js', 'jsx'];
+  private static readonly IGNORED_DIRECTORIES = ['node_modules', '.next'];
 
   static isSourceFile(filePath: string) {
     const ext = path.extname(filePath);
@@ -12,9 +13,12 @@ export default class SourceFileFilter {
     // Check if the file is within any of the `srcPath`s
     if (!SourceFileFilter.isWithinSrcPath(filePath, srcPaths)) return false;
 
-    // Ignore files in node_modules unless explicitly asked for
-    if (filePath.includes('/node_modules/')) {
-      return SourceFileFilter.isNodeModulesExplicitlyIncluded(
+    // Ignore files in ignored directories unless explicitly asked for
+    const isInIgnoredDir = SourceFileFilter.IGNORED_DIRECTORIES.some((dir) =>
+      filePath.includes(`/${dir}/`)
+    );
+    if (isInIgnoredDir) {
+      return SourceFileFilter.isIgnoredDirectoryExplicitlyIncluded(
         filePath,
         srcPaths
       );
@@ -27,9 +31,11 @@ export default class SourceFileFilter {
     dirPath: string,
     srcPaths: Array<string>
   ): boolean {
-    // Don't enter node_modules directories unless explicitly included
-    if (path.basename(dirPath) === 'node_modules') {
-      return SourceFileFilter.isNodeModulesExplicitlyIncluded(
+    const dirName = path.basename(dirPath);
+
+    // Don't enter ignored directories unless explicitly included
+    if (SourceFileFilter.IGNORED_DIRECTORIES.includes(dirName)) {
+      return SourceFileFilter.isIgnoredDirectoryExplicitlyIncluded(
         dirPath,
         srcPaths
       );
@@ -46,13 +52,13 @@ export default class SourceFileFilter {
     );
   }
 
-  private static isNodeModulesExplicitlyIncluded(
-    nodeModulesPath: string,
+  private static isIgnoredDirectoryExplicitlyIncluded(
+    ignoredDirPath: string,
     srcPaths: Array<string>
   ): boolean {
-    // node_modules should only be entered if a srcPath explicitly points into it
+    // Ignored directories should only be entered if a srcPath explicitly points into them
     return srcPaths.some((srcPath) =>
-      SourceFileFilter.isWithinPath(srcPath, nodeModulesPath)
+      SourceFileFilter.isWithinPath(srcPath, ignoredDirPath)
     );
   }
 
