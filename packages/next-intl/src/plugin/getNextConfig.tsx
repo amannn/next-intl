@@ -6,6 +6,7 @@ import type {
   TurbopackRuleConfigItemOrShortcut
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
+import SourceFileFilter from './extractor/source/SourceFileFilter.js';
 import hasStableTurboConfig from './hasStableTurboConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -84,7 +85,7 @@ export default function getNextConfig(
     // Add loader for extractor
     let rules: Record<string, TurbopackRuleConfigItemOrShortcut> | undefined;
     if (pluginConfig.experimental?.extractor) {
-      const sourceGlob = '*.{ts,tsx,jsx,js}';
+      const sourceGlob = `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`;
       rules =
         nextConfig?.turbopack?.rules ||
         nextConfig?.experimental?.turbo?.rules ||
@@ -148,9 +149,8 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.extractor) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
-
         config.module.rules.push({
-          test: /\.(tsx?|jsx?)$/,
+          test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
           use: [
             {
               loader: 'next-intl/extractor/extractMessagesLoader',

@@ -1,22 +1,23 @@
 import {promises as fs} from 'fs';
 import path from 'path';
-import SourceFileAnalyzer from './SourceFileAnalyzer.js';
+import SourceFileFilter from './SourceFileFilter.js';
 
 export default class SourceFileScanner {
   private static async walkSourceFiles(
     dir: string,
+    srcPaths: Array<string>,
     acc: Array<string> = []
   ): Promise<Array<string>> {
     const entries = await fs.readdir(dir, {withFileTypes: true});
     for (const entry of entries) {
       const entryPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        if (SourceFileAnalyzer.IGNORED_DIRECTORIES.includes(entryPath)) {
+        if (!SourceFileFilter.shouldEnterDirectory(entryPath, srcPaths)) {
           continue;
         }
-        await SourceFileScanner.walkSourceFiles(entryPath, acc);
+        await SourceFileScanner.walkSourceFiles(entryPath, srcPaths, acc);
       } else {
-        if (SourceFileAnalyzer.isSourceFile(entry.name)) {
+        if (SourceFileFilter.isSourceFile(entry.name)) {
           acc.push(entryPath);
         }
       }
@@ -27,7 +28,9 @@ export default class SourceFileScanner {
   static async getSourceFiles(srcPaths: Array<string>): Promise<Array<string>> {
     return (
       await Promise.all(
-        srcPaths.map((srcPath) => SourceFileScanner.walkSourceFiles(srcPath))
+        srcPaths.map((srcPath) =>
+          SourceFileScanner.walkSourceFiles(srcPath, srcPaths)
+        )
       )
     ).flat();
   }

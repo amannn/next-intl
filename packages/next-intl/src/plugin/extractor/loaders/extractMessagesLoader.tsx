@@ -1,6 +1,7 @@
 import path from 'path';
 import type {LoaderContext} from 'webpack';
 import ExtractionCompiler from '../ExtractionCompiler.js';
+import SourceFileFilter from '../source/SourceFileFilter.js';
 import type {ExtractorConfig} from '../types.js';
 
 // This instance:
@@ -9,7 +10,8 @@ import type {ExtractorConfig} from '../types.js';
 // - Is only lost when the dev server restarts (e.g. due to change to Next.js config)
 let compiler: ExtractionCompiler | undefined;
 
-const cwd = process.cwd();
+// Cache computation
+let srcPaths: Array<string> | undefined;
 
 export default function extractMessagesLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
@@ -17,28 +19,17 @@ export default function extractMessagesLoader(
 ) {
   const options = this.getOptions();
 
+  if (!srcPaths) {
+    srcPaths = (
+      Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath]
+    ).map((srcPath) => path.join(process.cwd(), srcPath));
+  }
+
   // Check if the file is within any of the `srcPath`s.
   // TODO: Remove this in favor of `conditions` in Next.js 16.
   // In this case we can also use `content: /useExtracted/`
-  const srcPaths = (
-    Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath]
-  ).map((srcPath) => path.join(cwd, srcPath));
-
-  const isWithinSrcPath = srcPaths.some(
-    (srcPath) => !path.relative(srcPath, this.resourcePath).startsWith('..')
-  );
-  if (!isWithinSrcPath) return source;
-
-  // Ignore files in node_modules unless explicitly asked for
-  const isInNodeModules = this.resourcePath.includes('/node_modules/');
-  if (isInNodeModules) {
-    const isExplicitlyIncluded = srcPaths.some((srcPath) => {
-      const relativePath = path.relative(srcPath, this.resourcePath);
-      return (
-        !relativePath.startsWith('..') && relativePath.includes('node_modules')
-      );
-    });
-    if (!isExplicitlyIncluded) return source;
+  if (!SourceFileFilter.shouldProcessFile(this.resourcePath, srcPaths)) {
+    return source;
   }
 
   if (!compiler) {
