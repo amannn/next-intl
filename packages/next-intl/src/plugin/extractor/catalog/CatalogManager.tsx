@@ -1,24 +1,11 @@
 import {promises as fs} from 'fs';
-import type {ExtractedMessage, Locale} from '../types.ts';
-import type Formatter from '../formatters/Formatter.ts';
 import path from 'path';
-import MessageExtractor from '../extractor/MessageExtractor.ts';
-import SourceFileScanner from '../source/SourceFileScanner.ts';
-import SaveScheduler from './SaveScheduler.ts';
-
-const formatters = {
-  json: () => import('../formatters/JSONFormatter.ts')
-};
-
-type Format = keyof typeof formatters;
-
-export type ExtractorConfig = {
-  sourceLocale: Locale;
-  messagesPath: string;
-  srcPath: string;
-  formatter: Format;
-  // TODO: Should we let user configure extensions here? A glob?
-};
+import MessageExtractor from '../extractor/MessageExtractor.js';
+import type Formatter from '../formatters/Formatter.js';
+import formatters from '../formatters/index.js';
+import SourceFileScanner from '../source/SourceFileScanner.js';
+import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
+import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager {
   private config: ExtractorConfig;
@@ -132,7 +119,7 @@ export default class CatalogManager {
   async extractFileMessages(
     absoluteFilePath: string,
     source: string
-  ): Promise<{messages: ExtractedMessage[]; source: string}> {
+  ): Promise<{messages: Array<ExtractedMessage>; source: string}> {
     const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
       source

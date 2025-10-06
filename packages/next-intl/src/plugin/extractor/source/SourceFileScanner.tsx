@@ -1,6 +1,6 @@
 import {promises as fs} from 'fs';
 import path from 'path';
-import SourceFileAnalyzer from './SourceFileAnalyzer.ts';
+import SourceFileAnalyzer from './SourceFileAnalyzer.js';
 
 export default class SourceFileScanner {
   private static async walkSourceFiles(

@@ -1,15 +1,19 @@
 import {NextConfig} from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
-import {type ExtractorConfig} from './extractor/catalog/CatalogManager.ts';
 
-const withNextIntl = createNextIntlPlugin();
-
-const extractorConfig: ExtractorConfig = {
+const extractorConfig = {
   sourceLocale: 'en',
   srcPath: './src',
   messagesPath: './messages',
   formatter: 'json'
 };
+
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // @ts-expect-error -- This is fine
+    extractor: extractorConfig
+  }
+});
 
 const config: NextConfig = {
   turbopack: {
@@ -18,17 +22,17 @@ const config: NextConfig = {
       '*.{ts,tsx,jsx,js}': {
         loaders: [
           {
-            loader: './extractor/dist/index.js',
+            loader: 'next-intl/extractor/extractMessagesLoader',
             options: extractorConfig
           }
         ]
-      },
-      '*.json': {
-        loaders: [
-          {loader: './extractor/catalog-loader.js', options: extractorConfig}
-        ],
-        as: '*.js'
       }
+      // '*.json': {
+      //   loaders: [
+      //     {loader: './extractor/catalog-loader.js', options: extractorConfig}
+      //   ],
+      //   as: '*.js'
+      // }
     }
   },
   webpack(config) {
@@ -36,16 +40,16 @@ const config: NextConfig = {
       test: /\.(tsx?|jsx?)$/,
       use: [
         {
-          loader: './extractor/dist/index.js',
+          loader: 'next-intl/extractor/extractMessagesLoader',
           options: extractorConfig
         }
       ]
     });
-    config.module.rules.push({
-      test: /\.json$/,
-      type: 'javascript/auto',
-      use: [{loader: './extractor/catalog-loader.js', options: extractorConfig}]
-    });
+    // config.module.rules.push({
+    //   test: /\.json$/,
+    //   type: 'javascript/auto',
+    //   use: [{loader: './extractor/catalog-loader.js', options: extractorConfig}]
+    // });
 
     return config;
   }

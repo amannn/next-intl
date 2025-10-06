@@ -1,7 +1,7 @@
-import type {LoaderContext} from 'webpack';
-import {ExtractorConfig} from './catalog/CatalogManager';
 import path from 'path';
-import ExtractionCompiler from './ExtractionCompiler';
+import type {LoaderContext} from 'webpack';
+import ExtractionCompiler from '../ExtractionCompiler.js';
+import type {ExtractorConfig} from '../types.js';
 
 // This instance:
 // - Remains available through HMR

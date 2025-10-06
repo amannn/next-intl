@@ -1,8 +1,7 @@
 import {promises as fs} from 'fs';
-import path from 'path';
-import {set} from 'lodash-es';
-import type {ExtractedMessage, Locale} from '../types.ts';
-import type Formatter from './Formatter.ts';
+import fsPath from 'path';
+import type {ExtractedMessage, Locale} from '../types.js';
+import type Formatter from './Formatter.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
@@ -31,7 +30,7 @@ export default class JSONFormatter implements Formatter {
    * This can however be used for target locales.
    */
   async read(targetLocale: Locale): Promise<Array<ExtractedMessage>> {
-    const filePath = path.join(
+    const filePath = fsPath.join(
       this.messagesPath,
       targetLocale + this.EXTENSION
     );
@@ -44,9 +43,9 @@ export default class JSONFormatter implements Formatter {
     locale: Locale,
     messages: Array<ExtractedMessage>
   ): Promise<void> {
-    const filePath = path.join(this.messagesPath, locale + this.EXTENSION);
+    const filePath = fsPath.join(this.messagesPath, locale + this.EXTENSION);
     try {
-      const outputDir = path.dirname(filePath);
+      const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
       const json = this.encode(messages);
       await fs.writeFile(filePath, JSON.stringify(json, null, 2));
@@ -58,7 +57,7 @@ export default class JSONFormatter implements Formatter {
   private encode(messages: Array<ExtractedMessage>): StoredFormat {
     const root: StoredFormat = {};
     for (const message of messages) {
-      set(root, message.id, message.message);
+      this.setNestedProperty(root, message.id, message.message);
     }
     return root;
   }
@@ -66,8 +65,8 @@ export default class JSONFormatter implements Formatter {
   private decode(json: StoredFormat): Array<ExtractedMessage> {
     const messages: Array<ExtractedMessage> = [];
 
-    this.traverseMessages(json, (message, path) => {
-      messages.push({id: path, message});
+    this.traverseMessages(json, (message, id) => {
+      messages.push({id, message});
     });
 
     return messages;
@@ -76,9 +75,9 @@ export default class JSONFormatter implements Formatter {
   private traverseMessages(
     obj: StoredFormat,
     callback: (value: string, path: string) => void,
-    path: string = ''
+    path = ''
   ): void {
-    for (const key in obj) {
+    for (const key of Object.keys(obj)) {
       const newPath = path
         ? path + JSONFormatter.NAMESPACE_SEPARATOR + key
         : key;
@@ -89,5 +88,28 @@ export default class JSONFormatter implements Formatter {
         this.traverseMessages(value, callback, newPath);
       }
     }
+  }
+
+  private setNestedProperty(
+    obj: Record<string, any>,
+    path: string,
+    value: any
+  ): void {
+    const keys = path.split('.');
+    let current = obj;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+      if (
+        !(key in current) ||
+        typeof current[key] !== 'object' ||
+        current[key] === null
+      ) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+
+    current[keys[keys.length - 1]] = value;
   }
 }

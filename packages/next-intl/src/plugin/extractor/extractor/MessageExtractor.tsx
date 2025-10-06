@@ -1,31 +1,31 @@
 import {
-  parse,
-  print,
-  type Program,
-  type Module,
-  type VariableDeclarator,
   type CallExpression,
+  type Identifier,
   type ImportDeclaration,
-  type StringLiteral,
+  type Module,
   type Node,
-  type Identifier
+  type Program,
+  type StringLiteral,
+  type VariableDeclarator,
+  parse,
+  print
 } from '@swc/core';
-import type {ExtractedMessage} from '../types.ts';
-import KeyGenerator from './KeyGenerator.ts';
-import ASTScope from './ASTScope.ts';
+import type {ExtractedMessage} from '../types.js';
+import ASTScope from './ASTScope.js';
+import KeyGenerator from './KeyGenerator.js';
 
 export default class MessageExtractor {
   // TODO: This could grow too large. If we really
   // need this we should use an LRU strategy.
   private compileCache = new Map<
     string,
-    {messages: ExtractedMessage[]; source: string}
+    {messages: Array<ExtractedMessage>; source: string}
   >();
 
   async processFileContent(
     absoluteFilePath: string,
     source: string
-  ): Promise<{messages: ExtractedMessage[]; source: string}> {
+  ): Promise<{messages: Array<ExtractedMessage>; source: string}> {
     const cacheKey = source;
     if (this.compileCache.has(cacheKey)) {
       return this.compileCache.get(cacheKey)!;
@@ -47,7 +47,7 @@ export default class MessageExtractor {
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
-    ) as {messages: ExtractedMessage[]; source: string};
+    ) as {messages: Array<ExtractedMessage>; source: string};
 
     this.compileCache.set(cacheKey, finalResult);
     return finalResult;
@@ -56,24 +56,24 @@ export default class MessageExtractor {
   private async processAST(
     ast: Program | Module,
     filePath?: string
-  ): Promise<{messages: ExtractedMessage[]; source?: string}> {
-    const results: ExtractedMessage[] = [];
+  ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
+    const results: Array<ExtractedMessage> = [];
     let hookLocalName: string | null = null;
 
-    const scopeStack: ASTScope[] = [new ASTScope()];
+    const scopeStack: Array<ASTScope> = [new ASTScope()];
 
-    const currentScope = () => {
+    function currentScope() {
       return scopeStack[scopeStack.length - 1];
-    };
+    }
 
     function visit(node: Node) {
-      if (!node || typeof node !== 'object') return;
+      if (typeof node !== 'object') return;
 
       switch (node.type) {
         case 'ImportDeclaration': {
           const decl = node as ImportDeclaration;
           if (decl.source.value === 'next-intl') {
-            for (const spec of decl.specifiers ?? []) {
+            for (const spec of decl.specifiers) {
               if (spec.type === 'ImportSpecifier') {
                 const importedName = spec.imported?.value;
                 const localName = spec.local.value;
@@ -115,8 +115,8 @@ export default class MessageExtractor {
             const name = call.callee.value;
             const resolved = currentScope().lookup(name);
             if (resolved === 'translator') {
-              const arg0 = call.arguments?.[0]?.expression;
-              if (arg0?.type === 'StringLiteral') {
+              const arg0 = call.arguments[0]?.expression;
+              if (arg0.type === 'StringLiteral') {
                 const stringLiteral = arg0 as StringLiteral;
                 const messageText = stringLiteral.value;
 
@@ -124,7 +124,7 @@ export default class MessageExtractor {
                 results.push({
                   id: KeyGenerator.generate(messageText),
                   message: messageText,
-                  filePath: filePath
+                  filePath
                 });
 
                 // Transform the string literal to the generated key
@@ -142,7 +142,7 @@ export default class MessageExtractor {
         case 'ArrowFunctionExpression':
         case 'BlockStatement': {
           scopeStack.push(new ASTScope(currentScope()));
-          for (const key in node) {
+          for (const key of Object.keys(node)) {
             const child = (node as unknown as Record<string, unknown>)[key];
             if (Array.isArray(child)) {
               child.forEach((item) => {
@@ -168,7 +168,7 @@ export default class MessageExtractor {
       }
 
       // Generic recursion
-      for (const key in node) {
+      for (const key of Object.keys(node)) {
         const child = (node as unknown as Record<string, unknown>)[key];
         if (Array.isArray(child)) {
           child.forEach((item) => {

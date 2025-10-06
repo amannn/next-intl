@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import {throwError} from './utils.js';
-import watchFile from './watchFile.js';
+import {throwError} from '../utils.js';
+import watchFile from '../watchFile.js';
 
 function runOnce(fn: () => void) {
   if (process.env._NEXT_INTL_COMPILE_MESSAGES === '1') {

@@ -84,6 +84,11 @@
         "default": "./dist/cjs/development/plugin.cjs"
       },
       "default": "./dist/esm/production/plugin.js"
+    },
+    "./extractor/extractMessagesLoader": {
+      "types": "./dist/types/extractor/extractMessagesLoader.d.ts",
+      "development": "./dist/esm/development/extractor/extractMessagesLoader.js",
+      "default": "./dist/esm/production/extractor/extractMessagesLoader.js"
     }
   },
   "files": [
@@ -111,6 +116,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
+    "@swc/core": "^1.13.19",
     "negotiator": "^1.0.0",
     "use-intl": "workspace:^"
   },
@@ -133,6 +139,7 @@
     "@types/node": "^20.14.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/webpack": "^5.28.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-8e3b87c-20240822",

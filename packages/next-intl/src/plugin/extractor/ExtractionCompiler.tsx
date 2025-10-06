@@ -1,5 +1,5 @@
-import CatalogManager, {ExtractorConfig} from './catalog/CatalogManager';
-import {ExtractedMessage} from './types';
+import CatalogManager from './catalog/CatalogManager.js';
+import type {ExtractedMessage, ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler {
   private manager: CatalogManager;
@@ -25,15 +25,9 @@ export default class ExtractionCompiler {
       this.initialScanPromise = undefined;
     }
 
-    // Get messages before extraction
     const beforeMessages = this.manager.getFileMessages(resourcePath);
-
-    // Extract messages
     const result = await this.manager.extractFileMessages(resourcePath, source);
-
-    // Get messages after extraction
     const afterMessages = this.manager.getFileMessages(resourcePath);
-
     const changed = this.haveMessagesChanged(beforeMessages, afterMessages);
 
     if (this.isDevelopment && changed) {

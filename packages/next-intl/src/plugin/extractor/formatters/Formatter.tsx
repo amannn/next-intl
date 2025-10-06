@@ -1,4 +1,4 @@
-import type {ExtractedMessage, Locale} from '../types';
+import type {ExtractedMessage, Locale} from '../types.js';
 
 type Formatter = {
   EXTENSION: string;

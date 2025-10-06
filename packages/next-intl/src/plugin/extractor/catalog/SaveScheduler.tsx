@@ -9,8 +9,8 @@ export default class SaveScheduler<T> {
   private isSaving = false;
   private delayMs: number;
   private pendingResolvers: Array<{
-    resolve: (value: T) => void;
-    reject: (error: unknown) => void;
+    resolve(value: T): void;
+    reject(error: unknown): void;
   }> = [];
 
   constructor(delayMs = 50) {

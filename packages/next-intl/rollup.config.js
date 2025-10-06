@@ -30,7 +30,9 @@ export default [
       middleware: 'src/middleware.tsx',
       routing: 'src/routing.tsx',
       plugin: 'src/plugin.tsx',
-      config: 'src/config.tsx'
+      config: 'src/config.tsx',
+      'extractor/extractMessagesLoader':
+        'src/plugin/extractor/loaders/extractMessagesLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),
