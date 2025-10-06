@@ -24,7 +24,11 @@ export default class SourceFileScanner {
     return acc;
   }
 
-  static async getSourceFiles(srcPath: string): Promise<Array<string>> {
-    return await SourceFileScanner.walkSourceFiles(srcPath);
+  static async getSourceFiles(srcPaths: Array<string>): Promise<Array<string>> {
+    return (
+      await Promise.all(
+        srcPaths.map((srcPath) => SourceFileScanner.walkSourceFiles(srcPath))
+      )
+    ).flat();
   }
 }

@@ -5,7 +5,7 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     extractor: {
       sourceLocale: 'en',
-      srcPath: './src',
+      srcPath: './',
       messagesPath: './messages',
       formatter: 'json'
     }

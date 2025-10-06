@@ -67,8 +67,13 @@ export default class CatalogManager {
     return process.cwd();
   }
 
-  getSrcPath() {
-    return path.join(this.getProjectRoot(), this.config.srcPath);
+  getSrcPaths(): Array<string> {
+    const projectRoot = this.getProjectRoot();
+    return (
+      Array.isArray(this.config.srcPath)
+        ? this.config.srcPath
+        : [this.config.srcPath]
+    ).map((srcPath) => path.join(projectRoot, srcPath));
   }
 
   getFileMessages(
@@ -87,9 +92,10 @@ export default class CatalogManager {
   }
 
   private async loadSourceMessages() {
-    const sourceFiles = await SourceFileScanner.getSourceFiles(
-      this.getSrcPath()
+    const sourceFiles = await Promise.all(
+      SourceFileScanner.getSourceFiles(this.getSrcPaths())
     );
+
     await Promise.all(
       sourceFiles.map(async (filePath) =>
         this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
@@ -148,7 +154,7 @@ export default class CatalogManager {
 
   private async saveImpl(): Promise<number> {
     // Sort and group by file paths
-    // TODO: Is this always wanted?
+    // TODO: Is this always wanted? Move to formatter.
     const messages = Array.from(this.messagesByFile.keys())
       .sort()
       .map((filePath) =>

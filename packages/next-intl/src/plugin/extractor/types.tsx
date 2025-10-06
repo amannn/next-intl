@@ -17,7 +17,7 @@ export type ExtractedMessage = {
 export type ExtractorConfig = {
   sourceLocale: string;
   messagesPath: string;
-  srcPath: string;
+  srcPath: string | Array<string>;
   formatter: keyof typeof formatters;
   // TODO: Should we let user configure extensions here? A glob?
 };

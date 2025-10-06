@@ -5,6 +5,7 @@ import type {
   TurbopackRuleConfigItem,
   TurbopackRuleConfigItemOrShortcut
 } from 'next/dist/server/config-shared.js';
+import type {Configuration} from 'webpack';
 import hasStableTurboConfig from './hasStableTurboConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -131,18 +132,23 @@ export default function getNextConfig(
       };
     }
   } else {
-    nextIntlConfig.webpack = function webpack(
-      ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
-    ) {
+    nextIntlConfig.webpack = function webpack(config: Configuration, context) {
+      if (!config.resolve) config.resolve = {};
+      if (!config.resolve.alias) config.resolve.alias = {};
+
       // Assign alias for `next-intl/config`
       // (Webpack requires absolute paths)
-      config.resolve.alias['next-intl/config'] = path.resolve(
-        config.context,
-        resolveI18nPath(pluginConfig.requestConfig, config.context)
-      );
+      (config.resolve.alias as Record<string, string>)['next-intl/config'] =
+        path.resolve(
+          config.context!,
+          resolveI18nPath(pluginConfig.requestConfig, config.context)
+        );
 
       // Add loader for extractor
       if (pluginConfig.experimental?.extractor) {
+        if (!config.module) config.module = {};
+        if (!config.module.rules) config.module.rules = [];
+
         config.module.rules.push({
           test: /\.(tsx?|jsx?)$/,
           use: [
@@ -155,7 +161,7 @@ export default function getNextConfig(
       }
 
       if (typeof nextConfig?.webpack === 'function') {
-        return nextConfig.webpack(config, options);
+        return nextConfig.webpack(config, context);
       }
 
       return config;
