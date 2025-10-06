@@ -14,21 +14,21 @@ import type {ExtractedMessage} from '../types.ts';
 import KeyGenerator from './KeyGenerator.ts';
 import ASTScope from './ASTScope.ts';
 
-// TODO: This could grow too large. If we really
-// need this we should use an LRU strategy.
-const compileCache = new Map<
-  string,
-  {messages: ExtractedMessage[]; source: string}
->();
-
 export default class MessageExtractor {
-  static async processFileContent(
+  // TODO: This could grow too large. If we really
+  // need this we should use an LRU strategy.
+  private compileCache = new Map<
+    string,
+    {messages: ExtractedMessage[]; source: string}
+  >();
+
+  async processFileContent(
     absoluteFilePath: string,
     source: string
   ): Promise<{messages: ExtractedMessage[]; source: string}> {
     const cacheKey = source;
-    if (compileCache.has(cacheKey)) {
-      return compileCache.get(cacheKey)!;
+    if (this.compileCache.has(cacheKey)) {
+      return this.compileCache.get(cacheKey)!;
     }
 
     // Shortcut parsing if hook is not used
@@ -45,20 +45,17 @@ export default class MessageExtractor {
       decorators: true
     });
 
-    const processResult = await MessageExtractor.processAST(
-      ast,
-      absoluteFilePath
-    );
+    const processResult = await this.processAST(ast, absoluteFilePath);
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
     ) as {messages: ExtractedMessage[]; source: string};
 
-    compileCache.set(cacheKey, finalResult);
+    this.compileCache.set(cacheKey, finalResult);
     return finalResult;
   }
 
-  private static async processAST(
+  private async processAST(
     ast: Program | Module,
     filePath?: string
   ): Promise<{messages: ExtractedMessage[]; source?: string}> {

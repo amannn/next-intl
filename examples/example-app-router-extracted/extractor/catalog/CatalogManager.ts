@@ -34,17 +34,18 @@ export default class CatalogManager {
   private translationsByTargetLocale: Map<Locale, Map<string, string>> =
     new Map();
 
-  // Cached
+  private saveScheduler: SaveScheduler<number>;
+
+  // Caching
   private formatter?: Formatter;
   private targetLocales?: Array<Locale>;
-
-  // Save scheduling
-  private saveScheduler: SaveScheduler<number>;
+  private messageExtractor: MessageExtractor;
 
   constructor(config: ExtractorConfig) {
     this.config = config;
     this.messagesByFile = new Map();
     this.saveScheduler = new SaveScheduler<number>(50);
+    this.messageExtractor = new MessageExtractor();
   }
 
   private async getFormatter() {
@@ -132,7 +133,7 @@ export default class CatalogManager {
     absoluteFilePath: string,
     source: string
   ): Promise<{messages: ExtractedMessage[]; source: string}> {
-    const result = await MessageExtractor.processFileContent(
+    const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
       source
     );

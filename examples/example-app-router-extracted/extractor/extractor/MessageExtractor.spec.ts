@@ -27,7 +27,10 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -54,7 +57,10 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -81,7 +87,10 @@ function Component() {
     translate("Hello!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -110,7 +119,10 @@ function Component() {
     t2("greeting");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations, useTranslations } from 'next-intl';
 
@@ -142,7 +154,10 @@ function Component() {
 const t = (msg) => msg;
 t("Should not be transformed");`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -186,7 +201,10 @@ function Component() {
     );
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -230,7 +248,10 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -260,7 +281,10 @@ function Component() {
     t("Goodbye!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -293,7 +317,10 @@ function Component() {
     t("Test message!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -320,7 +347,10 @@ function Component() {
     t("Hello!");
 }`;
 
-    const result = await MessageExtractor.processFileContent('test.tsx', input);
+    const result = await new MessageExtractor().processFileContent(
+      'test.tsx',
+      input
+    );
 
     // Should return original source unchanged
     assert.strictEqual(result.source, input);
