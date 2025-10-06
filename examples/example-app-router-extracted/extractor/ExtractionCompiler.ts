@@ -4,7 +4,7 @@ import {ExtractedMessage} from './types';
 export default class ExtractionCompiler {
   private manager: CatalogManager;
   private isDevelopment: boolean;
-  private initialScanDone: boolean = false;
+  private initialScanPromise: Promise<void> | undefined;
 
   constructor(config: ExtractorConfig) {
     this.manager = new CatalogManager(config);
@@ -12,28 +12,24 @@ export default class ExtractionCompiler {
     // We only want to emit messages continuously in development.
     // In production, we can do a single extraction pass.
     this.isDevelopment = process.env.NODE_ENV === 'development';
+
+    // Kick off the initial scan as early as possible,
+    // while awaiting it in `compile`. This also ensure
+    // we're only scanning once.
+    this.initialScanPromise = this.performInitialScan();
   }
 
   async compile(resourcePath: string, source: string) {
-    // Lazy init
-    if (!this.initialScanDone) {
-      // We can't rely on all files being compiled (e.g. due to persistent
-      // caching), so loading the messages initially is necessary.
-      await this.manager.loadMessages();
-
-      await this.manager.save();
-      this.initialScanDone = true;
+    if (this.initialScanPromise) {
+      await this.initialScanPromise;
+      this.initialScanPromise = undefined;
     }
 
     // Get messages before extraction
     const beforeMessages = this.manager.getFileMessages(resourcePath);
 
     // Extract messages
-    const result = await this.manager.extractFileMessages(
-      resourcePath,
-      source,
-      this.isDevelopment ? 'both' : 'transform'
-    );
+    const result = await this.manager.extractFileMessages(resourcePath, source);
     console.log(`   Extracted ${result.messages.length} message(s)`);
 
     // Get messages after extraction
@@ -49,7 +45,14 @@ export default class ExtractionCompiler {
     return result.source;
   }
 
-  haveMessagesChanged(
+  private async performInitialScan(): Promise<void> {
+    // We can't rely on all files being compiled (e.g. due to persistent
+    // caching), so loading the messages initially is necessary.
+    await this.manager.loadMessages();
+    await this.manager.save();
+  }
+
+  private haveMessagesChanged(
     messages1: Map<string, ExtractedMessage> | undefined,
     messages2: Map<string, ExtractedMessage> | undefined
   ): boolean {

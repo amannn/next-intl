@@ -1,6 +1,6 @@
 import {test, describe} from 'node:test';
 import assert from 'node:assert';
-import MessageExtractor, {ExtractorMode} from './MessageExtractor.ts';
+import MessageExtractor from './MessageExtractor.ts';
 
 function normalizeCode(code: string): string {
   return code
@@ -27,11 +27,7 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -41,7 +37,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '+YJVTi',
+        message: 'Hey!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('with_let', async () => {
@@ -52,11 +54,7 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -66,7 +64,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '+YJVTi',
+        message: 'Hey!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('renamed_var', async () => {
@@ -77,11 +81,7 @@ function Component() {
     translate("Hello!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -91,7 +91,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: 'OpKKos',
+        message: 'Hello!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('use_translations_already_present', async () => {
@@ -104,11 +110,7 @@ function Component() {
     t2("greeting");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations, useTranslations } from 'next-intl';
 
@@ -120,7 +122,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: 'piskIR',
+        message: 'Hello from extracted!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('t_out_of_scope', async () => {
@@ -134,11 +142,7 @@ function Component() {
 const t = (msg) => msg;
 t("Should not be transformed");`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -151,7 +155,13 @@ const t = (msg) => msg;
 t("Should not be transformed");`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '+YJVTi',
+        message: 'Hey!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('real_world', async () => {
@@ -176,11 +186,7 @@ function Component() {
     );
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -202,7 +208,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '9WRlF4',
+        message: 'Send',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   test('renamed', async () => {
@@ -213,11 +225,7 @@ function Component() {
     t("Hey!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -227,7 +235,13 @@ function Component() {
 }`;
 
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '+YJVTi',
+        message: 'Hey!',
+        filePath: 'test.tsx'
+      }
+    ]);
   });
 
   // Additional tests for extract and both modes
@@ -241,16 +255,29 @@ function Component() {
     t("Goodbye!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.EXTRACT
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
-    assert.strictEqual(result.messages.length, 2);
-    assert.strictEqual(result.messages[0].message, 'Hello World!');
-    assert.strictEqual(result.messages[1].message, 'Goodbye!');
-    assert.strictEqual(result.source, input); // Source should be unchanged
+    const expected = `import { useTranslations } from 'next-intl';
+
+function Component() {
+    const t = useTranslations();
+    t("hhhE1n");
+    t("NnE1NP");
+}`;
+
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: 'hhhE1n',
+        message: 'Hello World!',
+        filePath: 'test.tsx'
+      },
+      {
+        id: 'NnE1NP',
+        message: 'Goodbye!',
+        filePath: 'test.tsx'
+      }
+    ]);
+    assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
   });
 
   test('both_mode', async () => {
@@ -261,11 +288,7 @@ function Component() {
     t("Test message!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.BOTH
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     const expected = `import { useTranslations } from 'next-intl';
 
@@ -274,8 +297,13 @@ function Component() {
     t("7XEV7l");
 }`;
 
-    assert.strictEqual(result.messages.length, 1);
-    assert.strictEqual(result.messages[0].message, 'Test message!');
+    assert.deepStrictEqual(result.messages, [
+      {
+        id: '7XEV7l',
+        message: 'Test message!',
+        filePath: 'test.tsx'
+      }
+    ]);
     assert.strictEqual(normalizeCode(result.source), normalizeCode(expected));
   });
 
@@ -287,14 +315,10 @@ function Component() {
     t("Hello!");
 }`;
 
-    const result = await MessageExtractor.processFileContent(
-      'test.tsx',
-      input,
-      ExtractorMode.TRANSFORM
-    );
+    const result = await MessageExtractor.processFileContent('test.tsx', input);
 
     // Should return original source unchanged
     assert.strictEqual(result.source, input);
-    assert.strictEqual(result.messages.length, 0);
+    assert.deepStrictEqual(result.messages, []);
   });
 });

@@ -2,9 +2,7 @@ import {promises as fs} from 'fs';
 import type {ExtractedMessage, Locale} from '../types.ts';
 import type Formatter from '../formatters/Formatter.ts';
 import path from 'path';
-import MessageExtractor, {
-  ExtractorMode
-} from '../extractor/MessageExtractor.ts';
+import MessageExtractor from '../extractor/MessageExtractor.ts';
 import SourceFileScanner from '../source/SourceFileScanner.ts';
 import SaveScheduler from './SaveScheduler.ts';
 
@@ -106,11 +104,7 @@ export default class CatalogManager {
     );
     await Promise.all(
       sourceFiles.map(async (filePath) =>
-        this.extractFileMessages(
-          filePath,
-          await fs.readFile(filePath, 'utf8'),
-          ExtractorMode.EXTRACT
-        )
+        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
       )
     );
   }
@@ -136,15 +130,11 @@ export default class CatalogManager {
 
   async extractFileMessages(
     absoluteFilePath: string,
-    source: string,
-    mode: ExtractorMode = ExtractorMode.EXTRACT
+    source: string
   ): Promise<{messages: ExtractedMessage[]; source: string}> {
-    console.log('extractFileMessages', absoluteFilePath);
-
     const result = await MessageExtractor.processFileContent(
       absoluteFilePath,
-      source,
-      mode
+      source
     );
 
     // If messages were removed from a file, we need to clean them up

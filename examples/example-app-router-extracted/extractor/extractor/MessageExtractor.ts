@@ -14,14 +14,6 @@ import type {ExtractedMessage} from '../types.ts';
 import KeyGenerator from './KeyGenerator.ts';
 import ASTScope from './ASTScope.ts';
 
-export const ExtractorMode = {
-  EXTRACT: 'extract',
-  TRANSFORM: 'transform',
-  BOTH: 'both'
-} as const;
-
-export type ExtractorMode = (typeof ExtractorMode)[keyof typeof ExtractorMode];
-
 // TODO: This could grow too large. If we really
 // need this we should use an LRU strategy.
 const compileCache = new Map<
@@ -32,10 +24,9 @@ const compileCache = new Map<
 export default class MessageExtractor {
   static async processFileContent(
     absoluteFilePath: string,
-    source: string,
-    mode: ExtractorMode
+    source: string
   ): Promise<{messages: ExtractedMessage[]; source: string}> {
-    const cacheKey = `${mode}:${source}`;
+    const cacheKey = source;
     if (compileCache.has(cacheKey)) {
       return compileCache.get(cacheKey)!;
     }
@@ -44,6 +35,8 @@ export default class MessageExtractor {
     if (!source.includes('useExtracted')) {
       return {messages: [], source};
     }
+
+    console.log('MessageExtractor#processFileContent', absoluteFilePath);
 
     const ast = await parse(source, {
       syntax: 'typescript',
@@ -54,7 +47,6 @@ export default class MessageExtractor {
 
     const processResult = await MessageExtractor.processAST(
       ast,
-      mode,
       absoluteFilePath
     );
 
@@ -68,7 +60,6 @@ export default class MessageExtractor {
 
   private static async processAST(
     ast: Program | Module,
-    mode: ExtractorMode,
     filePath?: string
   ): Promise<{messages: ExtractedMessage[]; source?: string}> {
     const results: ExtractedMessage[] = [];
@@ -79,14 +70,6 @@ export default class MessageExtractor {
     const currentScope = () => {
       return scopeStack[scopeStack.length - 1];
     };
-
-    function shouldTransform(): boolean {
-      return mode === ExtractorMode.TRANSFORM || mode === ExtractorMode.BOTH;
-    }
-
-    function shouldCollect(): boolean {
-      return mode === ExtractorMode.EXTRACT || mode === ExtractorMode.BOTH;
-    }
 
     function visit(node: Node) {
       if (!node || typeof node !== 'object') return;
@@ -105,11 +88,9 @@ export default class MessageExtractor {
                   localName === 'useExtracted'
                 ) {
                   hookLocalName = localName;
-                  if (shouldTransform()) {
-                    // Transform import to useTranslations
-                    spec.imported = undefined;
-                    spec.local.value = 'useTranslations';
-                  }
+                  // Transform import to useTranslations
+                  spec.imported = undefined;
+                  spec.local.value = 'useTranslations';
                 }
               }
             }
@@ -126,10 +107,8 @@ export default class MessageExtractor {
           ) {
             if (decl.id.type === 'Identifier') {
               currentScope().define(decl.id.value, 'translator');
-              if (shouldTransform()) {
-                // Transform the call to useTranslations
-                (decl.init.callee as Identifier).value = 'useTranslations';
-              }
+              // Transform the call to useTranslations
+              (decl.init.callee as Identifier).value = 'useTranslations';
             }
           }
           break;
@@ -146,20 +125,17 @@ export default class MessageExtractor {
                 const stringLiteral = arg0 as StringLiteral;
                 const messageText = stringLiteral.value;
 
-                if (shouldCollect()) {
-                  results.push({
-                    id: KeyGenerator.generate(messageText),
-                    message: messageText,
-                    filePath: filePath
-                  });
-                }
+                // Extract the message
+                results.push({
+                  id: KeyGenerator.generate(messageText),
+                  message: messageText,
+                  filePath: filePath
+                });
 
-                if (shouldTransform()) {
-                  // Transform the string literal to the generated key
-                  const key = KeyGenerator.generate(messageText);
-                  stringLiteral.value = key;
-                  stringLiteral.raw = undefined;
-                }
+                // Transform the string literal to the generated key
+                const key = KeyGenerator.generate(messageText);
+                stringLiteral.value = key;
+                stringLiteral.raw = undefined;
               }
             }
           }
@@ -207,7 +183,7 @@ export default class MessageExtractor {
 
     return {
       messages: results,
-      source: shouldTransform() ? (await print(ast, {})).code : undefined
+      source: (await print(ast, {})).code
     };
   }
 }

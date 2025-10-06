@@ -19,11 +19,13 @@ export default function extractMessagesLoader(
 
   // Check if the file is within the `srcPath`.
   // TODO: Remove this in favor of `conditions` in Next.js 16.
+  // In this case we can also use `content: /useExtracted/`
   const srcPath = path.join(cwd, options.srcPath);
   const isWithinSrcPath = !path
     .relative(srcPath, this.resourcePath)
     .startsWith('..');
   if (!isWithinSrcPath) return source;
+  // TODO: Ignore node_modules
 
   if (!compiler) {
     compiler = new ExtractionCompiler(options);

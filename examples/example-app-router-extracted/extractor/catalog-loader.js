@@ -2,8 +2,6 @@ import path from 'path';
 
 const cwd = process.cwd();
 
-// This loader runs at build time for all possible values
-
 /**
  * Parses and optimizes catalog files.
  *
