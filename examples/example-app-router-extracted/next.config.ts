@@ -6,33 +6,32 @@ const withNextIntl = createNextIntlPlugin();
 
 const extractorConfig: ExtractorConfig = {
   sourceLocale: 'en',
-  messagesPath: './messages',
   srcPath: './src',
+  messagesPath: './messages',
   formatter: 'json'
 };
-
-function createExtractorRule() {
-  return {
-    loaders: [
-      {
-        loader: './extractor/dist/index.js',
-        options: extractorConfig
-      }
-    ]
-  };
-}
 
 const config: NextConfig = {
   turbopack: {
     rules: {
-      '*.tsx': createExtractorRule(),
-      '*.ts': createExtractorRule(),
-      '*.jsx': createExtractorRule(),
-      '*.js': createExtractorRule()
+      // './src/*.{ts,tsx,jsx,js}': (might work in canary)
+      '*.{ts,tsx,jsx,js}': {
+        loaders: [
+          {
+            loader: './extractor/dist/index.js',
+            options: extractorConfig
+          }
+        ]
+      },
+      '*.json': {
+        loaders: [
+          {loader: './extractor/catalog-loader.js', options: extractorConfig}
+        ],
+        as: '*.js'
+      }
     }
   },
   webpack(config) {
-    // Add the extractor loader for production builds
     config.module.rules.push({
       test: /\.(tsx?|jsx?)$/,
       use: [
@@ -41,6 +40,11 @@ const config: NextConfig = {
           options: extractorConfig
         }
       ]
+    });
+    config.module.rules.push({
+      test: /\.json$/,
+      type: 'javascript/auto',
+      use: [{loader: './extractor/catalog-loader.js', options: extractorConfig}]
     });
 
     return config;
