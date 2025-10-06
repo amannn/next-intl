@@ -92,8 +92,8 @@ export default class CatalogManager {
   }
 
   private async loadSourceMessages() {
-    const sourceFiles = await Promise.all(
-      SourceFileScanner.getSourceFiles(this.getSrcPaths())
+    const sourceFiles = await SourceFileScanner.getSourceFiles(
+      this.getSrcPaths()
     );
 
     await Promise.all(
