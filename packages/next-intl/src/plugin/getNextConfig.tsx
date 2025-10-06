@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
+import type {
+  TurbopackRuleConfigItem,
+  TurbopackRuleConfigItemOrShortcut
+} from 'next/dist/server/config-shared.js';
 import hasStableTurboConfig from './hasStableTurboConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -61,7 +65,6 @@ export default function getNextConfig(
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
 
-  // Assign alias for `next-intl/config`
   if (useTurbo) {
     if (pluginConfig.requestConfig?.startsWith('/')) {
       throwError(
@@ -70,15 +73,46 @@ export default function getNextConfig(
       );
     }
 
+    // Assign alias for `next-intl/config`
     const resolveAlias = {
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
 
+    // Add loader for extractor
+    let rules: Record<string, TurbopackRuleConfigItemOrShortcut> | undefined;
+    if (pluginConfig.experimental?.extractor) {
+      const sourceGlob = '*.{ts,tsx,jsx,js}';
+      rules =
+        nextConfig?.turbopack?.rules ||
+        nextConfig?.experimental?.turbo?.rules ||
+        {};
+      const sourceRule: TurbopackRuleConfigItem = {
+        loaders: [
+          {
+            loader: 'next-intl/extractor/extractMessagesLoader',
+            options: pluginConfig.experimental.extractor
+          }
+        ]
+      };
+      if (rules[sourceGlob]) {
+        if (Array.isArray(rules[sourceGlob])) {
+          // @ts-expect-error -- This is only supported in Next.js 16
+          rules[sourceGlob].push(sourceRule);
+        } else {
+          // @ts-expect-error -- This is only supported in Next.js 16
+          rules[sourceGlob].push(sourceRule);
+        }
+      } else {
+        rules[sourceGlob] = sourceRule;
+      }
+    }
+
     if (hasStableTurboConfig && !nextConfig?.experimental?.turbo) {
       nextIntlConfig.turbopack = {
         ...nextConfig?.turbopack,
+        rules,
         resolveAlias: {
           ...nextConfig?.turbopack?.resolveAlias,
           ...resolveAlias
@@ -100,14 +134,30 @@ export default function getNextConfig(
     nextIntlConfig.webpack = function webpack(
       ...[config, options]: Parameters<NonNullable<NextConfig['webpack']>>
     ) {
-      // Webpack requires absolute paths
+      // Assign alias for `next-intl/config`
+      // (Webpack requires absolute paths)
       config.resolve.alias['next-intl/config'] = path.resolve(
         config.context,
         resolveI18nPath(pluginConfig.requestConfig, config.context)
       );
+
+      // Add loader for extractor
+      if (pluginConfig.experimental?.extractor) {
+        config.module.rules.push({
+          test: /\.(tsx?|jsx?)$/,
+          use: [
+            {
+              loader: 'next-intl/extractor/extractMessagesLoader',
+              options: pluginConfig.experimental.extractor
+            }
+          ]
+        });
+      }
+
       if (typeof nextConfig?.webpack === 'function') {
         return nextConfig.webpack(config, options);
       }
+
       return config;
     };
   }
