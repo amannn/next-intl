@@ -30,7 +30,6 @@ export default class ExtractionCompiler {
 
     // Extract messages
     const result = await this.manager.extractFileMessages(resourcePath, source);
-    console.log(`   Extracted ${result.messages.length} message(s)`);
 
     // Get messages after extraction
     const afterMessages = this.manager.getFileMessages(resourcePath);
@@ -38,7 +37,6 @@ export default class ExtractionCompiler {
     const changed = this.haveMessagesChanged(beforeMessages, afterMessages);
 
     if (this.isDevelopment && changed) {
-      console.log(`   Messages changed`);
       void this.manager.save();
     }
 

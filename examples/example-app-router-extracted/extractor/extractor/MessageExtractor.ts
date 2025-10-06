@@ -36,8 +36,6 @@ export default class MessageExtractor {
       return {messages: [], source};
     }
 
-    console.log('MessageExtractor#processFileContent', absoluteFilePath);
-
     const ast = await parse(source, {
       syntax: 'typescript',
       tsx: true,
