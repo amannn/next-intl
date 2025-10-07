@@ -1,14 +1,18 @@
-import {expect, it} from 'vitest';
+import {describe, expect, it} from 'vitest';
 import MessageExtractor from './MessageExtractor.js';
 
-async function process(code: string) {
-  return await new MessageExtractor().processFileContent('test.tsx', code);
-}
+describe('development', () => {
+  async function process(code: string) {
+    return await new MessageExtractor(true).processFileContent(
+      'test.tsx',
+      code
+    );
+  }
 
-it('can extract a simple message', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a simple message', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -16,8 +20,8 @@ it('can extract a simple message', async () => {
       t("Hey!");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -29,17 +33,17 @@ it('can extract a simple message', async () => {
       "source": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi");
+        t("+YJVTi", undefined, undefined, "Hey!");
     }
     ",
     }
   `);
-});
+  });
 
-it('can extract a message with a let variable', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a message with a let variable', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -47,8 +51,8 @@ it('can extract a message with a let variable', async () => {
       t("Hey!");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -60,17 +64,17 @@ it('can extract a message with a let variable', async () => {
       "source": "import { useTranslations } from 'next-intl';
     function Component() {
         let t = useTranslations();
-        t("+YJVTi");
+        t("+YJVTi", undefined, undefined, "Hey!");
     }
     ",
     }
   `);
-});
+  });
 
-it('can extract a message with a renamed variable', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a message with a renamed variable', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -78,8 +82,8 @@ it('can extract a message with a renamed variable', async () => {
       translate("Hello!");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -91,17 +95,17 @@ it('can extract a message with a renamed variable', async () => {
       "source": "import { useTranslations } from 'next-intl';
     function Component() {
         const translate = useTranslations();
-        translate("OpKKos");
+        translate("OpKKos", undefined, undefined, "Hello!");
     }
     ",
     }
   `);
-});
+  });
 
-it('can extract a message with useTranslations already present', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a message with useTranslations already present', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted, useTranslations} from 'next-intl';
 
     function Component() {
@@ -111,8 +115,8 @@ it('can extract a message with useTranslations already present', async () => {
       t2("greeting");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -125,18 +129,18 @@ it('can extract a message with useTranslations already present', async () => {
     function Component() {
         const t = useTranslations();
         const t2 = useTranslations();
-        t("piskIR");
+        t("piskIR", undefined, undefined, "Hello from extracted!");
         t2("greeting");
     }
     ",
     }
   `);
-});
+  });
 
-it('can extract a message with t out of scope', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a message with t out of scope', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -147,8 +151,8 @@ it('can extract a message with t out of scope', async () => {
     const t = (msg) => msg;
     t("Should not be transformed");
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -160,19 +164,19 @@ it('can extract a message with t out of scope', async () => {
       "source": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi");
+        t("+YJVTi", undefined, undefined, "Hey!");
     }
     const t = (msg)=>msg;
     t("Should not be transformed");
     ",
     }
   `);
-});
+  });
 
-it('can extract messages from an event handler and JSX', async () => {
-  expect(
-    await process(
-      `
+  it('can extract messages from an event handler and JSX', async () => {
+    expect(
+      await process(
+        `
     import {useState} from 'react';
     import {useExtracted} from 'next-intl';
 
@@ -194,8 +198,8 @@ it('can extract messages from an event handler and JSX', async () => {
       );
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -215,11 +219,11 @@ it('can extract messages from an event handler and JSX', async () => {
         const [notification, setNotification] = useState();
         const t = useTranslations();
         function onClick() {
-            setNotification(t("+1F2If"));
+            setNotification(t("+1F2If", undefined, undefined, "Successfully sent!"));
         }
         return (<div>
               <button onClick={onClick}>
-                {t("9WRlF4")}
+                {t("9WRlF4", undefined, undefined, "Send")}
               </button>
               {notification}
             </div>);
@@ -227,12 +231,12 @@ it('can extract messages from an event handler and JSX', async () => {
     ",
     }
   `);
-});
+  });
 
-it('can extract a message with a renamed hook', async () => {
-  expect(
-    await process(
-      `
+  it('can extract a message with a renamed hook', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted as useInlined} from 'next-intl';
 
     function Component() {
@@ -240,8 +244,8 @@ it('can extract a message with a renamed hook', async () => {
       t("Hey!");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -253,17 +257,17 @@ it('can extract a message with a renamed hook', async () => {
       "source": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi");
+        t("+YJVTi", undefined, undefined, "Hey!");
     }
     ",
     }
   `);
-});
+  });
 
-it('supports passing values', async () => {
-  expect(
-    await process(
-      `
+  it('supports passing values', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -271,8 +275,8 @@ it('supports passing values', async () => {
       t('Hello, {name}!', {name: 'Alice'});
     }
     `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -286,17 +290,17 @@ it('supports passing values', async () => {
         const t = useTranslations();
         t("tBFOH1", {
             name: 'Alice'
-        });
+        }, undefined, "Hello, {name}!");
     }
     ",
     }
   `);
-});
+  });
 
-it('supports passing an inline date formatter', async () => {
-  expect(
-    await process(
-      `
+  it('supports passing an inline date formatter', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -304,8 +308,8 @@ it('supports passing an inline date formatter', async () => {
       t('{date, date, short}!', {date: new Date()}, {short: {dateStyle: 'short'}});
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -323,9 +327,43 @@ it('supports passing an inline date formatter', async () => {
             short: {
                 dateStyle: 'short'
             }
-        });
+        }, "{date, date, short}!");
     }
     ",
     }
   `);
+  });
+});
+
+describe('production', () => {
+  it('does not add fallback message', async () => {
+    expect(
+      await new MessageExtractor(false).processFileContent(
+        'test.tsx',
+        `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t("Hey!");
+    }
+  `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "+YJVTi",
+            "message": "Hey!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("+YJVTi");
+      }
+      ",
+      }
+    `);
+  });
 });

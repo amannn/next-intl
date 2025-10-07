@@ -33,7 +33,10 @@ export default function extractMessagesLoader(
   }
 
   if (!compiler) {
-    compiler = new ExtractionCompiler(options);
+    compiler = new ExtractionCompiler(options, {
+      // Avoid rollup's `replace` plugin to compile this away
+      isDevelopment: process.env['NODE_ENV'.trim()] === 'development'
+    });
   }
 
   const callback = this.async();

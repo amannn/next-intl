@@ -16,6 +16,12 @@ import KeyGenerator from './KeyGenerator.js';
 import LRUCache from './LRUCache.js';
 
 export default class MessageExtractor {
+  private isDevelopment: boolean;
+
+  constructor(isDevelopment: boolean) {
+    this.isDevelopment = isDevelopment;
+  }
+
   private compileCache = new LRUCache<{
     messages: Array<ExtractedMessage>;
     source: string;
@@ -57,6 +63,7 @@ export default class MessageExtractor {
   ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
     const results: Array<ExtractedMessage> = [];
     let hookLocalName: string | null = null;
+    const isDevelopment = this.isDevelopment;
 
     const scopeStack: Array<ASTScope> = [new ASTScope()];
 
@@ -129,6 +136,43 @@ export default class MessageExtractor {
                 const key = KeyGenerator.generate(messageText);
                 stringLiteral.value = key;
                 stringLiteral.raw = undefined;
+
+                // Add fallback message as fourth parameter in development mode
+                if (isDevelopment) {
+                  // Ensure we have at least 4 arguments
+                  while (call.arguments.length < 3) {
+                    call.arguments.push({
+                      expression: {
+                        type: 'Identifier',
+                        value: 'undefined',
+                        optional: false,
+                        // @ts-expect-error -- Seems required
+                        ctxt: 1,
+                        span: {
+                          start: 0,
+                          end: 0,
+                          ctxt: 0
+                        }
+                      }
+                    });
+                  }
+
+                  // Add fallback message
+                  call.arguments.push({
+                    expression: {
+                      type: 'StringLiteral',
+                      value: messageText,
+                      raw: JSON.stringify(messageText),
+                      // @ts-expect-error -- Seems required
+                      ctxt: 1,
+                      span: {
+                        start: 0,
+                        end: 0,
+                        ctxt: 0
+                      }
+                    }
+                  });
+                }
               }
             }
           }

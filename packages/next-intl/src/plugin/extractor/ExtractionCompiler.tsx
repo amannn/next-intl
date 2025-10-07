@@ -8,20 +8,10 @@ export default class ExtractionCompiler {
 
   constructor(
     config: ExtractorConfig,
-    opts?: {isDevelopment?: boolean; projectRoot?: string}
+    opts: {isDevelopment: boolean; projectRoot?: string}
   ) {
     this.manager = new CatalogManager(config, opts);
-
-    if (opts?.isDevelopment == null) {
-      // Avoid rollup's `replace` plugin to compile this away
-      const nodeEnv = process.env['NODE_ENV'.trim()];
-
-      // We only want to emit messages continuously in development.
-      // In production, we can do a single extraction pass.
-      this.isDevelopment = nodeEnv === 'development';
-    } else {
-      this.isDevelopment = opts.isDevelopment;
-    }
+    this.isDevelopment = opts.isDevelopment;
 
     // Kick off the initial scan as early as possible,
     // while awaiting it in `compile`. This also ensure

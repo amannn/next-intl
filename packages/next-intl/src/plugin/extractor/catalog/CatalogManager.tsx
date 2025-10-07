@@ -29,12 +29,17 @@ export default class CatalogManager {
   private targetLocales?: Array<Locale>;
   private messageExtractor: MessageExtractor;
 
-  constructor(config: ExtractorConfig, opts?: {projectRoot?: string}) {
+  constructor(
+    config: ExtractorConfig,
+    opts: {projectRoot?: string; isDevelopment: boolean}
+  ) {
     this.config = config;
     this.messagesByFile = new Map();
     this.saveScheduler = new SaveScheduler<number>(50);
-    this.messageExtractor = new MessageExtractor();
-    this.projectRoot = opts?.projectRoot || process.cwd();
+    this.projectRoot = opts.projectRoot || process.cwd();
+
+    const isDevelopment = opts.isDevelopment;
+    this.messageExtractor = new MessageExtractor(isDevelopment);
   }
 
   private async getFormatter() {
