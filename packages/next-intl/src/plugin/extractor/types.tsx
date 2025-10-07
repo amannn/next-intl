@@ -15,8 +15,10 @@ export type ExtractedMessage = {
 };
 
 export type ExtractorConfig = {
+  src: string | Array<string>;
   sourceLocale: string;
-  messagesPath: string;
-  srcPath: string | Array<string>;
-  formatter: keyof typeof formatters;
+  messages: {
+    path: string;
+    format: keyof typeof formatters;
+  };
 };

@@ -7,6 +7,7 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import SourceFileFilter from './extractor/source/SourceFileFilter.js';
+import type {ExtractorConfig} from './extractor/types.js';
 import hasStableTurboConfig from './hasStableTurboConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -67,6 +68,21 @@ export default function getNextConfig(
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
 
+  function getExtractMessagesLoaderConfig() {
+    const experimental = pluginConfig.experimental!;
+    if (!experimental.src || !experimental.messages) {
+      throwError('`src` and `messages` are required when using `extractor`.');
+    }
+    return {
+      loader: 'next-intl/extractor/extractMessagesLoader',
+      options: {
+        src: experimental.src,
+        sourceLocale: experimental.extractor.sourceLocale,
+        messages: experimental.messages
+      } satisfies ExtractorConfig
+    };
+  }
+
   if (useTurbo) {
     if (pluginConfig.requestConfig?.startsWith('/')) {
       throwError(
@@ -91,12 +107,7 @@ export default function getNextConfig(
         nextConfig?.experimental?.turbo?.rules ||
         {};
       const sourceRule: TurbopackRuleConfigItem = {
-        loaders: [
-          {
-            loader: 'next-intl/extractor/extractMessagesLoader',
-            options: pluginConfig.experimental.extractor
-          }
-        ]
+        loaders: [getExtractMessagesLoaderConfig()]
       };
       if (rules[sourceGlob]) {
         if (Array.isArray(rules[sourceGlob])) {
@@ -151,12 +162,7 @@ export default function getNextConfig(
         if (!config.module.rules) config.module.rules = [];
         config.module.rules.push({
           test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
-          use: [
-            {
-              loader: 'next-intl/extractor/extractMessagesLoader',
-              options: pluginConfig.experimental.extractor
-            }
-          ]
+          use: [getExtractMessagesLoaderConfig()]
         });
       }
 

@@ -20,9 +20,9 @@ export default function extractMessagesLoader(
   const options = this.getOptions();
 
   if (!srcPaths) {
-    srcPaths = (
-      Array.isArray(options.srcPath) ? options.srcPath : [options.srcPath]
-    ).map((srcPath) => path.join(process.cwd(), srcPath));
+    srcPaths = (Array.isArray(options.src) ? options.src : [options.src]).map(
+      (srcPath) => path.join(process.cwd(), srcPath)
+    );
   }
 
   // Check if the file is within any of the `srcPath`s.

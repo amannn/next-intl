@@ -1,4 +1,4 @@
-import type {ExtractorConfig} from './extractor/types.js';
+export type MessagesFormat = 'json';
 
 export type PluginConfig = {
   requestConfig?: string;
@@ -6,6 +6,20 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    extractor?: ExtractorConfig;
+    /** Relative path(s) to your source files, to be used in combination with `extractor` and `messages`. */
+    src?: string | Array<string>;
+
+    /** Configuration about your catalogs of messages, to be used in combination with `src` and `extractor`. */
+    messages?: {
+      /** Relative path to the directory containing your messages. */
+      path: string;
+      /** Defines the format for how your messages are stored. */
+      format: MessagesFormat;
+    };
+
+    /** Enables the usage of `useExtracted`, to be used in combination with `src` and `messages`. */
+    extractor: {
+      sourceLocale: string;
+    };
   };
 };

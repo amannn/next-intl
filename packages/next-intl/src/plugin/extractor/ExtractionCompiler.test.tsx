@@ -25,10 +25,12 @@ beforeEach(() => {
   vi.clearAllMocks();
   compiler = new ExtractionCompiler(
     {
-      formatter: 'json',
-      messagesPath: './messages',
+      src: './src',
       sourceLocale: 'en',
-      srcPath: './src'
+      messages: {
+        path: './messages',
+        format: 'json'
+      }
     },
     {isDevelopment: true, projectRoot: '/project'}
   );

@@ -41,8 +41,9 @@ export default class CatalogManager {
     if (this.formatter) {
       return this.formatter;
     } else {
-      const FormatterImpl = (await formatters[this.config.formatter]()).default;
-      this.formatter = new FormatterImpl(this.config.messagesPath);
+      const FormatterImpl = (await formatters[this.config.messages.format]())
+        .default;
+      this.formatter = new FormatterImpl(this.config.messages.path);
       return this.formatter;
     }
   }
@@ -51,7 +52,10 @@ export default class CatalogManager {
     if (this.targetLocales) {
       return this.targetLocales;
     } else {
-      const messagesDir = path.join(this.projectRoot, this.config.messagesPath);
+      const messagesDir = path.join(
+        this.projectRoot,
+        this.config.messages.path
+      );
       const files = await fs.readdir(messagesDir);
       const formatter = await this.getFormatter();
       this.targetLocales = files
@@ -64,9 +68,7 @@ export default class CatalogManager {
 
   getSrcPaths(): Array<string> {
     return (
-      Array.isArray(this.config.srcPath)
-        ? this.config.srcPath
-        : [this.config.srcPath]
+      Array.isArray(this.config.src) ? this.config.src : [this.config.src]
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
