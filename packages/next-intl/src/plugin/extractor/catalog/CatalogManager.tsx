@@ -155,8 +155,6 @@ export default class CatalogManager {
     const formatter = await this.getFormatter();
     await formatter.write(this.config.sourceLocale, messages);
 
-    // TODO: This might be slow. Maybe it's better to use a bit more memory
-    // and update messages in a granular way as updates come in.
     for (const locale of await this.getTargetLocales()) {
       const translations = this.translationsByTargetLocale.get(locale)!;
       const localeMessages = messages.map((message) => ({
