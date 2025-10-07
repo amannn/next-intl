@@ -18,7 +18,7 @@ export type PluginConfig = {
     };
 
     /** Enables the usage of `useExtracted`, to be used in combination with `src` and `messages`. */
-    extractor: {
+    extractor?: {
       sourceLocale: string;
     };
   };
