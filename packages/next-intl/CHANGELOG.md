@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.10 (2025-10-07)
+
+### Bug Fixes
+
+* Bump `@types/react` version ([#2050](https://github.com/amannn/next-intl/issues/2050)) ([c1e997e](https://github.com/amannn/next-intl/commit/c1e997e66c590fe6ccd24dd0884a0cb4048469df)), closes [#2044](https://github.com/amannn/next-intl/issues/2044) [#2044](https://github.com/amannn/next-intl/issues/2044) – by @amannn
+
 ## 4.3.9 (2025-09-15)
 
 ### Bug Fixes
