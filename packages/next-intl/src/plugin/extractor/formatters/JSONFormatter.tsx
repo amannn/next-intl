@@ -1,4 +1,4 @@
-import {promises as fs} from 'fs';
+import fs from 'fs/promises';
 import fsPath from 'path';
 import type {ExtractedMessage, Locale} from '../types.js';
 import type Formatter from './Formatter.js';

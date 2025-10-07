@@ -6,15 +6,22 @@ export default class ExtractionCompiler {
   private isDevelopment: boolean;
   private initialScanPromise: Promise<void> | undefined;
 
-  constructor(config: ExtractorConfig) {
-    this.manager = new CatalogManager(config);
+  constructor(
+    config: ExtractorConfig,
+    opts?: {isDevelopment?: boolean; projectRoot?: string}
+  ) {
+    this.manager = new CatalogManager(config, opts);
 
-    // Avoid rollup's `replace` plugin to compile this away
-    const nodeEnv = process.env['NODE_ENV'.trim()];
+    if (opts?.isDevelopment == null) {
+      // Avoid rollup's `replace` plugin to compile this away
+      const nodeEnv = process.env['NODE_ENV'.trim()];
 
-    // We only want to emit messages continuously in development.
-    // In production, we can do a single extraction pass.
-    this.isDevelopment = nodeEnv === 'development';
+      // We only want to emit messages continuously in development.
+      // In production, we can do a single extraction pass.
+      this.isDevelopment = nodeEnv === 'development';
+    } else {
+      this.isDevelopment = opts.isDevelopment;
+    }
 
     // Kick off the initial scan as early as possible,
     // while awaiting it in `compile`. This also ensure
@@ -22,7 +29,7 @@ export default class ExtractionCompiler {
     this.initialScanPromise = this.performInitialScan();
   }
 
-  async compile(resourcePath: string, source: string) {
+  public async compile(resourcePath: string, source: string) {
     if (this.initialScanPromise) {
       await this.initialScanPromise;
       this.initialScanPromise = undefined;
@@ -34,6 +41,8 @@ export default class ExtractionCompiler {
     const changed = this.haveMessagesChanged(beforeMessages, afterMessages);
 
     if (this.isDevelopment && changed) {
+      // While we await the AST modification, we
+      // don't need to await the persistence
       void this.manager.save();
     }
 

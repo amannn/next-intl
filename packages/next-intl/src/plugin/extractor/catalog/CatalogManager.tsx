@@ -1,4 +1,4 @@
-import {promises as fs} from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import MessageExtractor from '../extractor/MessageExtractor.js';
 import type Formatter from '../formatters/Formatter.js';
@@ -22,17 +22,19 @@ export default class CatalogManager {
     new Map();
 
   private saveScheduler: SaveScheduler<number>;
+  private projectRoot: string;
 
   // Caching
   private formatter?: Formatter;
   private targetLocales?: Array<Locale>;
   private messageExtractor: MessageExtractor;
 
-  constructor(config: ExtractorConfig) {
+  constructor(config: ExtractorConfig, opts?: {projectRoot?: string}) {
     this.config = config;
     this.messagesByFile = new Map();
     this.saveScheduler = new SaveScheduler<number>(50);
     this.messageExtractor = new MessageExtractor();
+    this.projectRoot = opts?.projectRoot || process.cwd();
   }
 
   private async getFormatter() {
@@ -49,10 +51,7 @@ export default class CatalogManager {
     if (this.targetLocales) {
       return this.targetLocales;
     } else {
-      const messagesDir = path.join(
-        this.getProjectRoot(),
-        this.config.messagesPath
-      );
+      const messagesDir = path.join(this.projectRoot, this.config.messagesPath);
       const files = await fs.readdir(messagesDir);
       const formatter = await this.getFormatter();
       this.targetLocales = files
@@ -63,17 +62,12 @@ export default class CatalogManager {
     }
   }
 
-  private getProjectRoot() {
-    return process.cwd();
-  }
-
   getSrcPaths(): Array<string> {
-    const projectRoot = this.getProjectRoot();
     return (
       Array.isArray(this.config.srcPath)
         ? this.config.srcPath
         : [this.config.srcPath]
-    ).map((srcPath) => path.join(projectRoot, srcPath));
+    ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
   getFileMessages(
@@ -82,7 +76,7 @@ export default class CatalogManager {
     return this.messagesByFile.get(absoluteFilePath);
   }
 
-  async loadMessages() {
+  public async loadMessages() {
     // TODO: We could potentially skip this in favor of reading
     // the existing messages for the .po format since it provides
     // all the necessary context by itself.
@@ -139,6 +133,7 @@ export default class CatalogManager {
 
     // Update the stored messages
     const hasMessages = result.messages.length > 0;
+
     if (hasMessages) {
       this.messagesByFile.set(absoluteFilePath, newMessagesMap);
     } else {
