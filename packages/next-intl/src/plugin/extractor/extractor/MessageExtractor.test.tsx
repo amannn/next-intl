@@ -1,128 +1,107 @@
 import {expect, it} from 'vitest';
-import type {ExtractedMessage} from '../types.js';
 import MessageExtractor from './MessageExtractor.js';
 
-function expectSourceToMatch(code: string, expected: string) {
-  function normalize(snippet: string) {
-    return snippet
-      .replace(/\s+/g, ' ')
-      .replace(/\s*{\s*/g, '{')
-      .replace(/\s*}\s*/g, '}')
-      .replace(/\s*\(\s*/g, '(')
-      .replace(/\s*\)\s*/g, ')')
-      .replace(/\s*\[\s*/g, '[')
-      .replace(/\s*\]\s*/g, ']')
-      .replace(/\s*;\s*/g, ';')
-      .replace(/\s*,\s*/g, ',')
-      .replace(/\s*=\s*/g, '=')
-      .replace(/\s*=>\s*/g, '=>')
-      .replace(/\{\s+/g, '{')
-      .replace(/\s+\}/g, '}')
-      .trim();
-  }
-  expect(normalize(code)).toBe(normalize(expected));
-}
-
-async function expectExtractionToMatch(
-  code: string,
-  compiled: string,
-  messages: Array<ExtractedMessage>
-) {
-  const result = await new MessageExtractor().processFileContent(
-    'test.tsx',
-    code
-  );
-  expectSourceToMatch(result.source, compiled);
-  expect(result.messages).toEqual(messages);
+async function process(code: string) {
+  return await new MessageExtractor().processFileContent('test.tsx', code);
 }
 
 it('can extract a simple message', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
       const t = useExtracted();
       t("Hey!");
     }
-  `,
-    `
-    import {useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "+YJVTi",
+          "message": "Hey!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
     function Component() {
-      const t = useTranslations();
-      t("+YJVTi");
+        const t = useTranslations();
+        t("+YJVTi");
     }
-  `,
-    [
-      {
-        id: '+YJVTi',
-        message: 'Hey!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract a message with a let variable', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
       let t = useExtracted();
       t("Hey!");
     }
-  `,
-    `
-    import {useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "+YJVTi",
+          "message": "Hey!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
     function Component() {
-      let t = useTranslations();
-      t("+YJVTi");
+        let t = useTranslations();
+        t("+YJVTi");
     }
-  `,
-    [
-      {
-        id: '+YJVTi',
-        message: 'Hey!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract a message with a renamed variable', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
       const translate = useExtracted();
       translate("Hello!");
     }
-  `,
-    `
-    import {useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "OpKKos",
+          "message": "Hello!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
     function Component() {
-      const translate = useTranslations();
-      translate("OpKKos");
+        const translate = useTranslations();
+        translate("OpKKos");
     }
-  `,
-    [
-      {
-        id: 'OpKKos',
-        message: 'Hello!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract a message with useTranslations already present', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted, useTranslations} from 'next-intl';
 
     function Component() {
@@ -131,30 +110,33 @@ it('can extract a message with useTranslations already present', async () => {
       t("Hello from extracted!");
       t2("greeting");
     }
-  `,
-    `
-    import {useTranslations, useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "piskIR",
+          "message": "Hello from extracted!",
+        },
+      ],
+      "source": "import { useTranslations, useTranslations } from 'next-intl';
     function Component() {
-      const t = useTranslations();
-      const t2 = useTranslations();
-      t("piskIR");
-      t2("greeting");
+        const t = useTranslations();
+        const t2 = useTranslations();
+        t("piskIR");
+        t2("greeting");
     }
-  `,
-    [
-      {
-        id: 'piskIR',
-        message: 'Hello from extracted!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract a message with t out of scope', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -164,31 +146,33 @@ it('can extract a message with t out of scope', async () => {
 
     const t = (msg) => msg;
     t("Should not be transformed");
-  `,
-    `
-    import {useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "+YJVTi",
+          "message": "Hey!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
     function Component() {
-      const t = useTranslations();
-      t("+YJVTi");
+        const t = useTranslations();
+        t("+YJVTi");
     }
-
-    const t = (msg) => msg;
+    const t = (msg)=>msg;
     t("Should not be transformed");
-  `,
-    [
-      {
-        id: '+YJVTi',
-        message: 'Hey!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract messages from an event handler and JSX', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useState} from 'react';
     import {useExtracted} from 'next-intl';
 
@@ -209,68 +193,102 @@ it('can extract messages from an event handler and JSX', async () => {
         </div>
       );
     }
-  `,
-    `
-    import {useState} from 'react';
-    import {useTranslations} from 'next-intl';
-
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "+1F2If",
+          "message": "Successfully sent!",
+        },
+        {
+          "filePath": "test.tsx",
+          "id": "9WRlF4",
+          "message": "Send",
+        },
+      ],
+      "source": "import { useState } from 'react';
+    import { useTranslations } from 'next-intl';
     function Component() {
-      const [notification, setNotification] = useState();
-      const t = useTranslations();
-
-      function onClick() {
-        setNotification(t("+1F2If"));
-      }
-
-      return (
-        <div>
-          <button onClick={onClick}>
-            {t("9WRlF4")}
-          </button>
-          {notification}
-        </div>
-      );
+        const [notification, setNotification] = useState();
+        const t = useTranslations();
+        function onClick() {
+            setNotification(t("+1F2If"));
+        }
+        return (<div>
+              <button onClick={onClick}>
+                {t("9WRlF4")}
+              </button>
+              {notification}
+            </div>);
     }
-  `,
-    [
-      {
-        id: '+1F2If',
-        message: 'Successfully sent!',
-        filePath: 'test.tsx'
-      },
-      {
-        id: '9WRlF4',
-        message: 'Send',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    ",
+    }
+  `);
 });
 
 it('can extract a message with a renamed hook', async () => {
-  await expectExtractionToMatch(
-    `
+  expect(
+    await process(
+      `
     import {useExtracted as useInlined} from 'next-intl';
 
     function Component() {
       const t = useInlined();
       t("Hey!");
     }
-  `,
-    `
-    import {useTranslations} from 'next-intl';
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "+YJVTi",
+          "message": "Hey!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("+YJVTi");
+    }
+    ",
+    }
+  `);
+});
+
+it('supports passing values', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
 
     function Component() {
-      const t = useTranslations();
-      t("+YJVTi");
+      const t = useExtracted();
+      t('Hello, {name}!', {name: 'Alice'});
     }
-  `,
-    [
-      {
-        id: '+YJVTi',
-        message: 'Hey!',
-        filePath: 'test.tsx'
-      }
-    ]
-  );
+    `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "tBFOH1",
+          "message": "Hello, {name}!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("tBFOH1", {
+            name: 'Alice'
+        });
+    }
+    ",
+    }
+  `);
 });
