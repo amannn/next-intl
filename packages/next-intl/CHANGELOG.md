@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.11 (2025-10-07)
+
+### Bug Fixes
+
+* Only call `NextResponse.rewrite` if really necessary ([#2051](https://github.com/amannn/next-intl/issues/2051)) ([43ed4aa](https://github.com/amannn/next-intl/commit/43ed4aa791bb8c1aa9ea941a9017b322b6bc9f82)) – by @amannn
+
 ## 4.3.10 (2025-10-07)
 
 ### Bug Fixes
