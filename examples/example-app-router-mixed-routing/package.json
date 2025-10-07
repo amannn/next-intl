@@ -19,7 +19,7 @@
     "@eslint/eslintrc": "^3.1.0",
     "@playwright/test": "^1.51.1",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.2.0",
     "autoprefixer": "^10.4.19",
     "eslint": "9.11.1",
     "eslint-config-next": "^15.5.0",
