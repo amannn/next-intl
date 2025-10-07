@@ -513,6 +513,9 @@ importers:
       '@types/react':
         specifier: ^19.2.0
         version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.2.1(@types/react@19.2.2)
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.21(postcss@8.5.3)
