@@ -88,7 +88,15 @@ export default function createMiddleware<
 
       const headers = new Headers(request.headers);
       headers.set(HEADER_LOCALE_NAME, locale);
-      return NextResponse.rewrite(urlObj, {request: {headers}});
+
+      const isRewriteNecessary =
+        normalizeTrailingSlash(request.nextUrl.pathname) !==
+        normalizeTrailingSlash(urlObj.pathname);
+      if (isRewriteNecessary) {
+        return NextResponse.rewrite(urlObj, {request: {headers}});
+      } else {
+        return NextResponse.next({request: {headers}});
+      }
     }
 
     function redirect(url: string, redirectDomain?: string) {
