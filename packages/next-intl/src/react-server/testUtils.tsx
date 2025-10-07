@@ -1,11 +1,6 @@
 import {type ReactNode, Suspense} from 'react';
 import type {ReactDOMServerReadableStream} from 'react-dom/server';
-// @ts-expect-error -- Not available in types
-import {renderToReadableStream as _renderToReadableStream} from 'react-dom/server.browser';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-const renderToReadableStream: typeof import('react-dom/server').renderToReadableStream =
-  _renderToReadableStream;
+import {renderToReadableStream} from 'react-dom/server.browser';
 
 async function readStream(stream: ReactDOMServerReadableStream) {
   const reader = stream.getReader();
