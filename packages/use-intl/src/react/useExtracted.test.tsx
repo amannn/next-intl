@@ -18,10 +18,6 @@ function MockProvider(
   );
 }
 
-// there are two cases:
-// - if useExtracted never gets compiled (like here)
-// - where it does get compiled and we provide a fallback (when waiting for messages) (we still need to implement this in the transformer)
-
 it('accepts plain messages', () => {
   const onError = vi.fn();
   function Component() {
@@ -111,6 +107,19 @@ it('accepts markup messages', () => {
     </MockProvider>
   );
   screen.getByText('Hello <b>Jan</b>');
+});
+
+it('supports .has', () => {
+  function Component() {
+    const t = useExtracted();
+    return String(t.has('Hello'));
+  }
+  render(
+    <MockProvider>
+      <Component />
+    </MockProvider>
+  );
+  screen.getByText('true');
 });
 
 it("doesn't accept raw messages", () => {

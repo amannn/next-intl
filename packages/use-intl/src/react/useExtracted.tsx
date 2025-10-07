@@ -57,5 +57,13 @@ export default function useExtracted(namespace?: string) {
     );
   };
 
+  translateFn.has = function translateHasFn<Message extends string>(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    message: Message
+  ): boolean {
+    // Not really something better we can do here
+    return true;
+  };
+
   return translateFn;
 }
