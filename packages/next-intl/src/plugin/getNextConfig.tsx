@@ -77,7 +77,7 @@ export default function getNextConfig(
       loader: 'next-intl/extractor/extractMessagesLoader',
       options: {
         src: experimental.src,
-        sourceLocale: experimental.extractor.sourceLocale,
+        sourceLocale: experimental.extractor!.sourceLocale,
         messages: experimental.messages
       } satisfies ExtractorConfig
     };

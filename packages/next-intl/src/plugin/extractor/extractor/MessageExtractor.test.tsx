@@ -292,3 +292,40 @@ it('supports passing values', async () => {
     }
   `);
 });
+
+it('supports passing an inline date formatter', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t('{date, date, short}!', {date: new Date()}, {short: {dateStyle: 'short'}});
+    }
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "filePath": "test.tsx",
+          "id": "5n+ZPU",
+          "message": "{date, date, short}!",
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("5n+ZPU", {
+            date: new Date()
+        }, {
+            short: {
+                dateStyle: 'short'
+            }
+        });
+    }
+    ",
+    }
+  `);
+});
