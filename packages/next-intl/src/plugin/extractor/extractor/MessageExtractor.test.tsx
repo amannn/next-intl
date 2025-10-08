@@ -430,6 +430,137 @@ describe('development', () => {
       }
     `);
   });
+
+  describe('getTranslations', () => {
+    it('supports plain messages', async () => {
+      expect(
+        await process(
+          `
+      import {getExtracted} from 'next-intl/server';
+
+      async function Component() {
+        const t = await getExtracted();
+        t("Hello there!");
+      }
+      `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "0KGiQf",
+              "message": "Hello there!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const t = await getTranslations();
+            t("0KGiQf", undefined, undefined, "Hello there!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract a message with a renamed variable', async () => {
+      expect(
+        await process(
+          `
+    import {getExtracted} from 'next-intl/server';
+
+    async function Component() {
+      const translate = await getExtracted();
+      translate("Hello there!");
+    }
+    `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "0KGiQf",
+              "message": "Hello there!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const translate = await getTranslations();
+            translate("0KGiQf", undefined, undefined, "Hello there!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('supports the object syntax for passing a locale', async () => {
+      expect(
+        await process(
+          `
+      import {getExtracted} from 'next-intl/server';
+
+      async function Component() {
+        const t = await getExtracted({locale: 'en'});
+        t("Hello there!");
+      }
+      `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "0KGiQf",
+              "message": "Hello there!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const t = await getTranslations({
+                locale: 'en'
+            });
+            t("0KGiQf", undefined, undefined, "Hello there!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('supports the object syntax for passing a locale and namespace', async () => {
+      expect(
+        await process(
+          `
+      import {getExtracted} from 'next-intl/server';
+
+      async function Component() {
+        const t = await getExtracted({locale: 'en', namespace: 'ui'});
+        t("Hello there!");
+      }
+      `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "0KGiQf",
+              "message": "Hello there!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const t = await getTranslations({
+                locale: 'en',
+                namespace: 'ui'
+            });
+            t("0KGiQf", undefined, undefined, "Hello there!");
+        }
+        ",
+        }
+      `);
+    });
+  });
 });
 
 describe('production', () => {

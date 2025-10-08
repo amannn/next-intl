@@ -37,7 +37,7 @@ export default class MessageExtractor {
     if (cached) return cached;
 
     // Shortcut parsing if hook is not used
-    if (!source.includes('useExtracted')) {
+    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
       return {messages: [], source};
     }
 
@@ -64,6 +64,7 @@ export default class MessageExtractor {
   ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
     const results: Array<ExtractedMessage> = [];
     let hookLocalName: string | null = null;
+    let hookType: 'useTranslations' | 'getTranslations' | null = null;
     const isDevelopment = this.isDevelopment;
 
     const scopeStack: Array<ASTScope> = [new ASTScope()];
@@ -89,9 +90,30 @@ export default class MessageExtractor {
                   localName === 'useExtracted'
                 ) {
                   hookLocalName = localName;
+                  hookType = 'useTranslations';
                   // Transform import to useTranslations
                   spec.imported = undefined;
                   spec.local.value = 'useTranslations';
+                }
+              }
+            }
+          } else if (decl.source.value === 'next-intl/server') {
+            for (const spec of decl.specifiers) {
+              if (spec.type === 'ImportSpecifier') {
+                const importedName = spec.imported?.value;
+                const localName = spec.local.value;
+
+                if (
+                  importedName === 'getExtracted' ||
+                  localName === 'getExtracted'
+                ) {
+                  hookLocalName = localName;
+                  hookType = 'getTranslations';
+                  // Transform import to getTranslations
+                  if (spec.imported) {
+                    spec.imported.value = 'getTranslations';
+                  }
+                  spec.local.value = 'getTranslations';
                 }
               }
             }
@@ -101,15 +123,31 @@ export default class MessageExtractor {
 
         case 'VariableDeclarator': {
           const decl = node as VariableDeclarator;
+          let callExpr = null;
+
+          // Handle direct CallExpression: const t = useExtracted();
           if (
             decl.init?.type === 'CallExpression' &&
             decl.init.callee.type === 'Identifier' &&
             decl.init.callee.value === hookLocalName
           ) {
-            if (decl.id.type === 'Identifier') {
-              currentScope().define(decl.id.value, 'translator');
-              // Transform the call to useTranslations
-              (decl.init.callee as Identifier).value = 'useTranslations';
+            callExpr = decl.init;
+          }
+          // Handle AwaitExpression: const t = await getExtracted();
+          else if (
+            decl.init?.type === 'AwaitExpression' &&
+            decl.init.argument.type === 'CallExpression' &&
+            decl.init.argument.callee.type === 'Identifier' &&
+            decl.init.argument.callee.value === hookLocalName
+          ) {
+            callExpr = decl.init.argument;
+          }
+
+          if (callExpr && decl.id.type === 'Identifier') {
+            currentScope().define(decl.id.value, 'translator');
+            // Transform the call based on the hook type
+            if (hookType) {
+              (callExpr.callee as Identifier).value = hookType;
             }
           }
           break;
