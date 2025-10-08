@@ -2,6 +2,7 @@ import {
   type CallExpression,
   type Identifier,
   type ImportDeclaration,
+  type MemberExpression,
   type Module,
   type Node,
   type Program,
@@ -116,53 +117,67 @@ export default class MessageExtractor {
 
         case 'CallExpression': {
           const call = node as CallExpression;
+          let isTranslatorCall = false;
+
+          // Handle Identifier case: t("message")
           if (call.callee.type === 'Identifier') {
             const name = call.callee.value;
             const resolved = currentScope().lookup(name);
-            if (resolved === 'translator') {
-              const arg0 = call.arguments[0]?.expression;
-              if (arg0.type === 'StringLiteral') {
-                const stringLiteral = arg0 as StringLiteral;
-                const messageText = stringLiteral.value;
+            isTranslatorCall = resolved === 'translator';
+          }
+          // Handle MemberExpression case: t.rich, t.markup, or t.has
+          else if (call.callee.type === 'MemberExpression') {
+            const memberExpr = call.callee as MemberExpression;
+            if (
+              memberExpr.object.type === 'Identifier' &&
+              memberExpr.property.type === 'Identifier'
+            ) {
+              const objectName = memberExpr.object.value;
+              const propertyName = memberExpr.property.value;
+              const resolved = currentScope().lookup(objectName);
+              isTranslatorCall =
+                resolved === 'translator' &&
+                (propertyName === 'rich' ||
+                  propertyName === 'markup' ||
+                  propertyName === 'has');
+            }
+          }
 
-                // Extract the message
-                results.push({
-                  id: KeyGenerator.generate(messageText),
-                  message: messageText,
-                  filePath
-                });
+          if (isTranslatorCall) {
+            const arg0 = call.arguments[0]?.expression;
+            if (arg0.type === 'StringLiteral') {
+              const stringLiteral = arg0 as StringLiteral;
+              const messageText = stringLiteral.value;
 
-                // Transform the string literal to the generated key
-                const key = KeyGenerator.generate(messageText);
-                stringLiteral.value = key;
-                stringLiteral.raw = undefined;
+              // Extract the message
+              results.push({
+                id: KeyGenerator.generate(messageText),
+                message: messageText,
+                filePath
+              });
 
-                // Add fallback message as fourth parameter in development mode
-                if (isDevelopment) {
-                  // Ensure we have at least 4 arguments
-                  while (call.arguments.length < 3) {
-                    call.arguments.push({
-                      expression: {
-                        type: 'Identifier',
-                        value: 'undefined',
-                        optional: false,
-                        // @ts-expect-error -- Seems required
-                        ctxt: 1,
-                        span: {
-                          start: 0,
-                          end: 0,
-                          ctxt: 0
-                        }
-                      }
-                    });
-                  }
+              // Transform the string literal to the generated key
+              const key = KeyGenerator.generate(messageText);
+              stringLiteral.value = key;
+              stringLiteral.raw = undefined;
 
-                  // Add fallback message
+              // Check if this is a t.has call (which doesn't need fallback)
+              const isHasCall =
+                call.callee.type === 'MemberExpression' &&
+                (call.callee as MemberExpression).property.type ===
+                  'Identifier' &&
+                ((call.callee as MemberExpression).property as Identifier)
+                  .value === 'has';
+
+              // Add fallback message as fourth parameter in development mode (except for t.has)
+              if (isDevelopment && !isHasCall) {
+                // Ensure we have at least 4 arguments
+                while (call.arguments.length < 3) {
                   call.arguments.push({
                     expression: {
-                      type: 'StringLiteral',
-                      value: messageText,
-                      raw: JSON.stringify(messageText),
+                      type: 'Identifier',
+                      value: 'undefined',
+                      optional: false,
                       // @ts-expect-error -- Seems required
                       ctxt: 1,
                       span: {
@@ -173,6 +188,22 @@ export default class MessageExtractor {
                     }
                   });
                 }
+
+                // Add fallback message
+                call.arguments.push({
+                  expression: {
+                    type: 'StringLiteral',
+                    value: messageText,
+                    raw: JSON.stringify(messageText),
+                    // @ts-expect-error -- Seems required
+                    ctxt: 1,
+                    span: {
+                      start: 0,
+                      end: 0,
+                      ctxt: 0
+                    }
+                  }
+                });
               }
             }
           }

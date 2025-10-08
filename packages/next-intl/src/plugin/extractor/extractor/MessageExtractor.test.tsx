@@ -333,6 +333,103 @@ describe('development', () => {
     }
   `);
   });
+
+  it('supports t.rich', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t.rich('Hello <b>Alice</b>!', {b: (chunks) => <b>{chunks}</b>});
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "C+nN8a",
+            "message": "Hello <b>Alice</b>!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t.rich("C+nN8a", {
+              b: (chunks)=><b>{chunks}</b>
+          }, undefined, "Hello <b>Alice</b>!");
+      }
+      ",
+      }
+    `);
+  });
+
+  it('supports t.markup', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t.markup('Hello <b>Alice</b>!', {b: (chunks) => \`<b>\${chunks}</b>\`});
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "C+nN8a",
+            "message": "Hello <b>Alice</b>!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t.markup("C+nN8a", {
+              b: (chunks)=>\`<b>\${chunks}</b>\`
+          }, undefined, "Hello <b>Alice</b>!");
+      }
+      ",
+      }
+    `);
+  });
+
+  it('supports t.has', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t.has('Hello there!');
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "0KGiQf",
+            "message": "Hello there!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t.has("0KGiQf");
+      }
+      ",
+      }
+    `);
+  });
 });
 
 describe('production', () => {
