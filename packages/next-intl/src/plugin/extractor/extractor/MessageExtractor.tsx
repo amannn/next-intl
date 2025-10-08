@@ -7,6 +7,7 @@ import {
   type Node,
   type Program,
   type StringLiteral,
+  type TemplateLiteral,
   type VariableDeclarator,
   parse,
   print
@@ -183,10 +184,24 @@ export default class MessageExtractor {
 
           if (isTranslatorCall) {
             const arg0 = call.arguments[0]?.expression;
-            if (arg0.type === 'StringLiteral') {
-              const stringLiteral = arg0 as StringLiteral;
-              const messageText = stringLiteral.value;
+            let messageText: string | null = null;
 
+            if (arg0.type === 'StringLiteral') {
+              messageText = (arg0 as StringLiteral).value;
+            } else if (arg0.type === 'TemplateLiteral') {
+              const templateLiteral = arg0 as TemplateLiteral;
+              // Only handle simple template literals without expressions
+              if (
+                templateLiteral.expressions.length === 0 &&
+                templateLiteral.quasis.length === 1
+              ) {
+                messageText =
+                  templateLiteral.quasis[0].cooked ||
+                  templateLiteral.quasis[0].raw;
+              }
+            }
+
+            if (messageText) {
               // Extract the message
               results.push({
                 id: KeyGenerator.generate(messageText),
@@ -194,10 +209,19 @@ export default class MessageExtractor {
                 filePath
               });
 
-              // Transform the string literal to the generated key
+              // Transform the literal to the generated key
               const key = KeyGenerator.generate(messageText);
-              stringLiteral.value = key;
-              stringLiteral.raw = undefined;
+              if (arg0.type === 'StringLiteral') {
+                (arg0 as StringLiteral).value = key;
+                (arg0 as StringLiteral).raw = undefined;
+              } else if (arg0.type === 'TemplateLiteral') {
+                // Replace template literal with string literal
+                Object.assign(arg0, {
+                  type: 'StringLiteral',
+                  value: key,
+                  raw: undefined
+                } as StringLiteral);
+              }
 
               // Check if this is a t.has call (which doesn't need fallback)
               const isHasCall =

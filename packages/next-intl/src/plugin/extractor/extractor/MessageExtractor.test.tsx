@@ -102,6 +102,51 @@ describe('development', () => {
   `);
   });
 
+  it('can extract a message with different quotes', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t("Hello!");
+      t('Hey!');
+      t(\`Hi!\`);
+    }
+  `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "OpKKos",
+            "message": "Hello!",
+          },
+          {
+            "filePath": "test.tsx",
+            "id": "+YJVTi",
+            "message": "Hey!",
+          },
+          {
+            "filePath": "test.tsx",
+            "id": "nm/7yQ",
+            "message": "Hi!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("OpKKos", undefined, undefined, "Hello!");
+          t("+YJVTi", undefined, undefined, "Hey!");
+          t("nm/7yQ", undefined, undefined, "Hi!");
+      }
+      ",
+      }
+    `);
+  });
+
   it('can extract a message with useTranslations already present', async () => {
     expect(
       await process(
