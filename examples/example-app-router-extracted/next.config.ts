@@ -8,7 +8,7 @@ const withNextIntl = createNextIntlPlugin({
       path: './messages',
       format: 'json'
     },
-    extractor: {
+    extract: {
       sourceLocale: 'en'
     }
   }

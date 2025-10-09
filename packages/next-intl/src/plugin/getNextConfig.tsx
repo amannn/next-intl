@@ -77,7 +77,7 @@ export default function getNextConfig(
       loader: 'next-intl/extractor/extractMessagesLoader',
       options: {
         src: experimental.src,
-        sourceLocale: experimental.extractor!.sourceLocale,
+        sourceLocale: experimental.extract!.sourceLocale,
         messages: experimental.messages
       } satisfies ExtractorConfig
     };
@@ -100,7 +100,7 @@ export default function getNextConfig(
 
     // Add loader for extractor
     let rules: Record<string, TurbopackRuleConfigItemOrShortcut> | undefined;
-    if (pluginConfig.experimental?.extractor) {
+    if (pluginConfig.experimental?.extract) {
       const sourceGlob = `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`;
       rules =
         nextConfig?.turbopack?.rules ||
@@ -157,7 +157,7 @@ export default function getNextConfig(
         );
 
       // Add loader for extractor
-      if (pluginConfig.experimental?.extractor) {
+      if (pluginConfig.experimental?.extract) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
         config.module.rules.push({
