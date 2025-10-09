@@ -174,6 +174,42 @@ it('restores previous translations when messages are added back', async () => {
   `);
 });
 
+it('handles namespaces when storing messages', async () => {
+  await compiler.compile(
+    '/project/src/Greeting.tsx',
+    `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted('ui');
+        return <div>{t('Hello!')}</div>;
+      }
+      `
+  );
+
+  await waitForWriteFileCalls(4);
+
+  expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    [
+      [
+        "messages/en.json",
+        "{
+      "ui": {
+        "OpKKos": "Hello!"
+      }
+    }",
+      ],
+      [
+        "messages/de.json",
+        "{
+      "ui": {
+        "OpKKos": ""
+      }
+    }",
+      ],
+    ]
+  `);
+});
+
 /**
  * Test utils
  */

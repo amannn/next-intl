@@ -476,6 +476,37 @@ describe('development', () => {
     `);
   });
 
+  it('can extract with a namespace', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted('ui');
+      t('Hello!');
+    }
+          `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "ui.OpKKos",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations('ui');
+            t("OpKKos", undefined, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+  });
+
   describe('object syntax', () => {
     it('can extract with an explicit id', async () => {
       expect(
@@ -652,6 +683,37 @@ describe('development', () => {
         }
       `);
     });
+
+    it('can extracth with an explicit id and a namespace', async () => {
+      expect(
+        await process(
+          `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted('ui');
+      t({id: 'greeting', message: 'Hello!'});
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "ui.greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations('ui');
+            t("greeting", undefined, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+    });
   });
 
   describe('getExtracted', () => {
@@ -815,6 +877,37 @@ describe('development', () => {
             t("greeting", {
                 name: 'Alice'
             }, undefined, "Hello {name}!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract with a namespace', async () => {
+      expect(
+        await process(
+          `
+    import {getExtracted} from 'next-intl/server';
+
+    async function Component() {
+      const t = await getExtracted('ui');
+      t("Hello!");
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "ui.OpKKos",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const t = await getTranslations('ui');
+            t("OpKKos", undefined, undefined, "Hello!");
         }
         ",
         }

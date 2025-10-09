@@ -19,6 +19,8 @@ import KeyGenerator from './KeyGenerator.js';
 import LRUCache from './LRUCache.js';
 
 export default class MessageExtractor {
+  private static readonly NAMESPACE_SEPARATOR = '.';
+
   private isDevelopment: boolean;
 
   constructor(isDevelopment: boolean) {
@@ -162,7 +164,16 @@ export default class MessageExtractor {
           }
 
           if (callExpr && decl.id.type === 'Identifier') {
-            currentScope().define(decl.id.value, 'translator');
+            // Extract namespace from first argument if present
+            let namespace: string | undefined;
+            if (callExpr.arguments.length > 0) {
+              const firstArg = callExpr.arguments[0].expression;
+              if (firstArg.type === 'StringLiteral') {
+                namespace = (firstArg as StringLiteral).value;
+              }
+            }
+
+            currentScope().define(decl.id.value, 'translator', namespace);
             // Transform the call based on the hook type
             if (hookType) {
               (callExpr.callee as Identifier).value = hookType;
@@ -174,12 +185,14 @@ export default class MessageExtractor {
         case 'CallExpression': {
           const call = node as CallExpression;
           let isTranslatorCall = false;
+          let namespace: string | undefined;
 
           // Handle Identifier case: t("message")
           if (call.callee.type === 'Identifier') {
             const name = call.callee.value;
             const resolved = currentScope().lookup(name);
-            isTranslatorCall = resolved === 'translator';
+            isTranslatorCall = resolved?.kind === 'translator';
+            namespace = resolved?.namespace;
           }
           // Handle MemberExpression case: t.rich, t.markup, or t.has
           else if (call.callee.type === 'MemberExpression') {
@@ -192,10 +205,11 @@ export default class MessageExtractor {
               const propertyName = memberExpr.property.value;
               const resolved = currentScope().lookup(objectName);
               isTranslatorCall =
-                resolved === 'translator' &&
+                resolved?.kind === 'translator' &&
                 (propertyName === 'rich' ||
                   propertyName === 'markup' ||
                   propertyName === 'has');
+              namespace = resolved?.namespace;
             }
           }
 
@@ -253,23 +267,28 @@ export default class MessageExtractor {
             }
 
             if (messageText) {
-              const key = explicitId || KeyGenerator.generate(messageText);
+              const callKey = explicitId || KeyGenerator.generate(messageText);
+              const fullKey = namespace
+                ? [namespace, callKey].join(
+                    MessageExtractor.NAMESPACE_SEPARATOR
+                  )
+                : callKey;
 
               results.push({
-                id: key,
+                id: fullKey,
                 message: messageText,
                 filePath
               });
 
-              // Transform the argument based on type
+              // Transform the argument based on type (use baseKey for the code)
               if (arg0.type === 'StringLiteral') {
-                (arg0 as StringLiteral).value = key;
+                (arg0 as StringLiteral).value = callKey;
                 (arg0 as StringLiteral).raw = undefined;
               } else if (arg0.type === 'TemplateLiteral') {
                 // Replace template literal with string literal
                 Object.assign(arg0, {
                   type: 'StringLiteral',
-                  value: key,
+                  value: callKey,
                   raw: undefined
                 } as StringLiteral);
               } else if (arg0.type === 'ObjectExpression') {
@@ -277,7 +296,7 @@ export default class MessageExtractor {
                 // Replace the object with the key as first argument
                 Object.assign(arg0, {
                   type: 'StringLiteral',
-                  value: key,
+                  value: callKey,
                   raw: undefined
                 } as StringLiteral);
 
