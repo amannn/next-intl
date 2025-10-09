@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.12 (2025-10-09)
+
+### Bug Fixes
+
+* Use correct return type for `getTimeZone` ([#2053](https://github.com/amannn/next-intl/issues/2053)) ([bdc2af4](https://github.com/amannn/next-intl/commit/bdc2af450e0cefa4bd88c5b1584ec24d25421c14)), closes [#2052](https://github.com/amannn/next-intl/issues/2052) – by @amannn
+
 ## 4.3.11 (2025-10-07)
 
 ### Bug Fixes
