@@ -40,7 +40,6 @@ type ICUArgsWithTags<
 
 type OnlyOptional<T> = Partial<T> extends T ? true : false;
 
-// move?
 export type TranslateArgs<
   Value extends string,
   TagsFn extends RichTagsFunction | MarkupTagsFunction = never

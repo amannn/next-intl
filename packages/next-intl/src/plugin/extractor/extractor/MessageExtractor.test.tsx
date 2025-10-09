@@ -309,6 +309,37 @@ describe('development', () => {
   `);
   });
 
+  it('can extract with an explicit id', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({id: "greeting", message: 'Hello!'});
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+      {
+        "messages": [
+          {
+            "filePath": "test.tsx",
+            "id": "greeting",
+            "message": "Hello!",
+          },
+        ],
+        "source": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("greeting", undefined, undefined, "Hello!");
+      }
+      ",
+      }
+    `);
+  });
+
   it('supports passing values', async () => {
     expect(
       await process(

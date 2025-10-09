@@ -6,6 +6,22 @@ import type {
 import type {TranslateArgs} from '../core/createTranslator.js';
 import useTranslations from './useTranslations.js';
 
+type TranslateArgsObject<
+  Value extends string,
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
+> =
+  TranslateArgs<Value, TagsFn> extends readonly [any?, any?]
+    ? undefined extends TranslateArgs<Value, TagsFn>[0]
+      ? {
+          values?: TranslateArgs<Value, TagsFn>[0];
+          formats?: TranslateArgs<Value, TagsFn>[1];
+        }
+      : {
+          values: TranslateArgs<Value, TagsFn>[0];
+          formats?: TranslateArgs<Value, TagsFn>[1];
+        }
+    : never;
+
 // Note: This API is usually compiled into `useTranslations`,
 // but there is some fallback handling which allows this hook
 // to still work when not being compiled.
@@ -16,21 +32,55 @@ import useTranslations from './useTranslations.js';
 export default function useExtracted(namespace?: string) {
   const t = useTranslations(namespace);
 
+  function getArgs<Message extends string>(
+    messageOrParams:
+      | Message
+      | ({
+          id: string;
+          message: Message;
+        } & TranslateArgsObject<Message>),
+    ...rest: TranslateArgs<Message>
+  ): [
+    string | undefined,
+    TranslateArgs<Message>[0],
+    TranslateArgs<Message>[1]
+  ] {
+    let message, values, formats;
+    if (typeof messageOrParams === 'string') {
+      message = messageOrParams;
+      values = rest[0];
+      formats = rest[1];
+    } else {
+      message = messageOrParams.message;
+      values = messageOrParams.values;
+      formats = messageOrParams.formats;
+    }
+    // @ts-expect-error -- Secret fallback parameter
+    return [
+      undefined,
+      values,
+      formats,
+      process.env.NODE_ENV !== 'production' ? message : undefined
+    ];
+  }
+
   function translateFn<Message extends string>(
     /** Inline ICU message in the source locale. */
     message: Message,
     ...[values, formats]: TranslateArgs<Message>
-  ): string {
-    return t(
-      undefined,
-      values,
-      formats,
-      // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
-    );
+  ): string;
+  function translateFn<Message extends string>(
+    params: {
+      id: string;
+      /** Inline ICU message in the source locale. */
+      message: Message;
+    } & TranslateArgsObject<Message>
+  ): string;
+  function translateFn(...args: Parameters<typeof getArgs>): string {
+    // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
+    return t(...getArgs(...args));
   }
 
-  // eslint-disable-next-line react-compiler/react-compiler -- As this module gets removed during compilation, not really relevant
   translateFn.rich = function translateRichFn<Message extends string>(
     message: Message,
     ...[values, formats]: TranslateArgs<Message, RichTagsFunction>

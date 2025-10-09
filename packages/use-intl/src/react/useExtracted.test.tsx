@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import type {ComponentProps, ReactNode} from 'react';
-import {expect, it, vi} from 'vitest';
+import {describe, expect, it, vi} from 'vitest';
 import IntlProvider from './IntlProvider.js';
 import useExtracted from './useExtracted.js';
 
@@ -46,6 +46,22 @@ it('accepts ICU arguments', () => {
   );
   expect(onError).not.toHaveBeenCalled();
   screen.getByText('Hello World');
+});
+
+it('validates that values are passed when required', () => {
+  const onError = vi.fn();
+  function Component() {
+    const t = useExtracted();
+    // @ts-expect-error -- Missing values
+    return t('Hello {name}');
+  }
+  render(
+    <MockProvider onError={onError}>
+      <Component />
+    </MockProvider>
+  );
+  expect(onError).toHaveBeenCalled();
+  screen.getByText('Hello {name}');
 });
 
 it('renders the fallback when formatting fails', () => {
@@ -144,4 +160,86 @@ it('accepts an optional namespace', () => {
   );
   expect(onError).toHaveBeenCalled();
   screen.getByText('Hello');
+});
+
+describe('object form', () => {
+  it('accepts an object form for explicit ids', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({id: 'greeting', message: 'Hello'});
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello');
+  });
+
+  it('allows passing values', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({
+        id: 'greeting',
+        message: 'Hello {name}',
+        values: {name: 'World'}
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello World');
+  });
+
+  it('allows passing values and formats', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({
+        id: 'greeting',
+        message: 'Hello {name}, {count, number, precise}',
+        values: {name: 'World', count: 1.5},
+        formats: {number: {precise: {minimumFractionDigits: 5}}}
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello World, 1.50000');
+  });
+
+  it('validates that values are passed when required', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useExtracted();
+      // @ts-expect-error -- Missing values
+      return t({id: 'greeting', message: 'Hello {name}'});
+    }
+    render(
+      <MockProvider onError={onError}>
+        <Component />
+      </MockProvider>
+    );
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('Hello {name}');
+  });
+
+  it('validates that the right values are passed', () => {
+    const onError = vi.fn();
+    function Component() {
+      const t = useExtracted();
+      // @ts-expect-error -- Missing values
+      return t({id: 'greeting', message: 'Hello {name}', values: {count: 1}});
+    }
+    render(
+      <MockProvider onError={onError}>
+        <Component />
+      </MockProvider>
+    );
+    expect(onError).toHaveBeenCalled();
+    screen.getByText('Hello {name}');
+  });
 });

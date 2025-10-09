@@ -5,6 +5,7 @@ import {
   type MemberExpression,
   type Module,
   type Node,
+  type ObjectExpression,
   type Program,
   type StringLiteral,
   type TemplateLiteral,
@@ -185,6 +186,7 @@ export default class MessageExtractor {
           if (isTranslatorCall) {
             const arg0 = call.arguments[0]?.expression;
             let messageText: string | null = null;
+            let explicitId: string | null = null;
 
             if (arg0.type === 'StringLiteral') {
               messageText = (arg0 as StringLiteral).value;
@@ -199,23 +201,52 @@ export default class MessageExtractor {
                   templateLiteral.quasis[0].cooked ||
                   templateLiteral.quasis[0].raw;
               }
+            } else if (arg0.type === 'ObjectExpression') {
+              const objectExpression = arg0 as ObjectExpression;
+              // Look for id and message properties
+              for (const prop of objectExpression.properties) {
+                if (prop.type === 'KeyValueProperty') {
+                  const key = prop.key;
+                  if (
+                    key.type === 'Identifier' &&
+                    key.value === 'id' &&
+                    prop.value.type === 'StringLiteral'
+                  ) {
+                    explicitId = (prop.value as StringLiteral).value;
+                  } else if (
+                    key.type === 'Identifier' &&
+                    key.value === 'message' &&
+                    prop.value.type === 'StringLiteral'
+                  ) {
+                    messageText = (prop.value as StringLiteral).value;
+                  }
+                }
+              }
             }
 
             if (messageText) {
-              // Extract the message
+              const key = explicitId || KeyGenerator.generate(messageText);
+
               results.push({
-                id: KeyGenerator.generate(messageText),
+                id: key,
                 message: messageText,
                 filePath
               });
 
-              // Transform the literal to the generated key
-              const key = KeyGenerator.generate(messageText);
+              // Transform the argument based on type
               if (arg0.type === 'StringLiteral') {
                 (arg0 as StringLiteral).value = key;
                 (arg0 as StringLiteral).raw = undefined;
               } else if (arg0.type === 'TemplateLiteral') {
                 // Replace template literal with string literal
+                Object.assign(arg0, {
+                  type: 'StringLiteral',
+                  value: key,
+                  raw: undefined
+                } as StringLiteral);
+              } else if (arg0.type === 'ObjectExpression') {
+                // Transform object expression to individual parameters
+                // Replace the object with the key as first argument
                 Object.assign(arg0, {
                   type: 'StringLiteral',
                   value: key,
