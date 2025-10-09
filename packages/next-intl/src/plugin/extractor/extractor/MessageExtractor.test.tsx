@@ -309,37 +309,6 @@ describe('development', () => {
   `);
   });
 
-  it('can extract with an explicit id', async () => {
-    expect(
-      await process(
-        `
-    import {useExtracted} from 'next-intl';
-
-    function Component() {
-      const t = useExtracted();
-      t({id: "greeting", message: 'Hello!'});
-    }
-    `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "messages": [
-          {
-            "filePath": "test.tsx",
-            "id": "greeting",
-            "message": "Hello!",
-          },
-        ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
-      }
-      ",
-      }
-    `);
-  });
-
   it('supports passing values', async () => {
     expect(
       await process(
@@ -505,6 +474,184 @@ describe('development', () => {
       ",
       }
     `);
+  });
+
+  describe('object syntax', () => {
+    it('can extract with an explicit id', async () => {
+      expect(
+        await process(
+          `
+      import {useExtracted} from 'next-intl';
+  
+      function Component() {
+        const t = useExtracted();
+        t({id: "greeting", message: 'Hello!'});
+      }
+      `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t("greeting", undefined, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract with an explicit id and values', async () => {
+      expect(
+        await process(
+          `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({id: "greeting", message: 'Hello!', values: {name: 'Alice'}});
+    }
+    `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t("greeting", {
+                name: 'Alice'
+            }, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract with an explicit id, values and formats', async () => {
+      expect(
+        await process(
+          `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({
+        id: "greeting",
+        message: 'Hello!',
+        values: {name: 'Alice'},
+        formats: {date: {dateStyle: 'short'}}
+      });
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t("greeting", {
+                name: 'Alice'
+            }, {
+                date: {
+                    dateStyle: 'short'
+                }
+            }, "Hello!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract with an explicit id when using t.rich', async () => {
+      expect(
+        await process(
+          `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t.rich({
+        id: 'greeting',
+        message: 'Hello <b>Alice</b>!',
+        values: {b: (chunks) => <b>{chunks}</b>}
+      });
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello <b>Alice</b>!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t.rich("greeting", {
+                b: (chunks)=><b>{chunks}</b>
+            }, undefined, "Hello <b>Alice</b>!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('can extract with an explicit id when using t.markup', async () => {
+      expect(
+        await process(
+          `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t.markup('Hello <b>Alice</b>!', {b: (chunks) => \`<b>\${chunks}</b>\`});
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "C+nN8a",
+              "message": "Hello <b>Alice</b>!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t.markup("C+nN8a", {
+                b: (chunks)=>\`<b>\${chunks}</b>\`
+            }, undefined, "Hello <b>Alice</b>!");
+        }
+        ",
+        }
+      `);
+    });
   });
 
   describe('getTranslations', () => {

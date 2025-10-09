@@ -242,4 +242,38 @@ describe('object form', () => {
     expect(onError).toHaveBeenCalled();
     screen.getByText('Hello {name}');
   });
+
+  it('allows passing values with rich text', () => {
+    function Component() {
+      const t = useExtracted();
+      return t.rich({
+        id: 'greeting',
+        message: 'Hello <b>{name}</b>',
+        values: {name: 'World', b: (chunks) => <b>{chunks}</b>}
+      });
+    }
+    const {container} = render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    expect(container.innerHTML).toBe('Hello <b>World</b>');
+  });
+
+  it('allows passing values with markup', () => {
+    function Component() {
+      const t = useExtracted();
+      return t.markup({
+        id: 'greeting',
+        message: 'Hello <b>{name}</b>',
+        values: {name: 'World', b: (chunks) => `<b>${chunks}</b>`}
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello <b>World</b>');
+  });
 });

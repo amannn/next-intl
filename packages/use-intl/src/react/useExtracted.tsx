@@ -22,6 +22,41 @@ type TranslateArgsObject<
         }
     : never;
 
+function getArgs<
+  Message extends string,
+  TagsFn extends RichTagsFunction | MarkupTagsFunction = never
+>(
+  messageOrParams:
+    | Message
+    | ({
+        id: string;
+        message: Message;
+      } & TranslateArgsObject<Message, TagsFn>),
+  ...rest: TranslateArgs<Message, TagsFn>
+): [
+  string | undefined,
+  TranslateArgs<Message, TagsFn>[0],
+  TranslateArgs<Message, TagsFn>[1]
+] {
+  let message, values, formats;
+  if (typeof messageOrParams === 'string') {
+    message = messageOrParams;
+    values = rest[0];
+    formats = rest[1];
+  } else {
+    message = messageOrParams.message;
+    values = messageOrParams.values;
+    formats = messageOrParams.formats;
+  }
+  // @ts-expect-error -- Secret fallback parameter
+  return [
+    undefined, // Always use fallback if not compiled
+    values,
+    formats,
+    process.env.NODE_ENV !== 'production' ? message : undefined
+  ];
+}
+
 // Note: This API is usually compiled into `useTranslations`,
 // but there is some fallback handling which allows this hook
 // to still work when not being compiled.
@@ -31,38 +66,6 @@ type TranslateArgsObject<
 // - Fallbacks in case an extracted message is not yet available
 export default function useExtracted(namespace?: string) {
   const t = useTranslations(namespace);
-
-  function getArgs<Message extends string>(
-    messageOrParams:
-      | Message
-      | ({
-          id: string;
-          message: Message;
-        } & TranslateArgsObject<Message>),
-    ...rest: TranslateArgs<Message>
-  ): [
-    string | undefined,
-    TranslateArgs<Message>[0],
-    TranslateArgs<Message>[1]
-  ] {
-    let message, values, formats;
-    if (typeof messageOrParams === 'string') {
-      message = messageOrParams;
-      values = rest[0];
-      formats = rest[1];
-    } else {
-      message = messageOrParams.message;
-      values = messageOrParams.values;
-      formats = messageOrParams.formats;
-    }
-    // @ts-expect-error -- Secret fallback parameter
-    return [
-      undefined,
-      values,
-      formats,
-      process.env.NODE_ENV !== 'production' ? message : undefined
-    ];
-  }
 
   function translateFn<Message extends string>(
     /** Inline ICU message in the source locale. */
@@ -76,35 +79,41 @@ export default function useExtracted(namespace?: string) {
       message: Message;
     } & TranslateArgsObject<Message>
   ): string;
-  function translateFn(...args: Parameters<typeof getArgs>): string {
+  function translateFn(...params: Parameters<typeof getArgs>): string {
     // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
-    return t(...getArgs(...args));
+    return t(...getArgs(...params));
   }
 
-  translateFn.rich = function translateRichFn<Message extends string>(
-    message: Message,
-    ...[values, formats]: TranslateArgs<Message, RichTagsFunction>
-  ): ReactNode {
-    return t.rich(
-      undefined,
-      values,
-      formats,
-      // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
-    );
+  translateFn.rich = ((...params: Parameters<typeof getArgs>): ReactNode =>
+    // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
+    t.rich(...getArgs(...params))) as {
+    <Message extends string>(
+      message: Message,
+      ...[values, formats]: TranslateArgs<Message, RichTagsFunction>
+    ): ReactNode;
+    <Message extends string>(
+      params: {
+        id: string;
+        /** Inline ICU message in the source locale. */
+        message: Message;
+      } & TranslateArgsObject<Message, RichTagsFunction>
+    ): ReactNode;
   };
 
-  translateFn.markup = function translateMarkupFn<Message extends string>(
-    message: Message,
-    ...[values, formats]: TranslateArgs<Message, MarkupTagsFunction>
-  ): string {
-    return t.markup(
-      undefined,
-      values,
-      formats,
-      // @ts-expect-error -- Secret fallback parameter
-      process.env.NODE_ENV !== 'production' ? message : undefined
-    );
+  translateFn.markup = ((...params: Parameters<typeof getArgs>): string =>
+    // @ts-expect-error -- Passing `undefined` as an ID is secretly allowed here
+    t.markup(...getArgs(...params))) as {
+    <Message extends string>(
+      message: Message,
+      ...[values, formats]: TranslateArgs<Message, MarkupTagsFunction>
+    ): string;
+    <Message extends string>(
+      params: {
+        id: string;
+        /** Inline ICU message in the source locale. */
+        message: Message;
+      } & TranslateArgsObject<Message, MarkupTagsFunction>
+    ): string;
   };
 
   translateFn.has = function translateHasFn<Message extends string>(

@@ -75,6 +75,22 @@ export default class MessageExtractor {
       return scopeStack[scopeStack.length - 1];
     }
 
+    function createUndefinedArgument() {
+      return {
+        expression: {
+          type: 'Identifier' as const,
+          value: 'undefined',
+          optional: false,
+          ctxt: 1,
+          span: {
+            start: 0,
+            end: 0,
+            ctxt: 0
+          }
+        }
+      };
+    }
+
     function visit(node: Node) {
       if (typeof node !== 'object') return;
 
@@ -187,6 +203,8 @@ export default class MessageExtractor {
             const arg0 = call.arguments[0]?.expression;
             let messageText: string | null = null;
             let explicitId: string | null = null;
+            let valuesNode: Node | null = null;
+            let formatsNode: Node | null = null;
 
             if (arg0.type === 'StringLiteral') {
               messageText = (arg0 as StringLiteral).value;
@@ -203,7 +221,7 @@ export default class MessageExtractor {
               }
             } else if (arg0.type === 'ObjectExpression') {
               const objectExpression = arg0 as ObjectExpression;
-              // Look for id and message properties
+              // Look for id, message, values, and formats properties
               for (const prop of objectExpression.properties) {
                 if (prop.type === 'KeyValueProperty') {
                   const key = prop.key;
@@ -219,6 +237,16 @@ export default class MessageExtractor {
                     prop.value.type === 'StringLiteral'
                   ) {
                     messageText = (prop.value as StringLiteral).value;
+                  } else if (
+                    key.type === 'Identifier' &&
+                    key.value === 'values'
+                  ) {
+                    valuesNode = prop.value;
+                  } else if (
+                    key.type === 'Identifier' &&
+                    key.value === 'formats'
+                  ) {
+                    formatsNode = prop.value;
                   }
                 }
               }
@@ -252,6 +280,38 @@ export default class MessageExtractor {
                   value: key,
                   raw: undefined
                 } as StringLiteral);
+
+                // Add values as second argument if present
+                if (valuesNode) {
+                  if (call.arguments.length < 2) {
+                    call.arguments.push({
+                      // @ts-expect-error -- Node type compatible with Expression
+                      expression: valuesNode
+                    });
+                  } else {
+                    // @ts-expect-error -- Node type compatible with Expression
+                    call.arguments[1].expression = valuesNode;
+                  }
+                }
+
+                // Add formats as third argument if present
+                if (formatsNode) {
+                  // Ensure we have a second argument (values or undefined)
+                  while (call.arguments.length < 2) {
+                    call.arguments.push(createUndefinedArgument());
+                  }
+                  if (call.arguments.length < 3) {
+                    // Append argument
+                    call.arguments.push({
+                      // @ts-expect-error -- Node type compatible with Expression
+                      expression: formatsNode
+                    });
+                  } else {
+                    // Replace argument
+                    // @ts-expect-error -- Node type compatible with Expression
+                    call.arguments[2].expression = formatsNode;
+                  }
+                }
               }
 
               // Check if this is a t.has call (which doesn't need fallback)
@@ -266,20 +326,7 @@ export default class MessageExtractor {
               if (isDevelopment && !isHasCall) {
                 // Ensure we have at least 4 arguments
                 while (call.arguments.length < 3) {
-                  call.arguments.push({
-                    expression: {
-                      type: 'Identifier',
-                      value: 'undefined',
-                      optional: false,
-                      // @ts-expect-error -- Seems required
-                      ctxt: 1,
-                      span: {
-                        start: 0,
-                        end: 0,
-                        ctxt: 0
-                      }
-                    }
-                  });
+                  call.arguments.push(createUndefinedArgument());
                 }
 
                 // Add fallback message
