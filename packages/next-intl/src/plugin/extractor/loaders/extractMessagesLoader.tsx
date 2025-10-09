@@ -27,7 +27,7 @@ export default function extractMessagesLoader(
 
   // Check if the file is within any of the `srcPath`s.
   // TODO: Remove this in favor of `conditions` in Next.js 16.
-  // In this case we can also use `content: /useExtracted/`
+  // In this case we can also use `content: /(useExtracted|getExtracted)/`
   if (!SourceFileFilter.shouldProcessFile(this.resourcePath, srcPaths)) {
     return source;
   }
