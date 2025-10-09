@@ -18,6 +18,13 @@ export default function Client() {
         })}
       </p>
       <p>{t.has('How are you?') ? t('How are you?') : 'N/A'}</p>
+      <p>
+        {t({
+          id: 'greeting',
+          message: 'Hello {name}!',
+          values: {name: 'Jane'}
+        })}
+      </p>
     </>
   );
 }

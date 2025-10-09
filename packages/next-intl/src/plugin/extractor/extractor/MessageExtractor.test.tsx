@@ -654,7 +654,7 @@ describe('development', () => {
     });
   });
 
-  describe('getTranslations', () => {
+  describe('getExtracted', () => {
     it('supports plain messages', async () => {
       expect(
         await process(
@@ -778,6 +778,43 @@ describe('development', () => {
                 namespace: 'ui'
             });
             t("0KGiQf", undefined, undefined, "Hello there!");
+        }
+        ",
+        }
+      `);
+    });
+
+    it('supports the object syntax for passing an explicit id', async () => {
+      expect(
+        await process(
+          `
+    import {getExtracted} from 'next-intl/server';
+
+    async function Component() {
+      const t = await getExtracted();
+      t({
+        id: 'greeting',
+        message: 'Hello {name}!',
+        values: {name: 'Alice'}
+      });
+    }
+          `
+        )
+      ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello {name}!",
+            },
+          ],
+          "source": "import { getTranslations } from 'next-intl/server';
+        async function Component() {
+            const t = await getTranslations();
+            t("greeting", {
+                name: 'Alice'
+            }, undefined, "Hello {name}!");
         }
         ",
         }
