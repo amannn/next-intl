@@ -76,7 +76,11 @@ export default function getNextConfig(
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
 
-    if (hasStableTurboConfig && !nextConfig?.experimental?.turbo) {
+    if (
+      hasStableTurboConfig &&
+      // @ts-expect-error -- For Next.js <16
+      !nextConfig?.experimental?.turbo
+    ) {
       nextIntlConfig.turbopack = {
         ...nextConfig?.turbopack,
         resolveAlias: {
@@ -87,9 +91,12 @@ export default function getNextConfig(
     } else {
       nextIntlConfig.experimental = {
         ...nextConfig?.experimental,
+        // @ts-expect-error -- For Next.js <16
         turbo: {
+          // @ts-expect-error -- For Next.js <16
           ...nextConfig?.experimental?.turbo,
           resolveAlias: {
+            // @ts-expect-error -- For Next.js <16
             ...nextConfig?.experimental?.turbo?.resolveAlias,
             ...resolveAlias
           }
