@@ -3,3 +3,4 @@ packages:
   - 'examples/*'
   - 'docs'
   - 'tools'
+  - 'playground'
