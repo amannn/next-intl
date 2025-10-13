@@ -732,6 +732,26 @@ it('can switch the locale with `useRouter`', async ({page}) => {
   await expect(page).toHaveURL('/client');
 });
 
+it('can use additional rewrites in the middleware', async ({browser}) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.context().addCookies([
+    {
+      name: 'v2',
+      value: 'true',
+      url: 'http://localhost'
+    }
+  ]);
+
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About v2'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'About v2'}).waitFor();
+
+  await context.close();
+});
+
 // https://github.com/radix-ui/primitives/issues/3165
 it.skip('provides a `Link` that works with Radix Primitives', async ({
   page
