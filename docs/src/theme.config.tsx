@@ -26,23 +26,6 @@ export default {
   components: {
     pre: Pre
   },
-  banner: {
-    key: 'banner-learn-next-intl',
-    content: (
-      <div className="text-center">
-        Announcing{' '}
-        <a
-          className="underline"
-          href="https://learn.next-intl.dev"
-          rel="noreferrer"
-          target="_blank"
-        >
-          learn.next-intl.dev
-        </a>
-        !
-      </div>
-    )
-  },
   footer: {
     component: Footer
   },
@@ -92,7 +75,7 @@ export default {
       if (!isRoot) return <Navbar {...props} />;
 
       return (
-        <div className="navbar-home">
+        <div className="navbar-home group">
           <Navbar {...props} />
         </div>
       );
@@ -101,21 +84,7 @@ export default {
   search: {
     component: AlgoliaSearch
   },
-  feedback: {
-    content: 'Provide feedback on this page',
-    useLink: () => {
-      const router = useRouter();
-      const pageConfig = useConfig();
-
-      const url = new URL(config.githubUrl);
-      url.pathname += '/issues/new';
-      url.searchParams.set('title', `[Docs]: ${pageConfig.title}`);
-      url.searchParams.set('template', 'update_docs.yml');
-      url.searchParams.set('pageLink', config.baseUrl + router.pathname);
-
-      return url.href;
-    }
-  },
+  feedback: {content: null},
   head: function Head() {
     const pageConfig = useConfig();
     const {route} = useRouter();

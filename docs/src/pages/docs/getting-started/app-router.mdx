@@ -1,28 +1,223 @@
 import Card from '@/components/Card';
 import Cards from '@/components/Cards';
+import {Tabs} from 'nextra/components';
 import Callout from '@/components/Callout';
 import Steps from '@/components/Steps';
 import Details from '@/components/Details';
+import CourseBanner, {CourseVideoBanner} from '@/components/CourseBanner';
 
-# Next.js App Router Internationalization (i18n)
+# Next.js App Router internationalization (i18n)
 
-You can pick from two options when setting up an app with `next-intl` and Next.js' App Router, depending on if you'd like to use unique pathnames for every language that your app supports.
+Prefer to watch a video?
 
-<Cards className="mt-8 max-w-[550px]">
-  <Card
-    title="With i18n routing"
-    href="/docs/getting-started/app-router/with-i18n-routing"
-  >
-    Uses a top-level `[locale]` segment for prefixed pathnames like `/en/about`
-    or domain-based routing like `en.example.com/about`
-  </Card>
-  <Card
-    title="Without i18n routing"
-    href="/docs/getting-started/app-router/without-i18n-routing"
-  >
-    Useful if you'd like to provide a locale to `next-intl`, e.g. based on user
-    settings, or if your app only supports a single language
-  </Card>
-</Cards>
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/01-setup"
+  title="Set up next-intl"
+/>
 
-To get a sense of what kind of setup you'd like to use, you can also explore the [example apps](/examples).
+## Getting started
+
+If you haven't done so already, [create a Next.js app](https://nextjs.org/docs/getting-started/installation) that uses the App Router and run:
+
+```sh
+npm install next-intl
+```
+
+Now, we're going to create the following file structure:
+
+```
+├── messages
+│   ├── en.json
+│   └── ...
+├── next.config.ts
+└── src
+    ├── i18n
+    │   └── request.ts
+    └── app
+        ├── layout.tsx
+        └── page.tsx
+```
+
+**Let's set up the files:**
+
+<Steps>
+
+### `messages/en.json` [#messages]
+
+Messages represent the translations that are available per language and can be provided either locally or loaded from a remote data source.
+
+The simplest option is to add JSON files in your local project folder:
+
+```json filename="messages/en.json"
+{
+  "HomePage": {
+    "title": "Hello world!"
+  }
+}
+```
+
+### `i18n/request.ts` [#i18n-request]
+
+`next-intl` creates a request-scoped configuration object, which you can use to provide messages and other options based on the user's locale to Server Components.
+
+```tsx filename="src/i18n/request.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  // Static for now, we'll change this later
+  const locale = 'en';
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+<Details id="i18n-request-path">
+<summary>Can I move this file somewhere else?</summary>
+
+This file is supported out-of-the-box as `./i18n/request.ts` both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can optionally provide a path to the plugin:
+
+```js filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin(
+  // Specify a custom path here
+  './somewhere/else/request.ts'
+);
+```
+
+</Details>
+
+### `next.config.ts` [#next-config]
+
+Now, set up the plugin which links your `i18n/request.ts` file to `next-intl`.
+
+<Tabs items={['next.config.ts', 'next.config.js']}>
+<Tabs.Tab>
+
+```js filename="next.config.ts"
+import {NextConfig} from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const nextConfig: NextConfig = {};
+
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(nextConfig);
+```
+
+</Tabs.Tab>
+<Tabs.Tab>
+
+```js filename="next.config.js"
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin();
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+module.exports = withNextIntl(nextConfig);
+```
+
+</Tabs.Tab>
+</Tabs>
+
+### `app/layout.tsx` [#layout]
+
+To make your request configuration available to Client Components, you can wrap the `children` in your root layout with `NextIntlClientProvider`.
+
+```tsx filename="app/layout.tsx" {7}
+import {NextIntlClientProvider} from 'next-intl';
+
+type Props = {
+  children: React.ReactNode;
+};
+
+export default async function RootLayout({children}: Props) {
+  return (
+    <html>
+      <body>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### `app/page.tsx` [#page]
+
+Use translations in your page components or anywhere else!
+
+```tsx filename="app/page.tsx"
+import {useTranslations} from 'next-intl';
+
+export default function HomePage() {
+  const t = useTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+In case of async components, you can use the awaitable `getTranslations` function instead:
+
+```tsx filename="app/page.tsx"
+import {getTranslations} from 'next-intl/server';
+
+export default async function HomePage() {
+  const t = await getTranslations('HomePage');
+  return <h1>{t('title')}</h1>;
+}
+```
+
+</Steps>
+
+## Next steps
+
+### Locale-based routing
+
+If you’d like to use unique pathnames for every language that your app supports (e.g. `/en/about` or `example.de/über-uns`), you can continue to set up a top-level `[locale]` segment for your app.
+
+<div className="mt-8 max-w-[300px]">
+  <Card title="Set up locale-based routing" href="/docs/routing" />
+</div>
+
+### Provide a locale
+
+If your app doesn't require unique pathnames per locale, you can provide a locale to `next-intl` based on user preferences or other application logic.
+
+The simplest option is to use a cookie:
+
+```tsx filename="src/i18n/request.ts"
+import {cookies} from 'next/headers';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  const store = await cookies();
+  const locale = store.get('locale')?.value || 'en';
+
+  return {
+    locale
+    // ...
+  };
+});
+```
+
+### Internationalization isn't just translating words
+
+`next-intl` provides the essential foundation for internationalization in Next.js apps. It handles aspects like translations, date and number formatting, as well as internationalized routing.
+
+However, building for a global audience spans a wider range of topics:
+
+- Choosing the right **architecture and routing strategy** for your app
+- Integrating with **backend services or a CMS**
+- Leveraging **generative AI** for content localization
+- Streamlining your **development workflow** with TypeScript and IDE tooling
+- Collaborating with your team using a **translation management system**
+- Understanding all the pieces that contribute to a **truly localized experience**
+- **Mastering SEO** for multilingual apps to reach global audiences
+
+<div className="mt-8">
+  <CourseBanner title="Build international Next.js apps with confidence" />
+</div>

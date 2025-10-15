@@ -15,9 +15,6 @@ const withBundleAnalyzer = createBundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true
-  },
   trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
   basePath:
     process.env.NEXT_PUBLIC_USE_CASE === 'base-path' ? '/base/path' : undefined,

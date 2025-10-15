@@ -17,6 +17,8 @@ export default function Footer() {
         <div>
           <FooterLink href="/docs">Docs</FooterLink>
           <FooterSeparator />
+          <FooterLink href="https://learn.next-intl.dev">Learn</FooterLink>
+          <FooterSeparator />
           <FooterLink href="/examples">Examples</FooterLink>
           <FooterSeparator />
           <FooterLink href="/blog">Blog</FooterLink>

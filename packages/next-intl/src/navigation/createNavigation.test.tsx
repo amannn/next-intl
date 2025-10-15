@@ -560,6 +560,24 @@ describe.each([
         );
       });
 
+      it("doesn't double-encode already encoded params", () => {
+        const markup = renderToString(
+          <Link
+            href={{
+              pathname: '/news/[articleSlug]-[articleId]',
+              params: {
+                articleId: 3,
+                articleSlug: encodeURIComponent('launch / party')
+              }
+            }}
+            locale="en"
+          >
+            Create
+          </Link>
+        );
+        expect(markup).toContain('href="/en/news/launch%20%2F%20party-3"');
+      });
+
       it('handles relative pathnames', () => {
         // @ts-expect-error -- Validation is still on
         const markup = renderToString(<Link href="test">Test</Link>);

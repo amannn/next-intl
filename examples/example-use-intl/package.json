@@ -14,8 +14,8 @@
     "use-intl": "^3.0.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3",
@@ -25,5 +25,8 @@
     "singleQuote": true,
     "bracketSpacing": false,
     "trailingComma": "none"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

@@ -8,30 +8,29 @@ import {
   getTimeZone,
   getTranslations
 } from 'next-intl/server';
-import {ReactNode} from 'react';
 import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
-
-type Props = {
-  children: ReactNode;
-  params: Promise<{locale: Locale}>;
-};
 
 const inter = Inter({subsets: ['latin']});
 
 export async function generateMetadata(
-  props: Omit<Props, 'children'>
+  props: Omit<LayoutProps<'/[locale]'>, 'children'>
 ): Promise<Metadata> {
   const params = await props.params;
-  const {locale} = params;
+  const locale = params.locale as Locale;
 
   const t = await getTranslations({locale, namespace: 'LocaleLayout'});
   const formatter = await getFormatter({locale});
   const now = await getNow({locale});
   const timeZone = await getTimeZone({locale});
 
+  const base = new URL('http://localhost:3000');
+  if (process.env.NEXT_PUBLIC_USE_CASE === 'base-path') {
+    base.pathname = '/base/path';
+  }
+
   return {
-    metadataBase: new URL('http://localhost:3000'),
+    metadataBase: base,
     title: t('title'),
     description: t('description'),
     other: {
@@ -41,7 +40,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function LocaleLayout({params, children}: Props) {
+export default async function LocaleLayout({
+  children,
+  params
+}: LayoutProps<'/[locale]'>) {
   const {locale} = await params;
 
   // Ensure that the incoming `locale` is valid

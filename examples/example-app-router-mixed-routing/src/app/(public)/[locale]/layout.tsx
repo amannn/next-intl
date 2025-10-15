@@ -1,17 +1,11 @@
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {Locale, NextIntlClientProvider, hasLocale} from 'next-intl';
+import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {setRequestLocale} from 'next-intl/server';
-import {ReactNode} from 'react';
 import Document from '@/components/Document';
 import {locales} from '@/config';
 import PublicNavigation from './PublicNavigation';
 import PublicNavigationLocaleSwitcher from './PublicNavigationLocaleSwitcher';
-
-type Props = {
-  children: ReactNode;
-  params: Promise<{locale: Locale}>;
-};
 
 export function generateStaticParams() {
   return locales.map((locale) => ({locale}));
@@ -21,7 +15,10 @@ export const metadata: Metadata = {
   title: 'next-intl-mixed-routing (public)'
 };
 
-export default async function LocaleLayout({children, params}: Props) {
+export default async function LocaleLayout({
+  children,
+  params
+}: LayoutProps<'/[locale]'>) {
   // Ensure that the incoming locale is valid
   const {locale} = await params;
   if (!hasLocale(locales, locale)) {

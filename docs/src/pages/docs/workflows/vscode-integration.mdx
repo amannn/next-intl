@@ -1,4 +1,14 @@
+import {CourseVideoBanner} from '@/components/CourseBanner';
+
 # VSCode integration
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/03-translations/05-tooling"
+  title="Editor tools"
+/>
 
 To improve the workflow for managing messages right from your code editor, you can use an extension for VSCode that includes support for `next-intl`.
 
@@ -7,17 +17,17 @@ To improve the workflow for managing messages right from your code editor, you c
 These extensions are known to support `next-intl`:
 
 1. [i18n Ally](#i18n-ally)
-2. [Sherlock](#sherlock)
+2. [Loccy](#loccy)
+3. [Sherlock](#sherlock)
 
 ## i18n Ally [#i18n-ally]
 
-**Features:**
+**Highlights:**
 
 - Message extraction
 - Inline annotations
 - Inline message editing
-- [Machine translations](https://github.com/lokalise/i18n-ally/wiki/Machine-Translation)
-- An [editor UI](https://github.com/lokalise/i18n-ally/wiki/Editor-UI) that provides a file-based system for annotating messages & reviews
+- Machine translations
 
 **Setup:**
 
@@ -29,15 +39,31 @@ These extensions are known to support `next-intl`:
 "i18n-ally.keystyle": "nested"
 ```
 
-## Sherlock [#sherlock]
+Learn more in the [i18n Ally docs](https://github.com/lokalise/i18n-ally/wiki).
 
-**Features:**
+## Loccy [#loccy]
+
+**Highlights:**
 
 - Message extraction
 - Inline annotations
 - Inline message editing
-- [Message linting](https://inlang.com/m/r7kp499g/app-inlang-ideextension#message-linting?ref=next-intl)
-- Integration with other parts of the inlang ecosystem like [the inlang CLI](https://inlang.com/m/2qj2w8pu/app-inlang-cli?ref=next-intl)
+- AI-enhanced features for message creation, machine translations and more (paid)
+
+**Setup:**
+
+1. Install [Loccy](https://loccy.dev) and it will auto-detect your i18n setup
+2. For advanced configuration, run `Loccy: Create Config File` from the command palette
+
+Learn more on the [Loccy website](https://loccy.dev).
+
+## Sherlock [#sherlock]
+
+**Highlights:**
+
+- Message extraction
+- Inline annotations
+- Inline message editing
 
 **Setup:**
 
@@ -58,4 +84,4 @@ These extensions are known to support `next-intl`:
 }
 ```
 
-Learn more in the inlang docs: [Setting up next-intl with the Sherlock extension](https://inlang.com/g/hhfueysj/guide-nilsjacobsen-nextIntlIdeExtension?ref=next-intl)
+Learn more in the [inlang docs](https://inlang.com/m/193hsyds/plugin-inlang-nextIntl).

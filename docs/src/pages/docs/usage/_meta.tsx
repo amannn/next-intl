@@ -1,7 +1,7 @@
 export default {
-  messages: 'Messages',
+  translations: 'Translations',
   numbers: 'Numbers',
   'dates-times': 'Dates and times',
   lists: 'Lists',
-  configuration: 'Global configuration'
+  configuration: 'Request configuration'
 };

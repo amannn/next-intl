@@ -1,6 +1,7 @@
 const name = 'Crowdin';
 const slogan = 'Agile localization for tech companies';
-const link = 'https://crowdin.com/';
+const link =
+  'https://crowdin.com/?utm_source=next-intl.dev&utm_medium=referral&utm_campaign=next-intl.dev&utm_term=next-intl.dev';
 
 function Logo({height = 33}: {height?: number}) {
   return (

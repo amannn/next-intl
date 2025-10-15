@@ -22,7 +22,7 @@ Using **dynamic text labels** is the most obvious aspect of internationalization
 
 On top of this come typical app problems like:
 
-1. **Rich text formatting**: Many apps need to support some way of rich text, e.g. to embed links into text labels ("Learn more in [the rich text docs](/docs/usage/messages#rich-text).").
+1. **Rich text formatting**: Many apps need to support some way of rich text, e.g. to embed links into text labels ("Learn more in the [rich text docs](/docs/usage/translations#rich-text).").
 2. **Time zones**: Displaying dates requires consistent handling of time zones across the server and client, potentially even customized based on a preference of the user.
 3. **Relative time formatting**: Displaying relative times like "5 minutes ago" or "in 2 hours" requires special care to get the formatting right, and also requires a consistent reference value for the current time. Potentially, you also need a mechanism to update the displayed time regularly.
 4. **Localized URLs**: URLs should be localized to match the user's language preference (e.g. `/en/about-us` for English and `/es/sobre-nosotros` for Spanish). Implementation-wise this requires mapping incoming requests to the right pages and providing streamlined APIs for developers to link between pages in a locale-agnostic way.
@@ -39,9 +39,9 @@ Considering this list, it might be apparent how large the problem space is and h
 
 ## Ergonomic
 
-The bold claim of this library is that your app code will become simpler instead of more complex when you implement internationalization.
+The bold claim of this library is that your app code will become simpler instead of complex when you implement internationalization.
 
-If you consider [the holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. As a developer, you should be able to focus solely on solving practical problems, with internationalization seamlessly integrated as a side effect of your efforts.
+If you consider the [holistic picture](/docs/design-principles#holistic) of what internationalization entails, it's clear that a majority of your components will be involved with internationalization in one way or another. Due to this, `next-intl` makes it a priority to provide convenient APIs that ensure you feel productive and in control. As a developer, you should be able to focus solely on solving practical problems, with internationalization seamlessly integrated as a side effect of your efforts.
 
 Once internationalization is set up, adding a new language is in the simplest case only a matter of adding a new JSON file with translations—everything else is being taken care of by `next-intl`.
 
@@ -49,13 +49,13 @@ Once internationalization is set up, adding a new language is in the simplest ca
 
 ## Standards-based
 
-With the introduction of [the ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), JavaScript has gotten very capable in the recent years in regard to formatting of dates, times, numbers, lists and pluralization. `next-intl` builds on top of this API and provides an ergonomic interface to work with these features, while considering your app-specific configuration & needs.
+With the introduction of the [ECMAScript Internationalization API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), JavaScript has gotten very capable in the recent years in regard to formatting of dates, times, numbers, lists and pluralization. `next-intl` builds on top of this API and provides an ergonomic interface to work with these features, while considering your app-specific configuration & needs.
 
 For text formatting, `next-intl` is based on [International Components for Unicode (ICU)](https://unicode-org.github.io/icu/userguide/format_parse/). ICU is a mature and widely used standard for internationalization that is supported by many programming languages and frameworks. `next-intl` uses the ICU message syntax for defining text labels, which allows to express complex formatting requirements like interpolating variables and pluralization in a concise and readable way—also for non-developers like translators.
 
 By being based on standards, `next-intl` ensures that your internationalization code is future-proof and feels familiar to developers who have existing experience with internationalization. Additionally, relying on standards ensures that `next-intl` integrates well with translation management systems like <PartnerContentLink href="https://crowdin.com/">Crowdin</PartnerContentLink>.
 
-`next-intl` uses a [nested style](/docs/usage/messages#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript#messages). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in [the structuring messages docs](/docs/usage/messages#structuring-messages)).
+`next-intl` uses a [nested style](/docs/usage/translations#structuring-messages) to provide structure to messages, allowing to express hierarchies of messages without redundancy. By supporting only a single style, we can offer advanced features that rely on these assumptions like [type-safety for messages](/docs/workflows/typescript#messages). If you're coming from a different style, you can consider migrating to the nested style (see "Can I use a different style for structuring my messages?" in the [structuring messages docs](/docs/usage/translations#structuring-messages)).
 
 As standards can change, `next-intl` is expected to keep up with the latest developments in the ECMAScript standard (e.g. [`Temporal`](https://tc39.es/proposal-temporal/docs/) and [`Intl.MessageFormat`](https://github.com/tc39/proposal-intl-messageformat)).
 

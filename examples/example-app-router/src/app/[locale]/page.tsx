@@ -3,15 +3,11 @@ import {setRequestLocale} from 'next-intl/server';
 import {use} from 'react';
 import PageLayout from '@/components/PageLayout';
 
-type Props = {
-  params: Promise<{locale: Locale}>;
-};
-
-export default function IndexPage({params}: Props) {
+export default function IndexPage({params}: PageProps<'/[locale]'>) {
   const {locale} = use(params);
 
   // Enable static rendering
-  setRequestLocale(locale);
+  setRequestLocale(locale as Locale);
 
   const t = useTranslations('IndexPage');
 

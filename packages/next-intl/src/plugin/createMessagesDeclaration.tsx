@@ -14,6 +14,27 @@ function runOnce(fn: () => void) {
 export default function createMessagesDeclaration(
   messagesPaths: Array<string>
 ) {
+  // Instead of running _only_ in certain cases, it's
+  // safer to _avoid_ running for certain known cases.
+  // https://github.com/amannn/next-intl/issues/2006
+  const shouldBailOut = [
+    'info',
+    'start'
+
+    // Note: These commands don't consult the
+    // Next.js config, so we can't detect them here.
+    // - telemetry
+    // - lint
+    //
+    // What remains are:
+    // - dev
+    // - build
+    // - typegen
+  ].some((arg) => process.argv.includes(arg));
+  if (shouldBailOut) {
+    return;
+  }
+
   // Next.js can call the Next.js config multiple
   // times - ensure we only run once.
   runOnce(() => {

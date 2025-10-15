@@ -52,7 +52,7 @@ With 3.0, we're cleaning up these APIs by moving them to a shared namespace as w
 + const {Link, useRouter, usePathname, redirect} = createSharedPathnamesNavigation({locales});
 ```
 
-Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see [the navigation docs](/docs/routing/navigation)).
+Typically, you'll want to call this factory function in a central place in your app where you can easily import from (see the [navigation docs](/docs/routing/navigation)).
 
 These changes bring the existing APIs in line with the new [`createLocalizedPathnamesNavigation` API](/docs/routing/navigation) that allows you to localize pathnames:
 
@@ -88,20 +88,20 @@ By using a similar API, you can upgrade from shared pathnames to localized pathn
 
 ### Switching the middleware default of `localePrefix` to `always`
 
-Previously, the [`localePrefix` of the middleware](/docs/routing#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
+Previously, the [`localePrefix` of the middleware](/docs/routing/configuration#locale-prefix) defaulted to `as-needed`, meaning that a locale prefix was only added for non-default locales.
 
 This default has now been changed to `always` since this has two advantages:
 
 1. We can recommend [a safer default `matcher`](/docs/routing/middleware#matcher-config) that needs no extra treatment for pathnames with dots (e.g. `/users/jane.doe`)
-2. It avoids an [edge case of `Link`](/docs/routing#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
+2. It avoids an [edge case of `Link`](/docs/routing/configuration#locale-prefix-as-needed) where we include a prefix for the default locale on the server side but patch this on the client side by removing the prefix (certain SEO tools might report a hint that a link points to a redirect in this case).
 
-If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing#locale-prefix-as-needed) in the middleware.
+If you want to stay on the `as-needed` strategy, you can [configure this option](/docs/routing/configuration#locale-prefix-as-needed) in the middleware.
 
 ### Static rendering of Server Components
 
 With the newly introduced Server Components support comes a temporary workaround for static rendering.
 
-If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/getting-started/app-router/with-i18n-routing#static-rendering) API so that you can keep your pages fully static.
+If you call APIs from `next-intl` in Server Components, the page will by default opt into [dynamic rendering](https://nextjs.org/docs/app/building-your-application/rendering/server-components#dynamic-rendering). This is a limitation that we aim to remove in the future, but as a stopgap solution, we've added the [`unstable_setRequestLocale`](/docs/routing/setup#static-rendering) API so that you can keep your pages fully static.
 
 Note that if you're using `next-intl` exclusively in Client Components, this doesn't apply to your app and static rendering will continue to work as it did before.
 
@@ -141,7 +141,7 @@ If you're not, be aware that this will by default opt the corresponding page int
 </NextIntlClientProvider>
 ```
 
-Alternatively, you can explicitly enable static rendering—see [the previous section](#static-rendering-of-server-components).
+Alternatively, you can explicitly enable static rendering—see the [previous section](#static-rendering-of-server-components).
 
 ### Other notable changes
 
@@ -150,7 +150,7 @@ Alternatively, you can explicitly enable static rendering—see [the previous se
 3. [The middleware](/docs/routing/middleware) now needs to be imported from `next-intl/middleware` instead of `next-intl/server` (deprecated since v2.14).
 4. `next@^13.4` is now required for the RSC APIs. Next.js 10–12 is still supported for the Pages Router integration via `use-intl` (see also: [Support for legacy Next.js versions](/docs/getting-started/pages-router#support-for-legacy-nextjs-versions)).
 5. `useMessages` now has a non-nullable return type for easier consumption and will throw if no messages are configured.
-6. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`](/docs/usage/messages#html-markup) function has been added to generate markup strings like `'<b>Hello</b>'` outside of React components.
+6. `createTranslator(…).rich` now returns a `ReactNode`. Previously, this was somewhat confusing, since `t.rich` accepted and returned either React elements or strings depending on if you retrieve the fuction via `useTranslations` or `createTranslator`. Now, an explicit [`t.markup`](/docs/usage/translations#html-markup) function has been added to generate markup strings like `'<b>Hello</b>'` outside of React components.
 7. `useIntl` has been replaced with [`useFormatter`](/docs/usage/dates-times) (deprecated since v2.11).
 8. `createIntl` has been replaced with [`createFormatter`](/docs/environments/core-library) (deprecated since v2.11).
 9. `useLocale` now requires `next@>=13.3.0`. If you're on an older version of Next.js and you're using the Pages Router, please use `useRouter().locale` instead.

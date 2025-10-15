@@ -2,8 +2,17 @@ import PartnerContentLink from '@/components/PartnerContentLink';
 import Callout from '@/components/Callout';
 import Screenshot from '@/components/Screenshot';
 import Image from 'next/image';
+import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Localization management with Crowdin
+
+Prefer to watch a video?
+
+<CourseVideoBanner
+  className="mt-2"
+  href="https://learn.next-intl.dev/chapters/10-continuous-localization/01-local-workflow"
+  title="AI translations with Crowdin"
+/>
 
 Once you've set up your app with `next-intl`, you'll have multiple translation bundles that contain your messages (e.g. `en.json`). To streamline the workflow of managing these and to allow other team members to contribute translations, it's a good idea to use a localization management platform.
 
