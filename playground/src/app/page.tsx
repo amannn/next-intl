@@ -6,9 +6,9 @@ import { LinkStatus } from "./_components/link-status";
 export default function Home() {
 	return (
 		<div>
-			<div className="mb-12 text-center">
+			<div className="mb-12 text-center pt-10 px-6">
 				<h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-					Welcome to the next-intl Playground
+					Welcome to the <span className="text-primary">next-intl</span> Playground
 				</h1>
 				<p className="text-muted-foreground text-base sm:text-lg md:text-xl">
 					Explore translations, formatting, routing, and patterns using Next.js
