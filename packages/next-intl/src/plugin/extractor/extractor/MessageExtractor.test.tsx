@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {warn} from '../../utils.js';
 import MessageExtractor from './MessageExtractor.js';
 
@@ -12,6 +12,10 @@ vi.mock('../../utils.js', () => ({
 async function process(code: string) {
   return await new MessageExtractor(true).processFileContent('test.tsx', code);
 }
+
+beforeEach(() => {
+  vi.resetAllMocks();
+});
 
 it('can extract a simple message', async () => {
   expect(
@@ -704,6 +708,10 @@ describe('error handling', () => {
 });
 
 describe('object syntax', () => {
+  afterEach(() => {
+    expect(warn).not.toHaveBeenCalled();
+  });
+
   it('can extract with an explicit id and single quotes', async () => {
     expect(
       await process(

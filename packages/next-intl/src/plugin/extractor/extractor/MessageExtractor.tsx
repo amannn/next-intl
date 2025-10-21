@@ -244,10 +244,7 @@ export default class MessageExtractor {
               );
             }
 
-            function extractStaticString(
-              value: Node,
-              warnOnDynamic = false
-            ): string | null {
+            function extractStaticString(value: Node): string | null {
               if (value.type === 'StringLiteral') {
                 return (value as StringLiteral).value;
               } else if (value.type === 'TemplateLiteral') {
@@ -261,21 +258,15 @@ export default class MessageExtractor {
                     templateLiteral.quasis[0].cooked ||
                     templateLiteral.quasis[0].raw
                   );
-                } else if (warnOnDynamic) {
-                  warnDynamicExpression(templateLiteral);
                 }
-              } else if (warnOnDynamic) {
-                warnDynamicExpression(value);
               }
               return null;
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (arg0) {
-              const staticString = extractStaticString(arg0, true);
-              if (staticString !== null) {
-                messageText = staticString;
-              } else if (arg0.type === 'ObjectExpression') {
+              // Handle object syntax: t({id: 'key', message: 'text'})
+              if (arg0.type === 'ObjectExpression') {
                 const objectExpression = arg0 as ObjectExpression;
                 // Look for id, message, values, and formats properties
                 for (const prop of objectExpression.properties) {
@@ -290,12 +281,11 @@ export default class MessageExtractor {
                       key.type === 'Identifier' &&
                       key.value === 'message'
                     ) {
-                      const staticMessage = extractStaticString(
-                        prop.value,
-                        true
-                      );
-                      if (staticMessage !== null) {
+                      const staticMessage = extractStaticString(prop.value);
+                      if (staticMessage != null) {
                         messageText = staticMessage;
+                      } else {
+                        warnDynamicExpression(prop.value);
                       }
                     } else if (
                       key.type === 'Identifier' &&
@@ -310,10 +300,16 @@ export default class MessageExtractor {
                     }
                   }
                 }
-              } else {
-                // Handle all other dynamic expression types
-                // (BinaryExpression, ConditionalExpression, Identifier, CallExpression, etc.)
-                warnDynamicExpression(arg0);
+              }
+              // Handle string syntax: t('text') or t(`text`)
+              else {
+                const staticString = extractStaticString(arg0);
+                if (staticString != null) {
+                  messageText = staticString;
+                } else {
+                  // Dynamic expression (Identifier, CallExpression, BinaryExpression, etc.)
+                  warnDynamicExpression(arg0);
+                }
               }
             }
 
