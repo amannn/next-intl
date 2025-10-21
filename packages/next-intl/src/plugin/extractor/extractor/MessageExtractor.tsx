@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   type CallExpression,
   type Identifier,
@@ -13,6 +14,7 @@ import {
   parse,
   print
 } from '@swc/core';
+import {warn} from '../../utils.js';
 import type {ExtractedMessage} from '../types.js';
 import ASTScope from './ASTScope.js';
 import KeyGenerator from './KeyGenerator.js';
@@ -22,15 +24,19 @@ export default class MessageExtractor {
   private static readonly NAMESPACE_SEPARATOR = '.';
 
   private isDevelopment: boolean;
+  private compileCache = new LRUCache<{
+    messages: Array<ExtractedMessage>;
+    source: string;
+  }>(750);
 
   constructor(isDevelopment: boolean) {
     this.isDevelopment = isDevelopment;
   }
 
-  private compileCache = new LRUCache<{
-    messages: Array<ExtractedMessage>;
-    source: string;
-  }>(750);
+  private static getLineNumber(source: string, offset: number): number {
+    const lines = source.slice(0, offset).split('\n');
+    return lines.length;
+  }
 
   async processFileContent(
     absoluteFilePath: string,
@@ -52,7 +58,7 @@ export default class MessageExtractor {
       decorators: true
     });
 
-    const processResult = await this.processAST(ast, absoluteFilePath);
+    const processResult = await this.processAST(ast, source, absoluteFilePath);
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
@@ -64,6 +70,7 @@ export default class MessageExtractor {
 
   private async processAST(
     ast: Program | Module,
+    source: string,
     filePath?: string
   ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
     const results: Array<ExtractedMessage> = [];
@@ -220,49 +227,93 @@ export default class MessageExtractor {
             let valuesNode: Node | null = null;
             let formatsNode: Node | null = null;
 
-            if (arg0.type === 'StringLiteral') {
-              messageText = (arg0 as StringLiteral).value;
-            } else if (arg0.type === 'TemplateLiteral') {
-              const templateLiteral = arg0 as TemplateLiteral;
-              // Only handle simple template literals without expressions
-              if (
-                templateLiteral.expressions.length === 0 &&
-                templateLiteral.quasis.length === 1
-              ) {
-                messageText =
-                  templateLiteral.quasis[0].cooked ||
-                  templateLiteral.quasis[0].raw;
+            function warnDynamicExpression(expressionNode: Node) {
+              const hasSpan =
+                'span' in expressionNode &&
+                expressionNode.span &&
+                typeof expressionNode.span === 'object' &&
+                'start' in expressionNode.span;
+              const location =
+                filePath && hasSpan
+                  ? `${path.basename(filePath)}:${MessageExtractor.getLineNumber(source, (expressionNode.span as {start: number}).start)}`
+                  : undefined;
+
+              warn(
+                (location ? `${location}: ` : '') +
+                  'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+              );
+            }
+
+            function extractStaticString(
+              value: Node,
+              warnOnDynamic = false
+            ): string | null {
+              if (value.type === 'StringLiteral') {
+                return (value as StringLiteral).value;
+              } else if (value.type === 'TemplateLiteral') {
+                const templateLiteral = value as TemplateLiteral;
+                // Only handle simple template literals without expressions
+                if (
+                  templateLiteral.expressions.length === 0 &&
+                  templateLiteral.quasis.length === 1
+                ) {
+                  return (
+                    templateLiteral.quasis[0].cooked ||
+                    templateLiteral.quasis[0].raw
+                  );
+                } else if (warnOnDynamic) {
+                  warnDynamicExpression(templateLiteral);
+                }
+              } else if (warnOnDynamic) {
+                warnDynamicExpression(value);
               }
-            } else if (arg0.type === 'ObjectExpression') {
-              const objectExpression = arg0 as ObjectExpression;
-              // Look for id, message, values, and formats properties
-              for (const prop of objectExpression.properties) {
-                if (prop.type === 'KeyValueProperty') {
-                  const key = prop.key;
-                  if (
-                    key.type === 'Identifier' &&
-                    key.value === 'id' &&
-                    prop.value.type === 'StringLiteral'
-                  ) {
-                    explicitId = (prop.value as StringLiteral).value;
-                  } else if (
-                    key.type === 'Identifier' &&
-                    key.value === 'message' &&
-                    prop.value.type === 'StringLiteral'
-                  ) {
-                    messageText = (prop.value as StringLiteral).value;
-                  } else if (
-                    key.type === 'Identifier' &&
-                    key.value === 'values'
-                  ) {
-                    valuesNode = prop.value;
-                  } else if (
-                    key.type === 'Identifier' &&
-                    key.value === 'formats'
-                  ) {
-                    formatsNode = prop.value;
+              return null;
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (arg0) {
+              const staticString = extractStaticString(arg0, true);
+              if (staticString !== null) {
+                messageText = staticString;
+              } else if (arg0.type === 'ObjectExpression') {
+                const objectExpression = arg0 as ObjectExpression;
+                // Look for id, message, values, and formats properties
+                for (const prop of objectExpression.properties) {
+                  if (prop.type === 'KeyValueProperty') {
+                    const key = prop.key;
+                    if (key.type === 'Identifier' && key.value === 'id') {
+                      const staticId = extractStaticString(prop.value);
+                      if (staticId !== null) {
+                        explicitId = staticId;
+                      }
+                    } else if (
+                      key.type === 'Identifier' &&
+                      key.value === 'message'
+                    ) {
+                      const staticMessage = extractStaticString(
+                        prop.value,
+                        true
+                      );
+                      if (staticMessage !== null) {
+                        messageText = staticMessage;
+                      }
+                    } else if (
+                      key.type === 'Identifier' &&
+                      key.value === 'values'
+                    ) {
+                      valuesNode = prop.value;
+                    } else if (
+                      key.type === 'Identifier' &&
+                      key.value === 'formats'
+                    ) {
+                      formatsNode = prop.value;
+                    }
                   }
                 }
+              } else {
+                // Handle all other dynamic expression types
+                // (BinaryExpression, ConditionalExpression, Identifier, CallExpression, etc.)
+                warnDynamicExpression(arg0);
               }
             }
 

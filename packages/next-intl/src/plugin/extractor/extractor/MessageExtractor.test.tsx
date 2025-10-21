@@ -1,18 +1,22 @@
-import {describe, expect, it} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import {warn} from '../../utils.js';
 import MessageExtractor from './MessageExtractor.js';
 
-describe('development', () => {
-  async function process(code: string) {
-    return await new MessageExtractor(true).processFileContent(
-      'test.tsx',
-      code
-    );
-  }
+vi.mock('../../utils.js', () => ({
+  warn: vi.fn(),
+  throwError: vi.fn((message: string) => {
+    throw new Error(message);
+  })
+}));
 
-  it('can extract a simple message', async () => {
-    expect(
-      await process(
-        `
+async function process(code: string) {
+  return await new MessageExtractor(true).processFileContent('test.tsx', code);
+}
+
+it('can extract a simple message', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -20,8 +24,8 @@ describe('development', () => {
       t("Hey!");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -38,12 +42,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract a message with a let variable', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with a let variable', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -51,8 +55,8 @@ describe('development', () => {
       t("Hey!");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -69,12 +73,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract a message with a renamed variable', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with a renamed variable', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -82,8 +86,8 @@ describe('development', () => {
       translate("Hello!");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -100,12 +104,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract a message with different quotes', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with different quotes', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -115,8 +119,8 @@ describe('development', () => {
       t(\`Hi!\`);
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
       {
         "messages": [
           {
@@ -145,12 +149,12 @@ describe('development', () => {
       ",
       }
     `);
-  });
+});
 
-  it('can extract a message with useTranslations already present', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with useTranslations already present', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted, useTranslations} from 'next-intl';
 
     function Component() {
@@ -160,8 +164,8 @@ describe('development', () => {
       t2("greeting");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -180,12 +184,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract a message with t out of scope', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with t out of scope', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -196,8 +200,8 @@ describe('development', () => {
     const t = (msg) => msg;
     t("Should not be transformed");
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -216,12 +220,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract messages from an event handler and JSX', async () => {
-    expect(
-      await process(
-        `
+it('can extract messages from an event handler and JSX', async () => {
+  expect(
+    await process(
+      `
     import {useState} from 'react';
     import {useExtracted} from 'next-intl';
 
@@ -243,8 +247,8 @@ describe('development', () => {
       );
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -276,12 +280,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('can extract a message with a renamed hook', async () => {
-    expect(
-      await process(
-        `
+it('can extract a message with a renamed hook', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted as useInlined} from 'next-intl';
 
     function Component() {
@@ -289,8 +293,8 @@ describe('development', () => {
       t("Hey!");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -307,12 +311,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('supports passing values', async () => {
-    expect(
-      await process(
-        `
+it('supports passing values', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -320,8 +324,8 @@ describe('development', () => {
       t('Hello, {name}!', {name: 'Alice'});
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -340,12 +344,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('supports passing an inline date formatter', async () => {
-    expect(
-      await process(
-        `
+it('supports passing an inline date formatter', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -353,8 +357,8 @@ describe('development', () => {
       t('{date, date, short}!', {date: new Date()}, {short: {dateStyle: 'short'}});
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -377,12 +381,12 @@ describe('development', () => {
     ",
     }
   `);
-  });
+});
 
-  it('supports t.rich', async () => {
-    expect(
-      await process(
-        `
+it('supports t.rich', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -390,8 +394,8 @@ describe('development', () => {
       t.rich('Hello <b>Alice</b>!', {b: (chunks) => <b>{chunks}</b>});
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
       {
         "messages": [
           {
@@ -410,12 +414,12 @@ describe('development', () => {
       ",
       }
     `);
-  });
+});
 
-  it('supports t.markup', async () => {
-    expect(
-      await process(
-        `
+it('supports t.markup', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -423,8 +427,8 @@ describe('development', () => {
       t.markup('Hello <b>Alice</b>!', {b: (chunks) => \`<b>\${chunks}</b>\`});
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
       {
         "messages": [
           {
@@ -443,12 +447,12 @@ describe('development', () => {
       ",
       }
     `);
-  });
+});
 
-  it('supports t.has', async () => {
-    expect(
-      await process(
-        `
+it('supports t.has', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -456,8 +460,8 @@ describe('development', () => {
       t.has('Hello there!');
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
       {
         "messages": [
           {
@@ -474,12 +478,12 @@ describe('development', () => {
       ",
       }
     `);
-  });
+});
 
-  it('can extract with a namespace', async () => {
-    expect(
-      await process(
-        `
+it('can extract with a namespace', async () => {
+  expect(
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -487,8 +491,8 @@ describe('development', () => {
       t('Hello!');
     }
           `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -505,22 +509,214 @@ describe('development', () => {
         ",
         }
       `);
+});
+
+describe('error handling', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    expect(warn).toHaveBeenCalledTimes(0);
   });
 
-  describe('object syntax', () => {
-    it('can extract with an explicit id', async () => {
-      expect(
-        await process(
-          `
+  it('warns when using a template literal with interpolation', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      const name = 'Alice';
+      t(\`Hello \${name}!\`);
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            const name = 'Alice';
+            t(\`Hello \${name}!\`);
+        }
+        ",
+        }
+      `);
+
+    // Note: We still transform to `useTranslations`, so that other potential
+    // calls to `useExtracted` remain not affected. The user should
+    // additionally see a warning on the console, which hints at something
+    // being wrong. There's a theoretical risk of us matching a valid ID, but
+    // since we can't extract in the first place, this message shouldn't be
+    // present in the catalog.
+
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+
+  it('warns when using string concatenation with +', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      const name = 'Alice';
+      t('Hello ' + name + '!');
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            const name = 'Alice';
+            t('Hello ' + name + '!');
+        }
+        ",
+        }
+      `);
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+
+  it('warns when using a ternary expression', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component({isAdmin}) {
+      const t = useExtracted();
+      t(isAdmin ? 'Admin panel' : 'User panel');
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component({ isAdmin }) {
+            const t = useTranslations();
+            t(isAdmin ? 'Admin panel' : 'User panel');
+        }
+        ",
+        }
+      `);
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+
+  it('warns when using a variable reference', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      const message = 'Hello world';
+      t(message);
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            const message = 'Hello world';
+            t(message);
+        }
+        ",
+        }
+      `);
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+
+  it('warns when using a function call', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t(getMessage());
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t(getMessage());
+        }
+        ",
+        }
+      `);
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+
+  it('warns when using a dynamic expression with object syntax', async () => {
+    expect(
+      await process(
+        `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({id: 'test', message: getMessage()});
+    }
+    `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t({
+                id: 'test',
+                message: getMessage()
+            });
+        }
+        ",
+        }
+      `);
+    expect(warn).toHaveBeenCalledWith(
+      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  });
+});
+
+describe('object syntax', () => {
+  it('can extract with an explicit id and single quotes', async () => {
+    expect(
+      await process(
+        `
       import {useExtracted} from 'next-intl';
   
       function Component() {
         const t = useExtracted();
-        t({id: "greeting", message: 'Hello!'});
+        t({id: 'greeting', message: 'Hello!'});
       }
       `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -537,12 +733,74 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract with an explicit id and values', async () => {
-      expect(
-        await process(
-          `
+  it('can extract with an explicit id and double quotes', async () => {
+    expect(
+      await process(
+        `
+      import {useExtracted} from 'next-intl';
+  
+      function Component() {
+        const t = useExtracted();
+        t({id: "greeting", message: "Hello!"});
+      }
+      `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t("greeting", undefined, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+  });
+
+  it('can extract with an explicit id and a template literal', async () => {
+    expect(
+      await process(
+        `
+      import {useExtracted} from 'next-intl';
+  
+      function Component() {
+        const t = useExtracted();
+        t({id: \`greeting\`, message: \`Hello!\`});
+      }
+      `
+      )
+    ).toMatchInlineSnapshot(`
+        {
+          "messages": [
+            {
+              "filePath": "test.tsx",
+              "id": "greeting",
+              "message": "Hello!",
+            },
+          ],
+          "source": "import { useTranslations } from 'next-intl';
+        function Component() {
+            const t = useTranslations();
+            t("greeting", undefined, undefined, "Hello!");
+        }
+        ",
+        }
+      `);
+  });
+
+  it('can extract with an explicit id and values', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -550,8 +808,8 @@ describe('development', () => {
       t({id: "greeting", message: 'Hello!', values: {name: 'Alice'}});
     }
     `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -570,12 +828,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract with an explicit id, values and formats', async () => {
-      expect(
-        await process(
-          `
+  it('can extract with an explicit id, values and formats', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -588,8 +846,8 @@ describe('development', () => {
       });
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -612,12 +870,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract with an explicit id when using t.rich', async () => {
-      expect(
-        await process(
-          `
+  it('can extract with an explicit id when using t.rich', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -629,8 +887,8 @@ describe('development', () => {
       });
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -649,12 +907,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract with an explicit id when using t.markup', async () => {
-      expect(
-        await process(
-          `
+  it('can extract with an explicit id when using t.markup', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -662,8 +920,8 @@ describe('development', () => {
       t.markup('Hello <b>Alice</b>!', {b: (chunks) => \`<b>\${chunks}</b>\`});
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -682,12 +940,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extracth with an explicit id and a namespace', async () => {
-      expect(
-        await process(
-          `
+  it('can extracth with an explicit id and a namespace', async () => {
+    expect(
+      await process(
+        `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -695,8 +953,8 @@ describe('development', () => {
       t({id: 'greeting', message: 'Hello!'});
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -713,14 +971,14 @@ describe('development', () => {
         ",
         }
       `);
-    });
   });
+});
 
-  describe('getExtracted', () => {
-    it('supports plain messages', async () => {
-      expect(
-        await process(
-          `
+describe('getExtracted', () => {
+  it('supports plain messages', async () => {
+    expect(
+      await process(
+        `
       import {getExtracted} from 'next-intl/server';
 
       async function Component() {
@@ -728,8 +986,8 @@ describe('development', () => {
         t("Hello there!");
       }
       `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -746,12 +1004,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract a message with a renamed variable', async () => {
-      expect(
-        await process(
-          `
+  it('can extract a message with a renamed variable', async () => {
+    expect(
+      await process(
+        `
     import {getExtracted} from 'next-intl/server';
 
     async function Component() {
@@ -759,8 +1017,8 @@ describe('development', () => {
       translate("Hello there!");
     }
     `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -777,12 +1035,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('supports the object syntax for passing a locale', async () => {
-      expect(
-        await process(
-          `
+  it('supports the object syntax for passing a locale', async () => {
+    expect(
+      await process(
+        `
       import {getExtracted} from 'next-intl/server';
 
       async function Component() {
@@ -790,8 +1048,8 @@ describe('development', () => {
         t("Hello there!");
       }
       `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -810,12 +1068,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('supports the object syntax for passing a locale and namespace', async () => {
-      expect(
-        await process(
-          `
+  it('supports the object syntax for passing a locale and namespace', async () => {
+    expect(
+      await process(
+        `
       import {getExtracted} from 'next-intl/server';
 
       async function Component() {
@@ -823,8 +1081,8 @@ describe('development', () => {
         t("Hello there!");
       }
       `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -844,12 +1102,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('supports the object syntax for passing an explicit id', async () => {
-      expect(
-        await process(
-          `
+  it('supports the object syntax for passing an explicit id', async () => {
+    expect(
+      await process(
+        `
     import {getExtracted} from 'next-intl/server';
 
     async function Component() {
@@ -861,8 +1119,8 @@ describe('development', () => {
       });
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -881,12 +1139,12 @@ describe('development', () => {
         ",
         }
       `);
-    });
+  });
 
-    it('can extract with a namespace', async () => {
-      expect(
-        await process(
-          `
+  it('can extract with a namespace', async () => {
+    expect(
+      await process(
+        `
     import {getExtracted} from 'next-intl/server';
 
     async function Component() {
@@ -894,8 +1152,8 @@ describe('development', () => {
       t("Hello!");
     }
           `
-        )
-      ).toMatchInlineSnapshot(`
+      )
+    ).toMatchInlineSnapshot(`
         {
           "messages": [
             {
@@ -912,24 +1170,22 @@ describe('development', () => {
         ",
         }
       `);
-    });
   });
 });
 
-describe('production', () => {
-  it('does not add fallback message', async () => {
-    expect(
-      await new MessageExtractor(false).processFileContent(
-        'test.tsx',
-        `import {useExtracted} from 'next-intl';
+it('does not add a fallback message in production', async () => {
+  expect(
+    await new MessageExtractor(false).processFileContent(
+      'test.tsx',
+      `import {useExtracted} from 'next-intl';
 
     function Component() {
       const t = useExtracted();
       t("Hey!");
     }
   `
-      )
-    ).toMatchInlineSnapshot(`
+    )
+  ).toMatchInlineSnapshot(`
       {
         "messages": [
           {
@@ -946,5 +1202,4 @@ describe('production', () => {
       ",
       }
     `);
-  });
 });
