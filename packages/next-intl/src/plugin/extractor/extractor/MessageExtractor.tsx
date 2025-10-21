@@ -33,11 +33,6 @@ export default class MessageExtractor {
     this.isDevelopment = isDevelopment;
   }
 
-  private static getLineNumber(source: string, offset: number): number {
-    const lines = source.slice(0, offset).split('\n');
-    return lines.length;
-  }
-
   async processFileContent(
     absoluteFilePath: string,
     source: string
@@ -58,7 +53,7 @@ export default class MessageExtractor {
       decorators: true
     });
 
-    const processResult = await this.processAST(ast, source, absoluteFilePath);
+    const processResult = await this.processAST(ast, absoluteFilePath);
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
@@ -70,7 +65,6 @@ export default class MessageExtractor {
 
   private async processAST(
     ast: Program | Module,
-    source: string,
     filePath?: string
   ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
     const results: Array<ExtractedMessage> = [];
@@ -234,9 +228,7 @@ export default class MessageExtractor {
                 typeof expressionNode.span === 'object' &&
                 'start' in expressionNode.span;
               const location =
-                filePath && hasSpan
-                  ? `${path.basename(filePath)}:${MessageExtractor.getLineNumber(source, (expressionNode.span as {start: number}).start)}`
-                  : undefined;
+                filePath && hasSpan ? `${path.basename(filePath)}` : undefined;
 
               warn(
                 (location ? `${location}: ` : '') +

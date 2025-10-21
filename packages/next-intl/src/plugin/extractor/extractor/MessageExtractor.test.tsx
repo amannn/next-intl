@@ -555,7 +555,7 @@ describe('error handling', () => {
     // present in the catalog.
 
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
@@ -585,7 +585,7 @@ describe('error handling', () => {
         }
       `);
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
@@ -613,7 +613,7 @@ describe('error handling', () => {
         }
       `);
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
@@ -643,7 +643,7 @@ describe('error handling', () => {
         }
       `);
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:9: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
@@ -671,7 +671,7 @@ describe('error handling', () => {
         }
       `);
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
@@ -702,7 +702,7 @@ describe('error handling', () => {
         }
       `);
     expect(warn).toHaveBeenCalledWith(
-      'test.tsx:8: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 });
