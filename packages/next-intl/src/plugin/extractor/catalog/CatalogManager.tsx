@@ -21,6 +21,8 @@ export default class CatalogManager {
   private translationsByTargetLocale: Map<Locale, Map<string, string>> =
     new Map();
 
+  private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
+
   private saveScheduler: SaveScheduler<number>;
   private projectRoot: string;
 
@@ -119,6 +121,10 @@ export default class CatalogManager {
           const translations = this.translationsByTargetLocale.get(locale)!;
           translations.set(message.id, message.message);
         }
+
+        // Initialize last modified
+        const fileTime = await formatter.getLastModified(locale);
+        this.lastWriteByLocale.set(locale, fileTime);
       })
     );
   }
@@ -163,12 +169,32 @@ export default class CatalogManager {
     await formatter.write(this.config.sourceLocale, messages);
 
     for (const locale of await this.getTargetLocales()) {
+      // Check if file was modified externally
+      const lastWriteTime = this.lastWriteByLocale.get(locale);
+      const currentFileTime = await formatter.getLastModified(locale);
+
+      // If file was modified externally, read and merge
+      if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
+        const diskMessages = await formatter.read(locale);
+        const translations = this.translationsByTargetLocale.get(locale)!;
+
+        for (const diskMessage of diskMessages) {
+          // Disk wins: preserve manual edits
+          translations.set(diskMessage.id, diskMessage.message);
+        }
+      }
+
       const translations = this.translationsByTargetLocale.get(locale)!;
       const localeMessages = messages.map((message) => ({
         ...message,
         message: translations.get(message.id) || ''
       }));
+
       await formatter.write(locale, localeMessages);
+
+      // Update timestamps
+      const newTime = await formatter.getLastModified(locale);
+      this.lastWriteByLocale.set(locale, newTime);
     }
 
     return messages.length;

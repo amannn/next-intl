@@ -4,6 +4,7 @@ type Formatter = {
   EXTENSION: `.${string}`;
   read(locale: Locale): Promise<Array<ExtractedMessage>>;
   write(locale: Locale, messages: Array<ExtractedMessage>): Promise<void>;
+  getLastModified(locale: Locale): Promise<Date | undefined>;
 };
 
 export default Formatter;

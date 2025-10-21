@@ -60,6 +60,16 @@ export default class JSONFormatter implements Formatter {
     }
   }
 
+  async getLastModified(locale: Locale): Promise<Date | undefined> {
+    const filePath = fsPath.join(this.messagesPath, locale + this.EXTENSION);
+    try {
+      const stats = await fs.stat(filePath);
+      return stats.mtime;
+    } catch {
+      return undefined;
+    }
+  }
+
   private encode(messages: Array<ExtractedMessage>): StoredFormat {
     const root: StoredFormat = {};
     for (const message of messages) {

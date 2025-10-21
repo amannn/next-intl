@@ -70,4 +70,8 @@ export default class ExtractionCompiler {
 
     return false;
   }
+
+  public destroy(): void {
+    this.manager.destroy();
+  }
 }
