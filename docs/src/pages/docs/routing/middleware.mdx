@@ -165,46 +165,55 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
 ### Example: Additional rewrites
 
-If you need to handle rewrites apart from the ones provided by `next-intl`, you can adjust the `pathname` of the `request` before invoking the `next-intl` middleware (based on ["A/B Testing with Cookies" by Vercel](https://vercel.com/templates/next.js/cookies)).
+If you need to handle rewrites apart from the ones provided by `next-intl`, you can call [`NextResponse.rewrite()`](https://nextjs.org/docs/app/api-reference/functions/next-response#rewrite) conditionally after the `next-intl` middleware has run.
 
 This example rewrites requests for `/[locale]/profile` to `/[locale]/profile/new` if a special cookie is set.
 
 ```tsx filename="middleware.ts"
 import createMiddleware from 'next-intl/middleware';
-import {NextRequest} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
+import {routing} from './i18n/routing';
+
+const handleI18nRouting = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
-  const [, locale, ...segments] = request.nextUrl.pathname.split('/');
+  let response = handleI18nRouting(request);
 
-  if (locale != null && segments.join('/') === 'profile') {
-    const usesNewProfile =
-      (request.cookies.get('NEW_PROFILE')?.value || 'false') === 'true';
+  // Additional rewrite when NEW_PROFILE cookie is set
+  if (response.ok) {
+    // (not for errors or redirects)
+    const [, locale, ...rest] = new URL(
+      response.headers.get('x-middleware-rewrite') || request.url
+    ).pathname.split('/');
+    const pathname = '/' + rest.join('/');
 
-    if (usesNewProfile) {
-      request.nextUrl.pathname = `/${locale}/profile/new`;
+    if (
+      pathname === '/profile' &&
+      request.cookies.get('NEW_PROFILE')?.value === 'true'
+    ) {
+      response = NextResponse.rewrite(
+        new URL(`/${locale}/profile/new`, request.url),
+        {headers: response.headers}
+      );
     }
   }
 
-  const handleI18nRouting = createMiddleware({
-    locales: ['en', 'de'],
-    defaultLocale: 'en'
-  });
-  const response = handleI18nRouting(request);
   return response;
 }
 
 export const config = {
-  matcher: ['/', '/(de|en)/:path*']
+  // Match only internationalized pathnames
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
-Note that if you use a [`localePrefix`](/docs/routing/configuration#locale-prefix) other than `always`, you need to adapt the handling appropriately to handle unprefixed pathnames too. Also, make sure to only rewrite pathnames that will not lead to a redirect, as otherwise rewritten pathnames will be redirected to.
+You may wish to customize this based on your routing configuration and use case.
 
 ### Example: Integrating with Clerk
 
@@ -227,7 +236,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   // Match only internationalized pathnames
-  matcher: ['/', '/(de|en)/:path*']
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
@@ -293,7 +302,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/(de|en)/:path*']
+  // Match only internationalized pathnames
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
@@ -349,7 +359,8 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  // Match only internationalized pathnames
+  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
 
