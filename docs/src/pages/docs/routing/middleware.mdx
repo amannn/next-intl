@@ -2,9 +2,9 @@ import Callout from '@/components/Callout';
 import Details from '@/components/Details';
 import {CourseVideoBanner} from '@/components/CourseBanner';
 
-# Middleware
+# Proxy / middleware
 
-The middleware can be created via `createMiddleware`.
+The `next-intl` middleware can be created via `createMiddleware`.
 
 It receives a [`routing`](/docs/routing/configuration#define-routing) configuration and takes care of:
 
@@ -14,7 +14,7 @@ It receives a [`routing`](/docs/routing/configuration#define-routing) configurat
 
 **Example:**
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {routing} from './i18n/routing';
 
@@ -27,6 +27,8 @@ export const config = {
   matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
 };
 ```
+
+**Note:** `proxy.ts` was called `middleware.ts` up until Next.js 16.
 
 ## Locale detection [#locale-detection]
 
@@ -112,7 +114,7 @@ The middleware is intended to only run on pages, not on arbitrary files that you
 
 A popular strategy is to match all routes that don't start with certain segments (e.g. `/_next`) and also none that include a dot (`.`) since these typically indicate static files. However, if you have some routes where a dot is expected (e.g. `/users/jane.doe`), you should explicitly provide a matcher for these.
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 export const config = {
   // Matcher entries are linked with a logical "or", therefore
   // if one of them matches, the middleware will be invoked.
@@ -142,11 +144,11 @@ function middleware(request: NextRequest): NextResponse;
 
 If you need to incorporate additional behavior, you can either modify the request before the `next-intl` middleware receives it, modify the response or even create the middleware based on dynamic configuration.
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // Step 1: Use the incoming request (example)
   const defaultLocale = request.headers.get('x-your-custom-locale') || 'en';
 
@@ -175,14 +177,14 @@ If you need to handle rewrites apart from the ones provided by `next-intl`, you 
 
 This example rewrites requests for `/[locale]/profile` to `/[locale]/profile/new` if a special cookie is set.
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {NextRequest, NextResponse} from 'next/server';
 import {routing} from './i18n/routing';
 
 const handleI18nRouting = createMiddleware(routing);
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   let response = handleI18nRouting(request);
 
   // Additional rewrite when NEW_PROFILE cookie is set
@@ -219,7 +221,7 @@ You may wish to customize this based on your routing configuration and use case.
 
 [`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be [combined](https://clerk.com/docs/references/nextjs/clerk-middleware#combine-middleware) with other middlewares like the one provided by `next-intl`. By combining them, the middleware from `@clerk/next` will first ensure protected routes are handled appropriately. Subsequently, the middleware from `next-intl` will run, potentially redirecting or rewriting incoming requests.
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
 import createMiddleware from 'next-intl/middleware';
 import {routing} from './i18n/routing';
@@ -286,7 +288,7 @@ export async function updateSession(
 
 Now, we can integrate the Supabase middleware with the one from `next-intl`:
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {type NextRequest} from 'next/server';
 import {routing} from './i18n/routing';
@@ -311,11 +313,11 @@ export const config = {
 
 ### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
 
-The Next.js middleware of [Auth.js](https://authjs.dev/) requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
+The [Auth.js](https://authjs.dev/) middleware requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
 
 For pathnames specified in the [`pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 import {withAuth} from 'next-auth/middleware';
 import createMiddleware from 'next-intl/middleware';
 import {NextRequest} from 'next/server';
@@ -342,7 +344,7 @@ const authMiddleware = withAuth(
   }
 );
 
-export default function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   const publicPathnameRegex = RegExp(
     `^(/(${locales.join('|')}))?(${publicPages
       .flatMap((p) => (p === '/' ? ['', '/'] : p))
@@ -372,9 +374,9 @@ Have a look at the [`next-intl` with NextAuth.js example](/examples#app-router-n
 
 </Callout>
 
-## Usage without middleware (static export)
+## Usage without proxy / middleware (static export)
 
-If you're using the [static export](https://nextjs.org/docs/app/building-your-application/deploying/static-exports) feature from Next.js (`output: 'export'`), the middleware will not run. You can use [prefix-based routing](/docs/routing/configuration#locale-prefix) nontheless to internationalize your app, but a few tradeoffs apply.
+If you're using the [static export](https://nextjs.org/docs/app/building-your-application/deploying/static-exports) feature from Next.js (`output: 'export'`), a proxy / middleware will not run. You can use [prefix-based routing](/docs/routing/configuration#locale-prefix) nontheless to internationalize your app, but a few tradeoffs apply.
 
 **Static export limitations:**
 
@@ -406,20 +408,20 @@ export default function RootLayout({children}) {
 
 ## Troubleshooting
 
-### "The middleware doesn't run for a particular page." [#middleware-not-running]
+### "The proxy / middleware doesn't run for a particular page." [#middleware-not-running]
 
 To resolve this, make sure that:
 
-1. The [middleware](/docs/routing/setup#middleware) is set up in the correct file (e.g. `src/middleware.ts`).
-2. Your middleware [matcher](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
+1. The [proxy / middleware](/docs/routing/setup#proxy) is set up in the correct file (e.g. `src/proxy.ts`).
+2. Your [`matcher`](#matcher-config) correctly matches all routes of your application, including dynamic segments with potentially unexpected characters like dots (e.g. `/users/jane.doe`).
 3. In case you're [composing other middlewares](#composing-other-middlewares), ensure that the middleware is called correctly.
 4. In case you require static rendering, make sure to follow the [static rendering guide](/docs/routing/setup#static-rendering) instead of relying on hacks like [`force-static`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic).
 
 ### "My page content isn't localized despite the pathname containing a locale prefix." [#content-not-localized]
 
-This is very likely the result of your [middleware not running](#middleware-not-running) on the request. As a result, a potential fallback from [`i18n/request.ts`](/docs/usage/configuration#i18n-request) might be applied.
+This is very likely the result of your [proxy / middleware not running](#middleware-not-running) on the request. As a result, a potential fallback from [`i18n/request.ts`](/docs/usage/configuration#i18n-request) might be applied.
 
-### "Unable to find `next-intl` locale because the middleware didn't run on this request and no `locale` was returned in `getRequestConfig`." [#unable-to-find-locale]
+### "Unable to find `next-intl` locale because the proxy / middleware didn't run on this request and no `locale` was returned in `getRequestConfig`." [#unable-to-find-locale]
 
 If the middleware _is not_ expected to run on this request (e.g. because you're using a setup without locale-based routing, you should explicitly return a `locale` from [`getRequestConfig`](/docs/usage/configuration#i18n-request) to recover from this error.
 

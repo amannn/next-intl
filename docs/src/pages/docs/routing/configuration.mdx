@@ -75,7 +75,7 @@ export const routing = defineRouting({
 
 **Note that:**
 
-1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
+1. If you use this routing strategy, make sure that your [`matcher`](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
 2. The middleware will by default set a [cookie](#locale-cookie) to remember the user's locale preference. If no explicit locale prefix is present in the pathname, then [locale detection](/docs/routing/middleware#locale-detection-prefix) will potentially redirect users to the latest locale that was matched based on the cookie value (e.g. `/` → `/de`).
 3. If a superfluous locale prefix like `/en/about` is requested, the middleware will automatically redirect to the unprefixed version `/about`. This can be helpful in case you're redirecting from another locale and you want to update a potential cookie value first (e.g. [`<Link />`](/docs/routing/navigation#link) relies on this mechanism).
 
@@ -101,7 +101,7 @@ In this case, requests for all locales will be rewritten to have the locale only
 
 **Note that:**
 
-1. If you use this routing strategy, make sure that your [middleware matcher](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
+1. If you use this routing strategy, make sure that your [`matcher`](/docs/routing/middleware#matcher-config) detects unprefixed pathnames.
 2. [Alternate links](#alternate-links) are disabled in this mode since URLs might not be unique per locale. Due to this, consider including these yourself, or set up a [sitemap](/docs/environments/actions-metadata-route-handlers#sitemap) that links localized pages via `alternates`.
 3. You can consider increasing the [`maxAge`](#locale-cookie) attribute of the locale cookie to a longer duration to remember the user's preference across sessions.
 
@@ -128,7 +128,7 @@ export const routing = defineRouting({
 
 **Note that:**
 
-1. You should adapt your [middleware matcher](/docs/routing/middleware#matcher-config) to match the custom prefixes.
+1. You should adapt your [`matcher`](/docs/routing/middleware#matcher-config) to match the custom prefixes.
 2. Custom prefixes are only visible to the user and rewritten internally to the corresponding locale. Therefore, the `[locale]` segment corresponds to the locale, not the prefix.
 
 <Details id="locale-prefix-custom-read-prefix">
@@ -549,9 +549,9 @@ The middleware as well as the navigation APIs will automatically consider a [`ba
 
 The only exception is the [`getPathname`](/docs/routing/navigation#getpathname) function, which will return the bare pathname without a base path. Due to this, you can prefix the returned pathname manually if you need to.
 
-When using a base path, you should make sure that your middleware [`matcher`](#matcher-config) handles an explicit root:
+When using a base path, you should make sure that your [`matcher`](#matcher-config) handles an explicit root:
 
-```tsx filename="middleware.ts"
+```tsx filename="proxy.ts"
 export const config = {
   // The `matcher` is relative to the `basePath`
   matcher: [

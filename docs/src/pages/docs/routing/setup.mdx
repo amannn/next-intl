@@ -45,11 +45,11 @@ export const routing = defineRouting({
 
 Depending on your requirements, you may wish to customize your routing configuration later—but let's finish with the setup first.
 
-### `src/middleware.ts` [#middleware]
+### `src/proxy.ts` [#proxy]
 
-Once we have our routing configuration in place, we can use it to set up the middleware:
+Once we have our routing configuration in place, we can use it to set up a proxy:
 
-```tsx filename="src/middleware.ts"
+```tsx filename="src/proxy.ts"
 import createMiddleware from 'next-intl/middleware';
 import {routing} from './i18n/routing';
 
@@ -63,12 +63,14 @@ export const config = {
 };
 ```
 
-<Details id="middleware-matcher-dots">
+**Note:** `proxy.ts` was called `middleware.ts` up until Next.js 16.
+
+<Details id="proxy-matcher-dots">
   <summary>How can I match pathnames that contain dots like `/users/jane.doe`?</summary>
 
 If you have pathnames where dots are expected, you can match them with explicit entries:
 
-```tsx filename="src/middleware.ts" {10,11}
+```tsx filename="src/proxy.ts" {10,11}
 // ...
 
 export const config = {
