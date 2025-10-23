@@ -63,12 +63,18 @@ export default class CatalogManager {
         this.projectRoot,
         this.config.messages.path
       );
-      const files = await fs.readdir(messagesDir);
-      const formatter = await this.getFormatter();
-      this.targetLocales = files
-        .filter((file) => file.endsWith(formatter.EXTENSION))
-        .map((file) => path.basename(file, formatter.EXTENSION))
-        .filter((locale) => locale !== this.config.sourceLocale);
+
+      try {
+        const files = await fs.readdir(messagesDir);
+        const formatter = await this.getFormatter();
+        this.targetLocales = files
+          .filter((file) => file.endsWith(formatter.EXTENSION))
+          .map((file) => path.basename(file, formatter.EXTENSION))
+          .filter((locale) => locale !== this.config.sourceLocale);
+      } catch {
+        this.targetLocales = [];
+      }
+
       return this.targetLocales;
     }
   }

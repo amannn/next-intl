@@ -5,12 +5,12 @@ import ExtractionCompiler from './ExtractionCompiler.js';
 const filesystem: {
   project: {
     src: Record<string, string>;
-    messages: Record<string, string>;
+    messages: Record<string, string> | undefined;
   };
 } = {
   project: {
     src: {},
-    messages: {}
+    messages: undefined
   }
 };
 
@@ -22,8 +22,10 @@ function resetFilesystem() {
       return <div>{t('Hey!')}</div>;
     }
     `;
-  filesystem.project.messages['en.json'] = '{"+YJVTi": "Hey!"}';
-  filesystem.project.messages['de.json'] = '{"+YJVTi": "Hallo!"}';
+  filesystem.project.messages = {
+    'en.json': '{"+YJVTi": "Hey!"}',
+    'de.json': '{"+YJVTi": "Hallo!"}'
+  };
   fileTimestamps.clear();
 }
 
@@ -285,6 +287,26 @@ it('preserves manual translations in target catalogs when adding new messages', 
     }",
     }
   `);
+});
+
+it('creates the messages directory and source catalog when they do not exist initially', async () => {
+  filesystem.project.messages = undefined;
+
+  await compiler.compile(
+    '/project/src/Greeting.tsx',
+    filesystem.project.src['Greeting.tsx']
+  );
+
+  expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
+    recursive: true
+  });
+  expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
+    'messages/en.json',
+    expect.any(String)
+  );
+  expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+    '+YJVTi': 'Hey!'
+  });
 });
 
 /**
