@@ -398,7 +398,7 @@ export default function RootPage() {
 }
 ```
 
-Additionally, Next.js will ask for a root layout for `app/page.tsx`, even if it's just passing `children` through:
+If you add such a root page at `app/page.tsx`, you need to add a root layout at `app/layout.tsx` as well, even if it's just passing `children` through:
 
 ```tsx filename="app/layout.tsx"
 export default function RootLayout({children}) {
