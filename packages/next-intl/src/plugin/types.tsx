@@ -7,7 +7,7 @@ export type PluginConfig = {
     createMessagesDeclaration?: string | Array<string>;
 
     /** Relative path(s) to your source files, to be used in combination with `extractor` and `messages`. */
-    src?: string | Array<string>;
+    srcPath?: string | Array<string>;
 
     /** Configuration about your catalogs of messages, to be used in combination with `src` and `extractor`. */
     messages?: {

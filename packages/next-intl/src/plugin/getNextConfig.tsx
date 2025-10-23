@@ -70,13 +70,15 @@ export default function getNextConfig(
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
-    if (!experimental.src || !experimental.messages) {
-      throwError('`src` and `messages` are required when using `extractor`.');
+    if (!experimental.srcPath || !experimental.messages) {
+      throwError(
+        '`srcPath` and `messages` are required when using `extractor`.'
+      );
     }
     return {
       loader: 'next-intl/extractor/extractMessagesLoader',
       options: {
-        src: experimental.src,
+        srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
         messages: experimental.messages
       } satisfies ExtractorConfig

@@ -75,7 +75,9 @@ export default class CatalogManager {
 
   getSrcPaths(): Array<string> {
     return (
-      Array.isArray(this.config.src) ? this.config.src : [this.config.src]
+      Array.isArray(this.config.srcPath)
+        ? this.config.srcPath
+        : [this.config.srcPath]
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 

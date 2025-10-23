@@ -15,7 +15,7 @@ export type ExtractedMessage = {
 };
 
 export type ExtractorConfig = {
-  src: string | Array<string>;
+  srcPath: string | Array<string>;
   sourceLocale: string;
   messages: {
     path: string;

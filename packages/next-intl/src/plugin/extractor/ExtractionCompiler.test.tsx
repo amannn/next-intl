@@ -33,7 +33,7 @@ beforeEach(() => {
   resetFilesystem();
   compiler = new ExtractionCompiler(
     {
-      src: './src',
+      srcPath: './src',
       sourceLocale: 'en',
       messages: {
         path: './messages',
