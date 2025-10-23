@@ -138,7 +138,7 @@ t(
 ```tsx
 t(
   "It's your {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!",
-  {year: 2025}
+  {year: 22}
 );
 ```
 
