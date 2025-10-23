@@ -246,7 +246,7 @@ it('can use `getMessageFallback`', async ({page}) => {
 it('can use the core library', async ({page}) => {
   await page.goto('/en');
   const element = page.getByTestId('CoreLibrary');
-  await expect(element).toHaveText('Relative time: in 1 day');
+  await expect(element).toHaveText('Relative time: tomorrow');
 });
 
 it('can use `Link` on the server', async ({page}) => {
