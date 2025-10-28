@@ -63,12 +63,43 @@ export default class ExtractionCompiler {
     // Check differences in messages1 vs messages2
     for (const [id, msg1] of messages1) {
       const msg2 = messages2.get(id);
-      if (!msg2 || msg1.message !== msg2.message) {
+      if (!msg2 || !this.areMessagesEqual(msg1, msg2)) {
         return true; // Early exit on first difference
       }
     }
 
     return false;
+  }
+
+  private areMessagesEqual(
+    msg1: ExtractedMessage,
+    msg2: ExtractedMessage
+  ): boolean {
+    return (
+      msg1.id === msg2.id &&
+      msg1.message === msg2.message &&
+      msg1.description === msg2.description &&
+      this.areReferencesEqual(msg1.references, msg2.references)
+    );
+  }
+
+  private areReferencesEqual(
+    refs1: Array<{path: string}> | undefined,
+    refs2: Array<{path: string}> | undefined
+  ): boolean {
+    // Both undefined or both empty
+    if (!refs1 && !refs2) return true;
+    if (!refs1 || !refs2) return false;
+    if (refs1.length !== refs2.length) return false;
+
+    // Compare each reference
+    for (let i = 0; i < refs1.length; i++) {
+      if (refs1[i].path !== refs2[i].path) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public destroy(): void {
