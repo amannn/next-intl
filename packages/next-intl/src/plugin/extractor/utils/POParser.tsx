@@ -11,7 +11,7 @@ type Entry = {
   msgctxt?: string;
   msgid?: string;
   msgstr?: string;
-  references: Array<{path: string; line?: number}>;
+  references?: Array<{path: string; line?: number}>;
   description?: string;
 };
 
@@ -108,6 +108,7 @@ export default class POParser {
               line
             );
           }
+          entry.references ??= [];
           entry.references.push({
             path: parts[0],
             line: parts.length > 1 ? parseInt(parts[1], 10) : undefined
@@ -271,12 +272,8 @@ export default class POParser {
     return content.split('\n');
   }
 
-  private static createEntry(): Entry {
-    return {references: []};
-  }
-
   private static ensureEntry(entry: Entry | undefined): Entry {
-    return entry || POParser.createEntry();
+    return entry || {};
   }
 
   private static finishEntry(entry: Entry): ExtractedMessage {
@@ -295,7 +292,7 @@ export default class POParser {
       id: fullId,
       message: entry.msgstr,
       description: entry.description,
-      references: entry.references.length > 0 ? entry.references : undefined
+      references: entry.references
     };
   }
 
