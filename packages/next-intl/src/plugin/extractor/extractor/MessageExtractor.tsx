@@ -316,7 +316,7 @@ export default class MessageExtractor {
               results.push({
                 id: fullKey,
                 message: messageText,
-                filePath
+                references: filePath ? [{path: filePath}] : []
               });
 
               // Transform the argument based on type (use baseKey for the code)
