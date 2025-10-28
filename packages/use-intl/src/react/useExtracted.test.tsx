@@ -276,4 +276,88 @@ describe('object form', () => {
     );
     screen.getByText('Hello <b>World</b>');
   });
+
+  it('accepts a description with message', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({
+        message: 'Right',
+        description: 'Advance to the next slide'
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Right');
+  });
+
+  it('accepts a description with id and message', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({
+        id: 'next-slide',
+        message: 'Right',
+        description: 'Advance to the next slide'
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Right');
+  });
+
+  it('accepts a description with values', () => {
+    function Component() {
+      const t = useExtracted();
+      return t({
+        message: 'Hello {name}',
+        description: 'Greeting message',
+        values: {name: 'World'}
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello World');
+  });
+
+  it('accepts a description with rich text', () => {
+    function Component() {
+      const t = useExtracted();
+      return t.rich({
+        message: 'Hello <b>Jan</b>',
+        description: 'Greeting with emphasis',
+        values: {b: (chunks) => <b>{chunks}</b>}
+      });
+    }
+    const {container} = render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    expect(container.innerHTML).toBe('Hello <b>Jan</b>');
+  });
+
+  it('accepts a description with markup', () => {
+    function Component() {
+      const t = useExtracted();
+      return t.markup({
+        message: 'Hello <b>Jan</b>',
+        description: 'Greeting with emphasis',
+        values: {b: (chunks) => `<b>${chunks}</b>`}
+      });
+    }
+    render(
+      <MockProvider>
+        <Component />
+      </MockProvider>
+    );
+    screen.getByText('Hello <b>Jan</b>');
+  });
 });

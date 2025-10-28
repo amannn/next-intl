@@ -13,7 +13,7 @@ async function process(code: string) {
   return await new MessageExtractor({
     isDevelopment: true,
     projectRoot: '/project'
-  }).processFileContent('test.tsx', code);
+  }).processFileContent('/project/test.tsx', code);
 }
 
 beforeEach(() => {
@@ -1314,7 +1314,7 @@ it('does not add a fallback message in production', async () => {
       isDevelopment: false,
       projectRoot: '/project'
     }).processFileContent(
-      'test.tsx',
+      '/project/test.tsx',
       `import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -1344,4 +1344,187 @@ it('does not add a fallback message in production', async () => {
     ",
     }
   `);
+});
+
+it('can extract description from object syntax', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({
+        message: 'Right',
+        description: 'Advance to the next slide'
+      });
+    }
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "description": "Advance to the next slide",
+          "id": "gAnLDP",
+          "message": "Right",
+          "references": [
+            {
+              "path": "test.tsx",
+            },
+          ],
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("gAnLDP", undefined, undefined, "Right");
+    }
+    ",
+    }
+  `);
+});
+
+it('can extract a description with an explicit id from object syntax', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({
+        id: 'next-slide',
+        message: 'Right',
+        description: 'Advance to the next slide'
+      });
+    }
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "description": "Advance to the next slide",
+          "id": "next-slide",
+          "message": "Right",
+          "references": [
+            {
+              "path": "test.tsx",
+            },
+          ],
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("next-slide", undefined, undefined, "Right");
+    }
+    ",
+    }
+  `);
+});
+
+it('can extract a description with values from object syntax', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({
+        message: 'Hello {name}!',
+        description: 'Greeting message with name placeholder',
+        values: {name: 'Alice'}
+      });
+    }
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "description": "Greeting message with name placeholder",
+          "id": "wafoOY",
+          "message": "Hello {name}!",
+          "references": [
+            {
+              "path": "test.tsx",
+            },
+          ],
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("wafoOY", {
+            name: 'Alice'
+        }, undefined, "Hello {name}!");
+    }
+    ",
+    }
+  `);
+});
+
+it('can extract a description with a template literal from object syntax', async () => {
+  expect(
+    await process(
+      `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t({
+        message: \`Right\`,
+        description: \`Advance to the next slide\`
+      });
+    }
+  `
+    )
+  ).toMatchInlineSnapshot(`
+    {
+      "messages": [
+        {
+          "description": "Advance to the next slide",
+          "id": "gAnLDP",
+          "message": "Right",
+          "references": [
+            {
+              "path": "test.tsx",
+            },
+          ],
+        },
+      ],
+      "source": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("gAnLDP", undefined, undefined, "Right");
+    }
+    ",
+    }
+  `);
+});
+
+it('warns about dynamic description expressions', async () => {
+  const warnSpy = vi.mocked(warn);
+
+  await process(
+    `
+    import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      const desc = 'Dynamic description';
+      t({
+        message: 'Right',
+        description: desc
+      });
+    }
+  `
+  );
+
+  expect(warnSpy).toHaveBeenCalledWith(
+    'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+  );
 });

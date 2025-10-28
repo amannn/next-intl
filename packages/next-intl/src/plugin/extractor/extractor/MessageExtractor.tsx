@@ -221,6 +221,7 @@ export default class MessageExtractor {
             const arg0 = call.arguments[0]?.expression;
             let messageText: string | null = null;
             let explicitId: string | null = null;
+            let description: string | null = null;
             let valuesNode: Node | null = null;
             let formatsNode: Node | null = null;
 
@@ -284,6 +285,16 @@ export default class MessageExtractor {
                       }
                     } else if (
                       key.type === 'Identifier' &&
+                      key.value === 'description'
+                    ) {
+                      const staticDescription = extractStaticString(prop.value);
+                      if (staticDescription != null) {
+                        description = staticDescription;
+                      } else {
+                        warnDynamicExpression(prop.value);
+                      }
+                    } else if (
+                      key.type === 'Identifier' &&
                       key.value === 'values'
                     ) {
                       valuesNode = prop.value;
@@ -316,11 +327,17 @@ export default class MessageExtractor {
                   )
                 : callKey;
 
-              results.push({
+              const message: ExtractedMessage = {
                 id: fullKey,
-                message: messageText,
-                references: filePath ? [{path: filePath}] : []
-              });
+                message: messageText
+              };
+              if (description) {
+                message.description = description;
+              }
+              if (filePath) {
+                message.references = [{path: filePath}];
+              }
+              results.push(message);
 
               // Transform the argument based on type (use baseKey for the code)
               if (arg0.type === 'StringLiteral') {

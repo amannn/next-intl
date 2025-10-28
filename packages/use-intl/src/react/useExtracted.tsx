@@ -29,8 +29,9 @@ function getArgs<
   messageOrParams:
     | Message
     | ({
-        id: string;
+        id?: string;
         message: Message;
+        description?: string;
       } & TranslateArgsObject<Message, TagsFn>),
   ...rest: TranslateArgs<Message, TagsFn>
 ): [
@@ -47,6 +48,7 @@ function getArgs<
     message = messageOrParams.message;
     values = messageOrParams.values;
     formats = messageOrParams.formats;
+    // `description` is is not used at runtime
   }
   // @ts-expect-error -- Secret fallback parameter
   return [
@@ -74,9 +76,11 @@ export default function useExtracted(namespace?: string) {
   ): string;
   function translateFn<Message extends string>(
     params: {
-      id: string;
+      id?: string;
       /** Inline ICU message in the source locale. */
       message: Message;
+      /** Description for translators and tooling. */
+      description?: string;
     } & TranslateArgsObject<Message>
   ): string;
   function translateFn(...params: Parameters<typeof getArgs>): string {
@@ -93,9 +97,11 @@ export default function useExtracted(namespace?: string) {
     ): ReactNode;
     <Message extends string>(
       params: {
-        id: string;
+        id?: string;
         /** Inline ICU message in the source locale. */
         message: Message;
+        /** Description for translators and tooling. */
+        description?: string;
       } & TranslateArgsObject<Message, RichTagsFunction>
     ): ReactNode;
   };
@@ -109,9 +115,11 @@ export default function useExtracted(namespace?: string) {
     ): string;
     <Message extends string>(
       params: {
-        id: string;
+        id?: string;
         /** Inline ICU message in the source locale. */
         message: Message;
+        /** Description for translators and tooling. */
+        description?: string;
       } & TranslateArgsObject<Message, MarkupTagsFunction>
     ): string;
   };
