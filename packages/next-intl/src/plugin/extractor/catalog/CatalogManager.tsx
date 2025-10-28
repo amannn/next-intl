@@ -11,8 +11,10 @@ export default class CatalogManager {
   private config: ExtractorConfig;
 
   /* The source of truth for which messages are used. */
-  private messagesByFile: Map<string, Map<string, ExtractedMessage>> =
-    new Map();
+  private messagesByFile: Map<
+    /* File path */ string,
+    Map</* ID */ string, ExtractedMessage>
+  > = new Map();
 
   /**
    * This potentially also includes outdated ones that were initially available,
@@ -40,8 +42,10 @@ export default class CatalogManager {
     this.saveScheduler = new SaveScheduler<number>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
 
-    const isDevelopment = opts.isDevelopment;
-    this.messageExtractor = new MessageExtractor(isDevelopment);
+    this.messageExtractor = new MessageExtractor({
+      isDevelopment: opts.isDevelopment,
+      projectRoot: this.projectRoot
+    });
   }
 
   private async getFormatter() {

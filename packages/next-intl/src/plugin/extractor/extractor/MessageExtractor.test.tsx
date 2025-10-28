@@ -10,7 +10,10 @@ vi.mock('../../utils.js', () => ({
 }));
 
 async function process(code: string) {
-  return await new MessageExtractor(true).processFileContent('test.tsx', code);
+  return await new MessageExtractor({
+    isDevelopment: true,
+    projectRoot: '/project'
+  }).processFileContent('test.tsx', code);
 }
 
 beforeEach(() => {
@@ -1307,7 +1310,10 @@ describe('getExtracted', () => {
 
 it('does not add a fallback message in production', async () => {
   expect(
-    await new MessageExtractor(false).processFileContent(
+    await new MessageExtractor({
+      isDevelopment: false,
+      projectRoot: '/project'
+    }).processFileContent(
       'test.tsx',
       `import {useExtracted} from 'next-intl';
 

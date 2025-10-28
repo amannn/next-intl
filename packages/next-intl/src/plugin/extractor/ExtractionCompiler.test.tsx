@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import {beforeEach, expect, it, vi} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
 
 const filesystem: {
@@ -14,49 +14,48 @@ const filesystem: {
   }
 };
 
-function resetFilesystem() {
-  filesystem.project.src['Greeting.tsx'] = `
+describe('json format', () => {
+  let compiler: ExtractionCompiler;
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
       const t = useExtracted();
       return <div>{t('Hey!')}</div>;
     }
     `;
-  filesystem.project.messages = {
-    'en.json': '{"+YJVTi": "Hey!"}',
-    'de.json': '{"+YJVTi": "Hallo!"}'
-  };
-  fileTimestamps.clear();
-}
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+    fileTimestamps.clear();
 
-let compiler: ExtractionCompiler;
-beforeEach(() => {
-  vi.clearAllMocks();
-  resetFilesystem();
-  compiler = new ExtractionCompiler(
-    {
-      srcPath: './src',
-      sourceLocale: 'en',
-      messages: {
-        path: './messages',
-        format: 'json'
-      }
-    },
-    {isDevelopment: true, projectRoot: '/project'}
-  );
+    compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
 
-  return () => {
-    compiler.destroy();
-  };
-});
+    return () => {
+      compiler.destroy();
+    };
+  });
 
-it('saves messages initially', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    filesystem.project.src['Greeting.tsx']
-  );
+  it('saves messages initially', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
 
-  expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -72,23 +71,23 @@ it('saves messages initially', async () => {
       ],
     ]
   `);
-});
+  });
 
-it('resets translations when a message changes', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+  it('resets translations when a message changes', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
         return <div>{t('Hello!')}</div>;
       }
       `
-  );
+    );
 
-  await waitForWriteFileCalls(4);
+    await waitForWriteFileCalls(4);
 
-  expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -104,21 +103,21 @@ it('resets translations when a message changes', async () => {
       ],
     ]
   `);
-});
+  });
 
-it('removes translations when all messages are removed from a file', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+  it('removes translations when all messages are removed from a file', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       function Greeting() {
         return <div />;
       }
     `
-  );
+    );
 
-  await waitForWriteFileCalls(4);
+    await waitForWriteFileCalls(4);
 
-  expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -130,21 +129,21 @@ it('removes translations when all messages are removed from a file', async () =>
       ],
     ]
   `);
-});
+  });
 
-it('restores previous translations when messages are added back', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+  it('restores previous translations when messages are added back', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       function Greeting() {
         return <div />;
       }
     `
-  );
+    );
 
-  await waitForWriteFileCalls(4);
+    await waitForWriteFileCalls(4);
 
-  expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -157,20 +156,20 @@ it('restores previous translations when messages are added back', async () => {
     ]
   `);
 
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
         return <div>{t('Hey!')}</div>;
       }
     `
-  );
+    );
 
-  await waitForWriteFileCalls(6);
+    await waitForWriteFileCalls(6);
 
-  expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -186,23 +185,23 @@ it('restores previous translations when messages are added back', async () => {
       ],
     ]
   `);
-});
+  });
 
-it('handles namespaces when storing messages', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+  it('handles namespaces when storing messages', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted('ui');
         return <div>{t('Hello!')}</div>;
       }
       `
-  );
+    );
 
-  await waitForWriteFileCalls(4);
+    await waitForWriteFileCalls(4);
 
-  expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
     [
       [
         "messages/en.json",
@@ -222,20 +221,20 @@ it('handles namespaces when storing messages', async () => {
       ],
     ]
   `);
-});
+  });
 
-it('preserves manual translations in target catalogs when adding new messages', async () => {
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+  it('preserves manual translations in target catalogs when adding new messages', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
         return <div>{t('Hello!')}</div>;
       }
       `
-  );
-  expect(filesystem).toMatchInlineSnapshot(`
+    );
+    expect(filesystem).toMatchInlineSnapshot(`
     {
       "project": {
         "messages": {
@@ -259,23 +258,23 @@ it('preserves manual translations in target catalogs when adding new messages', 
     }
   `);
 
-  simulateManualFileEdit(
-    'messages/de.json',
-    JSON.stringify({OpKKos: 'Hallo!'})
-  );
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    `
+    simulateManualFileEdit(
+      'messages/de.json',
+      JSON.stringify({OpKKos: 'Hallo!'})
+    );
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
         return <div>{t('Hello!')} {t('Goodbye!')}</div>;
       }
       `
-  );
+    );
 
-  await waitForWriteFileCalls(6);
-  expect(filesystem.project.messages).toMatchInlineSnapshot(`
+    await waitForWriteFileCalls(6);
+    expect(filesystem.project.messages).toMatchInlineSnapshot(`
     {
       "de.json": "{
       "NnE1NP": "",
@@ -287,28 +286,97 @@ it('preserves manual translations in target catalogs when adding new messages', 
     }",
     }
   `);
+  });
+
+  it('creates the messages directory and source catalog when they do not exist initially', async () => {
+    filesystem.project.messages = undefined;
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
+      recursive: true
+    });
+    expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
+      'messages/en.json',
+      expect.any(String)
+    );
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      '+YJVTi': 'Hey!'
+    });
+  });
 });
 
-it('creates the messages directory and source catalog when they do not exist initially', async () => {
-  filesystem.project.messages = undefined;
+describe('po format', () => {
+  let compiler: ExtractionCompiler;
+  beforeEach(() => {
+    vi.clearAllMocks();
 
-  await compiler.compile(
-    '/project/src/Greeting.tsx',
-    filesystem.project.src['Greeting.tsx']
-  );
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+    fileTimestamps.clear();
 
-  expect(vi.mocked(fs.mkdir)).toHaveBeenCalledWith('messages', {
-    recursive: true
+    compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'po'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    return () => {
+      compiler.destroy();
+    };
   });
-  expect(vi.mocked(fs.writeFile)).toHaveBeenCalledWith(
-    'messages/en.json',
-    expect.any(String)
-  );
-  expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-    '+YJVTi': 'Hey!'
+
+  it('saves messages initially', async () => {
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "#: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "#: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
   });
 });
-
 /**
  * Test utils
  */

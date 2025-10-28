@@ -216,9 +216,11 @@ export default class POParser {
       for (const message of catalog.messages) {
         if (message.references && message.references.length > 0) {
           for (const ref of message.references) {
-            lines.push(
-              `${POParser.COMMENTS.REFERENCE} ${ref.path}${POParser.FILE_COLUMN_SEPARATOR}${ref.line}`
-            );
+            let entry = `${POParser.COMMENTS.REFERENCE} ${ref.path}`;
+            if (ref.line) {
+              entry += `${POParser.FILE_COLUMN_SEPARATOR}${ref.line}`;
+            }
+            lines.push(entry);
           }
         }
 

@@ -1,4 +1,4 @@
-export type MessagesFormat = 'json';
+export type MessagesFormat = 'json' | 'po';
 
 export type PluginConfig = {
   requestConfig?: string;

@@ -1,26 +1,14 @@
-import fs from 'fs/promises';
-import fsPath from 'path';
 import type {ExtractedMessage, Locale} from '../types.js';
-import type Formatter from './Formatter.js';
+import BaseFormatter from './BaseFormatter.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
 }
 
-// Note: We don't read here, because the JSON format can't restore
-// metadata like the file path, which is needed for the watcher
-// to detect changed messages.
-
-export default class JSONFormatter implements Formatter {
+export default class JSONFormatter extends BaseFormatter {
   static readonly NAMESPACE_SEPARATOR = '.';
 
   public readonly EXTENSION = '.json';
-
-  private messagesPath: string;
-
-  constructor(messagesPath: string) {
-    this.messagesPath = messagesPath;
-  }
 
   /**
    * Note: This is not safe for hydrating messages for the source locale, as
@@ -29,56 +17,34 @@ export default class JSONFormatter implements Formatter {
    *
    * This can however be used for target locales.
    */
-  async read(targetLocale: Locale): Promise<Array<ExtractedMessage>> {
-    const filePath = fsPath.join(
-      this.messagesPath,
-      targetLocale + this.EXTENSION
-    );
-    const content = await fs.readFile(filePath, 'utf8');
-    const json = JSON.parse(content);
-    return this.decode(json);
+  public async read(targetLocale: Locale): Promise<Array<ExtractedMessage>> {
+    const content = await this.readCatalogFile(targetLocale);
+    return this.decode(content);
   }
 
-  async write(
+  public async write(
     locale: Locale,
     messages: Array<ExtractedMessage>
   ): Promise<void> {
-    const filePath = fsPath.join(this.messagesPath, locale + this.EXTENSION);
-    try {
-      const outputDir = fsPath.dirname(filePath);
-      await fs.mkdir(outputDir, {recursive: true});
+    // Sort messages by id for consistent output
+    const sortedMessages = [...messages].sort((a, b) =>
+      a.id.localeCompare(b.id)
+    );
 
-      // Sort messages by id for consistent output
-      const sortedMessages = [...messages].sort((a, b) =>
-        a.id.localeCompare(b.id)
-      );
-
-      const json = this.encode(sortedMessages);
-      await fs.writeFile(filePath, JSON.stringify(json, null, 2));
-    } catch (error) {
-      console.error(`❌ Failed to write catalog: ${error}`);
-    }
+    const content = this.encode(sortedMessages);
+    await this.writeCatalogFile(locale, content);
   }
 
-  async getLastModified(locale: Locale): Promise<Date | undefined> {
-    const filePath = fsPath.join(this.messagesPath, locale + this.EXTENSION);
-    try {
-      const stats = await fs.stat(filePath);
-      return stats.mtime;
-    } catch {
-      return undefined;
-    }
-  }
-
-  private encode(messages: Array<ExtractedMessage>): StoredFormat {
+  private encode(messages: Array<ExtractedMessage>): string {
     const root: StoredFormat = {};
     for (const message of messages) {
       this.setNestedProperty(root, message.id, message.message);
     }
-    return root;
+    return JSON.stringify(root, null, 2);
   }
 
-  private decode(json: StoredFormat): Array<ExtractedMessage> {
+  private decode(content: string): Array<ExtractedMessage> {
+    const json: StoredFormat = JSON.parse(content);
     const messages: Array<ExtractedMessage> = [];
 
     this.traverseMessages(json, (message, id) => {

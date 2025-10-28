@@ -24,13 +24,15 @@ export default class MessageExtractor {
   private static readonly NAMESPACE_SEPARATOR = '.';
 
   private isDevelopment: boolean;
+  private projectRoot: string;
   private compileCache = new LRUCache<{
     messages: Array<ExtractedMessage>;
     source: string;
   }>(750);
 
-  constructor(isDevelopment: boolean) {
-    this.isDevelopment = isDevelopment;
+  constructor(opts: {isDevelopment: boolean; projectRoot: string}) {
+    this.isDevelopment = opts.isDevelopment;
+    this.projectRoot = opts.projectRoot;
   }
 
   async processFileContent(
@@ -53,7 +55,8 @@ export default class MessageExtractor {
       decorators: true
     });
 
-    const processResult = await this.processAST(ast, absoluteFilePath);
+    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
+    const processResult = await this.processAST(ast, relativeFilePath);
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
