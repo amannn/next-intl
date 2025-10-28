@@ -81,7 +81,7 @@ export default class POParser {
         // Unsupported comment types
         if (POParser.lineStartsWithPrefix(line, POParser.COMMENTS.TRANSLATOR)) {
           POParser.throwWithLine(
-            'Translator comments (#) are not supported',
+            'Translator comments (#) are not supported, use inline descriptions instead',
             line
           );
         }
@@ -130,7 +130,7 @@ export default class POParser {
           POParser.lineStartsWithPrefix(line, POParser.KEYWORDS.MSGID_PLURAL)
         ) {
           POParser.throwWithLine(
-            'Plural forms (msgid_plural) are not supported',
+            'Plural forms (msgid_plural) are not supported, use ICU pluralization instead',
             line
           );
         }
@@ -173,7 +173,10 @@ export default class POParser {
 
         // Multi-line strings are not supported in entry mode
         if (line.startsWith(POParser.QUOTE)) {
-          POParser.throwWithLine('Multi-line strings are not supported', line);
+          POParser.throwWithLine(
+            'Multi-line strings are not supported, use single-line strings instead',
+            line
+          );
         }
       }
     }

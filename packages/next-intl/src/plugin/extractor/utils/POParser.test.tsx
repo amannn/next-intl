@@ -419,7 +419,7 @@ msgstr "You have one new message"
 msgid_plural "You have %d new messages"
 `)
       ).toThrow(
-        'Plural forms (msgid_plural) are not supported:\n> msgid_plural "You have %d new messages"'
+        'Plural forms (msgid_plural) are not supported, use ICU pluralization instead:\n> msgid_plural "You have %d new messages"'
       );
     });
 
@@ -430,7 +430,7 @@ msgid_plural "You have %d new messages"
 msgid "+YJVTi"
 msgstr "Hey"`)
       ).toThrow(
-        'Translator comments (#) are not supported:\n> # Shown on home screen'
+        'Translator comments (#) are not supported, use inline descriptions instead:\n> # Shown on home screen'
       );
     });
 
@@ -464,7 +464,9 @@ msgstr ""
 "translation\n"
 "translation_2"
 `)
-      ).toThrow('Multi-line strings are not supported:\n> "Very long string.');
+      ).toThrow(
+        'Multi-line strings are not supported, use single-line strings instead:\n> "Very long string.'
+      );
     });
   });
 });
