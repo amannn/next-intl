@@ -118,8 +118,7 @@ msgstr "Hey"
           message: 'Hey',
           references: [
             {
-              path: 'src/components/Greeting.tsx',
-              line: 120
+              path: 'src/components/Greeting.tsx'
             }
           ]
         }
@@ -142,12 +141,32 @@ msgstr "Hey"
           message: 'Hey',
           references: [
             {
-              path: 'src/components/Greeting.tsx',
-              line: 120
+              path: 'src/components/Greeting.tsx'
             },
             {
-              path: 'src/components/Greeting.tsx',
-              line: 121
+              path: 'src/components/Greeting.tsx'
+            }
+          ]
+        }
+      ]
+    });
+  });
+
+  it('ignores line and column numbers in references', () => {
+    expect(
+      POParser.parse(`
+#: src/components/Greeting.tsx:120:15
+msgid "+YJVTi"
+msgstr "Hey"
+`)
+    ).toEqual({
+      messages: [
+        {
+          id: '+YJVTi',
+          message: 'Hey',
+          references: [
+            {
+              path: 'src/components/Greeting.tsx'
             }
           ]
         }
@@ -238,12 +257,10 @@ msgstr "Submit"
           description: 'Button text for submit action',
           references: [
             {
-              path: 'src/components/Button.tsx',
-              line: 15
+              path: 'src/components/Button.tsx'
             },
             {
-              path: 'src/components/Button.tsx',
-              line: 20
+              path: 'src/components/Button.tsx'
             }
           ]
         }
@@ -363,18 +380,6 @@ msgid "incomplete
 msgstr "message"
 `)
       ).toThrow('Incomplete quoted string:\n> "incomplete');
-    });
-
-    it('throws for column numbers in references', () => {
-      expect(() =>
-        POParser.parse(`
-#: src/components/Button.tsx:15:10
-msgid "submit"
-msgstr "Submit"
-`)
-      ).toThrow(
-        'Column numbers in references are not supported:\n> #: src/components/Button.tsx:15:10'
-      );
     });
 
     it('throws if the message is not quoted', () => {
@@ -520,15 +525,15 @@ describe('serialize', () => {
             message: 'Save',
             description: 'Save button tooltip',
             references: [
-              {path: 'src/components/Button.tsx', line: 15},
-              {path: 'src/pages/Profile.tsx', line: 42}
+              {path: 'src/components/Button.tsx'},
+              {path: 'src/pages/Profile.tsx'}
             ]
           }
         ]
       })
     ).toMatchInlineSnapshot(`
-      "#: src/components/Button.tsx:15
-      #: src/pages/Profile.tsx:42
+      "#: src/components/Button.tsx
+      #: src/pages/Profile.tsx
       #. Save button tooltip
       msgctxt "ui.button"
       msgid "save"

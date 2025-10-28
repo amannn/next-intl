@@ -11,7 +11,7 @@ type Entry = {
   msgctxt?: string;
   msgid?: string;
   msgstr?: string;
-  references?: Array<{path: string; line?: number}>;
+  references?: Array<{path: string}>;
   description?: string;
 };
 
@@ -98,21 +98,14 @@ export default class POParser {
         // Reference comments
         if (POParser.lineStartsWithPrefix(line, POParser.COMMENTS.REFERENCE)) {
           entry = POParser.ensureEntry(entry);
-          const parts = line
+          // Only use the path part, ignore line and column numbers
+          const path = line
             .substring(POParser.COMMENTS.REFERENCE.length)
             .trim()
-            .split(POParser.FILE_COLUMN_SEPARATOR);
-          if (parts.length > 2) {
-            POParser.throwWithLine(
-              'Column numbers in references are not supported',
-              line
-            );
-          }
+            .split(POParser.FILE_COLUMN_SEPARATOR)
+            .at(0)!;
           entry.references ??= [];
-          entry.references.push({
-            path: parts[0],
-            line: parts.length > 1 ? parseInt(parts[1], 10) : undefined
-          });
+          entry.references.push({path});
           continue;
         }
 
@@ -216,11 +209,7 @@ export default class POParser {
       for (const message of catalog.messages) {
         if (message.references && message.references.length > 0) {
           for (const ref of message.references) {
-            let entry = `${POParser.COMMENTS.REFERENCE} ${ref.path}`;
-            if (ref.line) {
-              entry += `${POParser.FILE_COLUMN_SEPARATOR}${ref.line}`;
-            }
-            lines.push(entry);
+            lines.push(`${POParser.COMMENTS.REFERENCE} ${ref.path}`);
           }
         }
 

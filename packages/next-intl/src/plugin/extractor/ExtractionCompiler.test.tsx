@@ -377,6 +377,7 @@ describe('po format', () => {
     `);
   });
 });
+
 /**
  * Test utils
  */

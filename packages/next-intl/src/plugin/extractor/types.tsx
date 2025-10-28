@@ -9,7 +9,7 @@ export type ExtractedMessage = {
   id: string;
   message: string;
   description?: string;
-  references?: Array<{path: string; line?: number}>;
+  references?: Array<{path: string}>;
 };
 
 export type ExtractorConfig = {
