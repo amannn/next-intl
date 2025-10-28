@@ -323,6 +323,38 @@ msgstr "Goodbye"
     });
   });
 
+  it('parses files with Windows newline format (\\r\\n)', () => {
+    expect(
+      POParser.parse(
+        'msgid "hello"\r\nmsgstr "Hello World"\r\n\r\nmsgid "goodbye"\r\nmsgstr "Goodbye"'
+      )
+    ).toEqual({
+      messages: [
+        {
+          id: 'hello',
+          message: 'Hello World'
+        },
+        {
+          id: 'goodbye',
+          message: 'Goodbye'
+        }
+      ]
+    });
+  });
+
+  it('parses metadata with Windows newline format (\\r\\n)', () => {
+    expect(
+      POParser.parse(
+        'msgid ""\r\nmsgstr ""\r\n"POT-Creation-Date: 2025-10-27 16:00+0000\\n"\r\n"Language: en\\n"'
+      )
+    ).toEqual({
+      meta: {
+        'POT-Creation-Date': '2025-10-27 16:00+0000',
+        Language: 'en'
+      }
+    });
+  });
+
   describe('error handling', () => {
     it('throws for incomplete quoted strings', () => {
       expect(() =>

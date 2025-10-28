@@ -38,7 +38,7 @@ export default class POParser {
   private static readonly META_SEPARATOR = ':';
 
   static parse(content: string): Catalog {
-    const lines = content.split('\n');
+    const lines = POParser.splitLines(content);
     const messages: Array<ExtractedMessage> = [];
     const meta: Record<string, string> = {};
 
@@ -260,6 +260,15 @@ export default class POParser {
 
   private static throwWithLine(message: string, line: string): never {
     throw new Error(`${message}:\n> ${line}`);
+  }
+
+  private static splitLines(content: string): Array<string> {
+    // Avoid overhead for Unix newlines only
+    if (content.includes('\r')) {
+      content = content.replace(/\r\n/g, '\n');
+    }
+
+    return content.split('\n');
   }
 
   private static createEntry(): Entry {
