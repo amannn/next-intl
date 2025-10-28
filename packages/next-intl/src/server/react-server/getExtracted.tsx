@@ -3,13 +3,15 @@ import type {Locale} from 'use-intl/core';
 import getConfig from './getConfig.js';
 import getServerExtractor from './getServerExtractor.js';
 
+type Return = ReturnType<typeof getServerExtractor>;
+
 // Call signature 1: `getExtracted(namespace)`
-function getExtractedImpl(namespace?: string): Promise<any>;
+function getExtractedImpl(namespace?: string): Promise<Return>;
 // Call signature 2: `getExtracted({locale, namespace})`
 function getExtractedImpl(opts?: {
   locale: Locale;
   namespace?: string;
-}): Promise<any>;
+}): Promise<Return>;
 // Implementation
 async function getExtractedImpl(
   namespaceOrOpts?: string | {locale: Locale; namespace?: string}

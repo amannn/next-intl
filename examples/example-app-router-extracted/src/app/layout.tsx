@@ -11,7 +11,10 @@ type Props = {
 export async function generateMetadata() {
   const t = await getExtracted();
   return {
-    title: t('next-intl example')
+    title: t({
+      message: 'next-intl example',
+      description: 'Default meta title if not overridden by pages'
+    })
   };
 }
 

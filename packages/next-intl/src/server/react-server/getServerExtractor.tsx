@@ -1,5 +1,6 @@
 import {type ReactNode, cache} from 'react';
 import type {createTranslator} from 'use-intl/core';
+import type {useExtracted as useExtractedType} from 'use-intl/react';
 import getServerTranslator from './getServerTranslator.js';
 
 type Return = ReturnType<typeof getServerTranslator>;
@@ -61,7 +62,7 @@ function getServerExtractorImpl(
     return true;
   };
 
-  return translateFn;
+  return translateFn as ReturnType<typeof useExtractedType>;
 }
 
 export default cache(getServerExtractorImpl);
