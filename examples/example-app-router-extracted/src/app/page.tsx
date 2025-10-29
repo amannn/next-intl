@@ -3,10 +3,9 @@ import Client from './Client';
 
 export default function Index() {
   const t = useExtracted();
-  const name = 'Jane';
   return (
     <>
-      <h1>{t('Hey {name}!', {name})}</h1>
+      <h1>{t('Hey {name}!', {name: 'Jane'})}</h1>
       <p>{t('This is a test from the page.')}</p>
       <Client />
     </>
