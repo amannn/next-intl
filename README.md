@@ -22,7 +22,7 @@ Internationalization (i18n) is an essential part of the user experience, therefo
 - ✅ **Type-safe**: Speed up development with autocompletion for message keys and catch typos early with compile-time checks.
 - 💡 **Hooks-based API**: Learn a single API that can be used across your code base to turn translations into plain strings or rich text.
 - 🚀 **Next.js-native and performance-obsessed**: App Router, Server Components, static rendering—pick the right tool for the right job, next-intl works everywhere.
-- ⚔️ **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
+- 🌍 **Internationalized routing**: Provide unique pathnames per language and optionally localize pathnames for search engine optimization.
 
 ## What does it look like?
 

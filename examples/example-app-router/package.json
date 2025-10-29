@@ -2,7 +2,7 @@
   "name": "example-app-router",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "lint": "eslint src && prettier src --check",
     "test": "pnpm run test:playwright && pnpm run test:jest",
     "test:playwright": "playwright test",
@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "next": "^15.5.0",
+    "next": "^16.0.0",
     "next-intl": "^4.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
@@ -26,10 +26,10 @@
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.2.0",
     "autoprefixer": "^10.4.19",
-    "eslint": "9.11.1",
-    "eslint-config-next": "^15.5.0",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.3",

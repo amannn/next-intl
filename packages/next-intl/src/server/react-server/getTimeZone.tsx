@@ -1,5 +1,5 @@
 import {cache} from 'react';
-import type {Locale} from 'use-intl';
+import type {Locale, Timezone} from 'use-intl';
 import getConfig from './getConfig.js';
 
 async function getTimeZoneCachedImpl(locale?: Locale) {
@@ -10,6 +10,6 @@ const getTimeZoneCached = cache(getTimeZoneCachedImpl);
 
 export default async function getTimeZone(opts?: {
   locale?: Locale;
-}): Promise<Locale> {
+}): Promise<Timezone> {
   return getTimeZoneCached(opts?.locale);
 }

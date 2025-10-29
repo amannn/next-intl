@@ -3,12 +3,21 @@ import {assertLocaleCookieValue, getAlternateLinks} from './utils';
 
 const describe = it.describe;
 
-function getPageLoadTracker(context: BrowserContext) {
+function getPageLoadTracker(
+  context: BrowserContext,
+  pathnameWithSearch: string
+) {
   const state = {numPageLoads: 0};
 
-  context.on('request', (request) => {
-    // Is the same in dev and prod
-    if (request.url().includes('/chunks/main-app')) {
+  context.on('response', (response) => {
+    const url = new URL(response.url());
+    const curPathnameWithSearch = url.pathname + url.search;
+    const contentType = response.headers()['content-type'] || '';
+
+    if (
+      curPathnameWithSearch === pathnameWithSearch &&
+      contentType.includes('text/html')
+    ) {
       state.numPageLoads++;
     }
   });
@@ -271,7 +280,7 @@ it('can use `Link` to link to the root of another language', async ({page}) => {
 });
 
 it('uses client-side transitions when using link', async ({context, page}) => {
-  const tracker = getPageLoadTracker(context);
+  const tracker = getPageLoadTracker(context, '/');
 
   await page.goto('/');
   expect(tracker.numPageLoads).toBe(1);
@@ -288,8 +297,8 @@ it('uses client-side transitions when using link', async ({context, page}) => {
   await expect(page).toHaveURL('/nested');
   expect(tracker.numPageLoads).toBe(1);
 
-  await page.goForward();
-  await expect(page).toHaveURL('/client');
+  await page.goBack();
+  await expect(page).toHaveURL('/');
   expect(tracker.numPageLoads).toBe(1);
 });
 
@@ -297,7 +306,7 @@ it('keeps the locale cookie updated when changing the locale and uses soft navig
   context,
   page
 }) => {
-  const tracker = getPageLoadTracker(context);
+  const tracker = getPageLoadTracker(context, '/');
 
   await page.goto('/');
   await assertLocaleCookieValue(page, undefined);
@@ -730,6 +739,26 @@ it('can switch the locale with `useRouter`', async ({page}) => {
   await expect(page).toHaveURL('/de/client');
   await page.getByRole('button', {name: 'Switch to en'}).click();
   await expect(page).toHaveURL('/client');
+});
+
+it('can use additional rewrites in the middleware', async ({browser}) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.context().addCookies([
+    {
+      name: 'v2',
+      value: 'true',
+      url: 'http://localhost'
+    }
+  ]);
+
+  await page.goto('/about');
+  await page.getByRole('heading', {name: 'About v2'}).waitFor();
+
+  await page.goto('/de/about');
+  await page.getByRole('heading', {name: 'About v2'}).waitFor();
+
+  await context.close();
 });
 
 // https://github.com/radix-ui/primitives/issues/3165

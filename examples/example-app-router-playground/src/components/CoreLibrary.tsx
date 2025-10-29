@@ -3,7 +3,7 @@ import {createFormatter, createTranslator} from 'next-intl';
 export default function CoreLibrary() {
   const t = createTranslator({
     locale: 'en',
-    messages: {Index: {title: 'Relative time:'}} as any
+    messages: {Index: {title: 'Relative time:'}}
   });
 
   const now = new Date(2022, 10, 6, 20, 20, 0, 0);
