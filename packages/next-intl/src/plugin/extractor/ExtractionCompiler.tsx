@@ -1,5 +1,5 @@
 import CatalogManager from './catalog/CatalogManager.js';
-import type {ExtractedMessage, ExtractorConfig} from './types.js';
+import type {ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler {
   private manager: CatalogManager;
@@ -25,12 +25,9 @@ export default class ExtractionCompiler {
       this.initialScanPromise = undefined;
     }
 
-    const beforeMessages = this.manager.getFileMessages(resourcePath);
     const result = await this.manager.extractFileMessages(resourcePath, source);
-    const afterMessages = this.manager.getFileMessages(resourcePath);
-    const changed = this.haveMessagesChanged(beforeMessages, afterMessages);
 
-    if (this.isDevelopment && changed) {
+    if (this.isDevelopment && result.changed) {
       // While we await the AST modification, we
       // don't need to await the persistence
       void this.manager.save();
@@ -44,62 +41,6 @@ export default class ExtractionCompiler {
     // caching), so loading the messages initially is necessary.
     await this.manager.loadMessages();
     await this.manager.save();
-  }
-
-  private haveMessagesChanged(
-    messages1: Map<string, ExtractedMessage> | undefined,
-    messages2: Map<string, ExtractedMessage> | undefined
-  ): boolean {
-    // If one exists and the other doesn't, there's a change
-    if (!messages1 || !messages2) {
-      return messages1 !== messages2;
-    }
-
-    // Different sizes means changes
-    if (messages1.size !== messages2.size) {
-      return true;
-    }
-
-    // Check differences in messages1 vs messages2
-    for (const [id, msg1] of messages1) {
-      const msg2 = messages2.get(id);
-      if (!msg2 || !this.areMessagesEqual(msg1, msg2)) {
-        return true; // Early exit on first difference
-      }
-    }
-
-    return false;
-  }
-
-  private areMessagesEqual(
-    msg1: ExtractedMessage,
-    msg2: ExtractedMessage
-  ): boolean {
-    return (
-      msg1.id === msg2.id &&
-      msg1.message === msg2.message &&
-      msg1.description === msg2.description &&
-      this.areReferencesEqual(msg1.references, msg2.references)
-    );
-  }
-
-  private areReferencesEqual(
-    refs1: Array<{path: string}> | undefined,
-    refs2: Array<{path: string}> | undefined
-  ): boolean {
-    // Both undefined or both empty
-    if (!refs1 && !refs2) return true;
-    if (!refs1 || !refs2) return false;
-    if (refs1.length !== refs2.length) return false;
-
-    // Compare each reference
-    for (let i = 0; i < refs1.length; i++) {
-      if (refs1[i].path !== refs2[i].path) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   public destroy(): void {

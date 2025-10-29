@@ -144,28 +144,92 @@ export default class CatalogManager {
   async extractFileMessages(
     absoluteFilePath: string,
     source: string
-  ): Promise<{messages: Array<ExtractedMessage>; source: string}> {
+  ): Promise<{
+    messages: Array<ExtractedMessage>;
+    source: string;
+    changed: boolean;
+  }> {
+    const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
     const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
       source
     );
 
     // If messages were removed from a file, we need to clean them up
-    const newMessagesMap = new Map<string, ExtractedMessage>();
+    const fileMessages = new Map<string, ExtractedMessage>();
     for (const message of result.messages) {
-      newMessagesMap.set(message.id, message);
+      fileMessages.set(message.id, message);
     }
+
+    // Check for changes before updating
+    const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
 
     // Update the stored messages
     const hasMessages = result.messages.length > 0;
 
     if (hasMessages) {
-      this.messagesByFile.set(absoluteFilePath, newMessagesMap);
+      this.messagesByFile.set(absoluteFilePath, fileMessages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
     }
 
-    return result;
+    return {...result, changed};
+  }
+
+  private haveMessagesChanged(
+    beforeMessages: Map<string, ExtractedMessage> | undefined,
+    afterMessages: Map<string, ExtractedMessage>
+  ): boolean {
+    // If one exists and the other doesn't, there's a change
+    if (!beforeMessages) {
+      return afterMessages.size > 0;
+    }
+
+    // Different sizes means changes
+    if (beforeMessages.size !== afterMessages.size) {
+      return true;
+    }
+
+    // Check differences in beforeMessages vs afterMessages
+    for (const [id, msg1] of beforeMessages) {
+      const msg2 = afterMessages.get(id);
+      if (!msg2 || !this.areMessagesEqual(msg1, msg2)) {
+        return true; // Early exit on first difference
+      }
+    }
+
+    return false;
+  }
+
+  private areMessagesEqual(
+    msg1: ExtractedMessage,
+    msg2: ExtractedMessage
+  ): boolean {
+    return (
+      msg1.id === msg2.id &&
+      msg1.message === msg2.message &&
+      msg1.description === msg2.description &&
+      this.areReferencesEqual(msg1.references, msg2.references)
+    );
+  }
+
+  private areReferencesEqual(
+    refs1: Array<{path: string}> | undefined,
+    refs2: Array<{path: string}> | undefined
+  ): boolean {
+    // Both undefined or both empty
+    if (!refs1 && !refs2) return true;
+    if (!refs1 || !refs2) return false;
+    if (refs1.length !== refs2.length) return false;
+
+    // Compare each reference
+    for (let i = 0; i < refs1.length; i++) {
+      if (refs1[i].path !== refs2[i].path) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async save(): Promise<number> {
