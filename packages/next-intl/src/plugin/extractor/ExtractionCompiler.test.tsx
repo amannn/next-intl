@@ -574,6 +574,35 @@ describe('po format', () => {
       ]
     `);
   });
+
+  it('supports namespaces', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted('ui');
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    const compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0]).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "#: src/Greeting.tsx
+      msgctxt "ui"
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+      ]
+    `);
+  });
 });
 
 /**
