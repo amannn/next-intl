@@ -38,7 +38,8 @@ export default function middleware(req: NextRequest) {
   if (isPublicPage) {
     return intlMiddleware(req);
   } else {
-    return (authMiddleware as any)(req);
+    // @ts-expect-error - Doesn't accept correct type
+    return authMiddleware(req);
   }
 }
 

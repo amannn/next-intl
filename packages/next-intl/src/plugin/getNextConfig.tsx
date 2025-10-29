@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
-  TurbopackRuleConfigItem,
-  TurbopackRuleConfigItemOrShortcut
+  TurbopackRuleConfigCollection,
+  TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import SourceFileFilter from './extractor/source/SourceFileFilter.js';
@@ -101,32 +101,37 @@ export default function getNextConfig(
     };
 
     // Add loader for extractor
-    let rules: Record<string, TurbopackRuleConfigItemOrShortcut> | undefined;
+    let rules: Record<string, TurbopackRuleConfigCollection>;
     if (pluginConfig.experimental?.extract) {
       const sourceGlob = `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`;
       rules =
         nextConfig?.turbopack?.rules ||
+        // @ts-expect-error -- For Next.js <16
         nextConfig?.experimental?.turbo?.rules ||
         {};
       const sourceRule: TurbopackRuleConfigItem = {
         loaders: [getExtractMessagesLoaderConfig()]
       };
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (rules[sourceGlob]) {
         if (Array.isArray(rules[sourceGlob])) {
-          // @ts-expect-error -- This is only supported in Next.js 16
           rules[sourceGlob].push(sourceRule);
         } else {
-          // @ts-expect-error -- This is only supported in Next.js 16
-          rules[sourceGlob].push(sourceRule);
+          rules[sourceGlob] = [rules[sourceGlob], sourceRule];
         }
       } else {
         rules[sourceGlob] = sourceRule;
       }
     }
 
-    if (hasStableTurboConfig && !nextConfig?.experimental?.turbo) {
+    if (
+      hasStableTurboConfig &&
+      // @ts-expect-error -- For Next.js <16
+      !nextConfig?.experimental?.turbo
+    ) {
       nextIntlConfig.turbopack = {
         ...nextConfig?.turbopack,
+        // @ts-expect-error -- This is fine
         rules,
         resolveAlias: {
           ...nextConfig?.turbopack?.resolveAlias,
@@ -136,9 +141,12 @@ export default function getNextConfig(
     } else {
       nextIntlConfig.experimental = {
         ...nextConfig?.experimental,
+        // @ts-expect-error -- For Next.js <16
         turbo: {
+          // @ts-expect-error -- For Next.js <16
           ...nextConfig?.experimental?.turbo,
           resolveAlias: {
+            // @ts-expect-error -- For Next.js <16
             ...nextConfig?.experimental?.turbo?.resolveAlias,
             ...resolveAlias
           }
