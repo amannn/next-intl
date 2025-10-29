@@ -20,13 +20,17 @@ import ASTScope from './ASTScope.js';
 import KeyGenerator from './KeyGenerator.js';
 import LRUCache from './LRUCache.js';
 
+type StrictExtractedMessage = ExtractedMessage & {
+  references: NonNullable<ExtractedMessage['references']>;
+};
+
 export default class MessageExtractor {
   private static readonly NAMESPACE_SEPARATOR = '.';
 
   private isDevelopment: boolean;
   private projectRoot: string;
   private compileCache = new LRUCache<{
-    messages: Array<ExtractedMessage>;
+    messages: Array<StrictExtractedMessage>;
     source: string;
   }>(750);
 
@@ -38,7 +42,7 @@ export default class MessageExtractor {
   async processFileContent(
     absoluteFilePath: string,
     source: string
-  ): Promise<{messages: Array<ExtractedMessage>; source: string}> {
+  ): Promise<{messages: Array<StrictExtractedMessage>; source: string}> {
     const cacheKey = source;
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
@@ -60,7 +64,7 @@ export default class MessageExtractor {
 
     const finalResult = (
       processResult.source ? processResult : {...processResult, source}
-    ) as {messages: Array<ExtractedMessage>; source: string};
+    ) as {messages: Array<StrictExtractedMessage>; source: string};
 
     this.compileCache.set(cacheKey, finalResult);
     return finalResult;
@@ -68,9 +72,9 @@ export default class MessageExtractor {
 
   private async processAST(
     ast: Program | Module,
-    filePath?: string
-  ): Promise<{messages: Array<ExtractedMessage>; source?: string}> {
-    const results: Array<ExtractedMessage> = [];
+    filePath: string
+  ): Promise<{messages: Array<StrictExtractedMessage>; source?: string}> {
+    const results: Array<StrictExtractedMessage> = [];
     let hookLocalName: string | null = null;
     let hookType: 'useTranslations' | 'getTranslations' | null = null;
     const isDevelopment = this.isDevelopment;
@@ -231,8 +235,9 @@ export default class MessageExtractor {
                 expressionNode.span &&
                 typeof expressionNode.span === 'object' &&
                 'start' in expressionNode.span;
-              const location =
-                filePath && hasSpan ? `${path.basename(filePath)}` : undefined;
+              const location = hasSpan
+                ? `${path.basename(filePath)}`
+                : undefined;
 
               warn(
                 (location ? `${location}: ` : '') +
@@ -327,15 +332,13 @@ export default class MessageExtractor {
                   )
                 : callKey;
 
-              const message: ExtractedMessage = {
+              const message: StrictExtractedMessage = {
                 id: fullKey,
-                message: messageText
+                message: messageText,
+                references: [{path: filePath}]
               };
               if (description) {
                 message.description = description;
-              }
-              if (filePath) {
-                message.references = [{path: filePath}];
               }
               results.push(message);
 

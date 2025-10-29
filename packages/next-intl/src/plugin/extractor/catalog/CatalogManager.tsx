@@ -16,6 +16,10 @@ export default class CatalogManager {
     Map</* ID */ string, ExtractedMessage>
   > = new Map();
 
+  /* Fast lookup for messages by ID across all files,
+   * contains the same messages as `messagesByFile`. */
+  private messagesById: Map<string, ExtractedMessage> = new Map();
+
   /**
    * This potentially also includes outdated ones that were initially available,
    * but are not used anymore. This allows to restore them if they are used again.
@@ -38,7 +42,6 @@ export default class CatalogManager {
     opts: {projectRoot?: string; isDevelopment: boolean}
   ) {
     this.config = config;
-    this.messagesByFile = new Map();
     this.saveScheduler = new SaveScheduler<number>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
 
@@ -149,20 +152,56 @@ export default class CatalogManager {
     source: string;
     changed: boolean;
   }> {
-    const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
     const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
       source
     );
 
-    // If messages were removed from a file, we need to clean them up
+    const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
+
+    // Init with all previous ones
+    const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
+
+    // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractedMessage>();
-    for (const message of result.messages) {
+
+    for (let message of result.messages) {
+      const prevMessage = this.messagesById.get(message.id);
+
+      // Merge with previous message if it exists
+      if (prevMessage) {
+        // References: The `message` we receive here will always have one
+        // reference, which is the current file. We need to merge this with
+        // potentially existing references.
+        const references = [...(prevMessage.references ?? [])];
+        message.references.forEach((ref) => {
+          if (!references.some((cur) => cur.path === ref.path)) {
+            references.push(ref);
+          }
+        });
+        message = {...message, references};
+
+        // Description: In case we have conflicting descriptions, the new one wins.
+        if (prevMessage.description && !message.description) {
+          message = {
+            ...message,
+            description: prevMessage.description
+          };
+        }
+      }
+
+      this.messagesById.set(message.id, message);
       fileMessages.set(message.id, message);
+
+      // This message continues to exist in this file
+      const index = idsToRemove.indexOf(message.id);
+      if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Check for changes before updating
-    const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
+    // Clean up removed messages at `messagesById`
+    for (const id of idsToRemove) {
+      this.messagesById.delete(id);
+    }
 
     // Update the stored messages
     const hasMessages = result.messages.length > 0;
@@ -173,6 +212,7 @@ export default class CatalogManager {
       this.messagesByFile.delete(absoluteFilePath);
     }
 
+    const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
     return {...result, changed};
   }
 
@@ -237,9 +277,7 @@ export default class CatalogManager {
   }
 
   private async saveImpl(): Promise<number> {
-    const messages = Array.from(this.messagesByFile.values()).flatMap(
-      (fileMessages) => Array.from(fileMessages.values())
-    );
+    const messages = Array.from(this.messagesById.values());
 
     const formatter = await this.getFormatter();
     await formatter.write(this.config.sourceLocale, messages);

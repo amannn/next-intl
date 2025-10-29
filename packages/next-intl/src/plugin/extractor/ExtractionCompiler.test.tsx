@@ -377,14 +377,17 @@ describe('po format', () => {
     `);
   });
 
-  it('can extract descriptions', async () => {
+  it('saves changes to descriptions', async () => {
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
-        return <div>{t({message: 'Hey!', description: 'Shown on home screen'})}</div>;
+        return <div>{t({
+          message: 'Hey!',
+          description: 'Shown on home screen'
+        })}</div>;
       }
       `
     );
@@ -403,6 +406,42 @@ describe('po format', () => {
           "messages/de.po",
           "#: src/Greeting.tsx
       #. Shown on home screen
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('combines references from multiple files', async () => {
+    await compiler.compile(
+      '/project/src/Footer.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Footer() {
+        const t = useExtracted();
+        return <div>{t('Hey!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "#: src/Greeting.tsx
+      #: src/Footer.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "#: src/Greeting.tsx
+      #: src/Footer.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",
