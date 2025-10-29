@@ -15,10 +15,28 @@ const filesystem: {
 };
 
 describe('json format', () => {
-  let compiler: ExtractionCompiler;
   beforeEach(() => {
+    filesystem.project.src = {};
+    filesystem.project.messages = {};
+    fileTimestamps.clear();
     vi.clearAllMocks();
+  });
 
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('saves messages initially', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -30,26 +48,9 @@ describe('json format', () => {
       'en.json': '{"+YJVTi": "Hey!"}',
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
-    fileTimestamps.clear();
 
-    compiler = new ExtractionCompiler(
-      {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: 'json'
-        }
-      },
-      {isDevelopment: true, projectRoot: '/project'}
-    );
+    const compiler = createCompiler();
 
-    return () => {
-      compiler.destroy();
-    };
-  });
-
-  it('saves messages initially', async () => {
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -74,6 +75,20 @@ describe('json format', () => {
   });
 
   it('resets translations when a message changes', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -106,6 +121,20 @@ describe('json format', () => {
   });
 
   it('removes translations when all messages are removed from a file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -132,6 +161,20 @@ describe('json format', () => {
   });
 
   it('restores previous translations when messages are added back', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -188,6 +231,20 @@ describe('json format', () => {
   });
 
   it('handles namespaces when storing messages', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -224,6 +281,20 @@ describe('json format', () => {
   });
 
   it('preserves manual translations in target catalogs when adding new messages', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -290,6 +361,15 @@ describe('json format', () => {
 
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
     filesystem.project.messages = undefined;
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+
+    const compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -310,10 +390,28 @@ describe('json format', () => {
 });
 
 describe('po format', () => {
-  let compiler: ExtractionCompiler;
   beforeEach(() => {
+    filesystem.project.src = {};
+    filesystem.project.messages = {};
+    fileTimestamps.clear();
     vi.clearAllMocks();
+  });
 
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'po'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('saves messages initially', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -333,26 +431,9 @@ describe('po format', () => {
       msgstr "Hallo!"
       `
     };
-    fileTimestamps.clear();
 
-    compiler = new ExtractionCompiler(
-      {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: 'po'
-        }
-      },
-      {isDevelopment: true, projectRoot: '/project'}
-    );
+    const compiler = createCompiler();
 
-    return () => {
-      compiler.destroy();
-    };
-  });
-
-  it('saves messages initially', async () => {
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -378,6 +459,28 @@ describe('po format', () => {
   });
 
   it('saves changes to descriptions', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -415,6 +518,28 @@ describe('po format', () => {
   });
 
   it('combines references from multiple files', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    const compiler = createCompiler();
+
     await compiler.compile(
       '/project/src/Footer.tsx',
       `
@@ -506,6 +631,32 @@ function setNestedValue(obj: any, path: string, value: string): void {
   current[pathParts[pathParts.length - 1]] = value;
 }
 
+function checkDirectoryExists(obj: any, dirPath: string): boolean {
+  // Handle both absolute and relative paths
+  let pathParts: Array<string>;
+
+  if (dirPath.startsWith('/')) {
+    // Absolute path: /project/messages -> project/messages
+    pathParts = dirPath.replace(/^\//, '').split('/').filter(Boolean);
+  } else {
+    // Relative path: messages -> project/messages
+    pathParts = ['project', ...dirPath.split('/').filter(Boolean)];
+  }
+
+  let current = obj;
+
+  for (const part of pathParts) {
+    if (current && typeof current === 'object' && part in current) {
+      current = current[part];
+    } else {
+      return false;
+    }
+  }
+
+  // Directory exists if we successfully traversed the path
+  return current !== undefined && typeof current === 'object';
+}
+
 function getDirectoryContents(obj: any, dirPath: string): Array<string> {
   // Handle both absolute and relative paths
   let pathParts: Array<string>;
@@ -521,14 +672,23 @@ function getDirectoryContents(obj: any, dirPath: string): Array<string> {
   let current = obj;
 
   for (const part of pathParts) {
-    if (current && typeof current === 'object' && current[part]) {
-      current = current[part];
+    if (current && typeof current === 'object') {
+      if (part in current) {
+        current = current[part];
+      } else {
+        return [];
+      }
     } else {
       return [];
     }
   }
 
-  return Object.keys(current || {});
+  // If current exists and is an object, return its keys (even if empty)
+  if (current && typeof current === 'object') {
+    return Object.keys(current);
+  }
+
+  return [];
 }
 
 const fileTimestamps = new Map<string, Date>();
@@ -544,8 +704,12 @@ vi.mock('fs/promises', () => ({
     }),
     readdir: vi.fn(async (dir: string, opts?: {withFileTypes?: boolean}) => {
       const contents = getDirectoryContents(filesystem, dir);
-
-      if (contents.length === 0) {
+      // Note: empty array means directory exists but is empty
+      // We only check if contents is null/undefined for non-existence,
+      // but getDirectoryContents returns [] for both cases, so we check
+      // if the directory path exists in the structure
+      const dirExists = checkDirectoryExists(filesystem, dir);
+      if (!dirExists) {
         throw new Error('Directory not found: ' + dir);
       }
 
