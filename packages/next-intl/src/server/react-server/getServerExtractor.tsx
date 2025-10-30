@@ -1,6 +1,6 @@
 import {type ReactNode, cache} from 'react';
 import type {createTranslator} from 'use-intl/core';
-import type {useExtracted as useExtractedType} from 'use-intl/react';
+import type useExtractedType from 'use-intl/react/_useExtracted';
 import getServerTranslator from './getServerTranslator.js';
 
 type Return = ReturnType<typeof getServerTranslator>;

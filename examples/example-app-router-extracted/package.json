@@ -5,8 +5,7 @@
     "dev": "next dev",
     "lint": "eslint src && prettier src --check",
     "build": "next build",
-    "start": "next start",
-    "compile-extractor": "npx esbuild extractor/index.ts --bundle --platform=node --format=esm --outdir=extractor/dist --out-extension:.js=.js --external:@swc/core --external:fs --external:path --external:lodash-es"
+    "start": "next start"
   },
   "dependencies": {
     "next": "^16.0.0",
@@ -16,16 +15,9 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
-    "@parcel/watcher": "^2.4.1",
-    "@swc/core": "^1.13.19",
-    "@types/lodash-es": "^4.17.12",
-    "@types/node": "^20.14.5",
     "@types/react": "^19.2.0",
-    "@types/webpack": "^5.28.5",
-    "esbuild": "^0.25.10",
     "eslint": "9.11.1",
     "eslint-config-next": "^16.0.0",
-    "lodash-es": "^4.17.21",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },
