@@ -1,8 +1,8 @@
 import path from 'path';
-import type {LoaderContext} from 'webpack';
 import ExtractionCompiler from '../ExtractionCompiler.js';
 import SourceFileFilter from '../source/SourceFileFilter.js';
 import type {ExtractorConfig} from '../types.js';
+import type {TurbopackLoaderContext} from './types.js';
 
 // This instance:
 // - Remains available through HMR
@@ -48,39 +48,3 @@ export default function extractMessagesLoader(
     })
     .catch(callback);
 }
-
-// Only a subset of the LoaderContext is available in Turbopack
-type TurbopackLoaderContext<Options> = Pick<
-  LoaderContext<Options>,
-  | 'rootContext'
-  | 'sourceMap'
-  | 'getOptions'
-  | 'getResolve'
-  | 'emitWarning'
-  | 'emitError'
-  | 'getLogger'
-  | 'context'
-  | 'loaderIndex'
-  | 'loaders'
-  | 'resourcePath'
-  | 'resourceQuery'
-  | 'resourceFragment'
-  | 'async'
-  | 'callback'
-  | 'cacheable'
-  | 'addDependency'
-  | 'dependency'
-  | 'addContextDependency'
-  | 'addMissingDependency'
-  | 'getDependencies'
-  | 'getContextDependencies'
-  | 'getMissingDependencies'
-  | 'clearDependencies'
-  | 'resource'
-  | 'request'
-  | 'remainingRequest'
-  | 'currentRequest'
-  | 'previousRequest'
-  | 'query'
-  | 'data'
->;

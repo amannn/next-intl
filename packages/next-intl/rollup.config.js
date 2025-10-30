@@ -32,7 +32,9 @@ export default [
       plugin: 'src/plugin.tsx',
       config: 'src/config.tsx',
       'extractor/extractMessagesLoader':
-        'src/plugin/extractor/loaders/extractMessagesLoader.tsx'
+        'src/plugin/extractor/loaders/extractMessagesLoader.tsx',
+      'extractor/catalogLoader':
+        'src/plugin/extractor/loaders/catalogLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),

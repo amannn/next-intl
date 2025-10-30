@@ -1,4 +1,5 @@
 import type {ExtractedMessage} from '../types.js';
+import {setNestedProperty} from '../utils/ObjectUtils.js';
 import Formatter from './Formatter.js';
 
 interface StoredFormat {
@@ -29,7 +30,7 @@ export default class JSONFormatter extends Formatter {
 
     const root: StoredFormat = {};
     for (const message of sortedMessages) {
-      this.setNestedProperty(root, message.id, message.message);
+      setNestedProperty(root, message.id, message.message);
     }
     return JSON.stringify(root, null, 2);
   }
@@ -50,28 +51,5 @@ export default class JSONFormatter extends Formatter {
         this.traverseMessages(value, callback, newPath);
       }
     }
-  }
-
-  private setNestedProperty(
-    obj: Record<string, any>,
-    path: string,
-    value: any
-  ): void {
-    const keys = path.split('.');
-    let current = obj;
-
-    for (let i = 0; i < keys.length - 1; i++) {
-      const key = keys[i];
-      if (
-        !(key in current) ||
-        typeof current[key] !== 'object' ||
-        current[key] === null
-      ) {
-        current[key] = {};
-      }
-      current = current[key];
-    }
-
-    current[keys[keys.length - 1]] = value;
   }
 }

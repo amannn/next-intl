@@ -88,6 +88,10 @@
     "./extractor/extractMessagesLoader": {
       "types": "./dist/types/extractor/extractMessagesLoader.d.ts",
       "default": "./dist/esm/production/extractor/extractMessagesLoader.js"
+    },
+    "./extractor/catalogLoader": {
+      "types": "./dist/types/extractor/catalogLoader.d.ts",
+      "default": "./dist/esm/production/extractor/catalogLoader.js"
     }
   },
   "files": [

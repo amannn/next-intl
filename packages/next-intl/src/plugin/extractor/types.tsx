@@ -12,11 +12,17 @@ export type ExtractedMessage = {
   references?: Array<{path: string}>;
 };
 
+export type MessagesConfig = {
+  path: string;
+  format: keyof typeof formatters;
+};
+
 export type ExtractorConfig = {
   srcPath: string | Array<string>;
   sourceLocale: string;
-  messages: {
-    path: string;
-    format: keyof typeof formatters;
-  };
+  messages: MessagesConfig;
+};
+
+export type CatalogLoaderConfig = {
+  messages: MessagesConfig;
 };

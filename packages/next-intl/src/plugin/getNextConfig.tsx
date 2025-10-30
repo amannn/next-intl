@@ -7,8 +7,8 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import SourceFileFilter from './extractor/source/SourceFileFilter.js';
-import type {ExtractorConfig} from './extractor/types.js';
-import hasStableTurboConfig from './hasStableTurboConfig.js';
+import type {CatalogLoaderConfig, ExtractorConfig} from './extractor/types.js';
+import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
@@ -61,6 +61,7 @@ const withNextIntl = createNextIntlPlugin(
     );
   }
 }
+
 export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
@@ -85,6 +86,41 @@ export default function getNextConfig(
     };
   }
 
+  function getCatalogLoaderConfig() {
+    return {
+      loader: 'next-intl/extractor/catalogLoader',
+      options: {
+        messages: pluginConfig.experimental!.messages!
+      } satisfies CatalogLoaderConfig
+    };
+  }
+
+  function getTurboRules() {
+    return (
+      nextConfig?.turbopack?.rules ||
+      // @ts-expect-error -- For Next.js <16
+      nextConfig?.experimental?.turbo?.rules ||
+      {}
+    );
+  }
+
+  function addTurboRule(
+    rules: Record<string, TurbopackRuleConfigCollection>,
+    glob: string,
+    rule: TurbopackRuleConfigItem
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (rules[glob]) {
+      if (Array.isArray(rules[glob])) {
+        rules[glob].push(rule);
+      } else {
+        rules[glob] = [rules[glob], rule];
+      }
+    } else {
+      rules[glob] = rule;
+    }
+  }
+
   if (useTurbo) {
     if (pluginConfig.requestConfig?.startsWith('/')) {
       throwError(
@@ -100,39 +136,40 @@ export default function getNextConfig(
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
 
+    // Add loaders
+    let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
+
     // Add loader for extractor
-    let rules: Record<string, TurbopackRuleConfigCollection>;
     if (pluginConfig.experimental?.extract) {
-      const sourceGlob = `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`;
-      rules =
-        nextConfig?.turbopack?.rules ||
-        // @ts-expect-error -- For Next.js <16
-        nextConfig?.experimental?.turbo?.rules ||
-        {};
-      const sourceRule: TurbopackRuleConfigItem = {
-        loaders: [getExtractMessagesLoaderConfig()]
-      };
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (rules[sourceGlob]) {
-        if (Array.isArray(rules[sourceGlob])) {
-          rules[sourceGlob].push(sourceRule);
-        } else {
-          rules[sourceGlob] = [rules[sourceGlob], sourceRule];
-        }
-      } else {
-        rules[sourceGlob] = sourceRule;
+      if (!isNextJs16OrHigher()) {
+        throwError('Message extraction requires Next.js 16 or higher.');
       }
+      rules ??= getTurboRules();
+      addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
+        loaders: [getExtractMessagesLoaderConfig()]
+      });
+    }
+
+    // Add loader for catalog
+    if (pluginConfig.experimental?.messages) {
+      if (!isNextJs16OrHigher()) {
+        throwError('Message catalog loading requires Next.js 16 or higher.');
+      }
+      rules ??= getTurboRules();
+      addTurboRule(rules!, `*.${pluginConfig.experimental.messages.format}`, {
+        loaders: [getCatalogLoaderConfig()],
+        as: '*.js'
+      });
     }
 
     if (
-      hasStableTurboConfig &&
+      hasStableTurboConfig() &&
       // @ts-expect-error -- For Next.js <16
       !nextConfig?.experimental?.turbo
     ) {
       nextIntlConfig.turbopack = {
         ...nextConfig?.turbopack,
-        // @ts-expect-error -- This is fine
-        rules,
+        ...(rules && {rules}),
         resolveAlias: {
           ...nextConfig?.turbopack?.resolveAlias,
           ...resolveAlias
@@ -145,6 +182,7 @@ export default function getNextConfig(
         turbo: {
           // @ts-expect-error -- For Next.js <16
           ...nextConfig?.experimental?.turbo,
+          ...(rules && {rules}),
           resolveAlias: {
             // @ts-expect-error -- For Next.js <16
             ...nextConfig?.experimental?.turbo?.resolveAlias,
@@ -173,6 +211,17 @@ export default function getNextConfig(
         config.module.rules.push({
           test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
           use: [getExtractMessagesLoaderConfig()]
+        });
+      }
+
+      // Add loader for catalog
+      if (pluginConfig.experimental?.messages) {
+        if (!config.module) config.module = {};
+        if (!config.module.rules) config.module.rules = [];
+        config.module.rules.push({
+          test: new RegExp(`\\.${pluginConfig.experimental.messages.format}$`),
+          use: [getCatalogLoaderConfig()],
+          type: 'javascript/auto'
         });
       }
 
