@@ -5,6 +5,7 @@ import type Formatter from '../formatters/Formatter.js';
 import formatters from '../formatters/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
+import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
 export default class CatalogManager {
@@ -31,6 +32,7 @@ export default class CatalogManager {
 
   private saveScheduler: SaveScheduler<number>;
   private projectRoot: string;
+  private persister?: CatalogPersister;
 
   // Caching
   private formatter?: Formatter;
@@ -51,14 +53,26 @@ export default class CatalogManager {
     });
   }
 
-  private async getFormatter() {
+  private async getFormatter(): Promise<Formatter> {
     if (this.formatter) {
       return this.formatter;
     } else {
-      const FormatterImpl = (await formatters[this.config.messages.format]())
+      const FormatterClass = (await formatters[this.config.messages.format]())
         .default;
-      this.formatter = new FormatterImpl(this.config.messages.path);
+      this.formatter = new FormatterClass();
       return this.formatter;
+    }
+  }
+
+  private async getPersister(): Promise<CatalogPersister> {
+    if (this.persister) {
+      return this.persister;
+    } else {
+      this.persister = new CatalogPersister(
+        this.config.messages.path,
+        await this.getFormatter()
+      );
+      return this.persister;
     }
   }
 
@@ -74,9 +88,10 @@ export default class CatalogManager {
       try {
         const files = await fs.readdir(messagesDir);
         const formatter = await this.getFormatter();
+        const extension = formatter.EXTENSION;
         this.targetLocales = files
-          .filter((file) => file.endsWith(formatter.EXTENSION))
-          .map((file) => path.basename(file, formatter.EXTENSION))
+          .filter((file) => file.endsWith(extension))
+          .map((file) => path.basename(file, extension))
           .filter((locale) => locale !== this.config.sourceLocale);
       } catch {
         this.targetLocales = [];
@@ -123,7 +138,7 @@ export default class CatalogManager {
 
   private async loadTargetMessages() {
     const targetLocales = await this.getTargetLocales();
-    const formatter = await this.getFormatter();
+    const persister = await this.getPersister();
 
     for (const locale of targetLocales) {
       this.translationsByTargetLocale.set(locale, new Map());
@@ -131,14 +146,14 @@ export default class CatalogManager {
 
     await Promise.all(
       targetLocales.map(async (locale) => {
-        const messages = await formatter.read(locale);
+        const messages = await persister.read(locale);
         for (const message of messages) {
           const translations = this.translationsByTargetLocale.get(locale)!;
           translations.set(message.id, message.message);
         }
 
         // Initialize last modified
-        const fileTime = await formatter.getLastModified(locale);
+        const fileTime = await persister.getLastModified(locale);
         this.lastWriteByLocale.set(locale, fileTime);
       })
     );
@@ -279,17 +294,17 @@ export default class CatalogManager {
   private async saveImpl(): Promise<number> {
     const messages = Array.from(this.messagesById.values());
 
-    const formatter = await this.getFormatter();
-    await formatter.write(this.config.sourceLocale, messages);
+    const persister = await this.getPersister();
+    await persister.write(this.config.sourceLocale, messages);
 
     for (const locale of await this.getTargetLocales()) {
       // Check if file was modified externally
       const lastWriteTime = this.lastWriteByLocale.get(locale);
-      const currentFileTime = await formatter.getLastModified(locale);
+      const currentFileTime = await persister.getLastModified(locale);
 
       // If file was modified externally, read and merge
       if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
-        const diskMessages = await formatter.read(locale);
+        const diskMessages = await persister.read(locale);
         const translations = this.translationsByTargetLocale.get(locale)!;
 
         for (const diskMessage of diskMessages) {
@@ -304,10 +319,10 @@ export default class CatalogManager {
         message: translations.get(message.id) || ''
       }));
 
-      await formatter.write(locale, localeMessages);
+      await persister.write(locale, localeMessages);
 
       // Update timestamps
-      const newTime = await formatter.getLastModified(locale);
+      const newTime = await persister.getLastModified(locale);
       this.lastWriteByLocale.set(locale, newTime);
     }
 

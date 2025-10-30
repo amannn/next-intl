@@ -1,10 +1,19 @@
 import type {ExtractedMessage, Locale} from '../types.js';
 
-type Formatter = {
-  EXTENSION: `.${string}`;
-  read(locale: Locale): Promise<Array<ExtractedMessage>>;
-  write(locale: Locale, messages: Array<ExtractedMessage>): Promise<void>;
-  getLastModified(locale: Locale): Promise<Date | undefined>;
+type FormatterContext = {
+  locale: Locale;
 };
 
-export default Formatter;
+export default abstract class Formatter {
+  abstract readonly EXTENSION: `.${string}`;
+
+  abstract parse(
+    content: string,
+    context: FormatterContext
+  ): Array<ExtractedMessage>;
+
+  abstract serialize(
+    messages: Array<ExtractedMessage>,
+    context: FormatterContext
+  ): string;
+}
