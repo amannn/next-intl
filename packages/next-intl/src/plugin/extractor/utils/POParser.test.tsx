@@ -18,6 +18,22 @@ msgstr "Hey"
     });
   });
 
+  it('parses an empty message', () => {
+    expect(
+      POParser.parse(`
+msgid "lNLCAE"
+msgstr ""
+`)
+    ).toEqual({
+      messages: [
+        {
+          id: 'lNLCAE',
+          message: ''
+        }
+      ]
+    });
+  });
+
   it('handles irregular whitespace', () => {
     expect(
       POParser.parse(`

@@ -271,7 +271,7 @@ export default class POParser {
   }
 
   private static finishEntry(entry: Entry): ExtractedMessage {
-    if (!entry.msgid || !entry.msgstr) {
+    if (entry.msgid == null || entry.msgstr == null) {
       throw new Error(
         'Incomplete message entry: both msgid and msgstr are required'
       );
