@@ -442,14 +442,24 @@ describe('po format', () => {
       [
         [
           "messages/en.po",
-          "#: src/Greeting.tsx
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
       ",
         ],
         [
           "messages/de.po",
-          "#: src/Greeting.tsx
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",
@@ -499,7 +509,12 @@ describe('po format', () => {
       [
         [
           "messages/en.po",
-          "#. Shown on home screen
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. Shown on home screen
       #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -507,7 +522,12 @@ describe('po format', () => {
         ],
         [
           "messages/de.po",
-          "#. Shown on home screen
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. Shown on home screen
       #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
@@ -557,7 +577,12 @@ describe('po format', () => {
       [
         [
           "messages/en.po",
-          "#: src/Greeting.tsx
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
       #: src/Footer.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -565,7 +590,12 @@ describe('po format', () => {
         ],
         [
           "messages/de.po",
-          "#: src/Greeting.tsx
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
       #: src/Footer.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
@@ -595,7 +625,12 @@ describe('po format', () => {
     expect(vi.mocked(fs.writeFile).mock.calls[0]).toMatchInlineSnapshot(`
       [
         "messages/en.po",
-        "#: src/Greeting.tsx
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
       msgctxt "ui"
       msgid "OpKKos"
       msgstr "Hello!"
@@ -657,11 +692,12 @@ msgstr "Hallo!"
           "messages/en.po",
           "msgid ""
       msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
       "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
       "MIME-Version: 1.0\\n"
       "Content-Type: text/plain; charset=UTF-8\\n"
       "X-Generator: next-intl\\n"
-      "Language: en\\n"
 
       #: src/Greeting.tsx
       msgid "OpKKos"
@@ -672,9 +708,10 @@ msgstr "Hallo!"
           "messages/de.po",
           "msgid ""
       msgstr ""
+      "Language: de\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
       "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
       "Content-Type: text/plain; charset=UTF-8\\n"
-      "Language: de\\n"
 
       #: src/Greeting.tsx
       msgid "OpKKos"

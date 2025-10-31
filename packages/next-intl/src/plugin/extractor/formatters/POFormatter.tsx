@@ -3,6 +3,11 @@ import POParser from '../utils/POParser.js';
 import Formatter from './Formatter.js';
 
 export default class POFormatter extends Formatter {
+  private static readonly DEFAULT_METADATA = {
+    // Crowdin defaults to using msgid as source key
+    'X-Crowdin-SourceKey': 'msgstr'
+  };
+
   public readonly EXTENSION = '.po';
 
   // Metadata is stored so it can be retained when writing
@@ -31,8 +36,14 @@ export default class POFormatter extends Formatter {
       a.id.localeCompare(b.id)
     );
 
+    const meta = {
+      Language: context.locale,
+      ...POFormatter.DEFAULT_METADATA,
+      ...this.metadataByLocale.get(context.locale)
+    };
+
     return POParser.serialize({
-      meta: this.metadataByLocale.get(context.locale),
+      meta,
       messages: sortedMessages
     });
   }
