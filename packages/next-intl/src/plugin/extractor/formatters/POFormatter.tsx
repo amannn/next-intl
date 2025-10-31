@@ -1,6 +1,7 @@
 import type {ExtractedMessage, Locale} from '../types.js';
 import POParser from '../utils/POParser.js';
 import Formatter from './Formatter.js';
+import {getSortedMessages} from './utils.js';
 
 export default class POFormatter extends Formatter {
   private static readonly DEFAULT_METADATA = {
@@ -31,11 +32,6 @@ export default class POFormatter extends Formatter {
     messages: Array<ExtractedMessage>,
     context: {locale: Locale}
   ): string {
-    // Sort messages by id for consistent output
-    const sortedMessages = [...messages].sort((a, b) =>
-      a.id.localeCompare(b.id)
-    );
-
     const meta = {
       Language: context.locale,
       ...POFormatter.DEFAULT_METADATA,
@@ -44,7 +40,7 @@ export default class POFormatter extends Formatter {
 
     return POParser.serialize({
       meta,
-      messages: sortedMessages
+      messages: getSortedMessages(messages)
     });
   }
 }

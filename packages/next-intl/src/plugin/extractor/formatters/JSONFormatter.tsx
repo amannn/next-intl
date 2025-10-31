@@ -1,6 +1,7 @@
 import type {ExtractedMessage} from '../types.js';
 import {setNestedProperty} from '../utils/ObjectUtils.js';
 import Formatter from './Formatter.js';
+import {getSortedMessages} from './utils.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
@@ -23,13 +24,8 @@ export default class JSONFormatter extends Formatter {
   }
 
   public serialize(messages: Array<ExtractedMessage>): string {
-    // Sort messages by id for consistent output
-    const sortedMessages = [...messages].sort((a, b) =>
-      a.id.localeCompare(b.id)
-    );
-
     const root: StoredFormat = {};
-    for (const message of sortedMessages) {
+    for (const message of getSortedMessages(messages)) {
       setNestedProperty(root, message.id, message.message);
     }
     return JSON.stringify(root, null, 2);

@@ -346,17 +346,17 @@ describe('json format', () => {
 
     await waitForWriteFileCalls(6);
     expect(filesystem.project.messages).toMatchInlineSnapshot(`
-    {
-      "de.json": "{
-      "NnE1NP": "",
-      "OpKKos": "Hallo!"
-    }",
-      "en.json": "{
-      "NnE1NP": "Goodbye!",
-      "OpKKos": "Hello!"
-    }",
-    }
-  `);
+      {
+        "de.json": "{
+        "NnE1NP": "",
+        "OpKKos": "Hallo!"
+      }",
+        "en.json": "{
+        "NnE1NP": "Goodbye!",
+        "OpKKos": "Hello!"
+      }",
+      }
+    `);
   });
 
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
@@ -721,6 +721,53 @@ msgstr "Hallo!"
       ]
     `);
   });
+
+  it('sorts messages by reference path', async () => {
+    const compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/components/Header.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function Header() {
+      const t = useExtracted();
+      return <div>{t('Welcome')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/app/page.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function Page() {
+      const t = useExtracted();
+      return <div>{t('Hello')}</div>;
+    }
+    `
+    );
+
+    await waitForWriteFileCalls(3);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/app/page.tsx
+      msgid "NhX4DJ"
+      msgstr "Hello"
+
+      #: src/components/Header.tsx
+      msgid "PwaN2o"
+      msgstr "Welcome"
+      ",
+      ]
+    `);
+  });
 });
 
 /**
@@ -850,22 +897,33 @@ vi.mock('fs/promises', () => ({
       throw new Error('File not found: ' + filePath);
     }),
     readdir: vi.fn(async (dir: string, opts?: {withFileTypes?: boolean}) => {
-      const contents = getDirectoryContents(filesystem, dir);
-      // Note: empty array means directory exists but is empty
-      // We only check if contents is null/undefined for non-existence,
-      // but getDirectoryContents returns [] for both cases, so we check
-      // if the directory path exists in the structure
       const dirExists = checkDirectoryExists(filesystem, dir);
       if (!dirExists) {
         throw new Error('Directory not found: ' + dir);
       }
 
+      const contents = getDirectoryContents(filesystem, dir);
+      const pathParts = dir.startsWith('/')
+        ? dir.replace(/^\//, '').split('/').filter(Boolean)
+        : ['project', ...dir.split('/').filter(Boolean)];
+
+      let current: any = filesystem;
+      for (const part of pathParts) {
+        if (typeof current === 'object' && part in current) {
+          current = current[part];
+        }
+      }
+
       if (opts?.withFileTypes) {
-        return contents.map((fileName) => ({
-          name: fileName,
-          isDirectory: () => false,
-          isFile: () => true
-        }));
+        return contents.map((name) => {
+          const value = current?.[name];
+          const isDir = value && typeof value === 'object';
+          return {
+            name,
+            isDirectory: () => isDir,
+            isFile: () => !isDir
+          };
+        });
       }
 
       return contents;
