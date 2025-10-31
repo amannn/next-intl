@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
-import {beforeEach, describe, expect, it, vi} from 'vitest';
+import path from 'path';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
 
 const filesystem: {
@@ -15,15 +16,26 @@ const filesystem: {
 };
 
 describe('json format', () => {
+  const compilers = new Set<ExtractionCompiler>();
+
   beforeEach(() => {
     filesystem.project.src = {};
     filesystem.project.messages = {};
     fileTimestamps.clear();
+    watchCallbacks.clear();
+    mockWatchers.clear();
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    for (const compiler of compilers) {
+      compiler.destroy();
+    }
+    compilers.clear();
+  });
+
   function createCompiler() {
-    return new ExtractionCompiler(
+    const compiler = new ExtractionCompiler(
       {
         srcPath: './src',
         sourceLocale: 'en',
@@ -34,6 +46,8 @@ describe('json format', () => {
       },
       {isDevelopment: true, projectRoot: '/project'}
     );
+    compilers.add(compiler);
+    return compiler;
   }
 
   it('saves messages initially', async () => {
@@ -387,18 +401,187 @@ describe('json format', () => {
       '+YJVTi': 'Hey!'
     });
   });
+
+  it('writes to newly added catalog file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}'
+    };
+
+    const compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.json'] = '{}';
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+
+    await vi.waitFor(
+      () => {
+        const calls = vi.mocked(fs.writeFile).mock.calls;
+        expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
+          'messages/de.json',
+          '{\n  "OpKKos": ""\n}'
+        ]);
+      },
+      {timeout: 500}
+    );
+  });
+
+  it('preserves existing translations when adding a catalog file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}'
+    };
+
+    const compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.json'] = '{"OpKKos": "Hallo!"}';
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+
+    await vi.waitFor(
+      () => {
+        const calls = vi.mocked(fs.writeFile).mock.calls;
+        expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
+          'messages/de.json',
+          '{\n  "OpKKos": "Hallo!"\n}'
+        ]);
+      },
+      {timeout: 500}
+    );
+
+    // vi.mocked(fs.writeFile).mockClear();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')} {t('World!')}</div>;
+      }
+    `
+    );
+
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(3)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/de.json",
+          "{
+        "7kKG3Q": "",
+        "OpKKos": "Hallo!"
+      }",
+        ],
+      ]
+    `);
+  });
+
+  it('stops writing to removed catalog file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}',
+      'de.json': '{"OpKKos": "Hallo!"}',
+      'fr.json': '{"OpKKos": "Bonjour!"}'
+    };
+
+    const compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(3);
+
+    delete filesystem.project.messages!['fr.json'];
+    simulateFileEvent('/project/messages', 'rename', 'fr.json');
+
+    // Wait for debounce
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')} {t('Goodbye!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(5);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(3)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "NnE1NP": "Goodbye!",
+        "OpKKos": "Hello!"
+      }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "NnE1NP": "",
+        "OpKKos": "Hallo!"
+      }",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('po format', () => {
+  const compilers = new Set<ExtractionCompiler>();
+
   beforeEach(() => {
     filesystem.project.src = {};
     filesystem.project.messages = {};
     fileTimestamps.clear();
+    watchCallbacks.clear();
+    mockWatchers.clear();
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    for (const compiler of compilers) {
+      compiler.destroy();
+    }
+    compilers.clear();
+  });
+
   function createCompiler() {
-    return new ExtractionCompiler(
+    const compiler = new ExtractionCompiler(
       {
         srcPath: './src',
         sourceLocale: 'en',
@@ -409,6 +592,8 @@ describe('po format', () => {
       },
       {isDevelopment: true, projectRoot: '/project'}
     );
+    compilers.add(compiler);
+    return compiler;
   }
 
   it('saves messages initially', async () => {
@@ -815,31 +1000,31 @@ function simulateManualFileEdit(filePath: string, content: string) {
   fileTimestamps.set(filePath, futureTime);
 }
 
-function getNestedValue(obj: any, path: string): any {
+function getNestedValue(obj: any, pathname: string): any {
   // Handle both absolute and relative paths
   let pathParts: Array<string>;
 
-  if (path.startsWith('/')) {
+  if (pathname.startsWith('/')) {
     // Absolute path: /project/messages/en.json -> project/messages/en.json
-    pathParts = path.replace(/^\//, '').split('/');
+    pathParts = pathname.replace(/^\//, '').split('/');
   } else {
     // Relative path: messages/en.json -> project/messages/en.json
-    pathParts = ['project', ...path.split('/')];
+    pathParts = ['project', ...pathname.split('/')];
   }
 
   return pathParts.reduce((current, key) => current?.[key], obj);
 }
 
-function setNestedValue(obj: any, path: string, value: string): void {
+function setNestedValue(obj: any, pathname: string, value: string): void {
   // Handle both absolute and relative paths
   let pathParts: Array<string>;
 
-  if (path.startsWith('/')) {
+  if (pathname.startsWith('/')) {
     // Absolute path: /project/messages/en.json -> project/messages/en.json
-    pathParts = path.replace(/^\//, '').split('/');
+    pathParts = pathname.replace(/^\//, '').split('/');
   } else {
     // Relative path: messages/en.json -> project/messages/en.json
-    pathParts = ['project', ...path.split('/')];
+    pathParts = ['project', ...pathname.split('/')];
   }
 
   let current = obj;
@@ -915,6 +1100,87 @@ function getDirectoryContents(obj: any, dirPath: string): Array<string> {
 }
 
 const fileTimestamps = new Map<string, Date>();
+const watchCallbacks: Map<string, (event: string, filename: string) => void> =
+  new Map();
+const mockWatchers: Map<string, {close(): void}> = new Map();
+
+function simulateFileEvent(
+  dirPath: string,
+  event: 'rename',
+  filename: string
+): void {
+  // Try multiple path variations
+  const pathsToTry = [
+    dirPath,
+    path.resolve(dirPath),
+    path.join(process.cwd(), dirPath),
+    dirPath.replace(/\/$/, ''), // Remove trailing slash
+    path.resolve(dirPath).replace(/\/$/, '')
+  ];
+
+  let callback;
+  for (const testPath of pathsToTry) {
+    callback = watchCallbacks.get(testPath);
+    if (callback) break;
+  }
+
+  // If still not found, try to match by directory name
+  if (!callback && watchCallbacks.size > 0) {
+    const dirName = path.basename(dirPath);
+    for (const [key, cb] of watchCallbacks.entries()) {
+      if (
+        key.includes(dirName) ||
+        key.endsWith(dirPath) ||
+        dirPath.includes(key)
+      ) {
+        callback = cb;
+        break;
+      }
+    }
+  }
+
+  if (callback) {
+    callback(event, filename);
+  } else if (watchCallbacks.size > 0) {
+    throw new Error(
+      `No watcher found for ${dirPath}. Available: ${Array.from(watchCallbacks.keys()).join(', ')}`
+    );
+  }
+}
+
+vi.mock('fs', () => ({
+  default: {
+    watch: vi.fn(
+      (
+        dirPath: string,
+        _options: {persistent: boolean; recursive: boolean},
+        callback: (event: string, filename: string) => void
+      ) => {
+        // Store callback with exact path as provided (for test matching)
+        // Also store normalized variants for flexibility
+        watchCallbacks.set(dirPath, callback);
+        if (dirPath.startsWith('/')) {
+          watchCallbacks.set(path.resolve(dirPath), callback);
+        } else {
+          watchCallbacks.set(path.join(process.cwd(), dirPath), callback);
+        }
+        const watcher = {
+          close: vi.fn(() => {
+            watchCallbacks.delete(dirPath);
+            if (dirPath.startsWith('/')) {
+              watchCallbacks.delete(path.resolve(dirPath));
+            } else {
+              watchCallbacks.delete(path.join(process.cwd(), dirPath));
+            }
+            mockWatchers.delete(dirPath);
+          })
+        };
+        mockWatchers.set(dirPath, watcher);
+        return watcher;
+      }
+    )
+  }
+}));
 
 vi.mock('fs/promises', () => ({
   default: {

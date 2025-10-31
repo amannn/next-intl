@@ -5,6 +5,7 @@ import type Formatter from '../formatters/Formatter.js';
 import formatters from '../formatters/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
+import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
@@ -33,10 +34,11 @@ export default class CatalogManager {
   private saveScheduler: SaveScheduler<number>;
   private projectRoot: string;
   private persister?: CatalogPersister;
+  private isDevelopment: boolean;
 
   // Caching
   private formatter?: Formatter;
-  private targetLocales?: Array<Locale>;
+  private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
 
   constructor(
@@ -46,6 +48,7 @@ export default class CatalogManager {
     this.config = config;
     this.saveScheduler = new SaveScheduler<number>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
+    this.isDevelopment = opts.isDevelopment;
 
     this.messageExtractor = new MessageExtractor({
       isDevelopment: opts.isDevelopment,
@@ -76,29 +79,27 @@ export default class CatalogManager {
     }
   }
 
-  private async getTargetLocales(): Promise<Array<Locale>> {
-    if (this.targetLocales) {
-      return this.targetLocales;
+  private async getCatalogLocales(): Promise<CatalogLocales> {
+    if (this.catalogLocales) {
+      return this.catalogLocales;
     } else {
       const messagesDir = path.join(
         this.projectRoot,
         this.config.messages.path
       );
-
-      try {
-        const files = await fs.readdir(messagesDir);
-        const formatter = await this.getFormatter();
-        const extension = formatter.EXTENSION;
-        this.targetLocales = files
-          .filter((file) => file.endsWith(extension))
-          .map((file) => path.basename(file, extension))
-          .filter((locale) => locale !== this.config.sourceLocale);
-      } catch {
-        this.targetLocales = [];
-      }
-
-      return this.targetLocales;
+      const formatter = await this.getFormatter();
+      this.catalogLocales = new CatalogLocales({
+        messagesDir,
+        sourceLocale: this.config.sourceLocale,
+        extension: formatter.EXTENSION
+      });
+      return this.catalogLocales;
     }
+  }
+
+  private async getTargetLocales(): Promise<Array<Locale>> {
+    const catalogLocales = await this.getCatalogLocales();
+    return catalogLocales.getTargetLocales();
   }
 
   getSrcPaths(): Array<string> {
@@ -122,6 +123,11 @@ export default class CatalogManager {
     await this.loadSourceMessages();
 
     await this.loadTargetMessages();
+
+    if (this.isDevelopment) {
+      const catalogLocales = await this.getCatalogLocales();
+      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
+    }
   }
 
   private async loadSourceMessages() {
@@ -157,12 +163,9 @@ export default class CatalogManager {
   private async loadTargetMessages() {
     const targetLocales = await this.getTargetLocales();
 
-    for (const locale of targetLocales) {
-      this.translationsByTargetLocale.set(locale, new Map());
-    }
-
     await Promise.all(
       targetLocales.map(async (locale) => {
+        this.translationsByTargetLocale.set(locale, new Map());
         const messages = await this.loadLocaleMessages(locale);
         for (const message of messages) {
           const translations = this.translationsByTargetLocale.get(locale)!;
@@ -311,38 +314,68 @@ export default class CatalogManager {
     await persister.write(this.config.sourceLocale, messages);
 
     for (const locale of await this.getTargetLocales()) {
-      // Check if file was modified externally
-      const lastWriteTime = this.lastWriteByLocale.get(locale);
-      const currentFileTime = await persister.getLastModified(locale);
-
-      // If file was modified externally, read and merge
-      if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
-        const diskMessages = await persister.read(locale);
-        const translations = this.translationsByTargetLocale.get(locale)!;
-
-        for (const diskMessage of diskMessages) {
-          // Disk wins: preserve manual edits
-          translations.set(diskMessage.id, diskMessage.message);
-        }
-      }
-
-      const translations = this.translationsByTargetLocale.get(locale)!;
-      const localeMessages = messages.map((message) => ({
-        ...message,
-        message: translations.get(message.id) || ''
-      }));
-
-      await persister.write(locale, localeMessages);
-
-      // Update timestamps
-      const newTime = await persister.getLastModified(locale);
-      this.lastWriteByLocale.set(locale, newTime);
+      await this.saveLocale(locale);
     }
 
     return messages.length;
   }
 
+  private async saveLocale(locale: Locale): Promise<void> {
+    const messages = Array.from(this.messagesById.values());
+    const persister = await this.getPersister();
+
+    // Check if file was modified externally
+    const lastWriteTime = this.lastWriteByLocale.get(locale);
+    const currentFileTime = await persister.getLastModified(locale);
+
+    // If file was modified externally, read and merge
+    if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
+      const diskMessages = await persister.read(locale);
+      const translations = this.translationsByTargetLocale.get(locale)!;
+
+      for (const diskMessage of diskMessages) {
+        // Disk wins: preserve manual edits
+        translations.set(diskMessage.id, diskMessage.message);
+      }
+    }
+
+    const translations = this.translationsByTargetLocale.get(locale)!;
+    const localeMessages = messages.map((message) => ({
+      ...message,
+      message: translations.get(message.id) || ''
+    }));
+
+    await persister.write(locale, localeMessages);
+
+    // Update timestamps
+    const newTime = await persister.getLastModified(locale);
+    this.lastWriteByLocale.set(locale, newTime);
+  }
+
+  private onLocalesChange = async (params: {
+    added: Array<Locale>;
+    removed: Array<Locale>;
+  }): Promise<void> => {
+    for (const locale of params.added) {
+      const translations = new Map();
+      this.translationsByTargetLocale.set(locale, translations);
+      const messages = await this.loadLocaleMessages(locale);
+      for (const message of messages) {
+        translations.set(message.id, message.message);
+      }
+      await this.saveLocale(locale);
+    }
+
+    for (const locale of params.removed) {
+      this.translationsByTargetLocale.delete(locale);
+      this.lastWriteByLocale.delete(locale);
+    }
+  };
+
   destroy(): void {
     this.saveScheduler.destroy();
+    if (this.catalogLocales && this.isDevelopment) {
+      this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);
+    }
   }
 }
