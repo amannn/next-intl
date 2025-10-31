@@ -548,9 +548,9 @@ describe('serialize', () => {
         ]
       })
     ).toMatchInlineSnapshot(`
-      "#: src/components/Button.tsx
+      "#. Save button tooltip
+      #: src/components/Button.tsx
       #: src/pages/Profile.tsx
-      #. Save button tooltip
       msgctxt "ui.button"
       msgid "save"
       msgstr "Save"

@@ -207,14 +207,14 @@ export default class POParser {
     // Messages
     if (catalog.messages) {
       for (const message of catalog.messages) {
+        if (message.description) {
+          lines.push(`${POParser.COMMENTS.EXTRACTED} ${message.description}`);
+        }
+
         if (message.references && message.references.length > 0) {
           for (const ref of message.references) {
             lines.push(`${POParser.COMMENTS.REFERENCE} ${ref.path}`);
           }
-        }
-
-        if (message.description) {
-          lines.push(`${POParser.COMMENTS.EXTRACTED} ${message.description}`);
         }
 
         let msgctxt: string | undefined;

@@ -125,6 +125,10 @@ export default class CatalogManager {
   }
 
   private async loadSourceMessages() {
+    // First hydrate from source locale file to potentially init metadata
+    await this.loadLocaleMessages(this.config.sourceLocale);
+
+    // Then extract from all source files
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPaths()
     );
@@ -136,9 +140,22 @@ export default class CatalogManager {
     );
   }
 
+  private async loadLocaleMessages(
+    locale: Locale
+  ): Promise<Array<ExtractedMessage>> {
+    const persister = await this.getPersister();
+    try {
+      const messages = await persister.read(locale);
+      const fileTime = await persister.getLastModified(locale);
+      this.lastWriteByLocale.set(locale, fileTime);
+      return messages;
+    } catch {
+      return [];
+    }
+  }
+
   private async loadTargetMessages() {
     const targetLocales = await this.getTargetLocales();
-    const persister = await this.getPersister();
 
     for (const locale of targetLocales) {
       this.translationsByTargetLocale.set(locale, new Map());
@@ -146,15 +163,11 @@ export default class CatalogManager {
 
     await Promise.all(
       targetLocales.map(async (locale) => {
-        const messages = await persister.read(locale);
+        const messages = await this.loadLocaleMessages(locale);
         for (const message of messages) {
           const translations = this.translationsByTargetLocale.get(locale)!;
           translations.set(message.id, message.message);
         }
-
-        // Initialize last modified
-        const fileTime = await persister.getLastModified(locale);
-        this.lastWriteByLocale.set(locale, fileTime);
       })
     );
   }

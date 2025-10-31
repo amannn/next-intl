@@ -499,16 +499,16 @@ describe('po format', () => {
       [
         [
           "messages/en.po",
-          "#: src/Greeting.tsx
-      #. Shown on home screen
+          "#. Shown on home screen
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
       ",
         ],
         [
           "messages/de.po",
-          "#: src/Greeting.tsx
-      #. Shown on home screen
+          "#. Shown on home screen
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",
@@ -600,6 +600,87 @@ describe('po format', () => {
       msgid "OpKKos"
       msgstr "Hello!"
       ",
+      ]
+    `);
+  });
+
+  it('retains metadata when saving back to file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-10-27 16:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Generator: next-intl\n"
+"Language: en\n"
+
+#: src/Greeting.tsx:4
+msgid "+YJVTi"
+msgstr "Hey!"
+`,
+      'de.po': `msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-10-27 16:00+0000\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+#: src/Greeting.tsx:4
+msgid "+YJVTi"
+msgstr "Hallo!"
+`
+    };
+
+    const compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
+      "MIME-Version: 1.0\\n"
+      "Content-Type: text/plain; charset=UTF-8\\n"
+      "X-Generator: next-intl\\n"
+      "Language: en\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
+      "Content-Type: text/plain; charset=UTF-8\\n"
+      "Language: de\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr ""
+      ",
+        ],
       ]
     `);
   });
