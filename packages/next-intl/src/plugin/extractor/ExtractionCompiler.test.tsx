@@ -445,6 +445,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
@@ -457,6 +460,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
@@ -512,6 +518,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. Shown on home screen
@@ -525,6 +534,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. Shown on home screen
@@ -580,6 +592,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
@@ -593,6 +608,9 @@ describe('po format', () => {
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
@@ -628,6 +646,9 @@ describe('po format', () => {
         "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
@@ -653,7 +674,8 @@ msgstr ""
 "POT-Creation-Date: 2025-10-27 16:00+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"X-Generator: next-intl\n"
+"X-Generator: some-po-editor\n"
+"X-Something-Else: test\n"
 "Language: en\n"
 
 #: src/Greeting.tsx:4
@@ -693,11 +715,13 @@ msgstr "Hallo!"
           "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=UTF-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: some-po-editor\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
       "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
       "MIME-Version: 1.0\\n"
-      "Content-Type: text/plain; charset=UTF-8\\n"
-      "X-Generator: next-intl\\n"
+      "X-Something-Else: test\\n"
 
       #: src/Greeting.tsx
       msgid "OpKKos"
@@ -709,9 +733,11 @@ msgstr "Hallo!"
           "msgid ""
       msgstr ""
       "Language: de\\n"
+      "Content-Type: text/plain; charset=UTF-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
       "POT-Creation-Date: 2025-10-27 16:00+0000\\n"
-      "Content-Type: text/plain; charset=UTF-8\\n"
 
       #: src/Greeting.tsx
       msgid "OpKKos"
@@ -755,6 +781,9 @@ msgstr "Hallo!"
         "msgid ""
       msgstr ""
       "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/app/page.tsx

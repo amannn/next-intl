@@ -4,7 +4,15 @@ import Formatter from './Formatter.js';
 import {getSortedMessages} from './utils.js';
 
 export default class POFormatter extends Formatter {
+  // See also https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
   private static readonly DEFAULT_METADATA = {
+    // Recommended by spec
+    'Content-Type': 'text/plain; charset=utf-8',
+    'Content-Transfer-Encoding': '8bit',
+
+    // Otherwise other tools might set this
+    'X-Generator': 'next-intl',
+
     // Crowdin defaults to using msgid as source key
     'X-Crowdin-SourceKey': 'msgstr'
   };
