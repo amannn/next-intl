@@ -43,15 +43,15 @@ export default class CatalogManager {
 
   constructor(
     config: ExtractorConfig,
-    opts: {projectRoot?: string; isDevelopment: boolean}
+    opts: {projectRoot?: string; isDevelopment?: boolean} = {}
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<number>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
-    this.isDevelopment = opts.isDevelopment;
+    this.isDevelopment = opts.isDevelopment ?? false;
 
     this.messageExtractor = new MessageExtractor({
-      isDevelopment: opts.isDevelopment,
+      isDevelopment: this.isDevelopment,
       projectRoot: this.projectRoot
     });
   }

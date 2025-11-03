@@ -1,8 +1,8 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {warn} from '../../utils.js';
+import {warn} from '../../plugin/utils.js';
 import MessageExtractor from './MessageExtractor.js';
 
-vi.mock('../../utils.js', () => ({
+vi.mock('../../plugin/utils.js', () => ({
   warn: vi.fn(),
   throwError: vi.fn((message: string) => {
     throw new Error(message);
@@ -1209,7 +1209,7 @@ describe('getExtracted', () => {
       {
         "messages": [
           {
-            "id": "0KGiQf",
+            "id": "ui.0KGiQf",
             "message": "Hello there!",
             "references": [
               {

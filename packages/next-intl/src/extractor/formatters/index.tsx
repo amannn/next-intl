@@ -1,4 +1,4 @@
-import type {MessagesFormat} from '../../types.js';
+import type {MessagesFormat} from '../types.js';
 import type Formatter from './Formatter.js';
 
 const formatters = {

@@ -1,9 +1,9 @@
 import path from 'path';
-import type Formatter from '../formatters/Formatter.js';
-import formatters from '../formatters/index.js';
-import type {CatalogLoaderConfig} from '../types.js';
-import {setNestedProperty} from '../utils/ObjectUtils.js';
-import type {TurbopackLoaderContext} from './types.js';
+import type Formatter from '../../extractor/formatters/Formatter.js';
+import formatters from '../../extractor/formatters/index.js';
+import type {CatalogLoaderConfig} from '../../extractor/types.js';
+import {setNestedProperty} from '../../extractor/utils/ObjectUtils.js';
+import type {TurbopackLoaderContext} from '../types.js';
 
 const cwd = process.cwd();
 

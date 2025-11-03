@@ -31,10 +31,10 @@ export default [
       routing: 'src/routing.tsx',
       plugin: 'src/plugin.tsx',
       config: 'src/config.tsx',
+      extractor: 'src/extractor.tsx',
       'extractor/extractMessagesLoader':
-        'src/plugin/extractor/loaders/extractMessagesLoader.tsx',
-      'extractor/catalogLoader':
-        'src/plugin/extractor/loaders/catalogLoader.tsx'
+        'src/plugin/extractor/extractMessagesLoader.tsx',
+      'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),

@@ -14,7 +14,7 @@ import {
   parse,
   print
 } from '@swc/core';
-import {warn} from '../../utils.js';
+import {warn} from '../../plugin/utils.js';
 import type {ExtractedMessage} from '../types.js';
 import ASTScope from './ASTScope.js';
 import KeyGenerator from './KeyGenerator.js';
@@ -101,6 +101,24 @@ export default class MessageExtractor {
       };
     }
 
+    function extractStaticString(value: Node): string | null {
+      if (value.type === 'StringLiteral') {
+        return (value as StringLiteral).value;
+      } else if (value.type === 'TemplateLiteral') {
+        const templateLiteral = value as TemplateLiteral;
+        // Only handle simple template literals without expressions
+        if (
+          templateLiteral.expressions.length === 0 &&
+          templateLiteral.quasis.length === 1
+        ) {
+          return (
+            templateLiteral.quasis[0].cooked || templateLiteral.quasis[0].raw
+          );
+        }
+      }
+      return null;
+    }
+
     function visit(node: Node) {
       if (typeof node !== 'object') return;
 
@@ -178,6 +196,23 @@ export default class MessageExtractor {
               const firstArg = callExpr.arguments[0].expression;
               if (firstArg.type === 'StringLiteral') {
                 namespace = (firstArg as StringLiteral).value;
+              } else if (firstArg.type === 'ObjectExpression') {
+                const objectExpression = firstArg as ObjectExpression;
+                for (const prop of objectExpression.properties) {
+                  if (prop.type === 'KeyValueProperty') {
+                    const key = prop.key;
+                    if (
+                      key.type === 'Identifier' &&
+                      key.value === 'namespace'
+                    ) {
+                      const staticNamespace = extractStaticString(prop.value);
+                      if (staticNamespace !== null) {
+                        namespace = staticNamespace;
+                      }
+                      break;
+                    }
+                  }
+                }
               }
             }
 
@@ -243,25 +278,6 @@ export default class MessageExtractor {
                 (location ? `${location}: ` : '') +
                   'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
               );
-            }
-
-            function extractStaticString(value: Node): string | null {
-              if (value.type === 'StringLiteral') {
-                return (value as StringLiteral).value;
-              } else if (value.type === 'TemplateLiteral') {
-                const templateLiteral = value as TemplateLiteral;
-                // Only handle simple template literals without expressions
-                if (
-                  templateLiteral.expressions.length === 0 &&
-                  templateLiteral.quasis.length === 1
-                ) {
-                  return (
-                    templateLiteral.quasis[0].cooked ||
-                    templateLiteral.quasis[0].raw
-                  );
-                }
-              }
-              return null;
             }
 
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

@@ -85,6 +85,10 @@
       },
       "default": "./dist/esm/production/plugin.js"
     },
+    "./extractor": {
+      "types": "./dist/types/extractor.d.ts",
+      "default": "./dist/esm/production/extractor.js"
+    },
     "./extractor/extractMessagesLoader": {
       "types": "./dist/types/extractor/extractMessagesLoader.d.ts",
       "default": "./dist/esm/production/extractor/extractMessagesLoader.js"
@@ -102,7 +106,8 @@
     "plugin.d.ts",
     "plugin.d.cts",
     "routing.d.ts",
-    "config.d.ts"
+    "config.d.ts",
+    "extractor.d.ts"
   ],
   "keywords": [
     "react",

@@ -6,8 +6,8 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
-import SourceFileFilter from './extractor/source/SourceFileFilter.js';
-import type {CatalogLoaderConfig, ExtractorConfig} from './extractor/types.js';
+import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
+import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';

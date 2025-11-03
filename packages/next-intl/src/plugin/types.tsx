@@ -1,4 +1,5 @@
-export type MessagesFormat = 'json' | 'po';
+import type {LoaderContext} from 'webpack';
+import type {MessagesFormat} from '../extractor/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;
@@ -23,3 +24,39 @@ export type PluginConfig = {
     };
   };
 };
+
+// Only a subset of the LoaderContext is available in Turbopack
+export type TurbopackLoaderContext<Options> = Pick<
+  LoaderContext<Options>,
+  | 'rootContext'
+  | 'sourceMap'
+  | 'getOptions'
+  | 'getResolve'
+  | 'emitWarning'
+  | 'emitError'
+  | 'getLogger'
+  | 'context'
+  | 'loaderIndex'
+  | 'loaders'
+  | 'resourcePath'
+  | 'resourceQuery'
+  | 'resourceFragment'
+  | 'async'
+  | 'callback'
+  | 'cacheable'
+  | 'addDependency'
+  | 'dependency'
+  | 'addContextDependency'
+  | 'addMissingDependency'
+  | 'getDependencies'
+  | 'getContextDependencies'
+  | 'getMissingDependencies'
+  | 'clearDependencies'
+  | 'resource'
+  | 'request'
+  | 'remainingRequest'
+  | 'currentRequest'
+  | 'previousRequest'
+  | 'query'
+  | 'data'
+>;

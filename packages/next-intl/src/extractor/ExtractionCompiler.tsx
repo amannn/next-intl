@@ -3,18 +3,18 @@ import type {ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler {
   private manager: CatalogManager;
-  private isDevelopment: boolean;
+  private isDevelopment = false;
   private initialScanPromise: Promise<void> | undefined;
 
   constructor(
     config: ExtractorConfig,
-    opts: {isDevelopment: boolean; projectRoot?: string}
+    opts: {isDevelopment?: boolean; projectRoot?: string} = {}
   ) {
     this.manager = new CatalogManager(config, opts);
-    this.isDevelopment = opts.isDevelopment;
+    this.isDevelopment = opts.isDevelopment ?? false;
 
     // Kick off the initial scan as early as possible,
-    // while awaiting it in `compile`. This also ensure
+    // while awaiting it in `compile`. This also ensures
     // we're only scanning once.
     this.initialScanPromise = this.performInitialScan();
   }
@@ -41,6 +41,10 @@ export default class ExtractionCompiler {
     // caching), so loading the messages initially is necessary.
     await this.manager.loadMessages();
     await this.manager.save();
+  }
+
+  public async extract() {
+    await this.initialScanPromise;
   }
 
   public destroy(): void {

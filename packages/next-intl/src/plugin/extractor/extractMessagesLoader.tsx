@@ -1,8 +1,8 @@
 import path from 'path';
-import ExtractionCompiler from '../ExtractionCompiler.js';
-import SourceFileFilter from '../source/SourceFileFilter.js';
-import type {ExtractorConfig} from '../types.js';
-import type {TurbopackLoaderContext} from './types.js';
+import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
+import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
+import type {ExtractorConfig} from '../../extractor/types.js';
+import type {TurbopackLoaderContext} from '../types.js';
 
 // This instance:
 // - Remains available through HMR
