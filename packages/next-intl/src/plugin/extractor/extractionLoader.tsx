@@ -8,7 +8,7 @@ import type {TurbopackLoaderContext} from '../types.js';
 // - Is only lost when the dev server restarts (e.g. due to change to Next.js config)
 let compiler: ExtractionCompiler | undefined;
 
-export default function extractMessagesLoader(
+export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
   source: string
 ) {

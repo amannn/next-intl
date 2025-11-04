@@ -32,8 +32,7 @@ export default [
       plugin: 'src/plugin.tsx',
       config: 'src/config.tsx',
       extractor: 'src/extractor.tsx',
-      'extractor/extractMessagesLoader':
-        'src/plugin/extractor/extractMessagesLoader.tsx',
+      'extractor/extractionLoader': 'src/plugin/extractor/extractionLoader.tsx',
       'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx'
     },
     external: [

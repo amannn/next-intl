@@ -77,7 +77,7 @@ export default function getNextConfig(
       );
     }
     return {
-      loader: 'next-intl/extractor/extractMessagesLoader',
+      loader: 'next-intl/extractor/extractionLoader',
       options: {
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
