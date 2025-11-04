@@ -36,11 +36,10 @@ export default function catalogLoader(
 
       const jsonString = formatter.toJSONString(source, {locale});
 
-      callback(
-        null,
-        // https://v8.dev/blog/cost-of-javascript-2019#json
-        `export default JSON.parse(${JSON.stringify(jsonString)});`
-      );
+      // https://v8.dev/blog/cost-of-javascript-2019#json
+      const result = `export default JSON.parse(${JSON.stringify(jsonString)});`;
+
+      callback(null, result);
     })
     .catch(callback);
 }
