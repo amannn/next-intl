@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.4.0 (2025-10-22)
+
+### Features
+
+* Next.js 16 update ([#2054](https://github.com/amannn/next-intl/issues/2054)) ([c397e92](https://github.com/amannn/next-intl/commit/c397e92ed9de98371cdecaebaed47da3a3129870)) – by @amannn
+
 ## 4.3.12 (2025-10-09)
 
 ### Bug Fixes
