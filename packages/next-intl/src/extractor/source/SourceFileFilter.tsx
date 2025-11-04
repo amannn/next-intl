@@ -9,24 +9,6 @@ export default class SourceFileFilter {
     return SourceFileFilter.EXTENSIONS.map((cur) => '.' + cur).includes(ext);
   }
 
-  static shouldProcessFile(filePath: string, srcPaths: Array<string>): boolean {
-    // Check if the file is within any of the `srcPath`s
-    if (!SourceFileFilter.isWithinSrcPath(filePath, srcPaths)) return false;
-
-    // Ignore files in ignored directories unless explicitly asked for
-    const isInIgnoredDir = SourceFileFilter.IGNORED_DIRECTORIES.some((dir) =>
-      filePath.includes(`/${dir}/`)
-    );
-    if (isInIgnoredDir) {
-      return SourceFileFilter.isIgnoredDirectoryExplicitlyIncluded(
-        filePath,
-        srcPaths
-      );
-    }
-
-    return true;
-  }
-
   static shouldEnterDirectory(
     dirPath: string,
     srcPaths: Array<string>

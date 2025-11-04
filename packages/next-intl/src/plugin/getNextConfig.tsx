@@ -122,7 +122,10 @@ export default function getNextConfig(
   }
 
   if (useTurbo) {
-    if (pluginConfig.requestConfig?.startsWith('/')) {
+    if (
+      pluginConfig.requestConfig &&
+      path.isAbsolute(pluginConfig.requestConfig)
+    ) {
       throwError(
         "Turbopack support for next-intl currently does not support absolute paths, please provide a relative one (e.g. './src/i18n/config.ts').\n\nFound: " +
           pluginConfig.requestConfig
