@@ -21,8 +21,6 @@ export default class CatalogLocales {
   private sourceLocale: Locale;
   private locales: 'infer' | Array<Locale>;
   private watcher?: fs.FSWatcher;
-  private debounceTimeout?: NodeJS.Timeout;
-  private debounceDelayMs = 50;
   private cleanupHandlers: Array<() => void> = [];
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
@@ -87,12 +85,13 @@ export default class CatalogLocales {
       this.messagesDir,
       {persistent: false, recursive: false},
       (event, filename) => {
-        if (
-          filename &&
+        const isCatalogFile =
+          filename != null &&
           filename.endsWith(this.extension) &&
-          !filename.includes(path.sep)
-        ) {
-          this.debouncedOnChange();
+          !filename.includes(path.sep);
+
+        if (isCatalogFile) {
+          void this.onChange();
         }
       }
     );
@@ -101,11 +100,6 @@ export default class CatalogLocales {
   }
 
   private stopWatcher(): void {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-      this.debounceTimeout = undefined;
-    }
-
     if (this.watcher) {
       this.watcher.close();
       this.watcher = undefined;
@@ -117,38 +111,27 @@ export default class CatalogLocales {
     this.cleanupHandlers = [];
   }
 
-  private debouncedOnChange(): void {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
+  private async onChange(): Promise<void> {
+    const oldLocales = new Set(this.targetLocales || []);
+    this.targetLocales = await this.readTargetLocales();
+    const newLocalesSet = new Set(this.targetLocales);
+
+    const added = this.targetLocales.filter(
+      (locale) => !oldLocales.has(locale)
+    );
+    const removed = Array.from(oldLocales).filter(
+      (locale) => !newLocalesSet.has(locale)
+    );
+
+    if (added.length > 0 || removed.length > 0) {
+      for (const callback of this.onChangeCallbacks) {
+        callback({added, removed});
+      }
     }
-
-    this.debounceTimeout = setTimeout(() => {
-      void (async () => {
-        const oldLocales = new Set(this.targetLocales || []);
-        this.targetLocales = await this.readTargetLocales();
-        const newLocalesSet = new Set(this.targetLocales);
-
-        const added = this.targetLocales.filter(
-          (locale) => !oldLocales.has(locale)
-        );
-        const removed = Array.from(oldLocales).filter(
-          (locale) => !newLocalesSet.has(locale)
-        );
-
-        if (added.length > 0 || removed.length > 0) {
-          for (const callback of this.onChangeCallbacks) {
-            callback({added, removed});
-          }
-        }
-      })();
-    }, this.debounceDelayMs);
   }
 
   private setupCleanupHandlers(): void {
     const cleanup = () => {
-      if (this.debounceTimeout) {
-        clearTimeout(this.debounceTimeout);
-      }
       if (this.watcher) {
         this.watcher.close();
         this.watcher = undefined;

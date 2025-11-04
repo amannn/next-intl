@@ -605,6 +605,47 @@ describe('json format', () => {
 
     expect(watchCallbacks.size).toBe(0);
   });
+
+  it('initializes all messages to empty string when adding new catalog', async () => {
+    filesystem.project.messages = undefined;
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')} {t('World!')}</div>;
+    }
+    `;
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+      OpKKos: 'Hello!',
+      '7kKG3Q': 'World!'
+    });
+
+    filesystem.project.messages!['de.json'] = '{}';
+    simulateFileEvent('/project/messages', 'rename', 'de.json');
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(1)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": "",
+        "7kKG3Q": ""
+      }",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('po format', () => {
@@ -1015,6 +1056,54 @@ msgstr "Hallo!"
       msgid "PwaN2o"
       msgstr "Welcome"
       ",
+      ]
+    `);
+  });
+
+  it('initializes all messages to empty string when adding new catalog', async () => {
+    filesystem.project.messages = undefined;
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')} {t('World!')}</div>;
+    }
+    `;
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    filesystem.project.messages!['de.po'] = '';
+    simulateFileEvent('/project/messages', 'rename', 'de.po');
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(1)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "7kKG3Q"
+      msgstr ""
+      ",
+        ],
       ]
     `);
   });
