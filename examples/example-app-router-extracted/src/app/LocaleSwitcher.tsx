@@ -10,7 +10,7 @@ export default function LocaleSwitcher({changeLocaleAction}: Props) {
   const locale = useLocale();
 
   return (
-    <div>
+    <div style={{display: 'flex', gap: 5}}>
       {['en', 'de'].map((cur) => (
         <button
           key={cur}

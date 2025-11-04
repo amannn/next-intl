@@ -3,6 +3,9 @@ import {getLocale, getExtracted} from 'next-intl/server';
 import {ReactNode} from 'react';
 import LocaleSwitcher from './LocaleSwitcher';
 import {cookies} from 'next/headers';
+import {Inter} from 'next/font/google';
+
+const inter = Inter({subsets: ['latin']});
 
 type Props = {
   children: ReactNode;
@@ -29,7 +32,14 @@ export default async function LocaleLayout({children}: Props) {
 
   return (
     <html lang={locale}>
-      <body>
+      <body
+        className={inter.className}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10
+        }}
+      >
         <NextIntlClientProvider>
           {children}
           <LocaleSwitcher changeLocaleAction={changeLocaleAction} />

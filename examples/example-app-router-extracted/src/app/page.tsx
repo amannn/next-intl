@@ -1,13 +1,14 @@
 import {useExtracted} from 'next-intl';
-import Client from './Client';
+import Counter from './Counter';
 
 export default function Index() {
   const t = useExtracted();
+  const user = {name: 'Jane'};
+
   return (
-    <>
-      <h1>{t('Hey {name}!', {name: 'Jane'})}</h1>
-      <p>{t('This is a test from the page.')}</p>
-      <Client />
-    </>
+    <div>
+      <h1>{t('Hey {name}!', user)}</h1>
+      <Counter />
+    </div>
   );
 }

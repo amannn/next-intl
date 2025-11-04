@@ -187,7 +187,7 @@ importers:
   examples/example-app-router-extracted:
     dependencies:
       next:
-        specifier: ^16.0.0
+        specifier: ^16.0.1
         version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
@@ -209,7 +209,7 @@ importers:
         specifier: 9.11.1
         version: 9.11.1(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
+        specifier: ^16.0.1
         version: 16.0.1(eslint@9.11.1(jiti@2.4.2))(typescript@5.8.2)
       prettier:
         specifier: ^3.3.3
