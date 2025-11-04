@@ -1,5 +1,3 @@
-import type formatters from './formatters/index.js';
-
 export type MessagesFormat = 'json' | 'po';
 
 // Is likely the same as the `Locale` type in `use-intl`,
@@ -16,7 +14,8 @@ export type ExtractedMessage = {
 
 export type MessagesConfig = {
   path: string;
-  format: keyof typeof formatters;
+  format: MessagesFormat;
+  locales: 'infer' | Array<Locale>;
 };
 
 export type ExtractorConfig = {

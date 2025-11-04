@@ -91,7 +91,8 @@ export default class CatalogManager {
       this.catalogLocales = new CatalogLocales({
         messagesDir,
         sourceLocale: this.config.sourceLocale,
-        extension: formatter.EXTENSION
+        extension: formatter.EXTENSION,
+        locales: this.config.messages.locales
       });
       return this.catalogLocales;
     }

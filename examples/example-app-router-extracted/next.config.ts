@@ -9,7 +9,8 @@ const withNextIntl = createNextIntlPlugin({
     },
     messages: {
       path: './messages',
-      format: 'json'
+      format: 'json',
+      locales: 'infer'
     }
   }
 });

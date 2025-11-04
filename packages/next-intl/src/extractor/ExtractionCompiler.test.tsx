@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
 
 const filesystem: {
@@ -16,8 +16,6 @@ const filesystem: {
 };
 
 describe('json format', () => {
-  const compilers = new Set<ExtractionCompiler>();
-
   beforeEach(() => {
     filesystem.project.src = {};
     filesystem.project.messages = {};
@@ -27,27 +25,19 @@ describe('json format', () => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    for (const compiler of compilers) {
-      compiler.destroy();
-    }
-    compilers.clear();
-  });
-
   function createCompiler() {
-    const compiler = new ExtractionCompiler(
+    return new ExtractionCompiler(
       {
         srcPath: './src',
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json'
+          format: 'json',
+          locales: 'infer'
         }
       },
       {isDevelopment: true, projectRoot: '/project'}
     );
-    compilers.add(compiler);
-    return compiler;
   }
 
   it('saves messages initially', async () => {
@@ -63,7 +53,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -101,7 +91,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -147,7 +137,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -187,7 +177,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -257,7 +247,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -307,7 +297,7 @@ describe('json format', () => {
       'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -383,7 +373,7 @@ describe('json format', () => {
     }
     `;
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -414,7 +404,7 @@ describe('json format', () => {
       'en.json': '{"OpKKos": "Hello!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -449,7 +439,7 @@ describe('json format', () => {
       'en.json': '{"OpKKos": "Hello!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -513,7 +503,7 @@ describe('json format', () => {
       'fr.json': '{"OpKKos": "Bonjour!"}'
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -559,11 +549,65 @@ describe('json format', () => {
       ]
     `);
   });
+
+  it('creates all locale files immediately when explicit locales are provided', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = undefined;
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json',
+          locales: ['de', 'fr']
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(3);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "OpKKos": "Hello!"
+      }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": ""
+      }",
+        ],
+        [
+          "messages/fr.json",
+          "{
+        "OpKKos": ""
+      }",
+        ],
+      ]
+    `);
+
+    expect(watchCallbacks.size).toBe(0);
+  });
 });
 
 describe('po format', () => {
-  const compilers = new Set<ExtractionCompiler>();
-
   beforeEach(() => {
     filesystem.project.src = {};
     filesystem.project.messages = {};
@@ -573,27 +617,19 @@ describe('po format', () => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    for (const compiler of compilers) {
-      compiler.destroy();
-    }
-    compilers.clear();
-  });
-
   function createCompiler() {
-    const compiler = new ExtractionCompiler(
+    return new ExtractionCompiler(
       {
         srcPath: './src',
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'po'
+          format: 'po',
+          locales: 'infer'
         }
       },
       {isDevelopment: true, projectRoot: '/project'}
     );
-    compilers.add(compiler);
-    return compiler;
   }
 
   it('saves messages initially', async () => {
@@ -617,7 +653,7 @@ describe('po format', () => {
       `
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -680,7 +716,7 @@ describe('po format', () => {
       `
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -755,7 +791,7 @@ describe('po format', () => {
       `
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Footer.tsx',
@@ -817,7 +853,7 @@ describe('po format', () => {
     }
     `;
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -879,7 +915,7 @@ msgstr "Hallo!"
 `
     };
 
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -934,7 +970,7 @@ msgstr "Hallo!"
   });
 
   it('sorts messages by reference path', async () => {
-    const compiler = createCompiler();
+    using compiler = createCompiler();
 
     await compiler.compile(
       '/project/src/components/Header.tsx',

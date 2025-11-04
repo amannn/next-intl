@@ -12,12 +12,14 @@ type CatalogLocalesParams = {
   messagesDir: string;
   sourceLocale: Locale;
   extension: string;
+  locales: 'infer' | Array<Locale>;
 };
 
 export default class CatalogLocales {
   private messagesDir: string;
   private extension: string;
   private sourceLocale: Locale;
+  private locales: 'infer' | Array<Locale>;
   private watcher?: fs.FSWatcher;
   private debounceTimeout?: NodeJS.Timeout;
   private debounceDelayMs = 50;
@@ -29,6 +31,7 @@ export default class CatalogLocales {
     this.messagesDir = params.messagesDir;
     this.sourceLocale = params.sourceLocale;
     this.extension = params.extension;
+    this.locales = params.locales;
   }
 
   async getTargetLocales(): Promise<Array<Locale>> {
@@ -36,7 +39,13 @@ export default class CatalogLocales {
       return this.targetLocales;
     }
 
-    this.targetLocales = await this.readTargetLocales();
+    if (this.locales === 'infer') {
+      this.targetLocales = await this.readTargetLocales();
+    } else {
+      this.targetLocales = this.locales.filter(
+        (locale) => locale !== this.sourceLocale
+      );
+    }
     return this.targetLocales;
   }
 
@@ -55,7 +64,7 @@ export default class CatalogLocales {
   subscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.add(callback);
 
-    if (!this.watcher) {
+    if (this.locales === 'infer' && !this.watcher) {
       void this.startWatcher();
     }
   }

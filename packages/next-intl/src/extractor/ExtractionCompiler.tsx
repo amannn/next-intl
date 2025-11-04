@@ -47,7 +47,7 @@ export default class ExtractionCompiler {
     await this.initialScanPromise;
   }
 
-  public destroy(): void {
+  [Symbol.dispose](): void {
     this.manager.destroy();
   }
 }
