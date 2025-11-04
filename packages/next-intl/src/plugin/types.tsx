@@ -16,7 +16,6 @@ export type PluginConfig = {
       path: string;
       /** Defines the format for how your messages are stored. */
       format: MessagesFormat;
-
       /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
       locales: 'infer' | Array<string>;
     };

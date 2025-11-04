@@ -7,6 +7,8 @@ export default function Client() {
   return (
     <>
       <p>{t('Hey from client!')}</p>
+      <p>{t('Hey another one!')}</p>
+      <p>{t('Hey and another one!')}</p>
       <p>
         {t.rich('This is a <b>bold</b> message', {
           b: (chunks) => <b>{chunks}</b>

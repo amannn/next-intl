@@ -146,7 +146,16 @@ export default function getNextConfig(
       }
       rules ??= getTurboRules();
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
-        loaders: [getExtractMessagesLoaderConfig()]
+        loaders: [getExtractMessagesLoaderConfig()],
+        condition: {
+          // Note: We don't need `not: 'foreign'`, because this is
+          // implied by the filter based on `srcPath`.
+          path:
+            (Array.isArray(pluginConfig.experimental.srcPath)
+              ? `{${pluginConfig.experimental.srcPath.join(',')}}`
+              : pluginConfig.experimental.srcPath) + '/**/*',
+          content: /(useExtracted|getExtracted)/
+        }
       });
     }
 
@@ -158,6 +167,9 @@ export default function getNextConfig(
       rules ??= getTurboRules();
       addTurboRule(rules!, `*.${pluginConfig.experimental.messages.format}`, {
         loaders: [getCatalogLoaderConfig()],
+        condition: {
+          path: `${pluginConfig.experimental.messages.path}/**/*`
+        },
         as: '*.js'
       });
     }
@@ -208,8 +220,12 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.extract) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const srcPath = pluginConfig.experimental.srcPath;
         config.module.rules.push({
           test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
+          include: Array.isArray(srcPath)
+            ? srcPath.map((cur) => path.resolve(config.context!, cur))
+            : path.resolve(config.context!, srcPath || ''),
           use: [getExtractMessagesLoaderConfig()]
         });
       }
@@ -220,6 +236,10 @@ export default function getNextConfig(
         if (!config.module.rules) config.module.rules = [];
         config.module.rules.push({
           test: new RegExp(`\\.${pluginConfig.experimental.messages.format}$`),
+          include: path.resolve(
+            config.context!,
+            pluginConfig.experimental.messages.path
+          ),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'
         });
