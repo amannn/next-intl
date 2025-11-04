@@ -1,6 +1,6 @@
 import type {ExtractedMessage, Locale} from '../types.js';
 
-type FormatterContext = {
+export type FormatterContext = {
   locale: Locale;
 };
 
@@ -16,4 +16,6 @@ export default abstract class Formatter {
     messages: Array<ExtractedMessage>,
     context: FormatterContext
   ): string;
+
+  abstract toJSONString(source: string, context: FormatterContext): string;
 }

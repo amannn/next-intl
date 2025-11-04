@@ -12,8 +12,8 @@ export default class JSONFormatter extends Formatter {
 
   public readonly EXTENSION = '.json';
 
-  public parse(content: string): Array<ExtractedMessage> {
-    const json: StoredFormat = JSON.parse(content);
+  public parse(source: string): Array<ExtractedMessage> {
+    const json: StoredFormat = JSON.parse(source);
     const messages: Array<ExtractedMessage> = [];
 
     this.traverseMessages(json, (message, id) => {
@@ -29,6 +29,10 @@ export default class JSONFormatter extends Formatter {
       setNestedProperty(root, message.id, message.message);
     }
     return JSON.stringify(root, null, 2);
+  }
+
+  public toJSONString(source: string) {
+    return source;
   }
 
   private traverseMessages(

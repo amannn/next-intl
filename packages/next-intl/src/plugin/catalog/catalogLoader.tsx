@@ -2,7 +2,6 @@ import path from 'path';
 import type Formatter from '../../extractor/formatters/Formatter.js';
 import formatters from '../../extractor/formatters/index.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
-import {setNestedProperty} from '../../extractor/utils/ObjectUtils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
 let cachedFormatter: Formatter | null = null;
@@ -35,14 +34,12 @@ export default function catalogLoader(
         .basename(this.resourcePath)
         .slice(0, -formatter.EXTENSION.length);
 
-      const messagesObject: Record<string, string> = {};
-      for (const message of formatter.parse(source, {locale})) {
-        setNestedProperty(messagesObject, message.id, message.message);
-      }
+      const jsonString = formatter.toJSONString(source, {locale});
 
       callback(
         null,
-        `export default ${JSON.stringify(messagesObject, null, 2)};`
+        // https://v8.dev/blog/cost-of-javascript-2019#json
+        `export default JSON.parse(${JSON.stringify(jsonString)});`
       );
     })
     .catch(callback);

@@ -1,6 +1,7 @@
 import type {ExtractedMessage, Locale} from '../types.js';
+import {setNestedProperty} from '../utils/ObjectUtils.js';
 import POParser from '../utils/POParser.js';
-import Formatter from './Formatter.js';
+import Formatter, {type FormatterContext} from './Formatter.js';
 import {getSortedMessages} from './utils.js';
 
 export default class POFormatter extends Formatter {
@@ -24,7 +25,7 @@ export default class POFormatter extends Formatter {
 
   public parse(
     content: string,
-    context: {locale: Locale}
+    context: FormatterContext
   ): Array<ExtractedMessage> {
     const catalog = POParser.parse(content);
 
@@ -38,7 +39,7 @@ export default class POFormatter extends Formatter {
 
   public serialize(
     messages: Array<ExtractedMessage>,
-    context: {locale: Locale}
+    context: FormatterContext
   ): string {
     const meta = {
       Language: context.locale,
@@ -50,5 +51,16 @@ export default class POFormatter extends Formatter {
       meta,
       messages: getSortedMessages(messages)
     });
+  }
+
+  public toJSONString(source: string, context: FormatterContext) {
+    const parsed = this.parse(source, context);
+
+    const messagesObject: Record<string, string> = {};
+    for (const message of parsed) {
+      setNestedProperty(messagesObject, message.id, message.message);
+    }
+
+    return JSON.stringify(messagesObject, null, 2);
   }
 }
