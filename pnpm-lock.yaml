@@ -60,10 +60,10 @@ importers:
         version: 14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nextra:
         specifier: ^3.3.1
-        version: 3.3.1(@types/react@19.2.2)(acorn@8.14.1)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
+        version: 3.3.1(@types/react@19.2.2)(acorn@8.15.0)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
       nextra-theme-docs:
         specifier: ^3.3.1
-        version: 3.3.1(patch_hash=37qjvtnqoj5dxgzxofrrj6xcdq)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.2.2)(acorn@8.14.1)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.3.1(patch_hash=37qjvtnqoj5dxgzxofrrj6xcdq)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.2.2)(acorn@8.15.0)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -120,8 +120,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -166,8 +166,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.24)
@@ -187,8 +187,8 @@ importers:
   examples/example-app-router-migration:
     dependencies:
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -215,8 +215,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       prettier:
         specifier: ^3.3.3
         version: 3.5.3
@@ -227,8 +227,8 @@ importers:
   examples/example-app-router-mixed-routing:
     dependencies:
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -261,8 +261,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       postcss:
         specifier: ^8.5.3
         version: 8.5.3
@@ -276,11 +276,11 @@ importers:
   examples/example-app-router-next-auth:
     dependencies:
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-auth:
         specifier: ^4.24.11
-        version: 4.24.11(next@16.0.0(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 4.24.11(next@16.0.1(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -310,8 +310,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       prettier:
         specifier: ^3.3.3
         version: 3.5.3
@@ -331,8 +331,8 @@ importers:
         specifier: 2.1.3
         version: 2.1.3
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -359,17 +359,17 @@ importers:
         specifier: ^3.0.1
         version: 3.1.0(@types/react@19.2.2)(react@19.2.0)
       '@next/bundle-analyzer':
-        specifier: ^16.0.0
-        version: 16.0.0
+        specifier: ^16.0.1
+        version: 16.0.1
       '@next/mdx':
-        specifier: ^16.0.0
-        version: 16.0.0(@mdx-js/loader@3.1.0(webpack@5.98.0(esbuild@0.25.1)))(@mdx-js/react@3.1.0(@types/react@19.2.2)(react@19.2.0))
+        specifier: ^16.0.1
+        version: 16.0.1(@mdx-js/loader@3.1.0(webpack@5.98.0(esbuild@0.25.1)))(@mdx-js/react@3.1.0(@types/react@19.2.2)(react@19.2.0))
       '@playwright/test':
         specifier: ^1.51.1
         version: 1.55.0
       '@storybook/nextjs':
         specifier: ^8.6.4
-        version: 8.6.4(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sockjs-client@1.6.1)(storybook@8.6.4(prettier@3.5.3))(type-fest@4.37.0)(typescript@5.8.2)(webpack-dev-server@5.2.0(webpack@5.98.0(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
+        version: 8.6.4(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sockjs-client@1.6.1)(storybook@8.6.4(prettier@3.5.3))(type-fest@4.37.0)(typescript@5.8.2)(webpack-dev-server@5.2.0(webpack@5.98.0(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))
       '@storybook/react':
         specifier: ^8.6.4
         version: 8.6.4(@storybook/test@8.6.4(storybook@8.6.4(prettier@3.5.3)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.4(prettier@3.5.3))(typescript@5.8.2)
@@ -401,8 +401,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.24)
@@ -428,8 +428,8 @@ importers:
   examples/example-app-router-single-locale:
     dependencies:
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -459,8 +459,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       prettier:
         specifier: ^3.3.3
         version: 3.5.3
@@ -483,8 +483,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -523,8 +523,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       postcss:
         specifier: ^8.5.3
         version: 8.5.3
@@ -544,8 +544,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -572,8 +572,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       prettier:
         specifier: ^3.3.3
         version: 3.5.3
@@ -590,8 +590,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-intl:
         specifier: ^4.0.0
         version: link:../../packages/next-intl
@@ -627,8 +627,8 @@ importers:
         specifier: ^9.38.0
         version: 9.38.0(jiti@2.4.2)
       eslint-config-next:
-        specifier: ^16.0.0
-        version: 16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
+        specifier: ^16.0.1
+        version: 16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.17.24)
@@ -815,8 +815,8 @@ importers:
         specifier: 0.0.0-experimental-8e3b87c-20240822
         version: 0.0.0-experimental-8e3b87c-20240822(eslint@9.11.1(jiti@2.4.2))
       next:
-        specifier: ^16.0.0
-        version: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^16.0.1
+        version: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       path-to-regexp:
         specifier: ^6.2.2
         version: 6.3.0
@@ -3344,8 +3344,8 @@ packages:
     resolution: {integrity: sha512-jMxvwzkKzd3cXo2EB9GM2ic0eYo2rP/BS6gJt6HnWbsDO1O8GSD4k7o2Cpr2YERtMpGF/MGcDfsfj2EbQPtrXw==}
     engines: {node: '>= 10'}
 
-  '@next/bundle-analyzer@16.0.0':
-    resolution: {integrity: sha512-OYufQoNm/Im2fYQBdXu9fqUrXaP3lPuPnryW0XNGG7kJiGxH/VWS8zc2/x4aW2LQGn+opqIJYNRXy7k5qV/09g==}
+  '@next/bundle-analyzer@16.0.1':
+    resolution: {integrity: sha512-ds2XBC7hred9g9T16DYXp4llImGf9gBSsfY5k3bklizOtHeo+53EXjKm3AliS/fMTjYfRrv8usdL2wVZa1GIkw==}
 
   '@next/env@12.3.4':
     resolution: {integrity: sha512-H/69Lc5Q02dq3o+dxxy5O/oNxFsZpdL6WREtOOtOM1B/weonIwDXkekr1KV5DPVPr12IHFPrMrcJQ6bgPMfn7A==}
@@ -3356,14 +3356,14 @@ packages:
   '@next/env@14.2.24':
     resolution: {integrity: sha512-LAm0Is2KHTNT6IT16lxT+suD0u+VVfYNQqM+EJTKuFRRuY2z+zj01kueWXPCxbMBDt0B5vONYzabHGUNbZYAhA==}
 
-  '@next/env@16.0.0':
-    resolution: {integrity: sha512-s5j2iFGp38QsG1LWRQaE2iUY3h1jc014/melHFfLdrsMJPqxqDQwWNwyQTcNoUSGZlCVZuM7t7JDMmSyRilsnA==}
+  '@next/env@16.0.1':
+    resolution: {integrity: sha512-LFvlK0TG2L3fEOX77OC35KowL8D7DlFF45C0OvKMC4hy8c/md1RC4UMNDlUGJqfCoCS2VWrZ4dSE6OjaX5+8mw==}
 
-  '@next/eslint-plugin-next@16.0.0':
-    resolution: {integrity: sha512-IB7RzmmtrPOrpAgEBR1PIQPD0yea5lggh5cq54m51jHjjljU80Ia+czfxJYMlSDl1DPvpzb8S9TalCc0VMo9Hw==}
+  '@next/eslint-plugin-next@16.0.1':
+    resolution: {integrity: sha512-g4Cqmv/gyFEXNeVB2HkqDlYKfy+YrlM2k8AVIO/YQVEPfhVruH1VA99uT1zELLnPLIeOnx8IZ6Ddso0asfTIdw==}
 
-  '@next/mdx@16.0.0':
-    resolution: {integrity: sha512-FYe95hL50qfD27EFDYvXBatFOtW9UqLH7rrBS4LAIZryV+x1HmMvODTROlXXTryYNpLmUSkeEdt2Xr7SMvjGUA==}
+  '@next/mdx@16.0.1':
+    resolution: {integrity: sha512-YxcrY9Ig5agm5zekW7ta37OQ9P9dHueNRWLJLiYdE42wYrlfZ0KdjiQ3J5AHMPNq8tjiBxNOwkP4omTsVmb+9g==}
     peerDependencies:
       '@mdx-js/loader': '>=0.15.0'
       '@mdx-js/react': '>=0.15.0'
@@ -3397,8 +3397,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@next/swc-darwin-arm64@16.0.0':
-    resolution: {integrity: sha512-/CntqDCnk5w2qIwMiF0a9r6+9qunZzFmU0cBX4T82LOflE72zzH6gnOjCwUXYKOBlQi8OpP/rMj8cBIr18x4TA==}
+  '@next/swc-darwin-arm64@16.0.1':
+    resolution: {integrity: sha512-R0YxRp6/4W7yG1nKbfu41bp3d96a0EalonQXiMe+1H9GTHfKxGNCGFNWUho18avRBPsO8T3RmdWuzmfurlQPbg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -3415,8 +3415,8 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@next/swc-darwin-x64@16.0.0':
-    resolution: {integrity: sha512-hB4GZnJGKa8m4efvTGNyii6qs76vTNl+3dKHTCAUaksN6KjYy4iEO3Q5ira405NW2PKb3EcqWiRaL9DrYJfMHg==}
+  '@next/swc-darwin-x64@16.0.1':
+    resolution: {integrity: sha512-kETZBocRux3xITiZtOtVoVvXyQLB7VBxN7L6EPqgI5paZiUlnsgYv4q8diTNYeHmF9EiehydOBo20lTttCbHAg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -3445,8 +3445,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-arm64-gnu@16.0.0':
-    resolution: {integrity: sha512-E2IHMdE+C1k+nUgndM13/BY/iJY9KGCphCftMh7SXWcaQqExq/pJU/1Hgn8n/tFwSoLoYC/yUghOv97tAsIxqg==}
+  '@next/swc-linux-arm64-gnu@16.0.1':
+    resolution: {integrity: sha512-hWg3BtsxQuSKhfe0LunJoqxjO4NEpBmKkE+P2Sroos7yB//OOX3jD5ISP2wv8QdUwtRehMdwYz6VB50mY6hqAg==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -3463,8 +3463,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@next/swc-linux-arm64-musl@16.0.0':
-    resolution: {integrity: sha512-xzgl7c7BVk4+7PDWldU+On2nlwnGgFqJ1siWp3/8S0KBBLCjonB6zwJYPtl4MUY7YZJrzzumdUpUoquu5zk8vg==}
+  '@next/swc-linux-arm64-musl@16.0.1':
+    resolution: {integrity: sha512-UPnOvYg+fjAhP3b1iQStcYPWeBFRLrugEyK/lDKGk7kLNua8t5/DvDbAEFotfV1YfcOY6bru76qN9qnjLoyHCQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -3481,8 +3481,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-linux-x64-gnu@16.0.0':
-    resolution: {integrity: sha512-sdyOg4cbiCw7YUr0F/7ya42oiVBXLD21EYkSwN+PhE4csJH4MSXUsYyslliiiBwkM+KsuQH/y9wuxVz6s7Nstg==}
+  '@next/swc-linux-x64-gnu@16.0.1':
+    resolution: {integrity: sha512-Et81SdWkcRqAJziIgFtsFyJizHoWne4fzJkvjd6V4wEkWTB4MX6J0uByUb0peiJQ4WeAt6GGmMszE5KrXK6WKg==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -3499,8 +3499,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@next/swc-linux-x64-musl@16.0.0':
-    resolution: {integrity: sha512-IAXv3OBYqVaNOgyd3kxR4L3msuhmSy1bcchPHxDOjypG33i2yDWvGBwFD94OuuTjjTt/7cuIKtAmoOOml6kfbg==}
+  '@next/swc-linux-x64-musl@16.0.1':
+    resolution: {integrity: sha512-qBbgYEBRrC1egcG03FZaVfVxrJm8wBl7vr8UFKplnxNRprctdP26xEv9nJ07Ggq4y1adwa0nz2mz83CELY7N6Q==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -3517,8 +3517,8 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@next/swc-win32-arm64-msvc@16.0.0':
-    resolution: {integrity: sha512-bmo3ncIJKUS9PWK1JD9pEVv0yuvp1KPuOsyJTHXTv8KDrEmgV/K+U0C75rl9rhIaODcS7JEb6/7eJhdwXI0XmA==}
+  '@next/swc-win32-arm64-msvc@16.0.1':
+    resolution: {integrity: sha512-cPuBjYP6I699/RdbHJonb3BiRNEDm5CKEBuJ6SD8k3oLam2fDRMKAvmrli4QMDgT2ixyRJ0+DTkiODbIQhRkeQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -3547,8 +3547,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@next/swc-win32-x64-msvc@16.0.0':
-    resolution: {integrity: sha512-O1cJbT+lZp+cTjYyZGiDwsOjO3UHHzSqobkPNipdlnnuPb1swfcuY6r3p8dsKU4hAIEO4cO67ZCfVVH/M1ETXA==}
+  '@next/swc-win32-x64-msvc@16.0.1':
+    resolution: {integrity: sha512-XeEUJsE4JYtfrXe/LaJn3z1pD19fK0Q6Er8Qoufi+HqvdO4LEPyCxLUt4rxA+4RfYo6S9gMlmzCMU2F+AatFqQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -5438,10 +5438,6 @@ packages:
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  acorn-walk@8.3.3:
-    resolution: {integrity: sha512-MxXdReSRhGO7VlFe1bRG/oI7/mdLV9B9JJT0N8vZOhF7gFRR5l3M8W9G8JxmKV+JC5mGqJ0QvqfSOLsCPa4nUw==}
-    engines: {node: '>=0.4.0'}
-
   acorn-walk@8.3.4:
     resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
     engines: {node: '>=0.4.0'}
@@ -5463,11 +5459,6 @@ packages:
 
   acorn@8.14.0:
     resolution: {integrity: sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
-  acorn@8.14.1:
-    resolution: {integrity: sha512-OvQ/2pUDKmgfCg++xsTX1wGxfTaszcHVcTctW4UJB4hibJx2HXxxO5UmVgyjMa+ZDsiaf5wWLXYpRWMmBI0QHg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -6167,9 +6158,6 @@ packages:
   call-bind-apply-helpers@1.0.2:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
     engines: {node: '>= 0.4'}
-
-  call-bind@1.0.2:
-    resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
 
   call-bind@1.0.7:
     resolution: {integrity: sha512-GHTSNSYICQ7scH7sZ+M2rFopRoLh8t2bLSW6BbgrtLsahOIB5iyAVJf9GjWK3cYTDaMj4XdBpM1cA6pIS0Kv2w==}
@@ -7222,10 +7210,6 @@ packages:
     resolution: {integrity: sha512-N+MeXYoqr3pOgn8xfyRPREN7gHakLYjhsHhWGT3fWAiL4IkAt0iDw14QiiEm2bE30c5XX5q0FtAA3CK5f9/BUg==}
     engines: {node: '>=12'}
 
-  define-properties@1.2.0:
-    resolution: {integrity: sha512-xvqAVKGfT1+UAvPwKTVw/njhdQ8ZhXK4lI0bCIuCMrp2up9nPnaDftrLtmpTazqd1o+UY4zgzU+avtMbDP+ldA==}
-    engines: {node: '>= 0.4'}
-
   define-properties@1.2.1:
     resolution: {integrity: sha512-8QmQKqEASLd5nx0U1B1okLElbUuuttJ/AnYmRXbbbGDWh6uS208EjD4Xqq/I9wK7u0v6O08XhTWnt5XtEbR6Dg==}
     engines: {node: '>= 0.4'}
@@ -7556,10 +7540,6 @@ packages:
     resolution: {integrity: sha512-e+HfNH61Bj1X9/jLc5v1owaLYuHdeHHSQlkhCBiTK8rBvKaULl/beGMxwrMXjpYrv4pz22BlY570vVePA2ho4A==}
     engines: {node: '>= 0.4'}
 
-  es-abstract@1.23.9:
-    resolution: {integrity: sha512-py07lI0wjxAC/DcfK1S6G7iANonniZwTISvdPzk9hzeH0IZIshbuuFxLIU96OyF89Yb9hiqWn8M/bY83KY5vzA==}
-    engines: {node: '>= 0.4'}
-
   es-abstract@1.24.0:
     resolution: {integrity: sha512-WSzPgsdLtTcQwm4CROfS5ju2Wa1QQcVeT37jFjYzdFz1r9ahadC8B8/a4qxJxM+09F18iumCdRmlr96ZYkQvEg==}
     engines: {node: '>= 0.4'}
@@ -7691,8 +7671,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0
 
-  eslint-config-next@16.0.0:
-    resolution: {integrity: sha512-DWKT1YAO9ex2rK0/EeiPpKU++ghTiG59z6m08/ReLRECOYIaEv17maSCYT8zmFQLwIrY5lhJ+iaJPQdT4sJd4g==}
+  eslint-config-next@16.0.1:
+    resolution: {integrity: sha512-wNuHw5gNOxwLUvpg0cu6IL0crrVC9hAwdS/7UwleNkwyaMiWIOAwf8yzXVqBBzL3c9A7jVRngJxjoSpPP1aEhg==}
     peerDependencies:
       eslint: '>=9.0.0'
       typescript: '>=3.3.1'
@@ -8745,9 +8725,6 @@ packages:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
 
-  has-property-descriptors@1.0.0:
-    resolution: {integrity: sha512-62DVLZGoiEBDHQyqG4w9xCuZ7eJEwNmJRWw2VY84Oedb7WFcA27fiEVe8oUQx9hAUJ4ekurquucTGwsyO1XGdQ==}
-
   has-property-descriptors@1.0.2:
     resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
 
@@ -8812,10 +8789,6 @@ packages:
 
   hash.js@1.1.7:
     resolution: {integrity: sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==}
-
-  hasown@2.0.0:
-    resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
-    engines: {node: '>= 0.4'}
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
@@ -9404,9 +9377,6 @@ packages:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
 
-  is-finalizationregistry@1.0.2:
-    resolution: {integrity: sha512-0by5vtUJs8iFQb5TYUHHPudOR+qXYIMKtiUzvLIZITZUjknFmziyBJuLhVRc+Ds0dREFlskDNJKYIdIzu/9pfw==}
-
   is-finalizationregistry@1.1.1:
     resolution: {integrity: sha512-1pC6N8qWJbWoPtEjgcL2xyhQOP491EQjeUo3qTKcmV8YSDDJrOepfG8pcC7h/QgnQHYSv0mJ3Z/ZWxmatVrysg==}
     engines: {node: '>= 0.4'}
@@ -9557,9 +9527,6 @@ packages:
     resolution: {integrity: sha512-AGOriNp96vNBd3HtU+RzFEc75FfR5ymiYv8E553I71SCeXBiMsVDUtdio1OEFvrPyLIQ9tVR5RxXIFe5PUFjMg==}
     engines: {node: '>=6'}
 
-  is-set@2.0.2:
-    resolution: {integrity: sha512-+2cnTEZeY5z/iXGbLhPrOAaK/Mau5k5eXq9j14CpRTftq0pAJu2MwVRSZhyZWBzx3o6X795Lz6Bpb6R0GKf37g==}
-
   is-set@2.0.3:
     resolution: {integrity: sha512-iPAjerrse27/ygGLxw+EBR9agv9Y6uLeYVJMu+QNCoouJ1/1ri0mGrcWpfCqFZuzzx3WjtwxG098X+n4OuRkPg==}
     engines: {node: '>= 0.4'}
@@ -9597,10 +9564,6 @@ packages:
 
   is-string@1.1.1:
     resolution: {integrity: sha512-BtEeSsoaQjlSPBemMQIrY1MY0uM6vnS1g5fmufYOtnxLGUZM2178PKbhsk7Ffv58IX+ZtcvoGwccYsh0PglkAA==}
-    engines: {node: '>= 0.4'}
-
-  is-symbol@1.0.4:
-    resolution: {integrity: sha512-C/CPBqKWnvdcxqIARxyOh4v1UUEOCHpgDa0WYgpKDFMszcrPcffg5uhwSgPCLD2WWxmq6isisz87tzT01tuGhg==}
     engines: {node: '>= 0.4'}
 
   is-symbol@1.1.1:
@@ -11177,8 +11140,8 @@ packages:
       sass:
         optional: true
 
-  next@16.0.0:
-    resolution: {integrity: sha512-nYohiNdxGu4OmBzggxy9rczmjIGI+TpR5vbKTsE1HqYwNm1B+YSiugSrFguX6omMOKnDHAmBPY4+8TNJk0Idyg==}
+  next@16.0.1:
+    resolution: {integrity: sha512-e9RLSssZwd35p7/vOa+hoDFggUZIUbZhIUSLZuETCwrCVvxOs87NamoUzT+vbcNAL8Ld9GobBnWOA6SbV/arOw==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -13577,10 +13540,6 @@ packages:
 
   std-env@3.8.1:
     resolution: {integrity: sha512-vj5lIj3Mwf9D79hBkltk5qmkFI+biIKWS2IBxEyEU3AX1tUf7AoL8nSazCOiiqQsGKIq01SClsKEzweu34uwvA==}
-
-  stop-iteration-iterator@1.0.0:
-    resolution: {integrity: sha512-iCGQj+0l0HOdZ2AEeBADlsRC+vsnDsZsbdSiH1yNSjcfKM7fdpCMfqAL/dwF5BLiw/XhRft/Wax6zQbhq2BcjQ==}
-    engines: {node: '>= 0.4'}
 
   stop-iteration-iterator@1.1.0:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
@@ -17534,7 +17493,7 @@ snapshots:
   '@formatjs/icu-skeleton-parser@1.8.13':
     dependencies:
       '@formatjs/ecma402-abstract': 2.3.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@formatjs/intl-localematcher@0.2.25':
     dependencies:
@@ -18336,7 +18295,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mdx-js/mdx@3.1.0(acorn@8.14.1)':
+  '@mdx-js/mdx@3.1.0(acorn@8.15.0)':
     dependencies:
       '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
@@ -18350,7 +18309,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.2
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
-      recma-jsx: 1.0.0(acorn@8.14.1)
+      recma-jsx: 1.0.0(acorn@8.15.0)
       recma-stringify: 1.0.0
       rehype-recma: 1.0.0
       remark-mdx: 3.1.0
@@ -18441,7 +18400,7 @@ snapshots:
       '@napi-rs/simple-git-win32-arm64-msvc': 0.1.19
       '@napi-rs/simple-git-win32-x64-msvc': 0.1.19
 
-  '@next/bundle-analyzer@16.0.0':
+  '@next/bundle-analyzer@16.0.1':
     dependencies:
       webpack-bundle-analyzer: 4.10.1
     transitivePeerDependencies:
@@ -18454,13 +18413,13 @@ snapshots:
 
   '@next/env@14.2.24': {}
 
-  '@next/env@16.0.0': {}
+  '@next/env@16.0.1': {}
 
-  '@next/eslint-plugin-next@16.0.0':
+  '@next/eslint-plugin-next@16.0.1':
     dependencies:
       fast-glob: 3.3.1
 
-  '@next/mdx@16.0.0(@mdx-js/loader@3.1.0(webpack@5.98.0(esbuild@0.25.1)))(@mdx-js/react@3.1.0(@types/react@19.2.2)(react@19.2.0))':
+  '@next/mdx@16.0.1(@mdx-js/loader@3.1.0(webpack@5.98.0(esbuild@0.25.1)))(@mdx-js/react@3.1.0(@types/react@19.2.2)(react@19.2.0))':
     dependencies:
       source-map: 0.7.4
     optionalDependencies:
@@ -18479,7 +18438,7 @@ snapshots:
   '@next/swc-darwin-arm64@14.2.24':
     optional: true
 
-  '@next/swc-darwin-arm64@16.0.0':
+  '@next/swc-darwin-arm64@16.0.1':
     optional: true
 
   '@next/swc-darwin-x64@12.3.4':
@@ -18488,7 +18447,7 @@ snapshots:
   '@next/swc-darwin-x64@14.2.24':
     optional: true
 
-  '@next/swc-darwin-x64@16.0.0':
+  '@next/swc-darwin-x64@16.0.1':
     optional: true
 
   '@next/swc-freebsd-x64@12.3.4':
@@ -18503,7 +18462,7 @@ snapshots:
   '@next/swc-linux-arm64-gnu@14.2.24':
     optional: true
 
-  '@next/swc-linux-arm64-gnu@16.0.0':
+  '@next/swc-linux-arm64-gnu@16.0.1':
     optional: true
 
   '@next/swc-linux-arm64-musl@12.3.4':
@@ -18512,7 +18471,7 @@ snapshots:
   '@next/swc-linux-arm64-musl@14.2.24':
     optional: true
 
-  '@next/swc-linux-arm64-musl@16.0.0':
+  '@next/swc-linux-arm64-musl@16.0.1':
     optional: true
 
   '@next/swc-linux-x64-gnu@12.3.4':
@@ -18521,7 +18480,7 @@ snapshots:
   '@next/swc-linux-x64-gnu@14.2.24':
     optional: true
 
-  '@next/swc-linux-x64-gnu@16.0.0':
+  '@next/swc-linux-x64-gnu@16.0.1':
     optional: true
 
   '@next/swc-linux-x64-musl@12.3.4':
@@ -18530,7 +18489,7 @@ snapshots:
   '@next/swc-linux-x64-musl@14.2.24':
     optional: true
 
-  '@next/swc-linux-x64-musl@16.0.0':
+  '@next/swc-linux-x64-musl@16.0.1':
     optional: true
 
   '@next/swc-win32-arm64-msvc@12.3.4':
@@ -18539,7 +18498,7 @@ snapshots:
   '@next/swc-win32-arm64-msvc@14.2.24':
     optional: true
 
-  '@next/swc-win32-arm64-msvc@16.0.0':
+  '@next/swc-win32-arm64-msvc@16.0.1':
     optional: true
 
   '@next/swc-win32-ia32-msvc@12.3.4':
@@ -18554,7 +18513,7 @@ snapshots:
   '@next/swc-win32-x64-msvc@14.2.24':
     optional: true
 
-  '@next/swc-win32-x64-msvc@16.0.0':
+  '@next/swc-win32-x64-msvc@16.0.1':
     optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -18625,11 +18584,11 @@ snapshots:
   '@npmcli/fs@1.1.1':
     dependencies:
       '@gar/promisify': 1.1.3
-      semver: 7.7.1
+      semver: 7.7.2
 
   '@npmcli/fs@3.1.1':
     dependencies:
-      semver: 7.6.2
+      semver: 7.7.2
 
   '@npmcli/git@4.1.0':
     dependencies:
@@ -18639,7 +18598,7 @@ snapshots:
       proc-log: 3.0.0
       promise-inflight: 1.0.1(bluebird@3.7.2)
       promise-retry: 2.0.1
-      semver: 7.6.2
+      semver: 7.7.2
       which: 3.0.1
     transitivePeerDependencies:
       - bluebird
@@ -18653,7 +18612,7 @@ snapshots:
       proc-log: 4.2.0
       promise-inflight: 1.0.1(bluebird@3.7.2)
       promise-retry: 2.0.1
-      semver: 7.7.1
+      semver: 7.7.2
       which: 4.0.0
     transitivePeerDependencies:
       - bluebird
@@ -18676,7 +18635,7 @@ snapshots:
       json-parse-even-better-errors: 3.0.2
       pacote: 18.0.6
       proc-log: 4.2.0
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -19808,7 +19767,7 @@ snapshots:
     dependencies:
       storybook: 8.6.4(prettier@3.5.3)
 
-  '@storybook/nextjs@8.6.4(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sockjs-client@1.6.1)(storybook@8.6.4(prettier@3.5.3))(type-fest@4.37.0)(typescript@5.8.2)(webpack-dev-server@5.2.0(webpack@5.98.0(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
+  '@storybook/nextjs@8.6.4(@types/webpack@5.28.5(esbuild@0.25.1))(esbuild@0.25.1)(next@16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sockjs-client@1.6.1)(storybook@8.6.4(prettier@3.5.3))(type-fest@4.37.0)(typescript@5.8.2)(webpack-dev-server@5.2.0(webpack@5.98.0(esbuild@0.25.1)))(webpack-hot-middleware@2.26.1)(webpack@5.98.0(esbuild@0.25.1))':
     dependencies:
       '@babel/core': 7.26.10
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.26.10)
@@ -19834,7 +19793,7 @@ snapshots:
       find-up: 5.0.0
       image-size: 1.2.0
       loader-utils: 3.3.1
-      next: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.98.0(esbuild@0.25.1))
       pnp-webpack-plugin: 1.7.0(typescript@5.8.2)
       postcss: 8.5.3
@@ -21191,8 +21150,8 @@ snapshots:
 
   acorn-globals@7.0.1:
     dependencies:
-      acorn: 8.14.1
-      acorn-walk: 8.3.3
+      acorn: 8.15.0
+      acorn-walk: 8.3.4
 
   acorn-import-phases@1.0.4(acorn@8.15.0):
     dependencies:
@@ -21203,21 +21162,13 @@ snapshots:
     dependencies:
       acorn: 8.13.0
 
-  acorn-jsx@5.3.2(acorn@8.14.1):
-    dependencies:
-      acorn: 8.14.1
-
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
 
-  acorn-walk@8.3.3:
-    dependencies:
-      acorn: 8.14.1
-
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
   acorn@6.4.2: {}
 
@@ -21226,8 +21177,6 @@ snapshots:
   acorn@8.13.0: {}
 
   acorn@8.14.0: {}
-
-  acorn@8.14.1: {}
 
   acorn@8.15.0: {}
 
@@ -21402,8 +21351,8 @@ snapshots:
 
   array-buffer-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
-      is-array-buffer: 3.0.4
+      call-bind: 1.0.8
+      is-array-buffer: 3.0.5
 
   array-buffer-byte-length@1.0.2:
     dependencies:
@@ -21471,7 +21420,7 @@ snapshots:
       call-bind: 1.0.8
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       es-errors: 1.3.0
       es-object-atoms: 1.1.1
       es-shim-unscopables: 1.1.0
@@ -21487,8 +21436,8 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.9
-      es-shim-unscopables: 1.0.2
+      es-abstract: 1.24.0
+      es-shim-unscopables: 1.1.0
 
   array.prototype.flatmap@1.3.2:
     dependencies:
@@ -21501,18 +21450,18 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.9
-      es-shim-unscopables: 1.0.2
+      es-abstract: 1.24.0
+      es-shim-unscopables: 1.1.0
 
   array.prototype.reduce@1.0.7:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
+      es-abstract: 1.24.0
       es-array-method-boxes-properly: 1.0.0
       es-errors: 1.3.0
       es-object-atoms: 1.1.1
-      is-string: 1.0.7
+      is-string: 1.1.1
 
   array.prototype.tosorted@1.1.4:
     dependencies:
@@ -21524,21 +21473,21 @@ snapshots:
 
   arraybuffer.prototype.slice@1.0.3:
     dependencies:
-      array-buffer-byte-length: 1.0.1
-      call-bind: 1.0.7
+      array-buffer-byte-length: 1.0.2
+      call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
+      es-abstract: 1.24.0
       es-errors: 1.3.0
-      get-intrinsic: 1.2.4
-      is-array-buffer: 3.0.4
-      is-shared-array-buffer: 1.0.3
+      get-intrinsic: 1.3.0
+      is-array-buffer: 3.0.5
+      is-shared-array-buffer: 1.0.4
 
   arraybuffer.prototype.slice@1.0.4:
     dependencies:
       array-buffer-byte-length: 1.0.2
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       is-array-buffer: 3.0.5
@@ -21999,7 +21948,7 @@ snapshots:
 
   browserslist@4.14.2:
     dependencies:
-      caniuse-lite: 1.0.30001704
+      caniuse-lite: 1.0.30001751
       electron-to-chromium: 1.5.116
       escalade: 3.2.0
       node-releases: 1.1.77
@@ -22166,11 +22115,6 @@ snapshots:
       es-errors: 1.3.0
       function-bind: 1.1.2
 
-  call-bind@1.0.2:
-    dependencies:
-      function-bind: 1.1.2
-      get-intrinsic: 1.3.0
-
   call-bind@1.0.7:
     dependencies:
       es-define-property: 1.0.0
@@ -22217,14 +22161,13 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.24.4
-      caniuse-lite: 1.0.30001704
+      caniuse-lite: 1.0.30001751
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
   caniuse-lite@1.0.30001704: {}
 
-  caniuse-lite@1.0.30001751:
-    optional: true
+  caniuse-lite@1.0.30001751: {}
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
 
@@ -22656,7 +22599,7 @@ snapshots:
       handlebars: 4.7.8
       json-stringify-safe: 5.0.1
       meow: 12.1.1
-      semver: 7.7.1
+      semver: 7.7.2
       split2: 4.2.0
 
   conventional-commits-filter@4.0.0: {}
@@ -23226,9 +23169,9 @@ snapshots:
 
   data-view-buffer@1.0.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
-      is-data-view: 1.0.1
+      is-data-view: 1.0.2
 
   data-view-buffer@1.0.2:
     dependencies:
@@ -23238,9 +23181,9 @@ snapshots:
 
   data-view-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
-      is-data-view: 1.0.1
+      is-data-view: 1.0.2
 
   data-view-byte-length@1.0.2:
     dependencies:
@@ -23250,9 +23193,9 @@ snapshots:
 
   data-view-byte-offset@1.0.0:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
-      is-data-view: 1.0.1
+      is-data-view: 1.0.2
 
   data-view-byte-offset@1.0.1:
     dependencies:
@@ -23321,7 +23264,7 @@ snapshots:
   deep-equal@2.2.3:
     dependencies:
       array-buffer-byte-length: 1.0.1
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-get-iterator: 1.1.3
       get-intrinsic: 1.2.4
       is-arguments: 1.1.1
@@ -23379,11 +23322,6 @@ snapshots:
 
   define-lazy-prop@3.0.0:
     optional: true
-
-  define-properties@1.2.0:
-    dependencies:
-      has-property-descriptors: 1.0.0
-      object-keys: 1.1.1
 
   define-properties@1.2.1:
     dependencies:
@@ -23721,13 +23659,13 @@ snapshots:
       array-buffer-byte-length: 1.0.1
       arraybuffer.prototype.slice: 1.0.3
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       data-view-buffer: 1.0.1
       data-view-byte-length: 1.0.1
       data-view-byte-offset: 1.0.0
       es-define-property: 1.0.0
       es-errors: 1.3.0
-      es-object-atoms: 1.0.0
+      es-object-atoms: 1.1.1
       es-set-tostringtag: 2.0.3
       es-to-primitive: 1.2.1
       function.prototype.name: 1.1.6
@@ -23756,7 +23694,7 @@ snapshots:
       safe-array-concat: 1.1.2
       safe-regex-test: 1.0.3
       string.prototype.trim: 1.2.9
-      string.prototype.trimend: 1.0.8
+      string.prototype.trimend: 1.0.9
       string.prototype.trimstart: 1.0.8
       typed-array-buffer: 1.0.2
       typed-array-byte-length: 1.0.1
@@ -23764,60 +23702,6 @@ snapshots:
       typed-array-length: 1.0.6
       unbox-primitive: 1.0.2
       which-typed-array: 1.1.15
-
-  es-abstract@1.23.9:
-    dependencies:
-      array-buffer-byte-length: 1.0.2
-      arraybuffer.prototype.slice: 1.0.4
-      available-typed-arrays: 1.0.7
-      call-bind: 1.0.8
-      call-bound: 1.0.4
-      data-view-buffer: 1.0.2
-      data-view-byte-length: 1.0.2
-      data-view-byte-offset: 1.0.1
-      es-define-property: 1.0.1
-      es-errors: 1.3.0
-      es-object-atoms: 1.1.1
-      es-set-tostringtag: 2.1.0
-      es-to-primitive: 1.3.0
-      function.prototype.name: 1.1.8
-      get-intrinsic: 1.3.0
-      get-proto: 1.0.1
-      get-symbol-description: 1.1.0
-      globalthis: 1.0.4
-      gopd: 1.2.0
-      has-property-descriptors: 1.0.2
-      has-proto: 1.2.0
-      has-symbols: 1.1.0
-      hasown: 2.0.2
-      internal-slot: 1.1.0
-      is-array-buffer: 3.0.5
-      is-callable: 1.2.7
-      is-data-view: 1.0.2
-      is-regex: 1.2.1
-      is-shared-array-buffer: 1.0.4
-      is-string: 1.1.1
-      is-typed-array: 1.1.15
-      is-weakref: 1.1.1
-      math-intrinsics: 1.1.0
-      object-inspect: 1.13.4
-      object-keys: 1.1.1
-      object.assign: 4.1.7
-      own-keys: 1.0.1
-      regexp.prototype.flags: 1.5.4
-      safe-array-concat: 1.1.3
-      safe-push-apply: 1.0.0
-      safe-regex-test: 1.1.0
-      set-proto: 1.0.0
-      string.prototype.trim: 1.2.10
-      string.prototype.trimend: 1.0.9
-      string.prototype.trimstart: 1.0.8
-      typed-array-buffer: 1.0.3
-      typed-array-byte-length: 1.0.3
-      typed-array-byte-offset: 1.0.4
-      typed-array-length: 1.0.7
-      unbox-primitive: 1.1.0
-      which-typed-array: 1.1.18
 
   es-abstract@1.24.0:
     dependencies:
@@ -23880,7 +23764,7 @@ snapshots:
 
   es-define-property@1.0.0:
     dependencies:
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
 
   es-define-property@1.0.1: {}
 
@@ -23888,15 +23772,15 @@ snapshots:
 
   es-get-iterator@1.1.3:
     dependencies:
-      call-bind: 1.0.7
-      get-intrinsic: 1.2.4
+      call-bind: 1.0.8
+      get-intrinsic: 1.3.0
       has-symbols: 1.1.0
       is-arguments: 1.1.1
       is-map: 2.0.2
-      is-set: 2.0.2
-      is-string: 1.0.7
+      is-set: 2.0.3
+      is-string: 1.1.1
       isarray: 2.0.5
-      stop-iteration-iterator: 1.0.0
+      stop-iteration-iterator: 1.1.0
 
   es-iterator-helpers@1.0.19:
     dependencies:
@@ -23954,8 +23838,8 @@ snapshots:
   es-to-primitive@1.2.1:
     dependencies:
       is-callable: 1.2.7
-      is-date-object: 1.0.5
-      is-symbol: 1.0.4
+      is-date-object: 1.1.0
+      is-symbol: 1.1.1
 
   es-to-primitive@1.3.0:
     dependencies:
@@ -23973,7 +23857,7 @@ snapshots:
   esast-util-from-js@2.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      acorn: 8.14.1
+      acorn: 8.15.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.2
 
@@ -24182,9 +24066,9 @@ snapshots:
       - typescript
       - vitest
 
-  eslint-config-next@16.0.0(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2):
+  eslint-config-next@16.0.1(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2):
     dependencies:
-      '@next/eslint-plugin-next': 16.0.0
+      '@next/eslint-plugin-next': 16.0.1
       eslint: 9.38.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.2(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2))(eslint@9.38.0(jiti@2.4.2)))(eslint@9.38.0(jiti@2.4.2))
@@ -24202,9 +24086,9 @@ snapshots:
       - eslint-plugin-import-x
       - supports-color
 
-  eslint-config-next@16.0.0(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2):
+  eslint-config-next@16.0.1(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2):
     dependencies:
-      '@next/eslint-plugin-next': 16.0.0
+      '@next/eslint-plugin-next': 16.0.1
       eslint: 9.38.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.3(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.32.0)(eslint@9.38.0(jiti@2.4.2))
@@ -25553,7 +25437,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.1
+      semver: 7.7.2
       tapable: 2.2.1
       typescript: 5.8.2
       webpack: 5.98.0(esbuild@0.25.1)
@@ -25684,9 +25568,9 @@ snapshots:
 
   function.prototype.name@1.1.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
+      es-abstract: 1.24.0
       functions-have-names: 1.2.3
 
   function.prototype.name@1.1.8:
@@ -25759,9 +25643,9 @@ snapshots:
 
   get-symbol-description@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
 
   get-symbol-description@1.1.0:
     dependencies:
@@ -25997,10 +25881,6 @@ snapshots:
 
   has-flag@4.0.0: {}
 
-  has-property-descriptors@1.0.0:
-    dependencies:
-      get-intrinsic: 1.3.0
-
   has-property-descriptors@1.0.2:
     dependencies:
       es-define-property: 1.0.0
@@ -26023,7 +25903,7 @@ snapshots:
 
   has-tostringtag@1.0.2:
     dependencies:
-      has-symbols: 1.0.3
+      has-symbols: 1.1.0
 
   has-unicode@2.0.1: {}
 
@@ -26063,10 +25943,6 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
-
-  hasown@2.0.0:
-    dependencies:
-      function-bind: 1.1.2
 
   hasown@2.0.2:
     dependencies:
@@ -26649,8 +26525,8 @@ snapshots:
 
   is-arguments@1.1.1:
     dependencies:
-      call-bind: 1.0.2
-      has-tostringtag: 1.0.0
+      call-bind: 1.0.8
+      has-tostringtag: 1.0.2
 
   is-arguments@1.2.0:
     dependencies:
@@ -26659,8 +26535,8 @@ snapshots:
 
   is-array-buffer@3.0.4:
     dependencies:
-      call-bind: 1.0.7
-      get-intrinsic: 1.2.4
+      call-bind: 1.0.8
+      get-intrinsic: 1.3.0
 
   is-array-buffer@3.0.5:
     dependencies:
@@ -26731,7 +26607,7 @@ snapshots:
 
   is-core-module@2.13.1:
     dependencies:
-      hasown: 2.0.0
+      hasown: 2.0.2
 
   is-core-module@2.15.1:
     dependencies:
@@ -26747,7 +26623,7 @@ snapshots:
 
   is-data-view@1.0.1:
     dependencies:
-      is-typed-array: 1.1.13
+      is-typed-array: 1.1.15
 
   is-data-view@1.0.2:
     dependencies:
@@ -26757,7 +26633,7 @@ snapshots:
 
   is-date-object@1.0.5:
     dependencies:
-      has-tostringtag: 1.0.0
+      has-tostringtag: 1.0.2
 
   is-date-object@1.1.0:
     dependencies:
@@ -26793,10 +26669,6 @@ snapshots:
   is-extglob@1.0.0: {}
 
   is-extglob@2.1.1: {}
-
-  is-finalizationregistry@1.0.2:
-    dependencies:
-      call-bind: 1.0.8
 
   is-finalizationregistry@1.1.1:
     dependencies:
@@ -26906,7 +26778,7 @@ snapshots:
 
   is-regex@1.1.4:
     dependencies:
-      call-bind: 1.0.2
+      call-bind: 1.0.8
       has-tostringtag: 1.0.0
 
   is-regex@1.2.1:
@@ -26920,13 +26792,11 @@ snapshots:
 
   is-root@2.1.0: {}
 
-  is-set@2.0.2: {}
-
   is-set@2.0.3: {}
 
   is-shared-array-buffer@1.0.3:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
 
   is-shared-array-buffer@1.0.4:
     dependencies:
@@ -26953,10 +26823,6 @@ snapshots:
       call-bound: 1.0.4
       has-tostringtag: 1.0.2
 
-  is-symbol@1.0.4:
-    dependencies:
-      has-symbols: 1.1.0
-
   is-symbol@1.1.1:
     dependencies:
       call-bound: 1.0.4
@@ -26969,7 +26835,7 @@ snapshots:
 
   is-typed-array@1.1.13:
     dependencies:
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   is-typed-array@1.1.15:
     dependencies:
@@ -26989,7 +26855,7 @@ snapshots:
 
   is-weakref@1.0.2:
     dependencies:
-      call-bind: 1.0.2
+      call-bind: 1.0.8
 
   is-weakref@1.1.1:
     dependencies:
@@ -26998,7 +26864,7 @@ snapshots:
   is-weakset@2.0.2:
     dependencies:
       call-bind: 1.0.8
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
 
   is-weakset@2.0.4:
     dependencies:
@@ -27055,7 +26921,7 @@ snapshots:
       '@babel/parser': 7.21.9
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
@@ -28962,8 +28828,8 @@ snapshots:
 
   micromark-extension-mdxjs@1.0.1:
     dependencies:
-      acorn: 8.14.1
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       micromark-extension-mdx-expression: 1.0.8
       micromark-extension-mdx-jsx: 1.0.5
       micromark-extension-mdx-md: 1.0.1
@@ -28973,8 +28839,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.14.1
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       micromark-extension-mdx-expression: 3.0.0
       micromark-extension-mdx-jsx: 3.0.1
       micromark-extension-mdx-md: 2.0.0
@@ -29426,14 +29292,14 @@ snapshots:
 
   mlly@1.7.1:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       pathe: 1.1.2
       pkg-types: 1.1.1
       ufo: 1.5.3
 
   mlly@1.7.4:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.5.4
@@ -29543,13 +29409,13 @@ snapshots:
     dependencies:
       type-fest: 2.19.0
 
-  next-auth@4.24.11(next@16.0.0(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next-auth@4.24.11(next@16.0.1(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@babel/runtime': 7.24.7
       '@panva/hkdf': 1.2.0
       cookie: 0.7.2
       jose: 4.15.7
-      next: 16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      next: 16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       oauth: 0.9.15
       openid-client: 5.6.5
       preact: 10.22.0
@@ -29636,31 +29502,31 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.0.0(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next@16.0.1(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
-      '@next/env': 16.0.0
+      '@next/env': 16.0.1
       '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001704
+      caniuse-lite: 1.0.30001751
       postcss: 8.4.31
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       styled-jsx: 5.1.6(@babel/core@7.26.10)(react@19.2.0)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.0.0
-      '@next/swc-darwin-x64': 16.0.0
-      '@next/swc-linux-arm64-gnu': 16.0.0
-      '@next/swc-linux-arm64-musl': 16.0.0
-      '@next/swc-linux-x64-gnu': 16.0.0
-      '@next/swc-linux-x64-musl': 16.0.0
-      '@next/swc-win32-arm64-msvc': 16.0.0
-      '@next/swc-win32-x64-msvc': 16.0.0
+      '@next/swc-darwin-arm64': 16.0.1
+      '@next/swc-darwin-x64': 16.0.1
+      '@next/swc-linux-arm64-gnu': 16.0.1
+      '@next/swc-linux-arm64-musl': 16.0.1
+      '@next/swc-linux-x64-gnu': 16.0.1
+      '@next/swc-linux-x64-musl': 16.0.1
+      '@next/swc-win32-arm64-msvc': 16.0.1
+      '@next/swc-win32-x64-msvc': 16.0.1
       '@playwright/test': 1.55.0
       sharp: 0.34.4
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
 
-  nextra-theme-docs@3.3.1(patch_hash=37qjvtnqoj5dxgzxofrrj6xcdq)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.2.2)(acorn@8.14.1)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  nextra-theme-docs@3.3.1(patch_hash=37qjvtnqoj5dxgzxofrrj6xcdq)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(nextra@3.3.1(@types/react@19.2.2)(acorn@8.15.0)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@headlessui/react': 2.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
@@ -29668,17 +29534,17 @@ snapshots:
       flexsearch: 0.7.43
       next: 14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nextra: 3.3.1(@types/react@19.2.2)(acorn@8.14.1)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
+      nextra: 3.3.1(@types/react@19.2.2)(acorn@8.15.0)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       scroll-into-view-if-needed: 3.1.0
       zod: 3.24.2
 
-  nextra@3.3.1(@types/react@19.2.2)(acorn@8.14.1)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2):
+  nextra@3.3.1(@types/react@19.2.2)(acorn@8.15.0)(next@14.2.24(@playwright/test@1.55.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2):
     dependencies:
       '@formatjs/intl-localematcher': 0.5.10
       '@headlessui/react': 2.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mdx-js/mdx': 3.1.0(acorn@8.14.1)
+      '@mdx-js/mdx': 3.1.0(acorn@8.15.0)
       '@mdx-js/react': 3.1.0(@types/react@19.2.2)(react@18.3.1)
       '@napi-rs/simple-git': 0.1.19
       '@shikijs/twoslash': 1.29.2(typescript@5.8.2)
@@ -29876,13 +29742,13 @@ snapshots:
     dependencies:
       hosted-git-info: 6.1.1
       is-core-module: 2.13.1
-      semver: 7.6.2
+      semver: 7.7.2
       validate-npm-package-license: 3.0.4
 
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.7.1
+      semver: 7.7.2
       validate-npm-package-license: 3.0.4
 
   normalize-path@2.1.1:
@@ -29905,7 +29771,7 @@ snapshots:
 
   npm-install-checks@6.3.0:
     dependencies:
-      semver: 7.7.1
+      semver: 7.7.2
 
   npm-normalize-package-bin@2.0.0: {}
 
@@ -29948,14 +29814,14 @@ snapshots:
       npm-install-checks: 6.3.0
       npm-normalize-package-bin: 3.0.1
       npm-package-arg: 10.1.0
-      semver: 7.7.1
+      semver: 7.7.2
 
   npm-pick-manifest@9.1.0:
     dependencies:
       npm-install-checks: 6.3.0
       npm-normalize-package-bin: 3.0.1
       npm-package-arg: 11.0.3
-      semver: 7.7.1
+      semver: 7.7.2
 
   npm-registry-fetch@17.1.0:
     dependencies:
@@ -30024,8 +29890,8 @@ snapshots:
 
   object-is@1.1.5:
     dependencies:
-      call-bind: 1.0.2
-      define-properties: 1.2.0
+      call-bind: 1.0.8
+      define-properties: 1.2.1
 
   object-is@1.1.6:
     dependencies:
@@ -30040,7 +29906,7 @@ snapshots:
 
   object.assign@4.1.5:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       has-symbols: 1.0.3
       object-keys: 1.1.1
@@ -30072,7 +29938,7 @@ snapshots:
       array.prototype.reduce: 1.0.7
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
+      es-abstract: 1.24.0
       es-object-atoms: 1.1.1
       gopd: 1.2.0
       safe-array-concat: 1.1.2
@@ -31522,9 +31388,9 @@ snapshots:
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
-  recma-jsx@1.0.0(acorn@8.14.1):
+  recma-jsx@1.0.0(acorn@8.15.0):
     dependencies:
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       estree-util-to-js: 2.0.0
       recma-parse: 1.0.0
       recma-stringify: 1.0.0
@@ -31559,7 +31425,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       es-errors: 1.3.0
       es-object-atoms: 1.1.1
       get-intrinsic: 1.3.0
@@ -31568,11 +31434,11 @@ snapshots:
 
   reflect.getprototypeof@1.0.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
+      es-abstract: 1.24.0
       es-errors: 1.3.0
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
       globalthis: 1.0.4
       which-builtin-type: 1.1.3
 
@@ -31612,7 +31478,7 @@ snapshots:
 
   regexp.prototype.flags@1.5.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-errors: 1.3.0
       set-function-name: 2.0.2
@@ -32047,7 +31913,7 @@ snapshots:
 
   safe-array-concat@1.1.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       get-intrinsic: 1.2.4
       has-symbols: 1.0.3
       isarray: 2.0.5
@@ -32269,7 +32135,7 @@ snapshots:
       define-data-property: 1.1.4
       es-errors: 1.3.0
       function-bind: 1.1.2
-      get-intrinsic: 1.2.4
+      get-intrinsic: 1.3.0
       gopd: 1.2.0
       has-property-descriptors: 1.0.2
 
@@ -32416,7 +32282,7 @@ snapshots:
 
   side-channel@1.0.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       get-intrinsic: 1.2.4
       object-inspect: 1.13.4
@@ -32693,10 +32559,6 @@ snapshots:
 
   std-env@3.8.1: {}
 
-  stop-iteration-iterator@1.0.0:
-    dependencies:
-      internal-slot: 1.0.7
-
   stop-iteration-iterator@1.1.0:
     dependencies:
       es-errors: 1.3.0
@@ -32820,16 +32682,16 @@ snapshots:
       call-bound: 1.0.4
       define-data-property: 1.1.4
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       es-object-atoms: 1.1.1
       has-property-descriptors: 1.0.2
 
   string.prototype.trim@1.2.9:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.3
-      es-object-atoms: 1.0.0
+      es-abstract: 1.24.0
+      es-object-atoms: 1.1.1
 
   string.prototype.trimend@1.0.8:
     dependencies:
@@ -32846,9 +32708,9 @@ snapshots:
 
   string.prototype.trimstart@1.0.8:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
-      es-object-atoms: 1.0.0
+      es-object-atoms: 1.1.1
 
   string_decoder@1.1.1:
     dependencies:
@@ -33013,7 +32875,7 @@ snapshots:
       csso: 4.2.0
       js-yaml: 3.14.1
       mkdirp: 0.5.6
-      object.values: 1.2.0
+      object.values: 1.2.1
       sax: 1.2.4
       stable: 0.1.8
       unquote: 1.1.1
@@ -33178,7 +33040,7 @@ snapshots:
 
   terser@4.8.1:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
@@ -33193,7 +33055,7 @@ snapshots:
   terser@5.39.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.1
+      acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -33333,7 +33195,7 @@ snapshots:
     dependencies:
       gopd: 1.2.0
       typedarray.prototype.slice: 1.0.5
-      which-typed-array: 1.1.18
+      which-typed-array: 1.1.19
 
   tree-dump@1.1.0(tslib@2.8.1):
     dependencies:
@@ -33472,9 +33334,9 @@ snapshots:
 
   typed-array-buffer@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
-      is-typed-array: 1.1.13
+      is-typed-array: 1.1.15
 
   typed-array-buffer@1.0.3:
     dependencies:
@@ -33484,16 +33346,16 @@ snapshots:
 
   typed-array-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-proto: 1.0.3
-      is-typed-array: 1.1.13
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      has-proto: 1.2.0
+      is-typed-array: 1.1.15
 
   typed-array-byte-length@1.0.3:
     dependencies:
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.2.0
       is-typed-array: 1.1.15
@@ -33501,17 +33363,17 @@ snapshots:
   typed-array-byte-offset@1.0.2:
     dependencies:
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-proto: 1.0.3
-      is-typed-array: 1.1.13
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      has-proto: 1.2.0
+      is-typed-array: 1.1.15
 
   typed-array-byte-offset@1.0.4:
     dependencies:
       available-typed-arrays: 1.0.7
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.2.0
       is-typed-array: 1.1.15
@@ -33519,17 +33381,17 @@ snapshots:
 
   typed-array-length@1.0.6:
     dependencies:
-      call-bind: 1.0.7
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-proto: 1.0.3
-      is-typed-array: 1.1.13
+      call-bind: 1.0.8
+      for-each: 0.3.5
+      gopd: 1.2.0
+      has-proto: 1.2.0
+      is-typed-array: 1.1.15
       possible-typed-array-names: 1.0.0
 
   typed-array-length@1.0.7:
     dependencies:
       call-bind: 1.0.8
-      for-each: 0.3.3
+      for-each: 0.3.5
       gopd: 1.2.0
       is-typed-array: 1.1.15
       possible-typed-array-names: 1.0.0
@@ -33539,7 +33401,7 @@ snapshots:
     dependencies:
       call-bind: 1.0.8
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       es-errors: 1.3.0
       get-proto: 1.0.1
       math-intrinsics: 1.1.0
@@ -33601,10 +33463,10 @@ snapshots:
 
   unbox-primitive@1.0.2:
     dependencies:
-      call-bind: 1.0.2
+      call-bind: 1.0.8
       has-bigints: 1.0.2
-      has-symbols: 1.0.3
-      which-boxed-primitive: 1.0.2
+      has-symbols: 1.1.0
+      which-boxed-primitive: 1.1.1
 
   unbox-primitive@1.1.0:
     dependencies:
@@ -33916,7 +33778,7 @@ snapshots:
   util.promisify@1.0.1:
     dependencies:
       define-properties: 1.2.1
-      es-abstract: 1.23.9
+      es-abstract: 1.24.0
       has-symbols: 1.1.0
       object.getownpropertydescriptors: 2.1.8
 
@@ -34304,7 +34166,7 @@ snapshots:
   webpack-bundle-analyzer@4.10.1:
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      acorn: 8.14.1
+      acorn: 8.15.0
       acorn-walk: 8.3.4
       commander: 7.2.0
       debounce: 1.2.1
@@ -34528,7 +34390,7 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@webassemblyjs/wasm-edit': 1.14.1
       '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.1
+      acorn: 8.15.0
       browserslist: 4.24.4
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
@@ -34600,8 +34462,8 @@ snapshots:
       is-bigint: 1.0.4
       is-boolean-object: 1.1.2
       is-number-object: 1.0.7
-      is-string: 1.0.7
-      is-symbol: 1.0.4
+      is-string: 1.1.1
+      is-symbol: 1.1.1
 
   which-boxed-primitive@1.1.1:
     dependencies:
@@ -34613,18 +34475,18 @@ snapshots:
 
   which-builtin-type@1.1.3:
     dependencies:
-      function.prototype.name: 1.1.6
+      function.prototype.name: 1.1.8
       has-tostringtag: 1.0.2
       is-async-function: 2.0.0
-      is-date-object: 1.0.5
-      is-finalizationregistry: 1.0.2
+      is-date-object: 1.1.0
+      is-finalizationregistry: 1.1.1
       is-generator-function: 1.1.0
-      is-regex: 1.1.4
-      is-weakref: 1.0.2
+      is-regex: 1.2.1
+      is-weakref: 1.1.1
       isarray: 2.0.5
-      which-boxed-primitive: 1.0.2
-      which-collection: 1.0.1
-      which-typed-array: 1.1.18
+      which-boxed-primitive: 1.1.1
+      which-collection: 1.0.2
+      which-typed-array: 1.1.19
 
   which-builtin-type@1.2.1:
     dependencies:
@@ -34640,12 +34502,12 @@ snapshots:
       isarray: 2.0.5
       which-boxed-primitive: 1.1.1
       which-collection: 1.0.2
-      which-typed-array: 1.1.18
+      which-typed-array: 1.1.19
 
   which-collection@1.0.1:
     dependencies:
       is-map: 2.0.2
-      is-set: 2.0.2
+      is-set: 2.0.3
       is-weakmap: 2.0.1
       is-weakset: 2.0.2
 
@@ -34661,7 +34523,7 @@ snapshots:
   which-typed-array@1.1.15:
     dependencies:
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       for-each: 0.3.3
       gopd: 1.2.0
       has-tostringtag: 1.0.2
