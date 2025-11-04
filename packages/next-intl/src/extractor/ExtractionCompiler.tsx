@@ -1,7 +1,7 @@
 import CatalogManager from './catalog/CatalogManager.js';
 import type {ExtractorConfig} from './types.js';
 
-export default class ExtractionCompiler {
+export default class ExtractionCompiler implements Disposable {
   private manager: CatalogManager;
   private isDevelopment = false;
   private initialScanPromise: Promise<void> | undefined;
