@@ -96,36 +96,15 @@ type NamespacedValue<
 >;
 
 /**
- * Translates messages from the given namespace by using the ICU syntax.
- * See https://formatjs.io/docs/core-concepts/icu-syntax.
- *
- * If no namespace is provided, all available messages are returned.
- * The namespace can also indicate nesting by using a dot
- * (e.g. `namespace.Component`).
+ * @private Not intended for direct use.
  */
-export default function createTranslator<
-  const TranslatorMessages extends IntlMessages,
-  const Namespace extends NamespaceKeys<
+export type Translator<
+  TranslatorMessages extends IntlMessages = IntlMessages,
+  Namespace extends NamespaceKeys<
     TranslatorMessages,
     NestedKeyOf<TranslatorMessages>
   > = never
->({
-  _cache = createCache(),
-  _formatters = createIntlFormatters(_cache),
-  getMessageFallback = defaultGetMessageFallback,
-  messages,
-  namespace,
-  onError = defaultOnError,
-  ...rest
-}: Omit<IntlConfig, 'messages'> & {
-  messages?: TranslatorMessages;
-  namespace?: Namespace;
-  /** @private */
-  _formatters?: Formatters;
-  /** @private */
-  _cache?: IntlCache;
-}): // Explicitly defining the return type is necessary as TypeScript would get it wrong
-{
+> = {
   // Default invocation
   <TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey,
@@ -163,7 +142,38 @@ export default function createTranslator<
   has<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
     key: TargetKey
   ): boolean;
-} {
+};
+
+/**
+ * Translates messages from the given namespace by using the ICU syntax.
+ * See https://formatjs.io/docs/core-concepts/icu-syntax.
+ *
+ * If no namespace is provided, all available messages are returned.
+ * The namespace can also indicate nesting by using a dot
+ * (e.g. `namespace.Component`).
+ */
+export default function createTranslator<
+  const TranslatorMessages extends IntlMessages,
+  const Namespace extends NamespaceKeys<
+    TranslatorMessages,
+    NestedKeyOf<TranslatorMessages>
+  > = never
+>({
+  _cache = createCache(),
+  _formatters = createIntlFormatters(_cache),
+  getMessageFallback = defaultGetMessageFallback,
+  messages,
+  namespace,
+  onError = defaultOnError,
+  ...rest
+}: Omit<IntlConfig, 'messages'> & {
+  messages?: TranslatorMessages;
+  namespace?: Namespace;
+  /** @private */
+  _formatters?: Formatters;
+  /** @private */
+  _cache?: IntlCache;
+}): Translator<TranslatorMessages, Namespace> {
   // We have to wrap the actual function so the type inference for the optional
   // namespace works correctly. See https://stackoverflow.com/a/71529575/343045
   // The prefix ("!") is arbitrary.
