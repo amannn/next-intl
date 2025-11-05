@@ -603,7 +603,11 @@ describe('t.has', () => {
   it('returns false when no messages are provided', () => {
     const {result: t} = renderHook(() => useTranslations(), {
       wrapper({children}: PropsWithChildren) {
-        return <IntlProvider locale="en">{children}</IntlProvider>;
+        return (
+          <IntlProvider locale="en" onError={vi.fn()}>
+            {children}
+          </IntlProvider>
+        );
       }
     });
     expect(t.current.has('foo')).toBe(false);

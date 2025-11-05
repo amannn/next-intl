@@ -26,6 +26,10 @@ function compareVersions(version1: string, version2: string) {
   return 0;
 }
 
-const hasStableTurboConfig =
-  compareVersions(getCurrentVersion(), '15.3.0') >= 0;
-export default hasStableTurboConfig;
+export function hasStableTurboConfig() {
+  return compareVersions(getCurrentVersion(), '15.3.0') >= 0;
+}
+
+export function isNextJs16OrHigher() {
+  return compareVersions(getCurrentVersion(), '16.0.0') >= 0;
+}
