@@ -14,7 +14,7 @@
   "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amannn/next-intl"
+    "url": "git+https://github.com/amannn/next-intl.git"
   },
   "scripts": {
     "build": "rm -rf dist && rollup -c",
@@ -90,16 +90,17 @@
       "default": "./dist/esm/production/extractor.js"
     },
     "./extractor/extractionLoader": {
-      "types": "./dist/types/extractor/extractionLoader.d.ts",
+      "types": "./dist/types/plugin/extractor/extractionLoader.d.ts",
       "default": "./dist/esm/production/extractor/extractionLoader.js"
     },
     "./extractor/catalogLoader": {
-      "types": "./dist/types/extractor/catalogLoader.d.ts",
+      "types": "./dist/types/plugin/catalog/catalogLoader.d.ts",
       "default": "./dist/esm/production/extractor/catalogLoader.js"
     }
   },
   "files": [
     "dist",
+    "extractor",
     "server.d.ts",
     "navigation.d.ts",
     "middleware.d.ts",
