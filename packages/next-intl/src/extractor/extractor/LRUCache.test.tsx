@@ -50,6 +50,23 @@ it('should update existing values', () => {
   expect(cache.get('key1')).toBe('updated_value1');
 });
 
+it('should not evict entries when updating existing key at max capacity', () => {
+  const cache = new LRUCache<string>(3);
+
+  // Fill cache to max capacity
+  cache.set('key1', 'value1');
+  cache.set('key2', 'value2');
+  cache.set('key3', 'value3');
+
+  // Update an existing key
+  cache.set('key2', 'updated_value2');
+
+  // All three keys should still be in the cache
+  expect(cache.get('key1')).toBe('value1');
+  expect(cache.get('key2')).toBe('updated_value2');
+  expect(cache.get('key3')).toBe('value3');
+});
+
 it('should work with complex objects', () => {
   type ComplexValue = {
     messages: Array<{id: string; message: string}>;

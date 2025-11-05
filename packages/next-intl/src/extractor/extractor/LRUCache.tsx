@@ -13,7 +13,8 @@ export default class LRUCache<Value> {
   }
 
   set(key: string, value: Value): void {
-    if (this.cache.size >= this.maxSize) {
+    const isNewKey = !this.cache.has(key);
+    if (isNewKey && this.cache.size >= this.maxSize) {
       const lruKey = this.cache.keys().next().value;
       if (lruKey !== undefined) {
         this.cache.delete(lruKey);
