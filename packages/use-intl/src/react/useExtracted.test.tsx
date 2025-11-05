@@ -8,11 +8,7 @@ function MockProvider(
   props: Partial<ComponentProps<typeof IntlProvider>> & {children: ReactNode}
 ) {
   return (
-    <IntlProvider
-      locale="en"
-      messages={{}} // Only use fallbacks
-      {...props}
-    >
+    <IntlProvider locale="en" {...props}>
       {props.children}
     </IntlProvider>
   );
@@ -148,17 +144,15 @@ it("doesn't accept raw messages", () => {
 });
 
 it('accepts an optional namespace', () => {
-  const onError = vi.fn();
   function Component() {
     const t = useExtracted('design-system');
     return t('Hello');
   }
   render(
-    <MockProvider onError={onError}>
+    <MockProvider>
       <Component />
     </MockProvider>
   );
-  expect(onError).toHaveBeenCalled();
   screen.getByText('Hello');
 });
 

@@ -13,7 +13,7 @@ import type {
   TranslationValues
 } from './TranslationValues.js';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
+import {defaultGetMessageFallback} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
@@ -106,8 +106,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 function getMessagesOrError<Messages extends AbstractIntlMessages>(
   locale: Locale,
   messages?: Messages,
-  namespace?: string,
-  onError: (error: IntlError) => void = defaultOnError
+  namespace?: string
 ) {
   try {
     if (!messages) {
@@ -137,7 +136,6 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
       IntlErrorCode.MISSING_MESSAGE,
       (error as Error).message
     );
-    onError(intlError);
     return intlError;
   }
 }
@@ -170,8 +168,7 @@ export default function createBaseTranslator<
   const messagesOrError = getMessagesOrError(
     config.locale,
     config.messages,
-    config.namespace,
-    config.onError
+    config.namespace
   ) as Messages | IntlError;
 
   return createBaseTranslatorImpl<Messages, NestedKey>({
@@ -218,32 +215,34 @@ function createBaseTranslatorImpl<
   ): ReactNode {
     const fallback = _fallback as string | undefined;
 
-    if (hasMessagesError) {
-      // We have already warned about this during render
-      return (
-        fallback ??
-        getMessageFallback({
-          error: messagesOrError,
-          key,
-          namespace
-        })
-      );
-    }
-    const messages = messagesOrError;
-
     let message;
-    try {
-      message = resolvePath(locale, messages, key, namespace);
-    } catch (error) {
+    if (hasMessagesError) {
       if (fallback) {
         message = fallback;
       } else {
-        return getFallbackFromErrorAndNotify(
+        onError(messagesOrError);
+        return getMessageFallback({
+          error: messagesOrError,
           key,
-          IntlErrorCode.MISSING_MESSAGE,
-          (error as Error).message,
-          fallback
-        );
+          namespace
+        });
+      }
+    } else {
+      const messages = messagesOrError;
+
+      try {
+        message = resolvePath(locale, messages, key, namespace);
+      } catch (error) {
+        if (fallback) {
+          message = fallback;
+        } else {
+          return getFallbackFromErrorAndNotify(
+            key,
+            IntlErrorCode.MISSING_MESSAGE,
+            (error as Error).message,
+            fallback
+          );
+        }
       }
     }
 
@@ -419,7 +418,7 @@ function createBaseTranslatorImpl<
     key: string
   ): any => {
     if (hasMessagesError) {
-      // We have already warned about this during render
+      onError(messagesOrError);
       return getMessageFallback({
         error: messagesOrError,
         key,
