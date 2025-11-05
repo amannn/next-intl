@@ -1,6 +1,7 @@
 {
   "name": "example-app-router-extracted",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && prettier src --check",

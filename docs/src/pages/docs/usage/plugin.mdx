@@ -1,0 +1,161 @@
+import Details from '@/components/Details';
+
+# Next.js plugin (`createNextIntlPlugin`)
+
+When setting up `next-intl` for the [App Router](/docs/getting-started/app-router), you'll add `next-intl/plugin` to your Next.js config.
+
+At the minimum, it will look like this:
+
+```tsx filename="next.config.ts"
+import {NextConfig} from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const nextConfig: NextConfig = {};
+
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(nextConfig);
+```
+
+For customization, you can provide options to the plugin.
+
+## `requestConfig` [#request-config]
+
+By default, `next-intl` will look for a file called [`i18n/request.ts`](/docs/usage/configuration#server-client-components) which returns request-specific configuration. This file is searched for both in the `src` folder as well as in the project root with the extensions `.ts`, `.tsx`, `.js` and `.jsx`.
+
+If you prefer to move this file somewhere else, you can provide a path to the plugin:
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin(
+  // Specify a custom path here
+  './somewhere/else/request.ts'
+);
+```
+
+Or if you're combining this with other options, you can use the `requestConfig` option:
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: './somewhere/else/request.ts'
+});
+```
+
+## `experimental`
+
+For early adopters, the Next.js plugin provides various experimental options that let you try out new features before they're released as stable.
+
+### `createMessagesDeclaration` [#create-messages-declaration]
+
+To enable [type-safe message arguments](/docs/workflows/typescript#messages-arguments), you can point the `createMessagesDeclaration` option to a sample messages file in order to create a strict declaration file for it.
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    // Provide the path to the messages that you're using in `AppConfig`
+    createMessagesDeclaration: './messages/en.json'
+  }
+  // ...
+});
+```
+
+See [TypeScript augmentation](/docs/workflows/typescript) to learn more about this.
+
+### `extract` [#extract]
+
+This enables the usage of [`useExtracted`](/blog/use-extracted) to automatically extract messages from source files.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    extract: {
+      // Defines which locale to extract to
+      sourceLocale: 'en'
+    }
+    // ...
+  }
+});
+```
+
+Extraction integrates automatically with `next dev` and `next build`, you don't need to manually trigger it.
+
+This should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
+
+<Details id="extract-manual">
+<summary>Can I extract messages manually?</summary>
+
+While message extraction is designed to seamlessly integrate with your development workflow based on running `next dev` and `next build`, you can also extract messages manually:
+
+```tsx
+import {unstable_extractMessages} from 'next-intl/extractor';
+
+await unstable_extractMessages({
+  srcPath: './src',
+  sourceLocale: 'en',
+  messages: {
+    path: './messages',
+    format: 'json',
+    locales: 'infer'
+  }
+});
+
+console.log('✔ Messages extracted');
+```
+
+This can be useful in case you're developing a consumable package like a component library, where you don't have a Next.js dev server running.
+
+</Details>
+
+### `messages` [#messages]
+
+This defines where and how messages for locales should be stored.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    messages: {
+      // Relative path to the directory
+      path: './messages',
+
+      // Either 'json' or 'po'
+      format: 'json',
+
+      // Either 'infer' to automatically detect locales based on
+      // matching files in `path` or an explicit array of locales
+      locales: 'infer'
+    }
+    // ...
+  }
+});
+```
+
+Configuring this option will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects. Typically this is useful in [`i18n/request.ts`](/docs/usage/configuration#i18n-request) to provide messages based on the user's locale:
+
+```tsx filename="src/i18n/request.ts"
+import {cookies} from 'next/headers';
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  const locale = 'en';
+
+  // E.g. `{"NhX4DJ": "Hello"}`
+  const messages = (await import(`../../messages/${locale}.po`)).default;
+
+  // ...
+});
+```
+
+This should be used together with [`extract`](#extract) and [`srcPath`](#src-path).
+
+### `srcPath` [#src-path]
+
+This defines the source path(s) where messages should be extracted from.
+
+```tsx
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    srcPath: './src'
+    // ...
+  }
+});
+```
+
+This should be used together with [`extract`](#extract) and [`messages`](#messages).
