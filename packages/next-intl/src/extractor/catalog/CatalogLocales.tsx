@@ -1,7 +1,7 @@
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import path from 'path';
-import type {Locale} from '../types.js';
+import type {Locale, MessagesConfig} from '../types.js';
 
 type LocaleChangeCallback = (params: {
   added: Array<Locale>;
@@ -12,14 +12,14 @@ type CatalogLocalesParams = {
   messagesDir: string;
   sourceLocale: Locale;
   extension: string;
-  locales: 'infer' | Array<Locale>;
+  locales: MessagesConfig['locales'];
 };
 
 export default class CatalogLocales {
   private messagesDir: string;
   private extension: string;
   private sourceLocale: Locale;
-  private locales: 'infer' | Array<Locale>;
+  private locales: MessagesConfig['locales'];
   private watcher?: fs.FSWatcher;
   private cleanupHandlers: Array<() => void> = [];
   private targetLocales?: Array<Locale>;

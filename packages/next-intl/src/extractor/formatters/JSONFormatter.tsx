@@ -9,7 +9,6 @@ interface StoredFormat {
 
 export default class JSONFormatter extends Formatter {
   static readonly NAMESPACE_SEPARATOR = '.';
-
   public readonly EXTENSION = '.json';
 
   public parse(source: string): Array<ExtractedMessage> {

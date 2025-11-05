@@ -33,10 +33,10 @@ export default class CatalogManager {
 
   private saveScheduler: SaveScheduler<number>;
   private projectRoot: string;
-  private persister?: CatalogPersister;
   private isDevelopment: boolean;
 
-  // Caching
+  // Cached instances
+  private persister?: CatalogPersister;
   private formatter?: Formatter;
   private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
@@ -118,11 +118,7 @@ export default class CatalogManager {
   }
 
   public async loadMessages() {
-    // TODO: We could potentially skip this in favor of reading
-    // the existing messages for the .po format since it provides
-    // all the necessary context by itself.
     await this.loadSourceMessages();
-
     await this.loadTargetMessages();
 
     if (this.isDevelopment) {

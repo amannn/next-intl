@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    // Remove later
-    "allowImportingTsExtensions": true,
     "target": "ES2020",
     "lib": [
       "dom",

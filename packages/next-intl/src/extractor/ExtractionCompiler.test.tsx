@@ -514,9 +514,6 @@ describe('json format', () => {
     delete filesystem.project.messages!['fr.json'];
     simulateFileEvent('/project/messages', 'rename', 'fr.json');
 
-    // Wait for debounce
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -1111,7 +1108,7 @@ msgstr "Hallo!"
 
 /**
  * Test utils
- */
+ ****************************************************************/
 
 function waitForWriteFileCalls(length: number) {
   return vi.waitFor(() => {

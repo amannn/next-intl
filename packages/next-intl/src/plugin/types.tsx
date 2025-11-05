@@ -7,10 +7,10 @@ export type PluginConfig = {
     /** A path to the messages file that you'd like to create a declaration for. In case you want to consider multiple files, you can pass an array of paths. */
     createMessagesDeclaration?: string | Array<string>;
 
-    /** Relative path(s) to your source files, to be used in combination with `extractor` and `messages`. */
+    /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
     srcPath?: string | Array<string>;
 
-    /** Configuration about your catalogs of messages, to be used in combination with `src` and `extractor`. */
+    /** Configuration about your catalogs of messages, to be used in combination with `srcPath` and `extract`. */
     messages?: {
       /** Relative path to the directory containing your messages. */
       path: string;
@@ -20,7 +20,7 @@ export type PluginConfig = {
       locales: 'infer' | Array<string>;
     };
 
-    /** Enables the usage of `useExtracted`, to be used in combination with `src` and `messages`. */
+    /** Enables the usage of `useExtracted`, to be used in combination with `srcPath` and `messages`. */
     extract?: {
       sourceLocale: string;
     };

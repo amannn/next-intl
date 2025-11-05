@@ -30,10 +30,7 @@ export default function catalogLoader(
 
   getFormatter(options)
     .then((formatter) => {
-      const locale = path
-        .basename(this.resourcePath)
-        .slice(0, -formatter.EXTENSION.length);
-
+      const locale = path.basename(this.resourcePath, formatter.EXTENSION);
       const jsonString = formatter.toJSONString(source, {locale});
 
       // https://v8.dev/blog/cost-of-javascript-2019#json

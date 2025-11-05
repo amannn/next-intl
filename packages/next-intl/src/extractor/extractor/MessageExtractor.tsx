@@ -47,7 +47,9 @@ export default class MessageExtractor {
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 
-    // Shortcut parsing if hook is not used
+    // Shortcut parsing if hook is not used. The Turbopack integration already
+    // pre-filters this, but for webpack this feature doesn't exist, so we need
+    // to do it here.
     if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
       return {messages: [], source};
     }
@@ -137,6 +139,7 @@ export default class MessageExtractor {
                 ) {
                   hookLocalName = localName;
                   hookType = 'useTranslations';
+
                   // Transform import to useTranslations
                   spec.imported = undefined;
                   spec.local.value = 'useTranslations';
@@ -155,10 +158,9 @@ export default class MessageExtractor {
                 ) {
                   hookLocalName = localName;
                   hookType = 'getTranslations';
+
                   // Transform import to getTranslations
-                  if (spec.imported) {
-                    spec.imported.value = 'getTranslations';
-                  }
+                  spec.imported = undefined;
                   spec.local.value = 'getTranslations';
                 }
               }
@@ -206,7 +208,7 @@ export default class MessageExtractor {
                       key.value === 'namespace'
                     ) {
                       const staticNamespace = extractStaticString(prop.value);
-                      if (staticNamespace !== null) {
+                      if (staticNamespace != null) {
                         namespace = staticNamespace;
                       }
                       break;
@@ -217,6 +219,7 @@ export default class MessageExtractor {
             }
 
             currentScope().define(decl.id.value, 'translator', namespace);
+
             // Transform the call based on the hook type
             if (hookType) {
               (callExpr.callee as Identifier).value = hookType;
@@ -237,6 +240,7 @@ export default class MessageExtractor {
             isTranslatorCall = resolved?.kind === 'translator';
             namespace = resolved?.namespace;
           }
+
           // Handle MemberExpression case: t.rich, t.markup, or t.has
           else if (call.callee.type === 'MemberExpression') {
             const memberExpr = call.callee as MemberExpression;
@@ -270,9 +274,7 @@ export default class MessageExtractor {
                 expressionNode.span &&
                 typeof expressionNode.span === 'object' &&
                 'start' in expressionNode.span;
-              const location = hasSpan
-                ? `${path.basename(filePath)}`
-                : undefined;
+              const location = hasSpan ? path.basename(filePath) : undefined;
 
               warn(
                 (location ? `${location}: ` : '') +
@@ -285,6 +287,7 @@ export default class MessageExtractor {
               // Handle object syntax: t({id: 'key', message: 'text'})
               if (arg0.type === 'ObjectExpression') {
                 const objectExpression = arg0 as ObjectExpression;
+
                 // Look for id, message, values, and formats properties
                 for (const prop of objectExpression.properties) {
                   if (prop.type === 'KeyValueProperty') {
@@ -328,6 +331,7 @@ export default class MessageExtractor {
                   }
                 }
               }
+
               // Handle string syntax: t('text') or t(`text`)
               else {
                 const staticString = extractStaticString(arg0);
@@ -358,7 +362,7 @@ export default class MessageExtractor {
               }
               results.push(message);
 
-              // Transform the argument based on type (use baseKey for the code)
+              // Transform the argument based on type
               if (arg0.type === 'StringLiteral') {
                 (arg0 as StringLiteral).value = callKey;
                 (arg0 as StringLiteral).raw = undefined;
@@ -421,7 +425,7 @@ export default class MessageExtractor {
 
               // Add fallback message as fourth parameter in development mode (except for t.has)
               if (isDevelopment && !isHasCall) {
-                // Ensure we have at least 4 arguments
+                // Ensure we have at least 3 arguments
                 while (call.arguments.length < 3) {
                   call.arguments.push(createUndefinedArgument());
                 }

@@ -4,12 +4,12 @@ type SaveTask<T> = () => Promise<T>;
  * De-duplicates excessive save invocations,
  * while keeping a single one instant.
  */
-export default class SaveScheduler<T> {
+export default class SaveScheduler<Value> {
   private saveTimeout?: NodeJS.Timeout;
   private isSaving = false;
   private delayMs: number;
   private pendingResolvers: Array<{
-    resolve(value: T): void;
+    resolve(value: Value): void;
     reject(error: unknown): void;
   }> = [];
 
@@ -17,7 +17,7 @@ export default class SaveScheduler<T> {
     this.delayMs = delayMs;
   }
 
-  async schedule(saveTask: SaveTask<T>): Promise<T> {
+  async schedule(saveTask: SaveTask<Value>): Promise<Value> {
     return new Promise((resolve, reject) => {
       this.pendingResolvers.push({resolve, reject});
 
@@ -31,7 +31,7 @@ export default class SaveScheduler<T> {
     });
   }
 
-  private scheduleSave(saveTask: SaveTask<T>): void {
+  private scheduleSave(saveTask: SaveTask<Value>): void {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
@@ -41,7 +41,7 @@ export default class SaveScheduler<T> {
     }, this.delayMs);
   }
 
-  private async executeSave(saveTask: SaveTask<T>): Promise<void> {
+  private async executeSave(saveTask: SaveTask<Value>): Promise<void> {
     if (this.isSaving) {
       return;
     }
