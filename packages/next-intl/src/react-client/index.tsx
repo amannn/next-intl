@@ -14,7 +14,7 @@ import {
 } from 'use-intl';
 
 export * from 'use-intl';
-export {default as useExtracted} from 'use-intl/react/_useExtracted';
+export {_useExtracted as useExtracted} from 'use-intl/react';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function callHook(name: string, hook: Function) {
