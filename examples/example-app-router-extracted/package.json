@@ -19,7 +19,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "9.11.1",
+    "eslint": "^9.38.0",
     "eslint-config-next": "^16.0.1",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3",
