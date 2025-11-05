@@ -7,7 +7,7 @@ await unstable_extractMessages({
   sourceLocale: 'en',
   messages: {
     path: './messages',
-    format: 'json',
+    format: 'po',
     locales: 'infer'
   }
 });

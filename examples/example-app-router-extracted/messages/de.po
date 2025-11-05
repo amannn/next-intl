@@ -7,12 +7,12 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/Counter.tsx
-msgid "tQLRmz"
-msgstr "Erhöhen"
-
-#: src/app/Counter.tsx
 msgid "jm1lmy"
 msgstr "Anzahl: {count, number}"
+
+#: src/app/Counter.tsx
+msgid "tQLRmz"
+msgstr "Erhöhen"
 
 #. Default meta title if not overridden by pages
 #: src/app/layout.tsx
