@@ -4,5 +4,6 @@ export default {
   'dates-times': 'Dates and times',
   lists: 'Lists',
   configuration: 'Request configuration',
+  extraction: 'Message extraction',
   plugin: 'Next.js plugin'
 };

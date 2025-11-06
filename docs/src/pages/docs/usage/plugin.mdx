@@ -61,7 +61,7 @@ See [TypeScript augmentation](/docs/workflows/typescript) to learn more about th
 
 ### `extract` [#extract]
 
-This enables the usage of [`useExtracted`](/blog/use-extracted) to automatically extract messages from source files.
+This enables the usage of [`useExtracted`](/docs/usage/extraction) to automatically extract messages from source files.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
@@ -75,34 +75,7 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-Extraction integrates automatically with `next dev` and `next build`, you don't need to manually trigger it.
-
-This should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
-
-<Details id="extract-manual">
-<summary>Can I extract messages manually?</summary>
-
-While message extraction is designed to seamlessly integrate with your development workflow based on running `next dev` and `next build`, you can also extract messages manually:
-
-```tsx
-import {unstable_extractMessages} from 'next-intl/extractor';
-
-await unstable_extractMessages({
-  srcPath: './src',
-  sourceLocale: 'en',
-  messages: {
-    path: './messages',
-    format: 'json',
-    locales: 'infer'
-  }
-});
-
-console.log('✔ Messages extracted');
-```
-
-This can be useful in case you're developing a consumable package like a component library, where you don't have a Next.js dev server running.
-
-</Details>
+**Note:** The `extract` option should be used together with [`messages`](#messages) and [`srcPath`](#src-path).
 
 ### `messages` [#messages]
 
@@ -115,39 +88,30 @@ const withNextIntl = createNextIntlPlugin({
       // Relative path to the directory
       path: './messages',
 
-      // Either 'json' or 'po'
-      format: 'json',
+      // Automatically detects locales based on `path`
+      locales: 'infer',
 
-      // Either 'infer' to automatically detect locales based on
-      // matching files in `path` or an explicit array of locales
-      locales: 'infer'
+      // Either 'json' or 'po'
+      format: 'json'
     }
     // ...
   }
 });
 ```
 
-Configuring this option will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects. Typically this is useful in [`i18n/request.ts`](/docs/usage/configuration#i18n-request) to provide messages based on the user's locale:
+If you want to specify the locales explicitly, you can provide an array for `locales`:
 
-```tsx filename="src/i18n/request.ts"
-import {cookies} from 'next/headers';
-import {getRequestConfig} from 'next-intl/server';
-
-export default getRequestConfig(async () => {
-  const locale = 'en';
-
-  // E.g. `{"NhX4DJ": "Hello"}`
-  const messages = (await import(`../../messages/${locale}.po`)).default;
-
-  // ...
-});
+```tsx
+locales: ['en', 'de'];
 ```
 
-This should be used together with [`extract`](#extract) and [`srcPath`](#src-path).
+Configuring `experimental.messages` will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects (see [formatters](/docs/usage/extraction#formatters)).
+
+**Note:** The `messages` option should be used together with [`extract`](#extract) and [`srcPath`](#src-path).
 
 ### `srcPath` [#src-path]
 
-This defines the source path(s) where messages should be extracted from.
+This defines the source path where messages should be extracted from.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
@@ -158,4 +122,23 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-This should be used together with [`extract`](#extract) and [`messages`](#messages).
+If your project is split into multiple folders, you can provide an array of paths:
+
+```tsx
+// Not using a `src` folder
+srcPath: ['./app', './components'],
+```
+
+```tsx
+// Multiple packages in a monorepo
+srcPath: ['./src', '../ui'],
+```
+
+```tsx
+// External dependency on a package
+srcPath: ['./src', './node_modules/@acme/components'],
+```
+
+If you want to provide messages along with your package, you can also extract them [manually](/docs/usage/extraction#manual).
+
+**Note:** The `srcPath` option should be used together with [`extract`](#extract) and [`messages`](#messages).
