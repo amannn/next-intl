@@ -2,6 +2,10 @@ export default {
   index: {
     title: 'Overview'
   },
+  'use-extracted': {
+    title: 'useExtracted: The Tailwind of i18n?',
+    display: 'hidden'
+  },
   'next-intl-4-0': {
     title: 'next-intl 4.0',
     display: 'hidden'
