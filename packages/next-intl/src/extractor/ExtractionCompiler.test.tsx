@@ -363,6 +363,52 @@ describe('json format', () => {
     `);
   });
 
+  it('preserves messages when removed from one file but still used in another', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.src['Footer.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Footer() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"+YJVTi": "Hey!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      function Greeting() {
+        return <div />;
+      }
+    `
+    );
+
+    await waitForWriteFileCalls(2);
+
+    // Still used in Footer.tsx
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "+YJVTi": "Hey!"
+      }",
+      ]
+    `);
+  });
+
   it('creates the messages directory and source catalog when they do not exist initially', async () => {
     filesystem.project.messages = undefined;
     filesystem.project.src['Greeting.tsx'] = `

@@ -226,10 +226,17 @@ export default class CatalogManager {
       if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Clean up removed messages at `messagesById`
-    for (const id of idsToRemove) {
+    // Don't delete IDs still used in other files
+    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
+    const idsToDelete = idsToRemove.filter((id) => {
+      const message = this.messagesById.get(id);
+      return !message?.references?.some((ref) => ref.path !== relativeFilePath);
+    });
+
+    // Clean up removed messages from `messagesById`
+    idsToDelete.forEach((id) => {
       this.messagesById.delete(id);
-    }
+    });
 
     // Update the stored messages
     const hasMessages = result.messages.length > 0;
