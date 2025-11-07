@@ -123,7 +123,7 @@ But again, making something easy for AIs was probably always about making it eas
 
 ```po
 #: src/app/(auth)/login/page.tsx
-#. Greeting shown to user when they are logged in
+#. Greeting shown to user when logging back in
 msgid "0MXX5B"
 msgstr "Welcome back!"
 ```
@@ -134,7 +134,7 @@ So this is what you'll now be able to use with `next-intl` as well:
 
 <BlogVideo muted src="/blog/use-extracted/demo-03.mp4" />
 
-Note how enabling the `.po` formatter also activates a Turbopack loader that will parse your locale catalogs as JSON for you, making them easy to consume in your app. It's really just a compile target.
+Note how enabling the `.po` formatter also activates a Turbopack loader that will parse your locale catalogs as plain JavaScript objects for you, making them easy to consume in your app. It's really just a compile target.
 
 That being said, if JSON is your jam, that's totally fine too. And soon, there will also be support for custom formatters that will allow you to incorporate file references and descriptions in whatever format you prefer.
 
@@ -146,7 +146,7 @@ So first of all, let's add a new locale:
 
 <BlogVideo muted src="/blog/use-extracted/demo-04.mp4" />
 
-Nope, this wasn't cut. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
+Nope, the video wasn't cut. Neither was there a paste from the clipboard. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
 
 So from here, you can start translating your messages however you want, in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
 
@@ -156,7 +156,7 @@ More on this in the [localization management docs](/docs/workflows/localization-
 
 ## What sorcery is this?
 
-Behind the scenes, `useExtracted` integrates with Next.js in two ways:
+Behind the scenes, `useExtracted` integrates with Next.js at two touch points:
 
 **1. Turbopack loader for extration**
 
@@ -172,7 +172,7 @@ import {useTranslations} from 'next-intl';
 function InlineMessages() {
   const t = useTranslations();
 
-  // Production bundles use minified keys
+  // Pick up the minified key
   return <h1>{t('dPSc42')}</h1>;
 }
 ```
@@ -206,7 +206,7 @@ I could probably go on, e.g. about how `useExtracted` also works out-of-the-box 
 
 If you're excited about this as well, I'd really love to hear your feedback.
 
-Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and share your [feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental.
+Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and share your [feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental, so changes should be expected.
 
 Also, it's worth mentioning again that the `useTranslations` API that you might be using today is not going anywhere. If you're already happy with it, then by all means keep using it. Personally, I think `useExtracted` has a lot of potential, but only time will tell if this is true.
 

@@ -46,7 +46,10 @@ function InlineMessages() {
 }
 ```
 
-→ [Example app](/examples#app-router-extracted)
+**Links:**
+
+- [Blog post](/blog/use-extracted)
+- [Example app](/examples#app-router-extracted)
 
 ## Getting started
 
@@ -254,6 +257,7 @@ function Component() {
 
 it('renders', () => {
   const html = renderToString(
+    // No need to pass any messages
     <NextIntlClientProvider locale="en" timeZone="UTC">
       <Component />
     </NextIntlClientProvider>
