@@ -6,7 +6,7 @@ import {CourseVideoBanner} from '@/components/CourseBanner';
 
 # Localization management with Crowdin
 
-Prefer to use a fully AI-driven workflow? Learn more:
+Prefer to use a fully AI-driven workflow?
 
 <CourseVideoBanner
   className="mt-2"
@@ -48,10 +48,11 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
 
 **Integration options:**
 
-1. Git integration e.g. via the <PartnerContentLink name="localization-management-developers-integrations" href="https://support.crowdin.com/github-integration/">GitHub app</PartnerContentLink> or the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/cli-tool/">Crowdin CLI</PartnerContentLink> (recommended)
-2. Automatic workflows triggered from <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/api/v2/#tag/Webhooks">webhooks</PartnerContentLink>
-3. Over-the-air delivery via the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/sdk-ota-web/">JS SDK</PartnerContentLink>
-4. Manual up- and download of messages (useful to get started)
+1. Command-line integration with the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/cli-tool/">Crowdin CLI</PartnerContentLink>
+2. Git integration e.g. via the <PartnerContentLink name="localization-management-developers-integrations" href="https://support.crowdin.com/github-integration/">GitHub app</PartnerContentLink>
+3. Automatic workflows triggered from <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/api/v2/#tag/Webhooks">webhooks</PartnerContentLink>
+4. Over-the-air delivery via the <PartnerContentLink name="localization-management-developers-integrations" href="https://developer.crowdin.com/sdk-ota-web/">JS SDK</PartnerContentLink>
+5. Manual up- and download of messages
 
 <figure>
   <div className="max-w-2xl">
@@ -81,14 +82,6 @@ As a developer-focused localization service, Crowdin helps you to decouple the l
     </p>
   </figcaption>
 </figure>
-
-<Callout>
-  The [TypeScript augmentation of `next-intl`](/docs/workflows/typescript) can
-  help you to validate at compile time that your app is in sync with your
-  translation bundles.
-</Callout>
-
-You can further simplify the process for translators by setting up <PartnerContentLink name="localization-management-developers" href="https://developer.crowdin.com/in-context-localization/">Crowdin In-Context</PartnerContentLink>, allowing for the translation of messages directly from your app.
 
 ## Example workflow with the GitHub integration
 
