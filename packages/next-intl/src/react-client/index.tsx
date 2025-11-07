@@ -13,7 +13,14 @@ import {
   useTranslations as base_useTranslations
 } from 'use-intl';
 
-export * from 'use-intl';
+export * from 'use-intl/core';
+export {
+  IntlProvider,
+  useLocale,
+  useNow,
+  useTimeZone,
+  useMessages
+} from 'use-intl/react';
 export {_useExtracted as useExtracted} from 'use-intl/react';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
