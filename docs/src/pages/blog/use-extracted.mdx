@@ -99,7 +99,7 @@ export default async function ProfilePage() {
 
 Ok, now let's take a step back. Components that use inline messages appear to be easy to generate for AIs, all without having to load lengthy message catalogs into its precious context window.
 
-But what about using AI to translate your messages?
+But what about using AI to _translate_ your messages?
 
 ## Context is key
 
@@ -122,13 +122,13 @@ But again, making something easy for AIs was probably always about making it eas
 [GNU gettext](https://en.wikipedia.org/wiki/Gettext) introduced `.po` files for message catalogs, which look like this:
 
 ```po
-#: src/app/(auth)/login/page.tsx
 #. Greeting shown to user when logging back in
+#: src/app/(auth)/login/page.tsx
 msgid "0MXX5B"
 msgstr "Welcome back!"
 ```
 
-Everything is there: A filename reference, an optional description, an ID and the label itself.
+Everything is there: An optional description, a filename reference, an ID and the label itself.
 
 So this is what you'll now be able to use with `next-intl` as well:
 
@@ -148,7 +148,7 @@ So first of all, let's add a new locale:
 
 Nope, the video wasn't cut. Neither was there a paste from the clipboard. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
 
-So from here, you can start translating your messages however you want, in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
+So from here, you can start translating your messages however you want, either with an editor, or in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
 
 <BlogVideo muted src="/blog/use-extracted/demo-05.mp4" />
 
