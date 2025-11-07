@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.5.0 (2025-11-07)
+
+### Features
+
+* Add `useExtracted` (experimental) ([#2080](https://github.com/amannn/next-intl/issues/2080)) ([7a85644](https://github.com/amannn/next-intl/commit/7a8564478596a2ad487e553ff1160fff9b0a039e)) – by @amannn
+
 ## 4.4.0 (2025-10-22)
 
 ### Features
