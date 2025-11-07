@@ -37,7 +37,7 @@ If we consider the design of Tailwind, we can see that an i18n solution that fol
 6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of whether it's used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
 7. **Refactoring-friendly**: Moving code across components is seamless with Tailwind, this should be the case for your messages as well.
 
-While `next-intl` has answers to some of these questions, ultimately the truth is that there's currently potential left on the table. Therefore, after [publishing an RFC](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md) about two months ago — today, I'm incredibly excited to share what I believe could be the answer to this:
+While `next-intl` has answers to some of these questions, ultimately the truth is that there's currently potential left on the table. Therefore, after [publishing an RFC](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md) about two months ago—today, I'm incredibly excited to share what I believe could be the answer to this:
 
 ```tsx
 import {useExtracted} from 'next-intl';
@@ -128,7 +128,7 @@ msgid "0MXX5B"
 msgstr "Welcome back!"
 ```
 
-Everything is there: A file name, an optional description, an ID and the label itself.
+Everything is there: A filename reference, an optional description, an ID and the label itself.
 
 So this is what you'll now be able to use with `next-intl` as well:
 
@@ -154,7 +154,7 @@ So from here, you can start translating your messages however you want, in the e
 
 More on this in the [localization management docs](/docs/workflows/localization-management).
 
-## What sourcery is this?
+## What sorcery is this?
 
 Behind the scenes, `useExtracted` integrates with Next.js in two ways:
 
@@ -206,7 +206,7 @@ I could probably go on, e.g. about how `useExtracted` also works out-of-the-box 
 
 If you're excited about this as well, I'd really love to hear your feedback.
 
-Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and [share your feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental.
+Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and share your [feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental.
 
 Also, it's worth mentioning again that the `useTranslations` API that you might be using today is not going anywhere. If you're already happy with it, then by all means keep using it. Personally, I think `useExtracted` has a lot of potential, but only time will tell if this is true.
 
