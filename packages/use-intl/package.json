@@ -8,7 +8,7 @@
   "homepage": "https://next-intl.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/amannn/next-intl/tree/main/packages/use-intl"
+    "url": "git+https://github.com/amannn/next-intl.git"
   },
   "scripts": {
     "build": "rm -rf dist && rollup -c",
