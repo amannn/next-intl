@@ -316,6 +316,31 @@ msgstr ""
     });
   });
 
+  it('parses metadata when msgstr appears before msgid', () => {
+    expect(
+      POParser.parse(`
+msgstr ""
+msgid ""
+"POT-Creation-Date: 2025-10-27 16:00+0000"
+"MIME-Version: 1.0"
+
+msgid "hello"
+msgstr "Hello"
+`)
+    ).toEqual({
+      meta: {
+        'POT-Creation-Date': '2025-10-27 16:00+0000',
+        'MIME-Version': '1.0'
+      },
+      messages: [
+        {
+          id: 'hello',
+          message: 'Hello'
+        }
+      ]
+    });
+  });
+
   it('parses nested namespaces correctly', () => {
     expect(
       POParser.parse(`

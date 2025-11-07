@@ -145,6 +145,11 @@ export default class POParser {
             line.substring(POParser.KEYWORDS.MSGID.length + 1),
             state
           );
+
+          if (POParser.isMetaEntry(entry, messages)) {
+            state = 'meta';
+            entry = undefined;
+          }
           continue;
         }
 
@@ -156,8 +161,7 @@ export default class POParser {
             state
           );
 
-          // Switch to meta mode if this is the first entry with empty msgid
-          if (messages.length === 0 && entry.msgid === '') {
+          if (POParser.isMetaEntry(entry, messages)) {
             state = 'meta';
             entry = undefined;
           }
@@ -183,6 +187,13 @@ export default class POParser {
       meta: Object.keys(meta).length > 0 ? meta : undefined,
       messages: messages.length > 0 ? messages : undefined
     };
+  }
+
+  private static isMetaEntry(
+    entry: Entry,
+    messages: Array<ExtractedMessage>
+  ): boolean {
+    return messages.length === 0 && entry.msgid === '' && entry.msgstr === '';
   }
 
   static serialize(catalog: Catalog): string {
