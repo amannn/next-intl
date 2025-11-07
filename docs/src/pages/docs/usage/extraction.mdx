@@ -220,11 +220,11 @@ Namespaces are useful in situations like:
 For usage in async functions like Server Components, Metadata and Server Actions, you use an asynchronous variant from `next-intl/server`:
 
 ```tsx filename="page.tsx"
-import {getTranslations} from 'next-intl/server';
+import {getExtracted} from 'next-intl/server';
 
 export default async function ProfilePage() {
   const user = await fetchUser();
-  const t = await getTranslations();
+  const t = await getExtracted();
 
   return (
     <PageLayout title={t('Hello {name}!', {name: user.name})}>
