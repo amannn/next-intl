@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
 
-# Message extraction (`useExtracted`)
+# `useExtracted`
 
 As an alternative to managing namespaces and keys manually, `next-intl` provides an additional API that works similar to [`useTranslations`](/docs/usage/translations) but automatically extracts messages from your source files.
 
@@ -215,6 +215,8 @@ Namespaces are useful in situations like:
 1. **Libraries:** If you have multiple packages in a monorepo, you can merge messages from different packages into a single catalog and avoid key collisions between packages.
 2. **Splitting:** If you want to pass only certain messages to the client side, this can help to group them accordingly (e.g. `<NextIntlClientProvider messages={messages.client}>`).
 
+It's a good idea to not overuse namespaces, as they can make moving messages between components more difficult if this involves refactoring the namespace.
+
 ### `await getExtracted()` [#get-extracted]
 
 For usage in async functions like Server Components, Metadata and Server Actions, you use an asynchronous variant from `next-intl/server`:
@@ -322,6 +324,8 @@ When using this option, your messages will look like this:
 msgid "5VpL9Z"
 msgstr "Right"
 ```
+
+Besides the message key and the label itself, this format also supports optional descriptions and file references to all modules that consume this message.
 
 For local editing of PO messages, you can use e.g. a tool like [Poedit](https://poedit.net/) (replacing keys with source text requires a pro license).
 
