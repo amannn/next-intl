@@ -1,0 +1,380 @@
+---
+title: 'Using next/root-params in Next.js 15.X'
+---
+
+import StayUpdated from '@/components/StayUpdated.mdx';
+
+# Using `next/root-params` in Next.js 15.X
+
+<small>May XX, 2025 · by Jan Amann</small>
+
+(this post is still a draft)
+
+Next.js v15.X was just released and comes with a new feature: [`next/root-params`](https://github.com/vercel/next.js/pull/80255).
+
+This new API fills in the [missing piece](https://github.com/vercel/next.js/discussions/58862) that allows apps that use top-level dynamic segments like `[locale]` to read segment values deeply in Server Components:
+
+```tsx
+import {locale} from 'next/root-params';
+
+async function Component() {
+  // The ability to read params deeply in
+  // Server Components ... finally!
+  const locale = await locale();
+}
+```
+
+This addition is a game-changer for `next-intl`.
+
+While the library previously relied on workarounds to provide a locale to Server Components, this API now provides native support in Next.js for this use case, allowing the library to integrate much tighter with Next.js.
+
+Practically, for users of `next-intl` this means:
+
+1. Being able to support static rendering of apps with i18n routing without `setRequestLocale`
+2. Improved integration with Next.js cache mechanisms
+3. Preparation for upcoming rendering modes in Next.js like [Partial Prerendering](https://nextjs.org/docs/app/api-reference/next-config-js/ppr) and [`cacheComponents`](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)
+
+But first, let's have a look at how this API works in practice.
+
+## Root layouts
+
+Previously, Next.js required a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layouts) to be present at `app/layout.tsx`—the root of your app.
+
+Now, you can move a root layout to a nested segment, which can also be dynamic:
+
+```
+src
+└── app
+    └── [locale]
+        ├── layout.tsx (root layout)
+        └── page.tsx
+```
+
+In this extended definition, a root layout now is any layout that has no other layouts located above it.
+
+In contrast, layouts that do have other layout ancestors are regular layouts:
+
+```
+src
+└── app
+    └── [locale]
+        ├── layout.tsx (root layout)
+        ├── (...)
+        └── news
+            ├── layout.tsx (regular layout)
+            └── page.tsx
+```
+
+With the addition of `next/root-params`, you can now read param values of a root layout in all Server Components that render within it:
+
+```tsx filename=src/components/LocaleSwitcher.tsx
+import {locale} from 'next/root-params';
+
+export async function LocaleSwitcher() {
+  // Read the value of `[locale]`
+  const curLocale = await locale();
+
+  // ...
+}
+```
+
+## Multiple root layouts
+
+Here's where it gets interesting: With [route groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups), you can provide another layout for pages that are not located in the `[locale]` segment:
+
+```
+src
+└── app
+    ├── [locale]
+    │   ├── layout.tsx
+    │   └── page.tsx
+    └── (unlocalized)
+        ├── layout.tsx
+        └── page.tsx
+```
+
+The layout at `[locale]/layout.tsx` as well as the layout at `(unlocalized)/layout.tsx` both have no other layouts located above them, therefore _both_ qualify as root layouts.
+
+Due to this, in this case the returned value of `next/root-params` will depend on where the component that calls the function is being rendered from.
+
+If you call `next/root-params` in shared code that is used by both layouts, this allows for a pattern like this:
+
+```tsx filename="src/utils/getLocale.tsx"
+import {locale} from 'next/root-params';
+
+export default async function getLocale() {
+  // Try to read the locale in case we're in `[locale]/layout.tsx`
+  let curLocale = await locale();
+
+  // If we're in `(unlocalized)/layout.tsx`, let's use a fallback
+  if (!curLocale) {
+    curLocale = 'en';
+  }
+
+  return curLocale;
+}
+```
+
+With this, you can use the `getLocale` function across your codebase to read the current locale without having to worry about where it's being called from.
+
+In an internationalized app, this can for example be useful to implement a country selection page at the root where you have to rely on a default locale. Once the user is within the `[locale]` segment, this param value can be used instead for localizing page content.
+
+## Static rendering
+
+In case we know all possible values for the `[locale]` segment ahead of time, we can provide them to Next.js using the [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) function to enable static rendering:
+
+```tsx filename="src/app/[locale]/layout.tsx"
+const locales = ['en', 'de'];
+
+// Pre-render all available locales at build time
+export async function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
+
+// ...
+```
+
+In combination with [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams), we can furthermore instruct Next.js to disallow values that are encountered at runtime and do not match the values we've provided to `generateStaticParams`:
+
+```tsx filename="src/app/[locale]/layout.tsx"
+// Return a 404 for any unknown locales
+export const dynamicParams = false;
+
+// ...
+```
+
+## Leveraging `next/root-params` in `next-intl`
+
+So, how can you use this in `next-intl`?
+
+Similarly to how we've defined the `getLocale` function above, we do in fact already have a central place that is called by all server-side functions that require the current locale of the user: [`i18n/request.ts`](/docs/usage/configuration#server-client-components).
+
+So let's use `next/root-params` here:
+
+```tsx filename="src/i18n/request.ts" {7}
+import * as rootParams from 'next/root-params';
+import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
+import {routing} from './routing';
+
+export default getRequestConfig(async () => {
+  const paramValue = await rootParams.locale();
+  const locale = hasLocale(routing.locales, paramValue)
+    ? paramValue
+    : routing.defaultLocale;
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+That's it—a single change to `i18n/request.ts` is all you need to start using `next/root-params`!
+
+## Time for spring cleaning
+
+With this change, you can now simplify your codebase in various ways:
+
+### Remove a pass-through root layout
+
+For certain patterns like global 404 pages, you might have used a pass-through root layout so far:
+
+```tsx filename="src/app/layout.tsx"
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function RootLayout({children}: Props) {
+  return children;
+}
+```
+
+This needs to be removed now as otherwise this will qualify as a root layout instead of the one defined at `src/app/[locale]/layout.tsx`.
+
+Instead, you can use [`global-not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found#global-not-foundjs-experimental) for this now.
+
+### Avoid reading the `[locale]` segment
+
+Since `next-intl` provides the current locale via [`useLocale` and `getLocale`](/docs/usage/configuration#use-locale), you can seamlessly read the locale from these APIs instead of `params` now:
+
+```diff filename="src/app/[locale]/layout.tsx"
++ import {getLocale} from 'next-intl/server';
+
+type Props = {
+  children: React.ReactNode;
+-  params: {locale: string};
+};
+
+export default async function RootLayout({
+  children,
+-  params
+}: Props) {
+-  const {locale} = await params;
++  const locale = await getLocale();
+
+  return (
+    <html lang={locale}>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+Behind the scenes, if you call `useLocale` or `getLocale` in a Server Component, your `i18n/request.ts` config will be consulted, potentially using a fallback that you have defined.
+
+### Remove manual locale overrides [#locale-override]
+
+If you're using async APIs like `getTranslations`, you might have previously passed the locale manually, typically to enable static rendering in the Metadata API.
+
+Now, you can remove this and rely on the locale that is returned from `i18n/request.ts`:
+
+```diff filename="src/app/[locale]/page.tsx"
+- type Props = {
+-   params: Promise<{locale: string}>;
+- };
+
+export async function generateMetadata(
+-  {params}: Props
+) {
+-  const {locale} = await params;
+-  const t = await getTranslations({locale, namespace: 'HomePage'});
++  const t = await getTranslations('HomePage');
+
+  // ...
+}
+```
+
+The only rare case where you might still want to pass a locale to `getTranslations` is if your UI renders messages from multiple locales in parallel:
+
+```tsx
+// Use messages from the current locale
+const t = getTranslations();
+
+// Use messages from 'en', regardless of what the current user locale is
+const t = getTranslations({locale: 'en'});
+```
+
+In this case, you should make sure to accept an override in your `i18n/request.ts` config:
+
+```tsx filename="src/i18n/request.ts"
+import * as rootParams from 'next/root-params';
+import {getRequestConfig} from 'next-intl/server';
+import {hasLocale} from 'next-intl';
+import {routing} from './routing';
+
+export default getRequestConfig(async ({locale}) => {
+  // Use a locale based on these priorities:
+  // 1. An override passed to the function
+  // 2. A locale from the `[locale]` segment
+  // 3. A default locale
+  if (!locale) {
+    const paramValue = await rootParams.locale();
+    locale = hasLocale(routing.locales, paramValue)
+      ? paramValue
+      : routing.defaultLocale;
+  }
+
+  return {
+    locale
+    // ...
+  };
+});
+```
+
+This is a very rare case, so if you're unsure, you very likely don't need this.
+
+### Static rendering
+
+If you've previously used `setRequestLocale` to enable static rendering, you can now remove it:
+
+```diff filename="src/[locale]/page.tsx"
+- import {setRequestLocale} from 'next-intl/server';
+
+- type Props = {
+-   params: Promise<{locale: string}>;
+- }
+
+- export default function Page({params}: Props) {
+-   setRequestLocale(params.locale);
++ export default function Page() {
+  // ...
+}
+```
+
+Note that `generateStaticParams` is naturally still required though.
+
+### Handling unknown locales
+
+Not strictly a new feature of Next.js, but in case you're using `generateStaticParams`, the easiest way to ensure that only the locales you've defined are allowed is to configure [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams) in your root layout:
+
+```tsx filename="src/app/[locale]/layout.tsx"
+// Return a 404 for any unknown locales
+export const dynamicParams = false;
+```
+
+If you don't use `generateStaticParams`, you can still disallow unknown locales by manually calling `notFound()` based on `params` in your root layout:
+
+```tsx filename="src/app/[locale]/layout.tsx"
+import {hasLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
+
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{locale: string}>;
+};
+
+export default async function RootLayout({children, params}: Props) {
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    return notFound();
+  }
+
+  // ...
+}
+```
+
+### Custom routing setups
+
+While `next-intl` provides mechanisms like [`localePrefix`](/docs/routing/configuration#localeprefix) (and esp. [`prefixes`](/docs/routing/configuration#locale-prefix-prefixes)) that allow you to customize your [routing configuration](/docs/routing), the introduction of `next/root-params` now makes the usage of middleware optional.
+
+This in turn enables you to use a completely custom routing setup, while still being able to core APIs from `next-intl` like `useTranslations`.
+
+**Example:**
+
+```
+app/
+└── [tenant]
+      ├── layout.tsx
+      └── page.tsx
+```
+
+```tsx filename="src/i18n/request.ts"
+import * as rootParams from 'next/root-params';
+import {getRequestConfig} from 'next-intl/server';
+import {fetchTenant} from '@/services/tenant';
+
+export default getRequestConfig(async () => {
+  const tenantId = await rootParams.tenant();
+  const tenant = await fetchTenant(tenantId);
+  const locale = tenant.locale;
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+```
+
+In this case, you can consider implementing your own [middleware](/docs/routing/middleware) and [navigation APIs](/docs/routing/navigation) if relevant.
+
+## Try `next/root-params` today!
+
+If you're giving `next/root-params` a go with `next-intl`, let me know how it works for you by joining the discussion here: [Experiences with `next/root-params`](https://github.com/amannn/next-intl/discussions/1627).
+
+I'm curious to hear how it simplifies your codebase!
+
+—Jan
+
+<StayUpdated />
