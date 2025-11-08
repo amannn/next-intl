@@ -10,42 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { LinkStatus } from "./link-status";
 import { Logo } from "../assets/logo";
-
-
-const sections = [
-  {
-    title: "Translations",
-    items: [
-      { title: "Basic usage", slug: "/translations/basic" },
-      { title: "Async server components", slug: "/translations/async" },
-      { title: "ICU features", slug: "/translations/icu" },
-    ],
-  },
-  {
-    title: "Formatting",
-    items: [
-      { title: "Numbers", slug: "/formatting/numbers" },
-      { title: "Dates", slug: "/formatting/dates" },
-      { title: "Lists", slug: "/formatting/lists" },
-    ],
-  },
-  {
-    title: "Routing",
-    items: [
-      { title: "Basic routing", slug: "/routing/basic" },
-      { title: "Locale-based routing", slug: "/routing/locale" },
-    ],
-  },
-  {
-    title: "Patterns",
-    items: [
-      { title: "Locale switcher", slug: "/patterns/locale-switcher" },
-      { title: "Server Actions", slug: "/patterns/server-actions" },
-      { title: "Metadata", slug: "/patterns/metadata" },
-      { title: "Error files", slug: "/patterns/error-files" },
-    ],
-  },
-];
+import { sections } from "../assets/navigations";
 
 export function PlaygroundSidebar() {
   const [isOpen, setIsOpen] = useState(false);
