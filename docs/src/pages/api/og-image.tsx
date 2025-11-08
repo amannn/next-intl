@@ -112,7 +112,8 @@ export default async function OG(req: Request) {
               lineHeight: 1.1,
               letterSpacing: -2,
               marginRight: 12,
-              fontWeight: 500
+              fontWeight: 500,
+              color: '#55556D'
             }}
           >
             {subtitle}

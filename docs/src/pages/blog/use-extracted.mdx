@@ -1,0 +1,225 @@
+---
+title: 'useExtracted'
+subtitle: The Tailwind of i18n?
+---
+
+import StayUpdated from '@/components/StayUpdated.mdx';
+import PartnerContentLink from '@/components/PartnerContentLink';
+import BlogVideo from '@/components/BlogVideo';
+
+# useExtracted: The Tailwind of i18n?
+
+<small>Nov 7, 2025 · by Jan Amann</small>
+
+For quite some time, I used to be a Tailwind skeptic. But one day, I decided to _give it five minutes_ — and I was hooked. It's core idea is just so irresistibly pragmatic. Once you've tried it, you just can't go back.
+
+It made me wonder: "What would the Tailwind for i18n look like?"
+
+Now first of all, `next-intl` is doing very well and has recently crossed [1M weekly downloads](https://www.npmjs.com/package/next-intl) (thank you everyone!). So it seems like there are plenty of people who are quite happy with how it works today. And it's core APIs like `useTranslations` are surely here to stay.
+
+But will we continue to write code the same way tomorrow, as we do today?
+
+It seems evident that we will not. AI agents are increasingly making their way into our workflows, and innovations like Cursor and Claude Code are becoming more powerful by the day.
+
+So what makes a library suitable for AI-first development? Probably, that it was already a great option for humans in the first place. Tailwind wasn't "built for AI", it was a fantastic idea for how to make styling easy for humans. But now, it's become the default for agentic tools when it comes to styling.
+
+So what makes Tailwind _Tailwind_?
+
+## Design principles
+
+If we consider the design of Tailwind, we can see that an i18n solution that follows the same principles might look something like this:
+
+1. **Colocation**: Similar to how Tailwind avoids the need to manage separate stylesheets, there should not be a need for manually managing JSON message catalogs when adding, updating or removing messages. Message catalogs can however act as a compile target.
+2. **Local reasoning**: Generative AI is very good at Tailwind since it only requires very small context windows. Having to read entire message catalogs leads to context pollution and should therefore be avoided (at least not without tool calls).
+3. **No naming of things**: Not having to come up with names is a major productivity boost, therefore manual keys should be avoided as much as possible.
+4. **Purging**: When code is quickly changed, there shouldn't be any dead code left behind. Similar to how Tailwind can purge unused styles, we should purge unused messages automatically.
+5. **Minification**: Tailwind class names have a tiny bundle footprint. In the same way, messages should also use minified keys that ensures bundles are as small as possible.
+6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of whether it's used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
+7. **Refactoring-friendly**: Moving code across components is seamless with Tailwind, this should be the case for your messages as well.
+
+While `next-intl` has answers to some of these questions, ultimately the truth is that there's currently potential left on the table. Therefore, after [publishing an RFC](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md) about two months ago—today, I'm incredibly excited to share what I believe could be the answer to this:
+
+```tsx
+import {useExtracted} from 'next-intl';
+
+function InlineMessages() {
+  const t = useExtracted();
+  return <h1>{t('Look ma, no keys!')}</h1>;
+}
+```
+
+## `useExtracted` in action
+
+I already made you read far too much, so here's a demo to show you how it works.
+
+Let's start with an app that has `next-intl` installed, and we'll make a previously static label eligible for translation to other languages:
+
+<BlogVideo muted src="/blog/use-extracted/demo-01.mp4" />
+
+No naming of keys, no CLI to invoke, just `next dev` as you're used to.
+
+And you get an always-in-sync JSON catalog for free.
+
+## Everything you like about `useTranslations`, but without the keys
+
+If you've internationalized an app before, you know that we need to translate more than just plain strings.
+
+So let's use some ICU features:
+
+<BlogVideo muted src="/blog/use-extracted/demo-02.mp4" />
+
+Yep, TypeScript will automatically validate that you're using the `number` formatter in your messages when needed—all without additional setup. By doing this, we can ensure that `Intl.NumberFormat` will be used to turn a raw number into a readable string that uses locale-sensitive formatting.
+
+Also `t.rich` is of course supported:
+
+```tsx
+t.rich('Please refer to the <link>guidelines</link>.', {
+  link: (chunks) => <Link href="/guidelines">{chunks}</Link>
+});
+```
+
+And yes, there's also an awaitable version for Server Components and friends:
+
+```tsx filename="page.tsx"
+import {getExtracted} from 'next-intl/server';
+
+export default async function ProfilePage() {
+  const user = await fetchUser();
+  const t = await getExtracted();
+
+  return (
+    <PageLayout title={t('Hello {name}!', {name: user.name})}>
+      <UserDetails user={user} />
+    </PageLayout>
+  );
+}
+```
+
+---
+
+Ok, now let's take a step back. Components that use inline messages appear to be easy to generate for AIs, all without having to load lengthy message catalogs into its precious context window.
+
+But what about using AI to _translate_ your messages?
+
+## Context is key
+
+While providing context was always important for translators, it seems like in the AI era, doing this in an easy-to-digest way that's based on text is even more important.
+
+If you've previously used hand-crafted keys like `auth.login.title`, you already did your part to provide some context that clarifies the intent of the message.
+
+But what if our translations look like this:
+
+```json
+{
+  "0MXX5B": "Welcome back!"
+}
+```
+
+Not so easy.
+
+But again, making something easy for AIs was probably always about making it easy for humans in the first place. And we already found a solution to this—wait for it—**30 years ago**!
+
+[GNU gettext](https://en.wikipedia.org/wiki/Gettext) introduced `.po` files for message catalogs, which look like this:
+
+```po
+#. Greeting shown to user when logging back in
+#: src/app/(auth)/login/page.tsx
+msgid "0MXX5B"
+msgstr "Welcome back!"
+```
+
+Everything is there: An optional description, a filename reference, an ID and the label itself.
+
+So this is what you'll now be able to use with `next-intl` as well:
+
+<BlogVideo muted src="/blog/use-extracted/demo-03.mp4" />
+
+Note how enabling the `.po` formatter also activates a Turbopack loader that will parse your locale catalogs as plain JavaScript objects for you, making them easy to consume in your app. It's really just a compile target.
+
+That being said, if JSON is your jam, that's totally fine too. And soon, there will also be support for custom formatters that will allow you to incorporate file references and descriptions in whatever format you prefer.
+
+## Now we're ready to translate
+
+With this, we're in a much better position to get accurate and user-friendly translations.
+
+So first of all, let's add a new locale:
+
+<BlogVideo muted src="/blog/use-extracted/demo-04.mp4" />
+
+Nope, the video wasn't cut. Neither was there a paste from the clipboard. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
+
+So from here, you can start translating your messages however you want, either with an editor, or in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
+
+<BlogVideo muted src="/blog/use-extracted/demo-05.mp4" />
+
+More on this in the [localization management docs](/docs/workflows/localization-management).
+
+## What sorcery is this?
+
+Behind the scenes, `useExtracted` integrates with Next.js at two touch points:
+
+**1. Turbopack loader for extration**
+
+The core piece is a loader that will be called for source files containing `useExtracted` calls.
+
+Note that only Next.js 16+ is supported, since it introduced an optimization for Turbopack that allows to peak inside files to check if they even use the `useExtracted` hook before actually processing the file.
+
+If `useExtracted` is found, then SWC—the Rust-based compiler that powers Next.js—will parse the file, followed by a JavaScript transformer that will compile the file to a `useTranslations` call:
+
+```tsx
+import {useTranslations} from 'next-intl';
+
+function InlineMessages() {
+  const t = useTranslations();
+
+  // Pick up the minified key
+  return <h1>{t('dPSc42')}</h1>;
+}
+```
+
+Additionally, in case there are changes to the messages previously known for this file, the loader will also emit an updated messages catalog for your source locale, and also your target locales will be kept in sync. By doing this, Turbopack HMR will reflect the changes instantly in your running app.
+
+If no messages were changed as part of a save, the extraction part will be skipped altogether.
+
+**2. Turbopack loader for catalogs**
+
+To support catalog formats like `.po` (and custom ones in the future), a second Turbopack loader will be enabled that efficiently reads your catalogs and returns them as plain JavaScript objects:
+
+```tsx filename="i18n/request.ts"
+import {getRequestConfig} from 'next-intl/server';
+
+export default getRequestConfig(async () => {
+  const locale = 'en';
+
+  // E.g. `{"NhX4DJ": "Hello"}`
+  const messages = (await import(`../../messages/${locale}.po`)).default;
+
+  // ...
+});
+```
+
+Oh and yes, Webpack is also supported.
+
+## Ready to try it?
+
+I could probably go on, e.g. about how `useExtracted` also works out-of-the-box in test environments without any compilation at all, but I think I've already made my point.
+
+If you're excited about this as well, I'd really love to hear your feedback.
+
+Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and share your [feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental, so changes should be expected.
+
+Also, it's worth mentioning again that the `useTranslations` API that you might be using today is not going anywhere. If you're already happy with it, then by all means keep using it. Personally, I think `useExtracted` has a lot of potential, but only time will tell if this is true.
+
+As the feature stabilizes, you'll of course be the first to hear about best practices and in-depth tutorials if you're a member of 🌐 [learn.next-intl.dev](https://learn.next-intl.dev).
+
+— Jan
+
+PS: A special thank you goes to projects & companies like [gettext](https://en.wikipedia.org/wiki/Gettext), [Lingui](https://lingui.dev/), [FormatJS](https://formatjs.github.io/), [Wordpress](https://www.npmjs.com/package/@wordpress/i18n), and [Zendesk](https://www.youtube.com/watch?v=fUQAXo2DayQ) for their pioneering work in the space of message extraction. I'd also like to thank [Jan Nicklas](https://x.com/jantimon) for his work on [`next-yak`](https://github.com/DigitecGalaxus/next-yak), pushing the boundaries of Turbopack and sharing his insights.
+
+**Further reading:**
+
+- [Message extraction docs](/docs/usage/extraction)
+- [Next.js plugin docs](/docs/usage/plugin)
+- [RFC: Message extraction](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md)
+
+<StayUpdated />

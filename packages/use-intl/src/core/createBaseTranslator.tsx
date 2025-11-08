@@ -13,7 +13,7 @@ import type {
   TranslationValues
 } from './TranslationValues.js';
 import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
-import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
+import {defaultGetMessageFallback} from './defaults.js';
 import {
   type Formatters,
   type IntlCache,
@@ -106,8 +106,7 @@ function prepareTranslationValues(values: RichTranslationValues) {
 function getMessagesOrError<Messages extends AbstractIntlMessages>(
   locale: Locale,
   messages?: Messages,
-  namespace?: string,
-  onError: (error: IntlError) => void = defaultOnError
+  namespace?: string
 ) {
   try {
     if (!messages) {
@@ -137,7 +136,6 @@ function getMessagesOrError<Messages extends AbstractIntlMessages>(
       IntlErrorCode.MISSING_MESSAGE,
       (error as Error).message
     );
-    onError(intlError);
     return intlError;
   }
 }
@@ -170,8 +168,7 @@ export default function createBaseTranslator<
   const messagesOrError = getMessagesOrError(
     config.locale,
     config.messages,
-    config.namespace,
-    config.onError
+    config.namespace
   ) as Messages | IntlError;
 
   return createBaseTranslatorImpl<Messages, NestedKey>({
@@ -199,11 +196,12 @@ function createBaseTranslatorImpl<
   function getFallbackFromErrorAndNotify(
     key: string,
     code: IntlErrorCode,
-    message?: string
+    message?: string,
+    fallback?: string
   ) {
     const error = new IntlError(code, message);
     onError(error);
-    return getMessageFallback({error, key, namespace});
+    return fallback ?? getMessageFallback({error, key, namespace});
   }
 
   function translateBaseFn(
@@ -212,27 +210,40 @@ function createBaseTranslatorImpl<
     /** Key value pairs for values to interpolate into the message. */
     values?: RichTranslationValues,
     /** Provide custom formats for numbers, dates and times. */
-    formats?: Formats
+    formats?: Formats,
+    _fallback?: never
   ): ReactNode {
-    if (hasMessagesError) {
-      // We have already warned about this during render
-      return getMessageFallback({
-        error: messagesOrError,
-        key,
-        namespace
-      });
-    }
-    const messages = messagesOrError;
+    const fallback = _fallback as string | undefined;
 
     let message;
-    try {
-      message = resolvePath(locale, messages, key, namespace);
-    } catch (error) {
-      return getFallbackFromErrorAndNotify(
-        key,
-        IntlErrorCode.MISSING_MESSAGE,
-        (error as Error).message
-      );
+    if (hasMessagesError) {
+      if (fallback) {
+        message = fallback;
+      } else {
+        onError(messagesOrError);
+        return getMessageFallback({
+          error: messagesOrError,
+          key,
+          namespace
+        });
+      }
+    } else {
+      const messages = messagesOrError;
+
+      try {
+        message = resolvePath(locale, messages, key, namespace);
+      } catch (error) {
+        if (fallback) {
+          message = fallback;
+        } else {
+          return getFallbackFromErrorAndNotify(
+            key,
+            IntlErrorCode.MISSING_MESSAGE,
+            (error as Error).message,
+            fallback
+          );
+        }
+      }
     }
 
     if (typeof message === 'object') {
@@ -298,7 +309,8 @@ function createBaseTranslatorImpl<
               ('originalMessage' in thrownError
                 ? ` (${thrownError.originalMessage})`
                 : '')
-          : thrownError.message
+          : thrownError.message,
+        fallback
       );
     }
 
@@ -332,7 +344,8 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.FORMATTING_ERROR,
-        (error as Error).message
+        (error as Error).message,
+        fallback
       );
     }
   }
@@ -347,10 +360,11 @@ function createBaseTranslatorImpl<
     key: TargetKey,
     /** Key value pairs for values to interpolate into the message. */
     values?: TranslationValues,
-    /** Provide custom formats for numbers, dates and times. */
-    formats?: Formats
+    /** Custom formats for numbers, dates and times. */
+    formats?: Formats,
+    _fallback?: never
   ): string {
-    const result = translateBaseFn(key, values, formats);
+    const result = translateBaseFn(key, values, formats, _fallback);
 
     if (typeof result !== 'string') {
       return getFallbackFromErrorAndNotify(
@@ -374,14 +388,16 @@ function createBaseTranslatorImpl<
     key: Parameters<typeof translateBaseFn>[0],
     /** Key value pairs for values to interpolate into the message. */
     values: MarkupTranslationValues,
-    formats?: Parameters<typeof translateBaseFn>[2]
+    formats?: Parameters<typeof translateBaseFn>[2],
+    _fallback?: never
   ): string => {
     const result = translateBaseFn(
       key,
       // @ts-expect-error -- `MarkupTranslationValues` is practically a sub type
       // of `RichTranslationValues` but TypeScript isn't smart enough here.
       values,
-      formats
+      formats,
+      _fallback
     );
 
     if (process.env.NODE_ENV !== 'production' && typeof result !== 'string') {
@@ -402,7 +418,7 @@ function createBaseTranslatorImpl<
     key: string
   ): any => {
     if (hasMessagesError) {
-      // We have already warned about this during render
+      onError(messagesOrError);
       return getMessageFallback({
         error: messagesOrError,
         key,
