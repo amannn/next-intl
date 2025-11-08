@@ -14,15 +14,24 @@ function runOnce(fn: () => void) {
 export default function createMessagesDeclaration(
   messagesPaths: Array<string>
 ) {
-  const shouldRun = [
-    'dev',
-    'build',
-    'typegen'
-    // Note: The 'lint' task doesn't consult the
-    // Next.js config, so we can't detect it here.
-  ].some((arg) => process.argv.includes(arg));
+  // Instead of running _only_ in certain cases, it's
+  // safer to _avoid_ running for certain known cases.
+  // https://github.com/amannn/next-intl/issues/2006
+  const shouldBailOut = [
+    'info',
+    'start'
 
-  if (!shouldRun) {
+    // Note: These commands don't consult the
+    // Next.js config, so we can't detect them here.
+    // - telemetry
+    // - lint
+    //
+    // What remains are:
+    // - dev
+    // - build
+    // - typegen
+  ].some((arg) => process.argv.includes(arg));
+  if (shouldBailOut) {
     return;
   }
 

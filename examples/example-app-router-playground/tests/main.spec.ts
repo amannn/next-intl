@@ -469,15 +469,15 @@ it('can navigate between sibling pages that share a parent layout', async ({
 
 it('prefixes routes as necessary with the router', async ({page}) => {
   await page.goto('/');
-  page.getByTestId('ClientRouterWithoutProvider-link').click();
+  page.getByTestId('ClientRouter-link').click();
   await expect(page).toHaveURL('/nested');
 
   await page.goto('/en');
-  page.getByTestId('ClientRouterWithoutProvider-link').click();
+  page.getByTestId('ClientRouter-link').click();
   await expect(page).toHaveURL('/nested');
 
   await page.goto('/de');
-  page.getByTestId('ClientRouterWithoutProvider-link').click();
+  page.getByTestId('ClientRouter-link').click();
   await expect(page).toHaveURL('/de/verschachtelt');
 });
 

@@ -199,7 +199,7 @@ While the `requestLocale` parameter typically corresponds to the `[locale]` segm
 
 1. **Overrides**: When an explicit `locale` is passed to [awaitable functions](/docs/environments/actions-metadata-route-handlers) like `getTranslations({locale: 'en'})`, then this value will be used instead of the segment.
 1. **`undefined`**: The value can be `undefined` when a page outside of the `[locale]` segment renders (e.g. a language selection page at `app/page.tsx`).
-1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the[root layout](/docs/routing/setup#layout) to abort the render in this case.
+1. **Invalid values**: Since the `[locale]` segment effectively acts like a catch-all for unknown routes (e.g. `/unknown.txt`), invalid values should be replaced with a valid locale. In addition to this, you might want to call `notFound()` in the [root layout](/docs/routing/setup#layout) to abort the render in this case.
 
 </Details>
 
@@ -344,7 +344,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-After messages are configured, they can be used via [`useTranslations`](/docs/usage/messages#rendering-messages-with-usetranslations).
+After messages are configured, they can be used via [`useTranslations`](/docs/usage/translations#rendering-messages-with-usetranslations).
 
 Since `getRequestConfig` can execute arbitrary code, you can also:
 

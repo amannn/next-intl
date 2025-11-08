@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.3.12 (2025-10-09)
+
+### Bug Fixes
+
+* Use correct return type for `getTimeZone` ([#2053](https://github.com/amannn/next-intl/issues/2053)) ([bdc2af4](https://github.com/amannn/next-intl/commit/bdc2af450e0cefa4bd88c5b1584ec24d25421c14)), closes [#2052](https://github.com/amannn/next-intl/issues/2052) – by @amannn
+
+## 4.3.11 (2025-10-07)
+
+### Bug Fixes
+
+* Only call `NextResponse.rewrite` if really necessary ([#2051](https://github.com/amannn/next-intl/issues/2051)) ([43ed4aa](https://github.com/amannn/next-intl/commit/43ed4aa791bb8c1aa9ea941a9017b322b6bc9f82)) – by @amannn
+
+## 4.3.10 (2025-10-07)
+
+### Bug Fixes
+
+* Bump `@types/react` version ([#2050](https://github.com/amannn/next-intl/issues/2050)) ([c1e997e](https://github.com/amannn/next-intl/commit/c1e997e66c590fe6ccd24dd0884a0cb4048469df)), closes [#2044](https://github.com/amannn/next-intl/issues/2044) [#2044](https://github.com/amannn/next-intl/issues/2044) – by @amannn
+
+## 4.3.9 (2025-09-15)
+
+### Bug Fixes
+
+* Prefix pathnames when switching with `useRouter` to another locale ([#2021](https://github.com/amannn/next-intl/issues/2021)) ([c82d0af](https://github.com/amannn/next-intl/commit/c82d0af59461f0309150fbe7a9919ce72d4d76e0)), closes [#2020](https://github.com/amannn/next-intl/issues/2020) – by @amannn
+
+## 4.3.8 (2025-09-12)
+
+### Bug Fixes
+
+* Avoid double-encoding of already encoded params ([#2017](https://github.com/amannn/next-intl/issues/2017)) ([31265b4](https://github.com/amannn/next-intl/commit/31265b4a4d670c750eae3a7a7b2b9bc85c259577)), closes [#2014](https://github.com/amannn/next-intl/issues/2014) – by @amannn
+
+## 4.3.7 (2025-09-09)
+
+### Bug Fixes
+
+* Avoid `usePathname` inconsistency in Next.js leading to a hydration error with custom prefixes, `localePrefix: 'always'` and static rendering ([#2012](https://github.com/amannn/next-intl/issues/2012)) ([bc9cb62](https://github.com/amannn/next-intl/commit/bc9cb624df28577d5d5d3a7e3e821a9f4b8fa2bb)), closes [#2011](https://github.com/amannn/next-intl/issues/2011) [vercel/next.js#73085](https://github.com/vercel/next.js/issues/73085) [#1571](https://github.com/amannn/next-intl/issues/1571) – by @hugotiger
+
+## 4.3.6 (2025-09-04)
+
+### Bug Fixes
+
+* Ensure messages declaration continues working in `next dev` for upcoming `next@15.5.1` ([#2008](https://github.com/amannn/next-intl/issues/2008)) ([2bf09ec](https://github.com/amannn/next-intl/commit/2bf09ecefbfe6f3eb57a166d257c4a0cc11724c6)) – by @amannn
+
 ## 4.3.5 (2025-08-21)
 
 ### Bug Fixes
