@@ -142,6 +142,13 @@ export default {
         <meta content="#da532c" name="msapplication-TileColor" />
         <meta content="#ffffff" name="theme-color" />
 
+        <link
+          href="/feed.xml"
+          rel="alternate"
+          title="next-intl Blog RSS Feed"
+          type="application/rss+xml"
+        />
+
         <meta content="jamannnnnn" name="twitter:site" />
         <meta content="summary_large_image" name="twitter:card" />
       </>
