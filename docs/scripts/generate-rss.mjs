@@ -1,17 +1,23 @@
 import {readFileSync, writeFileSync} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import config from '../src/config.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Site configuration
-const SITE_URL = 'https://next-intl.dev';
+const SITE_URL = config.baseUrl;
 const FEED_URL = `${SITE_URL}/feed.xml`;
 const TITLE = 'next-intl Blog';
-const DESCRIPTION = 'Updates, guides, and insights about internationalization (i18n) in Next.js with next-intl';
+const DESCRIPTION = 'Updates, guides, and insights about internationalization in Next.js';
 const LANGUAGE = 'en';
-const IMAGE_URL = `${SITE_URL}/og-image.png`;
+const IMAGE_URL = `${SITE_URL}/api/og-image?params=${encodeURIComponent(
+  JSON.stringify({
+    title: 'Blog',
+    subtitle: DESCRIPTION
+  })
+)}`
 
 function parseBlogPostLinks(mdx) {
   const results = [];
