@@ -12,6 +12,9 @@ export default class SourceFileScanner {
     for (const entry of entries) {
       const entryPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
+        if (!SourceFileFilter.shouldEnterDirectory(entryPath, srcPaths)) {
+          continue;
+        }
         await SourceFileScanner.walkSourceFiles(entryPath, srcPaths, acc);
       } else {
         if (SourceFileFilter.isSourceFile(entry.name)) {

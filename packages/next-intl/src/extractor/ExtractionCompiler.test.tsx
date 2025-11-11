@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
+import SourceFileScanner from './source/SourceFileScanner.js';
 
 const filesystem: {
   project: {
@@ -17,8 +18,11 @@ const filesystem: {
 
 describe('json format', () => {
   beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
+    filesystem.project = {
+      src: {},
+      messages: {}
+    };
+    delete (filesystem as Record<string, unknown>).ui;
     fileTimestamps.clear();
     watchCallbacks.clear();
     mockWatchers.clear();
@@ -693,8 +697,11 @@ describe('json format', () => {
 
 describe('po format', () => {
   beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
+    filesystem.project = {
+      src: {},
+      messages: {}
+    };
+    delete (filesystem as Record<string, unknown>).ui;
     fileTimestamps.clear();
     watchCallbacks.clear();
     mockWatchers.clear();
@@ -1149,6 +1156,86 @@ msgstr "Hallo!"
         ],
       ]
     `);
+  });
+});
+
+describe('SourceFileScanner filtering', () => {
+  beforeEach(() => {
+    filesystem.project = {
+      src: {},
+      messages: {}
+    };
+    delete (filesystem as Record<string, unknown>).ui;
+    fileTimestamps.clear();
+    watchCallbacks.clear();
+    mockWatchers.clear();
+    vi.clearAllMocks();
+  });
+
+  it('skips node_modules unless requested', async () => {
+    (filesystem.project.src as Record<string, string>)['App.tsx'] =
+      'export default 1;';
+    (filesystem.project as Record<string, unknown>).node_modules = {
+      '@acme': {
+        'design-system': {
+          'Button.tsx': 'export default 1;'
+        }
+      }
+    };
+
+    const files = await SourceFileScanner.getSourceFiles([path.join('/project')]);
+
+    expect(files).toContain(path.join('/project', 'src', 'App.tsx'));
+    expect(files).not.toContain(
+      path.join(
+        '/project',
+        'node_modules',
+        '@acme',
+        'design-system',
+        'Button.tsx'
+      )
+    );
+  });
+
+  it('includes explicit node_modules paths', async () => {
+    const designSystemDir = path.join(
+      '/project',
+      'node_modules',
+      '@acme',
+      'design-system'
+    );
+    (filesystem.project as Record<string, unknown>).node_modules = {
+      '@acme': {
+        'design-system': {
+          'Button.tsx': 'export default 1;'
+        }
+      }
+    };
+
+    const files = await SourceFileScanner.getSourceFiles([designSystemDir]);
+
+    expect(files).toEqual([path.join(designSystemDir, 'Button.tsx')]);
+  });
+
+  it('skips node_modules in external directories', async () => {
+    const externalRoot = '/ui';
+    (filesystem as Record<string, unknown>).ui = {
+      'index.tsx': 'export default 1;',
+      node_modules: {
+        '@scope': {
+          'Widget.tsx': 'export default 1;'
+        }
+      }
+    };
+
+    const files = await SourceFileScanner.getSourceFiles([
+      path.join('/project', '../ui')
+    ]);
+
+    expect(files).toContain(path.join(externalRoot, 'index.tsx'));
+    expect(files).not.toContain(
+      path.join(externalRoot, 'node_modules', '@scope', 'Widget.tsx')
+    );
   });
 });
 
