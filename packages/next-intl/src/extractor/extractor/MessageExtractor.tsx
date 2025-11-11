@@ -46,32 +46,32 @@ export default class MessageExtractor {
 
   async processFileContent(
     absoluteFilePath: string,
-    code: string
+    source: string
   ): Promise<{
     messages: Array<StrictExtractedMessage>;
     code: string;
     map?: string;
   }> {
-    const cacheKey = code;
+    const cacheKey = source;
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 
     // Shortcut parsing if hook is not used. The Turbopack integration already
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
-    if (!code.includes('useExtracted') && !code.includes('getExtracted')) {
-      return {messages: [], code};
+    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
+      return {messages: [], code: source};
     }
 
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
     const processResult = await this.processWithTransform(
-      code,
+      source,
       absoluteFilePath,
       relativeFilePath
     );
 
     const finalResult = (
-      processResult.code ? processResult : {...processResult, code}
+      processResult.code ? processResult : {...processResult, code: source}
     ) as {
       messages: Array<StrictExtractedMessage>;
       code: string;
@@ -83,7 +83,7 @@ export default class MessageExtractor {
   }
 
   private async processWithTransform(
-    code: string,
+    source: string,
     absoluteFilePath: string,
     filePath: string
   ): Promise<{
@@ -92,7 +92,7 @@ export default class MessageExtractor {
     map?: string;
   }> {
     // First parse the AST
-    const ast = await parse(code, {
+    const ast = await parse(source, {
       syntax: 'typescript',
       tsx: true,
       target: 'es2022',
