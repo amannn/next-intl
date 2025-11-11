@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.5.1 (2025-11-11)
+
+### Bug Fixes
+
+* Avoid partial matches in overlapping localized pathnames ([#2090](https://github.com/amannn/next-intl/issues/2090)) ([c276c80](https://github.com/amannn/next-intl/commit/c276c807b433288c995755f000e69db240f8f80f)), closes [#2089](https://github.com/amannn/next-intl/issues/2089) [#2089](https://github.com/amannn/next-intl/issues/2089) – by @amannn
+
 ## 4.5.0 (2025-11-07)
 
 ### Features
