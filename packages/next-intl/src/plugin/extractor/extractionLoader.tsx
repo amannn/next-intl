@@ -10,7 +10,7 @@ let compiler: ExtractionCompiler | undefined;
 
 export default function extractionLoader(
   this: TurbopackLoaderContext<ExtractorConfig>,
-  source: string
+  code: string
 ) {
   const options = this.getOptions();
   const callback = this.async();
@@ -25,9 +25,9 @@ export default function extractionLoader(
   }
 
   compiler
-    .compile(this.resourcePath, source)
+    .compile(this.resourcePath, code)
     .then((result) => {
-      callback(null, result.source, result.map);
+      callback(null, result.code, result.map);
     })
     .catch(callback);
 }

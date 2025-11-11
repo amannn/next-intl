@@ -23,13 +23,13 @@ export default class ExtractionCompiler implements Disposable {
     this.initialScanPromise = this.performInitialScan();
   }
 
-  public async compile(resourcePath: string, source: string) {
+  public async compile(resourcePath: string, code: string) {
     if (this.initialScanPromise) {
       await this.initialScanPromise;
       this.initialScanPromise = undefined;
     }
 
-    const result = await this.manager.extractFileMessages(resourcePath, source);
+    const result = await this.manager.extractFileMessages(resourcePath, code);
 
     if (this.isDevelopment && result.changed) {
       // While we await the AST modification, we

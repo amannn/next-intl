@@ -37,6 +37,12 @@ it('can extract a simple message', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("+YJVTi", undefined, undefined, "Hey!");
+    }
+    ",
       "messages": [
         {
           "id": "+YJVTi",
@@ -48,12 +54,6 @@ it('can extract a simple message', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
-    }
-    ",
     }
   `);
 });
@@ -72,6 +72,12 @@ it('can extract a message with a let variable', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        let t = useTranslations();
+        t("+YJVTi", undefined, undefined, "Hey!");
+    }
+    ",
       "messages": [
         {
           "id": "+YJVTi",
@@ -83,12 +89,6 @@ it('can extract a message with a let variable', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        let t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
-    }
-    ",
     }
   `);
 });
@@ -107,6 +107,12 @@ it('can extract a message with a renamed variable', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const translate = useTranslations();
+        translate("OpKKos", undefined, undefined, "Hello!");
+    }
+    ",
       "messages": [
         {
           "id": "OpKKos",
@@ -118,12 +124,6 @@ it('can extract a message with a renamed variable', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const translate = useTranslations();
-        translate("OpKKos", undefined, undefined, "Hello!");
-    }
-    ",
     }
   `);
 });
@@ -144,6 +144,14 @@ it('can extract a message with different quotes', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("OpKKos", undefined, undefined, "Hello!");
+        t("+YJVTi", undefined, undefined, "Hey!");
+        t("nm/7yQ", undefined, undefined, "Hi!");
+    }
+    ",
       "messages": [
         {
           "id": "OpKKos",
@@ -173,14 +181,6 @@ it('can extract a message with different quotes', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("OpKKos", undefined, undefined, "Hello!");
-        t("+YJVTi", undefined, undefined, "Hey!");
-        t("nm/7yQ", undefined, undefined, "Hi!");
-    }
-    ",
     }
   `);
 });
@@ -201,6 +201,14 @@ it('can extract a message with useTranslations already present', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations, useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        const t2 = useTranslations();
+        t("piskIR", undefined, undefined, "Hello from extracted!");
+        t2("greeting");
+    }
+    ",
       "messages": [
         {
           "id": "piskIR",
@@ -212,14 +220,6 @@ it('can extract a message with useTranslations already present', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations, useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        const t2 = useTranslations();
-        t("piskIR", undefined, undefined, "Hello from extracted!");
-        t2("greeting");
-    }
-    ",
     }
   `);
 });
@@ -241,6 +241,14 @@ it('can extract a message with t out of scope', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("+YJVTi", undefined, undefined, "Hey!");
+    }
+    const t = (msg)=>msg;
+    t("Should not be transformed");
+    ",
       "messages": [
         {
           "id": "+YJVTi",
@@ -252,14 +260,6 @@ it('can extract a message with t out of scope', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
-    }
-    const t = (msg)=>msg;
-    t("Should not be transformed");
-    ",
     }
   `);
 });
@@ -292,6 +292,22 @@ it('can extract messages from an event handler and JSX', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useState } from 'react';
+    import { useTranslations } from 'next-intl';
+    function Component() {
+        const [notification, setNotification] = useState();
+        const t = useTranslations();
+        function onClick() {
+            setNotification(t("+1F2If", undefined, undefined, "Successfully sent!"));
+        }
+        return (<div>
+              <button onClick={onClick}>
+                {t("9WRlF4", undefined, undefined, "Send")}
+              </button>
+              {notification}
+            </div>);
+    }
+    ",
       "messages": [
         {
           "id": "+1F2If",
@@ -312,22 +328,6 @@ it('can extract messages from an event handler and JSX', async () => {
           ],
         },
       ],
-      "source": "import { useState } from 'react';
-    import { useTranslations } from 'next-intl';
-    function Component() {
-        const [notification, setNotification] = useState();
-        const t = useTranslations();
-        function onClick() {
-            setNotification(t("+1F2If", undefined, undefined, "Successfully sent!"));
-        }
-        return (<div>
-              <button onClick={onClick}>
-                {t("9WRlF4", undefined, undefined, "Send")}
-              </button>
-              {notification}
-            </div>);
-    }
-    ",
     }
   `);
 });
@@ -346,6 +346,12 @@ it('can extract a message with a renamed hook', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("+YJVTi", undefined, undefined, "Hey!");
+    }
+    ",
       "messages": [
         {
           "id": "+YJVTi",
@@ -357,12 +363,6 @@ it('can extract a message with a renamed hook', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
-    }
-    ",
     }
   `);
 });
@@ -381,6 +381,14 @@ it('supports passing values', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("tBFOH1", {
+            name: 'Alice'
+        }, undefined, "Hello, {name}!");
+    }
+    ",
       "messages": [
         {
           "id": "tBFOH1",
@@ -392,14 +400,6 @@ it('supports passing values', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("tBFOH1", {
-            name: 'Alice'
-        }, undefined, "Hello, {name}!");
-    }
-    ",
     }
   `);
 });
@@ -418,18 +418,7 @@ it('supports passing an inline date formatter', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
-      "messages": [
-        {
-          "id": "5n+ZPU",
-          "message": "{date, date, short}!",
-          "references": [
-            {
-              "path": "test.tsx",
-            },
-          ],
-        },
-      ],
-      "source": "import { useTranslations } from 'next-intl';
+      "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
         t("5n+ZPU", {
@@ -441,6 +430,17 @@ it('supports passing an inline date formatter', async () => {
         }, "{date, date, short}!");
     }
     ",
+      "messages": [
+        {
+          "id": "5n+ZPU",
+          "message": "{date, date, short}!",
+          "references": [
+            {
+              "path": "test.tsx",
+            },
+          ],
+        },
+      ],
     }
   `);
 });
@@ -459,6 +459,14 @@ it('supports t.rich', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t.rich("C+nN8a", {
+            b: (chunks)=><b>{chunks}</b>
+        }, undefined, "Hello <b>Alice</b>!");
+    }
+    ",
       "messages": [
         {
           "id": "C+nN8a",
@@ -470,14 +478,6 @@ it('supports t.rich', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t.rich("C+nN8a", {
-            b: (chunks)=><b>{chunks}</b>
-        }, undefined, "Hello <b>Alice</b>!");
-    }
-    ",
     }
   `);
 });
@@ -496,6 +496,14 @@ it('supports t.markup', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t.markup("C+nN8a", {
+            b: (chunks)=>\`<b>\${chunks}</b>\`
+        }, undefined, "Hello <b>Alice</b>!");
+    }
+    ",
       "messages": [
         {
           "id": "C+nN8a",
@@ -507,14 +515,6 @@ it('supports t.markup', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t.markup("C+nN8a", {
-            b: (chunks)=>\`<b>\${chunks}</b>\`
-        }, undefined, "Hello <b>Alice</b>!");
-    }
-    ",
     }
   `);
 });
@@ -533,6 +533,12 @@ it('supports t.has', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t.has("0KGiQf");
+    }
+    ",
       "messages": [
         {
           "id": "0KGiQf",
@@ -544,12 +550,6 @@ it('supports t.has', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t.has("0KGiQf");
-    }
-    ",
     }
   `);
 });
@@ -568,6 +568,12 @@ it('can extract with a namespace', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations('ui');
+        t("OpKKos", undefined, undefined, "Hello!");
+    }
+    ",
       "messages": [
         {
           "id": "ui.OpKKos",
@@ -579,12 +585,6 @@ it('can extract with a namespace', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations('ui');
-        t("OpKKos", undefined, undefined, "Hello!");
-    }
-    ",
     }
   `);
 });
@@ -609,17 +609,17 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component() {
-            const t = useTranslations();
-            const name = 'Alice';
-            t(\`Hello \${name}!\`);
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          const name = 'Alice';
+          t(\`Hello \${name}!\`);
+      }
+      ",
+        "messages": [],
+      }
+    `);
 
     // Note: We still transform to `useTranslations`, so that other potential
     // calls to `useExtracted` remain not affected. The user should
@@ -647,17 +647,17 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component() {
-            const t = useTranslations();
-            const name = 'Alice';
-            t('Hello ' + name + '!');
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          const name = 'Alice';
+          t('Hello ' + name + '!');
+      }
+      ",
+        "messages": [],
+      }
+    `);
     expect(warn).toHaveBeenCalledWith(
       'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
@@ -676,16 +676,16 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component({ isAdmin }) {
-            const t = useTranslations();
-            t(isAdmin ? 'Admin panel' : 'User panel');
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component({ isAdmin }) {
+          const t = useTranslations();
+          t(isAdmin ? 'Admin panel' : 'User panel');
+      }
+      ",
+        "messages": [],
+      }
+    `);
     expect(warn).toHaveBeenCalledWith(
       'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
@@ -705,17 +705,17 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component() {
-            const t = useTranslations();
-            const message = 'Hello world';
-            t(message);
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          const message = 'Hello world';
+          t(message);
+      }
+      ",
+        "messages": [],
+      }
+    `);
     expect(warn).toHaveBeenCalledWith(
       'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
@@ -734,16 +734,16 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component() {
-            const t = useTranslations();
-            t(getMessage());
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t(getMessage());
+      }
+      ",
+        "messages": [],
+      }
+    `);
     expect(warn).toHaveBeenCalledWith(
       'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
@@ -762,19 +762,19 @@ describe('error handling', () => {
     `
       )
     ).toMatchInlineSnapshot(`
-        {
-          "messages": [],
-          "source": "import { useTranslations } from 'next-intl';
-        function Component() {
-            const t = useTranslations();
-            t({
-                id: 'test',
-                message: getMessage()
-            });
-        }
-        ",
-        }
-      `);
+      {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t({
+              id: 'test',
+              message: getMessage()
+          });
+      }
+      ",
+        "messages": [],
+      }
+    `);
     expect(warn).toHaveBeenCalledWith(
       'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
@@ -800,6 +800,12 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("greeting", undefined, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -811,12 +817,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -835,6 +835,12 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("greeting", undefined, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -846,12 +852,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -870,6 +870,12 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("greeting", undefined, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -881,12 +887,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -905,6 +905,14 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t("greeting", {
+              name: 'Alice'
+          }, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -916,14 +924,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t("greeting", {
-              name: 'Alice'
-          }, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -947,18 +947,7 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
-        "messages": [
-          {
-            "id": "greeting",
-            "message": "Hello!",
-            "references": [
-              {
-                "path": "test.tsx",
-              },
-            ],
-          },
-        ],
-        "source": "import { useTranslations } from 'next-intl';
+        "code": "import { useTranslations } from 'next-intl';
       function Component() {
           const t = useTranslations();
           t("greeting", {
@@ -970,6 +959,17 @@ describe('object syntax', () => {
           }, "Hello!");
       }
       ",
+        "messages": [
+          {
+            "id": "greeting",
+            "message": "Hello!",
+            "references": [
+              {
+                "path": "test.tsx",
+              },
+            ],
+          },
+        ],
       }
     `);
   });
@@ -992,6 +992,14 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t.rich("greeting", {
+              b: (chunks)=><b>{chunks}</b>
+          }, undefined, "Hello <b>Alice</b>!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -1003,14 +1011,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t.rich("greeting", {
-              b: (chunks)=><b>{chunks}</b>
-          }, undefined, "Hello <b>Alice</b>!");
-      }
-      ",
       }
     `);
   });
@@ -1029,6 +1029,14 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations();
+          t.markup("C+nN8a", {
+              b: (chunks)=>\`<b>\${chunks}</b>\`
+          }, undefined, "Hello <b>Alice</b>!");
+      }
+      ",
         "messages": [
           {
             "id": "C+nN8a",
@@ -1040,14 +1048,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t.markup("C+nN8a", {
-              b: (chunks)=>\`<b>\${chunks}</b>\`
-          }, undefined, "Hello <b>Alice</b>!");
-      }
-      ",
       }
     `);
   });
@@ -1066,6 +1066,12 @@ describe('object syntax', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { useTranslations } from 'next-intl';
+      function Component() {
+          const t = useTranslations('ui');
+          t("greeting", undefined, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "ui.greeting",
@@ -1077,12 +1083,6 @@ describe('object syntax', () => {
             ],
           },
         ],
-        "source": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations('ui');
-          t("greeting", undefined, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -1103,6 +1103,12 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const t = await getTranslations();
+          t("0KGiQf", undefined, undefined, "Hello there!");
+      }
+      ",
         "messages": [
           {
             "id": "0KGiQf",
@@ -1114,12 +1120,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const t = await getTranslations();
-          t("0KGiQf", undefined, undefined, "Hello there!");
-      }
-      ",
       }
     `);
   });
@@ -1138,6 +1138,12 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const translate = await getTranslations();
+          translate("0KGiQf", undefined, undefined, "Hello there!");
+      }
+      ",
         "messages": [
           {
             "id": "0KGiQf",
@@ -1149,12 +1155,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const translate = await getTranslations();
-          translate("0KGiQf", undefined, undefined, "Hello there!");
-      }
-      ",
       }
     `);
   });
@@ -1173,6 +1173,14 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const t = await getTranslations({
+              locale: 'en'
+          });
+          t("0KGiQf", undefined, undefined, "Hello there!");
+      }
+      ",
         "messages": [
           {
             "id": "0KGiQf",
@@ -1184,14 +1192,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const t = await getTranslations({
-              locale: 'en'
-          });
-          t("0KGiQf", undefined, undefined, "Hello there!");
-      }
-      ",
       }
     `);
   });
@@ -1210,6 +1210,15 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const t = await getTranslations({
+              locale: 'en',
+              namespace: 'ui'
+          });
+          t("0KGiQf", undefined, undefined, "Hello there!");
+      }
+      ",
         "messages": [
           {
             "id": "ui.0KGiQf",
@@ -1221,15 +1230,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const t = await getTranslations({
-              locale: 'en',
-              namespace: 'ui'
-          });
-          t("0KGiQf", undefined, undefined, "Hello there!");
-      }
-      ",
       }
     `);
   });
@@ -1252,6 +1252,14 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const t = await getTranslations();
+          t("greeting", {
+              name: 'Alice'
+          }, undefined, "Hello {name}!");
+      }
+      ",
         "messages": [
           {
             "id": "greeting",
@@ -1263,14 +1271,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const t = await getTranslations();
-          t("greeting", {
-              name: 'Alice'
-          }, undefined, "Hello {name}!");
-      }
-      ",
       }
     `);
   });
@@ -1289,6 +1289,12 @@ describe('getExtracted', () => {
       )
     ).toMatchInlineSnapshot(`
       {
+        "code": "import { getTranslations } from 'next-intl/server';
+      async function Component() {
+          const t = await getTranslations('ui');
+          t("OpKKos", undefined, undefined, "Hello!");
+      }
+      ",
         "messages": [
           {
             "id": "ui.OpKKos",
@@ -1300,12 +1306,6 @@ describe('getExtracted', () => {
             ],
           },
         ],
-        "source": "import { getTranslations } from 'next-intl/server';
-      async function Component() {
-          const t = await getTranslations('ui');
-          t("OpKKos", undefined, undefined, "Hello!");
-      }
-      ",
       }
     `);
   });
@@ -1329,6 +1329,12 @@ it('does not add a fallback message in production', async () => {
   const {map, ...rest} = result;
   expect(rest).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("+YJVTi");
+    }
+    ",
       "messages": [
         {
           "id": "+YJVTi",
@@ -1340,12 +1346,6 @@ it('does not add a fallback message in production', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("+YJVTi");
-    }
-    ",
     }
   `);
 });
@@ -1367,6 +1367,12 @@ it('can extract description from object syntax', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("gAnLDP", undefined, undefined, "Right");
+    }
+    ",
       "messages": [
         {
           "description": "Advance to the next slide",
@@ -1379,12 +1385,6 @@ it('can extract description from object syntax', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("gAnLDP", undefined, undefined, "Right");
-    }
-    ",
     }
   `);
 });
@@ -1407,6 +1407,12 @@ it('can extract a description with an explicit id from object syntax', async () 
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("next-slide", undefined, undefined, "Right");
+    }
+    ",
       "messages": [
         {
           "description": "Advance to the next slide",
@@ -1419,12 +1425,6 @@ it('can extract a description with an explicit id from object syntax', async () 
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("next-slide", undefined, undefined, "Right");
-    }
-    ",
     }
   `);
 });
@@ -1447,6 +1447,14 @@ it('can extract a description with values from object syntax', async () => {
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("wafoOY", {
+            name: 'Alice'
+        }, undefined, "Hello {name}!");
+    }
+    ",
       "messages": [
         {
           "description": "Greeting message with name placeholder",
@@ -1459,14 +1467,6 @@ it('can extract a description with values from object syntax', async () => {
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("wafoOY", {
-            name: 'Alice'
-        }, undefined, "Hello {name}!");
-    }
-    ",
     }
   `);
 });
@@ -1488,6 +1488,12 @@ it('can extract a description with a template literal from object syntax', async
     )
   ).toMatchInlineSnapshot(`
     {
+      "code": "import { useTranslations } from 'next-intl';
+    function Component() {
+        const t = useTranslations();
+        t("gAnLDP", undefined, undefined, "Right");
+    }
+    ",
       "messages": [
         {
           "description": "Advance to the next slide",
@@ -1500,12 +1506,6 @@ it('can extract a description with a template literal from object syntax', async
           ],
         },
       ],
-      "source": "import { useTranslations } from 'next-intl';
-    function Component() {
-        const t = useTranslations();
-        t("gAnLDP", undefined, undefined, "Right");
-    }
-    ",
     }
   `);
 });

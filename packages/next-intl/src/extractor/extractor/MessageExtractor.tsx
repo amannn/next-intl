@@ -30,7 +30,7 @@ export default class MessageExtractor {
   private sourceMap: boolean;
   private compileCache = new LRUCache<{
     messages: Array<StrictExtractedMessage>;
-    source: string;
+    code: string;
     map?: string;
   }>(750);
 
@@ -46,35 +46,35 @@ export default class MessageExtractor {
 
   async processFileContent(
     absoluteFilePath: string,
-    source: string
+    code: string
   ): Promise<{
     messages: Array<StrictExtractedMessage>;
-    source: string;
+    code: string;
     map?: string;
   }> {
-    const cacheKey = source;
+    const cacheKey = code;
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 
     // Shortcut parsing if hook is not used. The Turbopack integration already
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
-    if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      return {messages: [], source};
+    if (!code.includes('useExtracted') && !code.includes('getExtracted')) {
+      return {messages: [], code};
     }
 
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
     const processResult = await this.processWithTransform(
-      source,
+      code,
       absoluteFilePath,
       relativeFilePath
     );
 
     const finalResult = (
-      processResult.source ? processResult : {...processResult, source}
+      processResult.code ? processResult : {...processResult, code}
     ) as {
       messages: Array<StrictExtractedMessage>;
-      source: string;
+      code: string;
       map?: string;
     };
 
@@ -83,16 +83,16 @@ export default class MessageExtractor {
   }
 
   private async processWithTransform(
-    source: string,
+    code: string,
     absoluteFilePath: string,
     filePath: string
   ): Promise<{
     messages: Array<StrictExtractedMessage>;
-    source?: string;
+    code?: string;
     map?: string;
   }> {
     // First parse the AST
-    const ast = await parse(source, {
+    const ast = await parse(code, {
       syntax: 'typescript',
       tsx: true,
       target: 'es2022',
@@ -546,7 +546,7 @@ export default class MessageExtractor {
 
     return {
       messages: results,
-      source: output.code,
+      code: output.code,
       map
     };
   }

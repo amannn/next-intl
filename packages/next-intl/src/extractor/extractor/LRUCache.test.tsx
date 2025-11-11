@@ -70,14 +70,14 @@ it('should not evict entries when updating existing key at max capacity', () => 
 it('should work with complex objects', () => {
   type ComplexValue = {
     messages: Array<{id: string; message: string}>;
-    source: string;
+    code: string;
   };
 
   const cache = new LRUCache<ComplexValue>(2);
 
   const value1: ComplexValue = {
     messages: [{id: 'key1', message: 'Hello'}],
-    source: 'const t = useTranslations(); t("Hello");'
+    code: 'const t = useTranslations(); t("Hello");'
   };
 
   cache.set('file1', value1);

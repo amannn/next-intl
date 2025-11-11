@@ -179,16 +179,16 @@ export default class CatalogManager {
 
   async extractFileMessages(
     absoluteFilePath: string,
-    source: string
+    code: string
   ): Promise<{
     messages: Array<ExtractedMessage>;
-    source: string;
+    code: string;
     changed: boolean;
     map?: string;
   }> {
     const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
-      source
+      code
     );
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
@@ -256,7 +256,7 @@ export default class CatalogManager {
     const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
     return {
       messages: result.messages,
-      source: result.source,
+      code: result.code,
       map: result.map,
       changed
     };
