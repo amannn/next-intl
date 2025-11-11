@@ -73,6 +73,13 @@ describe('getRouteParams', () => {
       '...categories': 'clothing/t-shirts'
     });
   });
+
+  it('does not partially match similar optional catch-all segments', () => {
+    expect(getRouteParams('/stoc/[[...slug]]', '/stock')).toBeUndefined();
+    expect(
+      getRouteParams('/stoc/[[...slug]]', '/stock/truck')
+    ).toBeUndefined();
+  });
 });
 
 describe('formatPathname', () => {
