@@ -37,7 +37,7 @@ If we consider the design of Tailwind, we can see that an i18n solution that fol
 6. **Prototype-friendly, production-ready**: Tailwind looks exactly the same, regardless of whether it's used for a quick prototype or a production app. In the same way, there should be a single API that avoids upfront structural decisions related to the project's size and complexity.
 7. **Refactoring-friendly**: Moving code across components is seamless with Tailwind, this should be the case for your messages as well.
 
-While `next-intl` has answers to some of these questions, ultimately the truth is that there's currently potential left on the table. Therefore, after [publishing an RFC](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md) about two months ago — today, I'm incredibly excited to share what I believe could be the answer to this:
+While `next-intl` has answers to some of these questions, ultimately the truth is that there's currently potential left on the table. Therefore, after [publishing an RFC](https://github.com/amannn/next-intl/blob/main/rfcs/001-message-extraction.md) about two months ago—today, I'm incredibly excited to share what I believe could be the answer to this:
 
 ```tsx
 import {useExtracted} from 'next-intl';
@@ -99,7 +99,7 @@ export default async function ProfilePage() {
 
 Ok, now let's take a step back. Components that use inline messages appear to be easy to generate for AIs, all without having to load lengthy message catalogs into its precious context window.
 
-But what about using AI to translate your messages?
+But what about using AI to _translate_ your messages?
 
 ## Context is key
 
@@ -117,24 +117,24 @@ But what if our translations look like this:
 
 Not so easy.
 
-But again, making something easy for AIs was probably always about making it easy for humans in the first place. And we already found a solution to this—wait for it—**35 years ago**!
+But again, making something easy for AIs was probably always about making it easy for humans in the first place. And we already found a solution to this—wait for it—**30 years ago**!
 
 [GNU gettext](https://en.wikipedia.org/wiki/Gettext) introduced `.po` files for message catalogs, which look like this:
 
 ```po
+#. Greeting shown to user when logging back in
 #: src/app/(auth)/login/page.tsx
-#. Greeting shown to user when they are logged in
 msgid "0MXX5B"
 msgstr "Welcome back!"
 ```
 
-Everything is there: A file name, an optional description, an ID and the label itself.
+Everything is there: An optional description, a filename reference, an ID and the label itself.
 
 So this is what you'll now be able to use with `next-intl` as well:
 
 <BlogVideo muted src="/blog/use-extracted/demo-03.mp4" />
 
-Note how enabling the `.po` formatter also activates a Turbopack loader that will parse your locale catalogs as JSON for you, making them easy to consume in your app. It's really just a compile target.
+Note how enabling the `.po` formatter also activates a Turbopack loader that will parse your locale catalogs as plain JavaScript objects for you, making them easy to consume in your app. It's really just a compile target.
 
 That being said, if JSON is your jam, that's totally fine too. And soon, there will also be support for custom formatters that will allow you to incorporate file references and descriptions in whatever format you prefer.
 
@@ -146,17 +146,17 @@ So first of all, let's add a new locale:
 
 <BlogVideo muted src="/blog/use-extracted/demo-04.mp4" />
 
-Nope, this wasn't cut. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
+Nope, the video wasn't cut. Neither was there a paste from the clipboard. When you add a new locale, `next-intl` will automatically populate the catalog with empty entries for all messages that you support.
 
-So from here, you can start translating your messages however you want, in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
+So from here, you can start translating your messages however you want, either with an editor, or in the easiest case by using an AI-based translation service like <PartnerContentLink href="https://crowdin.com" title="Crowdin">Crowdin</PartnerContentLink>:
 
 <BlogVideo muted src="/blog/use-extracted/demo-05.mp4" />
 
 More on this in the [localization management docs](/docs/workflows/localization-management).
 
-## What sourcery is this?
+## What sorcery is this?
 
-Behind the scenes, `useExtracted` integrates with Next.js in two ways:
+Behind the scenes, `useExtracted` integrates with Next.js at two touch points:
 
 **1. Turbopack loader for extration**
 
@@ -172,7 +172,7 @@ import {useTranslations} from 'next-intl';
 function InlineMessages() {
   const t = useTranslations();
 
-  // Production bundles use minified keys
+  // Pick up the minified key
   return <h1>{t('dPSc42')}</h1>;
 }
 ```
@@ -206,7 +206,7 @@ I could probably go on, e.g. about how `useExtracted` also works out-of-the-box 
 
 If you're excited about this as well, I'd really love to hear your feedback.
 
-Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and [share your feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental.
+Give the [demo app](https://github.com/amannn/next-intl-example-extracted) a try and share your [feedback](https://github.com/amannn/next-intl/discussions/2036) with me. If you're an early adopter, you can already try this feature in your app with `next-intl@4.5`, but please note that it's currently considered experimental, so changes should be expected.
 
 Also, it's worth mentioning again that the `useTranslations` API that you might be using today is not going anywhere. If you're already happy with it, then by all means keep using it. Personally, I think `useExtracted` has a lot of potential, but only time will tell if this is true.
 
@@ -214,7 +214,7 @@ As the feature stabilizes, you'll of course be the first to hear about best prac
 
 — Jan
 
-PS: A special thank you goes to projects & companies like [gettext](https://en.wikipedia.org/wiki/Gettext), [Lingui](https://lingui.dev/), [FormatJS](https://formatjs.github.io/), [Wordpress](https://www.npmjs.com/package/@wordpress/i18n), and [Zendesk](https://www.youtube.com/watch?v=fUQAXo2DayQ) for their pioneering work in the space of message extraction.
+PS: A special thank you goes to projects & companies like [gettext](https://en.wikipedia.org/wiki/Gettext), [Lingui](https://lingui.dev/), [FormatJS](https://formatjs.github.io/), [Wordpress](https://www.npmjs.com/package/@wordpress/i18n), and [Zendesk](https://www.youtube.com/watch?v=fUQAXo2DayQ) for their pioneering work in the space of message extraction. I'd also like to thank [Jan Nicklas](https://x.com/jantimon) for his work on [`next-yak`](https://github.com/DigitecGalaxus/next-yak), pushing the boundaries of Turbopack and sharing his insights.
 
 **Further reading:**
 
