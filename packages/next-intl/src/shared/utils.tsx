@@ -127,8 +127,8 @@ export function getLocaleAsPrefix(locale: string) {
 export function templateToRegex(template: string): RegExp {
   const regexPattern = template
     // Replace optional catchall ('[[...slug]]')
-    .replace(/\/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?')
-    .replace(/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?')
+    .replace(/\/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?') // With leading slash
+    .replace(/\[\[(\.\.\.[^\]]+)\]\]/g, '(?:/(.*))?') // Without leading slash
     // Replace catchall ('[...slug]')
     .replace(/\[(\.\.\.[^\]]+)\]/g, '(.+)')
     // Replace regular parameter ('[slug]')
