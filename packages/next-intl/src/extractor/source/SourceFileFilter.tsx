@@ -1,8 +1,15 @@
 import path from 'path';
 
 export default class SourceFileFilter {
-  static readonly EXTENSIONS = ['ts', 'tsx', 'js', 'jsx'];
-  private static readonly IGNORED_DIRECTORIES = ['node_modules', '.next'];
+  public static readonly EXTENSIONS = ['ts', 'tsx', 'js', 'jsx'];
+
+  // Will not be entered, except if explicitly asked for
+  // TODO: At some point we should infer these from .gitignore
+  private static readonly IGNORED_DIRECTORIES = [
+    'node_modules',
+    '.next',
+    '.git'
+  ];
 
   static isSourceFile(filePath: string) {
     const ext = path.extname(filePath);
@@ -32,10 +39,7 @@ export default class SourceFileFilter {
     );
   }
 
-  private static isWithinPath(
-    targetPath: string,
-    basePath: string
-  ): boolean {
+  private static isWithinPath(targetPath: string, basePath: string): boolean {
     const relativePath = path.relative(basePath, targetPath);
     return relativePath === '' || !relativePath.startsWith('..');
   }
