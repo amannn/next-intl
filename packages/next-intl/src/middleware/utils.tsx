@@ -227,11 +227,13 @@ export function getRouteParams(template: string, pathname: string) {
   const match = regex.exec(normalizedPathname);
   if (!match) return undefined;
   const params: Record<string, string> = {};
+  const keys = normalizedTemplate.match(/\[([^\]]+)\]/g) ?? [];
   for (let i = 1; i < match.length; i++) {
-    const key = normalizedTemplate
-      .match(/\[([^\]]+)\]/g)
-      ?.[i - 1].replace(/[[\]]/g, '');
-    if (key) params[key] = match[i];
+    const rawKey = keys[i - 1];
+    if (!rawKey) continue;
+    const key = rawKey.replace(/[[\]]/g, '');
+    const value = match[i] ?? '';
+    params[key] = value;
   }
   return params;
 }
