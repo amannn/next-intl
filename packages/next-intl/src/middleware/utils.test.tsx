@@ -76,9 +76,7 @@ describe('getRouteParams', () => {
 
   it('does not partially match similar optional catch-all segments', () => {
     expect(getRouteParams('/stoc/[[...slug]]', '/stock')).toBeUndefined();
-    expect(
-      getRouteParams('/stoc/[[...slug]]', '/stock/truck')
-    ).toBeUndefined();
+    expect(getRouteParams('/stoc/[[...slug]]', '/stock/truck')).toBeUndefined();
   });
 });
 
