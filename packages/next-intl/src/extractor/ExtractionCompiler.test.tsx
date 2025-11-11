@@ -902,8 +902,8 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
       #: src/Footer.tsx
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
       ",
@@ -918,8 +918,8 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
       #: src/Footer.tsx
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",

@@ -202,11 +202,18 @@ export default class CatalogManager {
         // reference, which is the current file. We need to merge this with
         // potentially existing references.
         const references = [...(prevMessage.references ?? [])];
-        message.references.forEach((ref) => {
-          if (!references.some((cur) => cur.path === ref.path)) {
-            references.push(ref);
+        message.references.forEach((reference) => {
+          if (
+            !references.some(
+              (existingReference) => existingReference.path === reference.path
+            )
+          ) {
+            references.push(reference);
           }
         });
+        references.sort((referenceA, referenceB) =>
+          referenceA.path.localeCompare(referenceB.path)
+        );
         message = {...message, references};
 
         // Description: In case we have conflicting descriptions, the new one wins.
