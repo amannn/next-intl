@@ -14,18 +14,20 @@ export default function extractionLoader(
 ) {
   const options = this.getOptions();
   const callback = this.async();
+  const shouldGenerateSourceMap = this.sourceMap;
 
   if (!compiler) {
     compiler = new ExtractionCompiler(options, {
       // Avoid rollup's `replace` plugin to compile this away
-      isDevelopment: process.env['NODE_ENV'.trim()] === 'development'
+      isDevelopment: process.env['NODE_ENV'.trim()] === 'development',
+      sourceMap: shouldGenerateSourceMap
     });
   }
 
   compiler
     .compile(this.resourcePath, source)
     .then((result) => {
-      callback(null, result);
+      callback(null, result.source, result.map);
     })
     .catch(callback);
 }

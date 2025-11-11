@@ -10,10 +10,13 @@ vi.mock('../../plugin/utils.js', () => ({
 }));
 
 async function process(code: string) {
-  return await new MessageExtractor({
+  const result = await new MessageExtractor({
     isDevelopment: true,
     projectRoot: '/project'
   }).processFileContent('/project/test.tsx', code);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {map, ...rest} = result;
+  return rest;
 }
 
 beforeEach(() => {
@@ -1309,21 +1312,22 @@ describe('getExtracted', () => {
 });
 
 it('does not add a fallback message in production', async () => {
-  expect(
-    await new MessageExtractor({
-      isDevelopment: false,
-      projectRoot: '/project'
-    }).processFileContent(
-      '/project/test.tsx',
-      `import {useExtracted} from 'next-intl';
+  const result = await new MessageExtractor({
+    isDevelopment: false,
+    projectRoot: '/project'
+  }).processFileContent(
+    '/project/test.tsx',
+    `import {useExtracted} from 'next-intl';
 
     function Component() {
       const t = useExtracted();
       t("Hey!");
     }
   `
-    )
-  ).toMatchInlineSnapshot(`
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {map, ...rest} = result;
+  expect(rest).toMatchInlineSnapshot(`
     {
       "messages": [
         {
@@ -1527,4 +1531,29 @@ it('warns about dynamic description expressions', async () => {
   expect(warnSpy).toHaveBeenCalledWith(
     'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
   );
+});
+
+describe('source maps', () => {
+  it('can extract with source maps', async () => {
+    const result = await new MessageExtractor({
+      isDevelopment: true,
+      projectRoot: '/project',
+      sourceMap: true
+    }).processFileContent(
+      '/project/test.tsx',
+      `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t("Hello!");
+    }
+  `
+    );
+
+    expect(result.map).toMatchInlineSnapshot(
+      `"{"version":3,"file":"test.tsx","sources":["/project/test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":[],"mappings":"AAAA,SAAQ,eAAY,QAAO,YAAY;AAEnC,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ"}"`
+    );
+
+    expect(result.map).not.toContain('<anon>');
+  });
 });
