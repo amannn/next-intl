@@ -532,7 +532,9 @@ export default class MessageExtractor {
 
     // Print the modified AST with source maps
     const output = await print(ast, {
-      sourceMaps: this.sourceMap
+      sourceMaps: this.sourceMap,
+      sourceFileName: filePath,
+      filename: filePath
     });
 
     // Fix the source map to include the correct filename
