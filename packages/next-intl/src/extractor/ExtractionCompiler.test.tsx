@@ -7,6 +7,9 @@ const filesystem: {
   project: {
     src: Record<string, string>;
     messages: Record<string, string> | undefined;
+    node_modules?: Record<'@acme', Record<'ui', Record<string, string>>>;
+    '.next'?: Record<string, Record<string, string>>;
+    '.git'?: Record<string, Record<string, string>>;
   };
 } = {
   project: {
@@ -15,16 +18,19 @@ const filesystem: {
   }
 };
 
-describe('json format', () => {
-  beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
-    fileTimestamps.clear();
-    watchCallbacks.clear();
-    mockWatchers.clear();
-    vi.clearAllMocks();
-  });
+beforeEach(() => {
+  filesystem.project = {
+    src: {},
+    messages: {}
+  };
+  delete (filesystem as Record<string, unknown>).ui;
+  fileTimestamps.clear();
+  watchCallbacks.clear();
+  mockWatchers.clear();
+  vi.clearAllMocks();
+});
 
+describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
@@ -310,28 +316,28 @@ describe('json format', () => {
       `
     );
     expect(filesystem).toMatchInlineSnapshot(`
-    {
-      "project": {
-        "messages": {
-          "de.json": "{
-      "+YJVTi": "Hallo!"
-    }",
-          "en.json": "{
-      "+YJVTi": "Hey!"
-    }",
+      {
+        "project": {
+          "messages": {
+            "de.json": "{
+        "+YJVTi": "Hallo!"
+      }",
+            "en.json": "{
+        "+YJVTi": "Hey!"
+      }",
+          },
+          "src": {
+            "Greeting.tsx": "
+          import {useExtracted} from 'next-intl';
+          function Greeting() {
+            const t = useExtracted();
+            return <div>{t('Hey!')}</div>;
+          }
+          ",
+          },
         },
-        "src": {
-          "Greeting.tsx": "
-        import {useExtracted} from 'next-intl';
-        function Greeting() {
-          const t = useExtracted();
-          return <div>{t('Hey!')}</div>;
-        }
-        ",
-        },
-      },
-    }
-  `);
+      }
+    `);
 
     simulateManualFileEdit(
       'messages/de.json',
@@ -692,15 +698,6 @@ describe('json format', () => {
 });
 
 describe('po format', () => {
-  beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
-    fileTimestamps.clear();
-    watchCallbacks.clear();
-    mockWatchers.clear();
-    vi.clearAllMocks();
-  });
-
   function createCompiler() {
     return new ExtractionCompiler(
       {
@@ -1223,6 +1220,106 @@ msgstr "Hallo!"
       msgid "7kKG3Q"
       msgstr ""
       ",
+        ],
+      ]
+    `);
+  });
+});
+
+describe('`srcPath` filtering', () => {
+  beforeEach(() => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    import Panel from '@acme/ui/panel';
+    function Greeting() {
+      const t = useExtracted();
+      return <Panel>{t('Hey!')}</Panel>;
+    }
+    `;
+
+    function createNodeModule(moduleName: string) {
+      return `
+      import {useExtracted} from 'next-intl';
+      export default function Module({children}) {
+        const t = useExtracted();
+        return (
+          <div>
+            <h1>{t('${moduleName}')}</h1>
+            {children}
+          </div>
+        )
+      }
+      `;
+    }
+
+    filesystem.project.node_modules = {
+      '@acme': {
+        ui: {
+          'panel.tsx': createNodeModule('panel.source')
+        }
+      }
+    };
+    filesystem.project['.next'] = {
+      build: {
+        'panel.tsx': createNodeModule('panel.compiled')
+      }
+    };
+    filesystem.project['.git'] = {
+      config: {
+        'panel.tsx': createNodeModule('panel.config')
+      }
+    };
+  });
+
+  function createCompiler(srcPath: string | Array<string>) {
+    return new ExtractionCompiler(
+      {
+        srcPath,
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json',
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('skips node_modules, .next and .git by default', async () => {
+    using compiler = createCompiler('./');
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }",
+        ],
+      ]
+    `);
+  });
+
+  it('includes node_modules if explicitly requested', async () => {
+    using compiler = createCompiler(['./', './node_modules/@acme/ui']);
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "JwjlWH": "panel.source",
+        "+YJVTi": "Hey!"
+      }",
         ],
       ]
     `);
