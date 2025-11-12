@@ -148,15 +148,19 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
+      const srcPaths = (
+        Array.isArray(pluginConfig.experimental.srcPath!)
+          ? pluginConfig.experimental.srcPath!
+          : [pluginConfig.experimental.srcPath!]
+      ).map((srcPath) =>
+        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
+      );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
           // Note: We don't need `not: 'foreign'`, because this is
           // implied by the filter based on `srcPath`.
-          path:
-            (Array.isArray(pluginConfig.experimental.srcPath)
-              ? `{${pluginConfig.experimental.srcPath.join(',')}}`
-              : pluginConfig.experimental.srcPath) + '/**/*',
+          path: `{${srcPaths.join(',')}}` + '/**/*',
           content: /(useExtracted|getExtracted)/
         }
       });
