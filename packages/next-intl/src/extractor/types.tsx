@@ -15,7 +15,7 @@ export type ExtractedMessage = {
 export type MessagesConfig = {
   path: string;
   format: MessagesFormat;
-  locales: 'infer' | Array<Locale>;
+  locales: 'infer' | ReadonlyArray<Locale>;
 };
 
 export type ExtractorConfig = {

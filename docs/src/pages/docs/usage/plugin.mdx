@@ -128,7 +128,7 @@ If your project is split into multiple folders, you can provide an array of path
 
 ```tsx
 // Not using a `src` folder
-srcPath: ['./app', './components'],
+srcPath: './',
 ```
 
 ```tsx
@@ -140,6 +140,8 @@ srcPath: ['./src', '../ui'],
 // External dependency on a package
 srcPath: ['./src', './node_modules/@acme/components'],
 ```
+
+Note that the directories `node_modules`, `.next` and `.git` are automatically excluded from extraction, except for if they appear explicitly in the `srcPath` array.
 
 If you want to provide messages along with your package, you can also extract them [manually](/docs/usage/extraction#manual).
 
