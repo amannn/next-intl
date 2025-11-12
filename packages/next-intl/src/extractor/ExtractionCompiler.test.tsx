@@ -1103,6 +1103,83 @@ msgstr "Hallo!"
     `);
   });
 
+  it('sorts messages by reference path when files are compiled out of order', async () => {
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/a.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function A() {
+      const t = useExtracted();
+      return <div>{t('Message A')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/d.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function D() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/c.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function C() {
+      const t = useExtracted();
+      return <div>{t('Message C')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/b.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function B() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `
+    );
+
+    await waitForWriteFileCalls(5);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/a.tsx
+      msgid "PmvAXH"
+      msgstr "Message A"
+
+      #: src/b.tsx
+      #: src/d.tsx
+      msgid "5bb321"
+      msgstr "Message B"
+
+      #: src/c.tsx
+      msgid "c3UbA2"
+      msgstr "Message C"
+      ",
+      ]
+    `);
+  });
+
   it('initializes all messages to empty string when adding new catalog', async () => {
     filesystem.project.messages = undefined;
     filesystem.project.src['Greeting.tsx'] = `
