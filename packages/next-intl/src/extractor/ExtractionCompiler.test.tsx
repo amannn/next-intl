@@ -688,8 +688,8 @@ describe('json format', () => {
         [
           "messages/de.json",
           "{
-        "OpKKos": "",
-        "7kKG3Q": ""
+        "7kKG3Q": "",
+        "OpKKos": ""
       }",
         ],
       ]
@@ -1213,11 +1213,11 @@ msgstr "Hallo!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgid "7kKG3Q"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "7kKG3Q"
+      msgid "OpKKos"
       msgstr ""
       ",
         ],
