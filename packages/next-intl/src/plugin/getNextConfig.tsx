@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
+  TurbopackLoaderOptions,
   TurbopackRuleConfigCollection,
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
@@ -82,7 +83,7 @@ export default function getNextConfig(
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
         messages: experimental.messages
-      } satisfies ExtractorConfig
+      } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
 
@@ -91,7 +92,7 @@ export default function getNextConfig(
       loader: 'next-intl/extractor/catalogLoader',
       options: {
         messages: pluginConfig.experimental!.messages!
-      } satisfies CatalogLoaderConfig
+      } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };
   }
 
