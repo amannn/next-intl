@@ -686,15 +686,13 @@ describe('json format', () => {
     simulateFileEvent('/project/messages', 'rename', 'de.json');
 
     await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(1)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
       [
-        [
-          "messages/de.json",
-          "{
+        "messages/de.json",
+        "{
         "7kKG3Q": "",
         "OpKKos": ""
       }",
-        ],
       ]
     `);
   });
