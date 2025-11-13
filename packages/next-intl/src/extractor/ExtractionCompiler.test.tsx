@@ -674,10 +674,13 @@ describe('json format', () => {
 
     await waitForWriteFileCalls(1);
 
-    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-      OpKKos: 'Hello!',
-      '7kKG3Q': 'World!'
-    });
+    expect(JSON.parse(filesystem.project.messages!['en.json']))
+      .toMatchInlineSnapshot(`
+        {
+          "7kKG3Q": "World!",
+          "OpKKos": "Hello!",
+        }
+      `);
 
     filesystem.project.messages!['de.json'] = '{}';
     simulateFileEvent('/project/messages', 'rename', 'de.json');
@@ -688,8 +691,8 @@ describe('json format', () => {
         [
           "messages/de.json",
           "{
-        "OpKKos": "",
-        "7kKG3Q": ""
+        "7kKG3Q": "",
+        "OpKKos": ""
       }",
         ],
       ]
@@ -1213,11 +1216,11 @@ msgstr "Hallo!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgid "7kKG3Q"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "7kKG3Q"
+      msgid "OpKKos"
       msgstr ""
       ",
         ],
