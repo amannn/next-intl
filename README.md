@@ -11,7 +11,7 @@
   <br>
 </p>
 
-Internationalization (i18n) for Next.js
+Internationalization for Next.js.
 
 ## Features
 
