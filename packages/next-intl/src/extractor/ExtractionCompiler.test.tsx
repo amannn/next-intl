@@ -674,10 +674,13 @@ describe('json format', () => {
 
     await waitForWriteFileCalls(1);
 
-    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-      OpKKos: 'Hello!',
-      '7kKG3Q': 'World!'
-    });
+    expect(JSON.parse(filesystem.project.messages!['en.json']))
+      .toMatchInlineSnapshot(`
+        {
+          "7kKG3Q": "World!",
+          "OpKKos": "Hello!",
+        }
+      `);
 
     filesystem.project.messages!['de.json'] = '{}';
     simulateFileEvent('/project/messages', 'rename', 'de.json');

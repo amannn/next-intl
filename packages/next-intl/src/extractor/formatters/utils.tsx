@@ -7,10 +7,10 @@ export function getSortedMessages(
     const pathA = messageA.references?.[0]?.path ?? '';
     const pathB = messageB.references?.[0]?.path ?? '';
 
-    if (pathA !== pathB) {
+    if (pathA === pathB) {
+      return messageA.id.localeCompare(messageB.id);
+    } else {
       return pathA.localeCompare(pathB);
     }
-
-    return messageA.id.localeCompare(messageB.id);
   });
 }

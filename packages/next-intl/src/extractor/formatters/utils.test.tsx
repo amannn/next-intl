@@ -1,26 +1,43 @@
-import {expect, it} from 'vitest';
-import type {ExtractedMessage} from '../types.js';
+import {describe, expect, it} from 'vitest';
 import {getSortedMessages} from './utils.js';
 
-it('uses message ids to break ties when reference paths match', () => {
-  const messages: Array<ExtractedMessage> = [
-    {id: 'beta', message: '', references: [{path: 'components/Footer.tsx'}]},
-    {id: 'alpha', message: '', references: [{path: 'components/Footer.tsx'}]},
-    {id: 'gamma', message: '', references: [{path: 'components/Header.tsx'}]}
-  ];
+describe('getSortedMessages', () => {
+  it('sorts by reference path', () => {
+    expect(
+      getSortedMessages([
+        {
+          id: 'a',
+          message: 'a',
+          references: [{path: 'components/B.tsx'}]
+        },
+        {
+          id: 'b',
+          message: 'b',
+          references: [{path: 'components/A.tsx'}]
+        }
+      ]).map((message) => message.id)
+    ).toEqual(['b', 'a']);
+  });
 
-  const sorted = getSortedMessages(messages).map((message) => message.id);
-
-  expect(sorted).toEqual(['alpha', 'beta', 'gamma']);
-});
-
-it('sorts by reference path before falling back to ids', () => {
-  const messages: Array<ExtractedMessage> = [
-    {id: 'beta', message: '', references: [{path: 'components/Header.tsx'}]},
-    {id: 'alpha', message: '', references: [{path: 'components/Footer.tsx'}]}
-  ];
-
-  const sorted = getSortedMessages(messages).map((message) => message.id);
-
-  expect(sorted).toEqual(['alpha', 'beta']);
+  it('uses message ids to break ties when reference paths match', () => {
+    expect(
+      getSortedMessages([
+        {
+          id: 'c',
+          message: 'b',
+          references: [{path: 'components/B.tsx'}]
+        },
+        {
+          id: 'b',
+          message: 'a',
+          references: [{path: 'components/A.tsx'}]
+        },
+        {
+          id: 'a',
+          message: 'c',
+          references: [{path: 'components/A.tsx'}]
+        }
+      ]).map((message) => message.id)
+    ).toEqual(['a', 'b', 'c']);
+  });
 });
