@@ -1,4 +1,4 @@
-<h1 align="center">
+<p align="center">
   <br>
   <a href="https://next-intl.dev">
     <picture>
@@ -9,9 +9,9 @@
   </a>
   <br>
   <br>
-</h1>
+</p>
 
-> Internationalization (i18n) for Next.js
+Internationalization (i18n) for Next.js
 
 ## Features
 
