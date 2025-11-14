@@ -127,6 +127,7 @@
     "@formatjs/intl-localematcher": "^0.5.4",
     "@swc/core": "^1.13.19",
     "negotiator": "^1.0.0",
+    "po-parser": "^0.1.2",
     "use-intl": "workspace:^"
   },
   "peerDependencies": {
