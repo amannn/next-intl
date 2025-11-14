@@ -1,6 +1,6 @@
+import POParser from 'po-parser';
 import type {ExtractedMessage, Locale} from '../types.js';
 import {setNestedProperty} from '../utils/ObjectUtils.js';
-import POParser from '../utils/POParser.js';
 import Formatter, {type FormatterContext} from './Formatter.js';
 import {getSortedMessages} from './utils.js';
 
