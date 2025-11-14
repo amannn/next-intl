@@ -30,7 +30,6 @@ swc_ecma_ast     = { workspace = true }
 swc_ecma_utils   = { workspace = true }
 swc_ecma_visit   = { workspace = true }
 swc_plugin_macro = { workspace = true }
-tracing          = { workspace = true, features = ["release_max_level_off"] }
 
 [dev-dependencies]
 swc_core = { workspace = true, features = ["ecma_parser"] }
