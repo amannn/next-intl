@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.5.3 (2025-11-13)
+
+### Bug Fixes
+
+* Fix inconsistent ordering of messages for `useExtracted` pt. 2 ([#2103](https://github.com/amannn/next-intl/issues/2103)) ([5cbd5da](https://github.com/amannn/next-intl/commit/5cbd5daceb62d26656f89ac66f587a56a34c3cd5)) – by @amannn
+
 ## 4.5.2 (2025-11-12)
 
 ### Bug Fixes
