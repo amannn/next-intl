@@ -1,0 +1,37 @@
+[package]
+
+description = "Next.js intl plugin for SWC"
+
+
+authors      = { workspace = true }
+edition      = { workspace = true }
+homepage     = { workspace = true }
+license      = { workspace = true }
+name         = "swc_plugin_next_intl"
+publish      = false
+repository   = { workspace = true }
+rust-version = { workspace = true }
+version      = "0.1.0"
+
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+base64           = { workspace = true }
+rustc-hash       = { workspace = true }
+serde            = { workspace = true }
+serde_json       = { workspace = true }
+sha2             = { workspace = true }
+swc_atoms        = { workspace = true }
+swc_common       = { workspace = true, features = ["concurrent"] }
+swc_core         = { workspace = true, features = ["ecma_plugin_transform"] }
+swc_ecma_ast     = { workspace = true }
+swc_ecma_utils   = { workspace = true }
+swc_ecma_visit   = { workspace = true }
+swc_plugin_macro = { workspace = true }
+tracing          = { workspace = true, features = ["release_max_level_off"] }
+
+[dev-dependencies]
+swc_core = { workspace = true, features = ["ecma_parser"] }
+testing  = { workspace = true }
