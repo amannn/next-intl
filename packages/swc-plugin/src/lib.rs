@@ -6,8 +6,8 @@ use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 use swc_atoms::Wtf8Atom;
-use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
-use swc_core::plugin::proxies::TransformPluginProgramMetadata;
+use swc_common::{DUMMY_SP, Spanned, errors::HANDLER};
+use swc_core::{plugin::proxies::TransformPluginProgramMetadata, transform_common::output::experimental_emit};
 use swc_ecma_ast::*;
 use swc_ecma_utils::{private_ident, ExprFactory};
 use swc_ecma_visit::{VisitMut, VisitMutWith};
@@ -22,10 +22,13 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("invalid config for next-intl");
 
-    program.visit_mut_with(&mut TransformVisitor::new(
+    let mut visitor = TransformVisitor::new(
         config.is_development,
         config.file_path,
-    ));
+    );  
+    program.visit_mut_with(&mut visitor);
+
+    experimental_emit("results".into(), serde_json::to_string(&visitor.results).unwrap());
 
     program
 }

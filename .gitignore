@@ -9,5 +9,6 @@ dist/
 tsconfig.tsbuildinfo
 .turbo
 
-
+# Rust plugin
 target/
+*.wasm
