@@ -1,5 +1,5 @@
 import { Locale, NextIntlClientProvider } from 'next-intl';
-import { getLocale, getTranslations as getTranslations1 } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { ReactNode } from 'react';
 import LocaleSwitcher from './LocaleSwitcher';
 import { cookies } from 'next/headers';

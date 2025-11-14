@@ -331,7 +331,7 @@ impl VisitMut for TransformVisitor {
                                     self.hook_local_name = Some(named_spec.local.to_id());
 
                                     named_spec.imported = None;
-                                    named_spec.local = private_ident!("useTranslation");
+                                    named_spec.local = Ident::new("useTranslations".into(), DUMMY_SP, named_spec.local.ctxt);
                                     break;
                                 }
                             }
@@ -356,7 +356,7 @@ impl VisitMut for TransformVisitor {
                                     self.hook_local_name = Some(named_spec.local.to_id());
 
                                     named_spec.imported = None;
-                                    named_spec.local = private_ident!("getTranslations");
+                                    named_spec.local = Ident::new("getTranslations".into(), DUMMY_SP, named_spec.local.ctxt);
                                     break;
                                 }
                             }
