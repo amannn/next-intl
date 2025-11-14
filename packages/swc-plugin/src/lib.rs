@@ -11,7 +11,7 @@ use swc_core::{
     plugin::proxies::TransformPluginProgramMetadata, transform_common::output::experimental_emit,
 };
 use swc_ecma_ast::*;
-use swc_ecma_utils::{private_ident, ExprFactory};
+use swc_ecma_utils::ExprFactory;
 use swc_ecma_visit::{VisitMut, VisitMutWith};
 use swc_plugin_macro::plugin_transform;
 
