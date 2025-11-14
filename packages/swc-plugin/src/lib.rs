@@ -98,6 +98,15 @@ enum HookType {
     GetTranslation,
 }
 
+impl HookType {
+    fn into_symbol(&self) -> swc_atoms::Atom {
+        match self{
+            HookType::UseTranslation => "useTranslations".into(),
+            HookType::GetTranslation => "getTranslations".into(),
+        }
+    }
+}
+
 impl VisitMut for TransformVisitor {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         let mut is_translator_call = false;
@@ -373,8 +382,14 @@ impl VisitMut for TransformVisitor {
                     Expr::Call(init_call) => {
                         if let Callee::Expr(box Expr::Ident(callee)) = &init_call.callee {
                             if self.hook_local_name == Some(callee.to_id()) {
-                                init_call.callee =
-                                    Callee::Expr(self.hook_local_name.clone().unwrap().into());
+                                init_call.callee = Callee::Expr(
+                                    Ident::new(
+                                        self.hook_type.unwrap().into_symbol(),
+                                        DUMMY_SP,
+                                        self.hook_local_name.as_ref().unwrap().1,
+                                    )
+                                    .into(),
+                                );
                                 call_expr = Some(init_call);
                             }
                         }
@@ -389,9 +404,19 @@ impl VisitMut for TransformVisitor {
                             ..
                         } = &*arg
                         {
+                            dbg!(&self.hook_local_name);
+                            dbg!(callee);
                             if self.hook_local_name == Some(callee.to_id()) {
-                                arg.callee =
-                                    Callee::Expr(self.hook_local_name.clone().unwrap().into());
+                                dbg!("found");
+
+                                arg.callee = Callee::Expr(
+                                    Ident::new(
+                                        self.hook_type.unwrap().into_symbol(),
+                                        DUMMY_SP,
+                                        self.hook_local_name.as_ref().unwrap().1,
+                                    )
+                                    .into(),
+                                );
                                 call_expr = Some(arg);
                             }
                         }
