@@ -138,7 +138,8 @@ export default class MessageExtractor {
 
     // TODO: Verify the output using console.log
     // TODO: Improve the typing of @swc/core
-    const results = JSON.parse((output as any).output.results) as Array<StrictExtractedMessage>;
+    const allOutput=(output as any).output as string;
+    const results = JSON.parse(JSON.parse(allOutput).results) as Array<StrictExtractedMessage>;
 
     return {
       messages: results,
