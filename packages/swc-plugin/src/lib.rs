@@ -100,7 +100,7 @@ enum HookType {
 
 impl HookType {
     fn into_symbol(&self) -> swc_atoms::Atom {
-        match self{
+        match self {
             HookType::UseTranslation => "useTranslations".into(),
             HookType::GetTranslation => "getTranslations".into(),
         }
@@ -404,11 +404,7 @@ impl VisitMut for TransformVisitor {
                             ..
                         } = &*arg
                         {
-                            dbg!(&self.hook_local_name);
-                            dbg!(callee);
                             if self.hook_local_name == Some(callee.to_id()) {
-                                dbg!("found");
-
                                 arg.callee = Callee::Expr(
                                     Ident::new(
                                         self.hook_type.unwrap().into_symbol(),
