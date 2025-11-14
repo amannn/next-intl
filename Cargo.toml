@@ -1,0 +1,49 @@
+[workspace]
+members = ["packages/swc-plugin"]
+resolver = "2"
+
+
+[workspace.package]
+authors      = ["강동윤/Donny <kdy.1997.dev@gmail.com>"]
+edition      = "2021"
+homepage     = "https://github.com/swc-project/plugins"
+license      = "Apache-2.0"
+repository   = "https://github.com/swc-project/plugins.git"
+rust-version = "1.70"
+
+[workspace.dependencies]
+Inflector                   = "0.11.4"
+anyhow                      = "1.0.83"
+base64                      = "0.22"
+regex                       = { version = "1.10.4", default-features = false }
+rustc-hash                  = "2.1.0"
+serde                       = "1.0.203"
+serde_json                  = "1.0.117"
+sha2                        = "0.10"
+swc_atoms                   = "9.0.0"
+swc_common                  = "17.0.0"
+swc_core                    = "47.0.3"
+swc_ecma_ast                = "18.0.0"
+swc_ecma_codegen            = "20.0.0"
+swc_ecma_minifier           = "36.0.1"
+swc_ecma_parser             = "27.0.2"
+swc_ecma_transforms         = "38.0.0"
+swc_ecma_transforms_base    = "30.0.0"
+swc_ecma_transforms_react   = "33.0.0"
+swc_ecma_transforms_testing = "33.0.0"
+swc_ecma_utils              = "24.0.0"
+swc_ecma_visit              = "18.0.0"
+swc_plugin_macro            = "1.1.0"
+swc_plugin_proxy            = "18.0.0"
+swc_sourcemap               = "9.3.0"
+swc_trace_macro             = "2.0.2"
+testing                     = "18.0.0"
+tracing                     = "0.1.40"
+
+[profile.release]
+codegen-units = 1
+# debug = true
+lto = true
+
+# Strip debug symbols
+strip = "symbols"

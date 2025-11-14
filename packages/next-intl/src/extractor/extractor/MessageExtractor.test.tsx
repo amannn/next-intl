@@ -40,11 +40,12 @@ it('can extract a simple message', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
+        t("+YJVTi", void 0, void 0, "Hey!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -75,11 +76,12 @@ it('can extract a message with a let variable', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         let t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
+        t("+YJVTi", void 0, void 0, "Hey!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -110,11 +112,12 @@ it('can extract a message with a renamed variable', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const translate = useTranslations();
-        translate("OpKKos", undefined, undefined, "Hello!");
+        translate("OpKKos", void 0, void 0, "Hello!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "OpKKos",
           "message": "Hello!",
           "references": [
@@ -147,13 +150,14 @@ it('can extract a message with different quotes', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("OpKKos", undefined, undefined, "Hello!");
-        t("+YJVTi", undefined, undefined, "Hey!");
-        t("nm/7yQ", undefined, undefined, "Hi!");
+        t("OpKKos", void 0, void 0, "Hello!");
+        t("+YJVTi", void 0, void 0, "Hey!");
+        t("nm/7yQ", void 0, void 0, "Hi!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "OpKKos",
           "message": "Hello!",
           "references": [
@@ -163,6 +167,7 @@ it('can extract a message with different quotes', async () => {
           ],
         },
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -172,6 +177,7 @@ it('can extract a message with different quotes', async () => {
           ],
         },
         {
+          "description": null,
           "id": "nm/7yQ",
           "message": "Hi!",
           "references": [
@@ -205,12 +211,13 @@ it('can extract a message with useTranslations already present', async () => {
     function Component() {
         const t = useTranslations();
         const t2 = useTranslations();
-        t("piskIR", undefined, undefined, "Hello from extracted!");
+        t("piskIR", void 0, void 0, "Hello from extracted!");
         t2("greeting");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "piskIR",
           "message": "Hello from extracted!",
           "references": [
@@ -244,13 +251,14 @@ it('can extract a message with t out of scope', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
+        t("+YJVTi", void 0, void 0, "Hey!");
     }
     const t = (msg)=>msg;
     t("Should not be transformed");
     ",
       "messages": [
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -298,11 +306,11 @@ it('can extract messages from an event handler and JSX', async () => {
         const [notification, setNotification] = useState();
         const t = useTranslations();
         function onClick() {
-            setNotification(t("+1F2If", undefined, undefined, "Successfully sent!"));
+            setNotification(t("+1F2If", void 0, void 0, "Successfully sent!"));
         }
         return (<div>
               <button onClick={onClick}>
-                {t("9WRlF4", undefined, undefined, "Send")}
+                {t("9WRlF4", void 0, void 0, "Send")}
               </button>
               {notification}
             </div>);
@@ -310,6 +318,7 @@ it('can extract messages from an event handler and JSX', async () => {
     ",
       "messages": [
         {
+          "description": null,
           "id": "+1F2If",
           "message": "Successfully sent!",
           "references": [
@@ -319,6 +328,7 @@ it('can extract messages from an event handler and JSX', async () => {
           ],
         },
         {
+          "description": null,
           "id": "9WRlF4",
           "message": "Send",
           "references": [
@@ -349,11 +359,12 @@ it('can extract a message with a renamed hook', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("+YJVTi", undefined, undefined, "Hey!");
+        t("+YJVTi", void 0, void 0, "Hey!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -386,11 +397,12 @@ it('supports passing values', async () => {
         const t = useTranslations();
         t("tBFOH1", {
             name: 'Alice'
-        }, undefined, "Hello, {name}!");
+        }, void 0, "Hello, {name}!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "tBFOH1",
           "message": "Hello, {name}!",
           "references": [
@@ -432,6 +444,7 @@ it('supports passing an inline date formatter', async () => {
     ",
       "messages": [
         {
+          "description": null,
           "id": "5n+ZPU",
           "message": "{date, date, short}!",
           "references": [
@@ -464,11 +477,12 @@ it('supports t.rich', async () => {
         const t = useTranslations();
         t.rich("C+nN8a", {
             b: (chunks)=><b>{chunks}</b>
-        }, undefined, "Hello <b>Alice</b>!");
+        }, void 0, "Hello <b>Alice</b>!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "C+nN8a",
           "message": "Hello <b>Alice</b>!",
           "references": [
@@ -501,11 +515,12 @@ it('supports t.markup', async () => {
         const t = useTranslations();
         t.markup("C+nN8a", {
             b: (chunks)=>\`<b>\${chunks}</b>\`
-        }, undefined, "Hello <b>Alice</b>!");
+        }, void 0, "Hello <b>Alice</b>!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "C+nN8a",
           "message": "Hello <b>Alice</b>!",
           "references": [
@@ -541,6 +556,7 @@ it('supports t.has', async () => {
     ",
       "messages": [
         {
+          "description": null,
           "id": "0KGiQf",
           "message": "Hello there!",
           "references": [
@@ -571,11 +587,12 @@ it('can extract with a namespace', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations('ui');
-        t("OpKKos", undefined, undefined, "Hello!");
+        t("OpKKos", void 0, void 0, "Hello!");
     }
     ",
       "messages": [
         {
+          "description": null,
           "id": "ui.OpKKos",
           "message": "Hello!",
           "references": [
@@ -595,8 +612,8 @@ describe('error handling', () => {
     expect(warn).toHaveBeenCalledTimes(0);
   });
 
-  it('warns when using a template literal with interpolation', async () => {
-    expect(
+  it('throws when using a template literal with interpolation', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -607,34 +624,14 @@ describe('error handling', () => {
       t(\`Hello \${name}!\`);
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          const name = 'Alice';
-          t(\`Hello \${name}!\`);
-      }
-      ",
-        "messages": [],
-      }
-    `);
-
-    // Note: We still transform to `useTranslations`, so that other potential
-    // calls to `useExtracted` remain not affected. The user should
-    // additionally see a warning on the console, which hints at something
-    // being wrong. There's a theoretical risk of us matching a valid ID, but
-    // since we can't extract in the first place, this message shouldn't be
-    // present in the catalog.
-
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
-  it('warns when using string concatenation with +', async () => {
-    expect(
+  it('throws when using string concatenation with +', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -645,26 +642,14 @@ describe('error handling', () => {
       t('Hello ' + name + '!');
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          const name = 'Alice';
-          t('Hello ' + name + '!');
-      }
-      ",
-        "messages": [],
-      }
-    `);
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
-  it('warns when using a ternary expression', async () => {
-    expect(
+  it('throws when using a ternary expression', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -674,25 +659,14 @@ describe('error handling', () => {
       t(isAdmin ? 'Admin panel' : 'User panel');
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component({ isAdmin }) {
-          const t = useTranslations();
-          t(isAdmin ? 'Admin panel' : 'User panel');
-      }
-      ",
-        "messages": [],
-      }
-    `);
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
-  it('warns when using a variable reference', async () => {
-    expect(
+  it('throws when using a variable reference', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -703,26 +677,14 @@ describe('error handling', () => {
       t(message);
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          const message = 'Hello world';
-          t(message);
-      }
-      ",
-        "messages": [],
-      }
-    `);
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
-  it('warns when using a function call', async () => {
-    expect(
+  it('throws when using a function call', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -732,25 +694,14 @@ describe('error handling', () => {
       t(getMessage());
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t(getMessage());
-      }
-      ",
-        "messages": [],
-      }
-    `);
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 
-  it('warns when using a dynamic expression with object syntax', async () => {
-    expect(
+  it('throws when using a dynamic expression with object syntax', async () => {
+    await expect(async () => {
       await process(
         `
     import {useExtracted} from 'next-intl';
@@ -760,23 +711,9 @@ describe('error handling', () => {
       t({id: 'test', message: getMessage()});
     }
     `
-      )
-    ).toMatchInlineSnapshot(`
-      {
-        "code": "import { useTranslations } from 'next-intl';
-      function Component() {
-          const t = useTranslations();
-          t({
-              id: 'test',
-              message: getMessage()
-          });
-      }
-      ",
-        "messages": [],
-      }
-    `);
-    expect(warn).toHaveBeenCalledWith(
-      'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+      );
+    }).rejects.toThrow(
+      'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
     );
   });
 });
@@ -803,11 +740,12 @@ describe('object syntax', () => {
         "code": "import { useTranslations } from 'next-intl';
       function Component() {
           const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
+          t("greeting", void 0, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello!",
             "references": [
@@ -838,11 +776,12 @@ describe('object syntax', () => {
         "code": "import { useTranslations } from 'next-intl';
       function Component() {
           const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
+          t("greeting", void 0, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello!",
             "references": [
@@ -873,11 +812,12 @@ describe('object syntax', () => {
         "code": "import { useTranslations } from 'next-intl';
       function Component() {
           const t = useTranslations();
-          t("greeting", undefined, undefined, "Hello!");
+          t("greeting", void 0, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello!",
             "references": [
@@ -910,11 +850,12 @@ describe('object syntax', () => {
           const t = useTranslations();
           t("greeting", {
               name: 'Alice'
-          }, undefined, "Hello!");
+          }, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello!",
             "references": [
@@ -961,6 +902,7 @@ describe('object syntax', () => {
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello!",
             "references": [
@@ -997,11 +939,12 @@ describe('object syntax', () => {
           const t = useTranslations();
           t.rich("greeting", {
               b: (chunks)=><b>{chunks}</b>
-          }, undefined, "Hello <b>Alice</b>!");
+          }, void 0, "Hello <b>Alice</b>!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello <b>Alice</b>!",
             "references": [
@@ -1034,11 +977,12 @@ describe('object syntax', () => {
           const t = useTranslations();
           t.markup("C+nN8a", {
               b: (chunks)=>\`<b>\${chunks}</b>\`
-          }, undefined, "Hello <b>Alice</b>!");
+          }, void 0, "Hello <b>Alice</b>!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "C+nN8a",
             "message": "Hello <b>Alice</b>!",
             "references": [
@@ -1069,11 +1013,12 @@ describe('object syntax', () => {
         "code": "import { useTranslations } from 'next-intl';
       function Component() {
           const t = useTranslations('ui');
-          t("greeting", undefined, undefined, "Hello!");
+          t("greeting", void 0, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "ui.greeting",
             "message": "Hello!",
             "references": [
@@ -1106,11 +1051,12 @@ describe('getExtracted', () => {
         "code": "import { getTranslations } from 'next-intl/server';
       async function Component() {
           const t = await getTranslations();
-          t("0KGiQf", undefined, undefined, "Hello there!");
+          t("0KGiQf", void 0, void 0, "Hello there!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "0KGiQf",
             "message": "Hello there!",
             "references": [
@@ -1141,11 +1087,12 @@ describe('getExtracted', () => {
         "code": "import { getTranslations } from 'next-intl/server';
       async function Component() {
           const translate = await getTranslations();
-          translate("0KGiQf", undefined, undefined, "Hello there!");
+          translate("0KGiQf", void 0, void 0, "Hello there!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "0KGiQf",
             "message": "Hello there!",
             "references": [
@@ -1178,11 +1125,12 @@ describe('getExtracted', () => {
           const t = await getTranslations({
               locale: 'en'
           });
-          t("0KGiQf", undefined, undefined, "Hello there!");
+          t("0KGiQf", void 0, void 0, "Hello there!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "0KGiQf",
             "message": "Hello there!",
             "references": [
@@ -1216,11 +1164,12 @@ describe('getExtracted', () => {
               locale: 'en',
               namespace: 'ui'
           });
-          t("0KGiQf", undefined, undefined, "Hello there!");
+          t("0KGiQf", void 0, void 0, "Hello there!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "ui.0KGiQf",
             "message": "Hello there!",
             "references": [
@@ -1257,11 +1206,12 @@ describe('getExtracted', () => {
           const t = await getTranslations();
           t("greeting", {
               name: 'Alice'
-          }, undefined, "Hello {name}!");
+          }, void 0, "Hello {name}!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "greeting",
             "message": "Hello {name}!",
             "references": [
@@ -1292,11 +1242,12 @@ describe('getExtracted', () => {
         "code": "import { getTranslations } from 'next-intl/server';
       async function Component() {
           const t = await getTranslations('ui');
-          t("OpKKos", undefined, undefined, "Hello!");
+          t("OpKKos", void 0, void 0, "Hello!");
       }
       ",
         "messages": [
           {
+            "description": null,
             "id": "ui.OpKKos",
             "message": "Hello!",
             "references": [
@@ -1337,6 +1288,7 @@ it('does not add a fallback message in production', async () => {
     ",
       "messages": [
         {
+          "description": null,
           "id": "+YJVTi",
           "message": "Hey!",
           "references": [
@@ -1370,7 +1322,7 @@ it('can extract description from object syntax', async () => {
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("gAnLDP", undefined, undefined, "Right");
+        t("gAnLDP", void 0, void 0, "Right");
     }
     ",
       "messages": [
@@ -1410,7 +1362,7 @@ it('can extract a description with an explicit id from object syntax', async () 
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("next-slide", undefined, undefined, "Right");
+        t("next-slide", void 0, void 0, "Right");
     }
     ",
       "messages": [
@@ -1452,7 +1404,7 @@ it('can extract a description with values from object syntax', async () => {
         const t = useTranslations();
         t("wafoOY", {
             name: 'Alice'
-        }, undefined, "Hello {name}!");
+        }, void 0, "Hello {name}!");
     }
     ",
       "messages": [
@@ -1491,7 +1443,7 @@ it('can extract a description with a template literal from object syntax', async
       "code": "import { useTranslations } from 'next-intl';
     function Component() {
         const t = useTranslations();
-        t("gAnLDP", undefined, undefined, "Right");
+        t("gAnLDP", void 0, void 0, "Right");
     }
     ",
       "messages": [
@@ -1510,11 +1462,10 @@ it('can extract a description with a template literal from object syntax', async
   `);
 });
 
-it('warns about dynamic description expressions', async () => {
-  const warnSpy = vi.mocked(warn);
-
-  await process(
-    `
+it('throws for dynamic description expressions', async () => {
+  await expect(async () => {
+    await process(
+      `
     import {useExtracted} from 'next-intl';
 
     function Component() {
@@ -1526,10 +1477,9 @@ it('warns about dynamic description expressions', async () => {
       });
     }
   `
-  );
-
-  expect(warnSpy).toHaveBeenCalledWith(
-    'test.tsx: Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
+    );
+  }).rejects.toThrow(
+    'Cannot extract message from dynamic expression, messages need to be statically analyzable. If you need to provide runtime values, pass them as a separate argument.'
   );
 });
 
@@ -1551,7 +1501,7 @@ describe('source maps', () => {
     );
 
     expect(result.map).toMatchInlineSnapshot(
-      `"{"version":3,"file":"test.tsx","sources":["/project/test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":[],"mappings":"AAAA,SAAQ,eAAY,QAAO,YAAY;AAEnC,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ"}"`
+      `"{"version":3,"sources":["test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,eAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
     );
 
     expect(result.map).not.toContain('<anon>');
