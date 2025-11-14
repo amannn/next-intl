@@ -93,12 +93,9 @@ export default class MessageExtractor {
     map?: string;
   }> {
     // TODO: Depend on this package and use require.resolve to get the path
-    const swcPluginPath = path.join(
-      process.cwd(),
-      'packages',
-      'swc-plugin',
-      'swc_plugin_next_intl.wasm'
-    );
+    const swcPluginPath = 
+      '/Users/kdy1/projects/next-intl/packages/swc-plugin/swc_plugin_next_intl.wasm'
+    ;
 
     const output = await transform(source, {
       jsc: {
@@ -116,7 +113,7 @@ export default class MessageExtractor {
               swcPluginPath,
               {
                 isDevelopment: this.isDevelopment,
-                file_path: filePath
+                filePath
               }
             ]
           ]

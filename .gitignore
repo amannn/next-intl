@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 # Rust plugin
 target/
 *.wasm
+.swc/
