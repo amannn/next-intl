@@ -1,5 +1,5 @@
 import { useTranslation } from "next-intl";
 function Component() {
-    const t = useExtracted();
+    const t = useTranslations();
     t("+YJVTi", void 0, void 0, "Hey!");
 }
