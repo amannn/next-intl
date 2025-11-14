@@ -135,6 +135,8 @@ export default class MessageExtractor {
         `{"version":3,"file":"${filePath}","sources":["${absoluteFilePath}"]`
       );
     }
+
+    // TODO: Verify the output using console.log
     // TODO: Improve the typing of @swc/core
     const results = JSON.parse((output as any).output.results) as Array<StrictExtractedMessage>;
 
