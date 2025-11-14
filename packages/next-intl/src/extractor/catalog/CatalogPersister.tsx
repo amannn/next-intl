@@ -28,12 +28,23 @@ export default class CatalogPersister {
   ): Promise<void> {
     const filePath = this.getFilePath(locale);
     const content = this.formatter.serialize(messages, {locale});
+    const outputDir = fsPath.dirname(filePath);
+    const temporaryFilePath = fsPath.join(
+      outputDir,
+      `.${fsPath.basename(filePath)}.tmp-${process.pid}-${Date.now()}`
+    );
+
     try {
-      const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
-      await fs.writeFile(filePath, content);
+      await fs.writeFile(temporaryFilePath, content);
+      await fs.rename(temporaryFilePath, filePath);
     } catch (error) {
       console.error(`❌ Failed to write catalog: ${error}`);
+      try {
+        await fs.unlink(temporaryFilePath);
+      } catch {
+        // ignore cleanup errors
+      }
     }
   }
 
