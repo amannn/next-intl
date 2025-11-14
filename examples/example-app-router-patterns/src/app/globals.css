@@ -1,0 +1,23 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-white: #ffffff;
+
+  --color-gray-50: #f7f7f8;
+  --color-gray-100: #ebebef;
+  --color-gray-200: #d1d1db;
+  --color-gray-300: #a9a9bc;
+  --color-gray-400: #8a8aa3;
+  --color-gray-500: #6c6c89;
+  --color-gray-600: #55556d;
+  --color-gray-700: #3f3f50;
+  --color-gray-800: #282833;
+  --color-gray-900: #121217;
+
+  --color-blue-300: #70d2ff;
+  --color-blue-700: #008fd6;
+
+  --font-mono:
+    Monaco, ui-monospace, SFMono-Regular, Menlo, Consolas, Liberation Mono,
+    Courier New, monospace;
+}
