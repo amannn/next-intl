@@ -8,7 +8,11 @@ export default class ExtractionCompiler implements Disposable {
 
   constructor(
     config: ExtractorConfig,
-    opts: {isDevelopment?: boolean; projectRoot?: string} = {}
+    opts: {
+      isDevelopment?: boolean;
+      projectRoot?: string;
+      sourceMap?: boolean;
+    } = {}
   ) {
     this.manager = new CatalogManager(config, opts);
     this.isDevelopment = opts.isDevelopment ?? false;
@@ -33,7 +37,7 @@ export default class ExtractionCompiler implements Disposable {
       void this.manager.save();
     }
 
-    return result.source;
+    return result;
   }
 
   private async performInitialScan(): Promise<void> {

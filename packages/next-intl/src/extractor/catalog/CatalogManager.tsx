@@ -43,7 +43,11 @@ export default class CatalogManager {
 
   constructor(
     config: ExtractorConfig,
-    opts: {projectRoot?: string; isDevelopment?: boolean} = {}
+    opts: {
+      projectRoot?: string;
+      isDevelopment?: boolean;
+      sourceMap?: boolean;
+    } = {}
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<number>(50);
@@ -52,7 +56,8 @@ export default class CatalogManager {
 
     this.messageExtractor = new MessageExtractor({
       isDevelopment: this.isDevelopment,
-      projectRoot: this.projectRoot
+      projectRoot: this.projectRoot,
+      sourceMap: opts.sourceMap
     });
   }
 
@@ -177,8 +182,9 @@ export default class CatalogManager {
     source: string
   ): Promise<{
     messages: Array<ExtractedMessage>;
-    source: string;
+    code: string;
     changed: boolean;
+    map?: string;
   }> {
     const result = await this.messageExtractor.processFileContent(
       absoluteFilePath,
@@ -251,7 +257,12 @@ export default class CatalogManager {
     }
 
     const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
-    return {...result, changed};
+    return {
+      messages: result.messages,
+      code: result.code,
+      map: result.map,
+      changed
+    };
   }
 
   private haveMessagesChanged(

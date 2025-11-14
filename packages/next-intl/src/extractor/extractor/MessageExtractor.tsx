@@ -4,10 +4,8 @@ import {
   type Identifier,
   type ImportDeclaration,
   type MemberExpression,
-  type Module,
   type Node,
   type ObjectExpression,
-  type Program,
   type StringLiteral,
   type TemplateLiteral,
   type VariableDeclarator,
@@ -29,20 +27,31 @@ export default class MessageExtractor {
 
   private isDevelopment: boolean;
   private projectRoot: string;
+  private sourceMap: boolean;
   private compileCache = new LRUCache<{
     messages: Array<StrictExtractedMessage>;
-    source: string;
+    code: string;
+    map?: string;
   }>(750);
 
-  constructor(opts: {isDevelopment: boolean; projectRoot: string}) {
+  constructor(opts: {
+    isDevelopment: boolean;
+    projectRoot: string;
+    sourceMap?: boolean;
+  }) {
     this.isDevelopment = opts.isDevelopment;
     this.projectRoot = opts.projectRoot;
+    this.sourceMap = opts.sourceMap ?? false;
   }
 
   async processFileContent(
     absoluteFilePath: string,
     source: string
-  ): Promise<{messages: Array<StrictExtractedMessage>; source: string}> {
+  ): Promise<{
+    messages: Array<StrictExtractedMessage>;
+    code: string;
+    map?: string;
+  }> {
     const cacheKey = source;
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
@@ -51,31 +60,44 @@ export default class MessageExtractor {
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
     if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      return {messages: [], source};
+      return {messages: [], code: source};
     }
 
+    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
+    const processResult = await this.processWithTransform(
+      source,
+      absoluteFilePath,
+      relativeFilePath
+    );
+
+    const finalResult = (
+      processResult.code ? processResult : {...processResult, code: source}
+    ) as {
+      messages: Array<StrictExtractedMessage>;
+      code: string;
+      map?: string;
+    };
+
+    this.compileCache.set(cacheKey, finalResult);
+    return finalResult;
+  }
+
+  private async processWithTransform(
+    source: string,
+    absoluteFilePath: string,
+    filePath: string
+  ): Promise<{
+    messages: Array<StrictExtractedMessage>;
+    code?: string;
+    map?: string;
+  }> {
+    // First parse the AST
     const ast = await parse(source, {
       syntax: 'typescript',
       tsx: true,
       target: 'es2022',
       decorators: true
     });
-
-    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const processResult = await this.processAST(ast, relativeFilePath);
-
-    const finalResult = (
-      processResult.source ? processResult : {...processResult, source}
-    ) as {messages: Array<StrictExtractedMessage>; source: string};
-
-    this.compileCache.set(cacheKey, finalResult);
-    return finalResult;
-  }
-
-  private async processAST(
-    ast: Program | Module,
-    filePath: string
-  ): Promise<{messages: Array<StrictExtractedMessage>; source?: string}> {
     const results: Array<StrictExtractedMessage> = [];
     let hookLocalName: string | null = null;
     let hookType: 'useTranslations' | 'getTranslations' | null = null;
@@ -505,11 +527,29 @@ export default class MessageExtractor {
       }
     }
 
+    // Visit and modify the AST
     visit(ast);
+
+    // Print the modified AST with source maps
+    const output = await print(ast, {
+      sourceMaps: this.sourceMap,
+      sourceFileName: filePath,
+      filename: filePath
+    });
+
+    // Fix the source map to include the correct filename
+    let map = output.map;
+    if (map && this.sourceMap) {
+      map = map.replace(
+        '{"version":3,"sources":["<anon>"]',
+        `{"version":3,"file":"${filePath}","sources":["${absoluteFilePath}"]`
+      );
+    }
 
     return {
       messages: results,
-      source: (await print(ast)).code
+      code: output.code,
+      map
     };
   }
 }
