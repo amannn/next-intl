@@ -163,8 +163,6 @@ describe('type safety', () => {
         // @ts-expect-error
         t('unknown');
         // @ts-expect-error
-        t.has('unknown');
-        // @ts-expect-error
         t.markup('unknown');
         // @ts-expect-error
         t.rich('unknown');
@@ -195,12 +193,26 @@ describe('type safety', () => {
         // @ts-expect-error
         t('unknown');
         // @ts-expect-error
-        t.has('unknown');
-        // @ts-expect-error
         t.markup('unknown');
         // @ts-expect-error
         t.rich('unknown');
       };
+    });
+
+    it('allows dynamic keys after they were checked by t.has', () => {
+      const t = createTranslator({
+        locale: 'en',
+        messages: {title: 'test'}
+      });
+      const key = 'title' as string;
+
+      if (t.has(key)) {
+        expect(t(key)).not.toBeUndefined();
+      } else {
+        expect.fail(
+          `\`t.has\` was not able to find ${key}, check if it still exists in messages`
+        );
+      }
     });
   });
 
@@ -610,7 +622,10 @@ describe('type safety', () => {
       () => {
         t('param', {unknown: 'Jane'});
         t.rich('param', {unknown: 'Jane', p: (chunks) => <p>{chunks}</p>});
-        t.markup('param', {unknown: 'Jane', p: (chunks) => `<p>${chunks}</p>`});
+        t.markup('param', {
+          unknown: 'Jane',
+          p: (chunks) => `<p>${chunks}</p>`
+        });
       };
     });
 
@@ -880,5 +895,27 @@ describe('t.raw', () => {
     });
 
     expect(t.raw('rich')).toBe('<b>Hello <i>{name}</i>!</b>');
+  });
+});
+
+describe('t.has', () => {
+  it('returns true when key exists in messages', () => {
+    const t = createTranslator({
+      locale: 'en',
+      namespace: 'Home',
+      messages
+    });
+
+    expect(t.has('title')).toBe(true);
+  });
+
+  it('returns false when key does not exist in messages', () => {
+    const t = createTranslator({
+      locale: 'en',
+      namespace: 'Home',
+      messages
+    });
+
+    expect(t.has('invalid')).toBe(false);
   });
 });

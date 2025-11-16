@@ -32,6 +32,8 @@ export async function TypeTest() {
   // @ts-expect-error
   t.markup('unknown');
 
-  // @ts-expect-error
-  t.has('unknown');
+  const key = 'unknown' as string;
+  if (t.has(key)) {
+    t(key);
+  }
 }

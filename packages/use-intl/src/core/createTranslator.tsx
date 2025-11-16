@@ -139,9 +139,7 @@ export type Translator<
   ): any;
 
   // `has`
-  has<TargetKey extends NamespacedMessageKeys<TranslatorMessages, Namespace>>(
-    key: TargetKey
-  ): boolean;
+  has(key: string): key is NamespacedMessageKeys<TranslatorMessages, Namespace>;
 };
 
 /**
