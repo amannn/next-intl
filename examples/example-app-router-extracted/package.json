@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "next": "^16.0.1",
+    "next": "^16.0.3",
     "next-intl": "^4.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
@@ -21,7 +21,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.0.1",
+    "eslint-config-next": "^16.0.3",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3",
     "vitest": "^3.0.8"

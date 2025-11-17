@@ -7,6 +7,9 @@ const filesystem: {
   project: {
     src: Record<string, string>;
     messages: Record<string, string> | undefined;
+    node_modules?: Record<'@acme', Record<'ui', Record<string, string>>>;
+    '.next'?: Record<string, Record<string, string>>;
+    '.git'?: Record<string, Record<string, string>>;
   };
 } = {
   project: {
@@ -15,16 +18,19 @@ const filesystem: {
   }
 };
 
-describe('json format', () => {
-  beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
-    fileTimestamps.clear();
-    watchCallbacks.clear();
-    mockWatchers.clear();
-    vi.clearAllMocks();
-  });
+beforeEach(() => {
+  filesystem.project = {
+    src: {},
+    messages: {}
+  };
+  delete (filesystem as Record<string, unknown>).ui;
+  fileTimestamps.clear();
+  watchCallbacks.clear();
+  mockWatchers.clear();
+  vi.clearAllMocks();
+});
 
+describe('json format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
@@ -310,28 +316,28 @@ describe('json format', () => {
       `
     );
     expect(filesystem).toMatchInlineSnapshot(`
-    {
-      "project": {
-        "messages": {
-          "de.json": "{
-      "+YJVTi": "Hallo!"
-    }",
-          "en.json": "{
-      "+YJVTi": "Hey!"
-    }",
+      {
+        "project": {
+          "messages": {
+            "de.json": "{
+        "+YJVTi": "Hallo!"
+      }",
+            "en.json": "{
+        "+YJVTi": "Hey!"
+      }",
+          },
+          "src": {
+            "Greeting.tsx": "
+          import {useExtracted} from 'next-intl';
+          function Greeting() {
+            const t = useExtracted();
+            return <div>{t('Hey!')}</div>;
+          }
+          ",
+          },
         },
-        "src": {
-          "Greeting.tsx": "
-        import {useExtracted} from 'next-intl';
-        function Greeting() {
-          const t = useExtracted();
-          return <div>{t('Hey!')}</div>;
-        }
-        ",
-        },
-      },
-    }
-  `);
+      }
+    `);
 
     simulateManualFileEdit(
       'messages/de.json',
@@ -668,39 +674,31 @@ describe('json format', () => {
 
     await waitForWriteFileCalls(1);
 
-    expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-      OpKKos: 'Hello!',
-      '7kKG3Q': 'World!'
-    });
+    expect(JSON.parse(filesystem.project.messages!['en.json']))
+      .toMatchInlineSnapshot(`
+        {
+          "7kKG3Q": "World!",
+          "OpKKos": "Hello!",
+        }
+      `);
 
     filesystem.project.messages!['de.json'] = '{}';
     simulateFileEvent('/project/messages', 'rename', 'de.json');
 
     await waitForWriteFileCalls(2);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(1)).toMatchInlineSnapshot(`
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
       [
-        [
-          "messages/de.json",
-          "{
-        "OpKKos": "",
-        "7kKG3Q": ""
+        "messages/de.json",
+        "{
+        "7kKG3Q": "",
+        "OpKKos": ""
       }",
-        ],
       ]
     `);
   });
 });
 
 describe('po format', () => {
-  beforeEach(() => {
-    filesystem.project.src = {};
-    filesystem.project.messages = {};
-    fileTimestamps.clear();
-    watchCallbacks.clear();
-    mockWatchers.clear();
-    vi.clearAllMocks();
-  });
-
   function createCompiler() {
     return new ExtractionCompiler(
       {
@@ -902,8 +900,8 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
       #: src/Footer.tsx
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hey!"
       ",
@@ -918,8 +916,8 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
       #: src/Footer.tsx
+      #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",
@@ -1103,6 +1101,83 @@ msgstr "Hallo!"
     `);
   });
 
+  it('sorts messages by reference path when files are compiled out of order', async () => {
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/a.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function A() {
+      const t = useExtracted();
+      return <div>{t('Message A')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/d.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function D() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/c.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function C() {
+      const t = useExtracted();
+      return <div>{t('Message C')}</div>;
+    }
+    `
+    );
+
+    await compiler.compile(
+      '/project/src/b.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    export default function B() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `
+    );
+
+    await waitForWriteFileCalls(5);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/a.tsx
+      msgid "PmvAXH"
+      msgstr "Message A"
+
+      #: src/b.tsx
+      #: src/d.tsx
+      msgid "5bb321"
+      msgstr "Message B"
+
+      #: src/c.tsx
+      msgid "c3UbA2"
+      msgstr "Message C"
+      ",
+      ]
+    `);
+  });
+
   it('initializes all messages to empty string when adding new catalog', async () => {
     filesystem.project.messages = undefined;
     filesystem.project.src['Greeting.tsx'] = `
@@ -1139,13 +1214,113 @@ msgstr "Hallo!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx
-      msgid "OpKKos"
+      msgid "7kKG3Q"
       msgstr ""
 
       #: src/Greeting.tsx
-      msgid "7kKG3Q"
+      msgid "OpKKos"
       msgstr ""
       ",
+        ],
+      ]
+    `);
+  });
+});
+
+describe('`srcPath` filtering', () => {
+  beforeEach(() => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    import Panel from '@acme/ui/panel';
+    function Greeting() {
+      const t = useExtracted();
+      return <Panel>{t('Hey!')}</Panel>;
+    }
+    `;
+
+    function createNodeModule(moduleName: string) {
+      return `
+      import {useExtracted} from 'next-intl';
+      export default function Module({children}) {
+        const t = useExtracted();
+        return (
+          <div>
+            <h1>{t('${moduleName}')}</h1>
+            {children}
+          </div>
+        )
+      }
+      `;
+    }
+
+    filesystem.project.node_modules = {
+      '@acme': {
+        ui: {
+          'panel.tsx': createNodeModule('panel.source')
+        }
+      }
+    };
+    filesystem.project['.next'] = {
+      build: {
+        'panel.tsx': createNodeModule('panel.compiled')
+      }
+    };
+    filesystem.project['.git'] = {
+      config: {
+        'panel.tsx': createNodeModule('panel.config')
+      }
+    };
+  });
+
+  function createCompiler(srcPath: string | Array<string>) {
+    return new ExtractionCompiler(
+      {
+        srcPath,
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json',
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('skips node_modules, .next and .git by default', async () => {
+    using compiler = createCompiler('./');
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }",
+        ],
+      ]
+    `);
+  });
+
+  it('includes node_modules if explicitly requested', async () => {
+    using compiler = createCompiler(['./', './node_modules/@acme/ui']);
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "JwjlWH": "panel.source",
+        "+YJVTi": "Hey!"
+      }",
         ],
       ]
     `);

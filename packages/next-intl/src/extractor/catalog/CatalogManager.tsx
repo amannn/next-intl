@@ -213,6 +213,9 @@ export default class CatalogManager {
             references.push(ref);
           }
         });
+        references.sort((referenceA, referenceB) =>
+          referenceA.path.localeCompare(referenceB.path)
+        );
         message = {...message, references};
 
         // Description: In case we have conflicting descriptions, the new one wins.
