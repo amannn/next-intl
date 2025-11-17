@@ -1,10 +1,10 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 #![feature(box_patterns)]
 
-use base64::Engine;
+mod key_generator;
+
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha512};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
@@ -20,9 +20,9 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     let config = serde_json::from_str::<Config>(
         &data
             .get_transform_plugin_config()
-            .expect("failed to get plugin config for styled-jsx"),
+            .expect("Failed to get plugin config"),
     )
-    .expect("invalid config for next-intl");
+    .expect("Invalid config");
 
     let mut visitor = TransformVisitor::new(config.is_development, config.file_path);
     program.visit_mut_with(&mut visitor);
@@ -200,8 +200,8 @@ impl VisitMut for TransformVisitor {
             }
 
             if let Some(message_text) = message_text {
-                let call_key =
-                    explicit_id.unwrap_or_else(|| KeyGenerator::generate(&message_text).into());
+                let call_key = explicit_id
+                    .unwrap_or_else(|| key_generator::KeyGenerator::generate(&message_text).into());
                 let full_key = namespace.map_or(call_key.clone(), |namespace| {
                     [&*namespace.to_string_lossy(), &*call_key.to_string_lossy()]
                         .join(NAMESPACE_SEPARATOR)
@@ -287,8 +287,7 @@ impl VisitMut for TransformVisitor {
                     _ => false,
                 };
 
-                // Add fallback message as fourth parameter in development mode (except for
-                // t.has)
+                // Add fallback message as 4th parameter in development mode (except for t.has)
                 if self.is_development && !is_has_call {
                     while call.args.len() < 3 {
                         call.args.push(Expr::undefined(DUMMY_SP).as_arg());
@@ -331,7 +330,11 @@ impl VisitMut for TransformVisitor {
                                     self.hook_local_name = Some(named_spec.local.to_id());
 
                                     named_spec.imported = None;
-                                    named_spec.local = Ident::new("useTranslations".into(), DUMMY_SP, named_spec.local.ctxt);
+                                    named_spec.local = Ident::new(
+                                        "useTranslations".into(),
+                                        DUMMY_SP,
+                                        named_spec.local.ctxt,
+                                    );
                                     break;
                                 }
                             }
@@ -356,7 +359,11 @@ impl VisitMut for TransformVisitor {
                                     self.hook_local_name = Some(named_spec.local.to_id());
 
                                     named_spec.imported = None;
-                                    named_spec.local = Ident::new("getTranslations".into(), DUMMY_SP, named_spec.local.ctxt);
+                                    named_spec.local = Ident::new(
+                                        "getTranslations".into(),
+                                        DUMMY_SP,
+                                        named_spec.local.ctxt,
+                                    );
                                     break;
                                 }
                             }
@@ -477,15 +484,5 @@ fn extract_static_string(value: &Expr) -> Option<Wtf8Atom> {
         }
 
         _ => None,
-    }
-}
-
-struct KeyGenerator;
-
-impl KeyGenerator {
-    fn generate(message: &Wtf8Atom) -> String {
-        let hash = Sha512::digest(message.as_bytes());
-        let base64 = base64::engine::general_purpose::STANDARD.encode(hash);
-        base64[..6].to_string()
     }
 }

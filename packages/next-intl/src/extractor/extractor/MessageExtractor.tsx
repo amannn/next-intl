@@ -49,9 +49,8 @@ export default class MessageExtractor {
     }
 
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const processResult = await this.processWithTransform(
+    const processResult = await this.extractFromSource(
       source,
-      absoluteFilePath,
       relativeFilePath
     );
 
@@ -67,9 +66,8 @@ export default class MessageExtractor {
     return finalResult;
   }
 
-  private async processWithTransform(
+  private async extractFromSource(
     source: string,
-    absoluteFilePath: string,
     filePath: string
   ): Promise<{
     messages: Array<StrictExtractedMessage>;
