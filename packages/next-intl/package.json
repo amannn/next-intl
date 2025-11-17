@@ -125,7 +125,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "@swc/core": "^1.15.1",
+    "@swc/core": "^1.15.2",
     "negotiator": "^1.0.0",
     "use-intl": "workspace:^"
   },
