@@ -12,6 +12,25 @@ async function process(
   }).processFileContent('/project/test.tsx', code);
 }
 
+it('can extract with source maps', async () => {
+  const result = await process(
+    `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      t("Hello!");
+    }
+  `,
+    {sourceMap: true}
+  );
+
+  expect(result.map).toMatchInlineSnapshot(
+    `"{"version":3,"sources":["test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,eAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
+  );
+
+  expect(result.map).not.toContain('<anon>');
+});
+
 it('does not add a fallback message in production', async () => {
   const result = await process(
     `import {useExtracted} from 'next-intl';
@@ -47,25 +66,6 @@ it('does not add a fallback message in production', async () => {
       ],
     }
   `);
-});
-
-it('can extract with source maps', async () => {
-  const result = await process(
-    `import {useExtracted} from 'next-intl';
-
-    function Component() {
-      const t = useExtracted();
-      t("Hello!");
-    }
-  `,
-    {sourceMap: true}
-  );
-
-  expect(result.map).toMatchInlineSnapshot(
-    `"{"version":3,"sources":["test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,eAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
-  );
-
-  expect(result.map).not.toContain('<anon>');
 });
 
 describe('error handling', () => {
