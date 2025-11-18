@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'next-intl';\n\nfunction Component() {\n  const t = useExtracted();\n  t(\"Hey!\");\n}\n\nconst t = (msg) => msg;\nt(\"Should not be transformed\");\n"],"names":[],"mappings":"AAAA,SAAQ,eAAY,QAAO,YAAY;AAEvC,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ;AAEA,MAAM,IAAI,CAAC,MAAQ;AACnB,EAAE"}
