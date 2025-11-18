@@ -8,8 +8,6 @@ type StrictExtractedMessage = ExtractedMessage & {
 };
 
 export default class MessageExtractor {
-  private static readonly NAMESPACE_SEPARATOR = '.';
-
   private isDevelopment: boolean;
   private projectRoot: string;
   private sourceMap: boolean;
