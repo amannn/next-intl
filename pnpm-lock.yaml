@@ -817,15 +817,15 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: ^0.5.4
         version: 0.5.10
-      '@next-intl/swc-plugin-extractor':
-        specifier: workspace:^
-        version: link:../swc-plugin-extractor
       '@swc/core':
         specifier: ^1.15.2
         version: 1.15.2
       negotiator:
         specifier: ^1.0.0
         version: 1.0.0
+      next-intl-swc-plugin-extractor:
+        specifier: workspace:^
+        version: link:../swc-plugin-extractor
       po-parser:
         specifier: ^0.1.2
         version: 0.1.2

@@ -63,7 +63,7 @@ export default class MessageExtractor {
           disableAllLints: true,
           plugins: [
             [
-              require.resolve('@next-intl/swc-plugin-extractor'),
+              require.resolve('next-intl-swc-plugin-extractor'),
               {
                 isDevelopment: this.isDevelopment,
                 filePath
