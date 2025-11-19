@@ -10,7 +10,7 @@ use swc_core::ecma::{
 };
 use swc_ecma_ast::Pass;
 use swc_ecma_visit::visit_mut_pass;
-use swc_plugin_next_intl::TransformVisitor;
+use swc_plugin_extractor::TransformVisitor;
 
 fn tr() -> impl Pass {
     let unresolved_mark = Mark::new();

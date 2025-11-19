@@ -1,7 +1,10 @@
+import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
 import type {ExtractedMessage} from '../types.js';
 import LRUCache from './LRUCache.js';
+
+const require = createRequire(import.meta.url);
 
 type StrictExtractedMessage = ExtractedMessage & {
   references: NonNullable<ExtractedMessage['references']>;
@@ -46,40 +49,7 @@ export default class MessageExtractor {
       return {messages: [], code: source};
     }
 
-    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const processResult = await this.extractFromSource(
-      source,
-      relativeFilePath
-    );
-
-    const finalResult = (
-      processResult.code ? processResult : {...processResult, code: source}
-    ) as {
-      messages: Array<StrictExtractedMessage>;
-      code: string;
-      map?: string;
-    };
-
-    this.compileCache.set(cacheKey, finalResult);
-    return finalResult;
-  }
-
-  private async extractFromSource(
-    source: string,
-    filePath: string
-  ): Promise<{
-    messages: Array<StrictExtractedMessage>;
-    code?: string;
-    map?: string;
-  }> {
-    // TODO: Depend on this package and use require.resolve to get the path
-    const swcPluginPath = path.join(
-      process.cwd(),
-      'packages',
-      'swc-plugin',
-      'swc_plugin_next_intl.wasm'
-    );
-
+    const filePath = path.relative(this.projectRoot, absoluteFilePath);
     const result = await transform(source, {
       jsc: {
         target: 'esnext',
@@ -93,7 +63,7 @@ export default class MessageExtractor {
           disableAllLints: true,
           plugins: [
             [
-              swcPluginPath,
+              require.resolve('@next-intl/swc-plugin-extractor'),
               {
                 isDevelopment: this.isDevelopment,
                 filePath
@@ -113,10 +83,13 @@ export default class MessageExtractor {
       JSON.parse(output).results
     ) as Array<StrictExtractedMessage>;
 
-    return {
-      messages,
+    const extractionResult = {
       code: result.code,
-      map: result.map
+      map: result.map,
+      messages
     };
+
+    this.compileCache.set(cacheKey, extractionResult);
+    return extractionResult;
   }
 }

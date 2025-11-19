@@ -817,6 +817,9 @@ importers:
       '@formatjs/intl-localematcher':
         specifier: ^0.5.4
         version: 0.5.10
+      '@next-intl/swc-plugin-extractor':
+        specifier: workspace:^
+        version: link:../swc-plugin-extractor
       '@swc/core':
         specifier: ^1.15.2
         version: 1.15.2
@@ -903,7 +906,7 @@ importers:
         specifier: ^3.0.8
         version: 3.0.8(@edge-runtime/vm@5.0.0)(@types/debug@4.1.12)(@types/node@20.17.24)(jiti@2.4.2)(jsdom@27.1.0)(lightningcss@1.29.2)(terser@5.39.0)(yaml@2.7.0)
 
-  packages/swc-plugin: {}
+  packages/swc-plugin-extractor: {}
 
   packages/use-intl:
     dependencies:
