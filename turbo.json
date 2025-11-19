@@ -12,7 +12,8 @@
       ]
     },
     "next-intl#build": {
-      "dependsOn": ["use-intl#build", "tools#build"]
+      "dependsOn": ["use-intl#build", "tools#build"],
+      "outputs": ["dist/**"]
     },
     "lint": {
       "dependsOn": ["^build"]
