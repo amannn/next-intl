@@ -1,6 +1,6 @@
 {
   "name": "next-intl",
-  "version": "4.5.3",
+  "version": "4.5.4",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
@@ -125,9 +125,9 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "next-intl-swc-plugin-extractor": "workspace:^",
     "@swc/core": "^1.15.2",
     "negotiator": "^1.0.0",
+    "next-intl-swc-plugin-extractor": "workspace:^",
     "po-parser": "^0.1.2",
     "use-intl": "workspace:^"
   },
