@@ -3,7 +3,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "build/**"]
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "build/**",
+        "target/wasm32-wasip1/release/*.wasm"
+      ]
+    },
+    "next-intl#build": {
+      "dependsOn": ["use-intl#build", "tools#build"]
     },
     "lint": {
       "dependsOn": ["^build"]
