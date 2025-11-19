@@ -257,12 +257,7 @@ export default class CatalogManager {
     }
 
     const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
-    return {
-      messages: result.messages,
-      code: result.code,
-      map: result.map,
-      changed
-    };
+    return {...result, changed};
   }
 
   private haveMessagesChanged(
