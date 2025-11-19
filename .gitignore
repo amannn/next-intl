@@ -8,8 +8,4 @@ dist/
 .next/
 tsconfig.tsbuildinfo
 .turbo
-
-# Rust plugin
-target/
-*.wasm
-.swc/
+.swc
