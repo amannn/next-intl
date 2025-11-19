@@ -18,14 +18,15 @@ export default function extractionLoader(
   if (!compiler) {
     compiler = new ExtractionCompiler(options, {
       // Avoid rollup's `replace` plugin to compile this away
-      isDevelopment: process.env['NODE_ENV'.trim()] === 'development'
+      isDevelopment: process.env['NODE_ENV'.trim()] === 'development',
+      sourceMap: this.sourceMap
     });
   }
 
   compiler
     .compile(this.resourcePath, source)
     .then((result) => {
-      callback(null, result);
+      callback(null, result.code, result.map);
     })
     .catch(callback);
 }

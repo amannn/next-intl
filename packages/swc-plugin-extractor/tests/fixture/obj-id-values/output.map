@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'next-intl';\n\nfunction Component() {\n  const t = useExtracted();\n  t({id: \"greeting\", message: 'Hello!', values: {name: 'Alice'}});\n}\n"],"names":[],"mappings":"AAAA,SAAQ,eAAY,QAAO,YAAY;AAEvC,SAAS;IACP,MAAM,IAAI;IACV,EAAE,YAA4C;QAAC,MAAM;IAAO;AAC9D"}
