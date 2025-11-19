@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.5.5 (2025-11-19)
+
+### Bug Fixes
+
+* Move SWC cache to `node_modules` ([#2120](https://github.com/amannn/next-intl/issues/2120)) ([0ba9105](https://github.com/amannn/next-intl/commit/0ba91054df2f40eae69eb4f4fa7e7455b3c8d9f2)) – by @amannn
+
 ## 4.5.4 (2025-11-19)
 
 ### Bug Fixes
