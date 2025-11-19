@@ -25,8 +25,11 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # Change workspace dependencies from workspace:^ to workspace: to use fixed versions
       - run: |
-          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && git commit -am "use fixed version"
+          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \
+          sed -i 's/"next-intl-swc-plugin-extractor": "workspace:\^"/"next-intl-swc-plugin-extractor": "workspace:"/' ./packages/next-intl/package.json && \
+          git commit -am "use fixed version"
       - run: pnpm lerna publish 0.0.0-canary-${GITHUB_SHA::7} --no-git-reset --dist-tag canary --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
         env:
