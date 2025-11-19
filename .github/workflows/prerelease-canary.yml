@@ -16,16 +16,20 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
           node-version: 20.x
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: npm install -g npm@latest # Trusted publishers
       - run: pnpm install
+      - run: pnpm turbo run build --filter './packages/**'
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # Change workspace dependencies from "workspace:^" to "workspace:"
       - run: |
-          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && git commit -am "use fixed version"
+          sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \
+          sed -i 's/"next-intl-swc-plugin-extractor": "workspace:\^"/"next-intl-swc-plugin-extractor": "workspace:"/' ./packages/next-intl/package.json && \
+          git commit -am "use fixed version"
       - run: pnpm lerna publish 0.0.0-canary-${GITHUB_SHA::7} --no-git-reset --dist-tag canary --no-push --yes
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
         env:

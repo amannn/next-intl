@@ -1,0 +1,38 @@
+[package]
+name = "swc-plugin-extractor"
+version = "0.1.0"
+description = "Next.js intl plugin for SWC"
+authors = ["강동윤/Donny <kdy.1997.dev@gmail.com>", "Jan Amann <jan@amann.work>"]
+edition = "2021"
+homepage = "https://next-intl.dev"
+license = "MIT"
+repository = "https://github.com/amannn/next-intl.git"
+rust-version = "1.80"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+base64 = "0.22"
+rustc-hash = "2.1.0"
+serde = "1.0.203"
+serde_json = "1.0.117"
+sha2 = "0.10"
+swc_atoms = "9.0.0"
+swc_common = { version = "17.0.0", features = ["concurrent"] }
+swc_core = { version = "47.0.3", features = ["ecma_plugin_transform"] }
+swc_ecma_ast = "18.0.0"
+swc_ecma_utils = "24.0.0"
+swc_ecma_visit = "18.0.0"
+swc_plugin_macro = "1.1.0"
+
+[dev-dependencies]
+swc_core = { version = "47.0.3", features = ["ecma_parser"] }
+swc_ecma_transforms_testing = "33.0.0"
+testing = "18.0.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = "symbols"

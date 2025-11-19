@@ -1,0 +1,25 @@
+{
+  "name": "next-intl-swc-plugin-extractor",
+  "version": "0.1.0",
+  "sideEffects": false,
+  "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "contributors": [
+    "Jan Amann <jan@amann.work>"
+  ],
+  "description": "SWC plugin for extracting inline messages.",
+  "license": "MIT",
+  "homepage": "https://next-intl.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amannn/next-intl.git"
+  },
+  "scripts": {
+    "prepublishOnly": "turbo build",
+    "test": "cargo test --release",
+    "build": "cargo build --release --target wasm32-wasip1 --target-dir target"
+  },
+  "main": "target/wasm32-wasip1/release/swc_plugin_extractor.wasm",
+  "files": [
+    "target/wasm32-wasip1/release/swc_plugin_extractor.wasm"
+  ]
+}

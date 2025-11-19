@@ -32,7 +32,8 @@ We aim to create resources that help developers in the following situations:
 
 1. Make sure you have [pnpm](https://pnpm.io/) installed
 2. Clone the repo
-3. `pnpm install` (includes an initial build of the packages)
+3. `pnpm install`
+4. `pnpm build-packages`
 
 Now, you're all set and you can work on individual packages.
 
