@@ -25,7 +25,7 @@ jobs:
       - run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-      # Change workspace dependencies from workspace:^ to workspace: to use fixed versions
+      # Change workspace dependencies from "workspace:^" to "workspace:"
       - run: |
           sed -i 's/"use-intl": "workspace:\^"/"use-intl": "workspace:"/' ./packages/next-intl/package.json && \
           sed -i 's/"next-intl-swc-plugin-extractor": "workspace:\^"/"next-intl-swc-plugin-extractor": "workspace:"/' ./packages/next-intl/package.json && \
