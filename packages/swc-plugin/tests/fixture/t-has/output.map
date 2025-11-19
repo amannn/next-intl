@@ -1,1 +1,0 @@
-{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'next-intl';\n\nfunction Component() {\n  const t = useExtracted();\n  t.has('Hello there!');\n}\n"],"names":[],"mappings":"AAAA,SAAQ,eAAY,QAAO,YAAY;AAEvC,SAAS;IACP,MAAM,IAAI;IACV,EAAE,GAAG,CAAC;AACR"}
