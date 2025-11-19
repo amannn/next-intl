@@ -59,6 +59,7 @@ export default class MessageExtractor {
           decorators: true
         },
         experimental: {
+          cacheRoot: 'node_modules/.cache/swc',
           disableBuiltinTransformsForInternalTesting: true,
           disableAllLints: true,
           plugins: [
