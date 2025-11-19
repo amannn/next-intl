@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "sideEffects": false,
   "author": "강동윤 <kdy1997.dev@gmail.com>",
+  "contributors": [
+    "Jan Amann <jan@amann.work>"
+  ],
   "description": "SWC plugin for extracting inline messages.",
   "license": "MIT",
   "homepage": "https://next-intl.dev",
