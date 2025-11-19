@@ -6,6 +6,9 @@
   "contributors": [
     "Jan Amann <jan@amann.work>"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "SWC plugin for extracting inline messages.",
   "license": "MIT",
   "homepage": "https://next-intl.dev",
