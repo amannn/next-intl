@@ -157,8 +157,11 @@ export default class CatalogManager {
       const fileTime = await persister.getLastModified(locale);
       this.lastWriteByLocale.set(locale, fileTime);
       return messages;
-    } catch {
-      return [];
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return [];
+      }
+      throw error;
     }
   }
 
