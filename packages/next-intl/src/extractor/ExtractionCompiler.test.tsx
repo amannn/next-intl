@@ -1225,6 +1225,75 @@ msgstr "Hallo!"
       ]
     `);
   });
+
+  it('preserves flags', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('`srcPath` filtering', () => {

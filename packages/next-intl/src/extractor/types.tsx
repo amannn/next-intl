@@ -10,6 +10,7 @@ export type ExtractedMessage = {
   message: string;
   description?: string;
   references?: Array<{path: string}>;
+  [key: string]: unknown;
 };
 
 export type MessagesConfig = {

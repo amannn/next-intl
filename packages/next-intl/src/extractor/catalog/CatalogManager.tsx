@@ -26,7 +26,7 @@ export default class CatalogManager {
    * This potentially also includes outdated ones that were initially available,
    * but are not used anymore. This allows to restore them if they are used again.
    **/
-  private translationsByTargetLocale: Map<Locale, Map<string, string>> =
+  private translationsByTargetLocale: Map<Locale, Map<string, ExtractedMessage>> =
     new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
@@ -171,7 +171,7 @@ export default class CatalogManager {
         const messages = await this.loadLocaleMessages(locale);
         for (const message of messages) {
           const translations = this.translationsByTargetLocale.get(locale)!;
-          translations.set(message.id, message.message);
+          translations.set(message.id, message);
         }
       })
     );
@@ -348,15 +348,19 @@ export default class CatalogManager {
 
       for (const diskMessage of diskMessages) {
         // Disk wins: preserve manual edits
-        translations.set(diskMessage.id, diskMessage.message);
+        translations.set(diskMessage.id, diskMessage);
       }
     }
 
     const translations = this.translationsByTargetLocale.get(locale)!;
-    const localeMessages = messages.map((message) => ({
-      ...message,
-      message: translations.get(message.id) || ''
-    }));
+    const localeMessages = messages.map((message) => {
+      const translation = translations.get(message.id);
+      return {
+        ...translation,
+        ...message,
+        message: translation ? translation.message : ''
+      };
+    });
 
     await persister.write(locale, localeMessages);
 
@@ -374,7 +378,7 @@ export default class CatalogManager {
       this.translationsByTargetLocale.set(locale, translations);
       const messages = await this.loadLocaleMessages(locale);
       for (const message of messages) {
-        translations.set(message.id, message.message);
+        translations.set(message.id, message);
       }
       await this.saveLocale(locale);
     }
