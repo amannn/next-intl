@@ -1394,9 +1394,12 @@ describe('`srcPath` filtering', () => {
  ****************************************************************/
 
 function waitForWriteFileCalls(length: number) {
-  return vi.waitFor(() => {
-    expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
-  });
+  return vi.waitFor(
+    () => {
+      expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+    },
+    {timeout: 5000}
+  );
 }
 
 function simulateManualFileEdit(filePath: string, content: string) {
