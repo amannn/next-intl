@@ -27,6 +27,7 @@ beforeEach(() => {
   fileTimestamps.clear();
   watchCallbacks.clear();
   mockWatchers.clear();
+  readFileInterceptors.clear();
   vi.clearAllMocks();
 });
 
@@ -695,6 +696,67 @@ describe('json format', () => {
       }",
       ]
     `);
+  });
+
+  it('avoids a race condition when saving while loading a locale catalog was changed', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    // Prepare the new locale file
+    filesystem.project.messages!['fr.json'] = '{"OpKKos": "Bonjour!"}';
+
+    let resolveReadFile: (() => void) | undefined;
+    const readFilePromise = new Promise<void>((resolve) => {
+      resolveReadFile = resolve;
+    });
+
+    // Intercept reading of fr.json
+    readFileInterceptors.set('fr.json', () => readFilePromise);
+
+    // Trigger the file change (this starts the loading process)
+    simulateFileEvent('/project/messages', 'rename', 'fr.json');
+
+    // While loading is pending (stuck in readFile), trigger a compile/save
+    // We change the content to ensure `save()` is actually called
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx'] +
+        `
+        function Other() {
+          const t = useExtracted();
+          return <div>{t('Hi!')}</div>;
+        }`
+    );
+
+    // Wait for the async operations to settle. We need to ensure the "bad save"
+    // attempt happens while the read interceptor is still blocking the load.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Allow loading to finish
+    resolveReadFile?.();
+
+    // Wait for everything to settle
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Ensure only the new message is empty
+    expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
+      OpKKos: 'Bonjour!',
+      'nm/7yQ': ''
+    });
   });
 });
 
@@ -1446,6 +1508,7 @@ const fileTimestamps = new Map<string, Date>();
 const watchCallbacks: Map<string, (event: string, filename: string) => void> =
   new Map();
 const mockWatchers: Map<string, {close(): void}> = new Map();
+const readFileInterceptors = new Map<string, () => Promise<void>>();
 
 function simulateFileEvent(
   dirPath: string,
@@ -1528,6 +1591,11 @@ vi.mock('fs', () => ({
 vi.mock('fs/promises', () => ({
   default: {
     readFile: vi.fn(async (filePath: string) => {
+      for (const [key, interceptor] of readFileInterceptors) {
+        if (filePath.endsWith(key)) {
+          await interceptor();
+        }
+      }
       const content = getNestedValue(filesystem, filePath);
       if (typeof content === 'string') {
         return content;

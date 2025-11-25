@@ -167,12 +167,12 @@ export default class CatalogManager {
 
     await Promise.all(
       targetLocales.map(async (locale) => {
-        this.translationsByTargetLocale.set(locale, new Map());
+        const translations = new Map<string, string>();
         const messages = await this.loadLocaleMessages(locale);
         for (const message of messages) {
-          const translations = this.translationsByTargetLocale.get(locale)!;
           translations.set(message.id, message.message);
         }
+        this.translationsByTargetLocale.set(locale, translations);
       })
     );
   }
@@ -337,6 +337,11 @@ export default class CatalogManager {
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
 
+    // In case the locale isn't loaded yet, abort for now. Once
+    // it's loaded, then this function will be invoked again.
+    const translations = this.translationsByTargetLocale.get(locale);
+    if (!translations) return;
+
     // Check if file was modified externally
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
@@ -344,7 +349,6 @@ export default class CatalogManager {
     // If file was modified externally, read and merge
     if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
       const diskMessages = await persister.read(locale);
-      const translations = this.translationsByTargetLocale.get(locale)!;
 
       for (const diskMessage of diskMessages) {
         // Disk wins: preserve manual edits
@@ -352,7 +356,6 @@ export default class CatalogManager {
       }
     }
 
-    const translations = this.translationsByTargetLocale.get(locale)!;
     const localeMessages = messages.map((message) => ({
       ...message,
       message: translations.get(message.id) || ''
@@ -370,12 +373,12 @@ export default class CatalogManager {
     removed: Array<Locale>;
   }): Promise<void> => {
     for (const locale of params.added) {
-      const translations = new Map();
-      this.translationsByTargetLocale.set(locale, translations);
+      const translations = new Map<string, string>();
       const messages = await this.loadLocaleMessages(locale);
       for (const message of messages) {
         translations.set(message.id, message.message);
       }
+      this.translationsByTargetLocale.set(locale, translations);
       await this.saveLocale(locale);
     }
 
