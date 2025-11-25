@@ -67,15 +67,23 @@ describe('json format', () => {
       filesystem.project.src['Greeting.tsx']
     );
 
-    await vi.waitFor(() => {
-      expect(filesystem.project.messages!['en.json']).toBeDefined();
-      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-        '+YJVTi': 'Hey!'
-      });
-      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
-        '+YJVTi': 'Hallo!'
-      });
-    });
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": "Hallo!"
+      }",
+        ],
+      ]
+    `);
   });
 
   it('resets translations when a message changes', async () => {
@@ -104,14 +112,24 @@ describe('json format', () => {
       `
     );
 
-    await vi.waitFor(() => {
-      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-        OpKKos: 'Hello!'
-      });
-      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
-        OpKKos: ''
-      });
-    });
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "OpKKos": "Hello!"
+      }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": ""
+      }",
+        ],
+      ]
+    `);
   });
 
   it('removes translations when all messages are removed from a file', async () => {

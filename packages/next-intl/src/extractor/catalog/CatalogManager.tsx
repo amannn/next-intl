@@ -364,27 +364,37 @@ export default class CatalogManager {
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
 
-    // In case the locale isn't loaded yet, abort for now. Once
-    // it's loaded, then this function will be invoked again.
-    const translations = this.translationsByTargetLocale.get(locale);
-    if (!translations) return;
+    const isSourceLocale = locale === this.config.sourceLocale;
+
+    let prevTranslations: Map<string, ExtractedMessage> | undefined;
+    if (!isSourceLocale) {
+      // In case the locale isn't loaded yet, abort for now. Once
+      // it's loaded, then this function will be invoked again.
+      prevTranslations = this.translationsByTargetLocale.get(locale);
+      if (!prevTranslations) return;
+    }
 
     // Check if file was modified externally
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
 
     // If file was modified externally, read and merge
-    if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
+    if (
+      prevTranslations &&
+      currentFileTime &&
+      lastWriteTime &&
+      currentFileTime > lastWriteTime
+    ) {
       const diskMessages = await persister.read(locale);
 
       for (const diskMessage of diskMessages) {
         // Disk wins: preserve manual edits
-        translations.set(diskMessage.id, diskMessage);
+        prevTranslations.set(diskMessage.id, diskMessage);
       }
     }
 
     const localeMessages = messages.map((message) => {
-      const translation = translations.get(message.id);
+      const translation = prevTranslations?.get(message.id);
       return {
         ...translation,
         id: message.id,
