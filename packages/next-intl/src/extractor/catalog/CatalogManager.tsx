@@ -136,12 +136,50 @@ export default class CatalogManager {
 
   private async loadSourceMessages() {
     // First hydrate from source locale file to potentially init metadata
-    await this.loadLocaleMessages(this.config.sourceLocale);
+    const sourceMessages = await this.loadLocaleMessages(this.config.sourceLocale);
+    for (const message of sourceMessages) {
+      this.messagesById.set(message.id, message);
+
+      if (message.references) {
+        for (const ref of message.references) {
+          const absolutePath = path.resolve(this.projectRoot, ref.path);
+          let fileMessages = this.messagesByFile.get(absolutePath);
+          if (!fileMessages) {
+            fileMessages = new Map();
+            this.messagesByFile.set(absolutePath, fileMessages);
+          }
+          fileMessages.set(message.id, message);
+        }
+      }
+    }
 
     // Then extract from all source files
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPaths()
     );
+
+    // Cleanup files that are not in sourceFiles anymore
+    const sourceFilesSet = new Set(sourceFiles);
+    for (const [filePath, fileMessages] of this.messagesByFile) {
+      if (!sourceFilesSet.has(filePath)) {
+        // File removed
+        for (const message of fileMessages.values()) {
+          // Remove reference
+          const relativePath = path.relative(this.projectRoot, filePath);
+          // Update message in messagesById
+          const globalMessage = this.messagesById.get(message.id);
+          if (globalMessage && globalMessage.references) {
+            globalMessage.references = globalMessage.references.filter(
+              (r) => r.path !== relativePath
+            );
+            if (globalMessage.references.length === 0) {
+              this.messagesById.delete(message.id);
+            }
+          }
+        }
+        this.messagesByFile.delete(filePath);
+      }
+    }
 
     await Promise.all(
       sourceFiles.map(async (filePath) =>
@@ -221,15 +259,12 @@ export default class CatalogManager {
         references.sort((referenceA, referenceB) =>
           referenceA.path.localeCompare(referenceB.path)
         );
-        message = {...message, references};
 
-        // Description: In case we have conflicting descriptions, the new one wins.
-        if (prevMessage.description && !message.description) {
-          message = {
-            ...message,
-            description: prevMessage.description
-          };
-        }
+        message = {
+          ...prevMessage,
+          ...message,
+          references
+        };
       }
 
       this.messagesById.set(message.id, message);
@@ -361,11 +396,17 @@ export default class CatalogManager {
     const translations = this.translationsByTargetLocale.get(locale)!;
     const localeMessages = messages.map((message) => {
       const translation = translations.get(message.id);
-      return {
+      const result = {
         ...translation,
         ...message,
         message: translation ? translation.message : ''
       };
+
+      if (translation && translation['flags']) {
+        result['flags'] = translation['flags'];
+      }
+
+      return result;
     });
 
     await persister.write(locale, localeMessages);
