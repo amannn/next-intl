@@ -1,5 +1,5 @@
-import {localeCompare} from '../utils.js';
 import type {ExtractedMessage} from '../types.js';
+import {localeCompare} from '../utils.js';
 
 export function getSortedMessages(
   messages: Array<ExtractedMessage>
