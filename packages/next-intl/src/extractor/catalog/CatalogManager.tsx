@@ -169,7 +169,10 @@ export default class CatalogManager {
 
     await Promise.all(
       targetLocales.map(async (locale) => {
+        // maybee this could be related to reset. we could later set this
+        // check also other calls of new Map()
         this.translationsByTargetLocale.set(locale, new Map());
+
         const messages = await this.loadLocaleMessages(locale);
         for (const message of messages) {
           const translations = this.translationsByTargetLocale.get(locale)!;
@@ -351,6 +354,7 @@ export default class CatalogManager {
       for (const diskMessage of diskMessages) {
         // Disk wins: preserve manual edits
         translations.set(diskMessage.id, diskMessage);
+        // merge somethng?
       }
     }
 
@@ -377,6 +381,8 @@ export default class CatalogManager {
   }): Promise<void> => {
     for (const locale of params.added) {
       const translations = new Map();
+      // this could be the issue
+      // does it only happen with infer?
       this.translationsByTargetLocale.set(locale, translations);
       const messages = await this.loadLocaleMessages(locale);
       for (const message of messages) {

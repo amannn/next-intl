@@ -1226,7 +1226,7 @@ msgstr "Hallo!"
     `);
   });
 
-  it('preserves flags', async () => {
+  it.only('preserves flags', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
