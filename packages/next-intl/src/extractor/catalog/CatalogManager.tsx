@@ -118,12 +118,6 @@ export default class CatalogManager {
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
-  getFileMessages(
-    absoluteFilePath: string
-  ): Map<string, ExtractedMessage> | undefined {
-    return this.messagesByFile.get(absoluteFilePath);
-  }
-
   public async loadMessages() {
     await this.loadSourceMessages();
     await this.loadTargetMessages();
@@ -136,7 +130,25 @@ export default class CatalogManager {
 
   private async loadSourceMessages() {
     // First hydrate from source locale file to potentially init metadata
-    await this.loadLocaleMessages(this.config.sourceLocale);
+    const messages = await this.loadLocaleMessages(this.config.sourceLocale);
+    const messagesById: typeof this.messagesById = new Map();
+    const messagesByFile: typeof this.messagesByFile = new Map();
+    for (const message of messages) {
+      messagesById.set(message.id, message);
+      if (message.references) {
+        for (const ref of message.references) {
+          const absoluteFilePath = path.join(this.projectRoot, ref.path);
+          let fileMessages = messagesByFile.get(absoluteFilePath);
+          if (!fileMessages) {
+            fileMessages = new Map();
+            messagesByFile.set(absoluteFilePath, fileMessages);
+          }
+          fileMessages.set(message.id, message);
+        }
+      }
+    }
+    this.messagesById = messagesById;
+    this.messagesByFile = messagesByFile;
 
     // Then extract from all source files
     const sourceFiles = await SourceFileScanner.getSourceFiles(
@@ -220,12 +232,12 @@ export default class CatalogManager {
         );
         message = {...message, references};
 
-        // Description: In case we have conflicting descriptions, the new one wins.
-        if (prevMessage.description && !message.description) {
-          message = {
-            ...message,
-            description: prevMessage.description
-          };
+        // Merge other properties like description, or unknown
+        // attributes like flags that are opaque to us
+        for (const key of Object.keys(prevMessage)) {
+          if (message[key] == null) {
+            message[key] = prevMessage[key];
+          }
         }
       }
 
@@ -362,7 +374,9 @@ export default class CatalogManager {
       const translation = translations.get(message.id);
       return {
         ...translation,
-        ...message,
+        id: message.id,
+        description: message.description,
+        references: message.references,
         message: translation ? translation.message : ''
       };
     });
