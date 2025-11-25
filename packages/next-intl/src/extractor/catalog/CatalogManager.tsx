@@ -26,8 +26,10 @@ export default class CatalogManager {
    * This potentially also includes outdated ones that were initially available,
    * but are not used anymore. This allows to restore them if they are used again.
    **/
-  private translationsByTargetLocale: Map<Locale, Map<string, ExtractedMessage>> =
-    new Map();
+  private translationsByTargetLocale: Map<
+    Locale,
+    Map<string, ExtractedMessage>
+  > = new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
 

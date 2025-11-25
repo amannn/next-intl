@@ -1256,8 +1256,8 @@ msgstr "Hallo!"
       filesystem.project.src['Greeting.tsx']
     );
 
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
       [
         [
           "messages/en.po",

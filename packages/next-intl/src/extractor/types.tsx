@@ -10,6 +10,7 @@ export type ExtractedMessage = {
   message: string;
   description?: string;
   references?: Array<{path: string}>;
+  /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };
 
