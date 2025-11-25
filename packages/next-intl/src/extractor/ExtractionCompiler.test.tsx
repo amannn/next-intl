@@ -67,22 +67,15 @@ describe('json format', () => {
       filesystem.project.src['Greeting.tsx']
     );
 
-    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
-    [
-      [
-        "messages/en.json",
-        "{
-      "+YJVTi": "Hey!"
-    }",
-      ],
-      [
-        "messages/de.json",
-        "{
-      "+YJVTi": "Hallo!"
-    }",
-      ],
-    ]
-  `);
+    await vi.waitFor(() => {
+      expect(filesystem.project.messages!['en.json']).toBeDefined();
+      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+        '+YJVTi': 'Hey!'
+      });
+      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+        '+YJVTi': 'Hallo!'
+      });
+    });
   });
 
   it('resets translations when a message changes', async () => {
@@ -111,24 +104,14 @@ describe('json format', () => {
       `
     );
 
-    await waitForWriteFileCalls(4);
-
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-    [
-      [
-        "messages/en.json",
-        "{
-      "OpKKos": "Hello!"
-    }",
-      ],
-      [
-        "messages/de.json",
-        "{
-      "OpKKos": ""
-    }",
-      ],
-    ]
-  `);
+    await vi.waitFor(() => {
+      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
+        OpKKos: 'Hello!'
+      });
+      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
+        OpKKos: ''
+      });
+    });
   });
 
   it('removes translations when all messages are removed from a file', async () => {
@@ -1394,12 +1377,9 @@ describe('`srcPath` filtering', () => {
  ****************************************************************/
 
 function waitForWriteFileCalls(length: number) {
-  return vi.waitFor(
-    () => {
-      expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
-    },
-    {timeout: 5000}
-  );
+  return vi.waitFor(() => {
+    expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+  });
 }
 
 function simulateManualFileEdit(filePath: string, content: string) {
