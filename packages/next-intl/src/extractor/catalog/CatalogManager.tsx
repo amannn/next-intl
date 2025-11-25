@@ -5,6 +5,7 @@ import type Formatter from '../formatters/Formatter.js';
 import formatters from '../formatters/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
+import {localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -214,7 +215,7 @@ export default class CatalogManager {
           }
         });
         references.sort((referenceA, referenceB) =>
-          referenceA.path.localeCompare(referenceB.path)
+          localeCompare(referenceA.path, referenceB.path)
         );
         message = {...message, references};
 

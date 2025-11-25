@@ -1,5 +1,5 @@
 import type {ExtractedMessage} from '../types.js';
-import {setNestedProperty} from '../utils/ObjectUtils.js';
+import {setNestedProperty} from '../utils.js';
 import Formatter from './Formatter.js';
 import {getSortedMessages} from './utils.js';
 
