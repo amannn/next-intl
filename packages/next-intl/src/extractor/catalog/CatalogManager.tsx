@@ -28,7 +28,7 @@ export default class CatalogManager {
    **/
   private translationsByTargetLocale: Map<
     Locale,
-    Map<string, ExtractedMessage>
+    Map</* ID */ string, ExtractedMessage>
   > = new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
@@ -243,6 +243,19 @@ export default class CatalogManager {
 
       this.messagesById.set(message.id, message);
       fileMessages.set(message.id, message);
+
+      // Update translations in all target locales with latest extracted info
+      for (const translations of this.translationsByTargetLocale.values()) {
+        const translation = translations.get(message.id);
+        if (translation) {
+          translations.set(message.id, {
+            ...translation,
+            id: message.id,
+            description: message.description,
+            references: message.references
+          });
+        }
+      }
 
       // This message continues to exist in this file
       const index = idsToRemove.indexOf(message.id);
