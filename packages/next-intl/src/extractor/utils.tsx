@@ -20,3 +20,7 @@ export function setNestedProperty(
 
   current[keys[keys.length - 1]] = value;
 }
+
+export function localeCompare(a: string, b: string) {
+  return a.localeCompare(b, 'en');
+}
