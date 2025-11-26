@@ -43,6 +43,10 @@ export default class CatalogManager {
   private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
 
+  // Resolves when all catalogs are loaded
+  // (but doesn't indicate that project scan is done)
+  loadCatalogsPromise?: Promise<unknown>;
+
   constructor(
     config: ExtractorConfig,
     opts: {
@@ -119,13 +123,24 @@ export default class CatalogManager {
   }
 
   public async loadMessages() {
-    await this.loadSourceMessages();
-    await this.loadTargetMessages();
+    this.loadCatalogsPromise = Promise.all([
+      this.loadSourceMessages(),
+      this.loadTargetMessages()
+    ]);
 
     if (this.isDevelopment) {
       const catalogLocales = await this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
     }
+
+    const sourceFiles = await SourceFileScanner.getSourceFiles(
+      this.getSrcPaths()
+    );
+    await Promise.all(
+      sourceFiles.map(async (filePath) =>
+        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+      )
+    );
   }
 
   private async loadSourceMessages() {
@@ -149,17 +164,6 @@ export default class CatalogManager {
     }
     this.messagesById = messagesById;
     this.messagesByFile = messagesByFile;
-
-    // Then extract from all source files
-    const sourceFiles = await SourceFileScanner.getSourceFiles(
-      this.getSrcPaths()
-    );
-
-    await Promise.all(
-      sourceFiles.map(async (filePath) =>
-        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
-      )
-    );
   }
 
   private async loadLocaleMessages(
@@ -348,6 +352,8 @@ export default class CatalogManager {
   }
 
   private async saveImpl(): Promise<number> {
+    await this.loadCatalogsPromise;
+
     const messages = Array.from(this.messagesById.values());
 
     const persister = await this.getPersister();

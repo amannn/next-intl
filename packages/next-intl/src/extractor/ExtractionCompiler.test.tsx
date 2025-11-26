@@ -1357,6 +1357,153 @@ msgstr "Hallo!"
       ]
     `);
   });
+
+  it('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      #, c-format
+      #. This is a description
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      #, fuzzy
+      #. This is a description
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    let resolveReadFile: (() => void) | undefined;
+    const readFilePromise = new Promise<void>((resolve) => {
+      resolveReadFile = resolve;
+    });
+
+    readFileInterceptors.set('de.po', () => readFilePromise);
+    readFileInterceptors.set('en.po', () => readFilePromise);
+
+    simulateFileEvent('/project/messages', 'rename', 'de.po');
+    simulateFileEvent('/project/messages', 'rename', 'en.po');
+
+    // Wait a bit to ensure onLocalesChange has started and created the reload promise
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // While loading is pending (stuck in readFile), trigger a compile/save
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx'] +
+        `
+        function Other() {
+          const t = useExtracted();
+          return <div>{t('Hi!')}</div>;
+        }`
+    );
+
+    // Ensure the "bad save" attempt happens while the read interceptor is still blocking
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    resolveReadFile?.();
+
+    // Wait for everything to settle
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      ",
+        ],
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "nm/7yQ"
+      msgstr "Hi!"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "nm/7yQ"
+      msgstr ""
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('`srcPath` filtering', () => {
