@@ -699,7 +699,7 @@ describe('json format', () => {
     `);
   });
 
-  it('avoids a race condition when saving while loading a locale catalog was changed', async () => {
+  it('avoids a race condition when compiling while a new locale is added', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {

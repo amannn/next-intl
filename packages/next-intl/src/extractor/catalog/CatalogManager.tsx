@@ -367,18 +367,15 @@ export default class CatalogManager {
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
+    await this.loadCatalogsPromise;
+
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
 
     const isSourceLocale = locale === this.config.sourceLocale;
-
-    let prevTranslations: Map<string, ExtractedMessage> | undefined;
-    if (!isSourceLocale) {
-      // In case the locale isn't loaded yet, abort for now. Once
-      // it's loaded, then this function will be invoked again.
-      prevTranslations = this.translationsByTargetLocale.get(locale);
-      if (!prevTranslations) return;
-    }
+    const prevTranslations = isSourceLocale
+      ? undefined
+      : this.translationsByTargetLocale.get(locale);
 
     // Check if file was modified externally
     const lastWriteTime = this.lastWriteByLocale.get(locale);
@@ -421,13 +418,22 @@ export default class CatalogManager {
     added: Array<Locale>;
     removed: Array<Locale>;
   }): Promise<void> => {
-    for (const locale of params.added) {
+    const loadNewCatalogsPromises = params.added.map(async (locale) => {
       const translations = new Map<string, ExtractedMessage>();
       const messages = await this.loadLocaleMessages(locale);
       for (const message of messages) {
         translations.set(message.id, message);
       }
       this.translationsByTargetLocale.set(locale, translations);
+    });
+
+    // Chain to existing promise
+    this.loadCatalogsPromise = Promise.all([
+      this.loadCatalogsPromise,
+      ...loadNewCatalogsPromises
+    ]);
+
+    for (const locale of params.added) {
       await this.saveLocale(locale);
     }
 
