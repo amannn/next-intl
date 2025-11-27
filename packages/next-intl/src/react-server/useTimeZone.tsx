@@ -3,5 +3,5 @@ import useConfig from './useConfig.js';
 
 export default function useTimeZone(): ReturnType<typeof useTimeZoneType> {
   const config = useConfig('useTimeZone');
-  return config.timeZone;
+  return config.timeZone();
 }

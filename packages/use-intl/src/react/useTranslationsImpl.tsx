@@ -59,7 +59,7 @@ export default function useTranslationsImpl<
         onError,
         formats: globalFormats,
         locale,
-        timeZone
+        timeZone: () => timeZone
       }),
     [
       cache,

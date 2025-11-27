@@ -292,7 +292,7 @@ function createBaseTranslatorImpl<
             getDateTimeFormat(locales, options) {
               // Workaround for https://github.com/formatjs/formatjs/issues/4279
               return formatters.getDateTimeFormat(locales, {
-                timeZone,
+                timeZone: timeZone?.(),
                 ...options
               });
             }

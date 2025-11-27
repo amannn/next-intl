@@ -1,10 +1,13 @@
 import type {IntlConfig, Locale} from 'use-intl/core';
 
-export type RequestConfig = Omit<IntlConfig, 'locale'> & {
+export type RequestConfig = Omit<IntlConfig, 'locale' | 'timeZone'> & {
   /**
    * @see https://next-intl.dev/docs/usage/configuration#i18n-request
    **/
   locale: IntlConfig['locale'];
+  timeZone?:
+    | IntlConfig['timeZone']
+    | (() => NonNullable<IntlConfig['timeZone']>);
 };
 
 export type GetRequestConfigParams = {

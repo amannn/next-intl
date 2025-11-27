@@ -4,7 +4,7 @@ import getConfig from './getConfig.js';
 
 async function getTimeZoneCachedImpl(locale?: Locale) {
   const config = await getConfig(locale);
-  return config.timeZone;
+  return config.timeZone();
 }
 const getTimeZoneCached = cache(getTimeZoneCachedImpl);
 

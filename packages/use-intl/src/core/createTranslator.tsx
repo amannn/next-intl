@@ -9,6 +9,7 @@ import type {
   NestedKeyOf,
   NestedValueOf
 } from './MessageKeys.js';
+import type TimeZone from './TimeZone.js';
 import type {
   MarkupTagsFunction,
   RichTagsFunction,
@@ -165,10 +166,12 @@ export default function createTranslator<
   messages,
   namespace,
   onError = defaultOnError,
+  timeZone,
   ...rest
-}: Omit<IntlConfig, 'messages'> & {
+}: Omit<IntlConfig, 'messages' | 'timeZone'> & {
   messages?: TranslatorMessages;
   namespace?: Namespace;
+  timeZone?: TimeZone | (() => TimeZone);
   /** @private */
   _formatters?: Formatters;
   /** @private */
@@ -184,6 +187,7 @@ export default function createTranslator<
   >(
     {
       ...rest,
+      timeZone: typeof timeZone === 'string' ? () => timeZone : timeZone,
       onError,
       cache: _cache,
       formatters: _formatters,

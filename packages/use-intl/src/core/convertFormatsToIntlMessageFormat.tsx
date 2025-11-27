@@ -15,7 +15,7 @@ import type TimeZone from './TimeZone.js';
 export default function convertFormatsToIntlMessageFormat(
   globalFormats?: Formats,
   inlineFormats?: Formats,
-  timeZone?: TimeZone
+  timeZone?: () => TimeZone | undefined
 ): Partial<IntlFormats> {
   const mfDateDefaults = IntlMessageFormat.formats.date as NonNullable<
     Formats['dateTime']
@@ -52,7 +52,7 @@ export default function convertFormatsToIntlMessageFormat(
       const formats = allFormats[property as keyof typeof allFormats];
       for (const [key, value] of Object.entries(formats)) {
         formats[key] = {
-          timeZone,
+          timeZone: timeZone() ?? value?.timeZone,
           ...value
         };
       }

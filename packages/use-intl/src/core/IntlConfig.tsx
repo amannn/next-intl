@@ -50,8 +50,9 @@ type IntlConfig = {
  */
 export type InitializedIntlConfig = Omit<
   IntlConfig,
-  'formats' | 'messages' | 'onError' | 'getMessageFallback'
+  'timeZone' | 'formats' | 'messages' | 'onError' | 'getMessageFallback'
 > & {
+  timeZone?(): TimeZone | undefined;
   formats?: NonNullable<IntlConfig['formats']>;
   messages?: NonNullable<IntlConfig['messages']>;
   onError: NonNullable<IntlConfig['onError']>;

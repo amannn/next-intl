@@ -73,7 +73,7 @@ function calculateRelativeTimeValue(
 
 type Props = {
   locale: Locale;
-  timeZone?: TimeZone;
+  timeZone?: TimeZone | (() => TimeZone | undefined);
   onError?(error: IntlError): void;
   formats?: Formats;
   now?: Date;
@@ -95,8 +95,13 @@ export default function createFormatter(props: Props) {
 
   function applyTimeZone(options?: DateTimeFormatOptions) {
     if (!options?.timeZone) {
-      if (globalTimeZone) {
-        options = {...options, timeZone: globalTimeZone};
+      // normalize the timezone
+      const timeZone =
+        typeof globalTimeZone === 'function'
+          ? globalTimeZone()
+          : globalTimeZone;
+      if (timeZone) {
+        options = {...options, timeZone};
       } else {
         onError(
           new IntlError(

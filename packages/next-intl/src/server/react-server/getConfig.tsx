@@ -2,6 +2,7 @@ import {cache} from 'react';
 import {
   type IntlConfig,
   type Locale,
+  type Timezone,
   _createCache,
   _createIntlFormatters,
   initializeConfig
@@ -76,7 +77,7 @@ const getCache = cache(_createCache);
 async function getConfigImpl(localeOverride?: Locale): Promise<{
   locale: IntlConfig['locale'];
   formats?: NonNullable<IntlConfig['formats']>;
-  timeZone: NonNullable<IntlConfig['timeZone']>;
+  timeZone(): NonNullable<IntlConfig['timeZone']>;
   onError: NonNullable<IntlConfig['onError']>;
   getMessageFallback: NonNullable<IntlConfig['getMessageFallback']>;
   messages?: NonNullable<IntlConfig['messages']>;
@@ -87,10 +88,18 @@ async function getConfigImpl(localeOverride?: Locale): Promise<{
     createRequestConfig,
     localeOverride
   );
+
+  // Support string and function time zones from the runtime config
+  const timeZoneFn =
+    (typeof runtimeConfig.timeZone === 'string'
+      ? () => runtimeConfig.timeZone as Timezone
+      : runtimeConfig.timeZone) ?? getDefaultTimeZone;
+
+  // TODO: support getting a function from the runtime config
   return {
     ...initializeConfig(runtimeConfig),
     _formatters: getFormatters(getCache()),
-    timeZone: runtimeConfig.timeZone || getDefaultTimeZone()
+    timeZone: timeZoneFn
   };
 }
 const getConfig = cache(getConfigImpl);

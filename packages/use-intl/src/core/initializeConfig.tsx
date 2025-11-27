@@ -2,13 +2,17 @@ import type IntlConfig from './IntlConfig.js';
 import {defaultGetMessageFallback, defaultOnError} from './defaults.js';
 import validateMessages from './validateMessages.js';
 
+type PropsConfig = Omit<IntlConfig, 'timeZone'> & {
+  timeZone?: IntlConfig['timeZone'] | (() => IntlConfig['timeZone']);
+};
+
 /**
  * Enhances the incoming props with defaults.
  */
 export default function initializeConfig<
   // This is a generic to allow for stricter typing. E.g.
   // the RSC integration always provides a `now` value.
-  Props extends IntlConfig
+  Props extends PropsConfig
 >({formats, getMessageFallback, messages, onError, ...rest}: Props) {
   const finalOnError = onError || defaultOnError;
   const finalGetMessageFallback =
