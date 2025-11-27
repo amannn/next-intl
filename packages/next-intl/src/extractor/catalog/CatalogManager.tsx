@@ -355,9 +355,8 @@ export default class CatalogManager {
 
   private async saveImpl(): Promise<void> {
     await this.saveLocale(this.config.sourceLocale);
-    for (const locale of await this.getTargetLocales()) {
-      await this.saveLocale(locale);
-    }
+    const targetLocales = await this.getTargetLocales();
+    await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
