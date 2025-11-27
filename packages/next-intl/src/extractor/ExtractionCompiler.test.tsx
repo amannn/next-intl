@@ -412,6 +412,10 @@ describe('json format', () => {
 
     await sleep(100);
 
+    // Note: We write even though catalog content is unchanged because
+    // Greeting.tsx's messages changed (1→0). The message persists from
+    // Footer.tsx, so output is identical - this is acceptable overhead.
+    // (For .po format, references would actually change, so writing is needed there.)
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
