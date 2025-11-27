@@ -1,4 +1,5 @@
 import type {ExtractedMessage} from '../types.js';
+import {localeCompare} from '../utils.js';
 
 export function getSortedMessages(
   messages: Array<ExtractedMessage>
@@ -8,9 +9,9 @@ export function getSortedMessages(
     const pathB = messageB.references?.[0]?.path ?? '';
 
     if (pathA === pathB) {
-      return messageA.id.localeCompare(messageB.id);
+      return localeCompare(messageA.id, messageB.id);
     } else {
-      return pathA.localeCompare(pathB);
+      return localeCompare(pathA, pathB);
     }
   });
 }
