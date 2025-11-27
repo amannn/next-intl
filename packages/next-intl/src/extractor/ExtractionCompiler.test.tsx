@@ -67,15 +67,18 @@ describe('json format', () => {
       filesystem.project.src['Greeting.tsx']
     );
 
-    await vi.waitFor(() => {
-      expect(filesystem.project.messages!['en.json']).toBeDefined();
-      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-        '+YJVTi': 'Hey!'
-      });
-      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
-        '+YJVTi': 'Hallo!'
-      });
-    });
+    // Wait for at least 2 writes (might save more due to change detection)
+    await waitForWriteFileCalls(2, {atLeast: true});
+    expect(filesystem.project.messages).toMatchInlineSnapshot(`
+      {
+        "de.json": "{
+        "+YJVTi": "Hallo!"
+      }",
+        "en.json": "{
+        "+YJVTi": "Hey!"
+      }",
+      }
+    `);
   });
 
   it('resets translations when a message changes', async () => {
@@ -104,14 +107,20 @@ describe('json format', () => {
       `
     );
 
-    await vi.waitFor(() => {
-      expect(JSON.parse(filesystem.project.messages!['en.json'])).toEqual({
-        OpKKos: 'Hello!'
-      });
-      expect(JSON.parse(filesystem.project.messages!['de.json'])).toEqual({
-        OpKKos: ''
-      });
-    });
+    // Wait for writes to settle (exact count may vary)
+    await waitForWriteFileCalls(4, {atLeast: true});
+
+    // Check final state
+    expect(filesystem.project.messages).toMatchInlineSnapshot(`
+      {
+        "de.json": "{
+        "OpKKos": ""
+      }",
+        "en.json": "{
+        "OpKKos": "Hello!"
+      }",
+      }
+    `);
   });
 
   it('removes translations when all messages are removed from a file', async () => {
@@ -369,14 +378,20 @@ describe('json format', () => {
     }
     `;
     filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}'
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
     using compiler = createCompiler();
+
+    // Kick off compilation
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
     );
+    await waitForWriteFileCalls(2);
+
+    // Remove message from one file
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -386,15 +401,28 @@ describe('json format', () => {
     `
     );
 
-    await waitForWriteFileCalls(2);
+    await sleep(100);
 
-    // Still used in Footer.tsx
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+    // Note: We write even though catalog content is unchanged because
+    // Greeting.tsx's messages changed (1→0). The message persists from
+    // Footer.tsx, so output is identical - this is acceptable overhead.
+    // (For .po format, references would actually change, so writing is needed there.)
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
       [
-        "messages/en.json",
-        "{
+        [
+          "messages/en.json",
+          "{
         "+YJVTi": "Hey!"
       }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": "Hallo!"
+      }",
+        ],
       ]
     `);
   });
@@ -681,7 +709,7 @@ describe('json format', () => {
     `);
   });
 
-  it('avoids a race condition when saving while loading a locale catalog was changed', async () => {
+  it('avoids a race condition when compiling while a new locale is added', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -727,13 +755,13 @@ describe('json format', () => {
 
     // Wait for the async operations to settle. We need to ensure the "bad save"
     // attempt happens while the read interceptor is still blocking the load.
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     // Allow loading to finish
     resolveReadFile?.();
 
     // Wait for everything to settle
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     // Ensure only the new message is empty
     expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
@@ -965,6 +993,114 @@ describe('po format', () => {
       #: src/Greeting.tsx
       msgid "+YJVTi"
       msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('updates references in all catalogs when message is reused in another file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+
+    // First compile: only Greeting.tsx has the message
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+
+    // Second compile: Footer.tsx also uses the same message
+    await compiler.compile(
+      '/project/src/Footer.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Footer() {
+        const t = useExtracted();
+        return <div>{t('Hey!')}</div>;
+      }
+      `
+    );
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Footer.tsx
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Footer.tsx
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr ""
       ",
         ],
       ]
@@ -1270,6 +1406,590 @@ msgstr "Hallo!"
       ]
     `);
   });
+
+  it('preserves flags', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('removes flags when externally deleted', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      #, fuzzy, c-format
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      #, fuzzy, no-wrap
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+
+    // Remove fuzzy flag from source locale, keep c-format
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+#, c-format
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+    );
+
+    // Trigger recompile with source change
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+      ",
+      ]
+    `);
+
+    // Remove remaining c-format flag from source locale
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+msgid "+YJVTi"
+msgstr "Hey!"
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr "World"
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(6);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr "!"
+      ",
+      ]
+    `);
+
+    // Now remove flags from target locale (remove fuzzy, keep no-wrap)
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+
+#: src/Greeting.tsx
+#, no-wrap
+msgid "+YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "eCfPKC"
+msgstr ""
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(8);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, no-wrap
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "pE58D7"
+      msgstr ""
+      ",
+      ]
+    `);
+
+    // Remove all flags from target locale
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+
+#: src/Greeting.tsx
+msgid "+YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgid "+tjj/T"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "eCfPKC"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr ""
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')} {t('More')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(10);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "I5NMJ8"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "pE58D7"
+      msgstr ""
+      ",
+      ]
+    `);
+  });
+
+  it('preserves manually added flags in source locale after recompile', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+#, fuzzy
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "7kKG3Q"
+      msgstr "World!"
+      ",
+      ]
+    `);
+  });
+
+  it('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx:4
+      #, c-format
+      #. This is a description
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx:4
+      #, fuzzy
+      #. This is a description
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    let resolveReadFile: (() => void) | undefined;
+    const readFilePromise = new Promise<void>((resolve) => {
+      resolveReadFile = resolve;
+    });
+
+    readFileInterceptors.set('de.po', () => readFilePromise);
+    readFileInterceptors.set('en.po', () => readFilePromise);
+
+    simulateFileEvent('/project/messages', 'rename', 'de.po');
+    simulateFileEvent('/project/messages', 'rename', 'en.po');
+
+    // Wait a bit to ensure onLocalesChange has started and created the reload promise
+    await sleep(50);
+
+    // While loading is pending (stuck in readFile), trigger a compile/save
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx'] +
+        `
+        function Other() {
+          const t = useExtracted();
+          return <div>{t('Hi!')}</div>;
+        }`
+    );
+
+    // Ensure the "bad save" attempt happens while the read interceptor is still blocking
+    await sleep(100);
+
+    resolveReadFile?.();
+
+    // Wait for everything to settle
+    await sleep(100);
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      ",
+        ],
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "nm/7yQ"
+      msgstr "Hi!"
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "nm/7yQ"
+      msgstr ""
+
+      #. This is a description
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -1376,9 +2096,19 @@ describe('`srcPath` filtering', () => {
  * Test utils
  ****************************************************************/
 
-function waitForWriteFileCalls(length: number) {
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function waitForWriteFileCalls(length: number, opts: {atLeast?: boolean} = {}) {
   return vi.waitFor(() => {
-    expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+    if (opts.atLeast) {
+      expect(vi.mocked(fs.writeFile).mock.calls.length).toBeGreaterThanOrEqual(
+        length
+      );
+    } else {
+      expect(vi.mocked(fs.writeFile).mock.calls.length).toBe(length);
+    }
   });
 }
 

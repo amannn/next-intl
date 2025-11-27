@@ -27,12 +27,14 @@ export default class CatalogManager {
    * This potentially also includes outdated ones that were initially available,
    * but are not used anymore. This allows to restore them if they are used again.
    **/
-  private translationsByTargetLocale: Map<Locale, Map<string, string>> =
-    new Map();
+  private translationsByTargetLocale: Map<
+    Locale,
+    Map</* ID */ string, ExtractedMessage>
+  > = new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
 
-  private saveScheduler: SaveScheduler<number>;
+  private saveScheduler: SaveScheduler<void>;
   private projectRoot: string;
   private isDevelopment: boolean;
 
@@ -41,6 +43,10 @@ export default class CatalogManager {
   private formatter?: Formatter;
   private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
+
+  // Resolves when all catalogs are loaded
+  // (but doesn't indicate that project scan is done)
+  loadCatalogsPromise?: Promise<unknown>;
 
   constructor(
     config: ExtractorConfig,
@@ -51,7 +57,7 @@ export default class CatalogManager {
     } = {}
   ) {
     this.config = config;
-    this.saveScheduler = new SaveScheduler<number>(50);
+    this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
     this.isDevelopment = opts.isDevelopment ?? false;
 
@@ -117,36 +123,53 @@ export default class CatalogManager {
     ).map((srcPath) => path.join(this.projectRoot, srcPath));
   }
 
-  getFileMessages(
-    absoluteFilePath: string
-  ): Map<string, ExtractedMessage> | undefined {
-    return this.messagesByFile.get(absoluteFilePath);
-  }
-
   public async loadMessages() {
-    await this.loadSourceMessages();
-    await this.loadTargetMessages();
+    this.loadCatalogsPromise = Promise.all([
+      this.loadSourceMessages(),
+      this.loadTargetMessages()
+    ]);
+
+    // Ensure catalogs are loaded before scanning source files.
+    // Otherwise, `loadSourceMessages` might overwrite extracted
+    // messages if it finishes after source file extraction.
+    await this.loadCatalogsPromise;
 
     if (this.isDevelopment) {
       const catalogLocales = await this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
     }
-  }
 
-  private async loadSourceMessages() {
-    // First hydrate from source locale file to potentially init metadata
-    await this.loadLocaleMessages(this.config.sourceLocale);
-
-    // Then extract from all source files
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPaths()
     );
-
     await Promise.all(
       sourceFiles.map(async (filePath) =>
         this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
       )
     );
+  }
+
+  private async loadSourceMessages() {
+    // First hydrate from source locale file to potentially init metadata
+    const messages = await this.loadLocaleMessages(this.config.sourceLocale);
+    const messagesById: typeof this.messagesById = new Map();
+    const messagesByFile: typeof this.messagesByFile = new Map();
+    for (const message of messages) {
+      messagesById.set(message.id, message);
+      if (message.references) {
+        for (const ref of message.references) {
+          const absoluteFilePath = path.join(this.projectRoot, ref.path);
+          let fileMessages = messagesByFile.get(absoluteFilePath);
+          if (!fileMessages) {
+            fileMessages = new Map();
+            messagesByFile.set(absoluteFilePath, fileMessages);
+          }
+          fileMessages.set(message.id, message);
+        }
+      }
+    }
+    this.messagesById = messagesById;
+    this.messagesByFile = messagesByFile;
   }
 
   private async loadLocaleMessages(
@@ -165,17 +188,41 @@ export default class CatalogManager {
 
   private async loadTargetMessages() {
     const targetLocales = await this.getTargetLocales();
-
     await Promise.all(
-      targetLocales.map(async (locale) => {
-        const translations = new Map<string, string>();
-        const messages = await this.loadLocaleMessages(locale);
-        for (const message of messages) {
-          translations.set(message.id, message.message);
-        }
-        this.translationsByTargetLocale.set(locale, translations);
-      })
+      targetLocales.map((locale) => this.reloadLocaleCatalog(locale))
     );
+  }
+
+  private async reloadLocaleCatalog(locale: Locale): Promise<void> {
+    const diskMessages = await this.loadLocaleMessages(locale);
+
+    if (locale === this.config.sourceLocale) {
+      // For source: Merge additional properties like flags
+      for (const diskMessage of diskMessages) {
+        const prev = this.messagesById.get(diskMessage.id);
+        if (prev) {
+          // Unknown properties (like flags): disk wins
+          // Known properties: existing (from extraction) wins
+          this.messagesById.set(diskMessage.id, {
+            ...diskMessage,
+            id: prev.id,
+            message: prev.message,
+            description: prev.description,
+            references: prev.references
+          });
+        } else {
+          // The message no longer exists, so it will be removed
+          // as part of the next save invocation.
+        }
+      }
+    } else {
+      // For target: disk wins completely
+      const translations = new Map<string, ExtractedMessage>();
+      for (const message of diskMessages) {
+        translations.set(message.id, message);
+      }
+      this.translationsByTargetLocale.set(locale, translations);
+    }
   }
 
   async extractFileMessages(
@@ -219,12 +266,12 @@ export default class CatalogManager {
         );
         message = {...message, references};
 
-        // Description: In case we have conflicting descriptions, the new one wins.
-        if (prevMessage.description && !message.description) {
-          message = {
-            ...message,
-            description: prevMessage.description
-          };
+        // Merge other properties like description, or unknown
+        // attributes like flags that are opaque to us
+        for (const key of Object.keys(prevMessage)) {
+          if (message[key] == null) {
+            message[key] = prevMessage[key];
+          }
         }
       }
 
@@ -257,11 +304,14 @@ export default class CatalogManager {
       this.messagesByFile.delete(absoluteFilePath);
     }
 
-    const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
+    const changed = this.haveMessagesChangedForFile(
+      prevFileMessages,
+      fileMessages
+    );
     return {...result, changed};
   }
 
-  private haveMessagesChanged(
+  private haveMessagesChangedForFile(
     beforeMessages: Map<string, ExtractedMessage> | undefined,
     afterMessages: Map<string, ExtractedMessage>
   ): boolean {
@@ -290,77 +340,55 @@ export default class CatalogManager {
     msg1: ExtractedMessage,
     msg2: ExtractedMessage
   ): boolean {
+    // Note: We intentionally don't compare references here.
+    // References are aggregated metadata from multiple files and comparing
+    // them would cause false positives due to parallel extraction order.
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      msg1.description === msg2.description &&
-      this.areReferencesEqual(msg1.references, msg2.references)
+      msg1.description === msg2.description
     );
   }
 
-  private areReferencesEqual(
-    refs1: Array<{path: string}> | undefined,
-    refs2: Array<{path: string}> | undefined
-  ): boolean {
-    // Both undefined or both empty
-    if (!refs1 && !refs2) return true;
-    if (!refs1 || !refs2) return false;
-    if (refs1.length !== refs2.length) return false;
-
-    // Compare each reference
-    for (let i = 0; i < refs1.length; i++) {
-      if (refs1[i].path !== refs2[i].path) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  async save(): Promise<number> {
+  async save(): Promise<void> {
     return this.saveScheduler.schedule(() => this.saveImpl());
   }
 
-  private async saveImpl(): Promise<number> {
-    const messages = Array.from(this.messagesById.values());
-
-    const persister = await this.getPersister();
-    await persister.write(this.config.sourceLocale, messages);
-
-    for (const locale of await this.getTargetLocales()) {
-      await this.saveLocale(locale);
-    }
-
-    return messages.length;
+  private async saveImpl(): Promise<void> {
+    await this.saveLocale(this.config.sourceLocale);
+    const targetLocales = await this.getTargetLocales();
+    await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
+    await this.loadCatalogsPromise;
+
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
+    const isSourceLocale = locale === this.config.sourceLocale;
 
-    // In case the locale isn't loaded yet, abort for now. Once
-    // it's loaded, then this function will be invoked again.
-    const translations = this.translationsByTargetLocale.get(locale);
-    if (!translations) return;
-
-    // Check if file was modified externally
+    // Check if file was modified externally (poll-at-save is cheaper than
+    // watchers here since stat() is fast and avoids continuous overhead)
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
-
-    // If file was modified externally, read and merge
     if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
-      const diskMessages = await persister.read(locale);
-
-      for (const diskMessage of diskMessages) {
-        // Disk wins: preserve manual edits
-        translations.set(diskMessage.id, diskMessage.message);
-      }
+      await this.reloadLocaleCatalog(locale);
     }
 
-    const localeMessages = messages.map((message) => ({
-      ...message,
-      message: translations.get(message.id) || ''
-    }));
+    const prevMessages = isSourceLocale
+      ? this.messagesById
+      : this.translationsByTargetLocale.get(locale);
+
+    const localeMessages = messages.map((message) => {
+      const prev = prevMessages?.get(message.id);
+      return {
+        ...prev,
+        id: message.id,
+        description: message.description,
+        references: message.references,
+        message: isSourceLocale ? message.message : (prev?.message ?? '')
+      };
+    });
 
     await persister.write(locale, localeMessages);
 
@@ -373,13 +401,13 @@ export default class CatalogManager {
     added: Array<Locale>;
     removed: Array<Locale>;
   }): Promise<void> => {
+    // Chain to existing promise
+    this.loadCatalogsPromise = Promise.all([
+      this.loadCatalogsPromise,
+      ...params.added.map((locale) => this.reloadLocaleCatalog(locale))
+    ]);
+
     for (const locale of params.added) {
-      const translations = new Map<string, string>();
-      const messages = await this.loadLocaleMessages(locale);
-      for (const message of messages) {
-        translations.set(message.id, message.message);
-      }
-      this.translationsByTargetLocale.set(locale, translations);
       await this.saveLocale(locale);
     }
 
