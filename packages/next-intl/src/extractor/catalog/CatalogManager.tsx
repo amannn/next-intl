@@ -128,6 +128,11 @@ export default class CatalogManager {
       this.loadTargetMessages()
     ]);
 
+    // Ensure catalogs are loaded before scanning source files.
+    // Otherwise, `loadSourceMessages` might overwrite extracted
+    // messages if it finishes after source file extraction.
+    await this.loadCatalogsPromise;
+
     if (this.isDevelopment) {
       const catalogLocales = await this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
