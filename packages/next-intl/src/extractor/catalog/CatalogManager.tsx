@@ -287,11 +287,14 @@ export default class CatalogManager {
       this.messagesByFile.delete(absoluteFilePath);
     }
 
-    const changed = this.haveMessagesChanged(prevFileMessages, fileMessages);
+    const changed = this.haveMessagesChangedForFile(
+      prevFileMessages,
+      fileMessages
+    );
     return {...result, changed};
   }
 
-  private haveMessagesChanged(
+  private haveMessagesChangedForFile(
     beforeMessages: Map<string, ExtractedMessage> | undefined,
     afterMessages: Map<string, ExtractedMessage>
   ): boolean {
@@ -320,31 +323,14 @@ export default class CatalogManager {
     msg1: ExtractedMessage,
     msg2: ExtractedMessage
   ): boolean {
+    // Note: We intentionally don't compare references here.
+    // References are aggregated metadata from multiple files and comparing
+    // them would cause false positives due to parallel extraction order.
     return (
       msg1.id === msg2.id &&
       msg1.message === msg2.message &&
-      msg1.description === msg2.description &&
-      this.areReferencesEqual(msg1.references, msg2.references)
+      msg1.description === msg2.description
     );
-  }
-
-  private areReferencesEqual(
-    refs1: Array<{path: string}> | undefined,
-    refs2: Array<{path: string}> | undefined
-  ): boolean {
-    // Both undefined or both empty
-    if (!refs1 && !refs2) return true;
-    if (!refs1 || !refs2) return false;
-    if (refs1.length !== refs2.length) return false;
-
-    // Compare each reference
-    for (let i = 0; i < refs1.length; i++) {
-      if (refs1[i].path !== refs2[i].path) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   async save(): Promise<void> {
