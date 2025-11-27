@@ -1485,6 +1485,300 @@ msgstr "Hallo!"
     `);
   });
 
+  it('removes flags when externally deleted', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      #, fuzzy, c-format
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      #, fuzzy, no-wrap
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+
+    // Remove fuzzy flag from source locale, keep c-format
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+#, c-format
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+    );
+
+    // Trigger recompile with source change
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, c-format
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+      ",
+      ]
+    `);
+
+    // Remove remaining c-format flag from source locale
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+msgid "+YJVTi"
+msgstr "Hey!"
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr "World"
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(6);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/en.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr "World"
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr "!"
+      ",
+      ]
+    `);
+
+    // Now remove flags from target locale (remove fuzzy, keep no-wrap)
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+
+#: src/Greeting.tsx
+#, no-wrap
+msgid "+YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "eCfPKC"
+msgstr ""
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(8);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, no-wrap
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "pE58D7"
+      msgstr ""
+      ",
+      ]
+    `);
+
+    // Remove all flags from target locale
+    simulateManualFileEdit(
+      'messages/de.po',
+      `msgid ""
+msgstr ""
+"Language: de\\n"
+
+#: src/Greeting.tsx
+msgid "+YJVTi"
+msgstr "Hallo!"
+
+#: src/Greeting.tsx
+msgid "+tjj/T"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "eCfPKC"
+msgstr ""
+
+#: src/Greeting.tsx
+msgid "sJM+Xd"
+msgstr ""
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World')} {t('!')} {t('Extra')} {t('More')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(10);
+    expect(
+      vi
+        .mocked(fs.writeFile)
+        .mock.calls.filter((call) => call[0] === 'messages/de.po')
+        .at(-1)
+    ).toMatchInlineSnapshot(`
+      [
+        "messages/de.po",
+        "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hallo!"
+
+      #: src/Greeting.tsx
+      msgid "I5NMJ8"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "jqdzk6"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "ODGmph"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "pE58D7"
+      msgstr ""
+      ",
+      ]
+    `);
+  });
+
   it('preserves manually added flags in source locale after recompile', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';

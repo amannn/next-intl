@@ -187,17 +187,41 @@ export default class CatalogManager {
 
   private async loadTargetMessages() {
     const targetLocales = await this.getTargetLocales();
-
     await Promise.all(
-      targetLocales.map(async (locale) => {
-        const translations = new Map<string, ExtractedMessage>();
-        const messages = await this.loadLocaleMessages(locale);
-        for (const message of messages) {
-          translations.set(message.id, message);
-        }
-        this.translationsByTargetLocale.set(locale, translations);
-      })
+      targetLocales.map((locale) => this.reloadLocaleCatalog(locale))
     );
+  }
+
+  private async reloadLocaleCatalog(locale: Locale): Promise<void> {
+    const diskMessages = await this.loadLocaleMessages(locale);
+
+    if (locale === this.config.sourceLocale) {
+      // For source: Merge additional properties like flags
+      for (const diskMessage of diskMessages) {
+        const prev = this.messagesById.get(diskMessage.id);
+        if (prev) {
+          // Unknown properties (like flags): disk wins
+          // Known properties: existing (from extraction) wins
+          this.messagesById.set(diskMessage.id, {
+            ...diskMessage,
+            id: prev.id,
+            message: prev.message,
+            description: prev.description,
+            references: prev.references
+          });
+        } else {
+          // The message no longer exists, so it will be removed
+          // as part of the next save invocation.
+        }
+      }
+    } else {
+      // For target: disk wins completely
+      const translations = new Map<string, ExtractedMessage>();
+      for (const message of diskMessages) {
+        translations.set(message.id, message);
+      }
+      this.translationsByTargetLocale.set(locale, translations);
+    }
   }
 
   async extractFileMessages(
@@ -341,43 +365,19 @@ export default class CatalogManager {
 
     const messages = Array.from(this.messagesById.values());
     const persister = await this.getPersister();
-
     const isSourceLocale = locale === this.config.sourceLocale;
-    const prevMessages = isSourceLocale
-      ? this.messagesById
-      : this.translationsByTargetLocale.get(locale);
 
     // Check if file was modified externally (poll-at-save is cheaper than
     // watchers here since stat() is fast and avoids continuous overhead)
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
-
-    // If file was modified externally, read and merge
-    if (
-      prevMessages &&
-      currentFileTime &&
-      lastWriteTime &&
-      currentFileTime > lastWriteTime
-    ) {
-      const diskMessages = await persister.read(locale);
-
-      for (const diskMessage of diskMessages) {
-        if (isSourceLocale) {
-          // Merge with disk-only fields (like flags)
-          const existing = prevMessages.get(diskMessage.id);
-          if (existing) {
-            for (const key of Object.keys(diskMessage)) {
-              if (existing[key] == null) {
-                existing[key] = diskMessage[key];
-              }
-            }
-          }
-        } else {
-          // Disk wins completely (preserve manual translations)
-          prevMessages.set(diskMessage.id, diskMessage);
-        }
-      }
+    if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
+      await this.reloadLocaleCatalog(locale);
     }
+
+    const prevMessages = isSourceLocale
+      ? this.messagesById
+      : this.translationsByTargetLocale.get(locale);
 
     const localeMessages = messages.map((message) => {
       const prev = prevMessages?.get(message.id);
@@ -401,19 +401,10 @@ export default class CatalogManager {
     added: Array<Locale>;
     removed: Array<Locale>;
   }): Promise<void> => {
-    const loadNewCatalogsPromises = params.added.map(async (locale) => {
-      const translations = new Map<string, ExtractedMessage>();
-      const messages = await this.loadLocaleMessages(locale);
-      for (const message of messages) {
-        translations.set(message.id, message);
-      }
-      this.translationsByTargetLocale.set(locale, translations);
-    });
-
     // Chain to existing promise
     this.loadCatalogsPromise = Promise.all([
       this.loadCatalogsPromise,
-      ...loadNewCatalogsPromises
+      ...params.added.map((locale) => this.reloadLocaleCatalog(locale))
     ]);
 
     for (const locale of params.added) {
