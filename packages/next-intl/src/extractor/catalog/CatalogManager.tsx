@@ -33,7 +33,7 @@ export default class CatalogManager {
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
 
-  private saveScheduler: SaveScheduler<number>;
+  private saveScheduler: SaveScheduler<void>;
   private projectRoot: string;
   private isDevelopment: boolean;
 
@@ -56,7 +56,7 @@ export default class CatalogManager {
     } = {}
   ) {
     this.config = config;
-    this.saveScheduler = new SaveScheduler<number>(50);
+    this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
     this.isDevelopment = opts.isDevelopment ?? false;
 
@@ -347,23 +347,15 @@ export default class CatalogManager {
     return true;
   }
 
-  async save(): Promise<number> {
+  async save(): Promise<void> {
     return this.saveScheduler.schedule(() => this.saveImpl());
   }
 
-  private async saveImpl(): Promise<number> {
-    await this.loadCatalogsPromise;
-
-    const messages = Array.from(this.messagesById.values());
-
-    const persister = await this.getPersister();
-    await persister.write(this.config.sourceLocale, messages);
-
+  private async saveImpl(): Promise<void> {
+    await this.saveLocale(this.config.sourceLocale);
     for (const locale of await this.getTargetLocales()) {
       await this.saveLocale(locale);
     }
-
-    return messages.length;
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
@@ -373,8 +365,8 @@ export default class CatalogManager {
     const persister = await this.getPersister();
 
     const isSourceLocale = locale === this.config.sourceLocale;
-    const prevTranslations = isSourceLocale
-      ? undefined
+    const prevMessages = isSourceLocale
+      ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
 
     // Check if file was modified externally (poll-at-save is cheaper than
@@ -384,7 +376,7 @@ export default class CatalogManager {
 
     // If file was modified externally, read and merge
     if (
-      prevTranslations &&
+      prevMessages &&
       currentFileTime &&
       lastWriteTime &&
       currentFileTime > lastWriteTime
@@ -392,19 +384,31 @@ export default class CatalogManager {
       const diskMessages = await persister.read(locale);
 
       for (const diskMessage of diskMessages) {
-        // Disk wins: preserve manual edits
-        prevTranslations.set(diskMessage.id, diskMessage);
+        if (isSourceLocale) {
+          // Merge with disk-only fields (like flags)
+          const existing = prevMessages.get(diskMessage.id);
+          if (existing) {
+            for (const key of Object.keys(diskMessage)) {
+              if (existing[key] == null) {
+                existing[key] = diskMessage[key];
+              }
+            }
+          }
+        } else {
+          // Disk wins completely (preserve manual translations)
+          prevMessages.set(diskMessage.id, diskMessage);
+        }
       }
     }
 
     const localeMessages = messages.map((message) => {
-      const translation = prevTranslations?.get(message.id);
+      const prev = prevMessages?.get(message.id);
       return {
-        ...translation,
+        ...prev,
         id: message.id,
         description: message.description,
         references: message.references,
-        message: translation ? translation.message : ''
+        message: isSourceLocale ? message.message : (prev?.message ?? '')
       };
     });
 

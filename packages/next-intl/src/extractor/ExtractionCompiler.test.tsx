@@ -387,14 +387,20 @@ describe('json format', () => {
     }
     `;
     filesystem.project.messages = {
-      'en.json': '{"+YJVTi": "Hey!"}'
+      'en.json': '{"+YJVTi": "Hey!"}',
+      'de.json': '{"+YJVTi": "Hallo!"}'
     };
 
     using compiler = createCompiler();
+
+    // Kick off compilation
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
     );
+    await waitForWriteFileCalls(2);
+
+    // Remove message from one file
     await compiler.compile(
       '/project/src/Greeting.tsx',
       `
@@ -404,15 +410,24 @@ describe('json format', () => {
     `
     );
 
-    await waitForWriteFileCalls(2);
+    await sleep(100);
 
-    // Still used in Footer.tsx
-    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
       [
-        "messages/en.json",
-        "{
+        [
+          "messages/en.json",
+          "{
         "+YJVTi": "Hey!"
       }",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": "Hallo!"
+      }",
+        ],
       ]
     `);
   });
@@ -745,13 +760,13 @@ describe('json format', () => {
 
     // Wait for the async operations to settle. We need to ensure the "bad save"
     // attempt happens while the read interceptor is still blocking the load.
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     // Allow loading to finish
     resolveReadFile?.();
 
     // Wait for everything to settle
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     // Ensure only the new message is empty
     expect(JSON.parse(filesystem.project.messages!['fr.json'])).toEqual({
@@ -1358,6 +1373,80 @@ msgstr "Hallo!"
     `);
   });
 
+  it('preserves manually added flags in source locale after recompile', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      `
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+
+    simulateManualFileEdit(
+      'messages/en.po',
+      `msgid ""
+msgstr ""
+"Language: en\\n"
+
+#: src/Greeting.tsx
+#, fuzzy
+msgid "+YJVTi"
+msgstr "Hey!"
+`
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hey!')} {t('World!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.po",
+        "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx
+      #, fuzzy
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "7kKG3Q"
+      msgstr "World!"
+      ",
+      ]
+    `);
+  });
+
   it('avoids a race condition when saving while loading locale catalogs with metadata', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -1401,7 +1490,7 @@ msgstr "Hallo!"
     simulateFileEvent('/project/messages', 'rename', 'en.po');
 
     // Wait a bit to ensure onLocalesChange has started and created the reload promise
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await sleep(50);
 
     // While loading is pending (stuck in readFile), trigger a compile/save
     await compiler.compile(
@@ -1415,12 +1504,12 @@ msgstr "Hallo!"
     );
 
     // Ensure the "bad save" attempt happens while the read interceptor is still blocking
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
 
     resolveReadFile?.();
 
     // Wait for everything to settle
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await sleep(100);
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
@@ -1609,6 +1698,10 @@ describe('`srcPath` filtering', () => {
 /**
  * Test utils
  ****************************************************************/
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function waitForWriteFileCalls(length: number) {
   return vi.waitFor(() => {
