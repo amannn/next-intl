@@ -377,7 +377,8 @@ export default class CatalogManager {
       ? undefined
       : this.translationsByTargetLocale.get(locale);
 
-    // Check if file was modified externally
+    // Check if file was modified externally (poll-at-save is cheaper than
+    // watchers here since stat() is fast and avoids continuous overhead)
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
 
