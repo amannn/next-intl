@@ -333,6 +333,8 @@ export function useClientTimeZone() {
 
     return () => clearInterval(interval);
   }, []);
+
+  return timeZone;
 }
 
 /** A simple utility function to get the current timezone on the Server or the Client */
