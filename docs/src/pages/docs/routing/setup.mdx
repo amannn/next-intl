@@ -300,3 +300,126 @@ export async function generateMetadata({params}) {
 ```
 
 </Steps>
+
+### Timezone support
+
+When using static-rendering with locale-based routing, you might also want to consider the timezone of your users. Since the timezone is part of the users device settings, and therefore cannot be known at build time, it is optimally configured on the client side.
+
+To do this we'll setup the following files:
+
+<Steps>
+
+### `src/i18n/useTimezone.ts` [#i18n-timezone-hook]
+
+We will create a simple React hook that can be used to get the users current timezone:
+
+```tsx filename="src/i18n/useClientTimeZone.ts"
+'use client';
+import {useState, useEffect} from 'react';
+
+/** Hook to get the users current timezone. */
+export function useClientTimeZone() {
+  // Initialize with the server timezone on the server render pass
+  const [timeZone, setTimeZone] = useState<string>(getTimeZone());
+
+  useEffect(() => {
+    // Update the timezone to match the client during hydration
+    setTimeZone(getTimeZone());
+
+    // Optionally update timezone every minute to account for DST changes
+    const interval = setInterval(() => {
+      setTimeZone(getTimeZone());
+    }, 60_000);
+
+    return () => clearInterval(interval);
+  }, []);
+}
+
+/** A simple utility function to get the current timezone on the Server or the Client */
+function getTimeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+```
+
+#### `src/i18n/provider.tsx` [#i18n-timezone-client-provider]
+
+Once we have that hook in place we can now create a Wrapper around `NextIntlClientProvider` that sets the timezone accordingly:
+
+```tsx filename="src/i18n/provider.tsx"
+'use client';
+
+import {NextIntlClientProvider} from 'next-intl';
+import {useClientTimeZone} from './useClientTimeZone';
+
+// Props for the local Timezone-aware NextIntlClientProvider
+type Props = Omit<ComponentProps<typeof NextIntlClientProvider>, 'timeZone'>;
+
+export function TZAwareNextIntlClientProvider(props: Props) {
+  const timeZone = useClientTimeZone();
+
+  return <NextIntlClientProvider {...props} timeZone={timeZone} />;
+}
+```
+
+#### `src/app/[locale]/layout.tsx` [#layout-timezone]
+
+Finally, we can use our `TZAwareNextIntlClientProvider` in our locale layout:
+
+```tsx filename="src/app/[locale]/layout.tsx"
+import {getMessages, setRequestLocale} from 'next-intl/server'; // update this import
+import {hasLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
+import {TZAwareNextIntlClientProvider} from '@/i18n/provider'; // add this import
+
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{locale: string}>;
+};
+
+export default async function LocaleLayout({children, params}: Props) {
+  // Ensure that the incoming `locale` is valid
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  // Enable static rendering
+  setRequestLocale(locale);
+  // Fetch the messages for the locale
+  const messages = await getMessages({locale});
+
+  // ...
+
+  return (
+    <TZAwareNextIntlClientProvider locale={locale} messages={messages}>
+      {/* Wrap other providers who may use next-intl hooks here */}
+      {children}
+    </TZAwareNextIntlClientProvider>
+  );
+}
+```
+
+</Steps>
+
+<Details id="timezone-popping">
+<summary>Will my users experience visual "popping" when the timezone loads?</summary>
+
+When using the above setup, the initial server render will use the server's timezone. During hydration on the client, the timezone will be updated to match the user's device settings. This may lead to visual "popping" if there are differences between the two timezones (e.g., displaying dates or times).
+
+However, for dynamic components that are streamed in after hydration (e.g., via `Suspense`), the correct timezone will be used right away, preventing any popping in those parts of the UI. Considering that most date/time components are quite often dynamic (e.g., comments, timestamps, etc.), the overall impact of this popping is usually minimal.
+
+</Details>
+
+<Details id="timezone-hydration-errors">
+<summary>Will I experience hydration errors when the timezone loads?</summary>
+
+In most cases, you should not experience hydration errors when using the above setup. However there is a potential edge case to be aware of. If you are:
+
+- Using `useTranslations` or other client-side hooks outside of the children of `TZAwareNextIntlClientProvider`
+- **_And_** you are formatting dates or times in those components.
+- **_And_** the server timezone and client timezone differ.
+
+Then you will experience hydration errors. As such it is reccomended to wrap your entire application in a `TZAwareNextIntlClientProvider` in your `LocaleLayout` to avoid this issue.
+
+</Details>
