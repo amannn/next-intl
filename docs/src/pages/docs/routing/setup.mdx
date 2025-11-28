@@ -407,7 +407,7 @@ export default async function LocaleLayout({children, params}: Props) {
 
 When using the above setup, the initial server render will use the server's timezone. During hydration on the client, the timezone will be updated to match the user's device settings. This may lead to visual "popping" if there are differences between the two timezones (e.g., displaying dates or times).
 
-However, for dynamic components that are streamed in after hydration (e.g., via `Suspense`), the correct timezone will be used right away, preventing any popping in those parts of the UI. Considering that most date/time components are quite often dynamic (e.g., comments, timestamps, etc.), the overall impact of this popping is usually minimal.
+However, for dynamic components that are streamed in after hydration (e.g., via `Suspense` with [Cache Components](https://nextjs.org/docs/app/getting-started/cache-components)), the correct timezone will be used right away, preventing any popping in those parts of the UI. Considering that most date/time components are quite often dynamic (e.g., comments, timestamps, etc.), the overall impact of this popping is usually minimal.
 
 </Details>
 
