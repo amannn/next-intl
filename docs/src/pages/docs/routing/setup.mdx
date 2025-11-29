@@ -404,6 +404,15 @@ export default async function LocaleLayout({children, params}: Props) {
 
 </Steps>
 
+<Details id="timezone-static">
+<summary>Does this work for Server Components?</summary>
+
+Sadly it does not. Since the timezone is hydrated on the client, components without a `"use-client"` directive will still present using the server's timezone.
+
+When using Static Rendering / Cache Components we reccomend splitting out date/time related components into Client Components or marking your page with `"use client"`. Note that if you mark your entire page as a Client Component, you need to remove `setRequestLocale` from that page.
+
+</Details>
+
 <Details id="timezone-popping">
 <summary>Will my users experience visual "popping" when the timezone loads?</summary>
 
