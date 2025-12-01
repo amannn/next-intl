@@ -190,7 +190,7 @@ it('supports pluralisation via tags like "zero" and "one" if the locale supports
 
 it('handles selects', () => {
   renderMessage(
-    '{gender, select, male {He} female {She} other {They}} is online.',
+    '{gender, select, male {He is} female {She is} other {They are}} online.',
     {gender: 'female'}
   );
   screen.getByText('She is online.');
