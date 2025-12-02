@@ -97,10 +97,27 @@ enum HookType {
 }
 
 impl HookType {
-    fn into_symbol(&self) -> swc_atoms::Atom {
+    /// The extracted hook name we look for in imports (e.g. `useExtracted`)
+    fn extracted_name(self) -> &'static str {
         match self {
-            HookType::UseTranslation => "useTranslations".into(),
-            HookType::GetTranslation => "getTranslations".into(),
+            HookType::UseTranslation => "useExtracted",
+            HookType::GetTranslation => "getExtracted",
+        }
+    }
+
+    /// The real hook name we import from next-intl (e.g. `useTranslations`)
+    fn target_name(self) -> &'static str {
+        match self {
+            HookType::UseTranslation => "useTranslations",
+            HookType::GetTranslation => "getTranslations",
+        }
+    }
+
+    /// The unique local identifier used to avoid conflicts with existing imports
+    fn local_name(self) -> swc_atoms::Atom {
+        match self {
+            HookType::UseTranslation => "useTranslations$1".into(),
+            HookType::GetTranslation => "getTranslations$1".into(),
         }
     }
 }
@@ -323,14 +340,16 @@ impl VisitMut for TransformVisitor {
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
 
-                                if orig_name == "useExtracted" {
+                                if orig_name == HookType::UseTranslation.extracted_name() {
                                     self.hook_local_names
                                         .insert(named_spec.local.to_id(), HookType::UseTranslation);
 
-                                    named_spec.imported = None;
+                                    named_spec.imported = Some(ModuleExportName::Ident(
+                                        HookType::UseTranslation.target_name().into(),
+                                    ));
                                     named_spec.local = Ident::new(
-                                        "useTranslations".into(),
-                                        named_spec.local.span,
+                                        HookType::UseTranslation.local_name(),
+                                        DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
                                 }
@@ -351,14 +370,16 @@ impl VisitMut for TransformVisitor {
                                     .unwrap_or_else(|| named_spec.local.sym.clone())
                                     .clone();
 
-                                if orig_name == "getExtracted" {
+                                if orig_name == HookType::GetTranslation.extracted_name() {
                                     self.hook_local_names
                                         .insert(named_spec.local.to_id(), HookType::GetTranslation);
 
-                                    named_spec.imported = None;
+                                    named_spec.imported = Some(ModuleExportName::Ident(
+                                        HookType::GetTranslation.target_name().into(),
+                                    ));
                                     named_spec.local = Ident::new(
-                                        "getTranslations".into(),
-                                        named_spec.local.span,
+                                        HookType::GetTranslation.local_name(),
+                                        DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
                                 }
@@ -386,7 +407,7 @@ impl VisitMut for TransformVisitor {
                         if let Callee::Expr(box Expr::Ident(callee)) = &init_call.callee {
                             if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 init_call.callee = Callee::Expr(
-                                    Ident::new(hook_type.into_symbol(), callee.span, callee.ctxt)
+                                    Ident::new(hook_type.local_name(), DUMMY_SP, callee.ctxt)
                                         .into(),
                                 );
                                 call_expr = Some(init_call);
@@ -405,7 +426,7 @@ impl VisitMut for TransformVisitor {
                         {
                             if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 arg.callee = Callee::Expr(
-                                    Ident::new(hook_type.into_symbol(), callee.span, callee.ctxt)
+                                    Ident::new(hook_type.local_name(), DUMMY_SP, callee.ctxt)
                                         .into(),
                                 );
                                 call_expr = Some(arg);
