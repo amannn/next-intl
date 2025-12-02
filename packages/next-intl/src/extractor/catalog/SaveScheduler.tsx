@@ -26,12 +26,13 @@ export default class SaveScheduler<Value> {
       if (!this.isSaving && !this.saveTimeout) {
         // Not currently saving and no scheduled save, save immediately
         this.executeSave();
-      } else if (!this.isSaving && this.saveTimeout) {
-        // A save is scheduled but not running, reschedule to debounce
+      } else if (this.saveTimeout) {
+        // A save is already scheduled, reschedule to debounce
         this.scheduleSave();
       }
-      // If isSaving is true, the current save will check for pending
-      // resolvers when it completes and schedule another save if needed
+      // If isSaving is true and no timeout is scheduled, the current save
+      // will check for pending resolvers when it completes and schedule
+      // another save if needed (see finally block in executeSave)
     });
   }
 
