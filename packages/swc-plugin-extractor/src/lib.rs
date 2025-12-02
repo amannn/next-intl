@@ -315,7 +315,7 @@ impl VisitMut for TransformVisitor {
                                     named_spec.imported =
                                         Some(ModuleExportName::Ident("useTranslations".into()));
                                     named_spec.local = Ident::new(
-                                        "_$useTranslations".into(),
+                                        "useTranslations$1".into(),
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
@@ -345,7 +345,7 @@ impl VisitMut for TransformVisitor {
                                     named_spec.imported =
                                         Some(ModuleExportName::Ident("getTranslations".into()));
                                     named_spec.local = Ident::new(
-                                        "_$getTranslations".into(),
+                                        "getTranslations$1".into(),
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
@@ -376,7 +376,7 @@ impl VisitMut for TransformVisitor {
                             if self.hook_local_name == Some(callee.to_id()) {
                                 init_call.callee = Callee::Expr(
                                     Ident::new(
-                                        "_$useTranslations".into(),
+                                        "useTranslations$1".into(),
                                         DUMMY_SP,
                                         self.hook_local_name.as_ref().unwrap().1,
                                     )
@@ -399,7 +399,7 @@ impl VisitMut for TransformVisitor {
                             if self.hook_local_name == Some(callee.to_id()) {
                                 arg.callee = Callee::Expr(
                                     Ident::new(
-                                        "_$getTranslations".into(),
+                                        "getTranslations$1".into(),
                                         DUMMY_SP,
                                         self.hook_local_name.as_ref().unwrap().1,
                                     )
