@@ -1,5 +1,5 @@
-import { useTranslations } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 export async function generateMetadata() {
     const t = await getTranslations();
     return {
@@ -14,7 +14,15 @@ export async function getServerData() {
     const t = await getTranslations();
     return t("mOPTEA", void 0, void 0, "Server data message");
 }
-export function ClientComponent() {
+export function Component() {
     const t = useTranslations();
-    return <span>{t("IM08ur", void 0, void 0, "Client message")}</span>;
+    return <span>{t("MgvtBu", void 0, void 0, "Component message")}</span>;
 }
+export async function anotherOne() {
+    const translate = await getTranslations();
+    return translate("sJK5Uk", void 0, void 0, "Another one 1");
+}
+export function AnotherOne() {
+    const translate = useTranslations();
+    return <span>{translate("2k7cS1", void 0, void 0, "Another one 2")}</span>;
+}     

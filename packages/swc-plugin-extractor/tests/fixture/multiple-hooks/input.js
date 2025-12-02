@@ -1,5 +1,5 @@
-import {useExtracted} from 'next-intl';
-import {getExtracted} from 'next-intl/server';
+import {useExtracted} from "next-intl";
+import {getExtracted} from "next-intl/server";
 
 export async function generateMetadata() {
   const t = await getExtracted();
@@ -18,7 +18,17 @@ export async function getServerData() {
   return t("Server data message");
 }
 
-export function ClientComponent() {
+export function Component() {
   const t = useExtracted();
-  return <span>{t("Client message")}</span>;
+  return <span>{t("Component message")}</span>;
+}
+
+export async function anotherOne() {
+  const translate = await getExtracted();
+  return translate("Another one 1");
+}
+
+export function AnotherOne() {
+  const translate = useExtracted();
+  return <span>{translate("Another one 2")}</span>;
 }
