@@ -113,9 +113,7 @@ impl HookType {
         }
     }
 
-    /// The unique local identifier used to avoid conflicts with existing imports.
-    /// Uses `$1` suffix since it's an invalid user-written identifier ($ followed by
-    /// a digit), ensuring no collisions with user code.
+    /// The unique local identifier used to avoid conflicts with existing imports
     fn local_name(self) -> swc_atoms::Atom {
         match self {
             HookType::UseTranslation => "useTranslations$1".into(),
