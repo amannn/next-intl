@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.5.7 (2025-12-01)
+
+### Bug Fixes
+
+* Skip `accept-language` parsing when locale cookie is already present ([#2143](https://github.com/amannn/next-intl/issues/2143)) ([0d1331b](https://github.com/amannn/next-intl/commit/0d1331b4bc0cd1da5a24bdda10977c353f3133cf)), closes [#2116](https://github.com/amannn/next-intl/issues/2116) – by @lxup
+
+## 4.5.6 (2025-11-27)
+
+### Bug Fixes
+
+* Improvements for `useExtracted` ([#2133](https://github.com/amannn/next-intl/issues/2133)) ([5397c49](https://github.com/amannn/next-intl/commit/5397c49bc886fb2c8e44ac2f0e417d8a6f78811e)) – by @amannn
+
 ## 4.5.5 (2025-11-19)
 
 ### Bug Fixes
