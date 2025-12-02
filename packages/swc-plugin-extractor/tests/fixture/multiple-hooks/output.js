@@ -26,3 +26,11 @@ export function AnotherOne() {
     const translate = useTranslations();
     return <span>{translate("2k7cS1", void 0, void 0, "Another one 2")}</span>;
 }     
+export async function anotherTwo() {
+    const translate = await getTranslations('another');
+    return translate("6jb0KP", void 0, void 0, "Two 1");
+}
+export function AnotherTwo() {
+    const translate = useTranslations('another');
+    return <span>{translate("KVQtmd", void 0, void 0, "Two 2")}</span>;
+}

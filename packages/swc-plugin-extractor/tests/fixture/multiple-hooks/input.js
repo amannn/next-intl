@@ -32,3 +32,13 @@ export function AnotherOne() {
   const translate = useExtracted();
   return <span>{translate("Another one 2")}</span>;
 }
+
+export async function anotherTwo() {
+  const translate = await getExtracted('another');
+  return translate("Two 1");
+}
+
+export function AnotherTwo() {
+  const translate = useExtracted('another');
+  return <span>{translate("Two 2")}</span>;
+}

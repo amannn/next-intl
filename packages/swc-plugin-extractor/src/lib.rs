@@ -330,7 +330,7 @@ impl VisitMut for TransformVisitor {
                                     named_spec.imported = None;
                                     named_spec.local = Ident::new(
                                         "useTranslations".into(),
-                                        DUMMY_SP,
+                                        named_spec.local.span,
                                         named_spec.local.ctxt,
                                     );
                                 }
@@ -358,7 +358,7 @@ impl VisitMut for TransformVisitor {
                                     named_spec.imported = None;
                                     named_spec.local = Ident::new(
                                         "getTranslations".into(),
-                                        DUMMY_SP,
+                                        named_spec.local.span,
                                         named_spec.local.ctxt,
                                     );
                                 }
@@ -386,7 +386,7 @@ impl VisitMut for TransformVisitor {
                         if let Callee::Expr(box Expr::Ident(callee)) = &init_call.callee {
                             if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 init_call.callee = Callee::Expr(
-                                    Ident::new(hook_type.into_symbol(), DUMMY_SP, callee.ctxt)
+                                    Ident::new(hook_type.into_symbol(), callee.span, callee.ctxt)
                                         .into(),
                                 );
                                 call_expr = Some(init_call);
@@ -405,7 +405,7 @@ impl VisitMut for TransformVisitor {
                         {
                             if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 arg.callee = Callee::Expr(
-                                    Ident::new(hook_type.into_symbol(), DUMMY_SP, callee.ctxt)
+                                    Ident::new(hook_type.into_symbol(), callee.span, callee.ctxt)
                                         .into(),
                                 );
                                 call_expr = Some(arg);
