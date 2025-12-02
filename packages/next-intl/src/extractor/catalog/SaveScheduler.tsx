@@ -12,6 +12,7 @@ export default class SaveScheduler<Value> {
     resolve(value: Value): void;
     reject(error: unknown): void;
   }> = [];
+  private nextSaveTask?: SaveTask<Value>;
 
   constructor(delayMs = 50) {
     this.delayMs = delayMs;
@@ -20,45 +21,62 @@ export default class SaveScheduler<Value> {
   async schedule(saveTask: SaveTask<Value>): Promise<Value> {
     return new Promise((resolve, reject) => {
       this.pendingResolvers.push({resolve, reject});
+      this.nextSaveTask = saveTask;
 
-      if (this.pendingResolvers.length === 1 && !this.isSaving) {
-        // No pending saves and not currently saving, save immediately
-        this.executeSave(saveTask);
-      } else if (this.pendingResolvers.length > 1) {
-        // Multiple pending saves, schedule/reschedule save
-        this.scheduleSave(saveTask);
+      if (!this.isSaving && !this.saveTimeout) {
+        // Not currently saving and no scheduled save, save immediately
+        this.executeSave();
+      } else if (!this.isSaving && this.saveTimeout) {
+        // A save is scheduled but not running, reschedule to debounce
+        this.scheduleSave();
       }
+      // If isSaving is true, the current save will check for pending
+      // resolvers when it completes and schedule another save if needed
     });
   }
 
-  private scheduleSave(saveTask: SaveTask<Value>): void {
+  private scheduleSave(): void {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
     }
 
     this.saveTimeout = setTimeout(() => {
-      this.executeSave(saveTask);
+      this.saveTimeout = undefined;
+      this.executeSave();
     }, this.delayMs);
   }
 
-  private async executeSave(saveTask: SaveTask<Value>): Promise<void> {
+  private async executeSave(): Promise<void> {
     if (this.isSaving) {
       return;
     }
 
+    const saveTask = this.nextSaveTask;
+    if (!saveTask) {
+      return;
+    }
+
+    // Capture current pending resolvers for this save
+    const resolversForThisSave = this.pendingResolvers;
+    this.pendingResolvers = [];
+    this.nextSaveTask = undefined;
     this.isSaving = true;
 
     try {
       const result = await saveTask();
 
-      // Resolve all pending promises with the same result
-      this.pendingResolvers.forEach(({resolve}) => resolve(result));
+      // Resolve only the promises that were pending when this save started
+      resolversForThisSave.forEach(({resolve}) => resolve(result));
     } catch (error) {
-      // Reject all pending promises with the same error
-      this.pendingResolvers.forEach(({reject}) => reject(error));
+      // Reject only the promises that were pending when this save started
+      resolversForThisSave.forEach(({reject}) => reject(error));
     } finally {
-      this.pendingResolvers = [];
       this.isSaving = false;
+
+      // If new saves were requested during this save, schedule another
+      if (this.pendingResolvers.length > 0) {
+        this.scheduleSave();
+      }
     }
   }
 
@@ -68,6 +86,7 @@ export default class SaveScheduler<Value> {
       this.saveTimeout = undefined;
     }
     this.pendingResolvers = [];
+    this.nextSaveTask = undefined;
     this.isSaving = false;
   }
 }
