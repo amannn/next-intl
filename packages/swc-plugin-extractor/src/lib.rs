@@ -48,7 +48,7 @@ pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
 
-    hook_local_name: Option<Id>,
+    hook_local_names: FxHashMap<Id, HookType>,
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
@@ -60,7 +60,7 @@ impl TransformVisitor {
         Self {
             is_development,
             file_path,
-            hook_local_name: None,
+            hook_local_names: Default::default(),
             translator_map: Default::default(),
             results: Default::default(),
         }
@@ -88,6 +88,21 @@ struct StrictExtractedMessage {
 #[derive(Debug, Clone, Serialize)]
 struct Reference {
     path: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+enum HookType {
+    UseTranslation,
+    GetTranslation,
+}
+
+impl HookType {
+    fn to_symbol(self) -> swc_atoms::Atom {
+        match self {
+            HookType::UseTranslation => "useTranslations$1".into(),
+            HookType::GetTranslation => "getTranslations$1".into(),
+        }
+    }
 }
 
 impl VisitMut for TransformVisitor {
@@ -309,7 +324,8 @@ impl VisitMut for TransformVisitor {
                                     .clone();
 
                                 if orig_name == "useExtracted" {
-                                    self.hook_local_name = Some(named_spec.local.to_id());
+                                    self.hook_local_names
+                                        .insert(named_spec.local.to_id(), HookType::UseTranslation);
 
                                     // Use a unique name to avoid conflicts with existing imports
                                     named_spec.imported =
@@ -319,7 +335,6 @@ impl VisitMut for TransformVisitor {
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
-                                    break;
                                 }
                             }
                         }
@@ -339,7 +354,8 @@ impl VisitMut for TransformVisitor {
                                     .clone();
 
                                 if orig_name == "getExtracted" {
-                                    self.hook_local_name = Some(named_spec.local.to_id());
+                                    self.hook_local_names
+                                        .insert(named_spec.local.to_id(), HookType::GetTranslation);
 
                                     // Use a unique name to avoid conflicts with existing imports
                                     named_spec.imported =
@@ -349,7 +365,6 @@ impl VisitMut for TransformVisitor {
                                         DUMMY_SP,
                                         named_spec.local.ctxt,
                                     );
-                                    break;
                                 }
                             }
                         }
@@ -373,14 +388,10 @@ impl VisitMut for TransformVisitor {
                 match &mut **init {
                     Expr::Call(init_call) => {
                         if let Callee::Expr(box Expr::Ident(callee)) = &init_call.callee {
-                            if self.hook_local_name == Some(callee.to_id()) {
+                            if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 init_call.callee = Callee::Expr(
-                                    Ident::new(
-                                        "useTranslations$1".into(),
-                                        DUMMY_SP,
-                                        self.hook_local_name.as_ref().unwrap().1,
-                                    )
-                                    .into(),
+                                    Ident::new(hook_type.to_symbol(), DUMMY_SP, callee.ctxt)
+                                        .into(),
                                 );
                                 call_expr = Some(init_call);
                             }
@@ -396,14 +407,10 @@ impl VisitMut for TransformVisitor {
                             ..
                         } = &*arg
                         {
-                            if self.hook_local_name == Some(callee.to_id()) {
+                            if let Some(hook_type) = self.hook_local_names.get(&callee.to_id()) {
                                 arg.callee = Callee::Expr(
-                                    Ident::new(
-                                        "getTranslations$1".into(),
-                                        DUMMY_SP,
-                                        self.hook_local_name.as_ref().unwrap().1,
-                                    )
-                                    .into(),
+                                    Ident::new(hook_type.to_symbol(), DUMMY_SP, callee.ctxt)
+                                        .into(),
                                 );
                                 call_expr = Some(arg);
                             }
