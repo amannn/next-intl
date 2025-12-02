@@ -1,4 +1,4 @@
-import { useTranslations, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 function Component() {
     const t = useTranslations();
     const t2 = useTranslations();

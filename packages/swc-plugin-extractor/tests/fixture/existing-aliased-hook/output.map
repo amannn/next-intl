@@ -1,0 +1,1 @@
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted, useTranslations as useT} from 'next-intl';\n\nfunction Component() {\n  const t = useExtracted();\n  const t2 = useT();\n  t(\"Hello from extracted!\");\n  t2(\"greeting\");\n}\n"],"names":[],"mappings":"AAAA,SAAsB,mBAAmB,IAAI,QAAO,YAAY;AAEhE,SAAS;IACP,MAAM,IAAI;IACV,MAAM,KAAK;IACX,EAAE;IACF,GAAG;AACL"}
