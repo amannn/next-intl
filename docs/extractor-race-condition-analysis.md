@@ -8,8 +8,10 @@
 Users report that translation files (`.po`) are intermittently getting wiped out—all translations replaced with empty strings. This affects non-source locale files (pt.po, es.po, de.po) but never the source locale (en.po).
 
 **Observed triggers:**
-- Building multiple apps simultaneously with Turborepo
-- Dev server crashes/restarts during file editing
+- Dev server running while rapidly editing source files (e.g., AI coding agents)
+- Dev server crashes/restarts during file editing with external tools (Poedit)
+
+**Frequency:** Rare after v4.5.6 fixes (~1 in 50+ builds), but still occurs.
 
 ## Architecture Overview
 
@@ -50,32 +52,13 @@ The following race conditions were addressed in commits `8d81357f`, `1035c19e`, 
 
 ## Remaining Race Conditions
 
-### 1. Cross-Process Race Condition (Turborepo/Parallel Builds) ⚠️ HIGH SEVERITY
+### 1. Cross-Process Race Condition (Turborepo/Parallel Builds) ⚠️ LOW SEVERITY
 
-**The Issue:**
-When multiple processes build simultaneously (e.g., Turborepo building multiple apps):
+**Note:** This was initially suspected but is **unlikely to be the cause**. In the reported cases, only a single app uses next-intl extraction, so there's only one process writing to catalog files. Other apps in the Turborepo don't touch translation files.
 
-```
-Process A                           Process B
-─────────────────────────────────  ─────────────────────────────────
-1. Read de.po (has translations)   
-                                    2. Read de.po (has translations)
-3. Extract messages, save de.po   
-   (preserves translations)        
-                                    4. Extract messages, save de.po
-                                       (uses stale snapshot, overwrites A's changes)
-```
+This would only be relevant if multiple apps share the same translation files AND use extraction simultaneously.
 
-**Root Cause:**
-- Each process has its own singleton compiler instance
-- No cross-process file locking mechanism
-- Last writer wins, potentially overwriting valid translations
-
-**Evidence:**
-- User reports issue "when building multiple apps at the same time (using pnpm build with Turborepo)"
-- Issue happens "only the first time" ran build (when multiple processes race)
-
-### 2. Timestamp Check Race Window ⚠️ MEDIUM SEVERITY
+### 2. Timestamp Check Race Window ⚠️ LOW SEVERITY
 
 **Location:** `CatalogManager.saveLocale()` lines 371-376
 
@@ -165,12 +148,23 @@ this.lastWriteByLocale.set(locale, newTime);  // Corrupt state
 
 ## Analysis of User-Reported Scenarios
 
-### Scenario: Turborepo Parallel Builds
-**Most likely cause:** Cross-process race condition (#1)
+### Scenario: Rapid Source File Edits (AI Coding Agents)
+**Most likely cause:** Silent read failures (#4) combined with transient I/O errors
 
-Multiple apps building simultaneously, each with its own compiler instance, racing to read and write the same catalog files. No coordination between processes.
+Colin reported: "GitHub Copilot agent on VSCode did a bunch of changes (e.g., changed 10-15 files in a short interval of time) while the dev server was running. After it finished its changes, both pt.po and es.po were wiped out."
 
-### Scenario: Dev Server Crashes During File Editing  
+Key observation: **Both locales wiped simultaneously, but on retry pt.po saved correctly while es.po wiped again.**
+
+This matches the behavior of silent read failures:
+1. Copilot rapidly edits 10-15 source files
+2. Dev server compiles each change → multiple `save()` calls (fire-and-forget, debounced)
+3. Target locales saved in parallel: `Promise.all(targetLocales.map(saveLocale))`
+4. If reading `es.po` fails (transient I/O, VS Code background indexing) → returns `[]` → wipe
+5. Reading `pt.po` succeeds → saved correctly
+
+VS Code performs background operations (indexing, git status) that can cause brief file access conflicts, especially during rapid changes.
+
+### Scenario: Dev Server Crashes During File Editing (Poedit)
 **Most likely cause:** Silent read failures (#4)
 
 When editing files with Poedit during dev server operation:
@@ -179,29 +173,13 @@ When editing files with Poedit during dev server operation:
 3. `reloadLocaleCatalog()` reads corrupted/partial file → fails → returns `[]`
 4. Next save writes empty translations
 
+### Why Issue Reduced After v4.5.6
+
+The `loadCatalogsPromise` synchronization fixes closed most timing windows. The remaining ~1 in 50+ occurrence rate suggests transient errors (brief I/O conflicts) rather than systematic race conditions.
+
 ## Recommended Fixes
 
-### Fix 1: File Locking for Cross-Process Safety
-
-Use a file locking mechanism (e.g., `proper-lockfile` or similar):
-
-```typescript
-import lockfile from 'proper-lockfile';
-
-private async saveLocale(locale: Locale): Promise<void> {
-  const filePath = persister.getFilePath(locale);
-  const release = await lockfile.lock(filePath, { retries: 5 });
-  try {
-    // Reload after acquiring lock (file may have changed)
-    await this.reloadLocaleCatalog(locale);
-    // ... perform save
-  } finally {
-    await release();
-  }
-}
-```
-
-### Fix 2: Don't Swallow Read Errors Silently
+### Fix 1: Don't Swallow Read Errors Silently ✅ IMPLEMENTED
 
 ```typescript
 private async loadLocaleMessages(locale: Locale): Promise<Array<ExtractedMessage>> {
@@ -222,7 +200,9 @@ private async loadLocaleMessages(locale: Locale): Promise<Array<ExtractedMessage
 }
 ```
 
-### Fix 3: Atomic Writes
+**Impact:** Transforms silent data loss into loud build failure. User can retry instead of losing translations.
+
+### Fix 2: Atomic Writes (Future consideration)
 
 Write to a temp file then rename (atomic on most filesystems):
 
@@ -238,49 +218,15 @@ async write(locale: Locale, messages: Array<ExtractedMessage>): Promise<void> {
 }
 ```
 
-### Fix 4: Handle First-Write Race
+### Fix 3: File Locking (Future consideration, if needed)
 
-Track whether we've ever successfully read the file:
+Only needed if cross-process issues are confirmed. Adds complexity and a dependency.
 
-```typescript
-private hasLoadedLocale: Set<Locale> = new Set();
+## Test Coverage
 
-private async saveLocale(locale: Locale): Promise<void> {
-  await this.loadCatalogsPromise;
-  
-  const persister = await this.getPersister();
-  const isSourceLocale = locale === this.config.sourceLocale;
-  
-  // Always reload before first save to avoid overwriting concurrent writes
-  if (!this.hasLoadedLocale.has(locale)) {
-    await this.reloadLocaleCatalog(locale);
-    this.hasLoadedLocale.add(locale);
-  }
-  
-  // Existing timestamp check...
-  const lastWriteTime = this.lastWriteByLocale.get(locale);
-  const currentFileTime = await persister.getLastModified(locale);
-  if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
-    await this.reloadLocaleCatalog(locale);
-  }
-  // ...
-}
-```
-
-## Test Coverage Gaps
-
-The existing tests use in-memory filesystem mocking and single-process execution. To properly test cross-process races, we would need:
-
-1. Integration tests that spawn multiple processes
-2. Tests that simulate partial/corrupted file reads
-3. Tests for first-write scenarios with concurrent processes
-
-## Recommended Priority
-
-1. **Fix #4 (Silent read failures)** - High impact, straightforward fix ✅ IMPLEMENTED
-2. **Fix #3 (Atomic writes)** - Reduces corruption window
-3. **Fix #2 (Don't swallow read errors)** - Better error handling ✅ IMPLEMENTED (same as #4)
-4. **Fix #1 (File locking)** - Most complete solution but adds dependency
+Added tests for the implemented fix:
+1. `propagates read errors instead of silently returning empty` - verifies non-ENOENT errors throw
+2. `returns empty array only for ENOENT errors` - verifies new locale setup still works
 
 ## Implemented Fix
 
@@ -303,7 +249,13 @@ catch (error) {
 }
 ```
 
-This addresses the scenario where file corruption or I/O errors during concurrent access would silently return empty translations, leading to wipes.
+**Why this helps:**
+
+When rapid file changes occur and a transient read error happens (VS Code indexing, brief I/O conflict):
+- **Before:** `es.po` read fails → returns `[]` → `es.po` saved with empty translations → **silent wipe**
+- **After:** `es.po` read fails → throws error → build fails → user sees error, can retry → **no data loss**
+
+This transforms a rare, hard-to-debug data loss into a visible error that prompts a retry.
 
 ## Appendix: Code Flow During Build
 
