@@ -176,27 +176,10 @@ export default class CatalogManager {
     locale: Locale
   ): Promise<Array<ExtractedMessage>> {
     const persister = await this.getPersister();
-    try {
-      const messages = await persister.read(locale);
-      const fileTime = await persister.getLastModified(locale);
-      this.lastWriteByLocale.set(locale, fileTime);
-      return messages;
-    } catch (error) {
-      // Only return empty if file doesn't exist (initial setup).
-      // For other errors (corruption, I/O), propagate to avoid
-      // accidentally wiping translations.
-      if (
-        error instanceof Error &&
-        error.cause &&
-        typeof error.cause === 'object' &&
-        'code' in error.cause &&
-        error.cause.code === 'ENOENT'
-      ) {
-        return [];
-      }
-
-      throw error;
-    }
+    const messages = await persister.read(locale);
+    const fileTime = await persister.getLastModified(locale);
+    this.lastWriteByLocale.set(locale, fileTime);
+    return messages;
   }
 
   private async loadTargetMessages() {

@@ -26,6 +26,14 @@ export default class CatalogPersister {
     try {
       content = await fs.readFile(filePath, 'utf8');
     } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return [];
+      }
       throw new Error(
         `Error while reading ${this.getFileName(locale)}:\n> ${error}`,
         {cause: error}
