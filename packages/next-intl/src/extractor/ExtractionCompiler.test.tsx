@@ -73,10 +73,12 @@ describe('json format', () => {
       {
         "de.json": "{
         "+YJVTi": "Hallo!"
-      }",
+      }
+      ",
         "en.json": "{
         "+YJVTi": "Hey!"
-      }",
+      }
+      ",
       }
     `);
   });
@@ -115,10 +117,12 @@ describe('json format', () => {
       {
         "de.json": "{
         "OpKKos": ""
-      }",
+      }
+      ",
         "en.json": "{
         "OpKKos": "Hello!"
-      }",
+      }
+      ",
       }
     `);
   });
@@ -150,17 +154,19 @@ describe('json format', () => {
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-    [
       [
-        "messages/en.json",
-        "{}",
-      ],
-      [
-        "messages/de.json",
-        "{}",
-      ],
-    ]
-  `);
+        [
+          "messages/en.json",
+          "{}
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{}
+      ",
+        ],
+      ]
+    `);
   });
 
   it('restores previous translations when messages are added back', async () => {
@@ -190,17 +196,19 @@ describe('json format', () => {
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-    [
       [
-        "messages/en.json",
-        "{}",
-      ],
-      [
-        "messages/de.json",
-        "{}",
-      ],
-    ]
-  `);
+        [
+          "messages/en.json",
+          "{}
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{}
+      ",
+        ],
+      ]
+    `);
 
     await compiler.compile(
       '/project/src/Greeting.tsx',
@@ -216,21 +224,23 @@ describe('json format', () => {
     await waitForWriteFileCalls(6);
 
     expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
-    [
       [
-        "messages/en.json",
-        "{
-      "+YJVTi": "Hey!"
-    }",
-      ],
-      [
-        "messages/de.json",
-        "{
-      "+YJVTi": "Hallo!"
-    }",
-      ],
-    ]
-  `);
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": "Hallo!"
+      }
+      ",
+        ],
+      ]
+    `);
   });
 
   it('handles namespaces when storing messages', async () => {
@@ -262,25 +272,27 @@ describe('json format', () => {
     await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-    [
       [
-        "messages/en.json",
-        "{
-      "ui": {
-        "OpKKos": "Hello!"
+        [
+          "messages/en.json",
+          "{
+        "ui": {
+          "OpKKos": "Hello!"
+        }
       }
-    }",
-      ],
-      [
-        "messages/de.json",
-        "{
-      "ui": {
-        "OpKKos": ""
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "ui": {
+          "OpKKos": ""
+        }
       }
-    }",
-      ],
-    ]
-  `);
+      ",
+        ],
+      ]
+    `);
   });
 
   it('preserves manual translations in target catalogs when adding new messages', async () => {
@@ -314,10 +326,12 @@ describe('json format', () => {
           "messages": {
             "de.json": "{
         "+YJVTi": "Hallo!"
-      }",
+      }
+      ",
             "en.json": "{
         "+YJVTi": "Hey!"
-      }",
+      }
+      ",
           },
           "src": {
             "Greeting.tsx": "
@@ -353,11 +367,13 @@ describe('json format', () => {
         "de.json": "{
         "NnE1NP": "",
         "OpKKos": "Hallo!"
-      }",
+      }
+      ",
         "en.json": "{
         "NnE1NP": "Goodbye!",
         "OpKKos": "Hello!"
-      }",
+      }
+      ",
       }
     `);
   });
@@ -415,13 +431,15 @@ describe('json format', () => {
           "messages/en.json",
           "{
         "+YJVTi": "Hey!"
-      }",
+      }
+      ",
         ],
         [
           "messages/de.json",
           "{
         "+YJVTi": "Hallo!"
-      }",
+      }
+      ",
         ],
       ]
     `);
@@ -484,7 +502,7 @@ describe('json format', () => {
         const calls = vi.mocked(fs.writeFile).mock.calls;
         expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
           'messages/de.json',
-          '{\n  "OpKKos": ""\n}'
+          '{\n  "OpKKos": ""\n}\n'
         ]);
       },
       {timeout: 500}
@@ -519,7 +537,7 @@ describe('json format', () => {
         const calls = vi.mocked(fs.writeFile).mock.calls;
         expect(calls.find((cur) => cur[0] === 'messages/de.json')).toEqual([
           'messages/de.json',
-          '{\n  "OpKKos": "Hallo!"\n}'
+          '{\n  "OpKKos": "Hallo!"\n}\n'
         ]);
       },
       {timeout: 500}
@@ -547,7 +565,8 @@ describe('json format', () => {
           "{
         "7kKG3Q": "",
         "OpKKos": "Hallo!"
-      }",
+      }
+      ",
         ],
       ]
     `);
@@ -598,14 +617,16 @@ describe('json format', () => {
           "{
         "NnE1NP": "Goodbye!",
         "OpKKos": "Hello!"
-      }",
+      }
+      ",
         ],
         [
           "messages/de.json",
           "{
         "NnE1NP": "",
         "OpKKos": "Hallo!"
-      }",
+      }
+      ",
         ],
       ]
     `);
@@ -647,19 +668,22 @@ describe('json format', () => {
           "messages/en.json",
           "{
         "OpKKos": "Hello!"
-      }",
+      }
+      ",
         ],
         [
           "messages/de.json",
           "{
         "OpKKos": ""
-      }",
+      }
+      ",
         ],
         [
           "messages/fr.json",
           "{
         "OpKKos": ""
-      }",
+      }
+      ",
         ],
       ]
     `);
@@ -704,7 +728,8 @@ describe('json format', () => {
         "{
         "7kKG3Q": "",
         "OpKKos": ""
-      }",
+      }
+      ",
       ]
     `);
   });
@@ -2065,7 +2090,8 @@ describe('`srcPath` filtering', () => {
           "messages/en.json",
           "{
         "+YJVTi": "Hey!"
-      }",
+      }
+      ",
         ],
       ]
     `);
@@ -2085,7 +2111,8 @@ describe('`srcPath` filtering', () => {
           "{
         "JwjlWH": "panel.source",
         "+YJVTi": "Hey!"
-      }",
+      }
+      ",
         ],
       ]
     `);

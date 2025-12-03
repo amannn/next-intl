@@ -27,7 +27,7 @@ export default class JSONFormatter extends Formatter {
     for (const message of getSortedMessages(messages)) {
       setNestedProperty(root, message.id, message.message);
     }
-    return JSON.stringify(root, null, 2);
+    return JSON.stringify(root, null, 2) + '\n';
   }
 
   public toJSONString(source: string) {
