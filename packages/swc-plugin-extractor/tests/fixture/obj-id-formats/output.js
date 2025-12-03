@@ -1,6 +1,6 @@
-import { useTranslations as useTranslations$1 } from 'next-intl';
+import { useTranslations as useExtracted } from 'next-intl';
 function Component() {
-    const t = useTranslations$1();
+    const t = useExtracted();
     t("greeting", {
         name: 'Alice'
     }, {

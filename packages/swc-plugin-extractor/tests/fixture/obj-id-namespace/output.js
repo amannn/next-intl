@@ -1,5 +1,5 @@
-import { useTranslations as useTranslations$1 } from 'next-intl';
+import { useTranslations as useExtracted } from 'next-intl';
 function Component() {
-    const t = useTranslations$1('ui');
+    const t = useExtracted('ui');
     t("greeting", void 0, void 0, "Hello!");
 }

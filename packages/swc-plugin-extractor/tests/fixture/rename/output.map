@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'next-intl';\n\nfunction Component() {\n  const translate = useExtracted();\n  translate(\"Hello!\");\n}\n"],"names":[],"mappings":"AAAA,SAAQ,oCAAY,QAAO,YAAY;AAEvC,SAAS;IACP,MAAM,YAAY;IAClB,UAAU;AACZ"}
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted} from 'next-intl';\n\nfunction Component() {\n  const translate = useExtracted();\n  translate(\"Hello!\");\n}\n"],"names":[],"mappings":"AAAA,SAAQ,+BAAY,QAAO,YAAY;AAEvC,SAAS;IACP,MAAM,YAAY;IAClB,UAAU;AACZ"}

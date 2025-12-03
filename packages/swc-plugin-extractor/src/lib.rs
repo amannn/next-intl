@@ -113,11 +113,12 @@ impl HookType {
         }
     }
 
-    /// The unique local identifier used to avoid conflicts with existing imports
+    /// The local identifier used in output. We reuse the previous name since user tooling
+    /// (ESLint, TypeScript) has already verified no conflicts exist with this identifier.
     fn local_name(self) -> swc_atoms::Atom {
         match self {
-            HookType::UseTranslation => "useTranslations$1".into(),
-            HookType::GetTranslation => "getTranslations$1".into(),
+            HookType::UseTranslation => "useExtracted".into(),
+            HookType::GetTranslation => "getExtracted".into(),
         }
     }
 }

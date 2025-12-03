@@ -1,1 +1,1 @@
-{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted as useInlined} from 'next-intl';\n\nfunction Component() {\n  const t = useInlined();\n  t(\"Hey!\");\n}\n"],"names":[],"mappings":"AAAA,SAAQ,oCAA0B,QAAO,YAAY;AAErD,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ"}
+{"version":3,"sources":["input.js"],"sourcesContent":["import {useExtracted as useInlined} from 'next-intl';\n\nfunction Component() {\n  const t = useInlined();\n  t(\"Hey!\");\n}\n"],"names":[],"mappings":"AAAA,SAAQ,+BAA0B,QAAO,YAAY;AAErD,SAAS;IACP,MAAM,IAAI;IACV,EAAE;AACJ"}
