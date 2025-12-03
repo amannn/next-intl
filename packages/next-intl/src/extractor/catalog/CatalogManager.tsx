@@ -192,7 +192,13 @@ export default class CatalogManager {
       ) {
         return [];
       }
-      throw error;
+
+      // Wrap error with context about which file failed
+      const formatter = await this.getFormatter();
+      const fileName = locale + formatter.EXTENSION;
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Error while reading ${fileName}: ${message}`);
     }
   }
 
