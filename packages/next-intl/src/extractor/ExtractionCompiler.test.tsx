@@ -2046,18 +2046,13 @@ msgstr "Hey!"
 
     readFileInterceptors.set('de.po', () => readFilePromise);
 
-    // Start compilation - this will attempt to load catalogs
     using compiler = createCompiler();
-
-    // Wait a bit for the load to start
     await sleep(50);
 
-    // Simulate a read error (e.g., file corruption, concurrent write)
     const ioError = new Error('EACCES: permission denied');
     (ioError as NodeJS.ErrnoException).code = 'EACCES';
     rejectReadFile?.(ioError);
 
-    // The compiler should fail rather than proceed with empty translations
     await expect(
       compiler.compile(
         '/project/src/Greeting.tsx',
@@ -2074,6 +2069,7 @@ msgstr "Hey!"
       return <div>{t('Hello!')}</div>;
     }
     `;
+
     // Only source locale exists, target locale doesn't exist yet
     filesystem.project.messages = {
       'en.po': `
@@ -2119,14 +2115,12 @@ msgstr "Hey!"
 
     using compiler = createCompiler();
 
-    // The compiler should fail due to parser error rather than
-    // silently returning empty translations and wiping the file
     await expect(
       compiler.compile(
         '/project/src/Greeting.tsx',
         filesystem.project.src['Greeting.tsx']
       )
-    ).rejects.toThrow();
+    ).rejects.toThrow('Incomplete quoted string:\n> "Hal');
   });
 });
 
@@ -2442,7 +2436,9 @@ vi.mock('fs', () => ({
 }));
 
 function createENOENTError(filePath: string): NodeJS.ErrnoException {
-  const error = new Error(`ENOENT: no such file or directory, open '${filePath}'`) as NodeJS.ErrnoException;
+  const error = new Error(
+    `ENOENT: no such file or directory, open '${filePath}'`
+  ) as NodeJS.ErrnoException;
   error.code = 'ENOENT';
   error.errno = -2;
   error.syscall = 'open';
