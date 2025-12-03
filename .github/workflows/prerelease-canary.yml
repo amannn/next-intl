@@ -19,7 +19,11 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           node-version: 20.x
           cache: "pnpm"
-      - run: npm install -g npm@latest # Trusted publishers
+
+      # Trusted publishers
+      - run: npm install -g npm@latest
+      - run: npm --version
+
       - run: pnpm install
       - run: pnpm turbo run build --filter './packages/**'
       - run: |
@@ -34,4 +38,3 @@ jobs:
         if: "${{startsWith(github.event.head_commit.message, 'fix: ') || startsWith(github.event.head_commit.message, 'feat: ') || startsWith(github.event.head_commit.message, 'feat!: ')}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
