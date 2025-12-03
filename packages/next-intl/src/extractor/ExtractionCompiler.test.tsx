@@ -2015,6 +2015,84 @@ msgstr "Hey!"
       ]
     `);
   });
+
+  it('propagates read errors instead of silently returning empty (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    // Intercept reading to simulate a corruption/I/O error
+    // (not ENOENT - file exists but can't be read)
+    let rejectReadFile: ((error: Error) => void) | undefined;
+    const readFilePromise = new Promise<void>((_, reject) => {
+      rejectReadFile = reject;
+    });
+
+    readFileInterceptors.set('de.po', () => readFilePromise);
+
+    // Start compilation - this will attempt to load catalogs
+    using compiler = createCompiler();
+
+    // Wait a bit for the load to start
+    await sleep(50);
+
+    // Simulate a read error (e.g., file corruption, concurrent write)
+    const ioError = new Error('EACCES: permission denied');
+    (ioError as NodeJS.ErrnoException).code = 'EACCES';
+    rejectReadFile?.(ioError);
+
+    // The compiler should fail rather than proceed with empty translations
+    await expect(
+      compiler.compile(
+        '/project/src/Greeting.tsx',
+        filesystem.project.src['Greeting.tsx']
+      )
+    ).rejects.toThrow('EACCES');
+  });
+
+  it('returns empty array only for ENOENT (file not found) errors', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    // Only source locale exists, target locale doesn't exist yet
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    // Should succeed and create empty target locale
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe('messages/en.po');
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -2328,6 +2406,15 @@ vi.mock('fs', () => ({
   }
 }));
 
+function createENOENTError(filePath: string): NodeJS.ErrnoException {
+  const error = new Error(`ENOENT: no such file or directory, open '${filePath}'`) as NodeJS.ErrnoException;
+  error.code = 'ENOENT';
+  error.errno = -2;
+  error.syscall = 'open';
+  error.path = filePath;
+  return error;
+}
+
 vi.mock('fs/promises', () => ({
   default: {
     readFile: vi.fn(async (filePath: string) => {
@@ -2340,7 +2427,7 @@ vi.mock('fs/promises', () => ({
       if (typeof content === 'string') {
         return content;
       }
-      throw new Error('File not found: ' + filePath);
+      throw createENOENTError(filePath);
     }),
     readdir: vi.fn(async (dir: string, opts?: {withFileTypes?: boolean}) => {
       const dirExists = checkDirectoryExists(filesystem, dir);

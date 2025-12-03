@@ -181,8 +181,18 @@ export default class CatalogManager {
       const fileTime = await persister.getLastModified(locale);
       this.lastWriteByLocale.set(locale, fileTime);
       return messages;
-    } catch {
-      return [];
+    } catch (error) {
+      // Only return empty if file doesn't exist (initial setup).
+      // For other errors (corruption, I/O), propagate to avoid
+      // accidentally wiping translations.
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return [];
+      }
+      throw error;
     }
   }
 
