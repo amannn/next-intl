@@ -2093,6 +2093,41 @@ msgstr "Hey!"
     await waitForWriteFileCalls(1);
     expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe('messages/en.po');
   });
+
+  it('propagates parser errors from corrupted/truncated files (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      // Simulates a truncated file read during concurrent write
+      // (file was truncated but read succeeded with partial content)
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hal`
+      // ↑ Truncated mid-write, parser will fail
+    };
+
+    using compiler = createCompiler();
+
+    // The compiler should fail due to parser error rather than
+    // silently returning empty translations and wiping the file
+    await expect(
+      compiler.compile(
+        '/project/src/Greeting.tsx',
+        filesystem.project.src['Greeting.tsx']
+      )
+    ).rejects.toThrow();
+  });
 });
 
 describe('`srcPath` filtering', () => {

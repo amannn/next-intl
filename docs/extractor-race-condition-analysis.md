@@ -225,8 +225,9 @@ Only needed if cross-process issues are confirmed. Adds complexity and a depende
 ## Test Coverage
 
 Added tests for the implemented fix:
-1. `propagates read errors instead of silently returning empty` - verifies non-ENOENT errors throw
+1. `propagates read errors instead of silently returning empty` - verifies file system errors (EACCES, etc.) throw
 2. `returns empty array only for ENOENT errors` - verifies new locale setup still works
+3. `propagates parser errors from corrupted/truncated files` - verifies truncated content (from concurrent write) causes parser to throw rather than silently wiping
 
 ## Implemented Fix
 
