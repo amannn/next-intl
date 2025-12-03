@@ -187,18 +187,15 @@ export default class CatalogManager {
       // accidentally wiping translations.
       if (
         error instanceof Error &&
-        'code' in error &&
-        error.code === 'ENOENT'
+        error.cause &&
+        typeof error.cause === 'object' &&
+        'code' in error.cause &&
+        error.cause.code === 'ENOENT'
       ) {
         return [];
       }
 
-      // Wrap error with context about which file failed
-      const formatter = await this.getFormatter();
-      const fileName = locale + formatter.EXTENSION;
-      const message =
-        error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Error while reading ${fileName}: ${message}`);
+      throw error;
     }
   }
 

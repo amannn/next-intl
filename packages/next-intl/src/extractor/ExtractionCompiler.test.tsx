@@ -2058,7 +2058,9 @@ msgstr "Hey!"
         '/project/src/Greeting.tsx',
         filesystem.project.src['Greeting.tsx']
       )
-    ).rejects.toThrow('Error while reading de.po: EACCES: permission denied');
+    ).rejects.toThrow(
+      'Error while reading de.po:\n> Error: EACCES: permission denied'
+    );
   });
 
   it('returns empty array only for ENOENT (file not found) errors', async () => {
@@ -2120,7 +2122,9 @@ msgstr "Hey!"
         '/project/src/Greeting.tsx',
         filesystem.project.src['Greeting.tsx']
       )
-    ).rejects.toThrow('Error while reading de.po: Incomplete quoted string');
+    ).rejects.toThrow(
+      'Error while parsing de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+    );
   });
 });
 
