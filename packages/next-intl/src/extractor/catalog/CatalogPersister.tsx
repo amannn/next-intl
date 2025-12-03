@@ -12,14 +12,41 @@ export default class CatalogPersister {
     this.formatter = formatter;
   }
 
+  private getFileName(locale: Locale): string {
+    return locale + this.formatter.EXTENSION;
+  }
+
   private getFilePath(locale: Locale): string {
-    return fsPath.join(this.messagesPath, locale + this.formatter.EXTENSION);
+    return fsPath.join(this.messagesPath, this.getFileName(locale));
   }
 
   async read(locale: Locale): Promise<Array<ExtractedMessage>> {
     const filePath = this.getFilePath(locale);
-    const content = await fs.readFile(filePath, 'utf8');
-    return this.formatter.parse(content, {locale});
+    let content: string;
+    try {
+      content = await fs.readFile(filePath, 'utf8');
+    } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return [];
+      }
+      throw new Error(
+        `Error while reading ${this.getFileName(locale)}:\n> ${error}`,
+        {cause: error}
+      );
+    }
+    try {
+      return this.formatter.parse(content, {locale});
+    } catch (error) {
+      throw new Error(
+        `Error while parsing ${this.getFileName(locale)}:\n> ${error}`,
+        {cause: error}
+      );
+    }
   }
 
   async write(

@@ -176,14 +176,10 @@ export default class CatalogManager {
     locale: Locale
   ): Promise<Array<ExtractedMessage>> {
     const persister = await this.getPersister();
-    try {
-      const messages = await persister.read(locale);
-      const fileTime = await persister.getLastModified(locale);
-      this.lastWriteByLocale.set(locale, fileTime);
-      return messages;
-    } catch {
-      return [];
-    }
+    const messages = await persister.read(locale);
+    const fileTime = await persister.getLastModified(locale);
+    this.lastWriteByLocale.set(locale, fileTime);
+    return messages;
   }
 
   private async loadTargetMessages() {

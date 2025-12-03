@@ -25,7 +25,7 @@ it('can extract with source maps', async () => {
   );
 
   expect(result.map).toMatchInlineSnapshot(
-    `"{"version":3,"sources":["test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,eAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
+    `"{"version":3,"sources":["test.tsx"],"sourcesContent":["import {useExtracted} from 'next-intl';\\n\\n    function Component() {\\n      const t = useExtracted();\\n      t(\\"Hello!\\");\\n    }\\n  "],"names":["useExtracted","Component","t"],"mappings":"AAAA,SAAQA,oCAAY,QAAO,YAAY;AAEnC,SAASC;IACP,MAAMC,IAAIF;IACVE,EAAE;AACJ"}"`
   );
 
   expect(result.map).not.toContain('<anon>');
@@ -45,9 +45,9 @@ it('does not add a fallback message in production', async () => {
 
   expect(result).toMatchInlineSnapshot(`
     {
-      "code": "import { useTranslations } from 'next-intl';
+      "code": "import { useTranslations as useTranslations$1 } from 'next-intl';
     function Component() {
-        const t = useTranslations();
+        const t = useTranslations$1();
         t("+YJVTi");
     }
     ",
