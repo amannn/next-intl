@@ -343,17 +343,29 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 To configure a custom format, you need to specify a codec along with an extension. The codec should implement [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/format/ExtractorCodec.tsx) from `next-intl/extractor`:
 
-```tsx filename="my-codec.js"
-import {ExtractorCodec} from 'next-intl/extractor';
+```tsx filename="extractor-codec.ts"
+import type {
+  ExtractorCodec,
+  ExtractorCodecContext,
+  ExtractorMessage
+} from 'next-intl/extractor';
 
-export default class MyCodec extends ExtractorCodec {
-  decode(content, context) {
+export default class CustomExtractorCodec implements ExtractorCodec {
+  decode(
+    content: string,
+    context: ExtractorCodecContext
+  ): Array<ExtractorMessage> {
     // ...
   }
-  encode(messages, context) {
+
+  encode(
+    messages: Array<ExtractorMessage>,
+    context: ExtractorCodecContext
+  ): string {
     // ...
   }
-  toJSONString(content, context) {
+
+  toJSONString(content: string, context: ExtractorCodecContext): string {
     // ...
   }
 }
@@ -366,7 +378,7 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
       format: {
-        codec: './my-codec.js',
+        codec: './extractor-codec.ts',
         extension: '.json'
       }
       // ...
