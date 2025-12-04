@@ -1,1 +1,4 @@
-export {Codec as default, type CodecContext} from './extractor/codecs/index.js';
+export {
+  default as ExtractorCodec,
+  type ExtractorCodecContext
+} from './extractor/codecs/ExtractorCodec.js';

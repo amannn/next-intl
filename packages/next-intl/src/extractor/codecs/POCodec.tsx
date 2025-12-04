@@ -1,7 +1,7 @@
 import POParser from 'po-parser';
 import type {ExtractedMessage, Locale} from '../types.js';
 import {setNestedProperty} from '../utils.js';
-import ExtractorCodec, {type CodecContext} from './ExtractorCodec.js';
+import ExtractorCodec, {type ExtractorCodecContext} from './ExtractorCodec.js';
 import {getSortedMessages} from './utils.js';
 
 export default class POCodec extends ExtractorCodec {
@@ -25,7 +25,7 @@ export default class POCodec extends ExtractorCodec {
 
   public decode(
     content: string,
-    context: CodecContext
+    context: ExtractorCodecContext
   ): Array<ExtractedMessage> {
     const catalog = POParser.parse(content);
 
@@ -39,7 +39,7 @@ export default class POCodec extends ExtractorCodec {
 
   public encode(
     messages: Array<ExtractedMessage>,
-    context: CodecContext
+    context: ExtractorCodecContext
   ): string {
     const meta = {
       Language: context.locale,
@@ -53,7 +53,7 @@ export default class POCodec extends ExtractorCodec {
     });
   }
 
-  public toJSONString(source: string, context: CodecContext) {
+  public toJSONString(source: string, context: ExtractorCodecContext) {
     const parsed = this.decode(source, context);
 
     const messagesObject: Record<string, string> = {};

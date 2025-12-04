@@ -341,7 +341,7 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom codec [#codecs-custom]
 
-You can create a custom codec to support any file format by extending `ExtractorCodec` from `next-intl/extractor`:
+You can create a custom codec to support any file format by extending [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
 
 ```tsx filename="my-codec.js"
 import {ExtractorCodec} from 'next-intl/extractor';

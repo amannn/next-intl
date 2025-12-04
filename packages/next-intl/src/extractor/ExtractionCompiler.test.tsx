@@ -2247,27 +2247,29 @@ describe('custom codec', () => {
     );
   }
 
-  it('supports custom codecs', async () => {
-    filesystem.project.src['Greeting.tsx'] = `
+  it('supports custom codecs with flat namespaced keys', async () => {
+    // This test demonstrates a custom codec that stores namespaced keys flat
+    // (e.g., "ui.wESdnU") instead of nested like the default JSON codec would
+    filesystem.project.src['Button.tsx'] = `
     import {useExtracted} from 'next-intl';
-    function Greeting() {
-      const t = useExtracted();
-      return <div>{t('Hey!')}</div>;
+    function Button() {
+      const t = useExtracted('ui');
+      return <button>{t('Click me')}</button>;
     }
     `;
     filesystem.project.messages = {
-      'en.custom': JSON.stringify({'+YJVTi': 'Hey!'}, null, 2),
-      'de.custom': JSON.stringify({'+YJVTi': 'Hallo!'}, null, 2)
+      'en.custom': JSON.stringify({'ui.wESdnU': 'Click me'}, null, 2),
+      'de.custom': JSON.stringify({'ui.wESdnU': 'Klick mich'}, null, 2)
     };
 
     using compiler = createCompiler();
 
     const result = await compiler.compile(
-      '/project/src/Greeting.tsx',
-      filesystem.project.src['Greeting.tsx']
+      '/project/src/Button.tsx',
+      filesystem.project.src['Button.tsx']
     );
 
-    expect(result.code).toContain('t("+YJVTi"');
+    expect(result.code).toContain('t("wESdnU"');
     await waitForWriteFileCalls(2);
 
     const writeCalls = vi.mocked(fs.writeFile).mock.calls;
@@ -2275,6 +2277,11 @@ describe('custom codec', () => {
       'messages/en.custom',
       'messages/de.custom'
     ]);
+
+    // Verify the content is stored with flat keys (not nested)
+    const enContent = JSON.parse(writeCalls[0][1] as string);
+    expect(enContent).toEqual({'ui.wESdnU': 'Click me'});
+    expect(enContent['ui']).toBeUndefined(); // Not nested!
   });
 });
 

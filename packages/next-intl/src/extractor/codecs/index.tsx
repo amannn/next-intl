@@ -10,10 +10,3 @@ const codecs = {
 >;
 
 export default codecs;
-
-// Re-export for public API
-export {
-  default as ExtractorCodec,
-  type CodecContext
-} from './ExtractorCodec.js';
-export {default as resolveCodec, getCodecExtension} from './resolveCodec.js';

@@ -1,6 +1,6 @@
 import path from 'path';
 import type ExtractorCodec from '../../extractor/codecs/ExtractorCodec.js';
-import resolveCodec from '../../extractor/codecs/resolveCodec.js';
+import {resolveCodec} from '../../extractor/codecs/utils.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 

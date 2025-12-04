@@ -1,6 +1,6 @@
 import type {ExtractedMessage, Locale} from '../types.js';
 
-export type CodecContext = {
+export type ExtractorCodecContext = {
   locale: Locale;
 };
 
@@ -18,7 +18,7 @@ export default abstract class ExtractorCodec {
    **/
   abstract decode(
     content: string,
-    context: CodecContext
+    context: ExtractorCodecContext
   ): Array<ExtractedMessage>;
 
   /**
@@ -27,7 +27,7 @@ export default abstract class ExtractorCodec {
    **/
   abstract encode(
     messages: Array<ExtractedMessage>,
-    context: CodecContext
+    context: ExtractorCodecContext
   ): string;
 
   /**
@@ -42,5 +42,8 @@ export default abstract class ExtractorCodec {
    * If your file content is JSON and should be used as-is, you can set this to
    * an identity function.
    **/
-  abstract toJSONString(content: string, context: CodecContext): string;
+  abstract toJSONString(
+    content: string,
+    context: ExtractorCodecContext
+  ): string;
 }
