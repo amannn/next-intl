@@ -15,7 +15,7 @@ export type PluginConfig = {
       /** Relative path to the directory containing your messages. */
       path: string;
       /** Defines the codec for how your messages are stored. */
-      codec?: MessagesCodec;
+      codec: MessagesCodec;
       /** @deprecated Use `codec` instead. */
       format?: MessagesCodec;
       /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
