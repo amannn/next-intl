@@ -1,6 +1,9 @@
 import path from 'path';
 import type ExtractorCodec from '../../extractor/codecs/ExtractorCodec.js';
-import {resolveCodec} from '../../extractor/codecs/utils.js';
+import {
+  getFormatExtension,
+  resolveCodec
+} from '../../extractor/codecs/utils.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
@@ -10,7 +13,7 @@ async function getCodec(
   projectRoot: string
 ): Promise<ExtractorCodec> {
   if (!cachedCodec) {
-    cachedCodec = await resolveCodec(options.messages.codec, projectRoot);
+    cachedCodec = await resolveCodec(options.messages.format, projectRoot);
   }
   return cachedCodec;
 }
@@ -28,10 +31,11 @@ export default function catalogLoader(
 ) {
   const options = this.getOptions();
   const callback = this.async();
+  const extension = getFormatExtension(options.messages.format);
 
   getCodec(options, this.rootContext)
     .then((codec) => {
-      const locale = path.basename(this.resourcePath, codec.EXTENSION);
+      const locale = path.basename(this.resourcePath, extension);
       const jsonString = codec.toJSONString(source, {locale});
 
       // https://v8.dev/blog/cost-of-javascript-2019#json

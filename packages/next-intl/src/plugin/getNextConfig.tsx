@@ -7,34 +7,21 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
-import {getCodecExtension} from '../extractor/codecs/utils.js';
+import {getFormatExtension} from '../extractor/codecs/utils.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {
   CatalogLoaderConfig,
   ExtractorConfig,
-  MessagesCodec,
   MessagesConfig
 } from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
-import {throwError, warn} from './utils.js';
+import {throwError} from './utils.js';
 
-function normalizeMessagesConfig(
-  messages: MessagesConfig & {format?: MessagesCodec}
-): MessagesConfig {
-  if ('format' in messages) {
-    warn('`messages.format` is deprecated, use `messages.codec` instead.');
-    return {
-      path: messages.path,
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      codec: messages.codec ?? messages.format,
-      locales: messages.locales
-    };
-  }
-
+function normalizeMessagesConfig(messages: MessagesConfig): MessagesConfig {
   return {
     path: messages.path,
-    codec: messages.codec!,
+    format: messages.format,
     locales: messages.locales
   };
 }
@@ -95,7 +82,6 @@ export default function getNextConfig(
 ) {
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
-  const projectRoot = process.cwd();
 
   const normalizedMessages = pluginConfig.experimental?.messages
     ? normalizeMessagesConfig(pluginConfig.experimental.messages)
@@ -204,11 +190,8 @@ export default function getNextConfig(
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const codecExtension = getCodecExtension(
-        normalizedMessages.codec,
-        projectRoot
-      );
-      addTurboRule(rules!, `*.${codecExtension}`, {
+      const extension = getFormatExtension(normalizedMessages.format).slice(1);
+      addTurboRule(rules!, `*.${extension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
           path: `${normalizedMessages.path}/**/*`
@@ -277,12 +260,11 @@ export default function getNextConfig(
       if (normalizedMessages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
-        const codecExtension = getCodecExtension(
-          normalizedMessages.codec,
-          projectRoot
+        const extension = getFormatExtension(normalizedMessages.format).slice(
+          1
         );
         config.module.rules.push({
-          test: new RegExp(`\\.${codecExtension}$`),
+          test: new RegExp(`\\.${extension}$`),
           include: path.resolve(config.context!, normalizedMessages.path),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'

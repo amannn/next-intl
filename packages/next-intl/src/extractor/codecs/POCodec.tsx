@@ -18,8 +18,6 @@ export default class POCodec extends ExtractorCodec {
     'X-Crowdin-SourceKey': 'msgstr'
   };
 
-  public readonly EXTENSION = '.po';
-
   // Metadata is stored so it can be retained when writing
   private metadataByLocale: Map<Locale, Record<string, string>> = new Map();
 

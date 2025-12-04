@@ -6,14 +6,20 @@ import type {ExtractedMessage, Locale} from '../types.js';
 export default class CatalogPersister {
   private messagesPath: string;
   private codec: ExtractorCodec;
+  private extension: string;
 
-  constructor(messagesPath: string, codec: ExtractorCodec) {
-    this.messagesPath = messagesPath;
-    this.codec = codec;
+  constructor(params: {
+    messagesPath: string;
+    codec: ExtractorCodec;
+    extension: string;
+  }) {
+    this.messagesPath = params.messagesPath;
+    this.codec = params.codec;
+    this.extension = params.extension;
   }
 
   private getFileName(locale: Locale): string {
-    return locale + this.codec.EXTENSION;
+    return locale + this.extension;
   }
 
   private getFilePath(locale: Locale): string {

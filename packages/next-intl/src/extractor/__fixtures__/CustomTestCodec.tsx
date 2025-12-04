@@ -7,8 +7,6 @@ import type {ExtractedMessage} from '../types.js';
  * this codec stores keys like "ui.+YJVTi" as flat strings.
  */
 export default class CustomTestCodec extends ExtractorCodec {
-  readonly EXTENSION = '.custom' as const;
-
   decode(content: string): Array<ExtractedMessage> {
     const data = JSON.parse(content);
     return Object.entries(data).map(([id, message]) => ({
@@ -18,7 +16,6 @@ export default class CustomTestCodec extends ExtractorCodec {
   }
 
   encode(messages: Array<ExtractedMessage>): string {
-    // Store as flat keys - no nesting even for namespaced keys like "ui.+YJVTi"
     const obj: Record<string, string> = {};
     for (const msg of messages) {
       obj[msg.id] = msg.message;

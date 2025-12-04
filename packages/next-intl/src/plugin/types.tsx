@@ -1,5 +1,5 @@
 import type {LoaderContext} from 'webpack';
-import type {MessagesCodec} from '../extractor/types.js';
+import type {MessagesFormat} from '../extractor/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;
@@ -14,10 +14,8 @@ export type PluginConfig = {
     messages?: {
       /** Relative path to the directory containing your messages. */
       path: string;
-      /** Defines the codec for how your messages are stored. */
-      codec: MessagesCodec;
-      /** @deprecated Use `codec` instead. */
-      format?: MessagesCodec;
+      /** Defines the format for how your messages are stored. */
+      format: MessagesFormat;
       /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
       locales: 'infer' | ReadonlyArray<string>;
     };

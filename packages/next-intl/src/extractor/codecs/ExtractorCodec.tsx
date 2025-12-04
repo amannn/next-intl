@@ -6,13 +6,6 @@ export type ExtractorCodecContext = {
 
 export default abstract class ExtractorCodec {
   /**
-   * The file extension that this codec uses.
-   *
-   * @example `.json`
-   */
-  abstract readonly EXTENSION: `.${string}`;
-
-  /**
    * Decode the content of a file into a list of extracted messages. This is used
    * to load existing messages from disk.
    **/

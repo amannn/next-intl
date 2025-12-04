@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import type ExtractorCodec from '../codecs/ExtractorCodec.js';
-import {resolveCodec} from '../codecs/utils.js';
+import {getFormatExtension, resolveCodec} from '../codecs/utils.js';
 import MessageExtractor from '../extractor/MessageExtractor.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
@@ -71,7 +71,7 @@ export default class CatalogManager {
   private async getCodec(): Promise<ExtractorCodec> {
     if (!this.codec) {
       this.codec = await resolveCodec(
-        this.config.messages.codec,
+        this.config.messages.format,
         this.projectRoot
       );
     }
@@ -82,15 +82,16 @@ export default class CatalogManager {
     if (this.persister) {
       return this.persister;
     } else {
-      this.persister = new CatalogPersister(
-        this.config.messages.path,
-        await this.getCodec()
-      );
+      this.persister = new CatalogPersister({
+        messagesPath: this.config.messages.path,
+        codec: await this.getCodec(),
+        extension: getFormatExtension(this.config.messages.format)
+      });
       return this.persister;
     }
   }
 
-  private async getCatalogLocales(): Promise<CatalogLocales> {
+  private getCatalogLocales(): CatalogLocales {
     if (this.catalogLocales) {
       return this.catalogLocales;
     } else {
@@ -98,11 +99,10 @@ export default class CatalogManager {
         this.projectRoot,
         this.config.messages.path
       );
-      const codec = await this.getCodec();
       this.catalogLocales = new CatalogLocales({
         messagesDir,
         sourceLocale: this.config.sourceLocale,
-        extension: codec.EXTENSION,
+        extension: getFormatExtension(this.config.messages.format),
         locales: this.config.messages.locales
       });
       return this.catalogLocales;
@@ -110,8 +110,7 @@ export default class CatalogManager {
   }
 
   private async getTargetLocales(): Promise<Array<Locale>> {
-    const catalogLocales = await this.getCatalogLocales();
-    return catalogLocales.getTargetLocales();
+    return this.getCatalogLocales().getTargetLocales();
   }
 
   getSrcPaths(): Array<string> {
@@ -134,7 +133,7 @@ export default class CatalogManager {
     await this.loadCatalogsPromise;
 
     if (this.isDevelopment) {
-      const catalogLocales = await this.getCatalogLocales();
+      const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
     }
 

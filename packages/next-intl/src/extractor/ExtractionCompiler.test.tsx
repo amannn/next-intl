@@ -39,7 +39,7 @@ describe('json format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          codec: 'json',
+          format: 'json',
           locales: 'infer'
         }
       },
@@ -648,7 +648,7 @@ describe('json format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          codec: 'json',
+          format: 'json',
           locales: ['de', 'fr']
         }
       },
@@ -804,7 +804,7 @@ describe('po format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          codec: 'po',
+          format: 'po',
           locales: 'infer'
         }
       },
@@ -2180,7 +2180,7 @@ describe('`srcPath` filtering', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          codec: 'json',
+          format: 'json',
           locales: 'infer'
         }
       },
@@ -2239,7 +2239,10 @@ describe('custom codec', () => {
         messages: {
           path: './messages',
           // Use absolute path to the fixture - vitest will handle the transform
-          codec: path.resolve(__dirname, '__fixtures__/CustomTestCodec.tsx'),
+          format: {
+            codec: path.resolve(__dirname, '__fixtures__/CustomTestCodec.tsx'),
+            extension: '.custom'
+          },
           locales: 'infer'
         }
       },
@@ -2278,10 +2281,9 @@ describe('custom codec', () => {
       'messages/de.custom'
     ]);
 
-    // Verify the content is stored with flat keys (not nested)
     const enContent = JSON.parse(writeCalls[0][1] as string);
     expect(enContent).toEqual({'ui.wESdnU': 'Click me'});
-    expect(enContent['ui']).toBeUndefined(); // Not nested!
+    expect(enContent.ui).toBeUndefined();
   });
 });
 

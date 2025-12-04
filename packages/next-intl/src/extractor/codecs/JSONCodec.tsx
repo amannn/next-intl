@@ -9,7 +9,6 @@ interface StoredFormat {
 
 export default class JSONCodec extends ExtractorCodec {
   static readonly NAMESPACE_SEPARATOR = '.';
-  public readonly EXTENSION = '.json';
 
   public decode(source: string): Array<ExtractedMessage> {
     const json: StoredFormat = JSON.parse(source);
