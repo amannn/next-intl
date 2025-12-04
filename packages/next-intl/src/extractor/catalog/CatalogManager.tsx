@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
+import MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/utils.js';
-import MessageExtractor from '../extractor/MessageExtractor.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
 import {localeCompare} from '../utils.js';
