@@ -33,8 +33,7 @@ export default [
       config: 'src/config.tsx',
       extractor: 'src/extractor.tsx',
       'extractor/extractionLoader': 'src/plugin/extractor/extractionLoader.tsx',
-      'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx',
-      codec: 'src/codec.tsx'
+      'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),
