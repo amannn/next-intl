@@ -341,7 +341,7 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom format [#formats-custom]
 
-You can create a custom format to support any file type by providing a codec that extends [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
+To configure a custom format, you need to specify a codec along with an extension. The codec should extend [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
 
 ```tsx filename="my-codec.js"
 import {ExtractorCodec} from 'next-intl/extractor';
@@ -353,7 +353,7 @@ export default class MyCodec extends ExtractorCodec {
 }
 ```
 
-Then reference it in your configuration along with the file extension:
+Then reference it in your configuration:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
