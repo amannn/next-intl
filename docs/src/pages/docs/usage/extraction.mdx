@@ -270,7 +270,7 @@ it('renders', () => {
 
 ## Formats [#formats]
 
-Messages can be extracted as JSON, PO, or custom file formats.
+Messages can be extracted as JSON, PO, or with custom file formats.
 
 When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
 
@@ -359,7 +359,10 @@ Then reference it in your configuration along with the file extension:
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
-      format: {codec: './my-codec.js', extension: '.custom'},
+      format: {
+        codec: './my-codec.js',
+        extension: '.json'
+      },
       // ...
     }
   }
