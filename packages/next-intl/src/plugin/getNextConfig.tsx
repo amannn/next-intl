@@ -12,6 +12,7 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {
   CatalogLoaderConfig,
   ExtractorConfig,
+  MessagesCodec,
   MessagesConfig
 } from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
@@ -19,12 +20,13 @@ import type {PluginConfig} from './types.js';
 import {throwError, warn} from './utils.js';
 
 function normalizeMessagesConfig(
-  messages: NonNullable<NonNullable<PluginConfig['experimental']>['messages']>
+  messages: MessagesConfig & {format?: MessagesCodec}
 ): MessagesConfig {
-  if ('format' in messages && messages.format !== undefined) {
+  if ('format' in messages) {
     warn('`messages.format` is deprecated, use `messages.codec` instead.');
     return {
       path: messages.path,
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       codec: messages.codec ?? messages.format,
       locales: messages.locales
     };
@@ -95,7 +97,6 @@ export default function getNextConfig(
   const nextIntlConfig: Partial<NextConfig> = {};
   const projectRoot = process.cwd();
 
-  // Normalize messages config once (handles format→codec deprecation)
   const normalizedMessages = pluginConfig.experimental?.messages
     ? normalizeMessagesConfig(pluginConfig.experimental.messages)
     : undefined;
