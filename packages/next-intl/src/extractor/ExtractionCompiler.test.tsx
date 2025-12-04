@@ -2230,7 +2230,7 @@ describe('`srcPath` filtering', () => {
   });
 });
 
-describe('custom codec', () => {
+describe('custom format', () => {
   function createCompiler() {
     return new ExtractionCompiler(
       {
@@ -2238,10 +2238,12 @@ describe('custom codec', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          // Use absolute path to the fixture - vitest will handle the transform
           format: {
-            codec: path.resolve(__dirname, '__fixtures__/CustomTestCodec.tsx'),
-            extension: '.custom'
+            codec: path.resolve(
+              __dirname,
+              '__fixtures__/CustomFormatCodec.tsx'
+            ),
+            extension: '.json'
           },
           locales: 'infer'
         }
@@ -2250,20 +2252,28 @@ describe('custom codec', () => {
     );
   }
 
-  it('supports custom codecs with flat namespaced keys', async () => {
-    // This test demonstrates a custom codec that stores namespaced keys flat
-    // (e.g., "ui.wESdnU") instead of nested like the default JSON codec would
+  it('supports custom formats with codecs', async () => {
+    filesystem.project.messages = {
+      'en.json': JSON.stringify(
+        {
+          'ui.wESdnU': {message: 'Click me', description: 'Button label'}
+        },
+        null,
+        2
+      )
+    };
     filesystem.project.src['Button.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Button() {
       const t = useExtracted('ui');
-      return <button>{t('Click me')}</button>;
+      return (
+        <button>
+          {t({message: 'Click me', description: 'Button label'})}
+          {t('Submit')}
+        </button>
+      );
     }
     `;
-    filesystem.project.messages = {
-      'en.custom': JSON.stringify({'ui.wESdnU': 'Click me'}, null, 2),
-      'de.custom': JSON.stringify({'ui.wESdnU': 'Klick mich'}, null, 2)
-    };
 
     using compiler = createCompiler();
 
@@ -2273,17 +2283,25 @@ describe('custom codec', () => {
     );
 
     expect(result.code).toContain('t("wESdnU"');
-    await waitForWriteFileCalls(2);
+    await waitForWriteFileCalls(1);
 
-    const writeCalls = vi.mocked(fs.writeFile).mock.calls;
-    expect(writeCalls.map((call) => call[0])).toEqual([
-      'messages/en.custom',
-      'messages/de.custom'
-    ]);
-
-    const enContent = JSON.parse(writeCalls[0][1] as string);
-    expect(enContent).toEqual({'ui.wESdnU': 'Click me'});
-    expect(enContent.ui).toBeUndefined();
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "ui.wESdnU": {
+          "message": "Click me",
+          "description": "Button label"
+        },
+        "ui.wSZR47": {
+          "message": "Submit"
+        }
+      }
+      ",
+        ],
+      ]
+    `);
   });
 });
 

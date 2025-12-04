@@ -347,9 +347,15 @@ To configure a custom format, you need to specify a codec along with an extensio
 import {ExtractorCodec} from 'next-intl/extractor';
 
 export default class MyCodec extends ExtractorCodec {
-  decode(content, context) { /* ... */ }
-  encode(messages, context) { /* ... */ }
-  toJSONString(content, context) { /* ... */ }
+  decode(content, context) {
+    // ...
+  }
+  encode(messages, context) {
+    // ...
+  }
+  toJSONString(content, context) {
+    // ...
+  }
 }
 ```
 
@@ -362,7 +368,7 @@ const withNextIntl = createNextIntlPlugin({
       format: {
         codec: './my-codec.js',
         extension: '.json'
-      },
+      }
       // ...
     }
   }
