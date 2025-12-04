@@ -1,10 +1,10 @@
 import POParser from 'po-parser';
 import type {ExtractedMessage, Locale} from '../types.js';
 import {setNestedProperty} from '../utils.js';
-import Codec, {type CodecContext} from './Codec.js';
+import ExtractorCodec, {type CodecContext} from './ExtractorCodec.js';
 import {getSortedMessages} from './utils.js';
 
-export default class POCodec extends Codec {
+export default class POCodec extends ExtractorCodec {
   // See also https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
   private static readonly DEFAULT_METADATA = {
     // Recommended by spec

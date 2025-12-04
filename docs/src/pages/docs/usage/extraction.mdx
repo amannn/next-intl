@@ -270,7 +270,7 @@ it('renders', () => {
 
 ## Codecs [#codecs]
 
-Currently, messages can be extracted as either JSON or PO files. Support for custom codecs is planned for a future release.
+Messages can be extracted as JSON, PO, or custom file formats using codecs.
 
 When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
 
@@ -300,7 +300,7 @@ When using this option, your messages will look like this:
 }
 ```
 
-Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#codecs-po) instead. Another alternative will be to use a custom JSON codec in the future.
+Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#codecs-po) instead. Alternatively, you can create a [custom codec](#codecs-custom) to store additional metadata.
 
 For local editing of JSON messages, you can use e.g. a [VSCode integration](/docs/workflows/vscode-integration) like i18n Ally:
 
@@ -338,3 +338,34 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 **Tip:** AI-based translation can be automated with a translation management system like [Crowdin](/docs/workflows/localization-management).
 
 </Callout>
+
+### Custom codec [#codecs-custom]
+
+You can create a custom codec to support any file format by extending `ExtractorCodec` from `next-intl/extractor`:
+
+```tsx filename="my-codec.js"
+import {ExtractorCodec} from 'next-intl/extractor';
+
+export default class MyCodec extends ExtractorCodec {
+  EXTENSION = '.custom';
+
+  decode(content, context) { /* ... */ }
+  encode(messages, context) { /* ... */ }
+  toJSONString(content, context) { /* ... */ }
+}
+```
+
+Then reference it in your configuration:
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    messages: {
+      codec: './my-codec.js',
+      // ...
+    }
+  }
+});
+```
+
+For implementation details, see the built-in [JSONCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/JSONCodec.tsx) and [POCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/POCodec.tsx) as examples.

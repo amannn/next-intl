@@ -7,6 +7,7 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
+import {getCodecExtension} from '../extractor/codecs/resolveCodec.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {
   CatalogLoaderConfig,
@@ -15,15 +16,13 @@ import type {
 } from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
-import {throwError} from './utils.js';
+import {throwError, warn} from './utils.js';
 
 function normalizeMessagesConfig(
   messages: NonNullable<NonNullable<PluginConfig['experimental']>['messages']>
 ): MessagesConfig {
   if ('format' in messages && messages.format !== undefined) {
-    console.warn(
-      '[next-intl] `messages.format` is deprecated, use `messages.codec` instead.'
-    );
+    warn('`messages.format` is deprecated, use `messages.codec` instead.');
     return {
       path: messages.path,
       codec: messages.codec ?? messages.format,
@@ -94,6 +93,7 @@ export default function getNextConfig(
 ) {
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
+  const projectRoot = process.cwd();
 
   // Normalize messages config once (handles format→codec deprecation)
   const normalizedMessages = pluginConfig.experimental?.messages
@@ -203,7 +203,11 @@ export default function getNextConfig(
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      addTurboRule(rules!, `*.${normalizedMessages.codec}`, {
+      const codecExtension = getCodecExtension(
+        normalizedMessages.codec,
+        projectRoot
+      );
+      addTurboRule(rules!, `*.${codecExtension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
           path: `${normalizedMessages.path}/**/*`
@@ -272,8 +276,12 @@ export default function getNextConfig(
       if (normalizedMessages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const codecExtension = getCodecExtension(
+          normalizedMessages.codec,
+          projectRoot
+        );
         config.module.rules.push({
-          test: new RegExp(`\\.${normalizedMessages.codec}$`),
+          test: new RegExp(`\\.${codecExtension}$`),
           include: path.resolve(config.context!, normalizedMessages.path),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'

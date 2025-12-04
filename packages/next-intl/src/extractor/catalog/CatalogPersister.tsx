@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
-import type Codec from '../codecs/Codec.js';
+import type ExtractorCodec from '../codecs/ExtractorCodec.js';
 import type {ExtractedMessage, Locale} from '../types.js';
 
 export default class CatalogPersister {
   private messagesPath: string;
-  private codec: Codec;
+  private codec: ExtractorCodec;
 
-  constructor(messagesPath: string, codec: Codec) {
+  constructor(messagesPath: string, codec: ExtractorCodec) {
     this.messagesPath = messagesPath;
     this.codec = codec;
   }

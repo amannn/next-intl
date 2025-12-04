@@ -1,16 +1,16 @@
 import path from 'path';
-import type Codec from '../../extractor/codecs/Codec.js';
-import codecs from '../../extractor/codecs/index.js';
+import type ExtractorCodec from '../../extractor/codecs/ExtractorCodec.js';
+import resolveCodec from '../../extractor/codecs/resolveCodec.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-let cachedCodec: Codec | null = null;
-async function getCodec(options: CatalogLoaderConfig): Promise<Codec> {
+let cachedCodec: ExtractorCodec | null = null;
+async function getCodec(
+  options: CatalogLoaderConfig,
+  projectRoot: string
+): Promise<ExtractorCodec> {
   if (!cachedCodec) {
-    const CodecClass = (
-      await codecs[options.messages.codec as keyof typeof codecs]()
-    ).default;
-    cachedCodec = new CodecClass();
+    cachedCodec = await resolveCodec(options.messages.codec, projectRoot);
   }
   return cachedCodec;
 }
@@ -29,7 +29,7 @@ export default function catalogLoader(
   const options = this.getOptions();
   const callback = this.async();
 
-  getCodec(options)
+  getCodec(options, this.rootContext)
     .then((codec) => {
       const locale = path.basename(this.resourcePath, codec.EXTENSION);
       const jsonString = codec.toJSONString(source, {locale});
