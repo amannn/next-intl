@@ -38,6 +38,22 @@ function normalizeMessagesConfig(
   };
 }
 
+const builtInCodecExtensions: Record<string, string> = {
+  json: 'json',
+  po: 'po'
+};
+
+function getCodecFileExtension(codec: string): string | undefined {
+  // For built-in codecs, return the known extension
+  if (codec in builtInCodecExtensions) {
+    return builtInCodecExtensions[codec];
+  }
+
+  // For custom codecs (file paths), we can't determine the extension at config time.
+  // Return undefined to indicate that custom codec file matching needs to be handled differently.
+  return undefined;
+}
+
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -203,13 +219,28 @@ export default function getNextConfig(
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      addTurboRule(rules!, `*.${normalizedMessages.codec}`, {
-        loaders: [getCatalogLoaderConfig()],
-        condition: {
-          path: `${normalizedMessages.path}/**/*`
-        },
-        as: '*.js'
-      });
+      const codecExtension = getCodecFileExtension(normalizedMessages.codec);
+      if (codecExtension) {
+        // Built-in codec: match specific extension
+        addTurboRule(rules!, `*.${codecExtension}`, {
+          loaders: [getCatalogLoaderConfig()],
+          condition: {
+            path: `${normalizedMessages.path}/**/*`
+          },
+          as: '*.js'
+        });
+      } else {
+        // Custom codec: match all files in the messages directory
+        // The codec's EXTENSION property determines actual file handling
+        addTurboRule(rules!, '*', {
+          loaders: [getCatalogLoaderConfig()],
+          condition: {
+            path: `${normalizedMessages.path}/**/*`,
+            not: '*.js' // Avoid infinite loop with output
+          },
+          as: '*.js'
+        });
+      }
     }
 
     if (
@@ -272,8 +303,12 @@ export default function getNextConfig(
       if (normalizedMessages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const codecExtension = getCodecFileExtension(normalizedMessages.codec);
         config.module.rules.push({
-          test: new RegExp(`\\.${normalizedMessages.codec}$`),
+          // Built-in codec: match specific extension; custom codec: match all non-js files
+          test: codecExtension
+            ? new RegExp(`\\.${codecExtension}$`)
+            : /^(?!.*\.js$).*$/,
           include: path.resolve(config.context!, normalizedMessages.path),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'

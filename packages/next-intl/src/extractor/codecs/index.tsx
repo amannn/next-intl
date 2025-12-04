@@ -10,3 +10,7 @@ const codecs = {
 >;
 
 export default codecs;
+
+// Re-export for public API
+export {default as Codec, type CodecContext} from './Codec.js';
+export {default as resolveCodec} from './resolveCodec.js';
