@@ -30,8 +30,9 @@ export function isBuiltInFormat(
 export function getFormatExtension(format: MessagesFormat): string {
   if (isBuiltInFormat(format)) {
     return formats[format].extension;
+  } else {
+    return format.extension;
   }
-  return format.extension;
 }
 
 export async function resolveCodec(
