@@ -1,10 +1,12 @@
+/* eslint-disable import/no-duplicates */
 import POParser from 'po-parser';
-import type {ExtractedMessage, Locale} from '../types.js';
-import {setNestedProperty} from '../utils.js';
-import ExtractorCodec, {type ExtractorCodecContext} from './ExtractorCodec.js';
-import {getSortedMessages} from './utils.js';
+import type {ExtractedMessage, Locale} from '../../types.js';
+import {setNestedProperty} from '../../utils.js';
+import type ExtractorCodec from '../ExtractorCodec.js';
+import type {ExtractorCodecContext} from '../ExtractorCodec.js';
+import {getSortedMessages} from '../utils.js';
 
-export default class POCodec extends ExtractorCodec {
+export default class POCodec implements ExtractorCodec {
   // See also https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
   private static readonly DEFAULT_METADATA = {
     // Recommended by spec

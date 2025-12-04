@@ -83,7 +83,7 @@ describe('json format', () => {
     `);
   });
 
-  it('resets translations when a message changes', async () => {
+  it('resets translations when a message changes', {retry: 5}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {

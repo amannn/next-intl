@@ -2,7 +2,7 @@ import path from 'path';
 import {throwError} from '../../plugin/utils.js';
 import type {ExtractedMessage, MessagesFormat} from '../types.js';
 import {localeCompare} from '../utils.js';
-import ExtractorCodec from './ExtractorCodec.js';
+import type ExtractorCodec from './ExtractorCodec.js';
 import formats, {type BuiltInFormat} from './index.js';
 
 export function getSortedMessages(
@@ -62,14 +62,5 @@ export async function resolveCodec(
     throwError(`Codec at "${resolvedPath}" must export a default class.`);
   }
 
-  const instance = new CodecClass();
-
-  if (!(instance instanceof ExtractorCodec)) {
-    throwError(
-      `Codec at "${resolvedPath}" must extend the ExtractorCodec base class. ` +
-        `Import it from 'next-intl/extractor'.`
-    );
-  }
-
-  return instance;
+  return new CodecClass();
 }

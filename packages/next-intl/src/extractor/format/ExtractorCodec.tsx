@@ -4,12 +4,12 @@ export type ExtractorCodecContext = {
   locale: Locale;
 };
 
-export default abstract class ExtractorCodec {
+export default interface ExtractorCodec {
   /**
    * Decode the content of a file into a list of extracted messages. This is used
    * to load existing messages from disk.
-   **/
-  abstract decode(
+   */
+  decode(
     content: string,
     context: ExtractorCodecContext
   ): Array<ExtractedMessage>;
@@ -17,8 +17,8 @@ export default abstract class ExtractorCodec {
   /**
    * Encode a list of extracted messages into a string that can be written as
    * file content to the disk.
-   **/
-  abstract encode(
+   */
+  encode(
     messages: Array<ExtractedMessage>,
     context: ExtractorCodecContext
   ): string;
@@ -34,9 +34,6 @@ export default abstract class ExtractorCodec {
    *
    * If your file content is JSON and should be used as-is, you can set this to
    * an identity function.
-   **/
-  abstract toJSONString(
-    content: string,
-    context: ExtractorCodecContext
-  ): string;
+   */
+  toJSONString(content: string, context: ExtractorCodecContext): string;
 }

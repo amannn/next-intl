@@ -1,13 +1,13 @@
-import type {ExtractedMessage} from '../types.js';
-import {setNestedProperty} from '../utils.js';
-import ExtractorCodec from './ExtractorCodec.js';
-import {getSortedMessages} from './utils.js';
+import type {ExtractedMessage} from '../../types.js';
+import {setNestedProperty} from '../../utils.js';
+import type ExtractorCodec from '../ExtractorCodec.js';
+import {getSortedMessages} from '../utils.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
 }
 
-export default class JSONCodec extends ExtractorCodec {
+export default class JSONCodec implements ExtractorCodec {
   static readonly NAMESPACE_SEPARATOR = '.';
 
   public decode(source: string): Array<ExtractedMessage> {

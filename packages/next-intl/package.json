@@ -96,10 +96,6 @@
     "./extractor/catalogLoader": {
       "types": "./dist/types/plugin/catalog/catalogLoader.d.ts",
       "default": "./dist/esm/production/extractor/catalogLoader.js"
-    },
-    "./codec": {
-      "types": "./dist/types/codec.d.ts",
-      "default": "./dist/esm/production/codec.js"
     }
   },
   "files": [
@@ -112,8 +108,7 @@
     "plugin.d.cts",
     "routing.d.ts",
     "config.d.ts",
-    "extractor.d.ts",
-    "codec.d.ts"
+    "extractor.d.ts"
   ],
   "keywords": [
     "react",

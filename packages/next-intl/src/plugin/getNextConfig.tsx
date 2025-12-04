@@ -7,7 +7,7 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
-import {getFormatExtension} from '../extractor/codecs/utils.js';
+import {getFormatExtension} from '../extractor/format/utils.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {
   CatalogLoaderConfig,

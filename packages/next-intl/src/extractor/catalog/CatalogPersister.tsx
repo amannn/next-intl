@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
-import type ExtractorCodec from '../codecs/ExtractorCodec.js';
+import type ExtractorCodec from '../format/ExtractorCodec.js';
 import type {ExtractedMessage, Locale} from '../types.js';
 
 export default class CatalogPersister {

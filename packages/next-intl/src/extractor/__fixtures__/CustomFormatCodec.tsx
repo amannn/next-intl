@@ -1,9 +1,9 @@
-import ExtractorCodec from '../codecs/ExtractorCodec.js';
+import type ExtractorCodec from '../format/ExtractorCodec.js';
 import type {ExtractedMessage} from '../types.js';
 
 type StoredMessage = {message: string; description?: string};
 
-export default class CustomTestCodec extends ExtractorCodec {
+export default class CustomTestCodec implements ExtractorCodec {
   decode(content: string): Array<ExtractedMessage> {
     const data = JSON.parse(content);
     return Object.entries(data).map(([id, value]) => {

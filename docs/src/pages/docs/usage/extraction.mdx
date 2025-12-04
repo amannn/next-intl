@@ -341,7 +341,7 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom format [#formats-custom]
 
-To configure a custom format, you need to specify a codec along with an extension. The codec should extend [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
+To configure a custom format, you need to specify a codec along with an extension. The codec should implement [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/format/ExtractorCodec.tsx) from `next-intl/extractor`:
 
 ```tsx filename="my-codec.js"
 import {ExtractorCodec} from 'next-intl/extractor';
@@ -359,7 +359,7 @@ export default class MyCodec extends ExtractorCodec {
 }
 ```
 
-Then reference it in your configuration:
+Then, reference it in your configuration along with an `extension`:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
@@ -375,4 +375,4 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-For implementation details, see the built-in [JSONCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/JSONCodec.tsx) and [POCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/POCodec.tsx) as examples.
+See also the built-in [`codecs`](https://github.com/amannn/next-intl/tree/main/packages/next-intl/src/extractor/format/codecs) for inspiration.

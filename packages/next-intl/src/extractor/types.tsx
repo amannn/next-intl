@@ -1,4 +1,4 @@
-import type {MessagesFormat} from './codecs/index.js';
+import type {MessagesFormat} from './format/index.js';
 
 // Is likely the same as the `Locale` type in `use-intl`,
 // but users may map messages to runtime locales, therefore
