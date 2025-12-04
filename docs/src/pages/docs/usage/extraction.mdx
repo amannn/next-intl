@@ -268,9 +268,9 @@ it('renders', () => {
 });
 ```
 
-## Codecs [#codecs]
+## Formats [#formats]
 
-Messages can be extracted as JSON, PO, or custom file formats using codecs.
+Messages can be extracted as JSON, PO, or custom file formats.
 
 When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
 
@@ -290,7 +290,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-### JSON codec [#codecs-json]
+### JSON format [#formats-json]
 
 When using this option, your messages will look like this:
 
@@ -300,7 +300,7 @@ When using this option, your messages will look like this:
 }
 ```
 
-Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#codecs-po) instead. Alternatively, you can create a [custom codec](#codecs-custom) to store additional metadata.
+Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#formats-po) instead. Alternatively, you can create a [custom format](#formats-custom) to store additional metadata.
 
 For local editing of JSON messages, you can use e.g. a [VSCode integration](/docs/workflows/vscode-integration) like i18n Ally:
 
@@ -318,7 +318,7 @@ For local editing of JSON messages, you can use e.g. a [VSCode integration](/doc
 
 </Callout>
 
-### PO codec [#codecs-po]
+### PO format [#formats-po]
 
 When using this option, your messages will look like this:
 
@@ -339,9 +339,9 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 </Callout>
 
-### Custom codec [#codecs-custom]
+### Custom format [#formats-custom]
 
-You can create a custom codec to support any file format by extending [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
+You can create a custom format to support any file type by providing a codec that extends [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/ExtractorCodec.tsx) from `next-intl/extractor`:
 
 ```tsx filename="my-codec.js"
 import {ExtractorCodec} from 'next-intl/extractor';
@@ -353,7 +353,7 @@ export default class MyCodec extends ExtractorCodec {
 }
 ```
 
-Then reference it in your configuration:
+Then reference it in your configuration along with the file extension:
 
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
