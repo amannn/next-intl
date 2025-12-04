@@ -1,19 +1,19 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
-import type Formatter from '../formatters/Formatter.js';
+import type Codec from '../codecs/Codec.js';
 import type {ExtractedMessage, Locale} from '../types.js';
 
 export default class CatalogPersister {
   private messagesPath: string;
-  private formatter: Formatter;
+  private codec: Codec;
 
-  constructor(messagesPath: string, formatter: Formatter) {
+  constructor(messagesPath: string, codec: Codec) {
     this.messagesPath = messagesPath;
-    this.formatter = formatter;
+    this.codec = codec;
   }
 
   private getFileName(locale: Locale): string {
-    return locale + this.formatter.EXTENSION;
+    return locale + this.codec.EXTENSION;
   }
 
   private getFilePath(locale: Locale): string {
@@ -40,10 +40,10 @@ export default class CatalogPersister {
       );
     }
     try {
-      return this.formatter.parse(content, {locale});
+      return this.codec.decode(content, {locale});
     } catch (error) {
       throw new Error(
-        `Error while parsing ${this.getFileName(locale)}:\n> ${error}`,
+        `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,
         {cause: error}
       );
     }
@@ -54,7 +54,7 @@ export default class CatalogPersister {
     messages: Array<ExtractedMessage>
   ): Promise<void> {
     const filePath = this.getFilePath(locale);
-    const content = this.formatter.serialize(messages, {locale});
+    const content = this.codec.encode(messages, {locale});
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});

@@ -94,7 +94,7 @@ const withNextIntl = createNextIntlPlugin({
       locales: 'infer',
 
       // Either 'json' or 'po'
-      format: 'json'
+      codec: 'json'
     }
     // ...
   }
@@ -107,7 +107,7 @@ If you want to specify the locales explicitly, you can provide an array for `loc
 locales: ['en', 'de'];
 ```
 
-Configuring `experimental.messages` will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects (see [formatters](/docs/usage/extraction#formatters)).
+Configuring `experimental.messages` will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects (see [codecs](/docs/usage/extraction#codecs)).
 
 **Note:** The `messages` option should be used together with [`extract`](#extract) and [`srcPath`](#src-path).
 

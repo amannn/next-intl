@@ -39,7 +39,7 @@ describe('json format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          codec: 'json',
           locales: 'infer'
         }
       },
@@ -648,7 +648,7 @@ describe('json format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          codec: 'json',
           locales: ['de', 'fr']
         }
       },
@@ -804,7 +804,7 @@ describe('po format', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'po',
+          codec: 'po',
           locales: 'infer'
         }
       },
@@ -2123,7 +2123,7 @@ msgstr "Hey!"
         filesystem.project.src['Greeting.tsx']
       )
     ).rejects.toThrow(
-      'Error while parsing de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+      'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
 });
@@ -2180,7 +2180,7 @@ describe('`srcPath` filtering', () => {
         sourceLocale: 'en',
         messages: {
           path: './messages',
-          format: 'json',
+          codec: 'json',
           locales: 'infer'
         }
       },

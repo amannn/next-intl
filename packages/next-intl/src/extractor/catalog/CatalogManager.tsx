@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
+import type Codec from '../codecs/Codec.js';
+import codecs from '../codecs/index.js';
 import MessageExtractor from '../extractor/MessageExtractor.js';
-import type Formatter from '../formatters/Formatter.js';
-import formatters from '../formatters/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
 import {localeCompare} from '../utils.js';
@@ -40,7 +40,7 @@ export default class CatalogManager {
 
   // Cached instances
   private persister?: CatalogPersister;
-  private formatter?: Formatter;
+  private codec?: Codec;
   private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
 
@@ -68,14 +68,15 @@ export default class CatalogManager {
     });
   }
 
-  private async getFormatter(): Promise<Formatter> {
-    if (this.formatter) {
-      return this.formatter;
+  private async getCodec(): Promise<Codec> {
+    if (this.codec) {
+      return this.codec;
     } else {
-      const FormatterClass = (await formatters[this.config.messages.format]())
-        .default;
-      this.formatter = new FormatterClass();
-      return this.formatter;
+      const CodecClass = (
+        await codecs[this.config.messages.codec as keyof typeof codecs]()
+      ).default;
+      this.codec = new CodecClass();
+      return this.codec;
     }
   }
 
@@ -85,7 +86,7 @@ export default class CatalogManager {
     } else {
       this.persister = new CatalogPersister(
         this.config.messages.path,
-        await this.getFormatter()
+        await this.getCodec()
       );
       return this.persister;
     }
@@ -99,11 +100,11 @@ export default class CatalogManager {
         this.projectRoot,
         this.config.messages.path
       );
-      const formatter = await this.getFormatter();
+      const codec = await this.getCodec();
       this.catalogLocales = new CatalogLocales({
         messagesDir,
         sourceLocale: this.config.sourceLocale,
-        extension: formatter.EXTENSION,
+        extension: codec.EXTENSION,
         locales: this.config.messages.locales
       });
       return this.catalogLocales;

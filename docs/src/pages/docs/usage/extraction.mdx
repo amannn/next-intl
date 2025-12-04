@@ -74,7 +74,7 @@ const withNextIntl = createNextIntlPlugin({
       path: './messages',
 
       // Either 'json' or 'po'
-      format: 'json',
+      codec: 'json',
 
       // Either 'infer' to automatically detect locales based on
       // matching files in `path` or an explicit array of locales
@@ -104,7 +104,7 @@ await unstable_extractMessages({
   sourceLocale: 'en',
   messages: {
     path: './messages',
-    format: 'json',
+    codec: 'json',
     locales: 'infer'
   }
 });
@@ -268,13 +268,13 @@ it('renders', () => {
 });
 ```
 
-## Formatters
+## Codecs [#codecs]
 
-Currently, messages can be extracted as either JSON or PO files. Support for custom formatters is planned for a future release.
+Currently, messages can be extracted as either JSON or PO files. Support for custom codecs is planned for a future release.
 
 When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
 
-For example, when using `format: 'po'`, messages can be imported as:
+For example, when using `codec: 'po'`, messages can be imported as:
 
 ```tsx filename="src/i18n/request.ts"
 import {cookies} from 'next/headers';
@@ -290,7 +290,7 @@ export default getRequestConfig(async () => {
 });
 ```
 
-### JSON formatter [#formatters-json]
+### JSON codec [#codecs-json]
 
 When using this option, your messages will look like this:
 
@@ -300,7 +300,7 @@ When using this option, your messages will look like this:
 }
 ```
 
-Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#po) instead. Another alternative will be to use a custom JSON formatter in the future.
+Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, it's therefore recommended to use [PO files](#codecs-po) instead. Another alternative will be to use a custom JSON codec in the future.
 
 For local editing of JSON messages, you can use e.g. a [VSCode integration](/docs/workflows/vscode-integration) like i18n Ally:
 
@@ -318,7 +318,7 @@ For local editing of JSON messages, you can use e.g. a [VSCode integration](/doc
 
 </Callout>
 
-### PO formatter [#formatters-po]
+### PO codec [#codecs-po]
 
 When using this option, your messages will look like this:
 

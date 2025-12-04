@@ -1,17 +1,17 @@
 import type {ExtractedMessage} from '../types.js';
 import {setNestedProperty} from '../utils.js';
-import Formatter from './Formatter.js';
+import Codec from './Codec.js';
 import {getSortedMessages} from './utils.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
 }
 
-export default class JSONFormatter extends Formatter {
+export default class JSONCodec extends Codec {
   static readonly NAMESPACE_SEPARATOR = '.';
   public readonly EXTENSION = '.json';
 
-  public parse(source: string): Array<ExtractedMessage> {
+  public decode(source: string): Array<ExtractedMessage> {
     const json: StoredFormat = JSON.parse(source);
     const messages: Array<ExtractedMessage> = [];
 
@@ -22,7 +22,7 @@ export default class JSONFormatter extends Formatter {
     return messages;
   }
 
-  public serialize(messages: Array<ExtractedMessage>): string {
+  public encode(messages: Array<ExtractedMessage>): string {
     const root: StoredFormat = {};
     for (const message of getSortedMessages(messages)) {
       setNestedProperty(root, message.id, message.message);
@@ -41,7 +41,7 @@ export default class JSONFormatter extends Formatter {
   ): void {
     for (const key of Object.keys(obj)) {
       const newPath = path
-        ? path + JSONFormatter.NAMESPACE_SEPARATOR + key
+        ? path + JSONCodec.NAMESPACE_SEPARATOR + key
         : key;
       const value = obj[key];
       if (typeof value === 'string') {
