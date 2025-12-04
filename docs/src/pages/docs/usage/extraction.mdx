@@ -73,8 +73,8 @@ const withNextIntl = createNextIntlPlugin({
       // Relative path to the directory
       path: './messages',
 
-      // Either 'json' or 'po'
-      codec: 'json',
+      // Either 'json', 'po', or a custom format
+      format: 'json',
 
       // Either 'infer' to automatically detect locales based on
       // matching files in `path` or an explicit array of locales
@@ -104,7 +104,7 @@ await unstable_extractMessages({
   sourceLocale: 'en',
   messages: {
     path: './messages',
-    codec: 'json',
+    format: 'json',
     locales: 'infer'
   }
 });
@@ -274,7 +274,7 @@ Messages can be extracted as JSON, PO, or custom file formats using codecs.
 
 When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
 
-For example, when using `codec: 'po'`, messages can be imported as:
+For example, when using `format: 'po'`, messages can be imported as:
 
 ```tsx filename="src/i18n/request.ts"
 import {cookies} from 'next/headers';
@@ -347,8 +347,6 @@ You can create a custom codec to support any file format by extending [`Extracto
 import {ExtractorCodec} from 'next-intl/extractor';
 
 export default class MyCodec extends ExtractorCodec {
-  EXTENSION = '.custom';
-
   decode(content, context) { /* ... */ }
   encode(messages, context) { /* ... */ }
   toJSONString(content, context) { /* ... */ }
@@ -361,7 +359,7 @@ Then reference it in your configuration:
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
-      codec: './my-codec.js',
+      format: {codec: './my-codec.js', extension: '.custom'},
       // ...
     }
   }
