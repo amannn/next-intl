@@ -4,7 +4,7 @@ export type CodecContext = {
   locale: Locale;
 };
 
-export default abstract class Codec {
+export default abstract class ExtractorCodec {
   /**
    * The file extension that this codec uses.
    *

@@ -1,19 +1,67 @@
 import path from 'path';
-import Codec from './Codec.js';
+import {throwError} from '../../plugin/utils.js';
+import ExtractorCodec from './ExtractorCodec.js';
 
 const builtInCodecs = {
   json: () => import('./JSONCodec.js'),
   po: () => import('./POCodec.js')
 };
 
-function isBuiltInCodec(codec: string): codec is keyof typeof builtInCodecs {
+export function isBuiltInCodec(
+  codec: string
+): codec is keyof typeof builtInCodecs {
   return codec in builtInCodecs;
+}
+
+export const builtInCodecExtensions: Record<
+  keyof typeof builtInCodecs,
+  string
+> = {
+  json: 'json',
+  po: 'po'
+};
+
+export function getCodecExtension(codec: string, projectRoot: string): string {
+  if (isBuiltInCodec(codec)) {
+    return builtInCodecExtensions[codec];
+  }
+
+  // For custom codecs, resolve the path and load synchronously
+  const resolvedPath = path.isAbsolute(codec)
+    ? codec
+    : path.resolve(projectRoot, codec);
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const module = require(resolvedPath);
+  const CodecClass = module.default || module;
+
+  if (!CodecClass || typeof CodecClass !== 'function') {
+    throwError(
+      `Custom codec at "${resolvedPath}" must export a default class.`
+    );
+  }
+
+  const instance = new CodecClass();
+  const extension = instance.EXTENSION;
+
+  if (
+    !extension ||
+    typeof extension !== 'string' ||
+    !extension.startsWith('.')
+  ) {
+    throwError(
+      `Custom codec at "${resolvedPath}" must have a valid EXTENSION property (e.g., '.json').`
+    );
+  }
+
+  // Return without the leading dot for consistency with built-in codecs
+  return extension.slice(1);
 }
 
 export default async function resolveCodec(
   codec: string,
   projectRoot: string
-): Promise<Codec> {
+): Promise<ExtractorCodec> {
   // Built-in codec
   if (isBuiltInCodec(codec)) {
     const CodecClass = (await builtInCodecs[codec]()).default;
@@ -28,28 +76,27 @@ export default async function resolveCodec(
   let module;
   try {
     module = await import(resolvedPath);
-  } catch (error) {
-    throw new Error(
-      `[next-intl] Could not load custom codec from "${resolvedPath}". ` +
-        `Make sure the file exists and exports a default class extending Codec.`,
-      {cause: error}
+  } catch {
+    throwError(
+      `Could not load custom codec from "${resolvedPath}". ` +
+        `Make sure the file exists and exports a default class extending ExtractorCodec.`
     );
   }
 
   const CodecClass = module.default;
 
   if (!CodecClass || typeof CodecClass !== 'function') {
-    throw new Error(
-      `[next-intl] Custom codec at "${resolvedPath}" must export a default class.`
+    throwError(
+      `Custom codec at "${resolvedPath}" must export a default class.`
     );
   }
 
   const instance = new CodecClass();
 
-  if (!(instance instanceof Codec)) {
-    throw new Error(
-      `[next-intl] Custom codec at "${resolvedPath}" must extend the Codec base class. ` +
-        `Import it from 'next-intl/codec'.`
+  if (!(instance instanceof ExtractorCodec)) {
+    throwError(
+      `Custom codec at "${resolvedPath}" must extend the ExtractorCodec base class. ` +
+        `Import it from 'next-intl/extractor'.`
     );
   }
 

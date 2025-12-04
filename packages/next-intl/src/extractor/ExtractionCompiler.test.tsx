@@ -2230,6 +2230,54 @@ describe('`srcPath` filtering', () => {
   });
 });
 
+describe('custom codec', () => {
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          // Use absolute path to the fixture - vitest will handle the transform
+          codec: path.resolve(__dirname, '__fixtures__/CustomTestCodec.tsx'),
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('supports custom codecs', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.custom': JSON.stringify({'+YJVTi': 'Hey!'}, null, 2),
+      'de.custom': JSON.stringify({'+YJVTi': 'Hallo!'}, null, 2)
+    };
+
+    using compiler = createCompiler();
+
+    const result = await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    expect(result.code).toContain('t("+YJVTi"');
+    await waitForWriteFileCalls(2);
+
+    const writeCalls = vi.mocked(fs.writeFile).mock.calls;
+    expect(writeCalls.map((call) => call[0])).toEqual([
+      'messages/en.custom',
+      'messages/de.custom'
+    ]);
+  });
+});
+
 /**
  * Test utils
  ****************************************************************/

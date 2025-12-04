@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type Codec from '../codecs/Codec.js';
+import type ExtractorCodec from '../codecs/ExtractorCodec.js';
 import resolveCodec from '../codecs/resolveCodec.js';
 import MessageExtractor from '../extractor/MessageExtractor.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
@@ -40,7 +40,7 @@ export default class CatalogManager {
 
   // Cached instances
   private persister?: CatalogPersister;
-  private codec?: Codec;
+  private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
   private messageExtractor: MessageExtractor;
 
@@ -68,7 +68,7 @@ export default class CatalogManager {
     });
   }
 
-  private async getCodec(): Promise<Codec> {
+  private async getCodec(): Promise<ExtractorCodec> {
     if (!this.codec) {
       this.codec = await resolveCodec(
         this.config.messages.codec,

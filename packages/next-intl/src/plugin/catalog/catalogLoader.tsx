@@ -1,14 +1,14 @@
 import path from 'path';
-import type Codec from '../../extractor/codecs/Codec.js';
+import type ExtractorCodec from '../../extractor/codecs/ExtractorCodec.js';
 import resolveCodec from '../../extractor/codecs/resolveCodec.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-let cachedCodec: Codec | null = null;
+let cachedCodec: ExtractorCodec | null = null;
 async function getCodec(
   options: CatalogLoaderConfig,
   projectRoot: string
-): Promise<Codec> {
+): Promise<ExtractorCodec> {
   if (!cachedCodec) {
     cachedCodec = await resolveCodec(options.messages.codec, projectRoot);
   }

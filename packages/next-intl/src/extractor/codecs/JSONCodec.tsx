@@ -1,13 +1,13 @@
 import type {ExtractedMessage} from '../types.js';
 import {setNestedProperty} from '../utils.js';
-import Codec from './Codec.js';
+import ExtractorCodec from './ExtractorCodec.js';
 import {getSortedMessages} from './utils.js';
 
 interface StoredFormat {
   [key: string]: string | StoredFormat;
 }
 
-export default class JSONCodec extends Codec {
+export default class JSONCodec extends ExtractorCodec {
   static readonly NAMESPACE_SEPARATOR = '.';
   public readonly EXTENSION = '.json';
 
@@ -40,9 +40,7 @@ export default class JSONCodec extends Codec {
     path = ''
   ): void {
     for (const key of Object.keys(obj)) {
-      const newPath = path
-        ? path + JSONCodec.NAMESPACE_SEPARATOR + key
-        : key;
+      const newPath = path ? path + JSONCodec.NAMESPACE_SEPARATOR + key : key;
       const value = obj[key];
       if (typeof value === 'string') {
         callback(value, newPath);

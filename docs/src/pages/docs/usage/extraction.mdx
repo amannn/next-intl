@@ -341,36 +341,17 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom codec [#codecs-custom]
 
-You can create a custom codec to support any file format. To do this:
-
-1. Create a file that exports a class extending `Codec` from `next-intl/codec`
-2. Reference the file path in your configuration
+You can create a custom codec to support any file format by extending `ExtractorCodec` from `next-intl/extractor`:
 
 ```tsx filename="my-codec.js"
-import Codec from 'next-intl/codec';
+import {ExtractorCodec} from 'next-intl/extractor';
 
-export default class MyCodec extends Codec {
-  // File extension used by this codec
+export default class MyCodec extends ExtractorCodec {
   EXTENSION = '.custom';
 
-  // Decode file content into extracted messages
-  decode(content, context) {
-    // Parse your custom format and return an array of messages
-    // Each message should have at minimum: { id: string, message: string }
-    return JSON.parse(content);
-  }
-
-  // Encode extracted messages into file content
-  encode(messages, context) {
-    // Serialize messages to your custom format
-    return JSON.stringify(messages, null, 2);
-  }
-
-  // Transform file content into JSON string for runtime loading
-  toJSONString(content, context) {
-    // The returned value will be passed to JSON.parse
-    return content;
-  }
+  decode(content, context) { /* ... */ }
+  encode(messages, context) { /* ... */ }
+  toJSONString(content, context) { /* ... */ }
 }
 ```
 
@@ -379,19 +360,12 @@ Then reference it in your configuration:
 ```tsx filename="next.config.ts"
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    srcPath: './src',
-    extract: {
-      sourceLocale: 'en'
-    },
     messages: {
-      path: './messages',
       codec: './my-codec.js',
-      locales: 'infer'
+      // ...
     }
   }
 });
 ```
 
-The `context` parameter passed to codec methods contains:
-
-- `locale`: The locale being processed (e.g., `'en'`, `'de'`)
+For implementation details, see the built-in [JSONCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/JSONCodec.tsx) and [POCodec](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/codecs/POCodec.tsx) as examples.
