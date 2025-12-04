@@ -1,17 +1,21 @@
 import path from 'path';
-import type Formatter from '../../extractor/formatters/Formatter.js';
-import formatters from '../../extractor/formatters/index.js';
+import type ExtractorCodec from '../../extractor/codecs/ExtractorCodec.js';
+import {
+  getFormatExtension,
+  resolveCodec
+} from '../../extractor/codecs/utils.js';
 import type {CatalogLoaderConfig} from '../../extractor/types.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
-let cachedFormatter: Formatter | null = null;
-async function getFormatter(options: CatalogLoaderConfig): Promise<Formatter> {
-  if (!cachedFormatter) {
-    const FormatterClass = (await formatters[options.messages.format]())
-      .default;
-    cachedFormatter = new FormatterClass();
+let cachedCodec: ExtractorCodec | null = null;
+async function getCodec(
+  options: CatalogLoaderConfig,
+  projectRoot: string
+): Promise<ExtractorCodec> {
+  if (!cachedCodec) {
+    cachedCodec = await resolveCodec(options.messages.format, projectRoot);
   }
-  return cachedFormatter;
+  return cachedCodec;
 }
 
 /**
@@ -27,11 +31,12 @@ export default function catalogLoader(
 ) {
   const options = this.getOptions();
   const callback = this.async();
+  const extension = getFormatExtension(options.messages.format);
 
-  getFormatter(options)
-    .then((formatter) => {
-      const locale = path.basename(this.resourcePath, formatter.EXTENSION);
-      const jsonString = formatter.toJSONString(source, {locale});
+  getCodec(options, this.rootContext)
+    .then((codec) => {
+      const locale = path.basename(this.resourcePath, extension);
+      const jsonString = codec.toJSONString(source, {locale});
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
       const result = `export default JSON.parse(${JSON.stringify(jsonString)});`;

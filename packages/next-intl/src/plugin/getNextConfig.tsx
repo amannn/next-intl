@@ -7,11 +7,24 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
+import {getFormatExtension} from '../extractor/codecs/utils.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
-import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
+import type {
+  CatalogLoaderConfig,
+  ExtractorConfig,
+  MessagesConfig
+} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
+
+function normalizeMessagesConfig(messages: MessagesConfig): MessagesConfig {
+  return {
+    path: messages.path,
+    format: messages.format,
+    locales: messages.locales
+  };
+}
 
 function withExtensions(localPath: string) {
   return [
@@ -70,9 +83,13 @@ export default function getNextConfig(
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
 
+  const normalizedMessages = pluginConfig.experimental?.messages
+    ? normalizeMessagesConfig(pluginConfig.experimental.messages)
+    : undefined;
+
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
-    if (!experimental.srcPath || !experimental.messages) {
+    if (!experimental.srcPath || !normalizedMessages) {
       throwError(
         '`srcPath` and `messages` are required when using `extractor`.'
       );
@@ -82,7 +99,7 @@ export default function getNextConfig(
       options: {
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
-        messages: experimental.messages
+        messages: normalizedMessages
       } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
@@ -91,7 +108,7 @@ export default function getNextConfig(
     return {
       loader: 'next-intl/extractor/catalogLoader',
       options: {
-        messages: pluginConfig.experimental!.messages!
+        messages: normalizedMessages!
       } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
     };
   }
@@ -168,15 +185,16 @@ export default function getNextConfig(
     }
 
     // Add loader for catalog
-    if (pluginConfig.experimental?.messages) {
+    if (normalizedMessages) {
       if (!isNextJs16OrHigher()) {
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      addTurboRule(rules!, `*.${pluginConfig.experimental.messages.format}`, {
+      const extension = getFormatExtension(normalizedMessages.format).slice(1);
+      addTurboRule(rules!, `*.${extension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
-          path: `${pluginConfig.experimental.messages.path}/**/*`
+          path: `${normalizedMessages.path}/**/*`
         },
         as: '*.js'
       });
@@ -239,15 +257,15 @@ export default function getNextConfig(
       }
 
       // Add loader for catalog
-      if (pluginConfig.experimental?.messages) {
+      if (normalizedMessages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const extension = getFormatExtension(normalizedMessages.format).slice(
+          1
+        );
         config.module.rules.push({
-          test: new RegExp(`\\.${pluginConfig.experimental.messages.format}$`),
-          include: path.resolve(
-            config.context!,
-            pluginConfig.experimental.messages.path
-          ),
+          test: new RegExp(`\\.${extension}$`),
+          include: path.resolve(config.context!, normalizedMessages.path),
           use: [getCatalogLoaderConfig()],
           type: 'javascript/auto'
         });

@@ -1,4 +1,4 @@
-export type MessagesFormat = 'json' | 'po';
+import type {MessagesFormat} from './codecs/index.js';
 
 // Is likely the same as the `Locale` type in `use-intl`,
 // but users may map messages to runtime locales, therefore
@@ -19,6 +19,8 @@ export type MessagesConfig = {
   format: MessagesFormat;
   locales: 'infer' | ReadonlyArray<Locale>;
 };
+
+export type {MessagesFormat};
 
 export type ExtractorConfig = {
   srcPath: string | Array<string>;

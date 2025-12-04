@@ -1,33 +1,26 @@
 import type {ExtractedMessage, Locale} from '../types.js';
 
-export type FormatterContext = {
+export type ExtractorCodecContext = {
   locale: Locale;
 };
 
-export default abstract class Formatter {
+export default abstract class ExtractorCodec {
   /**
-   * The file extension that this formatter uses.
-   *
-   * @example `.json`
-   */
-  abstract readonly EXTENSION: `.${string}`;
-
-  /**
-   * Parse the content of a file into a list of extracted messages. This is used
+   * Decode the content of a file into a list of extracted messages. This is used
    * to load existing messages from disk.
    **/
-  abstract parse(
+  abstract decode(
     content: string,
-    context: FormatterContext
+    context: ExtractorCodecContext
   ): Array<ExtractedMessage>;
 
   /**
-   * Serialize a list of extracted messages into a string that can be written as
+   * Encode a list of extracted messages into a string that can be written as
    * file content to the disk.
    **/
-  abstract serialize(
+  abstract encode(
     messages: Array<ExtractedMessage>,
-    context: FormatterContext
+    context: ExtractorCodecContext
   ): string;
 
   /**
@@ -42,5 +35,8 @@ export default abstract class Formatter {
    * If your file content is JSON and should be used as-is, you can set this to
    * an identity function.
    **/
-  abstract toJSONString(content: string, context: FormatterContext): string;
+  abstract toJSONString(
+    content: string,
+    context: ExtractorCodecContext
+  ): string;
 }

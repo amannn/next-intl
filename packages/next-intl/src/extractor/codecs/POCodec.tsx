@@ -1,10 +1,10 @@
 import POParser from 'po-parser';
 import type {ExtractedMessage, Locale} from '../types.js';
 import {setNestedProperty} from '../utils.js';
-import Formatter, {type FormatterContext} from './Formatter.js';
+import ExtractorCodec, {type ExtractorCodecContext} from './ExtractorCodec.js';
 import {getSortedMessages} from './utils.js';
 
-export default class POFormatter extends Formatter {
+export default class POCodec extends ExtractorCodec {
   // See also https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
   private static readonly DEFAULT_METADATA = {
     // Recommended by spec
@@ -18,14 +18,12 @@ export default class POFormatter extends Formatter {
     'X-Crowdin-SourceKey': 'msgstr'
   };
 
-  public readonly EXTENSION = '.po';
-
   // Metadata is stored so it can be retained when writing
   private metadataByLocale: Map<Locale, Record<string, string>> = new Map();
 
-  public parse(
+  public decode(
     content: string,
-    context: FormatterContext
+    context: ExtractorCodecContext
   ): Array<ExtractedMessage> {
     const catalog = POParser.parse(content);
 
@@ -37,13 +35,13 @@ export default class POFormatter extends Formatter {
     return catalog.messages || [];
   }
 
-  public serialize(
+  public encode(
     messages: Array<ExtractedMessage>,
-    context: FormatterContext
+    context: ExtractorCodecContext
   ): string {
     const meta = {
       Language: context.locale,
-      ...POFormatter.DEFAULT_METADATA,
+      ...POCodec.DEFAULT_METADATA,
       ...this.metadataByLocale.get(context.locale)
     };
 
@@ -53,8 +51,8 @@ export default class POFormatter extends Formatter {
     });
   }
 
-  public toJSONString(source: string, context: FormatterContext) {
-    const parsed = this.parse(source, context);
+  public toJSONString(source: string, context: ExtractorCodecContext) {
+    const parsed = this.decode(source, context);
 
     const messagesObject: Record<string, string> = {};
     for (const message of parsed) {

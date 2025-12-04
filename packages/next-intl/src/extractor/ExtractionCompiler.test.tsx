@@ -2123,7 +2123,7 @@ msgstr "Hey!"
         filesystem.project.src['Greeting.tsx']
       )
     ).rejects.toThrow(
-      'Error while parsing de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+      'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
 });
@@ -2227,6 +2227,63 @@ describe('`srcPath` filtering', () => {
         ],
       ]
     `);
+  });
+});
+
+describe('custom codec', () => {
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          // Use absolute path to the fixture - vitest will handle the transform
+          format: {
+            codec: path.resolve(__dirname, '__fixtures__/CustomTestCodec.tsx'),
+            extension: '.custom'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+  }
+
+  it('supports custom codecs with flat namespaced keys', async () => {
+    // This test demonstrates a custom codec that stores namespaced keys flat
+    // (e.g., "ui.wESdnU") instead of nested like the default JSON codec would
+    filesystem.project.src['Button.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Button() {
+      const t = useExtracted('ui');
+      return <button>{t('Click me')}</button>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.custom': JSON.stringify({'ui.wESdnU': 'Click me'}, null, 2),
+      'de.custom': JSON.stringify({'ui.wESdnU': 'Klick mich'}, null, 2)
+    };
+
+    using compiler = createCompiler();
+
+    const result = await compiler.compile(
+      '/project/src/Button.tsx',
+      filesystem.project.src['Button.tsx']
+    );
+
+    expect(result.code).toContain('t("wESdnU"');
+    await waitForWriteFileCalls(2);
+
+    const writeCalls = vi.mocked(fs.writeFile).mock.calls;
+    expect(writeCalls.map((call) => call[0])).toEqual([
+      'messages/en.custom',
+      'messages/de.custom'
+    ]);
+
+    const enContent = JSON.parse(writeCalls[0][1] as string);
+    expect(enContent).toEqual({'ui.wESdnU': 'Click me'});
+    expect(enContent.ui).toBeUndefined();
   });
 });
 
