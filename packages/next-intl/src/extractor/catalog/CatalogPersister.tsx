@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
-import type {ExtractedMessage, Locale} from '../types.js';
+import type {ExtractorMessage, Locale} from '../types.js';
 
 export default class CatalogPersister {
   private messagesPath: string;
@@ -26,7 +26,7 @@ export default class CatalogPersister {
     return fsPath.join(this.messagesPath, this.getFileName(locale));
   }
 
-  async read(locale: Locale): Promise<Array<ExtractedMessage>> {
+  async read(locale: Locale): Promise<Array<ExtractorMessage>> {
     const filePath = this.getFilePath(locale);
     let content: string;
     try {
@@ -57,7 +57,7 @@ export default class CatalogPersister {
 
   async write(
     locale: Locale,
-    messages: Array<ExtractedMessage>
+    messages: Array<ExtractorMessage>
   ): Promise<void> {
     const filePath = this.getFilePath(locale);
     const content = this.codec.encode(messages, {locale});

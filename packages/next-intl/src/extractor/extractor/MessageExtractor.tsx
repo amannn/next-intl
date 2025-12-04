@@ -1,13 +1,13 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
-import type {ExtractedMessage} from '../types.js';
+import type {ExtractorMessage} from '../types.js';
 import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
-type StrictExtractedMessage = ExtractedMessage & {
-  references: NonNullable<ExtractedMessage['references']>;
+type StrictExtractedMessage = ExtractorMessage & {
+  references: NonNullable<ExtractorMessage['references']>;
 };
 
 export default class MessageExtractor {

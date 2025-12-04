@@ -1,5 +1,5 @@
 import type {LoaderContext} from 'webpack';
-import type {MessagesFormat} from '../extractor/types.js';
+import type {MessagesFormat} from '../extractor/format/types.js';
 
 export type PluginConfig = {
   requestConfig?: string;

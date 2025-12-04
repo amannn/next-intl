@@ -1,11 +1,11 @@
-import type {MessagesFormat} from './format/index.js';
+import type {MessagesFormat} from './format/types.js';
 
 // Is likely the same as the `Locale` type in `use-intl`,
 // but users may map messages to runtime locales, therefore
 // don't require a match here.
 export type Locale = string;
 
-export type ExtractedMessage = {
+export type ExtractorMessage = {
   id: string;
   message: string;
   description?: string;
@@ -19,8 +19,6 @@ export type MessagesConfig = {
   format: MessagesFormat;
   locales: 'infer' | ReadonlyArray<Locale>;
 };
-
-export type {MessagesFormat};
 
 export type ExtractorConfig = {
   srcPath: string | Array<string>;

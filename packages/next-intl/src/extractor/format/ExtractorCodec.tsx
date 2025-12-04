@@ -1,4 +1,4 @@
-import type {ExtractedMessage, Locale} from '../types.js';
+import type {ExtractorMessage, Locale} from '../types.js';
 
 export type ExtractorCodecContext = {
   locale: Locale;
@@ -12,14 +12,14 @@ export default interface ExtractorCodec {
   decode(
     content: string,
     context: ExtractorCodecContext
-  ): Array<ExtractedMessage>;
+  ): Array<ExtractorMessage>;
 
   /**
    * Encode a list of extracted messages into a string that can be written as
    * file content to the disk.
    */
   encode(
-    messages: Array<ExtractedMessage>,
+    messages: Array<ExtractorMessage>,
     context: ExtractorCodecContext
   ): string;
 

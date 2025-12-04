@@ -4,7 +4,7 @@ import MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/utils.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
+import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
 import {localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
@@ -16,12 +16,12 @@ export default class CatalogManager {
   /* The source of truth for which messages are used. */
   private messagesByFile: Map<
     /* File path */ string,
-    Map</* ID */ string, ExtractedMessage>
+    Map</* ID */ string, ExtractorMessage>
   > = new Map();
 
   /* Fast lookup for messages by ID across all files,
    * contains the same messages as `messagesByFile`. */
-  private messagesById: Map<string, ExtractedMessage> = new Map();
+  private messagesById: Map<string, ExtractorMessage> = new Map();
 
   /**
    * This potentially also includes outdated ones that were initially available,
@@ -29,7 +29,7 @@ export default class CatalogManager {
    **/
   private translationsByTargetLocale: Map<
     Locale,
-    Map</* ID */ string, ExtractedMessage>
+    Map</* ID */ string, ExtractorMessage>
   > = new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
@@ -172,7 +172,7 @@ export default class CatalogManager {
 
   private async loadLocaleMessages(
     locale: Locale
-  ): Promise<Array<ExtractedMessage>> {
+  ): Promise<Array<ExtractorMessage>> {
     const persister = await this.getPersister();
     const messages = await persister.read(locale);
     const fileTime = await persister.getLastModified(locale);
@@ -211,7 +211,7 @@ export default class CatalogManager {
       }
     } else {
       // For target: disk wins completely
-      const translations = new Map<string, ExtractedMessage>();
+      const translations = new Map<string, ExtractorMessage>();
       for (const message of diskMessages) {
         translations.set(message.id, message);
       }
@@ -223,7 +223,7 @@ export default class CatalogManager {
     absoluteFilePath: string,
     source: string
   ): Promise<{
-    messages: Array<ExtractedMessage>;
+    messages: Array<ExtractorMessage>;
     code: string;
     changed: boolean;
     map?: string;
@@ -239,7 +239,7 @@ export default class CatalogManager {
     const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
 
     // Replace existing messages with new ones
-    const fileMessages = new Map<string, ExtractedMessage>();
+    const fileMessages = new Map<string, ExtractorMessage>();
 
     for (let message of result.messages) {
       const prevMessage = this.messagesById.get(message.id);
@@ -306,8 +306,8 @@ export default class CatalogManager {
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Map<string, ExtractedMessage> | undefined,
-    afterMessages: Map<string, ExtractedMessage>
+    beforeMessages: Map<string, ExtractorMessage> | undefined,
+    afterMessages: Map<string, ExtractorMessage>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
@@ -331,8 +331,8 @@ export default class CatalogManager {
   }
 
   private areMessagesEqual(
-    msg1: ExtractedMessage,
-    msg2: ExtractedMessage
+    msg1: ExtractorMessage,
+    msg2: ExtractorMessage
   ): boolean {
     // Note: We intentionally don't compare references here.
     // References are aggregated metadata from multiple files and comparing

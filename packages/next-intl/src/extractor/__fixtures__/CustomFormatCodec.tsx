@@ -1,10 +1,10 @@
 import type ExtractorCodec from '../format/ExtractorCodec.js';
-import type {ExtractedMessage} from '../types.js';
+import type {ExtractorMessage} from '../types.js';
 
 type StoredMessage = {message: string; description?: string};
 
 export default class CustomTestCodec implements ExtractorCodec {
-  decode(content: string): Array<ExtractedMessage> {
+  decode(content: string): Array<ExtractorMessage> {
     const data = JSON.parse(content);
     return Object.entries(data).map(([id, value]) => {
       const obj = value as StoredMessage;
@@ -16,7 +16,7 @@ export default class CustomTestCodec implements ExtractorCodec {
     });
   }
 
-  encode(messages: Array<ExtractedMessage>): string {
+  encode(messages: Array<ExtractorMessage>): string {
     const obj: Record<string, StoredMessage> = {};
     for (const msg of messages) {
       obj[msg.id] = {

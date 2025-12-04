@@ -1,4 +1,4 @@
-import type {ExtractedMessage} from '../../types.js';
+import type {ExtractorMessage} from '../../types.js';
 import {setNestedProperty} from '../../utils.js';
 import type ExtractorCodec from '../ExtractorCodec.js';
 import {getSortedMessages} from '../utils.js';
@@ -10,9 +10,9 @@ interface StoredFormat {
 export default class JSONCodec implements ExtractorCodec {
   static readonly NAMESPACE_SEPARATOR = '.';
 
-  public decode(source: string): Array<ExtractedMessage> {
+  public decode(source: string): Array<ExtractorMessage> {
     const json: StoredFormat = JSON.parse(source);
-    const messages: Array<ExtractedMessage> = [];
+    const messages: Array<ExtractorMessage> = [];
 
     this.traverseMessages(json, (message, id) => {
       messages.push({id, message});
@@ -21,7 +21,7 @@ export default class JSONCodec implements ExtractorCodec {
     return messages;
   }
 
-  public encode(messages: Array<ExtractedMessage>): string {
+  public encode(messages: Array<ExtractorMessage>): string {
     const root: StoredFormat = {};
     for (const message of getSortedMessages(messages)) {
       setNestedProperty(root, message.id, message.message);

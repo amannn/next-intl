@@ -1,6 +1,6 @@
 /* eslint-disable import/no-duplicates */
 import POParser from 'po-parser';
-import type {ExtractedMessage, Locale} from '../../types.js';
+import type {ExtractorMessage, Locale} from '../../types.js';
 import {setNestedProperty} from '../../utils.js';
 import type ExtractorCodec from '../ExtractorCodec.js';
 import type {ExtractorCodecContext} from '../ExtractorCodec.js';
@@ -26,7 +26,7 @@ export default class POCodec implements ExtractorCodec {
   public decode(
     content: string,
     context: ExtractorCodecContext
-  ): Array<ExtractedMessage> {
+  ): Array<ExtractorMessage> {
     const catalog = POParser.parse(content);
 
     // Store metadata for this locale
@@ -38,7 +38,7 @@ export default class POCodec implements ExtractorCodec {
   }
 
   public encode(
-    messages: Array<ExtractedMessage>,
+    messages: Array<ExtractorMessage>,
     context: ExtractorCodecContext
   ): string {
     const meta = {

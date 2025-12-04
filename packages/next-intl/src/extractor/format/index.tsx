@@ -12,12 +12,3 @@ const formats = {
 >;
 
 export default formats;
-
-export type BuiltInFormat = keyof typeof formats;
-
-export type CustomFormat = {
-  codec: string;
-  extension: `.${string}`;
-};
-
-export type MessagesFormat = BuiltInFormat | CustomFormat;
