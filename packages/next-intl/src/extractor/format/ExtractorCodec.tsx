@@ -1,6 +1,6 @@
 import type {ExtractorMessage, Locale} from '../types.js';
 
-export type ExtractorCodecContext = {
+type ExtractorCodecContext = {
   locale: Locale;
 };
 
@@ -20,7 +20,9 @@ export default interface ExtractorCodec {
    */
   encode(
     messages: Array<ExtractorMessage>,
-    context: ExtractorCodecContext
+    context: ExtractorCodecContext & {
+      sourceMessagesById: Map</* ID */ string, ExtractorMessage>;
+    }
   ): string;
 
   /**

@@ -386,7 +386,10 @@ export default class CatalogManager {
       };
     });
 
-    await persister.write(locale, messagesToPersist);
+    await persister.write(messagesToPersist, {
+      locale,
+      sourceMessagesById: this.messagesById
+    });
 
     // Update timestamps
     const newTime = await persister.getLastModified(locale);

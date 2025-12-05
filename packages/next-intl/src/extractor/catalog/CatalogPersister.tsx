@@ -56,11 +56,14 @@ export default class CatalogPersister {
   }
 
   async write(
-    locale: Locale,
-    messages: Array<ExtractorMessage>
+    messages: Array<ExtractorMessage>,
+    context: {
+      locale: Locale;
+      sourceMessagesById: Map<string, ExtractorMessage>;
+    }
   ): Promise<void> {
-    const filePath = this.getFilePath(locale);
-    const content = this.codec.encode(messages, {locale});
+    const filePath = this.getFilePath(context.locale);
+    const content = this.codec.encode(messages, context);
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});

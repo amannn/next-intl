@@ -2263,7 +2263,7 @@ describe('custom format', () => {
           format: {
             codec: path.resolve(
               __dirname,
-              'format/codecs/fixtures/StructuredJSONCodec.tsx'
+              'format/codecs/fixtures/JSONCodecStructured.tsx'
             ),
             extension: '.json'
           },
@@ -2294,6 +2294,86 @@ describe('custom format', () => {
           "message": "Submit"
         }
       }
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('supports a custom PO format that uses source messages as msgid', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
+            ),
+            extension: '.po'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
       ",
         ],
       ]
