@@ -2231,28 +2231,7 @@ describe('`srcPath` filtering', () => {
 });
 
 describe('custom format', () => {
-  function createCompiler() {
-    return new ExtractionCompiler(
-      {
-        srcPath: './src',
-        sourceLocale: 'en',
-        messages: {
-          path: './messages',
-          format: {
-            codec: path.resolve(
-              __dirname,
-              '__fixtures__/CustomFormatCodec.tsx'
-            ),
-            extension: '.json'
-          },
-          locales: 'infer'
-        }
-      },
-      {isDevelopment: true, projectRoot: '/project'}
-    );
-  }
-
-  it('supports custom formats with codecs', async () => {
+  it('supports a structured json custom format with codecs', async () => {
     filesystem.project.messages = {
       'en.json': JSON.stringify(
         {
@@ -2275,7 +2254,24 @@ describe('custom format', () => {
     }
     `;
 
-    using compiler = createCompiler();
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/StructuredJSONCodec.tsx'
+            ),
+            extension: '.json'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
 
     const result = await compiler.compile(
       '/project/src/Button.tsx',

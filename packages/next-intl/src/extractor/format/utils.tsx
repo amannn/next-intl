@@ -40,26 +40,28 @@ export async function resolveCodec(
   projectRoot: string
 ): Promise<ExtractorCodec> {
   if (isBuiltInFormat(format)) {
-    const CodecClass = (await formats[format].Codec()).default;
-    return new CodecClass();
+    const factory = (await formats[format].codec()).default;
+    return factory();
+  } else {
+    const resolvedPath = path.isAbsolute(format.codec)
+      ? format.codec
+      : path.resolve(projectRoot, format.codec);
+
+    let module;
+    try {
+      module = await import(resolvedPath);
+    } catch (error) {
+      throwError(`Could not load codec from "${resolvedPath}".\n${error}`);
+    }
+
+    const factory = module.default;
+
+    if (!factory || typeof factory !== 'function') {
+      throwError(
+        `Codec at "${resolvedPath}" must have a default export returned from \`defineCodec\`.`
+      );
+    }
+
+    return factory();
   }
-
-  const resolvedPath = path.isAbsolute(format.codec)
-    ? format.codec
-    : path.resolve(projectRoot, format.codec);
-
-  let module;
-  try {
-    module = await import(resolvedPath);
-  } catch (error) {
-    throwError(`Could not load codec from "${resolvedPath}".\n${error}`);
-  }
-
-  const CodecClass = module.default;
-
-  if (!CodecClass || typeof CodecClass !== 'function') {
-    throwError(`Codec at "${resolvedPath}" must export a default class.`);
-  }
-
-  return new CodecClass();
 }

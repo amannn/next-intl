@@ -1,12 +1,12 @@
 import type ExtractorCodec from './ExtractorCodec.js';
 
 const formats = {
-  json: {Codec: () => import('./codecs/JSONCodec.js'), extension: '.json'},
-  po: {Codec: () => import('./codecs/POCodec.js'), extension: '.po'}
+  json: {codec: () => import('./codecs/JSONCodec.js'), extension: '.json'},
+  po: {codec: () => import('./codecs/POCodec.js'), extension: '.po'}
 } satisfies Record<
   string,
   {
-    Codec(): Promise<{default: new () => ExtractorCodec}>;
+    codec(): Promise<{default(): ExtractorCodec}>;
     extension: `.${string}`;
   }
 >;
