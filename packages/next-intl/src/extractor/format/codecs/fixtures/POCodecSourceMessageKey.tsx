@@ -22,8 +22,8 @@ export default defineCodec(() => {
       const messages =
         catalog.messages || ([] as NonNullable<typeof catalog.messages>);
 
-      // Note: The ids could also be persisted separately in the encode function
-      // (either as part of the .po file or separately) to avoid recomputing them.
+      // Note: The ids could also be persisted in the encode function (either as
+      // part of the .po file or in an additional file) to avoid recomputing them.
       return messages.map((msg) => ({
         ...msg,
         id: getId(msg.id),

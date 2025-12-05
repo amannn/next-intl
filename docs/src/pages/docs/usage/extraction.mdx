@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Callout from '@/components/Callout';
 import Details from '@/components/Details';
 
-# `useExtracted`
+# `useExtracted` (experimental)
 
 As an alternative to managing namespaces and keys manually, `next-intl` provides an additional API that works similar to [`useTranslations`](/docs/usage/translations) but automatically extracts messages from your source files.
 
@@ -48,7 +48,7 @@ function InlineMessages() {
 
 **Links:**
 
-- [Blog post](/blog/use-extracted)
+- [Introduction blog post](/blog/use-extracted)
 - [Example app](/examples#app-router-extracted)
 
 ## Getting started
@@ -73,7 +73,7 @@ const withNextIntl = createNextIntlPlugin({
       // Relative path to the directory
       path: './messages',
 
-      // Either 'json', 'po', or a custom format
+      // Either 'json', 'po', or a custom format (see below)
       format: 'json',
 
       // Either 'infer' to automatically detect locales based on
@@ -272,7 +272,7 @@ it('renders', () => {
 
 Messages can be extracted as JSON, PO, or with custom file formats.
 
-When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects.
+When [`messages`](/docs/usage/plugin#messages) is configured, this will also set up a Turbo- or Webpack loader that will ensure imported messages can be used as plain JavaScript objects.
 
 For example, when using `format: 'po'`, messages can be imported as:
 
@@ -283,7 +283,7 @@ import {getRequestConfig} from 'next-intl/server';
 export default getRequestConfig(async () => {
   const locale = 'en';
 
-  // E.g. `{"NhX4DJ": "Hello"}`
+  // E.g. `[{"NhX4DJ": "Hello"}]`
   const messages = (await import(`../../messages/${locale}.po`)).default;
 
   // ...
@@ -331,7 +331,7 @@ msgstr "Right"
 
 Besides the message key and the label itself, this format also supports optional descriptions and file references to all modules that consume this message.
 
-For local editing of PO messages, you can use e.g. a tool like [Poedit](https://poedit.net/) (replacing keys with source text requires a pro license).
+For local editing of .po files, you can use e.g. a tool like [Poedit](https://poedit.net/) (note however that replacing keys with source text requires a pro license).
 
 <Callout>
 
@@ -341,9 +341,11 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom format [#formats-custom]
 
-To configure a custom format, you need to specify a codec along with an extension. The codec can be created via `defineCodec` from `next-intl/extractor`:
+To configure a custom format, you need to specify a codec along with an extension.
 
-```tsx filename="extractor-codec.ts"
+The codec can be created via `defineCodec` from `next-intl/extractor`:
+
+```tsx filename="./CustomCodec.ts"
 import {defineCodec} from 'next-intl/extractor';
 
 export default defineCodec(() => ({
@@ -368,7 +370,7 @@ const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
       format: {
-        codec: './extractor-codec.ts',
+        codec: './CustomCodec.ts',
         extension: '.json'
       }
       // ...

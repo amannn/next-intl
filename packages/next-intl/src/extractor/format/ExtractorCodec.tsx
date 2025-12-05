@@ -40,8 +40,6 @@ export default interface ExtractorCodec {
   toJSONString(content: string, context: ExtractorCodecContext): string;
 }
 
-export function defineCodec(
-  factory: () => ExtractorCodec
-): () => ExtractorCodec {
+export function defineCodec(factory: () => ExtractorCodec) {
   return factory;
 }
