@@ -1,33 +1,69 @@
 import fs from 'fs/promises';
 import fsPath from 'path';
-import type Formatter from '../formatters/Formatter.js';
-import type {ExtractedMessage, Locale} from '../types.js';
+import type ExtractorCodec from '../format/ExtractorCodec.js';
+import type {ExtractorMessage, Locale} from '../types.js';
 
 export default class CatalogPersister {
   private messagesPath: string;
-  private formatter: Formatter;
+  private codec: ExtractorCodec;
+  private extension: string;
 
-  constructor(messagesPath: string, formatter: Formatter) {
-    this.messagesPath = messagesPath;
-    this.formatter = formatter;
+  constructor(params: {
+    messagesPath: string;
+    codec: ExtractorCodec;
+    extension: string;
+  }) {
+    this.messagesPath = params.messagesPath;
+    this.codec = params.codec;
+    this.extension = params.extension;
+  }
+
+  private getFileName(locale: Locale): string {
+    return locale + this.extension;
   }
 
   private getFilePath(locale: Locale): string {
-    return fsPath.join(this.messagesPath, locale + this.formatter.EXTENSION);
+    return fsPath.join(this.messagesPath, this.getFileName(locale));
   }
 
-  async read(locale: Locale): Promise<Array<ExtractedMessage>> {
+  async read(locale: Locale): Promise<Array<ExtractorMessage>> {
     const filePath = this.getFilePath(locale);
-    const content = await fs.readFile(filePath, 'utf8');
-    return this.formatter.parse(content, {locale});
+    let content: string;
+    try {
+      content = await fs.readFile(filePath, 'utf8');
+    } catch (error) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return [];
+      }
+      throw new Error(
+        `Error while reading ${this.getFileName(locale)}:\n> ${error}`,
+        {cause: error}
+      );
+    }
+    try {
+      return this.codec.decode(content, {locale});
+    } catch (error) {
+      throw new Error(
+        `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,
+        {cause: error}
+      );
+    }
   }
 
   async write(
-    locale: Locale,
-    messages: Array<ExtractedMessage>
+    messages: Array<ExtractorMessage>,
+    context: {
+      locale: Locale;
+      sourceMessagesById: Map<string, ExtractorMessage>;
+    }
   ): Promise<void> {
-    const filePath = this.getFilePath(locale);
-    const content = this.formatter.serialize(messages, {locale});
+    const filePath = this.getFilePath(context.locale);
+    const content = this.codec.encode(messages, context);
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});

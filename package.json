@@ -6,9 +6,9 @@
     "build-packages": "turbo run build --filter './packages/**' --filter '!./packages/swc-plugin-extractor'"
   },
   "devDependencies": {
-    "@lerna-lite/cli": "3.9.0",
-    "@lerna-lite/publish": "3.9.0",
-    "conventional-changelog-conventionalcommits": "7.0.2",
+    "@lerna-lite/cli": "^4.9.4",
+    "@lerna-lite/publish": "^4.9.4",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "turbo": "^2.4.4"
   },
   "pnpm": {

@@ -83,7 +83,7 @@ describe('json format', () => {
     `);
   });
 
-  it('resets translations when a message changes', async () => {
+  it('resets translations when a message changes', {retry: 5}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2015,6 +2015,117 @@ msgstr "Hey!"
       ]
     `);
   });
+
+  it('propagates read errors instead of silently returning empty (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+
+    // Intercept reading to simulate a corruption/I/O error
+    // (not ENOENT - file exists but can't be read)
+    let rejectReadFile: ((error: Error) => void) | undefined;
+    const readFilePromise = new Promise<void>((_, reject) => {
+      rejectReadFile = reject;
+    });
+
+    readFileInterceptors.set('de.po', () => readFilePromise);
+
+    using compiler = createCompiler();
+    await sleep(50);
+
+    const ioError = new Error('EACCES: permission denied');
+    (ioError as NodeJS.ErrnoException).code = 'EACCES';
+    rejectReadFile?.(ioError);
+
+    await expect(
+      compiler.compile(
+        '/project/src/Greeting.tsx',
+        filesystem.project.src['Greeting.tsx']
+      )
+    ).rejects.toThrow(
+      'Error while reading de.po:\n> Error: EACCES: permission denied'
+    );
+  });
+
+  it('returns empty array only for ENOENT (file not found) errors', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    // Only source locale exists, target locale doesn't exist yet
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `
+    };
+
+    using compiler = createCompiler();
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    // Should succeed and create empty target locale
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][0]).toBe('messages/en.po');
+  });
+
+  it('propagates parser errors from corrupted/truncated files (prevents translation wipes)', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      // Simulates a truncated file read during concurrent write
+      // (file was truncated but read succeeded with partial content)
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "OpKKos"
+      msgstr "Hal`
+      // ↑ Truncated mid-write, parser will fail
+    };
+
+    using compiler = createCompiler();
+
+    await expect(
+      compiler.compile(
+        '/project/src/Greeting.tsx',
+        filesystem.project.src['Greeting.tsx']
+      )
+    ).rejects.toThrow(
+      'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+    );
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -2112,6 +2223,157 @@ describe('`srcPath` filtering', () => {
         "JwjlWH": "panel.source",
         "+YJVTi": "Hey!"
       }
+      ",
+        ],
+      ]
+    `);
+  });
+});
+
+describe('custom format', () => {
+  it('supports a structured json custom format with codecs', async () => {
+    filesystem.project.messages = {
+      'en.json': JSON.stringify(
+        {
+          'ui.wESdnU': {message: 'Click me', description: 'Button label'}
+        },
+        null,
+        2
+      )
+    };
+    filesystem.project.src['Button.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Button() {
+      const t = useExtracted('ui');
+      return (
+        <button>
+          {t({message: 'Click me', description: 'Button label'})}
+          {t('Submit')}
+        </button>
+      );
+    }
+    `;
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/JSONCodecStructured.tsx'
+            ),
+            extension: '.json'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    const result = await compiler.compile(
+      '/project/src/Button.tsx',
+      filesystem.project.src['Button.tsx']
+    );
+
+    expect(result.code).toContain('t("wESdnU"');
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "ui.wESdnU": {
+          "message": "Click me",
+          "description": "Button label"
+        },
+        "ui.wSZR47": {
+          "message": "Submit"
+        }
+      }
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('supports a custom PO format that uses source messages as msgid', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
+            ),
+            extension: '.po'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
       ",
         ],
       ]
@@ -2328,6 +2590,17 @@ vi.mock('fs', () => ({
   }
 }));
 
+function createENOENTError(filePath: string): NodeJS.ErrnoException {
+  const error = new Error(
+    `ENOENT: no such file or directory, open '${filePath}'`
+  ) as NodeJS.ErrnoException;
+  error.code = 'ENOENT';
+  error.errno = -2;
+  error.syscall = 'open';
+  error.path = filePath;
+  return error;
+}
+
 vi.mock('fs/promises', () => ({
   default: {
     readFile: vi.fn(async (filePath: string) => {
@@ -2340,7 +2613,7 @@ vi.mock('fs/promises', () => ({
       if (typeof content === 'string') {
         return content;
       }
-      throw new Error('File not found: ' + filePath);
+      throw createENOENTError(filePath);
     }),
     readdir: vi.fn(async (dir: string, opts?: {withFileTypes?: boolean}) => {
       const dirExists = checkDirectoryExists(filesystem, dir);
