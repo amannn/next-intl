@@ -341,34 +341,24 @@ For local editing of PO messages, you can use e.g. a tool like [Poedit](https://
 
 ### Custom format [#formats-custom]
 
-To configure a custom format, you need to specify a codec along with an extension. The codec should implement [`ExtractorCodec`](https://github.com/amannn/next-intl/blob/main/packages/next-intl/src/extractor/format/ExtractorCodec.tsx) from `next-intl/extractor`:
+To configure a custom format, you need to specify a codec along with an extension. The codec can be created via `defineCodec` from `next-intl/extractor`:
 
 ```tsx filename="extractor-codec.ts"
-import type {
-  ExtractorCodec,
-  ExtractorCodecContext,
-  ExtractorMessage
-} from 'next-intl/extractor';
+import {defineCodec} from 'next-intl/extractor';
 
-export default class CustomExtractorCodec implements ExtractorCodec {
-  decode(
-    content: string,
-    context: ExtractorCodecContext
-  ): Array<ExtractorMessage> {
+export default defineCodec(() => ({
+  decode(content, context) {
+    // ...
+  },
+
+  encode(messages, context) {
+    // ...
+  },
+
+  toJSONString(content, context) {
     // ...
   }
-
-  encode(
-    messages: Array<ExtractorMessage>,
-    context: ExtractorCodecContext
-  ): string {
-    // ...
-  }
-
-  toJSONString(content: string, context: ExtractorCodecContext): string {
-    // ...
-  }
-}
+}));
 ```
 
 Then, reference it in your configuration along with an `extension`:
