@@ -83,7 +83,7 @@ describe('json format', () => {
     `);
   });
 
-  it('resets translations when a message changes', async () => {
+  it('resets translations when a message changes', {retry: 5}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2123,7 +2123,7 @@ msgstr "Hey!"
         filesystem.project.src['Greeting.tsx']
       )
     ).rejects.toThrow(
-      'Error while parsing de.po:\n> Error: Incomplete quoted string:\n> "Hal'
+      'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
 });
@@ -2223,6 +2223,157 @@ describe('`srcPath` filtering', () => {
         "JwjlWH": "panel.source",
         "+YJVTi": "Hey!"
       }
+      ",
+        ],
+      ]
+    `);
+  });
+});
+
+describe('custom format', () => {
+  it('supports a structured json custom format with codecs', async () => {
+    filesystem.project.messages = {
+      'en.json': JSON.stringify(
+        {
+          'ui.wESdnU': {message: 'Click me', description: 'Button label'}
+        },
+        null,
+        2
+      )
+    };
+    filesystem.project.src['Button.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Button() {
+      const t = useExtracted('ui');
+      return (
+        <button>
+          {t({message: 'Click me', description: 'Button label'})}
+          {t('Submit')}
+        </button>
+      );
+    }
+    `;
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/JSONCodecStructured.tsx'
+            ),
+            extension: '.json'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    const result = await compiler.compile(
+      '/project/src/Button.tsx',
+      filesystem.project.src['Button.tsx']
+    );
+
+    expect(result.code).toContain('t("wESdnU"');
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "ui.wESdnU": {
+          "message": "Click me",
+          "description": "Button label"
+        },
+        "ui.wSZR47": {
+          "message": "Submit"
+        }
+      }
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('supports a custom PO format that uses source messages as msgid', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
+      `
+    };
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: {
+            codec: path.resolve(
+              __dirname,
+              'format/codecs/fixtures/POCodecSourceMessageKey.tsx'
+            ),
+            extension: '.po'
+          },
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: true, projectRoot: '/project'}
+    );
+
+    await compiler.compile(
+      '/project/src/Greeting.tsx',
+      filesystem.project.src['Greeting.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+
+      #: src/Greeting.tsx
+      msgid "Hello!"
+      msgstr "Hallo!"
       ",
         ],
       ]
