@@ -36,4 +36,3 @@ export default defineCodec(() => ({
     return JSON.stringify(result, null, 2);
   }
 }));
-
