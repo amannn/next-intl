@@ -369,22 +369,24 @@ export default class CatalogManager {
       await this.reloadLocaleCatalog(locale);
     }
 
-    const prevMessages = isSourceLocale
+    const localeMessages = isSourceLocale
       ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
 
-    const localeMessages = messages.map((message) => {
-      const prev = prevMessages?.get(message.id);
+    const messagesToPersist = messages.map((message) => {
+      const localeMessage = localeMessages?.get(message.id);
       return {
-        ...prev,
+        ...localeMessage,
         id: message.id,
         description: message.description,
         references: message.references,
-        message: isSourceLocale ? message.message : (prev?.message ?? '')
+        message: isSourceLocale
+          ? message.message
+          : (localeMessage?.message ?? '')
       };
     });
 
-    await persister.write(locale, localeMessages);
+    await persister.write(locale, messagesToPersist);
 
     // Update timestamps
     const newTime = await persister.getLastModified(locale);
