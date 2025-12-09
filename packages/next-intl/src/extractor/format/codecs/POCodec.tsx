@@ -30,34 +30,43 @@ export default defineCodec(() => {
       }
       const messages = catalog.messages || [];
       return messages.map((msg) => {
-        const {msgctxt, msgid, msgstr, ...rest} = msg;
+        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
+
+        if (extractedComments && extractedComments.length > 1) {
+          throw new Error(
+            `Multiple extracted comments are not supported. Found ${extractedComments.length} comments for msgid "${msgid}".`
+          );
+        }
 
         return {
           ...rest,
           id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
-          message: msgstr
+          message: msgstr,
+          ...(extractedComments &&
+            extractedComments.length > 0 && {
+              description: extractedComments[0]
+            })
         };
       });
     },
 
     encode(messages, context) {
       const encodedMessages = getSortedMessages(messages).map((msg) => {
-        const {id, message, ...rest} = msg;
+        const {description, id, message, ...rest} = msg;
 
-        if (id.includes(NAMESPACE_SEPARATOR)) {
-          const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
-          return {
-            ...rest,
-            msgctxt: id.slice(0, lastDotIndex),
-            msgid: id.slice(lastDotIndex + NAMESPACE_SEPARATOR.length),
-            msgstr: message
-          };
-        }
+        const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
+        const hasNamespace = id.includes(NAMESPACE_SEPARATOR);
+
+        const msgid = hasNamespace
+          ? id.slice(lastDotIndex + NAMESPACE_SEPARATOR.length)
+          : id;
 
         return {
-          ...rest,
-          msgid: id,
-          msgstr: message
+          msgid,
+          msgstr: message,
+          ...(description && {extractedComments: [description]}),
+          ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
+          ...rest
         };
       });
 

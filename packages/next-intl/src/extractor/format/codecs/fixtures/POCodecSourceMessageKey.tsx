@@ -21,22 +21,27 @@ export default defineCodec(() => {
         catalog.messages || ([] as NonNullable<typeof catalog.messages>);
 
       return messages.map((msg) => {
-        const {
-          msgctxt,
-          msgid, // eslint-disable-line @typescript-eslint/no-unused-vars -- not used
-          msgstr,
-          ...rest
-        } = msg;
+        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
 
         // Necessary to restore the ID
         if (!msgctxt) {
           throw new Error('msgctxt is required');
         }
 
+        if (extractedComments && extractedComments.length > 1) {
+          throw new Error(
+            `Multiple extracted comments are not supported. Found ${extractedComments.length} comments for msgid "${msgid}".`
+          );
+        }
+
         return {
           ...rest,
           id: msgctxt,
-          message: msgstr
+          message: msgstr,
+          ...(extractedComments &&
+            extractedComments.length > 0 && {
+              description: extractedComments[0]
+            })
         };
       });
     },
@@ -51,8 +56,9 @@ export default defineCodec(() => {
         }
 
         // Store the hashed ID in msgctxt so we can restore it during decode
-        const {id, message, ...rest} = msg;
+        const {description, id, message, ...rest} = msg;
         return {
+          ...(description && {extractedComments: [description]}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,
