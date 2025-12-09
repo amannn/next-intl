@@ -1,7 +1,5 @@
 import {expect, test as it} from '@playwright/test';
 
-it.describe.configure({retries: 5});
-
 it('syncs the locale across the public and private pages', async ({page}) => {
   await page.goto('/');
   await expect(page).toHaveURL('/en');
