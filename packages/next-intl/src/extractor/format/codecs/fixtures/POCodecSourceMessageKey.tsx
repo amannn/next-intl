@@ -1,7 +1,6 @@
 import POParser from 'po-parser';
-import {setNestedProperty} from '../../../utils.js';
+import {setNestedProperty, getSortedMessages} from '../../../utils.js';
 import {defineCodec} from '../../ExtractorCodec.js';
-import {getSortedMessages} from '../../utils.js';
 
 export default defineCodec(() => {
   const DEFAULT_METADATA = {
