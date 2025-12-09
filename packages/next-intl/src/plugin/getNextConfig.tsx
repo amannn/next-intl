@@ -250,7 +250,7 @@ export default function getNextConfig(
           pluginConfig.experimental.messages.format
         );
         config.module.rules.push({
-          test: new RegExp(`\\${extension}$`),
+          test: new RegExp(`${extension.replace(/\./g, '\\.')}$`),
           include: path.resolve(
             config.context!,
             pluginConfig.experimental.messages.path
