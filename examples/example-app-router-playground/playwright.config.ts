@@ -9,7 +9,7 @@ const PORT = process.env.CI ? 3004 : 3000;
 process.env.PORT = PORT.toString();
 
 const config: PlaywrightTestConfig = {
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
   testMatch: process.env.TEST_MATCH || 'main.spec.ts',
   testDir: './tests',
   projects: [

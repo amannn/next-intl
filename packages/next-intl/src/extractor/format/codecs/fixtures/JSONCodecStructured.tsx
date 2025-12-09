@@ -33,6 +33,6 @@ export default defineCodec(() => ({
       const obj = value as StoredMessage;
       result[id] = obj.message;
     }
-    return JSON.stringify(result, null, 2);
+    return JSON.stringify(result);
   }
 }));

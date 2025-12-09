@@ -1,7 +1,6 @@
 import POParser from 'po-parser';
-import {setNestedProperty} from '../../utils.js';
+import {getSortedMessages, setNestedProperty} from '../../utils.js';
 import {defineCodec} from '../ExtractorCodec.js';
-import {getSortedMessages} from '../utils.js';
 
 export default defineCodec(() => {
   // See also https://www.gnu.org/software/gettext/manual/html_node/Header-Entry.html
@@ -17,6 +16,9 @@ export default defineCodec(() => {
     'X-Crowdin-SourceKey': 'msgstr'
   };
 
+  // Move all parts before the last dot to msgctxt
+  const NAMESPACE_SEPARATOR = '.';
+
   // Metadata is stored so it can be retained when writing
   const metadataByLocale = new Map();
 
@@ -26,17 +28,55 @@ export default defineCodec(() => {
       if (catalog.meta) {
         metadataByLocale.set(context.locale, catalog.meta);
       }
-      return catalog.messages || [];
+      const messages = catalog.messages || [];
+      return messages.map((msg) => {
+        const {extractedComments, msgctxt, msgid, msgstr, ...rest} = msg;
+
+        if (extractedComments && extractedComments.length > 1) {
+          throw new Error(
+            `Multiple extracted comments are not supported. Found ${extractedComments.length} comments for msgid "${msgid}".`
+          );
+        }
+
+        return {
+          ...rest,
+          id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
+          message: msgstr,
+          ...(extractedComments &&
+            extractedComments.length > 0 && {
+              description: extractedComments[0]
+            })
+        };
+      });
     },
 
     encode(messages, context) {
+      const encodedMessages = getSortedMessages(messages).map((msg) => {
+        const {description, id, message, ...rest} = msg;
+
+        const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
+        const hasNamespace = id.includes(NAMESPACE_SEPARATOR);
+
+        const msgid = hasNamespace
+          ? id.slice(lastDotIndex + NAMESPACE_SEPARATOR.length)
+          : id;
+
+        return {
+          msgid,
+          msgstr: message,
+          ...(description && {extractedComments: [description]}),
+          ...(hasNamespace && {msgctxt: id.slice(0, lastDotIndex)}),
+          ...rest
+        };
+      });
+
       return POParser.serialize({
         meta: {
           Language: context.locale,
           ...DEFAULT_METADATA,
           ...metadataByLocale.get(context.locale)
         },
-        messages: getSortedMessages(messages)
+        messages: encodedMessages
       });
     },
 
@@ -46,7 +86,7 @@ export default defineCodec(() => {
       for (const message of parsed) {
         setNestedProperty(messagesObject, message.id, message.message);
       }
-      return JSON.stringify(messagesObject, null, 2);
+      return JSON.stringify(messagesObject);
     }
   };
 });

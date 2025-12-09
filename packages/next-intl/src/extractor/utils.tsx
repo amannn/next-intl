@@ -1,3 +1,5 @@
+import type {ExtractorMessage} from './types.js';
+
 export function setNestedProperty(
   obj: Record<string, any>,
   keyPath: string,
@@ -23,4 +25,19 @@ export function setNestedProperty(
 
 export function localeCompare(a: string, b: string) {
   return a.localeCompare(b, 'en');
+}
+
+export function getSortedMessages(
+  messages: Array<ExtractorMessage>
+): Array<ExtractorMessage> {
+  return messages.toSorted((messageA, messageB) => {
+    const pathA = messageA.references?.[0]?.path ?? '';
+    const pathB = messageB.references?.[0]?.path ?? '';
+
+    if (pathA === pathB) {
+      return localeCompare(messageA.id, messageB.id);
+    } else {
+      return localeCompare(pathA, pathB);
+    }
+  });
 }

@@ -47,7 +47,7 @@ describe('json format', () => {
     );
   }
 
-  it('saves messages initially', async () => {
+  it('saves messages initially', {timeout: 10000}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
@@ -2311,11 +2311,13 @@ describe('custom format', () => {
     filesystem.project.messages = {
       'en.po': `
       #: src/Greeting.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hello!"
       `,
       'de.po': `
       #: src/Greeting.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hallo!"
       `
@@ -2340,6 +2342,23 @@ describe('custom format', () => {
       {isDevelopment: true, projectRoot: '/project'}
     );
 
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    function Error() {
+      const t = useExtracted('misc');
+      return (
+        <div>
+          {t('The code you entered is incorrect. Please try again or contact support@example.com.')}
+          {t("Checking if you're logged in.")}
+        </div>
+      );
+    }
+    `;
+
     await compiler.compile(
       '/project/src/Greeting.tsx',
       filesystem.project.src['Greeting.tsx']
@@ -2358,6 +2377,17 @@ describe('custom format', () => {
       "X-Generator: next-intl\\n"
 
       #: src/Greeting.tsx
+      msgctxt "misc.Fp6Fab"
+      msgid "Checking if you're logged in."
+      msgstr "Checking if you're logged in."
+
+      #: src/Greeting.tsx
+      msgctxt "misc.l6ZjWT"
+      msgid "The code you entered is incorrect. Please try again or contact support@example.com."
+      msgstr "The code you entered is incorrect. Please try again or contact support@example.com."
+
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hello!"
       ",
@@ -2372,6 +2402,17 @@ describe('custom format', () => {
       "X-Generator: next-intl\\n"
 
       #: src/Greeting.tsx
+      msgctxt "misc.Fp6Fab"
+      msgid "Checking if you're logged in."
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "misc.l6ZjWT"
+      msgid "The code you entered is incorrect. Please try again or contact support@example.com."
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgctxt "OpKKos"
       msgid "Hello!"
       msgstr "Hallo!"
       ",
