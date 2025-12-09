@@ -17,6 +17,9 @@ export default defineCodec(() => {
     'X-Crowdin-SourceKey': 'msgstr'
   };
 
+  // Move all parts before the last dot to msgctxt
+  const NAMESPACE_SEPARATOR = '.';
+
   // Metadata is stored so it can be retained when writing
   const metadataByLocale = new Map();
 
@@ -26,17 +29,46 @@ export default defineCodec(() => {
       if (catalog.meta) {
         metadataByLocale.set(context.locale, catalog.meta);
       }
-      return catalog.messages || [];
+      const messages = catalog.messages || [];
+      return messages.map((msg) => {
+        const {msgctxt, msgid, msgstr, ...rest} = msg;
+
+        return {
+          ...rest,
+          id: msgctxt ? [msgctxt, msgid].join(NAMESPACE_SEPARATOR) : msgid,
+          message: msgstr
+        };
+      });
     },
 
     encode(messages, context) {
+      const encodedMessages = getSortedMessages(messages).map((msg) => {
+        const {id, message, ...rest} = msg;
+
+        if (id.includes(NAMESPACE_SEPARATOR)) {
+          const lastDotIndex = id.lastIndexOf(NAMESPACE_SEPARATOR);
+          return {
+            ...rest,
+            msgctxt: id.slice(0, lastDotIndex),
+            msgid: id.slice(lastDotIndex + NAMESPACE_SEPARATOR.length),
+            msgstr: message
+          };
+        }
+
+        return {
+          ...rest,
+          msgid: id,
+          msgstr: message
+        };
+      });
+
       return POParser.serialize({
         meta: {
           Language: context.locale,
           ...DEFAULT_METADATA,
           ...metadataByLocale.get(context.locale)
         },
-        messages: getSortedMessages(messages)
+        messages: encodedMessages
       });
     },
 
@@ -46,7 +78,7 @@ export default defineCodec(() => {
       for (const message of parsed) {
         setNestedProperty(messagesObject, message.id, message.message);
       }
-      return JSON.stringify(messagesObject, null, 2);
+      return JSON.stringify(messagesObject);
     }
   };
 });

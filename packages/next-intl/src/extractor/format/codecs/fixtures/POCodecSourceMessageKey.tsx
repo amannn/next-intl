@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import POParser from 'po-parser';
 import {setNestedProperty} from '../../../utils.js';
 import {defineCodec} from '../../ExtractorCodec.js';
@@ -22,17 +21,29 @@ export default defineCodec(() => {
       const messages =
         catalog.messages || ([] as NonNullable<typeof catalog.messages>);
 
-      // Note: The ids could also be persisted in the encode function (either as
-      // part of the .po file or in an additional file) to avoid recomputing them.
-      return messages.map((msg) => ({
-        ...msg,
-        id: getId(msg.id),
-        message: msg.message
-      }));
+      return messages.map((msg) => {
+        const {
+          msgctxt,
+          msgid, // eslint-disable-line @typescript-eslint/no-unused-vars -- not used
+          msgstr,
+          ...rest
+        } = msg;
+
+        // Necessary to restore the ID
+        if (!msgctxt) {
+          throw new Error('msgctxt is required');
+        }
+
+        return {
+          ...rest,
+          id: msgctxt,
+          message: msgstr
+        };
+      });
     },
 
     encode(messages, context) {
-      const encodedMessages = messages.map((msg) => {
+      const encodedMessages = getSortedMessages(messages).map((msg) => {
         const sourceMessage = context.sourceMessagesById.get(msg.id)?.message;
         if (!sourceMessage) {
           throw new Error(
@@ -40,10 +51,13 @@ export default defineCodec(() => {
           );
         }
 
+        // Store the hashed ID in msgctxt so we can restore it during decode
+        const {id, message, ...rest} = msg;
         return {
-          ...msg,
-          id: sourceMessage,
-          message: msg.message
+          ...rest,
+          msgctxt: id,
+          msgid: sourceMessage,
+          msgstr: message
         };
       });
 
@@ -53,7 +67,7 @@ export default defineCodec(() => {
           ...DEFAULT_METADATA,
           ...metadataByLocale.get(context.locale)
         },
-        messages: getSortedMessages(encodedMessages)
+        messages: encodedMessages
       });
     },
 
@@ -63,13 +77,7 @@ export default defineCodec(() => {
       for (const message of parsed) {
         setNestedProperty(messagesObject, message.id, message.message);
       }
-      return JSON.stringify(messagesObject, null, 2);
+      return JSON.stringify(messagesObject);
     }
   };
 });
-
-function getId(message: string): string {
-  const hash = crypto.createHash('sha512').update(message).digest();
-  const base64 = hash.toString('base64');
-  return base64.slice(0, 6);
-}
