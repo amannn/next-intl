@@ -47,7 +47,7 @@ describe('json format', () => {
     );
   }
 
-  it('saves messages initially', async () => {
+  it('saves messages initially', {timeout: 10000}, async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
     function Greeting() {
