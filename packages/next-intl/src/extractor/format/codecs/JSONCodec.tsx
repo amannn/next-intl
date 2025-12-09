@@ -1,4 +1,4 @@
-import {setNestedProperty, getSortedMessages} from '../../utils.js';
+import {getSortedMessages, setNestedProperty} from '../../utils.js';
 import {defineCodec} from '../ExtractorCodec.js';
 
 interface StoredFormat {
