@@ -1,5 +1,6 @@
 import type {ExtractorMessage} from './types.js';
 
+// Essentialls lodash/set, but we avoid this dependency
 export function setNestedProperty(
   obj: Record<string, any>,
   keyPath: string,
@@ -23,10 +24,6 @@ export function setNestedProperty(
   current[keys[keys.length - 1]] = value;
 }
 
-export function localeCompare(a: string, b: string) {
-  return a.localeCompare(b, 'en');
-}
-
 export function getSortedMessages(
   messages: Array<ExtractorMessage>
 ): Array<ExtractorMessage> {
@@ -40,4 +37,8 @@ export function getSortedMessages(
       return localeCompare(pathA, pathB);
     }
   });
+}
+
+export function localeCompare(a: string, b: string) {
+  return a.localeCompare(b, 'en');
 }

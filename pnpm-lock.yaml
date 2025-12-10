@@ -827,8 +827,8 @@ importers:
         specifier: workspace:^
         version: link:../swc-plugin-extractor
       po-parser:
-        specifier: 2.0.0-alpha.2
-        version: 2.0.0-alpha.2
+        specifier: ^2.0.0
+        version: 2.0.0
       use-intl:
         specifier: workspace:^
         version: link:../use-intl
@@ -12167,8 +12167,8 @@ packages:
     resolution: {integrity: sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==}
     engines: {node: '>=6'}
 
-  po-parser@2.0.0-alpha.2:
-    resolution: {integrity: sha512-XMJ5Uvj2KiScU5yjW4J9BveGqwk6ZsQ48nDDz5gvKmBFx7YJg6s7lFmZfCJ/+srf1LTmSNPx5JOl6/Am5mzbYw==}
+  po-parser@2.0.0:
+    resolution: {integrity: sha512-SZvoKi3PoI/hHa2V9je9CW7Xgxl4dvO74cvaa6tWShIHT51FkPxje6pt0gTJznJrU67ix91nDaQp2hUxkOYhKA==}
 
   points-on-curve@0.2.0:
     resolution: {integrity: sha512-0mYKnYYe9ZcqMCWhUjItv/oHjvgEsfKvnUTg8sAtnHr3GVy7rGkXCb6d5cSyqrWqL4k81b9CPg3urd+T7aop3A==}
@@ -30837,7 +30837,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  po-parser@2.0.0-alpha.2: {}
+  po-parser@2.0.0: {}
 
   points-on-curve@0.2.0: {}
 
