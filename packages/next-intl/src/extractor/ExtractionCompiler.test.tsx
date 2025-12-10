@@ -1242,8 +1242,14 @@ describe('po format', () => {
       '/project/src/component-a.tsx',
       filesystem.project.src['component-a.tsx']
     );
-    await waitForWriteFileCalls(2);
 
+    // Reference to component-a.tsx is written
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).toContain(
+      'src/component-a.tsx'
+    );
+
+    // Rename component-a.tsx to component-b.tsx
     filesystem.project.src['component-b.tsx'] =
       filesystem.project.src['component-a.tsx'];
     delete filesystem.project.src['component-a.tsx'];
@@ -1469,6 +1475,35 @@ msgstr "Hallo!"
   it('sorts messages by reference path when files are compiled out of order', async () => {
     using compiler = createCompiler();
 
+    filesystem.project.src['a.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function A() {
+      const t = useExtracted();
+      return <div>{t('Message A')}</div>;
+    }
+    `;
+    filesystem.project.src['b.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function B() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `;
+    filesystem.project.src['c.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function C() {
+      const t = useExtracted();
+      return <div>{t('Message C')}</div>;
+    }
+    `;
+    filesystem.project.src['d.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    export default function D() {
+      const t = useExtracted();
+      return <div>{t('Message B')}</div>;
+    }
+    `;
+
     await compiler.compile(
       '/project/src/a.tsx',
       `
@@ -1513,7 +1548,7 @@ msgstr "Hallo!"
     `
     );
 
-    await waitForWriteFileCalls(5);
+    await waitForWriteFileCalls(1);
 
     expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
       [
