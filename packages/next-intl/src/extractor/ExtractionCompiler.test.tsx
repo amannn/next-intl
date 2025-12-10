@@ -1132,6 +1132,165 @@ describe('po format', () => {
     `);
   });
 
+  it('removes obsolete references after a file rename during build', async () => {
+    filesystem.project.messages = {
+      'en.po': `
+      msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-a.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      `,
+      'de.po': `
+      msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-a.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      `
+    };
+    filesystem.project.src['component-b.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Component() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+
+    using compiler = new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'po',
+          locales: 'infer'
+        }
+      },
+      {isDevelopment: false, projectRoot: '/project'}
+    );
+
+    await compiler.compile(
+      '/project/src/component-b.tsx',
+      filesystem.project.src['component-b.tsx']
+    );
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-b.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-b.tsx
+      msgid "OpKKos"
+      msgstr "Hallo!"
+      ",
+        ],
+      ]
+    `);
+  });
+
+  it('removes obsolete references after a file rename during dev', async () => {
+    filesystem.project.src['component-a.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Component() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/component-a.tsx',
+      filesystem.project.src['component-a.tsx']
+    );
+    await waitForWriteFileCalls(2);
+
+    filesystem.project.src['component-b.tsx'] =
+      filesystem.project.src['component-a.tsx'];
+    delete filesystem.project.src['component-a.tsx'];
+
+    await compiler.compile(
+      '/project/src/component-b.tsx',
+      filesystem.project.src['component-b.tsx']
+    );
+
+    await waitForWriteFileCalls(4);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-b.tsx
+      msgid "OpKKos"
+      msgstr "Hello!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/component-b.tsx
+      msgid "OpKKos"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
   it('supports namespaces', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
