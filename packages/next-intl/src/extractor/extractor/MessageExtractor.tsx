@@ -30,7 +30,7 @@ export default class MessageExtractor {
     this.sourceMap = opts.sourceMap ?? false;
   }
 
-  async processFileContent(
+  async extract(
     absoluteFilePath: string,
     source: string
   ): Promise<{

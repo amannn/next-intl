@@ -9,7 +9,7 @@ async function process(
     isDevelopment: true,
     projectRoot: '/project',
     ...opts
-  }).processFileContent('/project/test.tsx', code);
+  }).extract('/project/test.tsx', code);
 }
 
 it('can extract with source maps', async () => {

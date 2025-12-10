@@ -27,7 +27,7 @@ bench('extract messages without source maps', async () => {
     sourceMap: false
   });
 
-  await extractor.processFileContent('/project/test.tsx', testCode);
+  await extractor.extract('/project/test.tsx', testCode);
 });
 
 bench('extract messages with source maps', async () => {
@@ -37,5 +37,5 @@ bench('extract messages with source maps', async () => {
     sourceMap: true
   });
 
-  await extractor.processFileContent('/project/test.tsx', testCode);
+  await extractor.extract('/project/test.tsx', testCode);
 });

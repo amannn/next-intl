@@ -219,7 +219,7 @@ export default class CatalogManager {
     }
   }
 
-  async extractFileMessages(
+  public async extractFileMessages(
     absoluteFilePath: string,
     source: string
   ): Promise<{
@@ -228,7 +228,7 @@ export default class CatalogManager {
     changed: boolean;
     map?: string;
   }> {
-    const result = await this.messageExtractor.processFileContent(
+    const result = await this.messageExtractor.extract(
       absoluteFilePath,
       source
     );
