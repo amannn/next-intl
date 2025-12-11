@@ -27,26 +27,18 @@ export default class ExtractionCompiler implements Disposable {
   }
 
   [Symbol.dispose](): void {
+    const cleanup = this[Symbol.dispose];
+    process.off('exit', cleanup);
+    process.off('SIGINT', cleanup);
+    process.off('SIGTERM', cleanup);
+
     this.manager.destroy();
   }
 
   private installExitHandlers() {
-    const cleanup = () => {
-      try {
-        this[Symbol.dispose]();
-      } catch {
-        // swallow cleanup errors
-      }
-    };
-
-    process.once('exit', cleanup);
-    process.once('SIGINT', () => {
-      cleanup();
-      process.exit(0);
-    });
-    process.once('SIGTERM', () => {
-      cleanup();
-      process.exit(0);
-    });
+    const cleanup = this[Symbol.dispose];
+    process.on('exit', cleanup);
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
   }
 }
