@@ -1129,6 +1129,91 @@ describe('po format', () => {
     `);
   });
 
+  it('removes references when a message is dropped from a single file', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t('Hey!')}
+          {t('Howdy!')}
+        </div>
+      );
+    }
+    `;
+    filesystem.project.src['Footer.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Footer() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': '',
+      'de.po': ''
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Howdy!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(-2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.po",
+          "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Footer.tsx
+      msgid "+YJVTi"
+      msgstr "Hey!"
+
+      #: src/Greeting.tsx
+      msgid "4xqPlJ"
+      msgstr "Howdy!"
+      ",
+        ],
+        [
+          "messages/de.po",
+          "msgid ""
+      msgstr ""
+      "Language: de\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Footer.tsx
+      msgid "+YJVTi"
+      msgstr ""
+
+      #: src/Greeting.tsx
+      msgid "4xqPlJ"
+      msgstr ""
+      ",
+        ],
+      ]
+    `);
+  });
+
   it('removes obsolete messages during build', async () => {
     filesystem.project.messages = {
       'en.po': `

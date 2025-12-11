@@ -296,33 +296,30 @@ export default class CatalogManager {
       if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Don't delete IDs still used in other files
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const idsToDelete = idsToRemove.filter((id) => {
-      const message = this.messagesById.get(id);
-      return !message?.references?.some((ref) => ref.path !== relativeFilePath);
-    });
 
     // Clean up removed messages from `messagesById`
-    idsToDelete.forEach((id) => {
-      this.messagesById.delete(id);
-    });
+    idsToRemove.forEach((id) => {
+      const message = this.messagesById.get(id);
+      if (!message) return;
 
-    // If file was deleted, remove references to it from all messages
-    if (messages.length === 0) {
-      for (const [id, message] of this.messagesById) {
-        if (message.references?.some((ref) => ref.path === relativeFilePath)) {
-          const cleanedReferences = message.references.filter(
+      const hasOtherReferences = message.references?.some(
+        (ref) => ref.path !== relativeFilePath
+      );
+
+      if (!hasOtherReferences) {
+        // No other references, delete the message entirely
+        this.messagesById.delete(id);
+      } else {
+        // Message is used elsewhere, remove this file from references
+        this.messagesById.set(id, {
+          ...message,
+          references: message.references?.filter(
             (ref) => ref.path !== relativeFilePath
-          );
-          this.messagesById.set(id, {
-            ...message,
-            references:
-              cleanedReferences.length > 0 ? cleanedReferences : undefined
-          });
-        }
+          )
+        });
       }
-    }
+    });
 
     // Update the stored messages
     if (messages.length > 0) {
