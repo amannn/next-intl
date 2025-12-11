@@ -1475,77 +1475,29 @@ msgstr "Hallo!"
   it('sorts messages by reference path when files are compiled out of order', async () => {
     using compiler = createCompiler();
 
-    filesystem.project.src['a.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    export default function A() {
-      const t = useExtracted();
-      return <div>{t('Message A')}</div>;
-    }
-    `;
-    filesystem.project.src['b.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    export default function B() {
-      const t = useExtracted();
-      return <div>{t('Message B')}</div>;
-    }
-    `;
-    filesystem.project.src['c.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    export default function C() {
-      const t = useExtracted();
-      return <div>{t('Message C')}</div>;
-    }
-    `;
-    filesystem.project.src['d.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    export default function D() {
-      const t = useExtracted();
-      return <div>{t('Message B')}</div>;
-    }
-    `;
+    filesystem.project.src['a.tsx'] = createFile('A', 'Message A');
+    filesystem.project.src['b.tsx'] = createFile('B', 'Message B');
+    filesystem.project.src['c.tsx'] = createFile('C', 'Message C');
+    filesystem.project.src['d.tsx'] = createFile('D', 'Message B');
 
     await compiler.compile(
       '/project/src/a.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    export default function A() {
-      const t = useExtracted();
-      return <div>{t('Message A')}</div>;
-    }
-    `
+      filesystem.project.src['a.tsx']
     );
 
     await compiler.compile(
       '/project/src/d.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    export default function D() {
-      const t = useExtracted();
-      return <div>{t('Message B')}</div>;
-    }
-    `
+      filesystem.project.src['d.tsx']
     );
 
     await compiler.compile(
       '/project/src/c.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    export default function C() {
-      const t = useExtracted();
-      return <div>{t('Message C')}</div>;
-    }
-    `
+      filesystem.project.src['c.tsx']
     );
 
     await compiler.compile(
       '/project/src/b.tsx',
-      `
-    import {useExtracted} from 'next-intl';
-    export default function B() {
-      const t = useExtracted();
-      return <div>{t('Message B')}</div>;
-    }
-    `
+      filesystem.project.src['b.tsx']
     );
 
     await waitForWriteFileCalls(1);
@@ -2619,6 +2571,16 @@ describe('custom format', () => {
 /**
  * Test utils
  ****************************************************************/
+
+function createFile(componentName: string, message: string) {
+  return `
+    import {useExtracted} from 'next-intl';
+    export default function ${componentName}() {
+      const t = useExtracted();
+      return <div>{t('${message}')}</div>;
+    }
+    `;
+}
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
