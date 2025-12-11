@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import MessageExtractor from '../extractor/MessageExtractor.js';
+import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
+import SourceFileWatcher from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
 import {localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
@@ -42,7 +43,8 @@ export default class CatalogManager {
   private persister?: CatalogPersister;
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
-  private messageExtractor: MessageExtractor;
+  private extractor: MessageExtractor;
+  private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
   // (but doesn't indicate that project scan is done)
@@ -54,18 +56,19 @@ export default class CatalogManager {
       projectRoot?: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
-    } = {}
+      messageExtractor: MessageExtractor;
+    }
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
     this.isDevelopment = opts.isDevelopment ?? false;
 
-    this.messageExtractor = new MessageExtractor({
-      isDevelopment: this.isDevelopment,
-      projectRoot: this.projectRoot,
-      sourceMap: opts.sourceMap
-    });
+    this.extractor = opts.messageExtractor;
+
+    if (this.isDevelopment) {
+      void this.startSourceWatcher();
+    }
   }
 
   private async getCodec(): Promise<ExtractorCodec> {
@@ -131,7 +134,7 @@ export default class CatalogManager {
     );
     await Promise.all(
       Array.from(sourceFiles).map(async (filePath) =>
-        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+        this.processFile(filePath)
       )
     );
 
@@ -231,19 +234,21 @@ export default class CatalogManager {
     }
   }
 
-  public async extractFileMessages(
-    absoluteFilePath: string,
-    source: string
-  ): Promise<{
-    messages: Array<ExtractorMessage>;
-    code: string;
-    changed: boolean;
-    map?: string;
-  }> {
-    const result = await this.messageExtractor.extract(
-      absoluteFilePath,
-      source
-    );
+  public async processFile(absoluteFilePath: string): Promise<boolean> {
+    let messages: Array<ExtractorMessage> = [];
+    try {
+      const content = await fs.readFile(absoluteFilePath, 'utf8');
+      const extraction = await this.extractor.extract(
+        absoluteFilePath,
+        content
+      );
+      messages = extraction.messages;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
+      // ENOENT -> treat as no messages
+    }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
 
@@ -253,7 +258,7 @@ export default class CatalogManager {
     // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractorMessage>();
 
-    for (let message of result.messages) {
+    for (let message of messages) {
       const prevMessage = this.messagesById.get(message.id);
 
       // Merge with previous message if it exists
@@ -300,9 +305,7 @@ export default class CatalogManager {
     });
 
     // Update the stored messages
-    const hasMessages = result.messages.length > 0;
-
-    if (hasMessages) {
+    if (messages.length > 0) {
       this.messagesByFile.set(absoluteFilePath, fileMessages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
@@ -312,7 +315,7 @@ export default class CatalogManager {
       prevFileMessages,
       fileMessages
     );
-    return {...result, changed};
+    return changed;
   }
 
   private async validateExistingReferences(
@@ -339,7 +342,7 @@ export default class CatalogManager {
 
       if (!refSource) continue;
 
-      const refResult = await this.messageExtractor.extract(
+      const refResult = await this.extractor.extract(
         refAbsoluteFilePath,
         refSource
       );
@@ -476,7 +479,43 @@ export default class CatalogManager {
     }
   };
 
+  private async startSourceWatcher(): Promise<void> {
+    if (!this.isDevelopment || this.sourceWatcher) return;
+    this.sourceWatcher = new SourceFileWatcher(this.getSrcPaths(), (events) =>
+      this.handleFileEvents(events)
+    );
+    await this.sourceWatcher.start();
+
+    const stop = () => void this.stopSourceWatcher();
+    process.once('exit', stop);
+    process.once('SIGINT', stop);
+    process.once('SIGTERM', stop);
+  }
+
+  private async stopSourceWatcher(): Promise<void> {
+    await this.sourceWatcher?.stop();
+    this.sourceWatcher = undefined;
+  }
+
+  private async handleFileEvents(events: Array<{type: string; path: string}>) {
+    if (this.loadCatalogsPromise) {
+      await this.loadCatalogsPromise;
+    }
+
+    let changed = false;
+
+    for (const event of events) {
+      const hasChanged = await this.processFile(event.path);
+      changed ||= hasChanged;
+    }
+
+    if (changed) {
+      await this.save();
+    }
+  }
+
   destroy(): void {
+    void this.stopSourceWatcher();
     this.saveScheduler.destroy();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);
