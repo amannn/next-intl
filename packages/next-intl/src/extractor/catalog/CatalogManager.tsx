@@ -267,11 +267,7 @@ export default class CatalogManager {
 
       // Merge with previous message if it exists
       if (prevMessage) {
-        const validated = await this.validateExistingReferences(
-          message.id,
-          prevMessage.references ?? [],
-          absoluteFilePath
-        );
+        const validated = prevMessage.references ?? [];
         message = {
           ...message,
           references: this.mergeReferences(validated, {
@@ -333,42 +329,6 @@ export default class CatalogManager {
       fileMessages
     );
     return changed;
-  }
-
-  private async validateExistingReferences(
-    messageId: string,
-    references: Array<{path: string}>,
-    currentAbsoluteFilePath: string
-  ): Promise<Array<{path: string}>> {
-    const validated: Array<{path: string}> = [];
-
-    for (const ref of references) {
-      const refAbsoluteFilePath = path.join(this.projectRoot, ref.path);
-
-      // No need to validate references to the same file
-      if (refAbsoluteFilePath === currentAbsoluteFilePath) continue;
-
-      const refSource = await fs
-        .readFile(refAbsoluteFilePath, 'utf8')
-        .catch((err) => {
-          if (err && err.code === 'ENOENT') {
-            return null;
-          }
-          throw err;
-        });
-
-      if (!refSource) continue;
-
-      const refResult = await this.extractor.extract(
-        refAbsoluteFilePath,
-        refSource
-      );
-      if (refResult.messages.some((msg) => msg.id === messageId)) {
-        validated.push(ref);
-      }
-    }
-
-    return validated;
   }
 
   private mergeReferences(
