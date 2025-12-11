@@ -1,9 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import MessageExtractor from '../extractor/MessageExtractor.js';
+import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
+import SourceFileWatcher from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
 import {localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
@@ -42,7 +43,8 @@ export default class CatalogManager {
   private persister?: CatalogPersister;
   private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
-  private messageExtractor: MessageExtractor;
+  private extractor: MessageExtractor;
+  private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
   // (but doesn't indicate that project scan is done)
@@ -54,18 +56,23 @@ export default class CatalogManager {
       projectRoot?: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
-    } = {}
+      extractor: MessageExtractor;
+    }
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot || process.cwd();
     this.isDevelopment = opts.isDevelopment ?? false;
 
-    this.messageExtractor = new MessageExtractor({
-      isDevelopment: this.isDevelopment,
-      projectRoot: this.projectRoot,
-      sourceMap: opts.sourceMap
-    });
+    this.extractor = opts.extractor;
+
+    if (this.isDevelopment) {
+      this.sourceWatcher = new SourceFileWatcher(
+        this.getSrcPaths(),
+        this.handleFileEvents.bind(this)
+      );
+      void this.sourceWatcher.start();
+    }
   }
 
   private async getCodec(): Promise<ExtractorCodec> {
@@ -131,7 +138,7 @@ export default class CatalogManager {
     );
     await Promise.all(
       Array.from(sourceFiles).map(async (filePath) =>
-        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+        this.processFile(filePath)
       )
     );
 
@@ -231,19 +238,21 @@ export default class CatalogManager {
     }
   }
 
-  public async extractFileMessages(
-    absoluteFilePath: string,
-    source: string
-  ): Promise<{
-    messages: Array<ExtractorMessage>;
-    code: string;
-    changed: boolean;
-    map?: string;
-  }> {
-    const result = await this.messageExtractor.extract(
-      absoluteFilePath,
-      source
-    );
+  public async processFile(absoluteFilePath: string): Promise<boolean> {
+    let messages: Array<ExtractorMessage> = [];
+    try {
+      const content = await fs.readFile(absoluteFilePath, 'utf8');
+      const extraction = await this.extractor.extract(
+        absoluteFilePath,
+        content
+      );
+      messages = extraction.messages;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
+      // ENOENT -> treat as no messages
+    }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
 
@@ -253,16 +262,12 @@ export default class CatalogManager {
     // Replace existing messages with new ones
     const fileMessages = new Map<string, ExtractorMessage>();
 
-    for (let message of result.messages) {
+    for (let message of messages) {
       const prevMessage = this.messagesById.get(message.id);
 
       // Merge with previous message if it exists
       if (prevMessage) {
-        const validated = await this.validateExistingReferences(
-          message.id,
-          prevMessage.references ?? [],
-          absoluteFilePath
-        );
+        const validated = prevMessage.references ?? [];
         message = {
           ...message,
           references: this.mergeReferences(validated, {
@@ -287,22 +292,33 @@ export default class CatalogManager {
       if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Don't delete IDs still used in other files
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const idsToDelete = idsToRemove.filter((id) => {
-      const message = this.messagesById.get(id);
-      return !message?.references?.some((ref) => ref.path !== relativeFilePath);
-    });
 
     // Clean up removed messages from `messagesById`
-    idsToDelete.forEach((id) => {
-      this.messagesById.delete(id);
+    idsToRemove.forEach((id) => {
+      const message = this.messagesById.get(id);
+      if (!message) return;
+
+      const hasOtherReferences = message.references?.some(
+        (ref) => ref.path !== relativeFilePath
+      );
+
+      if (!hasOtherReferences) {
+        // No other references, delete the message entirely
+        this.messagesById.delete(id);
+      } else {
+        // Message is used elsewhere, remove this file from references
+        this.messagesById.set(id, {
+          ...message,
+          references: message.references?.filter(
+            (ref) => ref.path !== relativeFilePath
+          )
+        });
+      }
     });
 
     // Update the stored messages
-    const hasMessages = result.messages.length > 0;
-
-    if (hasMessages) {
+    if (messages.length > 0) {
       this.messagesByFile.set(absoluteFilePath, fileMessages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
@@ -312,43 +328,7 @@ export default class CatalogManager {
       prevFileMessages,
       fileMessages
     );
-    return {...result, changed};
-  }
-
-  private async validateExistingReferences(
-    messageId: string,
-    references: Array<{path: string}>,
-    currentAbsoluteFilePath: string
-  ): Promise<Array<{path: string}>> {
-    const validated: Array<{path: string}> = [];
-
-    for (const ref of references) {
-      const refAbsoluteFilePath = path.join(this.projectRoot, ref.path);
-
-      // No need to validate references to the same file
-      if (refAbsoluteFilePath === currentAbsoluteFilePath) continue;
-
-      const refSource = await fs
-        .readFile(refAbsoluteFilePath, 'utf8')
-        .catch((err) => {
-          if (err && err.code === 'ENOENT') {
-            return null;
-          }
-          throw err;
-        });
-
-      if (!refSource) continue;
-
-      const refResult = await this.messageExtractor.extract(
-        refAbsoluteFilePath,
-        refSource
-      );
-      if (refResult.messages.some((msg) => msg.id === messageId)) {
-        validated.push(ref);
-      }
-    }
-
-    return validated;
+    return changed;
   }
 
   private mergeReferences(
@@ -476,7 +456,27 @@ export default class CatalogManager {
     }
   };
 
+  private async handleFileEvents(events: Array<{type: string; path: string}>) {
+    if (this.loadCatalogsPromise) {
+      await this.loadCatalogsPromise;
+    }
+
+    let changed = false;
+
+    for (const event of events) {
+      const hasChanged = await this.processFile(event.path);
+      changed ||= hasChanged;
+    }
+
+    if (changed) {
+      await this.save();
+    }
+  }
+
   destroy(): void {
+    this.sourceWatcher?.stop();
+    this.sourceWatcher = undefined;
+
     this.saveScheduler.destroy();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);

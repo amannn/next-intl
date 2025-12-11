@@ -125,6 +125,7 @@
   ],
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
+    "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.15.2",
     "negotiator": "^1.0.0",
     "next-intl-swc-plugin-extractor": "workspace:^",
