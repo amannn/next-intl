@@ -42,7 +42,7 @@ function traverseMessages(
     const value = obj[key];
     if (typeof value === 'string') {
       callback(value, newPath);
-    } else if (typeof value === 'object') {
+    } else if (value !== null && typeof value === 'object') {
       traverseMessages(value, callback, newPath);
     }
   }
