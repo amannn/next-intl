@@ -1224,7 +1224,7 @@ describe('po format', () => {
     `);
   });
 
-  it.only('removes messages when a file is deleted during dev', async () => {
+  it('removes messages when a file is deleted during dev', async () => {
     filesystem.project.src['component-a.tsx'] = `
     import {useExtracted} from 'next-intl';
     function ComponentA() {
