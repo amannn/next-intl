@@ -43,10 +43,13 @@ export default function extractionLoader(
     extractAllPromise = compiler.extractAll();
   }
 
-  extractor.extract(this.resourcePath, source).then(async (result) => {
-    if (!isDevelopment) {
-      await extractAllPromise;
-    }
-    callback(null, result.code, result.map);
-  });
+  extractor
+    .extract(this.resourcePath, source)
+    .then(async (result) => {
+      if (!isDevelopment) {
+        await extractAllPromise;
+      }
+      callback(null, result.code, result.map);
+    })
+    .catch(callback);
 }

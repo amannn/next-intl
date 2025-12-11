@@ -15,6 +15,7 @@ export default class ExtractionCompiler implements Disposable {
     }
   ) {
     this.manager = new CatalogManager(config, opts);
+    this[Symbol.dispose] = this[Symbol.dispose].bind(this);
     this.installExitHandlers();
   }
 
