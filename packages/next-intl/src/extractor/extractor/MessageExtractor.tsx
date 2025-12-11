@@ -30,7 +30,7 @@ export default class MessageExtractor {
     this.sourceMap = opts.sourceMap ?? false;
   }
 
-  async processFileContent(
+  async extract(
     absoluteFilePath: string,
     source: string
   ): Promise<{
@@ -38,7 +38,7 @@ export default class MessageExtractor {
     code: string;
     map?: string;
   }> {
-    const cacheKey = source;
+    const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 

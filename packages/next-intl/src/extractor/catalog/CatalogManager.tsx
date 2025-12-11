@@ -141,7 +141,7 @@ export default class CatalogManager {
       this.getSrcPaths()
     );
     await Promise.all(
-      sourceFiles.map(async (filePath) =>
+      Array.from(sourceFiles).map(async (filePath) =>
         this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
       )
     );
@@ -153,18 +153,14 @@ export default class CatalogManager {
     const messagesById: typeof this.messagesById = new Map();
     const messagesByFile: typeof this.messagesByFile = new Map();
     for (const message of messages) {
-      messagesById.set(message.id, message);
-      if (message.references) {
-        for (const ref of message.references) {
-          const absoluteFilePath = path.join(this.projectRoot, ref.path);
-          let fileMessages = messagesByFile.get(absoluteFilePath);
-          if (!fileMessages) {
-            fileMessages = new Map();
-            messagesByFile.set(absoluteFilePath, fileMessages);
-          }
-          fileMessages.set(message.id, message);
-        }
-      }
+      messagesById.set(message.id, {
+        ...message,
+        // Discard references from disk, as we want to build
+        // them from scratch during the full project scan.
+        // If we'd start with a draft here, we'd keep stale
+        // references and concatenate them with new ones.
+        references: []
+      });
     }
     this.messagesById = messagesById;
     this.messagesByFile = messagesByFile;
@@ -219,7 +215,7 @@ export default class CatalogManager {
     }
   }
 
-  async extractFileMessages(
+  public async extractFileMessages(
     absoluteFilePath: string,
     source: string
   ): Promise<{
@@ -228,7 +224,7 @@ export default class CatalogManager {
     changed: boolean;
     map?: string;
   }> {
-    const result = await this.messageExtractor.processFileContent(
+    const result = await this.messageExtractor.extract(
       absoluteFilePath,
       source
     );
@@ -246,19 +242,17 @@ export default class CatalogManager {
 
       // Merge with previous message if it exists
       if (prevMessage) {
-        // References: The `message` we receive here will always have one
-        // reference, which is the current file. We need to merge this with
-        // potentially existing references.
-        const references = [...(prevMessage.references ?? [])];
-        message.references.forEach((ref) => {
-          if (!references.some((cur) => cur.path === ref.path)) {
-            references.push(ref);
-          }
-        });
-        references.sort((referenceA, referenceB) =>
-          localeCompare(referenceA.path, referenceB.path)
+        const validated = await this.validateExistingReferences(
+          message.id,
+          prevMessage.references ?? [],
+          absoluteFilePath
         );
-        message = {...message, references};
+        message = {
+          ...message,
+          references: this.mergeReferences(validated, {
+            path: path.relative(this.projectRoot, absoluteFilePath)
+          })
+        };
 
         // Merge other properties like description, or unknown
         // attributes like flags that are opaque to us
@@ -303,6 +297,56 @@ export default class CatalogManager {
       fileMessages
     );
     return {...result, changed};
+  }
+
+  private async validateExistingReferences(
+    messageId: string,
+    references: Array<{path: string}>,
+    currentAbsoluteFilePath: string
+  ): Promise<Array<{path: string}>> {
+    const validated: Array<{path: string}> = [];
+
+    for (const ref of references) {
+      const refAbsoluteFilePath = path.join(this.projectRoot, ref.path);
+
+      // No need to validate references to the same file
+      if (refAbsoluteFilePath === currentAbsoluteFilePath) continue;
+
+      const refSource = await fs
+        .readFile(refAbsoluteFilePath, 'utf8')
+        .catch((err) => {
+          if (err && err.code === 'ENOENT') {
+            return null;
+          }
+          throw err;
+        });
+
+      if (!refSource) continue;
+
+      const refResult = await this.messageExtractor.extract(
+        refAbsoluteFilePath,
+        refSource
+      );
+      if (refResult.messages.some((msg) => msg.id === messageId)) {
+        validated.push(ref);
+      }
+    }
+
+    return validated;
+  }
+
+  private mergeReferences(
+    existing: Array<{path: string}>,
+    current: {path: string}
+  ): Array<{path: string}> {
+    const dedup = new Map<string, {path: string}>();
+    for (const ref of existing) {
+      dedup.set(ref.path, ref);
+    }
+    dedup.set(current.path, current);
+    return Array.from(dedup.values()).sort((a, b) =>
+      localeCompare(a.path, b.path)
+    );
   }
 
   private haveMessagesChangedForFile(
