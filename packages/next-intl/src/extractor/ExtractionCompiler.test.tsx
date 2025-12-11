@@ -1476,31 +1476,30 @@ msgstr "Hallo!"
     using compiler = createCompiler();
 
     filesystem.project.src['a.tsx'] = createFile('A', 'Message A');
-    filesystem.project.src['b.tsx'] = createFile('B', 'Message B');
-    filesystem.project.src['c.tsx'] = createFile('C', 'Message C');
-    filesystem.project.src['d.tsx'] = createFile('D', 'Message B');
-
     await compiler.compile(
       '/project/src/a.tsx',
       filesystem.project.src['a.tsx']
     );
 
+    filesystem.project.src['d.tsx'] = createFile('D', 'Message B');
     await compiler.compile(
       '/project/src/d.tsx',
       filesystem.project.src['d.tsx']
     );
 
+    filesystem.project.src['c.tsx'] = createFile('C', 'Message C');
     await compiler.compile(
       '/project/src/c.tsx',
       filesystem.project.src['c.tsx']
     );
 
+    filesystem.project.src['b.tsx'] = createFile('B', 'Message B');
     await compiler.compile(
       '/project/src/b.tsx',
       filesystem.project.src['b.tsx']
     );
 
-    await waitForWriteFileCalls(1);
+    await waitForWriteFileCalls(4);
 
     expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
       [
