@@ -304,6 +304,22 @@ export default class CatalogManager {
       this.messagesById.delete(id);
     });
 
+    // If file was deleted, remove references to it from all messages
+    if (messages.length === 0) {
+      for (const [id, message] of this.messagesById) {
+        if (message.references?.some((ref) => ref.path === relativeFilePath)) {
+          const cleanedReferences = message.references.filter(
+            (ref) => ref.path !== relativeFilePath
+          );
+          this.messagesById.set(id, {
+            ...message,
+            references:
+              cleanedReferences.length > 0 ? cleanedReferences : undefined
+          });
+        }
+      }
+    }
+
     // Update the stored messages
     if (messages.length > 0) {
       this.messagesByFile.set(absoluteFilePath, fileMessages);
