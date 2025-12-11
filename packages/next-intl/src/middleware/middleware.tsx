@@ -319,7 +319,7 @@ export default function createMiddleware<
       }
     }
 
-    syncCookie(request, response, locale, resolvedRouting, domain);
+    syncCookie(request, response, locale, resolvedRouting);
 
     if (
       !hasRedirected &&

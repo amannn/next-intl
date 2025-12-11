@@ -5,13 +5,11 @@ import type {
   ResolvedRoutingConfig
 } from '../routing/config.js';
 import type {
-  DomainConfig,
   DomainsConfig,
   LocalePrefixMode,
   Locales,
   Pathnames
 } from '../routing/types.js';
-import {getAcceptLanguageLocale} from './resolveLocale.js';
 
 export default function syncCookie<
   AppLocales extends Locales,
@@ -32,32 +30,16 @@ export default function syncCookie<
     'locales' | 'defaultLocale'
   > & {
     localeCookie: InitializedLocaleCookieConfig;
-  },
-  domain?: DomainConfig<AppLocales>
+  }
 ) {
   if (!routing.localeCookie) return;
 
   const {name, ...rest} = routing.localeCookie;
-  const hasLocaleCookie = request.cookies.has(name);
-  const hasOutdatedCookie =
-    hasLocaleCookie && request.cookies.get(name)?.value !== locale;
 
-  if (hasOutdatedCookie) {
+  if (request.cookies.get(name)?.value !== locale) {
     response.cookies.set(name, locale, {
       path: request.nextUrl.basePath || undefined,
       ...rest
     });
-  } else if (!hasLocaleCookie) {
-    const acceptLanguageLocale = getAcceptLanguageLocale(
-      request.headers,
-      domain?.locales || routing.locales,
-      routing.defaultLocale
-    );
-    if (acceptLanguageLocale !== locale) {
-      response.cookies.set(name, locale, {
-        path: request.nextUrl.basePath || undefined,
-        ...rest
-      });
-    }
   }
 }
