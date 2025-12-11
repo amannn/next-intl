@@ -1224,6 +1224,52 @@ describe('po format', () => {
     `);
   });
 
+  it.only('removes messages when a file is deleted during dev', async () => {
+    filesystem.project.src['component-a.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function ComponentA() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+
+    await compiler.compile(
+      '/project/src/component-a.tsx',
+      filesystem.project.src['component-a.tsx']
+    );
+
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain('Hello!');
+
+    filesystem.project.src['component-b.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function ComponentB() {
+      const t = useExtracted();
+      return <div>{t('Howdy!')}</div>;
+    }
+    `;
+
+    await compiler.compile(
+      '/project/src/component-b.tsx',
+      filesystem.project.src['component-b.tsx']
+    );
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls[1][1]).toContain('Howdy!');
+
+    delete filesystem.project.src['component-b.tsx'];
+
+    // TODO: Trigger file removal
+
+    await waitForWriteFileCalls(3);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).not.toContain(
+      'component-b.tsx'
+    );
+  });
+
   it('removes obsolete references after a file rename during build', async () => {
     filesystem.project.messages = {
       'en.po': `
