@@ -485,11 +485,6 @@ export default class CatalogManager {
       this.handleFileEvents(events)
     );
     await this.sourceWatcher.start();
-
-    const stop = () => void this.stopSourceWatcher();
-    process.once('exit', stop);
-    process.once('SIGINT', stop);
-    process.once('SIGTERM', stop);
   }
 
   private async stopSourceWatcher(): Promise<void> {
