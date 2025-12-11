@@ -122,20 +122,9 @@ export default class CatalogManager {
   }
 
   public async loadMessages() {
-    this.loadCatalogsPromise = Promise.all([
-      this.loadSourceMessages(),
-      this.loadTargetMessages()
-    ]);
-
-    // Ensure catalogs are loaded before scanning source files.
-    // Otherwise, `loadSourceMessages` might overwrite extracted
-    // messages if it finishes after source file extraction.
+    const sourceDiskMessages = await this.loadSourceMessages();
+    this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
-
-    if (this.isDevelopment) {
-      const catalogLocales = this.getCatalogLocales();
-      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
-    }
 
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPaths()
@@ -145,25 +134,26 @@ export default class CatalogManager {
         this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
       )
     );
+
+    this.mergeSourceDiskMetadata(sourceDiskMessages);
+
+    if (this.isDevelopment) {
+      const catalogLocales = this.getCatalogLocales();
+      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
+    }
   }
 
-  private async loadSourceMessages() {
-    // First hydrate from source locale file to potentially init metadata
-    const messages = await this.loadLocaleMessages(this.config.sourceLocale);
-    const messagesById: typeof this.messagesById = new Map();
-    const messagesByFile: typeof this.messagesByFile = new Map();
-    for (const message of messages) {
-      messagesById.set(message.id, {
-        ...message,
-        // Discard references from disk, as we want to build
-        // them from scratch during the full project scan.
-        // If we'd start with a draft here, we'd keep stale
-        // references and concatenate them with new ones.
-        references: []
-      });
+  private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
+    // Load source catalog to hydrate metadata (e.g. flags) later without
+    // treating catalog entries as source of truth.
+    const diskMessages = await this.loadLocaleMessages(
+      this.config.sourceLocale
+    );
+    const byId = new Map<string, ExtractorMessage>();
+    for (const diskMessage of diskMessages) {
+      byId.set(diskMessage.id, diskMessage);
     }
-    this.messagesById = messagesById;
-    this.messagesByFile = messagesByFile;
+    return byId;
   }
 
   private async loadLocaleMessages(
@@ -193,13 +183,22 @@ export default class CatalogManager {
         if (prev) {
           // Unknown properties (like flags): disk wins
           // Known properties: existing (from extraction) wins
-          this.messagesById.set(diskMessage.id, {
+          const merged = {
             ...diskMessage,
             id: prev.id,
             message: prev.message,
             description: prev.description,
             references: prev.references
-          });
+          };
+          this.messagesById.set(diskMessage.id, merged);
+
+          // Keep per-file messages in sync with updated metadata
+          for (const [filePath, messages] of this.messagesByFile) {
+            if (messages.has(diskMessage.id)) {
+              messages.set(diskMessage.id, merged);
+              this.messagesByFile.set(filePath, messages);
+            }
+          }
         } else {
           // The message no longer exists, so it will be removed
           // as part of the next save invocation.
@@ -212,6 +211,23 @@ export default class CatalogManager {
         translations.set(message.id, message);
       }
       this.translationsByTargetLocale.set(locale, translations);
+    }
+  }
+
+  private mergeSourceDiskMetadata(
+    diskMessages: Map<string, ExtractorMessage>
+  ): void {
+    for (const [id, diskMessage] of diskMessages) {
+      const existing = this.messagesById.get(id);
+      if (!existing) continue;
+
+      const merged = {...existing};
+      for (const key of Object.keys(diskMessage)) {
+        if (merged[key] == null) {
+          merged[key] = diskMessage[key];
+        }
+      }
+      this.messagesById.set(id, merged);
     }
   }
 
