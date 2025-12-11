@@ -4,7 +4,7 @@ import type {ExtractorConfig} from './types.js';
 
 export default async function extractMessages(params: ExtractorConfig) {
   const compiler = new ExtractionCompiler(params, {
-    messageExtractor: new MessageExtractor({
+    extractor: new MessageExtractor({
       isDevelopment: false,
       projectRoot: process.cwd()
     })

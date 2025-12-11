@@ -56,7 +56,7 @@ export default class CatalogManager {
       projectRoot?: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
-      messageExtractor: MessageExtractor;
+      extractor: MessageExtractor;
     }
   ) {
     this.config = config;
@@ -64,10 +64,14 @@ export default class CatalogManager {
     this.projectRoot = opts.projectRoot || process.cwd();
     this.isDevelopment = opts.isDevelopment ?? false;
 
-    this.extractor = opts.messageExtractor;
+    this.extractor = opts.extractor;
 
     if (this.isDevelopment) {
-      void this.startSourceWatcher();
+      this.sourceWatcher = new SourceFileWatcher(
+        this.getSrcPaths(),
+        this.handleFileEvents.bind(this)
+      );
+      void this.sourceWatcher.start();
     }
   }
 
@@ -495,19 +499,6 @@ export default class CatalogManager {
     }
   };
 
-  private async startSourceWatcher(): Promise<void> {
-    if (!this.isDevelopment || this.sourceWatcher) return;
-    this.sourceWatcher = new SourceFileWatcher(this.getSrcPaths(), (events) =>
-      this.handleFileEvents(events)
-    );
-    await this.sourceWatcher.start();
-  }
-
-  private async stopSourceWatcher(): Promise<void> {
-    await this.sourceWatcher?.stop();
-    this.sourceWatcher = undefined;
-  }
-
   private async handleFileEvents(events: Array<{type: string; path: string}>) {
     if (this.loadCatalogsPromise) {
       await this.loadCatalogsPromise;
@@ -526,7 +517,9 @@ export default class CatalogManager {
   }
 
   destroy(): void {
-    void this.stopSourceWatcher();
+    this.sourceWatcher?.stop();
+    this.sourceWatcher = undefined;
+
     this.saveScheduler.destroy();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);

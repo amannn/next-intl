@@ -52,7 +52,7 @@ describe('json format', () => {
       },
       {
         ...opts,
-        messageExtractor: new MessageExtractor(opts)
+        extractor: new MessageExtractor(opts)
       }
     );
   }
@@ -656,7 +656,7 @@ describe('json format', () => {
           locales: ['de', 'fr']
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
 
     await compiler.extractAll();
@@ -808,7 +808,7 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
   }
 
@@ -1180,7 +1180,7 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
 
     await compiler.extractAll();
@@ -1313,7 +1313,7 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
 
     await compiler.extractAll();
@@ -2457,7 +2457,7 @@ describe('`srcPath` filtering', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
   }
 
@@ -2541,7 +2541,7 @@ describe('custom format', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
 
     await compiler.extractAll();
@@ -2609,7 +2609,7 @@ describe('custom format', () => {
           locales: 'infer'
         }
       },
-      {...opts, messageExtractor: new MessageExtractor(opts)}
+      {...opts, extractor: new MessageExtractor(opts)}
     );
 
     filesystem.project.src['Greeting.tsx'] = `

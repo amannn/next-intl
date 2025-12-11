@@ -11,14 +11,13 @@ export default class ExtractionCompiler implements Disposable {
       isDevelopment?: boolean;
       projectRoot?: string;
       sourceMap?: boolean;
-      messageExtractor: MessageExtractor;
+      extractor: MessageExtractor;
     }
   ) {
     this.manager = new CatalogManager(config, opts);
     this.installExitHandlers();
   }
 
-  // This was part of #compile fn previously (remove this comment after updating tests)
   public async extractAll() {
     // We can't rely on all files being compiled (e.g. due to persistent
     // caching), so loading the messages initially is necessary.
@@ -27,11 +26,7 @@ export default class ExtractionCompiler implements Disposable {
   }
 
   [Symbol.dispose](): void {
-    const cleanup = this[Symbol.dispose];
-    process.off('exit', cleanup);
-    process.off('SIGINT', cleanup);
-    process.off('SIGTERM', cleanup);
-
+    this.uninstallExitHandlers();
     this.manager.destroy();
   }
 
@@ -40,5 +35,12 @@ export default class ExtractionCompiler implements Disposable {
     process.on('exit', cleanup);
     process.on('SIGINT', cleanup);
     process.on('SIGTERM', cleanup);
+  }
+
+  private uninstallExitHandlers() {
+    const cleanup = this[Symbol.dispose];
+    process.off('exit', cleanup);
+    process.off('SIGINT', cleanup);
+    process.off('SIGTERM', cleanup);
   }
 }
