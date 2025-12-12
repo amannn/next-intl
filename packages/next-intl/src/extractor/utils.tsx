@@ -42,3 +42,7 @@ export function getSortedMessages(
 export function localeCompare(a: string, b: string) {
   return a.localeCompare(b, 'en');
 }
+
+export function getDefaultProjectRoot() {
+  return process.cwd();
+}

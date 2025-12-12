@@ -17,7 +17,7 @@ export default function extractionLoader(
 ) {
   const options = this.getOptions();
   const callback = this.async();
-  const projectRoot = this.rootContext || process.cwd();
+  const projectRoot = this.rootContext;
 
   // Avoid rollup's `replace` plugin to compile this away
   const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';

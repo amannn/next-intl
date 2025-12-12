@@ -2,7 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ExtractionCompiler from './ExtractionCompiler.js';
-import MessageExtractor from './extractor/MessageExtractor.js';
 
 const filesystem: {
   project: {
@@ -36,10 +35,6 @@ beforeEach(() => {
 
 describe('json format', () => {
   function createCompiler() {
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     return new ExtractionCompiler(
       {
         srcPath: './src',
@@ -51,8 +46,8 @@ describe('json format', () => {
         }
       },
       {
-        ...opts,
-        extractor: new MessageExtractor(opts)
+        isDevelopment: true,
+        projectRoot: '/project'
       }
     );
   }
@@ -642,10 +637,6 @@ describe('json format', () => {
     `;
     filesystem.project.messages = undefined;
 
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     using compiler = new ExtractionCompiler(
       {
         srcPath: './src',
@@ -656,7 +647,10 @@ describe('json format', () => {
           locales: ['de', 'fr']
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
     );
 
     await compiler.extractAll();
@@ -794,10 +788,6 @@ describe('json format', () => {
 
 describe('po format', () => {
   function createCompiler() {
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     return new ExtractionCompiler(
       {
         srcPath: './src',
@@ -808,7 +798,10 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
     );
   }
 
@@ -1251,10 +1244,6 @@ describe('po format', () => {
     }
     `;
 
-    const opts = {
-      isDevelopment: false,
-      projectRoot: '/project'
-    };
     using compiler = new ExtractionCompiler(
       {
         srcPath: './src',
@@ -1265,7 +1254,10 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: false,
+        projectRoot: '/project'
+      }
     );
 
     await compiler.extractAll();
@@ -1384,10 +1376,6 @@ describe('po format', () => {
     }
     `;
 
-    const opts = {
-      isDevelopment: false,
-      projectRoot: '/project'
-    };
     using compiler = new ExtractionCompiler(
       {
         srcPath: './src',
@@ -1398,7 +1386,10 @@ describe('po format', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: false,
+        projectRoot: '/project'
+      }
     );
 
     await compiler.extractAll();
@@ -2528,10 +2519,6 @@ describe('`srcPath` filtering', () => {
   });
 
   function createCompiler(srcPath: string | Array<string>) {
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     return new ExtractionCompiler(
       {
         srcPath,
@@ -2542,7 +2529,10 @@ describe('`srcPath` filtering', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
     );
   }
 
@@ -2606,10 +2596,6 @@ describe('custom format', () => {
     }
     `;
 
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     using compiler = new ExtractionCompiler(
       {
         srcPath: './src',
@@ -2626,7 +2612,10 @@ describe('custom format', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
     );
 
     await compiler.extractAll();
@@ -2674,10 +2663,6 @@ describe('custom format', () => {
       `
     };
 
-    const opts = {
-      isDevelopment: true,
-      projectRoot: '/project'
-    };
     using compiler = new ExtractionCompiler(
       {
         srcPath: './src',
@@ -2694,7 +2679,10 @@ describe('custom format', () => {
           locales: 'infer'
         }
       },
-      {...opts, extractor: new MessageExtractor(opts)}
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
     );
 
     filesystem.project.src['Greeting.tsx'] = `
