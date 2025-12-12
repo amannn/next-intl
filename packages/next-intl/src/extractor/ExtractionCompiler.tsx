@@ -1,5 +1,5 @@
 import CatalogManager from './catalog/CatalogManager.js';
-import type MessageExtractor from './extractor/MessageExtractor.js';
+import MessageExtractor from './extractor/MessageExtractor.js';
 import type {ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler implements Disposable {
@@ -11,10 +11,11 @@ export default class ExtractionCompiler implements Disposable {
       isDevelopment?: boolean;
       projectRoot?: string;
       sourceMap?: boolean;
-      extractor: MessageExtractor;
-    }
+      extractor?: MessageExtractor;
+    } = {}
   ) {
-    this.manager = new CatalogManager(config, opts);
+    const extractor = opts.extractor ?? new MessageExtractor(opts);
+    this.manager = new CatalogManager(config, {...opts, extractor});
     this[Symbol.dispose] = this[Symbol.dispose].bind(this);
     this.installExitHandlers();
   }

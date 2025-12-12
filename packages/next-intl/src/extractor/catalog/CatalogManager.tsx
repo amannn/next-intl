@@ -6,7 +6,7 @@ import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
 import SourceFileWatcher from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
-import {localeCompare} from '../utils.js';
+import {getDefaultProjectRoot, localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -61,7 +61,7 @@ export default class CatalogManager {
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(50);
-    this.projectRoot = opts.projectRoot || process.cwd();
+    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
 
     this.extractor = opts.extractor;
