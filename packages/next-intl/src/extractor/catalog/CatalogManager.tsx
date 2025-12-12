@@ -14,14 +14,20 @@ import SaveScheduler from './SaveScheduler.js';
 export default class CatalogManager {
   private config: ExtractorConfig;
 
-  /* The source of truth for which messages are used. */
+  /**
+   * The source of truth for which messages are used.
+   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   */
   private messagesByFile: Map<
     /* File path */ string,
     Map</* ID */ string, ExtractorMessage>
   > = new Map();
 
-  /* Fast lookup for messages by ID across all files,
-   * contains the same messages as `messagesByFile`. */
+  /**
+   * Fast lookup for messages by ID across all files,
+   * contains the same messages as `messagesByFile`.
+   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   */
   private messagesById: Map<string, ExtractorMessage> = new Map();
 
   /**
@@ -188,22 +194,14 @@ export default class CatalogManager {
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
         if (prev) {
+          // Mutate the existing object instead of creating a copy
+          // to keep messagesById and messagesByFile in sync.
           // Unknown properties (like flags): disk wins
           // Known properties: existing (from extraction) wins
-          const merged = {
-            ...diskMessage,
-            id: prev.id,
-            message: prev.message,
-            description: prev.description,
-            references: prev.references
-          };
-          this.messagesById.set(diskMessage.id, merged);
-
-          // Keep per-file messages in sync with updated metadata
-          for (const [filePath, messages] of this.messagesByFile) {
-            if (messages.has(diskMessage.id)) {
-              messages.set(diskMessage.id, merged);
-              this.messagesByFile.set(filePath, messages);
+          for (const key of Object.keys(diskMessage)) {
+            if (!['id', 'message', 'description', 'references'].includes(key)) {
+              // For unknown properties (like flags), disk wins
+              prev[key] = diskMessage[key];
             }
           }
         } else {
@@ -228,13 +226,14 @@ export default class CatalogManager {
       const existing = this.messagesById.get(id);
       if (!existing) continue;
 
-      const merged = {...existing};
+      // Mutate the existing object instead of creating a copy.
+      // This keeps `messagesById` and `messagesByFile` in sync since
+      // they reference the same object instance.
       for (const key of Object.keys(diskMessage)) {
-        if (merged[key] == null) {
-          merged[key] = diskMessage[key];
+        if (existing[key] == null) {
+          existing[key] = diskMessage[key];
         }
       }
-      this.messagesById.set(id, merged);
     }
   }
 
@@ -308,12 +307,10 @@ export default class CatalogManager {
         this.messagesById.delete(id);
       } else {
         // Message is used elsewhere, remove this file from references
-        this.messagesById.set(id, {
-          ...message,
-          references: message.references?.filter(
-            (ref) => ref.path !== relativeFilePath
-          )
-        });
+        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
+        message.references = message.references?.filter(
+          (ref) => ref.path !== relativeFilePath
+        );
       }
     });
 
