@@ -1,13 +1,14 @@
 import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
-import type {ExtractedMessage} from '../types.js';
+import type {ExtractorMessage} from '../types.js';
+import {getDefaultProjectRoot} from '../utils.js';
 import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
 
-type StrictExtractedMessage = ExtractedMessage & {
-  references: NonNullable<ExtractedMessage['references']>;
+type StrictExtractedMessage = ExtractorMessage & {
+  references: NonNullable<ExtractorMessage['references']>;
 };
 
 export default class MessageExtractor {
@@ -21,16 +22,16 @@ export default class MessageExtractor {
   }>(750);
 
   constructor(opts: {
-    isDevelopment: boolean;
-    projectRoot: string;
+    isDevelopment?: boolean;
+    projectRoot?: string;
     sourceMap?: boolean;
   }) {
-    this.isDevelopment = opts.isDevelopment;
-    this.projectRoot = opts.projectRoot;
+    this.isDevelopment = opts.isDevelopment ?? false;
+    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.sourceMap = opts.sourceMap ?? false;
   }
 
-  async processFileContent(
+  async extract(
     absoluteFilePath: string,
     source: string
   ): Promise<{
@@ -38,7 +39,7 @@ export default class MessageExtractor {
     code: string;
     map?: string;
   }> {
-    const cacheKey = source;
+    const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
     if (cached) return cached;
 

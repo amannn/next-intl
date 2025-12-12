@@ -1,11 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
-import MessageExtractor from '../extractor/MessageExtractor.js';
-import type Formatter from '../formatters/Formatter.js';
-import formatters from '../formatters/index.js';
+import type MessageExtractor from '../extractor/MessageExtractor.js';
+import type ExtractorCodec from '../format/ExtractorCodec.js';
+import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import type {ExtractedMessage, ExtractorConfig, Locale} from '../types.js';
-import {localeCompare} from '../utils.js';
+import SourceFileWatcher from '../source/SourceFileWatcher.js';
+import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
+import {getDefaultProjectRoot, localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -13,15 +14,21 @@ import SaveScheduler from './SaveScheduler.js';
 export default class CatalogManager {
   private config: ExtractorConfig;
 
-  /* The source of truth for which messages are used. */
+  /**
+   * The source of truth for which messages are used.
+   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   */
   private messagesByFile: Map<
     /* File path */ string,
-    Map</* ID */ string, ExtractedMessage>
+    Map</* ID */ string, ExtractorMessage>
   > = new Map();
 
-  /* Fast lookup for messages by ID across all files,
-   * contains the same messages as `messagesByFile`. */
-  private messagesById: Map<string, ExtractedMessage> = new Map();
+  /**
+   * Fast lookup for messages by ID across all files,
+   * contains the same messages as `messagesByFile`.
+   * NOTE: Should be mutated in place to keep `messagesById` and `messagesByFile` in sync.
+   */
+  private messagesById: Map<string, ExtractorMessage> = new Map();
 
   /**
    * This potentially also includes outdated ones that were initially available,
@@ -29,7 +36,7 @@ export default class CatalogManager {
    **/
   private translationsByTargetLocale: Map<
     Locale,
-    Map</* ID */ string, ExtractedMessage>
+    Map</* ID */ string, ExtractorMessage>
   > = new Map();
 
   private lastWriteByLocale: Map<Locale, Date | undefined> = new Map();
@@ -40,9 +47,10 @@ export default class CatalogManager {
 
   // Cached instances
   private persister?: CatalogPersister;
-  private formatter?: Formatter;
+  private codec?: ExtractorCodec;
   private catalogLocales?: CatalogLocales;
-  private messageExtractor: MessageExtractor;
+  private extractor: MessageExtractor;
+  private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
   // (but doesn't indicate that project scan is done)
@@ -54,44 +62,49 @@ export default class CatalogManager {
       projectRoot?: string;
       isDevelopment?: boolean;
       sourceMap?: boolean;
-    } = {}
+      extractor: MessageExtractor;
+    }
   ) {
     this.config = config;
     this.saveScheduler = new SaveScheduler<void>(50);
-    this.projectRoot = opts.projectRoot || process.cwd();
+    this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
 
-    this.messageExtractor = new MessageExtractor({
-      isDevelopment: this.isDevelopment,
-      projectRoot: this.projectRoot,
-      sourceMap: opts.sourceMap
-    });
+    this.extractor = opts.extractor;
+
+    if (this.isDevelopment) {
+      this.sourceWatcher = new SourceFileWatcher(
+        this.getSrcPaths(),
+        this.handleFileEvents.bind(this)
+      );
+      void this.sourceWatcher.start();
+    }
   }
 
-  private async getFormatter(): Promise<Formatter> {
-    if (this.formatter) {
-      return this.formatter;
-    } else {
-      const FormatterClass = (await formatters[this.config.messages.format]())
-        .default;
-      this.formatter = new FormatterClass();
-      return this.formatter;
+  private async getCodec(): Promise<ExtractorCodec> {
+    if (!this.codec) {
+      this.codec = await resolveCodec(
+        this.config.messages.format,
+        this.projectRoot
+      );
     }
+    return this.codec;
   }
 
   private async getPersister(): Promise<CatalogPersister> {
     if (this.persister) {
       return this.persister;
     } else {
-      this.persister = new CatalogPersister(
-        this.config.messages.path,
-        await this.getFormatter()
-      );
+      this.persister = new CatalogPersister({
+        messagesPath: this.config.messages.path,
+        codec: await this.getCodec(),
+        extension: getFormatExtension(this.config.messages.format)
+      });
       return this.persister;
     }
   }
 
-  private async getCatalogLocales(): Promise<CatalogLocales> {
+  private getCatalogLocales(): CatalogLocales {
     if (this.catalogLocales) {
       return this.catalogLocales;
     } else {
@@ -99,11 +112,10 @@ export default class CatalogManager {
         this.projectRoot,
         this.config.messages.path
       );
-      const formatter = await this.getFormatter();
       this.catalogLocales = new CatalogLocales({
         messagesDir,
         sourceLocale: this.config.sourceLocale,
-        extension: formatter.EXTENSION,
+        extension: getFormatExtension(this.config.messages.format),
         locales: this.config.messages.locales
       });
       return this.catalogLocales;
@@ -111,8 +123,7 @@ export default class CatalogManager {
   }
 
   private async getTargetLocales(): Promise<Array<Locale>> {
-    const catalogLocales = await this.getCatalogLocales();
-    return catalogLocales.getTargetLocales();
+    return this.getCatalogLocales().getTargetLocales();
   }
 
   getSrcPaths(): Array<string> {
@@ -124,66 +135,48 @@ export default class CatalogManager {
   }
 
   public async loadMessages() {
-    this.loadCatalogsPromise = Promise.all([
-      this.loadSourceMessages(),
-      this.loadTargetMessages()
-    ]);
-
-    // Ensure catalogs are loaded before scanning source files.
-    // Otherwise, `loadSourceMessages` might overwrite extracted
-    // messages if it finishes after source file extraction.
+    const sourceDiskMessages = await this.loadSourceMessages();
+    this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
-
-    if (this.isDevelopment) {
-      const catalogLocales = await this.getCatalogLocales();
-      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
-    }
 
     const sourceFiles = await SourceFileScanner.getSourceFiles(
       this.getSrcPaths()
     );
     await Promise.all(
-      sourceFiles.map(async (filePath) =>
-        this.extractFileMessages(filePath, await fs.readFile(filePath, 'utf8'))
+      Array.from(sourceFiles).map(async (filePath) =>
+        this.processFile(filePath)
       )
     );
+
+    this.mergeSourceDiskMetadata(sourceDiskMessages);
+
+    if (this.isDevelopment) {
+      const catalogLocales = this.getCatalogLocales();
+      catalogLocales.subscribeLocalesChange(this.onLocalesChange);
+    }
   }
 
-  private async loadSourceMessages() {
-    // First hydrate from source locale file to potentially init metadata
-    const messages = await this.loadLocaleMessages(this.config.sourceLocale);
-    const messagesById: typeof this.messagesById = new Map();
-    const messagesByFile: typeof this.messagesByFile = new Map();
-    for (const message of messages) {
-      messagesById.set(message.id, message);
-      if (message.references) {
-        for (const ref of message.references) {
-          const absoluteFilePath = path.join(this.projectRoot, ref.path);
-          let fileMessages = messagesByFile.get(absoluteFilePath);
-          if (!fileMessages) {
-            fileMessages = new Map();
-            messagesByFile.set(absoluteFilePath, fileMessages);
-          }
-          fileMessages.set(message.id, message);
-        }
-      }
+  private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
+    // Load source catalog to hydrate metadata (e.g. flags) later without
+    // treating catalog entries as source of truth.
+    const diskMessages = await this.loadLocaleMessages(
+      this.config.sourceLocale
+    );
+    const byId = new Map<string, ExtractorMessage>();
+    for (const diskMessage of diskMessages) {
+      byId.set(diskMessage.id, diskMessage);
     }
-    this.messagesById = messagesById;
-    this.messagesByFile = messagesByFile;
+    return byId;
   }
 
   private async loadLocaleMessages(
     locale: Locale
-  ): Promise<Array<ExtractedMessage>> {
+  ): Promise<Array<ExtractorMessage>> {
     const persister = await this.getPersister();
-    try {
-      const messages = await persister.read(locale);
-      const fileTime = await persister.getLastModified(locale);
-      this.lastWriteByLocale.set(locale, fileTime);
-      return messages;
-    } catch {
-      return [];
-    }
+    const messages = await persister.read(locale);
+    const fileTime = await persister.getLastModified(locale);
+    this.lastWriteByLocale.set(locale, fileTime);
+    return messages;
   }
 
   private async loadTargetMessages() {
@@ -201,15 +194,16 @@ export default class CatalogManager {
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
         if (prev) {
+          // Mutate the existing object instead of creating a copy
+          // to keep messagesById and messagesByFile in sync.
           // Unknown properties (like flags): disk wins
           // Known properties: existing (from extraction) wins
-          this.messagesById.set(diskMessage.id, {
-            ...diskMessage,
-            id: prev.id,
-            message: prev.message,
-            description: prev.description,
-            references: prev.references
-          });
+          for (const key of Object.keys(diskMessage)) {
+            if (!['id', 'message', 'description', 'references'].includes(key)) {
+              // For unknown properties (like flags), disk wins
+              prev[key] = diskMessage[key];
+            }
+          }
         } else {
           // The message no longer exists, so it will be removed
           // as part of the next save invocation.
@@ -217,7 +211,7 @@ export default class CatalogManager {
       }
     } else {
       // For target: disk wins completely
-      const translations = new Map<string, ExtractedMessage>();
+      const translations = new Map<string, ExtractorMessage>();
       for (const message of diskMessages) {
         translations.set(message.id, message);
       }
@@ -225,19 +219,39 @@ export default class CatalogManager {
     }
   }
 
-  async extractFileMessages(
-    absoluteFilePath: string,
-    source: string
-  ): Promise<{
-    messages: Array<ExtractedMessage>;
-    code: string;
-    changed: boolean;
-    map?: string;
-  }> {
-    const result = await this.messageExtractor.processFileContent(
-      absoluteFilePath,
-      source
-    );
+  private mergeSourceDiskMetadata(
+    diskMessages: Map<string, ExtractorMessage>
+  ): void {
+    for (const [id, diskMessage] of diskMessages) {
+      const existing = this.messagesById.get(id);
+      if (!existing) continue;
+
+      // Mutate the existing object instead of creating a copy.
+      // This keeps `messagesById` and `messagesByFile` in sync since
+      // they reference the same object instance.
+      for (const key of Object.keys(diskMessage)) {
+        if (existing[key] == null) {
+          existing[key] = diskMessage[key];
+        }
+      }
+    }
+  }
+
+  public async processFile(absoluteFilePath: string): Promise<boolean> {
+    let messages: Array<ExtractorMessage> = [];
+    try {
+      const content = await fs.readFile(absoluteFilePath, 'utf8');
+      const extraction = await this.extractor.extract(
+        absoluteFilePath,
+        content
+      );
+      messages = extraction.messages;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw err;
+      }
+      // ENOENT -> treat as no messages
+    }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
 
@@ -245,26 +259,20 @@ export default class CatalogManager {
     const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
 
     // Replace existing messages with new ones
-    const fileMessages = new Map<string, ExtractedMessage>();
+    const fileMessages = new Map<string, ExtractorMessage>();
 
-    for (let message of result.messages) {
+    for (let message of messages) {
       const prevMessage = this.messagesById.get(message.id);
 
       // Merge with previous message if it exists
       if (prevMessage) {
-        // References: The `message` we receive here will always have one
-        // reference, which is the current file. We need to merge this with
-        // potentially existing references.
-        const references = [...(prevMessage.references ?? [])];
-        message.references.forEach((ref) => {
-          if (!references.some((cur) => cur.path === ref.path)) {
-            references.push(ref);
-          }
-        });
-        references.sort((referenceA, referenceB) =>
-          localeCompare(referenceA.path, referenceB.path)
-        );
-        message = {...message, references};
+        const validated = prevMessage.references ?? [];
+        message = {
+          ...message,
+          references: this.mergeReferences(validated, {
+            path: path.relative(this.projectRoot, absoluteFilePath)
+          })
+        };
 
         // Merge other properties like description, or unknown
         // attributes like flags that are opaque to us
@@ -283,22 +291,31 @@ export default class CatalogManager {
       if (index !== -1) idsToRemove.splice(index, 1);
     }
 
-    // Don't delete IDs still used in other files
     const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
-    const idsToDelete = idsToRemove.filter((id) => {
-      const message = this.messagesById.get(id);
-      return !message?.references?.some((ref) => ref.path !== relativeFilePath);
-    });
 
     // Clean up removed messages from `messagesById`
-    idsToDelete.forEach((id) => {
-      this.messagesById.delete(id);
+    idsToRemove.forEach((id) => {
+      const message = this.messagesById.get(id);
+      if (!message) return;
+
+      const hasOtherReferences = message.references?.some(
+        (ref) => ref.path !== relativeFilePath
+      );
+
+      if (!hasOtherReferences) {
+        // No other references, delete the message entirely
+        this.messagesById.delete(id);
+      } else {
+        // Message is used elsewhere, remove this file from references
+        // Mutate the existing object to keep `messagesById` and `messagesByFile` in sync
+        message.references = message.references?.filter(
+          (ref) => ref.path !== relativeFilePath
+        );
+      }
     });
 
     // Update the stored messages
-    const hasMessages = result.messages.length > 0;
-
-    if (hasMessages) {
+    if (messages.length > 0) {
       this.messagesByFile.set(absoluteFilePath, fileMessages);
     } else {
       this.messagesByFile.delete(absoluteFilePath);
@@ -308,12 +325,26 @@ export default class CatalogManager {
       prevFileMessages,
       fileMessages
     );
-    return {...result, changed};
+    return changed;
+  }
+
+  private mergeReferences(
+    existing: Array<{path: string}>,
+    current: {path: string}
+  ): Array<{path: string}> {
+    const dedup = new Map<string, {path: string}>();
+    for (const ref of existing) {
+      dedup.set(ref.path, ref);
+    }
+    dedup.set(current.path, current);
+    return Array.from(dedup.values()).sort((a, b) =>
+      localeCompare(a.path, b.path)
+    );
   }
 
   private haveMessagesChangedForFile(
-    beforeMessages: Map<string, ExtractedMessage> | undefined,
-    afterMessages: Map<string, ExtractedMessage>
+    beforeMessages: Map<string, ExtractorMessage> | undefined,
+    afterMessages: Map<string, ExtractorMessage>
   ): boolean {
     // If one exists and the other doesn't, there's a change
     if (!beforeMessages) {
@@ -337,8 +368,8 @@ export default class CatalogManager {
   }
 
   private areMessagesEqual(
-    msg1: ExtractedMessage,
-    msg2: ExtractedMessage
+    msg1: ExtractorMessage,
+    msg2: ExtractorMessage
   ): boolean {
     // Note: We intentionally don't compare references here.
     // References are aggregated metadata from multiple files and comparing
@@ -375,22 +406,27 @@ export default class CatalogManager {
       await this.reloadLocaleCatalog(locale);
     }
 
-    const prevMessages = isSourceLocale
+    const localeMessages = isSourceLocale
       ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
 
-    const localeMessages = messages.map((message) => {
-      const prev = prevMessages?.get(message.id);
+    const messagesToPersist = messages.map((message) => {
+      const localeMessage = localeMessages?.get(message.id);
       return {
-        ...prev,
+        ...localeMessage,
         id: message.id,
         description: message.description,
         references: message.references,
-        message: isSourceLocale ? message.message : (prev?.message ?? '')
+        message: isSourceLocale
+          ? message.message
+          : (localeMessage?.message ?? '')
       };
     });
 
-    await persister.write(locale, localeMessages);
+    await persister.write(messagesToPersist, {
+      locale,
+      sourceMessagesById: this.messagesById
+    });
 
     // Update timestamps
     const newTime = await persister.getLastModified(locale);
@@ -417,7 +453,27 @@ export default class CatalogManager {
     }
   };
 
+  private async handleFileEvents(events: Array<{type: string; path: string}>) {
+    if (this.loadCatalogsPromise) {
+      await this.loadCatalogsPromise;
+    }
+
+    let changed = false;
+
+    for (const event of events) {
+      const hasChanged = await this.processFile(event.path);
+      changed ||= hasChanged;
+    }
+
+    if (changed) {
+      await this.save();
+    }
+  }
+
   destroy(): void {
+    this.sourceWatcher?.stop();
+    this.sourceWatcher = undefined;
+
     this.saveScheduler.destroy();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);

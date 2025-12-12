@@ -73,7 +73,8 @@ export default [
     output: {
       dir: 'dist/cjs/development',
       format: 'cjs',
-      entryFileNames: '[name].cjs'
+      entryFileNames: '[name].cjs',
+      chunkFileNames: '[name]-[hash].cjs'
     }
   })
 ];

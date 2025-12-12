@@ -1,10 +1,9 @@
 import CatalogManager from './catalog/CatalogManager.js';
+import MessageExtractor from './extractor/MessageExtractor.js';
 import type {ExtractorConfig} from './types.js';
 
 export default class ExtractionCompiler implements Disposable {
   private manager: CatalogManager;
-  private isDevelopment = false;
-  private initialScanPromise: Promise<void> | undefined;
 
   constructor(
     config: ExtractorConfig,
@@ -12,46 +11,38 @@ export default class ExtractionCompiler implements Disposable {
       isDevelopment?: boolean;
       projectRoot?: string;
       sourceMap?: boolean;
+      extractor?: MessageExtractor;
     } = {}
   ) {
-    this.manager = new CatalogManager(config, opts);
-    this.isDevelopment = opts.isDevelopment ?? false;
-
-    // Kick off the initial scan as early as possible,
-    // while awaiting it in `compile`. This also ensures
-    // we're only scanning once.
-    this.initialScanPromise = this.performInitialScan();
+    const extractor = opts.extractor ?? new MessageExtractor(opts);
+    this.manager = new CatalogManager(config, {...opts, extractor});
+    this[Symbol.dispose] = this[Symbol.dispose].bind(this);
+    this.installExitHandlers();
   }
 
-  public async compile(resourcePath: string, source: string) {
-    if (this.initialScanPromise) {
-      await this.initialScanPromise;
-      this.initialScanPromise = undefined;
-    }
-
-    const result = await this.manager.extractFileMessages(resourcePath, source);
-
-    if (this.isDevelopment && result.changed) {
-      // While we await the AST modification, we
-      // don't need to await the persistence
-      void this.manager.save();
-    }
-
-    return result;
-  }
-
-  private async performInitialScan(): Promise<void> {
+  public async extractAll() {
     // We can't rely on all files being compiled (e.g. due to persistent
     // caching), so loading the messages initially is necessary.
     await this.manager.loadMessages();
     await this.manager.save();
   }
 
-  public async extract() {
-    await this.initialScanPromise;
+  [Symbol.dispose](): void {
+    this.uninstallExitHandlers();
+    this.manager.destroy();
   }
 
-  [Symbol.dispose](): void {
-    this.manager.destroy();
+  private installExitHandlers() {
+    const cleanup = this[Symbol.dispose];
+    process.on('exit', cleanup);
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
+  }
+
+  private uninstallExitHandlers() {
+    const cleanup = this[Symbol.dispose];
+    process.off('exit', cleanup);
+    process.off('SIGINT', cleanup);
+    process.off('SIGTERM', cleanup);
   }
 }

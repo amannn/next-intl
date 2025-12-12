@@ -7,6 +7,7 @@ import type {
   TurbopackRuleConfigItem
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
+import {getFormatExtension} from '../extractor/format/index.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
@@ -72,7 +73,7 @@ export default function getNextConfig(
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
-    if (!experimental.srcPath || !experimental.messages) {
+    if (!experimental.srcPath || !pluginConfig.experimental?.messages) {
       throwError(
         '`srcPath` and `messages` are required when using `extractor`.'
       );
@@ -82,7 +83,7 @@ export default function getNextConfig(
       options: {
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
-        messages: experimental.messages
+        messages: pluginConfig.experimental.messages
       } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
@@ -173,7 +174,10 @@ export default function getNextConfig(
         throwError('Message catalog loading requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      addTurboRule(rules!, `*.${pluginConfig.experimental.messages.format}`, {
+      const extension = getFormatExtension(
+        pluginConfig.experimental.messages.format
+      );
+      addTurboRule(rules!, `*${extension}`, {
         loaders: [getCatalogLoaderConfig()],
         condition: {
           path: `${pluginConfig.experimental.messages.path}/**/*`
@@ -242,8 +246,11 @@ export default function getNextConfig(
       if (pluginConfig.experimental?.messages) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const extension = getFormatExtension(
+          pluginConfig.experimental.messages.format
+        );
         config.module.rules.push({
-          test: new RegExp(`\\.${pluginConfig.experimental.messages.format}$`),
+          test: new RegExp(`${extension.replace(/\./g, '\\.')}$`),
           include: path.resolve(
             config.context!,
             pluginConfig.experimental.messages.path

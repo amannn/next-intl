@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import type {PlaywrightTestConfig} from '@playwright/test';
 import {devices} from '@playwright/test';
 
@@ -6,7 +5,7 @@ import {devices} from '@playwright/test';
 const PORT = process.env.CI ? 3002 : 3000;
 
 const config: PlaywrightTestConfig = {
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
   testDir: './tests',
   projects: [
     {

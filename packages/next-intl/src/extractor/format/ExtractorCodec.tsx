@@ -1,0 +1,45 @@
+import type {ExtractorMessage, Locale} from '../types.js';
+
+type ExtractorCodecContext = {
+  locale: Locale;
+};
+
+export default interface ExtractorCodec {
+  /**
+   * Decode the content of a file into a list of extracted messages. This is used
+   * to load existing messages from disk.
+   */
+  decode(
+    content: string,
+    context: ExtractorCodecContext
+  ): Array<ExtractorMessage>;
+
+  /**
+   * Encode a list of extracted messages into a string that can be written as
+   * file content to the disk.
+   */
+  encode(
+    messages: Array<ExtractorMessage>,
+    context: ExtractorCodecContext & {
+      sourceMessagesById: Map</* ID */ string, ExtractorMessage>;
+    }
+  ): string;
+
+  /**
+   * Turns the content of a file into a JSON string that represents extracted
+   * messages. The returned value will be passed to `JSON.parse`.
+   *
+   * @return E.g. `[{"id":"+YJVTi","message":"Hey!"}]`
+   *
+   * This is used when loading messages into your application, typically via a
+   * dynamic import (e.g. `import(`../messages/${locale}.json`)`).
+   *
+   * If your file content is JSON and should be used as-is, you can set this to
+   * an identity function.
+   */
+  toJSONString(content: string, context: ExtractorCodecContext): string;
+}
+
+export function defineCodec(factory: () => ExtractorCodec) {
+  return factory;
+}
