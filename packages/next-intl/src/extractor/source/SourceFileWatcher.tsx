@@ -23,12 +23,17 @@ export default class SourceFileWatcher implements Disposable {
     for (const root of this.roots) {
       const sub = await subscribe(
         root,
-        async (err, events) => {
+        (err, events) => {
           if (err) {
-            console.error('next-intl source watcher error:', err);
+            console.error(err);
             return;
           }
-          await this.onChange(events);
+          const filteredEvents = events.filter((event) =>
+            SourceFileFilter.isSourceFile(event.path)
+          );
+          if (filteredEvents.length > 0) {
+            void this.onChange(filteredEvents);
+          }
         },
         {ignore}
       );
