@@ -23,6 +23,8 @@ export default function extractionLoader(
   const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
 
   if (!extractor) {
+    // This instance is shared with the compiler to enable caching
+    // across code transformations and catalog extraction
     extractor = new MessageExtractor({
       isDevelopment,
       projectRoot,
