@@ -24,14 +24,14 @@ export default class CatalogLocales {
   private targetLocales?: Array<Locale>;
   private onChangeCallbacks: Set<LocaleChangeCallback> = new Set();
 
-  constructor(params: CatalogLocalesParams) {
+  public constructor(params: CatalogLocalesParams) {
     this.messagesDir = params.messagesDir;
     this.sourceLocale = params.sourceLocale;
     this.extension = params.extension;
     this.locales = params.locales;
   }
 
-  async getTargetLocales(): Promise<Array<Locale>> {
+  public async getTargetLocales(): Promise<Array<Locale>> {
     if (this.targetLocales) {
       return this.targetLocales;
     }
@@ -58,7 +58,7 @@ export default class CatalogLocales {
     }
   }
 
-  subscribeLocalesChange(callback: LocaleChangeCallback): void {
+  public subscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.add(callback);
 
     if (this.locales === 'infer' && !this.watcher) {
@@ -66,7 +66,7 @@ export default class CatalogLocales {
     }
   }
 
-  unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
+  public unsubscribeLocalesChange(callback: LocaleChangeCallback): void {
     this.onChangeCallbacks.delete(callback);
     if (this.onChangeCallbacks.size === 0) {
       this.stopWatcher();

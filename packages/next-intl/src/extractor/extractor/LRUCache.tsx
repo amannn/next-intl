@@ -7,12 +7,12 @@ export default class LRUCache<Value> {
   private readonly maxSize: number;
   private cache: Map<string, CacheItem<Value>>;
 
-  constructor(maxSize: number) {
+  public constructor(maxSize: number) {
     this.maxSize = maxSize;
     this.cache = new Map<string, CacheItem<Value>>();
   }
 
-  set(key: string, value: Value): void {
+  public set(key: string, value: Value): void {
     const isNewKey = !this.cache.has(key);
     if (isNewKey && this.cache.size >= this.maxSize) {
       const lruKey = this.cache.keys().next().value;
@@ -23,7 +23,7 @@ export default class LRUCache<Value> {
     this.cache.set(key, {key, value});
   }
 
-  get(key: string): Value | undefined {
+  public get(key: string): Value | undefined {
     const item = this.cache.get(key);
     if (item) {
       this.cache.delete(key);
