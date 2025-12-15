@@ -2471,6 +2471,84 @@ msgstr "Hey!"
       'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
+
+  it('preserves existing translations when reload reads empty file during external write', async () => {
+    // This test reproduces a race condition where:
+    // 1. We have existing translations in memory for a locale
+    // 2. An external process (translation tool) writes to the catalog file
+    // 3. File watcher detects the change and triggers reloadLocaleCatalog()
+    // 4. The reload reads the file while it's being written (empty/truncated)
+    // 5. BUG: Existing translations get wiped because empty content replaces in-memory state
+
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+#: src/Greeting.tsx
+msgid "OpKKos"
+msgstr "Hello!"`,
+      'de.po': `
+#: src/Greeting.tsx
+msgid "OpKKos"
+msgstr "Hallo!"`
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    // Verify de translation exists after initial extraction
+    const initialDeWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    expect(initialDeWrites[0][1]).toContain('msgstr "Hallo!"');
+
+    // Setup: When de.po is read during reload, return empty content.
+    // This simulates reading during an external write (file truncated but not filled).
+    let reloadReadCount = 0;
+    readFileInterceptors.set('de.po', async () => {
+      reloadReadCount++;
+      // On reload read (after initial extraction), return empty
+      // This simulates the race: file is being written (truncated) when we try to read
+      filesystem.project.messages!['de.po'] = '';
+    });
+
+    // Simulate external file modification (translation tool writes to file)
+    // This triggers the file watcher, which calls reloadLocaleCatalog()
+    simulateManualFileEdit(
+      'messages/de.po',
+      filesystem.project.messages!['de.po']
+    );
+
+    // Wait for a bit, ensure reload is complete
+    await sleep(200);
+
+    // Trigger a source file update to ensure save happens
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')} {t('World!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(reloadReadCount).toBeGreaterThan(0);
+
+    const deWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    const lastDeWrite = deWrites.at(-1)?.[1] as string;
+    expect(lastDeWrite).toContain('msgstr "Hallo!"');
+  });
 });
 
 describe('`srcPath` filtering', () => {
