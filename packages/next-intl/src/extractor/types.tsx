@@ -24,6 +24,7 @@ export type ExtractorConfig = {
   srcPath: string | Array<string>;
   sourceLocale: string;
   messages: MessagesConfig;
+  debugLog?: string;
 };
 
 export type CatalogLoaderConfig = {

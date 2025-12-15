@@ -24,6 +24,9 @@ export type PluginConfig = {
     extract?: {
       sourceLocale: string;
     };
+
+    /** Optional path to a debug log file for troubleshooting extraction issues. */
+    debugLog?: string;
   };
 };
 
