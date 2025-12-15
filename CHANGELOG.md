@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.6.0 (2025-12-12)
+
+### Features
+
+* Custom formats for `useExtracted`, consistency fixes for file references, pruning of messages and sorting of keys ([#2155](https://github.com/amannn/next-intl/issues/2155)) ([c02818e](https://github.com/amannn/next-intl/commit/c02818ed97f78521e9ef6a3ee8c936336f61aaa8)) – by @amannn
+
 ## 4.5.8 (2025-12-03)
 
 ### Bug Fixes
