@@ -54,9 +54,9 @@ export default class CatalogManager {
 
   // Resolves when all catalogs are loaded
   // (but doesn't indicate that project scan is done)
-  loadCatalogsPromise?: Promise<unknown>;
+  private loadCatalogsPromise?: Promise<unknown>;
 
-  constructor(
+  public constructor(
     config: ExtractorConfig,
     opts: {
       projectRoot?: string;
@@ -126,7 +126,7 @@ export default class CatalogManager {
     return this.getCatalogLocales().getTargetLocales();
   }
 
-  getSrcPaths(): Array<string> {
+  private getSrcPaths(): Array<string> {
     return (
       Array.isArray(this.config.srcPath)
         ? this.config.srcPath
@@ -237,7 +237,7 @@ export default class CatalogManager {
     }
   }
 
-  public async processFile(absoluteFilePath: string): Promise<boolean> {
+  private async processFile(absoluteFilePath: string): Promise<boolean> {
     let messages: Array<ExtractorMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
@@ -381,7 +381,7 @@ export default class CatalogManager {
     );
   }
 
-  async save(): Promise<void> {
+  public async save(): Promise<void> {
     return this.saveScheduler.schedule(() => this.saveImpl());
   }
 
@@ -470,7 +470,7 @@ export default class CatalogManager {
     }
   }
 
-  destroy(): void {
+  public destroy(): void {
     this.sourceWatcher?.stop();
     this.sourceWatcher = undefined;
 

@@ -5,7 +5,7 @@ import type {ExtractorConfig} from './types.js';
 export default class ExtractionCompiler implements Disposable {
   private manager: CatalogManager;
 
-  constructor(
+  public constructor(
     config: ExtractorConfig,
     opts: {
       isDevelopment?: boolean;
@@ -27,7 +27,7 @@ export default class ExtractionCompiler implements Disposable {
     await this.manager.save();
   }
 
-  [Symbol.dispose](): void {
+  public [Symbol.dispose](): void {
     this.uninstallExitHandlers();
     this.manager.destroy();
   }

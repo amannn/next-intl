@@ -25,7 +25,9 @@ export default class SourceFileScanner {
     return acc;
   }
 
-  static async getSourceFiles(srcPaths: Array<string>): Promise<Set<string>> {
+  public static async getSourceFiles(
+    srcPaths: Array<string>
+  ): Promise<Set<string>> {
     const files = (
       await Promise.all(
         srcPaths.map((srcPath) =>

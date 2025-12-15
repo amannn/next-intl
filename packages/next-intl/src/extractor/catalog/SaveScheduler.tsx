@@ -14,11 +14,11 @@ export default class SaveScheduler<Value> {
   }> = [];
   private nextSaveTask?: SaveTask<Value>;
 
-  constructor(delayMs = 50) {
+  public constructor(delayMs = 50) {
     this.delayMs = delayMs;
   }
 
-  async schedule(saveTask: SaveTask<Value>): Promise<Value> {
+  public async schedule(saveTask: SaveTask<Value>): Promise<Value> {
     return new Promise((resolve, reject) => {
       this.pendingResolvers.push({resolve, reject});
       this.nextSaveTask = saveTask;
@@ -81,7 +81,7 @@ export default class SaveScheduler<Value> {
     }
   }
 
-  destroy(): void {
+  public destroy(): void {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = undefined;
