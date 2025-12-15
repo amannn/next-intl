@@ -29,7 +29,7 @@ export default class ExtractionCompiler implements Disposable {
 
   public [Symbol.dispose](): void {
     this.uninstallExitHandlers();
-    this.manager.destroy();
+    this.manager[Symbol.dispose]();
   }
 
   private installExitHandlers() {

@@ -11,7 +11,7 @@ import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
-export default class CatalogManager {
+export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
 
   /**
@@ -470,11 +470,11 @@ export default class CatalogManager {
     }
   }
 
-  public destroy(): void {
+  public [Symbol.dispose](): void {
     this.sourceWatcher?.stop();
     this.sourceWatcher = undefined;
 
-    this.saveScheduler.destroy();
+    this.saveScheduler[Symbol.dispose]();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);
     }

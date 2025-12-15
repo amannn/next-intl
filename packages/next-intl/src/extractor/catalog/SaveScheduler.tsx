@@ -4,7 +4,7 @@ type SaveTask<T> = () => Promise<T>;
  * De-duplicates excessive save invocations,
  * while keeping a single one instant.
  */
-export default class SaveScheduler<Value> {
+export default class SaveScheduler<Value> implements Disposable {
   private saveTimeout?: NodeJS.Timeout;
   private isSaving = false;
   private delayMs: number;
@@ -81,7 +81,7 @@ export default class SaveScheduler<Value> {
     }
   }
 
-  public destroy(): void {
+  public [Symbol.dispose](): void {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout);
       this.saveTimeout = undefined;
