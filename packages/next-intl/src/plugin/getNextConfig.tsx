@@ -84,7 +84,7 @@ export default function getNextConfig(
         srcPath: experimental.srcPath,
         sourceLocale: experimental.extract!.sourceLocale,
         messages: pluginConfig.experimental.messages,
-        debugLog: experimental.debugLog
+        ...(experimental.debugLog && {debugLog: experimental.debugLog})
       } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
   }
