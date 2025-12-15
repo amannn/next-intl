@@ -308,16 +308,44 @@ export default class CatalogManager implements Disposable {
           diskMessageCount: diskMessages.length
         }
       );
-      // For target: disk wins completely
-      const translations = new Map<string, ExtractorMessage>();
-      for (const message of diskMessages) {
-        translations.set(message.id, message);
+      // For target: disk wins completely, BUT preserve existing translations
+      // if we read empty (likely a write in progress by an external tool
+      // that causes the file to temporarily be empty)
+      const existingTranslations = this.translationsByTargetLocale.get(locale);
+      const hasExistingTranslations =
+        existingTranslations && existingTranslations.size > 0;
+
+      if (diskMessages.length > 0) {
+        // We got content from disk, replace with it
+        const translations = new Map<string, ExtractorMessage>();
+        for (const message of diskMessages) {
+          translations.set(message.id, message);
+        }
+        this.translationsByTargetLocale.set(locale, translations);
+        void this.logger?.info('reloadLocaleCatalog() - target locale loaded', {
+          locale,
+          translationCount: translations.size
+        });
+      } else if (hasExistingTranslations) {
+        // We read empty but have existing translations - likely a write in progress.
+        // Preserve existing translations to avoid wipeout.
+        void this.logger?.warn(
+          'reloadLocaleCatalog() - read empty but have existing translations, preserving',
+          {
+            locale,
+            existingTranslationCount: existingTranslations.size
+          }
+        );
+        // Don't replace - keep existing translations
+      } else {
+        // We read empty and have no existing translations - new locale, initialize empty
+        const translations = new Map<string, ExtractorMessage>();
+        this.translationsByTargetLocale.set(locale, translations);
+        void this.logger?.info(
+          'reloadLocaleCatalog() - target locale initialized empty',
+          {locale}
+        );
       }
-      this.translationsByTargetLocale.set(locale, translations);
-      void this.logger?.info('reloadLocaleCatalog() - target locale loaded', {
-        locale,
-        translationCount: translations.size
-      });
     }
     void this.logger?.info('reloadLocaleCatalog() completed', {locale});
   }
