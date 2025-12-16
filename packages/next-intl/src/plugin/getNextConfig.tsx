@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import {createRequire} from 'module';
 import type {NextConfig} from 'next';
 import type {
   TurbopackLoaderOptions,
@@ -13,6 +14,8 @@ import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
+
+const require = createRequire(import.meta.url);
 
 function withExtensions(localPath: string) {
   return [
@@ -70,6 +73,7 @@ export default function getNextConfig(
 ) {
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
@@ -87,6 +91,20 @@ export default function getNextConfig(
         ...(experimental.debugLog && {debugLog: experimental.debugLog})
       } satisfies ExtractorConfig as TurbopackLoaderOptions
     };
+  }
+
+  function getSwcPluginConfig() {
+    // Note: file_path is per-file, but Next.js experimental.swcPlugins only supports
+    // global config. The SWC plugin will need to handle this differently or we
+    // can pass a placeholder. For now, we pass an empty string and the plugin
+    // should get the file path from metadata if available.
+    return [
+      require.resolve('next-intl-swc-plugin-extractor'),
+      {
+        isDevelopment,
+        filePath: ''
+      }
+    ] as [string, Record<string, unknown>];
   }
 
   function getCatalogLoaderConfig() {
@@ -144,29 +162,19 @@ export default function getNextConfig(
 
     // Add loaders
     let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
+    const experimentalConfig: Partial<NextConfig['experimental']> = {
+      ...nextConfig?.experimental
+    };
 
-    // Add loader for extractor
+    // Add SWC plugin for extractor transformation
     if (pluginConfig.experimental?.extract) {
       if (!isNextJs16OrHigher()) {
         throwError('Message extraction requires Next.js 16 or higher.');
       }
-      rules ??= getTurboRules();
-      const srcPaths = (
-        Array.isArray(pluginConfig.experimental.srcPath!)
-          ? pluginConfig.experimental.srcPath!
-          : [pluginConfig.experimental.srcPath!]
-      ).map((srcPath) =>
-        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
-      );
-      addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
-        loaders: [getExtractMessagesLoaderConfig()],
-        condition: {
-          // Note: We don't need `not: 'foreign'`, because this is
-          // implied by the filter based on `srcPath`.
-          path: `{${srcPaths.join(',')}}` + '/**/*',
-          content: /(useExtracted|getExtracted)/
-        }
-      });
+      experimentalConfig.swcPlugins = [
+        ...(nextConfig?.experimental?.swcPlugins ?? []),
+        getSwcPluginConfig()
+      ];
     }
 
     // Add loader for catalog
@@ -200,9 +208,12 @@ export default function getNextConfig(
           ...resolveAlias
         }
       };
+      if (Object.keys(experimentalConfig).length > 0) {
+        nextIntlConfig.experimental = experimentalConfig;
+      }
     } else {
       nextIntlConfig.experimental = {
-        ...nextConfig?.experimental,
+        ...experimentalConfig,
         // @ts-expect-error -- For Next.js <16
         turbo: {
           // @ts-expect-error -- For Next.js <16
@@ -217,6 +228,21 @@ export default function getNextConfig(
       };
     }
   } else {
+    // Add SWC plugin for extractor transformation (webpack)
+    if (pluginConfig.experimental?.extract) {
+      if (!isNextJs16OrHigher()) {
+        throwError('Message extraction requires Next.js 16 or higher.');
+      }
+      nextIntlConfig.experimental = {
+        ...nextIntlConfig.experimental,
+        ...nextConfig?.experimental,
+        swcPlugins: [
+          ...(nextConfig?.experimental?.swcPlugins ?? []),
+          getSwcPluginConfig()
+        ]
+      };
+    }
+
     nextIntlConfig.webpack = function webpack(config: Configuration, context) {
       if (!config.resolve) config.resolve = {};
       if (!config.resolve.alias) config.resolve.alias = {};
@@ -228,20 +254,6 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
-
-      // Add loader for extractor
-      if (pluginConfig.experimental?.extract) {
-        if (!config.module) config.module = {};
-        if (!config.module.rules) config.module.rules = [];
-        const srcPath = pluginConfig.experimental.srcPath;
-        config.module.rules.push({
-          test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
-          include: Array.isArray(srcPath)
-            ? srcPath.map((cur) => path.resolve(config.context!, cur))
-            : path.resolve(config.context!, srcPath || ''),
-          use: [getExtractMessagesLoaderConfig()]
-        });
-      }
 
       // Add loader for catalog
       if (pluginConfig.experimental?.messages) {
