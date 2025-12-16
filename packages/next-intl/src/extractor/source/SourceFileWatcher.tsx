@@ -80,7 +80,7 @@ export default class SourceFileWatcher implements Disposable {
         expandedCreateEvents = Array.from(sourceFiles).map(
           (filePath): Event => ({type: 'create', path: filePath})
         );
-      } catch (err) {
+      } catch {
         // Directories might have been deleted or are inaccessible
       }
     }
