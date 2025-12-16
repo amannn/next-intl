@@ -8,7 +8,6 @@ import SourceFileWatcher, {
   type SourceFileWatcherEvent
 } from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
-import type Logger from '../utils/Logger.js';
 import {getDefaultProjectRoot, localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
@@ -54,7 +53,6 @@ export default class CatalogManager implements Disposable {
   private catalogLocales?: CatalogLocales;
   private extractor: MessageExtractor;
   private sourceWatcher?: SourceFileWatcher;
-  private logger?: Logger;
 
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
@@ -69,30 +67,19 @@ export default class CatalogManager implements Disposable {
       isDevelopment?: boolean;
       sourceMap?: boolean;
       extractor: MessageExtractor;
-      logger?: Logger;
     }
   ) {
     this.config = config;
-    this.logger = opts.logger;
-    void this.logger?.info('CatalogManager constructor called', {
-      sourceLocale: config.sourceLocale,
-      isDevelopment: opts.isDevelopment ?? false
-    });
-    this.saveScheduler = new SaveScheduler<void>(
-      50,
-      this.logger?.createChild('SaveScheduler')
-    );
+    this.saveScheduler = new SaveScheduler<void>(50);
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.isDevelopment = opts.isDevelopment ?? false;
 
     this.extractor = opts.extractor;
 
     if (this.isDevelopment) {
-      void this.logger?.info('Creating SourceFileWatcher');
       this.sourceWatcher = new SourceFileWatcher(
         this.getSrcPaths(),
-        this.handleFileEvents.bind(this),
-        this.logger?.createChild('SourceFileWatcher')
+        this.handleFileEvents.bind(this)
       );
       void this.sourceWatcher.start();
     }
@@ -115,8 +102,7 @@ export default class CatalogManager implements Disposable {
       this.persister = new CatalogPersister({
         messagesPath: this.config.messages.path,
         codec: await this.getCodec(),
-        extension: getFormatExtension(this.config.messages.format),
-        logger: this.logger?.createChild('CatalogPersister')
+        extension: getFormatExtension(this.config.messages.format)
       });
       return this.persister;
     }
@@ -153,85 +139,35 @@ export default class CatalogManager implements Disposable {
   }
 
   public async loadMessages() {
-    void this.logger?.info('loadMessages() called - starting');
-    const startTime = Date.now();
-
-    void this.logger?.info(
-      'loadMessages() - loading source messages from disk'
-    );
-    const sourceLoadStart = Date.now();
     const sourceDiskMessages = await this.loadSourceMessages();
-    const sourceLoadDuration = Date.now() - sourceLoadStart;
-    void this.logger?.info('loadMessages() - source messages loaded', {
-      durationMs: sourceLoadDuration,
-      messageCount: sourceDiskMessages.size
-    });
 
-    void this.logger?.info('loadMessages() - starting target messages load');
-    const targetLoadStart = Date.now();
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
-    const targetLoadDuration = Date.now() - targetLoadStart;
-    void this.logger?.info('loadMessages() - target messages loaded', {
-      durationMs: targetLoadDuration
-    });
-
-    void this.logger?.info('loadMessages() - scanning source files');
-    const scanStart = Date.now();
 
     // Wrap the scan and processing in a promise
-    let scanDuration: number;
-    let processDuration: number;
     this.scanCompletePromise = (async () => {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );
-      scanDuration = Date.now() - scanStart;
-      void this.logger?.info('loadMessages() - source files scanned', {
-        durationMs: scanDuration,
-        fileCount: sourceFiles.size
-      });
 
-      void this.logger?.info('loadMessages() - processing source files', {
-        fileCount: sourceFiles.size
-      });
-      const processStart = Date.now();
       await Promise.all(
         Array.from(sourceFiles).map(async (filePath) =>
           this.processFile(filePath)
         )
       );
-      processDuration = Date.now() - processStart;
-      void this.logger?.info('loadMessages() - source files processed', {
-        durationMs: processDuration
-      });
 
-      void this.logger?.info('loadMessages() - merging source disk metadata');
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
     await this.scanCompletePromise;
 
     if (this.isDevelopment) {
-      void this.logger?.info('loadMessages() - subscribing to locale changes');
       const catalogLocales = this.getCatalogLocales();
       catalogLocales.subscribeLocalesChange(this.onLocalesChange);
     }
-
-    const totalDuration = Date.now() - startTime;
-    void this.logger?.info('loadMessages() completed', {
-      totalDurationMs: totalDuration,
-      sourceLoadDurationMs: sourceLoadDuration,
-      targetLoadDurationMs: targetLoadDuration,
-      scanDurationMs: scanDuration!,
-      processDurationMs: processDuration!
-    });
   }
 
   private async loadSourceMessages(): Promise<Map<string, ExtractorMessage>> {
-    void this.logger?.debug('loadSourceMessages() called', {
-      sourceLocale: this.config.sourceLocale
-    });
     // Load source catalog to hydrate metadata (e.g. flags) later without
     // treating catalog entries as source of truth.
     const diskMessages = await this.loadLocaleMessages(
@@ -241,58 +177,30 @@ export default class CatalogManager implements Disposable {
     for (const diskMessage of diskMessages) {
       byId.set(diskMessage.id, diskMessage);
     }
-    void this.logger?.debug('loadSourceMessages() completed', {
-      messageCount: byId.size
-    });
     return byId;
   }
 
   private async loadLocaleMessages(
     locale: Locale
   ): Promise<Array<ExtractorMessage>> {
-    void this.logger?.debug('loadLocaleMessages() called', {locale});
     const persister = await this.getPersister();
-    const readStart = Date.now();
     const messages = await persister.read(locale);
-    const readDuration = Date.now() - readStart;
     const fileTime = await persister.getLastModified(locale);
     this.lastWriteByLocale.set(locale, fileTime);
-    void this.logger?.debug('loadLocaleMessages() completed', {
-      locale,
-      messageCount: messages.length,
-      readDurationMs: readDuration,
-      lastModified: fileTime?.toISOString()
-    });
     return messages;
   }
 
   private async loadTargetMessages() {
-    void this.logger?.info('loadTargetMessages() called');
     const targetLocales = await this.getTargetLocales();
-    void this.logger?.info('loadTargetMessages() - target locales identified', {
-      locales: targetLocales,
-      count: targetLocales.length
-    });
     await Promise.all(
       targetLocales.map((locale) => this.reloadLocaleCatalog(locale))
     );
-    void this.logger?.info('loadTargetMessages() completed', {
-      localeCount: targetLocales.length
-    });
   }
 
   private async reloadLocaleCatalog(locale: Locale): Promise<void> {
-    void this.logger?.info('reloadLocaleCatalog() called', {locale});
     const diskMessages = await this.loadLocaleMessages(locale);
 
     if (locale === this.config.sourceLocale) {
-      void this.logger?.debug(
-        'reloadLocaleCatalog() - processing source locale',
-        {
-          locale,
-          diskMessageCount: diskMessages.length
-        }
-      );
       // For source: Merge additional properties like flags
       for (const diskMessage of diskMessages) {
         const prev = this.messagesById.get(diskMessage.id);
@@ -313,13 +221,6 @@ export default class CatalogManager implements Disposable {
         }
       }
     } else {
-      void this.logger?.debug(
-        'reloadLocaleCatalog() - processing target locale',
-        {
-          locale,
-          diskMessageCount: diskMessages.length
-        }
-      );
       // For target: disk wins completely, BUT preserve existing translations
       // if we read empty (likely a write in progress by an external tool
       // that causes the file to temporarily be empty)
@@ -334,32 +235,16 @@ export default class CatalogManager implements Disposable {
           translations.set(message.id, message);
         }
         this.translationsByTargetLocale.set(locale, translations);
-        void this.logger?.info('reloadLocaleCatalog() - target locale loaded', {
-          locale,
-          translationCount: translations.size
-        });
       } else if (hasExistingTranslations) {
         // We read empty but have existing translations - likely a write in progress.
         // Preserve existing translations to avoid wipeout.
-        void this.logger?.warn(
-          'reloadLocaleCatalog() - read empty but have existing translations, preserving',
-          {
-            locale,
-            existingTranslationCount: existingTranslations.size
-          }
-        );
         // Don't replace - keep existing translations
       } else {
         // We read empty and have no existing translations - new locale, initialize empty
         const translations = new Map<string, ExtractorMessage>();
         this.translationsByTargetLocale.set(locale, translations);
-        void this.logger?.info(
-          'reloadLocaleCatalog() - target locale initialized empty',
-          {locale}
-        );
       }
     }
-    void this.logger?.info('reloadLocaleCatalog() completed', {locale});
   }
 
   private mergeSourceDiskMetadata(
@@ -381,44 +266,20 @@ export default class CatalogManager implements Disposable {
   }
 
   private async processFile(absoluteFilePath: string): Promise<boolean> {
-    void this.logger?.debug('processFile() called', {absoluteFilePath});
-    const startTime = Date.now();
-
     let messages: Array<ExtractorMessage> = [];
     try {
-      const readStart = Date.now();
       const content = await fs.readFile(absoluteFilePath, 'utf8');
-      const readDuration = Date.now() - readStart;
-      void this.logger?.debug('processFile() - file read', {
-        absoluteFilePath,
-        readDurationMs: readDuration
-      });
-
-      const extractStart = Date.now();
       let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
       try {
         extraction = await this.extractor.extract(absoluteFilePath, content);
       } catch {
         return false;
       }
-      const extractDuration = Date.now() - extractStart;
       messages = extraction.messages;
-      void this.logger?.debug('processFile() - extraction completed', {
-        absoluteFilePath,
-        extractDurationMs: extractDuration,
-        messageCount: messages.length
-      });
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-        void this.logger?.error('processFile() - error', {
-          absoluteFilePath,
-          error: String(err)
-        });
         throw err;
       }
-      void this.logger?.debug('processFile() - file not found (ENOENT)', {
-        absoluteFilePath
-      });
       // ENOENT -> treat as no messages
     }
 
@@ -494,14 +355,6 @@ export default class CatalogManager implements Disposable {
       prevFileMessages,
       fileMessages
     );
-    const duration = Date.now() - startTime;
-    void this.logger?.debug('processFile() completed', {
-      absoluteFilePath,
-      changed,
-      durationMs: duration,
-      messageCount: messages.length,
-      prevMessageCount: prevFileMessages?.size ?? 0
-    });
     return changed;
   }
 
@@ -559,63 +412,20 @@ export default class CatalogManager implements Disposable {
   }
 
   public async save(): Promise<void> {
-    void this.logger?.info('save() called - scheduling save');
     return this.saveScheduler.schedule(() => this.saveImpl());
   }
 
   private async saveImpl(): Promise<void> {
-    void this.logger?.info('saveImpl() called - starting save operation');
-    const startTime = Date.now();
-
-    void this.logger?.info('saveImpl() - saving source locale', {
-      sourceLocale: this.config.sourceLocale
-    });
-    const sourceSaveStart = Date.now();
     await this.saveLocale(this.config.sourceLocale);
-    const sourceSaveDuration = Date.now() - sourceSaveStart;
-    void this.logger?.info('saveImpl() - source locale saved', {
-      sourceLocale: this.config.sourceLocale,
-      durationMs: sourceSaveDuration
-    });
 
     const targetLocales = await this.getTargetLocales();
-    void this.logger?.info('saveImpl() - saving target locales', {
-      targetLocales,
-      count: targetLocales.length
-    });
-    const targetSaveStart = Date.now();
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
-    const targetSaveDuration = Date.now() - targetSaveStart;
-    void this.logger?.info('saveImpl() - target locales saved', {
-      targetLocales,
-      durationMs: targetSaveDuration
-    });
-
-    const totalDuration = Date.now() - startTime;
-    void this.logger?.info('saveImpl() completed', {
-      totalDurationMs: totalDuration,
-      sourceSaveDurationMs: sourceSaveDuration,
-      targetSaveDurationMs: targetSaveDuration
-    });
   }
 
   private async saveLocale(locale: Locale): Promise<void> {
-    void this.logger?.info('saveLocale() called', {locale});
-    const startTime = Date.now();
-
-    void this.logger?.debug('saveLocale() - waiting for loadCatalogsPromise', {
-      locale
-    });
     await this.loadCatalogsPromise;
-    void this.logger?.debug('saveLocale() - loadCatalogsPromise resolved', {
-      locale
-    });
 
     const messages = Array.from(this.messagesById.values());
-    void this.logger?.debug('saveLocale() - messages collected', {
-      locale,
-      messageCount: messages.length
-    });
 
     const persister = await this.getPersister();
     const isSourceLocale = locale === this.config.sourceLocale;
@@ -624,35 +434,13 @@ export default class CatalogManager implements Disposable {
     // watchers here since stat() is fast and avoids continuous overhead)
     const lastWriteTime = this.lastWriteByLocale.get(locale);
     const currentFileTime = await persister.getLastModified(locale);
-    void this.logger?.debug('saveLocale() - checking file modification time', {
-      locale,
-      lastWriteTime: lastWriteTime?.toISOString(),
-      currentFileTime: currentFileTime?.toISOString(),
-      needsReload:
-        currentFileTime && lastWriteTime && currentFileTime > lastWriteTime
-    });
     if (currentFileTime && lastWriteTime && currentFileTime > lastWriteTime) {
-      void this.logger?.warn(
-        'saveLocale() - file modified externally, reloading',
-        {
-          locale,
-          lastWriteTime: lastWriteTime.toISOString(),
-          currentFileTime: currentFileTime.toISOString()
-        }
-      );
       await this.reloadLocaleCatalog(locale);
     }
 
     const localeMessages = isSourceLocale
       ? this.messagesById
       : this.translationsByTargetLocale.get(locale);
-
-    void this.logger?.debug('saveLocale() - preparing messages to persist', {
-      locale,
-      isSourceLocale,
-      localeMessageCount: localeMessages?.size ?? 0,
-      sourceMessageCount: this.messagesById.size
-    });
 
     const messagesToPersist = messages.map((message) => {
       const localeMessage = localeMessages?.get(message.id);
@@ -667,76 +455,20 @@ export default class CatalogManager implements Disposable {
       };
     });
 
-    const emptyMessageCount = messagesToPersist.filter(
-      (m) => !m.message
-    ).length;
-    void this.logger?.debug('saveLocale() - messages prepared', {
-      locale,
-      messagesToPersistCount: messagesToPersist.length,
-      emptyMessageCount
-    });
-
-    // Critical error detection: all messages are empty strings (wipeout bug)
-    if (
-      messagesToPersist.length > 0 &&
-      emptyMessageCount === messagesToPersist.length
-    ) {
-      void this.logger?.error(
-        '🚨 CRITICAL: All messages prepared for save are empty strings (wipeout detected in saveLocale)',
-        {
-          locale,
-          isSourceLocale,
-          messagesToPersistCount: messagesToPersist.length,
-          sourceMessageCount: this.messagesById.size,
-          localeMessageCount: localeMessages?.size ?? 0,
-          hasLocaleMessages: !!localeMessages,
-          sampleMessageIds: messagesToPersist.map((m) => m.id).slice(0, 20),
-          sampleLocaleMessages: localeMessages
-            ? Array.from(localeMessages.values())
-                .slice(0, 5)
-                .map((m) => ({id: m.id, hasMessage: !!m.message}))
-            : [],
-          lastWriteTime: lastWriteTime?.toISOString(),
-          currentFileTime: currentFileTime?.toISOString(),
-          wasReloaded:
-            currentFileTime && lastWriteTime && currentFileTime > lastWriteTime,
-          stackTrace: new Error().stack
-        }
-      );
-    }
-
-    const writeStart = Date.now();
     await persister.write(messagesToPersist, {
       locale,
       sourceMessagesById: this.messagesById
-    });
-    const writeDuration = Date.now() - writeStart;
-    void this.logger?.info('saveLocale() - write completed', {
-      locale,
-      writeDurationMs: writeDuration,
-      messageCount: messagesToPersist.length
     });
 
     // Update timestamps
     const newTime = await persister.getLastModified(locale);
     this.lastWriteByLocale.set(locale, newTime);
-    const duration = Date.now() - startTime;
-    void this.logger?.info('saveLocale() completed', {
-      locale,
-      durationMs: duration,
-      writeDurationMs: writeDuration,
-      newTimestamp: newTime?.toISOString()
-    });
   }
 
   private onLocalesChange = async (params: {
     added: Array<Locale>;
     removed: Array<Locale>;
   }): Promise<void> => {
-    void this.logger?.info('onLocalesChange() called', {
-      added: params.added,
-      removed: params.removed
-    });
     // Chain to existing promise
     this.loadCatalogsPromise = Promise.all([
       this.loadCatalogsPromise,
@@ -744,49 +476,23 @@ export default class CatalogManager implements Disposable {
     ]);
 
     for (const locale of params.added) {
-      void this.logger?.info('onLocalesChange() - saving added locale', {
-        locale
-      });
       await this.saveLocale(locale);
     }
 
     for (const locale of params.removed) {
-      void this.logger?.info('onLocalesChange() - removing locale', {locale});
       this.translationsByTargetLocale.delete(locale);
       this.lastWriteByLocale.delete(locale);
     }
-    void this.logger?.info('onLocalesChange() completed', {
-      added: params.added,
-      removed: params.removed
-    });
   };
 
   private async handleFileEvents(events: Array<SourceFileWatcherEvent>) {
-    void this.logger?.info('handleFileEvents() called', {
-      eventCount: events.length,
-      events: events.map((e) => ({type: e.type, path: e.path}))
-    });
-    const startTime = Date.now();
-
     if (this.loadCatalogsPromise) {
-      void this.logger?.debug(
-        'handleFileEvents() - waiting for loadCatalogsPromise'
-      );
       await this.loadCatalogsPromise;
-      void this.logger?.debug(
-        'handleFileEvents() - loadCatalogsPromise resolved'
-      );
     }
 
     // Wait for initial scan to complete to avoid race conditions
     if (this.scanCompletePromise) {
-      void this.logger?.debug(
-        'handleFileEvents() - waiting for scanCompletePromise'
-      );
       await this.scanCompletePromise;
-      void this.logger?.debug(
-        'handleFileEvents() - scanCompletePromise resolved'
-      );
     }
 
     let changed = false;
@@ -796,38 +502,16 @@ export default class CatalogManager implements Disposable {
         Array.from(this.messagesByFile.keys())
       );
     for (const event of expandedEvents) {
-      void this.logger?.debug('handleFileEvents() - processing event', {
-        type: event.type,
-        path: event.path
-      });
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
-      void this.logger?.debug('handleFileEvents() - event processed', {
-        type: event.type,
-        path: event.path,
-        hasChanged
-      });
     }
 
     if (changed) {
-      void this.logger?.info(
-        'handleFileEvents() - changes detected, triggering save'
-      );
       await this.save();
-    } else {
-      void this.logger?.debug('handleFileEvents() - no changes detected');
     }
-
-    const duration = Date.now() - startTime;
-    void this.logger?.info('handleFileEvents() completed', {
-      eventCount: events.length,
-      changed,
-      durationMs: duration
-    });
   }
 
   public [Symbol.dispose](): void {
-    void this.logger?.info('CatalogManager dispose() called');
     this.sourceWatcher?.stop();
     this.sourceWatcher = undefined;
 
