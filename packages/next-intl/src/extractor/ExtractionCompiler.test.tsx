@@ -2629,7 +2629,6 @@ msgstr "Hallo!"`
   });
 
   describe('folder operations', () => {
-
     it('removes messages when a folder is deleted', async () => {
       filesystem.project.src = {
         components: {
