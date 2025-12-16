@@ -41,9 +41,7 @@ export default class MessageExtractor {
   }> {
     const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
     // Shortcut parsing if hook is not used. The Turbopack integration already
     // pre-filters this, but for webpack this feature doesn't exist, so we need

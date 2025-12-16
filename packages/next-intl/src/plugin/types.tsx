@@ -36,6 +36,7 @@ export type TurbopackLoaderContext<Options> = Pick<
   | 'getResolve'
   | 'emitWarning'
   | 'emitError'
+  | 'getLogger'
   | 'context'
   | 'loaderIndex'
   | 'loaders'

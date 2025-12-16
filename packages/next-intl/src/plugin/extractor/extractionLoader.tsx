@@ -31,7 +31,5 @@ export default function extractionLoader(
     .then((result) => {
       callback(null, result.code, result.map);
     })
-    .catch((error) => {
-      callback(error);
-    });
+    .catch(callback);
 }

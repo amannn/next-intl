@@ -46,8 +46,7 @@ export default class CatalogPersister {
       );
     }
     try {
-      const messages = this.codec.decode(content, {locale});
-      return messages;
+      return this.codec.decode(content, {locale});
     } catch (error) {
       throw new Error(
         `Error while decoding ${this.getFileName(locale)}:\n> ${error}`,

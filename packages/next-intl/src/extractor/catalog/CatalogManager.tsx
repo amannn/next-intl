@@ -77,6 +77,9 @@ export default class CatalogManager implements Disposable {
     this.extractor = opts.extractor;
 
     if (this.isDevelopment) {
+      // We kick this off as early as possible, so we get notified about changes
+      // that happen during the initial project scan (while awaiting it to
+      // complete though)
       this.sourceWatcher = new SourceFileWatcher(
         this.getSrcPaths(),
         this.handleFileEvents.bind(this)
@@ -144,18 +147,15 @@ export default class CatalogManager implements Disposable {
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
 
-    // Wrap the scan and processing in a promise
     this.scanCompletePromise = (async () => {
       const sourceFiles = await SourceFileScanner.getSourceFiles(
         this.getSrcPaths()
       );
-
       await Promise.all(
         Array.from(sourceFiles).map(async (filePath) =>
           this.processFile(filePath)
         )
       );
-
       this.mergeSourceDiskMetadata(sourceDiskMessages);
     })();
 
@@ -236,11 +236,9 @@ export default class CatalogManager implements Disposable {
         }
         this.translationsByTargetLocale.set(locale, translations);
       } else if (hasExistingTranslations) {
-        // We read empty but have existing translations - likely a write in progress.
-        // Preserve existing translations to avoid wipeout.
-        // Don't replace - keep existing translations
+        // Likely a write in progress, preserve existing translations
       } else {
-        // We read empty and have no existing translations - new locale, initialize empty
+        // We read empty and have no existing translations
         const translations = new Map<string, ExtractorMessage>();
         this.translationsByTargetLocale.set(locale, translations);
       }
@@ -417,7 +415,6 @@ export default class CatalogManager implements Disposable {
 
   private async saveImpl(): Promise<void> {
     await this.saveLocale(this.config.sourceLocale);
-
     const targetLocales = await this.getTargetLocales();
     await Promise.all(targetLocales.map((locale) => this.saveLocale(locale)));
   }
@@ -426,7 +423,6 @@ export default class CatalogManager implements Disposable {
     await this.loadCatalogsPromise;
 
     const messages = Array.from(this.messagesById.values());
-
     const persister = await this.getPersister();
     const isSourceLocale = locale === this.config.sourceLocale;
 

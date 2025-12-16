@@ -38,7 +38,6 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
     // running the app, there is no difference.
     compiler.extractAll();
 
-    // Cleanup on process exit
     function cleanup() {
       if (compiler) {
         compiler[Symbol.dispose]();

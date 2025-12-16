@@ -91,7 +91,6 @@ export default class SourceFileWatcher implements Disposable {
     const allEvents = [...otherEvents, ...expandedCreateEvents];
     const seenPaths = new Set<string>();
     const deduplicated: Array<Event> = [];
-
     for (const event of allEvents) {
       const key = `${event.type}:${event.path}`;
       if (!seenPaths.has(key)) {
@@ -100,7 +99,6 @@ export default class SourceFileWatcher implements Disposable {
       }
     }
 
-    // Filter to keep only delete events and source files
     return deduplicated.filter((event) => {
       // Keep all delete events (might be deleted directories that no longer exist)
       if (event.type === 'delete') {

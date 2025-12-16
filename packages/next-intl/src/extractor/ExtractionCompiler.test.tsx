@@ -2713,7 +2713,6 @@ msgstr "Hey!"
     // 2. An external process (translation tool) writes to the catalog file
     // 3. File watcher detects the change and triggers reloadLocaleCatalog()
     // 4. The reload reads the file while it's being written (empty/truncated)
-    // 5. BUG: Existing translations get wiped because empty content replaces in-memory state
 
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
@@ -2737,24 +2736,18 @@ msgstr "Hallo!"`
     await compiler.extractAll();
     await waitForWriteFileCalls(2);
 
-    // Verify de translation exists after initial extraction
     const initialDeWrites = vi
       .mocked(fs.writeFile)
       .mock.calls.filter((call) => call[0] === 'messages/de.po');
     expect(initialDeWrites[0][1]).toContain('msgstr "Hallo!"');
 
-    // Setup: When de.po is read during reload, return empty content.
-    // This simulates reading during an external write (file truncated but not filled).
     let reloadReadCount = 0;
     readFileInterceptors.set('de.po', async () => {
       reloadReadCount++;
-      // On reload read (after initial extraction), return empty
-      // This simulates the race: file is being written (truncated) when we try to read
       filesystem.project.messages!['de.po'] = '';
     });
 
     // Simulate external file modification (translation tool writes to file)
-    // This triggers the file watcher, which calls reloadLocaleCatalog()
     simulateManualFileEdit(
       'messages/de.po',
       filesystem.project.messages!['de.po']
