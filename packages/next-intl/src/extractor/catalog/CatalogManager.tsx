@@ -4,7 +4,9 @@ import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import SourceFileWatcher from '../source/SourceFileWatcher.js';
+import SourceFileWatcher, {
+  type SourceFileWatcherEvent
+} from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
 import type Logger from '../utils/Logger.js';
 import {getDefaultProjectRoot, localeCompare} from '../utils.js';
@@ -757,7 +759,7 @@ export default class CatalogManager implements Disposable {
     });
   };
 
-  private async handleFileEvents(events: Array<{type: string; path: string}>) {
+  private async handleFileEvents(events: Array<SourceFileWatcherEvent>) {
     void this.logger?.info('handleFileEvents() called', {
       eventCount: events.length,
       events: events.map((e) => ({type: e.type, path: e.path}))
@@ -786,8 +788,12 @@ export default class CatalogManager implements Disposable {
     }
 
     let changed = false;
-
-    for (const event of events) {
+    const expandedEvents =
+      await this.sourceWatcher!.expandDirectoryDeleteEvents(
+        events,
+        Array.from(this.messagesByFile.keys())
+      );
+    for (const event of expandedEvents) {
       void this.logger?.debug('handleFileEvents() - processing event', {
         type: event.type,
         path: event.path

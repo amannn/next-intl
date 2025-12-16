@@ -1411,8 +1411,6 @@ describe('po format', () => {
 
     await simulateSourceFileDelete('/project/src/component-b.tsx');
 
-    // TODO: Trigger file removal
-
     await waitForWriteFileCalls(3);
     expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).not.toContain(
       'component-b.tsx'
@@ -2629,6 +2627,126 @@ msgstr "Hallo!"`
     const lastDeWrite = deWrites.at(-1)?.[1] as string;
     expect(lastDeWrite).toContain('msgstr "Hallo!"');
   });
+
+  describe('folder operations', () => {
+
+    it('removes messages when a folder is deleted', async () => {
+      filesystem.project.src = {
+        components: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/components/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate deleting the directory
+      delete (filesystem.project.src as any).components;
+      fileTimestamps.delete('/project/src/components/Button.tsx');
+
+      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      callback(null, [{type: 'delete', path: '/project/src/components'}]);
+
+      await waitForWriteFileCalls(2);
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+        "Content-Type: text/plain; charset=utf-8\\n"
+        "Content-Transfer-Encoding: 8bit\\n"
+        "X-Generator: next-intl\\n"
+        "X-Crowdin-SourceKey: msgstr\\n"
+        ",
+        ]
+      `);
+    });
+
+    it('updates messages when a folder is renamed', async () => {
+      filesystem.project.src = {
+        old: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/old/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate rename: create new (with updated message), delete old
+      setNestedValue(
+        filesystem,
+        '/project/src/new/Button.tsx',
+        `
+      import {useExtracted} from 'next-intl';
+      function Button() {
+        const t = useExtracted();
+        return <div>{t('Click me updated')}</div>;
+      }
+    `
+      );
+      fileTimestamps.set('/project/src/new/Button.tsx', new Date());
+
+      delete (filesystem.project.src as any).old;
+      fileTimestamps.delete('/project/src/old/Button.tsx');
+
+      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      callback(null, [
+        {type: 'create', path: '/project/src/new'},
+        {type: 'delete', path: '/project/src/old'}
+      ]);
+
+      await waitForWriteFileCalls(2);
+
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+        "Content-Type: text/plain; charset=utf-8\\n"
+        "Content-Transfer-Encoding: 8bit\\n"
+        "X-Generator: next-intl\\n"
+        "X-Crowdin-SourceKey: msgstr\\n"
+
+        #: src/new/Button.tsx
+        msgid "cfI2fq"
+        msgstr "Click me updated"
+        ",
+        ]
+      `);
+    });
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -3370,9 +3488,12 @@ vi.mock('fs/promises', () => ({
     }),
     stat: vi.fn(async (filePath: string) => {
       const content = getNestedValue(filesystem, filePath);
-      if (typeof content === 'string') {
+      if (content !== undefined) {
+        const isDir = typeof content === 'object';
         return {
-          mtime: fileTimestamps.get(filePath) || new Date()
+          mtime: fileTimestamps.get(filePath) || new Date(),
+          isDirectory: () => isDir,
+          isFile: () => !isDir
         };
       }
       throw new Error('File not found: ' + filePath);
