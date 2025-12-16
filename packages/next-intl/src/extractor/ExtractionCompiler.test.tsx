@@ -1331,8 +1331,6 @@ describe('po format', () => {
 
     await simulateSourceFileDelete('/project/src/component-b.tsx');
 
-    // TODO: Trigger file removal
-
     await waitForWriteFileCalls(3);
     expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).not.toContain(
       'component-b.tsx'
