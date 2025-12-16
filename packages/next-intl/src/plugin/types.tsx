@@ -24,9 +24,6 @@ export type PluginConfig = {
     extract?: {
       sourceLocale: string;
     };
-
-    /** Optional path to a debug log file for troubleshooting extraction issues. */
-    debugLog?: string;
   };
 };
 
@@ -39,7 +36,6 @@ export type TurbopackLoaderContext<Options> = Pick<
   | 'getResolve'
   | 'emitWarning'
   | 'emitError'
-  | 'getLogger'
   | 'context'
   | 'loaderIndex'
   | 'loaders'

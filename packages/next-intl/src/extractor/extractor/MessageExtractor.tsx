@@ -2,7 +2,6 @@ import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
 import type {ExtractorMessage} from '../types.js';
-import type Logger from '../utils/Logger.js';
 import {getDefaultProjectRoot} from '../utils.js';
 import LRUCache from './LRUCache.js';
 
@@ -16,7 +15,6 @@ export default class MessageExtractor {
   private isDevelopment: boolean;
   private projectRoot: string;
   private sourceMap: boolean;
-  private logger?: Logger;
   private compileCache = new LRUCache<{
     messages: Array<StrictExtractedMessage>;
     code: string;
@@ -27,12 +25,10 @@ export default class MessageExtractor {
     isDevelopment?: boolean;
     projectRoot?: string;
     sourceMap?: boolean;
-    logger?: Logger;
   }) {
     this.isDevelopment = opts.isDevelopment ?? false;
     this.projectRoot = opts.projectRoot ?? getDefaultProjectRoot();
     this.sourceMap = opts.sourceMap ?? false;
-    this.logger = opts.logger;
   }
 
   public async extract(
@@ -46,26 +42,13 @@ export default class MessageExtractor {
     const cacheKey = [source, absoluteFilePath].join('!');
     const cached = this.compileCache.get(cacheKey);
     if (cached) {
-      void this.logger?.debug('MessageExtractor.extract() cache hit', {
-        absoluteFilePath
-      });
       return cached;
     }
-
-    void this.logger?.debug('MessageExtractor.extract() starting', {
-      absoluteFilePath
-    });
 
     // Shortcut parsing if hook is not used. The Turbopack integration already
     // pre-filters this, but for webpack this feature doesn't exist, so we need
     // to do it here.
     if (!source.includes('useExtracted') && !source.includes('getExtracted')) {
-      void this.logger?.debug(
-        'MessageExtractor.extract() shortcut - no hooks found',
-        {
-          absoluteFilePath
-        }
-      );
       return {messages: [], code: source};
     }
 
@@ -109,11 +92,6 @@ export default class MessageExtractor {
       map: result.map,
       messages
     };
-
-    void this.logger?.debug('MessageExtractor.extract() completed', {
-      absoluteFilePath,
-      messageCount: messages.length
-    });
 
     this.compileCache.set(cacheKey, extractionResult);
     return extractionResult;
