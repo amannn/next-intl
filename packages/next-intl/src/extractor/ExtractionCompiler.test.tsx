@@ -864,6 +864,163 @@ describe('json format', () => {
     expect(messageValues).toContain('Message2');
     expect(messageValues).toContain('Message3');
   });
+
+  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
+    filesystem.project.src['Valid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `;
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Initially invalid')}</div>;
+    
+    // Missing closing brace for function - parse error
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "HovSZ7": "Valid message"
+      }
+      ",
+        ],
+      ]
+    `);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `
+    );
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "KvzhZT": "Now valid",
+        "HovSZ7": "Valid message"
+      }
+      ",
+      ]
+    `);
+  });
+
+  it('ignores parse error from watcher and waits for next file update', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}',
+      'de.json': '{"OpKKos": "Hallo!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "OpKKos": "Hello!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": "Hallo!"
+      }
+      ",
+        ],
+      ]
+    `);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')}</div>;
+
+      // Missing closing brace for function - parse error
+      `
+    );
+
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <h1>{t('Hello!')}</h1>;
+      }
+      `
+    );
+
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <h1>{t('Hey!')}</h1>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": ""
+      }
+      ",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('po format', () => {

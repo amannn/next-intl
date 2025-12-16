@@ -395,10 +395,12 @@ export default class CatalogManager implements Disposable {
       });
 
       const extractStart = Date.now();
-      const extraction = await this.extractor.extract(
-        absoluteFilePath,
-        content
-      );
+      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
+      try {
+        extraction = await this.extractor.extract(absoluteFilePath, content);
+      } catch {
+        return false;
+      }
       const extractDuration = Date.now() - extractStart;
       messages = extraction.messages;
       void this.logger?.debug('processFile() - extraction completed', {
@@ -798,7 +800,6 @@ export default class CatalogManager implements Disposable {
         type: event.type,
         path: event.path
       });
-      // parallelize this? or could this be problematic?
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
       void this.logger?.debug('handleFileEvents() - event processed', {
