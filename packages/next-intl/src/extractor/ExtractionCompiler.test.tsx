@@ -2549,23 +2549,6 @@ msgstr "Hallo!"`
   });
 
   describe('folder operations', () => {
-    function createCompiler() {
-      return new ExtractionCompiler(
-        {
-          srcPath: './src',
-          sourceLocale: 'en',
-          messages: {
-            path: './messages',
-            format: 'po',
-            locales: 'infer'
-          }
-        },
-        {
-          isDevelopment: true,
-          projectRoot: '/project'
-        }
-      );
-    }
 
     it('removes messages when a folder is deleted', async () => {
       filesystem.project.src = {
