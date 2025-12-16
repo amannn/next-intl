@@ -800,7 +800,6 @@ export default class CatalogManager implements Disposable {
         type: event.type,
         path: event.path
       });
-      // parallelize this? or could this be problematic?
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
       void this.logger?.debug('handleFileEvents() - event processed', {
