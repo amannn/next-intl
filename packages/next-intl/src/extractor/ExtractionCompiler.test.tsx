@@ -784,6 +784,86 @@ describe('json format', () => {
       'nm/7yQ': ''
     });
   });
+
+  it('avoids race condition when watcher processes files during initial scan', async () => {
+    // Create multiple files to make the initial scan take time
+    filesystem.project.src['File1.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File1() {
+      const t = useExtracted();
+      return <div>{t('Message1')}</div>;
+    }
+    `;
+    filesystem.project.src['File2.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File2() {
+      const t = useExtracted();
+      return <div>{t('Message2')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}',
+      'de.json': '{}'
+    };
+
+    using compiler = createCompiler();
+
+    // Delay processing of File2 during the initial scan
+    let resolveFile2: (() => void) | undefined;
+    const file2Promise = new Promise<void>((resolve) => {
+      resolveFile2 = resolve;
+    });
+    readFileInterceptors.set('File2.tsx', () => file2Promise);
+
+    // Start extractAll() - this will begin the initial scan
+    const extractAllPromise = compiler.extractAll();
+
+    // Wait a bit to ensure loadCatalogsPromise resolves but scan is still in progress
+    await sleep(50);
+
+    // While the scan is still processing File2, trigger a file watcher event
+    // This simulates the race condition: watcher should wait for scan to complete
+    const updatePromise = simulateSourceFileUpdate(
+      '/project/src/File1.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function File1() {
+        const t = useExtracted();
+        return <div>{t('Message1')} {t('Message3')}</div>;
+      }
+      `
+    );
+
+    // Wait a bit to ensure the watcher event is queued
+    await sleep(50);
+
+    // Now allow File2 processing to complete (scan finishes)
+    resolveFile2?.();
+
+    // Wait for extractAll to complete
+    await extractAllPromise;
+    await waitForWriteFileCalls(2);
+
+    // Wait for the watcher update to complete
+    await updatePromise;
+    await waitForWriteFileCalls(4);
+
+    // Verify that both messages from the initial scan and the watcher update are present
+    // If there was a race condition, we might lose messages or have inconsistent state
+    // Check the final write to en.json (should contain all 3 messages)
+    const enWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.json');
+    const finalEnWrite = enWrites[enWrites.length - 1];
+    const finalEnContent = JSON.parse(finalEnWrite[1] as string);
+    const messageValues = Object.values(finalEnContent) as Array<string>;
+
+    // Should have 3 messages: Message1, Message2 (from initial scan), and Message3 (from watcher update)
+    expect(messageValues.length).toBe(3);
+    expect(messageValues).toContain('Message1');
+    expect(messageValues).toContain('Message2');
+    expect(messageValues).toContain('Message3');
+  });
 });
 
 describe('po format', () => {

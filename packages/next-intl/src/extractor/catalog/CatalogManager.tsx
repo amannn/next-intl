@@ -55,8 +55,10 @@ export default class CatalogManager implements Disposable {
   private logger?: Logger;
 
   // Resolves when all catalogs are loaded
-  // (but doesn't indicate that project scan is done)
   private loadCatalogsPromise?: Promise<unknown>;
+
+  // Resolves when the initial project scan and processing is complete
+  private scanCompletePromise?: Promise<void>;
 
   public constructor(
     config: ExtractorConfig,
@@ -174,31 +176,39 @@ export default class CatalogManager implements Disposable {
 
     void this.logger?.info('loadMessages() - scanning source files');
     const scanStart = Date.now();
-    const sourceFiles = await SourceFileScanner.getSourceFiles(
-      this.getSrcPaths()
-    );
-    const scanDuration = Date.now() - scanStart;
-    void this.logger?.info('loadMessages() - source files scanned', {
-      durationMs: scanDuration,
-      fileCount: sourceFiles.size
-    });
 
-    void this.logger?.info('loadMessages() - processing source files', {
-      fileCount: sourceFiles.size
-    });
-    const processStart = Date.now();
-    await Promise.all(
-      Array.from(sourceFiles).map(async (filePath) =>
-        this.processFile(filePath)
-      )
-    );
-    const processDuration = Date.now() - processStart;
-    void this.logger?.info('loadMessages() - source files processed', {
-      durationMs: processDuration
-    });
+    // Wrap the scan and processing in a promise
+    let scanDuration: number;
+    let processDuration: number;
+    this.scanCompletePromise = (async () => {
+      const sourceFiles = await SourceFileScanner.getSourceFiles(
+        this.getSrcPaths()
+      );
+      scanDuration = Date.now() - scanStart;
+      void this.logger?.info('loadMessages() - source files scanned', {
+        durationMs: scanDuration,
+        fileCount: sourceFiles.size
+      });
 
-    void this.logger?.info('loadMessages() - merging source disk metadata');
-    this.mergeSourceDiskMetadata(sourceDiskMessages);
+      void this.logger?.info('loadMessages() - processing source files', {
+        fileCount: sourceFiles.size
+      });
+      const processStart = Date.now();
+      await Promise.all(
+        Array.from(sourceFiles).map(async (filePath) =>
+          this.processFile(filePath)
+        )
+      );
+      processDuration = Date.now() - processStart;
+      void this.logger?.info('loadMessages() - source files processed', {
+        durationMs: processDuration
+      });
+
+      void this.logger?.info('loadMessages() - merging source disk metadata');
+      this.mergeSourceDiskMetadata(sourceDiskMessages);
+    })();
+
+    await this.scanCompletePromise;
 
     if (this.isDevelopment) {
       void this.logger?.info('loadMessages() - subscribing to locale changes');
@@ -211,8 +221,8 @@ export default class CatalogManager implements Disposable {
       totalDurationMs: totalDuration,
       sourceLoadDurationMs: sourceLoadDuration,
       targetLoadDurationMs: targetLoadDuration,
-      scanDurationMs: scanDuration,
-      processDurationMs: processDuration
+      scanDurationMs: scanDuration!,
+      processDurationMs: processDuration!
     });
   }
 
@@ -761,6 +771,17 @@ export default class CatalogManager implements Disposable {
       await this.loadCatalogsPromise;
       void this.logger?.debug(
         'handleFileEvents() - loadCatalogsPromise resolved'
+      );
+    }
+
+    // Wait for initial scan to complete to avoid race conditions
+    if (this.scanCompletePromise) {
+      void this.logger?.debug(
+        'handleFileEvents() - waiting for scanCompletePromise'
+      );
+      await this.scanCompletePromise;
+      void this.logger?.debug(
+        'handleFileEvents() - scanCompletePromise resolved'
       );
     }
 
