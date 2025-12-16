@@ -2838,6 +2838,121 @@ describe('custom format', () => {
   });
 });
 
+describe('folder operations', () => {
+  function createCompiler() {
+    return new ExtractionCompiler(
+      {
+        srcPath: './src',
+        sourceLocale: 'en',
+        messages: {
+          path: './messages',
+          format: 'json',
+          locales: 'infer'
+        }
+      },
+      {
+        isDevelopment: true,
+        projectRoot: '/project'
+      }
+    );
+  }
+
+  it('removes messages when a folder is deleted', async () => {
+    filesystem.project.src = {
+      components: {
+        'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+      }
+    } as any;
+
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Click me"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    // Simulate deleting the directory
+    delete (filesystem.project.src as any).components;
+    fileTimestamps.delete('/project/src/components/Button.tsx');
+
+    const callback = parcelWatcherCallbacks.get('/project/src');
+    if (!callback) throw new Error('No watcher found for /project/src');
+
+    callback(null, [{type: 'delete', path: '/project/src/components'}]);
+
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{}
+      ",
+      ]
+    `);
+  });
+
+  it('updates messages when a folder is renamed', async () => {
+    filesystem.project.src = {
+      old: {
+        'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+      }
+    } as any;
+
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Click me"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    // Simulate rename: create new (with updated message), delete old
+    setNestedValue(filesystem, '/project/src/new/Button.tsx', `
+      import {useExtracted} from 'next-intl';
+      function Button() {
+        const t = useExtracted();
+        return <div>{t('Click me updated')}</div>;
+      }
+    `);
+    fileTimestamps.set('/project/src/new/Button.tsx', new Date());
+
+    delete (filesystem.project.src as any).old;
+    fileTimestamps.delete('/project/src/old/Button.tsx');
+
+    const callback = parcelWatcherCallbacks.get('/project/src');
+    if (!callback) throw new Error('No watcher found');
+
+    callback(null, [
+      {type: 'create', path: '/project/src/new'},
+      {type: 'delete', path: '/project/src/old'}
+    ]);
+
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "cfI2fq": "Click me updated"
+      }
+      ",
+      ]
+    `);
+  });
+});
+
 /**
  * Test utils
  ****************************************************************/
@@ -3288,9 +3403,12 @@ vi.mock('fs/promises', () => ({
     }),
     stat: vi.fn(async (filePath: string) => {
       const content = getNestedValue(filesystem, filePath);
-      if (typeof content === 'string') {
+      if (content !== undefined) {
+        const isDir = typeof content === 'object';
         return {
-          mtime: fileTimestamps.get(filePath) || new Date()
+          mtime: fileTimestamps.get(filePath) || new Date(),
+          isDirectory: () => isDir,
+          isFile: () => !isDir
         };
       }
       throw new Error('File not found: ' + filePath);
