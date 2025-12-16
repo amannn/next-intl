@@ -24,7 +24,7 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("Invalid config");
 
-    let mut visitor = TransformVisitor::new(config.is_development, config.file_path);
+    let mut visitor = TransformVisitor::new(config.is_development);
     program.visit_mut_with(&mut visitor);
 
     experimental_emit(
@@ -41,12 +41,10 @@ const NAMESPACE_SEPARATOR: &str = ".";
 #[serde(rename_all = "camelCase")]
 struct Config {
     is_development: bool,
-    file_path: String,
 }
 
 pub struct TransformVisitor {
     is_development: bool,
-    file_path: String,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
@@ -56,10 +54,9 @@ pub struct TransformVisitor {
 }
 
 impl TransformVisitor {
-    pub fn new(is_development: bool, file_path: String) -> Self {
+    pub fn new(is_development: bool) -> Self {
         Self {
             is_development,
-            file_path,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
             results: Default::default(),
@@ -82,12 +79,6 @@ struct StrictExtractedMessage {
     id: Wtf8Atom,
     message: Wtf8Atom,
     description: Option<Wtf8Atom>,
-    references: Vec<Reference>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct Reference {
-    path: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -226,9 +217,6 @@ impl VisitMut for TransformVisitor {
                     id: full_key,
                     message: message_text.clone(),
                     description: None,
-                    references: vec![Reference {
-                        path: self.file_path.clone(),
-                    }],
                 };
                 if let Some(description) = description {
                     message.description = Some(description.clone());

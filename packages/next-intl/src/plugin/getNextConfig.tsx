@@ -1,6 +1,6 @@
 import fs from 'fs';
-import path from 'path';
 import {createRequire} from 'module';
+import path from 'path';
 import type {NextConfig} from 'next';
 import type {
   TurbopackLoaderOptions,
@@ -9,8 +9,7 @@ import type {
 } from 'next/dist/server/config-shared.js';
 import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
-import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
-import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
+import type {CatalogLoaderConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -75,34 +74,11 @@ export default function getNextConfig(
   const nextIntlConfig: Partial<NextConfig> = {};
   const isDevelopment = process.env.NODE_ENV === 'development';
 
-  function getExtractMessagesLoaderConfig() {
-    const experimental = pluginConfig.experimental!;
-    if (!experimental.srcPath || !pluginConfig.experimental?.messages) {
-      throwError(
-        '`srcPath` and `messages` are required when using `extractor`.'
-      );
-    }
-    return {
-      loader: 'next-intl/extractor/extractionLoader',
-      options: {
-        srcPath: experimental.srcPath,
-        sourceLocale: experimental.extract!.sourceLocale,
-        messages: pluginConfig.experimental.messages,
-        ...(experimental.debugLog && {debugLog: experimental.debugLog})
-      } satisfies ExtractorConfig as TurbopackLoaderOptions
-    };
-  }
-
   function getSwcPluginConfig() {
-    // Note: file_path is per-file, but Next.js experimental.swcPlugins only supports
-    // global config. The SWC plugin will need to handle this differently or we
-    // can pass a placeholder. For now, we pass an empty string and the plugin
-    // should get the file path from metadata if available.
     return [
       require.resolve('next-intl-swc-plugin-extractor'),
       {
-        isDevelopment,
-        filePath: ''
+        isDevelopment
       }
     ] as [string, Record<string, unknown>];
   }

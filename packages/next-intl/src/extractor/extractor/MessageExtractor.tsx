@@ -86,8 +86,7 @@ export default class MessageExtractor {
             [
               require.resolve('next-intl-swc-plugin-extractor'),
               {
-                isDevelopment: this.isDevelopment,
-                filePath
+                isDevelopment: this.isDevelopment
               }
             ]
           ]
@@ -102,12 +101,20 @@ export default class MessageExtractor {
     const output = (result as any).output as string;
     const messages = JSON.parse(
       JSON.parse(output).results
-    ) as Array<StrictExtractedMessage>;
+    ) as Array<ExtractorMessage>;
+
+    // Add file path reference to each message
+    const messagesWithReferences: Array<StrictExtractedMessage> = messages.map(
+      (message) => ({
+        ...message,
+        references: [{path: filePath}]
+      })
+    );
 
     const extractionResult = {
       code: result.code,
       map: result.map,
-      messages
+      messages: messagesWithReferences
     };
 
     void this.logger?.debug('MessageExtractor.extract() completed', {
