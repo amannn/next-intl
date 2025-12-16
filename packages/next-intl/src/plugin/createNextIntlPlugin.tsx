@@ -25,7 +25,6 @@ function initPlugin(
     );
   }
 
-  // TODO: Await for prod build
   initExtractionCompiler(pluginConfig);
 
   return getNextConfig(pluginConfig, nextConfig);
