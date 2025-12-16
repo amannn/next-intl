@@ -395,10 +395,12 @@ export default class CatalogManager implements Disposable {
       });
 
       const extractStart = Date.now();
-      const extraction = await this.extractor.extract(
-        absoluteFilePath,
-        content
-      );
+      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
+      try {
+        extraction = await this.extractor.extract(absoluteFilePath, content);
+      } catch {
+        return false;
+      }
       const extractDuration = Date.now() - extractStart;
       messages = extraction.messages;
       void this.logger?.debug('processFile() - extraction completed', {

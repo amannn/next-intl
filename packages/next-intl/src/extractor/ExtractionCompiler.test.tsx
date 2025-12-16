@@ -971,21 +971,9 @@ describe('json format', () => {
       `
     );
 
-    await waitForWriteFileCalls(4);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
-      [
-        [
-          "messages/en.json",
-          "{}
-      ",
-        ],
-        [
-          "messages/de.json",
-          "{}
-      ",
-        ],
-      ]
-    `);
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
 
     await simulateSourceFileUpdate(
       '/project/src/Greeting.tsx',
@@ -993,25 +981,40 @@ describe('json format', () => {
       import {useExtracted} from 'next-intl';
       function Greeting() {
         const t = useExtracted();
-        return <div>{t('Hello!')}</div>;
+        return <h1>{t('Hello!')}</h1>;
       }
       `
     );
 
-    await waitForWriteFileCalls(6);
-    expect(vi.mocked(fs.writeFile).mock.calls.slice(4)).toMatchInlineSnapshot(`
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <h1>{t('Hey!')}</h1>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
       [
         [
           "messages/en.json",
           "{
-        "OpKKos": "Hello!"
+        "+YJVTi": "Hey!"
       }
       ",
         ],
         [
           "messages/de.json",
           "{
-        "OpKKos": "Hallo!"
+        "+YJVTi": ""
       }
       ",
         ],
