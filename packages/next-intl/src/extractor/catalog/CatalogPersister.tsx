@@ -8,7 +8,7 @@ export default class CatalogPersister {
   private codec: ExtractorCodec;
   private extension: string;
 
-  constructor(params: {
+  public constructor(params: {
     messagesPath: string;
     codec: ExtractorCodec;
     extension: string;
@@ -26,7 +26,7 @@ export default class CatalogPersister {
     return fsPath.join(this.messagesPath, this.getFileName(locale));
   }
 
-  async read(locale: Locale): Promise<Array<ExtractorMessage>> {
+  public async read(locale: Locale): Promise<Array<ExtractorMessage>> {
     const filePath = this.getFilePath(locale);
     let content: string;
     try {
@@ -55,7 +55,7 @@ export default class CatalogPersister {
     }
   }
 
-  async write(
+  public async write(
     messages: Array<ExtractorMessage>,
     context: {
       locale: Locale;
@@ -64,6 +64,7 @@ export default class CatalogPersister {
   ): Promise<void> {
     const filePath = this.getFilePath(context.locale);
     const content = this.codec.encode(messages, context);
+
     try {
       const outputDir = fsPath.dirname(filePath);
       await fs.mkdir(outputDir, {recursive: true});
@@ -73,7 +74,7 @@ export default class CatalogPersister {
     }
   }
 
-  async getLastModified(locale: Locale): Promise<Date | undefined> {
+  public async getLastModified(locale: Locale): Promise<Date | undefined> {
     const filePath = this.getFilePath(locale);
     try {
       const stats = await fs.stat(filePath);

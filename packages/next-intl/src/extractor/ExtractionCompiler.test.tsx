@@ -784,6 +784,243 @@ describe('json format', () => {
       'nm/7yQ': ''
     });
   });
+
+  it('avoids race condition when watcher processes files during initial scan', async () => {
+    // Create multiple files to make the initial scan take time
+    filesystem.project.src['File1.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File1() {
+      const t = useExtracted();
+      return <div>{t('Message1')}</div>;
+    }
+    `;
+    filesystem.project.src['File2.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function File2() {
+      const t = useExtracted();
+      return <div>{t('Message2')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}',
+      'de.json': '{}'
+    };
+
+    using compiler = createCompiler();
+
+    // Delay processing of File2 during the initial scan
+    let resolveFile2: (() => void) | undefined;
+    const file2Promise = new Promise<void>((resolve) => {
+      resolveFile2 = resolve;
+    });
+    readFileInterceptors.set('File2.tsx', () => file2Promise);
+
+    // Start extractAll() - this will begin the initial scan
+    const extractAllPromise = compiler.extractAll();
+
+    // Wait a bit to ensure loadCatalogsPromise resolves but scan is still in progress
+    await sleep(50);
+
+    // While the scan is still processing File2, trigger a file watcher event
+    // This simulates the race condition: watcher should wait for scan to complete
+    const updatePromise = simulateSourceFileUpdate(
+      '/project/src/File1.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function File1() {
+        const t = useExtracted();
+        return <div>{t('Message1')} {t('Message3')}</div>;
+      }
+      `
+    );
+
+    // Wait a bit to ensure the watcher event is queued
+    await sleep(50);
+
+    // Now allow File2 processing to complete (scan finishes)
+    resolveFile2?.();
+
+    // Wait for extractAll to complete
+    await extractAllPromise;
+    await waitForWriteFileCalls(2);
+
+    // Wait for the watcher update to complete
+    await updatePromise;
+    await waitForWriteFileCalls(4);
+
+    // Verify that both messages from the initial scan and the watcher update are present
+    // If there was a race condition, we might lose messages or have inconsistent state
+    // Check the final write to en.json (should contain all 3 messages)
+    const enWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/en.json');
+    const finalEnWrite = enWrites[enWrites.length - 1];
+    const finalEnContent = JSON.parse(finalEnWrite[1] as string);
+    const messageValues = Object.values(finalEnContent) as Array<string>;
+
+    // Should have 3 messages: Message1, Message2 (from initial scan), and Message3 (from watcher update)
+    expect(messageValues.length).toBe(3);
+    expect(messageValues).toContain('Message1');
+    expect(messageValues).toContain('Message2');
+    expect(messageValues).toContain('Message3');
+  });
+
+  it('omits file with parse error during initial scan but continues processing others (dev)', async () => {
+    filesystem.project.src['Valid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Valid() {
+      const t = useExtracted();
+      return <div>{t('Valid message')}</div>;
+    }
+    `;
+    filesystem.project.src['Invalid.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Initially invalid')}</div>;
+    
+    // Missing closing brace for function - parse error
+    `;
+    filesystem.project.messages = {
+      'en.json': '{}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "HovSZ7": "Valid message"
+      }
+      ",
+        ],
+      ]
+    `);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Invalid.tsx',
+      `
+    import {useExtracted} from 'next-intl';
+    function Invalid() {
+      const t = useExtracted();
+      return <div>{t('Now valid')}</div>;
+    }
+    `
+    );
+    await waitForWriteFileCalls(2);
+
+    expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+      [
+        "messages/en.json",
+        "{
+        "KvzhZT": "Now valid",
+        "HovSZ7": "Valid message"
+      }
+      ",
+      ]
+    `);
+  });
+
+  it('ignores parse error from watcher and waits for next file update', async () => {
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.json': '{"OpKKos": "Hello!"}',
+      'de.json': '{"OpKKos": "Hallo!"}'
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+    expect(vi.mocked(fs.writeFile).mock.calls).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "OpKKos": "Hello!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "OpKKos": "Hallo!"
+      }
+      ",
+        ],
+      ]
+    `);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')}</div>;
+
+      // Missing closing brace for function - parse error
+      `
+    );
+
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <h1>{t('Hello!')}</h1>;
+      }
+      `
+    );
+
+    // This shouldn't cause a save, make sure we wait a bit
+    await sleep(100);
+    await waitForWriteFileCalls(2);
+
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <h1>{t('Hey!')}</h1>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(vi.mocked(fs.writeFile).mock.calls.slice(2)).toMatchInlineSnapshot(`
+      [
+        [
+          "messages/en.json",
+          "{
+        "+YJVTi": "Hey!"
+      }
+      ",
+        ],
+        [
+          "messages/de.json",
+          "{
+        "+YJVTi": ""
+      }
+      ",
+        ],
+      ]
+    `);
+  });
 });
 
 describe('po format', () => {
@@ -1330,8 +1567,6 @@ describe('po format', () => {
     expect(vi.mocked(fs.writeFile).mock.calls[1][1]).toContain('Howdy!');
 
     await simulateSourceFileDelete('/project/src/component-b.tsx');
-
-    // TODO: Trigger file removal
 
     await waitForWriteFileCalls(3);
     expect(vi.mocked(fs.writeFile).mock.calls.at(-1)?.[1]).not.toContain(
@@ -2471,6 +2706,196 @@ msgstr "Hey!"
       'Error while decoding de.po:\n> Error: Incomplete quoted string:\n> "Hal'
     );
   });
+
+  it('preserves existing translations when reload reads empty file during external write', async () => {
+    // This test reproduces a race condition where:
+    // 1. We have existing translations in memory for a locale
+    // 2. An external process (translation tool) writes to the catalog file
+    // 3. File watcher detects the change and triggers reloadLocaleCatalog()
+    // 4. The reload reads the file while it's being written (empty/truncated)
+
+    filesystem.project.src['Greeting.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hello!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {
+      'en.po': `
+#: src/Greeting.tsx
+msgid "OpKKos"
+msgstr "Hello!"`,
+      'de.po': `
+#: src/Greeting.tsx
+msgid "OpKKos"
+msgstr "Hallo!"`
+    };
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(2);
+
+    const initialDeWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    expect(initialDeWrites[0][1]).toContain('msgstr "Hallo!"');
+
+    let reloadReadCount = 0;
+    readFileInterceptors.set('de.po', async () => {
+      reloadReadCount++;
+      filesystem.project.messages!['de.po'] = '';
+    });
+
+    // Simulate external file modification (translation tool writes to file)
+    simulateManualFileEdit(
+      'messages/de.po',
+      filesystem.project.messages!['de.po']
+    );
+
+    // Wait for a bit, ensure reload is complete
+    await sleep(200);
+
+    // Trigger a source file update to ensure save happens
+    await simulateSourceFileUpdate(
+      '/project/src/Greeting.tsx',
+      `
+      import {useExtracted} from 'next-intl';
+      function Greeting() {
+        const t = useExtracted();
+        return <div>{t('Hello!')} {t('World!')}</div>;
+      }
+      `
+    );
+
+    await waitForWriteFileCalls(4);
+    expect(reloadReadCount).toBeGreaterThan(0);
+
+    const deWrites = vi
+      .mocked(fs.writeFile)
+      .mock.calls.filter((call) => call[0] === 'messages/de.po');
+    const lastDeWrite = deWrites.at(-1)?.[1] as string;
+    expect(lastDeWrite).toContain('msgstr "Hallo!"');
+  });
+
+  describe('folder operations', () => {
+    it('removes messages when a folder is deleted', async () => {
+      filesystem.project.src = {
+        components: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/components/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate deleting the directory
+      delete (filesystem.project.src as any).components;
+      fileTimestamps.delete('/project/src/components/Button.tsx');
+
+      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      callback(null, [{type: 'delete', path: '/project/src/components'}]);
+
+      await waitForWriteFileCalls(2);
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+        "Content-Type: text/plain; charset=utf-8\\n"
+        "Content-Transfer-Encoding: 8bit\\n"
+        "X-Generator: next-intl\\n"
+        "X-Crowdin-SourceKey: msgstr\\n"
+        ",
+        ]
+      `);
+    });
+
+    it('updates messages when a folder is renamed', async () => {
+      filesystem.project.src = {
+        old: {
+          'Button.tsx': `
+          import {useExtracted} from 'next-intl';
+          function Button() {
+            const t = useExtracted();
+            return <div>{t('Click me')}</div>;
+          }
+        `
+        }
+      } as any;
+
+      filesystem.project.messages = {
+        'en.po': `
+      #: src/old/Button.tsx
+      msgid "OpKKos"
+      msgstr "Click me"
+      `
+      };
+
+      using compiler = createCompiler();
+      await compiler.extractAll();
+      await waitForWriteFileCalls(1);
+
+      // Simulate rename: create new (with updated message), delete old
+      setNestedValue(
+        filesystem,
+        '/project/src/new/Button.tsx',
+        `
+      import {useExtracted} from 'next-intl';
+      function Button() {
+        const t = useExtracted();
+        return <div>{t('Click me updated')}</div>;
+      }
+    `
+      );
+      fileTimestamps.set('/project/src/new/Button.tsx', new Date());
+
+      delete (filesystem.project.src as any).old;
+      fileTimestamps.delete('/project/src/old/Button.tsx');
+
+      const callback = parcelWatcherCallbacks.get('/project/src')!;
+      callback(null, [
+        {type: 'create', path: '/project/src/new'},
+        {type: 'delete', path: '/project/src/old'}
+      ]);
+
+      await waitForWriteFileCalls(2);
+
+      expect(vi.mocked(fs.writeFile).mock.calls.at(-1)).toMatchInlineSnapshot(`
+        [
+          "messages/en.po",
+          "msgid ""
+        msgstr ""
+        "Language: en\\n"
+        "Content-Type: text/plain; charset=utf-8\\n"
+        "Content-Transfer-Encoding: 8bit\\n"
+        "X-Generator: next-intl\\n"
+        "X-Crowdin-SourceKey: msgstr\\n"
+
+        #: src/new/Button.tsx
+        msgid "cfI2fq"
+        msgstr "Click me updated"
+        ",
+        ]
+      `);
+    });
+  });
 });
 
 describe('`srcPath` filtering', () => {
@@ -3212,9 +3637,12 @@ vi.mock('fs/promises', () => ({
     }),
     stat: vi.fn(async (filePath: string) => {
       const content = getNestedValue(filesystem, filePath);
-      if (typeof content === 'string') {
+      if (content !== undefined) {
+        const isDir = typeof content === 'object';
         return {
-          mtime: fileTimestamps.get(filePath) || new Date()
+          mtime: fileTimestamps.get(filePath) || new Date(),
+          isDirectory: () => isDir,
+          isFile: () => !isDir
         };
       }
       throw new Error('File not found: ' + filePath);

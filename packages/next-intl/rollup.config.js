@@ -74,7 +74,8 @@ export default [
       dir: 'dist/cjs/development',
       format: 'cjs',
       entryFileNames: '[name].cjs',
-      chunkFileNames: '[name]-[hash].cjs'
+      chunkFileNames: '[name]-[hash].cjs',
+      interop: 'compat'
     }
   })
 ];

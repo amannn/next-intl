@@ -1,5 +1,6 @@
 import type {NextConfig} from 'next';
 import createMessagesDeclaration from './declaration/index.js';
+import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
 import type {PluginConfig} from './types.js';
 import {warn} from './utils.js';
@@ -23,6 +24,8 @@ function initPlugin(
         : messagesPathOrPaths
     );
   }
+
+  initExtractionCompiler(pluginConfig);
 
   return getNextConfig(pluginConfig, nextConfig);
 }

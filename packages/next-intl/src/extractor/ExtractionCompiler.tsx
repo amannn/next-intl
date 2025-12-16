@@ -5,7 +5,7 @@ import type {ExtractorConfig} from './types.js';
 export default class ExtractionCompiler implements Disposable {
   private manager: CatalogManager;
 
-  constructor(
+  public constructor(
     config: ExtractorConfig,
     opts: {
       isDevelopment?: boolean;
@@ -15,7 +15,10 @@ export default class ExtractionCompiler implements Disposable {
     } = {}
   ) {
     const extractor = opts.extractor ?? new MessageExtractor(opts);
-    this.manager = new CatalogManager(config, {...opts, extractor});
+    this.manager = new CatalogManager(config, {
+      ...opts,
+      extractor
+    });
     this[Symbol.dispose] = this[Symbol.dispose].bind(this);
     this.installExitHandlers();
   }
@@ -27,9 +30,9 @@ export default class ExtractionCompiler implements Disposable {
     await this.manager.save();
   }
 
-  [Symbol.dispose](): void {
+  public [Symbol.dispose](): void {
     this.uninstallExitHandlers();
-    this.manager.destroy();
+    this.manager[Symbol.dispose]();
   }
 
   private installExitHandlers() {

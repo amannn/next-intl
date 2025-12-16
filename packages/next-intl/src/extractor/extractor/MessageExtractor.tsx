@@ -21,7 +21,7 @@ export default class MessageExtractor {
     map?: string;
   }>(750);
 
-  constructor(opts: {
+  public constructor(opts: {
     isDevelopment?: boolean;
     projectRoot?: string;
     sourceMap?: boolean;
@@ -31,7 +31,7 @@ export default class MessageExtractor {
     this.sourceMap = opts.sourceMap ?? false;
   }
 
-  async extract(
+  public async extract(
     absoluteFilePath: string,
     source: string
   ): Promise<{

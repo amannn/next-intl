@@ -39,7 +39,7 @@ export default class SourceFileFilter {
     );
   }
 
-  private static isWithinPath(targetPath: string, basePath: string): boolean {
+  public static isWithinPath(targetPath: string, basePath: string): boolean {
     const relativePath = path.relative(basePath, targetPath);
     return relativePath === '' || !relativePath.startsWith('..');
   }

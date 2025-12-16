@@ -4,14 +4,16 @@ import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import SourceFileWatcher from '../source/SourceFileWatcher.js';
+import SourceFileWatcher, {
+  type SourceFileWatcherEvent
+} from '../source/SourceFileWatcher.js';
 import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
 import {getDefaultProjectRoot, localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
 
-export default class CatalogManager {
+export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
 
   /**
@@ -53,10 +55,12 @@ export default class CatalogManager {
   private sourceWatcher?: SourceFileWatcher;
 
   // Resolves when all catalogs are loaded
-  // (but doesn't indicate that project scan is done)
-  loadCatalogsPromise?: Promise<unknown>;
+  private loadCatalogsPromise?: Promise<unknown>;
 
-  constructor(
+  // Resolves when the initial project scan and processing is complete
+  private scanCompletePromise?: Promise<void>;
+
+  public constructor(
     config: ExtractorConfig,
     opts: {
       projectRoot?: string;
@@ -73,6 +77,9 @@ export default class CatalogManager {
     this.extractor = opts.extractor;
 
     if (this.isDevelopment) {
+      // We kick this off as early as possible, so we get notified about changes
+      // that happen during the initial project scan (while awaiting it to
+      // complete though)
       this.sourceWatcher = new SourceFileWatcher(
         this.getSrcPaths(),
         this.handleFileEvents.bind(this)
@@ -126,7 +133,7 @@ export default class CatalogManager {
     return this.getCatalogLocales().getTargetLocales();
   }
 
-  getSrcPaths(): Array<string> {
+  private getSrcPaths(): Array<string> {
     return (
       Array.isArray(this.config.srcPath)
         ? this.config.srcPath
@@ -136,19 +143,23 @@ export default class CatalogManager {
 
   public async loadMessages() {
     const sourceDiskMessages = await this.loadSourceMessages();
+
     this.loadCatalogsPromise = this.loadTargetMessages();
     await this.loadCatalogsPromise;
 
-    const sourceFiles = await SourceFileScanner.getSourceFiles(
-      this.getSrcPaths()
-    );
-    await Promise.all(
-      Array.from(sourceFiles).map(async (filePath) =>
-        this.processFile(filePath)
-      )
-    );
+    this.scanCompletePromise = (async () => {
+      const sourceFiles = await SourceFileScanner.getSourceFiles(
+        this.getSrcPaths()
+      );
+      await Promise.all(
+        Array.from(sourceFiles).map(async (filePath) =>
+          this.processFile(filePath)
+        )
+      );
+      this.mergeSourceDiskMetadata(sourceDiskMessages);
+    })();
 
-    this.mergeSourceDiskMetadata(sourceDiskMessages);
+    await this.scanCompletePromise;
 
     if (this.isDevelopment) {
       const catalogLocales = this.getCatalogLocales();
@@ -210,12 +221,27 @@ export default class CatalogManager {
         }
       }
     } else {
-      // For target: disk wins completely
-      const translations = new Map<string, ExtractorMessage>();
-      for (const message of diskMessages) {
-        translations.set(message.id, message);
+      // For target: disk wins completely, BUT preserve existing translations
+      // if we read empty (likely a write in progress by an external tool
+      // that causes the file to temporarily be empty)
+      const existingTranslations = this.translationsByTargetLocale.get(locale);
+      const hasExistingTranslations =
+        existingTranslations && existingTranslations.size > 0;
+
+      if (diskMessages.length > 0) {
+        // We got content from disk, replace with it
+        const translations = new Map<string, ExtractorMessage>();
+        for (const message of diskMessages) {
+          translations.set(message.id, message);
+        }
+        this.translationsByTargetLocale.set(locale, translations);
+      } else if (hasExistingTranslations) {
+        // Likely a write in progress, preserve existing translations
+      } else {
+        // We read empty and have no existing translations
+        const translations = new Map<string, ExtractorMessage>();
+        this.translationsByTargetLocale.set(locale, translations);
       }
-      this.translationsByTargetLocale.set(locale, translations);
     }
   }
 
@@ -237,14 +263,16 @@ export default class CatalogManager {
     }
   }
 
-  public async processFile(absoluteFilePath: string): Promise<boolean> {
+  private async processFile(absoluteFilePath: string): Promise<boolean> {
     let messages: Array<ExtractorMessage> = [];
     try {
       const content = await fs.readFile(absoluteFilePath, 'utf8');
-      const extraction = await this.extractor.extract(
-        absoluteFilePath,
-        content
-      );
+      let extraction: Awaited<ReturnType<typeof this.extractor.extract>>;
+      try {
+        extraction = await this.extractor.extract(absoluteFilePath, content);
+      } catch {
+        return false;
+      }
       messages = extraction.messages;
     } catch (err) {
       if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
@@ -381,7 +409,7 @@ export default class CatalogManager {
     );
   }
 
-  async save(): Promise<void> {
+  public async save(): Promise<void> {
     return this.saveScheduler.schedule(() => this.saveImpl());
   }
 
@@ -453,14 +481,23 @@ export default class CatalogManager {
     }
   };
 
-  private async handleFileEvents(events: Array<{type: string; path: string}>) {
+  private async handleFileEvents(events: Array<SourceFileWatcherEvent>) {
     if (this.loadCatalogsPromise) {
       await this.loadCatalogsPromise;
     }
 
-    let changed = false;
+    // Wait for initial scan to complete to avoid race conditions
+    if (this.scanCompletePromise) {
+      await this.scanCompletePromise;
+    }
 
-    for (const event of events) {
+    let changed = false;
+    const expandedEvents =
+      await this.sourceWatcher!.expandDirectoryDeleteEvents(
+        events,
+        Array.from(this.messagesByFile.keys())
+      );
+    for (const event of expandedEvents) {
       const hasChanged = await this.processFile(event.path);
       changed ||= hasChanged;
     }
@@ -470,11 +507,11 @@ export default class CatalogManager {
     }
   }
 
-  destroy(): void {
+  public [Symbol.dispose](): void {
     this.sourceWatcher?.stop();
     this.sourceWatcher = undefined;
 
-    this.saveScheduler.destroy();
+    this.saveScheduler[Symbol.dispose]();
     if (this.catalogLocales && this.isDevelopment) {
       this.catalogLocales.unsubscribeLocalesChange(this.onLocalesChange);
     }
