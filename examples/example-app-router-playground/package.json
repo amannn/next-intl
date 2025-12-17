@@ -18,8 +18,7 @@
     "next": "^16.0.8",
     "next-intl": "^4.0.0",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "zod": "^3.24.2"
+    "react-dom": "^19.2.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",

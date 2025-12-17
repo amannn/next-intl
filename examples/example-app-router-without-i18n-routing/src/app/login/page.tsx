@@ -1,5 +1,4 @@
 import {UsersIcon} from '@heroicons/react/24/outline';
-import {isEqual} from 'lodash';
 import {redirect} from 'next/navigation';
 import {useLocale, useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
@@ -11,13 +10,18 @@ import {loginUser} from '@/services/session';
 import LoginForm from './LoginForm';
 
 const loginFormSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(1)
 });
 
 type LoginFormInput = z.infer<typeof loginFormSchema>;
 
-export type LoginFormErrors = z.typeToFlattenedError<LoginFormInput>;
+export type LoginFormErrors = {
+  fieldErrors?: {
+    [K in keyof LoginFormInput]?: string[];
+  };
+  formErrors?: string[];
+};
 
 export type LoginFormResult =
   | {
@@ -36,32 +40,37 @@ async function loginAction(
   const t = await getTranslations('LoginPage');
   const values = Object.fromEntries(data);
 
-  const result = await loginFormSchema
-    .refine(async (credentials) => loginUser(credentials), {
-      message: t('invalidCredentials')
-    })
-    .safeParseAsync(values, {
-      errorMap(issue, ctx) {
-        let message;
-
-        if (isEqual(issue.path, ['email'])) {
-          message = t('invalidEmail');
-        } else if (isEqual(issue.path, ['password'])) {
-          message = t('invalidPassword');
-        }
-
-        return {message: message || ctx.defaultError};
+  const result = await loginFormSchema.safeParseAsync(values, {
+    error(issue) {
+      if (issue.path) {
+        const key = issue.path.join('.');
+        const message = {
+          email: t('invalidEmail'),
+          password: t('invalidPassword')
+        }[key];
+        return message;
       }
-    });
+    }
+  });
 
   if (!result.success) {
     return {
       success: false,
       errors: result.error.flatten()
     };
-  } else {
-    redirect('/app');
   }
+
+  const isLoggedIn = await loginUser(result.data);
+  if (!isLoggedIn) {
+    return {
+      success: false,
+      errors: {
+        formErrors: [t('invalidCredentials')]
+      }
+    };
+  }
+
+  redirect('/app');
 }
 
 export default function LoginPage() {

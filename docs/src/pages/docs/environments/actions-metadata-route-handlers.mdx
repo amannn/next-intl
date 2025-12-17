@@ -83,15 +83,15 @@ async function loginAction(data: FormData) {
   const values = Object.fromEntries(data);
 
   const result = loginFormSchema.safeParse(values, {
-    errorMap(issue, ctx) {
-      const path = issue.path.join('.');
-
-      const message = {
-        email: t('invalidEmail')
-        password: t('invalidPassword')
-      }[path];
-
-      return {message: message || ctx.defaultError};
+    error(issue) {
+      if (issue.path) {
+        const path = issue.path.join('.');
+        const message = {
+          email: t('invalidEmail'),
+          password: t('invalidPassword')
+        }[path];
+        return message;
+      }
     }
   });
 
