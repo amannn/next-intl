@@ -76,7 +76,7 @@ export default function createSharedNavigationFns<
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl.dev/docs/routing/navigation#link */
-      locale?: Locale;
+      locale?: Locale | false;
     }
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
@@ -105,8 +105,11 @@ export default function createSharedNavigationFns<
           locale: locale || curLocale,
           // @ts-expect-error -- This is ok
           href: pathnames == null ? pathname : {pathname, params},
-          // Always include a prefix when changing locales
-          forcePrefix: locale != null || undefined
+          // Include a prefix when changing locales, exclude when locale is false
+          forcePrefix:
+            (locale as Locale | false | undefined) === false
+              ? false
+              : locale != null || undefined
         })
       : pathname;
 
@@ -119,7 +122,7 @@ export default function createSharedNavigationFns<
             ? {...href, pathname: finalPathname}
             : finalPathname
         }
-        locale={locale}
+        locale={locale || undefined}
         localeCookie={config.localeCookie}
         {...rest}
       />
