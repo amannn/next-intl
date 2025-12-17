@@ -56,7 +56,7 @@ async function loginAction(
   if (!result.success) {
     return {
       success: false,
-      errors: result.error.flatten()
+      errors: z.flattenError(result.error)
     };
   }
 
