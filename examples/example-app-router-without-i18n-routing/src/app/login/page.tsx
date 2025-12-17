@@ -44,11 +44,10 @@ async function loginAction(
     error(issue) {
       if (issue.path) {
         const key = issue.path.join('.');
-        const message = {
+        return {
           email: t('invalidEmail'),
           password: t('invalidPassword')
         }[key];
-        return message;
       }
     }
   });

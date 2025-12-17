@@ -86,11 +86,10 @@ async function loginAction(data: FormData) {
     error(issue) {
       if (issue.path) {
         const path = issue.path.join('.');
-        const message = {
+        return {
           email: t('invalidEmail'),
           password: t('invalidPassword')
         }[path];
-        return message;
       }
     }
   });
