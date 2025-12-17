@@ -1,4 +1,3 @@
-import {isEqual} from 'lodash';
 import {useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
 import {z} from 'zod';
@@ -16,7 +15,10 @@ export type FormResult =
     }
   | {
       success: false;
-      fieldErrors: Partial<Record<keyof FormInput, Array<string>>>;
+      errors: {
+        formErrors?: Array<string>;
+        fieldErrors?: Partial<Record<keyof FormInput, Array<string>>>;
+      };
     };
 
 async function submitAction(
@@ -29,22 +31,17 @@ async function submitAction(
   const t = await getTranslations('ZodFormExample');
 
   const result = FormSchema.safeParse(values, {
-    errorMap(issue, ctx) {
-      let message;
-      if (isEqual(issue.path, ['task'])) {
-        message = t('taskEmpty');
+    error(issue) {
+      if (issue.path && issue.path.join('.') === 'task') {
+        return t('taskEmpty');
       }
-      if (!message) {
-        message = ctx.defaultError;
-      }
-      return {message};
     }
   });
 
   if (!result.success) {
     return {
       success: false,
-      fieldErrors: result.error.flatten().fieldErrors
+      errors: z.flattenError(result.error)
     };
   } else {
     return {
