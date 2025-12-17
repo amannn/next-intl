@@ -56,5 +56,9 @@
   },
   "ServerActions": {
     "item": "Element #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Geben Sie eine Aufgabe ein",
+    "taskEmpty": "Bitte geben sie eine Aufgabe ein."
   }
 }

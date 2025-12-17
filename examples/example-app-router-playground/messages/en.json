@@ -56,5 +56,9 @@
   },
   "ServerActions": {
     "item": "Item #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Enter a task",
+    "taskEmpty": "Please enter a task."
   }
 }

@@ -56,5 +56,9 @@
   },
   "ServerActions": {
     "item": "Artículo #{id}"
+  },
+  "ZodFormExample": {
+    "task": "Introduce una tarea",
+    "taskEmpty": "Por favor ingrese una tarea."
   }
 }
