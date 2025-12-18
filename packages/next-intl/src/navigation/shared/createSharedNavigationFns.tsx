@@ -76,7 +76,7 @@ export default function createSharedNavigationFns<
         ? ComponentProps<typeof BaseLink>['href']
         : HrefOrUrlObjectWithParams<Pathname>;
       /** @see https://next-intl.dev/docs/routing/navigation#link */
-      locale?: Locale | false;
+      locale?: Locale | "remove-default-locale-prefix";
     }
   >;
   function Link<Pathname extends keyof AppPathnames = never>(
@@ -107,7 +107,7 @@ export default function createSharedNavigationFns<
           href: pathnames == null ? pathname : {pathname, params},
           // Include a prefix when changing locales, exclude when locale is false
           forcePrefix:
-            (locale as Locale | false | undefined) === false
+            (locale as Locale | "remove-default-locale-prefix" | undefined) === "remove-default-locale-prefix"
               ? false
               : locale != null || undefined
         })
