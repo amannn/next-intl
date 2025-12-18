@@ -17,7 +17,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
     "http-status-codes": "^2.3.0",
-    "next": "^14.2.4",
+    "next": "^14.2.35",
     "nextra": "^3.3.1",
     "nextra-theme-docs": "^3.3.1",
     "react": "^18.3.1",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.5",
-    "@types/react": "^19.2.1",
+    "@types/react": "^18.3.1",
     "autoprefixer": "^10.4.19",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
