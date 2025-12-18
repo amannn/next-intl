@@ -11,10 +11,10 @@
   "dependencies": {
     "accept-language-parser": "^1.5.0",
     "lodash": "^4.17.21",
-    "next": "^16.0.8",
+    "next": "^16.0.10",
     "next-intl": "^4.0.0",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
@@ -23,9 +23,9 @@
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.5",
-    "@types/react": "^19.2.1",
+    "@types/react": "^19.2.3",
     "eslint": "^9.38.0",
-    "eslint-config-next": "^16.0.8",
+    "eslint-config-next": "^16.0.10",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.3.3",
