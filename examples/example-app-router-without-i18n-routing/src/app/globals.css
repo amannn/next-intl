@@ -1,8 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-* {
-  -webkit-font-smoothing: antialiased;
-  @apply outline-sky-600;
-}
