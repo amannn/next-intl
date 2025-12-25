@@ -373,49 +373,6 @@ importers:
         specifier: ^5.5.3
         version: 5.8.2
 
-  examples/example-app-router-single-locale:
-    dependencies:
-      next:
-        specifier: ^16.0.10
-        version: 16.0.10(@babel/core@7.26.10)(@playwright/test@1.55.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      next-intl:
-        specifier: ^4.0.0
-        version: link:../../packages/next-intl
-      react:
-        specifier: ^19.2.3
-        version: 19.2.3
-      react-dom:
-        specifier: ^19.2.3
-        version: 19.2.3(react@19.2.3)
-    devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3.1.0
-        version: 3.3.0
-      '@playwright/test':
-        specifier: ^1.51.1
-        version: 1.55.0
-      '@types/lodash':
-        specifier: ^4.17.5
-        version: 4.17.16
-      '@types/node':
-        specifier: ^20.14.5
-        version: 20.17.24
-      '@types/react':
-        specifier: ^19.2.3
-        version: 19.2.7
-      eslint:
-        specifier: ^9.38.0
-        version: 9.38.0(jiti@2.4.2)
-      eslint-config-next:
-        specifier: ^16.0.10
-        version: 16.0.10(eslint@9.38.0(jiti@2.4.2))(typescript@5.8.2)
-      prettier:
-        specifier: ^3.3.3
-        version: 3.5.3
-      typescript:
-        specifier: ^5.5.3
-        version: 5.8.2
-
   examples/example-app-router-without-i18n-routing:
     dependencies:
       next:
