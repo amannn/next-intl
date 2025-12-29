@@ -98,6 +98,7 @@ it('does not add a fallback message in production', async () => {
             {
               "line": 5,
               "path": "test.tsx",
+              "line": 5,
             },
           ],
         },

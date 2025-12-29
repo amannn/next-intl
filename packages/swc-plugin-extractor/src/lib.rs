@@ -6,6 +6,7 @@ mod key_generator;
 use indexmap::IndexMap;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
+use std::sync::{Arc, Mutex};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
@@ -31,6 +32,7 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
         config.is_development,
         config.file_path,
         Some(data.source_map),
+        None,
     );
     program.visit_mut_with(&mut visitor);
 
@@ -51,10 +53,10 @@ struct Config {
     file_path: String,
 }
 
-pub struct TransformVisitor {
+pub struct TransformVisitor<M: SourceMapper> {
     is_development: bool,
     file_path: String,
-    source_map: Option<PluginSourceMapProxy>,
+    source_map: Option<M>,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
@@ -62,13 +64,17 @@ pub struct TransformVisitor {
 
     /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
     results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
+
+    /// Optional buffer to store results for testing
+    pub results_buffer: Option<Arc<Mutex<Vec<StrictExtractedMessage>>>>,
 }
 
-impl TransformVisitor {
+impl<M: SourceMapper> TransformVisitor<M> {
     pub fn new(
         is_development: bool,
         file_path: String,
-        source_map: Option<PluginSourceMapProxy>,
+        source_map: Option<M>,
+        results_buffer: Option<Arc<Mutex<Vec<StrictExtractedMessage>>>>,
     ) -> Self {
         Self {
             is_development,
@@ -77,6 +83,7 @@ impl TransformVisitor {
             hook_local_names: Default::default(),
             translator_map: Default::default(),
             results_by_id: Default::default(),
+            results_buffer,
         }
     }
 
@@ -141,7 +148,7 @@ impl HookType {
     }
 }
 
-impl VisitMut for TransformVisitor {
+impl<M: SourceMapper> VisitMut for TransformVisitor<M> {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         let mut is_translator_call = false;
         let mut namespace = None;
@@ -424,6 +431,11 @@ impl VisitMut for TransformVisitor {
         }
 
         module.visit_mut_children_with(self);
+
+        // Sync results to buffer for testing
+        if let Some(buffer) = &self.results_buffer {
+            *buffer.lock().unwrap() = self.get_results();
+        }
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
