@@ -9,7 +9,7 @@ export type ExtractorMessage = {
   id: string;
   message: string;
   description?: string;
-  references?: Array<{path: string}>;
+  references?: Array<{path: string; line: number}>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };

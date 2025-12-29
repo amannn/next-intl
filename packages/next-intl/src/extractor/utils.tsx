@@ -28,14 +28,21 @@ export function getSortedMessages(
   messages: Array<ExtractorMessage>
 ): Array<ExtractorMessage> {
   return messages.toSorted((messageA, messageB) => {
-    const pathA = messageA.references?.[0]?.path ?? '';
-    const pathB = messageB.references?.[0]?.path ?? '';
+    const refA = messageA.references?.[0];
+    const refB = messageB.references?.[0];
 
-    if (pathA === pathB) {
+    // Should practically never happen
+    if (!refA || !refB) {
       return localeCompare(messageA.id, messageB.id);
-    } else {
-      return localeCompare(pathA, pathB);
     }
+
+    const pathCompare = localeCompare(refA.path, refB.path);
+    if (pathCompare !== 0) return pathCompare;
+
+    const lineCompare = refA.line - refB.line;
+    if (lineCompare !== 0) return lineCompare;
+
+    return localeCompare(messageA.id, messageB.id);
   });
 }
 

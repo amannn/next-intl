@@ -59,6 +59,7 @@ it('does not add a fallback message in production', async () => {
           "message": "Hey!",
           "references": [
             {
+              "line": 5,
               "path": "test.tsx",
             },
           ],
