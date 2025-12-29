@@ -14,10 +14,25 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
     return;
   }
 
-  runOnce(() => {
-    // Avoid rollup's `replace` plugin to compile this away
-    const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
+  // Avoid rollup's `replace` plugin to compile this away
+  const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
 
+  // Avoid running for:
+  // - info
+  // - start
+  // - typegen
+  //
+  // Doesn't consult Next.js config anyway:
+  // - telemetry
+  // - lint
+  //
+  // What remains are:
+  // - dev (NODE_ENV=development)
+  // - build (NODE_ENV=production)
+  const shouldRun = isDevelopment || process.argv.includes('build');
+  if (!shouldRun) return;
+
+  runOnce(() => {
     const extractorConfig: ExtractorConfig = {
       srcPath: experimental.srcPath!,
       sourceLocale: experimental.extract!.sourceLocale,
