@@ -8,7 +8,9 @@ use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
-    plugin::proxies::TransformPluginProgramMetadata, transform_common::output::experimental_emit,
+    common::SourceMapper,
+    plugin::proxies::{PluginSourceMapProxy, TransformPluginProgramMetadata},
+    transform_common::output::experimental_emit,
 };
 use swc_ecma_ast::*;
 use swc_ecma_utils::ExprFactory;
@@ -24,7 +26,8 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("Invalid config");
 
-    let mut visitor = TransformVisitor::new(config.is_development, config.file_path);
+    let mut visitor =
+        TransformVisitor::new(config.is_development, config.file_path, Some(data.source_map));
     program.visit_mut_with(&mut visitor);
 
     experimental_emit(
@@ -47,6 +50,7 @@ struct Config {
 pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
+    source_map: Option<PluginSourceMapProxy>,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
@@ -56,10 +60,15 @@ pub struct TransformVisitor {
 }
 
 impl TransformVisitor {
-    pub fn new(is_development: bool, file_path: String) -> Self {
+    pub fn new(
+        is_development: bool,
+        file_path: String,
+        source_map: Option<PluginSourceMapProxy>,
+    ) -> Self {
         Self {
             is_development,
             file_path,
+            source_map,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
             results: Default::default(),
@@ -88,6 +97,7 @@ struct StrictExtractedMessage {
 #[derive(Debug, Clone, Serialize)]
 struct Reference {
     path: String,
+    line: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -222,12 +232,17 @@ impl VisitMut for TransformVisitor {
                         .join(NAMESPACE_SEPARATOR)
                         .into()
                 });
+                let line = self
+                    .source_map
+                    .as_ref()
+                    .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
                 let mut message = StrictExtractedMessage {
                     id: full_key,
                     message: message_text.clone(),
                     description: None,
                     references: vec![Reference {
                         path: self.file_path.clone(),
+                        line,
                     }],
                 };
                 if let Some(description) = description {

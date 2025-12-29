@@ -18,7 +18,7 @@ fn tr() -> impl Pass {
 
     (
         resolver(unresolved_mark, top_level_mark, false),
-        visit_mut_pass(TransformVisitor::new(true, "input.js".to_string())),
+        visit_mut_pass(TransformVisitor::new(true, "input.js".to_string(), None)),
     )
 }
 
