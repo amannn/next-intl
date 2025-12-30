@@ -7,7 +7,12 @@ import SourceFileScanner from '../source/SourceFileScanner.js';
 import SourceFileWatcher, {
   type SourceFileWatcherEvent
 } from '../source/SourceFileWatcher.js';
-import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
+import type {
+  ExtractorConfig,
+  ExtractorMessage,
+  ExtractorMessageReference,
+  Locale
+} from '../types.js';
 import {getDefaultProjectRoot, localeCompare} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
@@ -357,10 +362,10 @@ export default class CatalogManager implements Disposable {
   }
 
   private mergeReferences(
-    existing: Array<{path: string}>,
-    current: {path: string}
-  ): Array<{path: string}> {
-    const dedup = new Map<string, {path: string}>();
+    existing: Array<ExtractorMessageReference>,
+    current: ExtractorMessageReference
+  ): Array<ExtractorMessageReference> {
+    const dedup = new Map<string, ExtractorMessageReference>();
     for (const ref of existing) {
       dedup.set(ref.path, ref);
     }

@@ -5,11 +5,16 @@ import type {MessagesFormat} from './format/types.js';
 // don't require a match here.
 export type Locale = string;
 
+export type ExtractorMessageReference = {
+  path: string;
+  line?: number;
+};
+
 export type ExtractorMessage = {
   id: string;
   message: string;
   description?: string;
-  references?: Array<{path: string; line: number}>;
+  references?: Array<ExtractorMessageReference>;
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };
