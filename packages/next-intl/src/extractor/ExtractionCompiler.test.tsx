@@ -1412,7 +1412,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       msgid "+YJVTi"
       msgstr "Hey!"
 
@@ -1431,7 +1431,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       msgid "+YJVTi"
       msgstr ""
 
