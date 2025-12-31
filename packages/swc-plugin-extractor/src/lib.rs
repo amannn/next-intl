@@ -80,7 +80,7 @@ impl TransformVisitor {
         }
     }
 
-    fn get_results(&self) -> Vec<StrictExtractedMessage> {
+    pub fn get_results(&self) -> Vec<StrictExtractedMessage> {
         self.results_by_id.values().cloned().collect()
     }
 
@@ -96,17 +96,17 @@ struct TranslatorInfo {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct StrictExtractedMessage {
-    id: Wtf8Atom,
-    message: Wtf8Atom,
-    description: Option<Wtf8Atom>,
-    references: Vec<Reference>,
+pub struct StrictExtractedMessage {
+    pub id: Wtf8Atom,
+    pub message: Wtf8Atom,
+    pub description: Option<Wtf8Atom>,
+    pub references: Vec<Reference>,
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct Reference {
-    path: String,
-    line: usize,
+pub struct Reference {
+    pub path: String,
+    pub line: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -253,16 +253,16 @@ impl VisitMut for TransformVisitor {
                 // Aggregate duplicate messages by ID
                 if let Some(existing) = self.results_by_id.get_mut(&full_key) {
                     existing.references.push(new_reference);
+                    if existing.description.is_none() {
+                        existing.description = description;
+                    }
                 } else {
-                    let mut message = StrictExtractedMessage {
+                    let message = StrictExtractedMessage {
                         id: full_key.clone(),
                         message: message_text.clone(),
-                        description: None,
+                        description,
                         references: vec![new_reference],
                     };
-                    if let Some(description) = description {
-                        message.description = Some(description.clone());
-                    }
                     self.results_by_id.insert(full_key, message);
                 }
 
