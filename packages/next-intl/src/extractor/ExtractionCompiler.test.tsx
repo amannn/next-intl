@@ -1301,6 +1301,51 @@ describe('po format', () => {
     `);
   });
 
+  it('merges descriptions when message appears in multiple files with different descriptions', async () => {
+    filesystem.project.src['FileY.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileY() {
+      const t = useExtracted();
+      return <div>{t({message: 'Message', description: 'Description from FileY'})}</div>;
+    }
+    `;
+    filesystem.project.src['FileZ.tsx'] = `
+    import {useExtracted} from 'next-intl';
+    function FileZ() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t('Message')}
+          {t({message: 'Message', description: 'Description from FileZ'})}
+        </div>
+      );
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toMatchInlineSnapshot(`
+      "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #. Description from FileY
+      #: src/FileY.tsx:5
+      #: src/FileZ.tsx:7
+      #: src/FileZ.tsx:8
+      msgid "T7Ry38"
+      msgstr "Message"
+      "
+    `);
+  });
+
   it('updates references in all catalogs when message is reused in another file', async () => {
     filesystem.project.src['Greeting.tsx'] = `
     import {useExtracted} from 'next-intl';
