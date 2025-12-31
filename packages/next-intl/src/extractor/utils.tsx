@@ -1,4 +1,4 @@
-import type {ExtractorMessage} from './types.js';
+import type {ExtractorMessage, ExtractorMessageReference} from './types.js';
 
 // Essentialls lodash/set, but we avoid this dependency
 export function setNestedProperty(
@@ -31,23 +31,25 @@ export function getSortedMessages(
     const refA = messageA.references?.[0];
     const refB = messageB.references?.[0];
 
-    // Should practically never happen
-    if (!refA || !refB) {
-      return localeCompare(messageA.id, messageB.id);
-    }
+    // No references: preserve original (extraction) order
+    if (!refA || !refB) return 0;
 
-    const pathCompare = localeCompare(refA.path, refB.path);
-    if (pathCompare !== 0) return pathCompare;
-
-    const lineCompare = refA.line - refB.line;
-    if (lineCompare !== 0) return lineCompare;
-
-    return localeCompare(messageA.id, messageB.id);
+    // Sort by path, then line. Same path+line: preserve original order
+    return compareReferences(refA, refB);
   });
 }
 
 export function localeCompare(a: string, b: string) {
   return a.localeCompare(b, 'en');
+}
+
+export function compareReferences(
+  refA: ExtractorMessageReference,
+  refB: ExtractorMessageReference
+): number {
+  const pathCompare = localeCompare(refA.path, refB.path);
+  if (pathCompare !== 0) return pathCompare;
+  return (refA.line ?? 0) - (refB.line ?? 0);
 }
 
 export function getDefaultProjectRoot() {

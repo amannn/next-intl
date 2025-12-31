@@ -41,7 +41,7 @@ describe('getSortedMessages', () => {
     ).toEqual(['a', 'b', 'c']);
   });
 
-  it('sorts by message id when reference paths and lines match', () => {
+  it('preserves original order when reference paths and lines match', () => {
     expect(
       getSortedMessages([
         {
@@ -60,6 +60,6 @@ describe('getSortedMessages', () => {
           references: [{path: 'components/A.tsx', line: 10}]
         }
       ]).map((message) => message.id)
-    ).toEqual(['a', 'b', 'c']);
+    ).toEqual(['c', 'a', 'b']);
   });
 });

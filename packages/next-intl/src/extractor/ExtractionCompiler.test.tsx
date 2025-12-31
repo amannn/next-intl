@@ -701,13 +701,12 @@ describe('json format', () => {
 
     await waitForWriteFileCalls(1);
 
-    expect(JSON.parse(filesystem.project.messages!['en.json']))
-      .toMatchInlineSnapshot(`
-        {
-          "7kKG3Q": "World!",
-          "OpKKos": "Hello!",
-        }
-      `);
+    expect(filesystem.project.messages!['en.json']).toMatchInlineSnapshot(`
+      "{
+        "OpKKos": "Hello!",
+        "7kKG3Q": "World!"
+      }
+      "`);
 
     filesystem.project.messages!['de.json'] = '{}';
     simulateFileEvent('/project/messages', 'rename', 'de.json');
@@ -717,8 +716,8 @@ describe('json format', () => {
       [
         "messages/de.json",
         "{
-        "7kKG3Q": "",
-        "OpKKos": ""
+        "OpKKos": "",
+        "7kKG3Q": ""
       }
       ",
       ]
@@ -1042,6 +1041,54 @@ describe('po format', () => {
     );
   }
 
+  it('tracks all line numbers when same message appears multiple times in one file', async () => {
+    filesystem.project.src['Greeting.tsx'] =
+      `import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t('Hello!')}
+          {t('Hey!')}
+          <span>{t('Hello!')}</span>
+        </div>
+      );
+    }
+    `;
+    filesystem.project.src['Greeting2.tsx'] =
+      `import {useExtracted} from 'next-intl';
+    function Greeting2() {
+      const t = useExtracted();
+      return t('Hello!');
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toMatchInlineSnapshot(`
+      "msgid ""
+      msgstr ""
+      "Language: en\\n"
+      "Content-Type: text/plain; charset=utf-8\\n"
+      "Content-Transfer-Encoding: 8bit\\n"
+      "X-Generator: next-intl\\n"
+      "X-Crowdin-SourceKey: msgstr\\n"
+
+      #: src/Greeting.tsx:6
+      #: src/Greeting.tsx:8
+      #: src/Greeting2.tsx:4
+      msgid "OpKKos"
+      msgstr "Hello!"
+
+      #: src/Greeting.tsx:7
+      msgid "+YJVTi"
+      msgstr "Hey!"
+      "
+    `);
+  });
+
   it('saves messages initially', async () => {
     filesystem.project.src['Greeting.tsx'] =
       `import {useExtracted} from 'next-intl';
@@ -1153,7 +1200,7 @@ describe('po format', () => {
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. Shown on home screen
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hey!"
       ",
@@ -1169,7 +1216,7 @@ describe('po format', () => {
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. Shown on home screen
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hallo!"
       ",
@@ -1228,7 +1275,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -1244,7 +1291,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hallo!"
@@ -1333,7 +1380,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -1349,7 +1396,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Footer.tsx
+      #: src/Footer.tsx:5
       #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr ""
@@ -1416,7 +1463,7 @@ describe('po format', () => {
       msgid "+YJVTi"
       msgstr "Hey!"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "4xqPlJ"
       msgstr "Howdy!"
       ",
@@ -1435,7 +1482,7 @@ describe('po format', () => {
       msgid "+YJVTi"
       msgstr ""
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "4xqPlJ"
       msgstr ""
       ",
@@ -1983,16 +2030,16 @@ msgstr "Hallo!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/a.tsx
+      #: src/a.tsx:5
       msgid "PmvAXH"
       msgstr "Message A"
 
-      #: src/b.tsx
-      #: src/d.tsx
+      #: src/b.tsx:5
+      #: src/d.tsx:5
       msgid "5bb321"
       msgstr "Message B"
 
-      #: src/c.tsx
+      #: src/c.tsx:5
       msgid "c3UbA2"
       msgstr "Message C"
       ",
@@ -2032,11 +2079,11 @@ msgstr "Hallo!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #: src/Greeting.tsx:5
-      msgid "7kKG3Q"
+      msgid "OpKKos"
       msgstr ""
 
       #: src/Greeting.tsx:5
-      msgid "OpKKos"
+      msgid "7kKG3Q"
       msgstr ""
       ",
         ],
@@ -2179,7 +2226,7 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       #, c-format
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -2236,11 +2283,11 @@ msgstr "World"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hey!"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "jqdzk6"
       msgstr "World"
 
@@ -2301,16 +2348,16 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       #, no-wrap
       msgid "+YJVTi"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "jqdzk6"
       msgstr ""
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "ODGmph"
       msgstr ""
 
@@ -2374,19 +2421,19 @@ msgstr ""
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "+YJVTi"
       msgstr "Hallo!"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "jqdzk6"
       msgstr ""
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "ODGmph"
       msgstr ""
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       msgid "pE58D7"
       msgstr ""
 
@@ -2455,7 +2502,7 @@ msgstr "Hey!"
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       #, fuzzy
       msgid "+YJVTi"
       msgstr "Hey!"
@@ -2574,7 +2621,7 @@ msgstr "Hey!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. This is a description
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       #, c-format
       msgid "OpKKos"
       msgstr "Hello!"
@@ -2595,7 +2642,7 @@ msgstr "Hey!"
       "X-Crowdin-SourceKey: msgstr\\n"
 
       #. This is a description
-      #: src/Greeting.tsx
+      #: src/Greeting.tsx:5
       #, fuzzy
       msgid "OpKKos"
       msgstr "Hallo!"

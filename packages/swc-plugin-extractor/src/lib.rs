@@ -3,6 +3,7 @@
 
 mod key_generator;
 
+use indexmap::IndexMap;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
@@ -26,13 +27,16 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("Invalid config");
 
-    let mut visitor =
-        TransformVisitor::new(config.is_development, config.file_path, Some(data.source_map));
+    let mut visitor = TransformVisitor::new(
+        config.is_development,
+        config.file_path,
+        Some(data.source_map),
+    );
     program.visit_mut_with(&mut visitor);
 
     experimental_emit(
         "results".into(),
-        serde_json::to_string(&visitor.results).unwrap(),
+        serde_json::to_string(&visitor.get_results()).unwrap(),
     );
 
     program
@@ -56,7 +60,8 @@ pub struct TransformVisitor {
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
-    results: Vec<StrictExtractedMessage>,
+    /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
+    results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
 }
 
 impl TransformVisitor {
@@ -71,8 +76,12 @@ impl TransformVisitor {
             source_map,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
-            results: Default::default(),
+            results_by_id: Default::default(),
         }
+    }
+
+    fn get_results(&self) -> Vec<StrictExtractedMessage> {
+        self.results_by_id.values().cloned().collect()
     }
 
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
@@ -236,19 +245,26 @@ impl VisitMut for TransformVisitor {
                     .source_map
                     .as_ref()
                     .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
-                let mut message = StrictExtractedMessage {
-                    id: full_key,
-                    message: message_text.clone(),
-                    description: None,
-                    references: vec![Reference {
-                        path: self.file_path.clone(),
-                        line,
-                    }],
+                let new_reference = Reference {
+                    path: self.file_path.clone(),
+                    line,
                 };
-                if let Some(description) = description {
-                    message.description = Some(description.clone());
+
+                // Aggregate duplicate messages by ID
+                if let Some(existing) = self.results_by_id.get_mut(&full_key) {
+                    existing.references.push(new_reference);
+                } else {
+                    let mut message = StrictExtractedMessage {
+                        id: full_key.clone(),
+                        message: message_text.clone(),
+                        description: None,
+                        references: vec![new_reference],
+                    };
+                    if let Some(description) = description {
+                        message.description = Some(description.clone());
+                    }
+                    self.results_by_id.insert(full_key, message);
                 }
-                self.results.push(message);
 
                 // Transform the argument based on type
                 match &mut *call.args[0].expr {
