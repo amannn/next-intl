@@ -45,10 +45,11 @@ fn merges_duplicate_messages_preserving_description() {
         
         program.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
 
-        let mut visitor = TransformVisitor::new(
+        let mut visitor: TransformVisitor<SourceMap> = TransformVisitor::new(
             true,
             "test.tsx".to_string(),
-            None
+            None,
+            None,
         );
 
         program.visit_mut_with(&mut visitor);
