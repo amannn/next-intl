@@ -9,8 +9,7 @@ use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
-    common::SourceMapper,
-    plugin::proxies::{PluginSourceMapProxy, TransformPluginProgramMetadata},
+    common::SourceMapper, plugin::proxies::TransformPluginProgramMetadata,
     transform_common::output::experimental_emit,
 };
 use swc_ecma_ast::*;
@@ -30,7 +29,7 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     let mut visitor = TransformVisitor::new(
         config.is_development,
         config.file_path,
-        Some(data.source_map),
+        Some(Box::new(data.source_map) as Box<dyn SourceMapper>),
     );
     program.visit_mut_with(&mut visitor);
 
@@ -54,7 +53,7 @@ struct Config {
 pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
-    source_map: Option<PluginSourceMapProxy>,
+    source_map: Option<Box<dyn SourceMapper>>,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
@@ -68,7 +67,7 @@ impl TransformVisitor {
     pub fn new(
         is_development: bool,
         file_path: String,
-        source_map: Option<PluginSourceMapProxy>,
+        source_map: Option<Box<dyn SourceMapper>>,
     ) -> Self {
         Self {
             is_development,

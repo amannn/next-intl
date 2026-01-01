@@ -1,0 +1,28 @@
+[
+  {
+    "description": null,
+    "id": "j0tI96",
+    "message": "Hello here!",
+    "references": [
+      {
+        "line": 5,
+        "path": "input.js"
+      },
+      {
+        "line": 6,
+        "path": "input.js"
+      }
+    ]
+  },
+  {
+    "description": null,
+    "id": "0KGiQf",
+    "message": "Hello there!",
+    "references": [
+      {
+        "line": 8,
+        "path": "input.js"
+      }
+    ]
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "5n+ZPU",
+    "message": "{date, date, short}!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 5
+      }
+    ]
+  }
+]
