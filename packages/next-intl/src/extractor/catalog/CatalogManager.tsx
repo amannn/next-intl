@@ -313,6 +313,11 @@ export default class CatalogManager implements Disposable {
         // Merge other properties like description, or unknown
         // attributes like flags that are opaque to us
         for (const key of Object.keys(prevMessage)) {
+          if (key === 'description' && prevMessage[key]) {
+            message[key] = prevMessage[key];
+            continue;
+          }
+
           if (message[key] == null) {
             message[key] = prevMessage[key];
           }
