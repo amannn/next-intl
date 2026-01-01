@@ -1336,7 +1336,7 @@ describe('po format', () => {
       "X-Generator: next-intl\\n"
       "X-Crowdin-SourceKey: msgstr\\n"
 
-      #. Description from FileY
+      #. Description from FileZ
       #: src/FileY.tsx:5
       #: src/FileZ.tsx:7
       #: src/FileZ.tsx:8
