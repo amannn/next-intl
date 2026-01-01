@@ -1,0 +1,35 @@
+[
+  {
+    "id": "OpKKos",
+    "message": "Hello!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "+YJVTi",
+    "message": "Hey!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 6
+      }
+    ]
+  },
+  {
+    "id": "nm/7yQ",
+    "message": "Hi!",
+    "description": null,
+    "references": [
+      {
+        "path": "input.js",
+        "line": 7
+      }
+    ]
+  }
+]

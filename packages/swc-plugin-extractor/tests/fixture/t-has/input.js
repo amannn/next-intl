@@ -2,5 +2,9 @@ import {useExtracted} from 'next-intl';
 
 function Component() {
   const t = useExtracted();
-  t.has('Hello there!');
+  if (t.has('Hello here!')) {
+    return t('Hello here!');
+  } else {
+    return t('Hello there!');
+  }
 }
