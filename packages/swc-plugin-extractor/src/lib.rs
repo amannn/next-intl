@@ -3,12 +3,14 @@
 
 mod key_generator;
 
+use indexmap::IndexMap;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
-    plugin::proxies::TransformPluginProgramMetadata, transform_common::output::experimental_emit,
+    common::SourceMapper, plugin::proxies::TransformPluginProgramMetadata,
+    transform_common::output::experimental_emit,
 };
 use swc_ecma_ast::*;
 use swc_ecma_utils::ExprFactory;
@@ -24,12 +26,16 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     )
     .expect("Invalid config");
 
-    let mut visitor = TransformVisitor::new(config.is_development, config.file_path);
+    let mut visitor = TransformVisitor::new(
+        config.is_development,
+        config.file_path,
+        Some(Box::new(data.source_map) as Box<dyn SourceMapper>),
+    );
     program.visit_mut_with(&mut visitor);
 
     experimental_emit(
         "results".into(),
-        serde_json::to_string(&visitor.results).unwrap(),
+        serde_json::to_string(&visitor.get_results()).unwrap(),
     );
 
     program
@@ -47,23 +53,34 @@ struct Config {
 pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
+    source_map: Option<Box<dyn SourceMapper>>,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
     translator_map: FxHashMap<Id, TranslatorInfo>,
 
-    results: Vec<StrictExtractedMessage>,
+    /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
+    results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
 }
 
 impl TransformVisitor {
-    pub fn new(is_development: bool, file_path: String) -> Self {
+    pub fn new(
+        is_development: bool,
+        file_path: String,
+        source_map: Option<Box<dyn SourceMapper>>,
+    ) -> Self {
         Self {
             is_development,
             file_path,
+            source_map,
             hook_local_names: Default::default(),
             translator_map: Default::default(),
-            results: Default::default(),
+            results_by_id: Default::default(),
         }
+    }
+
+    pub fn get_results(&self) -> Vec<StrictExtractedMessage> {
+        self.results_by_id.values().cloned().collect()
     }
 
     fn define_translator(&mut self, name: Id, namespace: Option<Wtf8Atom>) {
@@ -78,16 +95,17 @@ struct TranslatorInfo {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct StrictExtractedMessage {
-    id: Wtf8Atom,
-    message: Wtf8Atom,
-    description: Option<Wtf8Atom>,
-    references: Vec<Reference>,
+pub struct StrictExtractedMessage {
+    pub id: Wtf8Atom,
+    pub message: Wtf8Atom,
+    pub description: Option<Wtf8Atom>,
+    pub references: Vec<Reference>,
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct Reference {
-    path: String,
+pub struct Reference {
+    pub path: String,
+    pub line: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -222,18 +240,30 @@ impl VisitMut for TransformVisitor {
                         .join(NAMESPACE_SEPARATOR)
                         .into()
                 });
-                let mut message = StrictExtractedMessage {
-                    id: full_key,
-                    message: message_text.clone(),
-                    description: None,
-                    references: vec![Reference {
-                        path: self.file_path.clone(),
-                    }],
+                let line = self
+                    .source_map
+                    .as_ref()
+                    .map_or(0, |sm| sm.lookup_char_pos(call.span.lo).line);
+                let new_reference = Reference {
+                    path: self.file_path.clone(),
+                    line,
                 };
-                if let Some(description) = description {
-                    message.description = Some(description.clone());
+
+                // Aggregate duplicate messages by ID
+                if let Some(existing) = self.results_by_id.get_mut(&full_key) {
+                    existing.references.push(new_reference);
+                    if existing.description.is_none() {
+                        existing.description = description;
+                    }
+                } else {
+                    let message = StrictExtractedMessage {
+                        id: full_key.clone(),
+                        message: message_text.clone(),
+                        description,
+                        references: vec![new_reference],
+                    };
+                    self.results_by_id.insert(full_key, message);
                 }
-                self.results.push(message);
 
                 // Transform the argument based on type
                 match &mut *call.args[0].expr {

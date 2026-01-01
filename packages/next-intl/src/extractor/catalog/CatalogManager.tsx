@@ -7,8 +7,13 @@ import SourceFileScanner from '../source/SourceFileScanner.js';
 import SourceFileWatcher, {
   type SourceFileWatcherEvent
 } from '../source/SourceFileWatcher.js';
-import type {ExtractorConfig, ExtractorMessage, Locale} from '../types.js';
-import {getDefaultProjectRoot, localeCompare} from '../utils.js';
+import type {
+  ExtractorConfig,
+  ExtractorMessage,
+  ExtractorMessageReference,
+  Locale
+} from '../types.js';
+import {compareReferences, getDefaultProjectRoot} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -282,6 +287,7 @@ export default class CatalogManager implements Disposable {
     }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
+    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
 
     // Init with all previous ones
     const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
@@ -294,13 +300,15 @@ export default class CatalogManager implements Disposable {
 
       // Merge with previous message if it exists
       if (prevMessage) {
-        const validated = prevMessage.references ?? [];
-        message = {
-          ...message,
-          references: this.mergeReferences(validated, {
-            path: path.relative(this.projectRoot, absoluteFilePath)
-          })
-        };
+        message = {...message};
+
+        if (message.references) {
+          message.references = this.mergeReferences(
+            prevMessage.references ?? [],
+            relativeFilePath,
+            message.references
+          );
+        }
 
         // Merge other properties like description, or unknown
         // attributes like flags that are opaque to us
@@ -318,8 +326,6 @@ export default class CatalogManager implements Disposable {
       const index = idsToRemove.indexOf(message.id);
       if (index !== -1) idsToRemove.splice(index, 1);
     }
-
-    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
 
     // Clean up removed messages from `messagesById`
     idsToRemove.forEach((id) => {
@@ -357,17 +363,16 @@ export default class CatalogManager implements Disposable {
   }
 
   private mergeReferences(
-    existing: Array<{path: string}>,
-    current: {path: string}
-  ): Array<{path: string}> {
-    const dedup = new Map<string, {path: string}>();
-    for (const ref of existing) {
-      dedup.set(ref.path, ref);
-    }
-    dedup.set(current.path, current);
-    return Array.from(dedup.values()).sort((a, b) =>
-      localeCompare(a.path, b.path)
+    existing: Array<ExtractorMessageReference>,
+    currentFilePath: string,
+    currentFileRefs: Array<ExtractorMessageReference>
+  ): Array<ExtractorMessageReference> {
+    // Keep refs from other files, replace all refs from the current file
+    const otherFileRefs = existing.filter(
+      (ref) => ref.path !== currentFilePath
     );
+    const merged = [...otherFileRefs, ...currentFileRefs];
+    return merged.sort(compareReferences);
   }
 
   private haveMessagesChangedForFile(

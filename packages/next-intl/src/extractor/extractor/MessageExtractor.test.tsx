@@ -31,6 +31,43 @@ it('can extract with source maps', async () => {
   expect(result.map).not.toContain('<anon>');
 });
 
+it('extracts same message used multiple times in one file with all references', async () => {
+  const result = await process(
+    `import {useExtracted} from 'next-intl';
+
+    function Component() {
+      const t = useExtracted();
+      return (
+        <div>
+          {t('Hello!')}
+          <span>{t('Hello!')}</span>
+        </div>
+      );
+    }
+  `
+  );
+
+  expect(result.messages).toMatchInlineSnapshot(`
+    [
+      {
+        "description": null,
+        "id": "OpKKos",
+        "message": "Hello!",
+        "references": [
+          {
+            "line": 7,
+            "path": "test.tsx",
+          },
+          {
+            "line": 8,
+            "path": "test.tsx",
+          },
+        ],
+      },
+    ]
+  `);
+});
+
 it('does not add a fallback message in production', async () => {
   const result = await process(
     `import {useExtracted} from 'next-intl';
@@ -59,6 +96,7 @@ it('does not add a fallback message in production', async () => {
           "message": "Hey!",
           "references": [
             {
+              "line": 5,
               "path": "test.tsx",
             },
           ],
