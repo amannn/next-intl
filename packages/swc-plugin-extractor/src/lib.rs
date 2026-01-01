@@ -9,8 +9,7 @@ use serde::{Deserialize, Serialize};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
-    common::SourceMapper,
-    plugin::proxies::{PluginSourceMapProxy, TransformPluginProgramMetadata},
+    common::SourceMapper, plugin::proxies::TransformPluginProgramMetadata,
     transform_common::output::experimental_emit,
 };
 use swc_ecma_ast::*;
@@ -30,7 +29,7 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
     let mut visitor = TransformVisitor::new(
         config.is_development,
         config.file_path,
-        Some(data.source_map),
+        Some(Box::new(data.source_map) as Box<dyn SourceMapper>),
     );
     program.visit_mut_with(&mut visitor);
 
@@ -51,10 +50,10 @@ struct Config {
     file_path: String,
 }
 
-pub struct TransformVisitor<M: SourceMapper> {
+pub struct TransformVisitor {
     is_development: bool,
     file_path: String,
-    source_map: Option<M>,
+    source_map: Option<Box<dyn SourceMapper>>,
 
     hook_local_names: FxHashMap<Id, HookType>,
 
@@ -64,11 +63,11 @@ pub struct TransformVisitor<M: SourceMapper> {
     results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
 }
 
-impl<M: SourceMapper> TransformVisitor<M> {
+impl TransformVisitor {
     pub fn new(
         is_development: bool,
         file_path: String,
-        source_map: Option<M>,
+        source_map: Option<Box<dyn SourceMapper>>,
     ) -> Self {
         Self {
             is_development,
@@ -141,7 +140,7 @@ impl HookType {
     }
 }
 
-impl<M: SourceMapper> VisitMut for TransformVisitor<M> {
+impl VisitMut for TransformVisitor {
     fn visit_mut_call_expr(&mut self, call: &mut CallExpr) {
         let mut is_translator_call = false;
         let mut namespace = None;
