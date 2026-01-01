@@ -1,22 +1,22 @@
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
-use swc_common::Mark;
+use swc_common::{Mark, GLOBALS};
 use swc_core::{
     common::{
         sync::Lrc, BytePos, FileName, Loc, SourceMap, SourceMapper, Span,
     },
     common::source_map::{FileLinesResult, SpanSnippetError},
     ecma::{
-        parser::{EsSyntax, Syntax},
+        parser::{lexer::Lexer, EsSyntax, Parser, StringInput, Syntax},
         transforms::{
             base::resolver,
             testing::{test_fixture, FixtureTestConfig},
         },
     },
 };
-use swc_ecma_ast::Pass;
-use swc_ecma_visit::visit_mut_pass;
+use swc_ecma_ast::{EsVersion, Pass, Program};
+use swc_ecma_visit::{visit_mut_pass, VisitMutWith};
 use swc_plugin_extractor::{StrictExtractedMessage, TransformVisitor};
 
 #[derive(Clone)]
@@ -49,7 +49,7 @@ impl SourceMapper for SourceMapWrapper {
     }
 }
 
-fn tr(results: Arc<Mutex<Vec<StrictExtractedMessage>>>, cm: Lrc<SourceMap>) -> impl Pass {
+fn tr(cm: Lrc<SourceMap>) -> impl Pass {
     let unresolved_mark = Mark::new();
     let top_level_mark = Mark::new();
 
@@ -59,9 +59,23 @@ fn tr(results: Arc<Mutex<Vec<StrictExtractedMessage>>>, cm: Lrc<SourceMap>) -> i
             true,
             "input.js".to_string(),
             Some(SourceMapWrapper(cm)),
-            Some(results),
         )),
     )
+}
+
+fn parse(cm: &SourceMap, code: &str) -> Program {
+    let fm = cm.new_source_file(FileName::Anon.into(), code.to_string());
+    let lexer = Lexer::new(
+        Syntax::Es(EsSyntax {
+            jsx: true,
+            ..Default::default()
+        }),
+        EsVersion::EsNext,
+        StringInput::from(&*fm),
+        None,
+    );
+    let mut parser = Parser::new_from(lexer);
+    parser.parse_program().unwrap()
 }
 
 #[testing::fixture("tests/fixture/**/input.js")]
@@ -70,15 +84,13 @@ fn test(input: PathBuf) {
     let output = dir.join("output.js");
     let output_json = dir.join("output.json");
 
-    let results = Arc::new(Mutex::new(Vec::new()));
-    let results_clone = results.clone();
-
+    // 1. Run standard test fixture for JS output and sourcemaps
     test_fixture(
         Syntax::Es(EsSyntax {
             jsx: true,
             ..Default::default()
         }),
-        &|t| tr(results_clone.clone(), t.cm.clone()),
+        &|t| tr(t.cm.clone()),
         &input,
         &output,
         FixtureTestConfig {
@@ -88,21 +100,39 @@ fn test(input: PathBuf) {
         },
     );
 
-    let results = results.lock().unwrap();
-    let mut json = serde_json::to_string_pretty(&*results).unwrap();
-    json.push('\n'); // Add trailing newline
+    // 2. Manually run visitor to check JSON output
+    testing::run_test(false, |cm, _| {
+        let code = std::fs::read_to_string(&input).unwrap();
+        let mut program = parse(&cm, &code);
 
-    // Normalize newlines
-    let json = json.replace("\r\n", "\n");
-
-    if output_json.exists() {
-        let expected = std::fs::read_to_string(&output_json)
-            .unwrap()
-            .replace("\r\n", "\n");
+        let unresolved_mark = Mark::new();
+        let top_level_mark = Mark::new();
         
-        // Use pretty assertions if available, otherwise standard assert
-        assert_eq!(json, expected, "output.json does not match for {:?}", input);
-    } else {
-        std::fs::write(&output_json, json).unwrap();
-    }
+        program.visit_mut_with(&mut resolver(unresolved_mark, top_level_mark, false));
+
+        let mut visitor = TransformVisitor::new(
+            true,
+            "input.js".to_string(),
+            Some(SourceMapWrapper(cm.clone())),
+        );
+
+        program.visit_mut_with(&mut visitor);
+        let results = visitor.get_results();
+
+        let mut json = serde_json::to_string_pretty(&results).unwrap();
+        json.push('\n'); // Add trailing newline
+        let json = json.replace("\r\n", "\n");
+
+        if output_json.exists() {
+            let expected = std::fs::read_to_string(&output_json)
+                .unwrap()
+                .replace("\r\n", "\n");
+            
+            assert_eq!(json, expected, "output.json does not match for {:?}", input);
+        } else {
+            std::fs::write(&output_json, json).unwrap();
+        }
+
+        Ok(())
+    }).unwrap();
 }

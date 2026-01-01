@@ -49,7 +49,6 @@ fn merges_duplicate_messages_preserving_description() {
             true,
             "test.tsx".to_string(),
             None,
-            None,
         );
 
         program.visit_mut_with(&mut visitor);

@@ -6,7 +6,6 @@ mod key_generator;
 use indexmap::IndexMap;
 use rustc_hash::FxHashMap;
 use serde::{Deserialize, Serialize};
-use std::sync::{Arc, Mutex};
 use swc_atoms::Wtf8Atom;
 use swc_common::{errors::HANDLER, Spanned, DUMMY_SP};
 use swc_core::{
@@ -32,7 +31,6 @@ fn next_intl_plugin(mut program: Program, data: TransformPluginProgramMetadata) 
         config.is_development,
         config.file_path,
         Some(data.source_map),
-        None,
     );
     program.visit_mut_with(&mut visitor);
 
@@ -64,9 +62,6 @@ pub struct TransformVisitor<M: SourceMapper> {
 
     /// Messages keyed by ID to aggregate duplicate usages (IndexMap preserves insertion order)
     results_by_id: IndexMap<Wtf8Atom, StrictExtractedMessage>,
-
-    /// Optional buffer to store results for testing
-    pub results_buffer: Option<Arc<Mutex<Vec<StrictExtractedMessage>>>>,
 }
 
 impl<M: SourceMapper> TransformVisitor<M> {
@@ -74,7 +69,6 @@ impl<M: SourceMapper> TransformVisitor<M> {
         is_development: bool,
         file_path: String,
         source_map: Option<M>,
-        results_buffer: Option<Arc<Mutex<Vec<StrictExtractedMessage>>>>,
     ) -> Self {
         Self {
             is_development,
@@ -83,7 +77,6 @@ impl<M: SourceMapper> TransformVisitor<M> {
             hook_local_names: Default::default(),
             translator_map: Default::default(),
             results_by_id: Default::default(),
-            results_buffer,
         }
     }
 
@@ -431,11 +424,6 @@ impl<M: SourceMapper> VisitMut for TransformVisitor<M> {
         }
 
         module.visit_mut_children_with(self);
-
-        // Sync results to buffer for testing
-        if let Some(buffer) = &self.results_buffer {
-            *buffer.lock().unwrap() = self.get_results();
-        }
     }
 
     fn visit_mut_var_declarator(&mut self, node: &mut VarDeclarator) {
