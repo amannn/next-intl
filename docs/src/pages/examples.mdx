@@ -7,31 +7,32 @@ These examples can provide inspiration for your project, showcasing different se
 <div className="mt-16 flex flex-col gap-16">
 
 <Example
-  image="/example-app-router.png"
   name="App Router with locale-based routing"
   id="app-router"
-  description="Showcases basic usage of next-intl with the App Router, including internationalized routing. This can be a good starting point for public sites where SEO is relevant."
+  description="Showcases basic usage of next-intl with the App Router, including internationalized routing."
   demoLink="https://next-intl-example-app-router.vercel.app"
   sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router"
 />
 
 <Example
-  image="/example-app-router-without-i18n-routing.png"
   name="App Router without locale-based routing"
   id="app-router-without-i18n-routing"
-  description="Demonstrates usage of next-intl without locale-based routing. The app manages the locale via a cookie that can be updated via a Server Action."
+  description="Demonstrates usage of next-intl without locale-based routing, managing the locale via a cookie."
   demoLink="https://next-intl-example-app-router-without-i18n-routing.vercel.app"
   sourceLink="https://github.com/amannn/next-intl/tree/main/examples/example-app-router-without-i18n-routing"
 />
 
-<Example
-  image="/example-street-photography.png"
-  name="Street photography viewer"
-  id="street-photography-viewer"
-  description="Handles i18n exclusively in Server Components, while adding interactivity with Client Components."
-  demoLink="https://street-photography-viewer.vercel.app/"
-  sourceLink="https://github.com/amannn/street-photography-viewer"
-/>
+<div className="lg:-mx-4">
+  <Example
+    featured
+    image="/template-app-pdp.png"
+    name="Production-ready templates"
+    description="Get started quickly with fully-featured project templates built with internationalization best practices from the ground up."
+    id="advanced"
+    sourceLink="https://learn.next-intl.dev/#project-code"
+    badges={['SEO', 'CMS', 'AI', 'Auth']}
+  />
+</div>
 
 <Example
   name="App Router with message extraction"
