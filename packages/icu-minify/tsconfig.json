@@ -1,0 +1,15 @@
+{
+  "extends": "eslint-config-molindo/tsconfig.json",
+  "include": ["src", "test"],
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "target": "ES2020",
+    "declaration": true,
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "noEmit": true
+  }
+}
