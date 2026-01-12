@@ -7,10 +7,12 @@ import {
   type NumberStyleOptions,
   type PluralOptions,
   type SelectOptions,
-  TYPE_FORMAT,
+  TYPE_DATE,
+  TYPE_NUMBER,
   TYPE_PLURAL,
   TYPE_SELECT,
-  TYPE_SELECTORDINAL
+  TYPE_SELECTORDINAL,
+  TYPE_TIME
 } from './types.js';
 
 // Could potentially share this with `use-intl` if we had a shared package for both
@@ -132,13 +134,30 @@ function formatNode<RichTextElement>(
         'ordinal'
       );
 
-    case TYPE_FORMAT:
-      return formatValue(
+    case TYPE_NUMBER:
+      return formatNumberValue(
         name,
-        rest[0] as 'number' | 'date' | 'time',
-        rest[1] as NumberStyle | DateTimeStyle | undefined,
+        rest[0] as NumberStyle | undefined,
         locale,
         values
+      );
+
+    case TYPE_DATE:
+      return formatDateTimeValue(
+        name,
+        rest[0] as DateTimeStyle | undefined,
+        locale,
+        values,
+        'date'
+      );
+
+    case TYPE_TIME:
+      return formatDateTimeValue(
+        name,
+        rest[0] as DateTimeStyle | undefined,
+        locale,
+        values,
+        'time'
       );
 
     default:
@@ -232,47 +251,29 @@ function formatBranch<RichTextElement>(
   return formatNodes(branch as Array<CompiledNode>, locale, values, pluralCtx);
 }
 
-function formatValue<RichTextElement>(
+function formatNumberValue<RichTextElement>(
   name: string,
-  subtype: 'number' | 'date' | 'time',
-  style: NumberStyle | DateTimeStyle | undefined,
+  style: NumberStyle | undefined,
   locale: string,
   values: FormatValues<RichTextElement>
 ): string {
   const rawValue = getValue(values, name);
+  const value = rawValue as number;
+  const opts = getNumberFormatOptions(style);
+  return new Intl.NumberFormat(locale, opts).format(value);
+}
 
-  switch (subtype) {
-    case 'number': {
-      const value = rawValue as number;
-      const opts = getNumberFormatOptions(style as NumberStyle | undefined);
-      return new Intl.NumberFormat(locale, opts).format(value);
-    }
-
-    case 'date': {
-      const value = rawValue as Date;
-      const opts = getDateTimeFormatOptions(
-        style as DateTimeStyle | undefined,
-        'date'
-      );
-      return new Intl.DateTimeFormat(locale, opts).format(value);
-    }
-
-    case 'time': {
-      const date = rawValue as Date;
-      const opts = getDateTimeFormatOptions(
-        style as DateTimeStyle | undefined,
-        'time'
-      );
-      return new Intl.DateTimeFormat(locale, opts).format(date);
-    }
-
-    default:
-      throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? `Unknown format subtype: ${subtype}`
-          : undefined
-      );
-  }
+function formatDateTimeValue<RichTextElement>(
+  name: string,
+  style: DateTimeStyle | undefined,
+  locale: string,
+  values: FormatValues<RichTextElement>,
+  type: 'date' | 'time'
+): string {
+  const rawValue = getValue(values, name);
+  const date = rawValue as Date;
+  const opts = getDateTimeFormatOptions(style, type);
+  return new Intl.DateTimeFormat(locale, opts).format(date);
 }
 
 function getNumberFormatOptions(

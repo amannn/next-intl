@@ -16,7 +16,7 @@ The following requirements guided the design:
 
 | Requirement       | Implementation                                                                                             |
 | ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| Minifies well     | Compact array format with short type constants (1-4), strings as literals, repeated patterns compress well |
+| Minifies well     | Compact array format with short type constants (1-6), strings as literals, repeated patterns compress well |
 | Plain JSON        | All values are strings, numbers, arrays, or objects - no functions, symbols, or special types              |
 | Format reliably   | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser       |
 | Fast runtime      | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters                  |
@@ -30,25 +30,27 @@ The following requirements guided the design:
 SELECT = 1
 PLURAL = 2
 SELECTORDINAL = 3
-FORMAT = 4
+NUMBER = 4
+DATE = 5
+TIME = 6
 ```
 
 Tags have no type constant - they're detected by checking if the second element is not a number.
 
 ### Node Types
 
-| Node          | Format                          | Example                                        |
-| ------------- | ------------------------------- | ---------------------------------------------- |
-| String        | `"text"`                        | `"Hello"`                                      |
-| Pound sign    | `0`                             | `0` (represents `#` in plural)                 |
-| Simple arg    | `["name"]`                      | `["name"]`                                     |
-| Tag           | `["tagName", ...children]`      | `["b", "bold"]`                                |
-| Select        | `["name", 1, {options}]`        | `["gender", 1, {male: "He", other: "They"}]`   |
-| Plural        | `["name", 2, {options}]`        | `["n", 2, {one: "item", other: "items"}]`      |
-| Ordinal       | `["name", 3, {options}]`        | `["n", 3, {one: [0, "st"], other: [0, "th"]}]` |
-| Number format | `["name", 4, "number", style?]` | `["val", 4, "number", "percent"]`              |
-| Date format   | `["name", 4, "date", style?]`   | `["d", 4, "date", "short"]`                    |
-| Time format   | `["name", 4, "time", style?]`   | `["t", 4, "time", "medium"]`                   |
+| Node          | Format                     | Example                                        |
+| ------------- | -------------------------- | ---------------------------------------------- |
+| String        | `"text"`                   | `"Hello"`                                      |
+| Pound sign    | `0`                        | `0` (represents `#` in plural)                 |
+| Simple arg    | `["name"]`                 | `["name"]`                                     |
+| Tag           | `["tagName", ...children]` | `["b", "bold"]`                                |
+| Select        | `["name", 1, {options}]`   | `["gender", 1, {male: "He", other: "They"}]`   |
+| Plural        | `["name", 2, {options}]`   | `["n", 2, {one: "item", other: "items"}]`      |
+| Ordinal       | `["name", 3, {options}]`   | `["n", 3, {one: [0, "st"], other: [0, "th"]}]` |
+| Number format | `["name", 4, style?]`      | `["val", 4, "percent"]`                        |
+| Date format   | `["name", 5, style?]`      | `["d", 5, "short"]`                            |
+| Time format   | `["name", 6, style?]`      | `["t", 6, "medium"]`                           |
 
 ### Examples
 
@@ -72,20 +74,21 @@ Both libraries share the same core goal and approach:
 
 The JSON formats are nearly identical:
 
-- Same type constants (SELECT=1, PLURAL=2, SELECTORDINAL=3, FORMAT=4)
-- Same structure for arguments, select, plural, and format nodes
+- Same type constants for SELECT/PLURAL/SELECTORDINAL
+- Same structure for arguments, select, and plural nodes
 - Same pound sign representation (`0`)
 
 ### Differences
 
-| Aspect            | icu-minify                           | icu-to-json                            |
-| ----------------- | ------------------------------------ | -------------------------------------- |
-| Tag format        | `["tagName", child1, ...]` (no type) | `["tagName", 5, child1, ...]` (TYPE=5) |
-| Runtime deps      | Zero (native Intl)                   | @messageformat/runtime                 |
-| Type generation   | No                                   | Yes (CLI can generate TS types)        |
-| Argument metadata | No                                   | Yes (returns argument info)            |
-| CLI               | No                                   | Yes                                    |
-| Plural offset     | Not supported                        | Supported                              |
+| Aspect            | icu-minify                               | icu-to-json                             |
+| ----------------- | ---------------------------------------- | --------------------------------------- | ------ | ------- |
+| Tag format        | `["tagName", child1, ...]` (no type)     | `["tagName", 5, child1, ...]` (TYPE=5)  |
+| Format nodes      | Distinct types: NUMBER=4, DATE=5, TIME=6 | Shared FORMAT=4 with subtype: `"number" | "date" | "time"` |
+| Runtime deps      | Zero (native Intl)                       | @messageformat/runtime                  |
+| Type generation   | No                                       | Yes (CLI can generate TS types)         |
+| Argument metadata | No                                       | Yes (returns argument info)             |
+| CLI               | No                                       | Yes                                     |
+| Plural offset     | Not supported                            | Supported                               |
 
 ### Why We Differ
 

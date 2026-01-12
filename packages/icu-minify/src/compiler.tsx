@@ -18,10 +18,12 @@ import {
   type NumberStyleOptions,
   type PluralOptions,
   type SelectOptions,
-  TYPE_FORMAT,
+  TYPE_DATE,
+  TYPE_NUMBER,
   TYPE_PLURAL,
   TYPE_SELECT,
-  TYPE_SELECTORDINAL
+  TYPE_SELECTORDINAL,
+  TYPE_TIME
 } from './types.js';
 
 export function compile(message: string): CompiledMessage {
@@ -111,7 +113,7 @@ function compileNode(node: MessageFormatElement): CompiledNode {
 }
 
 function compileNumber(node: NumberElement): CompiledNode {
-  const result: CompiledNode = [node.value, TYPE_FORMAT, 'number'];
+  const result: CompiledNode = [node.value, TYPE_NUMBER];
 
   const style = compileNumberStyle(node.style);
   if (style !== undefined) {
@@ -143,7 +145,7 @@ function compileNumberStyle(
 }
 
 function compileDate(node: DateElement): CompiledNode {
-  const result: CompiledNode = [node.value, TYPE_FORMAT, 'date'];
+  const result: CompiledNode = [node.value, TYPE_DATE];
 
   const style = compileDateTimeStyle(node.style);
   if (style !== undefined) {
@@ -154,7 +156,7 @@ function compileDate(node: DateElement): CompiledNode {
 }
 
 function compileTime(node: TimeElement): CompiledNode {
-  const result: CompiledNode = [node.value, TYPE_FORMAT, 'time'];
+  const result: CompiledNode = [node.value, TYPE_TIME];
 
   const style = compileDateTimeStyle(node.style);
   if (style !== undefined) {

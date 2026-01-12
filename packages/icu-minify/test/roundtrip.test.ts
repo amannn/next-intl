@@ -147,7 +147,6 @@ describe('number formatting', () => {
           [
             "val",
             4,
-            "number",
           ],
         ]
       `);
@@ -163,7 +162,6 @@ describe('number formatting', () => {
           [
             "val",
             4,
-            "number",
             "percent",
           ],
         ]
@@ -178,7 +176,6 @@ describe('number formatting', () => {
           [
             "val",
             4,
-            "number",
             "integer",
           ],
         ]
@@ -196,8 +193,7 @@ describe('date formatting', () => {
         [
           [
             "d",
-            4,
-            "date",
+            5,
             "short",
           ],
         ]
@@ -213,8 +209,7 @@ describe('date formatting', () => {
         [
           [
             "d",
-            4,
-            "date",
+            5,
             "medium",
           ],
         ]
@@ -233,8 +228,7 @@ describe('time formatting', () => {
         [
           [
             "t",
-            4,
-            "time",
+            6,
             "short",
           ],
         ]
