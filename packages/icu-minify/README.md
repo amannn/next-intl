@@ -1,6 +1,6 @@
 # icu-minify
 
-> Minimal ICU MessageFormat compiler and runtime
+Minimal ICU message format compiler and runtime with <1kb client-side bundle footprint.
 
 ## Features
 

@@ -67,20 +67,17 @@ function formatNode<RichTextElement>(
   node: CompiledNode,
   locale: string,
   values: FormatValues<RichTextElement>,
-  pluralCtx: PluralContext | undefined
+  rawPluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof node === 'string') {
     return node;
   }
 
   if (node === 0) {
-    if (!pluralCtx) {
-      throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? '# used outside of plural context'
-          : undefined
-      );
+    if (process.env.NODE_ENV !== 'production' && !rawPluralCtx) {
+      throw new Error('# used outside of plural context');
     }
+    const pluralCtx = rawPluralCtx as PluralContext;
     return new Intl.NumberFormat(pluralCtx.locale).format(pluralCtx.value);
   }
 
@@ -102,7 +99,7 @@ function formatNode<RichTextElement>(
       [type, ...rest] as Array<CompiledNode>,
       locale,
       values,
-      pluralCtx
+      rawPluralCtx
     );
   }
 
@@ -114,7 +111,7 @@ function formatNode<RichTextElement>(
         rest[0] as SelectOptions,
         locale,
         values,
-        pluralCtx
+        rawPluralCtx
       );
 
     case TYPE_PLURAL:
@@ -157,12 +154,8 @@ function getValue<RichTextElement>(
   values: FormatValues<RichTextElement>,
   name: string
 ): FormatValues<RichTextElement>[string] {
-  if (!(name in values)) {
-    throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `Missing value for argument "${name}"`
-        : undefined
-    );
+  if (process.env.NODE_ENV !== 'production' && !(name in values)) {
+    throw new Error(`Missing value for argument "${name}"`);
   }
   return values[name];
 }
@@ -177,11 +170,9 @@ function formatSelect<RichTextElement>(
   const value = String(getValue(values, name));
   const branch: CompiledNode | undefined = options[value] ?? options.other;
 
-  if (!branch) {
+  if (process.env.NODE_ENV !== 'production' && !branch) {
     throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `No matching branch for select "${name}" with value "${value}"`
-        : undefined
+      `No matching branch for select "${name}" with value "${value}"`
     );
   }
 
@@ -195,14 +186,14 @@ function formatPlural<RichTextElement>(
   values: FormatValues<RichTextElement>,
   pluralType: Intl.PluralRulesOptions['type']
 ): string | RichTextElement | Array<string | RichTextElement> {
-  const value = getValue(values, name);
-  if (typeof value !== 'number') {
+  const rawValue = getValue(values, name);
+
+  if (process.env.NODE_ENV !== 'production' && typeof rawValue !== 'number') {
     throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `Expected number for plural argument "${name}", got ${typeof value}`
-        : undefined
+      `Expected number for plural argument "${name}", got ${typeof rawValue}`
     );
   }
+  const value = rawValue as number;
 
   const exactKey = `=${value}`;
 
@@ -215,11 +206,9 @@ function formatPlural<RichTextElement>(
   );
   const branch: CompiledNode | undefined = options[category] ?? options.other;
 
-  if (!branch) {
+  if (process.env.NODE_ENV !== 'production' && !branch) {
     throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `No matching branch for plural "${name}" with category "${category}"`
-        : undefined
+      `No matching branch for plural "${name}" with category "${category}"`
     );
   }
 
@@ -250,37 +239,26 @@ function formatValue<RichTextElement>(
   locale: string,
   values: FormatValues<RichTextElement>
 ): string {
-  const value = getValue(values, name);
+  const rawValue = getValue(values, name);
 
   switch (subtype) {
     case 'number': {
-      if (typeof value !== 'number') {
-        throw new Error(
-          process.env.NODE_ENV !== 'production'
-            ? `Expected number for "${name}", got ${typeof value}`
-            : undefined
-        );
-      }
+      const value = rawValue as number;
       const opts = getNumberFormatOptions(style as NumberStyle | undefined);
-      let num = value;
-      if (opts && 'scale' in opts && opts.scale) {
-        num = value * opts.scale;
-        delete opts.scale;
-      }
-      return new Intl.NumberFormat(locale, opts).format(num);
+      return new Intl.NumberFormat(locale, opts).format(value);
     }
 
     case 'date': {
-      const date = value instanceof Date ? value : new Date(value as number);
+      const value = rawValue as Date;
       const opts = getDateTimeFormatOptions(
         style as DateTimeStyle | undefined,
         'date'
       );
-      return new Intl.DateTimeFormat(locale, opts).format(date);
+      return new Intl.DateTimeFormat(locale, opts).format(value);
     }
 
     case 'time': {
-      const date = value instanceof Date ? value : new Date(value as number);
+      const date = rawValue as Date;
       const opts = getDateTimeFormatOptions(
         style as DateTimeStyle | undefined,
         'time'
@@ -348,15 +326,17 @@ function formatTag<RichTextElement>(
   values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
-  const handler = getValue(values, name);
+  const rawHandler = getValue(values, name);
 
-  if (typeof handler !== 'function') {
-    throw new Error(
-      process.env.NODE_ENV !== 'production'
-        ? `Expected function for tag handler "${name}"`
-        : undefined
-    );
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    typeof rawHandler !== 'function'
+  ) {
+    throw new Error(`Expected function for tag handler "${name}"`);
   }
+  const handler = rawHandler as (
+    chunks: Array<string | RichTextElement>
+  ) => RichTextElement;
 
   const formattedChildren = formatNodes(children, locale, values, pluralCtx);
   const optimized = optimizeResult(formattedChildren);

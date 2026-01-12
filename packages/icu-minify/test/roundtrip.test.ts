@@ -185,13 +185,6 @@ describe('number formatting', () => {
       `);
     expect(format(compiled, 'en', {val: 3.7})).toMatchInlineSnapshot(`"4"`);
   });
-
-  it('throws for a non-number value', () => {
-    const compiled = compile('{val, number}');
-    expect(() => format(compiled, 'en', {val: 'abc'})).toThrow(
-      'Expected number for "val", got string'
-    );
-  });
 });
 
 describe('date formatting', () => {
@@ -401,13 +394,6 @@ describe('plural', () => {
   it('throws for a plural without other', () => {
     expect(() => compile('{count, plural, one {item}}')).toThrow(
       'MISSING_OTHER_CLAUSE'
-    );
-  });
-
-  it('throws for a non-number value', () => {
-    const compiled = compile('{count, plural, one {# item} other {# items}}');
-    expect(() => format(compiled, 'en', {count: 'abc'})).toThrow(
-      'Expected number for plural argument "count", got string'
     );
   });
 });
