@@ -74,7 +74,11 @@ function formatNode<RichTextElement>(
 
   if (node === 0) {
     if (!pluralCtx) {
-      throw new Error('# used outside of plural context');
+      throw new Error(
+        process.env.NODE_ENV !== 'production'
+          ? '# used outside of plural context'
+          : undefined
+      );
     }
     return new Intl.NumberFormat(pluralCtx.locale).format(pluralCtx.value);
   }
@@ -140,7 +144,11 @@ function formatNode<RichTextElement>(
       );
 
     default:
-      throw new Error(`Unknown compiled node type: ${type}`);
+      throw new Error(
+        process.env.NODE_ENV !== 'production'
+          ? `Unknown compiled node type: ${type}`
+          : undefined
+      );
   }
 }
 
@@ -149,7 +157,11 @@ function getValue<RichTextElement>(
   name: string
 ): FormatValues<RichTextElement>[string] {
   if (!(name in values)) {
-    throw new Error(`Missing value for argument "${name}"`);
+    throw new Error(
+      process.env.NODE_ENV !== 'production'
+        ? `Missing value for argument "${name}"`
+        : undefined
+    );
   }
   return values[name];
 }
@@ -166,7 +178,9 @@ function formatSelect<RichTextElement>(
 
   if (!branch) {
     throw new Error(
-      `No matching branch for select "${name}" with value "${value}"`
+      process.env.NODE_ENV !== 'production'
+        ? `No matching branch for select "${name}" with value "${value}"`
+        : undefined
     );
   }
 
@@ -183,7 +197,9 @@ function formatPlural<RichTextElement>(
   const value = getValue(values, name);
   if (typeof value !== 'number') {
     throw new Error(
-      `Expected number for plural argument "${name}", got ${typeof value}`
+      process.env.NODE_ENV !== 'production'
+        ? `Expected number for plural argument "${name}", got ${typeof value}`
+        : undefined
     );
   }
 
@@ -200,7 +216,9 @@ function formatPlural<RichTextElement>(
 
   if (!branch) {
     throw new Error(
-      `No matching branch for plural "${name}" with category "${category}"`
+      process.env.NODE_ENV !== 'production'
+        ? `No matching branch for plural "${name}" with category "${category}"`
+        : undefined
     );
   }
 
@@ -236,7 +254,11 @@ function formatValue<RichTextElement>(
   switch (subtype) {
     case 'number': {
       if (typeof value !== 'number') {
-        throw new Error(`Expected number for "${name}", got ${typeof value}`);
+        throw new Error(
+          process.env.NODE_ENV !== 'production'
+            ? `Expected number for "${name}", got ${typeof value}`
+            : undefined
+        );
       }
       const opts = getNumberFormatOptions(style as NumberStyle | undefined);
       let num = value;
@@ -266,7 +288,11 @@ function formatValue<RichTextElement>(
     }
 
     default:
-      throw new Error(`Unknown format subtype: ${subtype}`);
+      throw new Error(
+        process.env.NODE_ENV !== 'production'
+          ? `Unknown format subtype: ${subtype}`
+          : undefined
+      );
   }
 }
 
@@ -324,7 +350,11 @@ function formatTag<RichTextElement>(
   const handler = getValue(values, name);
 
   if (typeof handler !== 'function') {
-    throw new Error(`Expected function for tag handler "${name}"`);
+    throw new Error(
+      process.env.NODE_ENV !== 'production'
+        ? `Expected function for tag handler "${name}"`
+        : undefined
+    );
   }
 
   const formattedChildren = formatNodes(children, locale, values, pluralCtx);
