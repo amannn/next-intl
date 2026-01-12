@@ -252,27 +252,27 @@ describe('compile', () => {
   describe('tags', () => {
     it('compiles simple tag', () => {
       const result = compile('<bold>important</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, ['important']]]);
+      expect(result).toEqual([['bold', TYPE_TAG, 'important']]);
     });
 
     it('compiles tag with argument', () => {
       const result = compile('<bold>{name}</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, [['name']]]]);
+      expect(result).toEqual([['bold', TYPE_TAG, ['name']]]);
     });
 
     it('compiles multiple tags', () => {
       const result = compile('<a>link</a> and <b>bold</b>');
       expect(result).toEqual([
-        ['a', TYPE_TAG, ['link']],
+        ['a', TYPE_TAG, 'link'],
         ' and ',
-        ['b', TYPE_TAG, ['bold']]
+        ['b', TYPE_TAG, 'bold']
       ]);
     });
 
     it('compiles nested content in tags', () => {
       const result = compile('<wrapper>Hello <bold>{name}</bold></wrapper>');
       expect(result).toEqual([
-        ['wrapper', TYPE_TAG, ['Hello ', ['bold', TYPE_TAG, [['name']]]]]
+        ['wrapper', TYPE_TAG, 'Hello ', ['bold', TYPE_TAG, ['name']]]
       ]);
     });
 
@@ -284,7 +284,7 @@ describe('compile', () => {
         [
           'bold',
           TYPE_TAG,
-          [['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]]
+          ['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]
         ]
       ]);
     });

@@ -15,36 +15,20 @@ Both libraries share the same core goal: compile ICU MessageFormat strings at bu
 
 ## JSON Format Comparison
 
-Both use nearly identical numeric type constants:
+Both use identical numeric type constants and produce identical JSON output:
 
 ```
-icu-minify:     SELECT=1, PLURAL=2, SELECTORDINAL=3, FORMAT=4, TAG=5
-icu-to-json:    SELECT=1, PLURAL=2, SELECTORDINAL=3, FN=4,     TAG=5
+SELECT=1, PLURAL=2, SELECTORDINAL=3, FORMAT/FN=4, TAG=5
 ```
 
-### Simple Argument
-```
-Input: "Hello {name}"
+### Examples
 
-icu-minify:    ["Hello ", ["name"]]
-icu-to-json:   ["Hello ", ["name"]]
-```
-
-### Plural
-```
-Input: "{count, plural, one {# item} other {# items}}"
-
-icu-minify:    [["count", 2, {one: [0, " item"], other: [0, " items"]}]]
-icu-to-json:   [["count", 2, {one: [0, " item"], other: [0, " items"]}]]
-```
-
-### Tags
-```
-Input: "<b>bold</b>"
-
-icu-minify:    [["b", 5, ["bold"]]]
-icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
-```
+| Input | Output |
+|-------|--------|
+| `"Hello {name}"` | `["Hello ", ["name"]]` |
+| `"<b>bold</b>"` | `[["b", 5, "bold"]]` |
+| `"<b>Hello {name}</b>"` | `[["b", 5, "Hello ", ["name"]]]` |
+| `"{count, plural, one {# item} other {# items}}"` | `[["count", 2, {one: [0, " item"], other: [0, " items"]}]]` |
 
 ## Key Differences
 
@@ -56,21 +40,7 @@ icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
 
 **Advantage**: icu-minify - smaller dependency footprint, more self-contained.
 
-### 2. Tag Children Structure
-
-**icu-minify**: Children are always wrapped in an array at position 2.
-```typescript
-[name, TYPE_TAG, Array<CompiledNode>]
-```
-
-**icu-to-json**: Children are spread directly as rest elements.
-```typescript
-[name, TYPE_TAG, ...children]
-```
-
-**Advantage**: icu-to-json - slightly smaller JSON output. However, icu-minify's approach is required for TypeScript's tuple type system to avoid circular reference errors.
-
-### 3. String Interpolation
+### 2. String Interpolation
 
 **icu-to-json**: Offers an alternative `compileStringInterpolation()` for bracket notation like `"Hello [0]!"`.
 
@@ -78,7 +48,7 @@ icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
 
 **Advantage**: icu-to-json - more flexible for non-ICU use cases.
 
-### 4. Argument Extraction
+### 3. Argument Extraction
 
 **icu-to-json**: The compiler returns both the compiled JSON and extracted argument metadata:
 ```typescript
@@ -92,7 +62,7 @@ icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
 
 **Advantage**: icu-to-json - argument metadata enables TypeScript type generation.
 
-### 5. Type Generation
+### 4. Type Generation
 
 **icu-to-json**: CLI can generate TypeScript type definitions for messages and their required parameters.
 
@@ -100,7 +70,7 @@ icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
 
 **Advantage**: icu-to-json - better DX for TypeScript projects.
 
-### 6. CLI
+### 5. CLI
 
 **icu-to-json**: Provides a CLI for batch compilation.
 
@@ -108,59 +78,11 @@ icu-to-json:   [["b", 5, "bold"]]      (children not wrapped)
 
 **Advantage**: icu-to-json - easier integration into build pipelines.
 
-## Potential Improvements for icu-minify
-
-### High Priority
-
-1. **Return argument metadata from compiler**
-
-   Like icu-to-json, return extracted arguments with their types:
-   ```typescript
-   compile(message: string): {
-     compiled: CompiledMessage;
-     arguments: Record<string, 'string' | 'number' | 'date' | 'plural' | 'select' | 'tag'>;
-   }
-   ```
-   This enables type generation and validation.
-
-2. **Consider TypeScript code generation**
-
-   Generate type-safe wrapper functions based on argument metadata:
-   ```typescript
-   // Generated
-   export const greeting = (args: { name: string }) =>
-     format(compiledGreeting, locale, args);
-   ```
-
-### Medium Priority
-
-3. **Evaluate tag children structure**
-
-   Could optimize JSON size by not wrapping single-child tags:
-   ```typescript
-   // Current: [["b", 5, ["bold"]]]
-   // Optimized: [["b", 5, "bold"]]
-   ```
-   Would need to handle this in formatBranch logic.
-
-4. **Add CLI for batch processing**
-
-   A simple CLI for compiling message catalogs:
-   ```bash
-   icu-minify compile messages.json -o compiled.json
-   ```
-
-### Low Priority
-
-5. **Bracket notation interpolation**
-
-   Optional support for `"Hello [0]!"` syntax as alternative to ICU.
-
 ## Summary
 
-Both implementations are nearly identical in their core approach and JSON format. The main differences are:
+Both implementations produce identical JSON output. The main differences are:
 
-- **icu-minify** has zero runtime dependencies and cleaner TypeScript types
+- **icu-minify** has zero runtime dependencies
 - **icu-to-json** has better tooling (CLI, type generation, argument extraction)
 
 The ideal solution would combine icu-minify's zero-dependency runtime with icu-to-json's developer experience features.

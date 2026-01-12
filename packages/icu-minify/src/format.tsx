@@ -131,7 +131,7 @@ function formatNode<RichTextElement>(
     case TYPE_TAG:
       return formatTag(
         name,
-        rest[0] as Array<CompiledNode>,
+        rest as Array<CompiledNode>,
         locale,
         values,
         pluralCtx

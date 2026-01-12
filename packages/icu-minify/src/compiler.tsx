@@ -249,5 +249,5 @@ function compilePlural(node: PluralElement): CompiledNode {
 
 function compileTag(node: TagElement): CompiledNode {
   const children = compileNodes(node.children);
-  return [node.value, TYPE_TAG, children];
+  return [node.value, TYPE_TAG, ...children];
 }

@@ -26,6 +26,10 @@ export interface SelectOptions {
 
 export type PluralOptionsWithOffset = PluralOptions | [PluralOptions, number];
 
+// Tag children are spread directly: ["tagName", TYPE_TAG, child1, child2, ...]
+// We use `unknown` for the rest to avoid circular reference, runtime handles actual types
+type CompiledTagNode = [string, typeof TYPE_TAG, ...Array<unknown>];
+
 export type CompiledNode =
   | string
   | 0
@@ -34,6 +38,6 @@ export type CompiledNode =
   | [string, typeof TYPE_PLURAL, PluralOptionsWithOffset]
   | [string, typeof TYPE_SELECTORDINAL, PluralOptionsWithOffset]
   | [string, typeof TYPE_FORMAT, FormatSubtype, (NumberStyle | DateTimeStyle)?]
-  | [string, typeof TYPE_TAG, Array<CompiledNode>];
+  | CompiledTagNode;
 
 export type CompiledMessage = string | Array<CompiledNode>;
