@@ -5,15 +5,9 @@
 ## Features
 
 - **Build-time compilation**: Converts ICU messages to compact JSON at build time
-- **Minimal runtime**: ~1KB gzipped runtime formatter using native Intl APIs
-- **Full ICU support**: Arguments, plurals, select, selectordinal, date/time/number formatting, tags
-- **Zero runtime dependencies**: Uses native browser/Node.js Intl APIs
-
-## Installation
-
-```bash
-npm install icu-minify
-```
+- **Minimal runtime**: ~1KB gzipped runtime formatter using native `Intl` APIs
+- **Full ICU support**: Arguments, plurals, `select`, `selectordinal`, date/time/number formatting, tags
+- **Zero runtime dependencies**: Uses native browser/Node.js `Intl` APIs
 
 ## Usage
 
@@ -25,7 +19,7 @@ import {format} from 'icu-minify/format';
 const compiled = compile('Hello {name}!');
 
 // At runtime
-format(compiled, 'en', {name: 'World'}); // "Hello World!"
+format(compiled, 'en', {name: 'World'});
 ```
 
 ## API
@@ -43,8 +37,4 @@ Formats a compiled message with the given locale and values.
 
 ## Acknowledgments
 
-This library is heavily inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. Key differences: zero runtime dependencies (uses native Intl APIs) and no type generation (handled at a higher level in next-intl). See [DESIGN.md](./DESIGN.md) for details.
-
-## License
-
-MIT
+This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. See [`DESIGN.md`](./DESIGN.md) for details.

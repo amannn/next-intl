@@ -4,7 +4,7 @@ import {
   type MessageFormatElement,
   type NumberElement,
   type NumberSkeleton,
-  type PluralElement,
+  type PluralElement as PluralElementBase,
   type SelectElement,
   TYPE,
   type TagElement,
@@ -111,11 +111,14 @@ function compileNode(node: MessageFormatElement): CompiledNode {
 }
 
 function compileNumber(node: NumberElement): CompiledNode {
+  const result: CompiledNode = [node.value, TYPE_FORMAT, 'number'];
+
   const style = compileNumberStyle(node.style);
   if (style !== undefined) {
-    return [node.value, TYPE_FORMAT, 'number', style];
+    result.push(style);
   }
-  return [node.value, TYPE_FORMAT, 'number'];
+
+  return result;
 }
 
 function compileNumberStyle(
@@ -140,19 +143,25 @@ function compileNumberStyle(
 }
 
 function compileDate(node: DateElement): CompiledNode {
+  const result: CompiledNode = [node.value, TYPE_FORMAT, 'date'];
+
   const style = compileDateTimeStyle(node.style);
   if (style !== undefined) {
-    return [node.value, TYPE_FORMAT, 'date', style];
+    result.push(style);
   }
-  return [node.value, TYPE_FORMAT, 'date'];
+
+  return result;
 }
 
 function compileTime(node: TimeElement): CompiledNode {
+  const result: CompiledNode = [node.value, TYPE_FORMAT, 'time'];
+
   const style = compileDateTimeStyle(node.style);
   if (style !== undefined) {
-    return [node.value, TYPE_FORMAT, 'time', style];
+    result.push(style);
   }
-  return [node.value, TYPE_FORMAT, 'time'];
+
+  return result;
 }
 
 function compileDateTimeStyle(
@@ -186,28 +195,33 @@ function compileSelect(node: SelectElement): CompiledNode {
   return [node.value, TYPE_SELECT, options];
 }
 
+// Not supported
+type PluralElement = Omit<PluralElementBase, 'offset'>;
 function compilePlural(node: PluralElement): CompiledNode {
-  if (node.offset !== 0) {
-    throw new Error('Plural offset is not supported');
-  }
-
   const options: PluralOptions = {};
 
   for (const [key, option] of Object.entries(node.options)) {
     options[key] = compileNodesToNode(option.value);
   }
 
-  const type = node.pluralType === 'ordinal' ? TYPE_SELECTORDINAL : TYPE_PLURAL;
-
-  return [node.value, type, options];
+  return [
+    node.value,
+    node.pluralType === 'ordinal' ? TYPE_SELECTORDINAL : TYPE_PLURAL,
+    options
+  ];
 }
 
 function compileTag(node: TagElement): CompiledNode {
   const children = compileNodes(node.children);
+  const result: Array<unknown> = [node.value];
+
   // Tags have no type number - detected at runtime by typeof node[1] !== 'number'
   // Empty tags get an empty string child to distinguish from simple arguments
   if (children.length === 0) {
-    return [node.value, ''];
+    result.push('');
+  } else {
+    result.push(...children);
   }
-  return [node.value, ...children] as CompiledNode;
+
+  return result as CompiledNode;
 }

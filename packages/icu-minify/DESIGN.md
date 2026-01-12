@@ -14,19 +14,13 @@ The following requirements guided the design:
 
 ### How Requirements Are Achieved
 
-| Requirement | Implementation |
-|------------|----------------|
-| Minifies well | Compact array format with short type constants (1-4), strings as literals, repeated patterns compress well |
-| Plain JSON | All values are strings, numbers, arrays, or objects - no functions, symbols, or special types |
-| Format reliably | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser |
-| Fast runtime | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters |
-| Zero dependencies | Uses native Intl.PluralRules, Intl.NumberFormat, Intl.DateTimeFormat |
-
-## Limitations
-
-### Plural Offset Not Supported
-
-Plural offset syntax (`{n, plural, offset:1 ...}`) is intentionally not supported. This feature is rarely used in practice and adds complexity to both the compiled format and runtime. If offset behavior is needed, it can be achieved by pre-computing the offset value before passing it to the formatter.
+| Requirement       | Implementation                                                                                             |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| Minifies well     | Compact array format with short type constants (1-4), strings as literals, repeated patterns compress well |
+| Plain JSON        | All values are strings, numbers, arrays, or objects - no functions, symbols, or special types              |
+| Format reliably   | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser       |
+| Fast runtime      | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters                  |
+| Zero dependencies | Uses native Intl.PluralRules, Intl.NumberFormat, Intl.DateTimeFormat                                       |
 
 ## Compiled Format
 
@@ -43,27 +37,27 @@ Tags have no type constant - they're detected by checking if the second element 
 
 ### Node Types
 
-| Node | Format | Example |
-|------|--------|---------|
-| String | `"text"` | `"Hello"` |
-| Pound sign | `0` | `0` (represents `#` in plural) |
-| Simple arg | `["name"]` | `["name"]` |
-| Tag | `["tagName", ...children]` | `["b", "bold"]` |
-| Select | `["name", 1, {options}]` | `["gender", 1, {male: "He", other: "They"}]` |
-| Plural | `["name", 2, {options}]` | `["n", 2, {one: "item", other: "items"}]` |
-| Ordinal | `["name", 3, {options}]` | `["n", 3, {one: [0, "st"], other: [0, "th"]}]` |
-| Number format | `["name", 4, "number", style?]` | `["val", 4, "number", "percent"]` |
-| Date format | `["name", 4, "date", style?]` | `["d", 4, "date", "short"]` |
-| Time format | `["name", 4, "time", style?]` | `["t", 4, "time", "medium"]` |
+| Node          | Format                          | Example                                        |
+| ------------- | ------------------------------- | ---------------------------------------------- |
+| String        | `"text"`                        | `"Hello"`                                      |
+| Pound sign    | `0`                             | `0` (represents `#` in plural)                 |
+| Simple arg    | `["name"]`                      | `["name"]`                                     |
+| Tag           | `["tagName", ...children]`      | `["b", "bold"]`                                |
+| Select        | `["name", 1, {options}]`        | `["gender", 1, {male: "He", other: "They"}]`   |
+| Plural        | `["name", 2, {options}]`        | `["n", 2, {one: "item", other: "items"}]`      |
+| Ordinal       | `["name", 3, {options}]`        | `["n", 3, {one: [0, "st"], other: [0, "th"]}]` |
+| Number format | `["name", 4, "number", style?]` | `["val", 4, "number", "percent"]`              |
+| Date format   | `["name", 4, "date", style?]`   | `["d", 4, "date", "short"]`                    |
+| Time format   | `["name", 4, "time", style?]`   | `["t", 4, "time", "medium"]`                   |
 
 ### Examples
 
-| Input | Compiled Output |
-|-------|----------------|
-| `"Hello world"` | `"Hello world"` |
-| `"Hello {name}"` | `["Hello ", ["name"]]` |
-| `"<b>bold</b>"` | `[["b", "bold"]]` |
-| `"<b>{name}</b>"` | `[["b", ["name"]]]` |
+| Input                                         | Compiled Output                                         |
+| --------------------------------------------- | ------------------------------------------------------- |
+| `"Hello world"`                               | `"Hello world"`                                         |
+| `"Hello {name}"`                              | `["Hello ", ["name"]]`                                  |
+| `"<b>bold</b>"`                               | `[["b", "bold"]]`                                       |
+| `"<b>{name}</b>"`                             | `[["b", ["name"]]]`                                     |
 | `"{n, plural, one {# item} other {# items}}"` | `[["n", 2, {one: [0, " item"], other: [0, " items"]}]]` |
 
 ## Comparison with icu-to-json
@@ -71,25 +65,27 @@ Tags have no type constant - they're detected by checking if the second element 
 ### Similarities
 
 Both libraries share the same core goal and approach:
+
 - Parse ICU messages at build time using `@formatjs/icu-messageformat-parser`
 - Compile to compact JSON
 - Format at runtime with a minimal formatter
 
 The JSON formats are nearly identical:
+
 - Same type constants (SELECT=1, PLURAL=2, SELECTORDINAL=3, FORMAT=4)
 - Same structure for arguments, select, plural, and format nodes
 - Same pound sign representation (`0`)
 
 ### Differences
 
-| Aspect | icu-minify | icu-to-json |
-|--------|-----------|-------------|
-| Tag format | `["tagName", child1, ...]` (no type) | `["tagName", 5, child1, ...]` (TYPE=5) |
-| Runtime deps | Zero (native Intl) | @messageformat/runtime |
-| Type generation | No | Yes (CLI can generate TS types) |
-| Argument metadata | No | Yes (returns argument info) |
-| CLI | No | Yes |
-| Plural offset | Not supported | Supported |
+| Aspect            | icu-minify                           | icu-to-json                            |
+| ----------------- | ------------------------------------ | -------------------------------------- |
+| Tag format        | `["tagName", child1, ...]` (no type) | `["tagName", 5, child1, ...]` (TYPE=5) |
+| Runtime deps      | Zero (native Intl)                   | @messageformat/runtime                 |
+| Type generation   | No                                   | Yes (CLI can generate TS types)        |
+| Argument metadata | No                                   | Yes (returns argument info)            |
+| CLI               | No                                   | Yes                                    |
+| Plural offset     | Not supported                        | Supported                              |
 
 ### Why We Differ
 
@@ -102,33 +98,6 @@ The JSON formats are nearly identical:
 **Zero runtime dependencies**: Uses native Intl APIs for all formatting (PluralRules, NumberFormat, DateTimeFormat).
 
 **No plural offset**: Simplifies the format and runtime; offset is rarely needed in practice.
-
-## Alternative Formats Considered
-
-### Object-based format
-
-```json
-{"type": "plural", "name": "n", "options": {...}}
-```
-
-Rejected: Verbose, property names don't compress well, slower to parse at runtime.
-
-### String type names
-
-```json
-["name", "select", {...}]
-```
-
-Rejected: String type names are larger than numeric constants and don't compress as well with gzip/brotli.
-
-## Bundle Size
-
-| Component | Size (brotli) |
-|-----------|---------------|
-| Runtime (`format.js`) | ~1KB |
-| Compiler (`compiler.js`) | ~2KB |
-
-The runtime is intentionally kept minimal for production use. The compiler is only needed at build time.
 
 ## Acknowledgments
 
