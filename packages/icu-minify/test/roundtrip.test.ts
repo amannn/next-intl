@@ -3,7 +3,7 @@ import {compile} from '../src/compiler.js';
 import {format} from '../src/format.js';
 
 describe('static text', () => {
-  it('handles empty string', () => {
+  it('handles an empty string', () => {
     const compiled = compile('');
     expect(compiled).toMatchInlineSnapshot(`""`);
     expect(format(compiled, 'en')).toMatchInlineSnapshot(`""`);
@@ -29,13 +29,13 @@ describe('static text', () => {
 });
 
 describe('escaping', () => {
-  it('escapes single brace', () => {
+  it('escapes a single brace', () => {
     const compiled = compile("'{'");
     expect(compiled).toMatchInlineSnapshot(`"{"`);
     expect(format(compiled, 'en')).toMatchInlineSnapshot(`"{"`);
   });
 
-  it('escapes closing brace', () => {
+  it('escapes a closing brace', () => {
     const compiled = compile("'}'");
     expect(compiled).toMatchInlineSnapshot(`"}"`);
     expect(format(compiled, 'en')).toMatchInlineSnapshot(`"}"`);
@@ -70,7 +70,7 @@ describe('escaping', () => {
 });
 
 describe('simple arguments', () => {
-  it('formats single argument', () => {
+  it('formats a single argument', () => {
     const compiled = compile('{name}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -84,7 +84,7 @@ describe('simple arguments', () => {
     );
   });
 
-  it('formats text with argument', () => {
+  it('formats text with an argument', () => {
     const compiled = compile('Hello {name}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -131,7 +131,7 @@ describe('simple arguments', () => {
     );
   });
 
-  it('throws for missing argument', () => {
+  it('throws for a missing argument', () => {
     const compiled = compile('Hello {name}');
     expect(() => format(compiled, 'en', {})).toThrow(
       'Missing value for argument "name"'
@@ -140,7 +140,7 @@ describe('simple arguments', () => {
 });
 
 describe('number formatting', () => {
-  it('formats plain number', () => {
+  it('formats a plain number', () => {
     const compiled = compile('{val, number}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -156,7 +156,7 @@ describe('number formatting', () => {
     );
   });
 
-  it('formats percent', () => {
+  it('formats a percentage', () => {
     const compiled = compile('{val, number, percent}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -171,7 +171,7 @@ describe('number formatting', () => {
     expect(format(compiled, 'en', {val: 0.75})).toMatchInlineSnapshot(`"75%"`);
   });
 
-  it('formats integer', () => {
+  it('formats an integer', () => {
     const compiled = compile('{val, number, integer}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -186,7 +186,7 @@ describe('number formatting', () => {
     expect(format(compiled, 'en', {val: 3.7})).toMatchInlineSnapshot(`"4"`);
   });
 
-  it('throws for non-number value', () => {
+  it('throws for a non-number value', () => {
     const compiled = compile('{val, number}');
     expect(() => format(compiled, 'en', {val: 'abc'})).toThrow(
       'Expected number for "val", got string'
@@ -197,7 +197,7 @@ describe('number formatting', () => {
 describe('date formatting', () => {
   const date = new Date('2024-03-15T14:30:00Z');
 
-  it('formats date with short style', () => {
+  it('formats a date with short style', () => {
     const compiled = compile('{d, date, short}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -214,7 +214,7 @@ describe('date formatting', () => {
     expect(result).toContain('15');
   });
 
-  it('formats date with medium style', () => {
+  it('formats a date with medium style', () => {
     const compiled = compile('{d, date, medium}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -234,7 +234,7 @@ describe('date formatting', () => {
 describe('time formatting', () => {
   const date = new Date('2024-03-15T14:30:00Z');
 
-  it('formats time with short style', () => {
+  it('formats a time with short style', () => {
     const compiled = compile('{t, time, short}');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -252,7 +252,7 @@ describe('time formatting', () => {
 });
 
 describe('select', () => {
-  it('selects matching branch', () => {
+  it('selects the matching branch', () => {
     const compiled = compile(
       '{gender, select, female {She} male {He} other {They}}'
     );
@@ -317,7 +317,7 @@ describe('select', () => {
     ).toMatchInlineSnapshot(`"Alice is a woman"`);
   });
 
-  it('throws for select without other', () => {
+  it('throws for a select without other', () => {
     expect(() => compile('{gender, select, female {She} male {He}}')).toThrow(
       'MISSING_OTHER_CLAUSE'
     );
@@ -391,20 +391,20 @@ describe('plural', () => {
     );
   });
 
-  it('formats pound sign with locale', () => {
+  it('formats the pound sign with the locale', () => {
     const compiled = compile('{count, plural, one {# item} other {# items}}');
     expect(format(compiled, 'de', {count: 1000})).toMatchInlineSnapshot(
       `"1.000 items"`
     );
   });
 
-  it('throws for plural without other', () => {
+  it('throws for a plural without other', () => {
     expect(() => compile('{count, plural, one {item}}')).toThrow(
       'MISSING_OTHER_CLAUSE'
     );
   });
 
-  it('throws for non-number value', () => {
+  it('throws for a non-number value', () => {
     const compiled = compile('{count, plural, one {# item} other {# items}}');
     expect(() => format(compiled, 'en', {count: 'abc'})).toThrow(
       'Expected number for plural argument "count", got string'
@@ -453,7 +453,7 @@ describe('ordinal plural (selectordinal)', () => {
 });
 
 describe('tags', () => {
-  it('calls tag handler with children', () => {
+  it('calls a tag handler with children', () => {
     const compiled = compile('<bold>important</bold>');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -469,7 +469,7 @@ describe('tags', () => {
     expect(result).toMatchInlineSnapshot(`"<b>important</b>"`);
   });
 
-  it('handles empty tag', () => {
+  it('handles an empty tag', () => {
     const compiled = compile('<br></br>');
     // Empty tags get an empty string child to distinguish from simple arguments
     expect(compiled).toMatchInlineSnapshot(`
@@ -486,7 +486,7 @@ describe('tags', () => {
     expect(result).toMatchInlineSnapshot(`"<br/>"`);
   });
 
-  it('handles tag with argument', () => {
+  it('handles a tag with an argument', () => {
     const compiled = compile('<link>{name}</link>');
     expect(compiled).toMatchInlineSnapshot(`
         [
@@ -563,14 +563,14 @@ describe('tags', () => {
       `);
   });
 
-  it('throws for missing tag handler', () => {
+  it('throws for a missing tag handler', () => {
     const compiled = compile('<bold>text</bold>');
     expect(() => format(compiled, 'en', {})).toThrow(
       'Missing value for argument "bold"'
     );
   });
 
-  it('throws for non-function tag handler', () => {
+  it('throws for a non-function tag handler', () => {
     const compiled = compile('<bold>text</bold>');
     expect(() => format(compiled, 'en', {bold: 'not a function'})).toThrow(
       'Expected function for tag handler "bold"'
@@ -579,7 +579,7 @@ describe('tags', () => {
 });
 
 describe('nesting', () => {
-  it('formats select inside plural', () => {
+  it('formats a select inside a plural', () => {
     const compiled = compile(
       '{count, plural, one {{gender, select, female {her item} other {their item}}} other {{gender, select, female {her items} other {their items}}}}'
     );
@@ -621,7 +621,7 @@ describe('nesting', () => {
     ).toMatchInlineSnapshot(`"her items"`);
   });
 
-  it('formats plural inside select', () => {
+  it('formats a plural inside a select', () => {
     const compiled = compile(
       '{gender, select, female {{n, plural, one {She has # cat} other {She has # cats}}} other {{n, plural, one {They have # cat} other {They have # cats}}}}'
     );
@@ -687,21 +687,21 @@ describe('locales', () => {
 });
 
 describe('invalid syntax', () => {
-  it('throws for unclosed brace', () => {
+  it('throws for an unclosed brace', () => {
     expect(() => compile('{name')).toThrow('EXPECT_ARGUMENT_CLOSING_BRACE');
   });
 
-  it('throws for missing argument name', () => {
+  it('throws for a missing argument name', () => {
     expect(() => compile('{}')).toThrow('EMPTY_ARGUMENT');
   });
 
-  it('throws for unclosed tag', () => {
+  it('throws for an unclosed tag', () => {
     expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
   });
 });
 
 describe('real-world examples', () => {
-  it('handles shopping cart', () => {
+  it('handles a shopping cart message', () => {
     const compiled = compile(
       '{itemCount, plural, =0 {Your cart is empty} one {You have # item in your cart} other {You have # items in your cart}}'
     );
@@ -716,7 +716,7 @@ describe('real-world examples', () => {
     );
   });
 
-  it('handles greeting with gender', () => {
+  it('handles a greeting with gender', () => {
     const compiled = compile(
       '{gender, select, female {Dear Ms. {lastName}} male {Dear Mr. {lastName}} other {Dear {firstName} {lastName}}}'
     );
