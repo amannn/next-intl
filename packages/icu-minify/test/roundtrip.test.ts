@@ -117,14 +117,14 @@ describe('simple arguments', () => {
     ).toMatchInlineSnapshot(`"John Doe"`);
   });
 
-  it('converts numbers to strings', () => {
+  it('converts numbers to strings (only theoretical)', () => {
     const compiled = compile('Value: {val}');
     expect(format(compiled, 'en', {val: 42})).toMatchInlineSnapshot(
       `"Value: 42"`
     );
   });
 
-  it('converts booleans to strings', () => {
+  it('converts booleans to strings (only theoretical)', () => {
     const compiled = compile('Active: {active}');
     expect(format(compiled, 'en', {active: true})).toMatchInlineSnapshot(
       `"Active: true"`

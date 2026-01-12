@@ -5,8 +5,7 @@ export const TYPE_FORMAT = 4;
 
 export type FormatSubtype = 'number' | 'date' | 'time';
 
-// Extend Intl.NumberFormatOptions with 'scale' for ICU number skeletons
-export type NumberStyleOptions = Intl.NumberFormatOptions & {scale?: number};
+export type NumberStyleOptions = Intl.NumberFormatOptions;
 
 export type NumberStyle = string | NumberStyleOptions;
 
