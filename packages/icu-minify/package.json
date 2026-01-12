@@ -15,7 +15,7 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
-    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm --ignore-rules=no-resolution",
+    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
     "lint:prettier": "prettier src --check",
     "prepublishOnly": "turbo build",
     "size": "size-limit"
@@ -34,7 +34,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "compiler.d.ts",
+    "format.d.ts"
   ],
   "keywords": [
     "icu",

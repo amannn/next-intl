@@ -15,7 +15,7 @@ import {
   TYPE_TAG
 } from './types.js';
 
-export type FormatValues<T = unknown> = Record<
+export type FormatValues<RichTextElement = unknown> = Record<
   string,
   | string
   | number
@@ -23,14 +23,14 @@ export type FormatValues<T = unknown> = Record<
   | Date
   | null
   | undefined
-  | ((chunks: Array<string | T>) => T)
+  | ((chunks: Array<string | RichTextElement>) => RichTextElement)
 >;
 
-export function format<T = string>(
+export function format<RichTextElement = string>(
   message: CompiledMessage,
   locale: string,
-  values: FormatValues<T> = {} as FormatValues<T>
-): string | Array<string | T> {
+  values: FormatValues<RichTextElement> = {} as FormatValues<RichTextElement>
+): string | Array<string | RichTextElement> {
   if (typeof message === 'string') {
     return message;
   }
@@ -44,13 +44,13 @@ interface PluralContext {
   locale: string;
 }
 
-function formatNodes<T>(
+function formatNodes<RichTextElement>(
   nodes: Array<CompiledNode>,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
-): Array<string | T> {
-  const result: Array<string | T> = [];
+): Array<string | RichTextElement> {
+  const result: Array<string | RichTextElement> = [];
 
   for (const node of nodes) {
     const formatted = formatNode(node, locale, values, pluralCtx);
@@ -64,12 +64,12 @@ function formatNodes<T>(
   return result;
 }
 
-function formatNode<T>(
+function formatNode<RichTextElement>(
   node: CompiledNode,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
-): string | T | Array<string | T> {
+): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof node === 'string') {
     return node;
   }
@@ -142,23 +142,23 @@ function formatNode<T>(
   }
 }
 
-function getValue<T>(
-  values: FormatValues<T>,
+function getValue<RichTextElement>(
+  values: FormatValues<RichTextElement>,
   name: string
-): FormatValues<T>[string] {
+): FormatValues<RichTextElement>[string] {
   if (!(name in values)) {
     throw new Error(`Missing value for argument "${name}"`);
   }
   return values[name];
 }
 
-function formatSelect<T>(
+function formatSelect<RichTextElement>(
   name: string,
   options: SelectOptions,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
-): string | T | Array<string | T> {
+): string | RichTextElement | Array<string | RichTextElement> {
   const value = String(getValue(values, name));
   const branch: CompiledNode | undefined = options[value] ?? options.other;
 
@@ -171,13 +171,13 @@ function formatSelect<T>(
   return formatBranch(branch, locale, values, pluralCtx);
 }
 
-function formatPlural<T>(
+function formatPlural<RichTextElement>(
   name: string,
   optionsWithOffset: PluralOptionsWithOffset,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralType: Intl.PluralRulesOptions['type']
-): string | T | Array<string | T> {
+): string | RichTextElement | Array<string | RichTextElement> {
   const rawValue = getValue(values, name);
   if (typeof rawValue !== 'number') {
     throw new Error(
@@ -214,12 +214,12 @@ function formatPlural<T>(
   return formatBranch(branch, locale, values, {value, locale});
 }
 
-function formatBranch<T>(
+function formatBranch<RichTextElement>(
   branch: CompiledNode,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
-): string | T | Array<string | T> {
+): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof branch === 'string') {
     return branch;
   }
@@ -253,12 +253,12 @@ function formatBranch<T>(
   return formatNode(branch, locale, values, pluralCtx);
 }
 
-function formatValue<T>(
+function formatValue<RichTextElement>(
   name: string,
   subtype: 'number' | 'date' | 'time',
   style: NumberStyle | DateTimeStyle | undefined,
   locale: string,
-  values: FormatValues<T>
+  values: FormatValues<RichTextElement>
 ): string {
   const value = getValue(values, name);
 
@@ -343,13 +343,13 @@ function getDateTimeFormatOptions(
   return style as DateTimeStyleOptions;
 }
 
-function formatTag<T>(
+function formatTag<RichTextElement>(
   name: string,
   children: Array<CompiledNode>,
   locale: string,
-  values: FormatValues<T>,
+  values: FormatValues<RichTextElement>,
   pluralCtx: PluralContext | undefined
-): string | T | Array<string | T> {
+): string | RichTextElement | Array<string | RichTextElement> {
   const handler = getValue(values, name);
 
   if (typeof handler !== 'function') {
@@ -363,14 +363,14 @@ function formatTag<T>(
   return handler(childArray);
 }
 
-function optimizeResult<T>(
-  result: Array<string | T>
-): string | Array<string | T> {
+function optimizeResult<RichTextElement>(
+  result: Array<string | RichTextElement>
+): string | Array<string | RichTextElement> {
   if (result.length === 0) {
     return '';
   }
 
-  const merged: Array<string | T> = [];
+  const merged: Array<string | RichTextElement> = [];
   let currentString = '';
 
   for (const item of result) {

@@ -6,38 +6,12 @@ export const TYPE_TAG = 5;
 
 export type FormatSubtype = 'number' | 'date' | 'time';
 
-export interface NumberStyleOptions {
-  style?: 'decimal' | 'currency' | 'percent' | 'unit';
-  currency?: string;
-  unit?: string;
-  scale?: number;
-  minimumFractionDigits?: number;
-  maximumFractionDigits?: number;
-  minimumIntegerDigits?: number;
-  minimumSignificantDigits?: number;
-  maximumSignificantDigits?: number;
-  useGrouping?: boolean;
-  notation?: 'standard' | 'scientific' | 'engineering' | 'compact';
-  compactDisplay?: 'short' | 'long';
-  signDisplay?: 'auto' | 'never' | 'always' | 'exceptZero';
-}
+// Extend Intl.NumberFormatOptions with 'scale' for ICU number skeletons
+export type NumberStyleOptions = Intl.NumberFormatOptions & {scale?: number};
 
 export type NumberStyle = string | NumberStyleOptions;
 
-export interface DateTimeStyleOptions {
-  dateStyle?: 'full' | 'long' | 'medium' | 'short';
-  timeStyle?: 'full' | 'long' | 'medium' | 'short';
-  weekday?: 'narrow' | 'short' | 'long';
-  era?: 'narrow' | 'short' | 'long';
-  year?: 'numeric' | '2-digit';
-  month?: 'numeric' | '2-digit' | 'narrow' | 'short' | 'long';
-  day?: 'numeric' | '2-digit';
-  hour?: 'numeric' | '2-digit';
-  minute?: 'numeric' | '2-digit';
-  second?: 'numeric' | '2-digit';
-  timeZoneName?: 'short' | 'long';
-  hour12?: boolean;
-}
+export type DateTimeStyleOptions = Intl.DateTimeFormatOptions;
 
 export type DateTimeStyle = string | DateTimeStyleOptions;
 
