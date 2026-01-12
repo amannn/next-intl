@@ -1,6 +1,6 @@
-import {describe, it, expect} from 'vitest';
-import {format} from '../src/format.js';
+import {describe, expect, it} from 'vitest';
 import {compile} from '../src/compiler.js';
+import {format} from '../src/format.js';
 
 describe('format', () => {
   describe('static text', () => {
@@ -270,8 +270,12 @@ describe('format', () => {
     });
 
     it('supports nested tags returning JSX-like objects', () => {
+      interface TagElement {
+        tag: string;
+        children: Array<string | TagElement>;
+      }
       const compiled = compile('<a><b>text</b></a>');
-      const result = format(compiled, 'en', {
+      const result = format<TagElement>(compiled, 'en', {
         b: (chunks) => ({tag: 'b', children: chunks}),
         a: (chunks) => ({tag: 'a', children: chunks})
       });
@@ -467,8 +471,8 @@ describe('format', () => {
       const result = format(compiled, 'en', {
         name: 'Alice',
         count: 5,
-        bold: (chunks: unknown[]) => `<strong>${chunks.join('')}</strong>`,
-        link: (chunks: unknown[]) => `<a href="/messages">${chunks.join('')}</a>`
+        bold: (chunks: Array<unknown>) => `<strong>${chunks.join('')}</strong>`,
+        link: (chunks: Array<unknown>) => `<a href="/messages">${chunks.join('')}</a>`
       });
 
       expect(result).toBe(

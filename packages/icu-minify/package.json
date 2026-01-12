@@ -15,20 +15,13 @@
     "test": "TZ=Europe/Berlin vitest",
     "lint": "pnpm run lint:source && pnpm run lint:package",
     "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
-    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
+    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm --ignore-rules=no-resolution",
     "lint:prettier": "prettier src --check",
     "prepublishOnly": "turbo build",
     "size": "size-limit"
   },
   "type": "module",
-  "main": "./dist/esm/production/index.js",
-  "typings": "./dist/types/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/index.d.ts",
-      "development": "./dist/esm/development/index.js",
-      "default": "./dist/esm/production/index.js"
-    },
     "./compiler": {
       "types": "./dist/types/compiler.d.ts",
       "development": "./dist/esm/development/compiler.js",
@@ -41,9 +34,7 @@
     }
   },
   "files": [
-    "dist",
-    "compiler.d.ts",
-    "format.d.ts"
+    "dist"
   ],
   "keywords": [
     "icu",

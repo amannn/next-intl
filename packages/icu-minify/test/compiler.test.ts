@@ -1,10 +1,10 @@
-import {describe, it, expect} from 'vitest';
+import {describe, expect, it} from 'vitest';
 import {compile} from '../src/compiler.js';
 import {
-  TYPE_SELECT,
-  TYPE_PLURAL,
-  TYPE_SELECTORDINAL,
   TYPE_FORMAT,
+  TYPE_PLURAL,
+  TYPE_SELECT,
+  TYPE_SELECTORDINAL,
   TYPE_TAG
 } from '../src/types.js';
 
@@ -252,34 +252,40 @@ describe('compile', () => {
   describe('tags', () => {
     it('compiles simple tag', () => {
       const result = compile('<bold>important</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, 'important']]);
+      expect(result).toEqual([['bold', TYPE_TAG, ['important']]]);
     });
 
     it('compiles tag with argument', () => {
       const result = compile('<bold>{name}</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, ['name']]]);
+      expect(result).toEqual([['bold', TYPE_TAG, [['name']]]]);
     });
 
     it('compiles multiple tags', () => {
       const result = compile('<a>link</a> and <b>bold</b>');
       expect(result).toEqual([
-        ['a', TYPE_TAG, 'link'],
+        ['a', TYPE_TAG, ['link']],
         ' and ',
-        ['b', TYPE_TAG, 'bold']
+        ['b', TYPE_TAG, ['bold']]
       ]);
     });
 
     it('compiles nested content in tags', () => {
       const result = compile('<wrapper>Hello <bold>{name}</bold></wrapper>');
       expect(result).toEqual([
-        ['wrapper', TYPE_TAG, 'Hello ', ['bold', TYPE_TAG, ['name']]]
+        ['wrapper', TYPE_TAG, ['Hello ', ['bold', TYPE_TAG, [['name']]]]]
       ]);
     });
 
     it('compiles tags around plural', () => {
-      const result = compile('<bold>{count, plural, one {# item} other {# items}}</bold>');
+      const result = compile(
+        '<bold>{count, plural, one {# item} other {# items}}</bold>'
+      );
       expect(result).toEqual([
-        ['bold', TYPE_TAG, ['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]]
+        [
+          'bold',
+          TYPE_TAG,
+          [['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]]
+        ]
       ]);
     });
   });
