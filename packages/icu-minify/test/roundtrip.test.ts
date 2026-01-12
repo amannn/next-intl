@@ -482,6 +482,23 @@ describe('icu-minify', () => {
       expect(result).toMatchInlineSnapshot(`"<b>important</b>"`);
     });
 
+    it('handles empty tag', () => {
+      const compiled = compile('<br></br>');
+      // Empty tags get an empty string child to distinguish from simple arguments
+      expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "br",
+            "",
+          ],
+        ]
+      `);
+      const result = format(compiled, 'en', {
+        br: () => '<br/>'
+      });
+      expect(result).toMatchInlineSnapshot(`"<br/>"`);
+    });
+
     it('handles tag with argument', () => {
       const compiled = compile('<link>{name}</link>');
       expect(compiled).toMatchInlineSnapshot(`
