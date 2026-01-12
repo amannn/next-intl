@@ -21,8 +21,7 @@ import {
   TYPE_FORMAT,
   TYPE_PLURAL,
   TYPE_SELECT,
-  TYPE_SELECTORDINAL,
-  TYPE_TAG
+  TYPE_SELECTORDINAL
 } from './types.js';
 
 export function compile(message: string): CompiledMessage {
@@ -65,7 +64,12 @@ function compileNodesToNode(nodes: Array<MessageFormatElement>): CompiledNode {
     return '';
   }
   if (compiled.length === 1) {
-    return compiled[0];
+    const node = compiled[0];
+    // Only unwrap strings and pound signs, not array-based nodes (tags, typed nodes)
+    // This preserves structure for formatBranch to correctly identify single nodes vs arrays
+    if (typeof node === 'string' || node === 0) {
+      return node;
+    }
   }
   return compiled as unknown as CompiledNode;
 }
@@ -249,5 +253,10 @@ function compilePlural(node: PluralElement): CompiledNode {
 
 function compileTag(node: TagElement): CompiledNode {
   const children = compileNodes(node.children);
-  return [node.value, TYPE_TAG, ...children];
+  // Tags have no type number - detected at runtime by typeof node[1] !== 'number'
+  // Empty tags get an empty string child to distinguish from simple arguments
+  if (children.length === 0) {
+    return [node.value, ''];
+  }
+  return [node.value, ...children] as CompiledNode;
 }

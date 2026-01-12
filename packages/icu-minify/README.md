@@ -2,6 +2,8 @@
 
 > Minimal ICU MessageFormat compiler and runtime
 
+This library is heavily inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. Key differences: zero runtime dependencies (uses native Intl APIs) and no type generation (handled at a higher level in next-intl). See [DESIGN.md](./DESIGN.md) for details.
+
 ## Features
 
 - **Build-time compilation**: Converts ICU messages to compact JSON at build time

@@ -4,8 +4,7 @@ import {
   TYPE_FORMAT,
   TYPE_PLURAL,
   TYPE_SELECT,
-  TYPE_SELECTORDINAL,
-  TYPE_TAG
+  TYPE_SELECTORDINAL
 } from '../src/types.js';
 
 describe('compile', () => {
@@ -250,30 +249,25 @@ describe('compile', () => {
   });
 
   describe('tags', () => {
+    // Tags have no type number - detected at runtime by typeof node[1] !== 'number'
     it('compiles simple tag', () => {
       const result = compile('<bold>important</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, 'important']]);
+      expect(result).toEqual([['bold', 'important']]);
     });
 
     it('compiles tag with argument', () => {
       const result = compile('<bold>{name}</bold>');
-      expect(result).toEqual([['bold', TYPE_TAG, ['name']]]);
+      expect(result).toEqual([['bold', ['name']]]);
     });
 
     it('compiles multiple tags', () => {
       const result = compile('<a>link</a> and <b>bold</b>');
-      expect(result).toEqual([
-        ['a', TYPE_TAG, 'link'],
-        ' and ',
-        ['b', TYPE_TAG, 'bold']
-      ]);
+      expect(result).toEqual([['a', 'link'], ' and ', ['b', 'bold']]);
     });
 
     it('compiles nested content in tags', () => {
       const result = compile('<wrapper>Hello <bold>{name}</bold></wrapper>');
-      expect(result).toEqual([
-        ['wrapper', TYPE_TAG, 'Hello ', ['bold', TYPE_TAG, ['name']]]
-      ]);
+      expect(result).toEqual([['wrapper', 'Hello ', ['bold', ['name']]]]);
     });
 
     it('compiles tags around plural', () => {
@@ -281,11 +275,7 @@ describe('compile', () => {
         '<bold>{count, plural, one {# item} other {# items}}</bold>'
       );
       expect(result).toEqual([
-        [
-          'bold',
-          TYPE_TAG,
-          ['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]
-        ]
+        ['bold', ['count', TYPE_PLURAL, {one: [0, ' item'], other: [0, ' items']}]]
       ]);
     });
   });
@@ -293,6 +283,7 @@ describe('compile', () => {
   describe('nesting', () => {
     it('compiles select inside plural', () => {
       // Note: # inside a select (even when nested in plural) is treated as literal text per ICU spec
+      // Single complex nodes in branches are wrapped in arrays to preserve structure
       const result = compile(
         '{count, plural, one {{gender, select, female {her item} other {their item}}} other {{gender, select, female {her items} other {their items}}}}'
       );
@@ -302,14 +293,18 @@ describe('compile', () => {
           TYPE_PLURAL,
           {
             one: [
-              'gender',
-              TYPE_SELECT,
-              {female: 'her item', other: 'their item'}
+              [
+                'gender',
+                TYPE_SELECT,
+                {female: 'her item', other: 'their item'}
+              ]
             ],
             other: [
-              'gender',
-              TYPE_SELECT,
-              {female: 'her items', other: 'their items'}
+              [
+                'gender',
+                TYPE_SELECT,
+                {female: 'her items', other: 'their items'}
+              ]
             ]
           }
         ]
@@ -317,6 +312,7 @@ describe('compile', () => {
     });
 
     it('compiles plural inside select', () => {
+      // Single complex nodes in branches are wrapped in arrays to preserve structure
       const result = compile(
         '{gender, select, female {{n, plural, one {She has # cat} other {She has # cats}}} other {{n, plural, one {They have # cat} other {They have # cats}}}}'
       );
@@ -326,20 +322,24 @@ describe('compile', () => {
           TYPE_SELECT,
           {
             female: [
-              'n',
-              TYPE_PLURAL,
-              {
-                one: ['She has ', 0, ' cat'],
-                other: ['She has ', 0, ' cats']
-              }
+              [
+                'n',
+                TYPE_PLURAL,
+                {
+                  one: ['She has ', 0, ' cat'],
+                  other: ['She has ', 0, ' cats']
+                }
+              ]
             ],
             other: [
-              'n',
-              TYPE_PLURAL,
-              {
-                one: ['They have ', 0, ' cat'],
-                other: ['They have ', 0, ' cats']
-              }
+              [
+                'n',
+                TYPE_PLURAL,
+                {
+                  one: ['They have ', 0, ' cat'],
+                  other: ['They have ', 0, ' cats']
+                }
+              ]
             ]
           }
         ]

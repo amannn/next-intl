@@ -2,7 +2,6 @@ export const TYPE_SELECT = 1;
 export const TYPE_PLURAL = 2;
 export const TYPE_SELECTORDINAL = 3;
 export const TYPE_FORMAT = 4;
-export const TYPE_TAG = 5;
 
 export type FormatSubtype = 'number' | 'date' | 'time';
 
@@ -26,9 +25,9 @@ export interface SelectOptions {
 
 export type PluralOptionsWithOffset = PluralOptions | [PluralOptions, number];
 
-// Tag children are spread directly: ["tagName", TYPE_TAG, child1, child2, ...]
-// We use `unknown` for the rest to avoid circular reference, runtime handles actual types
-type CompiledTagNode = [string, typeof TYPE_TAG, ...Array<unknown>];
+// Tags have no type number - detected by: array.length >= 2 && typeof array[1] !== 'number'
+// Format: ["tagName", child1, child2, ...]
+type CompiledTagNode = [string, unknown, ...Array<unknown>];
 
 export type CompiledNode =
   | string

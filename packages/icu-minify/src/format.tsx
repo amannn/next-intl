@@ -11,8 +11,7 @@ import {
   TYPE_FORMAT,
   TYPE_PLURAL,
   TYPE_SELECT,
-  TYPE_SELECTORDINAL,
-  TYPE_TAG
+  TYPE_SELECTORDINAL
 } from './types.js';
 
 export type FormatValues<RichTextElement = unknown> = Record<
@@ -83,6 +82,7 @@ function formatNode<RichTextElement>(
 
   const [name, type, ...rest] = node;
 
+  // Simple argument: ["name"]
   if (type === undefined) {
     const value = getValue(values, name);
     if (value instanceof Date) {
@@ -91,6 +91,18 @@ function formatNode<RichTextElement>(
     return String(value);
   }
 
+  // Tag: ["tagName", child1, child2, ...] - detected by non-number second element
+  if (typeof type !== 'number') {
+    return formatTag(
+      name,
+      [type, ...rest] as Array<CompiledNode>,
+      locale,
+      values,
+      pluralCtx
+    );
+  }
+
+  // Typed nodes: ["name", TYPE, ...]
   switch (type) {
     case TYPE_SELECT:
       return formatSelect(
@@ -126,15 +138,6 @@ function formatNode<RichTextElement>(
         rest[1] as NumberStyle | DateTimeStyle | undefined,
         locale,
         values
-      );
-
-    case TYPE_TAG:
-      return formatTag(
-        name,
-        rest as Array<CompiledNode>,
-        locale,
-        values,
-        pluralCtx
       );
 
     default:
@@ -226,31 +229,9 @@ function formatBranch<RichTextElement>(
   if (branch === 0) {
     return formatNode(branch, locale, values, pluralCtx);
   }
-  if (Array.isArray(branch)) {
-    const first = branch[0];
-
-    if (typeof first === 'string') {
-      if (branch.length === 1) {
-        return formatNode(branch as CompiledNode, locale, values, pluralCtx);
-      }
-      const second = branch[1];
-      if (
-        typeof second === 'number' &&
-        second >= TYPE_SELECT &&
-        second <= TYPE_TAG
-      ) {
-        return formatNode(branch as CompiledNode, locale, values, pluralCtx);
-      }
-    }
-
-    return formatNodes(
-      branch as Array<CompiledNode>,
-      locale,
-      values,
-      pluralCtx
-    );
-  }
-  return formatNode(branch, locale, values, pluralCtx);
+  // Branch is an array - either a single complex node wrapped in array, or multiple nodes
+  // formatNodes handles both correctly via formatNode's tag detection
+  return formatNodes(branch as Array<CompiledNode>, locale, values, pluralCtx);
 }
 
 function formatValue<RichTextElement>(
