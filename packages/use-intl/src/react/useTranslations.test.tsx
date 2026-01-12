@@ -1,6 +1,6 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import {IntlMessageFormat} from 'intl-messageformat';
+import {compile} from 'icu-minify/compiler';
 import type {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
@@ -13,30 +13,22 @@ import {
 import IntlProvider from './IntlProvider.js';
 import useTranslations from './useTranslations.js';
 
-// Wrap the library to include a counter for parse
-// invocations for the cache test below.
-vi.mock('intl-messageformat', async (importOriginal) => {
-  const ActualIntlMessageFormat: typeof IntlMessageFormat = (
-    (await importOriginal()) as any
-  ).IntlMessageFormat;
+vi.mock('icu-minify/compiler', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('icu-minify/compiler');
+
+  const wrappedCompile = ((message: string) => {
+    wrappedCompile.invocationsByMessage[message] ||= 0;
+    wrappedCompile.invocationsByMessage[message]++;
+    return actual.compile(message);
+  }) as typeof actual.compile & {
+    invocationsByMessage: Record<string, number>;
+  };
+
+  wrappedCompile.invocationsByMessage = {};
 
   return {
-    IntlMessageFormat: class MockIntlMessageFormat extends ActualIntlMessageFormat {
-      public static invocationsByMessage: Record<string, number> = {};
-
-      constructor(
-        ...[message, ...rest]: ConstructorParameters<typeof IntlMessageFormat>
-      ) {
-        if (typeof message !== 'string') {
-          throw new Error('Unsupported invocation for testing.');
-        }
-
-        super(message, ...rest);
-
-        MockIntlMessageFormat.invocationsByMessage[message] ||= 0;
-        MockIntlMessageFormat.invocationsByMessage[message]++;
-      }
-    }
+    ...actual,
+    compile: wrappedCompile
   };
 });
 
@@ -384,9 +376,7 @@ it('utilizes a cache for parsing messages', () => {
 
   // The tree was rendered 3 times, but the message was parsed only once.
   expect(
-    (IntlMessageFormat as any).invocationsByMessage[
-      '[Cache test] Render #{renderNum}'
-    ]
+    (compile as any).invocationsByMessage['[Cache test] Render #{renderNum}']
   ).toEqual(1);
 });
 
@@ -996,40 +986,11 @@ describe('global formats', () => {
 });
 
 describe('performance', () => {
-  const MockIntlMessageFormat: typeof IntlMessageFormat & {
-    invocationsByMessage: Record<string, number>;
-  } = IntlMessageFormat as any;
-
   beforeEach(() => {
-    vi.mock('intl-messageformat', async (original) => {
-      const ActualIntlMessageFormat: typeof IntlMessageFormat = (
-        (await original()) as any
-      ).IntlMessageFormat;
-
-      return {
-        IntlMessageFormat: class MockIntlMessageFormatImpl extends ActualIntlMessageFormat {
-          public static invocationsByMessage: Record<string, number> = {};
-
-          constructor(
-            ...[message, ...rest]: ConstructorParameters<
-              typeof IntlMessageFormat
-            >
-          ) {
-            if (typeof message !== 'string') {
-              throw new Error('Unsupported invocation for testing.');
-            }
-
-            super(message, ...rest);
-
-            MockIntlMessageFormatImpl.invocationsByMessage[message] ||= 0;
-            MockIntlMessageFormatImpl.invocationsByMessage[message]++;
-          }
-        }
-      };
-    });
+    (compile as any).invocationsByMessage = {};
   });
 
-  it('caches message formats for component instances', () => {
+  it('caches compiled messages for component instances', () => {
     let renderCount = 0;
 
     function Component() {
@@ -1051,9 +1012,7 @@ describe('performance', () => {
         <Component />
       </Provider>
     );
-    expect(MockIntlMessageFormat.invocationsByMessage['Hello #{count}']).toBe(
-      1
-    );
+    expect((compile as any).invocationsByMessage['Hello #{count}']).toBe(1);
     expect(renderCount).toBe(1);
     screen.getByText('Hello #1');
 
@@ -1062,14 +1021,12 @@ describe('performance', () => {
         <Component />
       </Provider>
     );
-    expect(MockIntlMessageFormat.invocationsByMessage['Hello #{count}']).toBe(
-      1
-    );
+    expect((compile as any).invocationsByMessage['Hello #{count}']).toBe(1);
     expect(renderCount).toBe(2);
     screen.getByText('Hello #2');
   });
 
-  it("doesn't create a message format for plain strings", () => {
+  it("doesn't compile plain strings", () => {
     let renderCount = 0;
 
     function Component() {
@@ -1091,12 +1048,12 @@ describe('performance', () => {
         <Component />
       </Provider>
     );
-    expect(MockIntlMessageFormat.invocationsByMessage.Hello).toBe(undefined);
+    expect((compile as any).invocationsByMessage.Hello).toBe(undefined);
     expect(renderCount).toBe(1);
     screen.getByText('Hello');
   });
 
-  it('reuses message formats across component instances', () => {
+  it('reuses compiled messages across component instances', () => {
     function Component({value}: {value: number}) {
       const t = useTranslations();
       return <>{t('message', {value})}</>;
@@ -1111,6 +1068,6 @@ describe('performance', () => {
     );
 
     screen.getByText(['Value 1', 'Value 2', 'Value 3'].join(''));
-    expect(MockIntlMessageFormat.invocationsByMessage['Value {value}']).toBe(1);
+    expect((compile as any).invocationsByMessage['Value {value}']).toBe(1);
   });
 });
