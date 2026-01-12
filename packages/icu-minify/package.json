@@ -1,6 +1,6 @@
 {
   "name": "icu-minify",
-  "version": "1.0.0",
+  "version": "4.7.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "description": "Minimal ICU MessageFormat compiler and runtime",
@@ -46,10 +46,11 @@
     "compiler",
     "minify"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "^2.11.1"
+  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
-    "@formatjs/icu-messageformat-parser": "^2.11.1",
     "@size-limit/preset-small-lib": "^11.2.0",
     "@types/node": "^20.14.5",
     "eslint": "9.11.1",

@@ -118,22 +118,6 @@ function compileNumber(node: NumberElement): CompiledNode {
   return [node.value, TYPE_FORMAT, 'number'];
 }
 
-const numberOptionKeys: Array<keyof NumberStyleOptions> = [
-  'style',
-  'currency',
-  'unit',
-  'scale',
-  'minimumFractionDigits',
-  'maximumFractionDigits',
-  'minimumIntegerDigits',
-  'minimumSignificantDigits',
-  'maximumSignificantDigits',
-  'useGrouping',
-  'notation',
-  'compactDisplay',
-  'signDisplay'
-];
-
 function compileNumberStyle(
   style: NumberElement['style']
 ): string | NumberStyleOptions | undefined {
@@ -146,10 +130,10 @@ function compileNumberStyle(
   }
 
   if ('parsedOptions' in style) {
-    return extractOptions(
-      (style as NumberSkeleton).parsedOptions as Record<string, unknown>,
-      numberOptionKeys
-    ) as NumberStyleOptions | undefined;
+    const opts = (style as NumberSkeleton).parsedOptions;
+    return Object.keys(opts).length > 0
+      ? (opts as NumberStyleOptions)
+      : undefined;
   }
 
   return undefined;
@@ -171,21 +155,6 @@ function compileTime(node: TimeElement): CompiledNode {
   return [node.value, TYPE_FORMAT, 'time'];
 }
 
-const dateTimeOptionKeys: Array<keyof DateTimeStyleOptions> = [
-  'dateStyle',
-  'timeStyle',
-  'weekday',
-  'era',
-  'year',
-  'month',
-  'day',
-  'hour',
-  'minute',
-  'second',
-  'timeZoneName',
-  'hour12'
-];
-
 function compileDateTimeStyle(
   style: DateElement['style'] | TimeElement['style']
 ): string | DateTimeStyleOptions | undefined {
@@ -198,31 +167,13 @@ function compileDateTimeStyle(
   }
 
   if ('parsedOptions' in style) {
-    return extractOptions(
-      (style as DateTimeSkeleton).parsedOptions as Record<string, unknown>,
-      dateTimeOptionKeys
-    ) as DateTimeStyleOptions | undefined;
+    const opts = (style as DateTimeSkeleton).parsedOptions;
+    return Object.keys(opts).length > 0
+      ? (opts as DateTimeStyleOptions)
+      : undefined;
   }
 
   return undefined;
-}
-
-function extractOptions<K extends string>(
-  source: {[key: string]: unknown},
-  keys: Array<K>
-): Partial<Record<K, unknown>> | undefined {
-  const result: Partial<Record<K, unknown>> = {};
-  let hasValue = false;
-
-  for (const key of keys) {
-    const value = source[key];
-    if (value !== undefined) {
-      result[key] = value;
-      hasValue = true;
-    }
-  }
-
-  return hasValue ? result : undefined;
 }
 
 function compileSelect(node: SelectElement): CompiledNode {
@@ -236,6 +187,10 @@ function compileSelect(node: SelectElement): CompiledNode {
 }
 
 function compilePlural(node: PluralElement): CompiledNode {
+  if (node.offset !== 0) {
+    throw new Error('Plural offset is not supported');
+  }
+
   const options: PluralOptions = {};
 
   for (const [key, option] of Object.entries(node.options)) {
@@ -243,10 +198,6 @@ function compilePlural(node: PluralElement): CompiledNode {
   }
 
   const type = node.pluralType === 'ordinal' ? TYPE_SELECTORDINAL : TYPE_PLURAL;
-
-  if (node.offset !== 0) {
-    return [node.value, type, [options, node.offset]];
-  }
 
   return [node.value, type, options];
 }

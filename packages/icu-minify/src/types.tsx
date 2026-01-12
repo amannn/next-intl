@@ -23,8 +23,6 @@ export interface SelectOptions {
   [key: string]: CompiledNode;
 }
 
-export type PluralOptionsWithOffset = PluralOptions | [PluralOptions, number];
-
 // Tags have no type number - detected by: array.length >= 2 && typeof array[1] !== 'number'
 // Format: ["tagName", child1, child2, ...]
 type CompiledTagNode = [string, unknown, ...Array<unknown>];
@@ -34,8 +32,8 @@ export type CompiledNode =
   | 0
   | [string]
   | [string, typeof TYPE_SELECT, SelectOptions]
-  | [string, typeof TYPE_PLURAL, PluralOptionsWithOffset]
-  | [string, typeof TYPE_SELECTORDINAL, PluralOptionsWithOffset]
+  | [string, typeof TYPE_PLURAL, PluralOptions]
+  | [string, typeof TYPE_SELECTORDINAL, PluralOptions]
   | [string, typeof TYPE_FORMAT, FormatSubtype, (NumberStyle | DateTimeStyle)?]
   | CompiledTagNode;
 

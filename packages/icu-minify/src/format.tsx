@@ -6,7 +6,6 @@ import {
   type NumberStyle,
   type NumberStyleOptions,
   type PluralOptions,
-  type PluralOptionsWithOffset,
   type SelectOptions,
   TYPE_FORMAT,
   TYPE_PLURAL,
@@ -116,7 +115,7 @@ function formatNode<RichTextElement>(
     case TYPE_PLURAL:
       return formatPlural(
         name,
-        rest[0] as PluralOptionsWithOffset,
+        rest[0] as PluralOptions,
         locale,
         values,
         'cardinal'
@@ -125,7 +124,7 @@ function formatNode<RichTextElement>(
     case TYPE_SELECTORDINAL:
       return formatPlural(
         name,
-        rest[0] as PluralOptionsWithOffset,
+        rest[0] as PluralOptions,
         locale,
         values,
         'ordinal'
@@ -176,28 +175,19 @@ function formatSelect<RichTextElement>(
 
 function formatPlural<RichTextElement>(
   name: string,
-  optionsWithOffset: PluralOptionsWithOffset,
+  options: PluralOptions,
   locale: string,
   values: FormatValues<RichTextElement>,
   pluralType: Intl.PluralRulesOptions['type']
 ): string | RichTextElement | Array<string | RichTextElement> {
-  const rawValue = getValue(values, name);
-  if (typeof rawValue !== 'number') {
+  const value = getValue(values, name);
+  if (typeof value !== 'number') {
     throw new Error(
-      `Expected number for plural argument "${name}", got ${typeof rawValue}`
+      `Expected number for plural argument "${name}", got ${typeof value}`
     );
   }
 
-  let options: PluralOptions;
-  let offset = 0;
-  if (Array.isArray(optionsWithOffset)) {
-    [options, offset] = optionsWithOffset;
-  } else {
-    options = optionsWithOffset;
-  }
-
-  const value = rawValue - offset;
-  const exactKey = `=${rawValue}`;
+  const exactKey = `=${value}`;
 
   if (exactKey in options) {
     return formatBranch(options[exactKey], locale, values, {value, locale});

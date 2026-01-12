@@ -2,10 +2,6 @@
 
 This document describes the design decisions behind `icu-minify`, a minimal ICU MessageFormat compiler and runtime.
 
-## Acknowledgments
-
-This implementation is heavily inspired by [jantimon/icu-to-json](https://github.com/jantimon/icu-to-json). The core JSON format is nearly identical, and many of the design patterns were derived from studying that project. Key differences are documented in the comparison section below.
-
 ## Requirements
 
 The following requirements guided the design:
@@ -25,6 +21,12 @@ The following requirements guided the design:
 | Format reliably | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser |
 | Fast runtime | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters |
 | Zero dependencies | Uses native Intl.PluralRules, Intl.NumberFormat, Intl.DateTimeFormat |
+
+## Limitations
+
+### Plural Offset Not Supported
+
+Plural offset syntax (`{n, plural, offset:1 ...}`) is intentionally not supported. This feature is rarely used in practice and adds complexity to both the compiled format and runtime. If offset behavior is needed, it can be achieved by pre-computing the offset value before passing it to the formatter.
 
 ## Compiled Format
 
@@ -49,7 +51,6 @@ Tags have no type constant - they're detected by checking if the second element 
 | Tag | `["tagName", ...children]` | `["b", "bold"]` |
 | Select | `["name", 1, {options}]` | `["gender", 1, {male: "He", other: "They"}]` |
 | Plural | `["name", 2, {options}]` | `["n", 2, {one: "item", other: "items"}]` |
-| Plural w/offset | `["name", 2, [{options}, offset]]` | `["n", 2, [{...}, 1]]` |
 | Ordinal | `["name", 3, {options}]` | `["n", 3, {one: [0, "st"], other: [0, "th"]}]` |
 | Number format | `["name", 4, "number", style?]` | `["val", 4, "number", "percent"]` |
 | Date format | `["name", 4, "date", style?]` | `["d", 4, "date", "short"]` |
@@ -88,7 +89,7 @@ The JSON formats are nearly identical:
 | Type generation | No | Yes (CLI can generate TS types) |
 | Argument metadata | No | Yes (returns argument info) |
 | CLI | No | Yes |
-| String interpolation | ICU only | Also supports bracket notation |
+| Plural offset | Not supported | Supported |
 
 ### Why We Differ
 
@@ -100,45 +101,25 @@ The JSON formats are nearly identical:
 
 **Zero runtime dependencies**: Uses native Intl APIs for all formatting (PluralRules, NumberFormat, DateTimeFormat).
 
+**No plural offset**: Simplifies the format and runtime; offset is rarely needed in practice.
+
 ## Alternative Formats Considered
 
-### 1. Object-based format
+### Object-based format
 
 ```json
 {"type": "plural", "name": "n", "options": {...}}
 ```
 
-**Rejected**: Verbose, doesn't compress well, slower to parse at runtime.
+Rejected: Verbose, property names don't compress well, slower to parse at runtime.
 
-### 2. String concatenation format
+### String type names
 
-```
-"Hello " + values.name
-```
-
-**Rejected**: Not valid JSON, requires eval or Function constructor.
-
-### 3. Template literal format
-
-```
-`Hello ${name}`
-```
-
-**Rejected**: Not valid JSON, requires eval or Function constructor.
-
-### 4. Custom binary format
-
-Encode types and lengths as binary data.
-
-**Rejected**: Not plain JSON, requires custom encoder/decoder, harder to debug.
-
-### 5. Verbose type names
-
-```
+```json
 ["name", "select", {...}]
 ```
 
-**Rejected**: Strings don't compress as well as numbers, larger output.
+Rejected: String type names are larger than numeric constants and don't compress as well with gzip/brotli.
 
 ## Bundle Size
 
@@ -148,3 +129,7 @@ Encode types and lengths as binary data.
 | Compiler (`compiler.js`) | ~2KB |
 
 The runtime is intentionally kept minimal for production use. The compiler is only needed at build time.
+
+## Acknowledgments
+
+This implementation is heavily inspired by [jantimon/icu-to-json](https://github.com/jantimon/icu-to-json). The core JSON format is nearly identical, and many of the design patterns were derived from studying that project.

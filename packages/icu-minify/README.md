@@ -2,8 +2,6 @@
 
 > Minimal ICU MessageFormat compiler and runtime
 
-This library is heavily inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. Key differences: zero runtime dependencies (uses native Intl APIs) and no type generation (handled at a higher level in next-intl). See [DESIGN.md](./DESIGN.md) for details.
-
 ## Features
 
 - **Build-time compilation**: Converts ICU messages to compact JSON at build time
@@ -19,51 +17,15 @@ npm install icu-minify
 
 ## Usage
 
-### Compile (build-time)
-
 ```ts
 import {compile} from 'icu-minify/compiler';
-
-const compiled = compile('Hello {name}!');
-// Store compiled result as JSON
-```
-
-### Format (runtime)
-
-```ts
 import {format} from 'icu-minify/format';
 
-const result = format(compiled, 'en', {name: 'World'});
-// "Hello World!"
-```
+// At build time
+const compiled = compile('Hello {name}!');
 
-### Plurals
-
-```ts
-const compiled = compile('{count, plural, one {# item} other {# items}}');
-format(compiled, 'en', {count: 1}); // "1 item"
-format(compiled, 'en', {count: 5}); // "5 items"
-```
-
-### Date/Time/Number formatting
-
-```ts
-const compiled = compile('Price: {price, number, currency/USD}');
-format(compiled, 'en', {price: 99.99}); // "Price: $99.99"
-
-const compiled = compile('Date: {date, date, medium}');
-format(compiled, 'en', {date: new Date()}); // "Date: Jan 12, 2026"
-```
-
-### Rich text with tags
-
-```ts
-const compiled = compile('Hello <b>{name}</b>!');
-format(compiled, 'en', {
-  name: 'World',
-  b: (chunks) => `<strong>${chunks.join('')}</strong>`
-});
-// "Hello <strong>World</strong>!"
+// At runtime
+format(compiled, 'en', {name: 'World'}); // "Hello World!"
 ```
 
 ## API
@@ -78,6 +40,10 @@ Formats a compiled message with the given locale and values.
 
 - Returns a `string` when all values resolve to strings
 - Returns an `Array<string | T>` when tag handlers return non-string values
+
+## Acknowledgments
+
+This library is heavily inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. Key differences: zero runtime dependencies (uses native Intl APIs) and no type generation (handled at a higher level in next-intl). See [DESIGN.md](./DESIGN.md) for details.
 
 ## License
 
