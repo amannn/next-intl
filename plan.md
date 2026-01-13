@@ -65,23 +65,23 @@ flowchart TB
 
 ### Phase 1: Add icu-minify Dependency to use-intl
 
-- [ ] **add-icu-minify-dep**: Add `icu-minify` as workspace dependency in `packages/use-intl/package.json`
+- [x] **add-icu-minify-dep**: Add `icu-minify` as workspace dependency in `packages/use-intl/package.json`
 
 ### Phase 2: Create Format-Message Module in use-intl
 
-- [ ] **create-format-interface**: Design shared interface for formatMessage implementations
-- [ ] **create-compile-and-format**: Create `packages/use-intl/src/core/formatMessage/compileAndFormat.tsx` with existing intl-messageformat logic
-- [ ] **create-format-only**: Create `packages/use-intl/src/core/formatMessage/formatOnly.tsx` using icu-minify/format with dateTime→date/time conversion
-- [ ] **create-format-index**: Create `packages/use-intl/src/core/formatMessage/index.tsx` re-exporting compileAndFormat
-- [ ] **refactor-base-translator**: Update `createBaseTranslator.tsx` to use new formatMessage module
-- [ ] **update-use-intl-exports**: Add format-message exports to `packages/use-intl/package.json`
-- [ ] **update-use-intl-rollup**: Update `packages/use-intl/rollup.config.js` with new entry points
+- [x] **create-format-interface**: Design shared interface for formatMessage implementations
+- [x] **create-compile-and-format**: Create `packages/use-intl/src/core/formatMessage/compileAndFormat.tsx` with existing intl-messageformat logic
+- [x] **create-format-only**: Create `packages/use-intl/src/core/formatMessage/formatOnly.tsx` using icu-minify/format with dateTime→date/time conversion
+- [x] **create-format-index**: Create `packages/use-intl/src/core/formatMessage/index.tsx` re-exporting compileAndFormat
+- [x] **refactor-base-translator**: Update `createBaseTranslator.tsx` to use new formatMessage module
+- [x] **update-use-intl-exports**: Add format-message exports to `packages/use-intl/package.json`
+- [x] **update-use-intl-rollup**: Update `packages/use-intl/rollup.config.js` with new entry points
 
 ### Phase 3: Enable Precompilation in next-intl
 
-- [ ] **add-precompile-option**: Add `precompile` option to PluginConfig in `packages/next-intl/src/plugin/types.tsx`
-- [ ] **update-catalog-loader**: Update `packages/next-intl/src/plugin/catalog/catalogLoader.tsx` to precompile messages when enabled
-- [ ] **add-alias-logic**: Add webpack/turbopack alias in `packages/next-intl/src/plugin/getNextConfig.tsx` for precompile mode
+- [x] **add-precompile-option**: Add `precompile` option to PluginConfig in `packages/next-intl/src/plugin/types.tsx`
+- [x] **update-catalog-loader**: Update `packages/next-intl/src/plugin/catalog/catalogLoader.tsx` to precompile messages when enabled
+- [x] **add-alias-logic**: Add webpack/turbopack alias in `packages/next-intl/src/plugin/getNextConfig.tsx` for precompile mode
 
 ### Phase 4: Verification
 
