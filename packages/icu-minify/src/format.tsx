@@ -348,29 +348,22 @@ function getNumberFormatOptions(
   if (!style) return undefined;
 
   if (typeof style === 'string') {
-    switch (style) {
-      case 'percent':
-        return {style: 'percent'};
-      case 'integer':
-        return {maximumFractionDigits: 0};
-      default:
-        if (formatOptions.formats?.number?.[style]) {
-          return formatOptions.formats.number[style];
-        }
-        if (style.includes('/')) {
-          const [type, val] = style.split('/');
-          if (type === 'currency') {
-            return {style: 'currency', currency: val};
-          }
-          if (type === 'unit') {
-            return {style: 'unit', unit: val};
-          }
-        }
-        if (process.env.NODE_ENV !== 'production') {
-          throw new Error(`Missing number format "${style}"`);
-        }
-        return undefined;
+    if (formatOptions.formats?.number?.[style]) {
+      return formatOptions.formats.number[style];
     }
+    if (style.includes('/')) {
+      const [type, val] = style.split('/');
+      if (type === 'currency') {
+        return {style: 'currency', currency: val};
+      }
+      if (type === 'unit') {
+        return {style: 'unit', unit: val};
+      }
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(`Missing number format "${style}"`);
+    }
+    return undefined;
   }
 
   return style as NumberStyleOptions;

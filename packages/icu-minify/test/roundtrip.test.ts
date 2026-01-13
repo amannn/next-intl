@@ -223,7 +223,15 @@ describe('number formatting', () => {
         ]
       `);
     expect(
-      format(compiled, 'en', {val: 0.75}, {formatters})
+      format(
+        compiled,
+        'en',
+        {val: 0.75},
+        {
+          formatters,
+          formats: {number: {percent: {style: 'percent'}}}
+        }
+      )
     ).toMatchInlineSnapshot(`"75%"`);
   });
 
@@ -239,7 +247,15 @@ describe('number formatting', () => {
         ]
       `);
     expect(
-      format(compiled, 'en', {val: 3.7}, {formatters})
+      format(
+        compiled,
+        'en',
+        {val: 3.7},
+        {
+          formatters,
+          formats: {number: {integer: {maximumFractionDigits: 0}}}
+        }
+      )
     ).toMatchInlineSnapshot(`"4"`);
   });
 
