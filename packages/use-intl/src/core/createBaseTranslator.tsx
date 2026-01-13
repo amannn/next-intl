@@ -1,5 +1,6 @@
 import {compile} from 'icu-minify/compiler';
 import {format, type FormatValues} from 'icu-minify/format';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
 import type {Locale} from './AppConfig.js';
@@ -250,18 +251,42 @@ function createBaseTranslatorImpl<
     const plainMessage = getPlainMessage(message as string, values);
     if (plainMessage) return plainMessage;
 
+    const dateTimeFormats = {
+      ...globalFormats?.dateTime,
+      ...formats?.dateTime
+    } satisfies NonNullable<Formats['dateTime']>;
+
+    const mfDateDefaults = IntlMessageFormat.formats.date as NonNullable<
+      Formats['dateTime']
+    >;
+    const mfTimeDefaults = IntlMessageFormat.formats.time as NonNullable<
+      Formats['dateTime']
+    >;
+
+    function mergeDateTimeFormats(
+      defaults: Record<string, Intl.DateTimeFormatOptions>,
+      overrides: Record<string, Intl.DateTimeFormatOptions>
+    ) {
+      const result: Record<string, Intl.DateTimeFormatOptions> = {...defaults};
+
+      for (const [key, value] of Object.entries(overrides)) {
+        result[key] = {...(defaults[key] ?? {}), ...value};
+      }
+
+      return result;
+    }
+
     const mergedFormats = {
-      dateTime: {
-        ...globalFormats?.dateTime,
-        ...formats?.dateTime
-      },
+      date: mergeDateTimeFormats(mfDateDefaults, dateTimeFormats),
+      time: mergeDateTimeFormats(mfTimeDefaults, dateTimeFormats),
       number: {
         ...globalFormats?.number,
         ...formats?.number
       }
     } satisfies {
-      dateTime: NonNullable<Formats['dateTime']>;
+      date: Record<string, Intl.DateTimeFormatOptions>;
       number: NonNullable<Formats['number']>;
+      time: Record<string, Intl.DateTimeFormatOptions>;
     };
 
     let compiledMessage;

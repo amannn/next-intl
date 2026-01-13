@@ -2,29 +2,106 @@ import {describe, expect, it} from 'vitest';
 import {compile} from '../src/compiler.js';
 import {format} from '../src/format.js';
 
+type Formatters = {
+  getDateTimeFormat: (
+    ...args: ConstructorParameters<typeof Intl.DateTimeFormat>
+  ) => Intl.DateTimeFormat;
+  getNumberFormat: (
+    ...args: ConstructorParameters<typeof Intl.NumberFormat>
+  ) => Intl.NumberFormat;
+  getPluralRules: (
+    ...args: ConstructorParameters<typeof Intl.PluralRules>
+  ) => Intl.PluralRules;
+};
+
+function createFormatters(): Formatters {
+  const dateTimeCache = new Map<string, Intl.DateTimeFormat>();
+  const numberCache = new Map<string, Intl.NumberFormat>();
+  const pluralRulesCache = new Map<string, Intl.PluralRules>();
+
+  function cacheKey(args: Array<unknown>) {
+    return JSON.stringify(args);
+  }
+
+  return {
+    getDateTimeFormat(...args) {
+      const key = cacheKey(args);
+      const existing = dateTimeCache.get(key);
+      if (existing) return existing;
+      const created = new Intl.DateTimeFormat(
+        args[0] as any,
+        args[1] as any
+      );
+      dateTimeCache.set(key, created);
+      return created;
+    },
+    getNumberFormat(...args) {
+      const key = cacheKey(args);
+      const existing = numberCache.get(key);
+      if (existing) return existing;
+      const created = new Intl.NumberFormat(args[0] as any, args[1] as any);
+      numberCache.set(key, created);
+      return created;
+    },
+    getPluralRules(...args) {
+      const key = cacheKey(args);
+      const existing = pluralRulesCache.get(key);
+      if (existing) return existing;
+      const created = new Intl.PluralRules(args[0] as any, args[1] as any);
+      pluralRulesCache.set(key, created);
+      return created;
+    }
+  };
+}
+
+const formatters = createFormatters();
+
+function compileFn(message: string) {
+  const compiled = compile(message);
+
+  return function formatFn(
+    locale: string,
+    values: Parameters<typeof format>[2],
+    options?: Omit<Parameters<typeof format>[3], 'formatters'>
+  ) {
+    return format(
+      compiled,
+      locale,
+      values,
+      options ? {formatters, ...options} : {formatters}
+    );
+  };
+}
+
 describe('static text', () => {
   it('handles an empty string', () => {
     const compiled = compile('');
     expect(compiled).toMatchInlineSnapshot(`""`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`""`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(`""`);
   });
 
   it('handles plain text', () => {
     const compiled = compile('Hello world');
     expect(compiled).toMatchInlineSnapshot(`"Hello world"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"Hello world"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"Hello world"`
+    );
   });
 
   it('handles whitespace', () => {
     const compiled = compile('  Hello  world  ');
     expect(compiled).toMatchInlineSnapshot(`"  Hello  world  "`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"  Hello  world  "`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"  Hello  world  "`
+    );
   });
 
   it('handles unicode content', () => {
     const compiled = compile('こんにちは 🌍');
     expect(compiled).toMatchInlineSnapshot(`"こんにちは 🌍"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"こんにちは 🌍"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"こんにちは 🌍"`
+    );
   });
 });
 
@@ -32,25 +109,33 @@ describe('escaping', () => {
   it('escapes a single brace', () => {
     const compiled = compile("'{'");
     expect(compiled).toMatchInlineSnapshot(`"{"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"{"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"{"`
+    );
   });
 
   it('escapes a closing brace', () => {
     const compiled = compile("'}'");
     expect(compiled).toMatchInlineSnapshot(`"}"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"}"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"}"`
+    );
   });
 
   it('escapes braces around text', () => {
     const compiled = compile("'{name}'");
     expect(compiled).toMatchInlineSnapshot(`"{name}"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"{name}"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"{name}"`
+    );
   });
 
   it('escapes single quotes', () => {
     const compiled = compile("It''s working");
     expect(compiled).toMatchInlineSnapshot(`"It's working"`);
-    expect(format(compiled, 'en')).toMatchInlineSnapshot(`"It's working"`);
+    expect(format(compiled, 'en', {}, {formatters})).toMatchInlineSnapshot(
+      `"It's working"`
+    );
   });
 
   it('handles mixed escaped and unescaped', () => {
@@ -63,7 +148,7 @@ describe('escaping', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {name: 'test'})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {name: 'test'}, {formatters})).toMatchInlineSnapshot(
       `"{name} is test"`
     );
   });
@@ -79,7 +164,7 @@ describe('simple arguments', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {name: 'World'})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {name: 'World'}, {formatters})).toMatchInlineSnapshot(
       `"World"`
     );
   });
@@ -94,7 +179,7 @@ describe('simple arguments', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {name: 'World'})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {name: 'World'}, {formatters})).toMatchInlineSnapshot(
       `"Hello World"`
     );
   });
@@ -113,29 +198,72 @@ describe('simple arguments', () => {
         ]
       `);
     expect(
-      format(compiled, 'en', {first: 'John', last: 'Doe'})
+      format(compiled, 'en', {first: 'John', last: 'Doe'}, {formatters})
     ).toMatchInlineSnapshot(`"John Doe"`);
   });
 
-  it('converts numbers to strings (only theoretical)', () => {
+  it('converts numbers to strings', () => {
     const compiled = compile('Value: {val}');
-    expect(format(compiled, 'en', {val: 42})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {val: 42}, {formatters})).toMatchInlineSnapshot(
       `"Value: 42"`
     );
   });
 
-  it('converts booleans to strings (only theoretical)', () => {
+  it('throws for booleans as plain params', () => {
     const compiled = compile('Active: {active}');
-    expect(format(compiled, 'en', {active: true})).toMatchInlineSnapshot(
-      `"Active: true"`
+    expect(() => format(compiled, 'en', {active: true}, {formatters})).toThrow(
+      'Invalid value type for argument "active"'
     );
+  });
+
+  it('throws for dates as plain params', () => {
+    const compiled = compile('Date: {val}');
+    expect(() =>
+      format(compiled, 'en', {val: new Date('2024-01-01T00:00:00Z')}, {formatters})
+    ).toThrow('Invalid value type for argument "val"');
   });
 
   it('throws for a missing argument', () => {
     const compiled = compile('Hello {name}');
-    expect(() => format(compiled, 'en', {})).toThrow(
+    expect(() => format(compiled, 'en', {}, {formatters})).toThrow(
       'Missing value for argument "name"'
     );
+  });
+});
+
+describe('branch structure', () => {
+  it('does not unwrap single tag nodes in branches', () => {
+    // If a branch was unwrapped to a single array node (e.g. ["b","Hi"]),
+    // the runtime would treat it as a list of nodes and never execute the tag.
+    const formatMessage = compileFn(
+      '{gender, select, male {<b>Hi</b>} other {<b>Bye</b>}}'
+    );
+
+    const result = formatMessage('en', {
+      gender: 'male',
+      b: () => ({tag: 'b'})
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "tag": "b",
+      }
+    `);
+  });
+
+  it('does not unwrap single typed nodes in branches', () => {
+    // Same issue as above, but for typed nodes like ["value", 4].
+    const formatMessage = compileFn(
+      '{gender, select, male {{value, number}} other {fallback}}'
+    );
+
+    expect(
+      formatMessage(
+        'en',
+        {gender: 'male', value: 1234},
+        {formats: {number: {}}}
+      )
+    ).toBe('1,234');
   });
 });
 
@@ -150,7 +278,7 @@ describe('number formatting', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {val: 1234.5})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {val: 1234.5}, {formatters})).toMatchInlineSnapshot(
       `"1,234.5"`
     );
   });
@@ -166,7 +294,9 @@ describe('number formatting', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {val: 0.75})).toMatchInlineSnapshot(`"75%"`);
+    expect(format(compiled, 'en', {val: 0.75}, {formatters})).toMatchInlineSnapshot(
+      `"75%"`
+    );
   });
 
   it('formats an integer', () => {
@@ -180,7 +310,9 @@ describe('number formatting', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {val: 3.7})).toMatchInlineSnapshot(`"4"`);
+    expect(format(compiled, 'en', {val: 3.7}, {formatters})).toMatchInlineSnapshot(
+      `"4"`
+    );
   });
 });
 
@@ -198,7 +330,14 @@ describe('date formatting', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {d: date});
+    const result = format(compiled, 'en', {d: date}, {
+      formatters,
+      formats: {
+        date: {
+          short: {month: 'numeric', day: 'numeric', year: '2-digit'}
+        }
+      }
+    });
     expect(result).toContain('3');
     expect(result).toContain('15');
   });
@@ -214,7 +353,14 @@ describe('date formatting', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {d: date});
+    const result = format(compiled, 'en', {d: date}, {
+      formatters,
+      formats: {
+        date: {
+          medium: {month: 'short', day: 'numeric', year: 'numeric'}
+        }
+      }
+    });
     expect(result).toContain('Mar');
   });
 });
@@ -233,7 +379,14 @@ describe('time formatting', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {t: date});
+    const result = format(compiled, 'en', {t: date}, {
+      formatters,
+      formats: {
+        time: {
+          short: {hour: 'numeric', minute: 'numeric'}
+        }
+      }
+    });
     expect(typeof result).toBe('string');
   });
 });
@@ -256,10 +409,10 @@ describe('select', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {gender: 'female'})).toMatchInlineSnapshot(
-      `"She"`
-    );
-    expect(format(compiled, 'en', {gender: 'male'})).toMatchInlineSnapshot(
+    expect(
+      format(compiled, 'en', {gender: 'female'}, {formatters})
+    ).toMatchInlineSnapshot(`"She"`);
+    expect(format(compiled, 'en', {gender: 'male'}, {formatters})).toMatchInlineSnapshot(
       `"He"`
     );
   });
@@ -268,9 +421,9 @@ describe('select', () => {
     const compiled = compile(
       '{gender, select, female {She} male {He} other {They}}'
     );
-    expect(format(compiled, 'en', {gender: 'unknown'})).toMatchInlineSnapshot(
-      `"They"`
-    );
+    expect(
+      format(compiled, 'en', {gender: 'unknown'}, {formatters})
+    ).toMatchInlineSnapshot(`"They"`);
   });
 
   it('formats arguments in branches', () => {
@@ -300,7 +453,7 @@ describe('select', () => {
         ]
       `);
     expect(
-      format(compiled, 'en', {gender: 'female', name: 'Alice'})
+      format(compiled, 'en', {gender: 'female', name: 'Alice'}, {formatters})
     ).toMatchInlineSnapshot(`"Alice is a woman"`);
   });
 
@@ -332,13 +485,13 @@ describe('plural', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {count: 1})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 1}, {formatters})).toMatchInlineSnapshot(
       `"1 item"`
     );
-    expect(format(compiled, 'en', {count: 5})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 5}, {formatters})).toMatchInlineSnapshot(
       `"5 items"`
     );
-    expect(format(compiled, 'en', {count: 0})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 0}, {formatters})).toMatchInlineSnapshot(
       `"0 items"`
     );
   });
@@ -367,20 +520,20 @@ describe('plural', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {count: 0})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 0}, {formatters})).toMatchInlineSnapshot(
       `"no items"`
     );
-    expect(format(compiled, 'en', {count: 1})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 1}, {formatters})).toMatchInlineSnapshot(
       `"one item"`
     );
-    expect(format(compiled, 'en', {count: 2})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {count: 2}, {formatters})).toMatchInlineSnapshot(
       `"2 items"`
     );
   });
 
   it('formats the pound sign with the locale', () => {
     const compiled = compile('{count, plural, one {# item} other {# items}}');
-    expect(format(compiled, 'de', {count: 1000})).toMatchInlineSnapshot(
+    expect(format(compiled, 'de', {count: 1000}, {formatters})).toMatchInlineSnapshot(
       `"1.000 items"`
     );
   });
@@ -423,12 +576,24 @@ describe('ordinal plural (selectordinal)', () => {
           ],
         ]
       `);
-    expect(format(compiled, 'en', {n: 1})).toMatchInlineSnapshot(`"1st"`);
-    expect(format(compiled, 'en', {n: 2})).toMatchInlineSnapshot(`"2nd"`);
-    expect(format(compiled, 'en', {n: 3})).toMatchInlineSnapshot(`"3rd"`);
-    expect(format(compiled, 'en', {n: 4})).toMatchInlineSnapshot(`"4th"`);
-    expect(format(compiled, 'en', {n: 11})).toMatchInlineSnapshot(`"11th"`);
-    expect(format(compiled, 'en', {n: 21})).toMatchInlineSnapshot(`"21st"`);
+    expect(format(compiled, 'en', {n: 1}, {formatters})).toMatchInlineSnapshot(
+      `"1st"`
+    );
+    expect(format(compiled, 'en', {n: 2}, {formatters})).toMatchInlineSnapshot(
+      `"2nd"`
+    );
+    expect(format(compiled, 'en', {n: 3}, {formatters})).toMatchInlineSnapshot(
+      `"3rd"`
+    );
+    expect(format(compiled, 'en', {n: 4}, {formatters})).toMatchInlineSnapshot(
+      `"4th"`
+    );
+    expect(format(compiled, 'en', {n: 11}, {formatters})).toMatchInlineSnapshot(
+      `"11th"`
+    );
+    expect(format(compiled, 'en', {n: 21}, {formatters})).toMatchInlineSnapshot(
+      `"21st"`
+    );
   });
 });
 
@@ -443,9 +608,14 @@ describe('tags', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {
-      bold: (chunks) => `<b>${chunks.join('')}</b>`
-    });
+    const result = format(
+      compiled,
+      'en',
+      {
+        bold: (chunks) => `<b>${chunks.join('')}</b>`
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(`"<b>important</b>"`);
   });
 
@@ -460,9 +630,14 @@ describe('tags', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {
-      br: () => '<br/>'
-    });
+    const result = format(
+      compiled,
+      'en',
+      {
+        br: () => '<br/>'
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(`"<br/>"`);
   });
 
@@ -478,20 +653,30 @@ describe('tags', () => {
           ],
         ]
       `);
-    const result = format(compiled, 'en', {
-      name: 'Click here',
-      link: (chunks) => `<a>${chunks.join('')}</a>`
-    });
+    const result = format(
+      compiled,
+      'en',
+      {
+        name: 'Click here',
+        link: (chunks) => `<a>${chunks.join('')}</a>`
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(`"<a>Click here</a>"`);
   });
 
   it('supports tags returning non-strings', () => {
     const compiled = compile('Hello <bold>{name}</bold>');
     const boldElement = {type: 'bold', children: ['World']};
-    const result = format(compiled, 'en', {
-      name: 'World',
-      bold: () => boldElement
-    });
+    const result = format(
+      compiled,
+      'en',
+      {
+        name: 'World',
+        bold: () => boldElement
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(`
         [
           "Hello ",
@@ -522,39 +707,67 @@ describe('tags', () => {
       tag: string;
       children: Array<string | TagElement>;
     }
-    const result = format<TagElement>(compiled, 'en', {
-      b: (chunks) => ({tag: 'b', children: chunks}),
-      a: (chunks) => ({tag: 'a', children: chunks})
-    });
+    const result = format<TagElement>(
+      compiled,
+      'en',
+      {
+        b: (chunks) => ({tag: 'b', children: chunks}),
+        a: (chunks) => ({tag: 'a', children: chunks})
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(`
-        [
+      {
+        "children": [
           {
             "children": [
-              {
-                "children": [
-                  "text",
-                ],
-                "tag": "b",
-              },
+              "text",
             ],
-            "tag": "a",
+            "tag": "b",
           },
-        ]
+        ],
+        "tag": "a",
+      }
       `);
+  });
+
+  it('wraps a single rich child into an array for tag handlers', () => {
+    // `formatTag` must always call tag handlers with an array of chunks.
+    // If a child formats to a single rich element, it still needs wrapping.
+    const compiled = compile('<a><b>text</b></a>');
+
+    const calls: Array<Array<unknown>> = [];
+    format(compiled, 'en', {
+      b: () => ({tag: 'b'}),
+      a: (chunks) => {
+        calls.push(chunks);
+        return {tag: 'a'};
+      }
+    }, {formatters});
+
+    expect(calls).toMatchInlineSnapshot(`
+      [
+        [
+          {
+            "tag": "b",
+          },
+        ],
+      ]
+    `);
   });
 
   it('throws for a missing tag handler', () => {
     const compiled = compile('<bold>text</bold>');
-    expect(() => format(compiled, 'en', {})).toThrow(
+    expect(() => format(compiled, 'en', {}, {formatters})).toThrow(
       'Missing value for argument "bold"'
     );
   });
 
   it('throws for a non-function tag handler', () => {
     const compiled = compile('<bold>text</bold>');
-    expect(() => format(compiled, 'en', {bold: 'not a function'})).toThrow(
-      'Expected function for tag handler "bold"'
-    );
+    expect(() =>
+      format(compiled, 'en', {bold: 'not a function'}, {formatters})
+    ).toThrow('Expected function for tag handler "bold"');
   });
 });
 
@@ -594,10 +807,10 @@ describe('nesting', () => {
         ]
       `);
     expect(
-      format(compiled, 'en', {count: 1, gender: 'female'})
+      format(compiled, 'en', {count: 1, gender: 'female'}, {formatters})
     ).toMatchInlineSnapshot(`"her item"`);
     expect(
-      format(compiled, 'en', {count: 5, gender: 'female'})
+      format(compiled, 'en', {count: 5, gender: 'female'}, {formatters})
     ).toMatchInlineSnapshot(`"her items"`);
   });
 
@@ -606,13 +819,13 @@ describe('nesting', () => {
       '{gender, select, female {{n, plural, one {She has # cat} other {She has # cats}}} other {{n, plural, one {They have # cat} other {They have # cats}}}}'
     );
     expect(
-      format(compiled, 'en', {gender: 'female', n: 1})
+      format(compiled, 'en', {gender: 'female', n: 1}, {formatters})
     ).toMatchInlineSnapshot(`"She has 1 cat"`);
     expect(
-      format(compiled, 'en', {gender: 'female', n: 3})
+      format(compiled, 'en', {gender: 'female', n: 3}, {formatters})
     ).toMatchInlineSnapshot(`"She has 3 cats"`);
     expect(
-      format(compiled, 'en', {gender: 'other', n: 1})
+      format(compiled, 'en', {gender: 'other', n: 1}, {formatters})
     ).toMatchInlineSnapshot(`"They have 1 cat"`);
   });
 
@@ -621,16 +834,16 @@ describe('nesting', () => {
       '{a, select, x {{b, plural, one {{c, select, y {deep} other {nested}}} other {level}}} other {top}}'
     );
     expect(
-      format(compiled, 'en', {a: 'x', b: 1, c: 'y'})
+      format(compiled, 'en', {a: 'x', b: 1, c: 'y'}, {formatters})
     ).toMatchInlineSnapshot(`"deep"`);
     expect(
-      format(compiled, 'en', {a: 'x', b: 1, c: 'z'})
+      format(compiled, 'en', {a: 'x', b: 1, c: 'z'}, {formatters})
     ).toMatchInlineSnapshot(`"nested"`);
     expect(
-      format(compiled, 'en', {a: 'x', b: 2, c: 'y'})
+      format(compiled, 'en', {a: 'x', b: 2, c: 'y'}, {formatters})
     ).toMatchInlineSnapshot(`"level"`);
     expect(
-      format(compiled, 'en', {a: 'z', b: 1, c: 'y'})
+      format(compiled, 'en', {a: 'z', b: 1, c: 'y'}, {formatters})
     ).toMatchInlineSnapshot(`"top"`);
   });
 });
@@ -641,10 +854,18 @@ describe('locales', () => {
     const compiled = compile(
       '{n, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}'
     );
-    expect(format(compiled, 'pl', {n: 1})).toMatchInlineSnapshot(`"1 plik"`);
-    expect(format(compiled, 'pl', {n: 2})).toMatchInlineSnapshot(`"2 pliki"`);
-    expect(format(compiled, 'pl', {n: 5})).toMatchInlineSnapshot(`"5 plików"`);
-    expect(format(compiled, 'pl', {n: 22})).toMatchInlineSnapshot(`"22 pliki"`);
+    expect(format(compiled, 'pl', {n: 1}, {formatters})).toMatchInlineSnapshot(
+      `"1 plik"`
+    );
+    expect(format(compiled, 'pl', {n: 2}, {formatters})).toMatchInlineSnapshot(
+      `"2 pliki"`
+    );
+    expect(format(compiled, 'pl', {n: 5}, {formatters})).toMatchInlineSnapshot(
+      `"5 plików"`
+    );
+    expect(format(compiled, 'pl', {n: 22}, {formatters})).toMatchInlineSnapshot(
+      `"22 pliki"`
+    );
   });
 
   it('uses Russian plural rules', () => {
@@ -652,15 +873,23 @@ describe('locales', () => {
     const compiled = compile(
       '{n, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}'
     );
-    expect(format(compiled, 'ru', {n: 1})).toMatchInlineSnapshot(`"1 файл"`);
-    expect(format(compiled, 'ru', {n: 2})).toMatchInlineSnapshot(`"2 файла"`);
-    expect(format(compiled, 'ru', {n: 5})).toMatchInlineSnapshot(`"5 файлов"`);
-    expect(format(compiled, 'ru', {n: 21})).toMatchInlineSnapshot(`"21 файл"`);
+    expect(format(compiled, 'ru', {n: 1}, {formatters})).toMatchInlineSnapshot(
+      `"1 файл"`
+    );
+    expect(format(compiled, 'ru', {n: 2}, {formatters})).toMatchInlineSnapshot(
+      `"2 файла"`
+    );
+    expect(format(compiled, 'ru', {n: 5}, {formatters})).toMatchInlineSnapshot(
+      `"5 файлов"`
+    );
+    expect(format(compiled, 'ru', {n: 21}, {formatters})).toMatchInlineSnapshot(
+      `"21 файл"`
+    );
   });
 
   it('formats numbers with German locale', () => {
     const compiled = compile('{val, number}');
-    expect(format(compiled, 'de', {val: 1234.5})).toMatchInlineSnapshot(
+    expect(format(compiled, 'de', {val: 1234.5}, {formatters})).toMatchInlineSnapshot(
       `"1.234,5"`
     );
   });
@@ -685,13 +914,13 @@ describe('real-world examples', () => {
     const compiled = compile(
       '{itemCount, plural, =0 {Your cart is empty} one {You have # item in your cart} other {You have # items in your cart}}'
     );
-    expect(format(compiled, 'en', {itemCount: 0})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {itemCount: 0}, {formatters})).toMatchInlineSnapshot(
       `"Your cart is empty"`
     );
-    expect(format(compiled, 'en', {itemCount: 1})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {itemCount: 1}, {formatters})).toMatchInlineSnapshot(
       `"You have 1 item in your cart"`
     );
-    expect(format(compiled, 'en', {itemCount: 5})).toMatchInlineSnapshot(
+    expect(format(compiled, 'en', {itemCount: 5}, {formatters})).toMatchInlineSnapshot(
       `"You have 5 items in your cart"`
     );
   });
@@ -705,14 +934,14 @@ describe('real-world examples', () => {
         gender: 'female',
         firstName: 'Jane',
         lastName: 'Doe'
-      })
+      }, {formatters})
     ).toMatchInlineSnapshot(`"Dear Ms. Doe"`);
     expect(
       format(compiled, 'en', {
         gender: 'other',
         firstName: 'Alex',
         lastName: 'Smith'
-      })
+      }, {formatters})
     ).toMatchInlineSnapshot(`"Dear Alex Smith"`);
   });
 
@@ -720,13 +949,18 @@ describe('real-world examples', () => {
     const compiled = compile(
       'Welcome, <bold>{name}</bold>! You have <link>{count, plural, one {# message} other {# messages}}</link>.'
     );
-    const result = format(compiled, 'en', {
-      name: 'Alice',
-      count: 5,
-      bold: (chunks: Array<unknown>) => `<strong>${chunks.join('')}</strong>`,
-      link: (chunks: Array<unknown>) =>
-        `<a href="/messages">${chunks.join('')}</a>`
-    });
+    const result = format(
+      compiled,
+      'en',
+      {
+        name: 'Alice',
+        count: 5,
+        bold: (chunks: Array<unknown>) => `<strong>${chunks.join('')}</strong>`,
+        link: (chunks: Array<unknown>) =>
+          `<a href="/messages">${chunks.join('')}</a>`
+      },
+      {formatters}
+    );
     expect(result).toMatchInlineSnapshot(
       `"Welcome, <strong>Alice</strong>! You have <a href="/messages">5 messages</a>."`
     );

@@ -28,20 +28,21 @@ export type FormatValues<RichTextElement = unknown> = Record<
 >;
 
 export type Formats = {
-  dateTime?: Record<string, Intl.DateTimeFormatOptions>;
+  date?: Record<string, Intl.DateTimeFormatOptions>;
   number?: Record<string, Intl.NumberFormatOptions>;
+  time?: Record<string, Intl.DateTimeFormatOptions>;
 };
 
 export type FormatOptions = {
   formats?: Formats;
-  formatters?: {
-    getDateTimeFormat?: (
+  formatters: {
+    getDateTimeFormat: (
       ...args: ConstructorParameters<typeof Intl.DateTimeFormat>
     ) => Intl.DateTimeFormat;
-    getNumberFormat?: (
+    getNumberFormat: (
       ...args: ConstructorParameters<typeof Intl.NumberFormat>
     ) => Intl.NumberFormat;
-    getPluralRules?: (
+    getPluralRules: (
       ...args: ConstructorParameters<typeof Intl.PluralRules>
     ) => Intl.PluralRules;
   };
@@ -52,7 +53,7 @@ export function format<RichTextElement = string>(
   message: CompiledMessage,
   locale: string,
   values: FormatValues<RichTextElement> = {} as FormatValues<RichTextElement>,
-  options?: FormatOptions
+  options: FormatOptions
 ): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof message === 'string') {
     return message;
@@ -71,7 +72,7 @@ function formatNodes<RichTextElement>(
   nodes: Array<CompiledNode>,
   locale: string,
   values: FormatValues<RichTextElement>,
-  options: FormatOptions | undefined,
+  options: FormatOptions,
   pluralCtx: PluralContext | undefined
 ): Array<string | RichTextElement> {
   const result: Array<string | RichTextElement> = [];
@@ -92,7 +93,7 @@ function formatNode<RichTextElement>(
   node: CompiledNode,
   locale: string,
   values: FormatValues<RichTextElement>,
-  options: FormatOptions | undefined,
+  options: FormatOptions,
   rawPluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof node === 'string') {
@@ -104,11 +105,9 @@ function formatNode<RichTextElement>(
       throw new Error('# used outside of plural context');
     }
     const pluralCtx = rawPluralCtx as PluralContext;
-    const getNumberFormat = options?.formatters?.getNumberFormat;
-    const numberFormat = getNumberFormat
-      ? getNumberFormat(pluralCtx.locale)
-      : new Intl.NumberFormat(pluralCtx.locale);
-    return numberFormat.format(pluralCtx.value);
+    return options.formatters
+      .getNumberFormat(pluralCtx.locale)
+      .format(pluralCtx.value);
   }
 
   const [name, type, ...rest] = node;
@@ -118,11 +117,10 @@ function formatNode<RichTextElement>(
     const value = getValue(values, name);
     if (
       process.env.NODE_ENV !== 'production' &&
-      (typeof value === 'boolean' || value instanceof Date)
+      typeof value !== 'string' &&
+      typeof value !== 'number'
     ) {
-      throw new Error(
-        `Invalid value type for argument "${name}": ${typeof value}`
-      );
+      throw new Error(`Invalid value type for argument "${name}"`);
     }
     return String(value);
   }
@@ -224,7 +222,7 @@ function formatSelect<RichTextElement>(
   options: SelectOptions,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined,
+  formatOptions: FormatOptions,
   pluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   const value = String(getValue(values, name));
@@ -244,7 +242,7 @@ function formatPlural<RichTextElement>(
   options: PluralOptions,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined,
+  formatOptions: FormatOptions,
   pluralType: Intl.PluralRulesOptions['type']
 ): string | RichTextElement | Array<string | RichTextElement> {
   const rawValue = getValue(values, name);
@@ -265,11 +263,9 @@ function formatPlural<RichTextElement>(
     });
   }
 
-  const getPluralRules = formatOptions?.formatters?.getPluralRules;
-  const pluralRules = getPluralRules
-    ? getPluralRules(locale, {type: pluralType})
-    : new Intl.PluralRules(locale, {type: pluralType});
-  const category = pluralRules.select(value);
+  const category = formatOptions.formatters
+    .getPluralRules(locale, {type: pluralType})
+    .select(value);
   const branch: CompiledNode | undefined = options[category] ?? options.other;
 
   if (process.env.NODE_ENV !== 'production' && !branch) {
@@ -285,7 +281,7 @@ function formatBranch<RichTextElement>(
   branch: CompiledNode,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined,
+  formatOptions: FormatOptions,
   pluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   if (typeof branch === 'string') {
@@ -310,16 +306,12 @@ function formatNumberValue<RichTextElement>(
   style: NumberStyle | undefined,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined
+  formatOptions: FormatOptions
 ): string {
   const rawValue = getValue(values, name);
   const value = rawValue as number;
   const opts = getNumberFormatOptions(style, formatOptions);
-  const getNumberFormat = formatOptions?.formatters?.getNumberFormat;
-  const numberFormat = getNumberFormat
-    ? getNumberFormat(locale, opts)
-    : new Intl.NumberFormat(locale, opts);
-  return numberFormat.format(value);
+  return formatOptions.formatters.getNumberFormat(locale, opts).format(value);
 }
 
 function formatDateTimeValue<RichTextElement>(
@@ -327,22 +319,25 @@ function formatDateTimeValue<RichTextElement>(
   style: DateTimeStyle | undefined,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined,
+  formatOptions: FormatOptions,
   type: 'date' | 'time'
 ): string {
   const rawValue = getValue(values, name);
   const date = rawValue as Date;
-  const opts = getDateTimeFormatOptions(style, type, formatOptions);
-  const getDateTimeFormat = formatOptions?.formatters?.getDateTimeFormat;
-  const dateTimeFormat = getDateTimeFormat
-    ? getDateTimeFormat(locale, opts)
-    : new Intl.DateTimeFormat(locale, opts);
-  return dateTimeFormat.format(date);
+  const baseOpts = getDateTimeFormatOptions(style, type, formatOptions);
+  const timeZone = formatOptions.timeZone;
+  const opts =
+    timeZone && (!baseOpts || !baseOpts.timeZone)
+      ? baseOpts
+        ? {timeZone, ...baseOpts}
+        : {timeZone}
+      : baseOpts;
+  return formatOptions.formatters.getDateTimeFormat(locale, opts).format(date);
 }
 
 function getNumberFormatOptions(
   style: NumberStyle | undefined,
-  formatOptions: FormatOptions | undefined
+  formatOptions: FormatOptions
 ): Intl.NumberFormatOptions | undefined {
   if (!style) return undefined;
 
@@ -353,7 +348,7 @@ function getNumberFormatOptions(
       case 'integer':
         return {maximumFractionDigits: 0};
       default:
-        if (formatOptions?.formats?.number?.[style]) {
+        if (formatOptions.formats?.number?.[style]) {
           return formatOptions.formats.number[style];
         }
         if (style.includes('/')) {
@@ -365,6 +360,9 @@ function getNumberFormatOptions(
             return {style: 'unit', unit: val};
           }
         }
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error(`Missing number format "${style}"`);
+        }
         return undefined;
     }
   }
@@ -372,64 +370,26 @@ function getNumberFormatOptions(
   return style as NumberStyleOptions;
 }
 
-// Copied from `intl-messageformat` defaults (mirrors use-intl behavior)
-const DATE_TIME_DEFAULTS = {
-  date: {
-    short: {month: 'numeric', day: 'numeric', year: '2-digit'},
-    medium: {month: 'short', day: 'numeric', year: 'numeric'},
-    long: {month: 'long', day: 'numeric', year: 'numeric'},
-    full: {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'}
-  },
-  time: {
-    short: {hour: 'numeric', minute: 'numeric'},
-    medium: {hour: 'numeric', minute: 'numeric', second: 'numeric'},
-    long: {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      timeZoneName: 'short'
-    },
-    full: {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      timeZoneName: 'short'
-    }
-  }
-} as const;
-
 function getDateTimeFormatOptions(
   style: DateTimeStyle | undefined,
   type: 'date' | 'time',
-  formatOptions: FormatOptions | undefined
+  formatOptions: FormatOptions
 ): Intl.DateTimeFormatOptions | undefined {
-  const timeZone = formatOptions?.timeZone;
-  if (!style) {
-    return timeZone ? {timeZone} : undefined;
-  }
+  if (!style) return undefined;
 
   if (typeof style === 'string') {
-    const override = formatOptions?.formats?.dateTime?.[style];
-    const defaults =
-      style in DATE_TIME_DEFAULTS[type]
-        ? (DATE_TIME_DEFAULTS[type] as Record<string, Intl.DateTimeFormatOptions>)[
-            style
-          ]
-        : undefined;
-
-    const resolved = defaults
-      ? {...defaults, ...override}
-      : override
-        ? override
-        : undefined;
-
-    if (!resolved) return undefined;
-
-    return timeZone && !resolved.timeZone ? {timeZone, ...resolved} : resolved;
+    const resolved =
+      type === 'date'
+        ? formatOptions.formats?.date?.[style]
+        : formatOptions.formats?.time?.[style];
+    if (resolved) return resolved;
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(`Missing ${type} format "${style}"`);
+    }
+    return undefined;
   }
 
-  const resolved = style as DateTimeStyleOptions;
-  return timeZone && !resolved.timeZone ? {timeZone, ...resolved} : resolved;
+  return style as DateTimeStyleOptions;
 }
 
 function formatTag<RichTextElement>(
@@ -437,7 +397,7 @@ function formatTag<RichTextElement>(
   children: Array<CompiledNode>,
   locale: string,
   values: FormatValues<RichTextElement>,
-  formatOptions: FormatOptions | undefined,
+  formatOptions: FormatOptions,
   pluralCtx: PluralContext | undefined
 ): string | RichTextElement | Array<string | RichTextElement> {
   const rawHandler = getValue(values, name);
