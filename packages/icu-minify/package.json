@@ -3,7 +3,7 @@
   "version": "4.7.0",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
-  "description": "Minimal ICU MessageFormat compiler and runtime",
+  "description": "ICU message format compiler with a <1KB runtime bundle footprint",
   "license": "MIT",
   "homepage": "https://next-intl.dev",
   "repository": {

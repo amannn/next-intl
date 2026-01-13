@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
-import {compile} from '../src/compiler.js';
-import {format} from '../src/format.js';
+import compile from '../src/compiler.js';
+import format from '../src/format.js';
 
 type Formatters = {
   getDateTimeFormat(

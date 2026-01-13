@@ -49,7 +49,7 @@ export type FormatOptions = {
   timeZone?: string;
 };
 
-export function format<RichTextElement = string>(
+export default function format<RichTextElement = string>(
   message: CompiledMessage,
   locale: string,
   values: FormatValues<RichTextElement> = {} as FormatValues<RichTextElement>,

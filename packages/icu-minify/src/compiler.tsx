@@ -26,7 +26,7 @@ import {
   TYPE_TIME
 } from './types.js';
 
-export function compile(message: string): CompiledMessage {
+export default function compile(message: string): CompiledMessage {
   const ast = parse(message);
   const compiled = compileNodes(ast);
 
