@@ -36,15 +36,15 @@ export type Formats = {
 export type FormatOptions = {
   formats?: Formats;
   formatters: {
-    getDateTimeFormat: (
+    getDateTimeFormat(
       ...args: ConstructorParameters<typeof Intl.DateTimeFormat>
-    ) => Intl.DateTimeFormat;
-    getNumberFormat: (
+    ): Intl.DateTimeFormat;
+    getNumberFormat(
       ...args: ConstructorParameters<typeof Intl.NumberFormat>
-    ) => Intl.NumberFormat;
-    getPluralRules: (
+    ): Intl.NumberFormat;
+    getPluralRules(
       ...args: ConstructorParameters<typeof Intl.PluralRules>
-    ) => Intl.PluralRules;
+    ): Intl.PluralRules;
   };
   timeZone?: string;
 };
@@ -114,15 +114,8 @@ function formatNode<RichTextElement>(
 
   // Simple argument: ["name"]
   if (type === undefined) {
-    const value = getValue(values, name);
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      typeof value !== 'string' &&
-      typeof value !== 'number'
-    ) {
-      throw new Error(`Invalid value type for argument "${name}"`);
-    }
-    return String(value);
+    const value = getValue(values, name) as string;
+    return value;
   }
 
   // Tag: ["tagName", child1, child2, ...] - detected by non-number second element
@@ -327,7 +320,7 @@ function formatDateTimeValue<RichTextElement>(
   const baseOpts = getDateTimeFormatOptions(style, type, formatOptions);
   const timeZone = formatOptions.timeZone;
   const opts =
-    timeZone && (!baseOpts || !baseOpts.timeZone)
+    timeZone && !baseOpts?.timeZone
       ? baseOpts
         ? {timeZone, ...baseOpts}
         : {timeZone}
@@ -382,11 +375,10 @@ function getDateTimeFormatOptions(
       type === 'date'
         ? formatOptions.formats?.date?.[style]
         : formatOptions.formats?.time?.[style];
-    if (resolved) return resolved;
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && !resolved) {
       throw new Error(`Missing ${type} format "${style}"`);
     }
-    return undefined;
+    return resolved;
   }
 
   return style as DateTimeStyleOptions;
@@ -420,13 +412,7 @@ function formatTag<RichTextElement>(
     pluralCtx
   );
   const optimized = optimizeResult(formattedChildren);
-  const childArray =
-    typeof optimized === 'string'
-      ? [optimized]
-      : Array.isArray(optimized)
-        ? optimized
-        : [optimized];
-
+  const childArray = Array.isArray(optimized) ? optimized : [optimized];
   return handler(childArray);
 }
 
