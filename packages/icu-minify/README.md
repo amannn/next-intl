@@ -1,11 +1,11 @@
 # icu-minify
 
-ICU message format compiler with a <1KB runtime bundle footprint.
+ICU message format compiler with a 660 byte runtime bundle.
 
 ## Features
 
 - **Build-time compilation**: Converts ICU messages to compact JSON at build time.
-- **Minimal runtime**: <1KB runtime formatter using native `Intl` APIs.
+- **Minimal runtime**: 660 bytes (minified + brotli) using native `Intl` APIs.
 - **Full ICU support**: Arguments, plurals, `select`, `selectordinal`, date/time/number formatting, tags.
 - **Zero runtime dependencies**: Uses native browser/Node.js `Intl` APIs.
 
