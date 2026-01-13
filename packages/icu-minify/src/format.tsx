@@ -16,6 +16,9 @@ import {
   TYPE_TIME
 } from './types.js';
 
+// Re-export CompiledMessage type for consumers
+export type {CompiledMessage} from './types.js';
+
 // Could potentially share this with `use-intl` if we had a shared package for both
 export type FormatValues<RichTextElement = unknown> = Record<
   string,
