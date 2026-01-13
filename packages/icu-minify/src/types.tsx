@@ -5,7 +5,7 @@ export const TYPE_NUMBER = 4;
 export const TYPE_DATE = 5;
 export const TYPE_TIME = 6;
 
-export type NumberStyleOptions = Intl.NumberFormatOptions & {scale?: number};
+export type NumberStyleOptions = Intl.NumberFormatOptions;
 
 export type NumberStyle = string | NumberStyleOptions;
 

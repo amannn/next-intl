@@ -278,7 +278,7 @@ function formatDateTimeValue<RichTextElement>(
 
 function getNumberFormatOptions(
   style: NumberStyle | undefined
-): (Intl.NumberFormatOptions & {scale?: number}) | undefined {
+): Intl.NumberFormatOptions | undefined {
   if (!style) return undefined;
 
   if (typeof style === 'string') {
@@ -301,7 +301,7 @@ function getNumberFormatOptions(
     }
   }
 
-  return style as NumberStyleOptions & {scale?: number};
+  return style as NumberStyleOptions;
 }
 
 function getDateTimeFormatOptions(
