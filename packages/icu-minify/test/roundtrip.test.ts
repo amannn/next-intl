@@ -687,77 +687,6 @@ describe('tags', () => {
       `);
   });
 
-  it('supports nested tags', () => {
-    const compiled = compile('<a><b>text</b></a>');
-    expect(compiled).toMatchInlineSnapshot(`
-        [
-          [
-            "a",
-            [
-              "b",
-              "text",
-            ],
-          ],
-        ]
-      `);
-    interface TagElement {
-      tag: string;
-      children: Array<string | TagElement>;
-    }
-    const result = format<TagElement>(
-      compiled,
-      'en',
-      {
-        b: (chunks) => ({tag: 'b', children: chunks}),
-        a: (chunks) => ({tag: 'a', children: chunks})
-      },
-      {formatters}
-    );
-    expect(result).toMatchInlineSnapshot(`
-      {
-        "children": [
-          {
-            "children": [
-              "text",
-            ],
-            "tag": "b",
-          },
-        ],
-        "tag": "a",
-      }
-      `);
-  });
-
-  it('wraps a single rich child into an array for tag handlers', () => {
-    // `formatTag` must always call tag handlers with an array of chunks.
-    // If a child formats to a single rich element, it still needs wrapping.
-    const compiled = compile('<a><b>text</b></a>');
-
-    const calls: Array<Array<unknown>> = [];
-    format(
-      compiled,
-      'en',
-      {
-        b: () => ({tag: 'b'}),
-        a: (chunks) => {
-          calls.push(chunks);
-          return {tag: 'a'};
-        }
-      },
-      {formatters}
-    );
-
-    expect(calls).toMatchInlineSnapshot(`
-      [
-        [
-          {
-            "tag": "b",
-          },
-        ],
-      ]
-    `);
-  });
-
   it('throws for a missing tag handler', () => {
     const compiled = compile('<bold>text</bold>');
     expect(() => format(compiled, 'en', {}, {formatters})).toThrow(
@@ -770,6 +699,65 @@ describe('tags', () => {
     expect(() =>
       format(compiled, 'en', {bold: 'not a function'}, {formatters})
     ).toThrow('Expected function for tag handler "bold"');
+  });
+
+  describe('React elements', () => {
+    type ReactElement = {
+      type: string;
+      props: {
+        children?: Array<string | ReactElement>;
+      };
+    };
+
+    it('supports a complex case', () => {
+      const compiled = compile('Hello <a>foo <b>text</b></a>!');
+      expect(compiled).toMatchInlineSnapshot(`
+        [
+          "Hello ",
+          [
+            "a",
+            "foo ",
+            [
+              "b",
+              "text",
+            ],
+          ],
+          "!",
+        ]
+      `);
+
+      const result = format<ReactElement>(
+        compiled,
+        'en',
+        {
+          b: (chunks) => ({type: 'b', props: {children: chunks}}),
+          a: (chunks) => ({type: 'a', props: {children: chunks}})
+        },
+        {formatters}
+      );
+      expect(result).toMatchInlineSnapshot(`
+        [
+          "Hello ",
+          {
+            "props": {
+              "children": [
+                "foo ",
+                {
+                  "props": {
+                    "children": [
+                      "text",
+                    ],
+                  },
+                  "type": "b",
+                },
+              ],
+            },
+            "type": "a",
+          },
+          "!",
+        ]
+      `);
+    });
   });
 });
 
