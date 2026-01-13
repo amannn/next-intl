@@ -38,6 +38,21 @@
       "types": "./dist/types/react.d.ts",
       "development": "./dist/esm/development/react.js",
       "default": "./dist/esm/production/react.js"
+    },
+    "./format-message": {
+      "types": "./dist/types/format-message/index.d.ts",
+      "development": "./dist/esm/development/format-message/index.js",
+      "default": "./dist/esm/production/format-message/index.js"
+    },
+    "./format-message/compile-and-format": {
+      "types": "./dist/types/format-message/compileAndFormat.d.ts",
+      "development": "./dist/esm/development/format-message/compileAndFormat.js",
+      "default": "./dist/esm/production/format-message/compileAndFormat.js"
+    },
+    "./format-message/format-only": {
+      "types": "./dist/types/format-message/formatOnly.d.ts",
+      "development": "./dist/esm/development/format-message/formatOnly.js",
+      "default": "./dist/esm/production/format-message/formatOnly.js"
     }
   },
   "files": [
