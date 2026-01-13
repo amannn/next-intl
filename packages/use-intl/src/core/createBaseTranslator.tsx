@@ -169,7 +169,74 @@ function createBaseTranslatorImpl<
   timeZone
 }: CreateBaseTranslatorProps<Messages>) {
   const hasMessagesError = messagesOrError instanceof IntlError;
-  const getCompiledMessage = memoFn((message: string) => compile(message), cache.message);
+  const getCompiledMessage = memoFn((message: string) => {
+    const compiled = compile(message);
+    const plainArgNames = new Set<string>();
+
+    function visit(node: unknown) {
+      if (typeof node === 'string' || node === 0 || node == null) return;
+
+      if (Array.isArray(node)) {
+        if (node.length === 1 && typeof node[0] === 'string') {
+          plainArgNames.add(node[0]);
+          return;
+        }
+
+        if (node.length >= 2) {
+          const typeOrChild = node[1];
+
+          // Typed node: ["name", TYPE, ...]
+          if (typeof typeOrChild === 'number') {
+            const possibleOptions = node[2];
+            if (
+              typeOrChild <= 3 &&
+              possibleOptions &&
+              typeof possibleOptions === 'object' &&
+              !Array.isArray(possibleOptions)
+            ) {
+              for (const value of Object.values(possibleOptions as Record<string, unknown>)) {
+                visit(value);
+              }
+            }
+            return;
+          }
+
+          // Tag node: ["tagName", ...children]
+          for (let index = 1; index < node.length; index++) {
+            visit(node[index]);
+          }
+        }
+      }
+    }
+
+    visit(compiled);
+
+    return {compiled, plainArgNames};
+  }, cache.message);
+
+  function normalizePlainNumbers(
+    values: FormatValues<ReactNode> | undefined,
+    plainArgNames: Set<string>
+  ): FormatValues<ReactNode> | undefined {
+    if (!values) return values;
+
+    let hasNumber = false;
+    for (const [key, value] of Object.entries(values)) {
+      if (plainArgNames.has(key) && typeof value === 'number') {
+        hasNumber = true;
+        break;
+      }
+    }
+    if (!hasNumber) return values;
+
+    const result: FormatValues<ReactNode> = {...values};
+    for (const [key, value] of Object.entries(result)) {
+      if (plainArgNames.has(key) && typeof value === 'number') {
+        result[key] = String(value);
+      }
+    }
+    return result;
+  }
 
   function getFallbackFromErrorAndNotify(
     key: string,
@@ -305,12 +372,18 @@ function createBaseTranslatorImpl<
     }
 
     try {
+      const preparedValues = (values
+        ? prepareTranslationValues(values)
+        : values) as unknown as FormatValues<ReactNode> | undefined;
+      const normalizedValues = normalizePlainNumbers(
+        preparedValues,
+        compiledMessage.plainArgNames
+      );
+
       const formattedMessage = format(
-        compiledMessage,
+        compiledMessage.compiled,
         locale,
-        (values
-          ? prepareTranslationValues(values)
-          : values) as unknown as FormatValues<ReactNode>,
+        normalizedValues ?? ({} as FormatValues<ReactNode>),
         {
           formats: mergedFormats,
           formatters: _formatters,
