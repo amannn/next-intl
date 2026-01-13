@@ -981,7 +981,7 @@ describe('tags', () => {
         ]
       `);
 
-      const result = format<ReactElement>(
+      const result = formatMessage<ReactElement>(
         compiled,
         'en',
         {
