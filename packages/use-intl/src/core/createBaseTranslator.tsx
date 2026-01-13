@@ -1,8 +1,8 @@
-import {IntlMessageFormat} from 'intl-messageformat';
-import {type ReactNode, cloneElement, isValidElement} from 'react';
+import type {ReactNode} from 'react';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
 import type {Locale} from './AppConfig.js';
 import type Formats from './Formats.js';
+import {formatMessage} from './formatMessage/index.js';
 import type {InitializedIntlConfig} from './IntlConfig.js';
 import IntlError from './IntlError.js';
 import IntlErrorCode from './IntlErrorCode.js';
@@ -12,34 +12,9 @@ import type {
   RichTranslationValues,
   TranslationValues
 } from './TranslationValues.js';
-import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
 import {defaultGetMessageFallback} from './defaults.js';
-import {
-  type Formatters,
-  type IntlCache,
-  type IntlFormatters,
-  type MessageFormatter,
-  memoFn
-} from './formatters.js';
+import {type Formatters, type IntlCache} from './formatters.js';
 import joinPath from './joinPath.js';
-
-// Placed here for improved tree shaking. Somehow when this is placed in
-// `formatters.tsx`, then it can't be shaken off from `next-intl`.
-function createMessageFormatter(
-  cache: IntlCache,
-  intlFormatters: IntlFormatters
-): MessageFormatter {
-  const getMessageFormat = memoFn(
-    (...args: ConstructorParameters<typeof IntlMessageFormat>) =>
-      new IntlMessageFormat(args[0], args[1], args[2], {
-        formatters: intlFormatters,
-        ...args[3]
-      }),
-    cache.message
-  );
-
-  return getMessageFormat;
-}
 
 function resolvePath(
   locale: Locale,
@@ -75,32 +50,6 @@ function resolvePath(
   });
 
   return message;
-}
-
-function prepareTranslationValues(values: RichTranslationValues) {
-  // Workaround for https://github.com/formatjs/formatjs/issues/1467
-  const transformedValues: RichTranslationValues = {};
-  Object.keys(values).forEach((key) => {
-    let index = 0;
-    const value = values[key];
-
-    let transformed;
-    if (typeof value === 'function') {
-      transformed = (chunks: ReactNode) => {
-        const result = value(chunks);
-
-        return isValidElement(result)
-          ? cloneElement(result, {key: key + index++})
-          : result;
-      };
-    } else {
-      transformed = value;
-    }
-
-    transformedValues[key] = transformed;
-  });
-
-  return transformedValues;
 }
 
 function getMessagesOrError<Messages extends AbstractIntlMessages>(
@@ -269,82 +218,33 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(key, code, errorMessage);
     }
 
-    let messageFormat: IntlMessageFormat;
-
     // Hot path that avoids creating an `IntlMessageFormat` instance
-    const plainMessage = getPlainMessage(message as string, values);
-    if (plainMessage) return plainMessage;
-
-    // Lazy init the message formatter for better tree
-    // shaking in case message formatting is not used.
-    if (!formatters.getMessageFormat) {
-      formatters.getMessageFormat = createMessageFormatter(cache, formatters);
+    // Note: This optimization only works for string messages (not precompiled)
+    if (typeof message === 'string') {
+      const plainMessage = getPlainMessage(message, values);
+      if (plainMessage) return plainMessage;
     }
 
     try {
-      messageFormat = formatters.getMessageFormat(
-        message,
+      return formatMessage(message, values, {
+        cache,
+        formatters,
+        globalFormats,
+        formats,
         locale,
-        convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
-        {
-          formatters: {
-            ...formatters,
-            getDateTimeFormat(locales, options) {
-              // Workaround for https://github.com/formatjs/formatjs/issues/4279
-              return formatters.getDateTimeFormat(locales, {
-                timeZone,
-                ...options
-              });
-            }
-          }
-        }
-      );
+        timeZone
+      });
     } catch (error) {
       const thrownError = error as Error;
       return getFallbackFromErrorAndNotify(
         key,
-        IntlErrorCode.INVALID_MESSAGE,
+        IntlErrorCode.FORMATTING_ERROR,
         process.env.NODE_ENV !== 'production'
           ? thrownError.message +
               ('originalMessage' in thrownError
                 ? ` (${thrownError.originalMessage})`
                 : '')
           : thrownError.message,
-        fallback
-      );
-    }
-
-    try {
-      const formattedMessage = messageFormat.format(
-        // @ts-expect-error `intl-messageformat` expects a different format
-        // for rich text elements since a recent minor update. This
-        // needs to be evaluated in detail, possibly also in regards
-        // to be able to format to parts.
-        values ? prepareTranslationValues(values) : values
-      );
-
-      if (formattedMessage == null) {
-        throw new Error(
-          process.env.NODE_ENV !== 'production'
-            ? `Unable to format \`${key}\` in ${
-                namespace ? `namespace \`${namespace}\`` : 'messages'
-              }`
-            : undefined
-        );
-      }
-
-      // Limit the function signature to return strings or React elements
-      return isValidElement(formattedMessage) ||
-        // Arrays of React elements
-        Array.isArray(formattedMessage) ||
-        typeof formattedMessage === 'string'
-        ? formattedMessage
-        : String(formattedMessage);
-    } catch (error) {
-      return getFallbackFromErrorAndNotify(
-        key,
-        IntlErrorCode.FORMATTING_ERROR,
-        (error as Error).message,
         fallback
       );
     }
