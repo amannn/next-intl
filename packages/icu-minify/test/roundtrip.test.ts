@@ -265,6 +265,70 @@ describe('number formatting', () => {
       format(compiled, 'de', {val: 1234.5}, {formatters})
     ).toMatchInlineSnapshot(`"1.234,5"`);
   });
+
+  it('formats currency using skeleton syntax', () => {
+    const compiled = compile('{price, number, ::currency/EUR}');
+    expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "price",
+            4,
+            {
+              "currency": "EUR",
+              "style": "currency",
+            },
+          ],
+        ]
+      `);
+    expect(
+      format(compiled, 'en', {price: 123.45}, {formatters})
+    ).toMatchInlineSnapshot(`"€123.45"`);
+  });
+
+  it('formats unit using skeleton syntax', () => {
+    const compiled = compile('{weight, number, ::unit/kilogram}');
+    expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "weight",
+            4,
+            {
+              "style": "unit",
+              "unit": "kilogram",
+            },
+          ],
+        ]
+      `);
+    expect(
+      format(compiled, 'en', {weight: 5}, {formatters})
+    ).toMatchInlineSnapshot(`"5 kg"`);
+  });
+
+  it('formats with decimal precision skeleton', () => {
+    const compiled = compile('{val, number, ::.00}');
+    expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "val",
+            4,
+            {
+              "maximumFractionDigits": 2,
+              "minimumFractionDigits": 2,
+            },
+          ],
+        ]
+      `);
+    expect(
+      format(compiled, 'en', {val: 3.1}, {formatters})
+    ).toMatchInlineSnapshot(`"3.10"`);
+  });
+
+  it('throws for non-number values', () => {
+    const compiled = compile('{val, number}');
+    expect(() => format(compiled, 'en', {val: 'hello'}, {formatters})).toThrow(
+      'Expected number for argument "val", got string'
+    );
+  });
 });
 
 describe('date formatting', () => {
@@ -370,6 +434,33 @@ describe('date formatting', () => {
       expect(result).toMatchInlineSnapshot(`"Mar 15, 2024"`);
     });
   });
+
+  it('formats date using skeleton syntax', () => {
+    const compiled = compile('{d, date, ::yyyy-MM-dd}');
+    expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "d",
+            5,
+            {
+              "day": "2-digit",
+              "month": "2-digit",
+              "year": "numeric",
+            },
+          ],
+        ]
+      `);
+    expect(
+      format(compiled, 'en', {d: date}, {formatters, timeZone: 'UTC'})
+    ).toMatchInlineSnapshot(`"03/15/2024"`);
+  });
+
+  it('throws for non-Date values', () => {
+    const compiled = compile('{d, date}');
+    expect(() =>
+      format(compiled, 'en', {d: 'not a date'}, {formatters})
+    ).toThrow('Expected Date for argument "d", got string');
+  });
 });
 
 describe('time formatting', () => {
@@ -443,6 +534,13 @@ describe('time formatting', () => {
       );
       expect(result).toMatchInlineSnapshot(`"14:30"`);
     });
+  });
+
+  it('throws for non-Date values', () => {
+    const compiled = compile('{t, time}');
+    expect(() =>
+      format(compiled, 'en', {t: 'not a date'}, {formatters})
+    ).toThrow('Expected Date for argument "t", got string');
   });
 });
 
@@ -958,6 +1056,16 @@ describe('invalid syntax', () => {
 
   it('throws for an unclosed tag', () => {
     expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
+  });
+
+  it('throws for unknown compiled node type', () => {
+    // Manually construct an invalid compiled message with unknown type 99
+    const invalidCompiled = [['name', 99]] as unknown as ReturnType<
+      typeof compile
+    >;
+    expect(() => format(invalidCompiled, 'en', {name: 'test'}, {formatters})).toThrow(
+      'Unknown compiled node type: 99'
+    );
   });
 });
 

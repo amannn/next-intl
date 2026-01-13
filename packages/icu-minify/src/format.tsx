@@ -23,8 +23,6 @@ export type FormatValues<RichTextElement = unknown> = Record<
   | number
   | boolean
   | Date
-  | null
-  | undefined
   | ((chunks: Array<string | RichTextElement>) => RichTextElement)
 >;
 
@@ -205,11 +203,10 @@ function formatNode<RichTextElement>(
       );
 
     default:
-      throw new Error(
-        process.env.NODE_ENV !== 'production'
-          ? `Unknown compiled node type: ${type}`
-          : undefined
-      );
+      if (process.env.NODE_ENV !== 'production') {
+        throw new Error(`Unknown compiled node type: ${type}`);
+      }
+      return '';
   }
 }
 
@@ -315,6 +312,11 @@ function formatNumberValue<RichTextElement>(
   formatOptions: FormatOptions
 ): string {
   const rawValue = getValue(values, name);
+  if (process.env.NODE_ENV !== 'production' && typeof rawValue !== 'number') {
+    throw new Error(
+      `Expected number for argument "${name}", got ${typeof rawValue}`
+    );
+  }
   const value = rawValue as number;
   const opts = getNumberFormatOptions(style, formatOptions);
   return formatOptions.formatters.getNumberFormat(locale, opts).format(value);
@@ -329,6 +331,11 @@ function formatDateTimeValue<RichTextElement>(
   type: 'date' | 'time'
 ): string {
   const rawValue = getValue(values, name);
+  if (process.env.NODE_ENV !== 'production' && !(rawValue instanceof Date)) {
+    throw new Error(
+      `Expected Date for argument "${name}", got ${typeof rawValue}`
+    );
+  }
   const date = rawValue as Date;
   const baseOpts = getDateTimeFormatOptions(style, type, formatOptions);
 

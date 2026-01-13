@@ -198,7 +198,7 @@ function compileSelect(node: SelectElement): CompiledNode {
   return [node.value, TYPE_SELECT, options];
 }
 
-// Not supported
+// Plural offset is not supported
 type PluralElement = Omit<PluralElementBase, 'offset'>;
 function compilePlural(node: PluralElement): CompiledNode {
   const options: PluralOptions = {};
