@@ -1,6 +1,6 @@
 # icu-minify
 
-ICU message format compiler with a 660 byte runtime bundle.
+ICU message format compiler with a 660 byte runtime.
 
 ## Features
 
