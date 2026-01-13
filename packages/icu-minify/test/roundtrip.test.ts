@@ -283,6 +283,52 @@ describe('date formatting', () => {
     );
     expect(result).toContain('Mar');
   });
+
+  describe('timeZone', () => {
+    // 20:00 UTC = 05:00 next day in Tokyo
+    const lateDate = new Date('2024-03-15T20:00:00Z');
+
+    it('uses global timeZone', () => {
+      const compiled = compile('{d, date, custom}');
+      const result = format(
+        compiled,
+        'en',
+        {d: lateDate},
+        {
+          formatters,
+          timeZone: 'Asia/Tokyo',
+          formats: {
+            date: {custom: {year: 'numeric', month: 'short', day: 'numeric'}}
+          }
+        }
+      );
+      expect(result).toMatchInlineSnapshot(`"Mar 16, 2024"`);
+    });
+
+    it('prefers format-specific timeZone over global', () => {
+      const compiled = compile('{d, date, utc}');
+      const result = format(
+        compiled,
+        'en',
+        {d: lateDate},
+        {
+          formatters,
+          timeZone: 'Asia/Tokyo',
+          formats: {
+            date: {
+              utc: {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                timeZone: 'UTC'
+              }
+            }
+          }
+        }
+      );
+      expect(result).toMatchInlineSnapshot(`"Mar 15, 2024"`);
+    });
+  });
 });
 
 describe('time formatting', () => {
@@ -313,6 +359,49 @@ describe('time formatting', () => {
       }
     );
     expect(typeof result).toBe('string');
+  });
+
+  describe('timeZone', () => {
+    it('uses global timeZone', () => {
+      const compiled = compile('{t, time, custom}');
+      const result = format(
+        compiled,
+        'en',
+        {t: date},
+        {
+          formatters,
+          timeZone: 'America/New_York',
+          formats: {
+            time: {custom: {hour: 'numeric', minute: 'numeric', hour12: false}}
+          }
+        }
+      );
+      expect(result).toMatchInlineSnapshot(`"10:30"`);
+    });
+
+    it('prefers format-specific timeZone over global', () => {
+      const compiled = compile('{t, time, utc}');
+      const result = format(
+        compiled,
+        'en',
+        {t: date},
+        {
+          formatters,
+          timeZone: 'America/New_York',
+          formats: {
+            time: {
+              utc: {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: false,
+                timeZone: 'UTC'
+              }
+            }
+          }
+        }
+      );
+      expect(result).toMatchInlineSnapshot(`"14:30"`);
+    });
   });
 });
 

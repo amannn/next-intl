@@ -319,13 +319,13 @@ function formatDateTimeValue<RichTextElement>(
   const rawValue = getValue(values, name);
   const date = rawValue as Date;
   const baseOpts = getDateTimeFormatOptions(style, type, formatOptions);
-  const timeZone = formatOptions.timeZone;
-  const opts =
-    timeZone && !baseOpts?.timeZone
-      ? baseOpts
-        ? {timeZone, ...baseOpts}
-        : {timeZone}
-      : baseOpts;
+
+  // Global time zone is used as default, but format-specific one takes precedence
+  const opts = {
+    ...baseOpts,
+    timeZone: baseOpts?.timeZone ?? formatOptions.timeZone
+  };
+
   return formatOptions.formatters.getDateTimeFormat(locale, opts).format(date);
 }
 
