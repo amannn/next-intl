@@ -27,6 +27,7 @@ The following requirements guided the design:
 ### Type Constants
 
 ```
+POUND = 0
 SELECT = 1
 PLURAL = 2
 SELECTORDINAL = 3
@@ -64,18 +65,17 @@ Tags have no type constant - they're detected by checking if the second element 
 
 ## Comparison with Related Libraries
 
-| Aspect | icu-minify | icu-to-json | Lingui |
-| ------ | ---------- | ----------- | ------ |
-| Parser | @formatjs/icu-messageformat-parser | @formatjs/icu-messageformat-parser | @messageformat/parser |
-| Simple arg | `["name"]` | `["name"]` | `["name"]` |
-| Number format | `["n", 4]` | `["n", 4, "number"]` | `["n", "number"]` |
-| Date format | `["d", 5]` | `["d", 4, "date"]` | `["d", "date"]` |
-| Plural | `["n", 2, {...}]` | `["n", 2, {...}]` | `["n", "plural", {...}]` |
-| Select | `["g", 1, {...}]` | `["g", 1, {...}]` | `["g", "select", {...}]` |
-| Pound sign | `0` | `0` | `"#"` |
-| Tags | `["b", child1, ...]` | `["b", 5, child1, ...]` | Not supported |
-| Plural offset | Not supported | Supported | Supported |
-| Runtime deps | None (native Intl) | @messageformat/runtime | @lingui/core |
+| Aspect        | icu-minify                         | icu-to-json                        | Lingui                   |
+| ------------- | ---------------------------------- | ---------------------------------- | ------------------------ |
+| Parser        | @formatjs/icu-messageformat-parser | @formatjs/icu-messageformat-parser | @messageformat/parser    |
+| Simple arg    | `["name"]`                         | `["name"]`                         | `["name"]`               |
+| Number format | `["n", 4]`                         | `["n", 4, "number"]`               | `["n", "number"]`        |
+| Date format   | `["d", 5]`                         | `["d", 4, "date"]`                 | `["d", "date"]`          |
+| Plural        | `["n", 2, {...}]`                  | `["n", 2, {...}]`                  | `["n", "plural", {...}]` |
+| Select        | `["g", 1, {...}]`                  | `["g", 1, {...}]`                  | `["g", "select", {...}]` |
+| Pound sign    | `0`                                | `0`                                | `"#"`                    |
+| Tags          | `["b", child1, ...]`               | `["b", 5, child1, ...]`            | Not supported            |
+| Plural offset | Not supported                      | Supported                          | Supported                |
 
 ### Design Choices
 
