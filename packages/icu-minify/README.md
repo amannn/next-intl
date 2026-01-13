@@ -5,7 +5,7 @@ ICU message format compiler with a 660 bytes runtime ✨
 ## Features
 
 - ⚡ **Build-time compilation**: Converts ICU messages to a compact JSON intermediate representation.
-- 📦 **Minimal runtime**: 660 bytes (minified + compressed) and zero runtime dependencies.
+- 📦 **Minimal runtime**: 660 bytes (minified + compressed) with zero runtime dependencies.
 - 🌍 **Full ICU support**: `{arguments}`, `plural`, `select`, `selectordinal`, `date`, `time`, `number` and `<tags>`
 
 ## Usage
