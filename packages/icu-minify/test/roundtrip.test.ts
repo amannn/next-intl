@@ -1016,30 +1016,26 @@ describe('tags', () => {
 });
 
 describe('errors', () => {
-  describe('compile', () => {
-    it('throws for an unclosed brace', () => {
-      expect(() => compile('{name')).toThrow('EXPECT_ARGUMENT_CLOSING_BRACE');
-    });
-
-    it('throws for a missing argument name', () => {
-      expect(() => compile('{}')).toThrow('EMPTY_ARGUMENT');
-    });
-
-    it('throws for an unclosed tag', () => {
-      expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
-    });
+  it('throws for an unclosed brace', () => {
+    expect(() => compile('{name')).toThrow('EXPECT_ARGUMENT_CLOSING_BRACE');
   });
 
-  describe('format', () => {
-    it('throws for unknown compiled node type', () => {
-      // Manually construct an invalid compiled message with unknown type 99
-      const invalidCompiled = [['name', 99]] as unknown as ReturnType<
-        typeof compile
-      >;
-      expect(() => formatMessage(invalidCompiled, 'en', {name: 'test'})).toThrow(
-        'Unknown compiled node type: 99'
-      );
-    });
+  it('throws for a missing argument name', () => {
+    expect(() => compile('{}')).toThrow('EMPTY_ARGUMENT');
+  });
+
+  it('throws for an unclosed tag', () => {
+    expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
+  });
+
+  it('throws for unknown compiled node type', () => {
+    // Manually construct an invalid compiled message with unknown type 99
+    const invalidCompiled = [['name', 99]] as unknown as ReturnType<
+      typeof compile
+    >;
+    expect(() => formatMessage(invalidCompiled, 'en', {name: 'test'})).toThrow(
+      'Unknown compiled node type: 99'
+    );
   });
 });
 
