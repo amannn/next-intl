@@ -1,6 +1,6 @@
 import {render, renderHook, screen} from '@testing-library/react';
 import {parseISO} from 'date-fns';
-import {compile} from 'icu-minify/compiler';
+import compile from 'icu-minify/compiler';
 import type {ComponentProps, PropsWithChildren, ReactNode} from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {
@@ -14,21 +14,20 @@ import IntlProvider from './IntlProvider.js';
 import useTranslations from './useTranslations.js';
 
 vi.mock('icu-minify/compiler', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('icu-minify/compiler');
+  const actual = (await importOriginal()) as {default: typeof import('icu-minify/compiler').default};
 
   const wrappedCompile = ((message: string) => {
     wrappedCompile.invocationsByMessage[message] ||= 0;
     wrappedCompile.invocationsByMessage[message]++;
-    return actual.compile(message);
-  }) as typeof actual.compile & {
+    return actual.default(message);
+  }) as typeof actual.default & {
     invocationsByMessage: Record<string, number>;
   };
 
   wrappedCompile.invocationsByMessage = {};
 
   return {
-    ...actual,
-    compile: wrappedCompile
+    default: wrappedCompile
   };
 });
 

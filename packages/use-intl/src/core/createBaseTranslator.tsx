@@ -1,5 +1,5 @@
-import {compile} from 'icu-minify/compiler';
-import {format, type FormatValues} from 'icu-minify/format';
+import compile from 'icu-minify/compiler';
+import format, {type FormatValues} from 'icu-minify/format';
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
@@ -212,7 +212,7 @@ function createBaseTranslatorImpl<
     visit(compiled);
 
     return {compiled, plainArgNames};
-  }, cache.message);
+  }, cache.message as Record<string, {compiled: any; plainArgNames: Set<string>} | undefined>);
 
   function normalizePlainNumbers(
     values: FormatValues<ReactNode> | undefined,

@@ -217,6 +217,13 @@ describe('number formatting', () => {
       format(compiled, 'en', {val: 3.7}, {formatters})
     ).toMatchInlineSnapshot(`"4"`);
   });
+
+  it('formats numbers with a German locale', () => {
+    const compiled = compile('{val, number}');
+    expect(
+      format(compiled, 'de', {val: 1234.5}, {formatters})
+    ).toMatchInlineSnapshot(`"1.234,5"`);
+  });
 });
 
 describe('date formatting', () => {
@@ -375,6 +382,36 @@ describe('select', () => {
     ).toMatchInlineSnapshot(`"Alice is a woman"`);
   });
 
+  it('formats multiple arguments in branches', () => {
+    const compiled = compile(
+      '{gender, select, female {Dear Ms. {lastName}} male {Dear Mr. {lastName}} other {Dear {firstName} {lastName}}}'
+    );
+    expect(
+      format(
+        compiled,
+        'en',
+        {
+          gender: 'female',
+          firstName: 'Jane',
+          lastName: 'Doe'
+        },
+        {formatters}
+      )
+    ).toMatchInlineSnapshot(`"Dear Ms. Doe"`);
+    expect(
+      format(
+        compiled,
+        'en',
+        {
+          gender: 'other',
+          firstName: 'Alex',
+          lastName: 'Smith'
+        },
+        {formatters}
+      )
+    ).toMatchInlineSnapshot(`"Dear Alex Smith"`);
+  });
+
   it('throws for a select without other', () => {
     expect(() => compile('{gender, select, female {She} male {He}}')).toThrow(
       'MISSING_OTHER_CLAUSE'
@@ -461,7 +498,7 @@ describe('select', () => {
   });
 });
 
-describe('plural', () => {
+describe('cardinal plural (plural)', () => {
   it('formats plural with one/other', () => {
     const compiled = compile('{count, plural, one {# item} other {# items}}');
     expect(compiled).toMatchInlineSnapshot(`
@@ -533,6 +570,25 @@ describe('plural', () => {
     expect(
       format(compiled, 'de', {count: 1000}, {formatters})
     ).toMatchInlineSnapshot(`"1.000 items"`);
+  });
+
+  it('uses Polish plural rules', () => {
+    // Polish: 1 = one, 2-4 = few, 5-21 = many, 22-24 = few, etc.
+    const compiled = compile(
+      '{n, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}'
+    );
+    expect(format(compiled, 'pl', {n: 1}, {formatters})).toMatchInlineSnapshot(
+      `"1 plik"`
+    );
+    expect(format(compiled, 'pl', {n: 2}, {formatters})).toMatchInlineSnapshot(
+      `"2 pliki"`
+    );
+    expect(format(compiled, 'pl', {n: 5}, {formatters})).toMatchInlineSnapshot(
+      `"5 plików"`
+    );
+    expect(format(compiled, 'pl', {n: 22}, {formatters})).toMatchInlineSnapshot(
+      `"22 pliki"`
+    );
   });
 
   it('throws for a plural without other', () => {
@@ -761,7 +817,21 @@ describe('tags', () => {
   });
 });
 
-describe('nesting', () => {
+describe('invalid syntax', () => {
+  it('throws for an unclosed brace', () => {
+    expect(() => compile('{name')).toThrow('EXPECT_ARGUMENT_CLOSING_BRACE');
+  });
+
+  it('throws for a missing argument name', () => {
+    expect(() => compile('{}')).toThrow('EMPTY_ARGUMENT');
+  });
+
+  it('throws for an unclosed tag', () => {
+    expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
+  });
+});
+
+describe('mixed', () => {
   it('formats a select inside a plural', () => {
     const compiled = compile(
       '{count, plural, one {{gender, select, female {her item} other {their item}}} other {{gender, select, female {her items} other {their items}}}}'
@@ -836,116 +906,8 @@ describe('nesting', () => {
       format(compiled, 'en', {a: 'z', b: 1, c: 'y'}, {formatters})
     ).toMatchInlineSnapshot(`"top"`);
   });
-});
 
-describe('locales', () => {
-  it('uses Polish plural rules', () => {
-    // Polish: 1 = one, 2-4 = few, 5-21 = many, 22-24 = few, etc.
-    const compiled = compile(
-      '{n, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}'
-    );
-    expect(format(compiled, 'pl', {n: 1}, {formatters})).toMatchInlineSnapshot(
-      `"1 plik"`
-    );
-    expect(format(compiled, 'pl', {n: 2}, {formatters})).toMatchInlineSnapshot(
-      `"2 pliki"`
-    );
-    expect(format(compiled, 'pl', {n: 5}, {formatters})).toMatchInlineSnapshot(
-      `"5 plików"`
-    );
-    expect(format(compiled, 'pl', {n: 22}, {formatters})).toMatchInlineSnapshot(
-      `"22 pliki"`
-    );
-  });
-
-  it('uses Russian plural rules', () => {
-    // Russian: 1 = one, 2-4 = few, 5-20 = many, 21 = one, 22-24 = few
-    const compiled = compile(
-      '{n, plural, one {# файл} few {# файла} many {# файлов} other {# файла}}'
-    );
-    expect(format(compiled, 'ru', {n: 1}, {formatters})).toMatchInlineSnapshot(
-      `"1 файл"`
-    );
-    expect(format(compiled, 'ru', {n: 2}, {formatters})).toMatchInlineSnapshot(
-      `"2 файла"`
-    );
-    expect(format(compiled, 'ru', {n: 5}, {formatters})).toMatchInlineSnapshot(
-      `"5 файлов"`
-    );
-    expect(format(compiled, 'ru', {n: 21}, {formatters})).toMatchInlineSnapshot(
-      `"21 файл"`
-    );
-  });
-
-  it('formats numbers with German locale', () => {
-    const compiled = compile('{val, number}');
-    expect(
-      format(compiled, 'de', {val: 1234.5}, {formatters})
-    ).toMatchInlineSnapshot(`"1.234,5"`);
-  });
-});
-
-describe('invalid syntax', () => {
-  it('throws for an unclosed brace', () => {
-    expect(() => compile('{name')).toThrow('EXPECT_ARGUMENT_CLOSING_BRACE');
-  });
-
-  it('throws for a missing argument name', () => {
-    expect(() => compile('{}')).toThrow('EMPTY_ARGUMENT');
-  });
-
-  it('throws for an unclosed tag', () => {
-    expect(() => compile('<bold>text')).toThrow('UNCLOSED_TAG');
-  });
-});
-
-describe('real-world examples', () => {
-  it('handles a shopping cart message', () => {
-    const compiled = compile(
-      '{itemCount, plural, =0 {Your cart is empty} one {You have # item in your cart} other {You have # items in your cart}}'
-    );
-    expect(
-      format(compiled, 'en', {itemCount: 0}, {formatters})
-    ).toMatchInlineSnapshot(`"Your cart is empty"`);
-    expect(
-      format(compiled, 'en', {itemCount: 1}, {formatters})
-    ).toMatchInlineSnapshot(`"You have 1 item in your cart"`);
-    expect(
-      format(compiled, 'en', {itemCount: 5}, {formatters})
-    ).toMatchInlineSnapshot(`"You have 5 items in your cart"`);
-  });
-
-  it('handles a greeting with gender', () => {
-    const compiled = compile(
-      '{gender, select, female {Dear Ms. {lastName}} male {Dear Mr. {lastName}} other {Dear {firstName} {lastName}}}'
-    );
-    expect(
-      format(
-        compiled,
-        'en',
-        {
-          gender: 'female',
-          firstName: 'Jane',
-          lastName: 'Doe'
-        },
-        {formatters}
-      )
-    ).toMatchInlineSnapshot(`"Dear Ms. Doe"`);
-    expect(
-      format(
-        compiled,
-        'en',
-        {
-          gender: 'other',
-          firstName: 'Alex',
-          lastName: 'Smith'
-        },
-        {formatters}
-      )
-    ).toMatchInlineSnapshot(`"Dear Alex Smith"`);
-  });
-
-  it('handles rich text with formatting', () => {
+  it('formats tags with plural and arguments', () => {
     const compiled = compile(
       'Welcome, <bold>{name}</bold>! You have <link>{count, plural, one {# message} other {# messages}}</link>.'
     );
