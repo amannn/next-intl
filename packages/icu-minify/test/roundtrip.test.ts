@@ -15,38 +15,16 @@ type Formatters = {
 };
 
 function createFormatters(): Formatters {
-  const dateTimeCache = new Map<string, Intl.DateTimeFormat>();
-  const numberCache = new Map<string, Intl.NumberFormat>();
-  const pluralRulesCache = new Map<string, Intl.PluralRules>();
-
-  function cacheKey(args: Array<unknown>) {
-    return JSON.stringify(args);
-  }
-
+  // Will typically use caching in a real implementation
   return {
     getDateTimeFormat(...args) {
-      const key = cacheKey(args);
-      const existing = dateTimeCache.get(key);
-      if (existing) return existing;
-      const created = new Intl.DateTimeFormat(args[0] as any, args[1] as any);
-      dateTimeCache.set(key, created);
-      return created;
+      return new Intl.DateTimeFormat(...args);
     },
     getNumberFormat(...args) {
-      const key = cacheKey(args);
-      const existing = numberCache.get(key);
-      if (existing) return existing;
-      const created = new Intl.NumberFormat(args[0] as any, args[1] as any);
-      numberCache.set(key, created);
-      return created;
+      return new Intl.NumberFormat(...args);
     },
     getPluralRules(...args) {
-      const key = cacheKey(args);
-      const existing = pluralRulesCache.get(key);
-      if (existing) return existing;
-      const created = new Intl.PluralRules(args[0] as any, args[1] as any);
-      pluralRulesCache.set(key, created);
-      return created;
+      return new Intl.PluralRules(...args);
     }
   };
 }
