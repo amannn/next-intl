@@ -25,4 +25,6 @@ format(compiled, 'en', {name: 'World'});
 
 This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [`@lingui/message-utils`](https://github.com/lingui/js-lingui/tree/main/packages/message-utils), which similarly use an array-based intermediate representation for compiled messages.
 
-See [`DESIGN.md`](./DESIGN.md) for details.
+## Design
+
+For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC 002: ICU Message Precompilation](../../rfcs/002-icu-message-precompilation.md).
