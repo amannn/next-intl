@@ -59,7 +59,6 @@
   "dependencies": {
     "@formatjs/fast-memoize": "^2.2.0",
     "@schummar/icu-type-parser": "1.21.5",
-    "icu-minify": "workspace:^",
     "intl-messageformat": "^10.5.14"
   },
   "peerDependencies": {

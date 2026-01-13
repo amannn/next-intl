@@ -1,5 +1,3 @@
-import compile from 'icu-minify/compiler';
-import format, {type FormatValues} from 'icu-minify/format';
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
@@ -14,9 +12,34 @@ import type {
   RichTranslationValues,
   TranslationValues
 } from './TranslationValues.js';
+import convertFormatsToIntlMessageFormat from './convertFormatsToIntlMessageFormat.js';
 import {defaultGetMessageFallback} from './defaults.js';
-import {type Formatters, type IntlCache, memoFn} from './formatters.js';
+import {
+  type Formatters,
+  type IntlCache,
+  type IntlFormatters,
+  type MessageFormatter,
+  memoFn
+} from './formatters.js';
 import joinPath from './joinPath.js';
+
+// Placed here for improved tree shaking. Somehow when this is placed in
+// `formatters.tsx`, then it can't be shaken off from `next-intl`.
+function createMessageFormatter(
+  cache: IntlCache,
+  intlFormatters: IntlFormatters
+): MessageFormatter {
+  const getMessageFormat = memoFn(
+    (...args: ConstructorParameters<typeof IntlMessageFormat>) =>
+      new IntlMessageFormat(args[0], args[1], args[2], {
+        formatters: intlFormatters,
+        ...args[3]
+      }),
+    cache.message
+  );
+
+  return getMessageFormat;
+}
 
 function resolvePath(
   locale: Locale,
@@ -160,7 +183,7 @@ function createBaseTranslatorImpl<
 >({
   cache,
   formats: globalFormats,
-  formatters: _formatters,
+  formatters,
   getMessageFallback = defaultGetMessageFallback,
   locale,
   messagesOrError,
@@ -169,10 +192,6 @@ function createBaseTranslatorImpl<
   timeZone
 }: CreateBaseTranslatorProps<Messages>) {
   const hasMessagesError = messagesOrError instanceof IntlError;
-  const getCompiledMessage = memoFn(
-    (message: string) => compile(message),
-    cache.message as Record<string, any>
-  );
 
   function getFallbackFromErrorAndNotify(
     key: string,
@@ -250,77 +269,58 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(key, code, errorMessage);
     }
 
-    // Hot path that avoids compiling the message
+    let messageFormat: IntlMessageFormat;
+
+    // Hot path that avoids creating an `IntlMessageFormat` instance
     const plainMessage = getPlainMessage(message as string, values);
     if (plainMessage) return plainMessage;
 
-    const dateTimeFormats = {
-      ...globalFormats?.dateTime,
-      ...formats?.dateTime
-    } satisfies NonNullable<Formats['dateTime']>;
-
-    const mfDateDefaults = IntlMessageFormat.formats.date as NonNullable<
-      Formats['dateTime']
-    >;
-    const mfTimeDefaults = IntlMessageFormat.formats.time as NonNullable<
-      Formats['dateTime']
-    >;
-
-    function mergeDateTimeFormats(
-      defaults: Record<string, Intl.DateTimeFormatOptions>,
-      overrides: Record<string, Intl.DateTimeFormatOptions>
-    ) {
-      const result: Record<string, Intl.DateTimeFormatOptions> = {...defaults};
-
-      for (const [key, value] of Object.entries(overrides)) {
-        result[key] = {...(defaults[key] ?? {}), ...value};
-      }
-
-      return result;
+    // Lazy init the message formatter for better tree
+    // shaking in case message formatting is not used.
+    if (!formatters.getMessageFormat) {
+      formatters.getMessageFormat = createMessageFormatter(cache, formatters);
     }
 
-    const mergedFormats = {
-      date: mergeDateTimeFormats(mfDateDefaults, dateTimeFormats),
-      time: mergeDateTimeFormats(mfTimeDefaults, dateTimeFormats),
-      number: {
-        ...globalFormats?.number,
-        ...formats?.number
-      }
-    } satisfies {
-      date: Record<string, Intl.DateTimeFormatOptions>;
-      number: NonNullable<Formats['number']>;
-      time: Record<string, Intl.DateTimeFormatOptions>;
-    };
-
-    let compiledMessage;
     try {
-      compiledMessage = getCompiledMessage(message as string);
+      messageFormat = formatters.getMessageFormat(
+        message,
+        locale,
+        convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
+        {
+          formatters: {
+            ...formatters,
+            getDateTimeFormat(locales, options) {
+              // Workaround for https://github.com/formatjs/formatjs/issues/4279
+              return formatters.getDateTimeFormat(locales, {
+                timeZone,
+                ...options
+              });
+            }
+          }
+        }
+      );
     } catch (error) {
       const thrownError = error as Error;
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.INVALID_MESSAGE,
         process.env.NODE_ENV !== 'production'
-          ? `${thrownError.message} (${message as string})`
+          ? thrownError.message +
+              ('originalMessage' in thrownError
+                ? ` (${thrownError.originalMessage})`
+                : '')
           : thrownError.message,
         fallback
       );
     }
 
     try {
-      const preparedValues = (values
-        ? prepareTranslationValues(values)
-        : values) as unknown as FormatValues<ReactNode> | undefined;
-
-      const formattedMessage = format(
-        compiledMessage,
-        locale,
-        preparedValues ?? ({} as FormatValues<ReactNode>),
-        {
-          formats: mergedFormats,
-          formatters: _formatters,
-          timeZone
-        }
+      const formattedMessage = messageFormat.format(
+        // @ts-expect-error `intl-messageformat` expects a different format
+        // for rich text elements since a recent minor update. This
+        // needs to be evaluated in detail, possibly also in regards
+        // to be able to format to parts.
+        values ? prepareTranslationValues(values) : values
       );
 
       if (formattedMessage == null) {
@@ -341,12 +341,10 @@ function createBaseTranslatorImpl<
         ? formattedMessage
         : String(formattedMessage);
     } catch (error) {
-      const thrownError = error as Error;
-
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.FORMATTING_ERROR,
-        thrownError.message,
+        (error as Error).message,
         fallback
       );
     }

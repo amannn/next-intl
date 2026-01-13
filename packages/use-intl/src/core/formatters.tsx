@@ -1,9 +1,10 @@
 import {type Cache, memoize, strategies} from '@formatjs/fast-memoize';
+import type {IntlMessageFormat} from 'intl-messageformat';
 
 export type IntlCache = {
   dateTime: Record<string, Intl.DateTimeFormat>;
   number: Record<string, Intl.NumberFormat>;
-  message: Record<string, unknown>;
+  message: Record<string, IntlMessageFormat>;
   relativeTime: Record<string, Intl.RelativeTimeFormat>;
   pluralRules: Record<string, Intl.PluralRules>;
   list: Record<string, Intl.ListFormat>;
@@ -107,4 +108,10 @@ export function createIntlFormatters(cache: IntlCache): IntlFormatters {
   };
 }
 
-export type Formatters = IntlFormatters;
+export type MessageFormatter = (
+  ...args: ConstructorParameters<typeof IntlMessageFormat>
+) => IntlMessageFormat;
+
+export type Formatters = IntlFormatters & {
+  getMessageFormat?: MessageFormatter;
+};
