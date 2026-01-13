@@ -47,7 +47,7 @@ it('handles formatting errors', () => {
 
   const error: IntlError = onError.mock.calls[0][0];
   expect(error.message).toBe(
-    'FORMATTING_ERROR: The intl string context variable "value" was not provided to the string "{value}"'
+    'FORMATTING_ERROR: Missing value for argument "value"'
   );
   expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
 

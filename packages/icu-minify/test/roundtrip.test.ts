@@ -162,10 +162,35 @@ describe('simple arguments', () => {
     ).toMatchInlineSnapshot(`"John Doe"`);
   });
 
+  it('converts numbers to strings for simple arguments', () => {
+    const compiled = compile('{val}');
+    expect(
+      format(compiled, 'en', {val: 1234}, {formatters})
+    ).toMatchInlineSnapshot(`"1234"`);
+    expect(
+      format(compiled, 'en', {val: 0.75}, {formatters})
+    ).toMatchInlineSnapshot(`"0.75"`);
+  });
+
   it('throws for a missing argument', () => {
     const compiled = compile('Hello {name}');
     expect(() => format(compiled, 'en', {}, {formatters})).toThrow(
       'Missing value for argument "name"'
+    );
+  });
+
+  it('throws for boolean values in plain parameters', () => {
+    const compiled = compile('{param}');
+    expect(() => format(compiled, 'en', {param: true}, {formatters})).toThrow(
+      'Invalid value for argument "param": Boolean values are not supported and should be converted to strings if needed.'
+    );
+  });
+
+  it('throws for Date values in plain parameters', () => {
+    const compiled = compile('{param}');
+    const date = new Date('2024-03-15T14:30:00Z');
+    expect(() => format(compiled, 'en', {param: date}, {formatters})).toThrow(
+      'Invalid value for argument "param": Date values are not supported for plain parameters. Use date formatting instead (e.g. {param, date}).'
     );
   });
 });

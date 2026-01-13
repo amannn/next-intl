@@ -115,8 +115,20 @@ function formatNode<RichTextElement>(
 
   // Simple argument: ["name"]
   if (type === undefined) {
-    const value = getValue(values, name) as string;
-    return value;
+    const value = getValue(values, name);
+    if (process.env.NODE_ENV !== 'production') {
+      if (typeof value === 'boolean') {
+        throw new Error(
+          `Invalid value for argument "${name}": Boolean values are not supported and should be converted to strings if needed.`
+        );
+      }
+      if (value instanceof Date) {
+        throw new Error(
+          `Invalid value for argument "${name}": Date values are not supported for plain parameters. Use date formatting instead (e.g. {${name}, date}).`
+        );
+      }
+    }
+    return String(value);
   }
 
   // Tag: ["tagName", child1, child2, ...] - detected by non-number second element
