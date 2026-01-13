@@ -24,6 +24,6 @@ format(compiled, 'en', {name: 'World'});
 
 ## Acknowledgments
 
-This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) by Jan Nicklas and [Lingui](https://github.com/lingui/js-lingui), which similarly use an array-based intermediate representation for compiled messages.
+This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [Lingui](https://github.com/lingui/js-lingui), which similarly use an array-based intermediate representation for compiled messages.
 
 See [`DESIGN.md`](./DESIGN.md) for details.

@@ -431,7 +431,7 @@ function formatTag<RichTextElement>(
 
 function optimizeResult<RichTextElement>(
   result: Array<string | RichTextElement>
-): string | RichTextElement | Array<string | RichTextElement> {
+): string | Array<string | RichTextElement> {
   if (result.length === 0) {
     return '';
   }
