@@ -1,13 +1,12 @@
 # icu-minify
 
-ICU message format compiler with a 660 byte runtime.
+ICU message format compiler with a 660 bytes runtime ✨
 
 ## Features
 
-- **Build-time compilation**: Converts ICU messages to compact JSON at build time.
-- **Minimal runtime**: 660 bytes (minified + brotli) using native `Intl` APIs.
-- **Full ICU support**: Arguments, plurals, `select`, `selectordinal`, date/time/number formatting, tags.
-- **Zero runtime dependencies**: Uses native browser/Node.js `Intl` APIs.
+- ⚡ **Build-time compilation**: Converts ICU messages to a compact JSON intermediate representation.
+- 📦 **Minimal runtime**: 660 bytes (minified + compressed) and zero runtime dependencies.
+- 🌍 **Full ICU support**: `{arguments}`, `plural`, `select`, `selectordinal`, `date`, `time`, `number` and `<tags>`
 
 ## Usage
 
@@ -24,6 +23,6 @@ format(compiled, 'en', {name: 'World'});
 
 ## Acknowledgments
 
-This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [Lingui](https://github.com/lingui/js-lingui), which similarly use an array-based intermediate representation for compiled messages.
+This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [`@lingui/message-utils`](https://github.com/lingui/js-lingui/tree/main/packages/message-utils), which similarly use an array-based intermediate representation for compiled messages.
 
 See [`DESIGN.md`](./DESIGN.md) for details.

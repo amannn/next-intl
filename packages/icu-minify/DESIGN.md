@@ -1,26 +1,26 @@
-# icu-minify Design Document
+# Design Document
 
-This document describes the design decisions behind `icu-minify`, a minimal ICU MessageFormat compiler and runtime.
+This document describes the design decisions behind `icu-minify`, a minimal ICU message format compiler and runtime.
 
 ## Requirements
 
 The following requirements guided the design:
 
 1. **Minifies extremely well** - The compiled format should compress efficiently with gzip/brotli
-2. **Is plain JSON** - The format must be valid JSON that can be stored in JSON files or embedded in JS/TS
-3. **Can format reliably** - The runtime must correctly format all ICU MessageFormat constructs
-4. **Fast runtime** - Formatting should be efficient with minimal overhead
+2. **Is plain JSON** - The format must be valid JSON that can be serialized across the RSC bridge
+3. **Can format reliably** - The runtime must correctly format all ICU message format constructs
+4. **Fast and tiny runtime** - Formatting should be efficient with minimal overhead and a small bundle footprint
 5. **Zero runtime dependencies** - The runtime should use only native Intl APIs
 
 ### How Requirements Are Achieved
 
-| Requirement       | Implementation                                                                                             |
-| ----------------- | ---------------------------------------------------------------------------------------------------------- |
-| Minifies well     | Compact array format with short type constants (1-6), strings as literals, repeated patterns compress well |
-| Plain JSON        | All values are strings, numbers, arrays, or objects - no functions, symbols, or special types              |
-| Format reliably   | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser       |
-| Fast runtime      | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters                  |
-| Zero dependencies | Uses native Intl.PluralRules, Intl.NumberFormat, Intl.DateTimeFormat                                       |
+| Requirement           | Implementation                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Minifies well         | Compact array format with short type constants (1-6), strings as literals, repeated patterns compress well |
+| Plain JSON            | All values are strings, numbers, arrays, or objects - no functions, symbols, or special types              |
+| Format reliably       | Comprehensive test suite covering all ICU constructs; uses proven @formatjs/icu-messageformat-parser       |
+| Fast and tiny runtime | No parsing at runtime, direct traversal of pre-compiled structure, native Intl formatters                  |
+| Zero dependencies     | Uses native `Intl.PluralRules`, `Intl.NumberFormat`, `Intl.DateTimeFormat`                                 |
 
 ## Compiled Format
 
@@ -88,7 +88,3 @@ Tags have no type constant - they're detected by checking if the second element 
 **No plural offset**: Simplifies runtime; rarely needed in practice.
 
 **Zero runtime dependencies**: Uses native Intl APIs (PluralRules, NumberFormat, DateTimeFormat).
-
-## Acknowledgments
-
-Inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) and [Lingui](https://github.com/lingui/js-lingui).
