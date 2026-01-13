@@ -62,46 +62,33 @@ Tags have no type constant - they're detected by checking if the second element 
 | `"<b>{name}</b>"`                             | `[["b", ["name"]]]`                                     |
 | `"{n, plural, one {# item} other {# items}}"` | `[["n", 2, {one: [0, " item"], other: [0, " items"]}]]` |
 
-## Comparison with icu-to-json
+## Comparison with Related Libraries
 
-### Similarities
+| Aspect | icu-minify | icu-to-json | Lingui |
+| ------ | ---------- | ----------- | ------ |
+| Parser | @formatjs/icu-messageformat-parser | @formatjs/icu-messageformat-parser | @messageformat/parser |
+| Simple arg | `["name"]` | `["name"]` | `["name"]` |
+| Number format | `["n", 4]` | `["n", 4, "number"]` | `["n", "number"]` |
+| Date format | `["d", 5]` | `["d", 4, "date"]` | `["d", "date"]` |
+| Plural | `["n", 2, {...}]` | `["n", 2, {...}]` | `["n", "plural", {...}]` |
+| Select | `["g", 1, {...}]` | `["g", 1, {...}]` | `["g", "select", {...}]` |
+| Pound sign | `0` | `0` | `"#"` |
+| Tags | `["b", child1, ...]` | `["b", 5, child1, ...]` | Not supported |
+| Plural offset | Not supported | Supported | Supported |
+| Runtime deps | None (native Intl) | @messageformat/runtime | @lingui/core |
 
-Both libraries share the same core goal and approach:
+### Design Choices
 
-- Parse ICU messages at build time using `@formatjs/icu-messageformat-parser`
-- Compile to compact JSON
-- Format at runtime with a minimal formatter
+**Distinct type constants for formats (4/5/6)**: More compact than `[name, 4, "number"]` used by icu-to-json since the subtype is encoded in the constant itself.
 
-The JSON formats are nearly identical:
+**No TYPE constant for tags**: Tags are detected by `typeof node[1] !== 'number'`. Saves bytes per tag.
 
-- Same type constants for SELECT/PLURAL/SELECTORDINAL
-- Same structure for arguments, select, and plural nodes
-- Same pound sign representation (`0`)
+**Numeric type constants**: More compact than Lingui's string types (`"plural"` vs `2`).
 
-### Differences
+**No plural offset**: Simplifies runtime; rarely needed in practice.
 
-| Aspect            | icu-minify                               | icu-to-json                             |
-| ----------------- | ---------------------------------------- | --------------------------------------- | ------ | ------- |
-| Tag format        | `["tagName", child1, ...]` (no type)     | `["tagName", 5, child1, ...]` (TYPE=5)  |
-| Format nodes      | Distinct types: NUMBER=4, DATE=5, TIME=6 | Shared FORMAT=4 with subtype: `"number" | "date" | "time"` |
-| Runtime deps      | Zero (native Intl)                       | @messageformat/runtime                  |
-| Type generation   | No                                       | Yes (CLI can generate TS types)         |
-| Argument metadata | No                                       | Yes (returns argument info)             |
-| CLI               | No                                       | Yes                                     |
-| Plural offset     | Not supported                            | Supported                               |
-
-### Why We Differ
-
-**No TYPE constant for tags**: Saves 3 bytes per tag in the output. Tags are detected at runtime by checking `typeof node[1] !== 'number'`.
-
-**No type generation**: In next-intl, type generation is handled at a higher level. The compiler focuses solely on producing minimal output.
-
-**No CLI**: Intended for programmatic use within build pipelines, not standalone CLI usage.
-
-**Zero runtime dependencies**: Uses native Intl APIs for all formatting (PluralRules, NumberFormat, DateTimeFormat).
-
-**No plural offset**: Simplifies the format and runtime; offset is rarely needed in practice.
+**Zero runtime dependencies**: Uses native Intl APIs (PluralRules, NumberFormat, DateTimeFormat).
 
 ## Acknowledgments
 
-This implementation is heavily inspired by [jantimon/icu-to-json](https://github.com/jantimon/icu-to-json). The core JSON format is nearly identical, and many of the design patterns were derived from studying that project.
+Inspired by [icu-to-json](https://github.com/jantimon/icu-to-json) and [Lingui](https://github.com/lingui/js-lingui).

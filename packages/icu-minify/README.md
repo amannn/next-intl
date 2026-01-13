@@ -37,6 +37,4 @@ Formats a compiled message with the given locale and values.
 
 ## Acknowledgments
 
-This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) by Jan Nicklas. The core JSON format and approach are nearly identical. See [`DESIGN.md`](./DESIGN.md) for details.
-
-It’s also inspired by [Lingui](https://github.com/lingui/js-lingui), which similarly uses an array-based intermediate representation for compiled messages.
+Inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [Lingui](https://github.com/lingui/js-lingui). See [`DESIGN.md`](./DESIGN.md) for a comparison.
