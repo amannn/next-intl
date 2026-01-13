@@ -41,7 +41,9 @@ export default [
       'react/jsx-runtime',
       'next-intl/config',
       'use-intl/core',
-      'use-intl/react'
+      'use-intl/react',
+      'icu-minify/compiler',
+      'icu-minify/format'
     ],
     output: {
       preserveModules: true
