@@ -351,15 +351,6 @@ function getNumberFormatOptions(
     if (formatOptions.formats?.number?.[style]) {
       return formatOptions.formats.number[style];
     }
-    if (style.includes('/')) {
-      const [type, val] = style.split('/');
-      if (type === 'currency') {
-        return {style: 'currency', currency: val};
-      }
-      if (type === 'unit') {
-        return {style: 'unit', unit: val};
-      }
-    }
     if (process.env.NODE_ENV !== 'production') {
       throw new Error(`Missing number format "${style}"`);
     }
