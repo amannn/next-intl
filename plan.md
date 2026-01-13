@@ -85,7 +85,7 @@ flowchart TB
 
 ### Phase 4: Verification
 
-- [ ] **build-verify**: Build use-intl and verify dist contains both implementations
+- [x] **build-verify**: Build use-intl and verify dist contains both implementations
 - [ ] **e2e-test**: Test end-to-end with example app using `precompile: true`
 
 ---

@@ -40,17 +40,17 @@
       "default": "./dist/esm/production/react.js"
     },
     "./format-message": {
-      "types": "./dist/types/format-message/index.d.ts",
+      "types": "./dist/types/core/formatMessage/index.d.ts",
       "development": "./dist/esm/development/format-message/index.js",
       "default": "./dist/esm/production/format-message/index.js"
     },
     "./format-message/compile-and-format": {
-      "types": "./dist/types/format-message/compileAndFormat.d.ts",
+      "types": "./dist/types/core/formatMessage/compileAndFormat.d.ts",
       "development": "./dist/esm/development/format-message/compileAndFormat.js",
       "default": "./dist/esm/production/format-message/compileAndFormat.js"
     },
     "./format-message/format-only": {
-      "types": "./dist/types/format-message/formatOnly.d.ts",
+      "types": "./dist/types/core/formatMessage/formatOnly.d.ts",
       "development": "./dist/esm/development/format-message/formatOnly.js",
       "default": "./dist/esm/production/format-message/formatOnly.js"
     }
@@ -58,7 +58,9 @@
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts"
+    "react.d.ts",
+    "format-message.d.ts",
+    "format-message"
   ],
   "keywords": [
     "react",
