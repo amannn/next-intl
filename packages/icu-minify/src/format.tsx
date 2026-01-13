@@ -64,10 +64,10 @@ export default function format<RichTextElement = string>(
   return optimizeResult(result);
 }
 
-interface PluralContext {
+type PluralContext = {
   value: number;
   locale: string;
-}
+};
 
 function formatNodes<RichTextElement>(
   nodes: Array<CompiledNode>,
