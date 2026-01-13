@@ -21,6 +21,7 @@ import {
   TYPE_DATE,
   TYPE_NUMBER,
   TYPE_PLURAL,
+  TYPE_POUND,
   TYPE_SELECT,
   TYPE_SELECTORDINAL,
   TYPE_TIME
@@ -69,7 +70,7 @@ function compileNodesToNode(nodes: Array<MessageFormatElement>): CompiledNode {
     const node = compiled[0];
     // Only unwrap strings and pound signs, not array-based nodes (tags, typed nodes)
     // This preserves structure for formatBranch to correctly identify single nodes vs arrays
-    if (typeof node === 'string' || node === 0) {
+    if (typeof node === 'string' || node === TYPE_POUND) {
       return node;
     }
   }
@@ -100,7 +101,7 @@ function compileNode(node: MessageFormatElement): CompiledNode {
       return compilePlural(node);
 
     case TYPE.pound:
-      return 0;
+      return TYPE_POUND;
 
     case TYPE.tag:
       return compileTag(node);

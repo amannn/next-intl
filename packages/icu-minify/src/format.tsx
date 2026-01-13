@@ -10,6 +10,7 @@ import {
   TYPE_DATE,
   TYPE_NUMBER,
   TYPE_PLURAL,
+  TYPE_POUND,
   TYPE_SELECT,
   TYPE_SELECTORDINAL,
   TYPE_TIME
@@ -100,7 +101,7 @@ function formatNode<RichTextElement>(
     return node;
   }
 
-  if (node === 0) {
+  if (node === TYPE_POUND) {
     if (process.env.NODE_ENV !== 'production' && !rawPluralCtx) {
       throw new Error('# used outside of plural context');
     }
@@ -280,7 +281,7 @@ function formatBranch<RichTextElement>(
   if (typeof branch === 'string') {
     return branch;
   }
-  if (branch === 0) {
+  if (branch === TYPE_POUND) {
     return formatNode(branch, locale, values, formatOptions, pluralCtx);
   }
   // Branch is an array - either a single complex node wrapped in array, or multiple nodes

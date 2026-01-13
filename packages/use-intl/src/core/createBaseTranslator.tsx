@@ -169,50 +169,58 @@ function createBaseTranslatorImpl<
   timeZone
 }: CreateBaseTranslatorProps<Messages>) {
   const hasMessagesError = messagesOrError instanceof IntlError;
-  const getCompiledMessage = memoFn((message: string) => {
-    const compiled = compile(message);
-    const plainArgNames = new Set<string>();
+  const getCompiledMessage = memoFn(
+    (message: string) => {
+      const compiled = compile(message);
+      const plainArgNames = new Set<string>();
 
-    function visit(node: unknown) {
-      if (typeof node === 'string' || node === 0 || node == null) return;
+      function visit(node: unknown) {
+        if (typeof node === 'string' || node === 0 || node == null) return;
 
-      if (Array.isArray(node)) {
-        if (node.length === 1 && typeof node[0] === 'string') {
-          plainArgNames.add(node[0]);
-          return;
-        }
-
-        if (node.length >= 2) {
-          const typeOrChild = node[1];
-
-          // Typed node: ["name", TYPE, ...]
-          if (typeof typeOrChild === 'number') {
-            const possibleOptions = node[2];
-            if (
-              typeOrChild <= 3 &&
-              possibleOptions &&
-              typeof possibleOptions === 'object' &&
-              !Array.isArray(possibleOptions)
-            ) {
-              for (const value of Object.values(possibleOptions as Record<string, unknown>)) {
-                visit(value);
-              }
-            }
+        if (Array.isArray(node)) {
+          if (node.length === 1 && typeof node[0] === 'string') {
+            plainArgNames.add(node[0]);
             return;
           }
 
-          // Tag node: ["tagName", ...children]
-          for (let index = 1; index < node.length; index++) {
-            visit(node[index]);
+          if (node.length >= 2) {
+            const typeOrChild = node[1];
+
+            // Typed node: ["name", TYPE, ...]
+            if (typeof typeOrChild === 'number') {
+              const possibleOptions = node[2];
+              if (
+                typeOrChild <= 3 &&
+                possibleOptions &&
+                typeof possibleOptions === 'object' &&
+                !Array.isArray(possibleOptions)
+              ) {
+                for (const value of Object.values(
+                  possibleOptions as Record<string, unknown>
+                )) {
+                  visit(value);
+                }
+              }
+              return;
+            }
+
+            // Tag node: ["tagName", ...children]
+            for (let index = 1; index < node.length; index++) {
+              visit(node[index]);
+            }
           }
         }
       }
-    }
 
-    visit(compiled);
+      visit(compiled);
 
-    return {compiled, plainArgNames};
-  }, cache.message as Record<string, {compiled: any; plainArgNames: Set<string>} | undefined>);
+      return {compiled, plainArgNames};
+    },
+    cache.message as Record<
+      string,
+      {compiled: any; plainArgNames: Set<string>} | undefined
+    >
+  );
 
   function normalizePlainNumbers(
     values: FormatValues<ReactNode> | undefined,
