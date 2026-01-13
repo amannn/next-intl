@@ -135,11 +135,17 @@ export default function getNextConfig(
     }
 
     // Assign alias for `next-intl/config`
-    const resolveAlias = {
+    const resolveAlias: Record<string, string> = {
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    // Add alias for precompiled message formatting
+    if (pluginConfig.experimental?.messages?.precompile) {
+      resolveAlias['use-intl/format-message'] =
+        'use-intl/format-message/format-only';
+    }
 
     // Add loaders
     let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
@@ -227,6 +233,13 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+
+      // Add alias for precompiled message formatting
+      if (pluginConfig.experimental?.messages?.precompile) {
+        (config.resolve.alias as Record<string, string>)[
+          'use-intl/format-message'
+        ] = 'use-intl/format-message/format-only';
+      }
 
       // Add loader for extractor
       if (pluginConfig.experimental?.extract) {
