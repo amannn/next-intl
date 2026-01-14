@@ -61,6 +61,14 @@ export default function formatMessage(
   options: FormatMessageOptions
 ): ReactNode {
   const {formats, formatters, globalFormats, locale, timeZone} = options;
+  
+  // Detect system timezone when timeZone is not provided
+  // This ensures consistent behavior with system TZ environment variable
+  const effectiveTimeZone =
+    timeZone ||
+    (typeof Intl !== 'undefined' &&
+      Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+    undefined;
 
   const formatOptions: FormatOptions = {
     formats: {
@@ -75,15 +83,18 @@ export default function formatMessage(
     },
     formatters: {
       getDateTimeFormat(locales, dateTimeOptions) {
+        // Always use effectiveTimeZone (system timezone if timeZone not provided)
+        // dateTimeOptions.timeZone from formats takes precedence if explicitly set
+        const finalTimeZone = dateTimeOptions?.timeZone ?? effectiveTimeZone;
         return formatters.getDateTimeFormat(locales, {
-          timeZone,
-          ...dateTimeOptions
+          ...dateTimeOptions,
+          ...(finalTimeZone ? {timeZone: finalTimeZone} : {})
         });
       },
       getNumberFormat: formatters.getNumberFormat,
       getPluralRules: formatters.getPluralRules
     },
-    timeZone
+    timeZone: effectiveTimeZone
   };
 
   const formattedMessage = format<ReactNode>(
