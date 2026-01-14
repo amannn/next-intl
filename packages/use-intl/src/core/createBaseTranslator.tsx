@@ -195,7 +195,7 @@ function createBaseTranslatorImpl<
       }
     }
 
-    if (typeof message === 'object') {
+    if (typeof message === 'object' && !Array.isArray(message)) {
       let code, errorMessage;
       if (Array.isArray(message)) {
         code = IntlErrorCode.INVALID_MESSAGE;
