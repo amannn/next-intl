@@ -143,8 +143,17 @@ export default function getNextConfig(
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
-      resolveAlias['use-intl/format-message'] =
-        'use-intl/format-message/format-only';
+      // Use require.resolve to get the actual file path, since
+      // bundlers don't properly resolve package subpath exports
+      // when used as alias targets.
+      // For Turbopack, we need a relative path (it doesn't support absolute paths)
+      const formatOnlyPath = require.resolve(
+        'use-intl/format-message/format-only'
+      );
+      const relativePath = path.relative(process.cwd(), formatOnlyPath);
+      resolveAlias['use-intl/format-message'] = relativePath.startsWith('.')
+        ? relativePath
+        : './' + relativePath;
     }
 
     // Add loaders
@@ -236,9 +245,12 @@ export default function getNextConfig(
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
+        // Use require.resolve to get the actual file path, since
+        // bundlers don't properly resolve package subpath exports
+        // when used as alias targets
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
-        ] = 'use-intl/format-message/format-only';
+        ] = require.resolve('use-intl/format-message/format-only');
       }
 
       // Add loader for extractor
