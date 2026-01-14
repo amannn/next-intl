@@ -151,6 +151,7 @@ export default function getNextConfig(
         'use-intl/format-message/format-only'
       );
       const relativePath = path.relative(process.cwd(), formatOnlyPath);
+      // TODO: Can you add logging and verify if we need this condition?
       resolveAlias['use-intl/format-message'] = relativePath.startsWith('.')
         ? relativePath
         : './' + relativePath;
@@ -245,6 +246,7 @@ export default function getNextConfig(
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
+        // TODO: Please verify if this works with webpack
         // Use require.resolve to get the actual file path, since
         // bundlers don't properly resolve package subpath exports
         // when used as alias targets

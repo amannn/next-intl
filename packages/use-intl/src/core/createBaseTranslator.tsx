@@ -195,6 +195,7 @@ function createBaseTranslatorImpl<
       }
     }
 
+    // TODO: This check for arrays should be moved to compile-format.tsx, it's not relevant for format-only
     if (typeof message === 'object' && !Array.isArray(message)) {
       let code, errorMessage;
       if (Array.isArray(message)) {
@@ -218,6 +219,7 @@ function createBaseTranslatorImpl<
       return getFallbackFromErrorAndNotify(key, code, errorMessage);
     }
 
+    // TODO: should be moved to compile-format.tsx, it's not relevant for format-only (pls also check other code in this file and move relevant code)
     // Hot path that avoids creating an `IntlMessageFormat` instance
     // Note: This optimization only works for string messages (not precompiled)
     if (typeof message === 'string') {
@@ -238,6 +240,7 @@ function createBaseTranslatorImpl<
       const thrownError = error as Error;
       return getFallbackFromErrorAndNotify(
         key,
+        // TODO: this was changed from INVALID_MESSAGE to this - why? please check if this is correct. also: make sure all tests for use-intl still pass on this branch
         IntlErrorCode.FORMATTING_ERROR,
         process.env.NODE_ENV !== 'production'
           ? thrownError.message +

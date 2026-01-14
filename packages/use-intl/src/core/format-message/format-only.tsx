@@ -14,8 +14,7 @@ import type {Formatters, IntlCache} from '../formatters.js';
  * Converts use-intl's unified `dateTime` format namespace to icu-minify's
  * separate `date` and `time` namespaces.
  *
- * TODO: Consider adding unified `dateTime` support to icu-minify itself
- * to eliminate this conversion step.
+ * TODO: This should not be necessary, we should expect the format from use-intl in icu-minify/format to avoid this mapping
  */
 function convertFormatsToIcuMinify(
   globalFormats?: Formats,
@@ -27,6 +26,7 @@ function convertFormatsToIcuMinify(
     ...inlineFormats?.dateTime
   };
 
+  // TODO: This should not be necessary, time zone can be passed separately to icu-minify/format
   // Apply timeZone to all date/time formats if specified
   function applyTimeZone(
     formats: Record<string, Intl.DateTimeFormatOptions>
@@ -53,6 +53,7 @@ function convertFormatsToIcuMinify(
 function prepareTranslationValues(
   values: RichTranslationValues
 ): FormatValues<ReactNode> {
+  // TOOD: I guess this shouldn't be necessary anymore
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
   const transformedValues: FormatValues<ReactNode> = {};
   Object.keys(values).forEach((key) => {
@@ -105,6 +106,7 @@ export default function formatMessage(
   const formatOptions: FormatOptions = {
     formats: convertFormatsToIcuMinify(globalFormats, formats, timeZone),
     formatters: {
+      // TODO: pass formatters.getDateTimeFormat directly to icu-minify/format instead of this wrapper, time zone can be passed separately
       getDateTimeFormat(locales, dateTimeOptions) {
         return formatters.getDateTimeFormat(locales, {
           timeZone,
@@ -124,6 +126,7 @@ export default function formatMessage(
     formatOptions
   );
 
+  // TODO: We should directly return formattedMessage as-is here, no need for any checks or mappings. pls see tests for t and t.rich. What you could do is use the test suite for createTranslator and useTranslations, mock the implementation of format-message to format-only and verify that the results are the same.
   // Limit the function signature to return strings or React elements
   return isValidElement(formattedMessage) ||
     // Arrays of React elements

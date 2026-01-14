@@ -42,6 +42,7 @@ export default [
       'next-intl/config',
       'use-intl/core',
       'use-intl/react',
+      // TODO: Do we need the next two entries? Does this make a difference? Otherwise remove.
       'icu-minify/compiler',
       'icu-minify/format'
     ],
