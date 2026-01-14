@@ -217,156 +217,32 @@ export const config = {
 
 You may wish to customize this based on your routing configuration and use case.
 
-### Example: Integrating with Clerk
+### Further examples (auth, SaaS, tenants)
 
-[`@clerk/nextjs`](https://clerk.com/docs/references/nextjs/overview) provides a middleware that can be [combined](https://clerk.com/docs/references/nextjs/clerk-middleware#combine-middleware) with other middlewares like the one provided by `next-intl`. By combining them, the middleware from `@clerk/next` will first ensure protected routes are handled appropriately. Subsequently, the middleware from `next-intl` will run, potentially redirecting or rewriting incoming requests.
+When composing middleware, the most important decision is where `next-intl` should run in the chain:
 
-```tsx filename="proxy.ts"
-import {clerkMiddleware, createRouteMatcher} from '@clerk/nextjs/server';
-import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
+- Run **auth first** when access control should apply to the incoming URL (including locale prefixes) and you only want i18n routing for requests that are allowed.
+- Run **`next-intl` first** when the downstream middleware expects a normalized locale or relies on the rewritten URL.
 
-const handleI18nRouting = createMiddleware(routing);
+<Callout>
 
-const isProtectedRoute = createRouteMatcher(['/:locale/dashboard(.*)']);
+**Production-style templates (middleware composition):**
 
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
+You can find complete, working middleware setups on [learn.next-intl.dev](https://learn.next-intl.dev/#project-code), including:
 
-  return handleI18nRouting(req);
-});
+<ul className="ml-4 list-disc">
+  <li>
+    <code>app-router-auth</code>: An app behind an auth layer where the locale is managed via a user setting (includes a Better Auth integration).
+  </li>
+  <li>
+    <code>app-router-saas</code>: Locale prefixes on public routes while reading the locale from settings when logged in (includes auth + proxy composition).
+  </li>
+  <li>
+    <code>app-router-tenants</code>: An advanced composition pattern that routes between multiple tenants and a landing page while supporting multiple locales (no auth).
+  </li>
+</ul>
 
-export const config = {
-  // Match only internationalized pathnames
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
-};
-```
-
-(based on `@clerk/nextjs@^6.0.0`)
-
-### Example: Integrating with Supabase Authentication
-
-In order to use Supabase Authentication with `next-intl`, you need to combine the Supabase middleware with the one from `next-intl`.
-
-You can do so by following the [setup guide from Supabase](https://supabase.com/docs/guides/auth/server-side/nextjs?router=app) and adapting the middleware utils to accept a response object that's been created by the `next-intl` middleware instead of creating a new one:
-
-```tsx filename="utils/supabase/middleware.ts"
-import {createServerClient} from '@supabase/ssr';
-import {NextResponse, type NextRequest} from 'next/server';
-
-export async function updateSession(
-  request: NextRequest,
-  response: NextResponse
-) {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({name, value}) =>
-            request.cookies.set(name, value)
-          );
-          cookiesToSet.forEach(({name, value, options}) =>
-            response.cookies.set(name, value, options)
-          );
-        }
-      }
-    }
-  );
-
-  const {
-    data: {user}
-  } = await supabase.auth.getUser();
-
-  return response;
-}
-```
-
-Now, we can integrate the Supabase middleware with the one from `next-intl`:
-
-```tsx filename="proxy.ts"
-import createMiddleware from 'next-intl/middleware';
-import {type NextRequest} from 'next/server';
-import {routing} from './i18n/routing';
-import {updateSession} from './utils/supabase/middleware';
-
-const handleI18nRouting = createMiddleware(routing);
-
-export async function middleware(request: NextRequest) {
-  const response = handleI18nRouting(request);
-
-  // A `response` can now be passed here
-  return await updateSession(request, response);
-}
-
-export const config = {
-  // Match only internationalized pathnames
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
-};
-```
-
-(based on `@supabase/ssr@^0.5.0`)
-
-### Example: Integrating with Auth.js (aka NextAuth.js) [#example-auth-js]
-
-The [Auth.js](https://authjs.dev/) middleware requires an integration with their control flow to be compatible with other middlewares. The [success callback](https://next-auth.js.org/configuration/nextjs#wrap-middleware) can be used to run the `next-intl` middleware on authorized pages. However, public pages need to be treated separately.
-
-For pathnames specified in the [`pages` object](https://next-auth.js.org/configuration/nextjs#pages) (e.g. `signIn`), Auth.js will skip the entire middleware and not run the success callback. Therefore, we have to detect these pages before running the Auth.js middleware and only run the `next-intl` middleware in this case.
-
-```tsx filename="proxy.ts"
-import {withAuth} from 'next-auth/middleware';
-import createMiddleware from 'next-intl/middleware';
-import {NextRequest} from 'next/server';
-import {routing} from './i18n/routing';
-
-const publicPages = ['/', '/login'];
-
-const handleI18nRouting = createMiddleware(routing);
-
-const authMiddleware = withAuth(
-  // Note that this callback is only invoked if
-  // the `authorized` callback has returned `true`
-  // and not for pages listed in `pages`.
-  function onSuccess(req) {
-    return handleI18nRouting(req);
-  },
-  {
-    callbacks: {
-      authorized: ({token}) => token != null
-    },
-    pages: {
-      signIn: '/login'
-    }
-  }
-);
-
-export default function proxy(req: NextRequest) {
-  const publicPathnameRegex = RegExp(
-    `^(/(${locales.join('|')}))?(${publicPages
-      .flatMap((p) => (p === '/' ? ['', '/'] : p))
-      .join('|')})/?$`,
-    'i'
-  );
-  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
-
-  if (isPublicPage) {
-    return handleI18nRouting(req);
-  } else {
-    return (authMiddleware as any)(req);
-  }
-}
-
-export const config = {
-  // Match only internationalized pathnames
-  matcher: '/((?!api|trpc|_next|_vercel|.*\\..*).*)'
-};
-```
-
-(based on `next-auth@^4.0.0`)
+</Callout>
 
 ## Usage without proxy / middleware (static export)
 
