@@ -93,7 +93,8 @@ export default function formatMessage(
     formatOptions
   );
 
-  // TODO: Testing if we can directly return formattedMessage without checks
+  // icu-minify's format() always returns valid ReactNode types
+  // (string | ReactElement | Array<string | ReactElement>)
   return formattedMessage;
 }
 
