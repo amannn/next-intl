@@ -196,7 +196,7 @@ function createBaseTranslatorImpl<
     }
 
     // TODO: This check for arrays should be moved to compile-format.tsx, it's not relevant for format-only
-    if (typeof message === 'object' && !Array.isArray(message)) {
+    if (typeof message === 'object') {
       let code, errorMessage;
       if (Array.isArray(message)) {
         code = IntlErrorCode.INVALID_MESSAGE;
@@ -238,18 +238,26 @@ function createBaseTranslatorImpl<
       });
     } catch (error) {
       const thrownError = error as Error;
-      return getFallbackFromErrorAndNotify(
-        key,
-        // TODO: this was changed from INVALID_MESSAGE to this - why? please check if this is correct. also: make sure all tests for use-intl still pass on this branch
-        IntlErrorCode.FORMATTING_ERROR,
+      const errorMessage = thrownError.message;
+      // Check if this is an invalid message error (e.g., invalid argument types)
+      // vs a formatting error (e.g., missing values)
+      const isInvalidMessage =
+        errorMessage.includes('INVALID_ARGUMENT_TYPE') ||
+        errorMessage.includes('INVALID_ARGUMENT');
+      const errorCode = isInvalidMessage
+        ? IntlErrorCode.INVALID_MESSAGE
+        : IntlErrorCode.FORMATTING_ERROR;
+      // Only append originalMessage for INVALID_MESSAGE errors
+      const finalMessage =
         process.env.NODE_ENV !== 'production'
-          ? thrownError.message +
-              ('originalMessage' in thrownError
+          ? errorMessage +
+              (isInvalidMessage &&
+              'originalMessage' in thrownError &&
+              thrownError.originalMessage
                 ? ` (${thrownError.originalMessage})`
                 : '')
-          : thrownError.message,
-        fallback
-      );
+          : errorMessage;
+      return getFallbackFromErrorAndNotify(key, errorCode, finalMessage, fallback);
     }
   }
 
