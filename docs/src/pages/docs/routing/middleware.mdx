@@ -217,32 +217,17 @@ export const config = {
 
 You may wish to customize this based on your routing configuration and use case.
 
-### Further examples (auth, SaaS, tenants)
+### Starter templates (auth, saas, tenants)
 
-When composing middleware, the most important decision is where `next-intl` should run in the chain:
+🌐 [learn.next-intl.dev](https://learn.next-intl.dev) provides additional starter templates with middleware composition.
 
-- Run **auth first** when access control should apply to the incoming URL (including locale prefixes) and you only want i18n routing for requests that are allowed.
-- Run **`next-intl` first** when the downstream middleware expects a normalized locale or relies on the rewritten URL.
+**Including:**
 
-<Callout>
+- **`app-router-auth` with Better Auth**: Auth-protected app with locale from user settings.
+- **`app-router-saas` with Better Auth**: Locale prefixes on public routes with a login to a protected app.
+- **`app-router-tenants`**: An advanced composition pattern that routes between multiple tenants and a landing page while supporting multiple locales.
 
-**Production-style templates (middleware composition):**
-
-You can find complete, working middleware setups on [learn.next-intl.dev](https://learn.next-intl.dev/#project-code), including:
-
-<ul className="ml-4 list-disc">
-  <li>
-    <code>app-router-auth</code>: An app behind an auth layer where the locale is managed via a user setting (includes a Better Auth integration).
-  </li>
-  <li>
-    <code>app-router-saas</code>: Locale prefixes on public routes while reading the locale from settings when logged in (includes auth + proxy composition).
-  </li>
-  <li>
-    <code>app-router-tenants</code>: An advanced composition pattern that routes between multiple tenants and a landing page while supporting multiple locales (no auth).
-  </li>
-</ul>
-
-</Callout>
+[Source code](https://learn.next-intl.dev/#project-code)
 
 ## Usage without proxy / middleware (static export)
 
