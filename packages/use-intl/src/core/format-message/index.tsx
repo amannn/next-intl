@@ -13,5 +13,3 @@
  * optimization for smaller bundles and faster formatting.
  */
 export {default, type FormatMessageOptions} from './compile-format.js';
-
-// should we move this to another package for having a clearer dependency?
