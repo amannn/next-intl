@@ -111,10 +111,6 @@ export default function formatMessage(
     values ? prepareTranslationValues(values) : values
   );
 
-  if (formattedMessage == null) {
-    throw new Error('Unable to format message');
-  }
-
   // Limit the function signature to return strings or React elements
   return isValidElement(formattedMessage) ||
     // Arrays of React elements

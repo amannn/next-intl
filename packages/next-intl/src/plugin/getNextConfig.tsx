@@ -1,4 +1,5 @@
 import fs from 'fs';
+import {createRequire} from 'module';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
@@ -13,6 +14,8 @@ import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
+
+const require = createRequire(import.meta.url);
 
 function withExtensions(localPath: string) {
   return [
@@ -143,10 +146,7 @@ export default function getNextConfig(
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
-      // Use require.resolve to get the actual file path, since
-      // bundlers don't properly resolve package subpath exports
-      // when used as alias targets.
-      // For Turbopack, we need a relative path (it doesn't support absolute paths)
+      // Workaround for https://github.com/vercel/next.js/issues/88540
       const formatOnlyPath = require.resolve(
         'use-intl/format-message/format-only'
       );

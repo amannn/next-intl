@@ -1,5 +1,5 @@
-import compile from 'icu-minify/compiler';
 import path from 'path';
+import compile from 'icu-minify/compiler';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -26,10 +26,6 @@ async function getCodec(
 function precompileMessages(messages: unknown): unknown {
   if (typeof messages === 'string') {
     return compile(messages);
-  }
-
-  if (Array.isArray(messages)) {
-    return messages.map((item) => precompileMessages(item));
   }
 
   if (messages !== null && typeof messages === 'object') {

@@ -19,9 +19,7 @@ export type PluginConfig = {
       /** Either automatically infer the locales based on catalog files in `path` or explicitly define them. */
       locales: 'infer' | ReadonlyArray<string>;
       /**
-       * When enabled, ICU messages are precompiled at build time using icu-minify.
-       * This results in smaller bundles (~660 bytes vs ~15KB runtime) and faster
-       * message formatting since parsing happens at build time.
+       * When enabled, ICU messages are precompiled at build time, resulting in smaller bundles and faster message formatting.
        */
       precompile?: boolean;
     };

@@ -1,7 +1,7 @@
 import format, {
   type CompiledMessage,
-  type FormatOptions as IcuMinifyFormatOptions,
-  type FormatValues as IcuMinifyFormatValues,
+  type FormatOptions,
+  type FormatValues,
   type Formats as IcuMinifyFormats
 } from 'icu-minify/format';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
@@ -28,16 +28,16 @@ function convertFormatsToIcuMinify(
   };
 
   // Apply timeZone to all date/time formats if specified
-  const applyTimeZone = (
+  function applyTimeZone(
     formats: Record<string, Intl.DateTimeFormatOptions>
-  ): Record<string, Intl.DateTimeFormatOptions> => {
+  ): Record<string, Intl.DateTimeFormatOptions> {
     if (!timeZone) return formats;
     const result: Record<string, Intl.DateTimeFormatOptions> = {};
     for (const [key, value] of Object.entries(formats)) {
       result[key] = {timeZone, ...value};
     }
     return result;
-  };
+  }
 
   return {
     // icu-minify uses separate date/time namespaces
@@ -52,14 +52,14 @@ function convertFormatsToIcuMinify(
 
 function prepareTranslationValues(
   values: RichTranslationValues
-): IcuMinifyFormatValues<ReactNode> {
+): FormatValues<ReactNode> {
   // Workaround for https://github.com/formatjs/formatjs/issues/1467
-  const transformedValues: IcuMinifyFormatValues<ReactNode> = {};
+  const transformedValues: FormatValues<ReactNode> = {};
   Object.keys(values).forEach((key) => {
     let index = 0;
     const value = values[key];
 
-    let transformed: IcuMinifyFormatValues<ReactNode>[string];
+    let transformed: FormatValues<ReactNode>[string];
     if (typeof value === 'function') {
       transformed = (chunks: Array<string | ReactNode>) => {
         const result = value(chunks as ReactNode);
@@ -69,7 +69,7 @@ function prepareTranslationValues(
           : result;
       };
     } else {
-      transformed = value as IcuMinifyFormatValues<ReactNode>[string];
+      transformed = value as FormatValues<ReactNode>[string];
     }
 
     transformedValues[key] = transformed;
@@ -102,7 +102,7 @@ export default function formatMessage(
 ): ReactNode {
   const {formats, formatters, globalFormats, locale, timeZone} = options;
 
-  const formatOptions: IcuMinifyFormatOptions = {
+  const formatOptions: FormatOptions = {
     formats: convertFormatsToIcuMinify(globalFormats, formats, timeZone),
     formatters: {
       getDateTimeFormat(locales, dateTimeOptions) {
@@ -123,10 +123,6 @@ export default function formatMessage(
     values ? prepareTranslationValues(values) : {},
     formatOptions
   );
-
-  if (formattedMessage == null) {
-    throw new Error('Unable to format message');
-  }
 
   // Limit the function signature to return strings or React elements
   return isValidElement(formattedMessage) ||
