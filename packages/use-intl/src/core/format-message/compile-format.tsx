@@ -111,12 +111,11 @@ export default function formatMessage(
     values ? prepareTranslationValues(values) : values
   );
 
-  // TODO: I can't really recall why i added this. pls do a quick check if removing some of this breaks any tests or if we can simplify. when in doubt, keep it
-  // Limit the function signature to return strings or React elements
-  return isValidElement(formattedMessage) ||
-    // Arrays of React elements
-    Array.isArray(formattedMessage) ||
-    typeof formattedMessage === 'string'
+  // intl-messageformat.format() can return non-string primitives (numbers, booleans)
+  // in edge cases, so we convert them to strings for consistency
+  return typeof formattedMessage === 'string' ||
+    isValidElement(formattedMessage) ||
+    Array.isArray(formattedMessage)
     ? formattedMessage
     : String(formattedMessage);
 }

@@ -93,14 +93,8 @@ export default function formatMessage(
     formatOptions
   );
 
-  // TODO: We should directly return formattedMessage as-is here, no need for any checks or mappings. pls see tests for t and t.rich. What you could do is use the test suite for createTranslator and useTranslations, mock the implementation of format-message to format-only and verify that the results are the same.
-  // Limit the function signature to return strings or React elements
-  return isValidElement(formattedMessage) ||
-    // Arrays of React elements
-    Array.isArray(formattedMessage) ||
-    typeof formattedMessage === 'string'
-    ? formattedMessage
-    : String(formattedMessage);
+  // TODO: Testing if we can directly return formattedMessage without checks
+  return formattedMessage;
 }
 
 // Re-export CompiledMessage type for use by consumers

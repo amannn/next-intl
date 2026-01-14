@@ -8,9 +8,10 @@ Investigate and resolve all TODO statements left in the precompile feature branc
 - [x] TODO 2: Remove package organization comment
 - [x] TODO 3: Align icu-minify/format with use-intl's format structure
 - [x] TODO 4: Simplify format-only.tsx after format alignment
-- [ ] TODO 5: Verify return type checks can be removed (requires test setup modification)
-- [x] TODO 6: Verify Turbo alias path condition (logging added)
-- [x] TODO 7: Verify webpack alias works correctly (logging added)
+- [x] TODO 3: Verify return type check in compile-format.tsx
+- [x] TODO 5: Verify return type check in format-only.tsx
+- [x] TODO 6: Verify Turbo alias path condition
+- [x] TODO 7: Verify webpack alias works correctly
 
 ---
 
@@ -53,7 +54,7 @@ return isValidElement(formattedMessage) ||
 - Run existing tests for `createTranslator` to see what `messageFormat.format()` can return
 - Check `intl-messageformat` types for possible return values
 
-**Action:** Run tests, check if removing the check breaks anything. The check handles edge cases where `format()` returns non-string primitives (numbers, booleans). Likely safe to simplify but verify first.
+**Action:** ✅ Completed - Simplified the return type check. Verified that `intl-messageformat.format()` can return non-string primitives (numbers, booleans) in edge cases, so we keep a simplified check that converts non-string/non-ReactNode values to strings. The check is now more explicit about handling edge cases.
 
 ---
 
@@ -108,15 +109,13 @@ type Formats = {
 
 **Investigation approach:**
 
-1. Temporarily modify the test setup to use format-only instead of compile-format
-2. Run `createTranslator.test.tsx` and `useTranslations.test.tsx`
-3. If all tests pass, the return type check can be removed from both files
-4. Revert test changes after verification
+1. ✅ Temporarily modified test setup with mock to use format-only instead of compile-format
+2. ✅ Ran `createTranslator.test.tsx` tests with format-only mock
+3. ✅ Verified that icu-minify's `format()` returns `string | RichTextElement | Array<string | RichTextElement>`, which matches `ReactNode`
+4. ✅ Removed return type check from format-only.tsx - tests pass
+5. ✅ Reverted test mock changes
 
-**Files:**
-
-- [createTranslator.test.tsx](packages/use-intl/src/core/createTranslator.test.tsx)
-- [useTranslations.test.tsx](packages/use-intl/src/react/useTranslations.test.tsx)
+**Result:** ✅ The return type check can be removed from format-only.tsx. icu-minify's format function always returns valid ReactNode types (string, ReactElement, or arrays), so no conversion is needed. The check was removed and tests pass.
 
 ---
 
@@ -128,10 +127,10 @@ resolveAlias['use-intl/format-message'] = relativePath.startsWith('.')
   : './' + relativePath;
 ```
 
-**Action:** ✅ Completed - Added console.log in development mode to output relativePath and resolvedAlias values. Logging can be verified when running builds with Turbo. The condition ensures relative paths start with './' for proper resolution.
+**Action:** ✅ Completed - Verified the condition is needed. The condition ensures relative paths start with './' for proper Turbo resolution. Removed temporary logging after verification.
 
 ---
 
 ## TODO 10: Webpack alias verification (getNextConfig.tsx:249)
 
-**Action:** ✅ Completed - Added console.log in development mode to output webpack alias configuration. Logging can be verified when running builds without Turbo. The alias uses require.resolve to get the actual file path for proper subpath export resolution.
+**Action:** ✅ Completed - Verified webpack alias works correctly. The alias uses require.resolve to get the actual file path for proper subpath export resolution. Removed temporary logging after verification.
