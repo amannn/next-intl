@@ -1,2 +1,2 @@
 // Needed for projects with `moduleResolution: 'node'`
-export * from './dist/types/core/formatMessage/index.d.ts';
+export * from './dist/types/core/format-message/index.d.ts';

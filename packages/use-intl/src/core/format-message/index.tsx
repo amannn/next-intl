@@ -12,4 +12,6 @@
  * functionality, while next-intl users can opt into the precompilation
  * optimization for smaller bundles and faster formatting.
  */
-export {formatMessage, type FormatMessageOptions} from './compileAndFormat.js';
+export {default, type FormatMessageOptions} from './compile-format.js';
+
+// should we move this to another package for having a clearer dependency?

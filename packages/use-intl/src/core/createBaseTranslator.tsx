@@ -1,8 +1,8 @@
 import type {ReactNode} from 'react';
+import formatMessage from 'use-intl/format-message';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
 import type {Locale} from './AppConfig.js';
 import type Formats from './Formats.js';
-import {formatMessage} from './formatMessage/index.js';
 import type {InitializedIntlConfig} from './IntlConfig.js';
 import IntlError from './IntlError.js';
 import IntlErrorCode from './IntlErrorCode.js';
@@ -13,7 +13,7 @@ import type {
   TranslationValues
 } from './TranslationValues.js';
 import {defaultGetMessageFallback} from './defaults.js';
-import {type Formatters, type IntlCache} from './formatters.js';
+import type {Formatters, IntlCache} from './formatters.js';
 import joinPath from './joinPath.js';
 
 function resolvePath(
@@ -226,7 +226,7 @@ function createBaseTranslatorImpl<
     }
 
     try {
-      return formatMessage(message, values, {
+      return formatMessage(message as any, values, {
         cache,
         formatters,
         globalFormats,

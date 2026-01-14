@@ -6,9 +6,9 @@ import format, {
 } from 'icu-minify/format';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type Formats from '../Formats.js';
-import type {Formatters, IntlCache} from '../formatters.js';
-import type {RichTranslationValues} from '../TranslationValues.js';
 import type TimeZone from '../TimeZone.js';
+import type {RichTranslationValues} from '../TranslationValues.js';
+import type {Formatters, IntlCache} from '../formatters.js';
 
 /**
  * Converts use-intl's unified `dateTime` format namespace to icu-minify's
@@ -92,7 +92,7 @@ export type FormatMessageOptions = {
  * This implementation requires messages to be precompiled at build time.
  * It has a much smaller runtime footprint (~660 bytes vs ~15KB).
  */
-export function formatMessage(
+export default function formatMessage(
   /** The precompiled ICU message (CompiledMessage from icu-minify) */
   message: CompiledMessage,
   /** Key-value pairs for values to interpolate into the message */
@@ -100,7 +100,7 @@ export function formatMessage(
   /** Options including formatters, cache, formats, locale, and timeZone */
   options: FormatMessageOptions
 ): ReactNode {
-  const {formatters, globalFormats, formats, locale, timeZone} = options;
+  const {formats, formatters, globalFormats, locale, timeZone} = options;
 
   const formatOptions: IcuMinifyFormatOptions = {
     formats: convertFormatsToIcuMinify(globalFormats, formats, timeZone),
