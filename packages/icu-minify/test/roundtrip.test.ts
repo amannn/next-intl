@@ -336,7 +336,7 @@ describe('date formatting', () => {
       {d: date},
       {
         formats: {
-          date: {
+          dateTime: {
             short: {month: 'numeric', day: 'numeric', year: '2-digit'}
           }
         }
@@ -363,7 +363,7 @@ describe('date formatting', () => {
       {d: date},
       {
         formats: {
-          date: {
+          dateTime: {
             medium: {month: 'short', day: 'numeric', year: 'numeric'}
           }
         }
@@ -385,7 +385,7 @@ describe('date formatting', () => {
         {
           timeZone: 'Asia/Tokyo',
           formats: {
-            date: {custom: {year: 'numeric', month: 'short', day: 'numeric'}}
+            dateTime: {custom: {year: 'numeric', month: 'short', day: 'numeric'}}
           }
         }
       );
@@ -401,7 +401,7 @@ describe('date formatting', () => {
         {
           timeZone: 'Asia/Tokyo',
           formats: {
-            date: {
+            dateTime: {
               utc: {
                 year: 'numeric',
                 month: 'short',
@@ -464,7 +464,7 @@ describe('time formatting', () => {
       {t: date},
       {
         formats: {
-          time: {
+          dateTime: {
             short: {hour: 'numeric', minute: 'numeric'}
           }
         }
@@ -483,7 +483,7 @@ describe('time formatting', () => {
         {
           timeZone: 'America/New_York',
           formats: {
-            time: {custom: {hour: 'numeric', minute: 'numeric', hour12: false}}
+            dateTime: {custom: {hour: 'numeric', minute: 'numeric', hour12: false}}
           }
         }
       );
@@ -499,7 +499,7 @@ describe('time formatting', () => {
         {
           timeZone: 'America/New_York',
           formats: {
-            time: {
+            dateTime: {
               utc: {
                 hour: 'numeric',
                 minute: 'numeric',
