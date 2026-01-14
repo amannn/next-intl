@@ -2,6 +2,14 @@
 
 Investigate and resolve all TODO statements left in the precompile feature branch, covering rollup externals, format structure alignment, test verification, and bundler alias verification.
 
+## Summary
+
+All TODOs have been completed and all tests are now passing. Key fixes:
+- Fixed timezone handling to use system timezone when `timeZone` is not provided
+- Aligned icu-minify format structure with use-intl's unified `dateTime` namespace
+- Removed unnecessary return type checks from format-only.tsx
+- Fixed error handling in createBaseTranslator (array checks, error code differentiation)
+
 ## Progress
 
 - [x] TODO 1: Verify rollup externals for icu-minify
