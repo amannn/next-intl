@@ -151,7 +151,17 @@ export default function getNextConfig(
         'use-intl/format-message/format-only'
       );
       const relativePath = path.relative(process.cwd(), formatOnlyPath);
-      // TODO: Can you add logging and verify if we need this condition?
+      // TODO: Verify if condition is needed - logging added for verification
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[next-intl] Turbo alias path:', {
+          formatOnlyPath,
+          relativePath,
+          startsWithDot: relativePath.startsWith('.'),
+          resolvedAlias: relativePath.startsWith('.')
+            ? relativePath
+            : './' + relativePath
+        });
+      }
       resolveAlias['use-intl/format-message'] = relativePath.startsWith('.')
         ? relativePath
         : './' + relativePath;
@@ -246,13 +256,23 @@ export default function getNextConfig(
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
-        // TODO: Please verify if this works with webpack
+        // TODO: Verify if this works with webpack - logging added for verification
+        const formatOnlyPath = require.resolve(
+          'use-intl/format-message/format-only'
+        );
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[next-intl] Webpack alias:', {
+            formatOnlyPath,
+            alias: 'use-intl/format-message',
+            resolvedTo: formatOnlyPath
+          });
+        }
         // Use require.resolve to get the actual file path, since
         // bundlers don't properly resolve package subpath exports
         // when used as alias targets
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
-        ] = require.resolve('use-intl/format-message/format-only');
+        ] = formatOnlyPath;
       }
 
       // Add loader for extractor
