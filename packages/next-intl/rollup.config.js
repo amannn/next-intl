@@ -42,7 +42,8 @@ export default [
       'next-intl/config',
       'use-intl/core',
       'use-intl/react',
-      // TODO: Do we need the next two entries? Does this make a difference? Otherwise remove.
+      // icu-minify subpath exports need to be explicitly externalized
+      // (used by catalogLoader.tsx and format-only.tsx)
       'icu-minify/compiler',
       'icu-minify/format'
     ],

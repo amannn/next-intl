@@ -1,54 +1,13 @@
 import format, {
   type CompiledMessage,
   type FormatOptions,
-  type FormatValues,
-  type Formats as IcuMinifyFormats
+  type FormatValues
 } from 'icu-minify/format';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type Formats from '../Formats.js';
 import type TimeZone from '../TimeZone.js';
 import type {RichTranslationValues} from '../TranslationValues.js';
 import type {Formatters, IntlCache} from '../formatters.js';
-
-/**
- * Converts use-intl's unified `dateTime` format namespace to icu-minify's
- * separate `date` and `time` namespaces.
- *
- * TODO: This should not be necessary, we should expect the format from use-intl in icu-minify/format to avoid this mapping
- */
-function convertFormatsToIcuMinify(
-  globalFormats?: Formats,
-  inlineFormats?: Formats,
-  timeZone?: TimeZone
-): IcuMinifyFormats {
-  const dateTimeFormats = {
-    ...globalFormats?.dateTime,
-    ...inlineFormats?.dateTime
-  };
-
-  // TODO: This should not be necessary, time zone can be passed separately to icu-minify/format
-  // Apply timeZone to all date/time formats if specified
-  function applyTimeZone(
-    formats: Record<string, Intl.DateTimeFormatOptions>
-  ): Record<string, Intl.DateTimeFormatOptions> {
-    if (!timeZone) return formats;
-    const result: Record<string, Intl.DateTimeFormatOptions> = {};
-    for (const [key, value] of Object.entries(formats)) {
-      result[key] = {timeZone, ...value};
-    }
-    return result;
-  }
-
-  return {
-    // icu-minify uses separate date/time namespaces
-    date: applyTimeZone(dateTimeFormats),
-    time: applyTimeZone(dateTimeFormats),
-    number: {
-      ...globalFormats?.number,
-      ...inlineFormats?.number
-    }
-  };
-}
 
 function prepareTranslationValues(
   values: RichTranslationValues
@@ -104,9 +63,17 @@ export default function formatMessage(
   const {formats, formatters, globalFormats, locale, timeZone} = options;
 
   const formatOptions: FormatOptions = {
-    formats: convertFormatsToIcuMinify(globalFormats, formats, timeZone),
+    formats: {
+      dateTime: {
+        ...globalFormats?.dateTime,
+        ...formats?.dateTime
+      },
+      number: {
+        ...globalFormats?.number,
+        ...formats?.number
+      }
+    },
     formatters: {
-      // TODO: pass formatters.getDateTimeFormat directly to icu-minify/format instead of this wrapper, time zone can be passed separately
       getDateTimeFormat(locales, dateTimeOptions) {
         return formatters.getDateTimeFormat(locales, {
           timeZone,
