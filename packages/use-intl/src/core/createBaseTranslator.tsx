@@ -195,15 +195,14 @@ function createBaseTranslatorImpl<
       }
     }
 
+    const messagePath = joinPath(namespace, key);
+
     if (typeof message === 'object' && !Array.isArray(message)) {
       return getFallbackFromErrorAndNotify(
         key,
         IntlErrorCode.INSUFFICIENT_PATH,
         process.env.NODE_ENV !== 'production'
-          ? `Message at \`${joinPath(
-              namespace,
-              key
-            )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+          ? `Message at \`${messagePath}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
           : undefined
       );
     }
@@ -217,7 +216,7 @@ function createBaseTranslatorImpl<
     }
 
     try {
-      return formatMessage(message as any, values, {
+      return formatMessage(messagePath, message as any, values, {
         cache,
         formatters,
         globalFormats,
@@ -226,34 +225,19 @@ function createBaseTranslatorImpl<
         timeZone
       });
     } catch (error) {
-      const thrownError = error as Error;
-      const errorMessage = thrownError.message;
-
-      // Check if this is an invalid message error (e.g., invalid/malformed argument names or types)
-      // vs a formatting error (e.g., missing values)
-      const isInvalidMessage =
-        errorMessage.includes('INVALID_ARGUMENT_TYPE') ||
-        errorMessage.includes('INVALID_ARGUMENT') ||
-        errorMessage.includes('MALFORMED_ARGUMENT');
-      const errorCode = isInvalidMessage
-        ? IntlErrorCode.INVALID_MESSAGE
-        : IntlErrorCode.FORMATTING_ERROR;
-
-      // Only append originalMessage for INVALID_MESSAGE errors
-      const finalMessage =
-        process.env.NODE_ENV !== 'production'
-          ? errorMessage +
-            (isInvalidMessage &&
-            'originalMessage' in thrownError &&
-            thrownError.originalMessage
-              ? ` (${thrownError.originalMessage})`
-              : '')
-          : errorMessage;
+      let errorCode, errorMessage;
+      if (error instanceof IntlError) {
+        errorCode = error.code;
+        errorMessage = error.originalMessage;
+      } else {
+        errorCode = IntlErrorCode.FORMATTING_ERROR;
+        errorMessage = (error as Error).message;
+      }
 
       return getFallbackFromErrorAndNotify(
         key,
         errorCode,
-        finalMessage,
+        errorMessage,
         fallback
       );
     }

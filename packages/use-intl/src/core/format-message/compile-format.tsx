@@ -62,13 +62,13 @@ function prepareTranslationValues(values: RichTranslationValues) {
  */
 export default function formatMessage(
   /** The raw ICU message string (or precompiled message, though this implementation ignores precompilation) */
-  ...[message, values, options]: Parameters<FormatMessage<string>>
+  ...[key, message, values, options]: Parameters<FormatMessage<string>>
 ): ReturnType<FormatMessage<string>> {
   if (Array.isArray(message)) {
     throw new IntlError(
       IntlErrorCode.INVALID_MESSAGE,
       process.env.NODE_ENV !== 'production'
-        ? 'Message resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
+        ? `Message at \`${key}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
         : undefined
     );
   }
@@ -81,23 +81,33 @@ export default function formatMessage(
     formatters.getMessageFormat = createMessageFormatter(cache, formatters);
   }
 
-  const messageFormat = formatters.getMessageFormat(
-    message,
-    locale,
-    convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
-    {
-      formatters: {
-        ...formatters,
-        getDateTimeFormat(locales, dateTimeOptions) {
-          // Workaround for https://github.com/formatjs/formatjs/issues/4279
-          return formatters.getDateTimeFormat(locales, {
-            ...dateTimeOptions,
-            timeZone: dateTimeOptions?.timeZone ?? timeZone
-          });
+  let messageFormat;
+  try {
+    messageFormat = formatters.getMessageFormat(
+      message,
+      locale,
+      convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
+      {
+        formatters: {
+          ...formatters,
+          getDateTimeFormat(locales, dateTimeOptions) {
+            // Workaround for https://github.com/formatjs/formatjs/issues/4279
+            return formatters.getDateTimeFormat(locales, {
+              ...dateTimeOptions,
+              timeZone: dateTimeOptions?.timeZone ?? timeZone
+            });
+          }
         }
       }
-    }
-  );
+    );
+  } catch (error) {
+    throw new IntlError(
+      IntlErrorCode.INVALID_MESSAGE,
+      process.env.NODE_ENV !== 'production'
+        ? `${(error as any).message} (${(error as any).originalMessage})`
+        : undefined
+    );
+  }
 
   const formattedMessage = messageFormat.format(
     // @ts-expect-error `intl-messageformat` expects a different format

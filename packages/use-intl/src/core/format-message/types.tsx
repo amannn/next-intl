@@ -14,6 +14,7 @@ type FormatMessageOptions = {
 };
 
 export type FormatMessage<Message> = (
+  key: string,
   message: Message,
   values: RichTranslationValues | undefined,
   options: FormatMessageOptions

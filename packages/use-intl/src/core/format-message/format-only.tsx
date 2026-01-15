@@ -8,7 +8,7 @@ import type {FormatMessage} from './types.js';
  */
 export default function formatMessage(
   /** The precompiled ICU message (CompiledMessage from icu-minify) */
-  ...[message, values, options]: Parameters<FormatMessage<CompiledMessage>>
+  ...[, message, values, options]: Parameters<FormatMessage<CompiledMessage>>
 ): ReturnType<FormatMessage<CompiledMessage>> {
   const {formats, globalFormats, locale, ...rest} = options;
 
