@@ -54,9 +54,9 @@ function applyGlobalTimeZone(
     return formats;
   }
 
-  const applyTimeZone = (
+  function applyTimeZoneMap(
     formatMap: Record<string, Intl.DateTimeFormatOptions> | undefined
-  ) => {
+  ) {
     if (!formatMap) {
       return undefined;
     }
@@ -66,10 +66,10 @@ function applyGlobalTimeZone(
       updated[key] = value.timeZone ? value : {...value, timeZone};
     }
     return updated;
-  };
+  }
 
-  const date = applyTimeZone(formats.date);
-  const time = applyTimeZone(formats.time);
+  const date = applyTimeZoneMap(formats.date);
+  const time = applyTimeZoneMap(formats.time);
   const number = formats.number;
 
   return {
