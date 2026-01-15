@@ -38,12 +38,13 @@ export default [
     external: [
       ...Object.keys(pkg.dependencies),
       ...Object.keys(pkg.peerDependencies),
+
+      // Subpath exports need to be explicitly externalized
       'react/jsx-runtime',
       'next-intl/config',
       'use-intl/core',
       'use-intl/react',
-      'icu-minify/compiler',
-      'icu-minify/format'
+      'icu-minify/compiler'
     ],
     output: {
       preserveModules: true

@@ -96,20 +96,6 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   messagesOrError: Messages | IntlError;
 };
 
-function getPlainMessage(candidate: string, values?: unknown) {
-  // To improve runtime performance, only compile message if:
-  return (
-    // 1. Values are provided
-    values ||
-      // 2. There are escaped braces (e.g. "'{name'}")
-      /'[{}]/.test(candidate) ||
-      // 3. There are missing arguments or tags (dev-only error handling)
-      (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
-      ? undefined // Compile
-      : candidate // Don't compile
-  );
-}
-
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -195,38 +181,20 @@ function createBaseTranslatorImpl<
       }
     }
 
+    const messagePath = joinPath(namespace, key);
+
     if (typeof message === 'object' && !Array.isArray(message)) {
-      let code, errorMessage;
-      if (Array.isArray(message)) {
-        code = IntlErrorCode.INVALID_MESSAGE;
-        if (process.env.NODE_ENV !== 'production') {
-          errorMessage = `Message at \`${joinPath(
-            namespace,
-            key
-          )}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`;
-        }
-      } else {
-        code = IntlErrorCode.INSUFFICIENT_PATH;
-        if (process.env.NODE_ENV !== 'production') {
-          errorMessage = `Message at \`${joinPath(
-            namespace,
-            key
-          )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`;
-        }
-      }
-
-      return getFallbackFromErrorAndNotify(key, code, errorMessage);
-    }
-
-    // Hot path that avoids creating an `IntlMessageFormat` instance
-    // Note: This optimization only works for string messages (not precompiled)
-    if (typeof message === 'string') {
-      const plainMessage = getPlainMessage(message, values);
-      if (plainMessage) return plainMessage;
+      return getFallbackFromErrorAndNotify(
+        key,
+        IntlErrorCode.INSUFFICIENT_PATH,
+        process.env.NODE_ENV !== 'production'
+          ? `Message at \`${messagePath}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+          : undefined
+      );
     }
 
     try {
-      return formatMessage(message as any, values, {
+      return formatMessage(messagePath, message as any, values, {
         cache,
         formatters,
         globalFormats,
@@ -235,16 +203,19 @@ function createBaseTranslatorImpl<
         timeZone
       });
     } catch (error) {
-      const thrownError = error as Error;
+      let errorCode, errorMessage;
+      if (error instanceof IntlError) {
+        errorCode = error.code;
+        errorMessage = error.originalMessage;
+      } else {
+        errorCode = IntlErrorCode.FORMATTING_ERROR;
+        errorMessage = (error as Error).message;
+      }
+
       return getFallbackFromErrorAndNotify(
         key,
-        IntlErrorCode.FORMATTING_ERROR,
-        process.env.NODE_ENV !== 'production'
-          ? thrownError.message +
-              ('originalMessage' in thrownError
-                ? ` (${thrownError.originalMessage})`
-                : '')
-          : thrownError.message,
+        errorCode,
+        errorMessage,
         fallback
       );
     }

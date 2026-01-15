@@ -1,16 +1,16 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
-import type Formats from '../Formats.js';
-import type TimeZone from '../TimeZone.js';
+import IntlError from '../IntlError.js';
+import IntlErrorCode from '../IntlErrorCode.js';
 import type {RichTranslationValues} from '../TranslationValues.js';
 import convertFormatsToIntlMessageFormat from '../convertFormatsToIntlMessageFormat.js';
 import {
-  type Formatters,
   type IntlCache,
   type IntlFormatters,
   type MessageFormatter,
   memoFn
 } from '../formatters.js';
+import type {FormatMessage} from './types.js';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.
@@ -56,14 +56,22 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
-export type FormatMessageOptions = {
-  cache: IntlCache;
-  formatters: Formatters;
-  globalFormats?: Formats;
-  formats?: Formats;
-  locale: string;
-  timeZone?: TimeZone;
-};
+function getPlainMessage(
+  candidate: string,
+  values?: RichTranslationValues
+): string | undefined {
+  // To improve runtime performance, only compile message if:
+  return (
+    // 1. Values are provided
+    values ||
+      // 2. There are escaped braces (e.g. "'{name'}")
+      /'[{}]/.test(candidate) ||
+      // 3. There are missing arguments or tags (dev-only error handling)
+      (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
+      ? undefined // Compile
+      : candidate // Don't compile
+  );
+}
 
 /**
  * Compiles and formats an ICU message at runtime using intl-messageformat.
@@ -71,12 +79,24 @@ export type FormatMessageOptions = {
  */
 export default function formatMessage(
   /** The raw ICU message string (or precompiled message, though this implementation ignores precompilation) */
-  message: string,
-  /** Key-value pairs for values to interpolate into the message */
-  values: RichTranslationValues | undefined,
-  /** Options including formatters, cache, formats, locale, and timeZone */
-  options: FormatMessageOptions
-): ReactNode {
+  ...[key, message, values, options]: Parameters<FormatMessage<string>>
+): ReturnType<FormatMessage<string>> {
+  if (Array.isArray(message)) {
+    throw new IntlError(
+      IntlErrorCode.INVALID_MESSAGE,
+      process.env.NODE_ENV !== 'production'
+        ? `Message at \`${key}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
+        : undefined
+    );
+  }
+
+  // Hot path that avoids creating an `IntlMessageFormat` instance
+  // Note: This optimization only works for string messages (not precompiled)
+  if (typeof message === 'string') {
+    const plainMessage = getPlainMessage(message, values);
+    if (plainMessage) return plainMessage;
+  }
+
   const {cache, formats, formatters, globalFormats, locale, timeZone} = options;
 
   // Lazy init the message formatter for better tree
@@ -85,23 +105,33 @@ export default function formatMessage(
     formatters.getMessageFormat = createMessageFormatter(cache, formatters);
   }
 
-  const messageFormat = formatters.getMessageFormat(
-    message,
-    locale,
-    convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
-    {
-      formatters: {
-        ...formatters,
-        getDateTimeFormat(locales, dateTimeOptions) {
-          // Workaround for https://github.com/formatjs/formatjs/issues/4279
-          return formatters.getDateTimeFormat(locales, {
-            timeZone,
-            ...dateTimeOptions
-          });
+  let messageFormat;
+  try {
+    messageFormat = formatters.getMessageFormat(
+      message,
+      locale,
+      convertFormatsToIntlMessageFormat(globalFormats, formats, timeZone),
+      {
+        formatters: {
+          ...formatters,
+          getDateTimeFormat(locales, dateTimeOptions) {
+            // Workaround for https://github.com/formatjs/formatjs/issues/4279
+            return formatters.getDateTimeFormat(locales, {
+              ...dateTimeOptions,
+              timeZone: dateTimeOptions?.timeZone ?? timeZone
+            });
+          }
         }
       }
-    }
-  );
+    );
+  } catch (error) {
+    throw new IntlError(
+      IntlErrorCode.INVALID_MESSAGE,
+      process.env.NODE_ENV !== 'production'
+        ? `${(error as any).message} (${(error as any).originalMessage})`
+        : undefined
+    );
+  }
 
   const formattedMessage = messageFormat.format(
     // @ts-expect-error `intl-messageformat` expects a different format
