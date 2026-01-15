@@ -60,7 +60,7 @@ In contrast, `icu-minify` compiles messages to a minimal intermediate representa
 ["Hello ", ["name"], "!"]
 ```
 
-This comes with barely any size overhead and can be evaluated by a 660 bytes runtime counterpart that leverages native `Intl` APIs.
+This comes with barely any size overhead and can be evaluated by a 650 bytes runtime counterpart that leverages native `Intl` APIs.
 
 And while this can scale up to very complex messages with `plural`, `select` and more, a common observation has been that the majority of app messages tend to be plain strings. For these, the intermediate representation doesn't come with any overhead at all (`"Welcome"` → `"Welcome"`).
 

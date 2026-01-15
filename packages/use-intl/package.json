@@ -69,10 +69,10 @@
     "formatting"
   ],
   "dependencies": {
-    "@formatjs/fast-memoize": "^2.2.0",
+    "@formatjs/fast-memoize": "^3.1.0",
     "@schummar/icu-type-parser": "1.21.5",
     "icu-minify": "workspace:^",
-    "intl-messageformat": "^10.5.14"
+    "intl-messageformat": "^11.1.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
