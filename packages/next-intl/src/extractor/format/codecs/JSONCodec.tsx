@@ -42,6 +42,10 @@ function traverseMessages(
     const value = obj[key];
     if (typeof value === 'string') {
       callback(value, newPath);
+    } else if (Array.isArray(value)) {
+      throw new Error(
+        `Message at \`${newPath}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
+      );
     } else if (typeof value === 'object') {
       traverseMessages(value, callback, newPath);
     }
