@@ -1,7 +1,11 @@
-import IntlMessageFormat from 'intl-messageformat';
+import {IntlMessageFormat} from 'intl-messageformat';
 import {describe, expect, it} from 'vitest';
 import compile from '../src/compiler.js';
-import format, {type FormatOptions, type FormatValues} from '../src/format.js';
+import format, {
+  type Formats,
+  type FormatOptions,
+  type FormatValues
+} from '../src/format.js';
 import type {CompiledMessage} from '../src/types.js';
 
 const formatters: FormatOptions['formatters'] = {
@@ -308,7 +312,9 @@ describe('number formatting', () => {
           ],
         ]
       `);
-    const options = {formats: {number: {percent: {style: 'percent'}}}};
+    const options: Omit<FormatOptions, 'formatters'> = {
+      formats: {number: {percent: {style: 'percent'}}}
+    };
     const result = formatMessage(compiled, 'en', {val: 0.75}, options);
     expect(result).toMatchInlineSnapshot(`"75%"`);
     expectMatchesIntlMessageFormat(message, 'en', {val: 0.75}, options, result);
@@ -326,7 +332,7 @@ describe('number formatting', () => {
           ],
         ]
       `);
-    const options = {
+    const options: Omit<FormatOptions, 'formatters'> = {
       formats: {number: {integer: {maximumFractionDigits: 0}}}
     };
     const result = formatMessage(compiled, 'en', {val: 3.7}, options);
@@ -431,7 +437,7 @@ describe('date formatting', () => {
           ],
         ]
       `);
-    const options = {
+    const options: Omit<FormatOptions, 'formatters'> = {
       formats: {
         date: {
           short: {month: 'numeric', day: 'numeric', year: '2-digit'}
@@ -461,7 +467,7 @@ describe('date formatting', () => {
           ],
         ]
       `);
-    const options = {
+    const options: Omit<FormatOptions, 'formatters'> = {
       formats: {
         date: {
           medium: {month: 'short', day: 'numeric', year: 'numeric'}
@@ -485,7 +491,7 @@ describe('date formatting', () => {
     it('uses global timeZone', () => {
       const message = '{d, date, custom}';
       const compiled = compile(message);
-      const options = {
+      const options: Omit<FormatOptions, 'formatters'> = {
         timeZone: 'Asia/Tokyo',
         formats: {
           date: {custom: {year: 'numeric', month: 'short', day: 'numeric'}}
@@ -504,7 +510,7 @@ describe('date formatting', () => {
     it('prefers format-specific timeZone over global', () => {
       const message = '{d, date, utc}';
       const compiled = compile(message);
-      const options = {
+      const options: Omit<FormatOptions, 'formatters'> = {
         timeZone: 'Asia/Tokyo',
         formats: {
           date: {
@@ -544,7 +550,7 @@ describe('date formatting', () => {
           ],
         ]
       `);
-    const options = {timeZone: 'UTC'};
+    const options: Omit<FormatOptions, 'formatters'> = {timeZone: 'UTC'};
     const result = formatMessage(compiled, 'en', {d: date}, options);
     expect(result).toMatchInlineSnapshot(`"03/15/2024"`);
     expectMatchesIntlMessageFormat(message, 'en', {d: date}, options, result);
@@ -573,7 +579,7 @@ describe('time formatting', () => {
           ],
         ]
       `);
-    const options = {
+    const options: Omit<FormatOptions, 'formatters'> = {
       formats: {
         time: {
           short: {hour: 'numeric', minute: 'numeric'}
@@ -594,7 +600,7 @@ describe('time formatting', () => {
     it('uses global timeZone', () => {
       const message = '{t, time, custom}';
       const compiled = compile(message);
-      const options = {
+      const options: Omit<FormatOptions, 'formatters'> = {
         timeZone: 'America/New_York',
         formats: {
           time: {custom: {hour: 'numeric', minute: 'numeric', hour12: false}}
@@ -613,7 +619,7 @@ describe('time formatting', () => {
     it('prefers format-specific timeZone over global', () => {
       const message = '{t, time, utc}';
       const compiled = compile(message);
-      const options = {
+      const options: Omit<FormatOptions, 'formatters'> = {
         timeZone: 'America/New_York',
         formats: {
           time: {
@@ -851,7 +857,7 @@ describe('select', () => {
       ]
     `);
 
-    const options = {formats: {number: {}}};
+    const options: Omit<FormatOptions, 'formatters'> = {formats: {number: {}}};
     const result = formatMessage(
       compiled,
       'en',
