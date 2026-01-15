@@ -207,9 +207,8 @@ function createBaseTranslatorImpl<
       }
     }
 
-    const messagePath = joinPath(namespace, key);
-
     try {
+      const messagePath = joinPath(namespace, key);
       return formatMessage(
         messagePath,
         // @ts-expect-error -- We have additional validation either in `compile-format.tsx` or in case of `format-only.tsx` in the loader
