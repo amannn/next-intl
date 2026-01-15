@@ -239,11 +239,12 @@ function createBaseTranslatorImpl<
     } catch (error) {
       const thrownError = error as Error;
       const errorMessage = thrownError.message;
-      // Check if this is an invalid message error (e.g., invalid argument types)
+      // Check if this is an invalid message error (e.g., invalid/malformed argument names or types)
       // vs a formatting error (e.g., missing values)
       const isInvalidMessage =
         errorMessage.includes('INVALID_ARGUMENT_TYPE') ||
-        errorMessage.includes('INVALID_ARGUMENT');
+        errorMessage.includes('INVALID_ARGUMENT') ||
+        errorMessage.includes('MALFORMED_ARGUMENT');
       const errorCode = isInvalidMessage
         ? IntlErrorCode.INVALID_MESSAGE
         : IntlErrorCode.FORMATTING_ERROR;
