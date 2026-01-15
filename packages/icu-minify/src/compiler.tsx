@@ -199,8 +199,10 @@ function compileSelect(node: SelectElement): CompiledNode {
 }
 
 // Plural offset is not supported
-type PluralElement = Omit<PluralElementBase, 'offset'>;
-function compilePlural(node: PluralElement): CompiledNode {
+function compilePlural(node: PluralElementBase): CompiledNode {
+  if (process.env.NODE_ENV !== 'production' && node.offset) {
+    throw new Error('Plural offsets are not supported');
+  }
   const options: PluralOptions = {};
 
   for (const [key, option] of Object.entries(node.options)) {

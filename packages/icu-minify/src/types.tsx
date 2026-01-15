@@ -49,7 +49,8 @@ export type CompiledDateNode = [string, typeof TYPE_DATE, DateTimeStyle?];
 // Time format: ["name", TYPE_TIME, style?]
 export type CompiledTimeNode = [string, typeof TYPE_TIME, DateTimeStyle?];
 
-// Tags have no type constant - detected at runtime by: typeof node[1] !== 'number'
+// Tags have no type constant - detected at runtime by:
+// typeof node[1] !== 'number' || node[1] === TYPE_POUND
 // (after simple args are handled via node[1] === undefined check)
 // Format: ["tagName", child1, child2, ...]
 // Empty tags get an empty string child: ["tagName", ""]
