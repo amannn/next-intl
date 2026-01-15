@@ -129,8 +129,8 @@ function formatNode<RichTextElement>(
     return String(value);
   }
 
-  // Tag: ["tagName", child1, child2, ...] - detected by non-number second element
-  if (typeof type !== 'number') {
+  // Tag: ["tagName", child1, child2, ...] - detected by non-number or pound marker
+  if (typeof type !== 'number' || type === TYPE_POUND) {
     return formatTag(
       name,
       [type, ...rest] as Array<CompiledNode>,

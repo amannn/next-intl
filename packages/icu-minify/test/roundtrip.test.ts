@@ -918,6 +918,43 @@ describe('tags', () => {
     expect(result).toMatchInlineSnapshot(`"<a>Click here</a>"`);
   });
 
+  it('handles a tag with a pound sign', () => {
+    const compiled = compile(
+      '{count, plural, one {<bold>#</bold>} other {<bold>#</bold>}}'
+    );
+    expect(compiled).toMatchInlineSnapshot(`
+        [
+          [
+            "count",
+            2,
+            {
+              "one": [
+                [
+                  "bold",
+                  0,
+                ],
+              ],
+              "other": [
+                [
+                  "bold",
+                  0,
+                ],
+              ],
+            },
+          ],
+        ]
+      `);
+    const result = formatMessage(
+      compiled,
+      'en',
+      {
+        bold: (chunks) => `<b>${chunks.join('')}</b>`,
+        count: 2
+      }
+    );
+    expect(result).toMatchInlineSnapshot(`"<b>2</b>"`);
+  });
+
   it('supports tags returning non-strings', () => {
     const compiled = compile('Hello <bold>{name}</bold>');
     const boldElement = {type: 'bold', children: ['World']};
