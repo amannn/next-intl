@@ -22,6 +22,9 @@ type FormatResult<RichTextElement> =
 type IntlMessageFormatFormats = ConstructorParameters<
   typeof IntlMessageFormat
 >[2];
+type IntlMessageFormatOptions = ConstructorParameters<
+  typeof IntlMessageFormat
+>[3];
 
 function formatMessage<T = string>(
   message: CompiledMessage,
@@ -43,7 +46,7 @@ function formatWithIntlMessageFormat<T = string>(
     options?.timeZone
   );
   const formatterOptions = options?.timeZone
-    ? {timeZone: options.timeZone}
+    ? ({timeZone: options.timeZone} as IntlMessageFormatOptions)
     : undefined;
   const formatter = new IntlMessageFormat(
     message,
