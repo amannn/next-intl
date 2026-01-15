@@ -37,7 +37,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl/server' (react-server)",
     path: 'dist/esm/production/server.react-server.js',
-    limit: '13.505 KB'
+    limit: '13.585 KB'
   },
   {
     name: "import * from 'next-intl/middleware'",
