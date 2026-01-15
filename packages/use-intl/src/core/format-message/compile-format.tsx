@@ -56,6 +56,23 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
+function getPlainMessage(
+  candidate: string,
+  values?: RichTranslationValues
+): string | undefined {
+  // To improve runtime performance, only compile message if:
+  return (
+    // 1. Values are provided
+    values ||
+      // 2. There are escaped braces (e.g. "'{name'}")
+      /'[{}]/.test(candidate) ||
+      // 3. There are missing arguments or tags (dev-only error handling)
+      (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
+      ? undefined // Compile
+      : candidate // Don't compile
+  );
+}
+
 /**
  * Compiles and formats an ICU message at runtime using intl-messageformat.
  * This is the default implementation used when messages are not precompiled.
@@ -71,6 +88,13 @@ export default function formatMessage(
         ? `Message at \`${key}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
         : undefined
     );
+  }
+
+  // Hot path that avoids creating an `IntlMessageFormat` instance
+  // Note: This optimization only works for string messages (not precompiled)
+  if (typeof message === 'string') {
+    const plainMessage = getPlainMessage(message, values);
+    if (plainMessage) return plainMessage;
   }
 
   const {cache, formats, formatters, globalFormats, locale, timeZone} = options;

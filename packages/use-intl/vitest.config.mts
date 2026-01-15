@@ -7,6 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
+      // Use real source file for `use-intl/format-message`
       'use-intl/format-message': resolve(
         __dirname,
         'src/core/format-message/compile-format.tsx'

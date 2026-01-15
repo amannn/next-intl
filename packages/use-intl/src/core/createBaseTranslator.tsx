@@ -96,20 +96,6 @@ export type CreateBaseTranslatorProps<Messages> = InitializedIntlConfig & {
   messagesOrError: Messages | IntlError;
 };
 
-function getPlainMessage(candidate: string, values?: unknown) {
-  // To improve runtime performance, only compile message if:
-  return (
-    // 1. Values are provided
-    values ||
-      // 2. There are escaped braces (e.g. "'{name'}")
-      /'[{}]/.test(candidate) ||
-      // 3. There are missing arguments or tags (dev-only error handling)
-      (process.env.NODE_ENV !== 'production' && /<|{/.test(candidate))
-      ? undefined // Compile
-      : candidate // Don't compile
-  );
-}
-
 export default function createBaseTranslator<
   Messages extends AbstractIntlMessages,
   NestedKey extends NestedKeyOf<Messages>
@@ -205,14 +191,6 @@ function createBaseTranslatorImpl<
           ? `Message at \`${messagePath}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
           : undefined
       );
-    }
-
-    // TODO: should be moved to compile-format.tsx, it's not relevant for format-only (pls also check other code in this file and move relevant code)
-    // Hot path that avoids creating an `IntlMessageFormat` instance
-    // Note: This optimization only works for string messages (not precompiled)
-    if (typeof message === 'string') {
-      const plainMessage = getPlainMessage(message, values);
-      if (plainMessage) return plainMessage;
     }
 
     try {
