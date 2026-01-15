@@ -94,13 +94,12 @@ export default function formatMessage(
     throw new IntlError(
       IntlErrorCode.INSUFFICIENT_PATH,
       process.env.NODE_ENV !== 'production'
-        ? `Message at \`${key}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+        ? `Message at \`${key}\` resolved to \`${typeof message}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
         : undefined
     );
   }
 
   // Hot path that avoids creating an `IntlMessageFormat` instance
-  // Note: This optimization only works for string messages (not precompiled)
   if (typeof message === 'string') {
     const plainMessage = getPlainMessage(message, values);
     if (plainMessage) return plainMessage;
@@ -145,7 +144,7 @@ export default function formatMessage(
   const formattedMessage = messageFormat.format(
     // @ts-expect-error `intl-messageformat` expects a different format
     // for rich text elements since a recent minor update. This
-    // needs to be evaluated in detail, possibly also in regards
+    // needs to be evaluated in detail, possibly also in regard
     // to be able to format to parts.
     values ? prepareTranslationValues(values) : values
   );

@@ -79,7 +79,7 @@ function precompileMessages(
 
     if (typeof messageValue === 'object') {
       throw new Error(
-        `Message at \`${message.id}\` resolved to ${typeof messageValue}, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+        `Message at \`${message.id}\` resolved to \`${typeof messageValue}\`, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
       );
     }
 
