@@ -19,6 +19,10 @@ type FormatResult<RichTextElement> =
   | RichTextElement
   | Array<string | RichTextElement>;
 
+type IntlMessageFormatFormats = ConstructorParameters<
+  typeof IntlMessageFormat
+>[2];
+
 function formatMessage<T = string>(
   message: CompiledMessage,
   locale: string,
@@ -44,7 +48,7 @@ function formatWithIntlMessageFormat<T = string>(
   const formatter = new IntlMessageFormat(
     message,
     locale,
-    normalizedFormats,
+    normalizedFormats as IntlMessageFormatFormats,
     formatterOptions
   );
   return formatter.format(values) as FormatResult<T>;
