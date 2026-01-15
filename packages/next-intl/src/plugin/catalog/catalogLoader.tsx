@@ -13,6 +13,26 @@ import {setNestedProperty} from '../../extractor/utils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
 let cachedCodec: ExtractorCodec | null = null;
+
+type CompiledMessageCacheEntry = {
+  compiledMessage: unknown;
+  messageValue: string;
+};
+
+const compiledMessageCacheByCatalogId = new Map<
+  string,
+  Map<string, CompiledMessageCacheEntry>
+>();
+
+function getCompiledMessageCache(catalogId: string) {
+  let cache = compiledMessageCacheByCatalogId.get(catalogId);
+  if (!cache) {
+    cache = new Map();
+    compiledMessageCacheByCatalogId.set(catalogId, cache);
+  }
+  return cache;
+}
+
 async function getCodec(
   options: CatalogLoaderConfig,
   projectRoot: string
@@ -45,7 +65,8 @@ export default function catalogLoader(
 
       if (options.messages.precompile) {
         const decoded = codec.decode(source, {locale});
-        const precompiled = precompileMessages(decoded);
+        const cache = getCompiledMessageCache(this.resourcePath);
+        const precompiled = precompileMessages(decoded, cache);
         outputString = JSON.stringify(precompiled);
       } else {
         outputString = codec.toJSONString(source, {locale});
@@ -64,11 +85,14 @@ export default function catalogLoader(
  * using icu-minify/compiler for smaller runtime bundles.
  */
 function precompileMessages(
-  messages: Array<ExtractorMessage>
+  messages: Array<ExtractorMessage>,
+  cache: Map<string, CompiledMessageCacheEntry>
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
+  const usedMessageIds = new Set<string>();
 
   for (const message of messages) {
+    usedMessageIds.add(message.id);
     const messageValue = message.message;
 
     if (Array.isArray(messageValue)) {
@@ -83,8 +107,22 @@ function precompileMessages(
       );
     }
 
-    const compiledMessage = compile(messageValue);
+    const cachedEntry = cache.get(message.id);
+    const compiledMessage =
+      cachedEntry?.messageValue === messageValue
+        ? cachedEntry.compiledMessage
+        : compile(messageValue);
+
+    if (compiledMessage !== cachedEntry?.compiledMessage) {
+      cache.set(message.id, {compiledMessage, messageValue});
+    }
     setNestedProperty(result, message.id, compiledMessage);
+  }
+
+  for (const cachedId of cache.keys()) {
+    if (!usedMessageIds.has(cachedId)) {
+      cache.delete(cachedId);
+    }
   }
 
   return result;
