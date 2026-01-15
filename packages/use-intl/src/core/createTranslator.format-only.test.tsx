@@ -1,6 +1,8 @@
 import compile from 'icu-minify/compiler';
 import {type ReactElement, isValidElement} from 'react';
 import {expect, it, vi} from 'vitest';
+import type IntlError from './IntlError.js';
+import IntlErrorCode from './IntlErrorCode.js';
 import createTranslator from './createTranslator.js';
 
 vi.mock('use-intl/format-message', async () => {
@@ -179,4 +181,53 @@ it('uses the global time zone when no local time zone is set', async () => {
 
   const result = t('message', {value: date});
   expect(result).toMatchInlineSnapshot(`"01/01/2020"`);
+});
+
+it('handles missing arguments', async () => {
+  const onError = vi.fn();
+
+  const t = getTranslator('{value}', {onError});
+  const result = t('message');
+
+  const error: IntlError = onError.mock.calls[0][0];
+  expect(error.message).toBe(
+    'FORMATTING_ERROR: Missing value for argument "value"'
+  );
+  expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+
+  expect(result).toBe('message');
+});
+
+it('restricts date values as plain params', async () => {
+  const onError = vi.fn();
+  const t = getTranslator('{param}', {onError});
+
+  const result = t('message', {param: new Date()});
+
+  const error: IntlError = onError.mock.calls[0][0];
+  expect(error.message).toBe(
+    'FORMATTING_ERROR: Invalid value for argument "param": Date values are not supported for plain parameters. Use date formatting instead (e.g. {param, date}).'
+  );
+  expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+
+  expect(result).toBe('message');
+});
+
+it('handles errors when React components are provided', async () => {
+  const onError = vi.fn();
+  const t = getTranslator('<b>Hello {name}</b>', {onError});
+
+  const result = t.markup('message', {
+    name: 'world',
+    // @ts-expect-error Intentionally broken call site
+    b: (chunks) => <b>{chunks}</b>
+  });
+
+  expect(onError).toHaveBeenCalledTimes(1);
+  const error: IntlError = onError.mock.calls[0][0];
+  expect(error.code).toBe(IntlErrorCode.FORMATTING_ERROR);
+  expect(error.message).toBe(
+    "FORMATTING_ERROR: `t.markup` only accepts functions for formatting that receive and return strings.\n\nE.g. t.markup('markup', {b: (chunks) => `<b>${chunks}</b>`})"
+  );
+  expect(result).toBe('message');
 });
