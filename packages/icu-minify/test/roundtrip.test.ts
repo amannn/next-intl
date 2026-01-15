@@ -30,16 +30,53 @@ function formatWithIntlMessageFormat<T = string>(
   values: FormatValues<T>,
   options?: Omit<FormatOptions, 'formatters'>
 ): FormatResult<T> {
+  const normalizedFormats = applyGlobalTimeZone(
+    options?.formats,
+    options?.timeZone
+  );
   const formatterOptions = options?.timeZone
     ? {timeZone: options.timeZone}
     : undefined;
   const formatter = new IntlMessageFormat(
     message,
     locale,
-    options?.formats,
+    normalizedFormats,
     formatterOptions
   );
   return formatter.format(values) as FormatResult<T>;
+}
+
+function applyGlobalTimeZone(
+  formats: Formats | undefined,
+  timeZone: string | undefined
+): Formats | undefined {
+  if (!timeZone || !formats) {
+    return formats;
+  }
+
+  const applyTimeZone = (
+    formatMap: Record<string, Intl.DateTimeFormatOptions> | undefined
+  ) => {
+    if (!formatMap) {
+      return undefined;
+    }
+
+    const updated: Record<string, Intl.DateTimeFormatOptions> = {};
+    for (const [key, value] of Object.entries(formatMap)) {
+      updated[key] = value.timeZone ? value : {...value, timeZone};
+    }
+    return updated;
+  };
+
+  const date = applyTimeZone(formats.date);
+  const time = applyTimeZone(formats.time);
+  const number = formats.number;
+
+  return {
+    ...(date ? {date} : {}),
+    ...(number ? {number} : {}),
+    ...(time ? {time} : {})
+  };
 }
 
 function expectMatchesIntlMessageFormat<T = string>(
