@@ -1,12 +1,15 @@
-# icu-minify
+# `icu-minify`
 
 ICU message format compiler with a 660 bytes runtime ✨
 
 ## Features
 
-- ⚡ **Build-time compilation**: Converts ICU messages to a compact JSON intermediate representation.
-- 📦 **Minimal runtime**: 660 bytes (minified + compressed) with zero runtime dependencies.
-- 🌍 **Full ICU support**: `{arguments}`, `plural`, `select`, `selectordinal`, `date`, `time`, `number` and `<tags>`
+1. **Build-time compilation** ⚡  
+   Converts ICU messages to a compact JSON intermediate representation
+2. **Minimal runtime** 📦  
+   660 bytes (minified + compressed) with zero runtime dependencies
+3. **Full ICU support** 🌍  
+   `{arguments}`, `plural`, `select`, `selectordinal`, `date`, `time`, `number` and `<tags>`
 
 ## Usage
 
@@ -25,4 +28,6 @@ format(compiled, 'en', {name: 'World'});
 
 This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) and [`@lingui/message-utils`](https://github.com/lingui/js-lingui/tree/main/packages/message-utils), which similarly use an array-based intermediate representation for compiled messages.
 
-See [`DESIGN.md`](./DESIGN.md) for details.
+## Design
+
+For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC 002: ICU Message Precompilation](../../rfcs/002-icu-message-precompilation.md).
