@@ -90,6 +90,15 @@ export default function formatMessage(
     );
   }
 
+  if (typeof message === 'object') {
+    throw new IntlError(
+      IntlErrorCode.INSUFFICIENT_PATH,
+      process.env.NODE_ENV !== 'production'
+        ? `Message at \`${key}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+        : undefined
+    );
+  }
+
   // Hot path that avoids creating an `IntlMessageFormat` instance
   // Note: This optimization only works for string messages (not precompiled)
   if (typeof message === 'string') {

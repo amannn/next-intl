@@ -183,16 +183,6 @@ function createBaseTranslatorImpl<
 
     const messagePath = joinPath(namespace, key);
 
-    if (typeof message === 'object' && !Array.isArray(message)) {
-      return getFallbackFromErrorAndNotify(
-        key,
-        IntlErrorCode.INSUFFICIENT_PATH,
-        process.env.NODE_ENV !== 'production'
-          ? `Message at \`${messagePath}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
-          : undefined
-      );
-    }
-
     try {
       return formatMessage(messagePath, message as any, values, {
         cache,

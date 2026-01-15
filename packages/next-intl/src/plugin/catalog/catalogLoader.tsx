@@ -5,7 +5,11 @@ import {
   getFormatExtension,
   resolveCodec
 } from '../../extractor/format/index.js';
-import type {CatalogLoaderConfig} from '../../extractor/types.js';
+import type {
+  CatalogLoaderConfig,
+  ExtractorMessage
+} from '../../extractor/types.js';
+import {setNestedProperty} from '../../extractor/utils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
 let cachedCodec: ExtractorCodec | null = null;
@@ -17,26 +21,6 @@ async function getCodec(
     cachedCodec = await resolveCodec(options.messages.format, projectRoot);
   }
   return cachedCodec;
-}
-
-/**
- * Recursively precompiles all ICU message strings in a messages object
- * using icu-minify/compiler for smaller runtime bundles.
- */
-function precompileMessages(messages: unknown): unknown {
-  if (typeof messages === 'string') {
-    return compile(messages);
-  }
-
-  if (messages !== null && typeof messages === 'object') {
-    const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(messages)) {
-      result[key] = precompileMessages(value);
-    }
-    return result;
-  }
-
-  return messages;
 }
 
 /**
@@ -57,17 +41,14 @@ export default function catalogLoader(
   getCodec(options, this.rootContext)
     .then((codec) => {
       const locale = path.basename(this.resourcePath, extension);
-      const jsonString = codec.toJSONString(source, {locale});
-
       let outputString: string;
 
       if (options.messages.precompile) {
-        // Precompile ICU messages at build time for smaller runtime bundles
-        const messages = JSON.parse(jsonString);
-        const precompiled = precompileMessages(messages);
+        const decoded = codec.decode(source, {locale});
+        const precompiled = precompileMessages(decoded);
         outputString = JSON.stringify(precompiled);
       } else {
-        outputString = jsonString;
+        outputString = codec.toJSONString(source, {locale});
       }
 
       // https://v8.dev/blog/cost-of-javascript-2019#json
@@ -76,4 +57,35 @@ export default function catalogLoader(
       callback(null, result);
     })
     .catch(callback);
+}
+
+/**
+ * Recursively precompiles all ICU message strings in a messages object
+ * using icu-minify/compiler for smaller runtime bundles.
+ */
+function precompileMessages(
+  messages: Array<ExtractorMessage>
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+
+  for (const message of messages) {
+    const messageValue = message.message;
+
+    if (Array.isArray(messageValue)) {
+      throw new Error(
+        `Message at \`${message.id}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`
+      );
+    }
+
+    if (typeof messageValue === 'object') {
+      throw new Error(
+        `Message at \`${message.id}\` resolved to ${typeof messageValue}, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+      );
+    }
+
+    const compiledMessage = compile(messageValue);
+    setNestedProperty(result, message.id, compiledMessage);
+  }
+
+  return result;
 }
