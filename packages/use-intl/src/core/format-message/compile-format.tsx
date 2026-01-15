@@ -1,18 +1,16 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
-import type Formats from '../Formats.js';
 import IntlError from '../IntlError.js';
 import IntlErrorCode from '../IntlErrorCode.js';
-import type TimeZone from '../TimeZone.js';
 import type {RichTranslationValues} from '../TranslationValues.js';
 import convertFormatsToIntlMessageFormat from '../convertFormatsToIntlMessageFormat.js';
 import {
-  type Formatters,
   type IntlCache,
   type IntlFormatters,
   type MessageFormatter,
   memoFn
 } from '../formatters.js';
+import type {FormatMessage} from './types.js';
 
 // Placed here for improved tree shaking. Somehow when this is placed in
 // `formatters.tsx`, then it can't be shaken off from `next-intl`.
@@ -58,27 +56,14 @@ function prepareTranslationValues(values: RichTranslationValues) {
   return transformedValues;
 }
 
-export type FormatMessageOptions = {
-  cache: IntlCache;
-  formatters: Formatters;
-  globalFormats?: Formats;
-  formats?: Formats;
-  locale: string;
-  timeZone?: TimeZone;
-};
-
 /**
  * Compiles and formats an ICU message at runtime using intl-messageformat.
  * This is the default implementation used when messages are not precompiled.
  */
 export default function formatMessage(
   /** The raw ICU message string (or precompiled message, though this implementation ignores precompilation) */
-  message: string,
-  /** Key-value pairs for values to interpolate into the message */
-  values: RichTranslationValues | undefined,
-  /** Options including formatters, cache, formats, locale, and timeZone */
-  options: FormatMessageOptions
-): ReactNode {
+  ...[message, values, options]: Parameters<FormatMessage<string>>
+): ReturnType<FormatMessage<string>> {
   if (Array.isArray(message)) {
     throw new IntlError(
       IntlErrorCode.INVALID_MESSAGE,

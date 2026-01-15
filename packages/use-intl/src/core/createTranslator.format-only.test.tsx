@@ -1,5 +1,5 @@
 import compile from 'icu-minify/compiler';
-import {isValidElement} from 'react';
+import {type ReactElement, isValidElement} from 'react';
 import {expect, it, vi} from 'vitest';
 import createTranslator from './createTranslator.js';
 
@@ -11,10 +11,17 @@ vi.mock('use-intl/format-message', async () => {
   };
 });
 
-function getTranslator(message: string) {
+function getTranslator(
+  message: string,
+  opts: Omit<
+    Parameters<typeof createTranslator>[0],
+    'locale' | 'messages' | 'namespace'
+  > = {}
+) {
   return createTranslator({
     locale: 'en',
-    messages: {message: compile(message)}
+    messages: {message: compile(message)},
+    ...opts
   });
 }
 
@@ -51,4 +58,125 @@ it('can handle rich text', async () => {
       Hello World
     </b>
   `);
+});
+
+it('adds keys for repeated rich text elements', async () => {
+  const t = getTranslator('<b>One</b><b>Two</b>');
+  const result = t.rich('message', {
+    b: (chunks) => <b>{chunks}</b>
+  });
+  const keys = (result as Array<ReactElement>).map((element) => element.key);
+  expect(keys).toMatchInlineSnapshot(`
+    [
+      ".0",
+      ".1",
+    ]
+  `);
+});
+
+it('merges global and local number formats', async () => {
+  const t = getTranslator('{total, number, compact} {rate, number, percent}', {
+    formats: {
+      number: {
+        compact: {
+          notation: 'compact'
+        }
+      }
+    }
+  });
+
+  const result = t(
+    'message',
+    {
+      rate: 0.25,
+      total: 1200
+    },
+    {
+      number: {
+        percent: {
+          maximumFractionDigits: 0,
+          style: 'percent'
+        }
+      }
+    }
+  );
+  expect(result).toMatchInlineSnapshot(`"1.2K 25%"`);
+});
+
+it('overrides a global number format with a local one', async () => {
+  const t = getTranslator('{rate, number, percent}', {
+    formats: {
+      number: {
+        percent: {
+          maximumFractionDigits: 2,
+          style: 'percent'
+        }
+      }
+    }
+  });
+
+  const result = t(
+    'message',
+    {rate: 0.25},
+    {
+      number: {
+        percent: {
+          maximumFractionDigits: 0,
+          style: 'percent'
+        }
+      }
+    }
+  );
+
+  expect(result).toMatchInlineSnapshot(`"25%"`);
+});
+
+it('prefers the local time zone over a global time zone', async () => {
+  const date = new Date(Date.UTC(2020, 0, 2, 1, 0, 0));
+  const dateTimeFormat = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  } as const;
+  const t = getTranslator('{value, date, shortDate}', {
+    formats: {
+      dateTime: {
+        shortDate: dateTimeFormat
+      }
+    },
+    timeZone: 'UTC'
+  });
+
+  const result = t(
+    'message',
+    {value: date},
+    {
+      dateTime: {
+        shortDate: {
+          ...dateTimeFormat,
+          timeZone: 'America/Los_Angeles'
+        }
+      }
+    }
+  );
+  expect(result).toMatchInlineSnapshot(`"01/01/2020"`);
+});
+
+it('uses the global time zone when no local time zone is set', async () => {
+  const date = new Date(Date.UTC(2020, 0, 2, 1, 0, 0));
+  const t = getTranslator('{value, date, shortDate}', {
+    formats: {
+      dateTime: {
+        shortDate: {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        }
+      }
+    },
+    timeZone: 'America/Los_Angeles'
+  });
+
+  const result = t('message', {value: date});
+  expect(result).toMatchInlineSnapshot(`"01/01/2020"`);
 });
