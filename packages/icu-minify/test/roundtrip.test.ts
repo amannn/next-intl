@@ -2,9 +2,9 @@ import {IntlMessageFormat} from 'intl-messageformat';
 import {describe, expect, it} from 'vitest';
 import compile from '../src/compiler.js';
 import format, {
-  type Formats,
   type FormatOptions,
-  type FormatValues
+  type FormatValues,
+  type Formats
 } from '../src/format.js';
 import type {CompiledMessage} from '../src/types.js';
 
