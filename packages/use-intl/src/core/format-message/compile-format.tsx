@@ -1,6 +1,8 @@
 import {IntlMessageFormat} from 'intl-messageformat';
 import {type ReactNode, cloneElement, isValidElement} from 'react';
 import type Formats from '../Formats.js';
+import IntlError from '../IntlError.js';
+import IntlErrorCode from '../IntlErrorCode.js';
 import type TimeZone from '../TimeZone.js';
 import type {RichTranslationValues} from '../TranslationValues.js';
 import convertFormatsToIntlMessageFormat from '../convertFormatsToIntlMessageFormat.js';
@@ -77,6 +79,15 @@ export default function formatMessage(
   /** Options including formatters, cache, formats, locale, and timeZone */
   options: FormatMessageOptions
 ): ReactNode {
+  if (Array.isArray(message)) {
+    throw new IntlError(
+      IntlErrorCode.INVALID_MESSAGE,
+      process.env.NODE_ENV !== 'production'
+        ? 'Message resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages'
+        : undefined
+    );
+  }
+
   const {cache, formats, formatters, globalFormats, locale, timeZone} = options;
 
   // Lazy init the message formatter for better tree
@@ -94,11 +105,9 @@ export default function formatMessage(
         ...formatters,
         getDateTimeFormat(locales, dateTimeOptions) {
           // Workaround for https://github.com/formatjs/formatjs/issues/4279
-          // Only apply timeZone if explicitly provided
-          // Otherwise let Intl.DateTimeFormat use system timezone (from TZ env var)
           return formatters.getDateTimeFormat(locales, {
             ...dateTimeOptions,
-            ...(timeZone ? {timeZone} : {})
+            timeZone: dateTimeOptions?.timeZone ?? timeZone
           });
         }
       }
@@ -113,11 +122,11 @@ export default function formatMessage(
     values ? prepareTranslationValues(values) : values
   );
 
-  // intl-messageformat.format() can return non-string primitives (numbers, booleans)
-  // in edge cases, so we convert them to strings for consistency
-  return typeof formattedMessage === 'string' ||
-    isValidElement(formattedMessage) ||
-    Array.isArray(formattedMessage)
+  // Limit the function signature to return strings or React elements
+  return isValidElement(formattedMessage) ||
+    // Arrays of React elements
+    Array.isArray(formattedMessage) ||
+    typeof formattedMessage === 'string'
     ? formattedMessage
     : String(formattedMessage);
 }

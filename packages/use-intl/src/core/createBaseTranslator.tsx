@@ -195,28 +195,17 @@ function createBaseTranslatorImpl<
       }
     }
 
-    // TODO: This check for arrays should be moved to compile-format.tsx, it's not relevant for format-only
-    if (typeof message === 'object') {
-      let code, errorMessage;
-      if (Array.isArray(message)) {
-        code = IntlErrorCode.INVALID_MESSAGE;
-        if (process.env.NODE_ENV !== 'production') {
-          errorMessage = `Message at \`${joinPath(
-            namespace,
-            key
-          )}\` resolved to an array, but only strings are supported. See https://next-intl.dev/docs/usage/translations#arrays-of-messages`;
-        }
-      } else {
-        code = IntlErrorCode.INSUFFICIENT_PATH;
-        if (process.env.NODE_ENV !== 'production') {
-          errorMessage = `Message at \`${joinPath(
-            namespace,
-            key
-          )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`;
-        }
-      }
-
-      return getFallbackFromErrorAndNotify(key, code, errorMessage);
+    if (typeof message === 'object' && !Array.isArray(message)) {
+      return getFallbackFromErrorAndNotify(
+        key,
+        IntlErrorCode.INSUFFICIENT_PATH,
+        process.env.NODE_ENV !== 'production'
+          ? `Message at \`${joinPath(
+              namespace,
+              key
+            )}\` resolved to an object, but only strings are supported. Use a \`.\` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages`
+          : undefined
+      );
     }
 
     // TODO: should be moved to compile-format.tsx, it's not relevant for format-only (pls also check other code in this file and move relevant code)
@@ -239,6 +228,7 @@ function createBaseTranslatorImpl<
     } catch (error) {
       const thrownError = error as Error;
       const errorMessage = thrownError.message;
+
       // Check if this is an invalid message error (e.g., invalid/malformed argument names or types)
       // vs a formatting error (e.g., missing values)
       const isInvalidMessage =
@@ -248,17 +238,24 @@ function createBaseTranslatorImpl<
       const errorCode = isInvalidMessage
         ? IntlErrorCode.INVALID_MESSAGE
         : IntlErrorCode.FORMATTING_ERROR;
+
       // Only append originalMessage for INVALID_MESSAGE errors
       const finalMessage =
         process.env.NODE_ENV !== 'production'
           ? errorMessage +
-              (isInvalidMessage &&
-              'originalMessage' in thrownError &&
-              thrownError.originalMessage
-                ? ` (${thrownError.originalMessage})`
-                : '')
+            (isInvalidMessage &&
+            'originalMessage' in thrownError &&
+            thrownError.originalMessage
+              ? ` (${thrownError.originalMessage})`
+              : '')
           : errorMessage;
-      return getFallbackFromErrorAndNotify(key, errorCode, finalMessage, fallback);
+
+      return getFallbackFromErrorAndNotify(
+        key,
+        errorCode,
+        finalMessage,
+        fallback
+      );
     }
   }
 
