@@ -126,6 +126,17 @@ export default function getNextConfig(
     }
   }
 
+  // Validate messages config
+  if (pluginConfig.experimental?.messages) {
+    const messages = pluginConfig.experimental.messages;
+    if (typeof messages.format !== 'string') {
+      throwError('`format` is required when using `messages`.');
+    }
+    if (typeof messages.path !== 'string') {
+      throwError('`path` is required when using `messages`.');
+    }
+  }
+
   if (useTurbo) {
     if (
       pluginConfig.requestConfig &&

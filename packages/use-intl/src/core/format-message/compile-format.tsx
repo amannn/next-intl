@@ -1,5 +1,5 @@
 import {IntlMessageFormat} from 'intl-messageformat';
-import {type ReactNode, cloneElement, isValidElement} from 'react';
+import {isValidElement} from 'react';
 import IntlError from '../IntlError.js';
 import IntlErrorCode from '../IntlErrorCode.js';
 import type {RichTranslationValues} from '../TranslationValues.js';
@@ -28,32 +28,6 @@ function createMessageFormatter(
   );
 
   return getMessageFormat;
-}
-
-function prepareTranslationValues(values: RichTranslationValues) {
-  // Workaround for https://github.com/formatjs/formatjs/issues/1467
-  const transformedValues: RichTranslationValues = {};
-  Object.keys(values).forEach((key) => {
-    let index = 0;
-    const value = values[key];
-
-    let transformed;
-    if (typeof value === 'function') {
-      transformed = (chunks: ReactNode) => {
-        const result = value(chunks);
-
-        return isValidElement(result)
-          ? cloneElement(result, {key: key + index++})
-          : result;
-      };
-    } else {
-      transformed = value;
-    }
-
-    transformedValues[key] = transformed;
-  });
-
-  return transformedValues;
 }
 
 function getPlainMessage(
@@ -146,7 +120,7 @@ export default function formatMessage(
     // for rich text elements since a recent minor update. This
     // needs to be evaluated in detail, possibly also in regard
     // to be able to format to parts.
-    values ? prepareTranslationValues(values) : values
+    values
   );
 
   // Limit the function signature to return strings or React elements

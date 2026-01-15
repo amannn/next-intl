@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import {type ReactNode, cloneElement, isValidElement} from 'react';
 import formatMessage from 'use-intl/format-message';
 import type AbstractIntlMessages from './AbstractIntlMessages.js';
 import type {Locale} from './AppConfig.js';
@@ -15,6 +15,32 @@ import type {
 import {defaultGetMessageFallback} from './defaults.js';
 import type {Formatters, IntlCache} from './formatters.js';
 import joinPath from './joinPath.js';
+
+function prepareTranslationValues(values: RichTranslationValues) {
+  // Related to https://github.com/formatjs/formatjs/issues/1467
+  const transformedValues: RichTranslationValues = {};
+  Object.keys(values).forEach((key) => {
+    let index = 0;
+    const value = values[key];
+
+    let transformed;
+    if (typeof value === 'function') {
+      transformed = (chunks: ReactNode) => {
+        const result = value(chunks);
+
+        return isValidElement(result)
+          ? cloneElement(result, {key: key + index++})
+          : result;
+      };
+    } else {
+      transformed = value;
+    }
+
+    transformedValues[key] = transformed;
+  });
+
+  return transformedValues;
+}
 
 function resolvePath(
   locale: Locale,
@@ -184,14 +210,20 @@ function createBaseTranslatorImpl<
     const messagePath = joinPath(namespace, key);
 
     try {
-      return formatMessage(messagePath, message as any, values, {
-        cache,
-        formatters,
-        globalFormats,
-        formats,
-        locale,
-        timeZone
-      });
+      return formatMessage(
+        messagePath,
+        // @ts-expect-error -- We have additional validation either in `compile-format.tsx` or in case of `format-only.tsx` in the loader
+        message,
+        values ? prepareTranslationValues(values) : values,
+        {
+          cache,
+          formatters,
+          globalFormats,
+          formats,
+          locale,
+          timeZone
+        }
+      );
     } catch (error) {
       let errorCode, errorMessage;
       if (error instanceof IntlError) {

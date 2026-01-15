@@ -70,8 +70,8 @@ it('adds keys for repeated rich text elements', async () => {
   const keys = (result as Array<ReactElement>).map((element) => element.key);
   expect(keys).toMatchInlineSnapshot(`
     [
-      ".0",
-      ".1",
+      "b0",
+      "b1",
     ]
   `);
 });

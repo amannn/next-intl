@@ -1,5 +1,5 @@
 import format, {type CompiledMessage} from 'icu-minify/format';
-import {Children, type ReactNode} from 'react';
+import type {ReactNode} from 'react';
 import type {FormatMessage} from './types.js';
 
 /**
@@ -26,9 +26,5 @@ export default function formatMessage(
     ...rest
   });
 
-  return Array.isArray(result)
-    ? // Assign keys for rich text elements
-      Children.toArray(result)
-    : // Plain strings
-      result;
+  return result;
 }
