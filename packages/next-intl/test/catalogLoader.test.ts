@@ -1,9 +1,8 @@
-import compile from 'icu-minify/compiler';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 
-vi.mock('icu-minify/compiler', () => ({
-  default: vi.fn((message: string) => `__compiled__${message}`)
-}));
+const compileMock = vi.fn((message: string) => `__compiled__${message}`);
+
+vi.mock('icu-minify/compiler', () => ({default: compileMock}));
 
 type MessagesConfig = {
   format: 'json';
@@ -81,8 +80,6 @@ beforeEach(() => {
 
 describe('catalogLoader precompile cache', () => {
   it('reuses compiled messages for unchanged source', async () => {
-    const compileMock = vi.mocked(compile);
-
     const source = JSON.stringify({hello: 'Hello', world: 'World'});
     await runCatalogLoader({resourcePath: '/messages/en.json', source});
     await runCatalogLoader({resourcePath: '/messages/en.json', source});
@@ -91,8 +88,6 @@ describe('catalogLoader precompile cache', () => {
   });
 
   it('recompiles only the changed message', async () => {
-    const compileMock = vi.mocked(compile);
-
     const sourceA = JSON.stringify({hello: 'Hello', world: 'World'});
     const sourceB = JSON.stringify({hello: 'Hello!!!', world: 'World'});
 
@@ -103,8 +98,6 @@ describe('catalogLoader precompile cache', () => {
   });
 
   it('evicts removed messages and recompiles when they reappear', async () => {
-    const compileMock = vi.mocked(compile);
-
     const sourceA = JSON.stringify({hello: 'Hello', world: 'World'});
     const sourceB = JSON.stringify({hello: 'Hello'});
 
@@ -116,8 +109,6 @@ describe('catalogLoader precompile cache', () => {
   });
 
   it('does not share cache across different catalogs', async () => {
-    const compileMock = vi.mocked(compile);
-
     const source = JSON.stringify({hello: 'Hello', world: 'World'});
 
     await runCatalogLoader({resourcePath: '/messages/en.json', source});
