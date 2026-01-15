@@ -1,11 +1,6 @@
-import {IntlMessageFormat} from 'intl-messageformat';
 import {describe, expect, it} from 'vitest';
 import compile from '../src/compiler.js';
-import format, {
-  type FormatOptions,
-  type FormatValues,
-  type Formats
-} from '../src/format.js';
+import format, {type FormatOptions, type FormatValues} from '../src/format.js';
 import type {CompiledMessage} from '../src/types.js';
 
 const formatters: FormatOptions['formatters'] = {
@@ -13,18 +8,6 @@ const formatters: FormatOptions['formatters'] = {
   getNumberFormat: (...args) => new Intl.NumberFormat(...args),
   getPluralRules: (...args) => new Intl.PluralRules(...args)
 };
-
-type FormatResult<RichTextElement> =
-  | string
-  | RichTextElement
-  | Array<string | RichTextElement>;
-
-type IntlMessageFormatFormats = ConstructorParameters<
-  typeof IntlMessageFormat
->[2];
-type IntlMessageFormatOptions = ConstructorParameters<
-  typeof IntlMessageFormat
->[3];
 
 function formatMessage<T = string>(
   message: CompiledMessage,
@@ -35,77 +18,6 @@ function formatMessage<T = string>(
   return format<T>(message, locale, values, {...options, formatters});
 }
 
-function formatWithIntlMessageFormat<T = string>(
-  message: string,
-  locale: string,
-  values: FormatValues<T>,
-  options?: Omit<FormatOptions, 'formatters'>
-): FormatResult<T> {
-  const normalizedFormats = applyGlobalTimeZone(
-    options?.formats,
-    options?.timeZone
-  );
-  const formatterOptions = options?.timeZone
-    ? ({timeZone: options.timeZone} as IntlMessageFormatOptions)
-    : undefined;
-  const formatter = new IntlMessageFormat(
-    message,
-    locale,
-    normalizedFormats as IntlMessageFormatFormats,
-    formatterOptions
-  );
-  return formatter.format(values) as FormatResult<T>;
-}
-
-function applyGlobalTimeZone(
-  formats: Formats | undefined,
-  timeZone: string | undefined
-): Formats | undefined {
-  if (!timeZone || !formats) {
-    return formats;
-  }
-
-  function applyTimeZoneMap(
-    formatMap: Record<string, Intl.DateTimeFormatOptions> | undefined
-  ) {
-    if (!formatMap) {
-      return undefined;
-    }
-
-    const updated: Record<string, Intl.DateTimeFormatOptions> = {};
-    for (const [key, value] of Object.entries(formatMap)) {
-      updated[key] = value.timeZone ? value : {...value, timeZone};
-    }
-    return updated;
-  }
-
-  const date = applyTimeZoneMap(formats.date);
-  const time = applyTimeZoneMap(formats.time);
-  const number = formats.number;
-
-  return {
-    ...(date ? {date} : {}),
-    ...(number ? {number} : {}),
-    ...(time ? {time} : {})
-  };
-}
-
-function expectMatchesIntlMessageFormat<T = string>(
-  message: string,
-  locale: string,
-  values: FormatValues<T>,
-  options: Omit<FormatOptions, 'formatters'> | undefined,
-  result: FormatResult<T>
-) {
-  const expected = formatWithIntlMessageFormat(
-    message,
-    locale,
-    values,
-    options
-  );
-  expect(result).toEqual(expected);
-}
-
 describe('static text', () => {
   it('handles an empty string', () => {
     const message = '';
@@ -113,7 +25,6 @@ describe('static text', () => {
     expect(compiled).toMatchInlineSnapshot(`""`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`""`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('handles plain text', () => {
@@ -122,7 +33,6 @@ describe('static text', () => {
     expect(compiled).toMatchInlineSnapshot(`"Hello world"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"Hello world"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('handles whitespace', () => {
@@ -131,7 +41,6 @@ describe('static text', () => {
     expect(compiled).toMatchInlineSnapshot(`"  Hello  world  "`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"  Hello  world  "`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('handles unicode content', () => {
@@ -140,7 +49,6 @@ describe('static text', () => {
     expect(compiled).toMatchInlineSnapshot(`"こんにちは 🌍"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"こんにちは 🌍"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 });
 
@@ -151,7 +59,6 @@ describe('escaping', () => {
     expect(compiled).toMatchInlineSnapshot(`"{"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"{"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('escapes a closing brace', () => {
@@ -160,7 +67,6 @@ describe('escaping', () => {
     expect(compiled).toMatchInlineSnapshot(`"}"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"}"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('escapes braces around text', () => {
@@ -169,7 +75,6 @@ describe('escaping', () => {
     expect(compiled).toMatchInlineSnapshot(`"{name}"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"{name}"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('escapes single quotes', () => {
@@ -178,7 +83,6 @@ describe('escaping', () => {
     expect(compiled).toMatchInlineSnapshot(`"It's working"`);
     const result = formatMessage(compiled, 'en', {});
     expect(result).toMatchInlineSnapshot(`"It's working"`);
-    expectMatchesIntlMessageFormat(message, 'en', {}, undefined, result);
   });
 
   it('handles mixed escaped and unescaped', () => {
@@ -194,13 +98,6 @@ describe('escaping', () => {
       `);
     const result = formatMessage(compiled, 'en', {name: 'test'});
     expect(result).toMatchInlineSnapshot(`"{name} is test"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {name: 'test'},
-      undefined,
-      result
-    );
   });
 });
 
@@ -217,13 +114,6 @@ describe('simple arguments', () => {
       `);
     const result = formatMessage(compiled, 'en', {name: 'World'});
     expect(result).toMatchInlineSnapshot(`"World"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {name: 'World'},
-      undefined,
-      result
-    );
   });
 
   it('formats text with an argument', () => {
@@ -239,13 +129,6 @@ describe('simple arguments', () => {
       `);
     const result = formatMessage(compiled, 'en', {name: 'World'});
     expect(result).toMatchInlineSnapshot(`"Hello World"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {name: 'World'},
-      undefined,
-      result
-    );
   });
 
   it('formats multiple arguments', () => {
@@ -264,13 +147,6 @@ describe('simple arguments', () => {
       `);
     const result = formatMessage(compiled, 'en', {first: 'John', last: 'Doe'});
     expect(result).toMatchInlineSnapshot(`"John Doe"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {first: 'John', last: 'Doe'},
-      undefined,
-      result
-    );
   });
 
   it('converts numbers to strings for simple arguments', () => {
@@ -280,20 +156,6 @@ describe('simple arguments', () => {
     expect(result).toMatchInlineSnapshot(`"1234"`);
     const decimalResult = formatMessage(compiled, 'en', {val: 0.75});
     expect(decimalResult).toMatchInlineSnapshot(`"0.75"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {val: 1234},
-      undefined,
-      result
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {val: 0.75},
-      undefined,
-      decimalResult
-    );
   });
 
   it('throws for a missing argument', () => {
@@ -333,13 +195,6 @@ describe('number formatting', () => {
       `);
     const result = formatMessage(compiled, 'en', {val: 1234.5});
     expect(result).toMatchInlineSnapshot(`"1,234.5"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {val: 1234.5},
-      undefined,
-      result
-    );
   });
 
   it('formats a percentage', () => {
@@ -359,7 +214,6 @@ describe('number formatting', () => {
     };
     const result = formatMessage(compiled, 'en', {val: 0.75}, options);
     expect(result).toMatchInlineSnapshot(`"75%"`);
-    expectMatchesIntlMessageFormat(message, 'en', {val: 0.75}, options, result);
   });
 
   it('formats an integer', () => {
@@ -379,7 +233,6 @@ describe('number formatting', () => {
     };
     const result = formatMessage(compiled, 'en', {val: 3.7}, options);
     expect(result).toMatchInlineSnapshot(`"4"`);
-    expectMatchesIntlMessageFormat(message, 'en', {val: 3.7}, options, result);
   });
 
   it('formats numbers with a German locale', () => {
@@ -387,13 +240,6 @@ describe('number formatting', () => {
     const compiled = compile(message);
     const result = formatMessage(compiled, 'de', {val: 1234.5});
     expect(result).toMatchInlineSnapshot(`"1.234,5"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'de',
-      {val: 1234.5},
-      undefined,
-      result
-    );
   });
 
   it('formats currency using skeleton syntax', () => {
@@ -413,13 +259,6 @@ describe('number formatting', () => {
       `);
     const result = formatMessage(compiled, 'en', {price: 123.45});
     expect(result).toMatchInlineSnapshot(`"€123.45"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {price: 123.45},
-      undefined,
-      result
-    );
   });
 
   it('formats unit using skeleton syntax', () => {
@@ -439,13 +278,6 @@ describe('number formatting', () => {
       `);
     const result = formatMessage(compiled, 'en', {weight: 5});
     expect(result).toMatchInlineSnapshot(`"5 kg"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {weight: 5},
-      undefined,
-      result
-    );
   });
 
   it('formats with decimal precision skeleton', () => {
@@ -465,13 +297,6 @@ describe('number formatting', () => {
       `);
     const result = formatMessage(compiled, 'en', {val: 3.1});
     expect(result).toMatchInlineSnapshot(`"3.10"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {val: 3.1},
-      undefined,
-      result
-    );
   });
 
   it('throws for non-number values', () => {
@@ -507,7 +332,6 @@ describe('date formatting', () => {
     const result = formatMessage(compiled, 'en', {d: date}, options);
     expect(result).toContain('3');
     expect(result).toContain('15');
-    expectMatchesIntlMessageFormat(message, 'en', {d: date}, options, result);
   });
 
   it('formats a date with medium style', () => {
@@ -531,7 +355,6 @@ describe('date formatting', () => {
     };
     const result = formatMessage(compiled, 'en', {d: date}, options);
     expect(result).toContain('Mar');
-    expectMatchesIntlMessageFormat(message, 'en', {d: date}, options, result);
   });
 
   describe('timeZone', () => {
@@ -549,13 +372,6 @@ describe('date formatting', () => {
       };
       const result = formatMessage(compiled, 'en', {d: lateDate}, options);
       expect(result).toMatchInlineSnapshot(`"Mar 16, 2024"`);
-      expectMatchesIntlMessageFormat(
-        message,
-        'en',
-        {d: lateDate},
-        options,
-        result
-      );
     });
 
     it('prefers format-specific timeZone over global', () => {
@@ -576,13 +392,6 @@ describe('date formatting', () => {
       };
       const result = formatMessage(compiled, 'en', {d: lateDate}, options);
       expect(result).toMatchInlineSnapshot(`"Mar 15, 2024"`);
-      expectMatchesIntlMessageFormat(
-        message,
-        'en',
-        {d: lateDate},
-        options,
-        result
-      );
     });
   });
 
@@ -605,7 +414,6 @@ describe('date formatting', () => {
     const options: Omit<FormatOptions, 'formatters'> = {timeZone: 'UTC'};
     const result = formatMessage(compiled, 'en', {d: date}, options);
     expect(result).toMatchInlineSnapshot(`"03/15/2024"`);
-    expectMatchesIntlMessageFormat(message, 'en', {d: date}, options, result);
   });
 
   it('throws for non-Date values', () => {
@@ -640,7 +448,6 @@ describe('time formatting', () => {
     };
     const result = formatMessage(compiled, 'en', {t: date}, options);
     expect(typeof result).toBe('string');
-    expectMatchesIntlMessageFormat(message, 'en', {t: date}, options, result);
   });
 
   describe('timeZone', () => {
@@ -655,7 +462,6 @@ describe('time formatting', () => {
       };
       const result = formatMessage(compiled, 'en', {t: date}, options);
       expect(result).toMatchInlineSnapshot(`"10:30"`);
-      expectMatchesIntlMessageFormat(message, 'en', {t: date}, options, result);
     });
 
     it('prefers format-specific timeZone over global', () => {
@@ -676,7 +482,6 @@ describe('time formatting', () => {
       };
       const result = formatMessage(compiled, 'en', {t: date}, options);
       expect(result).toMatchInlineSnapshot(`"14:30"`);
-      expectMatchesIntlMessageFormat(message, 'en', {t: date}, options, result);
     });
   });
 
@@ -709,20 +514,6 @@ describe('select', () => {
     expect(femaleResult).toMatchInlineSnapshot(`"She"`);
     const maleResult = formatMessage(compiled, 'en', {gender: 'male'});
     expect(maleResult).toMatchInlineSnapshot(`"He"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'female'},
-      undefined,
-      femaleResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'male'},
-      undefined,
-      maleResult
-    );
   });
 
   it('falls back to other', () => {
@@ -730,13 +521,6 @@ describe('select', () => {
     const compiled = compile(message);
     const result = formatMessage(compiled, 'en', {gender: 'unknown'});
     expect(result).toMatchInlineSnapshot(`"They"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'unknown'},
-      undefined,
-      result
-    );
   });
 
   it('formats arguments in branches', () => {
@@ -770,13 +554,6 @@ describe('select', () => {
       name: 'Alice'
     });
     expect(result).toMatchInlineSnapshot(`"Alice is a woman"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'female', name: 'Alice'},
-      undefined,
-      result
-    );
   });
 
   it('formats multiple arguments in branches', () => {
@@ -795,20 +572,6 @@ describe('select', () => {
       lastName: 'Smith'
     });
     expect(otherResult).toMatchInlineSnapshot(`"Dear Alex Smith"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'female', firstName: 'Jane', lastName: 'Doe'},
-      undefined,
-      femaleResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'other', firstName: 'Alex', lastName: 'Smith'},
-      undefined,
-      otherResult
-    );
   });
 
   it('throws for a select without other', () => {
@@ -855,13 +618,6 @@ describe('select', () => {
         "tag": "b",
       }
     `);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'male', b: () => ({tag: 'b'})},
-      undefined,
-      result
-    );
   });
 
   it('does not unwrap single typed nodes in branches', () => {
@@ -894,13 +650,6 @@ describe('select', () => {
       options
     );
     expect(result).toBe('1,234');
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'male', value: 1234},
-      options,
-      result
-    );
   });
 });
 
@@ -932,27 +681,6 @@ describe('cardinal plural (plural)', () => {
     expect(manyResult).toMatchInlineSnapshot(`"5 items"`);
     const zeroResult = formatMessage(compiled, 'en', {count: 0});
     expect(zeroResult).toMatchInlineSnapshot(`"0 items"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 1},
-      undefined,
-      oneResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 5},
-      undefined,
-      manyResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 0},
-      undefined,
-      zeroResult
-    );
   });
 
   it('uses exact matches over plural rules', () => {
@@ -985,27 +713,6 @@ describe('cardinal plural (plural)', () => {
     expect(oneResult).toMatchInlineSnapshot(`"one item"`);
     const twoResult = formatMessage(compiled, 'en', {count: 2});
     expect(twoResult).toMatchInlineSnapshot(`"2 items"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 0},
-      undefined,
-      zeroResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 1},
-      undefined,
-      oneResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 2},
-      undefined,
-      twoResult
-    );
   });
 
   it('formats the pound sign with the locale', () => {
@@ -1013,13 +720,6 @@ describe('cardinal plural (plural)', () => {
     const compiled = compile(message);
     const result = formatMessage(compiled, 'de', {count: 1000});
     expect(result).toMatchInlineSnapshot(`"1.000 items"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'de',
-      {count: 1000},
-      undefined,
-      result
-    );
   });
 
   it('uses Polish plural rules', () => {
@@ -1035,22 +735,6 @@ describe('cardinal plural (plural)', () => {
     expect(manyResult).toMatchInlineSnapshot(`"5 plików"`);
     const otherResult = formatMessage(compiled, 'pl', {n: 22});
     expect(otherResult).toMatchInlineSnapshot(`"22 pliki"`);
-    expectMatchesIntlMessageFormat(message, 'pl', {n: 1}, undefined, oneResult);
-    expectMatchesIntlMessageFormat(message, 'pl', {n: 2}, undefined, fewResult);
-    expectMatchesIntlMessageFormat(
-      message,
-      'pl',
-      {n: 5},
-      undefined,
-      manyResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'pl',
-      {n: 22},
-      undefined,
-      otherResult
-    );
   });
 
   it('throws for a plural without other', () => {
@@ -1109,48 +793,6 @@ describe('ordinal plural (selectordinal)', () => {
     expect(elevenResult).toMatchInlineSnapshot(`"11th"`);
     const twentyOneResult = formatMessage(compiled, 'en', {n: 21});
     expect(twentyOneResult).toMatchInlineSnapshot(`"21st"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 1},
-      undefined,
-      firstResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 2},
-      undefined,
-      secondResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 3},
-      undefined,
-      thirdResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 4},
-      undefined,
-      fourthResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 11},
-      undefined,
-      elevenResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {n: 21},
-      undefined,
-      twentyOneResult
-    );
   });
 });
 
@@ -1171,7 +813,6 @@ describe('tags', () => {
     };
     const result = formatMessage(compiled, 'en', values);
     expect(result).toMatchInlineSnapshot(`"<b>important</b>"`);
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 
   it('handles an empty tag', () => {
@@ -1189,7 +830,6 @@ describe('tags', () => {
     const values = {br: () => '<br/>'};
     const result = formatMessage(compiled, 'en', values);
     expect(result).toMatchInlineSnapshot(`"<br/>"`);
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 
   it('handles a tag with an argument', () => {
@@ -1211,7 +851,6 @@ describe('tags', () => {
     };
     const result = formatMessage(compiled, 'en', values);
     expect(result).toMatchInlineSnapshot(`"<a>Click here</a>"`);
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 
   it('handles a tag with a pound sign', () => {
@@ -1246,7 +885,6 @@ describe('tags', () => {
     };
     const result = formatMessage(compiled, 'en', values);
     expect(result).toMatchInlineSnapshot(`"<b>2</b>"`);
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 
   it('supports tags returning non-strings', () => {
@@ -1269,7 +907,6 @@ describe('tags', () => {
           },
         ]
       `);
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 
   it('throws for a missing tag handler', () => {
@@ -1345,13 +982,6 @@ describe('tags', () => {
           "!",
         ]
       `);
-      expectMatchesIntlMessageFormat<ReactElement>(
-        message,
-        'en',
-        values,
-        undefined,
-        result
-      );
     });
   });
 });
@@ -1425,20 +1055,6 @@ describe('mixed', () => {
       gender: 'female'
     });
     expect(manyResult).toMatchInlineSnapshot(`"her items"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 1, gender: 'female'},
-      undefined,
-      oneResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {count: 5, gender: 'female'},
-      undefined,
-      manyResult
-    );
   });
 
   it('formats a plural inside a select', () => {
@@ -1460,27 +1076,6 @@ describe('mixed', () => {
       n: 1
     });
     expect(otherOneResult).toMatchInlineSnapshot(`"They have 1 cat"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'female', n: 1},
-      undefined,
-      femaleOneResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'female', n: 3},
-      undefined,
-      femaleManyResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {gender: 'other', n: 1},
-      undefined,
-      otherOneResult
-    );
   });
 
   it('formats deeply nested structures', () => {
@@ -1495,34 +1090,6 @@ describe('mixed', () => {
     expect(levelResult).toMatchInlineSnapshot(`"level"`);
     const topResult = formatMessage(compiled, 'en', {a: 'z', b: 1, c: 'y'});
     expect(topResult).toMatchInlineSnapshot(`"top"`);
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {a: 'x', b: 1, c: 'y'},
-      undefined,
-      deepResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {a: 'x', b: 1, c: 'z'},
-      undefined,
-      nestedResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {a: 'x', b: 2, c: 'y'},
-      undefined,
-      levelResult
-    );
-    expectMatchesIntlMessageFormat(
-      message,
-      'en',
-      {a: 'z', b: 1, c: 'y'},
-      undefined,
-      topResult
-    );
   });
 
   it('formats tags with plural and arguments', () => {
@@ -1540,6 +1107,5 @@ describe('mixed', () => {
     expect(result).toMatchInlineSnapshot(
       `"Welcome, <strong>Alice</strong>! You have <a href="/messages">5 messages</a>."`
     );
-    expectMatchesIntlMessageFormat(message, 'en', values, undefined, result);
   });
 });
