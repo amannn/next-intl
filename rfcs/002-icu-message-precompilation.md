@@ -12,14 +12,9 @@ This document describes the motivation, design decisions, and tradeoffs of this 
 
 - [Motivation](#motivation)
 - [Proposed solution](#proposed-solution)
-- [Implementation details](#implementation-details)
-  - [Compiled format](#compiled-format)
-  - [Build-time compilation](#build-time-compilation)
-  - [Runtime formatting](#runtime-formatting)
-  - [Integration with next-intl](#integration-with-next-intl)
+- [Implementation](#implementation)
 - [Tradeoffs](#tradeoffs)
-- [Migration](#migration)
-- [Prior art & credits](#prior-art--credits)
+- [Prior art](#prior-art)
 
 ## Motivation
 
@@ -98,7 +93,7 @@ t('Hello {name}!', {name: 'World'});
 
 (also server-only APIs like `getTranslations` and `getExtracted` are optimized)
 
-## Implementation details
+## Implementation
 
 ### Architecture
 
@@ -203,7 +198,7 @@ Precompilation cannot be used automatically for messages loaded from a remote so
 
 When messages are loaded dynamically (e.g., from a TMS, CMS, API, or CDN), the catalog loader cannot precompile them during the build process. However, you can manually compile remote messages after fetching them by using `icu-minify/compile` in your `i18n/request.ts` file and then returning the result as your `messages`.
 
-## Prior art & credits
+## Prior art
 
 Ahead-of-time compilation was heavily inspired by [`icu-to-json`](https://github.com/jantimon/icu-to-json) by [Jan Nicklas](https://x.com/jantimon). I later also discovered [`@lingui/message-utils`](https://github.com/lingui/js-lingui/tree/main/packages/message-utils), which is another library that has explored this approach.
 
