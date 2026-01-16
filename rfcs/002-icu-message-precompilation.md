@@ -182,7 +182,7 @@ The compiled format uses a compact array-based representation that:
 
 ### 1. `t.raw` is not supported
 
-The [`t.raw`](https://next-intl.dev/docs/usage/translations#raw-messages) API will not work with precompiled messages. Or rather, you'll encounter parse errors when you try to put anything else than ICU messages into your locale catalogs. This is because messages need to be parsed before we even know if you intend to call `t.raw` on them.
+The [`t.raw`](https://next-intl.dev/docs/usage/translations#raw-messages) API will not work with precompiled messages. You'll encounter parse errors when you try to put anything else than ICU messages into your locale catalogs and also if you call `t.raw` on a precompiled message, you'd simply receive the intermediate representation instead of the raw message. This is because messages need to be parsed before we even know if you intend to call `t.raw` on them.
 
 Historically, `t.raw` was added to support raw HTML content in your messages. However, time has shown that this is cumbersome for long-form content in practice anyway and that there are better alternatives:
 
