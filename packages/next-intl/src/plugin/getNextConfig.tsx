@@ -71,7 +71,11 @@ export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
 ) {
-  const useTurbo = process.env.TURBOPACK != null;
+  const useTurbo =
+    process.env.TURBOPACK != null ||
+    nextConfig?.turbopack != null ||
+    nextConfig?.experimental?.turbo != null ||
+    isNextJs16OrHigher();
   const nextIntlConfig: Partial<NextConfig> = {};
 
   function getExtractMessagesLoaderConfig() {
