@@ -12,7 +12,29 @@ import type {
 import {setNestedProperty} from '../../extractor/utils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
+// The module scope is safe for some caching, but Next.js can
+// create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
+
+type CompiledMessageCacheEntry = {
+  compiledMessage: unknown;
+  messageValue: string;
+};
+
+const messageCacheByCatalog = new Map<
+  string,
+  Map<string, CompiledMessageCacheEntry>
+>();
+
+function getMessageCache(catalogId: string) {
+  let cache = messageCacheByCatalog.get(catalogId);
+  if (!cache) {
+    cache = new Map();
+    messageCacheByCatalog.set(catalogId, cache);
+  }
+  return cache;
+}
+
 async function getCodec(
   options: CatalogLoaderConfig,
   projectRoot: string
@@ -45,7 +67,8 @@ export default function catalogLoader(
 
       if (options.messages.precompile) {
         const decoded = codec.decode(source, {locale});
-        const precompiled = precompileMessages(decoded);
+        const cache = getMessageCache(this.resourcePath);
+        const precompiled = precompileMessages(decoded, cache);
         outputString = JSON.stringify(precompiled);
       } else {
         outputString = codec.toJSONString(source, {locale});
@@ -64,11 +87,14 @@ export default function catalogLoader(
  * using icu-minify/compiler for smaller runtime bundles.
  */
 function precompileMessages(
-  messages: Array<ExtractorMessage>
+  messages: Array<ExtractorMessage>,
+  cache: Map<string, CompiledMessageCacheEntry>
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
+  const cacheKeysToEvict = new Set(cache.keys());
 
   for (const message of messages) {
+    cacheKeysToEvict.delete(message.id);
     const messageValue = message.message;
 
     if (Array.isArray(messageValue)) {
@@ -83,8 +109,23 @@ function precompileMessages(
       );
     }
 
-    const compiledMessage = compile(messageValue);
+    const cachedEntry = cache.get(message.id);
+    const hasCacheMatch = cachedEntry?.messageValue === messageValue;
+
+    let compiledMessage;
+    if (hasCacheMatch) {
+      compiledMessage = cachedEntry.compiledMessage;
+    } else {
+      compiledMessage = compile(messageValue);
+      cache.set(message.id, {compiledMessage, messageValue});
+    }
+
     setNestedProperty(result, message.id, compiledMessage);
+  }
+
+  // Evict unused cache entries
+  for (const cachedId of cacheKeysToEvict) {
+    cache.delete(cachedId);
   }
 
   return result;
