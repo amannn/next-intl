@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.7.0 (2026-01-01)
+
+### Features
+
+* Improvements for `useExtracted` ([#2200](https://github.com/amannn/next-intl/issues/2200)) ([ebc5e43](https://github.com/amannn/next-intl/commit/ebc5e43e41be1712f621ed6d19d752bcf993e163)) – by @amannn
+
 ## 4.6.1 (2025-12-16)
 
 ### Bug Fixes

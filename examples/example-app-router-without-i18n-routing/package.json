@@ -1,37 +1,27 @@
 {
   "name": "example-app-router-without-i18n-routing",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "lint": "eslint src && prettier src --check",
-    "test": "playwright test",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@heroicons/react": "^2.2.0",
-    "@radix-ui/react-select": "^2.1.6",
-    "clsx": "^2.1.1",
-    "lodash": "^4.17.21",
     "next": "^16.0.10",
     "next-intl": "^4.0.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "zod": "^4.0.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
-    "@playwright/test": "^1.51.1",
-    "@types/lodash": "^4.17.5",
-    "@types/node": "^20.14.5",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.4.19",
     "eslint": "^9.38.0",
     "eslint-config-next": "^16.0.10",
-    "postcss": "^8.5.3",
     "prettier": "^3.3.3",
-    "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3"
   },
   "prettier": {
