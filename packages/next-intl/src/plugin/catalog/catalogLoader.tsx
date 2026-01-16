@@ -12,6 +12,8 @@ import type {
 import {setNestedProperty} from '../../extractor/utils.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
+// The module scope is safe for some caching, but Next.js can
+// create multiple loader instances so don't expect a singleton.
 let cachedCodec: ExtractorCodec | null = null;
 
 type CompiledMessageCacheEntry = {
@@ -19,16 +21,16 @@ type CompiledMessageCacheEntry = {
   messageValue: string;
 };
 
-const compiledMessageCacheByCatalogId = new Map<
+const messageCacheByCatalog = new Map<
   string,
   Map<string, CompiledMessageCacheEntry>
 >();
 
-function getCompiledMessageCache(catalogId: string) {
-  let cache = compiledMessageCacheByCatalogId.get(catalogId);
+function getMessageCache(catalogId: string) {
+  let cache = messageCacheByCatalog.get(catalogId);
   if (!cache) {
     cache = new Map();
-    compiledMessageCacheByCatalogId.set(catalogId, cache);
+    messageCacheByCatalog.set(catalogId, cache);
   }
   return cache;
 }
@@ -65,7 +67,7 @@ export default function catalogLoader(
 
       if (options.messages.precompile) {
         const decoded = codec.decode(source, {locale});
-        const cache = getCompiledMessageCache(this.resourcePath);
+        const cache = getMessageCache(this.resourcePath);
         const precompiled = precompileMessages(decoded, cache);
         outputString = JSON.stringify(precompiled);
       } else {
@@ -89,10 +91,10 @@ function precompileMessages(
   cache: Map<string, CompiledMessageCacheEntry>
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
-  const usedMessageIds = new Set<string>();
+  const cacheKeysToEvict = new Set(cache.keys());
 
   for (const message of messages) {
-    usedMessageIds.add(message.id);
+    cacheKeysToEvict.delete(message.id);
     const messageValue = message.message;
 
     if (Array.isArray(messageValue)) {
@@ -108,21 +110,25 @@ function precompileMessages(
     }
 
     const cachedEntry = cache.get(message.id);
-    const compiledMessage =
-      cachedEntry?.messageValue === messageValue
-        ? cachedEntry.compiledMessage
-        : compile(messageValue);
+    const hasCacheMatch = cachedEntry?.messageValue === messageValue;
 
-    if (compiledMessage !== cachedEntry?.compiledMessage) {
+    let compiledMessage;
+    if (hasCacheMatch) {
+      console.log('cache hit', message.id);
+      compiledMessage = cachedEntry.compiledMessage;
+    } else {
+      console.log('compile', message.id);
+      compiledMessage = compile(messageValue);
       cache.set(message.id, {compiledMessage, messageValue});
     }
+
     setNestedProperty(result, message.id, compiledMessage);
   }
 
-  for (const cachedId of cache.keys()) {
-    if (!usedMessageIds.has(cachedId)) {
-      cache.delete(cachedId);
-    }
+  // Evict unused cache entries
+  for (const cachedId of cacheKeysToEvict) {
+    console.log('evict', cachedId);
+    cache.delete(cachedId);
   }
 
   return result;
