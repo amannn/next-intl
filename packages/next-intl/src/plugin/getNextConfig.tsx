@@ -71,10 +71,13 @@ export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
 ) {
+  const experimentalTurbo = (
+    nextConfig?.experimental as {turbo?: unknown} | undefined
+  )?.turbo;
   const useTurbo =
     process.env.TURBOPACK != null ||
     nextConfig?.turbopack != null ||
-    nextConfig?.experimental?.turbo != null ||
+    experimentalTurbo != null ||
     isNextJs16OrHigher();
   const nextIntlConfig: Partial<NextConfig> = {};
 
