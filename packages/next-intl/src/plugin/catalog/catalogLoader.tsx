@@ -114,10 +114,8 @@ function precompileMessages(
 
     let compiledMessage;
     if (hasCacheMatch) {
-      console.log('cache hit', message.id);
       compiledMessage = cachedEntry.compiledMessage;
     } else {
-      console.log('compile', message.id);
       compiledMessage = compile(messageValue);
       cache.set(message.id, {compiledMessage, messageValue});
     }
@@ -127,7 +125,6 @@ function precompileMessages(
 
   // Evict unused cache entries
   for (const cachedId of cacheKeysToEvict) {
-    console.log('evict', cachedId);
     cache.delete(cachedId);
   }
 
