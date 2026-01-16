@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import compile from '../src/compiler.js';
+import compile from '../src/compile.js';
 import format, {type FormatOptions, type FormatValues} from '../src/format.js';
 import type {CompiledMessage} from '../src/types.js';
 

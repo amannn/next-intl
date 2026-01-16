@@ -1,4 +1,4 @@
-import compile from 'icu-minify/compiler';
+import compile from 'icu-minify/compile';
 import {type ReactElement, isValidElement} from 'react';
 import {describe, expect, it, vi} from 'vitest';
 import type IntlError from './IntlError.js';

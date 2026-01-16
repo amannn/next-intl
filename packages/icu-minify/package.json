@@ -22,10 +22,10 @@
   },
   "type": "module",
   "exports": {
-    "./compiler": {
-      "types": "./dist/types/compiler.d.ts",
-      "development": "./dist/esm/development/compiler.js",
-      "default": "./dist/esm/production/compiler.js"
+    "./compile": {
+      "types": "./dist/types/compile.d.ts",
+      "development": "./dist/esm/development/compile.js",
+      "default": "./dist/esm/production/compile.js"
     },
     "./format": {
       "types": "./dist/types/format.d.ts",
@@ -35,7 +35,7 @@
   },
   "files": [
     "dist",
-    "compiler.d.ts",
+    "compile.d.ts",
     "format.d.ts"
   ],
   "keywords": [

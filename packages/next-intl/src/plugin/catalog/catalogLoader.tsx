@@ -1,5 +1,5 @@
 import path from 'path';
-import compile from 'icu-minify/compiler';
+import compile from 'icu-minify/compile';
 import type ExtractorCodec from '../../extractor/format/ExtractorCodec.js';
 import {
   getFormatExtension,
@@ -84,7 +84,7 @@ export default function catalogLoader(
 
 /**
  * Recursively precompiles all ICU message strings in a messages object
- * using icu-minify/compiler for smaller runtime bundles.
+ * using icu-minify/compile for smaller runtime bundles.
  */
 function precompileMessages(
   messages: Array<ExtractorMessage>,

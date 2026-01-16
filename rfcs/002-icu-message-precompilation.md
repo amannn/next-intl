@@ -118,7 +118,7 @@ It uses a Turbo- or Webpack loader that compiles imported messages during the bu
 │                     │                                      │
 │                     ▼                                      │
 │  ┌───────────────────────────────────────────────────────┐ │
-│  │ icu-minify/compiler                                   │ │
+│  │ icu-minify/compile                                    │ │
 │  │ Compiles ICU → Compact JSON                           │ │
 │  └──────────────────┬────────────────────────────────────┘ │
 │                     │                                      │
@@ -201,7 +201,7 @@ Potentially in a future release, `t.raw` might be deprecated—this is still up 
 
 Precompilation cannot be used automatically for messages loaded from a remote source at runtime.
 
-When messages are loaded dynamically (e.g., from a TMS, CMS, API, or CDN), the catalog loader cannot precompile them during the build process. However, you can manually compile remote messages after fetching them by using `icu-minify/compiler` in your `i18n/request.ts` file and then returning the result as your `messages`.
+When messages are loaded dynamically (e.g., from a TMS, CMS, API, or CDN), the catalog loader cannot precompile them during the build process. However, you can manually compile remote messages after fetching them by using `icu-minify/compile` in your `i18n/request.ts` file and then returning the result as your `messages`.
 
 ## Prior art & credits
 

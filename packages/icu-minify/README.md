@@ -14,7 +14,7 @@ ICU message format compiler with a 650 bytes runtime ✨
 ## Usage
 
 ```ts
-import compile from 'icu-minify/compiler';
+import compile from 'icu-minify/compile';
 import format from 'icu-minify/format';
 
 // At build time
