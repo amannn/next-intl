@@ -20,6 +20,9 @@ import format from 'icu-minify/format';
 // At build time
 const compiled = compile('Hello {name}!');
 
+// ["Hello ", ["name"], "!"]
+console.log(compiled);
+
 // At runtime
 format(compiled, 'en', {name: 'World'});
 ```
