@@ -140,7 +140,7 @@ export default function UserCompanies() {
         >
           <Image
             alt={company.name}
-            className="max-h-8 w-auto max-w-24 object-contain lg:max-h-11 lg:max-w-36"
+            className="max-h-8 w-auto max-w-24 object-contain dark:invert lg:max-h-11 lg:max-w-36"
             src={company.logo}
             style={{transform: `scale(${company.scale || 1})`}}
             title={company.name}
