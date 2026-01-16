@@ -1,4 +1,5 @@
 import fs from 'fs';
+import {createRequire} from 'module';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
@@ -13,6 +14,8 @@ import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
+
+const require = createRequire(import.meta.url);
 
 function withExtensions(localPath: string) {
   return [
@@ -123,6 +126,17 @@ export default function getNextConfig(
     }
   }
 
+  // Validate messages config
+  if (pluginConfig.experimental?.messages) {
+    const messages = pluginConfig.experimental.messages;
+    if (typeof messages.format !== 'string') {
+      throwError('`format` is required when using `messages`.');
+    }
+    if (typeof messages.path !== 'string') {
+      throwError('`path` is required when using `messages`.');
+    }
+  }
+
   if (useTurbo) {
     if (
       pluginConfig.requestConfig &&
@@ -135,11 +149,20 @@ export default function getNextConfig(
     }
 
     // Assign alias for `next-intl/config`
-    const resolveAlias = {
+    const resolveAlias: Record<string, string> = {
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    // Add alias for precompiled message formatting
+    if (pluginConfig.experimental?.messages?.precompile) {
+      // Workaround for https://github.com/vercel/next.js/issues/88540
+      resolveAlias['use-intl/format-message'] = path.relative(
+        process.cwd(),
+        require.resolve('use-intl/format-message/format-only')
+      );
+    }
 
     // Add loaders
     let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
@@ -227,6 +250,16 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+
+      // Add alias for precompiled message formatting
+      if (pluginConfig.experimental?.messages?.precompile) {
+        // Use require.resolve to get the actual file path, since
+        // bundlers don't properly resolve package subpath exports
+        // when used as alias targets
+        (config.resolve.alias as Record<string, string>)[
+          'use-intl/format-message'
+        ] = require.resolve('use-intl/format-message/format-only');
+      }
 
       // Add loader for extractor
       if (pluginConfig.experimental?.extract) {

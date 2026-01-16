@@ -22,10 +22,10 @@
   },
   "type": "module",
   "exports": {
-    "./compiler": {
-      "types": "./dist/types/compiler.d.ts",
-      "development": "./dist/esm/development/compiler.js",
-      "default": "./dist/esm/production/compiler.js"
+    "./compile": {
+      "types": "./dist/types/compile.d.ts",
+      "development": "./dist/esm/development/compile.js",
+      "default": "./dist/esm/production/compile.js"
     },
     "./format": {
       "types": "./dist/types/format.d.ts",
@@ -35,7 +35,7 @@
   },
   "files": [
     "dist",
-    "compiler.d.ts",
+    "compile.d.ts",
     "format.d.ts"
   ],
   "keywords": [
@@ -47,7 +47,7 @@
     "minify"
   ],
   "dependencies": {
-    "@formatjs/icu-messageformat-parser": "^2.11.1"
+    "@formatjs/icu-messageformat-parser": "^3.4.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.4",
@@ -55,7 +55,7 @@
     "@types/node": "^20.14.5",
     "eslint": "9.11.1",
     "eslint-config-molindo": "^8.0.0",
-    "intl-messageformat": "^10.5.14",
+    "intl-messageformat": "^11.1.0",
     "prettier": "^3.3.3",
     "publint": "^0.2.8",
     "rollup": "^4.18.0",

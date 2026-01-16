@@ -706,7 +706,8 @@ describe('json format', () => {
         "OpKKos": "Hello!",
         "7kKG3Q": "World!"
       }
-      "`);
+      "
+    `);
 
     filesystem.project.messages!['de.json'] = '{}';
     simulateFileEvent('/project/messages', 'rename', 'de.json');

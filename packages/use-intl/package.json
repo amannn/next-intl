@@ -38,12 +38,24 @@
       "types": "./dist/types/react.d.ts",
       "development": "./dist/esm/development/react.js",
       "default": "./dist/esm/production/react.js"
+    },
+    "./format-message": {
+      "types": "./dist/types/core/format-message/index.d.ts",
+      "development": "./dist/esm/development/format-message/index.js",
+      "default": "./dist/esm/production/format-message/index.js"
+    },
+    "./format-message/format-only": {
+      "types": "./dist/types/core/format-message/format-only.d.ts",
+      "development": "./dist/esm/development/format-message/format-only.js",
+      "default": "./dist/esm/production/format-message/format-only.js"
     }
   },
   "files": [
     "dist",
     "core.d.ts",
-    "react.d.ts"
+    "react.d.ts",
+    "format-message.d.ts",
+    "format-message"
   ],
   "keywords": [
     "react",
@@ -57,9 +69,10 @@
     "formatting"
   ],
   "dependencies": {
-    "@formatjs/fast-memoize": "^2.2.0",
+    "@formatjs/fast-memoize": "^3.1.0",
     "@schummar/icu-type-parser": "1.21.5",
-    "intl-messageformat": "^10.5.14"
+    "icu-minify": "workspace:^",
+    "intl-messageformat": "^11.1.0"
   },
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"

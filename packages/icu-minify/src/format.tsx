@@ -16,6 +16,9 @@ import {
   TYPE_TIME
 } from './types.js';
 
+// Re-export CompiledMessage type for consumers
+export type {CompiledMessage} from './types.js';
+
 // Could potentially share this with `use-intl` if we had a shared package for both
 export type FormatValues<RichTextElement = unknown> = Record<
   string,
@@ -27,9 +30,8 @@ export type FormatValues<RichTextElement = unknown> = Record<
 >;
 
 export type Formats = {
-  date?: Record<string, Intl.DateTimeFormatOptions>;
+  dateTime?: Record<string, Intl.DateTimeFormatOptions>;
   number?: Record<string, Intl.NumberFormatOptions>;
-  time?: Record<string, Intl.DateTimeFormatOptions>;
 };
 
 export type FormatOptions = {
@@ -375,10 +377,7 @@ function getDateTimeFormatOptions(
   if (!style) return undefined;
 
   if (typeof style === 'string') {
-    const resolved =
-      type === 'date'
-        ? formatOptions.formats?.date?.[style]
-        : formatOptions.formats?.time?.[style];
+    const resolved = formatOptions.formats?.dateTime?.[style];
     if (process.env.NODE_ENV !== 'production' && !resolved) {
       throw new Error(`Missing ${type} format "${style}"`);
     }

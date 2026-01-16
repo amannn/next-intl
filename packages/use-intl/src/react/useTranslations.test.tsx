@@ -848,7 +848,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to `object`, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
@@ -873,7 +873,7 @@ describe('error handling', () => {
     const error: IntlError = onError.mock.calls[0][0];
     expect(error.code).toBe(IntlErrorCode.INSUFFICIENT_PATH);
     expect(error.message).toBe(
-      'INSUFFICIENT_PATH: Message at `Component.object` resolved to an object, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
+      'INSUFFICIENT_PATH: Message at `Component.object` resolved to `object`, but only strings are supported. Use a `.` to retrieve nested messages. See https://next-intl.dev/docs/usage/translations#structuring-messages'
     );
   });
 
