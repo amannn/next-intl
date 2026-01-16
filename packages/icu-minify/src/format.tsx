@@ -56,6 +56,7 @@ export default function format<RichTextElement = string>(
   values: FormatValues<RichTextElement> = {} as FormatValues<RichTextElement>,
   options: FormatOptions
 ): string | RichTextElement | Array<string | RichTextElement> {
+  // Hot path for plain strings
   if (typeof message === 'string') {
     return message;
   }

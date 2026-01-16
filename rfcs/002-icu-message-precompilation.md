@@ -186,7 +186,7 @@ Historically, `t.raw` was added to support raw HTML content in your messages. Ho
 
 The other use case that `t.raw` was traditionally (ab)used for, is to handle arrays of messages. The recommended pattern for this has always been to use individual messages for each string, see [arrays of messages](https://next-intl.dev/docs/usage/translations#arrays-of-messages) in the docs. This pattern additionally has the benefit of being [statically analyzable](https://next-intl.dev/docs/workflows/messages).
 
-Related to this, the recently introduced [`useExtracted`](./001-message-extraction.md) API also doesn't support `t.raw` either, since it doesn't fit into this paradigm in the first place.
+Related to this, the recently introduced [`useExtracted`](./001-message-extraction.md) API doesn't support `t.raw` either, since it doesn't fit into this paradigm in the first place.
 
 Due to this, it's recommended to migrate to one of the mentioned alternatives if you'd like to benefit from ahead-of-time compilation. If you're heavily using `t.raw`, you can of course also decide to leave the optimization off for now.
 
