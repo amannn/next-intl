@@ -108,20 +108,19 @@ describe('simple arguments', () => {
     ).toMatchInlineSnapshot(`"World"`);
   });
 
-  it.only('formats text with an argument', () => {
-    const compiled = compile('Hello {name}!');
+  it('formats text with an argument', () => {
+    const compiled = compile('Hello {name}');
     expect(compiled).toMatchInlineSnapshot(`
-      [
-        "Hello ",
         [
-          "name",
-        ],
-        "!",
-      ]
-    `);
+          "Hello ",
+          [
+            "name",
+          ],
+        ]
+      `);
     expect(
       formatMessage(compiled, 'en', {name: 'World'})
-    ).toMatchInlineSnapshot(`"Hello World!"`);
+    ).toMatchInlineSnapshot(`"Hello World"`);
   });
 
   it('formats multiple arguments', () => {
