@@ -23,6 +23,7 @@ export type MessagesConfig = {
   path: string;
   format: MessagesFormat;
   locales: 'infer' | ReadonlyArray<Locale>;
+  precompile?: boolean;
 };
 
 export type ExtractorConfig = {
