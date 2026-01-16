@@ -1,3 +1,4 @@
+import Callout from '@/components/Callout';
 import Details from '@/components/Details';
 
 # Next.js plugin (`createNextIntlPlugin`)
@@ -81,7 +82,7 @@ const withNextIntl = createNextIntlPlugin({
 
 ### `messages` [#messages]
 
-This defines where and how message catalogs for locales are stored and loaded.
+This defines where messages for locales are stored and how they're loaded.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
@@ -98,37 +99,140 @@ const withNextIntl = createNextIntlPlugin({
 });
 ```
 
-Configuring `experimental.messages` also sets up a Turbo- or Webpack loader so catalogs can be imported as plain JavaScript objects (see [formats](/docs/usage/extraction#formats)).
+Configuring `experimental.messages` sets up a Turbo- or Webpack loader that allows messages to be imported as plain JavaScript objects (see [`format`](#format)).
 
 #### `path`
 
-Relative path to the directory containing message catalogs.
+Relative path to the directory containing messages:
+
+```tsx
+// ...
+path: './messages';
+```
 
 #### `locales`
 
-Defines which locales exist for your catalogs:
+When using [`useExtracted`](/docs/usage/extraction), this defines which messages are kept in sync with [`extract.sourceLocale`](/docs/usage/plugin#extract).
 
-- Use `'infer'` to automatically detect locales based on files in `path`
-- Or specify them explicitly:
+You can either automatically detect all locales within `messages.path`:
 
 ```tsx
-locales: ['en', 'de'];
+// ...
+locales: 'infer';
+```
+
+… or specify them explicitly (e.g. to use a subset):
+
+```tsx
+// ...
+locales: ['en', 'de', 'fr'];
 ```
 
 #### `format`
 
 Defines how your catalogs are stored (e.g. `'json'`, `'po'`, or a custom format).
 
+##### JSON format [#formats-json]
+
+When using this option, your messages might look like this:
+
+```json
+{
+  "greeting": "Hello"
+}
+```
+
+… or in case of [`useExtracted`](/docs/usage/extraction), with an auto-generated key:
+
+```json
+{
+  "NhX4DJ": "Hello"
+}
+```
+
+For local editing of JSON messages, you can use e.g. a [VSCode integration](/docs/workflows/vscode-integration) like i18n Ally.
+
+Note that JSON files can only hold pairs of keys and values. To provide more context about a message like file references and descriptions, you can use [PO files](#formats-po) or create a [custom format](#formats-custom) to store additional metadata.
+
+##### PO format [#formats-po]
+
+When using this option, your messages will look like this:
+
+```po
+#. Advance to the next slide
+#: src/components/Carousel.tsx:13
+msgid "carousel.next"
+msgstr "Right"
+```
+
+… or in case of [`useExtracted`](/docs/usage/extraction), with an auto-generated key:
+
+```po
+#. Advance to the next slide
+#: src/components/Carousel.tsx:13
+msgid "5VpL9Z"
+msgstr "Right"
+```
+
+Besides the message key and the label itself, this format also supports optional descriptions and file references to all modules that consume this message.
+
+For local editing of .po files, you can use e.g. a tool like [Poedit](https://poedit.net/).
+
+##### Custom format [#formats-custom]
+
+To configure a custom format, you need to specify a codec along with an extension.
+
+The codec can be created via `defineCodec` from `next-intl/extractor`:
+
+```tsx filename="./CustomCodec.ts"
+import {defineCodec} from 'next-intl/extractor';
+
+export default defineCodec(() => ({
+  decode(content, context) {
+    // ...
+  },
+
+  encode(messages, context) {
+    // ...
+  },
+
+  toJSONString(content, context) {
+    // ...
+  }
+}));
+```
+
+Then, reference it in your configuration along with an `extension`:
+
+```tsx filename="next.config.ts"
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    messages: {
+      format: {
+        codec: './CustomCodec.ts',
+        extension: '.json'
+      }
+      // ...
+    }
+  }
+});
+```
+
+See also the built-in [`codecs`](https://github.com/amannn/next-intl/tree/main/packages/next-intl/src/extractor/format/codecs) for inspiration, as well as the supplied types and JSDoc reference.
+
+<Callout>
+
+Node.js supports native TypeScript execution like it's needed for the example above, starting with v22.18. If you're on an older version, you should define your codec as a JavaScript file.
+
+</Callout>
+
 #### `precompile`
 
-When enabled, ICU messages are compiled at build time. This results in **smaller bundles** and **faster message formatting** at runtime.
+When enabled, ICU messages are compiled ahead of time during the build when they are processed by the messages loader. This results in smaller bundles and faster message formatting at runtime.
 
-Notes:
+See also: [Ahead-of-time compilation with `next-intl`](/blog/precompilation)
 
-- `t.raw` is not supported with precompiled messages.
-- Messages must resolve to strings (no [arrays](/docs/usage/translations#arrays-of-messages) or [objects](/docs/usage/translations#structuring-messages)).
-
-**Note:** `experimental.messages` is required when using [`extract`](#extract). You can also use it without extraction to precompile imported catalogs.
+**Note:** `t.raw` is not supported with precompiled messages (see [tradeoffs](https://github.com/amannn/next-intl/blob/main/rfcs/002-icu-message-precompilation.md#tradeoffs))
 
 ### `srcPath` [#src-path]
 
