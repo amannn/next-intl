@@ -30,4 +30,4 @@ This library is heavily inspired by [`icu-to-json`](https://github.com/jantimon/
 
 ## Design
 
-For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC 002: ICU Message Precompilation](../../rfcs/002-icu-message-precompilation.md).
+For detailed design rationale, motivation, tradeoffs, and implementation details, see [RFC: Ahead-of-time compilation of ICU messages](../../rfcs/002-icu-message-precompilation.md).

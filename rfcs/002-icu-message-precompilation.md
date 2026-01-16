@@ -1,6 +1,6 @@
 # RFC: Ahead-of-time compilation of ICU messages
 
-Start date: 2025-01-16
+Start date: 2025-01-19
 
 ## Summary
 
