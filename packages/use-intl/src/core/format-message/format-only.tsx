@@ -28,3 +28,6 @@ export default function formatMessage(
 
   return result;
 }
+
+// `t.raw` is not supported
+formatMessage.raw = false;

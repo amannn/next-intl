@@ -131,3 +131,6 @@ export default function formatMessage(
     ? formattedMessage
     : String(formattedMessage);
 }
+
+// `t.raw` is supported
+formatMessage.raw = true;

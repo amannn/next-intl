@@ -309,6 +309,14 @@ function createBaseTranslatorImpl<
     /** Use a dot to indicate a level of nesting (e.g. `namespace.nestedLabel`). */
     key: string
   ): any => {
+    if (process.env.NODE_ENV !== 'production') {
+      if (!formatMessage.raw) {
+        throw new Error(
+          '`t.raw` is not supported when messages are precompiled.'
+        );
+      }
+    }
+
     if (hasMessagesError) {
       onError(messagesOrError);
       return getMessageFallback({
