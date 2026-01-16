@@ -4,11 +4,9 @@ Start date: 2025-01-16
 
 ## Summary
 
-This RFC proposes build-time precompilation of ICU messages using a new library called `icu-minify` to reduce bundle size and improve runtime performance.
+This RFC proposes build-time precompilation of ICU messages using a new library called [`icu-minify`](../packages/icu-minify) to reduce bundle size and improve runtime performance.
 
-This document describes the motivation, design decisions, and tradeoffs of this optimization. The core implementation is already available in [`icu-minify`](../packages/icu-minify).
-
-→ [**Discussion**](https://github.com/amannn/next-intl/discussions/2209)
+This document describes the motivation, design decisions, and tradeoffs of this optimization.
 
 **Table of contents:**
 
@@ -29,12 +27,10 @@ Currently, `next-intl` uses `intl-messageformat` to parse and format ICU message
 
 This has two downsides:
 
-1. It adds approximately **15KB** (minified + compressed) to the bundle
-2. It affects runtime performance, as every message needs to be parsed
+1. It adds approximately 15KB (minified + compressed) to the bundle for both the server and client
+2. It affects runtime performance, as every message needs to be parsed before it can be formatted
 
-(2) was mitigated with caching, but total blocking time on initial page load is still affected.
-
-While Server Components helped to move more work to the server, there's still room for improvement.
+Some mitigation strategies are already possible, like moving more (or all) of your message consumption to Server Components. Additionally, parse results are cached, but total blocking time on initial page load can still be affected.
 
 ## Proposed solution
 
@@ -42,13 +38,13 @@ While Server Components helped to move more work to the server, there's still ro
 
 This RFC introduced ahead-of-time compilation of ICU messages with a new library called `icu-minify`.
 
-This eliminates the need to bundle an ICU parser and moves the compilation step to the build step. With this, we can effectively decrease total blocking time for apps and sites that have sensitive performance requirements.
+This eliminates the need to bundle an ICU parser and moves the compilation to the build step. With this, we can effectively decrease total blocking time for apps that have sensitive performance requirements.
 
 ### Intermediate representation
 
-Traditionally, while ahead-of-time compilation can decrease runtime work, it can come at the cost of increased bundle size due to ASTs being rather large.
+Traditionally, while ahead-of-time compilation can decrease runtime work, it can come at the cost of increased bundle size due to ICU message ASTs being rather large.
 
-As an alternative, some i18n libraries compile messages to functions that have a lower bundle footprint. The issue with this approach however is that functions can't be serialized across the RSC bridge when being passed to Client Components. A workaround can be to import these functions where necessary, but this however defeats per-locale splitting of messages.
+As an alternative, some i18n libraries compile messages to functions that have a lower bundle footprint. The issue with this approach however is that functions can't be serialized across the RSC bridge when being passed to Client Components. A workaround can be to import these functions where necessary, but this defeats per-locale splitting of messages.
 
 In contrast, `icu-minify` compiles messages to a minimal intermediate representation in plain JSON:
 
@@ -60,9 +56,9 @@ In contrast, `icu-minify` compiles messages to a minimal intermediate representa
 ["Hello ", ["name"], "!"]
 ```
 
-This comes with barely any size overhead and can be evaluated by a 650 bytes runtime counterpart that leverages native `Intl` APIs.
+This comes with barely a size overhead and can be evaluated by a 650 bytes runtime counterpart that leverages native `Intl` APIs.
 
-And while this can scale up to very complex messages with `plural`, `select` and more, a common observation has been that the majority of app messages tend to be plain strings. For these, the intermediate representation doesn't come with any overhead at all (`"Welcome"` → `"Welcome"`).
+And while this approach scales up to very complex messages with `plural`, `select` and more, a common observation has been that the majority of app messages tend to be plain strings. For these, the intermediate representation doesn't come with any overhead at all (`"Welcome"` → `"Welcome"`).
 
 ### API
 
@@ -100,53 +96,53 @@ const t = useExtracted();
 t('Hello {name}!', {name: 'World'});
 ```
 
+(also server-only APIs like `getTranslations` and `getExtracted` are optimized)
+
 ## Implementation details
 
 ### Architecture
 
 Ahead-of-time compilation piggybacks on previously added infrastructure that was initially implemented for [`useExtracted`](../docs/usage/extraction.md).
 
-It uses a Turbo- or Webpack loader that compiles imported messages during the build step of an app. Later, when `precompile` is set to `true`, `next-intl` will swap out the runtime compiler from its base library `use-intl` with an alternative that calls into the runtime from `icu-minify`.
-
-**Workflow:**
+It uses a Turbo- or Webpack loader that compiles imported messages during the build step of an app. Later, when `precompile` is set to `true`, `next-intl` will swap out the runtime compiler from its base library `use-intl` with an alternative that calls into the runtime of `icu-minify`.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ Build Time (next-intl plugin)                               │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  Catalog Loader                                              │
+┌────────────────────────────────────────────────────────────┐
+│ Build Time (next-intl plugin)                              │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Catalog Loader                                            │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │ messages/en.json: {"hello": "Hello {name}!"}         │  │
 │  └──────────────────┬───────────────────────────────────┘  │
-│                     │                                       │
-│                     ▼                                       │
+│                     │                                      │
+│                     ▼                                      │
+│  ┌───────────────────────────────────────────────────────┐ │
+│  │ icu-minify/compiler                                   │ │
+│  │ Compiles ICU → Compact JSON                           │ │
+│  └──────────────────┬────────────────────────────────────┘ │
+│                     │                                      │
+│                     ▼                                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │ icu-minify/compiler                                   │  │
-│  │ Compiles ICU → Compact JSON                           │  │
-│  └──────────────────┬───────────────────────────────────┘  │
-│                     │                                       │
-│                     ▼                                       │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │ Compiled catalog: {"hello": ["Hello ", ["name"]]}   │  │
+│  │ Compiled catalog: {"hello": ["Hello ", ["name"]]}    │  │
 │  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────┐
-│ Runtime (use-intl)                                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
+┌────────────────────────────────────────────────────────────┐
+│ Runtime (use-intl)                                         │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │ import formatMessage from 'use-intl/format-message'   │  │
-│  │ (aliased to format-only when precompile: true)      │  │
+│  │ import formatMessage from 'use-intl/format-message'  │  │
+│  │ (aliased to 'use-intl/format-message/format-only')   │  │
 │  └──────────────────┬───────────────────────────────────┘  │
-│                     │                                       │
-│                     ▼                                       │
+│                     │                                      │
+│                     ▼                                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │ icu-minify/format                                     │  │
+│  │ icu-minify/format                                    │  │
 │  │ Formats precompiled JSON → string/ReactNode          │  │
 │  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────┘
 ```
 
 ### Compiled format
@@ -155,21 +151,7 @@ The compiled format uses a compact array-based representation that:
 
 - **Minifies well**: Largely avoids object properties in favor of arrays
 - **Is plain JSON**: Can be serialized across the RSC bridge without issues
-- **Is fast to traverse**: Direct array/object access without parsing overhead
-
-#### Type constants
-
-```
-POUND = 0
-SELECT = 1
-PLURAL = 2
-SELECTORDINAL = 3
-NUMBER = 4
-DATE = 5
-TIME = 6
-```
-
-Tags have no type constant—they're detected by checking if the second element is not a number.
+- **Is fast to traverse**: Direct access without parsing overhead
 
 #### Node types
 
@@ -200,14 +182,14 @@ Tags have no type constant—they're detected by checking if the second element 
 
 ### 1. `t.raw` is not supported
 
-The [`t.raw`](https://next-intl.dev/docs/usage/translations#raw-messages) API will not work with precompiled messages. Or rather, you'll encounter parse errors when you try to put anything else than ICU messages into your locale catalogs.
+The [`t.raw`](https://next-intl.dev/docs/usage/translations#raw-messages) API will not work with precompiled messages. Or rather, you'll encounter parse errors when you try to put anything else than ICU messages into your locale catalogs. This is because messages need to be parsed before we even know if you intend to call `t.raw` on them.
 
-Historically, `t.raw` was added to support raw HTML content in your messages. However, time has shown that this is cumbersome for long-form content in practice and that there are better alternatives:
+Historically, `t.raw` was added to support raw HTML content in your messages. However, time has shown that this is cumbersome for long-form content in practice anyway and that there are better alternatives:
 
 1. **MDX for local content**: For content like imprint pages and similar, grouping your localized content into files like `content.en.mdx` and `content.es.mdx` is significantly easier to manage.
-2. **CMS for remote content**: Content management systems typically ship with a portable format that allows to express rich text in an HTML-agnostic way, enabling you to use the same content also for mobile apps and more ([example](https://www.sanity.io/docs/developer-guides/presenting-block-text)).
+2. **CMS for remote content**: Content management systems typically ship with a portable format that allows to express rich text in an HTML-agnostic way, enabling you to use the same content also for mobile apps and more (see e.g. [Sanity's Portable Text](https://www.sanity.io/docs/developer-guides/presenting-block-text)).
 
-The other use case that `t.raw` was traditionally (ab)used for, is to handle arrays of messages. The recommended pattern for this has always been to use individual messages for each string, see [arrays of messages](https://next-intl.dev/docs/usage/translations#arrays-of-messages) in the docs.
+The other use case that `t.raw` was traditionally (ab)used for, is to handle arrays of messages. The recommended pattern for this has always been to use individual messages for each string, see [arrays of messages](https://next-intl.dev/docs/usage/translations#arrays-of-messages) in the docs. This pattern additionally has the benefit of being [statically analyzable](https://next-intl.dev/docs/workflows/messages).
 
 Related to this, the recently introduced [`useExtracted`](./001-message-extraction.md) API also doesn't support `t.raw` either, since it doesn't fit into this paradigm in the first place.
 
@@ -215,11 +197,11 @@ Due to this, it's recommended to migrate to one of the mentioned alternatives if
 
 Potentially in a future release, `t.raw` might be deprecated—this is still up for discussion.
 
-### 2. Remote messages
+### 2. Compilation of remote messages
 
-**Impact**: Precompilation cannot be used automatically for messages loaded from a remote source.
+Precompilation cannot be used automatically for messages loaded from a remote source at runtime.
 
-When messages are loaded dynamically at runtime (e.g., from a TMS, CMS, API, or CDN), the catalog loader cannot precompile them during the build process. However, you can manually compile remote messages after fetching them by using `icu-minify/compiler` in your `i18n/request.ts` file.
+When messages are loaded dynamically (e.g., from a TMS, CMS, API, or CDN), the catalog loader cannot precompile them during the build process. However, you can manually compile remote messages after fetching them by using `icu-minify/compiler` in your `i18n/request.ts` file and then returning the result as your `messages`.
 
 ## Prior art & credits
 
@@ -239,10 +221,10 @@ Ahead-of-time compilation was heavily inspired by [`icu-to-json`](https://github
 | Tags          | `["b", child1, ...]`               | `["b", 5, child1, ...]`            | Not supported            |
 | Plural offset | Not supported                      | Supported                          | Supported                |
 
-**Design choices in `icu-minify`:**
+### Design choices in `icu-minify`
 
-- **Distinct type constants for formats (4/5/6)**: More compact than `[name, 4, "number"]` used by icu-to-json since the subtype is encoded in the constant itself
-- **No TYPE constant for tags**: Tags are detected by `typeof node[1] !== 'number'`. Saves bytes per tag
-- **Numeric type constants**: More compact than using string type identifiers (e.g., `"plural"` vs `2`)
-- **No plural offset**: Simplifies runtime; rarely needed in practice
+- **Numeric type constants**: More compact than using string type identifiers (e.g., `2` vs `"plural"`)
+- **Distinct type constants for formats (4/5/6)**: More compact than e.g. `[name, 4, "number"]` since the subtype is encoded in the constant itself
+- **No type constant for tags**: Tags are detected by `typeof node[1] !== 'number'` to save bytes per tag
+- **No support for plural offsets**: Simplifies runtime and is rarely needed in practice
 - **Zero runtime dependencies**: Uses native `Intl` APIs
