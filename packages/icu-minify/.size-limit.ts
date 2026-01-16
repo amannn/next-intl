@@ -8,9 +8,9 @@ const config: SizeLimitConfig = [
     limit: '0.65 kB'
   },
   {
-    name: "import compile from 'icu-minify/compiler' (production)",
+    name: "import compile from 'icu-minify/compile' (production)",
     import: 'compile',
-    path: 'dist/esm/production/compiler.js',
+    path: 'dist/esm/production/compile.js',
     limit: '7.055 kB'
   }
 ];
