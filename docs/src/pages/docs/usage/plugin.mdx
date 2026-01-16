@@ -81,35 +81,54 @@ const withNextIntl = createNextIntlPlugin({
 
 ### `messages` [#messages]
 
-This defines where and how messages for locales should be stored.
+This defines where and how message catalogs for locales are stored and loaded.
 
 ```tsx
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     messages: {
-      // Relative path to the directory
+      format: 'json',
+      locales: 'infer',
       path: './messages',
 
-      // Automatically detects locales based on `path`
-      locales: 'infer',
-
-      // Either 'json', 'po', or a custom format
-      format: 'json'
+      // Optional
+      precompile: true
     }
-    // ...
   }
 });
 ```
 
-If you want to specify the locales explicitly, you can provide an array for `locales`:
+Configuring `experimental.messages` also sets up a Turbo- or Webpack loader so catalogs can be imported as plain JavaScript objects (see [formats](/docs/usage/extraction#formats)).
+
+#### `path`
+
+Relative path to the directory containing message catalogs.
+
+#### `locales`
+
+Defines which locales exist for your catalogs:
+
+- Use `'infer'` to automatically detect locales based on files in `path`
+- Or specify them explicitly:
 
 ```tsx
 locales: ['en', 'de'];
 ```
 
-Configuring `experimental.messages` will also set up a Turbo- or Webpack loader that will ensure loaded messages can be imported as plain JavaScript objects (see [formats](/docs/usage/extraction#formats)).
+#### `format`
 
-**Note:** The `messages` option should be used together with [`extract`](#extract) and [`srcPath`](#src-path).
+Defines how your catalogs are stored (e.g. `'json'`, `'po'`, or a custom format).
+
+#### `precompile`
+
+When enabled, ICU messages are compiled at build time. This results in **smaller bundles** and **faster message formatting** at runtime.
+
+Notes:
+
+- `t.raw` is not supported with precompiled messages.
+- Messages must resolve to strings (no [arrays](/docs/usage/translations#arrays-of-messages) or [objects](/docs/usage/translations#structuring-messages)).
+
+**Note:** `experimental.messages` is required when using [`extract`](#extract). You can also use it without extraction to precompile imported catalogs.
 
 ### `srcPath` [#src-path]
 
