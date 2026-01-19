@@ -158,8 +158,7 @@ export default function getNextConfig(
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
       // Workaround for https://github.com/vercel/next.js/issues/88540
-      let formatOnlyPath =
-       path.relative(
+      let formatOnlyPath = path.relative(
         process.cwd(),
         require.resolve('use-intl/format-message/format-only')
       );
