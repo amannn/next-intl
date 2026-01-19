@@ -9,25 +9,27 @@ import StayUpdated from '@/components/StayUpdated.mdx';
 
 <small>Jan 16, 2025 · by Jan Amann</small>
 
-**tl;dr:** By flipping a single `precompile` flag in your `next.config.ts`, you can now drop ~9KB of compressed JavaScript from your bundle size and also improve the runtime performance of your app.
+**tl;dr:** By flipping a single `precompile` flag in your `next.config.ts`, you can **immediately drop ~9KB** of compressed JavaScript from your bundle size and also improve the runtime performance of your app.
 
----
+The cost of adding `next-intl` with a single client-side translation to an app now accounts to **~4KB** of compressed JavaScript.
+
+## How we got here
 
 When React Server Components were announced, I was pretty excited.
 
 I immediately saw [potential for `next-intl`](https://www.smashingmagazine.com/2023/03/internationalization-nextjs-13-react-server-components/) to improve performance for its users by moving more work to the server—leaving the client with less JavaScript to parse and evaluate.
 
-But I also have to admit, I got a bit carried away. While for very interactive apps this was never really an option in the first place, when working on apps with very sensitive performance requirements, I'd almost dogmatically avoid client-side translations entirely.
+But I also have to admit, I got a bit carried away. While for very interactive apps this was never really an option in the first place, when working on apps with very sensitive performance requirements, I'd try to almost dogmatically avoid client-side translations entirely.
 
-And while you can get [pretty far](/docs/environments/server-client-components#using-internationalization-in-client-components) with this approach, it can require quite some tricks like leaning heavily into ["donut components"](https://nextjs.org/docs/app/getting-started/server-and-client-components#interleaving-server-and-client-components) and other fancy patterns.
+And while you can get pretty far with this approach, it can require quite some tricks like leaning heavily into [donut components](https://nextjs.org/docs/app/getting-started/server-and-client-components#interleaving-server-and-client-components) and other fancy patterns.
 
-It almost felt like a game of "the floor is lava", trying to find clever tricks that would help to ultimately avoid shipping an ICU parser to the client. I know some of you did the same thing.
+It almost felt like a game of "the floor is lava", trying to find clever tricks to avoid touching the client with translations and ultimately avoiding shipping an ICU parser to the client. I know some of you did the same.
 
 ## A different perspective
 
 About three years ago, I started a conversation with [Jan Nicklas](https://x.com/jantimon), about how we could best leverage the new Server Components paradigm for internationalization.
 
-At some point, he shared an idea with me that he'd implement in a prototype: [`icu-to-json`](https://github.com/jantimon/icu-to-json)—a fresh take on removing the ICU parser from the runtime. I always wanted to integrate this into `next-intl`, but for the longest time, it seemed like a big ask architecturally for the library.
+At some point, he shared an idea with me that he'd implement in a prototype: `icu-to-json`, a fresh take on removing the ICU parser from the runtime. I always wanted to integrate this into `next-intl`, but for the longest time, it seemed like a big ask architecturally.
 
 But then, about two months ago, I shipped the first implementation of [`useExtracted`](/docs/usage/extraction), which happened to provide just the infrastructure that finally unlocked this feature.
 
@@ -65,13 +67,13 @@ The problem with this approach however is that such functions can not be seriali
 
 And in turn, this results in all locale-specific variants of a message being bundled with your code, therefore defeating the possibility to split messages by locale.
 
-`next-intl` is used by websites like [Ethereum.org](https://ethereum.org), which currently ships in 67 languages. So the function-based approach is just not an option here.
+`next-intl` is used by websites like [Ethereum.org](https://ethereum.org), which currently ships in 67 languages.  So the function-based approach is just not an option here.
 
 ## Minified ASTs
 
 Architecturally, precompiled ASTs are a better fit for `next-intl`—but they were too large.
 
-The core idea of Jan Nicklas's prototype was to minify the ASTs, largely avoiding object properties in favor of arrays with positional entries. I took his idea and was able to even squeeze the size a bit further.
+The core idea of Jan Nicklas's prototype was to minify ASTs, largely avoiding object properties in favor of arrays with positional entries. I took his idea and was able to even squeeze the size a bit further.
 
 So here's how it looks like:
 
@@ -98,9 +100,9 @@ And the best part is that this doesn't have any overhead at all for plain string
 "Welcome!" → "Welcome!"
 ```
 
-Based on my experience, such plain strings often account for the majority of messages that apps ship with, so this is a big win.
+Based on my experience, such plain strings often account for the majority of messages that typical apps ship with, so this is a big win.
 
-But that being said, this approach scales up to more complex messages too and supports the whole range of ICU features that you know from `next-intl`:
+But that being said, this approach still scales up to more complex messages as well and supports the whole range of ICU features that you know from `next-intl`:
 
 ```tsx
 compile(
@@ -118,7 +120,7 @@ compile(
 }], "."]
 ```
 
-Also rich text is supported:
+Also, rich text is of course supported:
 
 ```tsx
 compile('Hello <b>World</b>');
@@ -132,7 +134,7 @@ compile('Hello <b>World</b>');
 
 ## Minimal runtime
 
-But so what is this `format` function?
+But so, what is this `format` function?
 
 ```tsx
 format(compiled, 'en', {count: 2});
@@ -142,17 +144,17 @@ It's a minimal runtime that efficiently evaluates the optimized AST and calls in
 
 All that, in **~650 bytes** (compressed).
 
-So that means, if you want to make the switch to ahead-of-time compilation, this will **immediately drop ~9KB** from both your server and client bundle.
+So that means, if you make the switch to ahead-of-time compilation, this will **immediately drop ~9KB** of compressed JavaScript from both your server and client bundle. The cost of adding `next-intl` with a single client-side translation to an app now accounts to **~4KB** of compressed JavaScript.
 
-And additionally, formatting of messages will now be significantly faster, as the parsing overhead is gone.
+And additionally, formatting of messages will now be significantly faster, as the parsing overhead is gone from the runtime and evaluation of the optimized AST is very cheap.
 
 ## Turn on precompilation today
 
-The good news is that this is built right into `next-intl`, and there's no new API to learn.
+The good news is that all of this is built right into `next-intl`, and there's no new API to learn.
 
 Just flip a switch:
 
-```tsx filename="next.config.ts"
+```tsx filename="next.config.ts" {9-10}
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
@@ -169,7 +171,7 @@ const withNextIntl = createNextIntlPlugin({
 export default withNextIntl();
 ```
 
-If you haven't seen the `messages` config option yet, it was previously shipped as part of `useExtracted`.
+If you haven't seen the `messages` config option yet, it was previously shipped as part of `useExtracted` and is now relevant for precompilation as well.
 
 But that's it. Your existing calls to `useTranslations` and `useExtracted` will automatically benefit from this optimization—no code changes needed.
 
@@ -181,9 +183,9 @@ As messages are parsed at build time, we can't know if you're planning to call `
 
 But let's take a step back here.
 
-Historically, `t.raw` was added to support raw HTML content in your messages. However, time has shown that this is cumbersome for long-form content in practice anyway and that there are better alternatives:
+Historically, `t.raw` was added to support raw HTML content in your messages. However, time has shown that in practice, this is cumbersome for long-form content and that there are better alternatives:
 
-1. **MDX for local content**: For content like imprint pages and similar, grouping your localized content into files like `content.en.mdx` and `content.es.mdx` is significantly easier to manage.
+1. **MDX for local content**: For imprint pages and similar, grouping your localized content into files like `content.en.mdx` and `content.es.mdx` is significantly easier to manage.
 2. **CMS for remote content**: Content management systems typically ship with a portable format that allows to express rich text in an HTML-agnostic way, enabling you to use the same content also for mobile apps and more (see e.g. [Sanity's Portable Text](https://www.sanity.io/docs/developer-guides/presenting-block-text)).
 
 The other use case that `t.raw` was traditionally (ab)used for, is to handle arrays of messages. The recommended pattern for this has always been to use individual messages for each string (see [arrays of messages](/docs/usage/translations#arrays-of-messages)). This pattern additionally has the benefit of being [statically analyzable](/docs/workflows/messages).
@@ -192,15 +194,15 @@ Related to this, the recently introduced [`useExtracted`](/blog/use-extracted) d
 
 Due to this, it's recommended to migrate to one of the mentioned alternatives if you'd like to benefit from ahead-of-time compilation. If you're heavily using `t.raw`, you can of course also decide to leave the optimization off for now.
 
-Potentially in a future release, `t.raw` might be deprecated entirely—but this is still up for discussion.
+Potentially in a future release, `t.raw` might be deprecated entirely due to the downsides this API has—but this is still up for discussion.
 
 ## Ready to try it?
 
-If you're excited about this as well, I'd really love to hear your feedback.
+If you're excited about ahead-of-time compilation as well, I'd really love to hear your feedback.
 
-Give it a try in your app with `next-intl@4.8` and share your [feedback](https://github.com/amannn/next-intl/discussions/2209) with me. Please note that it's currently considered experimental, so changes should be expected.
+Give it a try in your app with `next-intl@4.8` and share your [feedback](https://github.com/amannn/next-intl/discussions/2209) with me. Please note that this feature is currently considered experimental, so changes should be expected.
 
-On a closing note, the final frontier in regard to performance optimization for `next-intl` is automatic tree shaking of messages. I hope to have more to share on this later this year.
+On a closing note, the final frontier in regard to performance optimization for `next-intl` is automatic tree shaking of messages. I hope to have more to share on this later this year!
 
 — Jan
 
