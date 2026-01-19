@@ -158,10 +158,21 @@ export default function getNextConfig(
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
       // Workaround for https://github.com/vercel/next.js/issues/88540
-      resolveAlias['use-intl/format-message'] = path.relative(
+      let formatOnlyPath =
+       path.relative(
         process.cwd(),
         require.resolve('use-intl/format-message/format-only')
       );
+
+      // Turbopack seems to require this, otherwise `use-intl/format-message` is
+      // still bundled (despite the code correctly calling into `format-only`).
+      // Note that in this monorepo this is not necessary, because we'll end
+      // up with a path like `../…` — but for actual consumers this is required.
+      if (!formatOnlyPath.startsWith('.')) {
+        formatOnlyPath = `./${formatOnlyPath}`;
+      }
+
+      resolveAlias['use-intl/format-message'] = formatOnlyPath;
     }
 
     // Add loaders
