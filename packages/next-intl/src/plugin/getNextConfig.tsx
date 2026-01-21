@@ -129,10 +129,11 @@ export default function getNextConfig(
   // Validate messages config
   if (pluginConfig.experimental?.messages) {
     const messages = pluginConfig.experimental.messages;
-    if (typeof messages.format !== 'string') {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- For non-TS consumers
+    if (!messages.format) {
       throwError('`format` is required when using `messages`.');
     }
-    if (typeof messages.path !== 'string') {
+    if (!messages.path) {
       throwError('`path` is required when using `messages`.');
     }
   }
