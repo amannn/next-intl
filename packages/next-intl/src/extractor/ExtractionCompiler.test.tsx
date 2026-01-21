@@ -1042,6 +1042,37 @@ describe('po format', () => {
     );
   }
 
+  it('normalizes Windows path separators in references', async () => {
+    filesystem.project.src['Greeting.tsx'] =
+      `import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    const originalRelative = path.relative;
+    const relativeSpy = vi
+      .spyOn(path, 'relative')
+      .mockImplementation((from: string, to: string) => {
+        if (from === '/project' && to === '/project/src/Greeting.tsx') {
+          return 'src\\Greeting.tsx';
+        }
+        return originalRelative(from, to);
+      });
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    const output = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+
+    expect(output).toContain('#: src/Greeting.tsx:4');
+    expect(output).not.toContain('src\\Greeting.tsx');
+
+    relativeSpy.mockRestore();
+  });
+
   it('tracks all line numbers when same message appears multiple times in one file', async () => {
     filesystem.project.src['Greeting.tsx'] =
       `import {useExtracted} from 'next-intl';

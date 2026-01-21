@@ -2,7 +2,7 @@ import {createRequire} from 'module';
 import path from 'path';
 import {transform} from '@swc/core';
 import type {ExtractorMessage} from '../types.js';
-import {getDefaultProjectRoot} from '../utils.js';
+import {getDefaultProjectRoot, normalizePathToPosix} from '../utils.js';
 import LRUCache from './LRUCache.js';
 
 const require = createRequire(import.meta.url);
@@ -50,7 +50,9 @@ export default class MessageExtractor {
       return {messages: [], code: source};
     }
 
-    const filePath = path.relative(this.projectRoot, absoluteFilePath);
+    const filePath = normalizePathToPosix(
+      path.relative(this.projectRoot, absoluteFilePath)
+    );
     const result = await transform(source, {
       jsc: {
         target: 'esnext',
