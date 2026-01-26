@@ -13,9 +13,10 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
-import {throwError} from './utils.js';
+import {log, once, throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
+const logOnce = once('_NEXT_INTL_LOG_CONFIG');
 
 function withExtensions(localPath: string) {
   return [
@@ -67,12 +68,43 @@ const withNextIntl = createNextIntlPlugin(
   }
 }
 
+function normalizeEnvValue(value?: string) {
+  return value ?? null;
+}
+
 export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
   const nextIntlConfig: Partial<NextConfig> = {};
+
+  logOnce(() => {
+    const envInfo: Record<string, string | null> = {
+      NODE_ENV: normalizeEnvValue(process.env.NODE_ENV),
+      NEXT_EXPERIMENTAL_ANALYZE: normalizeEnvValue(
+        process.env.NEXT_EXPERIMENTAL_ANALYZE
+      ),
+      NEXT_PHASE: normalizeEnvValue(process.env.NEXT_PHASE),
+      NEXT_PRIVATE_TURBOPACK: normalizeEnvValue(
+        process.env.NEXT_PRIVATE_TURBOPACK
+      ),
+      NEXT_RUNTIME: normalizeEnvValue(process.env.NEXT_RUNTIME),
+      NEXT_TURBOPACK: normalizeEnvValue(process.env.NEXT_TURBOPACK),
+      TURBOPACK: normalizeEnvValue(process.env.TURBOPACK)
+    };
+    const configInfo = {
+      hasExperimentalTurboConfig: nextConfig?.experimental?.turbo != null,
+      hasTurbopackConfig: nextConfig?.turbopack != null,
+      hasWebpackConfig: typeof nextConfig?.webpack === 'function',
+      precompile: pluginConfig.experimental?.messages?.precompile ?? false,
+      requestConfig: pluginConfig.requestConfig ?? null,
+      useTurbo
+    };
+
+    log(`Env: ${JSON.stringify(envInfo)}`);
+    log(`Config: ${JSON.stringify(configInfo)}`);
+  });
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
