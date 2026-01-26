@@ -70,13 +70,13 @@ export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
 ) {
-  const isExperimentalAnalyze = process.argv.includes('experimental-analyze');
-  const useTurbo =
-    process.env.TURBOPACK != null ||
-    process.env.NEXT_TURBOPACK != null ||
-    process.env.NEXT_PRIVATE_TURBOPACK != null ||
-    isExperimentalAnalyze;
+  const useTurbo = process.env.TURBOPACK != null;
+
+  // `experimental-analyze` doesn’t set the TURBOPACK env param. Since Next.js
+  // 16 doesn't print a warning when we configure both Turbo- and Webpack, just
+  // always configure Turbopack just in case.
   const shouldConfigureTurbo = useTurbo || isNextJs16OrHigher();
+
   const nextIntlConfig: Partial<NextConfig> = {};
 
   function getExtractMessagesLoaderConfig() {
