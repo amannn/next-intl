@@ -251,7 +251,7 @@ function compileMessages(messages: Messages): Messages {
       if (value && typeof value === 'object') {
         return [key, compileMessages(value as Messages)];
       }
-      
+
       if (typeof value === 'string') {
         return [key, compile(value)];
       }
