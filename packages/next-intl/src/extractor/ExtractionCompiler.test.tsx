@@ -1052,20 +1052,20 @@ describe('po format', () => {
     `;
     filesystem.project.messages = {};
 
-    const originalRelative = path.relative;
-    const relativeSpy = vi
-      .spyOn(path, 'relative')
-      .mockImplementation((from: string, to: string) => {
+    using relativeSpy = (() => {
+      const originalRelative = path.relative;
+      const spy = vi.spyOn(path, 'relative').mockImplementation((from, to) => {
         if (from === '/project' && to === '/project/src/Greeting.tsx') {
           return 'src\\Greeting.tsx';
         }
         return originalRelative(from, to);
       });
-    using _restoreRelativeSpy = {
-      [Symbol.dispose]() {
-        relativeSpy.mockRestore();
-      }
-    };
+
+      (spy as typeof spy & {[Symbol.dispose]?: () => void})[Symbol.dispose] = () =>
+        spy.mockRestore();
+
+      return spy as typeof spy & {[Symbol.dispose](): void};
+    })();
 
     using compiler = createCompiler();
     await compiler.extractAll();
@@ -1074,6 +1074,7 @@ describe('po format', () => {
 
     expect(output).toContain('#: src/Greeting.tsx:4');
     expect(output).not.toContain('src\\Greeting.tsx');
+    expect(relativeSpy).toHaveBeenCalled();
   });
 
   it('tracks all line numbers when same message appears multiple times in one file', async () => {
