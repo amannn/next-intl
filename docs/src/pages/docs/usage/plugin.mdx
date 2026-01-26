@@ -234,6 +234,49 @@ See also: [Ahead-of-time compilation with `next-intl`](/blog/precompilation)
 
 **Note:** `t.raw` is not supported with precompiled messages (see [tradeoffs](https://github.com/amannn/next-intl/blob/main/rfcs/002-icu-message-precompilation.md#tradeoffs))
 
+<Details id="precompile-runtime-messages">
+<summary>How can I precompile messages that are fetched at runtime?</summary>
+
+If you fetch messages at runtime, you can compile them yourself before returning them:
+
+```tsx filename="i18n/request.ts"
+import compile from 'icu-minify/compile';
+import {getRequestConfig} from 'next-intl/server';
+
+type Messages = Record<string, unknown>;
+
+function compileMessages(messages: Messages): Messages {
+  return Object.fromEntries(
+    Object.entries(messages).map(([key, value]) => {
+      if (value && typeof value === 'object') {
+        return [key, compileMessages(value as Messages)];
+      }
+
+      if (typeof value === 'string') {
+        return [key, compile(value)];
+      }
+
+      throw new Error(`Unexpected message: ${typeof value}`);
+    })
+  );
+}
+
+export default getRequestConfig(async () => {
+  const response = await fetch('https://cdn.example.com/messages/en.json');
+  const messages = (await response.json()) as Messages;
+  const compiled = compileMessages(messages);
+
+  return {
+    messages: compiled
+    // ...
+  };
+});
+```
+
+If you do this, be sure to use the same version of `icu-minify` as the one that your `next-intl` version depends on to ensure compatibility.
+
+</Details>
+
 ### `srcPath` [#src-path]
 
 This defines the source path where messages should be extracted from.
