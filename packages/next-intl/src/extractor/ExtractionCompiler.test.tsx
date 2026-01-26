@@ -1061,8 +1061,10 @@ describe('po format', () => {
         return originalRelative(from, to);
       });
 
-      (spy as typeof spy & {[Symbol.dispose]?: () => void})[Symbol.dispose] = () =>
-        spy.mockRestore();
+      (spy as typeof spy & {[Symbol.dispose](): void})[Symbol.dispose] =
+        function restoreRelativeSpy() {
+          spy.mockRestore();
+        };
 
       return spy as typeof spy & {[Symbol.dispose](): void};
     })();
