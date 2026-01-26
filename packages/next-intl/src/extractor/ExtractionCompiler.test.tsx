@@ -1042,6 +1042,43 @@ describe('po format', () => {
     );
   }
 
+  it('normalizes Windows path separators in references', async () => {
+    filesystem.project.src['Greeting.tsx'] =
+      `import {useExtracted} from 'next-intl';
+    function Greeting() {
+      const t = useExtracted();
+      return <div>{t('Hey!')}</div>;
+    }
+    `;
+    filesystem.project.messages = {};
+
+    using relativeSpy = (() => {
+      const originalRelative = path.relative;
+      const spy = vi.spyOn(path, 'relative').mockImplementation((from, to) => {
+        if (from === '/project' && to === '/project/src/Greeting.tsx') {
+          return 'src\\Greeting.tsx';
+        }
+        return originalRelative(from, to);
+      });
+
+      (spy as typeof spy & {[Symbol.dispose](): void})[Symbol.dispose] =
+        function restoreRelativeSpy() {
+          spy.mockRestore();
+        };
+
+      return spy as typeof spy & {[Symbol.dispose](): void};
+    })();
+
+    using compiler = createCompiler();
+    await compiler.extractAll();
+    await waitForWriteFileCalls(1);
+    const output = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+
+    expect(output).toContain('#: src/Greeting.tsx:4');
+    expect(output).not.toContain('src\\Greeting.tsx');
+    expect(relativeSpy).toHaveBeenCalled();
+  });
+
   it('tracks all line numbers when same message appears multiple times in one file', async () => {
     filesystem.project.src['Greeting.tsx'] =
       `import {useExtracted} from 'next-intl';

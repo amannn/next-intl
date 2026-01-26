@@ -13,7 +13,11 @@ import type {
   ExtractorMessageReference,
   Locale
 } from '../types.js';
-import {compareReferences, getDefaultProjectRoot} from '../utils.js';
+import {
+  compareReferences,
+  getDefaultProjectRoot,
+  normalizePathToPosix
+} from '../utils.js';
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
@@ -287,7 +291,9 @@ export default class CatalogManager implements Disposable {
     }
 
     const prevFileMessages = this.messagesByFile.get(absoluteFilePath);
-    const relativeFilePath = path.relative(this.projectRoot, absoluteFilePath);
+    const relativeFilePath = normalizePathToPosix(
+      path.relative(this.projectRoot, absoluteFilePath)
+    );
 
     // Init with all previous ones
     const idsToRemove = Array.from(prevFileMessages?.keys() ?? []);
