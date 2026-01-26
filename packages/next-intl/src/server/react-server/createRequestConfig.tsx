@@ -1,4 +1,4 @@
-import getRuntimeConfig from '../../config.js';
+import getRuntimeConfig from 'next-intl/config';
 import type {
   GetRequestConfigParams,
   RequestConfig
