@@ -13,11 +13,9 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
-import {log, once, throwError} from './utils.js';
+import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
-const logOnce = once('_NEXT_INTL_LOG_CONFIG');
-
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -68,10 +66,6 @@ const withNextIntl = createNextIntlPlugin(
   }
 }
 
-function normalizeEnvValue(value?: string) {
-  return value ?? null;
-}
-
 export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
@@ -82,38 +76,8 @@ export default function getNextConfig(
     process.env.NEXT_TURBOPACK != null ||
     process.env.NEXT_PRIVATE_TURBOPACK != null ||
     isExperimentalAnalyze;
+  const shouldConfigureTurbo = useTurbo || isNextJs16OrHigher();
   const nextIntlConfig: Partial<NextConfig> = {};
-
-  logOnce(() => {
-    const experimentalConfig = nextConfig?.experimental as
-      | {turbo?: unknown}
-      | undefined;
-    const envInfo: Record<string, string | null> = {
-      NODE_ENV: normalizeEnvValue(process.env.NODE_ENV),
-      NEXT_EXPERIMENTAL_ANALYZE: normalizeEnvValue(
-        process.env.NEXT_EXPERIMENTAL_ANALYZE
-      ),
-      NEXT_PHASE: normalizeEnvValue(process.env.NEXT_PHASE),
-      NEXT_PRIVATE_TURBOPACK: normalizeEnvValue(
-        process.env.NEXT_PRIVATE_TURBOPACK
-      ),
-      NEXT_RUNTIME: normalizeEnvValue(process.env.NEXT_RUNTIME),
-      NEXT_TURBOPACK: normalizeEnvValue(process.env.NEXT_TURBOPACK),
-      TURBOPACK: normalizeEnvValue(process.env.TURBOPACK)
-    };
-    const configInfo = {
-      hasExperimentalTurboConfig: experimentalConfig?.turbo != null,
-      hasTurbopackConfig: nextConfig?.turbopack != null,
-      hasWebpackConfig: typeof nextConfig?.webpack === 'function',
-      isExperimentalAnalyze,
-      precompile: pluginConfig.experimental?.messages?.precompile ?? false,
-      requestConfig: pluginConfig.requestConfig ?? null,
-      useTurbo
-    };
-
-    log(`Env: ${JSON.stringify(envInfo)}`);
-    log(`Config: ${JSON.stringify(configInfo)}`);
-  });
 
   function getExtractMessagesLoaderConfig() {
     const experimental = pluginConfig.experimental!;
@@ -179,7 +143,7 @@ export default function getNextConfig(
     }
   }
 
-  if (useTurbo) {
+  if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
       path.isAbsolute(pluginConfig.requestConfig)
@@ -290,7 +254,9 @@ export default function getNextConfig(
         }
       };
     }
-  } else {
+  }
+
+  if (!useTurbo) {
     nextIntlConfig.webpack = function webpack(config: Configuration, context) {
       if (!config.resolve) config.resolve = {};
       if (!config.resolve.alias) config.resolve.alias = {};

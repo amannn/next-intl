@@ -10,10 +10,6 @@ export function warn(message: string) {
   console.warn(formatMessage(message));
 }
 
-export function log(message: string) {
-  console.log(formatMessage(message));
-}
-
 /**
  * Returns a function that runs the provided callback only once per process.
  * Next.js can call the config multiple times - this ensures we only run once.
