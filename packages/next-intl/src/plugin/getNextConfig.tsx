@@ -16,7 +16,6 @@ import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
-
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -72,6 +71,12 @@ export default function getNextConfig(
   nextConfig?: NextConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
+
+  // `experimental-analyze` doesn’t set the TURBOPACK env param. Since Next.js
+  // 16 doesn't print a warning when we configure both Turbo- and Webpack, just
+  // always configure Turbopack just in case.
+  const shouldConfigureTurbo = useTurbo || isNextJs16OrHigher();
+
   const nextIntlConfig: Partial<NextConfig> = {};
 
   function getExtractMessagesLoaderConfig() {
@@ -138,7 +143,7 @@ export default function getNextConfig(
     }
   }
 
-  if (useTurbo) {
+  if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
       path.isAbsolute(pluginConfig.requestConfig)
@@ -249,7 +254,9 @@ export default function getNextConfig(
         }
       };
     }
-  } else {
+  }
+
+  if (!useTurbo) {
     nextIntlConfig.webpack = function webpack(config: Configuration, context) {
       if (!config.resolve) config.resolve = {};
       if (!config.resolve.alias) config.resolve.alias = {};
