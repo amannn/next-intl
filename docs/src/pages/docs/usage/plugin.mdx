@@ -262,12 +262,12 @@ function compileMessages(messages: Messages): Messages {
 }
 
 export default getRequestConfig(async () => {
-  // ...
   const response = await fetch('https://cdn.example.com/messages/en.json');
   const messages = (await response.json()) as Messages;
+  const compiled = compileMessages(messages);
 
   return {
-    messages: compileMessages(messages)
+    messages: compiled
     // ...
   };
 });
