@@ -76,7 +76,12 @@ export default function getNextConfig(
   pluginConfig: PluginConfig,
   nextConfig?: NextConfig
 ) {
-  const useTurbo = process.env.TURBOPACK != null;
+  const isExperimentalAnalyze = process.argv.includes('experimental-analyze');
+  const useTurbo =
+    process.env.TURBOPACK != null ||
+    process.env.NEXT_TURBOPACK != null ||
+    process.env.NEXT_PRIVATE_TURBOPACK != null ||
+    isExperimentalAnalyze;
   const nextIntlConfig: Partial<NextConfig> = {};
 
   logOnce(() => {
@@ -100,6 +105,7 @@ export default function getNextConfig(
       hasExperimentalTurboConfig: experimentalConfig?.turbo != null,
       hasTurbopackConfig: nextConfig?.turbopack != null,
       hasWebpackConfig: typeof nextConfig?.webpack === 'function',
+      isExperimentalAnalyze,
       precompile: pluginConfig.experimental?.messages?.precompile ?? false,
       requestConfig: pluginConfig.requestConfig ?? null,
       useTurbo
