@@ -80,6 +80,9 @@ export default function getNextConfig(
   const nextIntlConfig: Partial<NextConfig> = {};
 
   logOnce(() => {
+    const experimentalConfig = nextConfig?.experimental as
+      | {turbo?: unknown}
+      | undefined;
     const envInfo: Record<string, string | null> = {
       NODE_ENV: normalizeEnvValue(process.env.NODE_ENV),
       NEXT_EXPERIMENTAL_ANALYZE: normalizeEnvValue(
@@ -94,7 +97,7 @@ export default function getNextConfig(
       TURBOPACK: normalizeEnvValue(process.env.TURBOPACK)
     };
     const configInfo = {
-      hasExperimentalTurboConfig: nextConfig?.experimental?.turbo != null,
+      hasExperimentalTurboConfig: experimentalConfig?.turbo != null,
       hasTurbopackConfig: nextConfig?.turbopack != null,
       hasWebpackConfig: typeof nextConfig?.webpack === 'function',
       precompile: pluginConfig.experimental?.messages?.precompile ?? false,
