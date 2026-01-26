@@ -1061,6 +1061,11 @@ describe('po format', () => {
         }
         return originalRelative(from, to);
       });
+    using _restoreRelativeSpy = {
+      [Symbol.dispose]() {
+        relativeSpy.mockRestore();
+      }
+    };
 
     using compiler = createCompiler();
     await compiler.extractAll();
@@ -1069,8 +1074,6 @@ describe('po format', () => {
 
     expect(output).toContain('#: src/Greeting.tsx:4');
     expect(output).not.toContain('src\\Greeting.tsx');
-
-    relativeSpy.mockRestore();
   });
 
   it('tracks all line numbers when same message appears multiple times in one file', async () => {
