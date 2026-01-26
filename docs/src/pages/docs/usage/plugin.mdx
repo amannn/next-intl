@@ -235,9 +235,9 @@ See also: [Ahead-of-time compilation with `next-intl`](/blog/precompilation)
 **Note:** `t.raw` is not supported with precompiled messages (see [tradeoffs](https://github.com/amannn/next-intl/blob/main/rfcs/002-icu-message-precompilation.md#tradeoffs))
 
 <Details id="precompile-runtime-messages">
-<summary>Precompile runtime-loaded messages</summary>
+<summary>How can I precompile messages that are fetched at runtime?</summary>
 
-If you fetch messages at runtime (e.g. from a CDN), you can compile them yourself before returning them:
+If you fetch messages at runtime, you can compile them yourself before returning them:
 
 ```tsx filename="i18n/request.ts"
 import compile from 'icu-minify/compile';
@@ -248,15 +248,15 @@ type Messages = Record<string, unknown>;
 function compileMessages(messages: Messages): Messages {
   return Object.fromEntries(
     Object.entries(messages).map(([key, value]) => {
+      if (value && typeof value === 'object') {
+        return [key, compileMessages(value as Messages)];
+      }
+      
       if (typeof value === 'string') {
         return [key, compile(value)];
       }
 
-      if (value && typeof value === 'object' && !Array.isArray(value)) {
-        return [key, compileMessages(value as Messages)];
-      }
-
-      return [key, value];
+      throw new Error(`Unexpected message: ${typeof value}`);
     })
   );
 }
