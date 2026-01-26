@@ -267,7 +267,7 @@ export default getRequestConfig(async () => {
   const messages = (await response.json()) as Messages;
 
   return {
-    messages: compileMessages(messages),
+    messages: compileMessages(messages)
     // ...
   };
 });
