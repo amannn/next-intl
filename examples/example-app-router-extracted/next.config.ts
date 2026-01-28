@@ -10,7 +10,8 @@ const withNextIntl = createNextIntlPlugin({
     messages: {
       path: './messages',
       format: 'po',
-      locales: 'infer'
+      locales: 'infer',
+      precompile: true
     }
   }
 });

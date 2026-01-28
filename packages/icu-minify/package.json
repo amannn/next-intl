@@ -1,0 +1,74 @@
+{
+  "name": "icu-minify",
+  "version": "4.7.0",
+  "sideEffects": false,
+  "author": "Jan Amann <jan@amann.work>",
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://github.com/sponsors/amannn"
+    }
+  ],
+  "description": "ICU message format compiler with a <1KB runtime bundle footprint",
+  "license": "MIT",
+  "homepage": "https://next-intl.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amannn/next-intl.git"
+  },
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "test": "TZ=Europe/Berlin vitest",
+    "lint": "pnpm run lint:source && pnpm run lint:package",
+    "lint:source": "eslint src test && tsc --noEmit && pnpm run lint:prettier",
+    "lint:package": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
+    "lint:prettier": "prettier src --check",
+    "prepublishOnly": "turbo build",
+    "size": "size-limit"
+  },
+  "type": "module",
+  "exports": {
+    "./compile": {
+      "types": "./dist/types/compile.d.ts",
+      "development": "./dist/esm/development/compile.js",
+      "default": "./dist/esm/production/compile.js"
+    },
+    "./format": {
+      "types": "./dist/types/format.d.ts",
+      "development": "./dist/esm/development/format.js",
+      "default": "./dist/esm/production/format.js"
+    }
+  },
+  "files": [
+    "dist",
+    "compile.d.ts",
+    "format.d.ts"
+  ],
+  "keywords": [
+    "icu",
+    "messageformat",
+    "i18n",
+    "internationalization",
+    "compiler",
+    "minify"
+  ],
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "^3.4.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@size-limit/preset-small-lib": "^11.2.0",
+    "@types/node": "^20.14.5",
+    "eslint": "9.11.1",
+    "eslint-config-molindo": "^8.0.0",
+    "intl-messageformat": "^11.1.0",
+    "prettier": "^3.3.3",
+    "publint": "^0.2.8",
+    "rollup": "^4.18.0",
+    "size-limit": "^11.2.0",
+    "tools": "workspace:^",
+    "typescript": "^5.5.3",
+    "vitest": "^3.0.8"
+  },
+  "prettier": "eslint-config-molindo/.prettierrc.json"
+}

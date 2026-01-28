@@ -1,4 +1,5 @@
 import fs from 'fs';
+import {createRequire} from 'module';
 import path from 'path';
 import type {NextConfig} from 'next';
 import type {
@@ -14,6 +15,7 @@ import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
+const require = createRequire(import.meta.url);
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -69,6 +71,12 @@ export default function getNextConfig(
   nextConfig?: NextConfig
 ) {
   const useTurbo = process.env.TURBOPACK != null;
+
+  // `experimental-analyze` doesn’t set the TURBOPACK env param. Since Next.js
+  // 16 doesn't print a warning when we configure both Turbo- and Webpack, just
+  // always configure Turbopack just in case.
+  const shouldConfigureTurbo = useTurbo || isNextJs16OrHigher();
+
   const nextIntlConfig: Partial<NextConfig> = {};
 
   function getExtractMessagesLoaderConfig() {
@@ -123,7 +131,19 @@ export default function getNextConfig(
     }
   }
 
-  if (useTurbo) {
+  // Validate messages config
+  if (pluginConfig.experimental?.messages) {
+    const messages = pluginConfig.experimental.messages;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- For non-TS consumers
+    if (!messages.format) {
+      throwError('`format` is required when using `messages`.');
+    }
+    if (!messages.path) {
+      throwError('`path` is required when using `messages`.');
+    }
+  }
+
+  if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
       path.isAbsolute(pluginConfig.requestConfig)
@@ -135,11 +155,30 @@ export default function getNextConfig(
     }
 
     // Assign alias for `next-intl/config`
-    const resolveAlias = {
+    const resolveAlias: Record<string, string> = {
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    // Add alias for precompiled message formatting
+    if (pluginConfig.experimental?.messages?.precompile) {
+      // Workaround for https://github.com/vercel/next.js/issues/88540
+      let formatOnlyPath = path.relative(
+        process.cwd(),
+        require.resolve('use-intl/format-message/format-only')
+      );
+
+      // Turbopack seems to require this, otherwise `use-intl/format-message` is
+      // still bundled (despite the code correctly calling into `format-only`).
+      // Note that in this monorepo this is not necessary, because we'll end
+      // up with a path like `../…` — but for actual consumers this is required.
+      if (!formatOnlyPath.startsWith('.')) {
+        formatOnlyPath = `./${formatOnlyPath}`;
+      }
+
+      resolveAlias['use-intl/format-message'] = formatOnlyPath;
+    }
 
     // Add loaders
     let rules: Record<string, TurbopackRuleConfigCollection> | undefined;
@@ -215,7 +254,9 @@ export default function getNextConfig(
         }
       };
     }
-  } else {
+  }
+
+  if (!useTurbo) {
     nextIntlConfig.webpack = function webpack(config: Configuration, context) {
       if (!config.resolve) config.resolve = {};
       if (!config.resolve.alias) config.resolve.alias = {};
@@ -227,6 +268,16 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+
+      // Add alias for precompiled message formatting
+      if (pluginConfig.experimental?.messages?.precompile) {
+        // Use require.resolve to get the actual file path, since
+        // bundlers don't properly resolve package subpath exports
+        // when used as alias targets
+        (config.resolve.alias as Record<string, string>)[
+          'use-intl/format-message'
+        ] = require.resolve('use-intl/format-message/format-only');
+      }
 
       // Add loader for extractor
       if (pluginConfig.experimental?.extract) {

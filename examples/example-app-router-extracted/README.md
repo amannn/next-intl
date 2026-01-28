@@ -1,6 +1,6 @@
 # example-app-router-extracted
 
-An example that showcases an app with message extraction set up.
+An example that showcases an app with `useExtracted` set up.
 
 ## Deploy your own
 
