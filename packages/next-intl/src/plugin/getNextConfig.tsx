@@ -25,6 +25,10 @@ function withExtensions(localPath: string) {
   ];
 }
 
+function normalizeTurbopackAliasPath(pathname: string) {
+  return pathname.replace(/\\/g, '/');
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -177,7 +181,8 @@ export default function getNextConfig(
         formatOnlyPath = `./${formatOnlyPath}`;
       }
 
-      resolveAlias['use-intl/format-message'] = formatOnlyPath;
+      resolveAlias['use-intl/format-message'] =
+        normalizeTurbopackAliasPath(formatOnlyPath);
     }
 
     // Add loaders
