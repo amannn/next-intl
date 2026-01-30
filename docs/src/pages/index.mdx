@@ -11,8 +11,9 @@ import LinkButton from '@/components/LinkButton';
 import PartnerBanner from '@/components/PartnerBanner';
 import Section from '@/components/Section';
 import UserTestimonial from '@/components/UserTestimonial';
-import GetStartedBackground from '@/components/GetStartedBackground';
 import UserCompanies from '@/components/UserCompanies';
+import Wrapper from '@/components/Wrapper';
+import GitHubStarsLinkButton from '@/components/GitHubStarsLinkButton';
 
 <div className="bg-slate-50 dark:bg-gray-900">
 
@@ -154,12 +155,19 @@ import UserCompanies from '@/components/UserCompanies';
     Using next-intl too? <Link target="_blank" href="https://github.com/amannn/next-intl/issues/138">Let us know!</Link>
   </div>
 </Section>
-<div className="text-center pb-10 -mt-10">
-  <div className="py-60 relative">
-    <GetStartedBackground />
-    <div className='relative'>
-      <LinkButton size='lg' href="/docs/getting-started">Get started with next-intl</LinkButton>
+<div className="pt-10 pb-20 lg:pb-60">
+  <Wrapper>
+    <div className="text-center">
+      <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white lg:text-4xl">
+        Get started with <code className="nextra-code">next-intl</code>
+      </h2>
+      <div className="mt-4 flex items-center justify-center gap-2 md:mt-8 md:gap-4">
+        <LinkButton href="/docs/getting-started" size="lg">
+          Read the docs
+        </LinkButton>
+        <GitHubStarsLinkButton />
+      </div>
     </div>
-  </div>
+  </Wrapper>
 </div>
 </div>
