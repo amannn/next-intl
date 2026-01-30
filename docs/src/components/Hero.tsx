@@ -43,6 +43,7 @@ export default function Hero({
                 </div>
                 <div>
                   <LinkButton
+                    arrow={false}
                     href="https://next-intl-example-app-router.vercel.app"
                     size="lg"
                     target="_blank"

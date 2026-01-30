@@ -71,7 +71,6 @@ export default function GitHubStarsLinkButton() {
     <LinkButton
       href={config.githubUrl}
       rel="noreferrer"
-      showArrow={false}
       size="lg"
       target="_blank"
       variant="outline"
