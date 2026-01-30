@@ -1,17 +1,12 @@
-import type {ReactElement} from 'react';
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import LinkButton from '@/components/LinkButton';
 import config from '@/config';
 
-type Props = {
-  size?: 'md' | 'lg';
-};
-
-function GitHubIcon(): ReactElement {
+function GitHubIcon({className}: {className?: string}) {
   return (
     <svg
       aria-hidden="true"
-      className="h-5 w-5"
+      className={className}
       fill="currentColor"
       viewBox="0 0 24 24"
     >
@@ -24,62 +19,69 @@ function GitHubIcon(): ReactElement {
   );
 }
 
-function formatStars(stars: number): string {
-  return new Intl.NumberFormat('en', {
-    maximumFractionDigits: 1,
-    notation: 'compact'
-  }).format(stars);
-}
-
-export default function GitHubStarsLinkButton({size = 'lg'}: Props) {
+export default function GitHubStarsLinkButton() {
   const [stars, setStars] = useState<null | number>(null);
+
+  function formatStars(amount: number): string {
+    return new Intl.NumberFormat('en', {
+      maximumFractionDigits: 1,
+      notation: 'compact'
+    }).format(amount);
+  }
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadStars() {
       try {
-        const response = await fetch('/api/github-stars');
+        const response = await fetch(
+          `https://api.github.com/repos/${config.githubRepo}`,
+          {
+            headers: {
+              Accept: 'application/vnd.github+json'
+            }
+          }
+        );
         if (!response.ok) return;
 
         const json: unknown = await response.json();
         if (
           typeof json === 'object' &&
           json !== null &&
-          'stars' in json &&
-          typeof (json as {stars: unknown}).stars === 'number'
+          'stargazers_count' in json &&
+          typeof (json as {stargazers_count: unknown}).stargazers_count ===
+            'number'
         ) {
           if (!isMounted) return;
-          setStars((json as {stars: number}).stars);
+          setStars((json as {stargazers_count: number}).stargazers_count);
         }
-      } catch {
-        // Best-effort
+      } catch (error) {
+        console.error(error);
       }
     }
 
-    void loadStars();
+    loadStars();
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const label = useMemo(() => {
-    if (stars === null) return 'GitHub stars';
-    return `${formatStars(stars)} stars`;
-  }, [stars]);
-
   return (
     <LinkButton
       href={config.githubUrl}
       rel="noreferrer"
       showArrow={false}
-      size={size}
+      size="lg"
       target="_blank"
       variant="outline"
     >
-      <GitHubIcon />
-      {label}
+      <span className="inline-flex h-5 items-center">
+        <GitHubIcon className="size-5 md:size-7" />
+      </span>
+      <span className="ml-1 inline-block md:ml-2">
+        {stars ? `${formatStars(stars)} stars` : 'Star on GitHub'}
+      </span>
     </LinkButton>
   );
 }
