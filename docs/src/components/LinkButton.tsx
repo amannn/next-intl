@@ -12,8 +12,8 @@ type Props = {
 export default function LinkButton({
   children,
   className,
-  size = 'md',
   showArrow = true,
+  size = 'md',
   variant = 'primary',
   ...rest
 }: Props) {

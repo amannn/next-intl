@@ -53,4 +53,3 @@ export default async function handler(
     response.status(200).json({stars: null});
   }
 }
-

@@ -1,5 +1,4 @@
 import {useEffect, useMemo, useState} from 'react';
-
 import LinkButton from '@/components/LinkButton';
 import config from '@/config';
 
@@ -83,4 +82,3 @@ export default function GitHubStarsLinkButton({size = 'lg'}: Props) {
     </LinkButton>
   );
 }
-
