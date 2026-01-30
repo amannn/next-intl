@@ -1,3 +1,4 @@
+import type {ReactElement} from 'react';
 import {useEffect, useMemo, useState} from 'react';
 import LinkButton from '@/components/LinkButton';
 import config from '@/config';
@@ -6,7 +7,7 @@ type Props = {
   size?: 'md' | 'lg';
 };
 
-function GitHubIcon(): JSX.Element {
+function GitHubIcon(): ReactElement {
   return (
     <svg
       aria-hidden="true"
