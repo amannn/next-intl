@@ -106,8 +106,8 @@ const companies = [
   {
     name: 'Uber',
     logo: uberLogo,
-    scale: 0.85,
-    url: 'https://www.uber.com'
+    scale: 0.7,
+    url: 'https://jobs.uber.com'
   },
   {
     name: 'Ubisoft',
