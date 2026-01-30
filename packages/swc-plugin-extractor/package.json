@@ -1,6 +1,6 @@
 {
   "name": "next-intl-swc-plugin-extractor",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "sideEffects": false,
   "author": "강동윤 <kdy1997.dev@gmail.com>",
   "contributors": [
