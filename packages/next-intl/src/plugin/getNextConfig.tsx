@@ -26,6 +26,8 @@ function withExtensions(localPath: string) {
 }
 
 function normalizeTurbopackAliasPath(pathname: string) {
+  // Turbopack alias targets should use forward slashes; Windows backslashes can
+  // break resolution in dev (see `next-intl/config` alias path style).
   return pathname.replace(/\\/g, '/');
 }
 
