@@ -1,6 +1,6 @@
 {
   "name": "icu-minify",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "sideEffects": false,
   "author": "Jan Amann <jan@amann.work>",
   "funding": [
