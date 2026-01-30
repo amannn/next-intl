@@ -2,7 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import adidasRunningLogo from './adidas-running.svg';
 import bigcommerceLogo from './bigcommerce-logo.svg';
-import billivLogo from './billiv-logo.svg';
 import boleroLogo from './bolero-logo.svg';
 import boltLogo from './bolt-logo.svg';
 import ethereumLogo from './ethereum-logo.svg';
@@ -15,6 +14,7 @@ import solanaLogo from './solana-logo.svg';
 import soundtrackLogo from './soundtrack-logo.svg';
 import speechifyLogo from './speechify-logo.svg';
 import todoistLogo from './todoist-logo.svg';
+import uberLogo from './uber-logo.svg';
 import ubisoftLogo from './ubisoft-logo.svg';
 import vintedgoLogo from './vintedgo-logo.svg';
 import watershedLogo from './watershed-logo.svg';
@@ -31,12 +31,6 @@ const companies = [
     logo: bigcommerceLogo,
     scale: 1.1,
     url: 'https://www.catalyst.dev/'
-  },
-  {
-    name: 'Billiv',
-    logo: billivLogo,
-    scale: 0.65,
-    url: 'https://billiv.fr'
   },
   {
     name: 'Bolt',
@@ -108,6 +102,12 @@ const companies = [
     logo: todoistLogo,
     scale: 0.9,
     url: 'https://todoist.com'
+  },
+  {
+    name: 'Uber',
+    logo: uberLogo,
+    scale: 0.7,
+    url: 'https://jobs.uber.com'
   },
   {
     name: 'Ubisoft',
