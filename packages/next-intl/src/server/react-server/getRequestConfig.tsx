@@ -41,5 +41,47 @@ export default function getRequestConfig(
     params: GetRequestConfigParams
   ) => RequestConfig | Promise<RequestConfig>
 ) {
-  return createRequestConfig;
+  return async (params: GetRequestConfigParams) => {
+    const config = (await createRequestConfig(params)) as RequestConfig;
+    // If locale already provided by the createRequestConfig return as-is
+    if (config && config.locale) return config;
+
+    // Try to obtain locale from params.locale or the awaited requestLocale
+    let locale = (params && (params.locale as Locale)) || undefined;
+    try {
+      if (!locale && params && params.requestLocale) {
+        locale = await params.requestLocale;
+      }
+    } catch {
+      // ignore
+    }
+
+    // If still no locale, attempt to resolve a local next-intl config file
+    if (!locale) {
+      const candidates = [
+        'next-intl.config.js',
+        'next-intl.config.cjs',
+        'next-intl.config.mjs'
+      ];
+      for (const name of candidates) {
+        try {
+          const resolved = require.resolve(name, {paths: [process.cwd()]});
+          try {
+            const mod = name.endsWith('.mjs') ? await import(resolved) : require(resolved);
+            const cfgModule = (mod && (mod.default || mod)) as any;
+            if (cfgModule && cfgModule.defaultLocale) {
+              locale = cfgModule.defaultLocale;
+              break;
+            }
+          } catch {
+            // ignore module import errors
+          }
+        } catch {
+          // file not found, continue
+        }
+      }
+    }
+
+    return {...(config || {}), locale} as RequestConfig;
+  };
 }
