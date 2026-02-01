@@ -1,0 +1,39 @@
+name: Test next-intl package
+
+on:
+  pull_request:
+    paths:
+      - 'packages/next-intl/**'
+
+jobs:
+  test-next-intl:
+    name: Test `packages/next-intl`
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run next-intl package tests
+        run: pnpm --filter ./packages/next-intl test --silent
+
+      - name: Upload test results (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-intl-test-results
+          path: |
+            packages/next-intl/coverage || true
