@@ -1,5 +1,6 @@
 import ExtractionCompiler from '../../extractor/ExtractionCompiler.js';
 import type {ExtractorConfig} from '../../extractor/types.js';
+import {isDevelopment, isNextBuild} from '../config.js';
 import type {PluginConfig} from '../types.js';
 import {once} from '../utils.js';
 
@@ -14,9 +15,6 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
     return;
   }
 
-  // Avoid rollup's `replace` plugin to compile this away
-  const isDevelopment = process.env['NODE_ENV'.trim()] === 'development';
-
   // Avoid running for:
   // - info
   // - start
@@ -29,7 +27,7 @@ export default function initExtractionCompiler(pluginConfig: PluginConfig) {
   // What remains are:
   // - dev (NODE_ENV=development)
   // - build (NODE_ENV=production)
-  const shouldRun = isDevelopment || process.argv.includes('build');
+  const shouldRun = isDevelopment || isNextBuild;
   if (!shouldRun) return;
 
   runOnce(() => {
