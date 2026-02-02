@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.8.2 (2026-02-02)
+
+### Bug Fixes
+
+* Avoid throwing config errors for non-Next.js consumers of `next.config.ts` ([#2245](https://github.com/amannn/next-intl/issues/2245)) ([f57800e](https://github.com/amannn/next-intl/commit/f57800ecd43ab9ab928a6c3839e24fed68bc6d24)) – by @amannn
+
 ## 4.8.1 (2026-01-30)
 
 ### Bug Fixes
