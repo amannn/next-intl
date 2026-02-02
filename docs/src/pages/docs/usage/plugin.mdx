@@ -228,16 +228,37 @@ Node.js supports native TypeScript execution like it's needed for the example ab
 
 #### `precompile`
 
-When enabled, ICU messages are compiled ahead of time during the build when they are processed by the messages loader. This results in smaller bundles and faster message formatting at runtime.
+As a performance optimization, you can achieve smaller bundles and faster message formatting at runtime by precompiling messages ahead of time during the build:
+
+```tsx {7}
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    messages: {
+      path: './messages',
+      locales: 'infer',
+      format: 'json',
+      precompile: true
+    }
+    // ...
+  }
+});
+```
+
+Based on the provided options, message will now be precompiled when imported into your app:
+
+```tsx
+// ✅ Will be pre-processed by a Turbo- or Webpack loader
+const messages = (await import(`../../messages/en.json`)).default;
+```
 
 See also: [Ahead-of-time compilation with `next-intl`](/blog/precompilation)
 
 **Note:** `t.raw` is not supported with precompiled messages (see [tradeoffs](https://github.com/amannn/next-intl/blob/main/rfcs/002-icu-message-precompilation.md#tradeoffs))
 
 <Details id="precompile-runtime-messages">
-<summary>How can I precompile messages that are fetched at runtime?</summary>
+<summary>How can I manually precompile messages?</summary>
 
-If you fetch messages at runtime, you can compile them yourself before returning them:
+For cases where you don't `import` messages into your app (e.g. when fetching them at runtime), you can manually precompile them using `icu-minify/compile`:
 
 ```tsx filename="i18n/request.ts"
 import compile from 'icu-minify/compile';
