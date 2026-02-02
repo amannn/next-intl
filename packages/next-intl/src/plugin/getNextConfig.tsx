@@ -11,6 +11,7 @@ import type {Configuration} from 'webpack';
 import {getFormatExtension} from '../extractor/format/index.js';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
+import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
@@ -44,7 +45,10 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
   }
 
   if (providedPath) {
-    if (!pathExists(providedPath)) {
+    // We use the `isNextDevOrBuild` condition to avoid throwing errors
+    // if `next.config.ts` is read by a non-Next.js process.
+    // https://github.com/amannn/next-intl/discussions/2209#discussioncomment-15650927
+    if (isDevelopmentOrNextBuild && !pathExists(providedPath)) {
       throwError(
         `Could not find i18n config at ${providedPath}, please provide a valid path.`
       );
@@ -60,15 +64,18 @@ function resolveI18nPath(providedPath?: string, cwd?: string) {
       }
     }
 
-    throwError(
-      `Could not locate request configuration module.\n\nThis path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}\n\nAlternatively, you can specify a custom location in your Next.js config:\n\nconst withNextIntl = createNextIntlPlugin(
+    if (isDevelopmentOrNextBuild) {
+      throwError(
+        `Could not locate request configuration module.\n\nThis path is supported by default: ./(src/)i18n/request.{js,jsx,ts,tsx}\n\nAlternatively, you can specify a custom location in your Next.js config:\n\nconst withNextIntl = createNextIntlPlugin(\n  './path/to/i18n/request.tsx'\n);`
+      );
+    }
 
-Alternatively, you can specify a custom location in your Next.js config:
-
-const withNextIntl = createNextIntlPlugin(
-  './path/to/i18n/request.tsx'
-);`
-    );
+    // Default as fallback
+    if (pathExists('./src')) {
+      return './src/i18n/request.ts';
+    } else {
+      return './i18n/request.ts';
+    }
   }
 }
 
