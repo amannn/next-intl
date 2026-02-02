@@ -12,7 +12,7 @@ body:
         **Please note:**
         1. General usage questions are not bug reports. If you're looking for support with your app, you can consider asking for help on the [Next.js Discord](https://discord.com/invite/nextjs), [Stack Overflow](https://stackoverflow.com/questions/ask) or [GitHub discussions](https://github.com/amannn/next-intl/discussions) instead.
         2. `next-intl` is based on Next.js, therefore bugs in Next.js might cause errors in apps that use `next-intl`. Please make sure that the bug you're experiencing is _caused by_ by `next-intl`. If you're unsure, please search on [the Next.js issue tracker](https://github.com/vercel/next.js/issues) for similar issues.
-        3. Bug reports without a reproduction may be closed immediately.
+        3. Bug reports without a reproduction will be closed immediately.
   - type: textarea
     attributes:
       label: Description
@@ -42,6 +42,8 @@ body:
         **Creating a good reproduction takes time.**
 
         To help us resolve the issue quickly, please simplify the reproduction as much as possible by removing any unnecessary code, files, and dependencies that are not directly related to the problem. The easier it is for us to see the issue, the faster we can help you.
+
+        Note that bug reports without a reproduction will be closed immediately.
   - type: textarea
     attributes:
       label: Reproduction description
