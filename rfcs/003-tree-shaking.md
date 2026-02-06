@@ -147,11 +147,11 @@ The translator function returned by `useTranslations` has several methods that a
 
 ```tsx
 const t = useTranslations('About');
-t('title');           // Standard translation
-t.rich('title');      // Rich text with React components
-t.markup('title');    // HTML markup
-t.has('title');       // Check if key exists
-t.raw('title');       // Get raw message value
+t('title'); // Standard translation
+t.rich('title'); // Rich text with React components
+t.markup('title'); // HTML markup
+t.has('title'); // Check if key exists
+t.raw('title'); // Get raw message value
 ```
 
 **Requirement**: All these method calls must be tracked. `t.rich`, `t.markup`, and `t.has` still require the message to be available, so they contribute to the namespace requirements. `t.raw` is less common but should also be tracked.
@@ -184,11 +184,12 @@ For dynamic imports, the module path is statically analyzable (it's a string lit
 In monorepo setups or when analyzing dependencies, the analysis may need to traverse into `node_modules` to find `useTranslations` calls in shared packages or workspace dependencies.
 
 **Requirement**: The analysis should support analyzing code in:
+
 - The application source directory (typically `src/` or `app/`)
 - Workspace packages in monorepos (e.g., `packages/shared-components/`)
 - Dependencies in `node_modules` that are part of the client bundle (though this is less common)
 
-The existing infrastructure already handles source path configuration (see [`SourceFileScanner`](../packages/next-intl/src/extractor/source/SourceFileScanner.tsx)), so this can be extended to support multiple source paths or workspace patterns.
+This is closely related to `experimental.srcPath` configuration, we should utilize this for tree shaking as well.
 
 ### Entry point model
 
