@@ -157,13 +157,15 @@ Just flip a switch:
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
-  messages: {
-    path: './messages',
-    locales: 'infer',
-    format: 'json',
+  experimental: {
+    messages: {
+      path: './messages',
+      locales: 'infer',
+      format: 'json',
 
-    // Enable precompilation
-    precompile: true
+      // Enable precompilation
+      precompile: true
+    }
   }
 });
 
