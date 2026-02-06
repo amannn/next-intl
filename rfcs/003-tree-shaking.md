@@ -4,26 +4,28 @@ Start date: 2026-02-06
 
 ## Summary
 
-This RFC proposes automatic tree-shaking of messages for Client Components in Next.js App Router applications. By statically analyzing the module graph, we can automatically determine which message namespaces (and ideally which keys) each client boundary requires, eliminating the need for manual namespace management with `pick()`.
-
-This document describes the problem, motivation, and design considerations for implementing automatic message tree-shaking.
+We want Next.js App Router client bundles to receive only the message namespaces (and ideally keys) they actually use. Static analysis of the module graph can infer those requirements automatically, replacing manual `pick()` calls. This RFC frames the problem, the requirements for analysis, design options, and the proposed segment-level solution.
 
 **Table of contents:**
 
-- [Problem description](#problem-description)
-  - [Background: How messages flow today](#background-how-messages-flow-today)
-  - [The manual workaround](#the-manual-workaround)
-  - [The goal: automatic namespace inference](#the-goal-automatic-namespace-inference)
-  - [Static analysis requirements](#static-analysis-requirements)
-  - [Entry point model](#entry-point-model)
-- [Proposed solution: Segment-level tree-shaking](#proposed-solution-segment-level-tree-shaking)
-  - [Granularity](#granularity)
-  - [Analysis scope](#analysis-scope)
+- [Context](#context)
+  - [How messages flow today](#how-messages-flow-today)
+  - [Manual workaround](#manual-workaround)
+- [Goal](#goal)
+- [Static analysis requirements](#static-analysis-requirements)
+- [Entry point model](#entry-point-model)
+- [Design options for granularity](#design-options-for-granularity)
+- [Proposed approach: Segment-level tree-shaking](#proposed-approach-segment-level-tree-shaking)
+  - [Constraints](#constraints)
+  - [Scope of analysis](#scope-of-analysis)
+  - [Why this granularity](#why-this-granularity)
+- [Alternatives and complements](#alternatives-and-complements)
+- [Known limitations](#known-limitations)
 - [Open questions](#open-questions)
 
-## Problem description
+## Context
 
-### Background: How messages flow today
+### How messages flow today
 
 In Next.js App Router applications using `next-intl`, messages flow differently depending on where they're consumed:
 
@@ -47,7 +49,7 @@ export default async function LocaleLayout({children}: LayoutProps) {
 
 In this case, we're passing the messages for all pages to the client (including the server-only ones). This creates unnecessary bundle size overhead.
 
-### The manual workaround
+### Manual workaround
 
 Users can manually scope messages using `pick()` from lodash or similar utilities:
 
@@ -80,7 +82,7 @@ This approach works, but comes with significant drawbacks:
 4. **Doesn't compose well**: If a client component renders other client components from different namespaces, the parent must know about all transitive namespace dependencies. This violates encapsulation and makes components harder to refactor.
 5. **No key-level optimization**: Even with namespace-level filtering, all keys within a namespace are included, even if only a subset is used.
 
-### The goal: automatic namespace inference
+## Goal
 
 The ideal solution would automatically determine which message namespaces (and ideally which keys) each entry point's client boundary requires, ensuring users never over- or underfetch messages.
 
@@ -95,11 +97,11 @@ This would enable an API like:
 
 Or even better, the inference could happen automatically without any explicit opt-in, making the developer experience seamless.
 
-### Static analysis requirements
+## Static analysis requirements
 
 To implement automatic tree-shaking, we need to statically analyze the codebase and identify which messages are reachable from each client boundary. This analysis must handle several patterns:
 
-#### Static namespace + static key
+### Static namespace + static key
 
 ```tsx
 const t = useTranslations('About');
@@ -108,7 +110,7 @@ t('title');
 
 **Requirement**: Need `About.title` specifically.
 
-#### Static namespace + dynamic key
+### Static namespace + dynamic key
 
 ```tsx
 const t = useTranslations('About');
@@ -117,7 +119,7 @@ t(keyName); // where keyName is a variable
 
 **Requirement**: Need all keys within `About.*` namespace (conservative approach).
 
-#### No namespace
+### No namespace
 
 ```tsx
 const t = useTranslations();
@@ -126,7 +128,7 @@ t('someKey');
 
 **Requirement**: Requires key-level analysis to determine which keys are used.
 
-#### `useExtracted` / `getExtracted`
+### `useExtracted` / `getExtracted`
 
 ```tsx
 const t = useExtracted();
@@ -141,7 +143,7 @@ The analysis must:
 2. Determine which namespace the extracted message belongs to (if any was provided)
 3. Include the generated key in the required messages
 
-#### Translator method variants
+### Translator method variants
 
 The translator function returned by `useTranslations` has several methods that also need to be analyzed:
 
@@ -156,7 +158,7 @@ t.raw('title'); // Get raw message value
 
 **Requirement**: All these method calls must be tracked. `t.rich`, `t.markup`, and `t.has` still require the message to be available, so they contribute to the namespace requirements. `t.raw` is less common but should also be tracked.
 
-#### Hooks
+### Hooks
 
 `useTranslations` can be called inside custom hooks, not just components:
 
@@ -169,7 +171,7 @@ function useCustomHook() {
 
 **Requirement**: The analysis must follow the call graph transitively, tracking `useTranslations` calls in hooks that are imported by client components.
 
-#### Module graph traversal
+### Module graph traversal
 
 The analysis must traverse the module dependency graph to find all `useTranslations` / `useExtracted` calls reachable from client components. This includes:
 
@@ -179,7 +181,7 @@ The analysis must traverse the module dependency graph to find all `useTranslati
 
 For dynamic imports, the module path is statically analyzable (it's a string literal), so the analysis can still follow these imports. However, code-split boundaries created by `React.lazy` or dynamic `import()` may need to be handled conservatively -- if a namespace is used in a dynamically imported component, it should be included in the parent segment's message set.
 
-#### Monorepos and dependencies
+### Monorepos and dependencies
 
 In monorepo setups or when analyzing dependencies, the analysis may need to traverse into `node_modules` to find `useTranslations` calls in shared packages or workspace dependencies.
 
@@ -189,9 +191,9 @@ In monorepo setups or when analyzing dependencies, the analysis may need to trav
 - Workspace packages in monorepos (e.g., `packages/shared-components/`)
 - Dependencies in `node_modules` that are part of the client bundle (though this is less common)
 
-This is closely related to `experimental.srcPath` configuration, we should utilize this for tree shaking as well.
+This is closely related to `experimental.srcPath` configuration, we should utilize this for tree shaking as well. Traversal of `node_modules` should be optional and configurable.
 
-### Entry point model
+## Entry point model
 
 Next.js has well-defined entry points in the App Router:
 
@@ -210,54 +212,48 @@ Each entry point can contain `'use client'` boundaries that create separate clie
 
 Separately, there's `error.tsx` which **must** be a Client Component (so the only place where its messages can be provided is in a ancestor layout).
 
-## Proposed solution: Segment-level tree-shaking
+## Design options for granularity
 
-### Granularity
-
-There are three main approaches for the granularity of tree-shaking:
-
-#### Approach 1: Global client namespace filtering
+### Approach 1: Global client namespace filtering
 
 Place a single provider in the root layout. At build time, scan the entire codebase to determine which namespaces are used by any client component anywhere in the app. Strip all server-only namespaces from the messages passed to the provider.
 
 This is the simplest approach. It requires no module graph analysis per route -- just a global scan of all files to build a single set of "client namespaces." For apps where the majority of namespaces are server-only, this already eliminates a significant amount of unnecessary client payload. However, if 10 pages each use a different client namespace, every page still receives all 10.
 
-#### Approach 2: Per-entry-point splitting
+### Approach 2: Per-entry-point splitting
 
 Treat each Next.js entry point (`page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx`) as a separate unit. Analyze each independently and provide tailored messages to each one.
 
 This is unnecessarily granular. These entry points never render separately in a way that would benefit from separate message sets -- `loading.tsx` shows while `page.tsx` is loading, `error.tsx` replaces `page.tsx` on failure. Splitting between them adds complexity without practical benefit. Furthermore, `error.tsx` **must** be a Client Component, so it can't have its own provider -- it depends on an ancestor layout for messages.
 
-#### Approach 3: Segment-level splitting
+### Approach 3: Segment-level splitting (proposed)
 
-**This is the approach we're pursuing.** A _segment_ in Next.js is a folder in the route hierarchy. All entry points within that folder (`page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx`) make up the segment. A segment can optionally contain a `layout.tsx`, but this is not required by Next.js itself.
+**This is the approach we're pursuing.** A _segment_ is a route-folder. All entry points inside (`page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx`) belong to the same unit. We place the provider in the segment's `layout.tsx` (which Next.js treats as the shared wrapper) and infer the union of namespaces reachable from any client component in that segment's scope.
 
-For automatic tree-shaking however, we require a `layout.tsx` in the segment — this is where the provider is placed that delivers messages to client components. The segment is the natural unit for tree-shaking, and the layout is the natural place to provide messages.
+## Proposed approach: Segment-level tree-shaking
 
-**Constraints:**
+### Constraints
 
-1. The provider (e.g. `<NextIntlClientProvider messages="infer" />`) must be placed in a `layout.tsx`.
-2. The layout must not be annotated with `'use client'` (the provider needs to be rendered by a Server Component).
+1. The provider (e.g. `<NextIntlClientProvider messages="infer" />`) lives in `layout.tsx` of the segment.
+2. That layout stays a Server Component (no `'use client'`) so it can render the provider with serialized messages.
 
-The build step then analyzes all client components reachable from that segment and provides the union of their namespaces.
+### Scope of analysis
 
-This works well because:
+For a layout with `messages="infer"` at path `P`, analyze:
 
-1. **Segments are the architectural unit in Next.js.** Entry points within a segment are naturally grouped and share the same layout when one is present.
-2. **`error.tsx` works naturally.** Even though it must be a Client Component, it belongs to a segment whose layout provides messages.
-3. **No wasted splitting effort.** There's no practical benefit in giving `loading.tsx` different messages than `page.tsx` -- they belong to the same segment anyway.
-4. **Progressive refinement via nesting.** Start with one provider in the root layout for a global client namespace filter. Add layouts with providers in nested segments to progressively narrow the scope for specific sections of the app.
-5. **Subsumes Approach 1.** A single provider in the root layout with no nested providers behaves like Approach 1 -- all client namespaces across the app are included, server-only ones are stripped.
+1. The layout's own client children (e.g. `<Navigation />`).
+2. All entry points in the same segment (`page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx` at path `P`).
+3. Descendant segments until a nested layout with `messages="infer"` is encountered (that nested layout takes ownership of its subtree).
 
-### Analysis scope
+For each reachable client boundary, traverse the module graph starting at `'use client'` files and collect `useTranslations` / `useExtracted` calls. The union of required namespaces for the segment is passed to the provider.
 
-For a layout with `messages="infer"` at path `P`, the analysis covers:
+### Why this granularity
 
-1. **The layout's own client children** -- components rendered directly by the layout, e.g. `<Navigation />`
-2. **All entry points in the same segment** -- `page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx` at path `P`
-3. **All entry points in descendant segments** that don't have their own layout with `messages="infer"`
+- Segments are the unit Next.js already groups for routing; entry points inside don’t benefit from distinct message sets.
+- `error.tsx` is naturally covered because it shares the layout.
+- Avoids over-splitting while still allowing progressive refinement via nested layouts; a single root layout collapses back to the global-filter approach.
 
-For each of these, the analysis follows the client module graph (starting at `'use client'` boundaries) and collects all `useTranslations` / `useExtracted` calls to determine the required namespaces. The union of all namespaces across the segment becomes the message set passed to the provider.
+#### Example:
 
 **Example:**
 
@@ -283,7 +279,6 @@ app/[locale]/
 
 Several design decisions need to be made before implementation:
 
-1. **Build integration**: Should this run as part of the Next.js build process (via a plugin/loader), or as a separate sidecar process?
-2. **Development vs production**: Is this optimization needed in development mode, or only in production builds? Development mode could use the full message catalog for simplicity, while production builds would benefit from tree-shaking. However, having different behavior between dev and prod could lead to bugs that only surface in production.
-3. **Consumer API**: What API should consumers use to opt in (e.g. `<NextIntlClientProvider messages="infer" />`)?
-4. **Scope refinement for nested layouts**: When a nested layout has its own `messages="infer"`, should the parent layout automatically exclude that subtree's namespaces from its own set? This would further reduce over-fetching but requires coordination between layouts during the analysis phase.
+1. **Build integration**: SWC/plugin in Next.js vs separate sidecar; how to cache module graph results for fast rebuilds?
+2. **Development vs production**: Dev full catalog vs dev inference—how to surface missing-message regressions before prod?
+3. **Consumer API**: Final shape of opt-in (`messages="infer"`), and explicit escape-hatch semantics when `messages` is provided manually.
