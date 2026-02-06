@@ -141,6 +141,21 @@ The analysis must:
 2. Determine which namespace the extracted message belongs to (if any was provided)
 3. Include the generated key in the required messages
 
+#### Translator method variants
+
+The translator function returned by `useTranslations` has several methods that also need to be analyzed:
+
+```tsx
+const t = useTranslations('About');
+t('title');           // Standard translation
+t.rich('title');      // Rich text with React components
+t.markup('title');    // HTML markup
+t.has('title');       // Check if key exists
+t.raw('title');       // Get raw message value
+```
+
+**Requirement**: All these method calls must be tracked. `t.rich`, `t.markup`, and `t.has` still require the message to be available, so they contribute to the namespace requirements. `t.raw` is less common but should also be tracked.
+
 #### Hooks
 
 `useTranslations` can be called inside custom hooks, not just components:
@@ -153,6 +168,27 @@ function useCustomHook() {
 ```
 
 **Requirement**: The analysis must follow the call graph transitively, tracking `useTranslations` calls in hooks that are imported by client components.
+
+#### Module graph traversal
+
+The analysis must traverse the module dependency graph to find all `useTranslations` / `useExtracted` calls reachable from client components. This includes:
+
+- **Static imports**: `import {Component} from './Component'` - follow these transitively
+- **Dynamic imports**: `const Component = await import('./Component')`, `React.lazy(() => import('./Component'))`, or `next/dynamic(() => import('./Component'))` - these need special handling since the module path is known but the import happens at runtime. `next/dynamic` is Next.js's wrapper around `React.lazy()` that provides additional features like disabling SSR (`ssr: false`), but still uses the same dynamic `import()` syntax under the hood
+- **Re-exports**: `export {Component} from './Component'` - follow through re-export chains
+
+For dynamic imports, the module path is statically analyzable (it's a string literal), so the analysis can still follow these imports. However, code-split boundaries created by `React.lazy` or dynamic `import()` may need to be handled conservatively -- if a namespace is used in a dynamically imported component, it should be included in the parent segment's message set.
+
+#### Monorepos and dependencies
+
+In monorepo setups or when analyzing dependencies, the analysis may need to traverse into `node_modules` to find `useTranslations` calls in shared packages or workspace dependencies.
+
+**Requirement**: The analysis should support analyzing code in:
+- The application source directory (typically `src/` or `app/`)
+- Workspace packages in monorepos (e.g., `packages/shared-components/`)
+- Dependencies in `node_modules` that are part of the client bundle (though this is less common)
+
+The existing infrastructure already handles source path configuration (see [`SourceFileScanner`](../packages/next-intl/src/extractor/source/SourceFileScanner.tsx)), so this can be extended to support multiple source paths or workspace patterns.
 
 ### Entry point model
 
@@ -200,7 +236,7 @@ For automatic tree-shaking however, we require a `layout.tsx` in the segment —
 **Constraints:**
 
 1. The provider (e.g. `<NextIntlClientProvider messages="infer" />`) must be placed in a `layout.tsx`.
-2. The layout must not be annotated with `'use client'` (the provider needs to be a Server Component).
+2. The layout must not be annotated with `'use client'` (the provider needs to be rendered by a Server Component).
 
 The build step then analyzes all client components reachable from that segment and provides the union of their namespaces.
 
