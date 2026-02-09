@@ -282,3 +282,5 @@ Several design decisions need to be made before implementation:
 1. **Build integration**: SWC/plugin in Next.js vs separate sidecar; how to cache module graph results for fast rebuilds?
 2. **Development vs production**: Dev full catalog vs dev inference—how to surface missing-message regressions before prod?
 3. **Consumer API**: Final shape of opt-in (`messages="infer"`), and explicit escape-hatch semantics when `messages` is provided manually.
+4. **Pages router support**: How to handle Pages Router? (if at all)
+
