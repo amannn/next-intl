@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "lint": "eslint src && prettier src --check",
+    "lint": "eslint src && prettier src --check && pnpm lint:orphans",
+    "lint:orphans": "node scripts/check-orphans.mjs",
     "build": "next build",
     "start": "next start"
   },
@@ -12,14 +13,18 @@
     "next": "^16.0.10",
     "next-intl": "^4.0.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.38.0",
     "eslint-config-next": "^16.0.10",
+    "madge": "^8.0.0",
+    "postcss": "^8.5.3",
     "prettier": "^3.3.3",
     "typescript": "^5.5.3"
   },

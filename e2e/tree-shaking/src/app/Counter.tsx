@@ -14,7 +14,12 @@ export default function Counter() {
   return (
     <>
       <p>{t('Count: {count, number}', {count})}</p>
-      <button onClick={onIncrement}>{t('Increment')}</button>
+      <button
+        className="border border-gray-300 rounded-md px-2 py-1"
+        onClick={onIncrement}
+      >
+        {t('Increment')}
+      </button>
     </>
   );
 }

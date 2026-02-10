@@ -1,10 +1,12 @@
-import {Locale, NextIntlClientProvider} from 'next-intl';
+import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getExtracted, getMessages} from 'next-intl/server';
 import {ReactNode} from 'react';
-import {cookies} from 'next/headers';
 import {Inter} from 'next/font/google';
 // @ts-expect-error -- Need to export
 import manifest from 'next-intl/_client-manifest.json';
+import Navigation from './Navigation';
+import MessageDebug from './MessageDebug';
+import './globals.css';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -24,9 +26,9 @@ export async function generateMetadata() {
 
 export default async function LocaleLayout({children}: Props) {
   const locale = await getLocale();
-  const messages = await getMessages({locale});
+  const messages = await getMessages();
   const segment = '/';
-  const filteredMessages =
+  const clientMessages =
     manifest?.[segment]?.hasLayoutProvider === true
       ? pruneMessages(
           collectNamespacesForSegment(segment, manifest) ?? {},
@@ -36,16 +38,13 @@ export default async function LocaleLayout({children}: Props) {
 
   return (
     <html lang={locale}>
-      <body
-        className={inter.className}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 10
-        }}
-      >
-        <NextIntlClientProvider messages={filteredMessages}>
-          {children}
+      <body className={`${inter.className} flex flex-col gap-2.5`}>
+        <NextIntlClientProvider messages={clientMessages}>
+          <Navigation />
+          <div className="p-4 flex flex-col gap-4">
+            <div>{children}</div>
+            <MessageDebug messages={clientMessages} />
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>
