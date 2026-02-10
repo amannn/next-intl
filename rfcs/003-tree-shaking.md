@@ -253,7 +253,11 @@ For each reachable client boundary, traverse the module graph starting at `'use 
 - `error.tsx` is naturally covered because it shares the layout.
 - Avoids over-splitting while still allowing progressive refinement via nested layouts; a single root layout collapses back to the global-filter approach.
 
-#### Example:
+### Controlling message scope with nested providers
+
+By adding `NextIntlClientProvider` with `messages="infer"` in nested layouts, consumers can prevent client messages from bubbling up to ancestor providers. When a nested layout includes its own provider, it takes ownership of its subtree's message requirements, effectively creating a boundary that stops messages from being included in parent providers.
+
+This allows fine-grained control over bundle sizes: place providers closer to where messages are actually used to minimize the scope of included namespaces. Without a nested provider, descendant segments inherit from the nearest ancestor provider, which may include more messages than necessary.
 
 **Example:**
 
@@ -297,4 +301,5 @@ Several design decisions need to be made before implementation:
 - Maybe the manifest could be transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
 - We need to consider page extensions
 - Move analyzer to Rust?
+- Check other entry points like `global-error.tsx`
 - During production build, can we block the render until the manifest is written?

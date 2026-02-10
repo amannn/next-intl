@@ -1,11 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {subscribeSharedSourceWatcher} from '../../watcher/SharedSourceWatcher.js';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
 import SourceFileScanner from '../source/SourceFileScanner.js';
-import type * as SourceFileWatcherModule from '../source/SourceFileWatcher.js';
+import SourceFileWatcher, {
+  type SourceFileWatcherEvent
+} from '../source/SourceFileWatcher.js';
 import type {
   ExtractorConfig,
   ExtractorMessage,
@@ -20,9 +21,6 @@ import {
 import CatalogLocales from './CatalogLocales.js';
 import CatalogPersister from './CatalogPersister.js';
 import SaveScheduler from './SaveScheduler.js';
-
-type SourceFileWatcher = SourceFileWatcherModule.default;
-type SourceFileWatcherEvent = SourceFileWatcherModule.SourceFileWatcherEvent;
 
 export default class CatalogManager implements Disposable {
   private config: ExtractorConfig;
@@ -64,7 +62,6 @@ export default class CatalogManager implements Disposable {
   private catalogLocales?: CatalogLocales;
   private extractor: MessageExtractor;
   private sourceWatcher?: SourceFileWatcher;
-  private unsubscribeSourceWatcher?: () => Promise<void>;
 
   // Resolves when all catalogs are loaded
   private loadCatalogsPromise?: Promise<unknown>;
@@ -92,12 +89,11 @@ export default class CatalogManager implements Disposable {
       // We kick this off as early as possible, so we get notified about changes
       // that happen during the initial project scan (while awaiting it to
       // complete though)
-      void subscribeSharedSourceWatcher(this.handleFileEvents.bind(this)).then(
-        ({unsubscribe, watcher}) => {
-          this.unsubscribeSourceWatcher = unsubscribe;
-          this.sourceWatcher = watcher;
-        }
+      this.sourceWatcher = new SourceFileWatcher(
+        this.getSrcPaths(),
+        this.handleFileEvents.bind(this)
       );
+      void this.sourceWatcher.start();
     }
   }
 
@@ -526,9 +522,8 @@ export default class CatalogManager implements Disposable {
   }
 
   public [Symbol.dispose](): void {
-    if (this.unsubscribeSourceWatcher) {
-      void this.unsubscribeSourceWatcher();
-      this.unsubscribeSourceWatcher = undefined;
+    if (this.sourceWatcher) {
+      void this.sourceWatcher.stop();
     }
     this.sourceWatcher = undefined;
 

@@ -1,7 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
 
-export type ManifestNamespaces = Record<string, true | Record<string, true>>;
+export type ManifestNamespaceMap = Record<string, true | Record<string, true>>;
+
+export type ManifestNamespaces = true | ManifestNamespaceMap;
 
 export type ManifestEntry = {
   hasProvider: boolean;

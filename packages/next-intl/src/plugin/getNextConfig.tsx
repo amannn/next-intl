@@ -32,6 +32,12 @@ function normalizeTurbopackAliasPath(pathname: string) {
   return pathname.replace(/\\/g, '/');
 }
 
+function getManifestAliasPath() {
+  // Keep this outside `.next`: aliases targeting `.next` are unreliable and
+  // break manifest HMR. `node_modules/.cache` works for both Turbo/Webpack.
+  return './node_modules/.cache/next-intl-client-manifest.json';
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -156,6 +162,13 @@ export default function getNextConfig(
     }
   }
 
+  if (
+    pluginConfig.experimental?.treeShaking &&
+    !pluginConfig.experimental.srcPath
+  ) {
+    throwError('`experimental.srcPath` is required when using `treeShaking`.');
+  }
+
   if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
@@ -173,6 +186,10 @@ export default function getNextConfig(
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+    if (pluginConfig.experimental?.treeShaking) {
+      // Alias the manifest for tree-shaking HMR updates in dev.
+      resolveAlias['next-intl/_client-manifest.json'] = getManifestAliasPath();
+    }
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
@@ -282,6 +299,12 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+      if (pluginConfig.experimental?.treeShaking) {
+        // Alias the manifest for tree-shaking HMR updates in dev.
+        (config.resolve.alias as Record<string, string>)[
+          'next-intl/_client-manifest.json'
+        ] = path.resolve(config.context!, getManifestAliasPath());
+      }
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {

@@ -1,322 +1,152 @@
-import fs from 'fs/promises';
 import path from 'path';
-import {parse} from '@swc/core';
+import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
+import DependencyGraph from './DependencyGraph.js';
+import {
+  type EntryFile,
+  hasNextIntlClientProvider,
+  scanEntryFiles
+} from './EntryScanner.js';
 import {
   type Manifest,
   type ManifestEntry,
+  type ManifestNamespaceMap,
+  type ManifestNamespaces,
   createEmptyManifest
 } from './Manifest.js';
-import loadDependencyTree from './dependencyTreeLoader.js';
+import SourceAnalyzer from './SourceAnalyzer.js';
 
-const ENTRY_NAMES = new Set([
-  'page',
-  'layout',
-  'template',
-  'error',
-  'loading',
-  'not-found',
-  'default'
-]);
-
-type TranslationUse = {
-  namespace?: string | null;
-  key?: string;
-  fullNamespace?: boolean;
+type EntryResult = {
+  namespaces: ManifestNamespaces;
+  segmentId: string;
 };
 
-type FileInfo = {
-  hasUseClient: boolean;
-  hasUseServer: boolean;
-  translations: Array<TranslationUse>;
+type SourcePathMatcher = {
+  matches(filePath: string): boolean;
 };
 
-const fileInfoCache = new Map<string, FileInfo>();
-const importsCache = new Map<string, Array<string>>();
-
-async function readFileIfExists(filePath: string) {
-  try {
-    return await fs.readFile(filePath, 'utf8');
-  } catch {
-    return undefined;
-  }
-}
-
-function hasUseClientDirective(ast: any) {
-  const body = ast.body ?? [];
-  return body.some(
-    (item: any) =>
-      item.type === 'ExpressionStatement' &&
-      item.expression?.type === 'StringLiteral' &&
-      item.expression.value === 'use client'
+function normalizeSrcPaths(
+  projectRoot: string,
+  srcPaths: Array<string>
+): Array<string> {
+  return srcPaths.map((srcPath) =>
+    path.resolve(
+      projectRoot,
+      srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
+    )
   );
 }
 
-function containsUseServer(ast: any) {
-  let found = false;
+function createSourcePathMatcher(
+  projectRoot: string,
+  srcPaths: Array<string>
+): SourcePathMatcher {
+  const roots = normalizeSrcPaths(projectRoot, srcPaths);
+  return {
+    matches(filePath: string) {
+      return roots.some((root) =>
+        SourceFileFilter.isWithinPath(filePath, root)
+      );
+    }
+  };
+}
 
-  function walk(node: any) {
-    if (!node || typeof node !== 'object' || found) return;
-    if (
-      node.type === 'ExpressionStatement' &&
-      node.expression?.type === 'StringLiteral' &&
-      node.expression.value === 'use server'
-    ) {
-      found = true;
+function splitPath(input: string): Array<string> {
+  return input.split('.').filter(Boolean);
+}
+
+function setPathTrue(
+  container: ManifestNamespaceMap,
+  pathParts: Array<string>
+) {
+  if (pathParts.length === 0) {
+    return;
+  }
+
+  let current: ManifestNamespaceMap = container;
+  for (let index = 0; index < pathParts.length; index++) {
+    const part = pathParts[index];
+    const isLeaf = index === pathParts.length - 1;
+    const existing = current[part];
+    if (existing === true) {
       return;
     }
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) {
-        value.forEach(walk);
-      } else if (value && typeof value === 'object') {
-        walk(value);
-      }
-    }
-  }
 
-  walk(ast);
-  return found;
-}
-
-function getNamespaceFromCall(args: Array<any>): string | null | undefined {
-  const first = args[0]?.expression;
-  if (!first) return undefined;
-  if (first.type === 'StringLiteral') return first.value as string;
-  if (first.type === 'ObjectExpression') {
-    for (const prop of first.properties ?? []) {
-      if (prop.type !== 'KeyValueProperty') continue;
-      const key =
-        prop.key.type === 'Identifier'
-          ? prop.key.value
-          : prop.key.type === 'StringLiteral'
-            ? prop.key.value
-            : undefined;
-      if (key === 'namespace') {
-        const val = (prop.value as any)?.expression ?? prop.value;
-        if (val?.type === 'StringLiteral') return val.value as string;
-        return null;
-      }
-    }
-  }
-  return null;
-}
-
-function collectTranslations(ast: any): Array<TranslationUse> {
-  const translators = new Map<string, string | null | undefined>();
-  const results: Array<TranslationUse> = [];
-
-  function visit(node: any) {
-    if (!node || typeof node !== 'object') return;
-    switch (node.type) {
-      case 'VariableDeclarator': {
-        const id =
-          node.id?.type === 'Identifier'
-            ? (node.id.value as string)
-            : undefined;
-        const init = node.init;
-        if (
-          id &&
-          init?.type === 'CallExpression' &&
-          init.callee?.type === 'Identifier' &&
-          (init.callee.value === 'useTranslations' ||
-            init.callee.value === 'useExtracted')
-        ) {
-          const ns = getNamespaceFromCall(init.arguments ?? []);
-          translators.set(id, ns);
-        }
-        break;
-      }
-      case 'CallExpression': {
-        let translatorName: string | undefined;
-        if (node.callee?.type === 'Identifier') {
-          translatorName = node.callee.value;
-        } else if (
-          node.callee?.type === 'MemberExpression' &&
-          node.callee.object?.type === 'Identifier'
-        ) {
-          const prop = node.callee.property;
-          if (
-            prop?.type === 'Identifier' &&
-            ['rich', 'markup', 'has', 'raw'].includes(prop.value as string)
-          ) {
-            translatorName = node.callee.object.value as string;
-          }
-        }
-
-        if (translatorName && translators.has(translatorName)) {
-          const ns = translators.get(translatorName);
-          const arg0 = node.arguments?.[0]?.expression;
-          if (arg0?.type === 'StringLiteral') {
-            results.push({namespace: ns, key: arg0.value as string});
-          } else {
-            results.push({namespace: ns, fullNamespace: true});
-          }
-        }
-        break;
-      }
-      default:
-        break;
+    if (isLeaf) {
+      current[part] = true;
+      return;
     }
 
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) {
-        value.forEach(visit);
-      } else if (value && typeof value === 'object' && 'type' in value) {
-        visit(value);
-      }
+    if (!(part in current)) {
+      current[part] = {};
     }
-  }
 
-  visit(ast);
-  return results;
-}
-
-async function parseFile(filePath: string): Promise<any | undefined> {
-  const source = await readFileIfExists(filePath);
-  if (!source) return undefined;
-  try {
-    return await parse(source, {
-      syntax: 'typescript',
-      tsx: true,
-      target: 'esnext',
-      comments: false
-    });
-  } catch {
-    return undefined;
+    current = current[part] as ManifestNamespaceMap;
   }
 }
 
-async function getFileInfo(filePath: string): Promise<FileInfo> {
-  const cached = fileInfoCache.get(filePath);
-  if (cached) return cached;
+function addToManifest(
+  namespaces: ManifestNamespaceMap,
+  item: {fullNamespace?: boolean; key?: string; namespace?: string}
+) {
+  const {fullNamespace, key, namespace} = item;
 
-  const ast = await parseFile(filePath);
-  if (!ast) {
-    const empty: FileInfo = {
-      hasUseClient: false,
-      hasUseServer: false,
-      translations: []
-    };
-    fileInfoCache.set(filePath, empty);
-    return empty;
+  if (namespace == null) {
+    if (!key) return;
+    setPathTrue(namespaces, splitPath(key));
+    return;
   }
 
-  const info: FileInfo = {
-    hasUseClient: hasUseClientDirective(ast),
-    hasUseServer: containsUseServer(ast),
-    translations: collectTranslations(ast)
-  };
+  const nsParts = splitPath(namespace);
+  if (fullNamespace) {
+    setPathTrue(namespaces, nsParts);
+    return;
+  }
 
-  fileInfoCache.set(filePath, info);
-  return info;
+  if (!key) return;
+  setPathTrue(namespaces, [...nsParts, ...splitPath(key)]);
 }
 
-function hasNextIntlClientProvider(source: string, ast: any): boolean {
-  // Fast-path string check; keeps logic simple even if JSX parsing changes.
-  if (/<\s*NextIntlClientProvider\b/.test(source)) {
+function mergeNamespaceMaps(
+  target: ManifestNamespaceMap,
+  source: ManifestNamespaceMap
+) {
+  for (const [ns, value] of Object.entries(source)) {
+    if (value === true) {
+      target[ns] = true;
+      continue;
+    }
+    const existing = target[ns];
+    if (existing === true) {
+      continue;
+    }
+    if (typeof existing === 'object') {
+      mergeNamespaceMaps(existing, value);
+      continue;
+    }
+    target[ns] = {...value};
+  }
+}
+
+function mergeNamespaces(
+  target: ManifestNamespaces,
+  source: ManifestNamespaces
+): ManifestNamespaces {
+  if (target === true || source === true) {
     return true;
   }
 
-  let found = false;
-
-  function walk(node: any) {
-    if (!node || typeof node !== 'object' || found) return;
-
-    if (node.type === 'JSXElement') {
-      const name = node.openingElement?.name;
-      if (
-        name?.type === 'Identifier' &&
-        name.value === 'NextIntlClientProvider'
-      ) {
-        found = true;
-        return;
-      }
-    }
-
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) {
-        value.forEach(walk);
-      } else if (value && typeof value === 'object') {
-        walk(value);
-      }
-    }
-  }
-
-  walk(ast);
-  return found;
+  mergeNamespaceMaps(target, source);
+  return target;
 }
 
-function collectImports(ast: any): Array<string> {
-  const imports: Array<string> = [];
-
-  for (const node of ast.body ?? []) {
-    if (node.type === 'ImportDeclaration' && node.source?.value) {
-      imports.push(node.source.value as string);
-      continue;
-    }
-    if (
-      (node.type === 'ExportDeclaration' ||
-        node.type === 'ExportAllDeclaration') &&
-      node.source?.value
-    ) {
-      imports.push(node.source.value as string);
-      continue;
-    }
-  }
-
-  function walk(n: any) {
-    if (!n || typeof n !== 'object') return;
-    if (Array.isArray(n)) {
-      n.forEach(walk);
-      return;
-    }
-    if (n.type === 'CallExpression' && n.callee?.type === 'Import') {
-      const arg = n.arguments?.[0]?.expression;
-      if (arg?.type === 'StringLiteral') {
-        imports.push(arg.value as string);
-      }
-    }
-    Object.values(n).forEach(walk);
-  }
-
-  walk(ast.body);
-
-  return imports;
-}
-
-function flattenDependencyTree(tree: Record<string, any> | null) {
-  if (!tree) return null;
-
-  const map = new Map<string, Set<string>>();
-
-  function ensure(key: string) {
-    if (!map.has(key)) {
-      map.set(key, new Set());
-    }
-  }
-
-  function walk(parent: string, children?: Record<string, any>) {
-    if (!children) return;
-
-    for (const [child, nested] of Object.entries(children)) {
-      ensure(parent);
-      ensure(child);
-      map.get(parent)!.add(child);
-      walk(child, nested as Record<string, any>);
-    }
-  }
-
-  for (const [root, children] of Object.entries(tree)) {
-    ensure(root);
-    walk(root, children as Record<string, any>);
-  }
-
-  return map;
+function hasTranslationUsage(namespaces: ManifestNamespaces): boolean {
+  return namespaces === true || Object.keys(namespaces).length > 0;
 }
 
 function ensureManifestEntry(
   manifest: Manifest,
   segmentId: string,
-  hasProvider?: boolean
+  hasProvider: boolean
 ): ManifestEntry {
   const existing = manifest[segmentId];
   if (existing) {
@@ -327,262 +157,170 @@ function ensureManifestEntry(
   }
 
   const entry: ManifestEntry = {
-    hasProvider: Boolean(hasProvider),
+    hasProvider,
     namespaces: {}
   };
   manifest[segmentId] = entry;
   return entry;
 }
 
-function resolveWithExtensions(base: string) {
-  const candidates: Array<string> = [];
-  const exts = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'];
-  for (const ext of exts) {
-    candidates.push(`${base}${ext}`);
-  }
-  for (const ext of exts) {
-    candidates.push(path.join(base, `index${ext}`));
-  }
-  return candidates;
-}
-
-async function resolveImport(
-  specifier: string,
-  fromFile: string,
-  projectRoot: string
-): Promise<string | null> {
-  const fromDir = path.dirname(fromFile);
-  const tryPaths: Array<string> = [];
-
-  if (specifier.startsWith('./') || specifier.startsWith('../')) {
-    const base = path.resolve(fromDir, specifier);
-    tryPaths.push(base);
-    tryPaths.push(...resolveWithExtensions(base));
-  } else if (specifier.startsWith('@/')) {
-    const base = path.resolve(projectRoot, 'src', specifier.slice(2));
-    tryPaths.push(base);
-    tryPaths.push(...resolveWithExtensions(base));
-  } else {
-    return null;
-  }
-
-  for (const candidate of tryPaths) {
-    try {
-      const stats = await fs.stat(candidate);
-      if (stats.isFile()) return candidate;
-    } catch {
-      continue;
-    }
-  }
-
-  return null;
-}
-
-async function getImports(
+function getAppDirForFile(
   filePath: string,
-  projectRoot: string
-): Promise<Array<string>> {
-  const cached = importsCache.get(filePath);
-  if (cached) return cached;
-
-  const ast = await parseFile(filePath);
-  if (!ast) {
-    importsCache.set(filePath, []);
-    return [];
-  }
-
-  const specs = collectImports(ast);
-  const resolved: Array<string> = [];
-  for (const spec of specs) {
-    const resolvedPath = await resolveImport(spec, filePath, projectRoot);
-    if (resolvedPath) resolved.push(resolvedPath);
-  }
-
-  importsCache.set(filePath, resolved);
-  return resolved;
-}
-
-function stripRouteGroup(segment: string) {
-  if (segment.startsWith('(') || segment.startsWith('@')) {
-    return null;
-  }
-  return segment;
-}
-
-function getSegmentId(filePath: string, appDir: string) {
-  const relativeDir = path.relative(appDir, path.dirname(filePath));
-  const parts = relativeDir.split(path.sep).filter(Boolean);
-  const filtered = parts
-    .map(stripRouteGroup)
-    .filter((part): part is string => Boolean(part));
-  return '/' + filtered.join('/');
-}
-
-async function findEntryFiles(appDir: string): Promise<Array<string>> {
-  const entries: Array<string> = [];
-  async function walk(dir: string) {
-    const dirents = await fs.readdir(dir, {withFileTypes: true});
-    for (const entry of dirents) {
-      const entryPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        await walk(entryPath);
-        continue;
-      }
-      const ext = path.extname(entry.name);
-      if (!['.ts', '.tsx', '.js', '.jsx', '.mdx'].includes(ext)) continue;
-      const base = path.basename(entry.name, ext);
-      if (ENTRY_NAMES.has(base)) {
-        entries.push(entryPath);
-      }
-    }
-  }
-  await walk(appDir);
-  return entries;
-}
-
-function splitPath(input: string): Array<string> {
-  return input.split('.').filter(Boolean);
-}
-
-function setNestedFlag(
-  container: Record<string, true | Record<string, true>>,
-  pathParts: Array<string>,
-  leaf: string | null
-) {
-  let current: Record<string, true | Record<string, true>> = container;
-
-  for (let i = 0; i < pathParts.length; i++) {
-    const part = pathParts[i];
-    const existing = current[part];
-    if (existing === true) {
-      return; // already fully included
-    }
-    const existingObj = typeof existing === 'object' ? existing : undefined;
-    if (!existingObj) {
-      current[part] = {};
-    }
-    current = current[part] as Record<string, true | Record<string, true>>;
-  }
-
-  if (leaf == null) {
-    return;
-  }
-
-  const leafExisting = current[leaf];
-  if (leafExisting === true) return;
-  if (typeof leafExisting === 'object') return;
-  current[leaf] = true;
-}
-
-function addToManifest(
-  namespaces: Record<string, true | Record<string, true>>,
-  item: TranslationUse
-) {
-  const {fullNamespace, key, namespace} = item;
-
-  // No namespace: dot-path goes directly into root
-  if (namespace == null) {
-    if (!key) return;
-    const keyParts = splitPath(key);
-    if (keyParts.length === 0) return;
-    const leaf = keyParts.pop()!;
-    setNestedFlag(namespaces, keyParts, leaf);
-    return;
-  }
-
-  // Namespace with dot notation
-  const nsParts = splitPath(namespace);
-  if (fullNamespace) {
-    // Whole namespace included
-    setNestedFlag(namespaces, nsParts, null);
-    // mark leaf as true to indicate whole subtree
-    setNestedFlag(namespaces, nsParts.slice(0, -1), nsParts.at(-1) ?? null);
-    return;
-  }
-
-  if (!key) return;
-
-  const keyParts = splitPath(key);
-  const leaf = keyParts.pop() ?? key;
-
-  // Ensure namespace object exists, then set leaf (handling dot in key)
-  let target: Record<string, true | Record<string, true>> = namespaces;
-  for (let i = 0; i < nsParts.length; i++) {
-    const part = nsParts[i];
-    const existing = target[part];
-    if (existing === true) {
-      return; // namespace already fully included
-    }
-    const existingObj = typeof existing === 'object' ? existing : undefined;
-    if (!existingObj) {
-      target[part] = {};
-    }
-    target = target[part] as Record<string, true | Record<string, true>>;
-  }
-
-  setNestedFlag(target, keyParts, leaf);
-}
-
-export async function analyze({
-  appDirs,
-  projectRoot,
-  tsconfigPath
-}: {
-  appDirs: Array<string>;
-  projectRoot: string;
-  tsconfigPath?: string;
-}): Promise<Manifest> {
-  // Reset caches to reflect latest file contents between runs (watch mode).
-  fileInfoCache.clear();
-  importsCache.clear();
-
-  const manifest = createEmptyManifest();
-  const dependencyTree = loadDependencyTree();
-
+  appDirs: Array<string>
+): string | undefined {
   for (const appDir of appDirs) {
-    const entries = await findEntryFiles(appDir);
+    if (SourceFileFilter.isWithinPath(filePath, appDir)) {
+      return appDir;
+    }
+  }
+  return undefined;
+}
 
-    // Pre-scan layouts to find provider scopes
-    for (const entry of entries) {
-      const ext = path.extname(entry);
-      const base = path.basename(entry, ext);
-      if (base !== 'layout') continue;
+export default class TreeShakingAnalyzer {
+  private dependencyGraph: DependencyGraph;
+  private entryDependencies = new Map<string, Set<string>>();
+  private entryResults = new Map<string, EntryResult>();
+  private fileToEntries = new Map<string, Set<string>>();
+  private sourceAnalyzer = new SourceAnalyzer();
+  private srcMatcher: SourcePathMatcher;
 
-      const segmentId = getSegmentId(entry, appDir);
-      const source = await readFileIfExists(entry);
-      const ast = source
-        ? await parse(source, {
-            syntax: 'typescript',
-            tsx: true,
-            target: 'esnext',
-            comments: false
-          })
-        : undefined;
-      const hasProvider =
-        source && ast ? hasNextIntlClientProvider(source, ast) : false;
-      if (hasProvider) {
-        ensureManifestEntry(manifest, segmentId, true);
+  public constructor({
+    projectRoot,
+    srcPaths,
+    tsconfigPath
+  }: {
+    projectRoot: string;
+    srcPaths: Array<string>;
+    tsconfigPath?: string;
+  }) {
+    this.srcMatcher = createSourcePathMatcher(projectRoot, srcPaths);
+    this.dependencyGraph = new DependencyGraph({
+      projectRoot,
+      srcMatcher: this.srcMatcher,
+      tsconfigPath
+    });
+  }
+
+  private dropEntry(entryFile: string) {
+    const deps = this.entryDependencies.get(entryFile);
+    if (deps) {
+      for (const filePath of deps) {
+        const entries = this.fileToEntries.get(filePath);
+        if (!entries) continue;
+        entries.delete(entryFile);
+        if (entries.size === 0) {
+          this.fileToEntries.delete(filePath);
+        }
+      }
+    }
+    this.entryDependencies.delete(entryFile);
+    this.entryResults.delete(entryFile);
+  }
+
+  private updateEntryDependencies(entryFile: string, files: Set<string>) {
+    this.dropEntry(entryFile);
+    this.entryDependencies.set(entryFile, files);
+    for (const filePath of files) {
+      let entries = this.fileToEntries.get(filePath);
+      if (!entries) {
+        entries = new Set();
+        this.fileToEntries.set(filePath, entries);
+      }
+      entries.add(entryFile);
+    }
+  }
+
+  public async analyze({
+    appDirs,
+    changedFiles
+  }: {
+    appDirs: Array<string>;
+    changedFiles?: Array<string>;
+  }): Promise<Manifest> {
+    const entryFiles = await scanEntryFiles(appDirs);
+    const entryFilePaths = entryFiles.map((entry) => entry.filePath);
+    const entryFileSet = new Set(entryFilePaths);
+    const entryInfo = new Map<string, EntryFile>(
+      entryFiles.map((entry) => [entry.filePath, entry])
+    );
+
+    for (const entryFile of this.entryResults.keys()) {
+      if (!entryFileSet.has(entryFile)) {
+        this.dropEntry(entryFile);
       }
     }
 
-    for (const entry of entries) {
-      const segmentId = getSegmentId(entry, appDir);
+    const providerSegments = new Set<string>();
+    for (const entry of entryFiles) {
+      if (entry.name !== 'layout') continue;
+      if (await hasNextIntlClientProvider(entry.filePath)) {
+        providerSegments.add(entry.segmentId);
+      }
+    }
 
-      let treeMap: Map<string, Set<string>> | null = null;
-      if (dependencyTree) {
-        const tree = dependencyTree({
-          filename: entry,
-          directory: projectRoot,
-          tsConfig: tsconfigPath,
-          nodeModulesConfig: {entry: 'module'},
-          filter: (filePath: string) => filePath.startsWith(projectRoot),
-          extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
-        }) as Record<string, any>;
-        treeMap = flattenDependencyTree(tree);
+    const segmentMap = new Map<string, boolean>();
+    for (const entry of entryFiles) {
+      const existing = segmentMap.get(entry.segmentId);
+      const hasProvider =
+        existing === true ? true : providerSegments.has(entry.segmentId);
+      segmentMap.set(entry.segmentId, hasProvider);
+    }
+
+    let entriesToAnalyze = entryFilePaths;
+
+    if (changedFiles && this.entryResults.size > 0) {
+      const impactedEntries = new Set<string>();
+      const rescannedAppDirs = new Set<string>();
+      const normalizedChanges = changedFiles.map((filePath) =>
+        path.resolve(filePath)
+      );
+
+      this.sourceAnalyzer.clearCache(normalizedChanges);
+
+      for (const filePath of normalizedChanges) {
+        const directEntry = entryFileSet.has(filePath);
+        if (directEntry) {
+          impactedEntries.add(filePath);
+        }
+
+        const fromGraph = this.fileToEntries.get(filePath);
+        if (fromGraph) {
+          for (const entry of fromGraph) {
+            impactedEntries.add(entry);
+          }
+          continue;
+        }
+
+        const appDir = getAppDirForFile(filePath, appDirs);
+        if (appDir) {
+          rescannedAppDirs.add(appDir);
+        }
       }
 
+      if (rescannedAppDirs.size > 0) {
+        for (const entry of entryFiles) {
+          if (rescannedAppDirs.has(entry.appDir)) {
+            impactedEntries.add(entry.filePath);
+          }
+        }
+      }
+
+      entriesToAnalyze = Array.from(impactedEntries);
+    }
+
+    if (entriesToAnalyze.length > 0) {
+      this.dependencyGraph.clearEntries(entriesToAnalyze);
+    }
+
+    for (const entryFile of entriesToAnalyze) {
+      const entryMeta = entryInfo.get(entryFile);
+      if (!entryMeta) continue;
+      const graph = await this.dependencyGraph.getEntryGraph(entryFile);
+      this.updateEntryDependencies(entryFile, graph.files);
+
+      let namespaces: ManifestNamespaces = {};
       const queue: Array<{file: string; inClient: boolean}> = [
-        {file: entry, inClient: false}
+        {file: entryFile, inClient: false}
       ];
       const visited = new Set<string>();
 
@@ -592,31 +330,59 @@ export async function analyze({
         if (visited.has(visitKey)) continue;
         visited.add(visitKey);
 
-        const info = await getFileInfo(file);
-        const nowClient = inClient || info.hasUseClient;
-        const effectiveClient = nowClient && !info.hasUseServer;
+        if (!this.srcMatcher.matches(file)) {
+          continue;
+        }
+
+        const analysis = await this.sourceAnalyzer.analyzeFile(file);
+        const nowClient = inClient || analysis.hasUseClient;
+        const effectiveClient = nowClient && !analysis.hasUseServer;
 
         if (effectiveClient) {
-          const ownerEntry = ensureManifestEntry(manifest, segmentId);
-          for (const t of info.translations) {
-            addToManifest(ownerEntry.namespaces, t);
+          if (analysis.requiresAllMessages) {
+            namespaces = true;
+          }
+          if (namespaces !== true) {
+            for (const translation of analysis.translations) {
+              addToManifest(namespaces, translation);
+            }
           }
         }
 
-        const depsFromTree = treeMap?.get(file);
-        const depsFromFallback = await getImports(file, projectRoot);
-        const deps = new Set<string>([
-          ...(depsFromTree ? Array.from(depsFromTree) : []),
-          ...depsFromFallback
-        ]);
-
+        const deps = graph.adjacency.get(file);
+        if (!deps) continue;
         for (const dep of deps) {
           if (dep.endsWith('.d.ts')) continue;
           queue.push({file: dep, inClient: effectiveClient});
         }
       }
-    }
-  }
 
-  return manifest;
+      this.entryResults.set(entryFile, {
+        namespaces,
+        segmentId: entryMeta.segmentId
+      });
+    }
+
+    const manifest = createEmptyManifest();
+
+    for (const entry of this.entryResults.values()) {
+      if (!hasTranslationUsage(entry.namespaces)) {
+        continue;
+      }
+
+      const manifestEntry =
+        manifest[entry.segmentId] ??
+        ensureManifestEntry(
+          manifest,
+          entry.segmentId,
+          segmentMap.get(entry.segmentId) === true
+        );
+      manifestEntry.namespaces = mergeNamespaces(
+        manifestEntry.namespaces,
+        entry.namespaces
+      );
+    }
+
+    return manifest;
+  }
 }
