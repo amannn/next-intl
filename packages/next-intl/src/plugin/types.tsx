@@ -10,6 +10,9 @@ export type PluginConfig = {
     /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
     srcPath?: string | Array<string>;
 
+    /** Enables background tree-shaking analysis that writes a manifest to .next/next-intl. */
+    treeShaking?: boolean;
+
     /** Configuration about your catalogs of messages, to be used in combination with `srcPath` and `extract`. */
     messages?: {
       /** Relative path to the directory containing your messages. */

@@ -284,3 +284,13 @@ Several design decisions need to be made before implementation:
 3. **Consumer API**: Final shape of opt-in (`messages="infer"`), and explicit escape-hatch semantics when `messages` is provided manually.
 4. **Pages router support**: How to handle Pages Router? (if at all)
 
+## Ideas
+
+- When rendering `NextIntlClientProvider` with `messages="infer"`, can we trigger a Turbopack loader that observes a module graph?
+- This is kind of shitty, when do we need to evaluate this? Better maybe once at build time for now.
+- Maybe the manifest is transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
+- We need to consider page extensions
+
+--
+
+To continue this session, run codex resume 019c337e-d45f-78c0-92fc-02f41059c2dd

@@ -1,7 +1,10 @@
+import path from 'path';
 import type {NextConfig} from 'next';
+import {configureSharedSourceWatcher} from '../watcher/SharedSourceWatcher.js';
 import createMessagesDeclaration from './declaration/index.js';
 import initExtractionCompiler from './extractor/initExtractionCompiler.js';
 import getNextConfig from './getNextConfig.js';
+import initTreeShaking from './treeShaking/initTreeShaking.js';
 import type {PluginConfig} from './types.js';
 import {warn} from './utils.js';
 
@@ -26,6 +29,16 @@ function initPlugin(
   }
 
   initExtractionCompiler(pluginConfig);
+  initTreeShaking(pluginConfig);
+
+  if (pluginConfig.experimental?.srcPath) {
+    const roots = (
+      Array.isArray(pluginConfig.experimental.srcPath)
+        ? pluginConfig.experimental.srcPath
+        : [pluginConfig.experimental.srcPath]
+    ).map((root) => path.resolve(process.cwd(), root));
+    configureSharedSourceWatcher(roots);
+  }
 
   return getNextConfig(pluginConfig, nextConfig);
 }
