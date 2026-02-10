@@ -34,7 +34,7 @@ function normalizeTurbopackAliasPath(pathname: string) {
 
 function getManifestAliasPath() {
   // We can't put this inside `.next` as Turbopack aliases can't target that.
-  return './node_modules/.cache/next-intl-client-manifest.json';
+  return './node_modules/.cache/next-intl/client-manifest.json';
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
