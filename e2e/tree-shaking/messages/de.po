@@ -1,0 +1,24 @@
+msgid ""
+msgstr ""
+"Language: de\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/app/Counter.tsx:16
+msgid "jm1lmy"
+msgstr ""
+
+#: src/app/Counter.tsx:17
+msgid "tQLRmz"
+msgstr ""
+
+#. Default meta title if not overridden by pages
+#: src/app/layout.tsx:17
+msgid "lNLCAE"
+msgstr ""
+
+#: src/app/page.tsx:10
+msgid "vlslj0"
+msgstr ""
