@@ -297,5 +297,5 @@ Several design decisions need to be made before implementation:
 - Maybe the manifest could be transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
 - We need to consider page extensions
 - Move analyzer to Rust?
-- Build-time determinism: Should builds wait for manifest readiness, or stay best-effort and tolerate startup races?
 - Check other entry points like `global-error.tsx`
+- During production build, can we block the render until the manifest is written?
