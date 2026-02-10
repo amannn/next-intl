@@ -28,6 +28,7 @@ export default function Navigation() {
       <NavigationItem href="/hook-translation" label={t('Hook translation')} />
       <NavigationItem href="/layout-template" label={t('Layout template')} />
       <NavigationItem href="/shared-component" label={t('Shared component')} />
+      <NavigationItem href="/use-translations" label={t('Use translations')} />
     </nav>
   );
 }

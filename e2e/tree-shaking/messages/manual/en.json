@@ -1,1 +1,13 @@
-{}
+{
+  "UseTranslationsPage": {
+    "title": "useTranslations: static"
+  },
+  "GlobalNamespace": {
+    "title": "useTranslations: global namespace"
+  },
+  "DynamicKey": {
+    "title": "useTranslations: dynamic key",
+    "description": "useTranslations: dynamic key (unused)"
+  },
+  "unused": "Should not be included in manifest"
+}

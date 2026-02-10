@@ -6,11 +6,11 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
-#: src/app/(group)/group-one/page.tsx:9
+#: src/app/(group)/group-one/page.tsx:11
 msgid "0A97lp"
 msgstr "Group (one) page"
 
-#: src/app/(group)/group-two/page.tsx:9
+#: src/app/(group)/group-two/page.tsx:11
 msgid "ntVPJ+"
 msgstr "Group (two) page"
 
@@ -26,43 +26,43 @@ msgstr "Lazy server content"
 msgid "mz9I4r"
 msgstr "Server action page"
 
-#: src/app/actions/ServerActionForm.tsx:18
+#: src/app/actions/ServerActionForm.tsx:20
 msgid "RNB4/W"
 msgstr "Load lazy content"
 
-#: src/app/catch-all/[...parts]/page.tsx:15
+#: src/app/catch-all/[...parts]/page.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
 
-#: src/app/Counter.tsx:16
+#: src/app/Counter.tsx:17
 msgid "jm1lmy"
 msgstr "Count: {count, number}"
 
-#: src/app/Counter.tsx:21
+#: src/app/Counter.tsx:22
 msgid "tQLRmz"
 msgstr "Increment"
 
-#: src/app/dynamic-import/DynamicImportContent.tsx:7
+#: src/app/dynamic-import/DynamicImportContent.tsx:10
 msgid "TghmPk"
 msgstr "Dynamic imported client"
 
-#: src/app/dynamic-import/LazyImportContent.tsx:7
+#: src/app/dynamic-import/LazyImportContent.tsx:10
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 
-#: src/app/dynamic-segment/[slug]/page.tsx:14
+#: src/app/dynamic-segment/[slug]/page.tsx:16
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
-#: src/app/feed/@modal/(..)photo/[id]/page.tsx:12
+#: src/app/feed/@modal/(..)photo/[id]/page.tsx:14
 msgid "Ax7uMP"
 msgstr "Intercepted photo modal: {id}"
 
-#: src/app/feed/page.tsx:10
+#: src/app/feed/page.tsx:12
 msgid "I6Uu2z"
 msgstr "Feed page"
 
-#: src/app/feed/page.tsx:12
+#: src/app/feed/page.tsx:14
 msgid "i43YkF"
 msgstr "Open /photo/alpha"
 
@@ -70,11 +70,11 @@ msgstr "Open /photo/alpha"
 msgid "mocvtj"
 msgstr "Layout template layout"
 
-#: src/app/layout-template/page.tsx:7
+#: src/app/layout-template/page.tsx:10
 msgid "bowxvu"
 msgstr "Layout template page"
 
-#: src/app/layout-template/template.tsx:11
+#: src/app/layout-template/template.tsx:13
 msgid "30s0PJ"
 msgstr "Layout template template"
 
@@ -83,7 +83,7 @@ msgstr "Layout template template"
 msgid "lNLCAE"
 msgstr "next-intl example"
 
-#: src/app/loading/loading.tsx:7
+#: src/app/loading/loading.tsx:10
 msgid "o6jHkb"
 msgstr "Loading page …"
 
@@ -171,7 +171,12 @@ msgctxt "Navigation"
 msgid "JdTriE"
 msgstr "Shared component"
 
-#: src/app/optional/[[...parts]]/page.tsx:15
+#: src/app/Navigation.tsx:31
+msgctxt "Navigation"
+msgid "BXSx4m"
+msgstr "Use translations"
+
+#: src/app/optional/[[...parts]]/page.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
 
@@ -179,11 +184,11 @@ msgstr "Optional catch-all page: {segment}"
 msgid "vlslj0"
 msgstr "Hey {name}!"
 
-#: src/app/parallel/@activity/default.tsx:7
+#: src/app/parallel/@activity/default.tsx:10
 msgid "zZQM/j"
 msgstr "Parallel activity default (client)"
 
-#: src/app/parallel/@activity/page.tsx:7
+#: src/app/parallel/@activity/page.tsx:10
 msgid "eoEXj3"
 msgstr "Parallel activity page (client)"
 
@@ -195,19 +200,19 @@ msgstr "Parallel team default (server)"
 msgid "siB/XG"
 msgstr "Parallel team page (server)"
 
-#: src/app/parallel/error.tsx:15
+#: src/app/parallel/error.tsx:17
 msgid "ox304v"
 msgstr "An error occurred"
 
-#: src/app/parallel/error.tsx:18
+#: src/app/parallel/error.tsx:20
 msgid "62nsdy"
 msgstr "Retry"
 
-#: src/app/parallel/page.tsx:9
+#: src/app/parallel/page.tsx:11
 msgid "E8vtaB"
 msgstr "Parallel page"
 
-#: src/app/parallel/template.tsx:9
+#: src/app/parallel/template.tsx:11
 msgid "fJxh6G"
 msgstr "Parallel template"
 
@@ -215,7 +220,7 @@ msgstr "Parallel template"
 msgid "MmAwwP"
 msgstr "Type imports page"
 
-#: src/app/type-imports/TypeImportComponent.tsx:13
+#: src/app/type-imports/TypeImportComponent.tsx:15
 msgid "GO9hSh"
 msgstr "Test label: {value}"
 
