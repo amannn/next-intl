@@ -87,7 +87,9 @@ function getRouteName(segmentId: string): string {
     .map(getRouteSegmentName)
     .filter((segment): segment is string => Boolean(segment));
 
-  return normalizedSegments.length === 0 ? '/' : `/${normalizedSegments.join('/')}`;
+  return normalizedSegments.length === 0
+    ? '/'
+    : `/${normalizedSegments.join('/')}`;
 }
 
 function compareSegmentsByRouteName(left: string, right: string): number {
@@ -380,9 +382,7 @@ export default class TreeShakingAnalyzer {
       this.updateEntryDependencies(entryFile, graph.files);
 
       let namespaces: ManifestNamespaces = {};
-      const queue: Array<TraversalNode> = [
-        {file: entryFile, inClient: false}
-      ];
+      const queue: Array<TraversalNode> = [{file: entryFile, inClient: false}];
       const visited = new Set<string>();
 
       while (queue.length > 0) {

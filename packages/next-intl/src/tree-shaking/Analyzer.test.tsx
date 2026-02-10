@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'path';
-import TreeShakingAnalyzer from './Analyzer.js';
 import {afterEach, describe, expect, it} from 'vitest';
+import TreeShakingAnalyzer from './Analyzer.js';
 
 const TEMP_DIR_PREFIX = path.join(process.cwd(), '.tmp-tree-shaking-analyzer-');
 

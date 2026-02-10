@@ -19,12 +19,7 @@ describe('getSegmentId', () => {
 
   it('keeps route groups instead of stripping them', () => {
     const appDir = path.join('/project', 'src', 'app');
-    const filePath = path.join(
-      appDir,
-      '(group)',
-      'group-one',
-      'page.tsx'
-    );
+    const filePath = path.join(appDir, '(group)', 'group-one', 'page.tsx');
 
     expect(getSegmentId(filePath, appDir)).toBe('/(group)/group-one');
   });
