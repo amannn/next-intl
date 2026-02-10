@@ -286,7 +286,7 @@ app/[locale]/
 - The manifest must not live in `.next/`; Turbopack/Webpack aliases can’t target that folder. Writing it to `node_modules/.cache/next-intl-client-manifest.json` works however.
 - Seeding an empty manifest on startup prevents “module not found” when the alias is resolved before the first analysis run.
 - The analyzer splits dotted namespaces/keys (e.g., `Nested.deep.key` or `t('nested.key')`) into nested objects in the manifest so pruning can match message JSON structure.
-- Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasProvider` to support this.
+- Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasLayoutProvider` to support this.
 - Incremental runs: When a file changes, we only want to re-analyze affected files to be quick to emit an updated manifest.
 - We're using `@swc/core` (for now) to parse code and evaluate the AST in JS.
 - To observe the module graph of an entry point, we should use the `dependency-tree` package. One critical point is that this supports `tsconfig.json` with potential alias configuration.
