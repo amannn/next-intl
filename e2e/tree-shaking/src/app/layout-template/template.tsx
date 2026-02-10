@@ -1,15 +1,18 @@
 'use client';
 
 import {useExtracted} from 'next-intl';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function LayoutTemplateTemplate({
   children
 }: LayoutProps<'/layout-template'>) {
   const t = useExtracted();
   return (
-    <div>
-      <p>{t('Layout template template')}</p>
-      {children}
-    </div>
+    <ClientBoundary>
+      <div>
+        <p>{t('Layout template template')}</p>
+        {children}
+      </div>
+    </ClientBoundary>
   );
 }

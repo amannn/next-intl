@@ -2,6 +2,7 @@
 
 import {useExtracted} from 'next-intl';
 import {useState} from 'react';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function Counter() {
   const [count, setCount] = useState(1000);
@@ -12,7 +13,7 @@ export default function Counter() {
   }
 
   return (
-    <>
+    <ClientBoundary>
       <p>{t('Count: {count, number}', {count})}</p>
       <button
         className="border border-gray-300 rounded-md px-2 py-1"
@@ -20,6 +21,6 @@ export default function Counter() {
       >
         {t('Increment')}
       </button>
-    </>
+    </ClientBoundary>
   );
 }

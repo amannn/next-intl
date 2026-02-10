@@ -2,6 +2,7 @@
 
 import {useExtracted} from 'next-intl';
 import {use} from 'react';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function OptionalCatchAllPage({
   params
@@ -11,8 +12,10 @@ export default function OptionalCatchAllPage({
   const segment = parts?.join('/') ?? '(empty)';
 
   return (
-    <div>
-      <p>{t('Optional catch-all page: {segment}', {segment})}</p>
-    </div>
+    <ClientBoundary>
+      <div>
+        <p>{t('Optional catch-all page: {segment}', {segment})}</p>
+      </div>
+    </ClientBoundary>
   );
 }

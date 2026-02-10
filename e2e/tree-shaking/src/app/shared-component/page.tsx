@@ -1,7 +1,12 @@
 'use client';
 
 import SharedComponent from '@/components/SharedComponent';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function SharedComponentPage() {
-  return <SharedComponent />;
+  return (
+    <ClientBoundary>
+      <SharedComponent />
+    </ClientBoundary>
+  );
 }

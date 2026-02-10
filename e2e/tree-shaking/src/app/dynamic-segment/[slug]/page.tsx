@@ -2,6 +2,7 @@
 
 import {useExtracted} from 'next-intl';
 import {use} from 'react';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function DynamicSlugPage({
   params
@@ -10,8 +11,10 @@ export default function DynamicSlugPage({
   const t = useExtracted();
 
   return (
-    <div>
-      <p>{t('Dynamic slug page: {slug}', {slug})}</p>
-    </div>
+    <ClientBoundary>
+      <div>
+        <p>{t('Dynamic slug page: {slug}', {slug})}</p>
+      </div>
+    </ClientBoundary>
   );
 }

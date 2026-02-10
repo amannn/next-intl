@@ -2,6 +2,7 @@
 
 import {useExtracted} from 'next-intl';
 import type {Test} from './page';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function TypeImportComponent() {
   const t = useExtracted();
@@ -9,8 +10,10 @@ export default function TypeImportComponent() {
   const test: Test = 'test';
 
   return (
-    <section>
-      <h2>{t('Test label: {value}', {value: test})}</h2>
-    </section>
+    <ClientBoundary>
+      <section>
+        <h2>{t('Test label: {value}', {value: test})}</h2>
+      </section>
+    </ClientBoundary>
   );
 }

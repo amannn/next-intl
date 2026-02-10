@@ -1,8 +1,13 @@
 'use client';
 
 import {useExtracted} from 'next-intl';
+import ClientBoundary from '@/components/ClientBoundary';
 
 export default function ParallelActivityPage() {
   const t = useExtracted();
-  return <p>{t('Parallel activity page (client)')}</p>;
+  return (
+    <ClientBoundary>
+      <p>{t('Parallel activity page (client)')}</p>
+    </ClientBoundary>
+  );
 }
