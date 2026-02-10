@@ -1,7 +1,6 @@
 import createMDX from '@next/mdx';
 import createNextIntlPlugin from 'next-intl/plugin';
 import createBundleAnalyzer from '@next/bundle-analyzer';
-import {NextConfig} from 'next';
 
 const withNextIntl = createNextIntlPlugin({
   requestConfig: './src/i18n/request.tsx',
@@ -16,11 +15,12 @@ const withBundleAnalyzer = createBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true'
 });
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash',
   basePath:
     process.env.NEXT_PUBLIC_USE_CASE === 'base-path' ? '/base/path' : undefined,
-  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-  trailingSlash: process.env.NEXT_PUBLIC_USE_CASE === 'trailing-slash'
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']
 };
 
 export default withNextIntl(withMdx(withBundleAnalyzer(nextConfig)));

@@ -298,3 +298,4 @@ Several design decisions need to be made before implementation:
 - We need to consider page extensions
 - Move analyzer to Rust?
 - Build-time determinism: Should builds wait for manifest readiness, or stay best-effort and tolerate startup races?
+- Check other entry points like `global-error.tsx`
