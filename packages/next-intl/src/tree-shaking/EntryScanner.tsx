@@ -22,20 +22,10 @@ export type EntryFile = {
   segmentId: string;
 };
 
-function stripRouteGroup(segment: string): string | null {
-  if (segment.startsWith('(') || segment.startsWith('@')) {
-    return null;
-  }
-  return segment;
-}
-
 export function getSegmentId(filePath: string, appDir: string): string {
   const relativeDir = path.relative(appDir, path.dirname(filePath));
   const parts = relativeDir.split(path.sep).filter(Boolean);
-  const filtered = parts
-    .map(stripRouteGroup)
-    .filter((part): part is string => Boolean(part));
-  return '/' + filtered.join('/');
+  return parts.length === 0 ? '/' : '/' + parts.join('/');
 }
 
 function isEntryFile(fileName: string): boolean {
