@@ -283,7 +283,7 @@ app/[locale]/
 
 - A shared file watcher is reused by the extractor and the tree-shaking manifest generator to avoid duplicate watchers on the same roots.
 - We need an alias to link the manifest into layout files where it's imported. This ensures HMR works and the relevant messages are available.
-- The manifest must not live in `.next/`; Turbopack/Webpack aliases can’t target that folder. Writing it to `node_modules/.cache/next-intl-client-manifest.json` works however.
+- The manifest must not live in `.next/`; Turbopack/Webpack aliases can’t target that folder. Writing it to `node_modules/.cache/next-intl/client-manifest.json` works however.
 - Seeding an empty manifest on startup prevents “module not found” when the alias is resolved before the first analysis run.
 - The analyzer splits dotted namespaces/keys (e.g., `Nested.deep.key` or `t('nested.key')`) into nested objects in the manifest so pruning can match message JSON structure.
 - Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasLayoutProvider` to support this.

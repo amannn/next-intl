@@ -17,8 +17,8 @@ export function createEmptyManifest(): Manifest {
 }
 
 export async function writeManifest(manifest: Manifest, projectRoot: string) {
-  const outDir = path.join(projectRoot, 'node_modules', '.cache');
-  const outFile = path.join(outDir, 'next-intl-client-manifest.json');
+  const outDir = path.join(projectRoot, 'node_modules', '.cache', 'next-intl');
+  const outFile = path.join(outDir, 'client-manifest.json');
   await fs.mkdir(outDir, {recursive: true});
   await fs.writeFile(outFile, JSON.stringify(manifest, null, 2), 'utf8');
 }
