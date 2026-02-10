@@ -8,7 +8,9 @@ const ENTRY_NAMES = new Set([
   'loading',
   'not-found',
   'page',
-  'template'
+  'template',
+  'forbidden',
+  'unauthorized'
 ]);
 
 const ENTRY_EXTENSIONS = new Set(['.js', '.jsx', '.mdx', '.ts', '.tsx']);

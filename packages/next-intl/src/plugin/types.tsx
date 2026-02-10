@@ -10,7 +10,7 @@ export type PluginConfig = {
     /** Relative path(s) to your source files, to be used in combination with `extract` and `messages`. */
     srcPath?: string | Array<string>;
 
-    /** Enables background tree-shaking analysis that writes a manifest to node_modules/.cache. */
+    /** Enables tree-shaking analysis of client-side messages. */
     treeShaking?: boolean;
 
     /** Configuration about your catalogs of messages, to be used in combination with `srcPath` and `extract`. */

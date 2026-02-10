@@ -11,6 +11,8 @@ import {
 } from 'next-intl/server';
 import {routing} from '@/i18n/routing';
 import Navigation from '../../components/Navigation';
+// @ts-expect-error -- Need to export
+import manifest from 'next-intl/_client-manifest.json';
 
 const inter = Inter({subsets: ['latin']});
 
@@ -53,7 +55,6 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages({locale});
-  const manifest = await loadManifest();
   const segment = '/[locale]';
   const filteredMessages =
     manifest?.[segment]?.hasProvider === true
@@ -89,17 +90,6 @@ type ManifestEntry = {
   namespaces: ManifestSegmentEntry;
 };
 type Messages = Awaited<ReturnType<typeof getMessages>>;
-
-async function loadManifest(): Promise<
-  Record<string, ManifestEntry | undefined> | undefined
-> {
-  try {
-    const mod = await import('next-intl/_client-manifest.json');
-    return mod.default as Record<string, ManifestEntry | undefined>;
-  } catch {
-    return undefined;
-  }
-}
 
 function pruneMessages(
   entry: ManifestSegmentEntry,

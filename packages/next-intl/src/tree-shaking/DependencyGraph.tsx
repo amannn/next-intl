@@ -1,4 +1,4 @@
-import loadDependencyTree from './dependencyTreeLoader.js';
+import dependencyTree from 'dependency-tree';
 
 type EntryGraph = {
   adjacency: Map<string, Set<string>>;
@@ -8,8 +8,6 @@ type EntryGraph = {
 type SourcePathMatcher = {
   matches(filePath: string): boolean;
 };
-
-const DEFAULT_EXTENSIONS = ['.cjs', '.js', '.jsx', '.mjs', '.ts', '.tsx'];
 
 function flattenDependencyTree(tree: Record<string, any> | null) {
   if (!tree) return null;
@@ -42,7 +40,6 @@ function flattenDependencyTree(tree: Record<string, any> | null) {
 
 export default class DependencyGraph {
   private cache = new Map<string, EntryGraph>();
-  private dependencyTree = loadDependencyTree();
   private projectRoot: string;
   private srcMatcher: SourcePathMatcher;
   private tsconfigPath?: string;
@@ -71,15 +68,8 @@ export default class DependencyGraph {
     const cached = this.cache.get(entryFile);
     if (cached) return cached;
 
-    if (!this.dependencyTree) {
-      throw new Error(
-        '[next-intl] `dependency-tree` is required for tree-shaking analysis.'
-      );
-    }
-
-    const tree = this.dependencyTree({
+    const tree = dependencyTree({
       directory: this.projectRoot,
-      extensions: DEFAULT_EXTENSIONS,
       filename: entryFile,
       filter: (filePath: string) => this.srcMatcher.matches(filePath),
       nodeModulesConfig: {entry: 'module'},

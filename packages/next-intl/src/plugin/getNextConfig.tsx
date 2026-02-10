@@ -33,8 +33,7 @@ function normalizeTurbopackAliasPath(pathname: string) {
 }
 
 function getManifestAliasPath() {
-  // Keep this outside `.next`: aliases targeting `.next` are unreliable and
-  // break manifest HMR. `node_modules/.cache` works for both Turbo/Webpack.
+  // We can't put this inside `.next` as Turbopack aliases can't target that.
   return './node_modules/.cache/next-intl-client-manifest.json';
 }
 
