@@ -1,7 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
+import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
+import {isDevelopment} from '../plugin/config.js';
 import {subscribeSharedSourceWatcher} from '../watcher/SharedSourceWatcher.js';
-import {analyze} from './Analyzer.js';
+import TreeShakingAnalyzer from './Analyzer.js';
 import {createEmptyManifest, writeManifest} from './Manifest.js';
 
 type StartParams = {
@@ -9,7 +11,10 @@ type StartParams = {
   srcPaths: Array<string>;
 };
 
-async function resolveAppDirs(projectRoot: string, srcPaths: Array<string>) {
+async function resolveAppDirs(
+  projectRoot: string,
+  srcPaths: Array<string>
+): Promise<Array<string>> {
   const appDirs: Array<string> = [];
   for (const srcPath of srcPaths) {
     const absSrc = path.resolve(projectRoot, srcPath);
@@ -23,7 +28,6 @@ async function resolveAppDirs(projectRoot: string, srcPaths: Array<string>) {
     } catch {
       // ignore
     }
-    // Fallback: if srcPath already points to app/, accept it
     try {
       const stats = await fs.stat(absSrc);
       if (stats.isDirectory() && path.basename(absSrc) === 'app') {
@@ -36,29 +40,20 @@ async function resolveAppDirs(projectRoot: string, srcPaths: Array<string>) {
   return appDirs;
 }
 
-async function runAnalysis(projectRoot: string, appDirs: Array<string>) {
-  if (appDirs.length === 0) {
-    return;
-  }
-
-  const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
-  const manifest = await analyze({appDirs, projectRoot, tsconfigPath});
-  await writeManifest(manifest, projectRoot);
-}
-
-function appDirsForEvents(
+function filterChangedFiles(
   events: Array<{path: string}>,
   appDirs: Array<string>
 ): Array<string> {
-  const set = new Set<string>();
+  const matches = new Set<string>();
   for (const event of events) {
-    for (const dir of appDirs) {
-      if (event.path.startsWith(dir)) {
-        set.add(dir);
+    for (const appDir of appDirs) {
+      if (SourceFileFilter.isWithinPath(event.path, appDir)) {
+        matches.add(path.resolve(event.path));
+        break;
       }
     }
   }
-  return Array.from(set);
+  return Array.from(matches);
 }
 
 export default async function startTreeShakingService({
@@ -70,11 +65,18 @@ export default async function startTreeShakingService({
     return;
   }
 
-  const unsubscribers: Array<() => Promise<void>> = [];
+  const analyzer = new TreeShakingAnalyzer({
+    projectRoot,
+    srcPaths,
+    tsconfigPath: path.join(projectRoot, 'tsconfig.json')
+  });
 
-  async function run(targets: Array<string>) {
+  await writeManifest(createEmptyManifest(), projectRoot);
+
+  async function run(changedFiles?: Array<string>) {
     try {
-      await runAnalysis(projectRoot, targets);
+      const manifest = await analyzer.analyze({appDirs, changedFiles});
+      await writeManifest(manifest, projectRoot);
     } catch (error) {
       console.warn(
         `\n[next-intl] Tree-shaking analysis failed: ${
@@ -84,20 +86,19 @@ export default async function startTreeShakingService({
     }
   }
 
-  // Initial run (fire-and-forget)
-  // Ensure manifest file exists so imports resolve even before first analysis.
-  await writeManifest(createEmptyManifest(), projectRoot);
-  void run(appDirs);
+  const unsubscribers: Array<() => Promise<void>> = [];
 
-  // Subscribe to changes
-  const {unsubscribe} = await subscribeSharedSourceWatcher(async (events) => {
-    const relevantAppDirs = appDirsForEvents(events, appDirs);
-    if (relevantAppDirs.length === 0) {
-      return;
-    }
-    await runAnalysis(projectRoot, relevantAppDirs);
-  });
-  unsubscribers.push(unsubscribe);
+  if (isDevelopment) {
+    void run();
+    const {unsubscribe} = await subscribeSharedSourceWatcher(async (events) => {
+      const changedFiles = filterChangedFiles(events, appDirs);
+      if (changedFiles.length === 0) return;
+      await run(changedFiles);
+    });
+    unsubscribers.push(unsubscribe);
+  } else {
+    await run();
+  }
 
   async function cleanup() {
     await Promise.all(unsubscribers.map((fn) => fn()));

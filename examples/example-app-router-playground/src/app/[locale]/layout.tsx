@@ -85,6 +85,7 @@ export default async function LocaleLayout({
 
 type ManifestSegmentEntry = Record<string, true | Record<string, true>>;
 type ManifestEntry = {
+  fullMessages?: boolean;
   hasProvider: boolean;
   namespaces: ManifestSegmentEntry;
 };
@@ -166,6 +167,9 @@ function collectNamespacesForSegment(
   const merged: ManifestSegmentEntry = {};
 
   const selfEntry = manifest[segment];
+  if (selfEntry?.fullMessages) {
+    return undefined;
+  }
   if (selfEntry?.namespaces) {
     mergeNamespaces(merged, selfEntry.namespaces);
   }
@@ -175,6 +179,7 @@ function collectNamespacesForSegment(
     if (!entry || entry.hasProvider) continue;
     if (key === segment) continue;
     if (!key.startsWith(prefix)) continue;
+    if (entry.fullMessages) return undefined;
     mergeNamespaces(merged, entry.namespaces);
   }
 

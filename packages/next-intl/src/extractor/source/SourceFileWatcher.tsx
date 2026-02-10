@@ -23,9 +23,9 @@ export default class SourceFileWatcher implements Disposable {
       return;
     }
 
-    const ignore = SourceFileFilter.IGNORED_DIRECTORIES.map(
-      (dir) => `**/${dir}/**`
-    );
+    const ignore = SourceFileFilter.IGNORED_DIRECTORIES.filter(
+      (dir) => !this.isDirectoryExplicitlyIncluded(dir)
+    ).map((dir) => `**/${dir}/**`);
 
     for (const root of this.roots) {
       const sub = await subscribe(
@@ -45,6 +45,10 @@ export default class SourceFileWatcher implements Disposable {
       );
       this.subscriptions.push(sub);
     }
+  }
+
+  private isDirectoryExplicitlyIncluded(dirName: string): boolean {
+    return this.roots.some((root) => root.split(path.sep).includes(dirName));
   }
 
   private async normalizeEvents(events: Array<Event>): Promise<Array<Event>> {

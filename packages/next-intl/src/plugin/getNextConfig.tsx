@@ -32,6 +32,10 @@ function normalizeTurbopackAliasPath(pathname: string) {
   return pathname.replace(/\\/g, '/');
 }
 
+function getManifestAliasPath() {
+  return './node_modules/.cache/next-intl-client-manifest.json';
+}
+
 function resolveI18nPath(providedPath?: string, cwd?: string) {
   function resolvePath(pathname: string) {
     const parts = [];
@@ -156,6 +160,13 @@ export default function getNextConfig(
     }
   }
 
+  if (
+    pluginConfig.experimental?.treeShaking &&
+    !pluginConfig.experimental.srcPath
+  ) {
+    throwError('`experimental.srcPath` is required when using `treeShaking`.');
+  }
+
   if (shouldConfigureTurbo) {
     if (
       pluginConfig.requestConfig &&
@@ -169,10 +180,17 @@ export default function getNextConfig(
 
     // Assign alias for `next-intl/config`
     const resolveAlias: Record<string, string> = {
+      'next-intl/_client-manifest.json': normalizeTurbopackAliasPath(
+        getManifestAliasPath()
+      ),
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
+
+    if (!pluginConfig.experimental?.treeShaking) {
+      delete resolveAlias['next-intl/_client-manifest.json'];
+    }
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
@@ -277,11 +295,20 @@ export default function getNextConfig(
 
       // Assign alias for `next-intl/config`
       // (Webpack requires absolute paths)
+      (config.resolve.alias as Record<string, string>)[
+        'next-intl/_client-manifest.json'
+      ] = path.resolve(config.context!, getManifestAliasPath());
       (config.resolve.alias as Record<string, string>)['next-intl/config'] =
         path.resolve(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
+
+      if (!pluginConfig.experimental?.treeShaking) {
+        delete (config.resolve.alias as Record<string, string>)[
+          'next-intl/_client-manifest.json'
+        ];
+      }
 
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {

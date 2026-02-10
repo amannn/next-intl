@@ -4,6 +4,7 @@ import path from 'path';
 export type ManifestNamespaces = Record<string, true | Record<string, true>>;
 
 export type ManifestEntry = {
+  fullMessages?: boolean;
   hasProvider: boolean;
   namespaces: ManifestNamespaces;
 };
