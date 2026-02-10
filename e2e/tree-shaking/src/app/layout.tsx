@@ -27,7 +27,7 @@ export default async function LocaleLayout({children}: Props) {
   const messages = await getMessages({locale});
   const segment = '/';
   const filteredMessages =
-    manifest?.[segment]?.hasProvider === true
+    manifest?.[segment]?.hasLayoutProvider === true
       ? pruneMessages(
           collectNamespacesForSegment(segment, manifest) ?? {},
           messages
@@ -54,7 +54,7 @@ export default async function LocaleLayout({children}: Props) {
 
 type ManifestSegmentEntry = true | Record<string, true | Record<string, true>>;
 type ManifestEntry = {
-  hasProvider: boolean;
+  hasLayoutProvider: boolean;
   namespaces: ManifestSegmentEntry;
 };
 type Messages = Awaited<ReturnType<typeof getMessages>>;
@@ -140,7 +140,7 @@ function collectNamespacesForSegment(
 
   const prefix = segment === '/' ? '/' : `${segment}/`;
   for (const [key, entry] of Object.entries(manifest)) {
-    if (!entry || entry.hasProvider) continue;
+    if (!entry || entry.hasLayoutProvider) continue;
     if (key === segment) continue;
     if (!key.startsWith(prefix)) continue;
     merged = mergeNamespaces(merged, entry.namespaces);

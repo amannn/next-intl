@@ -146,18 +146,18 @@ function hasTranslationUsage(namespaces: ManifestNamespaces): boolean {
 function ensureManifestEntry(
   manifest: Manifest,
   segmentId: string,
-  hasProvider: boolean
+  hasLayoutProvider: boolean
 ): ManifestEntry {
   const existing = manifest[segmentId];
   if (existing) {
-    if (hasProvider && !existing.hasProvider) {
-      existing.hasProvider = true;
+    if (hasLayoutProvider && !existing.hasLayoutProvider) {
+      existing.hasLayoutProvider = true;
     }
     return existing;
   }
 
   const entry: ManifestEntry = {
-    hasProvider,
+    hasLayoutProvider,
     namespaces: {}
   };
   manifest[segmentId] = entry;
@@ -261,9 +261,9 @@ export default class TreeShakingAnalyzer {
     const segmentMap = new Map<string, boolean>();
     for (const entry of entryFiles) {
       const existing = segmentMap.get(entry.segmentId);
-      const hasProvider =
+      const hasLayoutProvider =
         existing === true ? true : providerSegments.has(entry.segmentId);
-      segmentMap.set(entry.segmentId, hasProvider);
+      segmentMap.set(entry.segmentId, hasLayoutProvider);
     }
 
     let entriesToAnalyze = entryFilePaths;
