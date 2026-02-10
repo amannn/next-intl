@@ -284,6 +284,9 @@ app/[locale]/
 - The analyzer splits dotted namespaces/keys (e.g., `Nested.deep.key` or `t('nested.key')`) into nested objects in the manifest so pruning can match message JSON structure.
 - Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasProvider` to support this.
 - Incremental runs: When a file changes, we only want to re-analyze affected files to be quick to emit an updated manifest.
+- We're using `@swc/core` (for now) to parse code and evaluate the AST in JS.
+- To observe the module graph of an entry point, we should use the `dependency-tree` package. One critical point is that this supports `tsconfig.json` with potential alias configuration.
+- When analyzing files, do a check if they match the `experimental.srcPath` setting. This should include `node_modules` by default (but allows them as opt-in).
 
 ## Open questions
 
@@ -293,3 +296,5 @@ Several design decisions need to be made before implementation:
 - **Pages router support**: How to handle Pages Router? (if at all)
 - Maybe the manifest could be transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
 - We need to consider page extensions
+- Move analyzer to Rust?
+- During production build, can we block the render until the manifest is written?
