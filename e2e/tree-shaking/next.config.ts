@@ -4,6 +4,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin({
   experimental: {
     srcPath: './src',
+    treeShaking: true,
     extract: {
       sourceLocale: 'en'
     },

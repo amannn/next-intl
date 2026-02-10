@@ -15,7 +15,7 @@ msgid "tQLRmz"
 msgstr "Increment"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx:17
+#: src/app/layout.tsx:19
 msgid "lNLCAE"
 msgstr "next-intl example"
 
