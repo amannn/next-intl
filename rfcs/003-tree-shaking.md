@@ -19,9 +19,9 @@ We want Next.js App Router client bundles to receive only the message namespaces
   - [Constraints](#constraints)
   - [Scope of analysis](#scope-of-analysis)
   - [Why this granularity](#why-this-granularity)
-- [Alternatives and complements](#alternatives-and-complements)
-- [Known limitations](#known-limitations)
+- [Implementation notes](#implementation-notes)
 - [Open questions](#open-questions)
+- [Ideas](#ideas)
 
 ## Context
 
@@ -275,22 +275,21 @@ app/[locale]/
 - When navigating from `/` to `/about`, the root layout's messages already include `About` -- no additional messages needed.
 - When navigating to `/dashboard`, the dashboard layout provides its own, more specific set.
 
+## Implementation notes
+
+- A shared file watcher is reused by the extractor and the tree-shaking manifest generator to avoid duplicate watchers on the same roots.
+- We need an alias to link the manifest into layout files where it's imported. This ensures HMR works and the relevant messages are available.
+- The manifest must not live in `.next/`; Turbopack/Webpack aliases can’t target that folder. Writing it to `node_modules/.cache/next-intl-client-manifest.json` works however.
+- Seeding an empty manifest on startup prevents “module not found” when the alias is resolved before the first analysis run.
+- The analyzer splits dotted namespaces/keys (e.g., `Nested.deep.key` or `t('nested.key')`) into nested objects in the manifest so pruning can match message JSON structure.
+- Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasProvider` to support this.
+- Incremental runs: When a file changes, we only want to re-analyze affected files to be quick to emit an updated manifest.
+
 ## Open questions
 
 Several design decisions need to be made before implementation:
 
-1. **Build integration**: SWC/plugin in Next.js vs separate sidecar; how to cache module graph results for fast rebuilds?
-2. **Development vs production**: Dev full catalog vs dev inference—how to surface missing-message regressions before prod?
-3. **Consumer API**: Final shape of opt-in (`messages="infer"`), and explicit escape-hatch semantics when `messages` is provided manually.
-4. **Pages router support**: How to handle Pages Router? (if at all)
-
-## Ideas
-
-- When rendering `NextIntlClientProvider` with `messages="infer"`, can we trigger a Turbopack loader that observes a module graph?
-- This is kind of shitty, when do we need to evaluate this? Better maybe once at build time for now.
-- Maybe the manifest is transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
+- **Consumer API**: Final shape of opt-in (`messages="infer"`), and explicit escape-hatch semantics when `messages` is provided manually.
+- **Pages router support**: How to handle Pages Router? (if at all)
+- Maybe the manifest could be transient, and we inline the value into the layouts? Maybe we could have a special loader for layout.ts files where we wait for manifest to be ready, then read and inline it.
 - We need to consider page extensions
-
---
-
-To continue this session, run codex resume 019c337e-d45f-78c0-92fc-02f41059c2dd
