@@ -1,6 +1,9 @@
 import fs from 'fs/promises';
 import path from 'path';
-import {subscribeSharedSourceWatcher} from '../../watcher/SharedSourceWatcher.js';
+import {
+  configureSharedSourceWatcher,
+  subscribeSharedSourceWatcher
+} from '../../watcher/SharedSourceWatcher.js';
 import type MessageExtractor from '../extractor/MessageExtractor.js';
 import type ExtractorCodec from '../format/ExtractorCodec.js';
 import {getFormatExtension, resolveCodec} from '../format/index.js';
@@ -89,6 +92,7 @@ export default class CatalogManager implements Disposable {
     this.extractor = opts.extractor;
 
     if (this.isDevelopment) {
+      configureSharedSourceWatcher(this.getSrcPaths());
       // We kick this off as early as possible, so we get notified about changes
       // that happen during the initial project scan (while awaiting it to
       // complete though)
