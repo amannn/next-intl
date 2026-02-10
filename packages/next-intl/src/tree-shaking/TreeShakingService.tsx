@@ -1,8 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
+import SourceFileWatcher from '../extractor/source/SourceFileWatcher.js';
 import {isDevelopment} from '../plugin/config.js';
-import {subscribeSharedSourceWatcher} from '../watcher/SharedSourceWatcher.js';
 import TreeShakingAnalyzer from './Analyzer.js';
 import {type Manifest, createEmptyManifest, writeManifest} from './Manifest.js';
 
@@ -80,6 +80,9 @@ export default async function startTreeShakingService({
     srcPaths,
     tsconfigPath: path.join(projectRoot, 'tsconfig.json')
   });
+  const sourceRoots = srcPaths.map((srcPath) =>
+    path.resolve(projectRoot, srcPath)
+  );
 
   await writeManifest(createEmptyManifest(), projectRoot);
   const warnedSegments = new Set<string>();
@@ -114,12 +117,13 @@ export default async function startTreeShakingService({
 
   if (isDevelopment) {
     void run();
-    const {unsubscribe} = await subscribeSharedSourceWatcher(async (events) => {
+    const sourceWatcher = new SourceFileWatcher(sourceRoots, async (events) => {
       const changedFiles = filterChangedFiles(events, appDirs);
       if (changedFiles.length === 0) return;
       await run(changedFiles);
     });
-    unsubscribers.push(unsubscribe);
+    await sourceWatcher.start();
+    unsubscribers.push(() => sourceWatcher.stop());
   } else {
     await run();
   }

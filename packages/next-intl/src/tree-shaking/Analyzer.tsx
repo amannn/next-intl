@@ -139,6 +139,10 @@ function mergeNamespaces(
   return target;
 }
 
+function hasTranslationUsage(namespaces: ManifestNamespaces): boolean {
+  return namespaces === true || Object.keys(namespaces).length > 0;
+}
+
 function ensureManifestEntry(
   manifest: Manifest,
   segmentId: string,
@@ -192,7 +196,6 @@ export default class TreeShakingAnalyzer {
     this.srcMatcher = createSourcePathMatcher(projectRoot, srcPaths);
     this.dependencyGraph = new DependencyGraph({
       projectRoot,
-      sourceAnalyzer: this.sourceAnalyzer,
       srcMatcher: this.srcMatcher,
       tsconfigPath
     });
@@ -336,7 +339,7 @@ export default class TreeShakingAnalyzer {
         const effectiveClient = nowClient && !analysis.hasUseServer;
 
         if (effectiveClient) {
-          if (analysis.fullMessages) {
+          if (analysis.requiresAllMessages) {
             namespaces = true;
           }
           if (namespaces !== true) {
@@ -362,14 +365,18 @@ export default class TreeShakingAnalyzer {
 
     const manifest = createEmptyManifest();
 
-    for (const [segmentId, hasProvider] of segmentMap) {
-      ensureManifestEntry(manifest, segmentId, hasProvider);
-    }
-
     for (const entry of this.entryResults.values()) {
+      if (!hasTranslationUsage(entry.namespaces)) {
+        continue;
+      }
+
       const manifestEntry =
         manifest[entry.segmentId] ??
-        ensureManifestEntry(manifest, entry.segmentId, false);
+        ensureManifestEntry(
+          manifest,
+          entry.segmentId,
+          segmentMap.get(entry.segmentId) === true
+        );
       manifestEntry.namespaces = mergeNamespaces(
         manifestEntry.namespaces,
         entry.namespaces

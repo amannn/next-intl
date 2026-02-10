@@ -33,6 +33,8 @@ function normalizeTurbopackAliasPath(pathname: string) {
 }
 
 function getManifestAliasPath() {
+  // Keep this outside `.next`: aliases targeting `.next` are unreliable and
+  // break manifest HMR. `node_modules/.cache` works for both Turbo/Webpack.
   return './node_modules/.cache/next-intl-client-manifest.json';
 }
 
@@ -180,16 +182,13 @@ export default function getNextConfig(
 
     // Assign alias for `next-intl/config`
     const resolveAlias: Record<string, string> = {
-      'next-intl/_client-manifest.json': normalizeTurbopackAliasPath(
-        getManifestAliasPath()
-      ),
       // Turbo aliases don't work with absolute
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
-
-    if (!pluginConfig.experimental?.treeShaking) {
-      delete resolveAlias['next-intl/_client-manifest.json'];
+    if (pluginConfig.experimental?.treeShaking) {
+      // Alias the manifest for tree-shaking HMR updates in dev.
+      resolveAlias['next-intl/_client-manifest.json'] = getManifestAliasPath();
     }
 
     // Add alias for precompiled message formatting
@@ -295,19 +294,16 @@ export default function getNextConfig(
 
       // Assign alias for `next-intl/config`
       // (Webpack requires absolute paths)
-      (config.resolve.alias as Record<string, string>)[
-        'next-intl/_client-manifest.json'
-      ] = path.resolve(config.context!, getManifestAliasPath());
       (config.resolve.alias as Record<string, string>)['next-intl/config'] =
         path.resolve(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
-
-      if (!pluginConfig.experimental?.treeShaking) {
-        delete (config.resolve.alias as Record<string, string>)[
+      if (pluginConfig.experimental?.treeShaking) {
+        // Alias the manifest for tree-shaking HMR updates in dev.
+        (config.resolve.alias as Record<string, string>)[
           'next-intl/_client-manifest.json'
-        ];
+        ] = path.resolve(config.context!, getManifestAliasPath());
       }
 
       // Add alias for precompiled message formatting

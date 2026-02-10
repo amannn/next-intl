@@ -26,7 +26,7 @@ type TranslatorInfo = {
 };
 
 type FileAnalysis = {
-  fullMessages: boolean;
+  requiresAllMessages: boolean;
   hasUseClient: boolean;
   hasUseServer: boolean;
   imports: Array<string>;
@@ -274,7 +274,7 @@ function getExtractedKey(arg: any): string | null {
 
 function addTranslationUse(
   translations: Array<TranslationUse>,
-  fullMessagesRef: {value: boolean},
+  requiresAllMessagesRef: {value: boolean},
   translator: TranslatorInfo,
   arg0: any
 ) {
@@ -283,7 +283,7 @@ function addTranslationUse(
   if (translator.kind === 'translations') {
     const key = getStaticString(arg0);
     if (namespace === null) {
-      fullMessagesRef.value = true;
+      requiresAllMessagesRef.value = true;
       return;
     }
     if (!key) {
@@ -291,7 +291,7 @@ function addTranslationUse(
         translations.push({fullNamespace: true, namespace});
         return;
       }
-      fullMessagesRef.value = true;
+      requiresAllMessagesRef.value = true;
       return;
     }
     translations.push({key, namespace: namespace ?? undefined});
@@ -304,22 +304,22 @@ function addTranslationUse(
       translations.push({fullNamespace: true, namespace});
       return;
     }
-    fullMessagesRef.value = true;
+    requiresAllMessagesRef.value = true;
     return;
   }
   if (namespace === null) {
-    fullMessagesRef.value = true;
+    requiresAllMessagesRef.value = true;
     return;
   }
   translations.push({key: extractedKey, namespace: namespace ?? undefined});
 }
 
 function collectTranslations(ast: any): {
-  fullMessages: boolean;
+  requiresAllMessages: boolean;
   translations: Array<TranslationUse>;
 } {
   const translations: Array<TranslationUse> = [];
-  const fullMessagesRef = {value: false};
+  const requiresAllMessagesRef = {value: false};
   const aliases = collectHookAliases(ast);
   const scopeStack: Array<Map<string, TranslatorInfo>> = [new Map()];
 
@@ -392,7 +392,12 @@ function collectTranslations(ast: any): {
         const translator = lookupTranslator(translatorName);
         if (translator) {
           const arg0 = node.arguments?.[0]?.expression;
-          addTranslationUse(translations, fullMessagesRef, translator, arg0);
+          addTranslationUse(
+            translations,
+            requiresAllMessagesRef,
+            translator,
+            arg0
+          );
         }
       }
     }
@@ -410,7 +415,7 @@ function collectTranslations(ast: any): {
 
   walk(ast.body);
 
-  return {fullMessages: fullMessagesRef.value, translations};
+  return {requiresAllMessages: requiresAllMessagesRef.value, translations};
 }
 
 export default class SourceAnalyzer {
@@ -427,7 +432,7 @@ export default class SourceAnalyzer {
     if (cached) return cached;
 
     const empty: FileAnalysis = {
-      fullMessages: false,
+      requiresAllMessages: false,
       hasUseClient: false,
       hasUseServer: false,
       imports: [],
@@ -458,10 +463,10 @@ export default class SourceAnalyzer {
       return empty;
     }
 
-    const {fullMessages, translations} = collectTranslations(ast);
+    const {requiresAllMessages, translations} = collectTranslations(ast);
 
     const analysis: FileAnalysis = {
-      fullMessages,
+      requiresAllMessages,
       hasUseClient: hasDirective(ast, 'use client'),
       hasUseServer: containsDirective(ast, 'use server'),
       imports: collectImports(ast),

@@ -5,50 +5,153 @@ import SourceFileFilter from './SourceFileFilter.js';
 import SourceFileScanner from './SourceFileScanner.js';
 
 type OnChange = (events: Array<Event>) => Promise<void>;
+type RootListener = (events: Array<Event>) => Promise<void>;
+type SharedRootWatcher = {
+  listeners: Set<RootListener>;
+  startPromise?: Promise<void>;
+  subscription?: AsyncSubscription;
+};
 
 export type SourceFileWatcherEvent = Event;
 
 export default class SourceFileWatcher implements Disposable {
-  private subscriptions: Array<AsyncSubscription> = [];
+  private static sharedRootWatchers = new Map<string, SharedRootWatcher>();
+
+  private rootListeners = new Map<string, RootListener>();
   private roots: Array<string>;
   private onChange: OnChange;
 
   public constructor(roots: Array<string>, onChange: OnChange) {
-    this.roots = roots;
+    this.roots = roots.map((root) => path.resolve(root));
     this.onChange = onChange;
   }
 
-  public async start() {
-    if (this.subscriptions.length > 0) {
+  private static getSharedRootWatcher(root: string): SharedRootWatcher {
+    const existing = SourceFileWatcher.sharedRootWatchers.get(root);
+    if (existing) {
+      return existing;
+    }
+
+    const created: SharedRootWatcher = {
+      listeners: new Set()
+    };
+    SourceFileWatcher.sharedRootWatchers.set(root, created);
+    return created;
+  }
+
+  private static getIgnorePatternsForRoot(root: string): Array<string> {
+    const rootParts = root.split(path.sep);
+    return SourceFileFilter.IGNORED_DIRECTORIES.filter(
+      (dir) => !rootParts.includes(dir)
+    ).map((dir) => `**/${dir}/**`);
+  }
+
+  private static async dispatchRootEvents(root: string, events: Array<Event>) {
+    const sharedRootWatcher = SourceFileWatcher.sharedRootWatchers.get(root);
+    if (!sharedRootWatcher) return;
+
+    await Promise.all(
+      Array.from(sharedRootWatcher.listeners).map((listener) =>
+        listener(events)
+      )
+    );
+  }
+
+  private static async ensureSubscription(
+    root: string,
+    sharedRootWatcher: SharedRootWatcher
+  ) {
+    if (sharedRootWatcher.subscription) {
       return;
     }
 
-    const ignore = SourceFileFilter.IGNORED_DIRECTORIES.filter(
-      (dir) => !this.isDirectoryExplicitlyIncluded(dir)
-    ).map((dir) => `**/${dir}/**`);
-
-    for (const root of this.roots) {
-      const sub = await subscribe(
+    if (!sharedRootWatcher.startPromise) {
+      sharedRootWatcher.startPromise = subscribe(
         root,
-        async (err, events) => {
-          if (err) {
-            console.error(err);
+        async (error, events) => {
+          if (error) {
+            console.error(error);
             return;
           }
+          await SourceFileWatcher.dispatchRootEvents(root, events);
+        },
+        {ignore: SourceFileWatcher.getIgnorePatternsForRoot(root)}
+      )
+        .then((subscription) => {
+          sharedRootWatcher.subscription = subscription;
+        })
+        .catch((error) => {
+          sharedRootWatcher.startPromise = undefined;
+          throw error;
+        });
+    }
 
+    await sharedRootWatcher.startPromise;
+  }
+
+  private static async addRootListener(root: string, listener: RootListener) {
+    const sharedRootWatcher = SourceFileWatcher.getSharedRootWatcher(root);
+    sharedRootWatcher.listeners.add(listener);
+
+    try {
+      await SourceFileWatcher.ensureSubscription(root, sharedRootWatcher);
+    } catch (error) {
+      sharedRootWatcher.listeners.delete(listener);
+      if (sharedRootWatcher.listeners.size === 0) {
+        SourceFileWatcher.sharedRootWatchers.delete(root);
+      }
+      throw error;
+    }
+  }
+
+  private static async removeRootListener(
+    root: string,
+    listener: RootListener
+  ) {
+    const sharedRootWatcher = SourceFileWatcher.sharedRootWatchers.get(root);
+    if (!sharedRootWatcher) {
+      return;
+    }
+
+    sharedRootWatcher.listeners.delete(listener);
+    if (sharedRootWatcher.listeners.size > 0) {
+      return;
+    }
+
+    try {
+      await sharedRootWatcher.startPromise;
+    } catch {
+      // ignore
+    }
+
+    if (sharedRootWatcher.subscription) {
+      await sharedRootWatcher.subscription.unsubscribe();
+      sharedRootWatcher.subscription = undefined;
+    }
+
+    SourceFileWatcher.sharedRootWatchers.delete(root);
+  }
+
+  public async start() {
+    if (this.rootListeners.size > 0) {
+      return;
+    }
+
+    try {
+      for (const root of new Set(this.roots)) {
+        const listener: RootListener = async (events) => {
           const filtered = await this.normalizeEvents(events);
           if (filtered.length > 0) {
             void this.onChange(filtered);
           }
-        },
-        {ignore}
-      );
-      this.subscriptions.push(sub);
+        };
+        await SourceFileWatcher.addRootListener(root, listener);
+        this.rootListeners.set(root, listener);
+      }
+    } catch (error) {
+      await this.stop();
+      throw error;
     }
-  }
-
-  private isDirectoryExplicitlyIncluded(dirName: string): boolean {
-    return this.roots.some((root) => root.split(path.sep).includes(dirName));
   }
 
   private async normalizeEvents(events: Array<Event>): Promise<Array<Event>> {
@@ -152,8 +255,14 @@ export default class SourceFileWatcher implements Disposable {
   }
 
   public async stop() {
-    await Promise.all(this.subscriptions.map((sub) => sub.unsubscribe()));
-    this.subscriptions = [];
+    const listeners = Array.from(this.rootListeners.entries());
+    this.rootListeners.clear();
+
+    await Promise.all(
+      listeners.map(([root, listener]) =>
+        SourceFileWatcher.removeRootListener(root, listener)
+      )
+    );
   }
 
   public [Symbol.dispose](): void {
