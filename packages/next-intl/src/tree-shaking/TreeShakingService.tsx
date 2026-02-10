@@ -4,7 +4,7 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import {isDevelopment} from '../plugin/config.js';
 import {subscribeSharedSourceWatcher} from '../watcher/SharedSourceWatcher.js';
 import TreeShakingAnalyzer from './Analyzer.js';
-import {createEmptyManifest, writeManifest} from './Manifest.js';
+import {type Manifest, createEmptyManifest, writeManifest} from './Manifest.js';
 
 type StartParams = {
   projectRoot: string;
@@ -56,6 +56,16 @@ function filterChangedFiles(
   return Array.from(matches);
 }
 
+function getNoTreeShakingSegments(manifest: Manifest): Array<string> {
+  const segments: Array<string> = [];
+  for (const [segment, entry] of Object.entries(manifest)) {
+    if (!entry) continue;
+    if (entry.namespaces !== true) continue;
+    segments.push(segment);
+  }
+  return segments;
+}
+
 export default async function startTreeShakingService({
   projectRoot,
   srcPaths
@@ -72,11 +82,25 @@ export default async function startTreeShakingService({
   });
 
   await writeManifest(createEmptyManifest(), projectRoot);
+  const warnedSegments = new Set<string>();
 
   async function run(changedFiles?: Array<string>) {
     try {
       const manifest = await analyzer.analyze({appDirs, changedFiles});
       await writeManifest(manifest, projectRoot);
+
+      const segments = getNoTreeShakingSegments(manifest);
+      const nextWarnedSegments = new Set(segments);
+      for (const segment of segments) {
+        if (warnedSegments.has(segment)) continue;
+        console.warn(
+          `[next-intl] Tree-shaking has no effect for segment "${segment}" because a translation call uses a non-static key without a static namespace (e.g. useTranslations() + t(dynamicKey)).`
+        );
+      }
+      warnedSegments.clear();
+      for (const segment of nextWarnedSegments) {
+        warnedSegments.add(segment);
+      }
     } catch (error) {
       console.warn(
         `\n[next-intl] Tree-shaking analysis failed: ${

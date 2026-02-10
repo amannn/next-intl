@@ -83,9 +83,8 @@ export default async function LocaleLayout({
   );
 }
 
-type ManifestSegmentEntry = Record<string, true | Record<string, true>>;
+type ManifestSegmentEntry = true | Record<string, true | Record<string, true>>;
 type ManifestEntry = {
-  fullMessages?: boolean;
   hasProvider: boolean;
   namespaces: ManifestSegmentEntry;
 };
@@ -106,6 +105,10 @@ function pruneMessages(
   entry: ManifestSegmentEntry,
   messages: Messages
 ): Messages {
+  if (entry === true) {
+    return messages;
+  }
+
   function pruneNode(
     selector: Record<string, true | Record<string, true>>,
     source: Record<string, unknown>
@@ -142,7 +145,11 @@ function pruneMessages(
 function mergeNamespaces(
   target: ManifestSegmentEntry,
   source: ManifestSegmentEntry
-) {
+): ManifestSegmentEntry {
+  if (target === true || source === true) {
+    return true;
+  }
+
   for (const [ns, val] of Object.entries(source)) {
     if (val === true) {
       target[ns] = true;
@@ -158,20 +165,19 @@ function mergeNamespaces(
     }
     target[ns] = {...val};
   }
+
+  return target;
 }
 
 function collectNamespacesForSegment(
   segment: string,
   manifest: Record<string, ManifestEntry | undefined>
 ): ManifestSegmentEntry | undefined {
-  const merged: ManifestSegmentEntry = {};
+  let merged: ManifestSegmentEntry = {};
 
   const selfEntry = manifest[segment];
-  if (selfEntry?.fullMessages) {
-    return undefined;
-  }
   if (selfEntry?.namespaces) {
-    mergeNamespaces(merged, selfEntry.namespaces);
+    merged = mergeNamespaces(merged, selfEntry.namespaces);
   }
 
   const prefix = segment === '/' ? '/' : `${segment}/`;
@@ -179,8 +185,11 @@ function collectNamespacesForSegment(
     if (!entry || entry.hasProvider) continue;
     if (key === segment) continue;
     if (!key.startsWith(prefix)) continue;
-    if (entry.fullMessages) return undefined;
-    mergeNamespaces(merged, entry.namespaces);
+    merged = mergeNamespaces(merged, entry.namespaces);
+  }
+
+  if (merged === true) {
+    return merged;
   }
 
   return Object.keys(merged).length > 0 ? merged : undefined;

@@ -9,13 +9,13 @@ import {
 import {
   type Manifest,
   type ManifestEntry,
+  type ManifestNamespaceMap,
   type ManifestNamespaces,
   createEmptyManifest
 } from './Manifest.js';
 import SourceAnalyzer from './SourceAnalyzer.js';
 
 type EntryResult = {
-  fullMessages: boolean;
   namespaces: ManifestNamespaces;
   segmentId: string;
 };
@@ -54,80 +54,61 @@ function splitPath(input: string): Array<string> {
   return input.split('.').filter(Boolean);
 }
 
-function setNestedFlag(
-  container: Record<string, true | Record<string, true>>,
-  pathParts: Array<string>,
-  leaf: string | null
+function setPathTrue(
+  container: ManifestNamespaceMap,
+  pathParts: Array<string>
 ) {
-  let current: Record<string, true | Record<string, true>> = container;
+  if (pathParts.length === 0) {
+    return;
+  }
 
-  for (const part of pathParts) {
+  let current: ManifestNamespaceMap = container;
+  for (let index = 0; index < pathParts.length; index++) {
+    const part = pathParts[index];
+    const isLeaf = index === pathParts.length - 1;
     const existing = current[part];
     if (existing === true) {
       return;
     }
-    const existingObj = typeof existing === 'object' ? existing : undefined;
-    if (!existingObj) {
+
+    if (isLeaf) {
+      current[part] = true;
+      return;
+    }
+
+    if (!(part in current)) {
       current[part] = {};
     }
-    current = current[part] as Record<string, true | Record<string, true>>;
-  }
 
-  if (leaf == null) {
-    return;
+    current = current[part] as ManifestNamespaceMap;
   }
-
-  const leafExisting = current[leaf];
-  if (leafExisting === true) return;
-  if (typeof leafExisting === 'object') return;
-  current[leaf] = true;
 }
 
 function addToManifest(
-  namespaces: ManifestNamespaces,
+  namespaces: ManifestNamespaceMap,
   item: {fullNamespace?: boolean; key?: string; namespace?: string}
 ) {
   const {fullNamespace, key, namespace} = item;
 
   if (namespace == null) {
     if (!key) return;
-    const keyParts = splitPath(key);
-    if (keyParts.length === 0) return;
-    const leaf = keyParts.pop()!;
-    setNestedFlag(namespaces, keyParts, leaf);
+    setPathTrue(namespaces, splitPath(key));
     return;
   }
 
   const nsParts = splitPath(namespace);
   if (fullNamespace) {
-    setNestedFlag(namespaces, nsParts, null);
-    setNestedFlag(namespaces, nsParts.slice(0, -1), nsParts.at(-1) ?? null);
+    setPathTrue(namespaces, nsParts);
     return;
   }
 
   if (!key) return;
-  const keyParts = splitPath(key);
-  const leaf = keyParts.pop() ?? key;
-
-  let target: Record<string, true | Record<string, true>> = namespaces;
-  for (const part of nsParts) {
-    const existing = target[part];
-    if (existing === true) {
-      return;
-    }
-    const existingObj = typeof existing === 'object' ? existing : undefined;
-    if (!existingObj) {
-      target[part] = {};
-    }
-    target = target[part] as Record<string, true | Record<string, true>>;
-  }
-
-  setNestedFlag(target, keyParts, leaf);
+  setPathTrue(namespaces, [...nsParts, ...splitPath(key)]);
 }
 
-function mergeNamespaces(
-  target: ManifestNamespaces,
-  source: ManifestNamespaces
+function mergeNamespaceMaps(
+  target: ManifestNamespaceMap,
+  source: ManifestNamespaceMap
 ) {
   for (const [ns, value] of Object.entries(source)) {
     if (value === true) {
@@ -139,11 +120,23 @@ function mergeNamespaces(
       continue;
     }
     if (typeof existing === 'object') {
-      mergeNamespaces(existing, value);
+      mergeNamespaceMaps(existing, value);
       continue;
     }
     target[ns] = {...value};
   }
+}
+
+function mergeNamespaces(
+  target: ManifestNamespaces,
+  source: ManifestNamespaces
+): ManifestNamespaces {
+  if (target === true || source === true) {
+    return true;
+  }
+
+  mergeNamespaceMaps(target, source);
+  return target;
 }
 
 function ensureManifestEntry(
@@ -322,8 +315,7 @@ export default class TreeShakingAnalyzer {
       const graph = await this.dependencyGraph.getEntryGraph(entryFile);
       this.updateEntryDependencies(entryFile, graph.files);
 
-      const namespaces: ManifestNamespaces = {};
-      let fullMessages = false;
+      let namespaces: ManifestNamespaces = {};
       const queue: Array<{file: string; inClient: boolean}> = [
         {file: entryFile, inClient: false}
       ];
@@ -345,10 +337,12 @@ export default class TreeShakingAnalyzer {
 
         if (effectiveClient) {
           if (analysis.fullMessages) {
-            fullMessages = true;
+            namespaces = true;
           }
-          for (const translation of analysis.translations) {
-            addToManifest(namespaces, translation);
+          if (namespaces !== true) {
+            for (const translation of analysis.translations) {
+              addToManifest(namespaces, translation);
+            }
           }
         }
 
@@ -361,7 +355,6 @@ export default class TreeShakingAnalyzer {
       }
 
       this.entryResults.set(entryFile, {
-        fullMessages,
         namespaces,
         segmentId: entryMeta.segmentId
       });
@@ -377,10 +370,10 @@ export default class TreeShakingAnalyzer {
       const manifestEntry =
         manifest[entry.segmentId] ??
         ensureManifestEntry(manifest, entry.segmentId, false);
-      if (entry.fullMessages) {
-        manifestEntry.fullMessages = true;
-      }
-      mergeNamespaces(manifestEntry.namespaces, entry.namespaces);
+      manifestEntry.namespaces = mergeNamespaces(
+        manifestEntry.namespaces,
+        entry.namespaces
+      );
     }
 
     return manifest;
