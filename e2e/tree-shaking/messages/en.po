@@ -150,32 +150,32 @@ msgctxt "Navigation"
 msgid "eW/Bj9"
 msgstr "Feed"
 
-#: src/app/Navigation.tsx:26
+#: src/app/Navigation.tsx:28
 msgctxt "Navigation"
-msgid "NqHXVi"
-msgstr "Feed (photo → alpha)"
+msgid "hJlOFc"
+msgstr "Photo (intercept from feed)"
 
-#: src/app/Navigation.tsx:27
+#: src/app/Navigation.tsx:30
 msgctxt "Navigation"
 msgid "d/em2z"
 msgstr "Dynamic import"
 
-#: src/app/Navigation.tsx:28
+#: src/app/Navigation.tsx:31
 msgctxt "Navigation"
 msgid "Iv+hfk"
 msgstr "Hook translation"
 
-#: src/app/Navigation.tsx:29
+#: src/app/Navigation.tsx:32
 msgctxt "Navigation"
 msgid "VRx4Ab"
 msgstr "Layout template"
 
-#: src/app/Navigation.tsx:30
+#: src/app/Navigation.tsx:33
 msgctxt "Navigation"
 msgid "JdTriE"
 msgstr "Shared component"
 
-#: src/app/Navigation.tsx:31
+#: src/app/Navigation.tsx:34
 msgctxt "Navigation"
 msgid "BXSx4m"
 msgstr "Use translations"
@@ -216,7 +216,7 @@ msgstr "Parallel page"
 msgid "fJxh6G"
 msgstr "Parallel template"
 
-#: src/app/photo/[id]/page.tsx:11
+#: src/app/photo/[id]/page.tsx:13
 msgid "o25lsU"
 msgstr "Photo page: {id}"
 

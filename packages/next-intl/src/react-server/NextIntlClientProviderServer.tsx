@@ -63,7 +63,12 @@ export default async function NextIntlClientProviderServer({
   );
 
   // Temporary debugging
-  if (process.env.NODE_ENV !== 'production' && messages === 'infer') {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    messages === 'infer' &&
+    clientMessages &&
+    Object.keys(clientMessages).length > 0
+  ) {
     return (
       <div style={{border: '1px solid green'}}>
         <pre style={{backgroundColor: 'lightgreen'}}>

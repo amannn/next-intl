@@ -23,7 +23,10 @@ export default function Navigation() {
       <NavigationItem href="/group-two" label={t('Group (two)')} />
       <NavigationItem href="/parallel" label={t('Parallel')} />
       <NavigationItem href="/feed" label={t('Feed')} />
-      <NavigationItem href="/photo/alpha" label={t('Feed (photo → alpha)')} />
+      <NavigationItem
+        href="/photo/alpha"
+        label={t('Photo (intercept from feed)')}
+      />
       <NavigationItem href="/dynamic-import" label={t('Dynamic import')} />
       <NavigationItem href="/hook-translation" label={t('Hook translation')} />
       <NavigationItem href="/layout-template" label={t('Layout template')} />
