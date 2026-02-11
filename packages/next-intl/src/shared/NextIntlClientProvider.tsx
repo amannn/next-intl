@@ -10,7 +10,6 @@ type Props = Omit<IntlProviderProps, 'messages'> & {
   /** This is automatically received when being rendered from a Server Component. In all other cases, e.g. when rendered from a Client Component, a unit test or with the Pages Router, you can pass this prop explicitly. */
   locale?: Locale;
   messages?: IntlProviderProps['messages'] | 'infer';
-  temp_segment?: string;
 };
 
 export default function NextIntlClientProvider(props: Props) {

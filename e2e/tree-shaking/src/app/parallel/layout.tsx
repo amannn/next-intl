@@ -6,7 +6,7 @@ export default function ParallelLayout({
   team
 }: LayoutProps<'/parallel'>) {
   return (
-    <NextIntlClientProvider messages="infer" temp_segment="/parallel">
+    <NextIntlClientProvider messages="infer">
       <section>
         <h1>Parallel layout</h1>
         <div>{children}</div>

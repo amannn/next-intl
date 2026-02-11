@@ -4,7 +4,7 @@ export default function SharedComponentLayout({
   children
 }: LayoutProps<'/shared-component'>) {
   return (
-    <NextIntlClientProvider messages="infer" temp_segment="/shared-component">
+    <NextIntlClientProvider messages="infer">
       {children}
     </NextIntlClientProvider>
   );

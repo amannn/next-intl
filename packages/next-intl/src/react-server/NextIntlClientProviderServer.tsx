@@ -11,9 +11,28 @@ import {
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
 
+function getLayoutSegment(props: Props): string | undefined {
+  // @ts-expect-error -- Internal prop injected by next-intl's layout loader.
+  return props.__layoutSegment as string | undefined;
+}
+
+function warnMissingLayoutSegment() {
+  if (process.env.NODE_ENV === 'production') {
+    return;
+  }
+
+  console.warn(
+    '[next-intl] `messages="infer"` was used without an injected layout segment. Falling back to safe message resolution. Ensure the next-intl plugin runs with `experimental.treeShaking` and `experimental.srcPath`.'
+  );
+}
+
 async function resolveMessages(
-  tempSegment: string | undefined
+  layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
+  if (!layoutSegment) {
+    warnMissingLayoutSegment();
+  }
+
   const allMessages = await getMessages();
   const manifest = await loadTreeShakingManifest();
   if (!manifest) {
@@ -23,25 +42,20 @@ async function resolveMessages(
   const inferredMessages = inferMessagesForSegment(
     allMessages as Record<string, unknown>,
     manifest,
-    tempSegment ?? '/'
+    layoutSegment ?? '/'
   );
   return inferredMessages as ResolvedMessages;
 }
 
-export default async function NextIntlClientProviderServer({
-  formats,
-  locale,
-  messages,
-  now,
-  temp_segment,
-  timeZone,
-  ...rest
-}: Props) {
+export default async function NextIntlClientProviderServer(props: Props) {
+  const layoutSegment = getLayoutSegment(props);
+  const {formats, locale, messages, now, timeZone, ...rest} = props;
+
   let clientMessages;
   if (messages === undefined) {
     clientMessages = await getMessages();
   } else if (messages === 'infer') {
-    clientMessages = await resolveMessages(temp_segment);
+    clientMessages = await resolveMessages(layoutSegment);
   } else {
     clientMessages = messages;
   }

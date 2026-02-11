@@ -4,10 +4,7 @@ export default function OptionalLayout({
   children
 }: LayoutProps<'/optional/[[...parts]]'>) {
   return (
-    <NextIntlClientProvider
-      messages="infer"
-      temp_segment="/optional/[[...parts]]"
-    >
+    <NextIntlClientProvider messages="infer">
       {children}
     </NextIntlClientProvider>
   );

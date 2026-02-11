@@ -100,3 +100,71 @@ it('reads missing configuration from getter functions', async () => {
   expect(getFormats).toHaveBeenCalled();
   expect(getMessages).toHaveBeenCalled();
 });
+
+it('resolves inferred messages from an injected layout segment', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Root: true
+      }
+    },
+    '/feed': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Feed: true
+      }
+    }
+  });
+
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+  const result = await NextIntlClientProviderServer({
+    // @ts-expect-error -- Internal prop injected via loader
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  expect(result.type).toBe(NextIntlClientProvider);
+  expect(result.props.messages).toEqual({Feed: 'Feed message'});
+  expect(warn).not.toHaveBeenCalled();
+  warn.mockRestore();
+});
+
+it('warns and falls back safely when inferred messages miss a layout segment', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Root: true
+      }
+    },
+    '/feed': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Feed: true
+      }
+    }
+  });
+
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+  const result = await NextIntlClientProviderServer({
+    children: null,
+    messages: 'infer'
+  });
+
+  expect(result.type).toBe(NextIntlClientProvider);
+  expect(result.props.messages).toEqual({Root: 'Root message'});
+  expect(warn).toHaveBeenCalledTimes(1);
+  warn.mockRestore();
+});
