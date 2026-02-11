@@ -1,19 +1,8 @@
-import {readFileSync} from 'fs';
-import {fileURLToPath} from 'url';
-import {dirname, join} from 'path';
+import {existsSync, readFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {expect, test as it} from '@playwright/test';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const rootDir = join(__dirname, '..');
-
-const manifestPath = join(
-  rootDir,
-  'node_modules/.cache/next-intl/client-manifest.json'
-);
-
-const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-
-const snapshot = {
+const EXPECTED_MANIFEST = {
   '/': {
     hasLayoutProvider: true,
     namespaces: {}
@@ -112,10 +101,10 @@ const snapshot = {
   '/parallel': {
     hasLayoutProvider: true,
     namespaces: {
-      ox304v: true,
       '62nsdy': true,
       E8vtaB: true,
-      fJxh6G: true
+      fJxh6G: true,
+      ox304v: true
     }
   },
   '/parallel/@activity': {
@@ -146,27 +135,58 @@ const snapshot = {
   '/use-translations': {
     hasLayoutProvider: true,
     namespaces: {
-      UseTranslationsPage: {
-        title: true
-      },
+      DynamicKey: true,
       GlobalNamespace: {
         title: true
       },
-      DynamicKey: true
+      UseTranslationsPage: {
+        title: true
+      }
     }
   }
-};
+} as const;
 
-const manifestStr = JSON.stringify(manifest, null, 2);
-const snapshotStr = JSON.stringify(snapshot, null, 2);
+function readManifest(manifestPath: string): Record<string, unknown> | null {
+  if (!existsSync(manifestPath)) {
+    return null;
+  }
 
-if (manifestStr !== snapshotStr) {
-  console.error('Error: Manifest does not match snapshot');
-  console.error('\nExpected:');
-  console.error(snapshotStr);
-  console.error('\nActual:');
-  console.error(manifestStr);
-  process.exit(1);
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as unknown;
+    if (
+      manifest == null ||
+      Array.isArray(manifest) ||
+      typeof manifest !== 'object'
+    ) {
+      return null;
+    }
+
+    return manifest as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 }
 
-console.log('✓ Manifest matches snapshot');
+function readManifestEntryCount(manifestPath: string): number {
+  const manifest = readManifest(manifestPath);
+  if (manifest == null) {
+    return 0;
+  }
+  return Object.keys(manifest).length;
+}
+
+it('writes a non-empty client manifest with expected content', async () => {
+  const manifestPath = join(
+    process.cwd(),
+    'node_modules/.cache/next-intl/client-manifest.json'
+  );
+
+  await expect
+    .poll(() => readManifestEntryCount(manifestPath), {
+      message: 'manifest should be generated and non-empty',
+      timeout: 30_000
+    })
+    .toBeGreaterThan(0);
+
+  expect(readManifest(manifestPath)).toEqual(EXPECTED_MANIFEST);
+});

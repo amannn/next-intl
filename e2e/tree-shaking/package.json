@@ -8,7 +8,7 @@
     "lint:orphans": "node scripts/check-orphans.mjs",
     "build": "next build",
     "start": "next start",
-    "test": "pnpm build && node scripts/check-manifest.mjs"
+    "test": "playwright test"
   },
   "dependencies": {
     "next": "^16.0.10",
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
+    "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
