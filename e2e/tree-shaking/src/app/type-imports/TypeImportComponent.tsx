@@ -11,9 +11,7 @@ export default function TypeImportComponent() {
 
   return (
     <ClientBoundary>
-      <section>
-        <h2>{t('Test label: {value}', {value: test})}</h2>
-      </section>
+      <p>{t('Test label: {value}', {value: test})}</p>
     </ClientBoundary>
   );
 }

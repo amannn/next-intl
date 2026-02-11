@@ -13,13 +13,11 @@ export default function ParallelError({error, reset}: Props) {
 
   return (
     <ClientBoundary>
-      <section>
-        <h2>{t('An error occurred')}</h2>
-        <p>{error.message}</p>
-        <button onClick={reset} type="button">
-          {t('Retry')}
-        </button>
-      </section>
+      <p>{t('An error occurred')}</p>
+      <p>{error.message}</p>
+      <button onClick={reset} type="button">
+        {t('Retry')}
+      </button>
     </ClientBoundary>
   );
 }

@@ -10,9 +10,7 @@ export default function FeedPhotoModalPage({params}: PageProps<'/photo/[id]'>) {
 
   return (
     <ClientBoundary>
-      <div>
-        <h2>{t('Intercepted photo modal: {id}', {id})}</h2>
-      </div>
+      <p>{t('Intercepted photo modal: {id}', {id})}</p>
     </ClientBoundary>
   );
 }

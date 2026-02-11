@@ -24,6 +24,15 @@ type SourcePathMatcher = {
   matches(filePath: string): boolean;
 };
 
+type TraversalNode = {
+  file: string;
+  inClient: boolean;
+  parent?: TraversalNode;
+};
+
+const INTERCEPTING_ROUTE_MARKER =
+  /^(\(\.\.\)\(\.\.\)|\(\.\.\.\)|\(\.\.\)|\(\.\))/;
+
 function normalizeSrcPaths(
   projectRoot: string,
   srcPaths: Array<string>
@@ -52,6 +61,60 @@ function createSourcePathMatcher(
 
 function splitPath(input: string): Array<string> {
   return input.split('.').filter(Boolean);
+}
+
+function getRouteSegmentName(segment: string): string | undefined {
+  if (segment.startsWith('@')) {
+    return undefined;
+  }
+
+  if (segment.startsWith('(') && segment.endsWith(')')) {
+    return undefined;
+  }
+
+  const normalized = segment.replace(INTERCEPTING_ROUTE_MARKER, '');
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function getRouteName(segmentId: string): string {
+  if (segmentId === '/') {
+    return '/';
+  }
+
+  const normalizedSegments = segmentId
+    .split('/')
+    .filter(Boolean)
+    .map(getRouteSegmentName)
+    .filter((segment): segment is string => Boolean(segment));
+
+  return normalizedSegments.length === 0
+    ? '/'
+    : `/${normalizedSegments.join('/')}`;
+}
+
+function compareSegmentsByRouteName(left: string, right: string): number {
+  const leftRoute = getRouteName(left);
+  const rightRoute = getRouteName(right);
+  const routeCompare = leftRoute.localeCompare(rightRoute);
+
+  if (routeCompare !== 0) {
+    return routeCompare;
+  }
+
+  return left.localeCompare(right);
+}
+
+function hasAncestor(node: TraversalNode, targetFile: string): boolean {
+  let current: TraversalNode | undefined = node;
+
+  while (current) {
+    if (current.file === targetFile) {
+      return true;
+    }
+    current = current.parent;
+  }
+
+  return false;
 }
 
 function setPathTrue(
@@ -319,13 +382,12 @@ export default class TreeShakingAnalyzer {
       this.updateEntryDependencies(entryFile, graph.files);
 
       let namespaces: ManifestNamespaces = {};
-      const queue: Array<{file: string; inClient: boolean}> = [
-        {file: entryFile, inClient: false}
-      ];
+      const queue: Array<TraversalNode> = [{file: entryFile, inClient: false}];
       const visited = new Set<string>();
 
       while (queue.length > 0) {
-        const {file, inClient} = queue.shift()!;
+        const node = queue.shift()!;
+        const {file, inClient} = node;
         const visitKey = `${file}|${inClient ? 'c' : 's'}`;
         if (visited.has(visitKey)) continue;
         visited.add(visitKey);
@@ -353,7 +415,10 @@ export default class TreeShakingAnalyzer {
         if (!deps) continue;
         for (const dep of deps) {
           if (dep.endsWith('.d.ts')) continue;
-          queue.push({file: dep, inClient: effectiveClient});
+          if (hasAncestor(node, dep)) {
+            continue;
+          }
+          queue.push({file: dep, inClient: effectiveClient, parent: node});
         }
       }
 
@@ -383,6 +448,13 @@ export default class TreeShakingAnalyzer {
       );
     }
 
-    return manifest;
+    const sortedManifest = createEmptyManifest();
+    for (const [segmentId, entry] of Object.entries(manifest).sort(
+      ([left], [right]) => compareSegmentsByRouteName(left, right)
+    )) {
+      sortedManifest[segmentId] = entry;
+    }
+
+    return sortedManifest;
   }
 }

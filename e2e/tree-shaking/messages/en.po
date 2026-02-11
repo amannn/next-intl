@@ -15,8 +15,8 @@ msgid "ntVPJ+"
 msgstr "Group (two) page"
 
 #: src/app/actions/ActionComponent.tsx:5
-msgid "FKiikF"
-msgstr "ActionComponent"
+msgid "sJNiQX"
+msgstr "Returned from action"
 
 #: src/app/actions/actions.tsx:10
 msgid "2QgyEZ"
@@ -54,17 +54,17 @@ msgstr "Lazy imported client"
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
-#: src/app/feed/@modal/(..)photo/[id]/page.tsx:14
+#: src/app/feed/@modal/(..)photo/[id]/page.tsx:13
 msgid "Ax7uMP"
 msgstr "Intercepted photo modal: {id}"
 
-#: src/app/feed/page.tsx:12
+#: src/app/feed/@modal/default.tsx:10
+msgid "Z2Vmmr"
+msgstr "Feed modal default"
+
+#: src/app/feed/page.tsx:10
 msgid "I6Uu2z"
 msgstr "Feed page"
-
-#: src/app/feed/page.tsx:14
-msgid "i43YkF"
-msgstr "Open /photo/alpha"
 
 #: src/app/layout-template/layout.tsx:9
 msgid "mocvtj"
@@ -148,8 +148,8 @@ msgstr "Feed"
 
 #: src/app/Navigation.tsx:26
 msgctxt "Navigation"
-msgid "NmKS4H"
-msgstr "Photo (alpha)"
+msgid "NqHXVi"
+msgstr "Feed (photo → alpha)"
 
 #: src/app/Navigation.tsx:27
 msgctxt "Navigation"
@@ -200,11 +200,11 @@ msgstr "Parallel team default (server)"
 msgid "siB/XG"
 msgstr "Parallel team page (server)"
 
-#: src/app/parallel/error.tsx:17
+#: src/app/parallel/error.tsx:16
 msgid "ox304v"
 msgstr "An error occurred"
 
-#: src/app/parallel/error.tsx:20
+#: src/app/parallel/error.tsx:19
 msgid "62nsdy"
 msgstr "Retry"
 
@@ -216,11 +216,15 @@ msgstr "Parallel page"
 msgid "fJxh6G"
 msgstr "Parallel template"
 
+#: src/app/photo/[id]/page.tsx:11
+msgid "o25lsU"
+msgstr "Photo page: {id}"
+
 #: src/app/type-imports/page.tsx:10
 msgid "MmAwwP"
 msgstr "Type imports page"
 
-#: src/app/type-imports/TypeImportComponent.tsx:15
+#: src/app/type-imports/TypeImportComponent.tsx:14
 msgid "GO9hSh"
 msgstr "Test label: {value}"
 
