@@ -125,9 +125,11 @@ const snapshot = {
       eoEXj3: true
     }
   },
-  '/photo': {
+  '/photo/[id]': {
     hasLayoutProvider: true,
-    namespaces: {}
+    namespaces: {
+      o25lsU: true
+    }
   },
   '/shared-component': {
     hasLayoutProvider: true,
