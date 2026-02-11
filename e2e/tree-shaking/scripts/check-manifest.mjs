@@ -8,120 +8,124 @@ const rootDir = join(__dirname, '..');
 
 const manifestPath = join(
   rootDir,
-  'node_modules/.cache/next-intl-client-manifest.json'
+  'node_modules/.cache/next-intl/client-manifest.json'
 );
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 
 const snapshot = {
-  '/group-one': {
-    hasProvider: false,
+  '/': {
+    hasLayoutProvider: true,
     namespaces: {
-      '0A97lp': true
-    }
-  },
-  '/group-two': {
-    hasProvider: false,
-    namespaces: {
-      'ntVPJ+': true
+      jm1lmy: true,
+      tQLRmz: true
     }
   },
   '/actions': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       'RNB4/W': true
     }
   },
   '/catch-all/[...parts]': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       xmCXAl: true
     }
   },
   '/dynamic-import': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       TghmPk: true,
       cOlyBM: true
     }
   },
   '/dynamic-segment/[slug]': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       mrNFad: true
     }
   },
-  '/feed/[id]': {
-    hasProvider: false,
-    namespaces: {
-      Ax7uMP: true
-    }
-  },
   '/feed': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       I6Uu2z: true,
       i43YkF: true
     }
   },
+  '/feed/@modal/(..)photo/[id]': {
+    hasLayoutProvider: false,
+    namespaces: {
+      Ax7uMP: true
+    }
+  },
+  '/(group)/group-one': {
+    hasLayoutProvider: false,
+    namespaces: {
+      '0A97lp': true
+    }
+  },
+  '/(group)/group-two': {
+    hasLayoutProvider: false,
+    namespaces: {
+      'ntVPJ+': true
+    }
+  },
   '/hook-translation': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       'd4JN/R': true
     }
   },
   '/layout-template': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       bowxvu: true,
       '30s0PJ': true
     }
   },
   '/loading': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       o6jHkb: true
     }
   },
   '/optional/[[...parts]]': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       bT9Pga: true
     }
   },
-  '/': {
-    hasProvider: true,
-    namespaces: {
-      jm1lmy: true,
-      tQLRmz: true
-    }
-  },
   '/parallel': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
-      'zZQM/j': true,
-      eoEXj3: true,
       ox304v: true,
       '62nsdy': true,
       E8vtaB: true,
       fJxh6G: true
     }
   },
+  '/parallel/@activity': {
+    hasLayoutProvider: false,
+    namespaces: {
+      'zZQM/j': true,
+      eoEXj3: true
+    }
+  },
   '/shared-component': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       JdTriE: true
     }
   },
   '/type-imports': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
-      GO9hSh: true,
-      MmAwwP: true
+      GO9hSh: true
     }
   },
   '/use-translations': {
-    hasProvider: false,
+    hasLayoutProvider: false,
     namespaces: {
       UseTranslationsPage: {
         title: true
