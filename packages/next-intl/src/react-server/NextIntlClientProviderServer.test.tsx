@@ -46,6 +46,19 @@ beforeEach(() => {
   vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
 });
 
+function readProviderFromResult(
+  result: Awaited<ReturnType<typeof NextIntlClientProviderServer>>
+) {
+  if (result.type === NextIntlClientProvider) {
+    return result;
+  }
+
+  const children = Array.isArray(result.props.children)
+    ? result.props.children
+    : [result.props.children];
+  return children[1];
+}
+
 it("doesn't read from headers if all relevant configuration is passed", async () => {
   const result = await NextIntlClientProviderServer({
     children: null,
@@ -124,14 +137,16 @@ it('resolves inferred messages from an injected layout segment', async () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
   const result = await NextIntlClientProviderServer({
-    // @ts-expect-error -- Internal prop injected via loader
     __layoutSegment: '/feed',
     children: null,
     messages: 'infer'
+  } as Parameters<typeof NextIntlClientProviderServer>[0] & {
+    __layoutSegment: string;
   });
 
-  expect(result.type).toBe(NextIntlClientProvider);
-  expect(result.props.messages).toEqual({Feed: 'Feed message'});
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
   expect(warn).not.toHaveBeenCalled();
   warn.mockRestore();
 });
@@ -163,8 +178,9 @@ it('warns and falls back safely when inferred messages miss a layout segment', a
     messages: 'infer'
   });
 
-  expect(result.type).toBe(NextIntlClientProvider);
-  expect(result.props.messages).toEqual({Root: 'Root message'});
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Root: 'Root message'});
   expect(warn).toHaveBeenCalledTimes(1);
   warn.mockRestore();
 });

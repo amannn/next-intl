@@ -4,8 +4,6 @@ export default function SharedComponentLayout({
   children
 }: LayoutProps<'/shared-component'>) {
   return (
-    <NextIntlClientProvider messages="infer">
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider messages="infer">{children}</NextIntlClientProvider>
   );
 }

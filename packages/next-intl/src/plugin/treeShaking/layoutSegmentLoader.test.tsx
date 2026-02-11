@@ -24,10 +24,7 @@ function runLoader({
     rootContext
   } as unknown as TurbopackLoaderContext<LayoutSegmentLoaderConfig>;
 
-  return layoutSegmentLoader.call(
-    context,
-    source
-  );
+  return layoutSegmentLoader.call(context, source);
 }
 
 describe('layoutSegmentLoader', () => {
@@ -54,13 +51,17 @@ describe('layoutSegmentLoader', () => {
     const result = runLoader({resourcePath, source});
 
     expect(result).toContain('messages="infer"');
-    expect(result).toContain(
-      '__layoutSegment="/feed/@modal/(..)photo/[id]"'
-    );
+    expect(result).toContain('__layoutSegment="/feed/@modal/(..)photo/[id]"');
   });
 
   it('injects __layoutSegment for messages={"infer"}', () => {
-    const resourcePath = path.join('/project', 'src', 'app', 'actions', 'layout.ts');
+    const resourcePath = path.join(
+      '/project',
+      'src',
+      'app',
+      'actions',
+      'layout.ts'
+    );
     const source =
       '<NextIntlClientProvider messages={"infer"}>content</NextIntlClientProvider>';
 
@@ -71,7 +72,8 @@ describe('layoutSegmentLoader', () => {
 
   it('returns root segment for app root layout', () => {
     const resourcePath = path.join('/project', 'app', 'layout.tsx');
-    const source = '<NextIntlClientProvider messages="infer">content</NextIntlClientProvider>';
+    const source =
+      '<NextIntlClientProvider messages="infer">content</NextIntlClientProvider>';
 
     const result = runLoader({resourcePath, source, srcPath: './app'});
 

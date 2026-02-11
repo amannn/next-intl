@@ -4,8 +4,6 @@ export default function TypeImportsLayout({
   children
 }: LayoutProps<'/type-imports'>) {
   return (
-    <NextIntlClientProvider messages="infer">
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider messages="infer">{children}</NextIntlClientProvider>
   );
 }

@@ -4,8 +4,6 @@ export default function HookTranslationLayout({
   children
 }: LayoutProps<'/hook-translation'>) {
   return (
-    <NextIntlClientProvider messages="infer">
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider messages="infer">{children}</NextIntlClientProvider>
   );
 }

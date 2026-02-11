@@ -4,8 +4,6 @@ export default function CatchAllLayout({
   children
 }: LayoutProps<'/catch-all/[...parts]'>) {
   return (
-    <NextIntlClientProvider messages="infer">
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider messages="infer">{children}</NextIntlClientProvider>
   );
 }

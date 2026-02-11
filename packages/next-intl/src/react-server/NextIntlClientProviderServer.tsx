@@ -10,10 +10,12 @@ import {
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
+type InternalProps = Props & {
+  __layoutSegment?: string;
+};
 
 function getLayoutSegment(props: Props): string | undefined {
-  // @ts-expect-error -- Internal prop injected by next-intl's layout loader.
-  return props.__layoutSegment as string | undefined;
+  return (props as InternalProps).__layoutSegment;
 }
 
 function warnMissingLayoutSegment() {

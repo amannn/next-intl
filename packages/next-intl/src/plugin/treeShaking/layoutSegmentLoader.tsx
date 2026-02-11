@@ -66,7 +66,7 @@ function hasLayoutSegmentProp(openingTag: string): boolean {
 
 function addLayoutSegmentProp(openingTag: string, segmentId: string): string {
   const match = openingTag.match(/\s*\/?>$/);
-  if (!match || match.index == null) {
+  if (match?.index == null) {
     return openingTag;
   }
 
@@ -118,10 +118,7 @@ function findOpeningTagEnd(source: string, fromIndex: number): number {
   return -1;
 }
 
-export function injectLayoutSegment(
-  source: string,
-  segmentId: string
-): string {
+export function injectLayoutSegment(source: string, segmentId: string): string {
   if (!source.includes(NEXT_INTL_CLIENT_PROVIDER_TAG)) {
     return source;
   }
@@ -164,7 +161,7 @@ export default function layoutSegmentLoader(
   source: string
 ) {
   const options = this.getOptions();
-  if (!options?.srcPath) {
+  if (!options.srcPath) {
     return source;
   }
 

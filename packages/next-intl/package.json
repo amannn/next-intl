@@ -112,7 +112,8 @@
     "plugin.d.cts",
     "routing.d.ts",
     "config.d.ts",
-    "extractor.d.ts"
+    "extractor.d.ts",
+    "treeShaking"
   ],
   "keywords": [
     "react",

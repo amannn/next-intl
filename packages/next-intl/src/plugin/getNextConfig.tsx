@@ -265,7 +265,9 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = getConfiguredSrcPaths(pluginConfig.experimental.srcPath!);
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
+      );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
@@ -283,7 +285,9 @@ export default function getNextConfig(
         throwError('Tree-shaking requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = getConfiguredSrcPaths(pluginConfig.experimental.srcPath!);
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
+      );
       addTurboRule(rules!, '*.{ts,tsx}', {
         loaders: [getLayoutSegmentLoaderConfig()],
         condition: {
