@@ -18,21 +18,13 @@ function getLayoutSegment(props: Props): string | undefined {
   return (props as InternalProps).__layoutSegment;
 }
 
-function warnMissingLayoutSegment() {
-  if (process.env.NODE_ENV === 'production') {
-    return;
-  }
-
-  console.warn(
-    '[next-intl] `messages="infer"` was used without an injected layout segment. Falling back to safe message resolution. Ensure the next-intl plugin runs with `experimental.treeShaking` and `experimental.srcPath`.'
-  );
-}
-
 async function resolveMessages(
   layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
   if (!layoutSegment) {
-    warnMissingLayoutSegment();
+    throw new Error(
+      '[next-intl] `messages="infer"` requires an auto-injected `__layoutSegment`. This usually means the provider is not used in `app/**/layout.tsx`, tree-shaking is disabled, or the file is not compiled by Next.js.'
+    );
   }
 
   const allMessages = await getMessages();
@@ -44,7 +36,7 @@ async function resolveMessages(
   const inferredMessages = inferMessagesForSegment(
     allMessages as Record<string, unknown>,
     manifest,
-    layoutSegment ?? '/'
+    layoutSegment
   );
   return inferredMessages as ResolvedMessages;
 }

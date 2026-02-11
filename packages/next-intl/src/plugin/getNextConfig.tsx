@@ -18,6 +18,9 @@ import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
+const NEXT_APP_LAYOUT_WEBPACK_PATH_REGEX =
+  /(^|[\\/])(src[\\/]app|app)([\\/].*)?[\\/]layout\.(ts|tsx)$/;
+
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -49,17 +52,17 @@ function getPathCondition(paths: Array<string>): string {
   return paths.length === 1 ? paths[0] : `{${paths.join(',')}}`;
 }
 
-function getAppLayoutPaths(srcPaths: Array<string>): Array<string> {
-  const appPaths = srcPaths.map((srcPath) =>
-    srcPath.endsWith('/app') ? srcPath : `${srcPath}/app`
-  );
-
-  return appPaths.flatMap((appPath) => [
-    `${appPath}/layout.ts`,
-    `${appPath}/layout.tsx`,
-    `${appPath}/**/layout.ts`,
-    `${appPath}/**/layout.tsx`
-  ]);
+function getAppLayoutPaths(): Array<string> {
+  return [
+    'app/layout.ts',
+    'app/layout.tsx',
+    'app/**/layout.ts',
+    'app/**/layout.tsx',
+    'src/app/layout.ts',
+    'src/app/layout.tsx',
+    'src/app/**/layout.ts',
+    'src/app/**/layout.tsx'
+  ];
 }
 
 function getManifestAliasPath() {
@@ -154,18 +157,9 @@ export default function getNextConfig(
   }
 
   function getLayoutSegmentLoaderConfig() {
-    const srcPath = pluginConfig.experimental?.srcPath;
-    if (!srcPath) {
-      throwError(
-        '`experimental.srcPath` is required when using `treeShaking`.'
-      );
-    }
-
     return {
       loader: 'next-intl/treeShaking/layoutSegmentLoader',
-      options: {
-        srcPath
-      } satisfies LayoutSegmentLoaderConfig as TurbopackLoaderOptions
+      options: {} satisfies LayoutSegmentLoaderConfig as TurbopackLoaderOptions
     };
   }
 
@@ -285,13 +279,10 @@ export default function getNextConfig(
         throwError('Tree-shaking requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = getConfiguredSrcPaths(
-        pluginConfig.experimental.srcPath!
-      );
       addTurboRule(rules!, '*.{ts,tsx}', {
         loaders: [getLayoutSegmentLoaderConfig()],
         condition: {
-          path: getPathCondition(getAppLayoutPaths(srcPaths))
+          path: getPathCondition(getAppLayoutPaths())
         }
       });
     }
@@ -372,6 +363,16 @@ export default function getNextConfig(
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
         ] = require.resolve('use-intl/format-message/format-only');
+      }
+
+      // Add loader for layout segment auto-injection
+      if (pluginConfig.experimental?.treeShaking) {
+        if (!config.module) config.module = {};
+        if (!config.module.rules) config.module.rules = [];
+        config.module.rules.push({
+          test: NEXT_APP_LAYOUT_WEBPACK_PATH_REGEX,
+          use: [getLayoutSegmentLoaderConfig()]
+        });
       }
 
       // Add loader for extractor

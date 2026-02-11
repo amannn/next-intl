@@ -8,17 +8,15 @@ import layoutSegmentLoader, {
 function runLoader({
   resourcePath,
   rootContext = '/project',
-  source,
-  srcPath = './src'
+  source
 }: {
   resourcePath: string;
   rootContext?: string;
   source: string;
-  srcPath?: string | Array<string>;
 }): string {
   const context: TurbopackLoaderContext<LayoutSegmentLoaderConfig> = {
     getOptions() {
-      return {srcPath};
+      return {};
     },
     resourcePath,
     rootContext
@@ -75,7 +73,7 @@ describe('layoutSegmentLoader', () => {
     const source =
       '<NextIntlClientProvider messages="infer">content</NextIntlClientProvider>';
 
-    const result = runLoader({resourcePath, source, srcPath: './app'});
+    const result = runLoader({resourcePath, source});
 
     expect(result).toContain('__layoutSegment="/"');
   });
@@ -99,5 +97,15 @@ describe('layoutSegmentLoader', () => {
     const matches = result.match(/__layoutSegment=/g) ?? [];
 
     expect(matches).toHaveLength(1);
+  });
+
+  it('does not inject outside Next.js app roots', () => {
+    const resourcePath = path.join('/project', 'custom', 'app', 'layout.tsx');
+    const source =
+      '<NextIntlClientProvider messages="infer">content</NextIntlClientProvider>';
+
+    const result = runLoader({resourcePath, source});
+
+    expect(result).not.toContain('__layoutSegment=');
   });
 });
