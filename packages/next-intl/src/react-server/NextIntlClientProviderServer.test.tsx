@@ -31,10 +31,7 @@ vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
 }));
 
 vi.mock('../../src/tree-shaking/inferMessages', async () => {
-  const actual =
-    await vi.importActual<typeof import('../../src/tree-shaking/inferMessages')>(
-      '../../src/tree-shaking/inferMessages'
-    );
+  const actual = await vi.importActual('../../src/tree-shaking/inferMessages');
   return {
     ...actual,
     loadTreeShakingManifest: vi.fn(async () => undefined)

@@ -13,14 +13,8 @@ type Props = Omit<IntlProviderProps, 'messages'> & {
   temp_segment?: string;
 };
 
-export default function NextIntlClientProvider({
-  locale,
-  messages,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  temp_segment: _tempSegment,
-  ...rest
-}: Props) {
-  if (!locale) {
+export default function NextIntlClientProvider(props: Props) {
+  if (!props.locale) {
     throw new Error(
       process.env.NODE_ENV !== 'production'
         ? "Couldn't infer the `locale` prop in `NextIntlClientProvider`, please provide it explicitly.\n\nSee https://next-intl.dev/docs/configuration#locale"
@@ -28,12 +22,12 @@ export default function NextIntlClientProvider({
     );
   }
 
-  if (process.env.NODE_ENV !== 'production' && messages === 'infer') {
+  if (process.env.NODE_ENV !== 'production' && props.messages === 'infer') {
     throw new Error(
       'The `messages="infer"` option can only be resolved in a Server Component.'
     );
   }
 
   // @ts-expect-error - TODO: fix this
-  return <IntlProvider locale={locale} messages={messages} {...rest} />;
+  return <IntlProvider {...props} />;
 }
