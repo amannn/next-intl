@@ -1,6 +1,6 @@
-import {readFileSync} from 'node:fs';
+import {existsSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
-import {expect, test as it} from '@playwright/test';
+import {expect, test as it, type Page} from '@playwright/test';
 
 type ManifestNamespaces = true | Record<string, ManifestNamespaces>;
 type ManifestEntry = {
@@ -8,6 +8,25 @@ type ManifestEntry = {
   namespaces: ManifestNamespaces;
 };
 type Manifest = Record<string, ManifestEntry>;
+type ManifestPollResult = Manifest | null;
+
+const ROUTES_TO_PRIME: Array<string> = [
+  '/',
+  '/loading',
+  '/dynamic-segment/test',
+  '/catch-all/a/b/c',
+  '/optional/x/y',
+  '/actions',
+  '/type-imports',
+  '/group-one',
+  '/group-two',
+  '/parallel',
+  '/dynamic-import',
+  '/hook-translation',
+  '/layout-template',
+  '/shared-component',
+  '/use-translations'
+];
 
 const EXPECTED_MANIFEST: Manifest = {
   '/': {
@@ -153,12 +172,45 @@ const EXPECTED_MANIFEST: Manifest = {
   }
 };
 
-it('matches client manifest snapshot', async () => {
+function readManifest(manifestPath: string): ManifestPollResult {
+  if (!existsSync(manifestPath)) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(readFileSync(manifestPath, 'utf8')) as Manifest;
+  } catch {
+    return null;
+  }
+}
+
+async function primeManifestRoutes(page: Page) {
+  for (const pathname of ROUTES_TO_PRIME) {
+    await page.goto(pathname);
+    await expect(page).toHaveURL(pathname);
+  }
+
+  await page.goto('/feed');
+  await expect(page).toHaveURL('/feed');
+  await page.locator('a[href="/photo/alpha"]').first().click();
+  await expect(page).toHaveURL('/photo/alpha');
+
+  await page.goto('/photo/alpha');
+  await expect(page).toHaveURL('/photo/alpha');
+}
+
+it('matches client manifest snapshot', async ({page}) => {
   const manifestPath = join(
     process.cwd(),
     'node_modules/.cache/next-intl/client-manifest.json'
   );
 
-  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as Manifest;
-  expect(manifest).toEqual(EXPECTED_MANIFEST);
+  await primeManifestRoutes(page);
+
+  await expect
+    .poll(() => readManifest(manifestPath), {
+      message: 'manifest should be generated with expected entries',
+      timeout: 30_000
+    })
+    .toEqual(EXPECTED_MANIFEST);
 });
