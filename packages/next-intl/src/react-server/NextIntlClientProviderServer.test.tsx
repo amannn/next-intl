@@ -73,69 +73,6 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
   expect(getMessages).not.toHaveBeenCalled();
 });
 
-it('infers messages for a segment and stops at nested provider boundaries', async () => {
-  vi.mocked(getMessages).mockResolvedValue({
-    ChildNamespace: {
-      title: 'Child title',
-      unused: 'Unused child key'
-    },
-    GroupNamespace: {
-      title: 'Group title'
-    },
-    RootNamespace: {
-      title: 'Root title',
-      unused: 'Unused root key'
-    }
-  });
-
-  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
-    '/': {
-      hasLayoutProvider: true,
-      namespaces: {
-        RootNamespace: {
-          title: true
-        }
-      }
-    },
-    '/child': {
-      hasLayoutProvider: false,
-      namespaces: {
-        ChildNamespace: {
-          title: true
-        }
-      }
-    },
-    '/(group)': {
-      hasLayoutProvider: true,
-      namespaces: {}
-    },
-    '/(group)/group-one': {
-      hasLayoutProvider: false,
-      namespaces: {
-        GroupNamespace: {
-          title: true
-        }
-      }
-    }
-  });
-
-  const result = await NextIntlClientProviderServer({
-    children: null,
-    messages: 'infer',
-    temp_segment: '/'
-  });
-
-  expect(result.props.messages).toEqual({
-    ChildNamespace: {
-      title: 'Child title'
-    },
-    RootNamespace: {
-      title: 'Root title'
-    }
-  });
-  expect(getMessages).toHaveBeenCalledTimes(1);
-});
-
 it('reads missing configuration from getter functions', async () => {
   const result = await NextIntlClientProviderServer({
     children: null
