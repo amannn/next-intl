@@ -2,15 +2,7 @@ import {existsSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {expect, test as it} from '@playwright/test';
 
-type ManifestNamespaces = true | Record<string, ManifestNamespaces>;
-type ManifestEntry = {
-  hasLayoutProvider: boolean;
-  namespaces: ManifestNamespaces;
-};
-type Manifest = Record<string, ManifestEntry>;
-type ManifestPollResult = Manifest | null;
-
-const EXPECTED_MANIFEST: Manifest = {
+const EXPECTED_MANIFEST = {
   '/': {
     hasLayoutProvider: true,
     namespaces: {}
@@ -152,9 +144,9 @@ const EXPECTED_MANIFEST: Manifest = {
       }
     }
   }
-};
+} as const;
 
-function readManifest(manifestPath: string): ManifestPollResult {
+function readManifest(manifestPath: string): Record<string, unknown> | null {
   if (!existsSync(manifestPath)) {
     return null;
   }
@@ -169,7 +161,7 @@ function readManifest(manifestPath: string): ManifestPollResult {
       return null;
     }
 
-    return manifest as Manifest;
+    return manifest as Record<string, unknown>;
   } catch {
     return null;
   }

@@ -1,80 +1,75 @@
 import {expect, test as it, type Page} from '@playwright/test';
 
-type ProviderClientMessage = Record<string, unknown>;
-type HardRouteCase = {
-  expectedClientMessages: Array<ProviderClientMessage>;
-  pathname: string;
-};
-
-const GROUP_PAGE_CLIENT_MESSAGES: Array<ProviderClientMessage> = [
+const groupPageMessages = [
   {
     '0A97lp': 'Group (one) page',
     'ntVPJ+': 'Group (two) page'
   }
-];
+] as const;
 
-const HARD_ROUTE_CASES: Array<HardRouteCase> = [
+const HARD_ROUTE_CASES = [
   {
-    expectedClientMessages: [
+    pathname: '/',
+    messages: [
       {
         jm1lmy: ['Count: ', ['count', 4]],
         tQLRmz: 'Increment'
       }
-    ],
-    pathname: '/'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/loading',
+    messages: [
       {
         o6jHkb: 'Loading page \u2026'
       }
-    ],
-    pathname: '/loading'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/dynamic-segment/test',
+    messages: [
       {
         mrNFad: ['Dynamic slug page: ', ['slug']]
       }
-    ],
-    pathname: '/dynamic-segment/test'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/catch-all/a/b/c',
+    messages: [
       {
         xmCXAl: ['Catch-all page: ', ['segment']]
       }
-    ],
-    pathname: '/catch-all/a/b/c'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/optional/x/y',
+    messages: [
       {
         bT9Pga: ['Optional catch-all page: ', ['segment']]
       }
-    ],
-    pathname: '/optional/x/y'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/actions',
+    messages: [
       {
         'RNB4/W': 'Load lazy content'
       }
-    ],
-    pathname: '/actions'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/type-imports',
+    messages: [
       {
         GO9hSh: ['Test label: ', ['value']]
       }
-    ],
-    pathname: '/type-imports'
+    ]
   },
-  {expectedClientMessages: GROUP_PAGE_CLIENT_MESSAGES, pathname: '/group-one'},
-  {expectedClientMessages: GROUP_PAGE_CLIENT_MESSAGES, pathname: '/group-two'},
+  {pathname: '/group-one', messages: groupPageMessages},
+  {pathname: '/group-two', messages: groupPageMessages},
   {
-    expectedClientMessages: [
+    pathname: '/parallel',
+    messages: [
       {
         '62nsdy': 'Retry',
         'zZQM/j': 'Parallel activity default (client)',
@@ -83,62 +78,62 @@ const HARD_ROUTE_CASES: Array<HardRouteCase> = [
         fJxh6G: 'Parallel template',
         ox304v: 'An error occurred'
       }
-    ],
-    pathname: '/parallel'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/feed',
+    messages: [
       {
         I6Uu2z: 'Feed page',
         Z2Vmmr: 'Feed modal default'
       }
-    ],
-    pathname: '/feed'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/photo/alpha',
+    messages: [
       {
         o25lsU: ['Photo page: ', ['id']]
       }
-    ],
-    pathname: '/photo/alpha'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/dynamic-import',
+    messages: [
       {
         TghmPk: 'Dynamic imported client',
         cOlyBM: 'Lazy imported client'
       }
-    ],
-    pathname: '/dynamic-import'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/hook-translation',
+    messages: [
       {
         'd4JN/R': 'Hook test label'
       }
-    ],
-    pathname: '/hook-translation'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/layout-template',
+    messages: [
       {
         '30s0PJ': 'Layout template template',
         bowxvu: 'Layout template page'
       }
-    ],
-    pathname: '/layout-template'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/shared-component',
+    messages: [
       {
         JdTriE: 'Shared component'
       }
-    ],
-    pathname: '/shared-component'
+    ]
   },
   {
-    expectedClientMessages: [
+    pathname: '/use-translations',
+    messages: [
       {
         DynamicKey: {
           description: 'useTranslations: dynamic key (unused)',
@@ -151,30 +146,18 @@ const HARD_ROUTE_CASES: Array<HardRouteCase> = [
           title: 'useTranslations: static'
         }
       }
-    ],
-    pathname: '/use-translations'
+    ]
   }
-];
-
-const PHOTO_ALPHA_SOFT_FROM_FEED_CLIENT_MESSAGES: Array<ProviderClientMessage> =
-  [
-    {
-      I6Uu2z: 'Feed page',
-      Z2Vmmr: 'Feed modal default'
-    },
-    {
-      Ax7uMP: ['Intercepted photo modal: ', ['id']]
-    }
-  ];
+] as const;
 
 async function readProviderClientMessages(
   page: Page
-): Promise<Array<ProviderClientMessage>> {
+): Promise<Array<Record<string, unknown>>> {
   const providerMessages = page.locator('[data-id="provider-client-messages"]');
   await expect(providerMessages.first()).toBeVisible();
 
   const providerCount = await providerMessages.count();
-  const clientMessages: Array<ProviderClientMessage> = [];
+  const messages: Array<Record<string, unknown>> = [];
 
   for (let index = 0; index < providerCount; index++) {
     const providerText = await providerMessages.nth(index).textContent();
@@ -191,18 +174,18 @@ async function readProviderClientMessages(
       throw new Error(`Expected object for provider index ${index}`);
     }
 
-    clientMessages.push(parsedProviderText as ProviderClientMessage);
+    messages.push(parsedProviderText as Record<string, unknown>);
   }
 
-  return clientMessages;
+  return messages;
 }
 
 it.describe('Provider client messages', () => {
   for (const hardRouteCase of HARD_ROUTE_CASES) {
     it(`hard load ${hardRouteCase.pathname}`, async ({page}) => {
       await page.goto(hardRouteCase.pathname);
-      const clientMessages = await readProviderClientMessages(page);
-      expect(clientMessages).toEqual(hardRouteCase.expectedClientMessages);
+      const messages = await readProviderClientMessages(page);
+      expect(messages).toEqual(hardRouteCase.messages);
     });
   }
 
@@ -211,7 +194,15 @@ it.describe('Provider client messages', () => {
     await page.locator('a[href="/photo/alpha"]').first().click();
     await expect(page).toHaveURL('/photo/alpha');
 
-    const clientMessages = await readProviderClientMessages(page);
-    expect(clientMessages).toEqual(PHOTO_ALPHA_SOFT_FROM_FEED_CLIENT_MESSAGES);
+    const messages = await readProviderClientMessages(page);
+    expect(messages).toEqual([
+      {
+        I6Uu2z: 'Feed page',
+        Z2Vmmr: 'Feed modal default'
+      },
+      {
+        Ax7uMP: ['Intercepted photo modal: ', ['id']]
+      }
+    ]);
   });
 });
