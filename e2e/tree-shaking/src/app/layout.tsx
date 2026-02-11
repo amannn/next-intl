@@ -16,9 +16,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function LocaleLayout({
-  children
-}: LayoutProps<'/'>) {
+export default async function LocaleLayout({children}: LayoutProps<'/'>) {
   const locale = await getLocale();
 
   return (
