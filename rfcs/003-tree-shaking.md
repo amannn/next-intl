@@ -287,6 +287,7 @@ app/[locale]/
 - Seeding an empty manifest on startup prevents “module not found” when the alias is resolved before the first analysis run.
 - The analyzer splits dotted namespaces/keys (e.g., `Nested.deep.key` or `t('nested.key')`) into nested objects in the manifest so pruning can match message JSON structure.
 - Provider detection currently lives in `layout.tsx` only; nested segments without a provider inherit from the nearest ancestor provider, and manifest entries include `hasLayoutProvider` to support this.
+- Manifest entries are emitted when either (a) the segment has a `NextIntlClientProvider` boundary or (b) the segment has client message usage. This means provider-only segments can appear with empty `namespaces` so ancestor inference can stop at nested boundaries.
 - Incremental runs: When a file changes, we only want to re-analyze affected files to be quick to emit an updated manifest.
 - We're using `@swc/core` (for now) to parse code and evaluate the AST in JS.
 - To observe the module graph of an entry point, we should use the `dependency-tree` package. One critical point is that this supports `tsconfig.json` with potential alias configuration.

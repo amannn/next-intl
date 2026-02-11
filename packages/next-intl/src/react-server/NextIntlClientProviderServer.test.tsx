@@ -1,8 +1,9 @@
-import {expect, it, vi} from 'vitest';
+import {beforeEach, expect, it, vi} from 'vitest';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
+import {loadTreeShakingManifest} from '../tree-shaking/inferMessages.js';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
@@ -29,6 +30,25 @@ vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
   default: vi.fn(() => 'NextIntlClientProvider')
 }));
 
+vi.mock('../../src/tree-shaking/inferMessages', async () => {
+  const actual =
+    await vi.importActual<typeof import('../../src/tree-shaking/inferMessages')>(
+      '../../src/tree-shaking/inferMessages'
+    );
+  return {
+    ...actual,
+    loadTreeShakingManifest: vi.fn(async () => undefined)
+  };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(getLocale).mockResolvedValue('en-US');
+  vi.mocked(getMessages).mockResolvedValue({});
+  vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
+});
+
 it("doesn't read from headers if all relevant configuration is passed", async () => {
   const result = await NextIntlClientProviderServer({
     children: null,
@@ -54,6 +74,69 @@ it("doesn't read from headers if all relevant configuration is passed", async ()
   expect(getTimeZone).not.toHaveBeenCalled();
   expect(getFormats).not.toHaveBeenCalled();
   expect(getMessages).not.toHaveBeenCalled();
+});
+
+it('infers messages for a segment and stops at nested provider boundaries', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    ChildNamespace: {
+      title: 'Child title',
+      unused: 'Unused child key'
+    },
+    GroupNamespace: {
+      title: 'Group title'
+    },
+    RootNamespace: {
+      title: 'Root title',
+      unused: 'Unused root key'
+    }
+  });
+
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        RootNamespace: {
+          title: true
+        }
+      }
+    },
+    '/child': {
+      hasLayoutProvider: false,
+      namespaces: {
+        ChildNamespace: {
+          title: true
+        }
+      }
+    },
+    '/(group)': {
+      hasLayoutProvider: true,
+      namespaces: {}
+    },
+    '/(group)/group-one': {
+      hasLayoutProvider: false,
+      namespaces: {
+        GroupNamespace: {
+          title: true
+        }
+      }
+    }
+  });
+
+  const result = await NextIntlClientProviderServer({
+    children: null,
+    messages: 'infer',
+    temp_segment: '/'
+  });
+
+  expect(result.props.messages).toEqual({
+    ChildNamespace: {
+      title: 'Child title'
+    },
+    RootNamespace: {
+      title: 'Root title'
+    }
+  });
+  expect(getMessages).toHaveBeenCalledTimes(1);
 });
 
 it('reads missing configuration from getter functions', async () => {

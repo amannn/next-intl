@@ -30,9 +30,6 @@ type TraversalNode = {
   parent?: TraversalNode;
 };
 
-const INTERCEPTING_ROUTE_MARKER =
-  /^(\(\.\.\)\(\.\.\)|\(\.\.\.\)|\(\.\.\)|\(\.\))/;
-
 function normalizeSrcPaths(
   projectRoot: string,
   srcPaths: Array<string>
@@ -63,45 +60,23 @@ function splitPath(input: string): Array<string> {
   return input.split('.').filter(Boolean);
 }
 
-function getRouteSegmentName(segment: string): string | undefined {
-  if (segment.startsWith('@')) {
-    return undefined;
-  }
-
-  if (segment.startsWith('(') && segment.endsWith(')')) {
-    return undefined;
-  }
-
-  const normalized = segment.replace(INTERCEPTING_ROUTE_MARKER, '');
-  return normalized.length > 0 ? normalized : undefined;
+function splitSegmentId(segmentId: string): Array<string> {
+  return segmentId.split('/').filter(Boolean);
 }
 
-function getRouteName(segmentId: string): string {
-  if (segmentId === '/') {
-    return '/';
+function compareSegmentsByHierarchy(left: string, right: string): number {
+  const leftSegments = splitSegmentId(left);
+  const rightSegments = splitSegmentId(right);
+  const length = Math.min(leftSegments.length, rightSegments.length);
+
+  for (let index = 0; index < length; index++) {
+    const compare = leftSegments[index].localeCompare(rightSegments[index]);
+    if (compare !== 0) {
+      return compare;
+    }
   }
 
-  const normalizedSegments = segmentId
-    .split('/')
-    .filter(Boolean)
-    .map(getRouteSegmentName)
-    .filter((segment): segment is string => Boolean(segment));
-
-  return normalizedSegments.length === 0
-    ? '/'
-    : `/${normalizedSegments.join('/')}`;
-}
-
-function compareSegmentsByRouteName(left: string, right: string): number {
-  const leftRoute = getRouteName(left);
-  const rightRoute = getRouteName(right);
-  const routeCompare = leftRoute.localeCompare(rightRoute);
-
-  if (routeCompare !== 0) {
-    return routeCompare;
-  }
-
-  return left.localeCompare(right);
+  return leftSegments.length - rightSegments.length;
 }
 
 function hasAncestor(node: TraversalNode, targetFile: string): boolean {
@@ -448,9 +423,16 @@ export default class TreeShakingAnalyzer {
       );
     }
 
+    for (const [segmentId, hasLayoutProvider] of segmentMap.entries()) {
+      if (!hasLayoutProvider) {
+        continue;
+      }
+      ensureManifestEntry(manifest, segmentId, true);
+    }
+
     const sortedManifest = createEmptyManifest();
     for (const [segmentId, entry] of Object.entries(manifest).sort(
-      ([left], [right]) => compareSegmentsByRouteName(left, right)
+      ([left], [right]) => compareSegmentsByHierarchy(left, right)
     )) {
       sortedManifest[segmentId] = entry;
     }

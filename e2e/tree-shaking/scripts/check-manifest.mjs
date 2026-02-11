@@ -21,6 +21,22 @@ const snapshot = {
       tQLRmz: true
     }
   },
+  '/(group)': {
+    hasLayoutProvider: true,
+    namespaces: {}
+  },
+  '/(group)/group-one': {
+    hasLayoutProvider: false,
+    namespaces: {
+      '0A97lp': true
+    }
+  },
+  '/(group)/group-two': {
+    hasLayoutProvider: false,
+    namespaces: {
+      'ntVPJ+': true
+    }
+  },
   '/actions': {
     hasLayoutProvider: false,
     namespaces: {
@@ -62,18 +78,6 @@ const snapshot = {
     hasLayoutProvider: false,
     namespaces: {
       Ax7uMP: true
-    }
-  },
-  '/(group)/group-one': {
-    hasLayoutProvider: false,
-    namespaces: {
-      '0A97lp': true
-    }
-  },
-  '/(group)/group-two': {
-    hasLayoutProvider: false,
-    namespaces: {
-      'ntVPJ+': true
     }
   },
   '/hook-translation': {

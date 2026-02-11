@@ -79,7 +79,7 @@ msgid "30s0PJ"
 msgstr "Layout template template"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx:20
+#: src/app/layout.tsx:17
 msgid "lNLCAE"
 msgstr "next-intl example"
 

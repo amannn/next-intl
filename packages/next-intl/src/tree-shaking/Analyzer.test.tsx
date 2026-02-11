@@ -137,7 +137,7 @@ afterEach(async () => {
 });
 
 describe('TreeShakingAnalyzer', () => {
-  it('keeps full segment paths, sorts by route name and ignores type-only back-edges', async () => {
+  it('keeps full segment paths, sorts by segment hierarchy and ignores type-only back-edges', async () => {
     const projectRoot = await createFixtureProject();
     tempProjects.push(projectRoot);
 
@@ -152,9 +152,9 @@ describe('TreeShakingAnalyzer', () => {
     });
 
     expect(Object.keys(manifest)).toEqual([
+      '/(group)/group-one',
       '/actions',
       '/feed/@modal/(..)photo/[id]',
-      '/(group)/group-one',
       '/type-imports'
     ]);
 

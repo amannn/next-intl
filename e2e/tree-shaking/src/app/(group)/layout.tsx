@@ -1,9 +1,12 @@
+import {NextIntlClientProvider} from 'next-intl';
+
 export default function CatalogGroupLayout({children}: LayoutProps<'/'>) {
-  // TODO: Add provider here
   return (
     <section>
       <h1>Catalog group layout</h1>
-      {children}
+      <NextIntlClientProvider messages="infer" temp_segment="/(group)">
+        {children}
+      </NextIntlClientProvider>
     </section>
   );
 }
