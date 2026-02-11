@@ -1,8 +1,9 @@
-import {expect, it, vi} from 'vitest';
+import {beforeEach, expect, it, vi} from 'vitest';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
+import {loadTreeShakingManifest} from '../tree-shaking/inferMessages.js';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
@@ -28,6 +29,22 @@ vi.mock('../../src/server/react-server/getConfigNow', () => ({
 vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
   default: vi.fn(() => 'NextIntlClientProvider')
 }));
+
+vi.mock('../../src/tree-shaking/inferMessages', async () => {
+  const actual = await vi.importActual('../../src/tree-shaking/inferMessages');
+  return {
+    ...actual,
+    loadTreeShakingManifest: vi.fn(async () => undefined)
+  };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(getLocale).mockResolvedValue('en-US');
+  vi.mocked(getMessages).mockResolvedValue({});
+  vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
+});
 
 it("doesn't read from headers if all relevant configuration is passed", async () => {
   const result = await NextIntlClientProviderServer({

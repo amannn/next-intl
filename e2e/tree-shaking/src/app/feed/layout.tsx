@@ -1,9 +1,13 @@
+import {NextIntlClientProvider} from 'next-intl';
+
 export default function FeedLayout({children, modal}: LayoutProps<'/feed'>) {
   return (
-    <section>
-      <h1>Feed layout</h1>
-      <div>{children}</div>
-      <div>{modal}</div>
-    </section>
+    <NextIntlClientProvider messages="infer" temp_segment="/feed">
+      <section>
+        <h1>Feed layout</h1>
+        <div>{children}</div>
+        <div>{modal}</div>
+      </section>
+    </NextIntlClientProvider>
   );
 }

@@ -14,6 +14,18 @@ msgstr "Group (one) page"
 msgid "ntVPJ+"
 msgstr "Group (two) page"
 
+#: src/app/(home)/Counter.tsx:17
+msgid "jm1lmy"
+msgstr "Count: {count, number}"
+
+#: src/app/(home)/Counter.tsx:22
+msgid "tQLRmz"
+msgstr "Increment"
+
+#: src/app/(home)/page.tsx:10
+msgid "vlslj0"
+msgstr "Hey {name}!"
+
 #: src/app/actions/ActionComponent.tsx:5
 msgid "sJNiQX"
 msgstr "Returned from action"
@@ -33,14 +45,6 @@ msgstr "Load lazy content"
 #: src/app/catch-all/[...parts]/page.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
-
-#: src/app/Counter.tsx:17
-msgid "jm1lmy"
-msgstr "Count: {count, number}"
-
-#: src/app/Counter.tsx:22
-msgid "tQLRmz"
-msgstr "Increment"
 
 #: src/app/dynamic-import/DynamicImportContent.tsx:10
 msgid "TghmPk"
@@ -66,7 +70,7 @@ msgstr "Feed modal default"
 msgid "I6Uu2z"
 msgstr "Feed page"
 
-#: src/app/layout-template/layout.tsx:9
+#: src/app/layout-template/layout.tsx:11
 msgid "mocvtj"
 msgstr "Layout template layout"
 
@@ -79,7 +83,7 @@ msgid "30s0PJ"
 msgstr "Layout template template"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx:20
+#: src/app/layout.tsx:12
 msgid "lNLCAE"
 msgstr "next-intl example"
 
@@ -146,32 +150,32 @@ msgctxt "Navigation"
 msgid "eW/Bj9"
 msgstr "Feed"
 
-#: src/app/Navigation.tsx:26
+#: src/app/Navigation.tsx:28
 msgctxt "Navigation"
-msgid "NqHXVi"
-msgstr "Feed (photo → alpha)"
+msgid "hJlOFc"
+msgstr "Photo (intercept from feed)"
 
-#: src/app/Navigation.tsx:27
+#: src/app/Navigation.tsx:30
 msgctxt "Navigation"
 msgid "d/em2z"
 msgstr "Dynamic import"
 
-#: src/app/Navigation.tsx:28
+#: src/app/Navigation.tsx:31
 msgctxt "Navigation"
 msgid "Iv+hfk"
 msgstr "Hook translation"
 
-#: src/app/Navigation.tsx:29
+#: src/app/Navigation.tsx:32
 msgctxt "Navigation"
 msgid "VRx4Ab"
 msgstr "Layout template"
 
-#: src/app/Navigation.tsx:30
+#: src/app/Navigation.tsx:33
 msgctxt "Navigation"
 msgid "JdTriE"
 msgstr "Shared component"
 
-#: src/app/Navigation.tsx:31
+#: src/app/Navigation.tsx:34
 msgctxt "Navigation"
 msgid "BXSx4m"
 msgstr "Use translations"
@@ -179,10 +183,6 @@ msgstr "Use translations"
 #: src/app/optional/[[...parts]]/page.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
-
-#: src/app/page.tsx:10
-msgid "vlslj0"
-msgstr "Hey {name}!"
 
 #: src/app/parallel/@activity/default.tsx:10
 msgid "zZQM/j"
@@ -216,7 +216,7 @@ msgstr "Parallel page"
 msgid "fJxh6G"
 msgstr "Parallel template"
 
-#: src/app/photo/[id]/page.tsx:11
+#: src/app/photo/[id]/page.tsx:13
 msgid "o25lsU"
 msgstr "Photo page: {id}"
 

@@ -1,3 +1,4 @@
+import {NextIntlClientProvider} from 'next-intl';
 import {useExtracted} from 'next-intl';
 
 export default function LayoutTemplateLayout({
@@ -5,9 +6,11 @@ export default function LayoutTemplateLayout({
 }: LayoutProps<'/layout-template'>) {
   const t = useExtracted();
   return (
-    <section>
-      <h1>{t('Layout template layout')}</h1>
-      {children}
-    </section>
+    <NextIntlClientProvider messages="infer" temp_segment="/layout-template">
+      <section>
+        <h1>{t('Layout template layout')}</h1>
+        {children}
+      </section>
+    </NextIntlClientProvider>
   );
 }

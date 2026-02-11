@@ -1,3 +1,5 @@
+'use client';
+
 import ClientBoundary from '@/components/ClientBoundary';
 import {useExtracted} from 'next-intl';
 import {use} from 'react';
