@@ -7,148 +7,103 @@ const groupPageMessages = [
   }
 ] as const;
 
-const HARD_ROUTE_CASES = [
-  {
-    pathname: '/',
-    messages: [
-      {
-        jm1lmy: ['Count: ', ['count', 4]],
-        tQLRmz: 'Increment'
+const routesMap = {
+  '/': [
+    {
+      jm1lmy: ['Count: ', ['count', 4]],
+      tQLRmz: 'Increment'
+    }
+  ],
+  '/loading': [
+    {
+      o6jHkb: 'Loading page \u2026'
+    }
+  ],
+  '/dynamic-segment/test': [
+    {
+      mrNFad: ['Dynamic slug page: ', ['slug']]
+    }
+  ],
+  '/catch-all/a/b/c': [
+    {
+      xmCXAl: ['Catch-all page: ', ['segment']]
+    }
+  ],
+  '/optional/x/y': [
+    {
+      bT9Pga: ['Optional catch-all page: ', ['segment']]
+    }
+  ],
+  '/actions': [
+    {
+      'RNB4/W': 'Load lazy content'
+    }
+  ],
+  '/type-imports': [
+    {
+      GO9hSh: ['Test label: ', ['value']]
+    }
+  ],
+  '/group-one': groupPageMessages,
+  '/group-two': groupPageMessages,
+  '/parallel': [
+    {
+      '62nsdy': 'Retry',
+      'zZQM/j': 'Parallel activity default (client)',
+      E8vtaB: 'Parallel page',
+      eoEXj3: 'Parallel activity page (client)',
+      fJxh6G: 'Parallel template',
+      ox304v: 'An error occurred'
+    }
+  ],
+  '/feed': [
+    {
+      I6Uu2z: 'Feed page',
+      Z2Vmmr: 'Feed modal default'
+    }
+  ],
+  '/photo/alpha': [
+    {
+      o25lsU: ['Photo page: ', ['id']]
+    }
+  ],
+  '/dynamic-import': [
+    {
+      TghmPk: 'Dynamic imported client',
+      cOlyBM: 'Lazy imported client'
+    }
+  ],
+  '/hook-translation': [
+    {
+      'd4JN/R': 'Hook test label'
+    }
+  ],
+  '/layout-template': [
+    {
+      '30s0PJ': 'Layout template template',
+      bowxvu: 'Layout template page'
+    }
+  ],
+  '/shared-component': [
+    {
+      JdTriE: 'Shared component'
+    }
+  ],
+  '/use-translations': [
+    {
+      DynamicKey: {
+        description: 'useTranslations: dynamic key (unused)',
+        title: 'useTranslations: dynamic key'
+      },
+      GlobalNamespace: {
+        title: 'useTranslations: global namespace'
+      },
+      UseTranslationsPage: {
+        title: 'useTranslations: static'
       }
-    ]
-  },
-  {
-    pathname: '/loading',
-    messages: [
-      {
-        o6jHkb: 'Loading page \u2026'
-      }
-    ]
-  },
-  {
-    pathname: '/dynamic-segment/test',
-    messages: [
-      {
-        mrNFad: ['Dynamic slug page: ', ['slug']]
-      }
-    ]
-  },
-  {
-    pathname: '/catch-all/a/b/c',
-    messages: [
-      {
-        xmCXAl: ['Catch-all page: ', ['segment']]
-      }
-    ]
-  },
-  {
-    pathname: '/optional/x/y',
-    messages: [
-      {
-        bT9Pga: ['Optional catch-all page: ', ['segment']]
-      }
-    ]
-  },
-  {
-    pathname: '/actions',
-    messages: [
-      {
-        'RNB4/W': 'Load lazy content'
-      }
-    ]
-  },
-  {
-    pathname: '/type-imports',
-    messages: [
-      {
-        GO9hSh: ['Test label: ', ['value']]
-      }
-    ]
-  },
-  {pathname: '/group-one', messages: groupPageMessages},
-  {pathname: '/group-two', messages: groupPageMessages},
-  {
-    pathname: '/parallel',
-    messages: [
-      {
-        '62nsdy': 'Retry',
-        'zZQM/j': 'Parallel activity default (client)',
-        E8vtaB: 'Parallel page',
-        eoEXj3: 'Parallel activity page (client)',
-        fJxh6G: 'Parallel template',
-        ox304v: 'An error occurred'
-      }
-    ]
-  },
-  {
-    pathname: '/feed',
-    messages: [
-      {
-        I6Uu2z: 'Feed page',
-        Z2Vmmr: 'Feed modal default'
-      }
-    ]
-  },
-  {
-    pathname: '/photo/alpha',
-    messages: [
-      {
-        o25lsU: ['Photo page: ', ['id']]
-      }
-    ]
-  },
-  {
-    pathname: '/dynamic-import',
-    messages: [
-      {
-        TghmPk: 'Dynamic imported client',
-        cOlyBM: 'Lazy imported client'
-      }
-    ]
-  },
-  {
-    pathname: '/hook-translation',
-    messages: [
-      {
-        'd4JN/R': 'Hook test label'
-      }
-    ]
-  },
-  {
-    pathname: '/layout-template',
-    messages: [
-      {
-        '30s0PJ': 'Layout template template',
-        bowxvu: 'Layout template page'
-      }
-    ]
-  },
-  {
-    pathname: '/shared-component',
-    messages: [
-      {
-        JdTriE: 'Shared component'
-      }
-    ]
-  },
-  {
-    pathname: '/use-translations',
-    messages: [
-      {
-        DynamicKey: {
-          description: 'useTranslations: dynamic key (unused)',
-          title: 'useTranslations: dynamic key'
-        },
-        GlobalNamespace: {
-          title: 'useTranslations: global namespace'
-        },
-        UseTranslationsPage: {
-          title: 'useTranslations: static'
-        }
-      }
-    ]
-  }
-] as const;
+    }
+  ]
+} as const;
 
 async function readProviderClientMessages(
   page: Page
@@ -180,16 +135,18 @@ async function readProviderClientMessages(
   return messages;
 }
 
-it.describe('Provider client messages', () => {
-  for (const hardRouteCase of HARD_ROUTE_CASES) {
-    it(`hard load ${hardRouteCase.pathname}`, async ({page}) => {
-      await page.goto(hardRouteCase.pathname);
+it.describe('provider client messages', () => {
+  for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
+    it(`has matching messages for ${pathname}`, async ({page}) => {
+      await page.goto(pathname);
       const messages = await readProviderClientMessages(page);
-      expect(messages).toEqual(hardRouteCase.messages);
+      expect(messages).toEqual(expectedMessages);
     });
   }
 
-  it('soft navigate /feed -> /photo/alpha', async ({page}) => {
+  it('has matching messages for soft navigation of /feed -> /photo/alpha', async ({
+    page
+  }) => {
     await page.goto('/feed');
     await page.locator('a[href="/photo/alpha"]').first().click();
     await expect(page).toHaveURL('/photo/alpha');
