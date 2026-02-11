@@ -49,8 +49,13 @@ const snapshot = {
   '/feed': {
     hasLayoutProvider: false,
     namespaces: {
-      I6Uu2z: true,
-      i43YkF: true
+      I6Uu2z: true
+    }
+  },
+  '/feed/@modal': {
+    hasLayoutProvider: false,
+    namespaces: {
+      Z2Vmmr: true
     }
   },
   '/feed/@modal/(..)photo/[id]': {
