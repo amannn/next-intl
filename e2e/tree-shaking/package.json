@@ -8,9 +8,7 @@
     "lint:orphans": "node scripts/check-orphans.mjs",
     "build": "next build",
     "start": "next start",
-    "test": "playwright test",
-    "test:manifest": "playwright test tests/manifest.spec.ts",
-    "test:client-messages": "playwright test tests/client-messages.spec.ts"
+    "test": "playwright test"
   },
   "dependencies": {
     "next": "^16.0.10",
