@@ -179,7 +179,10 @@ function pruneNode(
     }
 
     if (value && typeof value === 'object' && !Array.isArray(value)) {
-      const nested = pruneNode(nestedSelector, value as Record<string, unknown>);
+      const nested = pruneNode(
+        nestedSelector,
+        value as Record<string, unknown>
+      );
       if (Object.keys(nested).length > 0) {
         output[key] = nested;
       }
