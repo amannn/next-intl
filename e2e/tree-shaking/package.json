@@ -7,7 +7,8 @@
     "lint": "eslint src && prettier src --check && pnpm lint:orphans",
     "lint:orphans": "node scripts/check-orphans.mjs",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "pnpm build && node scripts/check-manifest.mjs"
   },
   "dependencies": {
     "next": "^16.0.10",
