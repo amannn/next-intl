@@ -53,16 +53,12 @@ function getPathCondition(paths: Array<string>): string {
 }
 
 function getAppLayoutPaths(): Array<string> {
-  return [
-    'app/layout.ts',
-    'app/layout.tsx',
-    'app/**/layout.ts',
-    'app/**/layout.tsx',
-    'src/app/layout.ts',
-    'src/app/layout.tsx',
-    'src/app/**/layout.ts',
-    'src/app/**/layout.tsx'
-  ];
+  return ['app', './app', 'src/app', './src/app'].flatMap((appPath) => [
+    `${appPath}/layout.ts`,
+    `${appPath}/layout.tsx`,
+    `${appPath}/**/layout.ts`,
+    `${appPath}/**/layout.tsx`
+  ]);
 }
 
 function getManifestAliasPath() {
