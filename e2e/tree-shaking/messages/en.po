@@ -14,6 +14,18 @@ msgstr "Group (one) page"
 msgid "ntVPJ+"
 msgstr "Group (two) page"
 
+#: src/app/(home)/Counter.tsx:17
+msgid "jm1lmy"
+msgstr "Count: {count, number}"
+
+#: src/app/(home)/Counter.tsx:22
+msgid "tQLRmz"
+msgstr "Increment"
+
+#: src/app/(home)/page.tsx:10
+msgid "vlslj0"
+msgstr "Hey {name}!"
+
 #: src/app/actions/ActionComponent.tsx:5
 msgid "sJNiQX"
 msgstr "Returned from action"
@@ -33,14 +45,6 @@ msgstr "Load lazy content"
 #: src/app/catch-all/[...parts]/page.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
-
-#: src/app/Counter.tsx:17
-msgid "jm1lmy"
-msgstr "Count: {count, number}"
-
-#: src/app/Counter.tsx:22
-msgid "tQLRmz"
-msgstr "Increment"
 
 #: src/app/dynamic-import/DynamicImportContent.tsx:10
 msgid "TghmPk"
@@ -66,7 +70,7 @@ msgstr "Feed modal default"
 msgid "I6Uu2z"
 msgstr "Feed page"
 
-#: src/app/layout-template/layout.tsx:9
+#: src/app/layout-template/layout.tsx:11
 msgid "mocvtj"
 msgstr "Layout template layout"
 
@@ -179,10 +183,6 @@ msgstr "Use translations"
 #: src/app/optional/[[...parts]]/page.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
-
-#: src/app/page.tsx:10
-msgid "vlslj0"
-msgstr "Hey {name}!"
 
 #: src/app/parallel/@activity/default.tsx:10
 msgid "zZQM/j"

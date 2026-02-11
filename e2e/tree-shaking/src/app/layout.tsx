@@ -1,15 +1,10 @@
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getExtracted} from 'next-intl/server';
-import {ReactNode} from 'react';
 import {Inter} from 'next/font/google';
 import Navigation from './Navigation';
 import './globals.css';
 
 const inter = Inter({subsets: ['latin']});
-
-type Props = {
-  children: ReactNode;
-};
 
 export async function generateMetadata() {
   const t = await getExtracted();
@@ -21,7 +16,9 @@ export async function generateMetadata() {
   };
 }
 
-export default async function LocaleLayout({children}: Props) {
+export default async function LocaleLayout({
+  children
+}: LayoutProps<'/'>) {
   const locale = await getLocale();
 
   return (

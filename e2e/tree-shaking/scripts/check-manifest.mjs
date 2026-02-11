@@ -16,10 +16,7 @@ const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
 const snapshot = {
   '/': {
     hasLayoutProvider: true,
-    namespaces: {
-      jm1lmy: true,
-      tQLRmz: true
-    }
+    namespaces: {}
   },
   '/(group)': {
     hasLayoutProvider: true,
@@ -37,33 +34,40 @@ const snapshot = {
       'ntVPJ+': true
     }
   },
+  '/(home)': {
+    hasLayoutProvider: true,
+    namespaces: {
+      jm1lmy: true,
+      tQLRmz: true
+    }
+  },
   '/actions': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       'RNB4/W': true
     }
   },
   '/catch-all/[...parts]': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       xmCXAl: true
     }
   },
   '/dynamic-import': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       TghmPk: true,
       cOlyBM: true
     }
   },
   '/dynamic-segment/[slug]': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       mrNFad: true
     }
   },
   '/feed': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       I6Uu2z: true
     }
@@ -75,38 +79,38 @@ const snapshot = {
     }
   },
   '/feed/@modal/(..)photo/[id]': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       Ax7uMP: true
     }
   },
   '/hook-translation': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       'd4JN/R': true
     }
   },
   '/layout-template': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       bowxvu: true,
       '30s0PJ': true
     }
   },
   '/loading': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       o6jHkb: true
     }
   },
   '/optional/[[...parts]]': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       bT9Pga: true
     }
   },
   '/parallel': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       ox304v: true,
       '62nsdy': true,
@@ -121,20 +125,24 @@ const snapshot = {
       eoEXj3: true
     }
   },
+  '/photo': {
+    hasLayoutProvider: true,
+    namespaces: {}
+  },
   '/shared-component': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       JdTriE: true
     }
   },
   '/type-imports': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       GO9hSh: true
     }
   },
   '/use-translations': {
-    hasLayoutProvider: false,
+    hasLayoutProvider: true,
     namespaces: {
       UseTranslationsPage: {
         title: true

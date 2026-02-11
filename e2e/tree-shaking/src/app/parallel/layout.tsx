@@ -1,18 +1,18 @@
-import {ReactNode} from 'react';
+import {NextIntlClientProvider} from 'next-intl';
 
-type Props = {
-  activity: ReactNode;
-  children: ReactNode;
-  team: ReactNode;
-};
-
-export default function ParallelLayout({activity, children, team}: Props) {
+export default function ParallelLayout({
+  activity,
+  children,
+  team
+}: LayoutProps<'/parallel'>) {
   return (
-    <section>
-      <h1>Parallel layout</h1>
-      <div>{children}</div>
-      <div>{team}</div>
-      <div>{activity}</div>
-    </section>
+    <NextIntlClientProvider messages="infer" temp_segment="/parallel">
+      <section>
+        <h1>Parallel layout</h1>
+        <div>{children}</div>
+        <div>{team}</div>
+        <div>{activity}</div>
+      </section>
+    </NextIntlClientProvider>
   );
 }
