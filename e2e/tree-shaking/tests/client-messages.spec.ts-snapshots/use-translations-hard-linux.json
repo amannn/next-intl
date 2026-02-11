@@ -1,0 +1,3 @@
+[
+  "{\n  \"UseTranslationsPage\": {\n    \"title\": \"useTranslations: static\"\n  },\n  \"GlobalNamespace\": {\n    \"title\": \"useTranslations: global namespace\"\n  },\n  \"DynamicKey\": {\n    \"title\": \"useTranslations: dynamic key\",\n    \"description\": \"useTranslations: dynamic key (unused)\"\n  }\n}"
+]
