@@ -6,11 +6,11 @@ import ClientBoundary from '@/components/ClientBoundary';
 export default function ParallelTemplate({children}: LayoutProps<'/parallel'>) {
   const t = useExtracted();
   return (
-    <ClientBoundary>
-      <section>
+    <>
+      <ClientBoundary>
         <p>{t('Parallel template')}</p>
-        {children}
-      </section>
-    </ClientBoundary>
+      </ClientBoundary>
+      {children}
+    </>
   );
 }

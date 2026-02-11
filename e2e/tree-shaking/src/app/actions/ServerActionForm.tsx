@@ -15,10 +15,10 @@ export default function ServerActionForm() {
   }
 
   return (
-    <ClientBoundary>
-      {lazyContent || (
+    lazyContent || (
+      <ClientBoundary>
         <button onClick={loadLazyContent}>{t('Load lazy content')}</button>
-      )}
-    </ClientBoundary>
+      </ClientBoundary>
+    )
   );
 }
