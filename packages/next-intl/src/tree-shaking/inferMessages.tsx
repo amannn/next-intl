@@ -113,14 +113,16 @@ function isOwnedBySegment(
   candidateSegment: string,
   manifest: Manifest
 ): boolean {
-  if (candidateSegment !== ownerSegment) {
-    if (!isDescendantSegment(ownerSegment, candidateSegment)) {
-      return false;
-    }
+  if (candidateSegment === ownerSegment) {
+    return true;
+  }
 
-    if (manifest[candidateSegment]?.hasLayoutProvider) {
-      return false;
-    }
+  if (!isDescendantSegment(ownerSegment, candidateSegment)) {
+    return false;
+  }
+
+  if (manifest[candidateSegment]?.hasLayoutProvider) {
+    return false;
   }
 
   const ancestors = getAncestorSegments(candidateSegment);
