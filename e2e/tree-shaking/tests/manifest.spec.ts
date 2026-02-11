@@ -1,19 +1,15 @@
-import {readFileSync} from 'fs';
-import {fileURLToPath} from 'url';
-import {dirname, join} from 'path';
+import {readFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {expect, test as it} from '@playwright/test';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const rootDir = join(__dirname, '..');
+type ManifestNamespaces = true | Record<string, ManifestNamespaces>;
+type ManifestEntry = {
+  hasLayoutProvider: boolean;
+  namespaces: ManifestNamespaces;
+};
+type Manifest = Record<string, ManifestEntry>;
 
-const manifestPath = join(
-  rootDir,
-  'node_modules/.cache/next-intl/client-manifest.json'
-);
-
-const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-
-const snapshot = {
+const EXPECTED_MANIFEST: Manifest = {
   '/': {
     hasLayoutProvider: true,
     namespaces: {}
@@ -112,10 +108,10 @@ const snapshot = {
   '/parallel': {
     hasLayoutProvider: true,
     namespaces: {
-      ox304v: true,
       '62nsdy': true,
       E8vtaB: true,
-      fJxh6G: true
+      fJxh6G: true,
+      ox304v: true
     }
   },
   '/parallel/@activity': {
@@ -146,27 +142,23 @@ const snapshot = {
   '/use-translations': {
     hasLayoutProvider: true,
     namespaces: {
-      UseTranslationsPage: {
-        title: true
-      },
+      DynamicKey: true,
       GlobalNamespace: {
         title: true
       },
-      DynamicKey: true
+      UseTranslationsPage: {
+        title: true
+      }
     }
   }
 };
 
-const manifestStr = JSON.stringify(manifest, null, 2);
-const snapshotStr = JSON.stringify(snapshot, null, 2);
+it('matches client manifest snapshot', async () => {
+  const manifestPath = join(
+    process.cwd(),
+    'node_modules/.cache/next-intl/client-manifest.json'
+  );
 
-if (manifestStr !== snapshotStr) {
-  console.error('Error: Manifest does not match snapshot');
-  console.error('\nExpected:');
-  console.error(snapshotStr);
-  console.error('\nActual:');
-  console.error(manifestStr);
-  process.exit(1);
-}
-
-console.log('✓ Manifest matches snapshot');
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as Manifest;
+  expect(manifest).toEqual(EXPECTED_MANIFEST);
+});

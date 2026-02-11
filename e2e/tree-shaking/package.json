@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "test": "pnpm run test:manifest && pnpm run test:client-messages",
-    "test:manifest": "pnpm build && node scripts/check-manifest.mjs",
+    "test:manifest": "pnpm build && playwright test tests/manifest.spec.ts --config=playwright.manifest.config.ts",
     "test:client-messages": "playwright test tests/client-messages.spec.ts"
   },
   "dependencies": {
