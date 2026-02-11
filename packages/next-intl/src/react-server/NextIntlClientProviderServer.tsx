@@ -71,7 +71,10 @@ export default async function NextIntlClientProviderServer({
   ) {
     return (
       <div style={{border: '1px solid green'}}>
-        <pre style={{backgroundColor: 'lightgreen'}}>
+        <pre
+          data-id="provider-client-messages"
+          style={{backgroundColor: 'lightgreen'}}
+        >
           {JSON.stringify(clientMessages, null, 2)}
         </pre>
         {result}
