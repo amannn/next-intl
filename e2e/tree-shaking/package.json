@@ -8,7 +8,8 @@
     "lint:orphans": "node scripts/check-orphans.mjs",
     "build": "next build",
     "start": "next start",
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:hmr": "NEXT_INTL_E2E_DEV_HMR=1 playwright test -c playwright.dev.config.ts tests/hmr.spec.ts"
   },
   "dependencies": {
     "next": "^16.0.10",

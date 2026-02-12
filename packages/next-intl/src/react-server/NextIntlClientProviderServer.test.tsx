@@ -4,7 +4,10 @@ import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
 import {loadTreeShakingManifest} from '../tree-shaking/inferMessages.js';
-import {getTreeShakingLazyOnlyEnvKey} from '../tree-shaking/mode.js';
+import {
+  getIgnoreInjectedManifestEnvKey,
+  getTreeShakingLazyOnlyEnvKey
+} from '../tree-shaking/mode.js';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
@@ -41,10 +44,14 @@ vi.mock('../../src/tree-shaking/inferMessages', async () => {
 
 const lazyOnlyEnvKey = getTreeShakingLazyOnlyEnvKey();
 const originalLazyOnlyEnv = process.env[lazyOnlyEnvKey];
+const ignoreInjectedManifestEnvKey = getIgnoreInjectedManifestEnvKey();
+const originalIgnoreInjectedManifestEnv =
+  process.env[ignoreInjectedManifestEnvKey];
 
 beforeEach(() => {
   vi.clearAllMocks();
   delete process.env[lazyOnlyEnvKey];
+  delete process.env[ignoreInjectedManifestEnvKey];
   vi.mocked(getLocale).mockResolvedValue('en-US');
   vi.mocked(getMessages).mockResolvedValue({});
   vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
@@ -56,6 +63,13 @@ afterEach(() => {
     delete process.env[lazyOnlyEnvKey];
   } else {
     process.env[lazyOnlyEnvKey] = originalLazyOnlyEnv;
+  }
+
+  if (originalIgnoreInjectedManifestEnv === undefined) {
+    delete process.env[ignoreInjectedManifestEnvKey];
+  } else {
+    process.env[ignoreInjectedManifestEnvKey] =
+      originalIgnoreInjectedManifestEnv;
   }
 });
 
@@ -177,6 +191,107 @@ it('prefers injected segment namespaces over global manifest loading', async () 
   expect(provider.type).toBe(NextIntlClientProvider);
   expect(provider.props.messages).toEqual({Feed: 'Feed message'});
   expect(loadTreeShakingManifest).not.toHaveBeenCalled();
+});
+
+it('accepts injected global manifest shape as fallback', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __inferredMessagesManifest: {
+      '/': {
+        hasLayoutProvider: true,
+        namespaces: {
+          Root: true
+        }
+      },
+      '/feed': {
+        hasLayoutProvider: true,
+        namespaces: {
+          Feed: true
+        }
+      }
+    },
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+  expect(loadTreeShakingManifest).not.toHaveBeenCalled();
+});
+
+it('falls back to global manifest when injected namespaces are empty', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Root: true
+      }
+    },
+    '/feed': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Feed: true
+      }
+    }
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __inferredMessagesManifest: {},
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+  expect(loadTreeShakingManifest).toHaveBeenCalledTimes(1);
+});
+
+it('can ignore injected manifests and use global fallback', async () => {
+  process.env[ignoreInjectedManifestEnvKey] = '1';
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Root: true
+      }
+    },
+    '/feed': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Feed: true
+      }
+    }
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __inferredMessagesManifest: {
+      Feed: true
+    },
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+  expect(loadTreeShakingManifest).toHaveBeenCalledTimes(1);
 });
 
 it('skips global manifest fallback when lazy-only mode is enabled', async () => {

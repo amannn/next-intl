@@ -3,31 +3,68 @@ import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.js';
-import type {ManifestNamespaces} from '../tree-shaking/Manifest.js';
+import type {Manifest, ManifestNamespaces} from '../tree-shaking/Manifest.js';
 import {
   inferMessagesForSegment,
   loadTreeShakingManifest,
   pruneMessagesByManifestNamespaces
 } from '../tree-shaking/inferMessages.js';
-import {isTreeShakingLazyOnly} from '../tree-shaking/mode.js';
+import {
+  isTreeShakingLazyOnly,
+  shouldIgnoreInjectedTreeShakingManifest
+} from '../tree-shaking/mode.js';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
 type InternalProps = {
-  __inferredMessagesManifest?: ManifestNamespaces;
+  __inferredMessagesManifest?: Manifest | ManifestNamespaces;
   __layoutSegment?: string;
 };
 
+function isManifestLike(value: unknown): value is Manifest {
+  if (value == null || value === true || typeof value !== 'object') {
+    return false;
+  }
+
+  const firstEntry = Object.values(value as Record<string, unknown>)[0];
+  if (
+    !firstEntry ||
+    typeof firstEntry !== 'object' ||
+    Array.isArray(firstEntry)
+  ) {
+    return false;
+  }
+
+  return 'hasLayoutProvider' in firstEntry && 'namespaces' in firstEntry;
+}
+
 async function resolveMessages(
-  inferredMessagesManifest: ManifestNamespaces | undefined,
+  inferredMessagesManifest: Manifest | ManifestNamespaces | undefined,
   layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
   const allMessages = await getMessages();
-  if (inferredMessagesManifest) {
-    return pruneMessagesByManifestNamespaces(
-      allMessages as Record<string, unknown>,
-      inferredMessagesManifest
-    ) as ResolvedMessages;
+  if (inferredMessagesManifest && !shouldIgnoreInjectedTreeShakingManifest()) {
+    if (isManifestLike(inferredMessagesManifest)) {
+      if (!layoutSegment) {
+        return allMessages;
+      }
+
+      return inferMessagesForSegment(
+        allMessages as Record<string, unknown>,
+        inferredMessagesManifest,
+        layoutSegment
+      ) as ResolvedMessages;
+    }
+
+    if (
+      inferredMessagesManifest === true ||
+      Object.keys(inferredMessagesManifest).length > 0
+    ) {
+      return pruneMessagesByManifestNamespaces(
+        allMessages as Record<string, unknown>,
+        inferredMessagesManifest
+      ) as ResolvedMessages;
+    }
   }
 
   if (!layoutSegment) {
