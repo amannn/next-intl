@@ -33,15 +33,6 @@ type TraversalNode = {
 
 type RequestedExports = 'all' | Set<string>;
 
-const IMPORT_RESOLVE_EXTENSIONS = [
-  '.cjs',
-  '.js',
-  '.jsx',
-  '.mjs',
-  '.ts',
-  '.tsx'
-];
-
 function normalizeSrcPaths(
   projectRoot: string,
   srcPaths: Array<string>
@@ -141,43 +132,6 @@ function getRequestedExportsKey(requestedExports: RequestedExports): string {
   return Array.from(requestedExports).sort().join(',');
 }
 
-function resolveImportCandidates(
-  filePath: string,
-  source: string
-): Array<string> {
-  if (!source.startsWith('.') && !source.startsWith('/')) {
-    return [];
-  }
-
-  const basePath = source.startsWith('/')
-    ? path.resolve(source)
-    : path.resolve(path.dirname(filePath), source);
-  const candidates = new Set<string>();
-  candidates.add(path.normalize(basePath));
-
-  for (const extension of IMPORT_RESOLVE_EXTENSIONS) {
-    candidates.add(path.normalize(`${basePath}${extension}`));
-    candidates.add(path.normalize(path.join(basePath, `index${extension}`)));
-  }
-
-  return Array.from(candidates);
-}
-
-function resolveDependencyFile(
-  filePath: string,
-  source: string,
-  dependenciesByPath: Map<string, string>
-): string | undefined {
-  for (const candidate of resolveImportCandidates(filePath, source)) {
-    const dependencyFile = dependenciesByPath.get(candidate);
-    if (dependencyFile) {
-      return dependencyFile;
-    }
-  }
-
-  return undefined;
-}
-
 function getRequestedExportsFromReference(
   reference: {
     exportAll?: boolean;
@@ -243,7 +197,7 @@ function getRequestedExportsFromReference(
 function collectDependencyRequests({
   dependencies,
   dependencyReferences,
-  filePath,
+  resolutionBySource,
   requestedExports
 }: {
   dependencies: Set<string>;
@@ -254,23 +208,14 @@ function collectDependencyRequests({
     mappings?: Array<{exported: string; imported: string}>;
     source: string;
   }>;
-  filePath: string;
+  resolutionBySource: Map<string, string>;
   requestedExports: RequestedExports;
 }): Map<string, RequestedExports> {
   const requests = new Map<string, RequestedExports>();
-  const dependenciesByPath = new Map<string, string>();
   const matchedDependencies = new Set<string>();
 
-  for (const dependency of dependencies) {
-    dependenciesByPath.set(path.normalize(dependency), dependency);
-  }
-
   for (const reference of dependencyReferences) {
-    const dependencyFile = resolveDependencyFile(
-      filePath,
-      reference.source,
-      dependenciesByPath
-    );
+    const dependencyFile = resolutionBySource.get(reference.source);
     if (!dependencyFile) {
       continue;
     }
@@ -441,7 +386,7 @@ export default class TreeShakingAnalyzer {
   }) {
     this.srcMatcher = createSourcePathMatcher(projectRoot, srcPaths);
     this.dependencyGraph = new DependencyGraph({
-      projectRoot,
+      sourceAnalyzer: this.sourceAnalyzer,
       srcMatcher: this.srcMatcher,
       tsconfigPath
     });
@@ -608,7 +553,7 @@ export default class TreeShakingAnalyzer {
         const dependencyRequests = collectDependencyRequests({
           dependencies: runtimeDependencies,
           dependencyReferences: analysis.dependencyReferences,
-          filePath: file,
+          resolutionBySource: graph.resolutions.get(file) ?? new Map(),
           requestedExports
         });
         for (const [dep, depRequestedExports] of dependencyRequests.entries()) {

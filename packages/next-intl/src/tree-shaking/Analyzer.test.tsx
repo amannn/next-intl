@@ -29,7 +29,10 @@ async function createFixtureProject() {
     JSON.stringify(
       {
         compilerOptions: {
-          baseUrl: '.'
+          baseUrl: '.',
+          paths: {
+            '@/*': ['src/*']
+          }
         }
       },
       null,
@@ -173,6 +176,35 @@ async function createFixtureProject() {
     ].join('\n')
   );
 
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/shared-component/page.tsx',
+    [
+      "'use client';",
+      '',
+      "import AliasSharedComponent from '@/components/AliasSharedComponent';",
+      '',
+      'export default function SharedComponentPage() {',
+      '  return <AliasSharedComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/components/AliasSharedComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function AliasSharedComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Alias shared component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
   return projectRoot;
 }
 
@@ -207,6 +239,7 @@ describe('TreeShakingAnalyzer', () => {
       '/actions',
       '/barrel',
       '/feed/@modal/(..)photo/[id]',
+      '/shared-component',
       '/type-imports'
     ]);
 
@@ -233,5 +266,10 @@ describe('TreeShakingAnalyzer', () => {
         getExtractedKey('Unused barrel component')
       ]
     ).toBeUndefined();
+    expect(
+      (manifest['/shared-component']?.namespaces as Record<string, true>)[
+        getExtractedKey('Alias shared component')
+      ]
+    ).toBe(true);
   });
 });
