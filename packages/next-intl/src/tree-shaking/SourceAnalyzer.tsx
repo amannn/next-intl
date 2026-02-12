@@ -321,7 +321,10 @@ function collectLocalExportMappings(ast: any): Array<LocalExportMapping> {
       declaration.type === 'FunctionDeclaration' ||
       declaration.type === 'ClassDeclaration'
     ) {
-      addMapping(getNodeValue(declaration.identifier), getNodeValue(declaration.identifier));
+      addMapping(
+        getNodeValue(declaration.identifier),
+        getNodeValue(declaration.identifier)
+      );
       continue;
     }
 

@@ -375,8 +375,8 @@ describe('TreeShakingAnalyzer', () => {
       '/feed/@modal/(..)photo/[id]',
       '/local-export-barrel',
       '/shared-component',
-      '/type-only-reexport',
-      '/type-imports'
+      '/type-imports',
+      '/type-only-reexport'
     ]);
 
     expect(manifest['/group-one']).toBeUndefined();
