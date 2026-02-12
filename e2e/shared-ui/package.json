@@ -2,6 +2,9 @@
   "name": "shared-ui",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "next-intl": "workspace:*"
+  },
   "exports": {
     "./ProfileCard": "./src/ProfileCard.tsx"
   }

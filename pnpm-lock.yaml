@@ -114,7 +114,11 @@ importers:
         specifier: ^5.5.3
         version: 5.9.3
 
-  e2e/shared-ui: {}
+  e2e/shared-ui:
+    dependencies:
+      next-intl:
+        specifier: workspace:*
+        version: link:../../packages/next-intl
 
   e2e/tree-shaking:
     dependencies:
