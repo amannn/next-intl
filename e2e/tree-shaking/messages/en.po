@@ -42,6 +42,10 @@ msgstr "Server action page"
 msgid "RNB4/W"
 msgstr "Load lazy content"
 
+#: src/app/barrel/page.tsx:9
+msgid "YWDsfC"
+msgstr "Barrel page"
+
 #: src/app/barrel/UnusedBarrelComponent.tsx:7
 msgid "wRSIBR"
 msgstr "Unused barrel component"
@@ -49,10 +53,6 @@ msgstr "Unused barrel component"
 #: src/app/barrel/UsedBarrelComponent.tsx:7
 msgid "VGs3cB"
 msgstr "Used barrel component"
-
-#: src/app/barrel/page.tsx:9
-msgid "YWDsfC"
-msgstr "Barrel page"
 
 #: src/app/catch-all/[...parts]/page.tsx:17
 msgid "xmCXAl"
