@@ -46,11 +46,11 @@ msgstr "Load lazy content"
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
 
-#: src/app/dynamic-import/DynamicImportContent.tsx:10
+#: src/app/dynamic-import/DynamicImportContent.tsx:7
 msgid "TghmPk"
 msgstr "Dynamic imported client"
 
-#: src/app/dynamic-import/LazyImportContent.tsx:10
+#: src/app/dynamic-import/LazyImportContent.tsx:7
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 
@@ -88,7 +88,7 @@ msgid "30s0PJ"
 msgstr "Layout template template"
 
 #. Default meta title if not overridden by pages
-#: src/app/layout.tsx:12
+#: src/app/layout.tsx:9
 msgid "lNLCAE"
 msgstr "next-intl example"
 
@@ -232,6 +232,11 @@ msgstr "Type imports page"
 #: src/app/type-imports/TypeImportComponent.tsx:14
 msgid "GO9hSh"
 msgstr "Test label: {value}"
+
+#: src/components/NotFound.tsx:10
+msgctxt "NotFound"
+msgid "QRccCM"
+msgstr "Page not found"
 
 #: src/components/SharedComponent.tsx:5
 msgid "JdTriE"

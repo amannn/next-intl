@@ -17,5 +17,10 @@ const withNextIntl = createNextIntlPlugin({
   }
 });
 
-const config: NextConfig = {};
+const config: NextConfig = {
+  experimental: {
+    globalNotFound: true
+  }
+};
+
 export default withNextIntl(config);

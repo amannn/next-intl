@@ -8,7 +8,7 @@ export default function LayoutTemplateTemplate({
 }: LayoutProps<'/layout-template'>) {
   const t = useExtracted();
   return (
-    <ClientBoundary>
+    <ClientBoundary debug={false}>
       <div>
         <p>{t('Layout template template')}</p>
         {children}

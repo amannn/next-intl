@@ -58,7 +58,7 @@ export default async function NextIntlClientProviderServer({
     clientMessages = messages;
   }
 
-  const result = (
+  return (
     <BaseNextIntlClientProvider
       // We need to be careful about potentially reading from headers here.
       // See https://github.com/amannn/next-intl/issues/631
@@ -73,26 +73,4 @@ export default async function NextIntlClientProviderServer({
       {...rest}
     />
   );
-
-  // Temporary debugging
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    messages === 'infer' &&
-    clientMessages &&
-    Object.keys(clientMessages).length > 0
-  ) {
-    return (
-      <div style={{border: '1px solid green'}}>
-        <pre
-          data-id="provider-client-messages"
-          style={{backgroundColor: 'lightgreen'}}
-        >
-          {JSON.stringify(clientMessages, null, 2)}
-        </pre>
-        {result}
-      </div>
-    );
-  }
-
-  return result;
 }

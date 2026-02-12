@@ -1,10 +1,7 @@
 import {NextIntlClientProvider} from 'next-intl';
 import {getLocale, getExtracted} from 'next-intl/server';
-import {Inter} from 'next/font/google';
 import Navigation from './Navigation';
-import './globals.css';
-
-const inter = Inter({subsets: ['latin']});
+import Document from '@/components/Document';
 
 export async function generateMetadata() {
   const t = await getExtracted();
@@ -20,15 +17,15 @@ export default async function LocaleLayout({children}: LayoutProps<'/'>) {
   const locale = await getLocale();
 
   return (
-    <html lang={locale}>
-      <body className={`${inter.className} flex flex-col gap-2.5`}>
-        <NextIntlClientProvider messages="infer">
+    <Document locale={locale}>
+      <NextIntlClientProvider messages="infer">
+        <div className="flex flex-col gap-2.5">
           <Navigation />
           <div className="p-4 flex flex-col gap-4">
             <div>{children}</div>
           </div>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+        </div>
+      </NextIntlClientProvider>
+    </Document>
   );
 }

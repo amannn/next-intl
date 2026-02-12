@@ -1,11 +1,6 @@
 import {expect, test as it, type Page} from '@playwright/test';
 
-const groupPageMessages = [
-  {
-    '0A97lp': 'Group (one) page',
-    'ntVPJ+': 'Group (two) page'
-  }
-] as const;
+const {describe} = it;
 
 const routesMap = {
   '/': [
@@ -51,8 +46,18 @@ const routesMap = {
       GO9hSh: ['Test label: ', ['value']]
     }
   ],
-  '/group-one': groupPageMessages,
-  '/group-two': groupPageMessages,
+  '/group-one': [
+    {
+      '0A97lp': 'Group (one) page',
+      'ntVPJ+': 'Group (two) page'
+    }
+  ],
+  '/group-two': [
+    {
+      '0A97lp': 'Group (one) page',
+      'ntVPJ+': 'Group (two) page'
+    }
+  ],
   '/parallel': [
     {
       '62nsdy': 'Retry',
@@ -109,6 +114,13 @@ const routesMap = {
         title: 'useTranslations: static'
       }
     }
+  ],
+  '/nonexistent': [
+    {
+      NotFound: {
+        QRccCM: 'Page not found'
+      }
+    }
   ]
 } as const;
 
@@ -142,7 +154,7 @@ async function readProviderClientMessages(
   return messages;
 }
 
-it.describe('provider client messages', () => {
+describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
     it(`has matching messages for ${pathname}`, async ({page}) => {
       await page.goto(pathname);
