@@ -1,4 +1,5 @@
 import startTreeShakingService from '../../tree-shaking/TreeShakingService.js';
+import {isDevelopmentOrNextBuild} from '../config.js';
 import type {PluginConfig} from '../types.js';
 import {once, throwError, warn} from '../utils.js';
 
@@ -8,6 +9,21 @@ export default function initTreeShaking(pluginConfig: PluginConfig) {
   if (!pluginConfig.experimental?.treeShaking) {
     return;
   }
+
+  // Avoid running for:
+  // - info
+  // - start
+  // - typegen
+  //
+  // Doesn't consult Next.js config anyway:
+  // - telemetry
+  // - lint
+  //
+  // What remains are:
+  // - dev (NODE_ENV=development)
+  // - build (NODE_ENV=production)
+  const shouldRun = isDevelopmentOrNextBuild;
+  if (!shouldRun) return;
 
   const srcPath = pluginConfig.experimental.srcPath;
   if (!srcPath) {
