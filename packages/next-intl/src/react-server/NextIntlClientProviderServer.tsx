@@ -14,16 +14,15 @@ type InternalProps = Props & {
   __layoutSegment?: string;
 };
 
-function getLayoutSegment(props: Props): string | undefined {
-  return (props as InternalProps).__layoutSegment;
-}
-
 async function resolveMessages(
   layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
   if (!layoutSegment) {
     throw new Error(
-      '[next-intl] `messages="infer"` requires an auto-injected `__layoutSegment`. This usually means the provider is not used in `app/**/layout.tsx`, tree-shaking is disabled, or the file is not compiled by Next.js.'
+      '[next-intl] `<NextIntlClientProvider messages="infer" /> was used, but wasn\'t compiled.\n\nThis usually means:\n' +
+        "- The provider is not placed in `app/**/layout.tsx` (that's the only place it can be used)" +
+        "- You don't have `experimental.treeShaking` enabled" +
+        `- You're not using Next.js for compiling your code (e.g. for test runners, pass \`messages\` explicitly)`
     );
   }
 
@@ -41,14 +40,19 @@ async function resolveMessages(
   return inferredMessages as ResolvedMessages;
 }
 
-export default async function NextIntlClientProviderServer(props: Props) {
-  const layoutSegment = getLayoutSegment(props);
-  const {formats, locale, messages, now, timeZone, ...rest} = props;
-
+export default async function NextIntlClientProviderServer({
+  formats,
+  locale,
+  messages,
+  now,
+  timeZone,
+  ...rest
+}: Props) {
   let clientMessages;
   if (messages === undefined) {
     clientMessages = await getMessages();
   } else if (messages === 'infer') {
+    const layoutSegment = (rest as InternalProps).__layoutSegment;
     clientMessages = await resolveMessages(layoutSegment);
   } else {
     clientMessages = messages;

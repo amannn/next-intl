@@ -18,8 +18,6 @@ import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
-const NEXT_APP_LAYOUT_WEBPACK_PATH_REGEX =
-  /(^|[\\/])(src[\\/]app|app)([\\/].*)?[\\/]layout\.(ts|tsx)$/;
 
 function withExtensions(localPath: string) {
   return [
@@ -366,7 +364,9 @@ export default function getNextConfig(
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
         config.module.rules.push({
-          test: NEXT_APP_LAYOUT_WEBPACK_PATH_REGEX,
+          test: new RegExp(
+            `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/]layout\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
+          ),
           use: [getLayoutSegmentLoaderConfig()]
         });
       }
