@@ -94,6 +94,16 @@ const EXPECTED_MANIFEST = {
       '30s0PJ': true
     }
   },
+  '/linked-dependency': {
+    hasLayoutProvider: true,
+    namespaces: {
+      linkedDependency: {
+        profileCard: {
+          title: true
+        }
+      }
+    }
+  },
   '/loading': {
     hasLayoutProvider: true,
     namespaces: {

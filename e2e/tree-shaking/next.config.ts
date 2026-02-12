@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    srcPath: './src',
+    srcPath: ['./src', '../shared-ui/src'],
     treeShaking: true,
     extract: {
       sourceLocale: 'en'

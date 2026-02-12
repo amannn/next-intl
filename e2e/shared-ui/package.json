@@ -1,0 +1,8 @@
+{
+  "name": "shared-ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ProfileCard": "./src/ProfileCard.tsx"
+  }
+}
