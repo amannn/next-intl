@@ -31,8 +31,7 @@ async function createFixtureProject() {
         compilerOptions: {
           baseUrl: '.',
           paths: {
-            '@/*': ['src/*'],
-            '@node-mod/*': ['node_modules/@node-mod/*']
+            '@/*': ['src/*']
           }
         }
       },
@@ -316,7 +315,7 @@ async function createFixtureProject() {
     projectRoot,
     'src/app/node-modules-path/page.tsx',
     [
-      "import NodeModulesPathComponent from '@node-mod/NodeModulesPathComponent';",
+      "import NodeModulesPathComponent from '@acme/ui';",
       '',
       'export default function NodeModulesPathPage() {',
       '  return <NodeModulesPathComponent />;',
@@ -326,7 +325,20 @@ async function createFixtureProject() {
 
   await writeFixtureFile(
     projectRoot,
-    'node_modules/@node-mod/NodeModulesPathComponent.tsx',
+    'node_modules/@acme/ui/package.json',
+    JSON.stringify(
+      {
+        name: '@acme/ui',
+        main: './index.js'
+      },
+      null,
+      2
+    )
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'node_modules/@acme/ui/index.js',
     [
       "'use client';",
       '',
@@ -334,7 +346,7 @@ async function createFixtureProject() {
       '',
       'export default function NodeModulesPathComponent() {',
       '  const t = useExtracted();',
-      "  return <p>{t('Node modules path component')}</p>;",
+      "  return <p>{t('Node modules package component')}</p>;",
       '}'
     ].join('\n')
   );
@@ -431,7 +443,7 @@ describe('TreeShakingAnalyzer', () => {
 
     const analyzerWithNodeModules = new TreeShakingAnalyzer({
       projectRoot,
-      srcPaths: ['src', 'node_modules/@node-mod'],
+      srcPaths: ['src', 'node_modules'],
       tsconfigPath: path.join(projectRoot, 'tsconfig.json')
     });
     const manifestWithNodeModules = await analyzerWithNodeModules.analyze({
@@ -444,7 +456,7 @@ describe('TreeShakingAnalyzer', () => {
           string,
           true
         >
-      )[getExtractedKey('Node modules path component')]
+      )[getExtractedKey('Node modules package component')]
     ).toBe(true);
   });
 });

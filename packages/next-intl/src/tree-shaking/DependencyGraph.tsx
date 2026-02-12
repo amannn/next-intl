@@ -395,6 +395,17 @@ export default class DependencyGraph {
       );
     }
 
+    if (!resolved) {
+      const resolvedPackagePath = tryResolveModule(source, path.dirname(filePath));
+      if (
+        resolvedPackagePath &&
+        this.srcMatcher.matches(resolvedPackagePath) &&
+        (await fileExists(resolvedPackagePath, this.fileExistsCache))
+      ) {
+        resolved = path.normalize(resolvedPackagePath);
+      }
+    }
+
     this.importResolutionCache.set(cacheKey, resolved);
     return resolved;
   }
