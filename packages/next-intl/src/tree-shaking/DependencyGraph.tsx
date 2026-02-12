@@ -313,6 +313,11 @@ export default class DependencyGraph {
     for (const entryFile of entryFiles) {
       this.cache.delete(entryFile);
     }
+
+    // Avoid stale resolution results when files are edited, moved or deleted.
+    this.fileExistsCache.clear();
+    this.importResolutionCache.clear();
+    this.tsconfigPromise = undefined;
   }
 
   private getTsConfig(): Promise<ParsedTsConfig | undefined> {

@@ -195,12 +195,10 @@ function getRequestedExportsFromReference(
 }
 
 function collectDependencyRequests({
-  dependencies,
   dependencyReferences,
   requestedExports,
   resolutionBySource
 }: {
-  dependencies: Set<string>;
   dependencyReferences: Array<{
     exportAll?: boolean;
     imported?: 'all' | Array<string>;
@@ -212,7 +210,6 @@ function collectDependencyRequests({
   resolutionBySource: Map<string, string>;
 }): Map<string, RequestedExports> {
   const requests = new Map<string, RequestedExports>();
-  const matchedDependencies = new Set<string>();
 
   for (const reference of dependencyReferences) {
     const dependencyFile = resolutionBySource.get(reference.source);
@@ -220,7 +217,6 @@ function collectDependencyRequests({
       continue;
     }
 
-    matchedDependencies.add(dependencyFile);
     const nextRequestedExports = getRequestedExportsFromReference(
       reference,
       requestedExports
@@ -234,12 +230,6 @@ function collectDependencyRequests({
       dependencyFile,
       mergeRequestedExports(previousRequestedExports, nextRequestedExports)
     );
-  }
-
-  for (const dependency of dependencies) {
-    if (!matchedDependencies.has(dependency)) {
-      requests.set(dependency, 'all');
-    }
   }
 
   return requests;
@@ -545,13 +535,7 @@ export default class TreeShakingAnalyzer {
 
         const deps = graph.adjacency.get(file);
         if (!deps) continue;
-        const runtimeDependencies = new Set<string>();
-        for (const dep of deps) {
-          if (dep.endsWith('.d.ts')) continue;
-          runtimeDependencies.add(dep);
-        }
         const dependencyRequests = collectDependencyRequests({
-          dependencies: runtimeDependencies,
           dependencyReferences: analysis.dependencyReferences,
           resolutionBySource: graph.resolutions.get(file) ?? new Map(),
           requestedExports
