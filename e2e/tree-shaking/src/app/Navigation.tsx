@@ -32,6 +32,10 @@ export default function Navigation() {
       <NavigationItem href="/layout-template" label={t('Layout template')} />
       <NavigationItem href="/shared-component" label={t('Shared component')} />
       <NavigationItem href="/use-translations" label={t('Use translations')} />
+      <NavigationItem
+        href="/linked-dependency"
+        label={t('Linked dependency')}
+      />
     </nav>
   );
 }

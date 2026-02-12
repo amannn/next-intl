@@ -79,7 +79,7 @@ msgstr "Feed modal default"
 msgid "I6Uu2z"
 msgstr "Feed page"
 
-#: src/app/layout-template/layout.tsx:11
+#: src/app/layout-template/layout.tsx:13
 msgid "mocvtj"
 msgstr "Layout template layout"
 
@@ -188,6 +188,11 @@ msgstr "Shared component"
 msgctxt "Navigation"
 msgid "BXSx4m"
 msgstr "Use translations"
+
+#: src/app/Navigation.tsx:37
+msgctxt "Navigation"
+msgid "ZME3di"
+msgstr "Linked dependency"
 
 #: src/app/optional/[[...parts]]/page.tsx:17
 msgid "bT9Pga"
