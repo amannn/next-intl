@@ -9,6 +9,7 @@ import {
   loadTreeShakingManifest,
   pruneMessagesByManifestNamespaces
 } from '../tree-shaking/inferMessages.js';
+import {isTreeShakingLazyOnly} from '../tree-shaking/mode.js';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
@@ -36,6 +37,10 @@ async function resolveMessages(
         "- You don't have `experimental.treeShaking` enabled" +
         `- You're not using Next.js for compiling your code (e.g. for test runners, pass \`messages\` explicitly)`
     );
+  }
+
+  if (isTreeShakingLazyOnly()) {
+    return allMessages;
   }
 
   const manifest = await loadTreeShakingManifest();

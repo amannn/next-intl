@@ -1,9 +1,10 @@
-import {beforeEach, expect, it, vi} from 'vitest';
+import {afterEach, beforeEach, expect, it, vi} from 'vitest';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
 import {loadTreeShakingManifest} from '../tree-shaking/inferMessages.js';
+import {getTreeShakingLazyOnlyEnvKey} from '../tree-shaking/mode.js';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
@@ -38,12 +39,24 @@ vi.mock('../../src/tree-shaking/inferMessages', async () => {
   };
 });
 
+const lazyOnlyEnvKey = getTreeShakingLazyOnlyEnvKey();
+const originalLazyOnlyEnv = process.env[lazyOnlyEnvKey];
+
 beforeEach(() => {
   vi.clearAllMocks();
+  delete process.env[lazyOnlyEnvKey];
   vi.mocked(getLocale).mockResolvedValue('en-US');
   vi.mocked(getMessages).mockResolvedValue({});
   vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
   vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
+});
+
+afterEach(() => {
+  if (originalLazyOnlyEnv === undefined) {
+    delete process.env[lazyOnlyEnvKey];
+  } else {
+    process.env[lazyOnlyEnvKey] = originalLazyOnlyEnv;
+  }
 });
 
 function readProviderFromResult(
@@ -163,5 +176,27 @@ it('prefers injected segment namespaces over global manifest loading', async () 
   const provider = readProviderFromResult(result);
   expect(provider.type).toBe(NextIntlClientProvider);
   expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+  expect(loadTreeShakingManifest).not.toHaveBeenCalled();
+});
+
+it('skips global manifest fallback when lazy-only mode is enabled', async () => {
+  process.env[lazyOnlyEnvKey] = '1';
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
   expect(loadTreeShakingManifest).not.toHaveBeenCalled();
 });

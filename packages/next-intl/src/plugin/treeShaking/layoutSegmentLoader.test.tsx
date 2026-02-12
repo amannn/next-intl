@@ -58,6 +58,9 @@ describe('layoutSegmentLoader', () => {
     expect(result).toContain(
       'segment=%2Ffeed%2F%40modal%2F%28..%29photo%2F%5Bid%5D'
     );
+    expect(
+      result.indexOf('import __nextIntlLayoutClientManifest')
+    ).toBeLessThan(result.indexOf('export default function Layout'));
   });
 
   it('injects metadata for messages={"infer"}', () => {
