@@ -32,7 +32,7 @@ async function createFixtureProject() {
           baseUrl: '.',
           paths: {
             '@/*': ['src/*'],
-            '@outside/*': ['outside/*']
+            '@node-mod/*': ['node_modules/@node-mod/*']
           }
         }
       },
@@ -314,27 +314,27 @@ async function createFixtureProject() {
 
   await writeFixtureFile(
     projectRoot,
-    'src/app/outside-src-path/page.tsx',
+    'src/app/node-modules-path/page.tsx',
     [
-      "import OutsideSrcPathComponent from '@outside/OutsideSrcPathComponent';",
+      "import NodeModulesPathComponent from '@node-mod/NodeModulesPathComponent';",
       '',
-      'export default function OutsideSrcPathPage() {',
-      '  return <OutsideSrcPathComponent />;',
+      'export default function NodeModulesPathPage() {',
+      '  return <NodeModulesPathComponent />;',
       '}'
     ].join('\n')
   );
 
   await writeFixtureFile(
     projectRoot,
-    'outside/OutsideSrcPathComponent.tsx',
+    'node_modules/@node-mod/NodeModulesPathComponent.tsx',
     [
       "'use client';",
       '',
       "import {useExtracted} from 'next-intl';",
       '',
-      'export default function OutsideSrcPathComponent() {',
+      'export default function NodeModulesPathComponent() {',
       '  const t = useExtracted();',
-      "  return <p>{t('Outside src path component')}</p>;",
+      "  return <p>{t('Node modules path component')}</p>;",
       '}'
     ].join('\n')
   );
@@ -427,6 +427,24 @@ describe('TreeShakingAnalyzer', () => {
         getExtractedKey('Type-only reexport unused component')
       ]
     ).toBeUndefined();
-    expect(manifest['/outside-src-path']).toBeUndefined();
+    expect(manifest['/node-modules-path']).toBeUndefined();
+
+    const analyzerWithNodeModules = new TreeShakingAnalyzer({
+      projectRoot,
+      srcPaths: ['src', 'node_modules/@node-mod'],
+      tsconfigPath: path.join(projectRoot, 'tsconfig.json')
+    });
+    const manifestWithNodeModules = await analyzerWithNodeModules.analyze({
+      appDirs: [path.join(projectRoot, 'src', 'app')]
+    });
+
+    expect(
+      (
+        manifestWithNodeModules['/node-modules-path']?.namespaces as Record<
+          string,
+          true
+        >
+      )[getExtractedKey('Node modules path component')]
+    ).toBe(true);
   });
 });
