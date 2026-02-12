@@ -93,11 +93,7 @@ const routesMap = {
   ],
   '/linked-dependency': [
     {
-      linkedDependency: {
-        profileCard: {
-          title: 'Profile card'
-        }
-      }
+      'Cq+Nds': 'Profile card'
     }
   ],
   '/shared-component': [

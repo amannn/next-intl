@@ -119,6 +119,13 @@ importers:
       next-intl:
         specifier: workspace:*
         version: link:../../packages/next-intl
+      react:
+        specifier: ^19.2.3
+        version: 19.2.3
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.3
+        version: 19.2.8
 
   e2e/tree-shaking:
     dependencies:

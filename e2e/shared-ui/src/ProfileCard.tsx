@@ -7,12 +7,7 @@ export default function ProfileCard() {
 
   return (
     <article className="border border-gray-300 rounded-md p-3">
-      <h2 className="font-medium">
-        {t({
-          id: 'linkedDependency.profileCard.title',
-          message: 'Profile card'
-        })}
-      </h2>
+      <h2 className="font-medium">{t('Profile card')}</h2>
     </article>
   );
 }

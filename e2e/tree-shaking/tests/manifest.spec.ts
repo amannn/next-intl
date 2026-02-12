@@ -97,11 +97,7 @@ const EXPECTED_MANIFEST = {
   '/linked-dependency': {
     hasLayoutProvider: true,
     namespaces: {
-      linkedDependency: {
-        profileCard: {
-          title: true
-        }
-      }
+      'Cq+Nds': true
     }
   },
   '/loading': {

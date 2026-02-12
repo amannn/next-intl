@@ -6,9 +6,8 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
-#: ../shared-ui/src/ProfileCard.tsx:11
-msgctxt "linkedDependency.profileCard"
-msgid "title"
+#: ../shared-ui/src/ProfileCard.tsx:10
+msgid "Cq+Nds"
 msgstr "Profile card"
 
 #: src/app/(group)/group-one/page.tsx:11
