@@ -3,20 +3,32 @@ import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.js';
+import type {ManifestNamespaces} from '../tree-shaking/Manifest.js';
 import {
   inferMessagesForSegment,
-  loadTreeShakingManifest
+  loadTreeShakingManifest,
+  pruneMessagesByManifestNamespaces
 } from '../tree-shaking/inferMessages.js';
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
-type InternalProps = Props & {
+type InternalProps = {
+  __inferredMessagesManifest?: ManifestNamespaces;
   __layoutSegment?: string;
 };
 
 async function resolveMessages(
+  inferredMessagesManifest: ManifestNamespaces | undefined,
   layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
+  const allMessages = await getMessages();
+  if (inferredMessagesManifest) {
+    return pruneMessagesByManifestNamespaces(
+      allMessages as Record<string, unknown>,
+      inferredMessagesManifest
+    ) as ResolvedMessages;
+  }
+
   if (!layoutSegment) {
     throw new Error(
       '[next-intl] `<NextIntlClientProvider messages="infer" /> was used, but wasn\'t compiled.\n\nThis usually means:\n' +
@@ -26,7 +38,6 @@ async function resolveMessages(
     );
   }
 
-  const allMessages = await getMessages();
   const manifest = await loadTreeShakingManifest();
   if (!manifest) {
     return allMessages;
@@ -41,19 +52,23 @@ async function resolveMessages(
 }
 
 export default async function NextIntlClientProviderServer({
+  __inferredMessagesManifest: inferredMessagesManifest,
+  __layoutSegment: layoutSegment,
   formats,
   locale,
   messages,
   now,
   timeZone,
   ...rest
-}: Props) {
+}: Props & InternalProps) {
   let clientMessages;
   if (messages === undefined) {
     clientMessages = await getMessages();
   } else if (messages === 'infer') {
-    const layoutSegment = (rest as InternalProps).__layoutSegment;
-    clientMessages = await resolveMessages(layoutSegment);
+    clientMessages = await resolveMessages(
+      inferredMessagesManifest,
+      layoutSegment
+    );
   } else {
     clientMessages = messages;
   }

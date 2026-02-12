@@ -35,7 +35,9 @@ export default [
       'extractor/extractionLoader': 'src/plugin/extractor/extractionLoader.tsx',
       'extractor/catalogLoader': 'src/plugin/catalog/catalogLoader.tsx',
       'treeShaking/layoutSegmentLoader':
-        'src/plugin/treeShaking/layoutSegmentLoader.tsx'
+        'src/plugin/treeShaking/layoutSegmentLoader.tsx',
+      'treeShaking/segmentManifestLoader':
+        'src/plugin/treeShaking/segmentManifestLoader.tsx'
     },
     external: [
       ...Object.keys(pkg.dependencies),

@@ -26,7 +26,7 @@ function runLoader({
 }
 
 describe('layoutSegmentLoader', () => {
-  it('injects __layoutSegment for messages="infer"', () => {
+  it('injects layout metadata and manifest import for messages="infer"', () => {
     const resourcePath = path.join(
       '/project',
       'src',
@@ -50,9 +50,17 @@ describe('layoutSegmentLoader', () => {
 
     expect(result).toContain('messages="infer"');
     expect(result).toContain('__layoutSegment="/feed/@modal/(..)photo/[id]"');
+    expect(result).toContain(
+      '__inferredMessagesManifest={__nextIntlLayoutClientManifest}'
+    );
+    expect(result).toContain('import __nextIntlLayoutClientManifest');
+    expect(result).toContain('next-intl/_client-manifest?');
+    expect(result).toContain(
+      'segment=%2Ffeed%2F%40modal%2F%28..%29photo%2F%5Bid%5D'
+    );
   });
 
-  it('injects __layoutSegment for messages={"infer"}', () => {
+  it('injects metadata for messages={"infer"}', () => {
     const resourcePath = path.join(
       '/project',
       'src',
@@ -66,6 +74,9 @@ describe('layoutSegmentLoader', () => {
     const result = runLoader({resourcePath, source});
 
     expect(result).toContain('__layoutSegment="/actions"');
+    expect(result).toContain(
+      '__inferredMessagesManifest={__nextIntlLayoutClientManifest}'
+    );
   });
 
   it('returns root segment for app root layout', () => {
@@ -76,6 +87,7 @@ describe('layoutSegmentLoader', () => {
     const result = runLoader({resourcePath, source});
 
     expect(result).toContain('__layoutSegment="/"');
+    expect(result).toContain('segment=%2F');
   });
 
   it('does not inject when messages is not infer', () => {
@@ -86,17 +98,37 @@ describe('layoutSegmentLoader', () => {
     const result = runLoader({resourcePath, source});
 
     expect(result).not.toContain('__layoutSegment=');
+    expect(result).not.toContain('__inferredMessagesManifest=');
+    expect(result).not.toContain('next-intl/_client-manifest?');
   });
 
-  it('does not inject when __layoutSegment already exists', () => {
+  it('does not duplicate __layoutSegment when already present', () => {
     const resourcePath = path.join('/project', 'src', 'app', 'layout.tsx');
     const source =
       '<NextIntlClientProvider __layoutSegment="/" messages="infer">content</NextIntlClientProvider>';
 
     const result = runLoader({resourcePath, source});
-    const matches = result.match(/__layoutSegment=/g) ?? [];
+    const layoutSegmentMatches = result.match(/__layoutSegment=/g) ?? [];
+    const manifestMatches = result.match(/__inferredMessagesManifest=/g) ?? [];
 
-    expect(matches).toHaveLength(1);
+    expect(layoutSegmentMatches).toHaveLength(1);
+    expect(manifestMatches).toHaveLength(1);
+  });
+
+  it('does not duplicate manifest import when already present', () => {
+    const resourcePath = path.join('/project', 'src', 'app', 'layout.tsx');
+    const source = [
+      "import __nextIntlLayoutClientManifest from 'next-intl/_client-manifest?layout=src%2Fapp%2Flayout.tsx&segment=%2F';",
+      '<NextIntlClientProvider __inferredMessagesManifest={__nextIntlLayoutClientManifest} messages="infer">content</NextIntlClientProvider>'
+    ].join('\n');
+
+    const result = runLoader({resourcePath, source});
+    const importMatches =
+      result.match(/import __nextIntlLayoutClientManifest/g) ?? [];
+    const manifestMatches = result.match(/__inferredMessagesManifest=/g) ?? [];
+
+    expect(importMatches).toHaveLength(1);
+    expect(manifestMatches).toHaveLength(1);
   });
 
   it('does not inject outside Next.js app roots', () => {
@@ -107,5 +139,6 @@ describe('layoutSegmentLoader', () => {
     const result = runLoader({resourcePath, source});
 
     expect(result).not.toContain('__layoutSegment=');
+    expect(result).not.toContain('__inferredMessagesManifest=');
   });
 });

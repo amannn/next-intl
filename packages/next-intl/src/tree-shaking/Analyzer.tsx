@@ -9,56 +9,23 @@ import {
 import {
   type Manifest,
   type ManifestEntry,
-  type ManifestNamespaceMap,
   type ManifestNamespaces,
   createEmptyManifest
 } from './Manifest.js';
 import SourceAnalyzer from './SourceAnalyzer.js';
+import {
+  analyzeEntryNamespaces,
+  hasTranslationUsage,
+  mergeNamespaces
+} from './entryAnalysis.js';
+import createSourcePathMatcher, {
+  type SourcePathMatcher
+} from './sourcePathMatcher.js';
 
 type EntryResult = {
   namespaces: ManifestNamespaces;
   segmentId: string;
 };
-
-type SourcePathMatcher = {
-  matches(filePath: string): boolean;
-};
-
-type TraversalNode = {
-  file: string;
-  inClient: boolean;
-  parent?: TraversalNode;
-};
-
-function normalizeSrcPaths(
-  projectRoot: string,
-  srcPaths: Array<string>
-): Array<string> {
-  return srcPaths.map((srcPath) =>
-    path.resolve(
-      projectRoot,
-      srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
-    )
-  );
-}
-
-function createSourcePathMatcher(
-  projectRoot: string,
-  srcPaths: Array<string>
-): SourcePathMatcher {
-  const roots = normalizeSrcPaths(projectRoot, srcPaths);
-  return {
-    matches(filePath: string) {
-      return roots.some((root) =>
-        SourceFileFilter.isWithinPath(filePath, root)
-      );
-    }
-  };
-}
-
-function splitPath(input: string): Array<string> {
-  return input.split('.').filter(Boolean);
-}
 
 function splitSegmentId(segmentId: string): Array<string> {
   return segmentId.split('/').filter(Boolean);
@@ -77,108 +44,6 @@ function compareSegmentsByHierarchy(left: string, right: string): number {
   }
 
   return leftSegments.length - rightSegments.length;
-}
-
-function hasAncestor(node: TraversalNode, targetFile: string): boolean {
-  let current: TraversalNode | undefined = node;
-
-  while (current) {
-    if (current.file === targetFile) {
-      return true;
-    }
-    current = current.parent;
-  }
-
-  return false;
-}
-
-function setPathTrue(
-  container: ManifestNamespaceMap,
-  pathParts: Array<string>
-) {
-  if (pathParts.length === 0) {
-    return;
-  }
-
-  let current: ManifestNamespaceMap = container;
-  for (let index = 0; index < pathParts.length; index++) {
-    const part = pathParts[index];
-    const isLeaf = index === pathParts.length - 1;
-    const existing = current[part];
-    if (existing === true) {
-      return;
-    }
-
-    if (isLeaf) {
-      current[part] = true;
-      return;
-    }
-
-    if (!(part in current)) {
-      current[part] = {};
-    }
-
-    current = current[part] as ManifestNamespaceMap;
-  }
-}
-
-function addToManifest(
-  namespaces: ManifestNamespaceMap,
-  item: {fullNamespace?: boolean; key?: string; namespace?: string}
-) {
-  const {fullNamespace, key, namespace} = item;
-
-  if (namespace == null) {
-    if (!key) return;
-    setPathTrue(namespaces, splitPath(key));
-    return;
-  }
-
-  const nsParts = splitPath(namespace);
-  if (fullNamespace) {
-    setPathTrue(namespaces, nsParts);
-    return;
-  }
-
-  if (!key) return;
-  setPathTrue(namespaces, [...nsParts, ...splitPath(key)]);
-}
-
-function mergeNamespaceMaps(
-  target: ManifestNamespaceMap,
-  source: ManifestNamespaceMap
-) {
-  for (const [ns, value] of Object.entries(source)) {
-    if (value === true) {
-      target[ns] = true;
-      continue;
-    }
-    const existing = target[ns];
-    if (existing === true) {
-      continue;
-    }
-    if (typeof existing === 'object') {
-      mergeNamespaceMaps(existing, value);
-      continue;
-    }
-    target[ns] = {...value};
-  }
-}
-
-function mergeNamespaces(
-  target: ManifestNamespaces,
-  source: ManifestNamespaces
-): ManifestNamespaces {
-  if (target === true || source === true) {
-    return true;
-  }
-
-  mergeNamespaceMaps(target, source);
-  return target;
-}
-
-function hasTranslationUsage(namespaces: ManifestNamespaces): boolean {
-  return namespaces === true || Object.keys(namespaces).length > 0;
 }
 
 function ensureManifestEntry(
@@ -355,47 +220,12 @@ export default class TreeShakingAnalyzer {
       if (!entryMeta) continue;
       const graph = await this.dependencyGraph.getEntryGraph(entryFile);
       this.updateEntryDependencies(entryFile, graph.files);
-
-      let namespaces: ManifestNamespaces = {};
-      const queue: Array<TraversalNode> = [{file: entryFile, inClient: false}];
-      const visited = new Set<string>();
-
-      while (queue.length > 0) {
-        const node = queue.shift()!;
-        const {file, inClient} = node;
-        const visitKey = `${file}|${inClient ? 'c' : 's'}`;
-        if (visited.has(visitKey)) continue;
-        visited.add(visitKey);
-
-        if (!this.srcMatcher.matches(file)) {
-          continue;
-        }
-
-        const analysis = await this.sourceAnalyzer.analyzeFile(file);
-        const nowClient = inClient || analysis.hasUseClient;
-        const effectiveClient = nowClient && !analysis.hasUseServer;
-
-        if (effectiveClient) {
-          if (analysis.requiresAllMessages) {
-            namespaces = true;
-          }
-          if (namespaces !== true) {
-            for (const translation of analysis.translations) {
-              addToManifest(namespaces, translation);
-            }
-          }
-        }
-
-        const deps = graph.adjacency.get(file);
-        if (!deps) continue;
-        for (const dep of deps) {
-          if (dep.endsWith('.d.ts')) continue;
-          if (hasAncestor(node, dep)) {
-            continue;
-          }
-          queue.push({file: dep, inClient: effectiveClient, parent: node});
-        }
-      }
+      const namespaces = await analyzeEntryNamespaces({
+        entryFile,
+        graphAdjacency: graph.adjacency,
+        sourceAnalyzer: this.sourceAnalyzer,
+        srcMatcher: this.srcMatcher
+      });
 
       this.entryResults.set(entryFile, {
         namespaces,

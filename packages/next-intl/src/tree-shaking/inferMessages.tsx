@@ -33,7 +33,7 @@ function isManifestModuleMissing(error: unknown): boolean {
   );
 }
 
-function normalizeSegmentId(segment: string): string {
+export function normalizeSegmentId(segment: string): string {
   const withLeadingSlash = segment.startsWith('/') ? segment : `/${segment}`;
   if (withLeadingSlash.length > 1 && withLeadingSlash.endsWith('/')) {
     return withLeadingSlash.slice(0, -1);
@@ -108,7 +108,7 @@ export function mergeManifestNamespaces(
   return target;
 }
 
-function isOwnedBySegment(
+export function isOwnedBySegment(
   ownerSegment: string,
   candidateSegment: string,
   manifest: Manifest

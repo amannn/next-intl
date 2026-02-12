@@ -138,11 +138,30 @@ it('resolves inferred messages from an injected layout segment', async () => {
     __layoutSegment: '/feed',
     children: null,
     messages: 'infer'
-  } as Parameters<typeof NextIntlClientProviderServer>[0] & {
-    __layoutSegment: string;
   });
 
   const provider = readProviderFromResult(result);
   expect(provider.type).toBe(NextIntlClientProvider);
   expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+});
+
+it('prefers injected segment namespaces over global manifest loading', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __inferredMessagesManifest: {
+      Feed: true
+    },
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
+  expect(loadTreeShakingManifest).not.toHaveBeenCalled();
 });

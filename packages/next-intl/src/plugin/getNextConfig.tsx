@@ -14,6 +14,7 @@ import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
 import type {LayoutSegmentLoaderConfig} from './treeShaking/layoutSegmentLoader.js';
+import type {SegmentManifestLoaderConfig} from './treeShaking/segmentManifestLoader.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
@@ -62,6 +63,11 @@ function getAppLayoutPaths(): Array<string> {
 function getManifestAliasPath() {
   // We can't put this inside `.next` as Turbopack aliases can't target that.
   return './node_modules/.cache/next-intl/client-manifest.json';
+}
+
+function getManifestAliasPathCondition() {
+  const aliasPath = getManifestAliasPath();
+  return getPathCondition([aliasPath, aliasPath.replace(/^\.\//, '')]);
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
@@ -157,6 +163,15 @@ export default function getNextConfig(
     };
   }
 
+  function getSegmentManifestLoaderConfig() {
+    return {
+      loader: 'next-intl/treeShaking/segmentManifestLoader',
+      options: {
+        srcPath: pluginConfig.experimental!.srcPath!
+      } satisfies SegmentManifestLoaderConfig as TurbopackLoaderOptions
+    };
+  }
+
   function getTurboRules() {
     return (
       nextConfig?.turbopack?.rules ||
@@ -222,6 +237,7 @@ export default function getNextConfig(
     if (pluginConfig.experimental?.treeShaking) {
       // Alias the manifest for tree-shaking HMR updates in dev.
       resolveAlias['next-intl/_client-manifest.json'] = getManifestAliasPath();
+      resolveAlias['next-intl/_client-manifest'] = getManifestAliasPath();
     }
 
     // Add alias for precompiled message formatting
@@ -278,6 +294,13 @@ export default function getNextConfig(
         condition: {
           path: getPathCondition(getAppLayoutPaths())
         }
+      });
+      addTurboRule(rules!, '*.json', {
+        loaders: [getSegmentManifestLoaderConfig()],
+        condition: {
+          path: getManifestAliasPathCondition()
+        },
+        as: '*.js'
       });
     }
 
@@ -347,6 +370,9 @@ export default function getNextConfig(
         (config.resolve.alias as Record<string, string>)[
           'next-intl/_client-manifest.json'
         ] = path.resolve(config.context!, getManifestAliasPath());
+        (config.resolve.alias as Record<string, string>)[
+          'next-intl/_client-manifest'
+        ] = path.resolve(config.context!, getManifestAliasPath());
       }
 
       // Add alias for precompiled message formatting
@@ -368,6 +394,12 @@ export default function getNextConfig(
             `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/]layout\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
           ),
           use: [getLayoutSegmentLoaderConfig()]
+        });
+        config.module.rules.push({
+          test: /client-manifest\.json$/,
+          include: path.resolve(config.context!, getManifestAliasPath()),
+          use: [getSegmentManifestLoaderConfig()],
+          type: 'javascript/auto'
         });
       }
 

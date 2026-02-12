@@ -4,6 +4,9 @@ import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import {getSegmentId} from '../../tree-shaking/EntryScanner.js';
 import type {TurbopackLoaderContext} from '../types.js';
 
+const CLIENT_MANIFEST_MODULE_NAME = 'next-intl/_client-manifest';
+const INFERRED_MESSAGES_MANIFEST_PROP = '__inferredMessagesManifest';
+const INFERRED_MESSAGES_MANIFEST_VARIABLE = '__nextIntlLayoutClientManifest';
 const NEXT_INTL_CLIENT_PROVIDER_TAG = 'NextIntlClientProvider';
 const NEXT_APP_DIRS = ['app', 'src/app'];
 const SYNTHETIC_SPAN = {end: 0, start: 0};
@@ -55,6 +58,14 @@ function hasLayoutSegmentProp(attributes: Array<any>): boolean {
   );
 }
 
+function hasInferredMessagesManifestProp(attributes: Array<any>): boolean {
+  return attributes.some(
+    (attribute) =>
+      attribute.type === 'JSXAttribute' &&
+      isIdentifier(attribute.name, INFERRED_MESSAGES_MANIFEST_PROP)
+  );
+}
+
 function hasInferMessagesProp(attributes: Array<any>): boolean {
   return attributes.some((attribute) => {
     if (
@@ -97,6 +108,86 @@ function createLayoutSegmentAttribute(segmentId: string) {
   };
 }
 
+function createInferredMessagesManifestAttribute() {
+  return {
+    name: {
+      span: SYNTHETIC_SPAN,
+      type: 'Identifier',
+      value: INFERRED_MESSAGES_MANIFEST_PROP
+    },
+    span: SYNTHETIC_SPAN,
+    type: 'JSXAttribute',
+    value: {
+      expression: {
+        ctxt: 0,
+        optional: false,
+        span: SYNTHETIC_SPAN,
+        type: 'Identifier',
+        value: INFERRED_MESSAGES_MANIFEST_VARIABLE
+      },
+      span: SYNTHETIC_SPAN,
+      type: 'JSXExpressionContainer'
+    }
+  };
+}
+
+function toPosixPath(pathname: string): string {
+  return pathname.split(path.sep).join('/');
+}
+
+export function getSegmentManifestImportSource(
+  rootContext: string,
+  resourcePath: string,
+  segmentId: string
+): string {
+  const relativeLayoutPath = toPosixPath(
+    path.relative(rootContext, resourcePath)
+  );
+  const query = new URLSearchParams({
+    layout: relativeLayoutPath,
+    segment: segmentId
+  });
+  return `${CLIENT_MANIFEST_MODULE_NAME}?${query.toString()}`;
+}
+
+function hasManifestImport(ast: any, source: string): boolean {
+  return (ast.body ?? []).some(
+    (statement: any) =>
+      statement.type === 'ImportDeclaration' &&
+      statement.source?.value === source
+  );
+}
+
+function insertManifestImport(ast: any, source: string): boolean {
+  let importDeclaration;
+  try {
+    importDeclaration = parseSync(
+      `import ${INFERRED_MESSAGES_MANIFEST_VARIABLE} from ${JSON.stringify(source)};`,
+      {
+        syntax: 'typescript',
+        target: 'esnext',
+        tsx: true
+      }
+    ).body[0];
+  } catch {
+    return false;
+  }
+
+  const body = ast.body as Array<any>;
+  let insertIndex = 0;
+
+  while (
+    insertIndex < body.length &&
+    body[insertIndex].type === 'ExpressionStatement' &&
+    body[insertIndex].expression?.type === 'StringLiteral'
+  ) {
+    insertIndex++;
+  }
+
+  body.splice(insertIndex, 0, importDeclaration);
+  return true;
+}
+
 function walkAst(node: unknown, visit: (node: any) => void) {
   if (!node || typeof node !== 'object') {
     return;
@@ -117,7 +208,11 @@ function walkAst(node: unknown, visit: (node: any) => void) {
   }
 }
 
-function addLayoutSegmentAttributes(ast: any, segmentId: string): boolean {
+function addLayoutSegmentAttributes(
+  ast: any,
+  segmentId: string
+): {addedManifestProp: boolean; didMutate: boolean} {
+  let addedManifestProp = false;
   let didMutate = false;
 
   walkAst(ast, (node) => {
@@ -130,21 +225,37 @@ function addLayoutSegmentAttributes(ast: any, segmentId: string): boolean {
     }
 
     const attributes = node.attributes as Array<any>;
-    if (hasLayoutSegmentProp(attributes)) {
-      return;
-    }
     if (!hasInferMessagesProp(attributes)) {
       return;
     }
 
-    attributes.push(createLayoutSegmentAttribute(segmentId));
-    didMutate = true;
+    if (!hasLayoutSegmentProp(attributes)) {
+      attributes.push(createLayoutSegmentAttribute(segmentId));
+      didMutate = true;
+    }
+
+    if (!hasInferredMessagesManifestProp(attributes)) {
+      attributes.push(createInferredMessagesManifestAttribute());
+      addedManifestProp = true;
+      didMutate = true;
+    }
   });
 
-  return didMutate;
+  return {addedManifestProp, didMutate};
 }
 
-export function injectLayoutSegment(source: string, segmentId: string): string {
+export function injectLayoutSegment(
+  source: string,
+  {
+    resourcePath,
+    rootContext,
+    segmentId
+  }: {
+    resourcePath: string;
+    rootContext: string;
+    segmentId: string;
+  }
+): string {
   if (!source.includes('<NextIntlClientProvider')) {
     return source;
   }
@@ -160,9 +271,23 @@ export function injectLayoutSegment(source: string, segmentId: string): string {
     return source;
   }
 
-  const didMutate = addLayoutSegmentAttributes(ast, segmentId);
+  const {addedManifestProp, didMutate} = addLayoutSegmentAttributes(
+    ast,
+    segmentId
+  );
   if (!didMutate) {
     return source;
+  }
+
+  if (addedManifestProp) {
+    const manifestImportSource = getSegmentManifestImportSource(
+      rootContext,
+      resourcePath,
+      segmentId
+    );
+    if (!hasManifestImport(ast, manifestImportSource)) {
+      insertManifestImport(ast, manifestImportSource);
+    }
   }
 
   try {
@@ -182,5 +307,9 @@ export default function layoutSegmentLoader(
   }
 
   const segmentId = getSegmentId(this.resourcePath, appDir);
-  return injectLayoutSegment(source, segmentId);
+  return injectLayoutSegment(source, {
+    resourcePath: this.resourcePath,
+    rootContext: this.rootContext,
+    segmentId
+  });
 }
