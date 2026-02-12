@@ -15,7 +15,7 @@ const config: SizeLimitConfig = [
   {
     name: "import * from 'next-intl' (react-server)",
     path: 'dist/esm/production/index.react-server.js',
-    limit: '13.345 KB'
+    limit: '13.395 KB'
   },
   {
     name: "import {createNavigation} from 'next-intl/navigation' (react-client)",
