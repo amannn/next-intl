@@ -12,7 +12,7 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`
   },
   webServer: {
-    command: `PORT=${PORT} pnpm dev`,
+    command: `PORT=${PORT} pnpm start`,
     port: PORT,
     reuseExistingServer: true
   }
