@@ -22,7 +22,7 @@ export default async function LocaleLayout({children}: LayoutProps<'/'>) {
   return (
     <html lang={locale}>
       <body className={`${inter.className} flex flex-col gap-2.5`}>
-        <NextIntlClientProvider messages="infer" temp_segment="/">
+        <NextIntlClientProvider messages="infer">
           <Navigation />
           <div className="p-4 flex flex-col gap-4">
             <div>{children}</div>

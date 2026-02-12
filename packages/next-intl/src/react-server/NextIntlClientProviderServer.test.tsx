@@ -46,6 +46,19 @@ beforeEach(() => {
   vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
 });
 
+function readProviderFromResult(
+  result: Awaited<ReturnType<typeof NextIntlClientProviderServer>>
+) {
+  if (result.type === NextIntlClientProvider) {
+    return result;
+  }
+
+  const children = Array.isArray(result.props.children)
+    ? result.props.children
+    : [result.props.children];
+  return children[1];
+}
+
 it("doesn't read from headers if all relevant configuration is passed", async () => {
   const result = await NextIntlClientProviderServer({
     children: null,
@@ -99,4 +112,37 @@ it('reads missing configuration from getter functions', async () => {
   expect(getTimeZone).toHaveBeenCalled();
   expect(getFormats).toHaveBeenCalled();
   expect(getMessages).toHaveBeenCalled();
+});
+
+it('resolves inferred messages from an injected layout segment', async () => {
+  vi.mocked(getMessages).mockResolvedValue({
+    Feed: 'Feed message',
+    Root: 'Root message'
+  });
+  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
+    '/': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Root: true
+      }
+    },
+    '/feed': {
+      hasLayoutProvider: true,
+      namespaces: {
+        Feed: true
+      }
+    }
+  });
+
+  const result = await NextIntlClientProviderServer({
+    __layoutSegment: '/feed',
+    children: null,
+    messages: 'infer'
+  } as Parameters<typeof NextIntlClientProviderServer>[0] & {
+    __layoutSegment: string;
+  });
+
+  const provider = readProviderFromResult(result);
+  expect(provider.type).toBe(NextIntlClientProvider);
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
 });

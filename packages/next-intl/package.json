@@ -96,6 +96,10 @@
     "./extractor/catalogLoader": {
       "types": "./dist/types/plugin/catalog/catalogLoader.d.ts",
       "default": "./dist/esm/production/extractor/catalogLoader.js"
+    },
+    "./treeShaking/layoutSegmentLoader": {
+      "types": "./dist/types/plugin/treeShaking/layoutSegmentLoader.d.ts",
+      "default": "./dist/esm/production/treeShaking/layoutSegmentLoader.js"
     }
   },
   "files": [
@@ -108,7 +112,8 @@
     "plugin.d.cts",
     "routing.d.ts",
     "config.d.ts",
-    "extractor.d.ts"
+    "extractor.d.ts",
+    "treeShaking"
   ],
   "keywords": [
     "react",

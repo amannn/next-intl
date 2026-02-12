@@ -4,11 +4,6 @@ export default function FeedPhotoModalLayout({
   children
 }: LayoutProps<'/photo/[id]'>) {
   return (
-    <NextIntlClientProvider
-      messages="infer"
-      temp_segment="/feed/@modal/(..)photo/[id]"
-    >
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider messages="infer">{children}</NextIntlClientProvider>
   );
 }

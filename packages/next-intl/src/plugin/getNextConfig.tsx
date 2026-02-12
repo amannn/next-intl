@@ -13,10 +13,12 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
+import type {LayoutSegmentLoaderConfig} from './treeShaking/layoutSegmentLoader.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
 const require = createRequire(import.meta.url);
+
 function withExtensions(localPath: string) {
   return [
     `${localPath}.ts`,
@@ -30,6 +32,31 @@ function normalizeTurbopackAliasPath(pathname: string) {
   // Turbopack alias targets should use forward slashes; Windows backslashes can
   // break resolution in dev (see `next-intl/config` alias path style).
   return pathname.replace(/\\/g, '/');
+}
+
+function normalizeSrcPath(srcPath: string) {
+  const normalized = srcPath.replace(/[/\\]+$/, '');
+  return normalized || srcPath;
+}
+
+function getConfiguredSrcPaths(srcPath: string | Array<string>): Array<string> {
+  const srcPaths = Array.isArray(srcPath) ? srcPath : [srcPath];
+  return srcPaths.map((currentPath) =>
+    normalizeTurbopackAliasPath(normalizeSrcPath(currentPath))
+  );
+}
+
+function getPathCondition(paths: Array<string>): string {
+  return paths.length === 1 ? paths[0] : `{${paths.join(',')}}`;
+}
+
+function getAppLayoutPaths(): Array<string> {
+  return ['app', './app', 'src/app', './src/app'].flatMap((appPath) => [
+    `${appPath}/layout.ts`,
+    `${appPath}/layout.tsx`,
+    `${appPath}/**/layout.ts`,
+    `${appPath}/**/layout.tsx`
+  ]);
 }
 
 function getManifestAliasPath() {
@@ -120,6 +147,13 @@ export default function getNextConfig(
       options: {
         messages: pluginConfig.experimental!.messages!
       } satisfies CatalogLoaderConfig as TurbopackLoaderOptions
+    };
+  }
+
+  function getLayoutSegmentLoaderConfig() {
+    return {
+      loader: 'next-intl/treeShaking/layoutSegmentLoader',
+      options: {} satisfies LayoutSegmentLoaderConfig as TurbopackLoaderOptions
     };
   }
 
@@ -219,20 +253,30 @@ export default function getNextConfig(
         throwError('Message extraction requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
-      const srcPaths = (
-        Array.isArray(pluginConfig.experimental.srcPath!)
-          ? pluginConfig.experimental.srcPath!
-          : [pluginConfig.experimental.srcPath!]
-      ).map((srcPath) =>
-        srcPath.endsWith('/') ? srcPath.slice(0, -1) : srcPath
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
       );
       addTurboRule(rules!, `*.{${SourceFileFilter.EXTENSIONS.join(',')}}`, {
         loaders: [getExtractMessagesLoaderConfig()],
         condition: {
           // Note: We don't need `not: 'foreign'`, because this is
           // implied by the filter based on `srcPath`.
-          path: `{${srcPaths.join(',')}}` + '/**/*',
+          path: getPathCondition(srcPaths.map((srcPath) => `${srcPath}/**/*`)),
           content: /(useExtracted|getExtracted)/
+        }
+      });
+    }
+
+    // Add loader for layout segment auto-injection
+    if (pluginConfig.experimental?.treeShaking) {
+      if (!isNextJs16OrHigher()) {
+        throwError('Tree-shaking requires Next.js 16 or higher.');
+      }
+      rules ??= getTurboRules();
+      addTurboRule(rules!, '*.{ts,tsx}', {
+        loaders: [getLayoutSegmentLoaderConfig()],
+        condition: {
+          path: getPathCondition(getAppLayoutPaths())
         }
       });
     }
@@ -313,6 +357,18 @@ export default function getNextConfig(
         (config.resolve.alias as Record<string, string>)[
           'use-intl/format-message'
         ] = require.resolve('use-intl/format-message/format-only');
+      }
+
+      // Add loader for layout segment auto-injection
+      if (pluginConfig.experimental?.treeShaking) {
+        if (!config.module) config.module = {};
+        if (!config.module.rules) config.module.rules = [];
+        config.module.rules.push({
+          test: new RegExp(
+            `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/]layout\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
+          ),
+          use: [getLayoutSegmentLoaderConfig()]
+        });
       }
 
       // Add loader for extractor

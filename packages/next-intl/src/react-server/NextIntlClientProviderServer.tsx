@@ -10,10 +10,22 @@ import {
 
 type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
+type InternalProps = Props & {
+  __layoutSegment?: string;
+};
 
 async function resolveMessages(
-  tempSegment: string | undefined
+  layoutSegment: string | undefined
 ): Promise<ResolvedMessages> {
+  if (!layoutSegment) {
+    throw new Error(
+      '[next-intl] `<NextIntlClientProvider messages="infer" /> was used, but wasn\'t compiled.\n\nThis usually means:\n' +
+        "- The provider is not placed in `app/**/layout.tsx` (that's the only place it can be used)" +
+        "- You don't have `experimental.treeShaking` enabled" +
+        `- You're not using Next.js for compiling your code (e.g. for test runners, pass \`messages\` explicitly)`
+    );
+  }
+
   const allMessages = await getMessages();
   const manifest = await loadTreeShakingManifest();
   if (!manifest) {
@@ -23,7 +35,7 @@ async function resolveMessages(
   const inferredMessages = inferMessagesForSegment(
     allMessages as Record<string, unknown>,
     manifest,
-    tempSegment ?? '/'
+    layoutSegment
   );
   return inferredMessages as ResolvedMessages;
 }
@@ -33,7 +45,6 @@ export default async function NextIntlClientProviderServer({
   locale,
   messages,
   now,
-  temp_segment,
   timeZone,
   ...rest
 }: Props) {
@@ -41,7 +52,8 @@ export default async function NextIntlClientProviderServer({
   if (messages === undefined) {
     clientMessages = await getMessages();
   } else if (messages === 'infer') {
-    clientMessages = await resolveMessages(temp_segment);
+    const layoutSegment = (rest as InternalProps).__layoutSegment;
+    clientMessages = await resolveMessages(layoutSegment);
   } else {
     clientMessages = messages;
   }

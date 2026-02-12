@@ -6,7 +6,7 @@ export default function LayoutTemplateLayout({
 }: LayoutProps<'/layout-template'>) {
   const t = useExtracted();
   return (
-    <NextIntlClientProvider messages="infer" temp_segment="/layout-template">
+    <NextIntlClientProvider messages="infer">
       <section>
         <h1>{t('Layout template layout')}</h1>
         {children}
