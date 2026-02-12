@@ -136,7 +136,7 @@ async function createFixtureProject() {
 
   await writeFixtureFile(
     projectRoot,
-    'src/app/barrel/components/index.ts',
+    'src/app/barrel/components.ts',
     [
       "export {default as UnusedBarrelComponent} from './UnusedBarrelComponent';",
       "export {default as UsedBarrelComponent} from './UsedBarrelComponent';"
@@ -145,7 +145,7 @@ async function createFixtureProject() {
 
   await writeFixtureFile(
     projectRoot,
-    'src/app/barrel/components/UsedBarrelComponent.tsx',
+    'src/app/barrel/UsedBarrelComponent.tsx',
     [
       "'use client';",
       '',
@@ -160,7 +160,7 @@ async function createFixtureProject() {
 
   await writeFixtureFile(
     projectRoot,
-    'src/app/barrel/components/UnusedBarrelComponent.tsx',
+    'src/app/barrel/UnusedBarrelComponent.tsx',
     [
       "'use client';",
       '',
