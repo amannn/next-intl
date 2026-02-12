@@ -24,6 +24,13 @@ const routesMap = {
       mrNFad: ['Dynamic slug page: ', ['slug']]
     }
   ],
+  '/explicit-id': [
+    {
+      carousel: {
+        next: 'Right'
+      }
+    }
+  ],
   '/catch-all/a/b/c': [
     {
       xmCXAl: ['Catch-all page: ', ['segment']]
