@@ -122,6 +122,57 @@ async function createFixtureProject() {
     ].join('\n')
   );
 
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/page.tsx',
+    [
+      "import {UsedBarrelComponent} from './components';",
+      '',
+      'export default function BarrelPage() {',
+      '  return <UsedBarrelComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/components/index.ts',
+    [
+      "export {default as UnusedBarrelComponent} from './UnusedBarrelComponent';",
+      "export {default as UsedBarrelComponent} from './UsedBarrelComponent';"
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/components/UsedBarrelComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedBarrelComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Used barrel component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/components/UnusedBarrelComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UnusedBarrelComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Unused barrel component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
   return projectRoot;
 }
 
@@ -154,6 +205,7 @@ describe('TreeShakingAnalyzer', () => {
     expect(Object.keys(manifest)).toEqual([
       '/(group)/group-one',
       '/actions',
+      '/barrel',
       '/feed/@modal/(..)photo/[id]',
       '/type-imports'
     ]);
@@ -169,6 +221,16 @@ describe('TreeShakingAnalyzer', () => {
     expect(
       (manifest['/type-imports']?.namespaces as Record<string, true>)[
         getExtractedKey('Type imports page')
+      ]
+    ).toBeUndefined();
+    expect(
+      (manifest['/barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Used barrel component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Unused barrel component')
       ]
     ).toBeUndefined();
   });

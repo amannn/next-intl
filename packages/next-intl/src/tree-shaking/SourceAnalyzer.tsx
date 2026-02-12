@@ -26,14 +26,30 @@ type TranslatorInfo = {
 };
 
 type FileAnalysis = {
+  dependencyReferences: Array<DependencyReference>;
   requiresAllMessages: boolean;
   hasUseClient: boolean;
   hasUseServer: boolean;
-  imports: Array<string>;
   translations: Array<TranslationUse>;
 };
 
 type HookAliasMap = Map<string, TranslatorKind>;
+
+export type DependencyReference =
+  | {
+      imported: 'all' | Array<string>;
+      kind: 'import';
+      source: string;
+    }
+  | {
+      exportAll: boolean;
+      kind: 'reexport';
+      mappings: Array<{
+        exported: string;
+        imported: string;
+      }>;
+      source: string;
+    };
 
 function isSupportedSourceFile(filePath: string): boolean {
   if (filePath.endsWith('.d.ts')) return false;
@@ -82,26 +98,137 @@ function containsDirective(ast: any, directive: string): boolean {
   return found;
 }
 
-function collectImports(ast: any): Array<string> {
-  const imports: Array<string> = [];
+function getNodeValue(node: any): string | undefined {
+  if (!node) {
+    return undefined;
+  }
+  if (node.type === 'Identifier') {
+    return node.value as string;
+  }
+  if (node.type === 'StringLiteral') {
+    return node.value as string;
+  }
+  return undefined;
+}
+
+function collectDependencyReferences(ast: any): Array<DependencyReference> {
+  const references: Array<DependencyReference> = [];
+
+  function pushReference(reference: DependencyReference) {
+    references.push(reference);
+  }
 
   for (const node of ast.body ?? []) {
-    if (node.type === 'ImportDeclaration' && node.source?.value) {
-      imports.push(node.source.value as string);
+    if (node.type === 'ImportDeclaration') {
+      if (node.typeOnly || !node.source?.value) {
+        continue;
+      }
+
+      const source = node.source.value as string;
+      if ((node.specifiers ?? []).length === 0) {
+        pushReference({imported: 'all', kind: 'import', source});
+        continue;
+      }
+
+      const imported = new Set<string>();
+      let importAll = false;
+
+      for (const specifier of node.specifiers ?? []) {
+        if (specifier.type === 'ImportNamespaceSpecifier') {
+          importAll = true;
+          break;
+        }
+        if (specifier.type === 'ImportDefaultSpecifier') {
+          imported.add('default');
+          continue;
+        }
+        if (specifier.type === 'ImportSpecifier') {
+          if (specifier.isTypeOnly) {
+            continue;
+          }
+
+          const importedName =
+            getNodeValue(specifier.imported) ??
+            getNodeValue(specifier.local) ??
+            undefined;
+          if (importedName) {
+            imported.add(importedName);
+          }
+        }
+      }
+
+      if (importAll) {
+        pushReference({imported: 'all', kind: 'import', source});
+        continue;
+      }
+
+      if (imported.size > 0) {
+        pushReference({
+          imported: Array.from(imported),
+          kind: 'import',
+          source
+        });
+      }
       continue;
     }
-    if (
-      (node.type === 'ExportAllDeclaration' ||
-        node.type === 'ExportDeclaration' ||
-        node.type === 'ExportNamedDeclaration') &&
-      node.source?.value
-    ) {
-      imports.push(node.source.value as string);
+
+    if (node.type === 'ExportAllDeclaration') {
+      if (node.typeOnly || !node.source?.value) {
+        continue;
+      }
+
+      pushReference({
+        exportAll: true,
+        kind: 'reexport',
+        mappings: [],
+        source: node.source.value as string
+      });
+      continue;
+    }
+
+    if (node.type === 'ExportNamedDeclaration' && node.source?.value) {
+      if (node.typeOnly) {
+        continue;
+      }
+
+      const mappings: Array<{exported: string; imported: string}> = [];
+      for (const specifier of node.specifiers ?? []) {
+        if (specifier.type === 'ExportSpecifier') {
+          if (specifier.isTypeOnly) {
+            continue;
+          }
+
+          const imported = getNodeValue(specifier.orig);
+          const exported = getNodeValue(specifier.exported) ?? imported;
+          if (imported && exported) {
+            mappings.push({exported, imported});
+          }
+          continue;
+        }
+
+        if (specifier.type === 'ExportNamespaceSpecifier') {
+          const exported = getNodeValue(specifier.name);
+          if (exported) {
+            mappings.push({exported, imported: '*'});
+          }
+        }
+      }
+
+      if (mappings.length > 0) {
+        pushReference({
+          exportAll: false,
+          kind: 'reexport',
+          mappings,
+          source: node.source.value as string
+        });
+      }
     }
   }
 
   function walk(node: any) {
-    if (!node || typeof node !== 'object') return;
+    if (!node || typeof node !== 'object') {
+      return;
+    }
     if (Array.isArray(node)) {
       node.forEach(walk);
       return;
@@ -109,7 +236,9 @@ function collectImports(ast: any): Array<string> {
     if (node.type === 'CallExpression' && node.callee?.type === 'Import') {
       const arg = node.arguments?.[0]?.expression;
       const spec = getStaticString(arg);
-      if (spec) imports.push(spec);
+      if (spec) {
+        pushReference({imported: 'all', kind: 'import', source: spec});
+      }
     }
     for (const value of Object.values(node)) {
       if (Array.isArray(value)) {
@@ -122,7 +251,7 @@ function collectImports(ast: any): Array<string> {
 
   walk(ast.body);
 
-  return imports;
+  return references;
 }
 
 function collectHookAliases(ast: any): HookAliasMap {
@@ -432,10 +561,10 @@ export default class SourceAnalyzer {
     if (cached) return cached;
 
     const empty: FileAnalysis = {
+      dependencyReferences: [],
       requiresAllMessages: false,
       hasUseClient: false,
       hasUseServer: false,
-      imports: [],
       translations: []
     };
 
@@ -466,10 +595,10 @@ export default class SourceAnalyzer {
     const {requiresAllMessages, translations} = collectTranslations(ast);
 
     const analysis: FileAnalysis = {
+      dependencyReferences: collectDependencyReferences(ast),
       requiresAllMessages,
       hasUseClient: hasDirective(ast, 'use client'),
       hasUseServer: containsDirective(ast, 'use server'),
-      imports: collectImports(ast),
       translations
     };
 

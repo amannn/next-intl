@@ -42,6 +42,18 @@ msgstr "Server action page"
 msgid "RNB4/W"
 msgstr "Load lazy content"
 
+#: src/app/barrel/components/UnusedBarrelComponent.tsx:7
+msgid "wRSIBR"
+msgstr "Unused barrel component"
+
+#: src/app/barrel/components/UsedBarrelComponent.tsx:7
+msgid "VGs3cB"
+msgstr "Used barrel component"
+
+#: src/app/barrel/page.tsx:9
+msgid "YWDsfC"
+msgstr "Barrel page"
+
 #: src/app/catch-all/[...parts]/page.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
@@ -57,18 +69,6 @@ msgstr "Lazy imported client"
 #: src/app/dynamic-segment/[slug]/page.tsx:16
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
-
-#: src/app/barrel/components/UsedBarrelComponent.tsx:7
-msgid "VGs3cB"
-msgstr "Used barrel component"
-
-#: src/app/barrel/components/UnusedBarrelComponent.tsx:7
-msgid "wRSIBR"
-msgstr "Unused barrel component"
-
-#: src/app/barrel/page.tsx:9
-msgid "YWDsfC"
-msgstr "Barrel page"
 
 #: src/app/feed/@modal/(..)photo/[id]/page.tsx:13
 msgid "Ax7uMP"
@@ -167,32 +167,32 @@ msgctxt "Navigation"
 msgid "eW/Bj9"
 msgstr "Feed"
 
-#: src/app/Navigation.tsx:28
+#: src/app/Navigation.tsx:29
 msgctxt "Navigation"
 msgid "hJlOFc"
 msgstr "Photo (intercept from feed)"
 
-#: src/app/Navigation.tsx:30
+#: src/app/Navigation.tsx:31
 msgctxt "Navigation"
 msgid "d/em2z"
 msgstr "Dynamic import"
 
-#: src/app/Navigation.tsx:31
+#: src/app/Navigation.tsx:32
 msgctxt "Navigation"
 msgid "Iv+hfk"
 msgstr "Hook translation"
 
-#: src/app/Navigation.tsx:32
+#: src/app/Navigation.tsx:33
 msgctxt "Navigation"
 msgid "VRx4Ab"
 msgstr "Layout template"
 
-#: src/app/Navigation.tsx:33
+#: src/app/Navigation.tsx:34
 msgctxt "Navigation"
 msgid "JdTriE"
 msgstr "Shared component"
 
-#: src/app/Navigation.tsx:34
+#: src/app/Navigation.tsx:35
 msgctxt "Navigation"
 msgid "BXSx4m"
 msgstr "Use translations"
