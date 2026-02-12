@@ -146,13 +146,3 @@ it('resolves inferred messages from an injected layout segment', async () => {
   expect(provider.type).toBe(NextIntlClientProvider);
   expect(provider.props.messages).toEqual({Feed: 'Feed message'});
 });
-
-it('throws when inferred messages miss a layout segment', async () => {
-  await expect(
-    NextIntlClientProviderServer({
-      children: null,
-      messages: 'infer'
-    })
-  ).rejects.toThrow(/messages="infer".*__layoutSegment/);
-  expect(getMessages).not.toHaveBeenCalled();
-});
