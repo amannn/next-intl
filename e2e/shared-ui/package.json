@@ -1,0 +1,15 @@
+{
+  "name": "shared-ui",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "next-intl": "workspace:*",
+    "react": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3"
+  },
+  "exports": {
+    "./ProfileCard": "./src/ProfileCard.tsx"
+  }
+}
