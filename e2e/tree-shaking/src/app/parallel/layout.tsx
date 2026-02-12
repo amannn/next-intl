@@ -1,3 +1,4 @@
+import DebugMessages from '@/components/DebugMessages';
 import {NextIntlClientProvider} from 'next-intl';
 
 export default function ParallelLayout({
@@ -7,6 +8,7 @@ export default function ParallelLayout({
 }: LayoutProps<'/parallel'>) {
   return (
     <NextIntlClientProvider messages="infer">
+      <DebugMessages />
       <section>
         <h1>Parallel layout</h1>
         <div>{children}</div>

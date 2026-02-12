@@ -1,3 +1,4 @@
+import DebugMessages from '@/components/DebugMessages';
 import Document from '@/components/Document';
 import NotFound from '@/components/NotFound';
 import {NextIntlClientProvider, useMessages} from 'next-intl';
@@ -11,6 +12,7 @@ export default function GlobalNotFound() {
   return (
     <Document locale="en">
       <NextIntlClientProvider messages={{NotFound: messages.NotFound}}>
+        <DebugMessages />
         <NotFound />
       </NextIntlClientProvider>
     </Document>

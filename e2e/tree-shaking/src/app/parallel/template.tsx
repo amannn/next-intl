@@ -7,7 +7,7 @@ export default function ParallelTemplate({children}: LayoutProps<'/parallel'>) {
   const t = useExtracted();
   return (
     <>
-      <ClientBoundary debug={false}>
+      <ClientBoundary>
         <p>{t('Parallel template')}</p>
       </ClientBoundary>
       {children}

@@ -46,11 +46,11 @@ msgstr "Load lazy content"
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
 
-#: src/app/dynamic-import/DynamicImportContent.tsx:7
+#: src/app/dynamic-import/DynamicImportContent.tsx:10
 msgid "TghmPk"
 msgstr "Dynamic imported client"
 
-#: src/app/dynamic-import/LazyImportContent.tsx:7
+#: src/app/dynamic-import/LazyImportContent.tsx:10
 msgid "cOlyBM"
 msgstr "Lazy imported client"
 

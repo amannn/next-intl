@@ -6,7 +6,7 @@ import ClientBoundary from '@/components/ClientBoundary';
 export default function ParallelActivityPage() {
   const t = useExtracted();
   return (
-    <ClientBoundary debug={false}>
+    <ClientBoundary>
       <p>{t('Parallel activity page (client)')}</p>
     </ClientBoundary>
   );
