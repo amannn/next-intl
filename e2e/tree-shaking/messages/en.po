@@ -58,6 +58,18 @@ msgstr "Lazy imported client"
 msgid "mrNFad"
 msgstr "Dynamic slug page: {slug}"
 
+#: src/app/barrel/components/UsedBarrelComponent.tsx:7
+msgid "VGs3cB"
+msgstr "Used barrel component"
+
+#: src/app/barrel/components/UnusedBarrelComponent.tsx:7
+msgid "wRSIBR"
+msgstr "Unused barrel component"
+
+#: src/app/barrel/page.tsx:9
+msgid "YWDsfC"
+msgstr "Barrel page"
+
 #: src/app/feed/@modal/(..)photo/[id]/page.tsx:13
 msgid "Ax7uMP"
 msgstr "Intercepted photo modal: {id}"
@@ -146,6 +158,11 @@ msgid "fPQSeV"
 msgstr "Parallel"
 
 #: src/app/Navigation.tsx:25
+msgctxt "Navigation"
+msgid "pj+eAj"
+msgstr "Barrel"
+
+#: src/app/Navigation.tsx:26
 msgctxt "Navigation"
 msgid "eW/Bj9"
 msgstr "Feed"
