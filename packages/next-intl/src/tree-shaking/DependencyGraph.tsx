@@ -396,7 +396,10 @@ export default class DependencyGraph {
     }
 
     if (!resolved) {
-      const resolvedPackagePath = tryResolveModule(source, path.dirname(filePath));
+      const resolvedPackagePath = tryResolveModule(
+        source,
+        path.dirname(filePath)
+      );
       if (
         resolvedPackagePath &&
         this.srcMatcher.matches(resolvedPackagePath) &&
