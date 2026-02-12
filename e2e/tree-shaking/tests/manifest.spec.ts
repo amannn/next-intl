@@ -61,6 +61,14 @@ const EXPECTED_MANIFEST = {
       mrNFad: true
     }
   },
+  '/explicit-id': {
+    hasLayoutProvider: true,
+    namespaces: {
+      carousel: {
+        next: true
+      }
+    }
+  },
   '/feed': {
     hasLayoutProvider: true,
     namespaces: {
