@@ -5,7 +5,9 @@ const originalNodeEnv = process.env.NODE_ENV;
 const originalArgv = [...process.argv];
 const startTreeShakingService = vi.fn();
 
-function getPluginConfig(srcPath: string | Array<string> = './src'): PluginConfig {
+function getPluginConfig(
+  srcPath: string | Array<string> = './src'
+): PluginConfig {
   return {
     experimental: {
       srcPath,
@@ -33,11 +35,7 @@ describe('initTreeShaking', () => {
   });
 
   afterAll(() => {
-    if (originalNodeEnv === undefined) {
-      delete process.env.NODE_ENV;
-    } else {
-      process.env.NODE_ENV = originalNodeEnv;
-    }
+    process.env.NODE_ENV = originalNodeEnv;
     process.argv = originalArgv;
   });
 
