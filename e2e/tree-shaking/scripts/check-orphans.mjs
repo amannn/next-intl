@@ -12,7 +12,7 @@ const orphans = lines
     const path = line.trim();
     if (!path) return false;
     if (path === 'i18n/request.ts') return false;
-    if (/^app\/(.*\/)?(page|layout|loading|template|error|not-found|default)\.tsx?$/.test(path)) {
+    if (/^app\/(.*\/)?(page|layout|loading|template|error|not-found|global-not-found|default)\.tsx?$/.test(path)) {
       return false;
     }
     return true;
