@@ -197,8 +197,8 @@ function getRequestedExportsFromReference(
 function collectDependencyRequests({
   dependencies,
   dependencyReferences,
-  resolutionBySource,
-  requestedExports
+  requestedExports,
+  resolutionBySource
 }: {
   dependencies: Set<string>;
   dependencyReferences: Array<{
@@ -208,8 +208,8 @@ function collectDependencyRequests({
     mappings?: Array<{exported: string; imported: string}>;
     source: string;
   }>;
-  resolutionBySource: Map<string, string>;
   requestedExports: RequestedExports;
+  resolutionBySource: Map<string, string>;
 }): Map<string, RequestedExports> {
   const requests = new Map<string, RequestedExports>();
   const matchedDependencies = new Set<string>();

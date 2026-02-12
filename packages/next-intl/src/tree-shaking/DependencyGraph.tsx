@@ -31,6 +31,17 @@ const RESOLVE_EXTENSIONS = [
 ];
 const require = createRequire(import.meta.url);
 
+function tryResolveModule(
+  modulePath: string,
+  fromDir: string
+): string | undefined {
+  try {
+    return require.resolve(modulePath, {paths: [fromDir]});
+  } catch {
+    return undefined;
+  }
+}
+
 function mergeTsConfig(
   base: ParsedTsConfig | undefined,
   override: ParsedTsConfig | undefined
@@ -74,22 +85,14 @@ function resolveExtendsPath(
     return withJsonExtension(path.resolve(fromDir, extendsValue));
   }
 
-  try {
-    return require.resolve(extendsValue, {paths: [fromDir]});
-  } catch {}
-  try {
-    return require.resolve(withJsonExtension(extendsValue), {paths: [fromDir]});
-  } catch {}
-  try {
-    return require.resolve(`${extendsValue}/tsconfig.json`, {paths: [fromDir]});
-  } catch {}
-
-  return undefined;
+  return (
+    tryResolveModule(extendsValue, fromDir) ??
+    tryResolveModule(withJsonExtension(extendsValue), fromDir) ??
+    tryResolveModule(`${extendsValue}/tsconfig.json`, fromDir)
+  );
 }
 
-function readPaths(
-  value: unknown
-): ParsedTsConfig['paths'] | undefined {
+function readPaths(value: unknown): ParsedTsConfig['paths'] | undefined {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     return undefined;
   }
@@ -152,8 +155,10 @@ async function parseTsConfig(
     (config as Record<string, unknown>).compilerOptions &&
     typeof (config as Record<string, unknown>).compilerOptions === 'object' &&
     !Array.isArray((config as Record<string, unknown>).compilerOptions)
-      ? ((config as Record<string, unknown>)
-          .compilerOptions as Record<string, unknown>)
+      ? ((config as Record<string, unknown>).compilerOptions as Record<
+          string,
+          unknown
+        >)
       : {};
 
   const paths = readPaths(compilerOptions.paths) ?? {};
