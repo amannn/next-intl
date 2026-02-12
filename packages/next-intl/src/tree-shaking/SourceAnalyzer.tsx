@@ -30,13 +30,23 @@ type FileAnalysis = {
   requiresAllMessages: boolean;
   hasUseClient: boolean;
   hasUseServer: boolean;
+  localExportMappings: Array<LocalExportMapping>;
   translations: Array<TranslationUse>;
 };
 
 type HookAliasMap = Map<string, TranslatorKind>;
+type LocalExportMapping = {
+  exported: string;
+  local: string;
+};
+type ImportBinding = {
+  imported: string;
+  local: string;
+};
 
 export type DependencyReference =
   | {
+      bindings?: Array<ImportBinding>;
       imported: 'all' | Array<string>;
       kind: 'moduleImport';
       source: string;
@@ -130,6 +140,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
         continue;
       }
 
+      const bindings: Array<ImportBinding> = [];
       const imported = new Set<string>();
       let importAll = false;
 
@@ -139,6 +150,10 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
           break;
         }
         if (specifier.type === 'ImportDefaultSpecifier') {
+          const localName = getNodeValue(specifier.local);
+          if (localName) {
+            bindings.push({imported: 'default', local: localName});
+          }
           imported.add('default');
           continue;
         }
@@ -151,6 +166,10 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
             getNodeValue(specifier.imported) ??
             getNodeValue(specifier.local) ??
             undefined;
+          const localName = getNodeValue(specifier.local);
+          if (importedName && localName) {
+            bindings.push({imported: importedName, local: localName});
+          }
           if (importedName) {
             imported.add(importedName);
           }
@@ -164,6 +183,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
 
       if (imported.size > 0) {
         pushReference({
+          bindings,
           imported: Array.from(imported),
           kind: 'moduleImport',
           source
@@ -252,6 +272,74 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
   walk(ast.body);
 
   return references;
+}
+
+function collectLocalExportMappings(ast: any): Array<LocalExportMapping> {
+  const mappings = new Map<string, string>();
+
+  function addMapping(local: string | undefined, exported: string | undefined) {
+    if (!local || !exported) {
+      return;
+    }
+    if (!mappings.has(exported)) {
+      mappings.set(exported, local);
+    }
+  }
+
+  for (const node of ast.body ?? []) {
+    if (
+      node.type === 'ExportNamedDeclaration' &&
+      !node.source &&
+      node.typeOnly !== true
+    ) {
+      for (const specifier of node.specifiers ?? []) {
+        if (specifier.type !== 'ExportSpecifier' || specifier.isTypeOnly) {
+          continue;
+        }
+        const localName = getNodeValue(specifier.orig);
+        const exportedName = getNodeValue(specifier.exported) ?? localName;
+        addMapping(localName, exportedName);
+      }
+      continue;
+    }
+
+    if (node.type === 'ExportDefaultExpression') {
+      addMapping(getNodeValue(node.expression), 'default');
+      continue;
+    }
+
+    if (node.type !== 'ExportDeclaration') {
+      continue;
+    }
+
+    const declaration = node.declaration;
+    if (!declaration || typeof declaration !== 'object') {
+      continue;
+    }
+
+    if (
+      declaration.type === 'FunctionDeclaration' ||
+      declaration.type === 'ClassDeclaration'
+    ) {
+      addMapping(getNodeValue(declaration.identifier), getNodeValue(declaration.identifier));
+      continue;
+    }
+
+    if (declaration.type === 'VariableDeclaration') {
+      for (const declarator of declaration.declarations ?? []) {
+        if (declarator.id?.type !== 'Identifier') {
+          continue;
+        }
+        const localName = getNodeValue(declarator.id);
+        addMapping(localName, localName);
+      }
+    }
+  }
+
+  return Array.from(mappings.entries()).map(([exported, local]) => ({
+    exported,
+    local
+  }));
 }
 
 function collectHookAliases(ast: any): HookAliasMap {
@@ -565,6 +653,7 @@ export default class SourceAnalyzer {
       requiresAllMessages: false,
       hasUseClient: false,
       hasUseServer: false,
+      localExportMappings: [],
       translations: []
     };
 
@@ -599,6 +688,7 @@ export default class SourceAnalyzer {
       requiresAllMessages,
       hasUseClient: hasDirective(ast, 'use client'),
       hasUseServer: containsDirective(ast, 'use server'),
+      localExportMappings: collectLocalExportMappings(ast),
       translations
     };
 

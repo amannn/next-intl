@@ -134,6 +134,7 @@ function getRequestedExportsKey(requestedExports: RequestedExports): string {
 
 function getRequestedExportsFromReference(
   reference: {
+    bindings?: Array<{imported: string; local: string}>;
     exportAll?: boolean;
     imported?: 'all' | Array<string>;
     kind: 'moduleImport' | 'moduleReexport';
@@ -194,22 +195,53 @@ function getRequestedExportsFromReference(
   return imported;
 }
 
+function collectRequestedLocals(
+  requestedExports: RequestedExports,
+  localExportMappings: Array<{exported: string; local: string}>
+): RequestedExports {
+  if (requestedExports === 'all' || localExportMappings.length === 0) {
+    return 'all';
+  }
+
+  const exportToLocal = new Map(
+    localExportMappings.map((mapping) => [mapping.exported, mapping.local])
+  );
+  const requestedLocals = new Set<string>();
+
+  for (const exportName of requestedExports) {
+    const localName = exportToLocal.get(exportName);
+    if (!localName) {
+      return 'all';
+    }
+    requestedLocals.add(localName);
+  }
+
+  return requestedLocals;
+}
+
 function collectDependencyRequests({
   dependencyReferences,
+  localExportMappings,
   requestedExports,
   resolutionBySource
 }: {
   dependencyReferences: Array<{
+    bindings?: Array<{imported: string; local: string}>;
     exportAll?: boolean;
     imported?: 'all' | Array<string>;
     kind: 'moduleImport' | 'moduleReexport';
     mappings?: Array<{exported: string; imported: string}>;
     source: string;
   }>;
+  localExportMappings: Array<{exported: string; local: string}>;
   requestedExports: RequestedExports;
   resolutionBySource: Map<string, string>;
 }): Map<string, RequestedExports> {
   const requests = new Map<string, RequestedExports>();
+  const requestedLocals = collectRequestedLocals(
+    requestedExports,
+    localExportMappings
+  );
 
   for (const reference of dependencyReferences) {
     const dependencyFile = resolutionBySource.get(reference.source);
@@ -217,10 +249,28 @@ function collectDependencyRequests({
       continue;
     }
 
-    const nextRequestedExports = getRequestedExportsFromReference(
-      reference,
-      requestedExports
-    );
+    let nextRequestedExports: RequestedExports | undefined;
+    if (
+      reference.kind === 'moduleImport' &&
+      requestedLocals !== 'all' &&
+      reference.imported !== 'all' &&
+      reference.bindings
+    ) {
+      const filteredImported = reference.bindings
+        .filter((binding) => requestedLocals.has(binding.local))
+        .map((binding) => binding.imported);
+
+      if (filteredImported.length === 0) {
+        continue;
+      }
+
+      nextRequestedExports = new Set(filteredImported);
+    } else {
+      nextRequestedExports = getRequestedExportsFromReference(
+        reference,
+        requestedExports
+      );
+    }
     if (!nextRequestedExports) {
       continue;
     }
@@ -537,6 +587,7 @@ export default class TreeShakingAnalyzer {
         if (!deps) continue;
         const dependencyRequests = collectDependencyRequests({
           dependencyReferences: analysis.dependencyReferences,
+          localExportMappings: analysis.localExportMappings,
           resolutionBySource: graph.resolutions.get(file) ?? new Map(),
           requestedExports
         });

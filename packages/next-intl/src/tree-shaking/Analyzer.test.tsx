@@ -31,7 +31,8 @@ async function createFixtureProject() {
         compilerOptions: {
           baseUrl: '.',
           paths: {
-            '@/*': ['src/*']
+            '@/*': ['src/*'],
+            '@outside/*': ['outside/*']
           }
         }
       },
@@ -205,6 +206,139 @@ async function createFixtureProject() {
     ].join('\n')
   );
 
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/page.tsx',
+    [
+      "import {UsedLocalExportComponent} from './barrel';",
+      '',
+      'export default function LocalExportBarrelPage() {',
+      '  return <UsedLocalExportComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/barrel.ts',
+    [
+      "import UnusedLocalExportComponent from './UnusedLocalExportComponent';",
+      "import UsedLocalExportComponent from './UsedLocalExportComponent';",
+      '',
+      'export {UnusedLocalExportComponent, UsedLocalExportComponent};'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/UsedLocalExportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedLocalExportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Local export used component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/UnusedLocalExportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UnusedLocalExportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Local export unused component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/page.tsx',
+    [
+      "import {UsedTypeOnlyReexportComponent} from './barrel';",
+      '',
+      'export default function TypeOnlyReexportPage() {',
+      '  return <UsedTypeOnlyReexportComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/barrel.ts',
+    [
+      "export {default as UsedTypeOnlyReexportComponent} from './UsedTypeOnlyReexportComponent';",
+      "export type {UnusedTypeOnlyReexportComponentType} from './UnusedTypeOnlyReexportComponent';"
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/UsedTypeOnlyReexportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedTypeOnlyReexportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Type-only reexport used component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/UnusedTypeOnlyReexportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export type UnusedTypeOnlyReexportComponentType = string;',
+      '',
+      'export default function UnusedTypeOnlyReexportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Type-only reexport unused component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/outside-src-path/page.tsx',
+    [
+      "import OutsideSrcPathComponent from '@outside/OutsideSrcPathComponent';",
+      '',
+      'export default function OutsideSrcPathPage() {',
+      '  return <OutsideSrcPathComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'outside/OutsideSrcPathComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function OutsideSrcPathComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Outside src path component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
   return projectRoot;
 }
 
@@ -239,7 +373,9 @@ describe('TreeShakingAnalyzer', () => {
       '/actions',
       '/barrel',
       '/feed/@modal/(..)photo/[id]',
+      '/local-export-barrel',
       '/shared-component',
+      '/type-only-reexport',
       '/type-imports'
     ]);
 
@@ -271,5 +407,26 @@ describe('TreeShakingAnalyzer', () => {
         getExtractedKey('Alias shared component')
       ]
     ).toBe(true);
+    expect(
+      (manifest['/local-export-barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Local export used component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/local-export-barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Local export unused component')
+      ]
+    ).toBeUndefined();
+    expect(
+      (manifest['/type-only-reexport']?.namespaces as Record<string, true>)[
+        getExtractedKey('Type-only reexport used component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/type-only-reexport']?.namespaces as Record<string, true>)[
+        getExtractedKey('Type-only reexport unused component')
+      ]
+    ).toBeUndefined();
+    expect(manifest['/outside-src-path']).toBeUndefined();
   });
 });
