@@ -182,12 +182,12 @@ function getRequestedExportsFromReference(
   reference: {
     exportAll?: boolean;
     imported?: 'all' | Array<string>;
-    kind: 'import' | 'reexport';
+    kind: 'moduleImport' | 'moduleReexport';
     mappings?: Array<{exported: string; imported: string}>;
   },
   requestedExports: RequestedExports
 ): RequestedExports | undefined {
-  if (reference.kind === 'import') {
+  if (reference.kind === 'moduleImport') {
     if (reference.imported === 'all') {
       return 'all';
     }
@@ -250,7 +250,7 @@ function collectDependencyRequests({
   dependencyReferences: Array<{
     exportAll?: boolean;
     imported?: 'all' | Array<string>;
-    kind: 'import' | 'reexport';
+    kind: 'moduleImport' | 'moduleReexport';
     mappings?: Array<{exported: string; imported: string}>;
     source: string;
   }>;

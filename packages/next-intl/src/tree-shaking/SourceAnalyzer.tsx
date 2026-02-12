@@ -38,12 +38,12 @@ type HookAliasMap = Map<string, TranslatorKind>;
 export type DependencyReference =
   | {
       imported: 'all' | Array<string>;
-      kind: 'import';
+      kind: 'moduleImport';
       source: string;
     }
   | {
       exportAll: boolean;
-      kind: 'reexport';
+      kind: 'moduleReexport';
       mappings: Array<{
         exported: string;
         imported: string;
@@ -126,7 +126,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
 
       const source = node.source.value as string;
       if ((node.specifiers ?? []).length === 0) {
-        pushReference({imported: 'all', kind: 'import', source});
+        pushReference({imported: 'all', kind: 'moduleImport', source});
         continue;
       }
 
@@ -158,14 +158,14 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
       }
 
       if (importAll) {
-        pushReference({imported: 'all', kind: 'import', source});
+        pushReference({imported: 'all', kind: 'moduleImport', source});
         continue;
       }
 
       if (imported.size > 0) {
         pushReference({
           imported: Array.from(imported),
-          kind: 'import',
+          kind: 'moduleImport',
           source
         });
       }
@@ -179,7 +179,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
 
       pushReference({
         exportAll: true,
-        kind: 'reexport',
+        kind: 'moduleReexport',
         mappings: [],
         source: node.source.value as string
       });
@@ -217,7 +217,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
       if (mappings.length > 0) {
         pushReference({
           exportAll: false,
-          kind: 'reexport',
+          kind: 'moduleReexport',
           mappings,
           source: node.source.value as string
         });
@@ -237,7 +237,7 @@ function collectDependencyReferences(ast: any): Array<DependencyReference> {
       const arg = node.arguments?.[0]?.expression;
       const spec = getStaticString(arg);
       if (spec) {
-        pushReference({imported: 'all', kind: 'import', source: spec});
+        pushReference({imported: 'all', kind: 'moduleImport', source: spec});
       }
     }
     for (const value of Object.values(node)) {
