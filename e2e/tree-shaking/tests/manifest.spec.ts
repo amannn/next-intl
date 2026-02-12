@@ -36,6 +36,12 @@ const EXPECTED_MANIFEST = {
       'RNB4/W': true
     }
   },
+  '/barrel': {
+    hasLayoutProvider: true,
+    namespaces: {
+      VGs3cB: true
+    }
+  },
   '/catch-all/[...parts]': {
     hasLayoutProvider: true,
     namespaces: {

@@ -29,7 +29,10 @@ async function createFixtureProject() {
     JSON.stringify(
       {
         compilerOptions: {
-          baseUrl: '.'
+          baseUrl: '.',
+          paths: {
+            '@/*': ['src/*']
+          }
         }
       },
       null,
@@ -122,6 +125,232 @@ async function createFixtureProject() {
     ].join('\n')
   );
 
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/page.tsx',
+    [
+      "import {UsedBarrelComponent} from './components';",
+      '',
+      'export default function BarrelPage() {',
+      '  return <UsedBarrelComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/components.ts',
+    [
+      "export {default as UnusedBarrelComponent} from './UnusedBarrelComponent';",
+      "export {default as UsedBarrelComponent} from './UsedBarrelComponent';"
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/UsedBarrelComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedBarrelComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Used barrel component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/barrel/UnusedBarrelComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UnusedBarrelComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Unused barrel component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/shared-component/page.tsx',
+    [
+      "'use client';",
+      '',
+      "import AliasSharedComponent from '@/components/AliasSharedComponent';",
+      '',
+      'export default function SharedComponentPage() {',
+      '  return <AliasSharedComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/components/AliasSharedComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function AliasSharedComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Alias shared component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/page.tsx',
+    [
+      "import {UsedLocalExportComponent} from './barrel';",
+      '',
+      'export default function LocalExportBarrelPage() {',
+      '  return <UsedLocalExportComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/barrel.ts',
+    [
+      "import UnusedLocalExportComponent from './UnusedLocalExportComponent';",
+      "import UsedLocalExportComponent from './UsedLocalExportComponent';",
+      '',
+      'export {UnusedLocalExportComponent, UsedLocalExportComponent};'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/UsedLocalExportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedLocalExportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Local export used component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/local-export-barrel/UnusedLocalExportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UnusedLocalExportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Local export unused component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/page.tsx',
+    [
+      "import {UsedTypeOnlyReexportComponent} from './barrel';",
+      '',
+      'export default function TypeOnlyReexportPage() {',
+      '  return <UsedTypeOnlyReexportComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/barrel.ts',
+    [
+      "export {default as UsedTypeOnlyReexportComponent} from './UsedTypeOnlyReexportComponent';",
+      "export type {UnusedTypeOnlyReexportComponentType} from './UnusedTypeOnlyReexportComponent';"
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/UsedTypeOnlyReexportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function UsedTypeOnlyReexportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Type-only reexport used component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/type-only-reexport/UnusedTypeOnlyReexportComponent.tsx',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export type UnusedTypeOnlyReexportComponentType = string;',
+      '',
+      'export default function UnusedTypeOnlyReexportComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Type-only reexport unused component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'src/app/node-modules-path/page.tsx',
+    [
+      "import NodeModulesPathComponent from '@acme/ui';",
+      '',
+      'export default function NodeModulesPathPage() {',
+      '  return <NodeModulesPathComponent />;',
+      '}'
+    ].join('\n')
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'node_modules/@acme/ui/package.json',
+    JSON.stringify(
+      {
+        name: '@acme/ui',
+        main: './index.js'
+      },
+      null,
+      2
+    )
+  );
+
+  await writeFixtureFile(
+    projectRoot,
+    'node_modules/@acme/ui/index.js',
+    [
+      "'use client';",
+      '',
+      "import {useExtracted} from 'next-intl';",
+      '',
+      'export default function NodeModulesPathComponent() {',
+      '  const t = useExtracted();',
+      "  return <p>{t('Node modules package component')}</p>;",
+      '}'
+    ].join('\n')
+  );
+
   return projectRoot;
 }
 
@@ -154,8 +383,12 @@ describe('TreeShakingAnalyzer', () => {
     expect(Object.keys(manifest)).toEqual([
       '/(group)/group-one',
       '/actions',
+      '/barrel',
       '/feed/@modal/(..)photo/[id]',
-      '/type-imports'
+      '/local-export-barrel',
+      '/shared-component',
+      '/type-imports',
+      '/type-only-reexport'
     ]);
 
     expect(manifest['/group-one']).toBeUndefined();
@@ -171,5 +404,59 @@ describe('TreeShakingAnalyzer', () => {
         getExtractedKey('Type imports page')
       ]
     ).toBeUndefined();
+    expect(
+      (manifest['/barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Used barrel component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Unused barrel component')
+      ]
+    ).toBeUndefined();
+    expect(
+      (manifest['/shared-component']?.namespaces as Record<string, true>)[
+        getExtractedKey('Alias shared component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/local-export-barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Local export used component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/local-export-barrel']?.namespaces as Record<string, true>)[
+        getExtractedKey('Local export unused component')
+      ]
+    ).toBeUndefined();
+    expect(
+      (manifest['/type-only-reexport']?.namespaces as Record<string, true>)[
+        getExtractedKey('Type-only reexport used component')
+      ]
+    ).toBe(true);
+    expect(
+      (manifest['/type-only-reexport']?.namespaces as Record<string, true>)[
+        getExtractedKey('Type-only reexport unused component')
+      ]
+    ).toBeUndefined();
+    expect(manifest['/node-modules-path']).toBeUndefined();
+
+    const analyzerWithNodeModules = new TreeShakingAnalyzer({
+      projectRoot,
+      srcPaths: ['src', 'node_modules'],
+      tsconfigPath: path.join(projectRoot, 'tsconfig.json')
+    });
+    const manifestWithNodeModules = await analyzerWithNodeModules.analyze({
+      appDirs: [path.join(projectRoot, 'src', 'app')]
+    });
+
+    expect(
+      (
+        manifestWithNodeModules['/node-modules-path']?.namespaces as Record<
+          string,
+          true
+        >
+      )[getExtractedKey('Node modules package component')]
+    ).toBe(true);
   });
 });

@@ -22,6 +22,7 @@ export default function Navigation() {
       <NavigationItem href="/group-one" label={t('Group (one)')} />
       <NavigationItem href="/group-two" label={t('Group (two)')} />
       <NavigationItem href="/parallel" label={t('Parallel')} />
+      <NavigationItem href="/barrel" label={t('Barrel')} />
       <NavigationItem href="/feed" label={t('Feed')} />
       <NavigationItem
         href="/photo/alpha"

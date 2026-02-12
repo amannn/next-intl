@@ -68,6 +68,11 @@ const routesMap = {
       ox304v: 'An error occurred'
     }
   ],
+  '/barrel': [
+    {
+      VGs3cB: 'Used barrel component'
+    }
+  ],
   '/feed': [
     {
       I6Uu2z: 'Feed page',

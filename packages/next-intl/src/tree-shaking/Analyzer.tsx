@@ -27,8 +27,11 @@ type SourcePathMatcher = {
 type TraversalNode = {
   file: string;
   inClient: boolean;
+  requestedExports: RequestedExports;
   parent?: TraversalNode;
 };
+
+type RequestedExports = 'all' | Set<string>;
 
 function normalizeSrcPaths(
   projectRoot: string,
@@ -90,6 +93,196 @@ function hasAncestor(node: TraversalNode, targetFile: string): boolean {
   }
 
   return false;
+}
+
+function cloneRequestedExports(
+  requestedExports: RequestedExports
+): RequestedExports {
+  if (requestedExports === 'all') {
+    return 'all';
+  }
+
+  return new Set(requestedExports);
+}
+
+function mergeRequestedExports(
+  current: RequestedExports | undefined,
+  next: RequestedExports
+): RequestedExports {
+  if (!current) {
+    return cloneRequestedExports(next);
+  }
+
+  if (current === 'all' || next === 'all') {
+    return 'all';
+  }
+
+  const merged = new Set(current);
+  for (const value of next) {
+    merged.add(value);
+  }
+  return merged;
+}
+
+function getRequestedExportsKey(requestedExports: RequestedExports): string {
+  if (requestedExports === 'all') {
+    return '*';
+  }
+
+  return Array.from(requestedExports).sort().join(',');
+}
+
+function getRequestedExportsFromReference(
+  reference: {
+    bindings?: Array<{imported: string; local: string}>;
+    exportAll?: boolean;
+    imported?: 'all' | Array<string>;
+    kind: 'moduleImport' | 'moduleReexport';
+    mappings?: Array<{exported: string; imported: string}>;
+  },
+  requestedExports: RequestedExports
+): RequestedExports | undefined {
+  if (reference.kind === 'moduleImport') {
+    if (reference.imported === 'all') {
+      return 'all';
+    }
+
+    if (!reference.imported) {
+      return undefined;
+    }
+
+    const imported = new Set(reference.imported);
+    if (imported.size === 0) {
+      return undefined;
+    }
+    return imported;
+  }
+
+  if (reference.exportAll) {
+    return cloneRequestedExports(requestedExports);
+  }
+
+  const mappings = reference.mappings ?? [];
+  if (requestedExports === 'all') {
+    const imported = new Set<string>();
+    for (const mapping of mappings) {
+      if (mapping.imported === '*') {
+        return 'all';
+      }
+      imported.add(mapping.imported);
+    }
+    if (imported.size === 0) {
+      return undefined;
+    }
+    return imported;
+  }
+
+  const imported = new Set<string>();
+  for (const mapping of mappings) {
+    if (!requestedExports.has(mapping.exported)) {
+      continue;
+    }
+    if (mapping.imported === '*') {
+      return 'all';
+    }
+    imported.add(mapping.imported);
+  }
+
+  if (imported.size === 0) {
+    return undefined;
+  }
+
+  return imported;
+}
+
+function collectRequestedLocals(
+  requestedExports: RequestedExports,
+  localExportMappings: Array<{exported: string; local: string}>
+): RequestedExports {
+  if (requestedExports === 'all' || localExportMappings.length === 0) {
+    return 'all';
+  }
+
+  const exportToLocal = new Map(
+    localExportMappings.map((mapping) => [mapping.exported, mapping.local])
+  );
+  const requestedLocals = new Set<string>();
+
+  for (const exportName of requestedExports) {
+    const localName = exportToLocal.get(exportName);
+    if (!localName) {
+      return 'all';
+    }
+    requestedLocals.add(localName);
+  }
+
+  return requestedLocals;
+}
+
+function collectDependencyRequests({
+  dependencyReferences,
+  localExportMappings,
+  requestedExports,
+  resolutionBySource
+}: {
+  dependencyReferences: Array<{
+    bindings?: Array<{imported: string; local: string}>;
+    exportAll?: boolean;
+    imported?: 'all' | Array<string>;
+    kind: 'moduleImport' | 'moduleReexport';
+    mappings?: Array<{exported: string; imported: string}>;
+    source: string;
+  }>;
+  localExportMappings: Array<{exported: string; local: string}>;
+  requestedExports: RequestedExports;
+  resolutionBySource: Map<string, string>;
+}): Map<string, RequestedExports> {
+  const requests = new Map<string, RequestedExports>();
+  const requestedLocals = collectRequestedLocals(
+    requestedExports,
+    localExportMappings
+  );
+
+  for (const reference of dependencyReferences) {
+    const dependencyFile = resolutionBySource.get(reference.source);
+    if (!dependencyFile) {
+      continue;
+    }
+
+    let nextRequestedExports: RequestedExports | undefined;
+    if (
+      reference.kind === 'moduleImport' &&
+      requestedLocals !== 'all' &&
+      reference.imported !== 'all' &&
+      reference.bindings
+    ) {
+      const filteredImported = reference.bindings
+        .filter((binding) => requestedLocals.has(binding.local))
+        .map((binding) => binding.imported);
+
+      if (filteredImported.length === 0) {
+        continue;
+      }
+
+      nextRequestedExports = new Set(filteredImported);
+    } else {
+      nextRequestedExports = getRequestedExportsFromReference(
+        reference,
+        requestedExports
+      );
+    }
+    if (!nextRequestedExports) {
+      continue;
+    }
+
+    const previousRequestedExports = requests.get(dependencyFile);
+    requests.set(
+      dependencyFile,
+      mergeRequestedExports(previousRequestedExports, nextRequestedExports)
+    );
+  }
+
+  return requests;
 }
 
 function setPathTrue(
@@ -233,7 +426,7 @@ export default class TreeShakingAnalyzer {
   }) {
     this.srcMatcher = createSourcePathMatcher(projectRoot, srcPaths);
     this.dependencyGraph = new DependencyGraph({
-      projectRoot,
+      sourceAnalyzer: this.sourceAnalyzer,
       srcMatcher: this.srcMatcher,
       tsconfigPath
     });
@@ -357,13 +550,17 @@ export default class TreeShakingAnalyzer {
       this.updateEntryDependencies(entryFile, graph.files);
 
       let namespaces: ManifestNamespaces = {};
-      const queue: Array<TraversalNode> = [{file: entryFile, inClient: false}];
+      const queue: Array<TraversalNode> = [
+        {file: entryFile, inClient: false, requestedExports: 'all'}
+      ];
       const visited = new Set<string>();
 
       while (queue.length > 0) {
         const node = queue.shift()!;
-        const {file, inClient} = node;
-        const visitKey = `${file}|${inClient ? 'c' : 's'}`;
+        const {file, inClient, requestedExports} = node;
+        const visitKey = `${file}|${inClient ? 'c' : 's'}|${getRequestedExportsKey(
+          requestedExports
+        )}`;
         if (visited.has(visitKey)) continue;
         visited.add(visitKey);
 
@@ -388,12 +585,22 @@ export default class TreeShakingAnalyzer {
 
         const deps = graph.adjacency.get(file);
         if (!deps) continue;
-        for (const dep of deps) {
-          if (dep.endsWith('.d.ts')) continue;
+        const dependencyRequests = collectDependencyRequests({
+          dependencyReferences: analysis.dependencyReferences,
+          localExportMappings: analysis.localExportMappings,
+          resolutionBySource: graph.resolutions.get(file) ?? new Map(),
+          requestedExports
+        });
+        for (const [dep, depRequestedExports] of dependencyRequests.entries()) {
           if (hasAncestor(node, dep)) {
             continue;
           }
-          queue.push({file: dep, inClient: effectiveClient, parent: node});
+          queue.push({
+            file: dep,
+            inClient: effectiveClient,
+            parent: node,
+            requestedExports: depRequestedExports
+          });
         }
       }
 
