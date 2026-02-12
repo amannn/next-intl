@@ -96,6 +96,11 @@ const routesMap = {
       bowxvu: 'Layout template page'
     }
   ],
+  '/linked-dependency': [
+    {
+      'Cq+Nds': 'Profile card'
+    }
+  ],
   '/shared-component': [
     {
       JdTriE: 'Shared component'

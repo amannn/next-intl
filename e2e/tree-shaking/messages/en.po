@@ -6,6 +6,10 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: ../shared-ui/src/ProfileCard.tsx:10
+msgid "Cq+Nds"
+msgstr "Profile card"
+
 #: src/app/(group)/group-one/page.tsx:11
 msgid "0A97lp"
 msgstr "Group (one) page"

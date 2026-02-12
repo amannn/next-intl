@@ -15,6 +15,7 @@
     "next-intl": "^4.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "shared-ui": "workspace:*",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
