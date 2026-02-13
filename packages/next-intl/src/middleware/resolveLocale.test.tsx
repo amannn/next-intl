@@ -24,6 +24,17 @@ describe('getAcceptLanguageLocale', () => {
     ).toBe('en-US');
   });
 
+  it('returns the locale exactly as configured', () => {
+    const requestHeaders = new Headers({
+      'accept-language': 'de-at;q=0.9,en-gb;q=0.8'
+    });
+    const locales = ['en', 'en-gb', 'de-at', 'pt'];
+    const defaultLocale = 'en';
+    expect(
+      getAcceptLanguageLocale(requestHeaders, locales, defaultLocale)
+    ).toBe('de-at');
+  });
+
   it('resolves the most specific locale, even if it is defined after a more generic one', () => {
     // Related to https://github.com/formatjs/formatjs/issues/4469
     const requestHeaders = new Headers({

@@ -124,7 +124,7 @@
     "next.js"
   ],
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.5.4",
+    "@formatjs/intl-localematcher": "^0.8.1",
     "@parcel/watcher": "^2.4.1",
     "@swc/core": "^1.15.2",
     "icu-minify": "workspace:^",
