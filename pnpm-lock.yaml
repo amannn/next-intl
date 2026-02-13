@@ -552,8 +552,8 @@ importers:
   packages/next-intl:
     dependencies:
       '@formatjs/intl-localematcher':
-        specifier: ^0.5.4
-        version: 0.5.10
+        specifier: ^0.8.1
+        version: 0.8.1
       '@parcel/watcher':
         specifier: ^2.4.1
         version: 2.5.4
@@ -2122,6 +2122,9 @@ packages:
 
   '@formatjs/intl-localematcher@0.8.0':
     resolution: {integrity: sha512-zgMYWdUlmEZpX2Io+v3LHrfq9xZ6khpQVf9UAw2xYWhGerGgI9XgH1HvL/A34jWiruUJpYlP5pk4g8nIcaDrXQ==}
+
+  '@formatjs/intl-localematcher@0.8.1':
+    resolution: {integrity: sha512-xwEuwQFdtSq1UKtQnyTZWC+eHdv7Uygoa+H2k/9uzBVQjDyp9r20LNDNKedWXll7FssT3GRHvqsdJGYSUWqYFA==}
 
   '@headlessui/react@2.2.9':
     resolution: {integrity: sha512-Mb+Un58gwBn0/yWZfyrCh0TJyurtT+dETj7YHleylHk5od3dv2XqETPGWMyQ5/7sYN7oWdyM1u9MvC0OC8UmzQ==}
@@ -13206,6 +13209,11 @@ snapshots:
       tslib: 2.8.1
 
   '@formatjs/intl-localematcher@0.8.0':
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.0
+      tslib: 2.8.1
+
+  '@formatjs/intl-localematcher@0.8.1':
     dependencies:
       '@formatjs/fast-memoize': 3.1.0
       tslib: 2.8.1
