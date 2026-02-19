@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition -- Loader context varies (webpack/turbopack) */
+import fs from 'fs';
 import path from 'path';
 import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import DependencyGraph from '../../tree-shaking/DependencyGraph.js';
@@ -83,6 +84,46 @@ function hasAncestor(node: TraversalNode, target: string): boolean {
   return false;
 }
 
+const ROUTE_SIBLING_NAMES = [
+  'page',
+  'loading',
+  'error',
+  'default',
+  'template',
+  'not-found'
+];
+
+function getSiblingRouteFiles(layoutPath: string): Array<string> {
+  const dir = path.dirname(layoutPath);
+  const ext = path.extname(layoutPath);
+  const altExt = ext === '.tsx' ? '.ts' : '.tsx';
+  const found: Array<string> = [];
+
+  for (const name of ROUTE_SIBLING_NAMES) {
+    const sibling = path.join(dir, `${name}${ext}`);
+    if (fs.existsSync(sibling)) found.push(sibling);
+    const altSibling = path.join(dir, `${name}${altExt}`);
+    if (altSibling !== sibling && fs.existsSync(altSibling)) {
+      found.push(altSibling);
+    }
+  }
+
+  const entries = fs.readdirSync(dir, {withFileTypes: true});
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !entry.name.startsWith('@')) continue;
+    const slotDir = path.join(dir, entry.name);
+    for (const name of ROUTE_SIBLING_NAMES) {
+      const sibling = path.join(slotDir, `${name}${ext}`);
+      if (fs.existsSync(sibling)) found.push(sibling);
+      const altSibling = path.join(slotDir, `${name}${altExt}`);
+      if (altSibling !== sibling && fs.existsSync(altSibling)) {
+        found.push(altSibling);
+      }
+    }
+  }
+  return found;
+}
+
 function injectManifestProp(
   source: string,
   manifest: ManifestNamespaces
@@ -142,6 +183,28 @@ export default async function manifestLoader(
 
   try {
     const graph = await dependencyGraph.getEntryGraph(inputFile);
+
+    const isLayout = /\b(?:layout)\.(?:tsx?|jsx?)$/.test(inputFile);
+    if (isLayout) {
+      const siblings = getSiblingRouteFiles(inputFile).filter((file) =>
+        srcMatcher.matches(file)
+      );
+      for (const sibling of siblings) {
+        const siblingGraph = await dependencyGraph.getEntryGraph(sibling);
+        for (const [file, deps] of siblingGraph.adjacency) {
+          const existing = graph.adjacency.get(file);
+          if (existing) {
+            for (const dep of deps) existing.add(dep);
+          } else {
+            graph.adjacency.set(file, new Set(deps));
+          }
+        }
+        for (const file of siblingGraph.files) graph.files.add(file);
+        const layoutDeps = graph.adjacency.get(inputFile);
+        if (layoutDeps) layoutDeps.add(sibling);
+        else graph.adjacency.set(inputFile, new Set([sibling]));
+      }
+    }
 
     for (const filePath of graph.files) {
       this.addDependency?.(filePath);
