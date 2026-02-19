@@ -1,27 +1,18 @@
-import startTreeShakingService from '../../tree-shaking/TreeShakingService.js';
+import fs from 'fs/promises';
+import path from 'path';
+import {
+  createEmptyManifest,
+  writeManifest
+} from '../../tree-shaking/Manifest.js';
 import {isDevelopmentOrNextBuild} from '../config.js';
 import type {PluginConfig} from '../types.js';
-import {once, throwError, warn} from '../utils.js';
-
-const runOnce = once('_NEXT_INTL_TREE_SHAKING');
+import {throwError} from '../utils.js';
 
 export default function initTreeShaking(pluginConfig: PluginConfig) {
   if (!pluginConfig.experimental?.treeShaking) {
     return;
   }
 
-  // Avoid running for:
-  // - info
-  // - start
-  // - typegen
-  //
-  // Doesn't consult Next.js config anyway:
-  // - telemetry
-  // - lint
-  //
-  // What remains are:
-  // - dev (NODE_ENV=development)
-  // - build (NODE_ENV=production)
   const shouldRun = isDevelopmentOrNextBuild;
   if (!shouldRun) return;
 
@@ -30,17 +21,19 @@ export default function initTreeShaking(pluginConfig: PluginConfig) {
     throwError('`experimental.srcPath` is required when using `treeShaking`.');
   }
 
-  runOnce(() => {
-    const srcPaths = Array.isArray(srcPath) ? srcPath : [srcPath];
-    startTreeShakingService({
-      projectRoot: process.cwd(),
-      srcPaths
-    }).catch((error) => {
-      warn(
-        `Tree-shaking analyzer failed to start: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
+  // Seed empty manifest so alias resolves before first loader run
+  const projectRoot = process.cwd();
+  const manifestPath = path.join(
+    projectRoot,
+    'node_modules',
+    '.cache',
+    'next-intl',
+    'client-manifest.json'
+  );
+
+  fs.mkdir(path.dirname(manifestPath), {recursive: true})
+    .then(() => writeManifest(createEmptyManifest(), projectRoot))
+    .catch(() => {
+      // Ignore - loader will create on first run
     });
-  });
 }

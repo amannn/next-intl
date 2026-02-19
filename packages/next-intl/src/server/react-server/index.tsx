@@ -8,6 +8,7 @@ export {
   type RequestConfig
 } from './getRequestConfig.js';
 export {default as getFormatter} from './getFormatter.js';
+export {getPathname} from './getPathname.js';
 export {default as getNow} from './getNow.js';
 export {default as getTimeZone} from './getTimeZone.js';
 export {default as getTranslations} from './getTranslations.js';

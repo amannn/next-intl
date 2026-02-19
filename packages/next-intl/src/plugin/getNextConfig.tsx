@@ -13,7 +13,7 @@ import SourceFileFilter from '../extractor/source/SourceFileFilter.js';
 import type {CatalogLoaderConfig, ExtractorConfig} from '../extractor/types.js';
 import {isDevelopmentOrNextBuild} from './config.js';
 import {hasStableTurboConfig, isNextJs16OrHigher} from './nextFlags.js';
-import type {LayoutSegmentLoaderConfig} from './treeShaking/layoutSegmentLoader.js';
+import type {ManifestLoaderConfig} from './treeShaking/manifestLoaderConfig.js';
 import type {PluginConfig} from './types.js';
 import {throwError} from './utils.js';
 
@@ -57,6 +57,18 @@ function getAppLayoutPaths(): Array<string> {
     `${appPath}/**/layout.ts`,
     `${appPath}/**/layout.tsx`
   ]);
+}
+
+function getAppEntryPaths(): Array<string> {
+  const entryNames = ['page', 'loading', 'template', 'default', 'error'];
+  return ['app', './app', 'src/app', './src/app'].flatMap((appPath) =>
+    entryNames.flatMap((name) => [
+      `${appPath}/**/${name}.ts`,
+      `${appPath}/**/${name}.tsx`,
+      `${appPath}/${name}.ts`,
+      `${appPath}/${name}.tsx`
+    ])
+  );
 }
 
 function getManifestAliasPath() {
@@ -150,10 +162,17 @@ export default function getNextConfig(
     };
   }
 
-  function getLayoutSegmentLoaderConfig() {
+  function getManifestLoaderConfig(): {
+    loader: string;
+    options: TurbopackLoaderOptions;
+  } {
+    const srcPaths = getConfiguredSrcPaths(pluginConfig.experimental!.srcPath!);
     return {
-      loader: 'next-intl/treeShaking/layoutSegmentLoader',
-      options: {} satisfies LayoutSegmentLoaderConfig as TurbopackLoaderOptions
+      loader: 'next-intl/treeShaking/manifestLoader',
+      options: {
+        projectRoot: process.cwd(),
+        srcPath: srcPaths
+      } satisfies ManifestLoaderConfig as TurbopackLoaderOptions
     };
   }
 
@@ -267,16 +286,20 @@ export default function getNextConfig(
       });
     }
 
-    // Add loader for layout segment auto-injection
+    // Add loader for on-demand manifest generation (layout + entry points)
     if (pluginConfig.experimental?.treeShaking) {
       if (!isNextJs16OrHigher()) {
         throwError('Tree-shaking requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
+      const manifestLoaderConfig = getManifestLoaderConfig();
       addTurboRule(rules!, '*.{ts,tsx}', {
-        loaders: [getLayoutSegmentLoaderConfig()],
+        loaders: [manifestLoaderConfig],
         condition: {
-          path: getPathCondition(getAppLayoutPaths())
+          path: getPathCondition([
+            ...getAppLayoutPaths(),
+            ...getAppEntryPaths()
+          ])
         }
       });
     }
@@ -359,15 +382,15 @@ export default function getNextConfig(
         ] = require.resolve('use-intl/format-message/format-only');
       }
 
-      // Add loader for layout segment auto-injection
+      // Add loader for on-demand manifest generation
       if (pluginConfig.experimental?.treeShaking) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
         config.module.rules.push({
           test: new RegExp(
-            `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/]layout\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
+            `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/](layout|page|loading|template|default|error)\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
           ),
-          use: [getLayoutSegmentLoaderConfig()]
+          use: [getManifestLoaderConfig()]
         });
       }
 

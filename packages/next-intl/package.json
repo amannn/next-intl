@@ -100,6 +100,10 @@
     "./treeShaking/layoutSegmentLoader": {
       "types": "./dist/types/plugin/treeShaking/layoutSegmentLoader.d.ts",
       "default": "./dist/esm/production/treeShaking/layoutSegmentLoader.js"
+    },
+    "./treeShaking/manifestLoader": {
+      "types": "./dist/types/plugin/treeShaking/manifestLoader.d.ts",
+      "default": "./dist/esm/production/treeShaking/manifestLoader.js"
     }
   },
   "files": [

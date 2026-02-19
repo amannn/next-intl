@@ -11,6 +11,7 @@ type ManifestModule = {
 
 const CLIENT_MANIFEST_MODULE_PREFIX = 'next-intl';
 const CLIENT_MANIFEST_MODULE_SUFFIX = '_client-manifest.json';
+const LAYOUT_SUFFIX = '__layout';
 
 function getClientManifestModuleName(): string {
   return `${CLIENT_MANIFEST_MODULE_PREFIX}/${CLIENT_MANIFEST_MODULE_SUFFIX}`;
@@ -219,6 +220,88 @@ export function inferMessagesForSegment(
   }
 
   return pruneMessagesByManifestNamespaces(messages, namespaces);
+}
+
+function segmentToRegex(segment: string): RegExp {
+  const normalized = normalizeSegmentId(segment);
+  const pattern = normalized
+    .split('/')
+    .filter(Boolean)
+    .map((part) => {
+      if (part.startsWith('[') && part.endsWith(']')) {
+        const inner = part.slice(1, -1);
+        if (inner.startsWith('...')) return '.*';
+        return '[^/]+';
+      }
+      return part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    })
+    .join('/');
+  return new RegExp(`^/${pattern}$`);
+}
+
+function findMatchingPageSegment(
+  pathname: string,
+  manifest: Manifest
+): string | undefined {
+  const normalizedPath =
+    pathname === '/' ? '/' : pathname.replace(/\/$/, '') || '/';
+  let bestMatch: string | undefined;
+  let bestLength = 0;
+
+  for (const key of Object.keys(manifest)) {
+    if (key.endsWith(LAYOUT_SUFFIX)) continue;
+    const regex = segmentToRegex(key);
+    if (regex.test(normalizedPath) && key.length > bestLength) {
+      bestMatch = key;
+      bestLength = key.length;
+    }
+  }
+
+  return bestMatch;
+}
+
+function getLayoutKeysForSegment(segment: string): Array<string> {
+  const ancestors = getAncestorSegments(segment);
+  const keys: Array<string> = [];
+  if (segment !== '/') {
+    keys.push(`/${LAYOUT_SUFFIX}`);
+  }
+  for (const ancestor of ancestors) {
+    if (ancestor !== '/') {
+      keys.push(`${ancestor}${LAYOUT_SUFFIX}`);
+    }
+  }
+  return keys;
+}
+
+export function inferMessagesForPathname(
+  messages: Messages,
+  manifest: Manifest,
+  pathname: string
+): Messages {
+  const pageSegment = findMatchingPageSegment(pathname, manifest);
+  if (!pageSegment) {
+    return {};
+  }
+
+  const keysToMerge = [
+    ...getLayoutKeysForSegment(pageSegment),
+    pageSegment
+  ].filter((key) => manifest[key]?.namespaces);
+
+  let merged: ManifestNamespaces | undefined;
+  for (const key of keysToMerge) {
+    const entry = manifest[key];
+    if (!entry) continue;
+    if (!merged) {
+      merged = cloneNamespaces(entry.namespaces);
+    } else {
+      merged = mergeManifestNamespaces(merged, entry.namespaces);
+    }
+  }
+
+  if (!merged) return {};
+  return pruneMessagesByManifestNamespaces(messages, merged);
 }
 
 export async function loadTreeShakingManifest(): Promise<Manifest | undefined> {
