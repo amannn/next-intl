@@ -1,4 +1,5 @@
-import {useExtracted} from 'next-intl';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider, useExtracted} from 'next-intl';
 import Counter from './Counter';
 
 export default function Index() {
@@ -6,9 +7,12 @@ export default function Index() {
   const user = {name: 'Jane'};
 
   return (
-    <div>
-      <h1>{t('Hey {name}!', user)}</h1>
-      <Counter />
-    </div>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <div>
+        <h1>{t('Hey {name}!', user)}</h1>
+        <Counter />
+      </div>
+    </NextIntlClientProvider>
   );
 }

@@ -1,38 +1,32 @@
 import type {ComponentProps} from 'react';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
-import {getPathname} from '../server/react-server/getPathname.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import BaseNextIntlClientProvider from '../shared/NextIntlClientProvider.js';
-import {
-  inferMessagesForPathname,
-  loadTreeShakingManifest
-} from '../tree-shaking/inferMessages.js';
+import type {ManifestNamespaces} from '../tree-shaking/Manifest.js';
+import {pruneMessagesByManifestNamespaces} from '../tree-shaking/inferMessages.js';
 
-type Props = ComponentProps<typeof BaseNextIntlClientProvider>;
+type Props = ComponentProps<typeof BaseNextIntlClientProvider> & {
+  __inferredManifest?: ManifestNamespaces;
+};
+
 type ResolvedMessages = Exclude<Props['messages'], 'infer'>;
 
-async function resolveMessages(): Promise<ResolvedMessages> {
+async function resolveMessages(
+  inferredManifest: ManifestNamespaces | undefined
+): Promise<ResolvedMessages> {
   const allMessages = await getMessages();
-  const manifest = await loadTreeShakingManifest();
-  if (!manifest) {
+  if (!inferredManifest) {
     return allMessages;
   }
-
-  const pathname = await getPathname();
-  if (!pathname) {
-    return allMessages;
-  }
-
-  const inferredMessages = inferMessagesForPathname(
+  return pruneMessagesByManifestNamespaces(
     allMessages as Record<string, unknown>,
-    manifest,
-    pathname
-  );
-  return inferredMessages as ResolvedMessages;
+    inferredManifest
+  ) as ResolvedMessages;
 }
 
 export default async function NextIntlClientProviderServer({
+  __inferredManifest,
   formats,
   locale,
   messages,
@@ -44,15 +38,13 @@ export default async function NextIntlClientProviderServer({
   if (messages === undefined) {
     clientMessages = await getMessages();
   } else if (messages === 'infer') {
-    clientMessages = await resolveMessages();
+    clientMessages = await resolveMessages(__inferredManifest);
   } else {
     clientMessages = messages;
   }
 
   return (
     <BaseNextIntlClientProvider
-      // We need to be careful about potentially reading from headers here.
-      // See https://github.com/amannn/next-intl/issues/631
       formats={formats === undefined ? await getFormats() : formats}
       locale={locale ?? (await getLocale())}
       messages={clientMessages}

@@ -1,10 +1,8 @@
 import {beforeEach, expect, it, vi} from 'vitest';
 import getConfigNow from '../server/react-server/getConfigNow.js';
 import getFormats from '../server/react-server/getFormats.js';
-import {getPathname} from '../server/react-server/getPathname.js';
 import {getLocale, getMessages, getTimeZone} from '../server.react-server.js';
 import NextIntlClientProvider from '../shared/NextIntlClientProvider.js';
-import {loadTreeShakingManifest} from '../tree-shaking/inferMessages.js';
 import NextIntlClientProviderServer from './NextIntlClientProviderServer.js';
 
 vi.mock('../../src/server/react-server', async () => ({
@@ -31,25 +29,11 @@ vi.mock('../../src/shared/NextIntlClientProvider', async () => ({
   default: vi.fn(() => 'NextIntlClientProvider')
 }));
 
-vi.mock('../../src/tree-shaking/inferMessages', async () => {
-  const actual = await vi.importActual('../../src/tree-shaking/inferMessages');
-  return {
-    ...actual,
-    loadTreeShakingManifest: vi.fn(async () => undefined)
-  };
-});
-
-vi.mock('../../src/server/react-server/getPathname', () => ({
-  getPathname: vi.fn(async () => undefined)
-}));
-
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getLocale).mockResolvedValue('en-US');
   vi.mocked(getMessages).mockResolvedValue({});
   vi.mocked(getTimeZone).mockResolvedValue('America/New_York');
-  vi.mocked(loadTreeShakingManifest).mockResolvedValue(undefined);
-  vi.mocked(getPathname).mockResolvedValue(undefined);
 });
 
 function readProviderFromResult(
@@ -120,32 +104,19 @@ it('reads missing configuration from getter functions', async () => {
   expect(getMessages).toHaveBeenCalled();
 });
 
-it('resolves inferred messages from pathname-based manifest lookup', async () => {
+it('resolves inferred messages from __inferredManifest prop', async () => {
   vi.mocked(getMessages).mockResolvedValue({
     Feed: 'Feed message',
     Root: 'Root message'
   });
-  vi.mocked(getPathname).mockResolvedValue('/feed');
-  vi.mocked(loadTreeShakingManifest).mockResolvedValue({
-    '/__layout': {
-      hasLayoutProvider: true,
-      namespaces: {Root: true}
-    },
-    '/feed': {
-      hasLayoutProvider: true,
-      namespaces: {Feed: true}
-    }
-  });
 
   const result = await NextIntlClientProviderServer({
+    __inferredManifest: {Feed: true},
     children: null,
     messages: 'infer'
   });
 
   const provider = readProviderFromResult(result);
   expect(provider.type).toBe(NextIntlClientProvider);
-  expect(provider.props.messages).toEqual({
-    Feed: 'Feed message',
-    Root: 'Root message'
-  });
+  expect(provider.props.messages).toEqual({Feed: 'Feed message'});
 });

@@ -1,21 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition -- Loader context varies (webpack/turbopack) */
-import fs from 'fs/promises';
 import path from 'path';
 import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import DependencyGraph from '../../tree-shaking/DependencyGraph.js';
-import {getSegmentId} from '../../tree-shaking/EntryScanner.js';
-import type {
-  Manifest,
-  ManifestEntry,
-  ManifestNamespaces
-} from '../../tree-shaking/Manifest.js';
+import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
 import SourceAnalyzer from '../../tree-shaking/SourceAnalyzer.js';
 import type {TurbopackLoaderContext} from '../types.js';
 import type {ManifestLoaderConfig} from './manifestLoaderConfig.js';
 
-const LAYOUT_SUFFIX = '__layout';
-
-let manifestWriteLock = Promise.resolve();
+const PROVIDER_NAME = 'NextIntlClientProvider';
+const INFERRED_MANIFEST_PROP = '__inferredManifest';
 
 function createSrcMatcher(
   projectRoot: string,
@@ -79,32 +72,6 @@ function addToManifest(
   setPathTrue(namespaces, [...nsParts, ...splitPath(key)]);
 }
 
-function mergeNamespaces(
-  target: ManifestNamespaces,
-  source: ManifestNamespaces
-): ManifestNamespaces {
-  if (target === true || source === true) return true;
-  const targetMap = target as Record<string, unknown>;
-  const sourceMap = source as Record<string, unknown>;
-  for (const [key, value] of Object.entries(sourceMap)) {
-    if (value === true) {
-      targetMap[key] = true;
-    } else if (typeof value === 'object' && value !== null) {
-      const existing = targetMap[key];
-      if (existing === true) continue;
-      if (typeof existing === 'object' && existing !== null) {
-        mergeNamespaces(
-          existing as ManifestNamespaces,
-          value as ManifestNamespaces
-        );
-      } else {
-        targetMap[key] = JSON.parse(JSON.stringify(value));
-      }
-    }
-  }
-  return target;
-}
-
 type TraversalNode = {file: string; inClient: boolean; parent?: TraversalNode};
 
 function hasAncestor(node: TraversalNode, target: string): boolean {
@@ -114,6 +81,23 @@ function hasAncestor(node: TraversalNode, target: string): boolean {
     cur = cur.parent;
   }
   return false;
+}
+
+function injectManifestProp(
+  source: string,
+  manifest: ManifestNamespaces
+): string {
+  const manifestJson = JSON.stringify(manifest);
+  const propInjection = ` ${INFERRED_MANIFEST_PROP}={${manifestJson}}`;
+
+  const re = new RegExp(`(<${PROVIDER_NAME}(?:\\s[^>]*?)?)(\\s*>)`, 's');
+  const match = source.match(re);
+  if (!match) return source;
+
+  const before = match[1];
+  if (before.includes(INFERRED_MANIFEST_PROP)) return source;
+
+  return source.replace(re, `$1${propInjection}$2`);
 }
 
 export default async function manifestLoader(
@@ -133,52 +117,22 @@ export default async function manifestLoader(
     return source;
   }
 
-  const appDirs: Array<string> = [];
-  for (const srcPath of srcPaths) {
-    const absSrc = path.resolve(projectRoot, srcPath);
-    const candidate = path.join(absSrc, 'app');
-    try {
-      const stats = await fs.stat(candidate);
-      if (stats.isDirectory()) {
-        appDirs.push(candidate);
-        continue;
-      }
-    } catch {
-      // ignore
-    }
-    try {
-      const stats = await fs.stat(absSrc);
-      if (stats.isDirectory() && path.basename(absSrc) === 'app') {
-        appDirs.push(absSrc);
-      }
-    } catch {
-      // ignore
-    }
-  }
-
-  const appDir = appDirs.find((dir) =>
-    SourceFileFilter.isWithinPath(inputFile, dir)
-  );
-  if (!appDir) {
-    callback?.(null, source);
-    return source;
-  }
-
-  const segmentId = getSegmentId(inputFile, appDir);
-  const isLayout = path.basename(inputFile).startsWith('layout.');
   const hasInferProvider =
     /messages\s*=\s*["']infer["']|messages\s*=\s*\{\s*["']infer["']\s*\}/.test(
       source
-    ) && /NextIntlClientProvider/.test(source);
+    ) && new RegExp(PROVIDER_NAME).test(source);
 
-  if (isLayout && !hasInferProvider) {
+  if (!hasInferProvider) {
     callback?.(null, source);
     return source;
   }
 
-  const manifestKey = isLayout ? `${segmentId}${LAYOUT_SUFFIX}` : segmentId;
-
   const srcMatcher = createSrcMatcher(projectRoot, srcPaths);
+  if (!srcMatcher.matches(inputFile)) {
+    callback?.(null, source);
+    return source;
+  }
+
   const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
   const dependencyGraph = new DependencyGraph({
     projectRoot,
@@ -229,65 +183,19 @@ export default async function manifestLoader(
       }
     }
 
-    const hasTranslations =
+    const hasNamespaces =
       namespaces === true ||
       (typeof namespaces === 'object' && Object.keys(namespaces).length > 0);
-    if (!hasTranslations && !isLayout) {
-      if (callback) callback(null, source);
+    if (!hasNamespaces) {
+      callback?.(null, source);
       return source;
     }
 
-    const manifestDir = path.join(
-      projectRoot,
-      'node_modules',
-      '.cache',
-      'next-intl'
-    );
-    const manifestPath = path.join(manifestDir, 'client-manifest.json');
-
-    await manifestWriteLock;
-
-    let resolveLock: () => void;
-    manifestWriteLock = new Promise<void>((resolve) => {
-      resolveLock = resolve;
-    });
-
-    try {
-      let manifest: Manifest = {};
-      try {
-        const content = await fs.readFile(manifestPath, 'utf8');
-        manifest = JSON.parse(content) as Manifest;
-      } catch {
-        await fs.mkdir(manifestDir, {recursive: true});
-      }
-
-      const entry: ManifestEntry = {
-        hasLayoutProvider: isLayout,
-        namespaces
-      };
-
-      const existing = manifest[manifestKey];
-      if (existing) {
-        entry.namespaces = mergeNamespaces(existing.namespaces, namespaces);
-        entry.hasLayoutProvider = existing.hasLayoutProvider || isLayout;
-      }
-      manifest[manifestKey] = entry;
-
-      await fs.writeFile(
-        manifestPath,
-        JSON.stringify(manifest, null, 2),
-        'utf8'
-      );
-    } finally {
-      resolveLock!();
-    }
-
-    this.addDependency?.(manifestPath);
-
-    callback?.(null, source);
-    return source;
+    const result = injectManifestProp(source, namespaces);
+    callback?.(null, result);
+    return result;
   } catch (error) {
-    if (callback) callback(error as Error);
+    callback?.(error as Error);
     throw error;
   }
 }

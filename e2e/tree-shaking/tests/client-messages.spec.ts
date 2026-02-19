@@ -48,13 +48,11 @@ const routesMap = {
   ],
   '/group-one': [
     {
-      '0A97lp': 'Group (one) page',
-      'ntVPJ+': 'Group (two) page'
+      '0A97lp': 'Group (one) page'
     }
   ],
   '/group-two': [
     {
-      '0A97lp': 'Group (one) page',
       'ntVPJ+': 'Group (two) page'
     }
   ],

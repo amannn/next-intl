@@ -50,30 +50,13 @@ function getPathCondition(paths: Array<string>): string {
   return paths.length === 1 ? paths[0] : `{${paths.join(',')}}`;
 }
 
-function getAppLayoutPaths(): Array<string> {
-  return ['app', './app', 'src/app', './src/app'].flatMap((appPath) => [
-    `${appPath}/layout.ts`,
-    `${appPath}/layout.tsx`,
-    `${appPath}/**/layout.ts`,
-    `${appPath}/**/layout.tsx`
+function getAppSourcePaths(srcPaths: Array<string>): Array<string> {
+  return srcPaths.flatMap((srcPath) => [
+    `${srcPath}/**/*.ts`,
+    `${srcPath}/**/*.tsx`,
+    `${srcPath}/*.ts`,
+    `${srcPath}/*.tsx`
   ]);
-}
-
-function getAppEntryPaths(): Array<string> {
-  const entryNames = ['page', 'loading', 'template', 'default', 'error'];
-  return ['app', './app', 'src/app', './src/app'].flatMap((appPath) =>
-    entryNames.flatMap((name) => [
-      `${appPath}/**/${name}.ts`,
-      `${appPath}/**/${name}.tsx`,
-      `${appPath}/${name}.ts`,
-      `${appPath}/${name}.tsx`
-    ])
-  );
-}
-
-function getManifestAliasPath() {
-  // We can't put this inside `.next` as Turbopack aliases can't target that.
-  return './node_modules/.cache/next-intl/client-manifest.json';
 }
 
 function resolveI18nPath(providedPath?: string, cwd?: string) {
@@ -238,10 +221,6 @@ export default function getNextConfig(
       // paths (see error handling above)
       'next-intl/config': resolveI18nPath(pluginConfig.requestConfig)
     };
-    if (pluginConfig.experimental?.treeShaking) {
-      // Alias the manifest for tree-shaking HMR updates in dev.
-      resolveAlias['next-intl/_client-manifest.json'] = getManifestAliasPath();
-    }
 
     // Add alias for precompiled message formatting
     if (pluginConfig.experimental?.messages?.precompile) {
@@ -286,20 +265,22 @@ export default function getNextConfig(
       });
     }
 
-    // Add loader for on-demand manifest generation (layout + entry points)
+    // Add loader for messages="infer" only (injects __inferredManifest prop)
     if (pluginConfig.experimental?.treeShaking) {
       if (!isNextJs16OrHigher()) {
         throwError('Tree-shaking requires Next.js 16 or higher.');
       }
       rules ??= getTurboRules();
       const manifestLoaderConfig = getManifestLoaderConfig();
+      const srcPaths = getConfiguredSrcPaths(
+        pluginConfig.experimental.srcPath!
+      );
       addTurboRule(rules!, '*.{ts,tsx}', {
         loaders: [manifestLoaderConfig],
         condition: {
-          path: getPathCondition([
-            ...getAppLayoutPaths(),
-            ...getAppEntryPaths()
-          ])
+          path: getPathCondition(getAppSourcePaths(srcPaths)),
+          content:
+            /messages\s*=\s*["']infer["']|messages\s*=\s*\{\s*["']infer["']\s*\}/
         }
       });
     }
@@ -365,13 +346,6 @@ export default function getNextConfig(
           config.context!,
           resolveI18nPath(pluginConfig.requestConfig, config.context)
         );
-      if (pluginConfig.experimental?.treeShaking) {
-        // Alias the manifest for tree-shaking HMR updates in dev.
-        (config.resolve.alias as Record<string, string>)[
-          'next-intl/_client-manifest.json'
-        ] = path.resolve(config.context!, getManifestAliasPath());
-      }
-
       // Add alias for precompiled message formatting
       if (pluginConfig.experimental?.messages?.precompile) {
         // Use require.resolve to get the actual file path, since
@@ -382,14 +356,17 @@ export default function getNextConfig(
         ] = require.resolve('use-intl/format-message/format-only');
       }
 
-      // Add loader for on-demand manifest generation
+      // Add loader for messages="infer" (injects __inferredManifest prop)
       if (pluginConfig.experimental?.treeShaking) {
         if (!config.module) config.module = {};
         if (!config.module.rules) config.module.rules = [];
+        const srcPath = pluginConfig.experimental.srcPath;
+        const include = Array.isArray(srcPath)
+          ? srcPath.map((cur) => path.resolve(config.context!, cur))
+          : path.resolve(config.context!, srcPath || '');
         config.module.rules.push({
-          test: new RegExp(
-            `(^|[\\\\/])(src[\\\\/]app|app)([\\\\/].*)?[\\\\/](layout|page|loading|template|default|error)\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`
-          ),
+          test: new RegExp(`\\.(${SourceFileFilter.EXTENSIONS.join('|')})$`),
+          include,
           use: [getManifestLoaderConfig()]
         });
       }
