@@ -1,14 +1,18 @@
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider, useExtracted} from 'next-intl';
 import TypeImportComponent from './TypeImportComponent';
-import {useExtracted} from 'next-intl';
 
 export type Test = 'test';
 
 export default function TypeImportsPage() {
   const t = useExtracted();
   return (
-    <div>
-      <p>{t('Type imports page')}</p>
-      <TypeImportComponent />
-    </div>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <div>
+        <p>{t('Type imports page')}</p>
+        <TypeImportComponent />
+      </div>
+    </NextIntlClientProvider>
   );
 }

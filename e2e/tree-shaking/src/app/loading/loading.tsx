@@ -1,13 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import LoadingContent from './LoadingContent';
 
 export default function Loading() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <p>{t('Loading page …')}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <LoadingContent />
+    </NextIntlClientProvider>
   );
 }

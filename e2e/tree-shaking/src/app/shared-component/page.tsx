@@ -1,12 +1,12 @@
-'use client';
-
-import SharedComponent from '@/components/SharedComponent';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import SharedComponentPageContent from './SharedComponentPageContent';
 
 export default function SharedComponentPage() {
   return (
-    <ClientBoundary>
-      <SharedComponent />
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <SharedComponentPageContent />
+    </NextIntlClientProvider>
   );
 }

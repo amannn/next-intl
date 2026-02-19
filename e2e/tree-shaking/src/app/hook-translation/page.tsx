@@ -1,13 +1,12 @@
-'use client';
-
-import useHookLabel from '@/hooks/useHookLabel';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import HookTranslationPageContent from './HookTranslationPageContent';
 
 export default function HookTranslationPage() {
-  const label = useHookLabel();
   return (
-    <ClientBoundary>
-      <p>{label}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <HookTranslationPageContent />
+    </NextIntlClientProvider>
   );
 }

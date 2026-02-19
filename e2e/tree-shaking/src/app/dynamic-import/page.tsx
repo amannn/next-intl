@@ -1,14 +1,12 @@
-import dynamic from 'next/dynamic';
-import {lazy} from 'react';
-
-const DynamicImportContent = dynamic(() => import('./DynamicImportContent'));
-const LazyImportContent = lazy(() => import('./LazyImportContent'));
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import DynamicImportPageContent from './DynamicImportPageContent';
 
 export default function DynamicImportPage() {
   return (
-    <>
-      <DynamicImportContent />
-      <LazyImportContent />
-    </>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <DynamicImportPageContent />
+    </NextIntlClientProvider>
   );
 }

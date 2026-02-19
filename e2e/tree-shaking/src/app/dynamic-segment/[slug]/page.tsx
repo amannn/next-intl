@@ -1,20 +1,16 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import DynamicSlugPageContent from './DynamicSlugPageContent';
 
-import {useExtracted} from 'next-intl';
-import {use} from 'react';
-import ClientBoundary from '@/components/ClientBoundary';
+type Props = {
+  params: Promise<{slug: string}>;
+};
 
-export default function DynamicSlugPage({
-  params
-}: PageProps<'/dynamic-segment/[slug]'>) {
-  const {slug} = use(params);
-  const t = useExtracted();
-
+export default function DynamicSlugPage({params}: Props) {
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Dynamic slug page: {slug}', {slug})}</p>
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <DynamicSlugPageContent params={params} />
+    </NextIntlClientProvider>
   );
 }

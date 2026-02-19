@@ -1,16 +1,16 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import PhotoPageContent from './PhotoPageContent';
 
-import ClientBoundary from '@/components/ClientBoundary';
-import {useExtracted} from 'next-intl';
-import {use} from 'react';
+type Props = {
+  params: Promise<{id: string}>;
+};
 
-export default function PhotoPage({params}: PageProps<'/photo/[id]'>) {
-  const {id} = use(params);
-  const t = useExtracted();
-
+export default function PhotoPage({params}: Props) {
   return (
-    <ClientBoundary>
-      <p>{t('Photo page: {id}', {id})}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <PhotoPageContent params={params} />
+    </NextIntlClientProvider>
   );
 }

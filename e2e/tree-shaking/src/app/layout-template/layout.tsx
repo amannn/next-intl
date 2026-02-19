@@ -1,6 +1,5 @@
 import DebugMessages from '@/components/DebugMessages';
-import {NextIntlClientProvider} from 'next-intl';
-import {useExtracted} from 'next-intl';
+import {NextIntlClientProvider, useExtracted} from 'next-intl';
 
 export default function LayoutTemplateLayout({
   children

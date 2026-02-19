@@ -1,16 +1,12 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import ParallelTemplateContent from './ParallelTemplateContent';
 
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
-
-export default function ParallelTemplate({children}: LayoutProps<'/parallel'>) {
-  const t = useExtracted();
+export default function ParallelTemplate() {
   return (
-    <>
-      <ClientBoundary>
-        <p>{t('Parallel template')}</p>
-      </ClientBoundary>
-      {children}
-    </>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <ParallelTemplateContent />
+    </NextIntlClientProvider>
   );
 }

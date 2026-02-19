@@ -1,21 +1,16 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import CatchAllPageContent from './CatchAllPageContent';
 
-import {useExtracted} from 'next-intl';
-import {use} from 'react';
-import ClientBoundary from '@/components/ClientBoundary';
+type Props = {
+  params: Promise<{parts: Array<string>}>;
+};
 
-export default function CatchAllPage({
-  params
-}: PageProps<'/catch-all/[...parts]'>) {
-  const t = useExtracted();
-  const {parts} = use(params);
-  const segment = parts.join('/');
-
+export default function CatchAllPage({params}: Props) {
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Catch-all page: {segment}', {segment})}</p>
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <CatchAllPageContent params={params} />
+    </NextIntlClientProvider>
   );
 }

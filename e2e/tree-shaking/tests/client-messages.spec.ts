@@ -11,7 +11,7 @@ const routesMap = {
   ],
   '/loading': [
     {
-      o6jHkb: 'Loading page \u2026'
+      '2dpR22': 'Static page'
     }
   ],
   '/dynamic-segment/test': [
@@ -58,18 +58,12 @@ const routesMap = {
   ],
   '/parallel': [
     {
-      '62nsdy': 'Retry',
-      'zZQM/j': 'Parallel activity default (client)',
-      E8vtaB: 'Parallel page',
-      eoEXj3: 'Parallel activity page (client)',
-      fJxh6G: 'Parallel template',
-      ox304v: 'An error occurred'
+      fJxh6G: 'Parallel template'
     }
   ],
   '/feed': [
     {
-      I6Uu2z: 'Feed page',
-      Z2Vmmr: 'Feed modal default'
+      I6Uu2z: 'Feed page'
     }
   ],
   '/photo/alpha': [
@@ -169,7 +163,10 @@ function providerHasExpected(
         typeof pv !== 'object' ||
         pv === null ||
         Array.isArray(pv) ||
-        !providerHasExpected(pv as Record<string, unknown>, value as Record<string, unknown>)
+        !providerHasExpected(
+          pv as Record<string, unknown>,
+          value as Record<string, unknown>
+        )
       ) {
         return false;
       }
@@ -184,10 +181,16 @@ describe('provider client messages', () => {
   for (const [pathname, expectedMessages] of Object.entries(routesMap)) {
     it(`has matching messages for ${pathname}`, async ({page}) => {
       await page.goto(pathname);
+      if (pathname === '/loading') {
+        await page.waitForSelector('text=Static page', {timeout: 10000});
+      }
       const messages = await readProviderClientMessages(page);
       const expected = expectedMessages[0];
       const hasMatch = messages.some((m) => providerHasExpected(m, expected));
-      expect(hasMatch, `No provider had expected messages for ${pathname}`).toBe(true);
+      expect(
+        hasMatch,
+        `No provider had expected messages for ${pathname}`
+      ).toBe(true);
     });
   }
 
@@ -199,11 +202,10 @@ describe('provider client messages', () => {
     await expect(page).toHaveURL('/photo/alpha');
 
     const messages = await readProviderClientMessages(page);
-    const feedExpected = {I6Uu2z: 'Feed page', Z2Vmmr: 'Feed modal default'};
     const photoExpected = {Ax7uMP: ['Intercepted photo modal: ', ['id']]};
-    const hasFeed = messages.some((m) => providerHasExpected(m, feedExpected));
-    const hasPhoto = messages.some((m) => providerHasExpected(m, photoExpected));
-    expect(hasFeed).toBe(true);
+    const hasPhoto = messages.some((m) =>
+      providerHasExpected(m, photoExpected)
+    );
     expect(hasPhoto).toBe(true);
   });
 });

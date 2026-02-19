@@ -1,13 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import ParallelActivityDefaultContent from './ParallelActivityDefaultContent';
 
 export default function ParallelActivityDefault() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <p>{t('Parallel activity default (client)')}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <ParallelActivityDefaultContent />
+    </NextIntlClientProvider>
   );
 }

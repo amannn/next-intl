@@ -1,13 +1,12 @@
-'use client';
-
-import {useExtracted} from 'next-intl';
-import ClientBoundary from '@/components/ClientBoundary';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import LayoutTemplatePageContent from './LayoutTemplatePageContent';
 
 export default function LayoutTemplatePage() {
-  const t = useExtracted();
   return (
-    <ClientBoundary>
-      <p>{t('Layout template page')}</p>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <LayoutTemplatePageContent />
+    </NextIntlClientProvider>
   );
 }

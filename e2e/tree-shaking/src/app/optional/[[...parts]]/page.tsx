@@ -1,21 +1,16 @@
-'use client';
+import DebugMessages from '@/components/DebugMessages';
+import {NextIntlClientProvider} from 'next-intl';
+import OptionalCatchAllPageContent from './OptionalCatchAllPageContent';
 
-import {useExtracted} from 'next-intl';
-import {use} from 'react';
-import ClientBoundary from '@/components/ClientBoundary';
+type Props = {
+  params: Promise<{parts?: Array<string>}>;
+};
 
-export default function OptionalCatchAllPage({
-  params
-}: PageProps<'/optional/[[...parts]]'>) {
-  const t = useExtracted();
-  const {parts} = use(params);
-  const segment = parts?.join('/') ?? '(empty)';
-
+export default function OptionalCatchAllPage({params}: Props) {
   return (
-    <ClientBoundary>
-      <div>
-        <p>{t('Optional catch-all page: {segment}', {segment})}</p>
-      </div>
-    </ClientBoundary>
+    <NextIntlClientProvider messages="infer">
+      <DebugMessages />
+      <OptionalCatchAllPageContent params={params} />
+    </NextIntlClientProvider>
   );
 }
