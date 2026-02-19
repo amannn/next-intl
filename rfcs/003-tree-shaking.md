@@ -4,9 +4,7 @@ Start date: 2026-02-06
 
 ## Summary
 
-We want Next.js App Router client bundles to receive only the message namespaces (and ideally keys) they actually use. Static analysis of the module graph can infer those requirements automatically, replacing manual `pick()` calls. This RFC frames the problem, the requirements for analysis, design options, and the proposed approach.
-
-**Update (2026-02):** Implementation learnings led to two important changes: (1) on-demand manifest generation via loader instead of pre-computation for `next dev` compatibility, and (2) provider-level splitting instead of segment-level to avoid over-including messages across sibling routes.
+We want Next.js App Router client bundles to receive only the message namespaces (and ideally keys) they actually use. Static analysis of the module graph can infer those requirements automatically, replacing manual `pick()` calls. We use on-demand manifest generation via a loader (for `next dev` compatibility) and provider-level splitting (to avoid over-including messages across sibling routes). This RFC frames the problem, the requirements for analysis, design options, and the proposed approach.
 
 **Table of contents:**
 
@@ -17,7 +15,7 @@ We want Next.js App Router client bundles to receive only the message namespaces
 - [Static analysis requirements](#static-analysis-requirements)
 - [Entry point model](#entry-point-model)
 - [Design options for granularity](#design-options-for-granularity)
-- [Proposed approach: Segment-level tree-shaking](#proposed-approach-segment-level-tree-shaking)
+- [Proposed approach: Provider-level tree-shaking](#proposed-approach-provider-level-tree-shaking)
   - [Constraints](#constraints)
   - [Scope of analysis](#scope-of-analysis)
   - [Why this granularity](#why-this-granularity)
@@ -228,15 +226,9 @@ Treat each Next.js entry point (`page.tsx`, `loading.tsx`, `error.tsx`, `templat
 
 This is unnecessarily granular. These entry points never render separately in a way that would benefit from separate message sets -- `loading.tsx` shows while `page.tsx` is loading, `error.tsx` replaces `page.tsx` on failure. Splitting between them adds complexity without practical benefit. Furthermore, `error.tsx` **must** be a Client Component, so it can't have its own provider -- it depends on an ancestor layout for messages.
 
-### Approach 3: Segment-level splitting (deprecated)
+### Approach 3: Provider-level splitting (current)
 
-A _segment_ is a route-folder. All entry points inside (`page.tsx`, `loading.tsx`, `error.tsx`, `template.tsx`) belong to the same unit. We place the provider in the segment's `layout.tsx` and infer the union of namespaces reachable from any client component in that segment's scope.
-
-**This approach was abandoned.** See "Implementation learnings" below.
-
-### Approach 4: Provider-level splitting (current)
-
-**This is the approach we're pursuing.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance gets its own manifest entry keyed by the route being rendered. The root layout's provider scope is layout namespaces + current page namespaces; sibling pages' namespaces are not included.
+**This is the approach we use.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance receives its inferred namespaces via an injected `__inferredManifest` prop; sibling pages' namespaces are not included.
 
 ## Proposed approach: Provider-level tree-shaking
 
@@ -287,27 +279,10 @@ app/[locale]/
 - When navigating from `/` to `/about`, the root layout's messages already include `About` -- no additional messages needed.
 - When navigating to `/dashboard`, the dashboard layout provides its own, more specific set.
 
-## Implementation learnings
-
-### (1) On-demand manifest generation for `next dev`
-
-The initial approach computed the whole project graph ahead of time and wrote to `node_modules/.cache/next-intl/client-manifest.json`. This does not work well with `next dev` because Next.js compiles routes on-demand; we don't know the full graph upfront.
-
-**Solution:** Use a Turbopack/Webpack loader that runs when layout or entry files are compiled. The loader traverses the module graph, collects translation usage, and writes its manifest entry. It uses `this.addDependency` for all discovered modules so HMR correctly invalidates when dependencies change. Inspired by [nextjs-manifest-loader](https://github.com/amannn/nextjs-manifest-loader).
-
-### (2) Provider-level instead of segment-level splitting
-
-Segment-level splitting was the wrong choice. Example: `app/{layout,page}` and `app/about/{layout,page}`. The root segment would include messages for both pages, but we don't need `app/page` when rendering `about/page`.
-
-**Solution:** Key the manifest by route (pathname). Each provider gets namespaces from layout ancestors + current page only. Use `getPathname()` from headers to resolve the route at runtime.
-
 ## Implementation notes
 
-- A manifest loader runs on layout files (with `messages="infer"`) and entry files. It uses `addDependency` for all discovered modules.
-- The manifest lives at `node_modules/.cache/next-intl/client-manifest.json`.
-- The manifest must not live in `.next/`; Turbopack/Webpack aliases can’t target that folder. Writing it to `node_modules/.cache/next-intl/client-manifest.json` works however.
-- Seeding an empty manifest on startup prevents “module not found” when the alias is resolved before the first analysis run.
-- Manifest keys: `segmentId__layout` for layouts, `segmentId` for pages. Lookup uses pathname to find the matching page segment and merges layout + page namespaces.
+- A manifest loader runs on files containing `messages="infer"` (matched by content condition). It traverses the module graph from that file, including sibling route files (page, loading, @slot) when the entry is a layout. It uses `addDependency` for all discovered modules so HMR correctly invalidates when dependencies change. Inspired by [nextjs-manifest-loader](https://github.com/amannn/nextjs-manifest-loader).
+- The computed manifest is injected as `__inferredManifest` prop onto the provider; no file is written. The server component reads it and prunes messages via `pruneMessagesByManifestNamespaces`.
 - The analyzer splits dotted namespaces/keys into nested objects so pruning matches message JSON structure.
-- We use `@swc/core` to parse and `dependency-tree` for the module graph (with `tsconfig.json` support).
+- We use custom traversal with `enhanced-resolve` for module resolution (tsconfig paths, package.json exports) and `@swc/core` for parsing imports. `SourceAnalyzer` handles translation extraction.
 - File changes trigger loader re-run via `addDependency`; no separate file watcher needed for tree-shaking.

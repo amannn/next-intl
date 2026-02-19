@@ -141,6 +141,73 @@ function injectManifestProp(
   return source.replace(re, `$1${propInjection}$2`);
 }
 
+async function collectNamespacesFromGraph(
+  graph: {adjacency: Map<string, Set<string>>; files: Set<string>},
+  inputFile: string,
+  srcMatcher: {matches(filePath: string): boolean},
+  sourceAnalyzer: SourceAnalyzer
+): Promise<ManifestNamespaces> {
+  let namespaces: ManifestNamespaces = {};
+  const queue: Array<TraversalNode> = [{file: inputFile, inClient: false}];
+  const visited = new Set<string>();
+
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    const {file, inClient} = node;
+    const visitKey = `${file}|${inClient ? 'c' : 's'}`;
+    if (visited.has(visitKey)) continue;
+    visited.add(visitKey);
+
+    if (!srcMatcher.matches(file)) continue;
+
+    const analysis = await sourceAnalyzer.analyzeFile(file);
+    const nowClient = inClient || analysis.hasUseClient;
+    const effectiveClient = nowClient && !analysis.hasUseServer;
+
+    if (effectiveClient) {
+      if (analysis.requiresAllMessages) namespaces = true;
+      if (namespaces !== true) {
+        for (const translation of analysis.translations) {
+          addToManifest(namespaces as Record<string, unknown>, translation);
+        }
+      }
+    }
+
+    const deps = graph.adjacency.get(file);
+    if (!deps) continue;
+    for (const dep of deps) {
+      if (dep.endsWith('.d.ts')) continue;
+      if (hasAncestor(node, dep)) continue;
+      queue.push({file: dep, inClient: effectiveClient, parent: node});
+    }
+  }
+
+  return namespaces;
+}
+
+async function mergeSiblingGraphs(
+  graph: {adjacency: Map<string, Set<string>>; files: Set<string>},
+  inputFile: string,
+  siblings: Array<string>,
+  dependencyGraph: InstanceType<typeof DependencyGraph>
+): Promise<void> {
+  for (const sibling of siblings) {
+    const siblingGraph = await dependencyGraph.getEntryGraph(sibling);
+    for (const [file, deps] of siblingGraph.adjacency) {
+      const existing = graph.adjacency.get(file);
+      if (existing) {
+        for (const dep of deps) existing.add(dep);
+      } else {
+        graph.adjacency.set(file, new Set(deps));
+      }
+    }
+    for (const file of siblingGraph.files) graph.files.add(file);
+    const layoutDeps = graph.adjacency.get(inputFile);
+    if (layoutDeps) layoutDeps.add(sibling);
+    else graph.adjacency.set(inputFile, new Set([sibling]));
+  }
+}
+
 export default async function manifestLoader(
   this: TurbopackLoaderContext<ManifestLoaderConfig>,
   source: string
@@ -149,21 +216,20 @@ export default async function manifestLoader(
   const inputFile = this.resourcePath;
   const rootContext = this.rootContext ?? process.cwd();
 
-  const options = (this.getOptions?.() ?? {}) as Partial<ManifestLoaderConfig>;
-  const srcPaths = options.srcPath;
-  const projectRoot = options.projectRoot ?? rootContext;
-
-  if (!srcPaths || !Array.isArray(srcPaths)) {
-    callback?.(null, source);
-    return source;
-  }
-
+  // Early exit if marker not found (content condition in next.config also checks)
   const hasInferProvider =
     /messages\s*=\s*["']infer["']|messages\s*=\s*\{\s*["']infer["']\s*\}/.test(
       source
     ) && new RegExp(PROVIDER_NAME).test(source);
-
   if (!hasInferProvider) {
+    callback?.(null, source);
+    return source;
+  }
+
+  const options = (this.getOptions?.() ?? {}) as Partial<ManifestLoaderConfig>;
+  const srcPaths = options.srcPath;
+  const projectRoot = options.projectRoot ?? rootContext;
+  if (!srcPaths || !Array.isArray(srcPaths)) {
     callback?.(null, source);
     return source;
   }
@@ -174,14 +240,14 @@ export default async function manifestLoader(
     return source;
   }
 
-  const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
-  const dependencyGraph = new DependencyGraph({
-    projectRoot,
-    srcMatcher,
-    tsconfigPath
-  });
-
   try {
+    const tsconfigPath = path.join(projectRoot, 'tsconfig.json');
+    const dependencyGraph = new DependencyGraph({
+      projectRoot,
+      srcMatcher,
+      tsconfigPath
+    });
+
     const graph = await dependencyGraph.getEntryGraph(inputFile);
 
     const isLayout = /\b(?:layout)\.(?:tsx?|jsx?)$/.test(inputFile);
@@ -189,21 +255,7 @@ export default async function manifestLoader(
       const siblings = getSiblingRouteFiles(inputFile).filter((file) =>
         srcMatcher.matches(file)
       );
-      for (const sibling of siblings) {
-        const siblingGraph = await dependencyGraph.getEntryGraph(sibling);
-        for (const [file, deps] of siblingGraph.adjacency) {
-          const existing = graph.adjacency.get(file);
-          if (existing) {
-            for (const dep of deps) existing.add(dep);
-          } else {
-            graph.adjacency.set(file, new Set(deps));
-          }
-        }
-        for (const file of siblingGraph.files) graph.files.add(file);
-        const layoutDeps = graph.adjacency.get(inputFile);
-        if (layoutDeps) layoutDeps.add(sibling);
-        else graph.adjacency.set(inputFile, new Set([sibling]));
-      }
+      await mergeSiblingGraphs(graph, inputFile, siblings, dependencyGraph);
     }
 
     for (const filePath of graph.files) {
@@ -211,40 +263,12 @@ export default async function manifestLoader(
     }
 
     const sourceAnalyzer = new SourceAnalyzer();
-    let namespaces: ManifestNamespaces = {};
-    const queue: Array<TraversalNode> = [{file: inputFile, inClient: false}];
-    const visited = new Set<string>();
-
-    while (queue.length > 0) {
-      const node = queue.shift()!;
-      const {file, inClient} = node;
-      const visitKey = `${file}|${inClient ? 'c' : 's'}`;
-      if (visited.has(visitKey)) continue;
-      visited.add(visitKey);
-
-      if (!srcMatcher.matches(file)) continue;
-
-      const analysis = await sourceAnalyzer.analyzeFile(file);
-      const nowClient = inClient || analysis.hasUseClient;
-      const effectiveClient = nowClient && !analysis.hasUseServer;
-
-      if (effectiveClient) {
-        if (analysis.requiresAllMessages) namespaces = true;
-        if (namespaces !== true) {
-          for (const translation of analysis.translations) {
-            addToManifest(namespaces as Record<string, unknown>, translation);
-          }
-        }
-      }
-
-      const deps = graph.adjacency.get(file);
-      if (!deps) continue;
-      for (const dep of deps) {
-        if (dep.endsWith('.d.ts')) continue;
-        if (hasAncestor(node, dep)) continue;
-        queue.push({file: dep, inClient: effectiveClient, parent: node});
-      }
-    }
+    const namespaces = await collectNamespacesFromGraph(
+      graph,
+      inputFile,
+      srcMatcher,
+      sourceAnalyzer
+    );
 
     const hasNamespaces =
       namespaces === true ||
