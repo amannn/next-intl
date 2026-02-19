@@ -3,7 +3,6 @@ import SourceFileFilter from '../../extractor/source/SourceFileFilter.js';
 import DependencyGraph from '../../tree-shaking/DependencyGraph.js';
 import type {ManifestNamespaces} from '../../tree-shaking/Manifest.js';
 import SourceAnalyzer from '../../tree-shaking/SourceAnalyzer.js';
-import {getSiblingRouteFiles} from './routeSiblings.js';
 
 type SrcMatcher = {matches(filePath: string): boolean};
 
@@ -129,34 +128,6 @@ async function collectNamespacesFromGraph(
   return namespaces;
 }
 
-async function mergeSiblingGraphs(
-  graph: EntryGraph,
-  inputFile: string,
-  siblings: Array<string>,
-  dependencyGraph: DependencyGraph
-): Promise<void> {
-  const siblingGraphs = await Promise.all(
-    siblings.map((sibling) => dependencyGraph.getEntryGraph(sibling))
-  );
-  for (const siblingGraph of siblingGraphs) {
-    for (const [file, deps] of siblingGraph.adjacency) {
-      const existing = graph.adjacency.get(file);
-      if (existing) {
-        for (const dep of deps) existing.add(dep);
-      } else {
-        graph.adjacency.set(file, new Set(deps));
-      }
-    }
-    for (const file of siblingGraph.files) graph.files.add(file);
-  }
-  const layoutDeps = graph.adjacency.get(inputFile);
-  if (layoutDeps) {
-    for (const sibling of siblings) layoutDeps.add(sibling);
-  } else {
-    graph.adjacency.set(inputFile, new Set(siblings));
-  }
-}
-
 export async function buildInferredManifest(
   inputFile: string,
   projectRoot: string,
@@ -173,14 +144,6 @@ export async function buildInferredManifest(
   });
 
   const graph = await dependencyGraph.getEntryGraph(inputFile);
-
-  const isLayout = /\b(?:layout)\.(?:tsx?|jsx?)$/.test(inputFile);
-  if (isLayout) {
-    const siblings = getSiblingRouteFiles(inputFile).filter((file) =>
-      srcMatcher.matches(file)
-    );
-    await mergeSiblingGraphs(graph, inputFile, siblings, dependencyGraph);
-  }
 
   const sourceAnalyzer = new SourceAnalyzer();
   const namespaces = await collectNamespacesFromGraph(

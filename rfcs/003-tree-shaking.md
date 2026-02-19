@@ -228,7 +228,7 @@ This is unnecessarily granular. These entry points never render separately in a 
 
 ### Approach 3: Provider-level splitting (current)
 
-**This is the approach we use.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance receives its inferred namespaces via an injected `__inferredManifest` prop; sibling pages' namespaces are not included.
+**This is the approach we use.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance receives its inferred namespaces via an injected `__inferredManifest` prop. Each page, loading, default, template should use its own provider (no sibling merging). `error.tsx` is unsolved.
 
 ## Proposed approach: Provider-level tree-shaking
 
@@ -281,7 +281,7 @@ app/[locale]/
 
 ## Implementation notes
 
-- A manifest loader runs on files containing `messages="infer"` (matched by content condition). It traverses the module graph from that file, including sibling route files (page, loading, @slot) when the entry is a layout. It uses `addDependency` for all discovered modules so HMR correctly invalidates when dependencies change. Inspired by [nextjs-manifest-loader](https://github.com/amannn/nextjs-manifest-loader).
+- A manifest loader runs on files containing `messages="infer"` (matched by content condition). It traverses the module graph from that file only (no sibling merging). Each page, loading, default, template should have its own provider. `error.tsx` is unsolved for now. Uses `addDependency` for all discovered modules so HMR correctly invalidates when dependencies change. Inspired by [nextjs-manifest-loader](https://github.com/amannn/nextjs-manifest-loader).
 - The computed manifest is injected as `__inferredManifest` prop onto the provider; no file is written. The server component reads it and prunes messages via `pruneMessagesByManifestNamespaces`.
 - The analyzer splits dotted namespaces/keys into nested objects so pruning matches message JSON structure.
 - We use custom traversal with `enhanced-resolve` for module resolution (tsconfig paths, package.json exports) and `@swc/core` for parsing imports. `SourceAnalyzer` handles translation extraction.
