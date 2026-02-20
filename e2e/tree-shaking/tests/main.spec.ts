@@ -1,6 +1,9 @@
 import {expect, test as it, type Page} from '@playwright/test';
 import {readFileSync, writeFileSync} from 'fs';
-import {join} from 'path';
+import {dirname, join} from 'path';
+import {fileURLToPath} from 'url';
+
+const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const {describe} = it;
 
@@ -249,21 +252,19 @@ describe('provider client messages', () => {
 });
 
 describe.serial('HMR message updates', () => {
-  const HMR_POLL_TIMEOUT_MS = 15_000;
-
   async function pollMessages(
     page: Page,
     predicate: (messages: Array<Record<string, unknown>>) => boolean
   ) {
     await expect
       .poll(async () => predicate(await readProviderClientMessages(page)), {
-        timeout: HMR_POLL_TIMEOUT_MS
+        timeout: 10000
       })
       .toBe(true);
   }
 
   function useEdit(path: string, edit: (original: string) => string) {
-    const fullPath = join(process.cwd(), path);
+    const fullPath = join(projectRoot, path);
     const original = readFileSync(fullPath, 'utf-8');
     writeFileSync(fullPath, edit(original));
     return {
@@ -294,7 +295,6 @@ describe.serial('HMR message updates', () => {
 
   it('updates rendered messages when adding client message', async ({page}) => {
     await page.goto('/');
-    await page.reload(); // Reset after previous test's restore (messages come from server)
     const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
@@ -317,7 +317,6 @@ describe.serial('HMR message updates', () => {
     page
   }) => {
     await page.goto('/');
-    await page.reload(); // Reset after previous test's restore (messages come from server)
     const messages = await readProviderClientMessages(page);
     expect(messagesContainValue(messages, 'Increment')).toBe(true);
 
