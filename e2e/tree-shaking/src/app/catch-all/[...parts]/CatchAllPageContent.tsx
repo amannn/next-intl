@@ -1,16 +1,14 @@
 'use client';
 
 import {useExtracted} from 'next-intl';
-import {use} from 'react';
 import ClientBoundary from '@/components/ClientBoundary';
 
 type Props = {
-  params: Promise<{parts: Array<string>}>;
+  parts: Array<string>;
 };
 
-export default function CatchAllPageContent({params}: Props) {
+export default function CatchAllPageContent({parts}: Props) {
   const t = useExtracted();
-  const {parts} = use(params);
   const segment = parts.join('/');
 
   return (

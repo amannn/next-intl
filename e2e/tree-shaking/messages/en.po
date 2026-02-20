@@ -26,7 +26,7 @@ msgstr "Returned from action"
 msgid "2QgyEZ"
 msgstr "Lazy server content"
 
-#: src/app/actions/page.tsx:11
+#: src/app/actions/page.tsx:9
 msgid "mz9I4r"
 msgstr "Server action page"
 
@@ -34,7 +34,7 @@ msgstr "Server action page"
 msgid "RNB4/W"
 msgstr "Load lazy content"
 
-#: src/app/catch-all/[...parts]/CatchAllPageContent.tsx:19
+#: src/app/catch-all/[...parts]/CatchAllPageContent.tsx:17
 msgid "xmCXAl"
 msgstr "Catch-all page: {segment}"
 
@@ -96,7 +96,7 @@ msgstr "next-intl example"
 msgid "o6jHkb"
 msgstr "Loading page …"
 
-#: src/app/loading/page.tsx:11
+#: src/app/loading/page.tsx:6
 msgid "2dpR22"
 msgstr "Static page"
 
@@ -190,7 +190,7 @@ msgctxt "Navigation"
 msgid "ZME3di"
 msgstr "Linked dependency"
 
-#: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:19
+#: src/app/optional/[[...parts]]/OptionalCatchAllPageContent.tsx:17
 msgid "bT9Pga"
 msgstr "Optional catch-all page: {segment}"
 
@@ -214,14 +214,6 @@ msgstr "Parallel team default (server)"
 msgid "siB/XG"
 msgstr "Parallel team page (server)"
 
-#: src/app/parallel/error.tsx:16
-msgid "ox304v"
-msgstr "An error occurred"
-
-#: src/app/parallel/error.tsx:19
-msgid "62nsdy"
-msgstr "Retry"
-
 #: src/app/parallel/ParallelPageContent.tsx:11
 msgid "E8vtaB"
 msgstr "Parallel page"
@@ -230,7 +222,7 @@ msgstr "Parallel page"
 msgid "fJxh6G"
 msgstr "Parallel template"
 
-#: src/app/photo/[id]/PhotoPageContent.tsx:17
+#: src/app/photo/[id]/PhotoPageContent.tsx:15
 msgid "o25lsU"
 msgstr "Photo page: {id}"
 

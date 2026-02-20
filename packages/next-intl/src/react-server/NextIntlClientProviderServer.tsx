@@ -18,9 +18,7 @@ async function resolveMessages(
   if (!inferredManifest) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
-        '[next-intl] No manifest was provided for `messages="infer"`. ' +
-          'Providing no messages to avoid leaking all translations. ' +
-          'Ensure the manifest loader processes this file and finds client components using translations.'
+        "[next-intl] `NextIntlClientProvider` didn't infer any client messages for this module."
       );
     }
     return {} as ResolvedMessages;
@@ -52,6 +50,8 @@ export default async function NextIntlClientProviderServer({
 
   return (
     <BaseNextIntlClientProvider
+      // We need to be careful about potentially reading from headers here.
+      // See https://github.com/amannn/next-intl/issues/631
       formats={formats === undefined ? await getFormats() : formats}
       locale={locale ?? (await getLocale())}
       messages={clientMessages}

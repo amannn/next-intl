@@ -5,12 +5,12 @@ import ServerActionForm from './ServerActionForm';
 export default function ActionsPage() {
   const t = useExtracted();
   return (
-    <NextIntlClientProvider messages="infer">
-      <DebugMessages />
-      <div>
-        <p>{t('Server action page')}</p>
+    <div>
+      <p>{t('Server action page')}</p>
+      <NextIntlClientProvider messages="infer">
+        <DebugMessages />
         <ServerActionForm />
-      </div>
-    </NextIntlClientProvider>
+      </NextIntlClientProvider>
+    </div>
   );
 }

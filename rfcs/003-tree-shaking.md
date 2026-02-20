@@ -4,7 +4,7 @@ Start date: 2026-02-06
 
 ## Summary
 
-We want Next.js App Router client bundles to receive only the message namespaces (and ideally keys) they actually use. Static analysis of the module graph can infer those requirements automatically, replacing manual `pick()` calls. We use on-demand manifest generation via a loader (for `next dev` compatibility) and provider-level splitting (to avoid over-including messages across sibling routes). This RFC frames the problem, the requirements for analysis, design options, and the proposed approach.
+We want Next.js App Router client bundles to receive only the message namespaces and keys they actually use. Static analysis of the module graph can infer those requirements automatically, replacing manual `pick()` calls. This RFC frames the problem, the requirements for analysis, design options, and the proposed approach.
 
 **Table of contents:**
 
@@ -226,9 +226,13 @@ Treat each Next.js entry point (`page.tsx`, `loading.tsx`, `error.tsx`, `templat
 
 This is unnecessarily granular. These entry points never render separately in a way that would benefit from separate message sets -- `loading.tsx` shows while `page.tsx` is loading, `error.tsx` replaces `page.tsx` on failure. Splitting between them adds complexity without practical benefit. Furthermore, `error.tsx` **must** be a Client Component, so it can't have its own provider -- it depends on an ancestor layout for messages.
 
-### Approach 3: Provider-level splitting (current)
+### Approach 3: Segment-level splitting
 
-**This is the approach we use.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance receives its inferred namespaces via an injected `__inferredManifest` prop. Each page, loading, default, template should use its own provider (no sibling merging). `error.tsx` is unsolved.
+While many entry points within a segment are typically rendered together (e.g. `loading.tsx`, `page.tsx`, …), it turned out that this approach was not useful since `layout.tsx` files are consumed by child routes as well and shouldn't cause messages of sibling entry points to be included.
+
+### Approach 4: Provider-level splitting (current)
+
+**This is the approach we use.** We only rely on presence of `<NextIntlClientProvider messages="infer">` and process only the module graph for that provider's subtree. Each provider instance receives its inferred namespaces via an injected `__inferredManifest` prop. Each page, loading, default, template should use its own provider (no sibling merging).
 
 ## Proposed approach: Provider-level tree-shaking
 
